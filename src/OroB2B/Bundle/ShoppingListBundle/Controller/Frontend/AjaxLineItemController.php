@@ -132,30 +132,6 @@ class AjaxLineItemController extends Controller
     }
 
     /**
-     * Edit product form
-     *
-     * @Route("/update/{id}", name="orob2b_shopping_list_line_item_frontend_update_widget", requirements={"id"="\d+"})
-     * @Template("OroB2BShoppingListBundle:LineItem:widget/update.html.twig")
-     * @Acl(
-     *      id="orob2b_shopping_list_line_item_frontend_update",
-     *      type="entity",
-     *      class="OroB2BShoppingListBundle:LineItem",
-     *      permission="EDIT",
-     *      group_name="commerce"
-     * )
-     *
-     * @param LineItem $lineItem
-     *
-     * @return array|RedirectResponse
-     */
-    public function updateAction(LineItem $lineItem)
-    {
-        $form = $this->createForm(LineItemType::NAME, $lineItem);
-
-        return $this->get('oro_form.model.update_handler')->handleUpdate($lineItem, $form, null, null, null);
-    }
-
-    /**
      * @Route("/{gridName}/massAction/{actionName}", name="orob2b_shopping_list_add_products_massaction")
      * @AclAncestor("orob2b_shopping_list_line_item_frontend_add")
      *
@@ -189,32 +165,6 @@ class AjaxLineItemController extends Controller
      */
     public function productsAddBtnWidgetAction()
     {
-        return $this->getTemplateParameters();
-    }
-
-    /**
-     * @return Response
-     * @Template("OroB2BShoppingListBundle:ShoppingList/Frontend:quickAdd.html.twig")
-     */
-    public function getQuickAddBtnAction()
-    {
-        return $this->getTemplateParameters();
-    }
-
-    /**
-     * @return Response
-     */
-    protected function getTemplateParameters()
-    {
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->getUser();
-        $repository = $this->getDoctrine()->getRepository('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList');
-        $shoppingLists = $repository->findAllExceptCurrentForAccountUser($accountUser);
-        $currentShoppingList = $repository->findCurrentForAccountUser($accountUser);
-
-        return [
-            'shoppingLists' => $shoppingLists,
-            'currentShoppingList' => $currentShoppingList
-        ];
+        return $this->get('orob2b_shopping_list.shopping_list.manager')->getShoppingLists();
     }
 }

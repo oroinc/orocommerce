@@ -5,6 +5,7 @@ namespace Oro\Bundle\ActionBundle\Tests\Unit\Twig;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 use Oro\Bundle\ActionBundle\Twig\ActionExtension;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -15,6 +16,9 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|ActionManager */
     protected $actionManager;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ApplicationsHelper */
+    protected $appsHelper;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
     protected $doctrineHelper;
@@ -31,6 +35,10 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->appsHelper = $this->getMockBuilder('Oro\Bundle\ActionBundle\Helper\ApplicationsHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
@@ -39,12 +47,17 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->extension = new ActionExtension($this->actionManager, $this->doctrineHelper, $this->requestStack);
+        $this->extension = new ActionExtension(
+            $this->actionManager,
+            $this->appsHelper,
+            $this->doctrineHelper,
+            $this->requestStack
+        );
     }
 
     protected function tearDown()
     {
-        unset($this->extension, $this->actionManager, $this->doctrineHelper, $this->requestStack);
+        unset($this->extension, $this->actionManager, $this->appsHelper, $this->doctrineHelper, $this->requestStack);
     }
 
     public function testGetName()
@@ -55,10 +68,11 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
     public function testGetFunctions()
     {
         $functions = $this->extension->getFunctions();
-        $this->assertCount(2, $functions);
+        $this->assertCount(3, $functions);
 
         $expectedFunctions = [
             'oro_action_widget_parameters' => true,
+            'oro_action_widget_route' => false,
             'has_actions' => false,
         ];
 
@@ -139,6 +153,16 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    public function testGetWidgetRoute()
+    {
+        $this->appsHelper->expects($this->once())
+            ->method('getWidgetRoute')
+            ->withAnyParameters()
+            ->willReturn('test_route');
+
+        $this->assertSame('test_route', $this->extension->getWidgetRoute());
+    }
+
     /**
      * @dataProvider hasActionsDataProvider
      *
@@ -174,7 +198,6 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
     protected function getEntity($id = null)
     {
         $entity = new \stdClass();
-
         $entity->id = $id;
 
         return $entity;

@@ -8,8 +8,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\EventListener\CategoryTreeHandlerListener;
-use OroB2B\Bundle\AccountBundle\Visibility\Storage\CategoryVisibilityData;
-use OroB2B\Bundle\AccountBundle\Visibility\Storage\CategoryVisibilityStorage;
+use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
 
@@ -21,9 +20,9 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
     use EntityTrait;
 
     /**
-     * @var CategoryVisibilityStorage|\PHPUnit_Framework_MockObject_MockObject
+     * @var CategoryVisibilityResolverInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $categoryVisibilityStorage;
+    protected $categoryVisibilityResolver;
 
     /**
      * @var CategoryTreeHandlerListener
@@ -51,17 +50,17 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->categoryVisibilityStorage = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Visibility\Storage\CategoryVisibilityStorage')
+        $this->categoryVisibilityResolver = $this
+            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolverInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new CategoryTreeHandlerListener($this->categoryVisibilityStorage);
+        $this->listener = new CategoryTreeHandlerListener($this->categoryVisibilityResolver);
     }
 
     protected function tearDown()
     {
-        unset($this->categoryVisibilityStorage, $this->listener);
+        unset($this->categoryVisibilityResolver, $this->listener);
     }
 
     /**
@@ -69,23 +68,33 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
      *
      * @param array $categories
      * @param array $expected
-     * @param CategoryVisibilityData|null $categoryVisibilityData
+     * @param array $visibleCategoryIds
      * @param UserInterface|null $user
      */
     public function testOnCreateAfter(
         array $categories,
         array $expected,
-        CategoryVisibilityData $categoryVisibilityData = null,
+        array $visibleCategoryIds,
         UserInterface $user = null
     ) {
         $categories = $this->prepareCategories($categories);
         $expected = $this->prepareCategories($expected);
         $event = new CategoryTreeCreateAfterEvent($categories);
         $event->setUser($user);
-        $this->categoryVisibilityStorage->expects($categoryVisibilityData ? $this->once() : $this->never())
-            ->method('getData')
-            ->with($user instanceof AccountUser ? $user->getAccount() : null)
-            ->willReturn($categoryVisibilityData);
+
+        if ($user instanceof User) {
+            $this->categoryVisibilityResolver->expects($this->never())
+                ->method('isCategoryVisibleForAccount');
+        } else {
+            $index = 0;
+            foreach ($categories as $category) {
+                $this->categoryVisibilityResolver->expects($this->at($index))
+                    ->method('isCategoryVisibleForAccount')
+                    ->with($category, $user instanceof AccountUser ? $user->getAccount() : null)
+                    ->willReturn(in_array($category->getId(), $visibleCategoryIds));
+                ++$index;
+            }
+        }
 
         $this->listener->onCreateAfter($event);
         $actual = $event->getCategories();
@@ -105,7 +114,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
             'tree for backend user' => [
                 'categories' => self::$categories,
                 'expected' => self::$categories,
-                'categoryVisibilityData' => null,
+                'visibleCategoryIds' => [],
                 'user' => new User()
             ],
             'tree for anonymous user with visible ids' => [
@@ -114,7 +123,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
                     ['id' => 1, 'parent' => null],
                     ['id' => 2, 'parent' => 1],
                 ],
-                'categoryVisibilityData' => new CategoryVisibilityData([1, 2, 6, 7, 12, 13, 14, 15], true),
+                'visibleCategoryIds' => [1, 2, 6, 7, 12, 13, 14, 15],
                 'user' => null
             ],
             'tree for account user with invisible ids' => [
@@ -129,7 +138,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
                     ['id' => 8, 'parent' => 5],
                     ['id' => 9, 'parent' => 5],
                 ],
-                'categoryVisibilityData' => new CategoryVisibilityData([3], false),
+                'visibleCategoryIds' => [1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
                 'user' => (new AccountUser)
                     ->setAccount($this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 42]))
             ]

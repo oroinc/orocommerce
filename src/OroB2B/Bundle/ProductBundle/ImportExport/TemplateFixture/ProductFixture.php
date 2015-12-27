@@ -69,6 +69,7 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
             ->addName($name)
             ->addName($localizedName)
             ->addDescription($description)
-            ->addDescription($localizedDescription);
+            ->addDescription($localizedDescription)
+            ->setHasVariants(true);
     }
 }

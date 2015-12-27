@@ -83,6 +83,14 @@ class RequestProduct implements ProductHolderInterface
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->productSku;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getEntityIdentifier()

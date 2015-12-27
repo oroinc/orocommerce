@@ -91,7 +91,7 @@ class RequestTypeTest extends AbstractTest
                     'firstName'     => 'FirstName',
                     'lastName'      => 'LastName',
                     'email'         => $email,
-                    'body'          => 'body',
+                    'note'          => 'note',
                     'poNumber'      => 'poNumber',
                     'shipUntil'     => $date,
                     'role'          => 'role',
@@ -116,7 +116,7 @@ class RequestTypeTest extends AbstractTest
                     'FirstName',
                     'LastName',
                     $email,
-                    'body',
+                    'note',
                     'company',
                     'role',
                     'poNumber',
@@ -128,7 +128,7 @@ class RequestTypeTest extends AbstractTest
                     'FirstName',
                     'LastName',
                     $email,
-                    'body',
+                    'note',
                     'company',
                     'role',
                     'poNumber',
@@ -142,7 +142,7 @@ class RequestTypeTest extends AbstractTest
                     'firstName'     => 'FirstName',
                     'lastName'      => 'LastName',
                     'email'         => $email,
-                    'body'          => 'body',
+                    'note'          => 'note',
                     'poNumber'      => 'poNumber',
                     'shipUntil'     => $date,
                     'role'          => 'role',
@@ -153,7 +153,7 @@ class RequestTypeTest extends AbstractTest
                     'FirstName',
                     'LastName',
                     $email,
-                    'body',
+                    'note',
                     'company',
                     'role',
                     'poNumber',
@@ -164,7 +164,7 @@ class RequestTypeTest extends AbstractTest
                     'FirstName',
                     'LastName',
                     $email,
-                    'body',
+                    'note',
                     'company',
                     'role',
                     'poNumber',
@@ -177,11 +177,11 @@ class RequestTypeTest extends AbstractTest
                 'submittedData' => [
                     'lastName'  => 'LastName',
                     'email'     => $email,
-                    'body'      => 'body',
+                    'note'      => 'note',
                     'role'      => 'role',
                     'company'   => 'company',
                 ],
-                'expectedData'  => $this->getRequest(null, 'LastName', $email, 'body', 'company', 'role'),
+                'expectedData'  => $this->getRequest(null, 'LastName', $email, 'note', 'company', 'role'),
                 'defaultData'   => $this->getRequest(),
             ],
             'first name len > 255' => [
@@ -190,11 +190,11 @@ class RequestTypeTest extends AbstractTest
                     'firstName' => $longStr,
                     'lastName'  => 'LastName',
                     'email'     => $email,
-                    'body'      => 'body',
+                    'note'      => 'note',
                     'role'      => 'role',
                     'company'   => 'company',
                 ],
-                'expectedData'  => $this->getRequest($longStr, 'LastName', $email, 'body', 'company', 'role'),
+                'expectedData'  => $this->getRequest($longStr, 'LastName', $email, 'note', 'company', 'role'),
                 'defaultData'   => $this->getRequest(),
             ],
             'empty last name' => [
@@ -202,11 +202,11 @@ class RequestTypeTest extends AbstractTest
                 'submittedData' => [
                     'firstName' => 'FirstName',
                     'email'     => $email,
-                    'body'      => 'body',
+                    'note'      => 'note',
                     'role'      => 'role',
                     'company'   => 'company',
                 ],
-                'expectedData'  => $this->getRequest('FirstName', null, $email, 'body', 'company', 'role'),
+                'expectedData'  => $this->getRequest('FirstName', null, $email, 'note', 'company', 'role'),
                 'defaultData'   => $this->getRequest(),
             ],
             'last name len > 255' => [
@@ -215,11 +215,11 @@ class RequestTypeTest extends AbstractTest
                     'firstName' => 'FirstName',
                     'lastName'  => $longStr,
                     'email'     => $email,
-                    'body'      => 'body',
+                    'note'      => 'note',
                     'role'      => 'role',
                     'company'   => 'company',
                 ],
-                'expectedData'  => $this->getRequest('FirstName', $longStr, $email, 'body', 'company', 'role'),
+                'expectedData'  => $this->getRequest('FirstName', $longStr, $email, 'note', 'company', 'role'),
                 'defaultData'   => $this->getRequest(),
             ],
             'empty email' => [
@@ -227,11 +227,11 @@ class RequestTypeTest extends AbstractTest
                 'submittedData' => [
                     'firstName' => 'FirstName',
                     'lastName'  => 'LastName',
-                    'body'      => 'body',
+                    'note'      => 'note',
                     'role'      => 'role',
                     'company'   => 'company',
                 ],
-                'expectedData'  => $this->getRequest('FirstName', 'LastName', null, 'body', 'company', 'role'),
+                'expectedData'  => $this->getRequest('FirstName', 'LastName', null, 'note', 'company', 'role'),
                 'defaultData'   => $this->getRequest(),
             ],
             'invalid email' => [
@@ -240,11 +240,11 @@ class RequestTypeTest extends AbstractTest
                     'firstName' => 'FirstName',
                     'lastName'  => 'LastName',
                     'email'     => 'no-email',
-                    'body'      => 'body',
+                    'note'      => 'note',
                     'role'      => 'role',
                     'company'   => 'company',
                 ],
-                'expectedData'  => $this->getRequest('FirstName', 'LastName', 'no-email', 'body', 'company', 'role'),
+                'expectedData'  => $this->getRequest('FirstName', 'LastName', 'no-email', 'note', 'company', 'role'),
                 'defaultData'   => $this->getRequest(),
             ],
             'email len > 255' => [
@@ -253,14 +253,14 @@ class RequestTypeTest extends AbstractTest
                     'firstName' => 'FirstName',
                     'lastName'  => 'LastName',
                     'email'     => $longEmail,
-                    'body'      => 'body',
+                    'note'      => 'note',
                     'role'      => 'role',
                     'company'   => 'company',
                 ],
-                'expectedData'  => $this->getRequest('FirstName', 'LastName', $longEmail, 'body', 'company', 'role'),
+                'expectedData'  => $this->getRequest('FirstName', 'LastName', $longEmail, 'note', 'company', 'role'),
                 'defaultData'   => $this->getRequest(),
             ],
-            'empty body' => [
+            'empty note' => [
                 'isValid'       => false,
                 'submittedData' => [
                     'firstName' => 'FirstName',
@@ -278,11 +278,11 @@ class RequestTypeTest extends AbstractTest
                     'firstName' => 'FirstName',
                     'lastName'  => 'LastName',
                     'email'     => $email,
-                    'body'      => 'body',
+                    'note'      => 'note',
                     'role'      => 'role',
                     'company'   => $longStr,
                 ],
-                'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'body', $longStr, 'role'),
+                'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'note', $longStr, 'role'),
                 'defaultData'   => $this->getRequest(),
             ],
             'role len > 255' => [
@@ -291,11 +291,11 @@ class RequestTypeTest extends AbstractTest
                     'firstName' => 'FirstName',
                     'lastName'  => 'LastName',
                     'email'     => $email,
-                    'body'      => 'body',
+                    'note'      => 'note',
                     'role'      => $longStr,
                     'company'   => 'company',
                 ],
-                'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', $longStr),
+                'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'note', 'company', $longStr),
                 'defaultData'   => $this->getRequest(),
             ],
             'poNumber len > 255' => [
@@ -304,7 +304,7 @@ class RequestTypeTest extends AbstractTest
                     'firstName' => 'FirstName',
                     'lastName'  => 'LastName',
                     'email'     => $email,
-                    'body'      => 'body',
+                    'note'      => 'note',
                     'poNumber'  => $longStr,
                     'shipUntil' => $date,
                     'role'      => 'role',
@@ -314,7 +314,7 @@ class RequestTypeTest extends AbstractTest
                     'FirstName',
                     'LastName',
                     $email,
-                    'body',
+                    'note',
                     'company',
                     'role',
                     $longStr,
@@ -328,7 +328,7 @@ class RequestTypeTest extends AbstractTest
                     'firstName' => 'FirstName',
                     'lastName'  => 'LastName',
                     'email'     => $email,
-                    'body'      => 'body',
+                    'note'      => 'note',
                     'poNumber'  => 'poNumber',
                     'shipUntil' => 'no-date',
                     'role'      => 'role',
@@ -338,7 +338,7 @@ class RequestTypeTest extends AbstractTest
                     'FirstName',
                     'LastName',
                     $email,
-                    'body',
+                    'note',
                     'company',
                     'role',
                     'poNumber',
@@ -352,7 +352,7 @@ class RequestTypeTest extends AbstractTest
                     'firstName'     => 'FirstName',
                     'lastName'      => 'LastName',
                     'email'         => $email,
-                    'body'          => 'body',
+                    'note'          => 'note',
                     'poNumber'      => null,
                     'shipUntil'     => null,
                     'role'          => 'role',
@@ -363,7 +363,7 @@ class RequestTypeTest extends AbstractTest
                     'FirstName',
                     'LastName',
                     $email,
-                    'body',
+                    'note',
                     'company',
                     'role',
                     null,
@@ -379,7 +379,7 @@ class RequestTypeTest extends AbstractTest
      * @param string $firstName
      * @param string $lastName
      * @param string $email
-     * @param string $body
+     * @param string $note
      * @param string $company
      * @param string $role
      * @param string $poNumber
@@ -391,7 +391,7 @@ class RequestTypeTest extends AbstractTest
         $firstName = null,
         $lastName = null,
         $email = null,
-        $body = null,
+        $note = null,
         $company = null,
         $role = null,
         $poNumber = null,
@@ -404,7 +404,7 @@ class RequestTypeTest extends AbstractTest
             ->setFirstName($firstName)
             ->setLastName($lastName)
             ->setEmail($email)
-            ->setBody($body)
+            ->setNote($note)
             ->setCompany($company)
             ->setRole($role)
             ->setPhone($phone)

@@ -84,6 +84,25 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
         $this->service->validate($product, new UniqueProductVariantLinks());
     }
 
+    public function testSkipIfProductIsMissingAndValidatedByNotBlank()
+    {
+        $product = new StubProduct();
+        $product->setHasVariants(true);
+        $product->setVariantFields(['field1']);
+        $variantLink = new ProductVariantLink($product);
+        $product->addVariantLink($variantLink);
+
+        $this->context->expects($this->never())
+            ->method('addViolation')
+            ->with((new UniqueProductVariantLinks())->message);
+
+        $this->service->validate($product, new UniqueProductVariantLinks());
+    }
+
+    /**
+     * @param array $variantLinkFields
+     * @return StubProduct
+     */
     private function prepareProduct(array $variantLinkFields)
     {
         $product = new StubProduct();
