@@ -8,19 +8,22 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class WindowsStateManagerPass implements CompilerPassInterface
 {
+    const WINDOWS_STATE_REGISTRY = 'oro_windows.manager.windows_state_registry';
+    const COMMERCE_WINDOWS_STATE = 'orob2b_account.manager.windows_state';
+
     /**
      * {@inheritdoc}
      */
     public function process(ContainerBuilder $container)
     {
-        if (!$container->hasDefinition('oro_windows.manager.windows_state_registry')) {
+        if (!$container->hasDefinition(self::WINDOWS_STATE_REGISTRY)) {
             return;
         }
 
-        $container->getDefinition('oro_windows.manager.windows_state_registry')
+        $container->getDefinition(self::WINDOWS_STATE_REGISTRY)
             ->addMethodCall(
                 'addManager',
-                [new Reference('orob2b_account.manager.windows_state')]
+                [new Reference(self::COMMERCE_WINDOWS_STATE)]
             );
     }
 }
