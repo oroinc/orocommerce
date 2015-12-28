@@ -19,7 +19,6 @@ class TaxCodeGridListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected $doctrineHelper;
 
-
     protected function setUp()
     {
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
@@ -31,6 +30,11 @@ class TaxCodeGridListenerTest extends \PHPUnit_Framework_TestCase
             'OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode',
             '\stdClass'
         );
+    }
+
+    protected function tearDown()
+    {
+        unset($this->listener, $this->doctrineHelper);
     }
 
     /**

@@ -17,6 +17,11 @@ class ZipCodeRangeHelperTest extends \PHPUnit_Framework_TestCase
         $this->helper = new ZipCodeRangeHelper();
     }
 
+    protected function tearDown()
+    {
+        unset($this->helper);
+    }
+
     /**
      * @param array $zipCodes
      * @param array $expectedData
