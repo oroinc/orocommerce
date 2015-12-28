@@ -100,12 +100,12 @@ class QuickAddControllerTest extends WebTestCase
 
     /**
      * @param string $file
-     * @param array $expectedValidationResult
+     * @param null|array $expectedValidationResult
      * @param null|string $formErrorMessage
      *
      * @dataProvider importFromFileProvider
      */
-    public function testImportFromFileAction($file, array $expectedValidationResult, $formErrorMessage = null)
+    public function testImportFromFileAction($file, $expectedValidationResult, $formErrorMessage = null)
     {
         $this->client->request('GET', $this->getUrl('orob2b_product_frontend_quick_add'));
         $response = $this->client->getResponse();
