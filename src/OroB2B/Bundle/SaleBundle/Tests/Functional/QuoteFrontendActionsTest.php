@@ -35,7 +35,6 @@ class QuoteFrontendActionsTest extends WebTestCase
         );
     }
 
-
     /**
      * @param array $input
      * @param bool $expected
