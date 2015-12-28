@@ -111,10 +111,13 @@ class AccountGroupCategoryVisibilityRepositoryTest extends CategoryVisibilityTes
      */
     public function testGetParentCategoryVisibilities(array $expectedVisibilities)
     {
-        $this->assertEquals(
-            $this->convertReferences($expectedVisibilities),
-            $this->repository->getParentCategoryVisibilities()
-        );
+        $expectedVisibilities = $this->convertReferences($expectedVisibilities);
+        $actualVisibilities = $this->repository->getParentCategoryVisibilities();
+
+        $this->assertSameSize($expectedVisibilities, $actualVisibilities);
+        foreach ($actualVisibilities as $actualVisibility) {
+            $this->assertContains($actualVisibility, $expectedVisibilities);
+        }
     }
 
     /**
