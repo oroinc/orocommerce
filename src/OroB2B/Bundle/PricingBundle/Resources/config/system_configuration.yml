@@ -1,21 +1,18 @@
 oro_system_configuration:
     groups:
-        price_list_settings:
-            title: orob2b.pricing.system_configuration.price_lists
-            icon: 'icon-briefcase'
         default_price_lists:
-            title: orob2b.pricing.system_configuration.default_price_lists
-            icon: 'icon-briefcase'
-            
-        product_price_settings:
-            title: orob2b.pricing.system_configuration.groups.product_price_settings.title
-
+            title: orob2b.pricing.system_configuration.groups.default_price_lists.title
+        price_rounding:
+            title: orob2b.pricing.system_configuration.groups.price_rounding.title
+        pricing:
+            title: orob2b.pricing.system_configuration.groups.pricing.title
+            icon: 'icon-credit-card'
     fields:
         oro_b2b_pricing.default_price_lists:
             data_type: array
             type: orob2b_pricing_price_list_system_config
             options:
-                label: orob2b.pricing.system_configuration.price_lists
+                label: orob2b.pricing.system_configuration.fields.price_lists.title
                 resettable: false
         oro_b2b_pricing.rounding_type:
             data_type: string
@@ -36,17 +33,17 @@ oro_system_configuration:
 
     tree:
         system_configuration:
-            platform:
+            commerce:
                 children:
                     catalog:
                         children:
-                            product_settings:
+                            pricing:
+                                priority: 100
                                 children:
-                                    product_price_settings:
+                                    price_rounding:
+                                        priority: 200
                                         children:
                                             - oro_b2b_pricing.rounding_type
-                            price_list_settings:
-                                children:
                                     default_price_lists:
                                         priority: 100
                                         children:
