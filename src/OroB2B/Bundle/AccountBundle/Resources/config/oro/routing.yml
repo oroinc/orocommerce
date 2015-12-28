@@ -149,5 +149,9 @@ orob2b_frontend_windows_api:
         _format:  json
     defaults:
         version: latest
+
+orob2b_account_audit:
+    resource:     "@OroB2BAccountBundle/Controller/AuditController.php"
+    type:         annotation
     options:
         frontend: true

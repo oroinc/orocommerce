@@ -124,6 +124,13 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
      * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $organization;
 
@@ -202,6 +209,13 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
      * @var string
      *
      * @ORM\Column(name="currency", type="string", length=3, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $currency;
 
@@ -209,6 +223,13 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
      * @var float
      *
      * @ORM\Column(name="subtotal", type="money", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $subtotal;
 
@@ -232,6 +253,13 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
      * @ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $account;
 
@@ -240,6 +268,13 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
      * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $accountUser;
 
@@ -249,6 +284,13 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
      * @ORM\OneToMany(targetEntity="OroB2B\Bundle\OrderBundle\Entity\OrderLineItem",
      *      mappedBy="order", cascade={"ALL"}, orphanRemoval=true
      * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $lineItems;
 
@@ -257,6 +299,13 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList")
      * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      **/
     protected $priceList;
 
@@ -268,6 +317,14 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
         parent::__construct();
 
         $this->lineItems = new ArrayCollection();
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->identifier;
     }
 
     /**

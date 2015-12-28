@@ -7,6 +7,9 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountRepository;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
 /**
  * @dbIsolation
@@ -33,7 +36,9 @@ class AccountRepositoryTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts'
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
+                'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData'
             ]
         );
 
@@ -83,6 +88,8 @@ class AccountRepositoryTest extends WebTestCase
                     'account.level_1.3.1',
                     'account.level_1.3.1.1',
                     'account.level_1.4',
+                    'account.level_1.4.1',
+                    'account.level_1.4.1.1',
                 ]
             ],
             'level_1.1' => [
@@ -107,7 +114,66 @@ class AccountRepositoryTest extends WebTestCase
             ],
             'level_1.4' => [
                 'account.level_1.4',
-                []
+                [
+                    'account.level_1.4.1',
+                    'account.level_1.4.1.1',
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getCategoryAccountIdsByVisibilityDataProvider
+     * @param string $categoryName
+     * @param string $visibility
+     * @param array $expectedAccounts
+     * @param array $restricted
+     */
+    public function testGetCategoryAccountIdsByVisibility(
+        $categoryName,
+        $visibility,
+        array $expectedAccounts,
+        array $restricted = null
+    ) {
+        /** @var Category $category */
+        $category = $this->getReference($categoryName);
+
+        $accountIds = $this->repository->getCategoryAccountIdsByVisibility($category, $visibility, $restricted);
+
+        $expectedAccountIds = [];
+        foreach ($expectedAccounts as $expectedAccountName) {
+            $accountGroup = $this->getReference($expectedAccountName);
+            $expectedAccountIds[] = $accountGroup->getId();
+        }
+
+        $this->assertEquals($expectedAccountIds, $accountIds);
+    }
+
+    /**
+     * @return array
+     */
+    public function getCategoryAccountIdsByVisibilityDataProvider()
+    {
+        return [
+            'FIRST_LEVEL with VISIBLE' => [
+                'categoryName' => LoadCategoryData::FIRST_LEVEL,
+                'visibility' => AccountCategoryVisibility::VISIBLE,
+                'expectedAccounts' => [
+                    'account.level_1.4',
+                ]
+            ],
+            'FIRST_LEVEL with VISIBLE restricted' => [
+                'categoryName' => LoadCategoryData::FIRST_LEVEL,
+                'visibility' => AccountCategoryVisibility::VISIBLE,
+                'expectedAccounts' => [],
+                'restricted' => []
+            ],
+            'FIRST_LEVEL with HIDDEN' => [
+                'categoryName' => LoadCategoryData::FIRST_LEVEL,
+                'visibility' => AccountCategoryVisibility::HIDDEN,
+                'expectedAccounts' => [
+                    'account.level_1.1',
+                ]
             ],
         ];
     }

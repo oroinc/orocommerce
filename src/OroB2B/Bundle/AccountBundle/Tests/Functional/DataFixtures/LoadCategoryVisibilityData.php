@@ -10,13 +10,10 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class LoadCategoryVisibilityData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -29,9 +26,14 @@ class LoadCategoryVisibilityData extends AbstractFixture implements DependentFix
     public function load(ObjectManager $manager)
     {
         $this->em = $manager;
+
         $categories = $this->getCategoryVisibilityData();
 
-        $this->addCategories($manager, $categories);
+        foreach ($categories as $categoryReference => $categoryVisibilityData) {
+            /** @var Category $category */
+            $category = $this->getReference($categoryReference);
+            $this->createCategoryVisibilities($category, $categoryVisibilityData);
+        }
 
         $manager->flush();
     }
@@ -42,113 +44,82 @@ class LoadCategoryVisibilityData extends AbstractFixture implements DependentFix
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
+            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
             'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
+            'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
         ];
     }
 
     /**
-     * @param ObjectManager $manager
-     * @param array $categories
+     * @param Category $category
+     * @param array $categoryData
      */
-    protected function addCategories(ObjectManager $manager, array $categories)
+    protected function createCategoryVisibilities(Category $category, array $categoryData)
     {
-        /** @var AccountUser $user */
-        $user = $this->getReference(LoadAccountUserData::EMAIL);
-        $account = $user->getAccount();
+        $this->createCategoryVisibility($category, $categoryData['all']);
 
-        foreach ($categories as $categoryName => $categoryData) {
-            $category = new Category();
-            $this->setTitle($category, $categoryName);
+        $this->createAccountGroupCategoryVisibilities($category, $categoryData['groups']);
 
-            if ($categoryData['parent_category'] === 'root') {
-                /** @var CategoryRepository $categoryRepository */
-                $categoryRepository = $manager->getRepository('OroB2BCatalogBundle:Category');
-                $parentCategory = $categoryRepository->getMasterCatalogRoot();
-            } else {
-                $parentCategory = $this->getReference($categoryData['parent_category']);
-            }
+        $this->createAccountCategoryVisibilities($category, $categoryData['accounts']);
+    }
 
-            $category->setParentCategory($parentCategory);
-
-            if (isset($categoryData['to_all'])) {
-                $this->setCategoryVisibility($category, $categoryData['to_all']);
-            }
-
-            if ($categoryData['to_group']) {
-                $this->setAccountGroupCategoryVisibility($category, $account->getGroup(), $categoryData['to_group']);
-            }
-
-            if ($categoryData['to_account']) {
-                $this->setAccountCategoryVisibility($category, $account, $categoryData['to_account']);
-            }
-
-            $this->addReference($categoryName, $category);
-
-            $manager->persist($category);
+    /**
+     * @param Category $category
+     * @param array $data
+     */
+    protected function createCategoryVisibility(Category $category, array $data)
+    {
+        if (!$data['visibility']) {
+            return;
         }
-    }
 
-    /**
-     * @param Category $category
-     * @param $title
-     */
-    protected function setTitle(Category $category, $title)
-    {
-        $categoryTitle = new LocalizedFallbackValue();
-        $categoryTitle->setString($title);
+        $categoryVisibility = (new CategoryVisibility())
+            ->setCategory($category)
+            ->setVisibility($data['visibility']);
 
-        $category->addTitle($categoryTitle);
-    }
-
-    /**
-     * @param Category $category
-     * @param string $visibilityToAll
-     */
-    protected function setCategoryVisibility(Category $category, $visibilityToAll)
-    {
-        $categoryVisibility = new CategoryVisibility();
-        $categoryVisibility->setCategory($category);
-        $categoryVisibility->setVisibility($visibilityToAll);
+        $this->setReference($data['reference'], $categoryVisibility);
 
         $this->em->persist($categoryVisibility);
     }
 
     /**
      * @param Category $category
-     * @param AccountGroup $accountGroup
-     * @param string $visibilityToAccountGroup
+     * @param array $accountGroupVisibilityData
      */
-    protected function setAccountGroupCategoryVisibility(
-        Category $category,
-        AccountGroup $accountGroup,
-        $visibilityToAccountGroup
-    ) {
-        $accountGroupCategoryVisibility = new AccountGroupCategoryVisibility();
-        $accountGroupCategoryVisibility->setCategory($category);
+    protected function createAccountGroupCategoryVisibilities(Category $category, array $accountGroupVisibilityData)
+    {
+        foreach ($accountGroupVisibilityData as $accountGroupReference => $data) {
+            /** @var AccountGroup $accountGroup */
+            $accountGroup = $this->getReference($accountGroupReference);
+            $accountGroupCategoryVisibility = (new AccountGroupCategoryVisibility())
+                ->setCategory($category)
+                ->setAccountGroup($accountGroup)
+                ->setVisibility($data['visibility']);
 
-        $accountGroupCategoryVisibility->setAccountGroup($accountGroup);
-        $accountGroupCategoryVisibility->setVisibility($visibilityToAccountGroup);
+            $this->setReference($data['reference'], $accountGroupCategoryVisibility);
 
-        $this->em->persist($accountGroupCategoryVisibility);
+            $this->em->persist($accountGroupCategoryVisibility);
+        }
     }
 
     /**
      * @param Category $category
-     * @param Account $account
-     * @param string $visibilityToAccount
+     * @param array $accountVisibilityData
      */
-    protected function setAccountCategoryVisibility(
-        Category $category,
-        Account $account,
-        $visibilityToAccount
-    ) {
-        $accountGroupCategoryVisibility = new AccountCategoryVisibility();
-        $accountGroupCategoryVisibility->setCategory($category);
-        $accountGroupCategoryVisibility->setAccount($account);
-        $accountGroupCategoryVisibility->setVisibility($visibilityToAccount);
+    protected function createAccountCategoryVisibilities(Category $category, array $accountVisibilityData)
+    {
+        foreach ($accountVisibilityData as $accountReference => $data) {
+            /** @var Account $account */
+            $account = $this->getReference($accountReference);
+            $accountCategoryVisibility = (new AccountCategoryVisibility())
+                ->setCategory($category)
+                ->setAccount($account)
+                ->setVisibility($data['visibility']);
 
-        $this->em->persist($accountGroupCategoryVisibility);
+            $this->setReference($data['reference'], $accountCategoryVisibility);
+
+            $this->em->persist($accountCategoryVisibility);
+        }
     }
 
     /**
@@ -156,7 +127,7 @@ class LoadCategoryVisibilityData extends AbstractFixture implements DependentFix
      */
     protected function getCategoryVisibilityData()
     {
-        $filePath = __DIR__.DIRECTORY_SEPARATOR.'data'.DIRECTORY_SEPARATOR.'visibilities.yml';
+        $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'category_visibilities.yml';
 
         return Yaml::parse($filePath);
     }

@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\CMSBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 use OroB2B\Bundle\CMSBundle\Model\ExtendLoginPage;
 
@@ -19,6 +20,9 @@ use OroB2B\Bundle\CMSBundle\Model\ExtendLoginPage;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
+ *          },
+ *          "dataaudit"={
+ *              "auditable"=true
  *          }
  *      }
  * )
@@ -38,6 +42,13 @@ class LoginPage extends ExtendLoginPage
      * @var string
      *
      * @ORM\Column(name="top_content", type="text", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $topContent;
 
@@ -45,6 +56,13 @@ class LoginPage extends ExtendLoginPage
      * @var string
      *
      * @ORM\Column(name="bottom_content", type="text", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $bottomContent;
 
@@ -52,8 +70,23 @@ class LoginPage extends ExtendLoginPage
      * @var string
      *
      * @ORM\Column(name="css", type="text", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $css;
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->id;
+    }
 
     /**
      * @return int

@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\EventListener;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\ORM\EntityRepository;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
@@ -71,8 +72,17 @@ class ProductDuplicateListener
      */
     protected function duplicateVisibility($className, $entity, $sourceEntity, $manager)
     {
+        /** @var EntityRepository $repository */
+        $repository = $manager->getRepository($className);
+        $repository->createQueryBuilder('entity')
+            ->delete($className, 'entity')
+            ->andWhere(sprintf('entity.%s = :entity', $this->fieldName))
+            ->setParameter('entity', $entity)
+            ->getQuery()
+            ->execute();
+
         /** @var VisibilityInterface[] $visibilities */
-        $visibilities = $manager->getRepository($className)->findBy([$this->fieldName => $sourceEntity]);
+        $visibilities = $repository->findBy([$this->fieldName => $sourceEntity]);
         foreach ($visibilities as $visibility) {
             $duplicateVisibility = clone $visibility;
             $duplicateVisibility->setTargetEntity($entity);
