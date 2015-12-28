@@ -25,7 +25,7 @@ actions:
 
     orob2b_sale_notify_customer_by_email_action:
         label: orob2b.sale.quote.notify_customer.by_email.link.text
-        applications: [backend]
+        applications: [backend, frontend]
         entities:
             - OroB2B\Bundle\SaleBundle\Entity\Quote
         order: 20
@@ -84,7 +84,7 @@ actions:
             icon: icon-edit
         preconditions:
             @equal: [false, $hasOfferVariants]
-        postfunctions:
+        functions:
             - @get_active_user: $.user
             - @call_service_method:
                 service: orob2b_sale.service.quote_to_order_converter
@@ -133,10 +133,10 @@ actions:
                 quote_to_order:
                     form_type: orob2b_sale_quote_to_order
 
-        initfunctions:
+        form_init:
             - @assign_value: [$.quote_to_order, $.data]
 
-        postfunctions:
+        functions:
             - @get_active_user: $.user
             - @call_service_method:
                 service: orob2b_sale.service.quote_to_order_converter
