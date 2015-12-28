@@ -1,0 +1,320 @@
+//Helpers
+.borderless {
+  td, th {
+    border: 0 !important;
+  }
+}
+
+.paddingless {
+  td, th {
+    padding: 0 !important;
+  }
+}
+
+.t_paddingless {
+  td, th {
+    padding-top: 0 !important;
+  }
+}
+
+.b_paddingless {
+  td, th {
+    padding-bottom: 0 !important;
+  }
+}
+
+.b_paddingless_md {
+  td, th {
+    @media (min-width: 992px) {
+      padding-bottom: 0 !important;
+    }
+  }
+}
+
+.b-padding10 {
+  td, th {
+    padding-bottom: 1rem !important;
+  }
+}
+
+//Clears
+.cl_l {
+  clear: left !important;
+}
+
+.cl_r {
+  clear: right !important;
+}
+
+.wsnr {
+  white-space: nowrap;
+}
+
+//Widths
+.w70 {
+  width: 7rem !important;
+}
+
+.w80 {
+  width: 8rem !important;
+}
+
+.w90 {
+  width: 9rem !important;
+}
+
+.w100 {
+  width: 10rem !important;
+}
+
+.w120 {
+  width: 12rem !important;
+}
+
+.w130 {
+  width: 13rem !important;
+}
+
+.w140 {
+  width: 14rem !important;
+}
+
+.w170 {
+  width: 17rem !important;
+}
+
+.w200 {
+  width: 20rem !important;
+}
+
+.w300 {
+  width: 30rem !important;
+}
+
+.w350 {
+  width: 35rem !important;
+}
+
+.w350-md {
+  @media (min-width: 992px) {
+    width: 35rem !important;
+  }
+}
+
+.w50_p {
+  width: 50% !important;
+}
+
+//Margins
+.mt3 {
+	margin-top: 3rem !important;
+}
+
+.generate-margin-helpers(@i, @param, @position, @size) when (@i >= 0) {
+  .generate-margin-helpers((@i - 1), @param, @position, @size);
+
+  .m@{param}@{i}-@{size} {
+    /*margin-@{position}: unit(@i, rem) !important;*/
+  }
+}
+
+@media (max-width: 991px) {
+  .generate-margin-helpers(12, t, top, sm);
+  .generate-margin-helpers(12, b, bottom, sm);
+  .generate-margin-helpers(12, r, right, sm);
+  .generate-margin-helpers(12, l, left, sm);
+}
+
+@media (min-width: 992px) {
+  .generate-margin-helpers(12, t, top, md);
+  .generate-margin-helpers(12, b, bottom, md);
+  .generate-margin-helpers(12, r, right, md);
+  .generate-margin-helpers(12, l, left, md);
+}
+
+//Micro Margins
+.generate-micro-margin-helpers(@i, @n, @param, @position, @size) when (@i >= 0.1) {
+  .generate-micro-margin-helpers((@i - 0.1), (@n - 1), @param, @position, @size);
+
+  .mm@{param}@{n}-@{size} {
+    /*margin-@{position}: unit(@i, rem) !important;*/
+  }
+}
+
+@media (max-width: 991px) {
+  .generate-micro-margin-helpers(.9, 9, t, top, sm);
+  .generate-micro-margin-helpers(.9, 9, b, bottom, sm);
+  .generate-micro-margin-helpers(.9, 9, r, right, sm);
+  .generate-micro-margin-helpers(.9, 9, l, left, sm);
+}
+
+@media (min-width: 992px) {
+  .generate-micro-margin-helpers(.9, 9, t, top, md);
+  .generate-micro-margin-helpers(.9, 9, b, bottom, md);
+  .generate-micro-margin-helpers(.9, 9, r, right, md);
+  .generate-micro-margin-helpers(.9, 9, l, left, md);
+}
+
+//Negative Micro Margins
+.generate-negative-micro-margin-helpers(@i, @n, @param, @position, @size) when (@i >= 0.1) {
+  .generate-negative-micro-margin-helpers((@i - 0.1), (@n - 1), @param, @position, @size);
+
+  .nmm@{param}@{n}-@{size} {
+    /*margin-@{position}: unit(-@i, rem) !important;*/
+  }
+}
+
+@media (max-width: 991px) {
+  .generate-negative-micro-margin-helpers(.9, 9, t, top, sm);
+  .generate-negative-micro-margin-helpers(.9, 9, b, bottom, sm);
+  .generate-negative-micro-margin-helpers(.9, 9, r, right, sm);
+  .generate-negative-micro-margin-helpers(.9, 9, l, left, sm);
+}
+
+@media (min-width: 992px) {
+  .generate-negative-micro-margin-helpers(.9, 9, t, top, md);
+  .generate-negative-micro-margin-helpers(.9, 9, b, bottom, md);
+  .generate-negative-micro-margin-helpers(.9, 9, r, right, md);
+  .generate-negative-micro-margin-helpers(.9, 9, l, left, md);
+}
+
+//Font sizes
+.generate-font-size-helpers(@i) when (@i >= 0) {
+  .generate-font-size-helpers(@i - 1);
+
+  .fs@{i} {
+    font-size: unit(@i / 10, rem) !important;
+  }
+}
+
+.generate-font-size-helpers(32);
+
+.fs16-sm {
+  @media (min-width: 992px) {
+    font-size: 1.6rem !important;
+  }
+}
+
+.fs18-md {
+
+  @media (min-width: 992px) {
+    font-size: 1.8rem !important;
+  }
+}
+
+//Colors
+.red {
+  color: @theme-red-color;
+}
+
+a.red {
+  &:hover, &:focus, &:active {
+    color: @theme-red-color;
+  }
+}
+
+.orange {
+  color: @theme-orange-color;
+}
+
+.base-color {
+  color: @base-font-color !important;
+}
+
+.gray {
+  color: @theme-bucket-color;
+}
+
+.blue {
+  color: @base-link-color;
+}
+ 
+.green2 {
+  color: @product_color-green2;
+}
+
+.green3 {
+  color: @theme-green-color;
+}
+
+.price-up-color {
+  color: @theme-orange-color-light;
+} 
+
+.price-old-color {
+  color: #919191;
+}
+
+.price-out-of-stock-color {
+  color: #f17b7b;
+}
+
+//Notifications colors
+.warning {
+  color: @theme-warning-color;
+}
+
+//Alignments
+.va-t_sm {
+  
+  @media (max-width: 991px) {
+    vertical-align: top !important;
+  }
+}
+
+.va-t_md {
+
+  @media (min-width: 992px) {
+    vertical-align: top !important;
+  }
+}
+
+.va-m_md {
+  vertical-align: middle !important;
+}
+
+//Elements displayings
+.inline {
+  display: inline-block;
+}
+
+.dbmw100p {
+  display: block !important;
+  max-width: 100% !important;
+}
+
+
+//Text transforms
+.text-normal {
+  text-transform: none !important;
+}
+
+//Text decorations
+.underlined {
+  text-decoration: underline;
+}
+
+//Other
+.buttons-flex-container {
+  display: flex;
+
+  &.buttons-flex-container_in-cart {
+    border-bottom: .1rem solid @base-border-color;
+    border-top: .1rem solid @base-border-color;
+    padding: 2rem 0;
+  }
+
+  &.buttons-flex-container_equal-btns {
+    .btn {
+      flex-basis: 50%;
+    }
+  }
+
+  .btn {
+    flex-grow: 1;
+
+    &:first-child {
+      margin-right: 1rem;
+    }
+  }
+}
