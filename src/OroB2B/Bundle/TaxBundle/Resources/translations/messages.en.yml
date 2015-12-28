@@ -6,6 +6,7 @@ orob2b.tax:
     id.label: 'id'
     rate.label: 'Rate'
     taxcode.label: 'Tax Code'
+    taxcode.accountgroup.label: 'Account Group Tax Code'
 
     form:
         choose: 'Choose a tax'
