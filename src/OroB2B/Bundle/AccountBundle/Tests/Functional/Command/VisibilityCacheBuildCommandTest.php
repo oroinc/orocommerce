@@ -101,7 +101,7 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
                 ],
                 'expectedCounts' => [
                     'categoryVisibility' => 8,
-                    'accountGroupCategoryVisibility' => 0,
+                    'accountGroupCategoryVisibility' => 14,
                     'accountCategoryVisibility' => 0,
                     'productVisibility' => 19,
                     'accountGroupProductVisibility' => 8,
@@ -117,7 +117,7 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
                 ],
                 'expectedCounts' => [
                     'categoryVisibility' => 8,
-                    'accountGroupCategoryVisibility' => 0,
+                    'accountGroupCategoryVisibility' => 14,
                     'accountCategoryVisibility' => 0,
                     'productVisibility' => 6,
                     'accountGroupProductVisibility' => 6,
