@@ -85,7 +85,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
         $resolvedRepository->insertStaticValues($this->insertFromSelectQueryExecutor);
 
         // resolved parent category values
-        $categoryVisibilities = $this->indexVisibilities($repository->getCategoriesVisibilities());
+        $categoryVisibilities = $this->indexVisibilities($repository->getCategoriesVisibilities(), 'category_id');
         $categoryIds = [
             CategoryVisibilityResolved::VISIBILITY_VISIBLE => [],
             CategoryVisibilityResolved::VISIBILITY_HIDDEN => [],

@@ -51,7 +51,7 @@ class AccountGroupCategoryVisibilityRepository extends EntityRepository
      *      [
      *          'visibility_id' => <int>,
      *          'parent_visibility_id' => <int|null>,
-     *          'parent_visibility_visibility' => <string|null>,
+     *          'parent_visibility' => <string|null>,
      *          'category_id' => <int>,
      *          'parent_category_id' => <int|null>,
      *      ],
@@ -67,7 +67,7 @@ class AccountGroupCategoryVisibilityRepository extends EntityRepository
         return $qb->select(
             'agcv.id as visibility_id',
             'agcv_parent.id as parent_visibility_id',
-            'agcv_parent.visibility as parent_visibility_visibility',
+            'agcv_parent.visibility as parent_visibility',
             'c.id as category_id',
             'IDENTITY(c.parentCategory) as parent_category_id'
         )
