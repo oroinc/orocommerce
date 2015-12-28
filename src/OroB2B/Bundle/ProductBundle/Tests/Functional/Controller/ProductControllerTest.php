@@ -198,42 +198,6 @@ class ProductControllerTest extends WebTestCase
     }
 
     /**
-     * @depends testView
-     * @param int $id
-     * @return int
-     */
-    public function testDuplicate($id)
-    {
-        $this->client->followRedirects(true);
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_duplicate', ['id' => $id]));
-
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
-        $html = $crawler->html();
-        $this->assertContains('Product has been duplicated', $html);
-        $this->assertContains(
-            self::FIRST_DUPLICATED_SKU . ' - ' . self::DEFAULT_NAME_ALTERED . ' - Products - Products',
-            $html
-        );
-        $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
-        $this->assertContains(self::STATUS, $html);
-
-        $this->assertContains(
-            $this->createUnitPrecisionString(self::FIRST_UNIT_FULL_NAME, self::FIRST_UNIT_PRECISION),
-            $html
-        );
-        $this->assertContains(
-            $this->createUnitPrecisionString(self::SECOND_UNIT_FULL_NAME, self::SECOND_UNIT_PRECISION),
-            $html
-        );
-
-        $result = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
-
-        return $result['id'];
-    }
-
-    /**
      * @depends testDuplicate
      *
      * @return int

@@ -5,11 +5,14 @@ actions:
         applications:
             - backend
             - frontend
-        entities:
-            - OroB2B\Bundle\SaleBundle\Entity\Quote
+        routes:
+            - orob2b_sale_quote_view
+        datagrids:
+            - quotes-grid
         order: 10
         frontend_options:
             icon: icon-time
+            confirmation: orob2b.sale.quote.actions.quote_expire_confirm
         preconditions:
             @equal: [$expired, false]
         postfunctions:
