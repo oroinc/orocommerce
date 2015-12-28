@@ -87,7 +87,7 @@ Configuration Replacing
 =======================
 
 In merge process we can replace any node on any level of our configuration. If node `replace` is exist and it contains
-some nodes which located on the same level of node `replace` - value of this nodes will be replaced by values from
+some nodes which located on the same level of node `replace` - value of these nodes will be replaced by values from
 _last_ configuration from queue.
 
 Defining an Action
