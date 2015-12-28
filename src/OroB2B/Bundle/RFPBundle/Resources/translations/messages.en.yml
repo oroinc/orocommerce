@@ -79,12 +79,16 @@ orob2b:
             label_translation: 'Labels'
 
         system_configuration:
-            group_title: 'Request For Quote'
-            requeststatus_group_title: 'RFQ Status'
-            requeststatus_default_label: 'Default RFQ Status'
-            default_user_for_notifications: 'Default User For Notifications'
-            backend_product_visibility: 'Can Be Added to RFQs'
-            frontend_product_visibility: 'Can Be Added to RFQs'
+            groups:
+                sales.title: 'Sales'
+                rfq.title: 'Request For Quote'
+                requeststatus.title: 'RFQ Status'
+                notifications.title: 'Notifications'
+            fields:
+                requeststatus_default.title: 'Default RFQ Status'
+                default_user_for_notifications.title: 'Default User For Notifications'
+                backend_product_visibility.title: 'Can Be Added to RFQs'
+                frontend_product_visibility.title: 'Can Be Added to RFQs'
 
         message:
             request_status_saved: 'Request Status saved'
@@ -134,10 +138,5 @@ orob2b:
                 id.label: 'RFQ #'
                 submitted_to.label: 'Submitted To'
                 is_draft.label: 'Draft'
-
-# We MUST move this section form here in the future!
-orob2b.frontendadmin:
-    system_configuration:
-        frontend_application_group_title: 'Frontend Application'
 
 orob2b.order.orderlineitem.offers.label: 'Requested QTY and price'
