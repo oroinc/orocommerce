@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\EventListener;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\TaxBundle\EventListener\AccountTaxCodeGridListener;
 

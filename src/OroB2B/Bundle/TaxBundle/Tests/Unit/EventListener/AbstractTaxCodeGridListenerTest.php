@@ -26,6 +26,11 @@ abstract class AbstractTaxCodeGridListenerTest extends \PHPUnit_Framework_TestCa
         $this->listener = $this->createListener();
     }
 
+    protected function tearDown()
+    {
+        unset($this->listener, $this->doctrineHelper);
+    }
+
     /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage for "\stdClass" not found in "OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode"

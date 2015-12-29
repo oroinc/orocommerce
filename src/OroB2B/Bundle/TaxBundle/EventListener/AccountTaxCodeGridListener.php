@@ -25,23 +25,23 @@ class AccountTaxCodeGridListener
     /** @var string */
     protected $relatedAccountGroupClass;
 
-    /**  @var DoctrineHelper */
+    /** @var DoctrineHelper */
     protected $doctrineHelper;
 
     /**
      * @param DoctrineHelper $doctrineHelper
-     * @param string         $taxCodeClass
+     * @param string         $accountTaxCodeClass
      * @param string         $relatedAccountClass
      * @param string         $relatedAccountGroupClass
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        $taxCodeClass,
+        $accountTaxCodeClass,
         $relatedAccountClass,
         $relatedAccountGroupClass
     ) {
         $this->doctrineHelper = $doctrineHelper;
-        $this->accountTaxCodeClass = $taxCodeClass;
+        $this->accountTaxCodeClass = $accountTaxCodeClass;
         $this->relatedAccountClass = $relatedAccountClass;
         $this->relatedAccountGroupClass = $relatedAccountGroupClass;
 
