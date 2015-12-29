@@ -143,21 +143,21 @@ class AccountGroupCategoryRepository extends EntityRepository
             return;
         }
 
-        foreach (array_chunk($visibilityIds, CategoryRepository::INSERT_BATCH_SIZE) as $ids) {
-            $queryBuilder = $this->getEntityManager()->createQueryBuilder()
-                ->select(
-                    'agcv.id',
-                    'IDENTITY(agcv.category)',
-                    'IDENTITY(agcv.accountGroup)',
-                    (string)$visibility,
-                    (string)AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY
-                )
-                ->from('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility', 'agcv')
-                ->andWhere('agcv.visibility = :parentCategory') // parent category fallback
-                ->andWhere('agcv.id IN (:visibilityIds)')       // specific visibility entity IDs
-                ->setParameter('parentCategory', AccountGroupCategoryVisibility::PARENT_CATEGORY)
-                ->setParameter('visibilityIds', $ids);
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder()
+            ->select(
+                'agcv.id',
+                'IDENTITY(agcv.category)',
+                'IDENTITY(agcv.accountGroup)',
+                (string)$visibility,
+                (string)AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY
+            )
+            ->from('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility', 'agcv')
+            ->andWhere('agcv.visibility = :parentCategory') // parent category fallback
+            ->andWhere('agcv.id IN (:visibilityIds)')       // specific visibility entity IDs
+            ->setParameter('parentCategory', AccountGroupCategoryVisibility::PARENT_CATEGORY);
 
+        foreach (array_chunk($visibilityIds, CategoryRepository::INSERT_BATCH_SIZE) as $ids) {
+            $queryBuilder->setParameter('visibilityIds', $ids);
             $insertExecutor->execute(
                 $this->getClassName(),
                 ['sourceCategoryVisibility', 'category', 'accountGroup', 'visibility', 'source'],
