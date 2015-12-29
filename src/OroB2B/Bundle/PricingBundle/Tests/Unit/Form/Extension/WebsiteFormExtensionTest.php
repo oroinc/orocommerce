@@ -95,8 +95,8 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
         $priceListFrom->expects($this->once())
             ->method('setData')
             ->with([
-                ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100],
-                ['priceList' => $this->getExisting()[2]->getPriceList(), 'priority' => 200],
+                ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100, 'merge' => true],
+                ['priceList' => $this->getExisting()[2]->getPriceList(), 'priority' => 200, 'merge' => true],
             ]);
 
         $rootForm = $this->getFormMock();
@@ -113,8 +113,8 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
         $priceListFrom->expects($this->once())
             ->method('getData')
             ->willReturn([
-                ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100],
-                ['priceList' => null, 'priority' => 200],
+                ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100, 'merge' => true],
+                ['priceList' => null, 'priority' => 200, 'merge' => true],
             ]);
 
         $rootForm = $this->getFormMock();
@@ -160,10 +160,10 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
         $priceListFrom->expects($this->once())
             ->method('getData')
             ->willReturn([
-                ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100],
-                ['priceList' => $this->getExisting()[2]->getPriceList(), 'priority' => 200],
-                ['priceList' => $addedPriceList, 'priority' => 300],
-                ['priceList' => null, 'priority' => 400]
+                ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100, 'merge' => true],
+                ['priceList' => $this->getExisting()[2]->getPriceList(), 'priority' => 200, 'merge' => true],
+                ['priceList' => $addedPriceList, 'priority' => 300, 'merge' => true],
+                ['priceList' => null, 'priority' => 400, 'merge' => false]
             ]);
 
         $rootForm = $this->getFormMock();

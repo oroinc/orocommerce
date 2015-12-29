@@ -38,6 +38,18 @@ class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInte
     protected $website;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="merge", type="boolean", nullable=false, options={"default"=true})
+     */
+    protected $merge;
+
+    public function __construct()
+    {
+        $this->merge = true;
+    }
+
+    /**
      * @return int
      */
     public function getPriority()
@@ -90,6 +102,25 @@ class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInte
     public function setWebsite(Website $website)
     {
         $this->website = $website;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getMerge()
+    {
+        return $this->merge;
+    }
+
+    /**
+     * @param boolean $merge
+     * @return $this
+     */
+    public function setMerge($merge)
+    {
+        $this->merge = $merge;
 
         return $this;
     }

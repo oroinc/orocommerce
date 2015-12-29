@@ -138,6 +138,7 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
 
         $priceListToTargetEntity->setPriceList($priceList);
         $priceListToTargetEntity->setPriority(100);
+        $priceListToTargetEntity->setMerge(true);
 
         $this->repository->expects($this->any())
             ->method('getPriceLists')
@@ -195,7 +196,8 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
                 '42' => [
                     [
                         'priceList' => $priceList,
-                        'priority' => 100
+                        'priority' => 100,
+                        'merge' => true,
                     ]
                 ]
             ]);
@@ -222,6 +224,7 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
             $priceListToTargetEntity = new PriceListToAccount();
             $priceListToTargetEntity->setPriceList($item['priceList']);
             $priceListToTargetEntity->setPriority($item['priority']);
+            $priceListToTargetEntity->setMerge($item['merge']);
 
             $actualPriceLists[] = $priceListToTargetEntity;
         }
@@ -323,17 +326,20 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
                 'submittedData' => [
                     [
                         'priceList' => $priceList1,
-                        'priority' => 100
+                        'priority' => 100,
+                        'merge' => true,
                     ]
                 ],
                 'actualData' => [
                     [
                         'priceList' => $priceList1,
-                        'priority' => 100
+                        'priority' => 100,
+                        'merge' => true,
                     ],
                     [
                         'priceList' => $priceList2,
-                        'priority' => 200
+                        'priority' => 200,
+                        'merge' => true,
                     ],
                 ]
             ],
@@ -341,13 +347,15 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
                 'submittedData' => [
                     [
                         'priceList' => $priceList1,
-                        'priority' => 100
+                        'priority' => 100,
+                        'merge' => true,
                     ]
                 ],
                 'actualData' => [
                     [
                         'priceList' => $priceList1,
-                        'priority' => 3
+                        'priority' => 3,
+                        'merge' => true,
                     ]
                 ]
             ],
@@ -355,7 +363,8 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
                 'submittedData' => [
                     [
                         'priceList' => $priceList1,
-                        'priority' => 100
+                        'priority' => 100,
+                        'merge' => true,
                     ]
                 ],
                 'actualData' => []

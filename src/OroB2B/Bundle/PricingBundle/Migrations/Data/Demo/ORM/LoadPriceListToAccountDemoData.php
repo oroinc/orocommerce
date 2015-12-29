@@ -36,7 +36,8 @@ class LoadPriceListToAccountDemoData extends LoadBasePriceListRelationDemoData
             $priceListToAccount->setAccount($account)
                 ->setPriceList($priceList)
                 ->setWebsite($website)
-                ->setPriority($row['priority']);
+                ->setPriority($row['priority'])
+                ->setMerge($row['merge']);
 
             $manager->persist($priceListToAccount);
         }

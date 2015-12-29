@@ -177,6 +177,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
             $priceListToTargetEntity->setPriceList($priceListWithPriorityData['priceList']);
         }
         $priceListToTargetEntity->setPriority($priceListWithPriorityData['priority']);
+        $priceListToTargetEntity->setMerge($priceListWithPriorityData['merge']);
         $em->persist($priceListToTargetEntity);
     }
 
@@ -235,6 +236,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
             foreach ($actualPriceListsToTargetEntity as $priceListToTargetEntity) {
                 $priceLists['priceList'] = $priceListToTargetEntity->getPriceList();
                 $priceLists['priority'] = $priceListToTargetEntity->getPriority();
+                $priceLists['merge'] = $priceListToTargetEntity->getMerge();
 
                 $actualPriceLists[] = $priceLists;
             }
