@@ -40,14 +40,9 @@ class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInte
     /**
      * @var boolean
      *
-     * @ORM\Column(name="merge", type="boolean", nullable=false, options={"default"=true})
+     * @ORM\Column(name="merge_allowed", type="boolean", nullable=false)
      */
-    protected $merge;
-
-    public function __construct()
-    {
-        $this->merge = true;
-    }
+    protected $mergeAllowed = true;
 
     /**
      * @return int
@@ -109,18 +104,18 @@ class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInte
     /**
      * @return boolean
      */
-    public function getMerge()
+    public function isMergeAllowed()
     {
-        return $this->merge;
+        return $this->mergeAllowed;
     }
 
     /**
-     * @param boolean $merge
+     * @param boolean $mergeAllowed
      * @return $this
      */
-    public function setMerge($merge)
+    public function setMergeAllowed($mergeAllowed)
     {
-        $this->merge = $merge;
+        $this->mergeAllowed = $mergeAllowed;
 
         return $this;
     }

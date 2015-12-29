@@ -38,7 +38,7 @@ class LoadPriceListToAccountGroupGroupDemoData extends LoadBasePriceListRelation
                 ->setPriceList($priceList)
                 ->setWebsite($website)
                 ->setPriority($row['priority'])
-                ->setMerge($row['merge']);
+                ->setMergeAllowed($row['mergeAllowed']);
 
             $manager->persist($priceListToAccountGroup);
         }

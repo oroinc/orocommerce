@@ -16,9 +16,9 @@ orob2b.pricing:
         websites.label: Websites
         prices.label: Prices
         priority.label: Priority
-        merge.label: Merge
-        merge.on.label: On
-        merge.off.label: Off
+        merge_allowed.label: Merge Allowed
+        merge_allowed.on.label: On
+        merge_allowed.off.label: Off
 
         form:
             pricelist_required: Please select a price list first...

@@ -1,13 +1,13 @@
-priceList,website,priority,merge
+priceList,website,priority,mergeAllowed
 Wholesale Price List,Default,100,true
 Partner C Custom Price List,Default,200,true
-Wholesale Price List,US,100,true
+Wholesale Price List,US,100,false
 Partner C Custom Price List,US,200,true
 Wholesale Price List,Australia,100,true
-Partner C Custom Price List,Australia,200,true
+Partner C Custom Price List,Australia,200,false
 Wholesale Price List,Canada,100,true
 Partner C Custom Price List,Canada,200,true
 Partner C Custom Price List,Mexico,100,true
 Wholesale Price List,Mexico,200,true
-Wholesale Price List,Europe,100,true
+Wholesale Price List,Europe,100,false
 Partner C Custom Price List,Europe,200,true

@@ -86,7 +86,7 @@ class WebsiteFormExtension extends AbstractTypeExtension
             $data[] = [
                 'priceList' => $entity->getPriceList(),
                 'priority' => $entity->getPriority(),
-                'merge' => $entity->getMerge(),
+                'mergeAllowed' => $entity->isMergeAllowed(),
             ];
         }
         $event->getForm()->get(self::PRICE_LISTS_TO_WEBSITE_FIELD)->setData($data);
@@ -147,12 +147,12 @@ class WebsiteFormExtension extends AbstractTypeExtension
             }
             if (in_array($priceList->getId(), $ids, true)) {
                 $existing[$priceList->getId()]->setPriority($item['priority']);
-                $existing[$priceList->getId()]->setMerge($item['merge']);
+                $existing[$priceList->getId()]->setMergeAllowed($item['mergeAllowed']);
             } else {
                 $entity = new PriceListToWebsite();
                 $entity->setWebsite($website)
                     ->setPriority($item['priority'])
-                    ->setMerge($item['merge'])
+                    ->setMergeAllowed($item['mergeAllowed'])
                     ->setPriceList($priceList);
                 $this->getPriceListToWebsiteManager()->persist($entity);
             }
