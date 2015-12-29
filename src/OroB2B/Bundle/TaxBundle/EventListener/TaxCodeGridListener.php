@@ -19,7 +19,7 @@ class TaxCodeGridListener
     /** @var string */
     protected $relatedEntityClass;
 
-    /**  @var DoctrineHelper */
+    /** @var DoctrineHelper */
     protected $doctrineHelper;
 
     /**
@@ -72,7 +72,8 @@ class TaxCodeGridListener
     }
 
     /**
-     * @return string|null null if there is not association
+     * @return string
+     * @throws \InvalidArgumentException if there is not association
      */
     protected function getFieldName()
     {
@@ -93,6 +94,7 @@ class TaxCodeGridListener
     /**
      * @param DatagridConfiguration $configuration
      * @return string
+     * @throws \InvalidArgumentException when path [source][query][from] not found in the grid
      */
     protected function getAlias(DatagridConfiguration $configuration)
     {

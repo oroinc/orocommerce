@@ -20,6 +20,11 @@ class TaxSelectTypeTest extends \PHPUnit_Framework_TestCase
         $this->type = new TaxSelectType();
     }
 
+    protected function tearDown()
+    {
+        unset($this->type);
+    }
+
     public function testGetName()
     {
         $this->assertEquals(TaxSelectType::NAME, $this->type->getName());
