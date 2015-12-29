@@ -12,6 +12,7 @@ use OroB2B\Bundle\PricingBundle\Rounding\PriceRoundingService;
 class Configuration implements ConfigurationInterface
 {
     const DEFAULT_PRICE_LISTS = 'default_price_lists';
+    const COMBINED_PRICE_LIST = 'combined_price_list';
 
     /**
      * {@inheritDoc}
@@ -25,6 +26,7 @@ class Configuration implements ConfigurationInterface
         SettingsBuilder::append(
             $rootNode,
             [
+                self::COMBINED_PRICE_LIST => null,
                 self::DEFAULT_PRICE_LISTS => [ 'type' => 'array', 'value' => []],
                 'rounding_type' => ['value' => PriceRoundingService::HALF_UP],
                 'precision' => ['value' => PriceRoundingService::FALLBACK_PRECISION],
