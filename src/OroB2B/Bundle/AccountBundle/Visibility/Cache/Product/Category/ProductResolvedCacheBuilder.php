@@ -89,6 +89,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
         $categoryIds = [
             CategoryVisibilityResolved::VISIBILITY_VISIBLE => [],
             CategoryVisibilityResolved::VISIBILITY_HIDDEN => [],
+            CategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG => [],
         ];
         foreach ($categoryVisibilities as $categoryId => $currentCategory) {
             // if fallback to parent category
@@ -128,7 +129,6 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
                     $categoryVisibilities[$parentCategoryId]
                 );
             }
-
         // static value
         } elseif ($visibility !== CategoryVisibility::CONFIG) {
             $resolvedVisibility = $this->convertVisibility($visibility === CategoryVisibility::VISIBLE);
@@ -136,7 +136,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
 
         // config value (default)
         if (null === $resolvedVisibility) {
-            $resolvedVisibility = $this->getVisibilityFromConfig();
+            $resolvedVisibility = CategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
         }
 
         // save resolved visibility to use it in following iterations
