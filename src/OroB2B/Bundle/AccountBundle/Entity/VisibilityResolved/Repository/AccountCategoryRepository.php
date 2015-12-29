@@ -5,7 +5,11 @@ namespace OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
@@ -100,5 +104,83 @@ class AccountCategoryRepository extends EntityRepository
         $categoryVisibilityResolved = $qb->getQuery()->getArrayResult();
 
         return array_map('current', $categoryVisibilityResolved);
+    }
+
+    public function clearTable()
+    {
+        // TRUNCATE can't be used because it can't be rolled back in case of DB error
+        $this->createQueryBuilder('acvr')
+            ->delete()
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * @param InsertFromSelectQueryExecutor $insertExecutor
+     */
+    public function insertStaticValues(InsertFromSelectQueryExecutor $insertExecutor)
+    {
+        $visibilityCondition = sprintf(
+            "CASE WHEN acv.visibility = '%s' THEN %s ELSE %s END",
+            AccountCategoryVisibility::VISIBLE,
+            AccountCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+            AccountCategoryVisibilityResolved::VISIBILITY_HIDDEN
+        );
+
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder()
+            ->select(
+                'acv.id',
+                'IDENTITY(acv.category)',
+                'IDENTITY(acv.account)',
+                $visibilityCondition,
+                (string)AccountCategoryVisibilityResolved::SOURCE_STATIC
+            )
+            ->from('OroB2BAccountBundle:Visibility\AccountCategoryVisibility', 'acv')
+            ->where('acv.visibility IN (:staticVisibilities)')
+            ->setParameter(
+                'staticVisibilities',
+                [AccountCategoryVisibility::VISIBLE, AccountCategoryVisibility::HIDDEN]
+            );
+
+        $insertExecutor->execute(
+            $this->getClassName(),
+            ['sourceCategoryVisibility', 'category', 'account', 'visibility', 'source'],
+            $queryBuilder
+        );
+    }
+
+    /**
+     * @param InsertFromSelectQueryExecutor $insertExecutor
+     */
+    public function insertCategoryValues(InsertFromSelectQueryExecutor $insertExecutor)
+    {
+        $visibilityCondition = sprintf(
+            'CASE WHEN cvr.visibility IS NOT NULL THEN cvr.visibility ELSE %s END',
+            AccountCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG
+        );
+
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder()
+            ->select(
+                'acv.id',
+                'IDENTITY(acv.category)',
+                'IDENTITY(acv.account)',
+                $visibilityCondition,
+                (string)AccountCategoryVisibilityResolved::SOURCE_STATIC
+            )
+            ->from('OroB2BAccountBundle:Visibility\AccountCategoryVisibility', 'acv')
+            ->leftJoin(
+                'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+                'cvr',
+                'WITH',
+                'acv.category = cvr.category'
+            )
+            ->where('acv.visibility = :category')
+            ->setParameter('category', AccountCategoryVisibility::CATEGORY);
+
+        $insertExecutor->execute(
+            $this->getClassName(),
+            ['sourceCategoryVisibility', 'category', 'account', 'visibility', 'source'],
+            $queryBuilder
+        );
     }
 }
