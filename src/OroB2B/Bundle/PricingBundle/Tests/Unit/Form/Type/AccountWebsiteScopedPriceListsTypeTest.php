@@ -348,14 +348,14 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
                     [
                         'priceList' => $priceList1,
                         'priority' => 100,
-                        'mergeAllowed' => true,
+                        'mergeAllowed' => false,
                     ]
                 ],
                 'actualData' => [
                     [
                         'priceList' => $priceList1,
                         'priority' => 3,
-                        'mergeAllowed' => true,
+                        'mergeAllowed' => false,
                     ]
                 ]
             ],

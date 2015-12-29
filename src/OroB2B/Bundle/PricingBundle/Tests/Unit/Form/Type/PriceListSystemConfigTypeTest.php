@@ -87,7 +87,7 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
             [
                 'priceList' => 2,
                 'priority' => 200,
-                'mergeAllowed' => true
+                'mergeAllowed' => false
             ]
         ]);
         $this->assertTrue($form->isValid());

@@ -97,6 +97,19 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
                     'mergeAllowed'     => true
                 ]
             ],
+            'without default data merge off' => [
+                'defaultData'   => [],
+                'submittedData' => [
+                    'priceList' => self::PRICE_LIST_ID,
+                    'priority'  => 100,
+                    'mergeAllowed'     => false
+                ],
+                'expectedData' => [
+                    'priceList' => $expectedPriceList,
+                    'priority'  => 100,
+                    'mergeAllowed'     => false
+                ]
+            ],
             'with default data' => [
                 'defaultData'   => [
                     'priceList' => $existingPriceList,
@@ -112,6 +125,23 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
                     'priceList' => $expectedPriceList,
                     'priority'  => 100,
                     'mergeAllowed'     => true
+                ]
+            ],
+            'with default data merge off' => [
+                'defaultData'   => [
+                    'priceList' => $existingPriceList,
+                    'priority'  => 50,
+                    'mergeAllowed'     => false
+                ],
+                'submittedData' => [
+                    'priceList' => self::PRICE_LIST_ID,
+                    'priority'  => 100,
+                    'mergeAllowed'     => false
+                ],
+                'expectedData' => [
+                    'priceList' => $expectedPriceList,
+                    'priority'  => 100,
+                    'mergeAllowed'     => false
                 ]
             ],
         ];
