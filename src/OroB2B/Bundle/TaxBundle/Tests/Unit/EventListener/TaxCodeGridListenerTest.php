@@ -5,72 +5,11 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\EventListener;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\TaxBundle\EventListener\TaxCodeGridListener;
 
-class TaxCodeGridListenerTest extends \PHPUnit_Framework_TestCase
+class TaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
 {
-    /** @var TaxCodeGridListener */
-    protected $listener;
-
-    /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $doctrineHelper;
-
-
-    protected function setUp()
-    {
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->listener = new TaxCodeGridListener(
-            $this->doctrineHelper,
-            'OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode',
-            '\stdClass'
-        );
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage for "\stdClass" not found in "OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode"
-     */
-    public function testOnBuildBeforeWithoutAssociation()
-    {
-        $gridConfig = DatagridConfiguration::create(['name' => 'std-grid']);
-        $gridConfig->offsetSetByPath('[source][query][from]', [['alias' => 'std']]);
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $dataGrid */
-        $dataGrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
-        $event = new BuildBefore($dataGrid, $gridConfig);
-
-        $metadata = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadata')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityMetadataForClass')
-            ->with('OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode')
-            ->willReturn($metadata);
-
-        $this->listener->onBuildBefore($event);
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage [source][query][from] is missing for grid "std-grid"
-     */
-    public function testOnBuildBeforeWithoutFromPart()
-    {
-        $gridConfig = DatagridConfiguration::create(['name' => 'std-grid']);
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $dataGrid */
-        $dataGrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
-        $event = new BuildBefore($dataGrid, $gridConfig);
-
-        $this->listener->onBuildBefore($event);
-    }
-
     public function testOnBuildBefore()
     {
         $gridConfig = DatagridConfiguration::create(['name' => 'std-grid']);
@@ -115,6 +54,18 @@ class TaxCodeGridListenerTest extends \PHPUnit_Framework_TestCase
                 'name' => 'std-grid',
             ],
             $gridConfig->toArray()
+        );
+    }
+
+    /**
+     * @return TaxCodeGridListener
+     */
+    protected function createListener()
+    {
+        return $this->listener = new TaxCodeGridListener(
+            $this->doctrineHelper,
+            'OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode',
+            '\stdClass'
         );
     }
 }
