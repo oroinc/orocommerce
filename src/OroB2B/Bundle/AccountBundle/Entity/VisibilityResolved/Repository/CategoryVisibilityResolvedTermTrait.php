@@ -25,16 +25,20 @@ trait CategoryVisibilityResolvedTermTrait
             $qb->expr()->eq($this->getRootAlias($qb), 'cvr.category')
         );
 
-        return sprintf('COALESCE(cvr.visibility, %s)', $configValue);
+        return $this->formatConfigFallback('cvr.visibility', $configValue);
     }
 
     /**
      * @param QueryBuilder $qb
      * @param AccountGroup $account
+     * @param int
      * @return string
      */
-    protected function getAccountGroupCategoryVisibilityResolvedTerm(QueryBuilder $qb, AccountGroup $account)
-    {
+    protected function getAccountGroupCategoryVisibilityResolvedTerm(
+        QueryBuilder $qb,
+        AccountGroup $account,
+        $configValue
+    ) {
         $qb->leftJoin(
             'OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved',
             'agcvr',
@@ -47,7 +51,11 @@ trait CategoryVisibilityResolvedTermTrait
 
         $qb->setParameter('account_group', $account);
 
-        return 'COALESCE(agcvr.visibility, 0) * 10';
+        return sprintf(
+            'COALESCE(CASE WHEN agcvr.visibility = %s THEN %s ELSE agcvr.visibility END, 0) * 10',
+            AccountCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+            $configValue
+        );
     }
 
     /**
@@ -70,13 +78,11 @@ trait CategoryVisibilityResolvedTermTrait
 
         $qb->setParameter('account', $account);
 
-        $term = <<<TERM
-CASE WHEN acvr.visibility = %s
-    THEN (COALESCE(cvr.visibility, %s) * 100)
-ELSE (COALESCE(acvr.visibility, 0) * 100)
-END
-TERM;
-        return sprintf($term, AccountCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL, $configValue);
+        return sprintf(
+            'COALESCE(CASE WHEN acvr.visibility = %s THEN %s ELSE acvr.visibility END, 0) * 100',
+            AccountCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+            $configValue
+        );
     }
 
     /**
@@ -86,5 +92,20 @@ TERM;
     protected function getRootAlias(QueryBuilder $qb)
     {
         return $qb->getRootAliases()[0];
+    }
+
+    /**
+     * @param string $select
+     * @param int $configValue
+     * @return string
+     */
+    protected function formatConfigFallback($select, $configValue)
+    {
+        return sprintf(
+            'CASE WHEN COALESCE(%1$s, %3$s) != %2$s THEN COALESCE(%1$s, %3$s) ELSE %3$s END',
+            $select,
+            AccountCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+            $configValue
+        );
     }
 }

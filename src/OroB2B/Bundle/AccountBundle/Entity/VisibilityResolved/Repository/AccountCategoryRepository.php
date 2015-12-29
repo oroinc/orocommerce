@@ -6,7 +6,6 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
@@ -31,14 +30,7 @@ class AccountCategoryRepository extends EntityRepository
 
         $qb = $this->getEntityManager()->createQueryBuilder();
 
-        $configValue = $qb->expr()->literal($configValue);
-        $accountCondition = sprintf(
-            'CASE WHEN acvr.visibility = %s THEN COALESCE(cvr.visibility, %s) ELSE acvr.visibility END',
-            AccountCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL,
-            $configValue
-        );
-
-        $qb->select('COALESCE(' . $accountCondition . ', cvr.visibility, ' . $configValue . ')')
+        $qb->select($this->formatConfigFallback('acvr.visibility, cvr.visibility', $configValue))
             ->from('OroB2BCatalogBundle:Category', 'category')
             ->leftJoin(
                 'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
@@ -48,7 +40,7 @@ class AccountCategoryRepository extends EntityRepository
             );
 
         if ($accountGroup) {
-            $qb->select('COALESCE(' . $accountCondition . ', agcvr.visibility, cvr.visibility, ' . $configValue . ')')
+            $qb->select($this->formatConfigFallback('acvr.visibility, agcvr.visibility, cvr.visibility', $configValue))
                 ->leftJoin(
                     'OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
                     'agcvr',
@@ -95,7 +87,7 @@ class AccountCategoryRepository extends EntityRepository
 
         $terms = [$this->getCategoryVisibilityResolvedTerm($qb, $configValue)];
         if ($account->getGroup()) {
-            $terms[] = $this->getAccountGroupCategoryVisibilityResolvedTerm($qb, $account->getGroup());
+            $terms[] = $this->getAccountGroupCategoryVisibilityResolvedTerm($qb, $account->getGroup(), $configValue);
         }
         $terms[] = $this->getAccountCategoryVisibilityResolvedTerm($qb, $account, $configValue);
 
