@@ -192,14 +192,6 @@ class AccountTaxCodeGridListener
     /**
      * @return string
      */
-    protected function getDataName()
-    {
-        return self::DATA_NAME;
-    }
-
-    /**
-     * @return string
-     */
     protected function getAccountTaxCodeAlias()
     {
         return self::ACCOUNT_TAX_CODE_JOIN_ALIAS;
