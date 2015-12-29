@@ -25,7 +25,7 @@ class AccountCategoryRepository extends EntityRepository
      * @param int $configValue
      * @return bool
      */
-    public function isCategoryVisible(Category $category, Account $account, $configValue)
+    public function getCategoryVisibility(Category $category, Account $account, $configValue)
     {
         $accountGroup = $account->getGroup();
 
@@ -75,9 +75,79 @@ class AccountCategoryRepository extends EntityRepository
             ->setParameter('category', $category)
             ->setParameter('account', $account);
 
-        $visibility = $qb->getQuery()->getSingleScalarResult();
+        return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @param Category $category
+     * @param Account $account
+     * @param int $configValue
+     * @return bool
+     */
+    public function isCategoryVisible(Category $category, Account $account, $configValue)
+    {
+        $visibility = $this->getCategoryVisibility($category, $account, $configValue);
 
         return (int)$visibility === BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE;
+    }
+
+    /**
+     * @param Category $category
+     * @param int $configValue
+     * @return int
+     */
+    public function getFallbackToAllValue(Category $category, $configValue)
+    {
+        $qb = $this->_em->createQueryBuilder();
+
+        $qb->select('COALESCE(cvr.visibility, '. $qb->expr()->literal($configValue).')')
+            ->from('OroB2BCatalogBundle:Category', 'category')
+            ->leftJoin(
+                'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+                'cvr',
+                Join::WITH,
+                $qb->expr()->eq('cvr.category', 'category')
+            )
+            ->where($qb->expr()->eq('category', ':category'))
+            ->setParameter('category', $category);
+
+        return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @param Category $category
+     * @param Account $account
+     * @param $configValue
+     * @return int
+     */
+    public function getFallbackToGroupValue(Category $category, Account $account, $configValue)
+    {
+        $qb = $this->_em->createQueryBuilder();
+
+        $qb->select('COALESCE(agcvr.visibility, COALESCE(cvr.visibility, '. $qb->expr()->literal($configValue).'))')
+            ->from('OroB2BCatalogBundle:Category', 'category')
+            ->leftJoin(
+                'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+                'cvr',
+                Join::WITH,
+                $qb->expr()->eq('cvr.category', 'category')
+            )
+            ->leftJoin(
+                'OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
+                'agcvr',
+                Join::WITH,
+                $qb->expr()->andX(
+                    $qb->expr()->eq('agcvr.category', 'category'),
+                    $qb->expr()->eq('agcvr.accountGroup', ':accountGroup')
+                )
+            )
+            ->where($qb->expr()->eq('category', ':category'))
+            ->setParameters([
+                'category' => $category,
+                'accountGroup' => $account->getGroup()
+            ]);
+
+        return $qb->getQuery()->getSingleScalarResult();
     }
 
     /**

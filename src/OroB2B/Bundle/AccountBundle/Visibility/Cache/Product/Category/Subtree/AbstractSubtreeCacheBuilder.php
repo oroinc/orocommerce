@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\QueryBuilder;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
@@ -14,16 +16,41 @@ abstract class AbstractSubtreeCacheBuilder
     /**
      * @var array
      */
+    protected $childCategoriesForUpdate = [];
+
+    /**
+     * @var array
+     */
     protected $excludedCategories = [];
+
+    /**
+     * @var Registry
+     */
+    protected $registry;
+
+    /**
+     * @var CategoryVisibilityResolverInterface
+     */
+    protected $categoryVisibilityResolver;
+
+    /**
+     * @var ConfigManager
+     */
+    protected $configManager;
 
     /**
      * @param Registry $registry
      * @param CategoryVisibilityResolverInterface $categoryVisibilityResolver
+     * @param ConfigManager $configManager
      */
-    public function __construct(Registry $registry, CategoryVisibilityResolverInterface $categoryVisibilityResolver)
-    {
+    public function __construct(
+        Registry $registry,
+        CategoryVisibilityResolverInterface $categoryVisibilityResolver,
+        ConfigManager $configManager
+    ) {
         $this->registry = $registry;
         $this->categoryVisibilityResolver = $categoryVisibilityResolver;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -63,16 +90,30 @@ abstract class AbstractSubtreeCacheBuilder
      */
     protected function getCategoryIdsForUpdate(Category $category, $target)
     {
-        $categoriesWithStaticFallback = $this->getChildCategoriesWithFallbackStatic($category, $target);
-        $categoryIds = $this->getChildCategoriesIdsWithFallbackToParent(
-            $category,
-            $categoriesWithStaticFallback,
-            $target
-        );
-
+        $categoryIds = $this->getChildCategoryIdsForUpdate($category, $target);
         $categoryIds[] = $category->getId();
 
         return $categoryIds;
+    }
+
+    /**
+     * @param Category $category
+     * @param $target
+     * @return array
+     */
+    protected function getChildCategoryIdsForUpdate(Category $category, $target)
+    {
+        if (empty($this->childCategoriesForUpdate)) {
+            $categoriesWithStaticFallback = $this->getChildCategoriesWithFallbackStatic($category, $target);
+
+            $this->childCategoriesForUpdate = $this->getChildCategoriesIdsWithFallbackToParent(
+                $category,
+                $categoriesWithStaticFallback,
+                $target
+            );
+        }
+
+        return $this->childCategoriesForUpdate;
     }
 
     /**

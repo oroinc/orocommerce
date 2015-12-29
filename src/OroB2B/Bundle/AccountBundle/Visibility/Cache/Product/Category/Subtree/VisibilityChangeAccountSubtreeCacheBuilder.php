@@ -9,7 +9,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
-class VisibilityChangeAccountSubtreeCacheBuilder extends AbstractSubtreeCacheBuilder
+class VisibilityChangeAccountSubtreeCacheBuilder extends AbstractCategorySubtreeCacheBuilder
 {
     /**
      * @param Category $category
@@ -17,11 +17,21 @@ class VisibilityChangeAccountSubtreeCacheBuilder extends AbstractSubtreeCacheBui
      */
     public function resolveVisibilitySettings(Category $category, Account $account)
     {
+        $accountCategoryVisibility = $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountCategoryVisibility')
+            ->getRepository('OroB2BAccountBundle:Visibility\AccountCategoryVisibility')
+            ->findOneBy(['category' => $category, 'account' => $account]);
+
+        if ($accountCategoryVisibility) {
+            $visibility = $accountCategoryVisibility->getVisibility();
+            $this->updateCategoryVisibilityCache($category, $account, $visibility);
+        }
+
         $visibility = $this->categoryVisibilityResolver->isCategoryVisibleForAccount($category, $account);
         $visibility = $this->convertVisibility($visibility);
 
         $categoryIds = $this->getCategoryIdsForUpdate($category, $account);
-        $this->updateProductVisibilityByCategory($categoryIds, $visibility, $account);
+        $this->updateAccountProductVisibilityByCategory($categoryIds, $visibility, $account);
     }
 
     /**
@@ -49,7 +59,7 @@ class VisibilityChangeAccountSubtreeCacheBuilder extends AbstractSubtreeCacheBui
      * @param int $visibility
      * @param Account $account
      */
-    protected function updateProductVisibilityByCategory(array $categoryIds, $visibility, Account $account)
+    protected function updateAccountProductVisibilityByCategory(array $categoryIds, $visibility, Account $account)
     {
         if (!$categoryIds) {
             return;
