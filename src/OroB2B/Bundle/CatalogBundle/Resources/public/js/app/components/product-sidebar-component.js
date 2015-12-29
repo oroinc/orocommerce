@@ -11,7 +11,7 @@ define(function(require) {
      * Options:
      * - defaultCategoryId - default selected category id
      *
-     * @export oroui/js/app/components/tree-manage-component
+     * @export orob2bcatalog/js/app/components/product-sidebar-component
      * @extends orob2bcatalog.app.components.BasicTreeComponent
      * @class orob2bcatalog.app.components.ProductSidebarComponent
      */
