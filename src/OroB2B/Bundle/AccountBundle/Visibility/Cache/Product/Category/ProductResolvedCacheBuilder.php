@@ -85,7 +85,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
         $resolvedRepository->insertStaticValues($this->insertFromSelectQueryExecutor);
 
         // resolved parent category values
-        $categoryVisibilities = $this->indexVisibilities($repository->getCategoriesVisibilities());
+        $categoryVisibilities = $this->indexVisibilities($repository->getCategoriesVisibilities(), 'category_id');
         $categoryIds = [
             CategoryVisibilityResolved::VISIBILITY_VISIBLE => [],
             CategoryVisibilityResolved::VISIBILITY_HIDDEN => [],
@@ -100,23 +100,6 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
         foreach ($categoryIds as $visibility => $ids) {
             $resolvedRepository->insertParentCategoryValues($this->insertFromSelectQueryExecutor, $ids, $visibility);
         }
-    }
-
-    /**
-     * Use category ID as array index
-     *
-     * @param array $visibilities
-     * @return array
-     */
-    protected function indexVisibilities(array $visibilities)
-    {
-        $indexedVisibilities = [];
-        foreach ($visibilities as $visibility) {
-            $categoryId = $visibility['category_id'];
-            $indexedVisibilities[$categoryId] = $visibility;
-        }
-
-        return $indexedVisibilities;
     }
 
     /**

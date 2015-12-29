@@ -124,24 +124,46 @@ class CategoryRepository extends EntityRepository
             return;
         }
 
-        foreach (array_chunk($categoryIds, self::INSERT_BATCH_SIZE) as $ids) {
-            $queryBuilder = $this->getEntityManager()->createQueryBuilder()
-                ->select(
-                    'c.id',
-                    (string)$visibility,
-                    (string)CategoryVisibilityResolved::SOURCE_PARENT_CATEGORY
-                )
-                ->from('OroB2BCatalogBundle:Category', 'c')
-                ->leftJoin('OroB2BAccountBundle:Visibility\CategoryVisibility', 'cv', 'WITH', 'cv.category = c')
-                ->andWhere('cv.visibility IS NULL')     // parent category fallback
-                ->andWhere('c.id IN (:categoryIds)')    // specific category IDs
-                ->setParameter('categoryIds', $ids);
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder()
+            ->select(
+                'c.id',
+                (string)$visibility,
+                (string)CategoryVisibilityResolved::SOURCE_PARENT_CATEGORY
+            )
+            ->from('OroB2BCatalogBundle:Category', 'c')
+            ->leftJoin('OroB2BAccountBundle:Visibility\CategoryVisibility', 'cv', 'WITH', 'cv.category = c')
+            ->andWhere('cv.visibility IS NULL')     // parent category fallback
+            ->andWhere('c.id IN (:categoryIds)');   // specific category IDs
 
+        foreach (array_chunk($categoryIds, self::INSERT_BATCH_SIZE) as $ids) {
+            $queryBuilder->setParameter('categoryIds', $ids);
             $insertExecutor->execute(
                 $this->getClassName(),
                 ['category', 'visibility', 'source'],
                 $queryBuilder
             );
         }
+    }
+
+    /**
+     * @return array [['category_id' => <int>, 'parent_category_id' => <int>, 'resolved_visibility' => <int|null>], ...]
+     */
+    public function getCategoriesWithResolvedVisibilities()
+    {
+        return $this->getEntityManager()->createQueryBuilder()
+            ->select(
+                'c.id as category_id',
+                'IDENTITY(c.parentCategory) as parent_category_id',
+                'cvr.visibility as resolved_visibility'
+            )
+            ->from('OroB2BCatalogBundle:Category', 'c')
+            ->leftJoin(
+                'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+                'cvr',
+                'WITH',
+                'cvr.category = c'
+            )
+            ->getQuery()
+            ->getScalarResult();
     }
 }

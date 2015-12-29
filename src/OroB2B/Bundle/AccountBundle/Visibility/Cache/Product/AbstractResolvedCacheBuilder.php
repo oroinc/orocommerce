@@ -13,6 +13,7 @@ use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\BasicOperationRepositoryTrait;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
 use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolver;
@@ -90,9 +91,9 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
         ];
 
         if ($selectedVisibility === VisibilityInterface::VISIBLE) {
-            $updateData['visibility'] = BaseProductVisibilityResolved::VISIBILITY_VISIBLE;
+            $updateData['visibility'] = BaseVisibilityResolved::VISIBILITY_VISIBLE;
         } elseif ($selectedVisibility === VisibilityInterface::HIDDEN) {
-            $updateData['visibility'] = BaseProductVisibilityResolved::VISIBILITY_HIDDEN;
+            $updateData['visibility'] = BaseVisibilityResolved::VISIBILITY_HIDDEN;
         }
 
         return $updateData;
@@ -150,8 +151,8 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
      */
     protected function convertVisibility($isVisible)
     {
-        return $isVisible ? BaseProductVisibilityResolved::VISIBILITY_VISIBLE
-            : BaseProductVisibilityResolved::VISIBILITY_HIDDEN;
+        return $isVisible ? BaseVisibilityResolved::VISIBILITY_VISIBLE
+            : BaseVisibilityResolved::VISIBILITY_HIDDEN;
     }
 
     /**
@@ -176,5 +177,23 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
         }
 
         return $entity;
+    }
+
+    /**
+     * Use category ID as array index
+     *
+     * @param array $visibilities
+     * @param string $fieldName
+     * @return array
+     */
+    protected function indexVisibilities(array $visibilities, $fieldName)
+    {
+        $indexedVisibilities = [];
+        foreach ($visibilities as $visibility) {
+            $index = $visibility[$fieldName];
+            $indexedVisibilities[$index] = $visibility;
+        }
+
+        return $indexedVisibilities;
     }
 }
