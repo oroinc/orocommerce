@@ -61,6 +61,7 @@ class PriceListRepository extends EntityRepository
     }
 
     /**
+     * @todo remove in scope of BB-1851
      * @param Account $account
      * @return PriceList|null
      */
@@ -85,6 +86,7 @@ class PriceListRepository extends EntityRepository
     }
 
     /**
+     * @todo remove in scope of BB-1851
      * @param AccountGroup $accountGroup
      * @return PriceList|null
      */
@@ -109,6 +111,7 @@ class PriceListRepository extends EntityRepository
     }
 
     /**
+     * @todo remove in scope of BB-1851
      * @param Website $website
      * @return PriceList|null
      */
