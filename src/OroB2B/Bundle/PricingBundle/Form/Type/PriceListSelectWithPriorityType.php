@@ -43,7 +43,9 @@ class PriceListSelectWithPriorityType extends AbstractType
             ->add(
                 'merge',
                 'checkbox',
-                ['label' => 'orob2b.pricing.pricelist.merge.label']
+                [
+                    'label' => 'orob2b.pricing.pricelist.merge.label'
+                ]
             );
     }
 
