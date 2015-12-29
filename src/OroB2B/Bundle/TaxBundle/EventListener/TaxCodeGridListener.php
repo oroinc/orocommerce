@@ -55,7 +55,7 @@ class TaxCodeGridListener
                     'conditionType' => Expr\Join::WITH,
                     'condition' => (string)$this->expressionBuilder->isMemberOf(
                         $this->getAlias($config),
-                        sprintf('%s.%s', $this->getJoinAlias(), $this->getFieldName())
+                        sprintf('%s.%s', $this->getJoinAlias(), $this->getFieldName($this->relatedEntityClass))
                     ),
                 ],
             ]
@@ -72,17 +72,18 @@ class TaxCodeGridListener
     }
 
     /**
+     * @param string $relatedEntityClass
      * @return string
      * @throws \InvalidArgumentException if there is not association
      */
-    protected function getFieldName()
+    protected function getFieldName($relatedEntityClass)
     {
         $metadata = $this->doctrineHelper->getEntityMetadataForClass($this->taxCodeClass);
 
-        $associations = $metadata->getAssociationsByTargetClass($this->relatedEntityClass);
+        $associations = $metadata->getAssociationsByTargetClass($relatedEntityClass);
         if (!$associations) {
             throw new \InvalidArgumentException(
-                sprintf('Association for "%s" not found in "%s"', $this->relatedEntityClass, $this->taxCodeClass)
+                sprintf('Association for "%s" not found in "%s"', $relatedEntityClass, $this->taxCodeClass)
             );
         }
 

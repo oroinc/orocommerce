@@ -119,7 +119,9 @@ class AccountControllerTest extends WebTestCase
         $result = reset($result['data']);
 
         $this->assertArrayHasKey('taxCode', $result);
+        $this->assertArrayHasKey('accountGroupTaxCode', $result);
         $this->assertEquals($accountTaxCode->getCode(), $result['taxCode']);
+        $this->assertNull($result['accountGroupTaxCode']);
     }
 
     /**
@@ -144,8 +146,8 @@ class AccountControllerTest extends WebTestCase
         $this->assertArrayHasKey('taxCode', $result);
         $this->assertEmpty($result['taxCode']);
 
-        $this->assertArrayHasKey('groupTaxCode', $result);
-        $this->assertEquals($accountTaxCode->getCode(), $result['groupTaxCode']);
+        $this->assertArrayHasKey('accountGroupTaxCode', $result);
+        $this->assertEquals($accountTaxCode->getCode(), $result['accountGroupTaxCode']);
     }
 
     /**
