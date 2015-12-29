@@ -26,6 +26,7 @@ class AccountControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadInternalRating',
                 'OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes'
             ]
