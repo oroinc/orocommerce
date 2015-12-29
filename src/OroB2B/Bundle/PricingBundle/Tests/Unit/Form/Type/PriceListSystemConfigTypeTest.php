@@ -35,7 +35,6 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->markTestSkipped('Test will be fixed at BB-1833');
         $this->formType = new PriceListSystemConfigType(
             'OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig',
             'OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigBag'
