@@ -2,13 +2,14 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Entity;
 
-use Oro\Component\Testing\Unit\EntityTestCase;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceListCurrency;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency;
-
-class PriceListCurrencyTest extends EntityTestCase
+class BasePriceListCurrencyTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTestCaseTrait;
+
     public function testAccessors()
     {
         $this->assertPropertyAccessors(
@@ -22,18 +23,18 @@ class PriceListCurrencyTest extends EntityTestCase
     }
 
     /**
-     * @return PriceList
+     * @return BasePriceList
      */
     protected function createPriceList()
     {
-        return new PriceList();
+        return new BasePriceList();
     }
 
     /**
-     * @return PriceListCurrency
+     * @return BasePriceListCurrency
      */
     protected function createPriceListCurrency()
     {
-        return new PriceListCurrency();
+        return new BasePriceListCurrency();
     }
 }

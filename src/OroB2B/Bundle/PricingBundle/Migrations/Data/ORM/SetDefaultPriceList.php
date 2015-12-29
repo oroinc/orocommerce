@@ -33,7 +33,7 @@ class SetDefaultPriceList extends AbstractFixture implements ContainerAwareInter
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\PricingBundle\Migrations\Data\ORM\LoadPriceListData'
+            'OroB2B\Bundle\PricingBundle\Migrations\Data\ORM\LoadPriceListData',
         ];
     }
 
@@ -51,7 +51,7 @@ class SetDefaultPriceList extends AbstractFixture implements ContainerAwareInter
         $configManager = $this->container->get('oro_config.global');
         $configManager->set(
             'oro_b2b_pricing.default_price_lists',
-            [new PriceListConfig($defaultPriceList, 100)]
+            [new PriceListConfig($defaultPriceList, 100, true)]
         );
         $configManager->flush();
     }

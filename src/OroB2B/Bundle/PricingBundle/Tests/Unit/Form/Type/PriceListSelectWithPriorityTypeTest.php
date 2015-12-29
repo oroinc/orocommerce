@@ -89,29 +89,29 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'priceList' => self::PRICE_LIST_ID,
                     'priority'  => 100,
-                    'merge' => true,
+                    'merge'     => true
                 ],
                 'expectedData' => [
                     'priceList' => $expectedPriceList,
                     'priority'  => 100,
-                    'merge' => true,
+                    'merge'     => true
                 ]
             ],
             'with default data' => [
                 'defaultData'   => [
                     'priceList' => $existingPriceList,
                     'priority'  => 50,
-                    'merge' => true,
+                    'merge'     => true
                 ],
                 'submittedData' => [
                     'priceList' => self::PRICE_LIST_ID,
                     'priority'  => 100,
-                    'merge' => true,
+                    'merge'     => true
                 ],
                 'expectedData' => [
                     'priceList' => $expectedPriceList,
                     'priority'  => 100,
-                    'merge' => true,
+                    'merge'     => true
                 ]
             ],
         ];

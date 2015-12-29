@@ -4,9 +4,9 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 
-class PriceListTest extends \PHPUnit_Framework_TestCase
+class CombinedPriceListTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
 
@@ -15,16 +15,16 @@ class PriceListTest extends \PHPUnit_Framework_TestCase
         $this->assertPropertyAccessors(
             $this->createPriceList(),
             [
-                ['default', false],
+                ['enabled', false],
             ]
         );
     }
 
     /**
-     * @return PriceList
+     * @return CombinedPriceList
      */
     protected function createPriceList()
     {
-        return new PriceList();
+        return new CombinedPriceList();
     }
 }

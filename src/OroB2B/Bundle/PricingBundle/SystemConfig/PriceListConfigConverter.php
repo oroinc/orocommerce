@@ -8,6 +8,7 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 class PriceListConfigConverter
 {
+    const MERGE_KEY = 'merge';
     const PRIORITY_KEY = 'priority';
     const PRICE_LIST_KEY = 'priceList';
 
@@ -37,13 +38,17 @@ class PriceListConfigConverter
      */
     public function convertBeforeSave(array $configs)
     {
-        $result = array_map(function ($config) {
-            /** @var PriceListConfig $config */
-            return [
-                self::PRICE_LIST_KEY => $config->getPriceList()->getId(),
-                self::PRIORITY_KEY => $config->getPriority()
-            ];
-        }, $configs);
+        $result = array_map(
+            function ($config) {
+                /** @var PriceListConfig $config */
+                return [
+                    self::PRICE_LIST_KEY => $config->getPriceList()->getId(),
+                    self::PRIORITY_KEY => $config->getPriority(),
+                    self::MERGE_KEY => $config->isMerge(),
+                ];
+            },
+            $configs
+        );
 
         return $result;
     }
@@ -54,9 +59,12 @@ class PriceListConfigConverter
      */
     public function convertFromSaved(array $configs)
     {
-        $ids = array_map(function ($config) {
-            return $config[self::PRICE_LIST_KEY];
-        }, $configs);
+        $ids = array_map(
+            function ($config) {
+                return $config[self::PRICE_LIST_KEY];
+            },
+            $configs
+        );
         $result = [];
 
         if (0 !== count($ids)) {
@@ -67,11 +75,14 @@ class PriceListConfigConverter
                 $result[] = $this->createPriceListConfig($config, $priceLists);
             }
 
-            usort($result, function ($a, $b) {
-                /** @var PriceListConfig $a */
-                /** @var PriceListConfig $b */
-                return ($a->getPriority() > $b->getPriority()) ? -1 : 1;
-            });
+            usort(
+                $result,
+                function ($a, $b) {
+                    /** @var PriceListConfig $a */
+                    /** @var PriceListConfig $b */
+                    return ($a->getPriority() > $b->getPriority()) ? -1 : 1;
+                }
+            );
         }
 
         return $result;
@@ -89,7 +100,9 @@ class PriceListConfigConverter
         foreach ($priceLists as $priceList) {
             if ($config[self::PRICE_LIST_KEY] === $priceList->getId()) {
                 $configModel->setPriceList($priceList)
-                    ->setPriority($config[self::PRIORITY_KEY]);
+                    ->setPriority($config[self::PRIORITY_KEY])
+                    ->setMerge($config[self::MERGE_KEY]);
+
                 return $configModel;
             }
         }

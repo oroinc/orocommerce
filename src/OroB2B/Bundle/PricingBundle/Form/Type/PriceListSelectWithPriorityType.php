@@ -27,7 +27,7 @@ class PriceListSelectWithPriorityType extends AbstractType
                     'required' => true,
                     'label' => 'orob2b.pricing.pricelist.entity_label',
                     'create_enabled' => false,
-                    'constraints' => [new NotBlank()]
+                    'constraints' => [new NotBlank()],
                 ]
             )
             ->add(
@@ -44,10 +44,7 @@ class PriceListSelectWithPriorityType extends AbstractType
                 'merge',
                 'checkbox',
                 [
-                    'empty_data' => null,
-                    'required' => false,
-                    'label' => 'orob2b.pricing.pricelist.merge.label',
-                    'constraints' => [],
+                    'label' => 'orob2b.pricing.pricelist.merge.label'
                 ]
             );
     }
