@@ -62,7 +62,7 @@ class TaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
      */
     protected function createListener()
     {
-        return $this->listener = new TaxCodeGridListener(
+        return new TaxCodeGridListener(
             $this->doctrineHelper,
             'OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode',
             '\stdClass'

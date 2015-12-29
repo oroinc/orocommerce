@@ -85,14 +85,14 @@ class AccountTaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
      */
     protected function createListener()
     {
-        $this->listener = new AccountTaxCodeGridListener(
+        $listener = new AccountTaxCodeGridListener(
             $this->doctrineHelper,
             'OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode',
             '\stdClass'
         );
 
-        $this->listener->setRelatedAccountGroupClass('\stdClass');
+        $listener->setRelatedAccountGroupClass('\stdClass');
 
-        return $this->listener;
+        return $listener;
     }
 }

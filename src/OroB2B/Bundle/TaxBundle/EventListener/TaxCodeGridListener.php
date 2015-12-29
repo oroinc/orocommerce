@@ -73,7 +73,8 @@ class TaxCodeGridListener
 
     /**
      * @param string $relatedEntityClass
-     * @return null|string null if there is not association
+     * @return string
+     * @throws \InvalidArgumentException if there is not association
      */
     protected function getFieldName($relatedEntityClass)
     {
