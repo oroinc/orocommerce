@@ -69,5 +69,8 @@ abstract class AbstractTaxCodeGridListenerTest extends \PHPUnit_Framework_TestCa
         $this->listener->onBuildBefore($event);
     }
 
+    /**
+     * @return object
+     */
     abstract protected function createListener();
 }
