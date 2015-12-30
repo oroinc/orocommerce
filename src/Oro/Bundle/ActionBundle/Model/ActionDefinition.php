@@ -5,8 +5,8 @@ namespace Oro\Bundle\ActionBundle\Model;
 class ActionDefinition
 {
     const PREFUNCTIONS = 'prefunctions';
-    const INITFUNCTIONS = 'initfunctions';
-    const POSTFUNCTIONS = 'postfunctions';
+    const FORM_INIT = 'form_init';
+    const FUNCTIONS = 'functions';
 
     const PRECONDITIONS = 'preconditions';
     const CONDITIONS = 'conditions';
@@ -66,7 +66,7 @@ class ActionDefinition
      */
     public static function getAllowedFunctions()
     {
-        return [self::PREFUNCTIONS, self::INITFUNCTIONS, self::POSTFUNCTIONS];
+        return [self::PREFUNCTIONS, self::FORM_INIT, self::FUNCTIONS];
     }
 
     /**

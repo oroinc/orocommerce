@@ -419,7 +419,7 @@ class WidgetControllerTest extends WebTestCase
                 ],
                 'prefunctions' => [],
                 'preconditions' => [],
-                'initfunctions' => [
+                'form_init' => [
                     ['@assign_value' => [
                         'conditions' => ['@empty' => '$description'],
                         'parameters' => ['$.descr_attr', 'Test Description'],
@@ -438,7 +438,7 @@ class WidgetControllerTest extends WebTestCase
                         ]
                     ]
                 ],
-                'postfunctions' => [
+                'functions' => [
                     ['@assign_value' => ['$message', '$.message_attr']],
                     ['@assign_value' => ['$description', '$.descr_attr']]
                 ]

@@ -2,9 +2,7 @@ actions:
     orob2b_sale_expire_quote_action:
         label: orob2b.sale.quote.actions.quote_expire
         enabled: true
-        applications:
-            - backend
-            - frontend
+        applications: [backend]
         routes:
             - orob2b_sale_quote_view
         datagrids:
@@ -15,7 +13,7 @@ actions:
             confirmation: orob2b.sale.quote.actions.quote_expire_confirm
         preconditions:
             @equal: [$expired, false]
-        postfunctions:
+        functions:
             - @assign_value: [$expired, true]
             - @flash_message:
                 message: orob2b.sale.quote.message.quote.expire.success
@@ -27,7 +25,6 @@ actions:
 
     orob2b_sale_notify_customer_by_email_action:
         label: orob2b.sale.quote.notify_customer.by_email.link.text
-        enabled: true
         applications: [backend, frontend]
         entities:
             - OroB2B\Bundle\SaleBundle\Entity\Quote
@@ -58,7 +55,7 @@ actions:
                 email:
                     form_type: oro_email_email
 
-        initfunctions:
+        form_init:
             - @call_service_method:
                 attribute: $.email
                 service: orob2b_sale.helper.notification
@@ -70,7 +67,7 @@ actions:
                 method: get
                 method_parameters: ['oro_email.append_signature']
 
-        postfunctions:
+        functions:
             - @call_service_method:
                 service: orob2b_sale.helper.notification
                 method: send
@@ -87,7 +84,7 @@ actions:
             icon: icon-edit
         preconditions:
             @equal: [false, $hasOfferVariants]
-        postfunctions:
+        functions:
             - @get_active_user: $.user
             - @call_service_method:
                 service: orob2b_sale.service.quote_to_order_converter
@@ -136,10 +133,10 @@ actions:
                 quote_to_order:
                     form_type: orob2b_sale_quote_to_order
 
-        initfunctions:
+        form_init:
             - @assign_value: [$.quote_to_order, $.data]
 
-        postfunctions:
+        functions:
             - @get_active_user: $.user
             - @call_service_method:
                 service: orob2b_sale.service.quote_to_order_converter
