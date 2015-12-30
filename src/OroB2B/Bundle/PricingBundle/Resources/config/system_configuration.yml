@@ -30,6 +30,15 @@ oro_system_configuration:
                     half_down: orob2b.pricing.system_configuration.fields.rounding_type.choices.half_down.label
                     ceil: orob2b.pricing.system_configuration.fields.rounding_type.choices.ceil.label
                     floor: orob2b.pricing.system_configuration.fields.rounding_type.choices.floor.label
+        oro_b2b_pricing.precision:
+            data_type: integer
+            type: number
+            priority: 20
+            options:
+                label: orob2b.pricing.system_configuration.fields.precision.label
+                required: true
+                constraints:
+                    - NotBlank: ~
 
     tree:
         system_configuration:
@@ -44,6 +53,7 @@ oro_system_configuration:
                                         priority: 200
                                         children:
                                             - oro_b2b_pricing.rounding_type
+                                            - oro_b2b_pricing.precision
                                     default_price_lists:
                                         priority: 100
                                         children:

@@ -85,6 +85,7 @@ orob2b.pricing:
             pricing.title: Pricing
         fields:
             price_lists.title: Price Lists
+            precision.label: Pricing Precision
             rounding_type:
                 label: Pricing Rounding Type
                 tooltip: Select the rounding type that can be used for product prices.
