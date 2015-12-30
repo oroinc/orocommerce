@@ -183,4 +183,108 @@ class AccountCategoryRepository extends EntityRepository
             $queryBuilder
         );
     }
+
+    /**
+     * [
+     *      [
+     *          'visibility_id' => <int>,
+     *          'parent_visibility_id' => <int|null>,
+     *          'parent_visibility' => <string|null>,
+     *          'category_id' => <int>,
+     *          'parent_category_id' => <int|null>,
+     *          'parent_group_resolved_visibility' => <int|null>,
+     *          'parent_category_resolved_visibility' => <int|null>
+     *      ],
+     *      ...
+     * ]
+     *
+     * @return array
+     */
+    public function getParentCategoryVisibilities()
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        return $qb->select(
+            'acv.id as visibility_id',
+            'acv_parent.id as parent_visibility_id',
+            'acv_parent.visibility as parent_visibility',
+            'c.id as category_id',
+            'IDENTITY(c.parentCategory) as parent_category_id',
+            'agcvr_parent.visibility as parent_group_resolved_visibility',
+            'cvr_parent.visibility as parent_category_resolved_visibility'
+        )
+        ->from('OroB2BAccountBundle:Visibility\AccountCategoryVisibility', 'acv')
+        // join to category that includes only parent category entities
+        ->innerJoin(
+            'acv.category',
+            'c',
+            'WITH',
+            'acv.visibility = ' . $qb->expr()->literal(AccountCategoryVisibility::PARENT_CATEGORY)
+        )
+        // join to related account
+        ->innerJoin('OroB2BAccountBundle:Account', 'a', 'WITH', 'acv.account = a')
+        // join to parent category visibility
+        ->leftJoin(
+            'OroB2BAccountBundle:Visibility\AccountCategoryVisibility',
+            'acv_parent',
+            'WITH',
+            'acv_parent.account = acv.account AND acv_parent.category = c.parentCategory'
+        )
+        // join to resolved group visibility for parent category
+        ->leftJoin(
+            'OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
+            'agcvr_parent',
+            'WITH',
+            'agcvr_parent.accountGroup = a.group AND agcvr_parent.category = c.parentCategory'
+        )
+        // join to resolved category visibility for parent category
+        ->leftJoin(
+            'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+            'cvr_parent',
+            'WITH',
+            'cvr_parent.category = c.parentCategory'
+        )
+        // order is important to make sure that higher level categories will be processed first
+        ->addOrderBy('c.level', 'ASC')
+        ->addOrderBy('c.left', 'ASC')
+        ->getQuery()
+        ->getScalarResult();
+    }
+
+    /**
+     * @param InsertFromSelectQueryExecutor $insertExecutor
+     * @param array $visibilityIds
+     * @param int $visibility
+     */
+    public function insertParentCategoryValues(
+        InsertFromSelectQueryExecutor $insertExecutor,
+        array $visibilityIds,
+        $visibility
+    ) {
+        if (!$visibilityIds) {
+            return;
+        }
+
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder()
+            ->select(
+                'acv.id',
+                'IDENTITY(acv.category)',
+                'IDENTITY(acv.account)',
+                (string)$visibility,
+                (string)AccountCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY
+            )
+            ->from('OroB2BAccountBundle:Visibility\AccountCategoryVisibility', 'acv')
+            ->andWhere('acv.visibility = :parentCategory')  // parent category fallback
+            ->andWhere('acv.id IN (:visibilityIds)')        // specific visibility entity IDs
+            ->setParameter('parentCategory', AccountCategoryVisibility::PARENT_CATEGORY);
+
+        foreach (array_chunk($visibilityIds, CategoryRepository::INSERT_BATCH_SIZE) as $ids) {
+            $queryBuilder->setParameter('visibilityIds', $ids);
+            $insertExecutor->execute(
+                $this->getClassName(),
+                ['sourceCategoryVisibility', 'category', 'account', 'visibility', 'source'],
+                $queryBuilder
+            );
+        }
+    }
 }

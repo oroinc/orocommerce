@@ -65,16 +65,16 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
             $resolvedRepository->getParentCategoryVisibilities(),
             'visibility_id'
         );
-        $groupIds = [
+        $groupVisibilityIds = [
             AccountGroupCategoryVisibilityResolved::VISIBILITY_VISIBLE => [],
             AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN => [],
             AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG => [],
         ];
         foreach ($groupVisibilities as $visibilityId => $groupVisibility) {
             $resolvedVisibility = $this->resolveVisibility($groupVisibilities, $groupVisibility);
-            $groupIds[$resolvedVisibility][] = $visibilityId;
+            $groupVisibilityIds[$resolvedVisibility][] = $visibilityId;
         }
-        foreach ($groupIds as $visibility => $ids) {
+        foreach ($groupVisibilityIds as $visibility => $ids) {
             $resolvedRepository->insertParentCategoryValues($this->insertFromSelectQueryExecutor, $ids, $visibility);
         }
     }

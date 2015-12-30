@@ -193,32 +193,32 @@ class AccountGroupCategoryRepository extends EntityRepository
             'IDENTITY(c.parentCategory) as parent_category_id',
             'cvr_parent.visibility as parent_category_resolved_visibility'
         )
-            ->from('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility', 'agcv')
-            // join to category that includes only parent category entities
-            ->innerJoin(
-                'agcv.category',
-                'c',
-                'WITH',
-                'agcv.visibility = ' . $qb->expr()->literal(AccountGroupCategoryVisibility::PARENT_CATEGORY)
-            )
-            // join to parent category visibility
-            ->leftJoin(
-                'OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility',
-                'agcv_parent',
-                'WITH',
-                'agcv_parent.accountGroup = agcv.accountGroup AND agcv_parent.category = c.parentCategory'
-            )
-            // join to resolved category visibility for parent category
-            ->leftJoin(
-                'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
-                'cvr_parent',
-                'WITH',
-                'cvr_parent.category = c.parentCategory'
-            )
-            // order is important to make sure that higher level categories will be processed first
-            ->addOrderBy('c.level', 'ASC')
-            ->addOrderBy('c.left', 'ASC')
-            ->getQuery()
-            ->getScalarResult();
+        ->from('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility', 'agcv')
+        // join to category that includes only parent category entities
+        ->innerJoin(
+            'agcv.category',
+            'c',
+            'WITH',
+            'agcv.visibility = ' . $qb->expr()->literal(AccountGroupCategoryVisibility::PARENT_CATEGORY)
+        )
+        // join to parent category visibility
+        ->leftJoin(
+            'OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility',
+            'agcv_parent',
+            'WITH',
+            'agcv_parent.accountGroup = agcv.accountGroup AND agcv_parent.category = c.parentCategory'
+        )
+        // join to resolved category visibility for parent category
+        ->leftJoin(
+            'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+            'cvr_parent',
+            'WITH',
+            'cvr_parent.category = c.parentCategory'
+        )
+        // order is important to make sure that higher level categories will be processed first
+        ->addOrderBy('c.level', 'ASC')
+        ->addOrderBy('c.left', 'ASC')
+        ->getQuery()
+        ->getScalarResult();
     }
 }
