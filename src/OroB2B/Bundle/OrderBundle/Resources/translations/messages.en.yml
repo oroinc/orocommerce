@@ -133,5 +133,6 @@ orob2b:
             view: 'Order #%identifier%'
 
         system_configuration:
-            backend_product_visibility: 'Can Be Added to Orders'
-            frontend_product_visibility: 'Can Be Added to Orders'
+            fields:
+                backend_product_visibility.title: 'Can Be Added to Orders'
+                frontend_product_visibility.title: 'Can Be Added to Orders'

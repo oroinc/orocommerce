@@ -13,36 +13,6 @@
     {{ parent() }}
 {% endblock pageHeader %}
 
-{% block navButtons %}
-    {{ UI.clientButton({
-        'dataUrl': path(
-        'orob2b_shopping_list_line_item_create_widget', {
-            shoppingListId: entity.id
-        }),
-        'aCss': 'no-hash btn',
-        'iCss': 'icon-plus',
-        'label' : 'orob2b.shoppinglist.lineitem.add_line_item'|trans,
-        'widget' : {
-            'type' : 'dialog',
-            'multiple' : true,
-            'reload-grid-name' : 'shopping-list-line-items-grid',
-            'options' : {
-                'alias': 'add-line-item-dialog',
-                'dialogOptions' : {
-                    'stateEnabled': false,
-                    'incrementalPosition': false,
-                    'title' : 'orob2b.shoppinglist.lineitem.add_line_item'|trans,
-                    'allowMaximize': true,
-                    'allowMinimize': true,
-                    'dblclick': 'maximize',
-                    'maximizedHeightDecreaseBy': 'minimize-bar',
-                    'width': 460
-                }
-            }
-        }
-    }) }}
-{% endblock navButtons %}
-
 {% block content_data %}
     {% set shoppingListInformationWidget %}
         {{ oro_widget_render({

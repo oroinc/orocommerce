@@ -1,9 +1,7 @@
 actions:
     orob2b_account_action_accountuser_disable:
         label: orob2b.account.action.account_user.disable
-        enabled: true
-        applications:
-            - backend
+        applications: [backend]
         routes:
             - orob2b_account_account_user_view
         datagrids:
@@ -16,7 +14,7 @@ actions:
             - @get_active_user: $.currentUser
         preconditions:
             @equal: [$enabled, true]
-        postfunctions:
+        functions:
             - @assign_value: [$enabled, false]
             - @call_service_method:
                 service: orob2b_account_user.manager
@@ -28,9 +26,7 @@ actions:
 
     orob2b_account_action_accountuser_enable:
         label: orob2b.account.action.account_user.enable
-        enabled: true
-        applications:
-            - backend
+        applications: [backend]
         routes:
             - orob2b_account_account_user_view
         datagrids:
@@ -41,7 +37,7 @@ actions:
         acl_resource: [EDIT,$.data]
         preconditions:
             @equal: [$enabled, false]
-        postfunctions:
+        functions:
             - @assign_value: [$enabled, true]
             - @call_service_method:
                 service: orob2b_account_user.manager
@@ -53,9 +49,7 @@ actions:
 
     orob2b_account_frontend_accountuser_disable_action:
         label: orob2b.account.action.account_user.disable
-        enabled: true
-        applications:
-            - frontend
+        applications: [frontend]
         routes:
             - orob2b_account_frontend_account_user_view
         datagrids:
@@ -70,7 +64,7 @@ actions:
             @and:
                 - @equal: [$enabled, true]
                 - @not_equal: [$id, $.currentUser.id]
-        postfunctions:
+        functions:
             - @assign_value: [$enabled, false]
             - @call_service_method:
                 service: orob2b_account_user.manager
@@ -82,9 +76,7 @@ actions:
 
     orob2b_account_frontend_accountuser_enable_action:
         label: orob2b.account.action.account_user.enable
-        enabled: true
-        applications:
-            - frontend
+        applications: [frontend]
         routes:
             - orob2b_account_frontend_account_user_view
         datagrids:
@@ -101,7 +93,7 @@ actions:
                 - @not_equal: [$id, $.currentUser.id]
         preconditions:
             @equal: [$enabled, true]
-        postfunctions:
+        functions:
             - @assign_value: [$enabled, true]
             - @call_service_method:
                 service: orob2b_account_user.manager
@@ -113,7 +105,6 @@ actions:
 
     orob2b_account_action_accountuser_confirm:
         label: orob2b.account.action.account_user.confirm
-        enabled: true
         routes:
             - orob2b_account_account_user_view
             - orob2b_account_frontend_account_user_view
@@ -124,7 +115,7 @@ actions:
         acl_resource: [EDIT,$.data]
         preconditions:
             @equal: [$confirmed, false]
-        postfunctions:
+        functions:
             - @call_service_method:
                 service: orob2b_account_user.manager
                 method: confirmRegistration
@@ -139,7 +130,6 @@ actions:
 
     orob2b_account_action_accountuser_sendconfirmation:
         label: orob2b.account.action.account_user.send_confirmation
-        enabled: true
         routes:
             - orob2b_account_account_user_view
             - orob2b_account_frontend_account_user_view
@@ -150,7 +140,7 @@ actions:
         acl_resource: [EDIT,$.data]
         preconditions:
             @equal: [$confirmed, false]
-        postfunctions:
+        functions:
             - @call_service_method:
                 service: orob2b_account_user.manager
                 method: sendConfirmationEmail

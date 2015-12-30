@@ -3,16 +3,18 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional;
 
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
-use Oro\Component\Testing\WebTestCase;
 
+use OroB2B\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
 /**
  * @dbIsolation
  */
-class ShoppingListFrontendActionsTest extends WebTestCase
+class ShoppingListFrontendActionsTest extends FrontendActionTestCase
 {
     protected function setUp()
     {
@@ -20,10 +22,6 @@ class ShoppingListFrontendActionsTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
-
-        if (!$this->client->getContainer()->hasParameter('orob2b_order.entity.order.class')) {
-            $this->markTestSkipped('OrderBundle disabled');
-        }
 
         $this->loadFixtures(
             [
@@ -34,6 +32,10 @@ class ShoppingListFrontendActionsTest extends WebTestCase
 
     public function testCreateOrder()
     {
+        if (!$this->client->getContainer()->hasParameter('orob2b_order.entity.order.class')) {
+            $this->markTestSkipped('OrderBundle disabled');
+        }
+
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         $this->assertFalse($shoppingList->getLineItems()->isEmpty());
@@ -61,6 +63,10 @@ class ShoppingListFrontendActionsTest extends WebTestCase
 
     public function testCreateRequest()
     {
+        if (!$this->client->getContainer()->hasParameter('orob2b_rfp.entity.request.class')) {
+            $this->markTestSkipped('RFPBundle disabled');
+        }
+
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         $this->assertFalse($shoppingList->getLineItems()->isEmpty());
@@ -88,23 +94,41 @@ class ShoppingListFrontendActionsTest extends WebTestCase
         }
     }
 
+    public function testLineItemUpdate()
+    {
+        /** @var LineItem $lineItem */
+        $lineItem = $this->getReference('shopping_list_line_item.1');
+        /** @var ProductUnit $unit */
+        $unit = $this->getReference('product_unit.liter');
+
+        $crawler = $this->assertActionForm(
+            'orob2b_shoppinglist_frontend_updatelineitem',
+            $lineItem->getId(),
+            get_class($lineItem)
+        );
+
+        $form = $crawler->selectButton('Save')->form(
+            [
+                'oro_action[lineItem][quantity]' => 33.3,
+                'oro_action[lineItem][unit]' => $unit->getCode(),
+                'oro_action[lineItem][notes]' => 'Updated test notes',
+            ]
+        );
+
+        $this->assertActionFormSubmitted($form, 'Line item has been updated');
+    }
+
     /**
      * @param ShoppingList $shoppingList
      * @param string $actionName
      */
     protected function executeAction(ShoppingList $shoppingList, $actionName)
     {
-        $this->client->request(
-            'GET',
-            $this->getUrl(
-                'orob2b_api_frontend_action_execute_actions',
-                [
-                    'actionName' => $actionName,
-                    'route' => 'orob2b_shopping_list_frontend_view',
-                    'entityId' => $shoppingList->getId(),
-                    'entityClass' => 'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList'
-                ]
-            )
+        $this->assertExecuteAction(
+            $actionName,
+            $shoppingList->getId(),
+            'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList',
+            ['route' => 'orob2b_shopping_list_frontend_view']
         );
     }
 }
