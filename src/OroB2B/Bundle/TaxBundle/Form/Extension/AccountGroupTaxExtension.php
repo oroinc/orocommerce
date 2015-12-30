@@ -4,21 +4,21 @@ namespace OroB2B\Bundle\TaxBundle\Form\Extension;
 
 use Symfony\Component\Form\FormBuilderInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountType;
 use OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
 use OroB2B\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository;
 use OroB2B\Bundle\TaxBundle\Form\Type\AccountTaxCodeAutocompleteType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountGroupType;
 
-class AccountTaxExtension extends AbstractTaxExtension
+class AccountGroupTaxExtension extends AbstractTaxExtension
 {
     /**
      * {@inheritdoc}
      */
     public function getExtendedType()
     {
-        return AccountType::NAME;
+        return AccountGroupType::NAME;
     }
 
     /**
@@ -40,23 +40,23 @@ class AccountTaxExtension extends AbstractTaxExtension
     }
 
     /**
-     * @param Account $account
+     * @param AccountGroup $accountGroup
      * @param AccountTaxCode|AbstractTaxCode $taxCode
      * @param AccountTaxCode|AbstractTaxCode $taxCodeNew
      */
-    protected function handleTaxCode($account, AbstractTaxCode $taxCode = null, AbstractTaxCode $taxCodeNew = null)
+    protected function handleTaxCode($accountGroup, AbstractTaxCode $taxCode = null, AbstractTaxCode $taxCodeNew = null)
     {
         if ($taxCode) {
-            $taxCode->removeAccount($account);
+            $taxCode->removeAccountGroup($accountGroup);
         }
 
         if ($taxCodeNew) {
-            $taxCodeNew->addAccount($account);
+            $taxCodeNew->addAccountGroup($accountGroup);
         }
     }
 
     /**
-     * @param Account $object
+     * @param AccountGroup $object
      * @return AccountTaxCode
      */
     protected function getTaxCode($object)
@@ -64,6 +64,6 @@ class AccountTaxExtension extends AbstractTaxExtension
         /** @var AccountTaxCodeRepository $repository */
         $repository = $this->getRepository();
 
-        return $repository->findOneByAccount($object);
+        return $repository->findOneByAccountGroup($object);
     }
 }
