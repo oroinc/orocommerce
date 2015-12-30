@@ -4,34 +4,29 @@ namespace OroB2B\Bundle\TaxBundle\EventListener;
 
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository;
 
-class AccountFormViewListener extends AbstractFormViewListener
+class AccountGroupFormViewListener extends AbstractFormViewListener
 {
     /**
      * {@inheritdoc}
      */
     public function onView(BeforeListRenderEvent $event)
     {
-        /** @var Account $account */
-        $account = $this->getEntityFromRequest();
-        if (!$account) {
+        /** @var AccountGroup $accountGroup */
+        $accountGroup = $this->getEntityFromRequest();
+        if (!$accountGroup) {
             return;
         }
 
         /** @var AccountTaxCodeRepository $repository */
         $repository = $this->doctrineHelper->getEntityRepository($this->taxCodeClass);
-        $entity = $repository->findOneByAccount($account);
-
-        $groupAccountTaxCode = null;
-        if (!$entity && $account->getGroup()) {
-            $groupAccountTaxCode = $repository->findOneByAccountGroup($account->getGroup());
-        }
+        $entity = $repository->findOneByAccountGroup($accountGroup);
 
         $template = $event->getEnvironment()->render(
-            'OroB2BTaxBundle:Account:tax_code_view.html.twig',
-            ['entity' => $entity, 'groupAccountTaxCode' => $groupAccountTaxCode]
+            'OroB2BTaxBundle:AccountGroup:tax_code_view.html.twig',
+            ['entity' => $entity]
         );
         $event->getScrollData()->addSubBlockData(0, 0, $template);
     }
@@ -42,7 +37,7 @@ class AccountFormViewListener extends AbstractFormViewListener
     public function onEdit(BeforeListRenderEvent $event)
     {
         $template = $event->getEnvironment()->render(
-            'OroB2BTaxBundle:Account:tax_code_update.html.twig',
+            'OroB2BTaxBundle:AccountGroup:tax_code_update.html.twig',
             ['form' => $event->getFormView()]
         );
         $event->getScrollData()->addSubBlockData(0, 0, $template);
