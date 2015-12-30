@@ -262,7 +262,7 @@ class WidgetControllerTest extends WebTestCase
                 'enabled' => true,
                 'order' => 10,
                 'applications' => ['backend', 'frontend'],
-                'frontend_options' => [],
+                'frontend_options' => ['show_dialog' => true],
                 'entities' => [],
                 'routes' => [],
             ]
@@ -400,7 +400,7 @@ class WidgetControllerTest extends WebTestCase
                 'order' => 10,
                 'entities' => ['Oro\Bundle\TestFrameworkBundle\Entity\TestActivity'],
                 'routes' => [],
-                'frontend_options' => [],
+                'frontend_options' => ['show_dialog' => true],
                 'attributes' => [
                     'message_attr' => ['label' => 'Message', 'type' => 'string'],
                     'descr_attr' => ['property_path' => 'data.description']

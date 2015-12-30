@@ -177,7 +177,7 @@ class ActionManager
 
             if (array_key_exists('template', $frontendOptions)) {
                 $template = $frontendOptions['template'];
-            } elseif (!$frontendOptions['show_dialog']) {
+            } elseif (empty($frontendOptions['show_dialog'])) {
                 $template = self::DEFAULT_PAGE_TEMPLATE;
             }
         }

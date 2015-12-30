@@ -83,7 +83,7 @@ actions:
             - orob2b_sale_quote_frontend_view
         order: 20
         acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\OrderBundle\Entity\Order]
-        frontend_options:
+        button_options:
             icon: icon-edit
         preconditions:
             @equal: [false, $hasOfferVariants]
@@ -112,10 +112,12 @@ actions:
         order: 20
         acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\OrderBundle\Entity\Order]
 
+        button_options:
+                    icon: icon-edit
+
         frontend_options:
-            icon: icon-edit
-            dialog_template: OroB2BSaleBundle:Action:quoteToOrder.html.twig
-            dialog_options:
+            template: OroB2BSaleBundle:Action:quoteToOrder.html.twig
+            options:
                 modal: true,
                 resizable: true,
                 width: 1000
