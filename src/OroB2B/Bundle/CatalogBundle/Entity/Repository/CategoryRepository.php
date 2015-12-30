@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\CatalogBundle\Entity\Repository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
-use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
+use Oro\Component\Tree\Entity\Repository\NestedTreeRepository;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;

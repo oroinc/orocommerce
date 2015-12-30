@@ -11,6 +11,7 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 use OroB2B\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Component\Tree\Handler\AbstractTreeHandler;
+use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 
 class CategoryTreeHandler extends AbstractTreeHandler
 {
@@ -40,20 +41,18 @@ class CategoryTreeHandler extends AbstractTreeHandler
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    public function createTree()
+    public function getNodes($root, $includeRoot)
     {
-        $categories = $this->getEntityRepository()->getChildrenWithTitles(null, false, 'left', 'ASC');
-
+        /** @var CategoryRepository $repository */
+        $repository = $this->getEntityRepository();
+        $categories = $repository->getChildrenWithTitles(null, false, 'left', 'ASC');
         $event = new CategoryTreeCreateAfterEvent($categories);
         $event->setUser($this->securityFacade->getLoggedUser());
         $this->eventDispatcher->dispatch(CategoryTreeCreateAfterEvent::NAME, $event);
-        $categories = $event->getCategories();
 
-        $categories = $this->formatTree($categories);
-
-        return $categories;
+        return $event->getCategories();
     }
 
     /**
@@ -93,9 +92,10 @@ class CategoryTreeHandler extends AbstractTreeHandler
      * )
      *
      * @param Category $entity
+     * @param Category|null $root
      * @return array
      */
-    protected function formatEntity($entity)
+    protected function formatEntity($entity, $root)
     {
         return [
             'id'     => $entity->getId(),

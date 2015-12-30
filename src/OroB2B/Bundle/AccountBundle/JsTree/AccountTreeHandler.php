@@ -2,65 +2,41 @@
 
 namespace OroB2B\Bundle\AccountBundle\JsTree;
 
-use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Component\Tree\Handler\AbstractTreeHandler;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 
-class AccountTreeHandler
+class AccountTreeHandler extends AbstractTreeHandler
 {
     /**
-     * @param string $entityClass
-     * @param ManagerRegistry $managerRegistry
-     */
-    public function __construct($entityClass, ManagerRegistry $managerRegistry)
-    {
-        $this->entityClass     = $entityClass;
-        $this->managerRegistry = $managerRegistry;
-    }
-
-    /**
-     * @param int $rootId
+     * @param Account $root
      * @return array
      */
-    public function createTree($rootId)
+    public function getNodes($root)
     {
-        /** @var Account $root */
-        $root = $this->getEntityRepository()->find((int)$rootId);
-
         $entities = [];
 
-        $childrenEntities = $this->buildTreeRecursive($root);
+        $children = $root->getChildren();
 
-        return $this->formatTree(array_merge($entities, $childrenEntities), $rootId);
-    }
+        foreach ($children->toArray() as $child) {
+            $entities[] = $child;
 
-    /**
-     * @param array|Account[] $entities
-     * @param int $rootId
-     * @return array
-     */
-    protected function formatTree(array $entities, $rootId)
-    {
-        $formattedTree = [];
-
-        foreach ($entities as $entity) {
-            $formattedTree[] = $this->formatEntity($entity, $rootId);
+            $entities = array_merge($entities, $this->getNodes($child));
         }
 
-        return $formattedTree;
+        return $entities;
     }
 
     /**
      * @param Account $entity
-     * @param int $rootId
+     * @param Account $root
      * @return array
      */
-    protected function formatEntity(Account $entity, $rootId)
+    protected function formatEntity($entity, $root)
     {
         return [
             'id'     => $entity->getId(),
-            'parent' => $entity->getParent() && $entity->getParent()->getId() !== $rootId
+            'parent' => $entity->getParent() && $entity->getParent()->getId() !== $root->getId()
                 ? $entity->getParent()->getId()
                 : '#',
             'text'   => $entity->getName(),
@@ -71,29 +47,10 @@ class AccountTreeHandler
     }
 
     /**
-     * @param Account $entity
-     * @return array
+     * {@inheritdoc}
      */
-    protected function buildTreeRecursive(Account $entity)
+    protected function moveProcessing($entityId, $parentId, $position)
     {
-        $entities = [];
-
-        $children = $entity->getChildren();
-
-        foreach ($children->toArray() as $child) {
-            $entities[] = $child;
-
-            $entities = array_merge($entities, $this->buildTreeRecursive($child));
-        }
-
-        return $entities;
-    }
-
-    /**
-     * @return ObjectRepository
-     */
-    protected function getEntityRepository()
-    {
-        return $this->managerRegistry->getRepository($this->entityClass);
+        throw new \LogicException('Account moving is not supported');
     }
 }
