@@ -166,4 +166,27 @@ class CategoryRepository extends EntityRepository
             ->getQuery()
             ->getScalarResult();
     }
+
+    /**
+     * @param Category $category
+     * @param int $configValue
+     * @return int
+     */
+    public function getFallbackToAllVisibility(Category $category, $configValue)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->select('COALESCE(cvr.visibility, '. $qb->expr()->literal($configValue).')')
+            ->from('OroB2BCatalogBundle:Category', 'category')
+            ->leftJoin(
+                'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+                'cvr',
+                Join::WITH,
+                $qb->expr()->eq('cvr.category', 'category')
+            )
+            ->where($qb->expr()->eq('category', ':category'))
+            ->setParameter('category', $category);
+
+        return $qb->getQuery()->getSingleScalarResult();
+    }
 }

@@ -16,11 +16,6 @@ abstract class AbstractSubtreeCacheBuilder
     /**
      * @var array
      */
-    protected $childCategoriesForUpdate = [];
-
-    /**
-     * @var array
-     */
     protected $excludedCategories = [];
 
     /**
@@ -85,35 +80,30 @@ abstract class AbstractSubtreeCacheBuilder
 
     /**
      * @param Category $category
-     * @param $target
+     * @param array $childCategoryIds
      * @return array
      */
-    protected function getCategoryIdsForUpdate(Category $category, $target)
+    protected function getCategoryIdsForUpdate(Category $category, array $childCategoryIds)
     {
-        $categoryIds = $this->getChildCategoryIdsForUpdate($category, $target);
-        $categoryIds[] = $category->getId();
+        $categoryIds = array_merge($childCategoryIds, [$category->getId()]);
 
         return $categoryIds;
     }
 
     /**
      * @param Category $category
-     * @param $target
+     * @param object $target
      * @return array
      */
-    protected function getChildCategoryIdsForUpdate(Category $category, $target)
+    protected function getChildCategoryIdsForUpdate(Category $category, $target = null)
     {
-        if (empty($this->childCategoriesForUpdate)) {
-            $categoriesWithStaticFallback = $this->getChildCategoriesWithFallbackStatic($category, $target);
+        $categoriesWithStaticFallback = $this->getChildCategoriesWithFallbackStatic($category, $target);
 
-            $this->childCategoriesForUpdate = $this->getChildCategoriesIdsWithFallbackToParent(
-                $category,
-                $categoriesWithStaticFallback,
-                $target
-            );
-        }
-
-        return $this->childCategoriesForUpdate;
+        return $this->getChildCategoriesIdsWithFallbackToParent(
+            $category,
+            $categoriesWithStaticFallback,
+            $target
+        );
     }
 
     /**

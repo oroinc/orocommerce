@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\QueryBuilder;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
@@ -17,62 +16,48 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 abstract class AbstractCategorySubtreeCacheBuilder extends AbstractSubtreeCacheBuilder
 {
     /**
-     * @param array $categoryIds
-     * @param int $visibility
-     * @param Account $account
-     */
-    protected function updateAccountCategoryVisibilityByCategory(array $categoryIds, $visibility, Account $account)
-    {
-        if (!$categoryIds) {
-            return;
-        }
-
-        /** @var QueryBuilder $qb */
-        $qb = $this->getEntityManager()->createQueryBuilder();
-
-        $qb->update('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved', 'acvr')
-            ->set('acvr.visibility', $visibility)
-            ->where($qb->expr()->eq('acvr.account', ':account'))
-            ->andWhere($qb->expr()->in('IDENTITY(acvr.category)', ':categoryIds'))
-            ->setParameters(['account' => $account, 'categoryIds' => $categoryIds]);
-
-        $qb->getQuery()->execute();
-    }
-
-    /**
      * @param Category $category
      * @param Account $account
-     * @param $visibility
-     * @throws \Exception
+     * @param array $childCategoryIds
+     * @param string $visibility
      */
-    protected function updateCategoryVisibilityCache(Category $category, Account $account, $visibility)
-    {
+    protected function updateCategoryVisibilityCache(
+        Category $category,
+        Account $account,
+        array $childCategoryIds,
+        $visibility
+    ) {
         switch ($visibility) {
             case AccountCategoryVisibility::HIDDEN:
             case AccountCategoryVisibility::VISIBLE:
-                $this->updateToStaticCategoryVisibility($category, $account, $visibility);
+                $this->updateToStaticCategoryVisibility($category, $account, $childCategoryIds, $visibility);
                 break;
             case AccountCategoryVisibility::CATEGORY:
-                $this->updateToAllCategoryVisibility($category, $account);
+                $this->updateToAllCategoryVisibility($category, $account, $childCategoryIds);
                 break;
             case AccountCategoryVisibility::ACCOUNT_GROUP:
-                $this->updateToAccountGroupCategoryVisibility($category, $account);
+                $this->updateToAccountGroupCategoryVisibility($category, $account, $childCategoryIds);
                 break;
             case AccountCategoryVisibility::PARENT_CATEGORY:
-                $this->updateToParentCategoryVisibility($category, $account);
+                $this->updateToParentCategoryVisibility($category, $account, $childCategoryIds);
                 break;
             default:
-                throw new \Exception();
+                throw new \InvalidArgumentException(sprintf('Unknown visibility %s', $visibility));
         }
     }
 
     /**
      * @param Category $category
      * @param Account $account
+     * @param array $childCategoryIds
      * @param int $visibility
      */
-    protected function updateToStaticCategoryVisibility(Category $category, Account $account, $visibility)
-    {
+    protected function updateToStaticCategoryVisibility(
+        Category $category,
+        Account $account,
+        array $childCategoryIds,
+        $visibility
+    ) {
         $visibility = $this->convertStaticCategoryVisibility($visibility);
 
         $categoryVisibilityResolved = $this->getCategoryVisibilityResolved($category, $account);
@@ -86,8 +71,7 @@ abstract class AbstractCategorySubtreeCacheBuilder extends AbstractSubtreeCacheB
 
         $categoryVisibilityResolved->setSource(AccountCategoryVisibilityResolved::SOURCE_STATIC);
 
-        $childCategoryIds = $this->getChildCategoryIdsForUpdate($category, $account);
-        $this->updateAccountCategoryVisibilityByCategory($childCategoryIds, $visibility, $account);
+        $this->getRepository()->updateAccountCategoryVisibilityByCategory($account, $childCategoryIds, $visibility);
 
         $em = $this->getEntityManager();
         $em->persist($categoryVisibilityResolved);
@@ -103,13 +87,19 @@ abstract class AbstractCategorySubtreeCacheBuilder extends AbstractSubtreeCacheB
         return ($visibility == CategoryVisibility::VISIBLE)
             ? BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE
             : BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN;
-
     }
 
-    protected function updateToAllCategoryVisibility(Category $category, Account $account)
+    /**
+     * @param Category $category
+     * @param Account $account
+     * @param array $childCategoryIds
+     */
+    protected function updateToAllCategoryVisibility(Category $category, Account $account, array $childCategoryIds)
     {
-        $visibility = $this->getRepository()
-            ->getFallbackToAllValue($category, $this->getCategoryVisibilityConfigValue());
+        $visibility = $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getFallbackToAllVisibility($category, $this->getCategoryVisibilityConfigValue());
         $categoryVisibilityResolved = $this->getCategoryVisibilityResolved($category, $account);
 
         if ($categoryVisibilityResolved) {
@@ -121,8 +111,7 @@ abstract class AbstractCategorySubtreeCacheBuilder extends AbstractSubtreeCacheB
 
         $categoryVisibilityResolved->setSource(AccountCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL);
 
-        $childCategoryIds = $this->getChildCategoryIdsForUpdate($category, $account);
-        $this->updateAccountCategoryVisibilityByCategory($childCategoryIds, $visibility, $account);
+        $this->getRepository()->updateAccountCategoryVisibilityByCategory($account, $childCategoryIds, $visibility);
 
         $em = $this->getEntityManager();
         $em->persist($categoryVisibilityResolved);
@@ -151,15 +140,19 @@ abstract class AbstractCategorySubtreeCacheBuilder extends AbstractSubtreeCacheB
      */
     protected function getCategoryVisibilityResolved(Category $category, Account $account)
     {
-        return $this->getRepository()->findOneBy(['category' => $category, 'account' => $account]);
+        return $this->getRepository()->findByPrimaryKey($category, $account);
     }
 
     /**
      * @param Category $category
      * @param Account $account
+     * @param array $childCategoryIds
      */
-    protected function updateToAccountGroupCategoryVisibility(Category $category, Account $account)
-    {
+    protected function updateToAccountGroupCategoryVisibility(
+        Category $category,
+        Account $account,
+        array $childCategoryIds
+    ) {
         $categoryVisibilityResolved = $this->getCategoryVisibilityResolved($category, $account);
 
         // Fallback to account group is default for account and should be removed if exist
@@ -169,19 +162,20 @@ abstract class AbstractCategorySubtreeCacheBuilder extends AbstractSubtreeCacheB
             $em->flush();
         }
 
-        $childCategoryIds = $this->getChildCategoryIdsForUpdate($category, $account);
+        $visibility = $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->getFallbackToGroupVisibility($category, $account->getGroup(), $this->getCategoryVisibilityConfigValue());
 
-        $visibility = $this->getRepository()
-            ->getFallbackToGroupValue($category, $account, $this->getCategoryVisibilityConfigValue());
-
-        $this->updateAccountCategoryVisibilityByCategory($childCategoryIds, $visibility, $account);
+        $this->getRepository()->updateAccountCategoryVisibilityByCategory($account, $childCategoryIds, $visibility);
     }
 
     /**
      * @param Category $category
      * @param Account $account
+     * @param array $childCategoryIds
      */
-    protected function updateToParentCategoryVisibility(Category $category, Account $account)
+    protected function updateToParentCategoryVisibility(Category $category, Account $account, array $childCategoryIds)
     {
         $parentCategory = $category->getParentCategory();
         $visibility = $this->getRepository()->getCategoryVisibility(
@@ -200,8 +194,7 @@ abstract class AbstractCategorySubtreeCacheBuilder extends AbstractSubtreeCacheB
 
         $categoryVisibilityResolved->setSource(AccountCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY);
 
-        $childCategoryIds= $this->getChildCategoryIdsForUpdate($category, $account);
-        $this->updateAccountCategoryVisibilityByCategory($childCategoryIds, $visibility, $account);
+        $this->getRepository()->updateAccountCategoryVisibilityByCategory($account, $childCategoryIds, $visibility);
 
         $em = $this->getEntityManager();
         $em->persist($categoryVisibilityResolved);

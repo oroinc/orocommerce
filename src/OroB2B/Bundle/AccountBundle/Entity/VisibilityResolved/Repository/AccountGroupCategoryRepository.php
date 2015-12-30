@@ -165,4 +165,40 @@ class AccountGroupCategoryRepository extends EntityRepository
             );
         }
     }
+
+    /**
+     * @param Category $category
+     * @param AccountGroup $accountGroup
+     * @param int $configValue
+     * @return int
+     */
+    public function getFallbackToGroupVisibility(Category $category, AccountGroup $accountGroup, $configValue)
+    {
+        $qb = $this->_em->createQueryBuilder();
+
+        $qb->select('COALESCE(agcvr.visibility, COALESCE(cvr.visibility, '. $qb->expr()->literal($configValue).'))')
+            ->from('OroB2BCatalogBundle:Category', 'category')
+            ->leftJoin(
+                'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+                'cvr',
+                Join::WITH,
+                $qb->expr()->eq('cvr.category', 'category')
+            )
+            ->leftJoin(
+                'OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
+                'agcvr',
+                Join::WITH,
+                $qb->expr()->andX(
+                    $qb->expr()->eq('agcvr.category', 'category'),
+                    $qb->expr()->eq('agcvr.accountGroup', ':accountGroup')
+                )
+            )
+            ->where($qb->expr()->eq('category', ':category'))
+            ->setParameters([
+                'category' => $category,
+                'accountGroup' => $accountGroup
+            ]);
+
+        return $qb->getQuery()->getSingleScalarResult();
+    }
 }

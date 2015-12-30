@@ -22,15 +22,24 @@ class VisibilityChangeAccountSubtreeCacheBuilder extends AbstractCategorySubtree
             ->getRepository('OroB2BAccountBundle:Visibility\AccountCategoryVisibility')
             ->findOneBy(['category' => $category, 'account' => $account]);
 
+        $childCategoryIds = $this->getChildCategoryIdsForUpdate($category, $account);
+
         if ($accountCategoryVisibility) {
             $visibility = $accountCategoryVisibility->getVisibility();
-            $this->updateCategoryVisibilityCache($category, $account, $visibility);
+            $this->updateCategoryVisibilityCache($category, $account, $childCategoryIds, $visibility);
+        } else {
+            $this->updateCategoryVisibilityCache(
+                $category,
+                $account,
+                $childCategoryIds,
+                AccountCategoryVisibility::PARENT_CATEGORY
+            );
         }
 
         $visibility = $this->categoryVisibilityResolver->isCategoryVisibleForAccount($category, $account);
         $visibility = $this->convertVisibility($visibility);
 
-        $categoryIds = $this->getCategoryIdsForUpdate($category, $account);
+        $categoryIds = $this->getCategoryIdsForUpdate($category, $childCategoryIds);
         $this->updateAccountProductVisibilityByCategory($categoryIds, $visibility, $account);
     }
 

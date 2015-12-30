@@ -23,7 +23,7 @@ class AccountCategoryRepository extends EntityRepository
      * @param Category $category
      * @param Account $account
      * @param int $configValue
-     * @return bool
+     * @return int
      */
     public function getCategoryVisibility(Category $category, Account $account, $configValue)
     {
@@ -92,65 +92,6 @@ class AccountCategoryRepository extends EntityRepository
     }
 
     /**
-     * @param Category $category
-     * @param int $configValue
-     * @return int
-     */
-    public function getFallbackToAllValue(Category $category, $configValue)
-    {
-        $qb = $this->_em->createQueryBuilder();
-
-        $qb->select('COALESCE(cvr.visibility, '. $qb->expr()->literal($configValue).')')
-            ->from('OroB2BCatalogBundle:Category', 'category')
-            ->leftJoin(
-                'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
-                'cvr',
-                Join::WITH,
-                $qb->expr()->eq('cvr.category', 'category')
-            )
-            ->where($qb->expr()->eq('category', ':category'))
-            ->setParameter('category', $category);
-
-        return $qb->getQuery()->getSingleScalarResult();
-    }
-
-    /**
-     * @param Category $category
-     * @param Account $account
-     * @param $configValue
-     * @return int
-     */
-    public function getFallbackToGroupValue(Category $category, Account $account, $configValue)
-    {
-        $qb = $this->_em->createQueryBuilder();
-
-        $qb->select('COALESCE(agcvr.visibility, COALESCE(cvr.visibility, '. $qb->expr()->literal($configValue).'))')
-            ->from('OroB2BCatalogBundle:Category', 'category')
-            ->leftJoin(
-                'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
-                'cvr',
-                Join::WITH,
-                $qb->expr()->eq('cvr.category', 'category')
-            )
-            ->leftJoin(
-                'OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
-                'agcvr',
-                Join::WITH,
-                $qb->expr()->andX(
-                    $qb->expr()->eq('agcvr.category', 'category'),
-                    $qb->expr()->eq('agcvr.accountGroup', ':accountGroup')
-                )
-            )
-            ->where($qb->expr()->eq('category', ':category'))
-            ->setParameters([
-                'category' => $category,
-                'accountGroup' => $account->getGroup()
-            ]);
-
-        return $qb->getQuery()->getSingleScalarResult();
-    }
-
-    /**
      * @param int $visibility
      * @param Account $account
      * @param int $configValue
@@ -178,5 +119,36 @@ class AccountCategoryRepository extends EntityRepository
         $categoryVisibilityResolved = $qb->getQuery()->getArrayResult();
 
         return array_map('current', $categoryVisibilityResolved);
+    }
+
+    /**
+     * @param array $categoryIds
+     * @param int $visibility
+     * @param Account $account
+     */
+    public function updateAccountCategoryVisibilityByCategory(Account $account, array $categoryIds, $visibility)
+    {
+        if (!$categoryIds) {
+            return;
+        }
+
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->update('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved', 'acvr')
+            ->set('acvr.visibility', $visibility)
+            ->where($qb->expr()->eq('acvr.account', ':account'))
+            ->andWhere($qb->expr()->in('IDENTITY(acvr.category)', ':categoryIds'))
+            ->setParameters(['account' => $account, 'categoryIds' => $categoryIds]);
+
+        $qb->getQuery()->execute();
+    }
+
+    /**
+     * @param Category $category
+     * @param Account $account
+     * @return null|AccountCategoryVisibilityResolved
+     */
+    public function findByPrimaryKey(Category $category, Account $account)
+    {
+        return $this->findOneBy(['account' => $account, 'category' => $category]);
     }
 }
