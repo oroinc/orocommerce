@@ -165,4 +165,60 @@ class AccountGroupCategoryRepository extends EntityRepository
             );
         }
     }
+
+    /**
+     * [
+     *      [
+     *          'visibility_id' => <int>,
+     *          'parent_visibility_id' => <int|null>,
+     *          'parent_visibility' => <string|null>,
+     *          'category_id' => <int>,
+     *          'parent_category_id' => <int|null>,
+     *          'parent_category_resolved_visibility' => <int|null>
+     *      ],
+     *      ...
+     * ]
+     *
+     * @return array
+     */
+    public function getParentCategoryVisibilities()
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        return $qb->select(
+            'agcv.id as visibility_id',
+            'agcv_parent.id as parent_visibility_id',
+            'agcv_parent.visibility as parent_visibility',
+            'c.id as category_id',
+            'IDENTITY(c.parentCategory) as parent_category_id',
+            'cvr_parent.visibility as parent_category_resolved_visibility'
+        )
+            ->from('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility', 'agcv')
+            // join to category that includes only parent category entities
+            ->innerJoin(
+                'agcv.category',
+                'c',
+                'WITH',
+                'agcv.visibility = ' . $qb->expr()->literal(AccountGroupCategoryVisibility::PARENT_CATEGORY)
+            )
+            // join to parent category visibility
+            ->leftJoin(
+                'OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility',
+                'agcv_parent',
+                'WITH',
+                'agcv_parent.accountGroup = agcv.accountGroup AND agcv_parent.category = c.parentCategory'
+            )
+            // join to resolved category visibility for parent category
+            ->leftJoin(
+                'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+                'cvr_parent',
+                'WITH',
+                'cvr_parent.category = c.parentCategory'
+            )
+            // order is important to make sure that higher level categories will be processed first
+            ->addOrderBy('c.level', 'ASC')
+            ->addOrderBy('c.left', 'ASC')
+            ->getQuery()
+            ->getScalarResult();
+    }
 }

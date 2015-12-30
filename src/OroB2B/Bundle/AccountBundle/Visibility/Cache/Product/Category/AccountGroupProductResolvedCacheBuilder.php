@@ -50,14 +50,6 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
      */
     public function buildCache(Website $website = null)
     {
-        /** @var CategoryRepository $repository */
-        $categoryRepository = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved');
-        /** @var AccountGroupCategoryVisibilityRepository $repository */
-        $repository = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility')
-            ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility');
         /** @var AccountGroupCategoryRepository $resolvedRepository */
         $resolvedRepository = $this->registry->getManagerForClass($this->cacheClass)
             ->getRepository($this->cacheClass);
@@ -69,12 +61,8 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
         $resolvedRepository->insertStaticValues($this->insertFromSelectQueryExecutor);
 
         // resolve parent category values
-        $categoryVisibilities = $this->indexVisibilities(
-            $categoryRepository->getCategoriesWithResolvedVisibilities(),
-            'category_id'
-        );
         $groupVisibilities = $this->indexVisibilities(
-            $repository->getParentCategoryVisibilities(),
+            $resolvedRepository->getParentCategoryVisibilities(),
             'visibility_id'
         );
         $groupIds = [
@@ -83,7 +71,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
             AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG => [],
         ];
         foreach ($groupVisibilities as $visibilityId => $groupVisibility) {
-            $resolvedVisibility = $this->resolveVisibility($groupVisibilities, $categoryVisibilities, $groupVisibility);
+            $resolvedVisibility = $this->resolveVisibility($groupVisibilities, $groupVisibility);
             $groupIds[$resolvedVisibility][] = $visibilityId;
         }
         foreach ($groupIds as $visibility => $ids) {
@@ -93,11 +81,10 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
 
     /**
      * @param array $groupVisibilities
-     * @param array $categoryVisibilities
      * @param array $currentGroup
      * @return int
      */
-    protected function resolveVisibility(array &$groupVisibilities, array $categoryVisibilities, array $currentGroup)
+    protected function resolveVisibility(array &$groupVisibilities, array $currentGroup)
     {
         // visibility already resolved
         if (array_key_exists('resolved_visibility', $currentGroup)) {
@@ -105,19 +92,19 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
         }
 
         $visibilityId = $currentGroup['visibility_id'];
-        $parentCategoryId = $currentGroup['parent_category_id'];
         $parentVisibility = $currentGroup['parent_visibility'];
         $parentVisibilityId = $currentGroup['parent_visibility_id'];
+        $parentCategoryVisibilityResolved = $currentGroup['parent_category_resolved_visibility'];
 
         $resolvedVisibility = null;
 
         // category fallback (visibility to all)
         if (null === $parentVisibility) {
-            $resolvedVisibility = $categoryVisibilities[$parentCategoryId]['resolved_visibility'];
+            $resolvedVisibility = $parentCategoryVisibilityResolved;
         // parent category fallback
         } elseif ($parentVisibility === AccountGroupCategoryVisibility::PARENT_CATEGORY) {
             $parentGroup = $groupVisibilities[$parentVisibilityId];
-            $resolvedVisibility = $this->resolveVisibility($groupVisibilities, $categoryVisibilities, $parentGroup);
+            $resolvedVisibility = $this->resolveVisibility($groupVisibilities, $parentGroup);
         // static visibility
         } else {
             $resolvedVisibility
