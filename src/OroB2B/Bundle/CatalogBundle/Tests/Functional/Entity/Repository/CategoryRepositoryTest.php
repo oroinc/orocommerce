@@ -52,7 +52,7 @@ class CategoryRepositoryTest extends WebTestCase
         $this->registry->getManagerForClass('OroB2BCatalogBundle:Category')->clear();
 
         $categories = $this->repository->getChildrenWithTitles();
-        $this->assertCount(5, $categories);
+        $this->assertCount(8, $categories);
 
         /** @var Category $category */
         $category = current($categories);
@@ -69,11 +69,15 @@ class CategoryRepositoryTest extends WebTestCase
         /** @var Category $category */
         $categories = $this->repository->findAll();
         $parent = $this->findCategoryByTitle($categories, LoadCategoryData::FIRST_LEVEL);
-        $childrenId1 = $this->findCategoryByTitle($categories, LoadCategoryData::SECOND_LEVEL1)->getId();
-        $childrenId2 = $this->findCategoryByTitle($categories, LoadCategoryData::THIRD_LEVEL1)->getId();
-        $childrenId3 = $this->findCategoryByTitle($categories, LoadCategoryData::THIRD_LEVEL2)->getId();
+        $childrenIds = [];
+        $childrenIds[] = $this->findCategoryByTitle($categories, LoadCategoryData::SECOND_LEVEL1)->getId();
+        $childrenIds[] = $this->findCategoryByTitle($categories, LoadCategoryData::THIRD_LEVEL1)->getId();
+        $childrenIds[] = $this->findCategoryByTitle($categories, LoadCategoryData::FOURTH_LEVEL1)->getId();
+        $childrenIds[] = $this->findCategoryByTitle($categories, LoadCategoryData::SECOND_LEVEL2)->getId();
+        $childrenIds[] = $this->findCategoryByTitle($categories, LoadCategoryData::THIRD_LEVEL2)->getId();
+        $childrenIds[] = $this->findCategoryByTitle($categories, LoadCategoryData::FOURTH_LEVEL2)->getId();
         $result = $this->repository->getChildrenIds($parent);
-        $this->assertEquals($result, [$childrenId1, $childrenId2, $childrenId3]);
+        $this->assertEquals($result, $childrenIds);
     }
 
     public function testFindOneByDefaultTitle()

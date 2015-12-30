@@ -7,6 +7,7 @@ Table of Contents
  - [Main Entities](#main-entities)
  - [How it works?](#how-it-works)
  - [Configuration](#configuration)
+ - [Action Diagram](#action-diagram)
  - [Configuration Validation](#configuration-validation)
 
 What are Actions?
@@ -14,7 +15,8 @@ What are Actions?
 
 Actions provide possibility to assign any operations to:
  - Entity classes;
- - Routes.
+ - Routes;
+ - Datagrids.
 
 Every active action will show button (link) on the corresponded page(s). Button will be displayed only if all described
 Pre conditions are met. Action will be performed after click on the button if all described Pre conditions
@@ -28,13 +30,13 @@ Action consists of several related entities.
 
 * **Action** - main model that contains information about specific action. It contains the most important
 information like action related entity classes (f.e. 'Acme\Bundle\DemoBundle\Entity\MyEntity')
-or routes ('acme_demo_myentity_view'). Action can be enabled or disabled.
+or routes ('acme_demo_myentity_view') or datagrids ('acme-demo-grid'). Action can be enabled or disabled.
 Other fields of the action contain information about action name, extended options,
 order of display buttons. More options see in [Configuration](#configuration).
 
 * **ActionDefinition** - part of the Action model that contains raw data from action's configuration.
 
-* **Action Context** - container aggregated some data, that will be available on each step of Action. Some of values
+* **Action Data** - container aggregated some data, that will be available on each step of Action. Some of values
 associated with some Attribute. Those values can be entered by user directly or assigned via Functions.
 
 * **Attribute** - entity that represent one value in Action, used to render field value on a step form.
@@ -44,19 +46,19 @@ Attribute contains name and label as additional parameters.
 * **Condition** - defines whether specific Action is allowed with specified input data. Conditions can be nested.
 
 * **Functions** - operations are assigned to Action and executed when Action is performed.
-There are two kind of actions: Pre Functions, Init Functions and Post Functions.
-The difference between them is that Pre Functions are executed before Action button redder, Init Functions are executed
-before Action and Post Functions are executed after Action.
-Actions can be used to perform any operations with data in Action Context or other entities.
+There are two kind of actions: Pre Functions, Form Init Functions and Functions.
+The difference between them is that Pre Functions are executed before Action button redder, Form Init Functions are
+executed before Action and Functions are executed after Action.
+Actions can be used to perform any operations with data in Action Data or other entities.
 
 How it works?
 -------------
 
 Each action relates to the some entity types (i.e. consists full class name) or\and routes of pages
-where action should be displayed. Before page loading Action Bundle chooses actions that
+where action should be displayed or\and datagrids. Before page loading Action Bundle chooses actions that
 are corresponded to page's entity\route. Then these actions checking for Pre conditions.
 If all Pre conditions are met - Action's button is displaying.
-After user click on the button - all postfunctions will be executed if pre conditions and conditions are met.
+After user click on the button - all functions will be executed if pre conditions and conditions are met.
 
 Configuration
 -------------
@@ -77,6 +79,8 @@ actions:
             - AcmeDemoBundle:MyEntity2
         routes:                                                     # (optional) list of routes
             - acme_demo_myentity_view                               # route name
+        datagrids                                                   # (optional) list of datagrids
+            - acme-demo-grid                                        # datagrid name
         order: 10                                                   # (optional, default = 0) display order of action button
         acl_resource: acme_demo_myentity_view                       # (optional) ACL resource name that will be checked while checking that action execution is allowed
 
@@ -113,7 +117,7 @@ actions:
             attribute_default_values:                               # (optional) define default values for attributes
                 demo_attr: $demo                                    # use attribute name and property path or simple string for attribute value
 
-        initfunctions:                                              # (optional) any needed functions which will execute before showing form dialog
+        form_init:                                                  # (optional) any needed functions which will execute before showing form dialog
             - @assign_value:                                        # function alias
                 conditions:                                         # (optional) conditions list to allow current function
                     @empty: $description                            # condition definition
@@ -129,7 +133,7 @@ actions:
         conditions:                                                 # (optional) pre conditions for display Action button
             @gt: [$updatedAt, $.date]                               # condition definition
 
-        postfunctions:                                              # (optional) any needed post functions which will execute after click on th button
+        functions:                                                  # (optional) any needed functions which will execute after click on th button
             - @assign_value: [$expired, true]                       # function definition
 ```
 
@@ -137,7 +141,7 @@ This configuration describes action that relates to the ``MyEntity`` entity. On 
 of this entity (in case of field 'updatedAt' > new DateTime('now')) will be displayed button with label
 "adme.demo.myentity.actions.myentity_action". After click on this button - will run postfunction "assign_value" and set
 field 'expired' to `true`.
-If `form_options` are specified after click on button will be shown form dialog with attributes fields. And postfunctions
+If `form_options` are specified after click on button will be shown form dialog with attributes fields. And functions
 will run only on form submit.
 
 Configuration Validation

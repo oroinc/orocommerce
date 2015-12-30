@@ -13,6 +13,9 @@ orob2b:
         current.label: Current
         default.label: Default
 
+        btn:
+            create_order: 'Create Order'
+
         create_new_form:
             input_label: Shopping List Label
             comment: Selected products will be added to this new shopping list.
@@ -64,6 +67,7 @@ orob2b:
             organization.label: Organization
             account_user.label: Account User
             add_line_item: Add Line Item
+            edit_line_item: Edit Line Item
             create_new_shopping_list: Create New Shopping List
             new_shopping_list_label: Shopping List Label
             grid:
@@ -72,6 +76,8 @@ orob2b:
                         product: View Product
             flash:
                 success: Line item has been added
+                added: Line item has been added
+                updated: Line item has been updated
             controller:
                 saved.message: Line Item Saved Successfully
 
@@ -80,9 +86,11 @@ orob2b:
                 cancel: Cancel
 
         system_configuration:
-            backend_product_visibility: 'Can Be Added to Shopping Lists'
+            fields:
+                backend_product_visibility.title: 'Can Be Added to Shopping Lists'
 
     frontend:
         shoppinglist:
             btn:
                 request_quote_create_rfp: 'Request a Quote'
+                create_order: 'Create Order'

@@ -64,13 +64,16 @@ use Oro\Bundle\UserBundle\Entity\User;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"="commerce"
+ *          },
+ *          "dataaudit"={
+ *              "auditable"=true
  *          }
  *      }
  * )
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class AccountUser extends AbstractUser implements FullNameInterface, EmailHolderInterface
+class AccountUser extends AbstractUser implements FullNameInterface, EmailHolderInterface, CustomerUserIdentity
 {
     const SECURITY_GROUP = 'commerce';
 
@@ -87,6 +90,13 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      *          @ORM\JoinColumn(name="account_user_role_id", referencedColumnName="id", onDelete="CASCADE")
      *      }
      * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $roles;
 
@@ -99,13 +109,27 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      *      cascade={"persist"}
      * )
      * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
-     **/
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
     protected $account;
 
     /**
      * @var bool
      *
      * @ORM\Column(type="boolean")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $confirmed = true;
 
@@ -113,6 +137,13 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      * @var string
      *
      * @ORM\Column(type="string", length=255, unique=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $email;
 
@@ -122,6 +153,13 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      * @var string
      *
      * @ORM\Column(name="name_prefix", type="string", length=255, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $namePrefix;
 
@@ -131,6 +169,13 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      * @var string
      *
      * @ORM\Column(name="first_name", type="string", length=255, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $firstName;
 
@@ -140,6 +185,13 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      * @var string
      *
      * @ORM\Column(name="middle_name", type="string", length=255, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $middleName;
 
@@ -149,6 +201,13 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      * @var string
      *
      * @ORM\Column(name="last_name", type="string", length=255, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $lastName;
 
@@ -158,6 +217,13 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      * @var string
      *
      * @ORM\Column(name="name_suffix", type="string", length=255, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $nameSuffix;
 
@@ -165,6 +231,13 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      * @var \DateTime
      *
      * @ORM\Column(name="birthday", type="date", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $birthday;
 
@@ -178,6 +251,13 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      *      orphanRemoval=true
      * )
      * @ORM\OrderBy({"primary" = "DESC"})
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $addresses;
 

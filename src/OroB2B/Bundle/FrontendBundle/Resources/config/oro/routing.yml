@@ -25,14 +25,5 @@ orob2b_frontend_datagrid_widget:
     options:
         frontend: true
 
-orob2b_frontend_windows_api:
-    resource: "@OroB2BFrontendBundle/Controller/Api/Rest/FrontendWindowsStateController.php"
-    type: rest
-    prefix: api/rest/{version}/
-    requirements:
-        version:  latest|v1
-        _format:  json
-    defaults:
-        version: latest
-    options:
-        frontend: true
+orob2b_frontend_action:
+    resource: @OroB2BFrontendBundle/Resources/config/oro/routing_action.yml

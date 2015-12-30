@@ -50,6 +50,7 @@ orob2b.pricing:
         action:
             save: Save
             cancel: Cancel
+        save.success: Product Price has been added
 
     menu:
         price_lists_tab.label: Price lists management
@@ -78,11 +79,12 @@ orob2b.pricing:
                 product: View Product
 
     system_configuration:
-        price_lists: Price Lists
-        default_price_lists: Default Price Lists
         groups:
-            product_price_settings.title: Pricing Settings
+            default_price_lists.title: Default Price Lists
+            price_rounding.title: Pricing Rounding
+            pricing.title: Pricing
         fields:
+            price_lists.title: Price Lists
             rounding_type:
                 label: Pricing Rounding Type
                 tooltip: Select the rounding type that can be used for product prices.

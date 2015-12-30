@@ -1,12 +1,11 @@
 actions:
     orob2b_rfp_change_status_action:
         label: orob2b.rfp.btn.change_status
-        enabled: true
-        applications:
-            - backend
-            - frontend
+        applications: [backend]
         routes:
             - orob2b_rfp_request_view
+        datagrids:
+            - rfp-requests-grid
         order: 10
         attributes:
             request_status:
@@ -31,7 +30,7 @@ actions:
             dialog_title: orob2b.rfp.widget.change_status_title
             dialog_options:
                 width: 550
-        postfunctions:
+        functions:
             - @assign_value: [$status, $.request_status]
             - @format_string:
                 attribute: $.message
@@ -52,10 +51,7 @@ actions:
 
     orob2b_rfp_create_quote_action:
         label: orob2b.rfp.btn.create_quote
-        enabled: true
-        applications:
-            - backend
-            - frontend
+        applications: [backend]
         routes:
             - orob2b_rfp_request_view
         acl_resource: orob2b_sale_quote_create
@@ -65,7 +61,7 @@ actions:
             class: icons-holder-text no-hash btn
         preconditions:
             @equal: [$status.draft, false]
-        postfunctions:
+        functions:
             - @call_service_method:
                 service: orob2b_rfp.service.request_to_quote_data_storage
                 method: saveToStorage
@@ -74,3 +70,26 @@ actions:
                 parameters:
                     route: orob2b_sale_quote_create
                     route_parameters: {'storage': true}
+
+    orob2b_rfp_frontend_request_a_quote_action:
+        label: orob2b.rfp.btn.add_to_rfp
+        applications: [frontend]
+        routes:
+            - orob2b_product_frontend_quick_add
+        acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\RFPBundle\Entity\Request]
+        order: 10
+        frontend_options:
+            icon: icon-file-text
+            data:
+                component_name: orob2b_rfp_quick_add_processor
+            page_component_module: orob2bproduct/js/app/components/quick-add-form-button-component
+            page_component_options:
+                component_name: '[name$="[component]"]'
+                component_additional: '[name$="[additional]"]'
+        prefunctions:
+            - @call_service_method:
+                service: orob2b_rfp.processor.quick_add
+                method: isAllowed
+                attribute: $.isAllowed
+        preconditions:
+            @equal: [true, $.isAllowed]

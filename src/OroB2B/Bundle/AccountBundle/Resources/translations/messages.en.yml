@@ -71,12 +71,15 @@ orob2b.account:
             company_name: 'Company Name'
             registration.title: 'Registration'
             register: 'Register'
-            forgot_password: 'Forgot Your Password'
+            register.description: 'Please register if you do not have an account. A sales representative will contact you shortly.'
+            create_an_account: 'Create an Account'
+            forgot_password: 'Forgot Your Password?'
+            enter_password: 'Enter your password'
             reset_password:
                 title: 'Create New Password'
                 label: 'Create'
-            remember_me: 'Remember Me on This Computer'
-            login: 'Login'
+            remember_me: 'Remember Me'
+            login: 'Sign In'
             return_to_login: 'Return to Login'
             password_reset.message: 'Password was created successfully.'
             request_password.label: 'Request'
@@ -278,14 +281,12 @@ orob2b.account:
         visibility:
             label: Default Visibility to Accounts
             form_label: Visibility
-            product_configuration_label: Product Catalog
             catalog_configuration_label: Categories
             visible.label: Visible
             hidden.label: Hidden
     product:
         visibility:
             label: Manage Visibility
-            product_configuration_label: Products
 
     menu:
         customers_tab.label: 'Customers'
@@ -342,6 +343,11 @@ orob2b.account:
         groups:
             account.title: 'Account'
             account_users.title: 'Account Users'
+            account_users_registration.title: 'Account Users Registration'
+            visibility:
+                title: 'Visibility'
+                product.title: 'Product Visibility to Accounts'
+                category.title: 'Category Visibility to Accounts'
         fields:
             default_account_owner.label: 'Default Account Owner'
             registration_allowed.label: 'Registration Allowed'
@@ -371,3 +377,7 @@ orob2b.account:
 
     account_typed_address_with_default_type:
         choice.default_text: 'Default %type_name%'
+
+    dataaudit:
+        administrator: Administrator
+        module_label: Audig history for Account User

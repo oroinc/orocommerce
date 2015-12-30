@@ -7,6 +7,7 @@ Table of Contents
  - [Configuration File](#configuration-file)
  - [Configuration Loading](#configuration-loading)
  - [Configuration Merging](#configuration-merging)
+ - [Configuration Replacing](#configuration-replacing)
  - [Defining an Action](#defining-an-action)
    - [Example](#example)
  - [Frontend Options Configuration](#frontend-options-configuration)
@@ -17,7 +18,7 @@ Table of Contents
    - [Example](#example-3)
  - [Pre Conditions and Conditions Configuration](#pre-conditions-and-conditions-configuration)
    - [Example](#example-4)
- - [Pre Functions, Init Functions and Post Functions Configuration](#pre-functions-init-functions-and-post-functions-configuration)
+ - [Pre Functions, Form Init Functions and Functions Configuration](#pre-functions-form-init-functions-and-functions-configuration)
    - [Example](#example-5)
 
 Overview
@@ -26,7 +27,7 @@ Overview
 Configuration of Action declares all aspects related to specific action:
 
 * basic properties of action like name, label, order, acl resource, etc
-* entities or routes that is related to action
+* entities or routes or datagrids that is related to action
 * conditions and functions
 * attributes involved in action
 * frontend configuration
@@ -74,14 +75,20 @@ configuration.
 Merging uses simple rules:
  * if node value is scalar - value will be replaced
  * if node value is array - this array will be complemented by values from the second configuration
- * if array node `replace` is exist on the same level and it contain original node name - value will be replaced
 
 After first step application knows about all actions and have only one configuration for each action.
 
 **Extending**
 On this step application collects configurations for all actions which contain `extends`. Then main action 
 configuration, which specified in `extends`, copied and merged with configuration of original action. Merging use same 
-way, which use `overriding` step (first and second rules).
+way, which use `overriding` step (rules).
+
+Configuration Replacing
+=======================
+
+In merge process we can replace any node on any level of our configuration. If node `replace` is exist and it contains
+some nodes which located on the same level of node `replace` - value of these nodes will be replaced by values from
+_last_ configuration from queue.
 
 Defining an Action
 ==================
@@ -108,6 +115,9 @@ Single action configuration has next properties:
 * **routes**
     *array*
     Action button will be shown on pages which route is in list.
+* **datagrids**
+    *array*
+    Action icon will be shown as an datagrid-action in listed datagrids.
 * **order**
     *integer*
     Parameter that specifies the display order of actions buttons.
@@ -124,12 +134,12 @@ Single action configuration has next properties:
     Contains configuration for Attributes
 * **form_options**
     Contains configuration for Transitions
-* **initfunctions**
-    Contains configuration for Init Functions
+* **form_init**
+    Contains configuration for Form Init Functions
 * **conditions**
     Contains configuration for Conditions
-* **postfunctions**
-    Contains configuration for Post Functions
+* **functions**
+    Contains configuration for Functions
 
 Example
 -------
@@ -141,8 +151,10 @@ actions:                                             # root elements
         enabled: false                               # action is disabled, means not used in application
         entities:                                    # on view/edit pages of this entities action button will be shown
             - Acme\Bundle\DemoBundle\Entity\MyEntity # entity class name
-        routes:                                      # on pages with this action names action button will be shown
+        routes:                                      # on pages with these routes action button will be shown
             - acme_demo_action_view                  # route name
+        datagrids                                    # in listed datagrids action icon will be shown
+            - acme-demo-grid                         # datagrid name
         order: 10                                    # display order of action button
         acl_resource: acme_demo_action_view          # ACL resource name that will be checked on pre conditions step
         frontend_options:                            # configuration for Frontend Options
@@ -155,11 +167,11 @@ actions:                                             # root elements
                                                      # ...
         form_options:                                # configuration for Form Options
                                                      # ...
-        initfunctions:                               # configuration for Init Functions
+        form_init:                                   # configuration for Form Init Functions
                                                      # ...
         conditions:                                  # configuration for Conditions
                                                      # ...
-        postfunctions:                               # configuration for Post Functions
+        functions:                                   # configuration for Functions
                                                      # ...
 ```
 
@@ -179,11 +191,20 @@ Frontend Options configuration has next options:
 * **group**
     *string*
     Name of action button menu. Action button will be part of dropdown buttons menu with label (specified group).
-    All actions with same group will be shown in one dropdown burrons menu.
+    All actions with same group will be shown in one dropdown button html menu.
 * **template**
     *string*
     This option provide possibility to override button template.
     Should be extended from `OroActionBundle:Action:button.html.twig`
+* **data**
+    *array*
+    This option provide possibility to add data-attributes to the button tag.
+* **page_component_module**
+    *string*
+    Name of js-component module for the action-button (attribute *data-page-component-module*).
+* **page_component_options**
+    *array*
+    List of options of js-component module for the action-button (attribute *data-page-component-options*).
 * **dialog_template**
     *string*
     You can set custom action dialog template.
@@ -195,6 +216,10 @@ Frontend Options configuration has next options:
     *array*
     Parameters related to widget component. Can be specified next options: *allowMaximize*, *allowMinimize*, *dblclick*,
     *maximizedHeightDecreaseBy*, *width*, etc.
+* **confirmation**
+    *string*
+    You can show confirmation message before start action`s execution. Translate constant should be available
+    for JS - placed in jsmessages.*.yml
 
 Example
 -------
@@ -207,6 +232,13 @@ actions:
             class: btn
             group: aсme.demo.actions.demogroup.label
             template: OroActionBundle:Action:button.html.twig
+            data:
+                param: value
+            page_component_module: acmedemo/js/app/components/demo-component
+            page_component_options:
+                component_name: '[name$="[component]"]'
+                component_additional: '[name$="[additional]"]'
+            confirmation: aсme.demo.actions.action_perform_confirm
             dialog_template: OroActionBundle:Widget:widget/form.html.twig
             dialog_title: aсme.demo.actions.dialog.title
             dialog_options:
@@ -220,7 +252,7 @@ actions:
 Attributes Configuration
 ========================
 
-Action define configuration of attributes. Action can manipulate it's own data (Action Context) that is mapped by
+Action define configuration of attributes. Action can manipulate it's own data (Action Data) that is mapped by
 Attributes. Each attribute must to have a type and may have options.
 
 Single attribute can be described with next configuration:
@@ -325,7 +357,7 @@ Pre Conditions and Conditions Configuration
 * **conditions**
     Configuration of Conditions that must satisfy to allow action.
 
-It declares a tree structure of conditions that are applied on the Action Context to check if the Action could be
+It declares a tree structure of conditions that are applied on the Action Data to check if the Action could be
 performed. Single condition configuration contains alias - a unique name of condition - and options.
 
 Optionally each condition can have a constraint message. All messages of not passed conditions will be shown to user
@@ -337,10 +369,10 @@ whether action should be allowed to show, and actual conditions used to check wh
 Alias of condition starts from "@" symbol and must refer to registered condition. For example "@or" refers to logical
 OR condition.
 
-Options can refer to values of main entity in Action Context using "$" prefix. For example "$some_value" refers to value
+Options can refer to values of main entity in Action Data using "$" prefix. For example "$some_value" refers to value
 of "callsome_value" attribute of entity that is processed in condition.
 
-Also it is possible to refer to any property of Action Context using "$." prefix. For example to refer date attribute
+Also it is possible to refer to any property of Action Data using "$." prefix. For example to refer date attribute
 with date can be used string "$.created".
 
 Example
@@ -356,22 +388,22 @@ actions:
             @not_empty: [$group]
 ```
 
-Pre Functions, Init Functions and Post Functions Configuration
+Pre Functions, Form Init Functions and Functions Configuration
 ==============================================================
 
 * **prefunctions**
-    Configuration of Pre Functions that may be performed before pre conditions, conditions, init functions and post
-    functions. It can be used to prepare some data in Action Context that will be used in pre conditions validation.
-* **initfunctions**
-    Configuration of Init Functions that may be performed on Action Context before conditions and post functions.
+    Configuration of Pre Functions that may be performed before pre conditions, conditions, form init functions and post
+    functions. It can be used to prepare some data in Action Data that will be used in pre conditions validation.
+* **form_init**
+    Configuration of Form Init Functions that may be performed on Action Data before conditions and functions.
     One of possible init actions usage scenario is to fill attributes with default values, which will be used in action
     form if it exist.
-* **postfunctions**
-    Configuration of Post Functions that must be performed after all previous steps are performed. This is main action
-    step that must contain action logic. It will be performed only after conditions will be qualified.
+* **functions**
+    Configuration of Functions that must be performed after all previous steps are performed. This is main action step
+    that must contain action logic. It will be performed only after conditions will be qualified.
 
 Similarly to Conditions - alias of Function starts from "@" symbol and must refer to registered Functions. For example
-"@assign_value" refers to Function which set specified value to attribute in Action Context.
+"@assign_value" refers to Function which set specified value to attribute in Action Data.
 
 Example
 -------
@@ -382,9 +414,9 @@ actions:
         # ...
         prefunctions:
             - @assign_value: [$name, 'User Name']
-        initfunctions:
+        form_init:
             - @assign_value: [$group, 'Group Name']
-        postfunctions:
+        functions:
             - @create_entity:
                 class: Acme\Bundle\DemoBundle\Entity\User
                 attribute: $user
@@ -392,3 +424,8 @@ actions:
                     name: $name
                     group: $group
 ```
+
+Action Diagram
+--------------
+
+Following diagram shows action processes logic in graphical representation: ![Action Diagram](images/getting-started_action-diagram.png)

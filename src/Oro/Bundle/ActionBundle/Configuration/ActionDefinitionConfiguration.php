@@ -42,6 +42,17 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
     {
         $nodeDefinition
             ->children()
+                ->arrayNode('replace')
+                    ->beforeNormalization()
+                        ->always(
+                            function ($replace) {
+                                return (array)$replace;
+                            }
+                        )
+                        ->end()
+                    ->prototype('scalar')
+                    ->end()
+                ->end()
                 ->scalarNode('label')
                     ->isRequired()
                     ->cannotBeEmpty()
@@ -54,11 +65,15 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
                     ->prototype('scalar')
                     ->end()
                 ->end()
+                ->arrayNode('datagrids')
+                    ->prototype('scalar')
+                    ->end()
+                ->end()
                 ->arrayNode('routes')
                     ->prototype('scalar')
                     ->end()
                 ->end()
-                ->scalarNode('acl_resource')
+                ->variableNode('acl_resource')
                 ->end()
                 ->integerNode('order')
                     ->defaultValue(0)
@@ -164,12 +179,22 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
                 ->scalarNode('class')->end()
                 ->scalarNode('group')->end()
                 ->scalarNode('template')->end()
+                ->scalarNode('confirmation')->end()
                 ->scalarNode('dialog_title')->end()
                 ->arrayNode('dialog_options')
                     ->prototype('variable')
                     ->end()
                 ->end()
                 ->scalarNode('dialog_template')->end()
+                ->scalarNode('page_component_module')->end()
+                ->arrayNode('page_component_options')
+                    ->prototype('variable')
+                    ->end()
+                ->end()
+                ->arrayNode('data')
+                    ->prototype('variable')
+                    ->end()
+                ->end()
             ->end();
 
         return $node;

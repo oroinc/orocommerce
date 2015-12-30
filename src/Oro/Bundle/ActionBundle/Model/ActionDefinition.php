@@ -5,8 +5,8 @@ namespace Oro\Bundle\ActionBundle\Model;
 class ActionDefinition
 {
     const PREFUNCTIONS = 'prefunctions';
-    const INITFUNCTIONS = 'initfunctions';
-    const POSTFUNCTIONS = 'postfunctions';
+    const FORM_INIT = 'form_init';
+    const FUNCTIONS = 'functions';
 
     const PRECONDITIONS = 'preconditions';
     const CONDITIONS = 'conditions';
@@ -22,6 +22,9 @@ class ActionDefinition
 
     /** @var array */
     private $entities = [];
+
+    /** @var array */
+    private $datagrids = [];
 
     /** @var array */
     private $routes = [];
@@ -63,7 +66,7 @@ class ActionDefinition
      */
     public static function getAllowedFunctions()
     {
-        return [self::PREFUNCTIONS, self::INITFUNCTIONS, self::POSTFUNCTIONS];
+        return [self::PREFUNCTIONS, self::FORM_INIT, self::FUNCTIONS];
     }
 
     /**
@@ -157,6 +160,25 @@ class ActionDefinition
     public function setEntities(array $entities)
     {
         $this->entities = $entities;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDatagrids()
+    {
+        return $this->datagrids;
+    }
+
+    /**
+     * @param array $datagrids
+     * @return $this
+     */
+    public function setDatagrids(array $datagrids)
+    {
+        $this->datagrids = $datagrids;
 
         return $this;
     }
