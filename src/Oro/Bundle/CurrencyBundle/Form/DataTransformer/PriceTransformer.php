@@ -1,15 +1,30 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: ap
- * Date: 29.12.15
- * Time: 10:59
- */
 
 namespace Oro\Bundle\CurrencyBundle\Form\DataTransformer;
 
+use Symfony\Component\Form\DataTransformerInterface;
+use Oro\Bundle\CurrencyBundle\Model\Price;
 
-class PriceTransformer
+class PriceTransformer implements DataTransformerInterface
 {
+    /**
+     * @param Price|null $price
+     * @return Price|null
+     */
+    public function transform($price)
+    {
+        return $price;
+    }
 
+    /**
+     * @param Price|null $price
+     * @return Price|null
+     */
+    public function reverseTransform($price)
+    {
+        if (!$price || !$price instanceof Price || filter_var($price->getValue(), FILTER_VALIDATE_FLOAT) === false) {
+            return null;
+        }
+        return $price;
+    }
 }

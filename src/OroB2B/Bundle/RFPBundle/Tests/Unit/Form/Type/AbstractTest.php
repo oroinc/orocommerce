@@ -2,21 +2,22 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Symfony\Component\Form\FormTypeInterface;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Form\Type\OptionalPriceType;
 use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
+use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectEntityTypeStub;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
@@ -71,10 +72,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function preparePriceType()
     {
-        $price = new PriceType();
-        $price->setDataClass('Oro\Bundle\CurrencyBundle\Model\Price');
-
-        return $price;
+        return PriceTypeGenerator::createPriceType();
     }
 
     /**

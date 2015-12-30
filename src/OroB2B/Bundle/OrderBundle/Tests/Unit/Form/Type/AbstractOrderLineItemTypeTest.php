@@ -9,8 +9,9 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
+
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -43,7 +44,7 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
             ProductUnitSelectionType::NAME
         );
 
-        $priceType = new PriceType();
+        $priceType = PriceTypeGenerator::createPriceType();
         $priceType->setDataClass('Oro\Bundle\CurrencyBundle\Model\Price');
 
         $orderPriceType = new PriceTypeSelectorType();

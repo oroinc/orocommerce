@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
     'use strict';
 
     var LineItemView;
@@ -22,10 +22,12 @@ define(function(require) {
             'UNIT': 10
         },
 
+        pricesComponent: {},
+
         /**
          * @inheritDoc
          */
-        initialize: function(options) {
+        initialize: function (options) {
             this.options = $.extend(true, {
                 selectors: {
                     productSelector: '.invoice-line-item-type-product input.select2',
@@ -39,29 +41,33 @@ define(function(require) {
             }, this.options);
             this.options = $.extend(true, {}, this.options, options || {});
             this.initLayout().done(_.bind(this.handleLayoutInit, this));
-            this.delegate('click', '.removeLineItem', this.removeRow);
+            this.$el.on('click', '.removeLineItem', this.removeRow);
         },
 
         setTotalPrice: function () {
             var totalPrice;
+            if (!this.fieldsByName.priceValue) {
+                return;
+            }
 
             totalPrice = +this.fieldsByName.priceValue.val();
             if (+this.fieldsByName.priceType.val() === this.priceTypes.UNIT) {
-                totalPrice *= +this.fieldsByName.quantity.val()
+                totalPrice *= +this.fieldsByName.quantity.val();
             }
 
-            this.$el.find('.invoice-line-item-total-price').text(NumberFormatter.formatCurrency(totalPrice, 'USD'));
+            this.$el.find('.invoice-line-item-total-price')
+                .text(NumberFormatter.formatCurrency(totalPrice, this.pricesComponent.getCurrency()));
         },
 
         /**
          * @inheritDoc
          */
-        handleLayoutInit: function() {
+        handleLayoutInit: function () {
             this.$form = this.$el.closest('form');
             this.$fields = this.$el.find(':input[name]');
 
             this.fieldsByName = {};
-            this.$fields.each(_.bind(function(i, field) {
+            this.$fields.each(_.bind(function (i, field) {
                 this.fieldsByName[this.formFieldName(field)] = $(field);
             }, this));
 
@@ -70,10 +76,28 @@ define(function(require) {
             this.initTypeSwitcher();
             this.initPrices();
             this.initProduct();
-            this.setTotalPrice();
+            this.initTotalPriceListener();
         },
 
-        initSubtotalListener: function() {
+        initTotalPriceListener: function () {
+            var self = this;
+            this.setTotalPrice();
+            this.pricesComponent.on('currency:changed', _.bind(this.setTotalPrice, this));
+
+            setTimeout(function () {
+                _.each([
+                        self.fieldsByName.quantity,
+                        self.fieldsByName.productUnit,
+                        self.fieldsByName.priceValue,
+                        self.fieldsByName.priceType
+                    ], function (field) {
+                        field.on('change', _.bind(self.setTotalPrice, self));
+                    }
+                );
+            }, 100);
+        },
+
+        initSubtotalListener: function () {
             this.fieldsByName.currency = this.$form
                 .find(':input[data-ftid="' + this.$form.attr('name') + '_currency"]');
 
@@ -84,9 +108,11 @@ define(function(require) {
                 this.fieldsByName.priceValue,
                 this.fieldsByName.priceType
             ]);
+
+
         },
 
-        initUnitLoader: function(options) {
+        initUnitLoader: function (options) {
             var defaultOptions = {
                 _sourceElement: this.$el,
                 productSelector: this.options.selectors.productSelector,
@@ -100,8 +126,8 @@ define(function(require) {
             this.subview('productUnitComponent', new ProductUnitComponent(_.extend({}, defaultOptions, options || {})));
         },
 
-        initPrices: function() {
-            this.subview('productPricesComponents', new ProductPricesComponent({
+        initPrices: function () {
+            this.pricesComponent = new ProductPricesComponent({
                 _sourceElement: this.$el,
                 $product: this.fieldsByName.product,
                 $priceValue: this.fieldsByName.priceValue,
@@ -109,29 +135,31 @@ define(function(require) {
                 $productUnit: this.fieldsByName.productUnit,
                 $quantity: this.fieldsByName.quantity,
                 $currency: this.options.currency
-            }));
+            });
+
+            this.subview('productPricesComponents', this.pricesComponent);
         },
 
-        initTypeSwitcher: function() {
+        initTypeSwitcher: function () {
             var $product = this.$el.find('div' + this.options.selectors.productType);
             var $freeForm = this.$el.find('div' + this.options.selectors.freeFormType);
 
-            var showFreeFormType = function() {
+            var showFreeFormType = function () {
                 $product.hide();
                 $freeForm.show();
             };
 
-            var showProductType = function() {
+            var showProductType = function () {
                 $freeForm.hide();
                 $product.show();
             };
 
-            $freeForm.find('a' + this.options.selectors.productType).click(_.bind(function() {
+            $freeForm.find('a' + this.options.selectors.productType).click(_.bind(function () {
                 showProductType();
                 $freeForm.find(':input').val('').change();
             }, this));
 
-            $product.find('a' + this.options.selectors.freeFormType).click(_.bind(function() {
+            $product.find('a' + this.options.selectors.freeFormType).click(_.bind(function () {
                 showFreeFormType();
                 this.fieldsByName.product.select2('val', '').change();
             }, this));
@@ -146,7 +174,7 @@ define(function(require) {
          * @param {Object} field
          * @returns {String}
          */
-        formFieldName: function(field) {
+        formFieldName: function (field) {
             var name = '';
             var nameParts = field.name.replace(/.*\[[0-9]+\]/, '').replace(/[\[\]]/g, '_').split('_');
             var namePart;
@@ -165,15 +193,15 @@ define(function(require) {
             return name;
         },
 
-        resetData: function() {
+        resetData: function () {
             if (this.fieldsByName.hasOwnProperty('quantity')) {
                 this.fieldsByName.quantity.val(1);
             }
         },
 
-        initProduct: function() {
+        initProduct: function () {
             if (this.fieldsByName.product) {
-                this.fieldsByName.product.change(_.bind(function() {
+                this.fieldsByName.product.change(_.bind(function () {
                     this.resetData();
 
                     var data = this.fieldsByName.product.select2('data') || {};
@@ -182,9 +210,23 @@ define(function(require) {
             }
         },
 
-        removeRow: function() {
+        removeRow: function () {
             this.$el.trigger('content:remove');
             this.remove();
+        },
+
+        /**
+         * @inheritDoc
+         */
+        dispose: function () {
+            if (this.disposed) {
+                return;
+            }
+
+            mediator.off('line-items-subtotals:update', this.setTotalPrice, this);
+            mediator.off('pricing:update-currency', this.setTotalPrice, this);
+
+            ProductPricesComponent.__super__.dispose.call(this);
         }
     });
 

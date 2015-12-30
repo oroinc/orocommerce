@@ -2,3 +2,4 @@ config:
     paths:
         'orob2binvoice/js/app/views/line-item-view': 'bundles/orob2binvoice/js/app/views/line-item-view.js'
         'orob2binvoice/js/app/views/line-items-view': 'bundles/orob2binvoice/js/app/views/line-items-view.js'
+        'orob2binvoice/js/app/views/line-items-view': 'bundles/orob2binvoice/js/app/views/invoice-genearal-view.js'

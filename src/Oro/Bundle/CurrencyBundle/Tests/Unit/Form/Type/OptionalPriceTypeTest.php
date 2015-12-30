@@ -8,7 +8,6 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
 use Oro\Bundle\CurrencyBundle\Form\Type\OptionalPriceType;
@@ -136,7 +135,7 @@ class OptionalPriceTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $currencyPrice = new PriceType();
+        $currencyPrice = PriceTypeGenerator::createPriceType();
         $currencyPrice->setDataClass('Oro\Bundle\CurrencyBundle\Model\Price');
 
         return [

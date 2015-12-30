@@ -12,6 +12,7 @@ use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
@@ -95,7 +96,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
 
         $productSelect = new ProductSelectTypeStub();
 
-        $priceType = new PriceType();
+        $priceType = PriceTypeGenerator::createPriceType();
         $priceType->setDataClass('Oro\Bundle\CurrencyBundle\Model\Price');
 
         return [

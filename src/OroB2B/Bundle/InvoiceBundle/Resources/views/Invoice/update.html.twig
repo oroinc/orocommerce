@@ -85,14 +85,23 @@
     {% endset %}
 
     {% set invoiceFieldsWidgets %}
-        <div>
-            {{ form_row(form.invoiceDate) }}
-        </div>
-        <div>
-            {{ form_row(form.paymentDueDate) }}
-        </div>
-        <div>
-            {{ form_row(form.poNumber) }}
+        <div
+            data-page-component-module="oroui/js/app/components/view-component"
+            data-page-component-options="{{ {
+                'view': 'orob2binvoice/js/app/views/invoice-general-view'
+            }|json_encode }}">
+            <div>
+                {{ form_row(form.invoiceDate) }}
+            </div>
+            <div>
+                {{ form_row(form.paymentDueDate) }}
+            </div>
+            <div>
+                {{ form_row(form.poNumber) }}
+            </div>
+            <div class="invoice-currency">
+                {{ form_row(form.currency) }}
+            </div>
         </div>
     {% endset %}
 
@@ -103,8 +112,7 @@
             'subblocks': [{
                 'data': [
                     ownerSelectors,
-                    invoiceFieldsWidgets,
-                    form_row(form.currency)
+                    invoiceFieldsWidgets
                 ]
             }]
         },

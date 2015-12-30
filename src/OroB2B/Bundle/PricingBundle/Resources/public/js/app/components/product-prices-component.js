@@ -87,6 +87,7 @@ define(function(require) {
                 mediator.trigger('pricing:get:products-tier-prices', _.bind(this.setTierPrices, this));
                 mediator.trigger('pricing:get:line-items-matched-prices', _.bind(this.setMatchedPrices, this));
             }
+            mediator.on('pricing:update-currency', this.setCurrency, this);
         },
 
         initTierPrices: function() {
@@ -161,7 +162,7 @@ define(function(require) {
             var $button = this.$tierButton.find('i');
             var content = '';
             var tierPrices = {};
-            var currency = this._getCurrency();
+            var currency = this.getCurrency();
             _.each(this.tierPrices, function(prices, unit) {
                 prices = _.filter(prices, function(price) {
                     return price.currency === currency;
@@ -242,7 +243,7 @@ define(function(require) {
                     product: productId,
                     unit: this.options.$productUnit.val(),
                     qty: this.options.$quantity.val(),
-                    currency: this._getCurrency()
+                    currency: this.getCurrency()
                 };
             }
 
@@ -303,7 +304,7 @@ define(function(require) {
                     matchedPrice = price;
                 }
 
-                this.options.$priceValue.text(NumberFormatter.formatCurrency(matchedPrice, this._getCurrency()));
+                this.options.$priceValue.text(NumberFormatter.formatCurrency(matchedPrice, this.getCurrency()));
             }
 
             this.options.$priceValue.trigger('value:changed');
@@ -323,7 +324,7 @@ define(function(require) {
             identifiers.push(productId);
             identifiers.push(this.options.$productUnit.val());
             identifiers.push(this.options.$quantity.val());
-            identifiers.push(this._getCurrency());
+            identifiers.push(this.getCurrency());
 
             return identifiers.join('-');
         },
@@ -345,7 +346,7 @@ define(function(require) {
                 quantity = parseFloat(this.options.$quantity.val());
             }
 
-            return price * quantity;
+            return +(price * quantity).toFixed(4);
         },
 
         onPriceValueChange: function() {
@@ -406,14 +407,23 @@ define(function(require) {
 
         /**
          * @returns {String}
-         * @private
          */
-        _getCurrency: function() {
+        getCurrency: function() {
             if (_.isObject(this.options.$currency)) {
                 return this.options.$currency.val();
             } else {
                 return this.options.$currency;
             }
+        },
+
+        /**
+         * @param {String} value
+         */
+        setCurrency: function(value) {
+            this.options.$currency = value;
+            this.updateTierPrices();
+            mediator.trigger('pricing:reload:products-tier-prices');
+            this.trigger('currency:changed');
         },
 
         /**
@@ -425,6 +435,7 @@ define(function(require) {
             }
 
             mediator.off('pricing:refresh:products-tier-prices', this.setTierPrices, this);
+            mediator.off('pricing:update-currency', this.setCurrency(), this);
             mediator.off('pricing:refresh:line-items-matched-prices', this.setMatchedPrices, this);
 
             ProductPricesComponent.__super__.dispose.call(this);

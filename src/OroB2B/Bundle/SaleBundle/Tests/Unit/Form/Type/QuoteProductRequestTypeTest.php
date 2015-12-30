@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -216,7 +217,7 @@ class QuoteProductRequestTypeTest extends AbstractTest
      */
     protected function getExtensions()
     {
-        $priceType                  = $this->preparePriceType();
+        $priceType                  = PriceTypeGenerator::createPriceType();
         $optionalPriceType          = $this->prepareOptionalPriceType();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
 

@@ -11,6 +11,7 @@ use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Form\Type\OptionalPriceType;
+use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -147,10 +148,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function preparePriceType()
     {
-        $price = new PriceType();
-        $price->setDataClass('Oro\Bundle\CurrencyBundle\Model\Price');
-
-        return $price;
+        return PriceTypeGenerator::createPriceType();
     }
 
     /**

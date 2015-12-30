@@ -29,7 +29,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                         'scope' => 'app'
                 ],
                 'rounding_type' => [
-                    'value' => 'half_up',
+                    'value' => 6,
                     'scope' => 'app'
                 ],
                 'precision' => [
