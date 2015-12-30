@@ -19,13 +19,45 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
+        if (!$value instanceof Product) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Entity must be instance of "%s", "%s" given',
+                    'OroB2B\Bundle\ProductBundle\Entity\Product',
+                    is_object($value) ? get_class($value) : gettype($value)
+                )
+            );
+        }
+
         if (!$value->getHasVariants()) {
             return;
         }
 
+        $this->validateLinksWithoutFields($value, $constraint);
+        $this->validateVariantLinks($value, $constraint);
+    }
+
+    /**
+     * Add violation if variant fields empty but variant links presented
+     *
+     * @param Product $value
+     * @param UniqueProductVariantLinks $constraint
+     */
+    private function validateLinksWithoutFields(Product $value, UniqueProductVariantLinks $constraint)
+    {
+        if (count($value->getVariantFields()) === 0 && $value->getVariantLinks()->count() !== 0) {
+            $this->context->addViolation($constraint->variantFieldRequiredMessage);
+        }
+    }
+
+    /**
+     * @param Product $value
+     * @param UniqueProductVariantLinks $constraint
+     */
+    private function validateVariantLinks(Product $value, UniqueProductVariantLinks $constraint)
+    {
         $variantHashes = [];
         $variantFields = $value->getVariantFields();
-
         foreach ($value->getVariantLinks() as $variantLink) {
             $product = $variantLink->getProduct();
             if (!$product) {
@@ -36,7 +68,7 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
         }
 
         if (count($variantHashes) !== count(array_unique($variantHashes))) {
-            $this->context->addViolation($constraint->message);
+            $this->context->addViolation($constraint->uniqueRequiredMessage);
         }
     }
 
