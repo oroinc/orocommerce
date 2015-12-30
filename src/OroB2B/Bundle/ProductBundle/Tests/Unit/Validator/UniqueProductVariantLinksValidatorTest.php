@@ -38,10 +38,12 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
         unset($this->service, $this->context);
     }
 
+    //@codingStandardsIgnoreStart
     /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Entity must be instance of "OroB2B\Bundle\ProductBundle\Entity\Product", "stdClass" given
      */
+    //@codingStandardsIgnoreEnd
     public function testNotProductValidate()
     {
         $this->service->validate(new \stdClass(), new UniqueProductVariantLinks());
