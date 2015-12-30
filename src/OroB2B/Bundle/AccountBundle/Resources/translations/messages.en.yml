@@ -71,12 +71,15 @@ orob2b.account:
             company_name: 'Company Name'
             registration.title: 'Registration'
             register: 'Register'
-            forgot_password: 'Forgot Your Password'
+            register.description: 'Please register if you do not have an account. A sales representative will contact you shortly.'
+            create_an_account: 'Create an Account'
+            forgot_password: 'Forgot Your Password?'
+            enter_password: 'Enter your password'
             reset_password:
                 title: 'Create New Password'
                 label: 'Create'
-            remember_me: 'Remember Me on This Computer'
-            login: 'Login'
+            remember_me: 'Remember Me'
+            login: 'Sign In'
             return_to_login: 'Return to Login'
             password_reset.message: 'Password was created successfully.'
             request_password.label: 'Request'
@@ -371,3 +374,7 @@ orob2b.account:
 
     account_typed_address_with_default_type:
         choice.default_text: 'Default %type_name%'
+
+    dataaudit:
+        administrator: Administrator
+        module_label: Audig history for Account User

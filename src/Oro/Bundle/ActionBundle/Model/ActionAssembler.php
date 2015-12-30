@@ -73,6 +73,7 @@ class ActionAssembler extends AbstractAssembler
             ->setName($actionName)
             ->setLabel($this->getOption($options, 'label'))
             ->setEntities($this->getOption($options, 'entities', []))
+            ->setDatagrids($this->getOption($options, 'datagrids', []))
             ->setRoutes($this->getOption($options, 'routes', []))
             ->setApplications($this->getOption($options, 'applications', []))
             ->setEnabled($this->getOption($options, 'enabled', true))

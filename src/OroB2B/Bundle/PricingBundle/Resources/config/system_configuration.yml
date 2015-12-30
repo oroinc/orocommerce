@@ -45,8 +45,6 @@ oro_system_configuration:
                                     product_price_settings:
                                         children:
                                             - oro_b2b_pricing.rounding_type
-                    catalog:
-                        children:
                             price_list_settings:
                                 children:
                                     default_price_lists:

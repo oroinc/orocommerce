@@ -67,6 +67,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                     'applications' => [],
                     'entities' => [],
                     'routes' => [],
+                    'datagrids' => [],
                     'order' => 0,
                     'enabled' => true,
                     'prefunctions' => [],
@@ -77,6 +78,8 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                     'attributes' => [],
                     'frontend_options' => [
                         'dialog_options' => [],
+                        'page_component_options' => [],
+                        'data' => []
                     ],
                 ],
             ],
@@ -87,6 +90,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'applications' => ['app1', 'app2', 'app3'],
                         'entities' => ['Entity1', 'Entity2'],
                         'routes' => ['route_1', 'route_2'],
+                        'datagrids' => ['datagrid_1', 'datagrid_2'],
                         'order' => 15,
                         'enabled' => false,
                         'frontend_options' => [
@@ -97,6 +101,14 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                             'dialog_template' => 'template',
                             'dialog_title' => 'dialog title',
                             'dialog_options' => ['width' => 400],
+                            'page_component_module' => 'testbundle/app/component',
+                            'page_component_options' => [
+                                'param' => 'value'
+                            ],
+                            'data' => [
+                                'attribute' => 'attrValue'
+                            ],
+                            'confirmation' => 'Confirmation message'
                         ],
                         'form_options' => [
                             'attribute_fields' => [
@@ -136,6 +148,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                     'applications' => ['app1', 'app2', 'app3'],
                     'entities' => ['Entity1', 'Entity2'],
                     'routes' => ['route_1', 'route_2'],
+                    'datagrids' => ['datagrid_1', 'datagrid_2'],
                     'order' => 15,
                     'enabled' => false,
                     'prefunctions' => [
@@ -167,6 +180,14 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'dialog_template' => 'template',
                         'dialog_title' => 'dialog title',
                         'dialog_options' => ['width' => 400],
+                        'page_component_module' => 'testbundle/app/component',
+                        'page_component_options' => [
+                            'param' => 'value'
+                        ],
+                        'data' => [
+                            'attribute' => 'attrValue'
+                        ],
+                        'confirmation' => 'Confirmation message'
                     ],
                     'form_options' => [
                         'attribute_fields' => [

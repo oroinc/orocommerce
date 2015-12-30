@@ -14,7 +14,8 @@ What are Actions?
 
 Actions provide possibility to assign any operations to:
  - Entity classes;
- - Routes.
+ - Routes;
+ - Datagrids.
 
 Every active action will show button (link) on the corresponded page(s). Button will be displayed only if all described
 Pre conditions are met. Action will be performed after click on the button if all described Pre conditions
@@ -28,13 +29,13 @@ Action consists of several related entities.
 
 * **Action** - main model that contains information about specific action. It contains the most important
 information like action related entity classes (f.e. 'Acme\Bundle\DemoBundle\Entity\MyEntity')
-or routes ('acme_demo_myentity_view'). Action can be enabled or disabled.
+or routes ('acme_demo_myentity_view') or datagrids ('acme-demo-grid'). Action can be enabled or disabled.
 Other fields of the action contain information about action name, extended options,
 order of display buttons. More options see in [Configuration](#configuration).
 
 * **ActionDefinition** - part of the Action model that contains raw data from action's configuration.
 
-* **Action Context** - container aggregated some data, that will be available on each step of Action. Some of values
+* **Action Data** - container aggregated some data, that will be available on each step of Action. Some of values
 associated with some Attribute. Those values can be entered by user directly or assigned via Functions.
 
 * **Attribute** - entity that represent one value in Action, used to render field value on a step form.
@@ -47,13 +48,13 @@ Attribute contains name and label as additional parameters.
 There are two kind of actions: Pre Functions, Init Functions and Post Functions.
 The difference between them is that Pre Functions are executed before Action button redder, Init Functions are executed
 before Action and Post Functions are executed after Action.
-Actions can be used to perform any operations with data in Action Context or other entities.
+Actions can be used to perform any operations with data in Action Data or other entities.
 
 How it works?
 -------------
 
 Each action relates to the some entity types (i.e. consists full class name) or\and routes of pages
-where action should be displayed. Before page loading Action Bundle chooses actions that
+where action should be displayed or\and datagrids. Before page loading Action Bundle chooses actions that
 are corresponded to page's entity\route. Then these actions checking for Pre conditions.
 If all Pre conditions are met - Action's button is displaying.
 After user click on the button - all postfunctions will be executed if pre conditions and conditions are met.
@@ -77,6 +78,8 @@ actions:
             - AcmeDemoBundle:MyEntity2
         routes:                                                     # (optional) list of routes
             - acme_demo_myentity_view                               # route name
+        datagrids                                                   # (optional) list of datagrids
+            - acme-demo-grid                                        # datagrid name
         order: 10                                                   # (optional, default = 0) display order of action button
         acl_resource: acme_demo_myentity_view                       # (optional) ACL resource name that will be checked while checking that action execution is allowed
 
