@@ -21,7 +21,7 @@ class CombinedPriceListRepository extends EntityRepository
     public function getPriceListRelations(CombinedPriceList $combinedPriceList)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('partial cpl.{priceList, mergeAllowed}')
+        $qb->select('partial cpl.{id, priceList, mergeAllowed}')
             ->from('OroB2BPricingBundle:CombinedPriceListToPriceList', 'cpl')
             ->where($qb->expr()->eq('cpl.combinedPriceList', ':combinedPriceList'))
             ->setParameter('combinedPriceList', $combinedPriceList)

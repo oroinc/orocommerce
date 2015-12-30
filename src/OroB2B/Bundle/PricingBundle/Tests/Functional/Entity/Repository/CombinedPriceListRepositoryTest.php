@@ -8,9 +8,10 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -24,85 +25,85 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists']);
     }
 
+    public function testGetPriceListRelations()
+    {
+        /** @var CombinedPriceList $priceList */
+        $priceList = $this->getReference('3f_4t_2f');
+
+        $relations = $this->getRepository()->getPriceListRelations($priceList);
+        $this->assertNotEmpty($relations);
+        $this->assertCount(3, $relations);
+
+        $expected = [
+            $this->getReference('price_list_3')->getId() => false,
+            $this->getReference('price_list_4')->getId() => true,
+            $this->getReference('price_list_2')->getId() => false,
+        ];
+        $actual = [];
+        foreach ($relations as $relation) {
+            $actual[$relation->getPriceList()->getId()] = $relation->isMergeAllowed();
+        }
+        $this->assertEquals($expected, $actual);
+    }
+
     public function testAccountPriceList()
     {
-        $this->markTestIncomplete();
         /** @var Account $account */
-        $account = $this->getReference('account.orphan');
+        $account = $this->getReference('account.level_1.2');
 
-        /** @var PriceList $priceList */
-        $priceList = $this->getReference('combined_price_list_2');
+        /** @var CombinedPriceList $priceList */
+        $priceList = $this->getReference('3f_4t_2f');
 
-        $priceListToAccount = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository('OroB2BPricingBundle:CombinedPriceListToAccount')
-            ->findOneBy(['account' => $account, 'priceList' => $priceList]);
-        $this->assertNotNull($priceListToAccount);
+        /** @var Website $websiteUs */
+        $websiteUs = $this->getReference(LoadWebsiteData::WEBSITE1);
+
+        /** @var Website $websiteCa */
+        $websiteCa = $this->getReference(LoadWebsiteData::WEBSITE2);
 
         $this->assertEquals(
             $priceList->getId(),
-            $this->getRepository()->getCombinedPriceListByAccount($account)->getId()
+            $this->getRepository()->getCombinedPriceListByAccount($account, $websiteUs)->getId()
         );
-        $em = $this->getContainer()
-            ->get('doctrine')
-            ->getManagerForClass('OroB2BPricingBundle:CombinedPriceListToAccount');
-        $em->remove($priceListToAccount);
-        $em->flush();
-        $this->assertNull($this->getRepository()->getCombinedPriceListByAccount($account));
+        $this->assertNull($this->getRepository()->getCombinedPriceListByAccount($account, $websiteCa));
     }
 
     public function testAccountGroupPriceList()
     {
-        $this->markTestIncomplete();
         /** @var AccountGroup $accountGroup */
         $accountGroup = $this->getReference('account_group.group1');
 
-        /** @var PriceList $priceList */
-        $priceList = $this->getReference('combined_price_list_1');
+        /** @var CombinedPriceList $priceList */
+        $priceList = $this->getReference('1t_2f_3t');
 
-        $priceListToAccountGroup = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository('OroB2BPricingBundle:CombinedPriceListToAccountGroup')
-            ->findOneBy(['accountGroup' => $accountGroup, 'priceList' => $priceList]);
-        $this->assertNotNull($priceListToAccountGroup);
+        /** @var Website $websiteUs */
+        $websiteUs = $this->getReference(LoadWebsiteData::WEBSITE1);
+
+        /** @var Website $websiteCa */
+        $websiteCa = $this->getReference(LoadWebsiteData::WEBSITE2);
 
         $this->assertEquals(
             $priceList->getId(),
-            $this->getRepository()->getCombinedPriceListByAccountGroup($accountGroup)->getId()
+            $this->getRepository()->getCombinedPriceListByAccountGroup($accountGroup, $websiteUs)->getId()
         );
-        $em = $this->getContainer()
-            ->get('doctrine')
-            ->getManagerForClass('OroB2BPricingBundle:CombinedPriceListToAccountGroup');
-        $em->remove($priceListToAccountGroup);
-        $em->flush();
-        $this->assertNull($this->getRepository()->getCombinedPriceListByAccountGroup($accountGroup));
+        $this->assertNull($this->getRepository()->getCombinedPriceListByAccountGroup($accountGroup, $websiteCa));
     }
 
     public function testWebsitePriceList()
     {
-        $this->markTestIncomplete();
-        /** @var Website $website */
-        $website = $this->getReference('US');
+        /** @var CombinedPriceList $priceList */
+        $priceList = $this->getReference('1t_2f_3t');
 
-        /** @var PriceList $priceList */
-        $priceList = $this->getReference('combined_price_list_1');
+        /** @var Website $websiteUs */
+        $websiteUs = $this->getReference(LoadWebsiteData::WEBSITE1);
 
-        $priceListToAccountGroup = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository('OroB2BPricingBundle:CombinedPriceListToWebsite')
-            ->findOneBy(['website' => $website, 'priceList' => $priceList]);
-        $this->assertNotNull($priceListToAccountGroup);
+        /** @var Website $websiteCa */
+        $websiteCa = $this->getReference(LoadWebsiteData::WEBSITE2);
 
         $this->assertEquals(
             $priceList->getId(),
-            $this->getRepository()->getCombinedPriceListByWebsite($website)->getId()
+            $this->getRepository()->getCombinedPriceListByWebsite($websiteUs)->getId()
         );
-        $em = $this->getContainer()
-            ->get('doctrine')
-            ->getManagerForClass('OroB2BPricingBundle:CombinedPriceListToWebsite');
-        $em->remove($priceListToAccountGroup);
-        $em->flush();
-        $this->assertNull($this->getRepository()->getCombinedPriceListByWebsite($website));
+        $this->assertNull($this->getRepository()->getCombinedPriceListByWebsite($websiteCa));
     }
 
     /**
