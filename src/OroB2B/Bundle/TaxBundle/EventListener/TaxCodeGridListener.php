@@ -42,33 +42,12 @@ class TaxCodeGridListener
     public function onBuildBefore(BuildBefore $event)
     {
         $config = $event->getConfig();
-        $config->offsetAddToArrayByPath(
-            '[source][query][select]',
-            [sprintf('%s.code AS %s', $this->getJoinAlias(), $this->getDataName())]
-        );
-        $config->offsetAddToArrayByPath(
-            '[source][query][join][left]',
-            [
-                [
-                    'join' => $this->taxCodeClass,
-                    'alias' => $this->getJoinAlias(),
-                    'conditionType' => Expr\Join::WITH,
-                    'condition' => (string)$this->expressionBuilder->isMemberOf(
-                        $this->getAlias($config),
-                        sprintf('%s.%s', $this->getJoinAlias(), $this->getFieldName($this->relatedEntityClass))
-                    ),
-                ],
-            ]
-        );
-        $config->offsetSetByPath(sprintf('[columns][%s]', $this->getDataName()), ['label' => $this->getColumnLabel()]);
-        $config->offsetSetByPath(
-            sprintf('[sorters][columns][%s]', $this->getDataName()),
-            ['data_name' => $this->getDataName()]
-        );
-        $config->offsetSetByPath(
-            sprintf('[filters][columns][%s]', $this->getDataName()),
-            ['type' => 'string', 'data_name' => $this->getDataName()]
-        );
+
+        $this->addSelect($config);
+        $this->addJoin($config);
+        $this->addColumn($config);
+        $this->addSorter($config);
+        $this->addFilter($config);
     }
 
     /**
@@ -135,5 +114,67 @@ class TaxCodeGridListener
     protected function getJoinAlias()
     {
         return self::JOIN_ALIAS;
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     */
+    protected function addSelect(DatagridConfiguration $config)
+    {
+        $config->offsetAddToArrayByPath(
+            '[source][query][select]',
+            [sprintf('%s.code AS %s', $this->getJoinAlias(), $this->getDataName())]
+        );
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     */
+    protected function addJoin(DatagridConfiguration $config)
+    {
+        $config->offsetAddToArrayByPath(
+            '[source][query][join][left]',
+            [
+                [
+                    'join' => $this->taxCodeClass,
+                    'alias' => $this->getJoinAlias(),
+                    'conditionType' => Expr\Join::WITH,
+                    'condition' => (string)$this->expressionBuilder->isMemberOf(
+                        $this->getAlias($config),
+                        sprintf('%s.%s', $this->getJoinAlias(), $this->getFieldName($this->relatedEntityClass))
+                    ),
+                ],
+            ]
+        );
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     */
+    protected function addColumn(DatagridConfiguration $config)
+    {
+        $config->offsetSetByPath(sprintf('[columns][%s]', $this->getDataName()), ['label' => $this->getColumnLabel()]);
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     */
+    protected function addSorter(DatagridConfiguration $config)
+    {
+        $config->offsetSetByPath(
+            sprintf('[sorters][columns][%s]', $this->getDataName()),
+            ['data_name' => $this->getDataName()]
+        );
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     */
+    protected function addFilter(DatagridConfiguration $config)
+    {
+        $config->offsetSetByPath(
+            sprintf('[filters][columns][%s]', $this->getDataName()),
+            ['type' => 'string', 'data_name' => $this->getDataName()]
+        );
     }
 }

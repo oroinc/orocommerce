@@ -137,13 +137,21 @@ services:
             - { name: validator.constraint_validator, alias: orob2b_tax_zip_code_fields }
 
     orob2b_tax.event_listener.account_grid:
-        class: %orob2b_tax.event_listener.account_grid.class%
+        class: %orob2b_tax.event_listener.tax_code_grid.class%
         arguments:
             - @oro_entity.doctrine_helper
             - %orob2b_tax.entity.account_tax_code.class%
             - %orob2b_account.entity.account.class%
-        calls:
-            - [setRelatedAccountGroupClass, [%orob2b_account.entity.account_group.class%]]
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-select-grid, method: onBuildBefore }
+
+
+    orob2b_tax.event_listener.account_grid_groups:
+        class: %orob2b_tax.event_listener.account_grid.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+            - %orob2b_tax.entity.account_tax_code.class%
+            - %orob2b_account.entity.account_group.class%
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-select-grid, method: onBuildBefore }
 

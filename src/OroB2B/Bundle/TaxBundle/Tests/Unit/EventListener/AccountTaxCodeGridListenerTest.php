@@ -22,10 +22,10 @@ class AccountTaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
         $metadata = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadata')->disableOriginalConstructor()
             ->getMock();
 
-        $this->doctrineHelper->expects($this->exactly(2))->method('getEntityMetadataForClass')
+        $this->doctrineHelper->expects($this->once())->method('getEntityMetadataForClass')
             ->with('OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode')->willReturn($metadata);
 
-        $metadata->expects($this->exactly(2))->method('getAssociationsByTargetClass')->with('\stdClass')
+        $metadata->expects($this->once())->method('getAssociationsByTargetClass')->with('\stdClass')
             ->willReturn(['stdClass' => ['fieldName' => 'stds']]);
 
         $this->listener->onBuildBefore($event);
@@ -35,22 +35,15 @@ class AccountTaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
                 'source' => [
                     'query' => [
                         'select' => [
-                            'taxCodes.code AS taxCode',
                             'accountGroupTaxCodes.code AS accountGroupTaxCode'
                         ],
                         'join' => [
                             'left' => [
                                 [
                                     'join' => 'OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode',
-                                    'alias' => 'taxCodes',
-                                    'conditionType' => 'WITH',
-                                    'condition' => 'std MEMBER OF taxCodes.stds',
-                                ],
-                                [
-                                    'join' => 'OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode',
                                     'alias' => 'accountGroupTaxCodes',
                                     'conditionType' => 'WITH',
-                                    'condition' => 'std.group MEMBER OF accountGroupTaxCodes.stds',
+                                    'condition' => 'std MEMBER OF accountGroupTaxCodes.stds'
                                 ],
                             ],
                         ],
@@ -58,19 +51,16 @@ class AccountTaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
                     ],
                 ],
                 'columns' => [
-                    'taxCode' => ['label' => 'orob2b.tax.taxcode.label'],
                     'accountGroupTaxCode' => ['label' => 'orob2b.tax.taxcode.accountgroup.label', 'renderable' => false]
                 ],
                 'sorters' => [
                     'columns' => [
-                        'taxCode' => ['data_name' => 'taxCode'],
                         'accountGroupTaxCode' => ['data_name' => 'accountGroupTaxCode']
                     ]
                 ],
 
                 'filters' => [
                     'columns' => [
-                        'taxCode' => ['data_name' => 'taxCode', 'type' => 'string'],
                         'accountGroupTaxCode' => ['data_name' => 'accountGroupTaxCode', 'type' => 'string'],
                     ]
                 ],
@@ -85,14 +75,10 @@ class AccountTaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
      */
     protected function createListener()
     {
-        $listener = new AccountTaxCodeGridListener(
+        return new AccountTaxCodeGridListener(
             $this->doctrineHelper,
             'OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode',
             '\stdClass'
         );
-
-        $listener->setRelatedAccountGroupClass('\stdClass');
-
-        return $listener;
     }
 }
