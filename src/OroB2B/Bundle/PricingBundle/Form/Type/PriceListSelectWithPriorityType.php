@@ -41,10 +41,10 @@ class PriceListSelectWithPriorityType extends AbstractType
                 ]
             )
             ->add(
-                'merge',
+                'mergeAllowed',
                 'checkbox',
                 [
-                    'label' => 'orob2b.pricing.pricelist.merge.label'
+                    'label' => 'orob2b.pricing.pricelist.merge_allowed.label'
                 ]
             );
     }

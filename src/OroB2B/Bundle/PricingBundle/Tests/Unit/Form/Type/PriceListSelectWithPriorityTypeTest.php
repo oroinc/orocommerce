@@ -89,29 +89,59 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'priceList' => self::PRICE_LIST_ID,
                     'priority'  => 100,
-                    'merge'     => true
+                    'mergeAllowed'     => true
                 ],
                 'expectedData' => [
                     'priceList' => $expectedPriceList,
                     'priority'  => 100,
-                    'merge'     => true
+                    'mergeAllowed'     => true
+                ]
+            ],
+            'without default data merge off' => [
+                'defaultData'   => [],
+                'submittedData' => [
+                    'priceList' => self::PRICE_LIST_ID,
+                    'priority'  => 100,
+                    'mergeAllowed'     => false
+                ],
+                'expectedData' => [
+                    'priceList' => $expectedPriceList,
+                    'priority'  => 100,
+                    'mergeAllowed'     => false
                 ]
             ],
             'with default data' => [
                 'defaultData'   => [
                     'priceList' => $existingPriceList,
                     'priority'  => 50,
-                    'merge'     => true
+                    'mergeAllowed'     => true
                 ],
                 'submittedData' => [
                     'priceList' => self::PRICE_LIST_ID,
                     'priority'  => 100,
-                    'merge'     => true
+                    'mergeAllowed'     => true
                 ],
                 'expectedData' => [
                     'priceList' => $expectedPriceList,
                     'priority'  => 100,
-                    'merge'     => true
+                    'mergeAllowed'     => true
+                ]
+            ],
+            'with default data merge off' => [
+                'defaultData'   => [
+                    'priceList' => $existingPriceList,
+                    'priority'  => 50,
+                    'mergeAllowed'     => false
+                ],
+                'submittedData' => [
+                    'priceList' => self::PRICE_LIST_ID,
+                    'priority'  => 100,
+                    'mergeAllowed'     => false
+                ],
+                'expectedData' => [
+                    'priceList' => $expectedPriceList,
+                    'priority'  => 100,
+                    'mergeAllowed'     => false
                 ]
             ],
         ];

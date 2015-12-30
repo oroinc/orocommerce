@@ -8,7 +8,7 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 class PriceListConfigConverter
 {
-    const MERGE_KEY = 'merge';
+    const MERGE_KEY = 'mergeAllowed';
     const PRIORITY_KEY = 'priority';
     const PRICE_LIST_KEY = 'priceList';
 
@@ -44,7 +44,7 @@ class PriceListConfigConverter
                 return [
                     self::PRICE_LIST_KEY => $config->getPriceList()->getId(),
                     self::PRIORITY_KEY => $config->getPriority(),
-                    self::MERGE_KEY => $config->isMerge(),
+                    self::MERGE_KEY => $config->isMergeAllowed(),
                 ];
             },
             $configs
@@ -101,7 +101,7 @@ class PriceListConfigConverter
             if ($config[self::PRICE_LIST_KEY] === $priceList->getId()) {
                 $configModel->setPriceList($priceList)
                     ->setPriority($config[self::PRIORITY_KEY])
-                    ->setMerge($config[self::MERGE_KEY]);
+                    ->setMergeAllowed($config[self::MERGE_KEY]);
 
                 return $configModel;
             }
