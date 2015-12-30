@@ -30,7 +30,7 @@ class CategoryRepository extends EntityRepository
     public function isCategoryVisible(Category $category, $configValue)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('COALESCE(cvr.visibility, '. $qb->expr()->literal($configValue).')')
+        $qb->select($this->formatConfigFallback('cvr.visibility', $configValue))
             ->from('OroB2BCatalogBundle:Category', 'category')
             ->leftJoin(
                 'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
