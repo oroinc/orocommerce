@@ -15,7 +15,7 @@
                     <td>{{ loop.index }}</td>
                     <td><a href="{{ path('orob2b_pricing_price_list_view', {'id': entity.priceList.id}) }}">{{ entity.priceList.name }}</a></td>
                     <td>{{ entity.priority }}</td>
-                    <td>{{ entity.mergeAllowed ? 'orob2b.pricing.pricelist.merge_allowed.on.label'|trans : 'orob2b.pricing.pricelist.merge_allowed.off.label'|trans }}</td>
+                    <td>{{ entity.mergeAllowed ? 'orob2b.pricing.pricelist.merge_allowed.yes.label'|trans : 'orob2b.pricing.pricelist.merge_allowed.no.label'|trans }}</td>
                 </tr>
             {% endfor %}
             </tbody>
