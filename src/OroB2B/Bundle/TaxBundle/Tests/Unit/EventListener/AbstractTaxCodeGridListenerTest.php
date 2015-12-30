@@ -56,20 +56,6 @@ abstract class AbstractTaxCodeGridListenerTest extends \PHPUnit_Framework_TestCa
     }
 
     /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage [source][query][from] is missing for grid "std-grid"
-     */
-    public function testOnBuildBeforeWithoutFromPart()
-    {
-        $gridConfig = DatagridConfiguration::create(['name' => 'std-grid']);
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $dataGrid */
-        $dataGrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
-        $event = new BuildBefore($dataGrid, $gridConfig);
-
-        $this->listener->onBuildBefore($event);
-    }
-
-    /**
      * @return object
      */
     abstract protected function createListener();

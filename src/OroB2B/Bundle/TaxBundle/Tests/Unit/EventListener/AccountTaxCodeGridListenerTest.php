@@ -12,8 +12,8 @@ class AccountTaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
 {
     public function testOnBuildBefore()
     {
-        $gridConfig = DatagridConfiguration::create(['name' => 'std-grid']);
-        $gridConfig->offsetSetByPath('[source][query][from]', [['alias' => 'std']]);
+        $gridConfig = DatagridConfiguration::create(['name' => 'accounts-grid']);
+        $gridConfig->offsetSetByPath('[source][query][from]', [['alias' => 'accounts']]);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $dataGrid */
         $dataGrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
@@ -26,7 +26,7 @@ class AccountTaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
             ->with('OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode')->willReturn($metadata);
 
         $metadata->expects($this->once())->method('getAssociationsByTargetClass')->with('\stdClass')
-            ->willReturn(['stdClass' => ['fieldName' => 'stds']]);
+            ->willReturn(['stdClass' => ['fieldName' => 'accountGroups']]);
 
         $this->listener->onBuildBefore($event);
 
@@ -43,11 +43,11 @@ class AccountTaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
                                     'join' => 'OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode',
                                     'alias' => 'accountGroupTaxCodes',
                                     'conditionType' => 'WITH',
-                                    'condition' => 'std MEMBER OF accountGroupTaxCodes.stds'
+                                    'condition' => 'account_group MEMBER OF accountGroupTaxCodes.accountGroups'
                                 ],
                             ],
                         ],
-                        'from' => [['alias' => 'std']],
+                        'from' => [['alias' => 'accounts']],
                     ],
                 ],
                 'columns' => [
@@ -64,7 +64,7 @@ class AccountTaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
                         'accountGroupTaxCode' => ['data_name' => 'accountGroupTaxCode', 'type' => 'string'],
                     ]
                 ],
-                'name' => 'std-grid',
+                'name' => 'accounts-grid',
             ],
             $gridConfig->toArray()
         );

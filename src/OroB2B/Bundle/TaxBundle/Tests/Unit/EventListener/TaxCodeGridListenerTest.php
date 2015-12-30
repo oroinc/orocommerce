@@ -12,8 +12,8 @@ class TaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
 {
     public function testOnBuildBefore()
     {
-        $gridConfig = DatagridConfiguration::create(['name' => 'std-grid']);
-        $gridConfig->offsetSetByPath('[source][query][from]', [['alias' => 'std']]);
+        $gridConfig = DatagridConfiguration::create(['name' => 'accounts-grid']);
+        $gridConfig->offsetSetByPath('[source][query][from]', [['alias' => 'account']]);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $dataGrid */
         $dataGrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
@@ -26,7 +26,7 @@ class TaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
             ->with('OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode')->willReturn($metadata);
 
         $metadata->expects($this->once())->method('getAssociationsByTargetClass')->with('\stdClass')
-            ->willReturn(['stdClass' => ['fieldName' => 'stds']]);
+            ->willReturn(['stdClass' => ['fieldName' => 'accounts']]);
 
         $this->listener->onBuildBefore($event);
 
@@ -41,21 +41,36 @@ class TaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
                                     'join' => 'OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode',
                                     'alias' => 'taxCodes',
                                     'conditionType' => 'WITH',
-                                    'condition' => 'std MEMBER OF taxCodes.stds',
+                                    'condition' => 'account MEMBER OF taxCodes.accounts',
                                 ],
                             ],
                         ],
-                        'from' => [['alias' => 'std']],
+                        'from' => [['alias' => 'account']],
                     ],
                 ],
                 'columns' => ['taxCode' => ['label' => 'orob2b.tax.taxcode.label']],
                 'sorters' => ['columns' => ['taxCode' => ['data_name' => 'taxCode']]],
                 'filters' => ['columns' => ['taxCode' => ['data_name' => 'taxCode', 'type' => 'string']]],
-                'name' => 'std-grid',
+                'name' => 'accounts-grid',
             ],
             $gridConfig->toArray()
         );
     }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage [source][query][from] is missing for grid "std-grid"
+     */
+    public function testOnBuildBeforeWithoutFromPart()
+    {
+        $gridConfig = DatagridConfiguration::create(['name' => 'std-grid']);
+        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $dataGrid */
+        $dataGrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $event = new BuildBefore($dataGrid, $gridConfig);
+
+        $this->listener->onBuildBefore($event);
+    }
+
 
     /**
      * @return TaxCodeGridListener

@@ -17,27 +17,27 @@ class AccountTaxCodeGridListener extends TaxCodeGridListener
         );
     }
 
-    /**
-     * @return string
-     */
+    /** {@inheritdoc} */
     protected function getDataName()
     {
         return 'accountGroupTaxCode';
     }
 
-    /**
-     * @return string
-     */
+    /** {@inheritdoc} */
     protected function getColumnLabel()
     {
         return 'orob2b.tax.taxcode.accountgroup.label';
     }
 
-    /**
-     * @return string
-     */
+    /** {@inheritdoc} */
     protected function getJoinAlias()
     {
         return 'accountGroupTaxCodes';
+    }
+
+    /** {@inheritdoc} */
+    protected function getAlias(DatagridConfiguration $configuration)
+    {
+        return 'account_group';
     }
 }
