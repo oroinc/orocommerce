@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
