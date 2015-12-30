@@ -1,8 +1,7 @@
 actions:
     orob2b_product_duplicate_action:
         label: orob2b.product.ui.duplicate
-        enabled: true
-        applications: [backend, frontend]
+        applications: [backend]
         routes:
             - orob2b_product_view
         datagrids:
@@ -11,7 +10,7 @@ actions:
         order: 10
         button_options:
             icon: icon-copy
-        postfunctions:
+        functions:
             - @call_service_method:
                 service: orob2b_product.service.duplicator
                 method: duplicate

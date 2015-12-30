@@ -1,16 +1,14 @@
 actions:
     orob2b_shoppinglist_action_createorder:
         label: orob2b.shoppinglist.btn.create_order
-        enabled: true
-        applications:
-            - backend
+        applications: [backend]
         routes:
             - orob2b_shopping_list_view
         acl_resource: orob2b_order_create
         order: 10
         button_options:
             icon: icon-briefcase
-        postfunctions:
+        functions:
             - @call_service_method:
                 service: orob2b_shopping_list.service.product_data_storage
                 method: saveToStorage
@@ -22,16 +20,14 @@ actions:
 
     orob2b_shoppinglist_frontend_action_createorder:
         label: orob2b.frontend.shoppinglist.btn.create_order
-        enabled: true
-        applications:
-            - frontend
+        applications: [frontend]
         routes:
             - orob2b_shopping_list_frontend_view
         acl_resource: orob2b_order_frontend_create
         order: 10
         button_options:
             icon: icon-briefcase
-        postfunctions:
+        functions:
             - @call_service_method:
                 service: orob2b_shopping_list.service.product_data_storage
                 method: saveToStorage
@@ -64,16 +60,14 @@ actions:
 
     orob2b_shoppinglist_frontend_action_request_quote:
         label: orob2b.frontend.shoppinglist.btn.request_quote_create_rfp
-        enabled: true
-        applications:
-            - frontend
+        applications: [frontend]
         routes:
             - orob2b_shopping_list_frontend_view
         acl_resource: orob2b_rfp_frontend_request_create
         order: 20
         button_options:
             icon: icon-briefcase
-        postfunctions:
+        functions:
             - @call_service_method:
                 service: orob2b_shopping_list.service.product_data_storage
                 method: saveToStorage
@@ -123,14 +117,14 @@ actions:
                 allowMinimize: true
                 dblclick: maximize
                 maximizedHeightDecreaseBy: minimize-bar
-        initfunctions:
+        form_init:
             - @create_object:
                 class: OroB2B\Bundle\ShoppingListBundle\Entity\LineItem
                 attribute: $.lineItem
             - @assign_value: [$.lineItem.shoppingList, $.data]
             - @assign_value: [$.lineItem.accountUser, $.data.accountUser]
             - @assign_value: [$.lineItem.organization, $.data.organization]
-        postfunctions:
+        functions:
             - @call_service_method:
                 service: orob2b_shopping_list.shopping_list.manager
                 method: addLineItem
@@ -148,9 +142,9 @@ actions:
         frontend_options:
             options:
                 modal: true
-        initfunctions:
+        form_init:
             - @assign_value: [$.lineItem, $.data]
-        postfunctions:
+        functions:
             - @flash_message:
                 message: orob2b.shoppinglist.lineitem.flash.updated
                 type: 'success'
@@ -160,7 +154,7 @@ actions:
         acl_resource: [EDIT, entity:OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
         datagrids:
             - shopping-list-line-items-grid
-        postfunctions:
+        functions:
             - @refresh_grid: shopping-list-line-items-grid
 
     orob2b_shoppinglist_frontend_updatelineitem:
@@ -168,5 +162,5 @@ actions:
         acl_resource: [EDIT, entity:commerce@OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
         datagrids:
             - frontend-shopping-list-line-items-grid
-        postfunctions:
+        functions:
             - @refresh_grid: frontend-shopping-list-line-items-grid

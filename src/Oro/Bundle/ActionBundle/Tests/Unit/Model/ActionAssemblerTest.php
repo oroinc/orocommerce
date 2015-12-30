@@ -73,8 +73,8 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
             ->setConditions('conditions', [])
             ->setConditions('preconditions', [])
             ->setFunctions('prefunctions', [])
-            ->setFunctions('initfunctions', [])
-            ->setFunctions('postfunctions', [])
+            ->setFunctions('form_init', [])
+            ->setFunctions('functions', [])
             ->setFormType(ActionType::NAME);
 
         $definition2 = new ActionDefinition();
@@ -89,8 +89,8 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
             ->setConditions('preconditions', ['config_pre_cond'])
             ->setConditions('conditions', ['config_cond'])
             ->setFunctions('prefunctions', ['config_pre_func'])
-            ->setFunctions('initfunctions', ['config_init_func'])
-            ->setFunctions('postfunctions', ['config_post_func'])
+            ->setFunctions('form_init', ['config_form_init_func'])
+            ->setFunctions('functions', ['config_post_func'])
             ->setFormOptions(['config_form_options'])
             ->setFrontendOptions(['config_frontend_options'])
             ->setOrder(77)
@@ -113,8 +113,8 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
              ])
             ->setConditions('conditions', ['config_cond'])
             ->setFunctions('prefunctions', ['config_pre_func'])
-            ->setFunctions('initfunctions', ['config_init_func'])
-            ->setFunctions('postfunctions', ['config_post_func'])
+            ->setFunctions('form_init', ['config_form_init_func'])
+            ->setFunctions('functions', ['config_post_func'])
             ->setFormOptions(['config_form_options'])
             ->setFrontendOptions(['config_frontend_options'])
             ->setOrder(77)
@@ -157,8 +157,8 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
                         'conditions' => ['config_cond'],
                         'prefunctions' => ['config_pre_func'],
                         'preconditions' => ['config_pre_cond'],
-                        'initfunctions' => ['config_init_func'],
-                        'postfunctions' => ['config_post_func'],
+                        'form_init' => ['config_form_init_func'],
+                        'functions' => ['config_post_func'],
                         'form_options' => ['config_form_options'],
                         'frontend_options' => ['config_frontend_options'],
                         'order' => 77,
@@ -186,8 +186,8 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
                         'conditions' => ['config_cond'],
                         'prefunctions' => ['config_pre_func'],
                         'preconditions' => ['config_pre_cond'],
-                        'initfunctions' => ['config_init_func'],
-                        'postfunctions' => ['config_post_func'],
+                        'form_init' => ['config_form_init_func'],
+                        'functions' => ['config_post_func'],
                         'form_options' => ['config_form_options'],
                         'frontend_options' => ['config_frontend_options'],
                         'order' => 77,

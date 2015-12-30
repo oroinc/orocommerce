@@ -7,6 +7,7 @@ Table of Contents
  - [Main Entities](#main-entities)
  - [How it works?](#how-it-works)
  - [Configuration](#configuration)
+ - [Action Diagram](#action-diagram)
  - [Configuration Validation](#configuration-validation)
 
 What are Actions?
@@ -45,9 +46,9 @@ Attribute contains name and label as additional parameters.
 * **Condition** - defines whether specific Action is allowed with specified input data. Conditions can be nested.
 
 * **Functions** - operations are assigned to Action and executed when Action is performed.
-There are two kind of actions: Pre Functions, Init Functions and Post Functions.
-The difference between them is that Pre Functions are executed before Action button redder, Init Functions are executed
-before Action and Post Functions are executed after Action.
+There are two kind of actions: Pre Functions, Form Init Functions and Functions.
+The difference between them is that Pre Functions are executed before Action button redder, Form Init Functions are
+executed before Action and Functions are executed after Action.
 Actions can be used to perform any operations with data in Action Data or other entities.
 
 How it works?
@@ -57,7 +58,7 @@ Each action relates to the some entity types (i.e. consists full class name) or\
 where action should be displayed or\and datagrids. Before page loading Action Bundle chooses actions that
 are corresponded to page's entity\route. Then these actions checking for Pre conditions.
 If all Pre conditions are met - Action's button is displaying.
-After user click on the button - all postfunctions will be executed if pre conditions and conditions are met.
+After user click on the button - all functions will be executed if pre conditions and conditions are met.
 
 Configuration
 -------------
@@ -126,7 +127,7 @@ actions:
             attribute_default_values:                               # (optional) define default values for attributes
                 demo_attr: $demo                                    # use attribute name and property path or simple string for attribute value
 
-        initfunctions:                                              # (optional) any needed functions which will execute before showing form dialog
+        form_init:                                                  # (optional) any needed functions which will execute before showing form dialog
             - @assign_value:                                        # function alias
                 conditions:                                         # (optional) conditions list to allow current function
                     @empty: $description                            # condition definition
@@ -142,7 +143,7 @@ actions:
         conditions:                                                 # (optional) pre conditions for display Action button
             @gt: [$updatedAt, $.date]                               # condition definition
 
-        postfunctions:                                              # (optional) any needed post functions which will execute after click on th button
+        functions:                                                  # (optional) any needed functions which will execute after click on th button
             - @assign_value: [$expired, true]                       # function definition
 ```
 
@@ -150,7 +151,7 @@ This configuration describes action that relates to the ``MyEntity`` entity. On 
 of this entity (in case of field 'updatedAt' > new DateTime('now')) will be displayed button with label
 "adme.demo.myentity.actions.myentity_action". After click on this button - will run postfunction "assign_value" and set
 field 'expired' to `true`.
-If `form_options` are specified after click on button will be shown form dialog with attributes fields. And postfunctions
+If `form_options` are specified after click on button will be shown form dialog with attributes fields. And functions
 will run only on form submit.
 
 Configuration Validation

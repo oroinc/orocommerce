@@ -1,8 +1,7 @@
 actions:
     orob2b_pricing_add_product_price_action:
         label: orob2b.pricing.add_product_price
-        enabled: true
-        applications: [backend, frontend]
+        applications: [backend]
         routes: [orob2b_pricing_price_list_view]
         order: 10
         acl_resource: ['CREATE', 'entity:OroB2B\Bundle\PricingBundle\Entity\ProductPrice']
@@ -35,13 +34,13 @@ actions:
             attribute_default_values:
                 price: $.price
 
-        initfunctions:
+        form_init:
             - @create_object:
                 class: OroB2B\Bundle\PricingBundle\Entity\ProductPrice
                 attribute: $.price
             - @assign_value: [$.price.priceList, $.data]
 
-        postfunctions:
+        functions:
             - @create_entity:
                 class: OroB2B\Bundle\PricingBundle\Entity\ProductPrice
                 attribute: $.newPrice

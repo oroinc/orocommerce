@@ -42,6 +42,17 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
     {
         $nodeDefinition
             ->children()
+                ->arrayNode('replace')
+                    ->beforeNormalization()
+                        ->always(
+                            function ($replace) {
+                                return (array)$replace;
+                            }
+                        )
+                        ->end()
+                    ->prototype('scalar')
+                    ->end()
+                ->end()
                 ->scalarNode('label')
                     ->isRequired()
                     ->cannotBeEmpty()

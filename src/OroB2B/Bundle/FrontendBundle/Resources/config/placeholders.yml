@@ -17,8 +17,6 @@ placeholders:
         items:
             window_bundle_js:
                 order: 200
-            frontend_window_bundle_js:
-                order: 200
 
     install_additional_configuration_fields:
         items:
@@ -41,9 +39,6 @@ items:
     window_bundle_js:
         template: OroWindowsBundle:Include:javascript.html.twig
         applicable: @orob2b_frontend.placeholder.filter->isBackendRoute()
-    frontend_window_bundle_js:
-        template: OroB2BFrontendBundle:Windows:javascript.html.twig
-        applicable: @orob2b_frontend.placeholder.filter->isFrontendRoute()
     view_oro_activity_list:
         applicable: @orob2b_frontend.activity_list.placeholder.filter->isApplicable($entity$, Oro\Bundle\ActivityBundle\EntityConfig\ActivityScope::VIEW_PAGE)
         template: OroActivityListBundle:ActivityList:activities.html.twig
