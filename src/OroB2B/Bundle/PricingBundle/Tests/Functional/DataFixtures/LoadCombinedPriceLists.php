@@ -25,6 +25,7 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
     protected $data = [
         [
             'name' => '1t_2f_3t',
+            'enabled' => true,
             'priceListsToAccounts' => [],
             'priceListsToAccountGroups' => [
                 [
@@ -50,6 +51,7 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
         ],
         [
             'name' => '3f_4t_2f',
+            'enabled' => true,
             'priceListsToAccounts' => [
                 [
                     'account' => 'account.level_1.2',
@@ -88,7 +90,8 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
             $combinedPriceList
                 ->setName($priceListData['name'])
                 ->setCreatedAt($now)
-                ->setUpdatedAt($now);
+                ->setUpdatedAt($now)
+                ->setEnabled($priceListData['enabled']);
 
             $this->loadCombinedPriceListToPriceList($manager, $priceListData, $combinedPriceList);
             $this->loadCombinedPriceListToAccount($manager, $priceListData, $combinedPriceList);
