@@ -78,7 +78,10 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                     'functions' => [],
                     'attributes' => [],
                     'frontend_options' => [
-                        'dialog_options' => [],
+                        'options' => [],
+                        'show_dialog' => true
+                    ],
+                    'button_options' => [
                         'page_component_options' => [],
                         'data' => []
                     ],
@@ -96,21 +99,24 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'order' => 15,
                         'enabled' => false,
                         'frontend_options' => [
+                            'template' => 'template',
+                            'title' => 'dialog title',
+                            'options' => ['width' => 400],
+                            'confirmation' => 'Confirmation message',
+                            'show_dialog' => false
+                        ],
+                        'button_options' => [
                             'icon' => 'icon',
                             'class' => 'class',
                             'group' => 'group label',
                             'template' => 'template',
-                            'dialog_template' => 'template',
-                            'dialog_title' => 'dialog title',
-                            'dialog_options' => ['width' => 400],
                             'page_component_module' => 'testbundle/app/component',
                             'page_component_options' => [
                                 'param' => 'value'
                             ],
                             'data' => [
                                 'attribute' => 'attrValue'
-                            ],
-                            'confirmation' => 'Confirmation message'
+                            ]
                         ],
                         'form_options' => [
                             'attribute_fields' => [
@@ -176,21 +182,24 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         ]
                     ],
                     'frontend_options' => [
+                        'template' => 'template',
+                        'title' => 'dialog title',
+                        'options' => ['width' => 400],
+                        'confirmation' => 'Confirmation message',
+                        'show_dialog' => false
+                    ],
+                    'button_options' => [
                         'icon' => 'icon',
                         'class' => 'class',
                         'group' => 'group label',
                         'template' => 'template',
-                        'dialog_template' => 'template',
-                        'dialog_title' => 'dialog title',
-                        'dialog_options' => ['width' => 400],
                         'page_component_module' => 'testbundle/app/component',
                         'page_component_options' => [
                             'param' => 'value'
                         ],
                         'data' => [
                             'attribute' => 'attrValue'
-                        ],
-                        'confirmation' => 'Confirmation message'
+                        ]
                     ],
                     'form_options' => [
                         'attribute_fields' => [
