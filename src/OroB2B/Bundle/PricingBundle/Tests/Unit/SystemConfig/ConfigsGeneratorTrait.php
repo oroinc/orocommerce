@@ -26,7 +26,11 @@ trait ConfigsGeneratorTrait
             $config = new PriceListConfig();
             $config->setPriceList($priceList)
                 ->setPriority($i * 100);
-            $config->setMerge(true);
+            $config->setMergeAllowed(true);
+            if ($i % 2 == 0) {
+                $config->setMergeAllowed(false);
+            }
+
             $result[] = $config;
         }
 

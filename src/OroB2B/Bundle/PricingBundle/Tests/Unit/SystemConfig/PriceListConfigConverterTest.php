@@ -16,8 +16,8 @@ class PriceListConfigConverterTest extends \PHPUnit_Framework_TestCase
         $testData = $this->createConfigs(2);
 
         $expected = [
-            ['priceList' => 1, 'priority' => 100, 'merge' => true],
-            ['priceList' => 2, 'priority' => 200, 'merge' => true]
+            ['priceList' => 1, 'priority' => 100, 'mergeAllowed' => true],
+            ['priceList' => 2, 'priority' => 200, 'mergeAllowed' => false]
         ];
 
         $actual = $converter->convertBeforeSave($testData);
@@ -30,8 +30,8 @@ class PriceListConfigConverterTest extends \PHPUnit_Framework_TestCase
         $converter = new PriceListConfigConverter($registry, '\PriceList');
 
         $configs = [
-            ['priceList' => 1, 'priority' => 100, 'merge' => true],
-            ['priceList' => 2, 'priority' => 200, 'merge' => true]
+            ['priceList' => 1, 'priority' => 100, 'mergeAllowed' => true],
+            ['priceList' => 2, 'priority' => 200, 'mergeAllowed' => false]
         ];
 
         $actual = $converter->convertFromSaved($configs);
@@ -52,8 +52,8 @@ class PriceListConfigConverterTest extends \PHPUnit_Framework_TestCase
         $converter = new PriceListConfigConverter($registry, '\PriceList');
 
         $configs = [
-            ['priceList' => 1, 'priority' => 100, 'merge' => true],
-            ['priceList' => 5, 'priority' => 500, 'merge' => false]
+            ['priceList' => 1, 'priority' => 100, 'mergeAllowed' => true],
+            ['priceList' => 5, 'priority' => 500, 'mergeAllowed' => false]
         ];
 
         $converter->convertFromSaved($configs);

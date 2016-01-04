@@ -117,12 +117,10 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
         $priceListFrom = $this->getFormMock();
         $priceListFrom->expects($this->once())
             ->method('setData')
-            ->with(
-                [
-                    ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100],
-                    ['priceList' => $this->getExisting()[2]->getPriceList(), 'priority' => 200],
-                ]
-            );
+            ->with([
+                ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100, 'mergeAllowed' => true],
+                ['priceList' => $this->getExisting()[2]->getPriceList(), 'priority' => 200, 'mergeAllowed' => true],
+            ]);
 
         $rootForm = $this->getFormMock();
         $fallbackField = $this->getFormMock();
@@ -171,12 +169,10 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
         $priceListFrom = $this->getMock('Symfony\Component\Form\FormInterface');
         $priceListFrom->expects($this->once())
             ->method('getData')
-            ->willReturn(
-                [
-                    ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100],
-                    ['priceList' => null, 'priority' => 200],
-                ]
-            );
+            ->willReturn([
+                ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100, 'mergeAllowed' => true],
+                ['priceList' => null, 'priority' => 200, 'mergeAllowed' => true],
+            ]);
 
         $rootForm = $this->getFormMock();
         $rootForm->expects($this->any())
@@ -230,10 +226,10 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
         $priceListFrom->expects($this->once())
             ->method('getData')
             ->willReturn([
-                ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100],
-                ['priceList' => $this->getExisting()[2]->getPriceList(), 'priority' => 200],
-                ['priceList' => $addedPriceList, 'priority' => 300],
-                ['priceList' => null, 'priority' => 400]
+                ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100, 'mergeAllowed' => true],
+                ['priceList' => $this->getExisting()[2]->getPriceList(), 'priority' => 200, 'mergeAllowed' => true],
+                ['priceList' => $addedPriceList, 'priority' => 300, 'mergeAllowed' => true],
+                ['priceList' => null, 'priority' => 400, 'mergeAllowed' => false]
             ]);
 
         $rootForm = $this->getFormMock();
