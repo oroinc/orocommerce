@@ -101,13 +101,15 @@ class ShoppingListLineItemHandler
      * @param ShoppingList $shoppingList
      * @return LineItem
      */
-    public function prepareLineItemWithProduct(AccountUser $accountUser, Product $product, ShoppingList $shoppingList = null)
-    {
+    public function prepareLineItemWithProduct(
+        AccountUser $accountUser,
+        Product $product,
+        ShoppingList $shoppingList = null
+    ) {
         $lineItem = new LineItem();
         $lineItem
             ->setProduct($product)
-            ->setAccountUser($accountUser)
-        ;
+            ->setAccountUser($accountUser);
 
         if (null !== $shoppingList) {
             $lineItem->setShoppingList($shoppingList);
@@ -128,7 +130,7 @@ class ShoppingListLineItemHandler
             /* @var $form \Symfony\Component\Form\Form */
             $name = $form->get('lineItem')->get('shoppingListLabel')->getData();
 
-            $shoppingList = $this->createCurrent($name);
+            $shoppingList = $this->shoppingListManager->createCurrent($name);
         }
 
         $lineItem->setShoppingList($shoppingList);
