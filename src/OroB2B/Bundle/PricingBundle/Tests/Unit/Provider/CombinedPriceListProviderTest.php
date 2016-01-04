@@ -81,6 +81,7 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
             $combinedPriceList
         );
         $this->assertEquals($expected['name'], $combinedPriceList->getName());
+        $this->assertEquals($expected['currencies'], $combinedPriceList->getCurrencies());
 
     }
 
@@ -117,6 +118,7 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expected' => [
                     'name' => '1t2f2t',
+                    'currencies' => ['EUR', 'USD'],
                 ]
             ]
         ];

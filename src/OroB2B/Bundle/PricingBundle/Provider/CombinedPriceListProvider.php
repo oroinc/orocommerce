@@ -154,6 +154,7 @@ class CombinedPriceListProvider
             $currencies = array_merge($currencies, $priceListsRelation->getPriceList()->getCurrencies());
         }
         $currencies = array_unique($currencies);
+
         return $currencies;
     }
 
