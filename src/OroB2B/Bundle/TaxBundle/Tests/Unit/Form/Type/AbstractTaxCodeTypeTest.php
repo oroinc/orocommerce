@@ -21,9 +21,11 @@ abstract class AbstractTaxCodeTypeTest extends FormIntegrationTestCase
         $this->formType->setDataClass($this->getDataClass());
     }
 
-    public function tearDown()
+    protected function tearDown()
     {
         unset($this->formType);
+
+        parent::tearDown();
     }
 
     /**

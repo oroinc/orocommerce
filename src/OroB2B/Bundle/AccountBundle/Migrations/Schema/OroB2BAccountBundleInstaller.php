@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AccountBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Types\Type;
 
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
@@ -155,6 +156,7 @@ class OroB2BAccountBundleInstaller implements
         $this->createOroB2BAccountProductVisibilityTable($schema);
         $this->createOroB2BAccountGroupProductVisibilityTable($schema);
 
+        $this->createOrob2BWindowsStateTable($schema);
         $this->createOroB2BProductVisibilityResolvedTable($schema);
         $this->createOroB2BAccountGroupProductVisibilityResolvedTable($schema);
         $this->createOroB2BAccountProductVisibilityResolvedTable($schema);
@@ -185,6 +187,7 @@ class OroB2BAccountBundleInstaller implements
         $this->addOroB2BAccountProductVisibilityForeignKeys($schema);
         $this->addOroB2BAccountGroupProductVisibilityForeignKeys($schema);
 
+        $this->addOrob2BWindowsStateForeignKeys($schema);
         $this->addOroB2BProductVisibilityResolvedForeignKeys($schema);
         $this->addOroB2BAccountGroupProductVisibilityResolvedForeignKeys($schema);
         $this->addOroB2BAccountProductVisibilityResolvedForeignKeys($schema);
@@ -241,7 +244,7 @@ class OroB2BAccountBundleInstaller implements
                 'application/vnd.ms-excel',
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 'application/vnd.ms-powerpoint',
-                'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+                'application/vnd.openxmlformats-officedocument.presentationml.presentation',
             ]
         );
 
@@ -292,7 +295,7 @@ class OroB2BAccountBundleInstaller implements
                 'application/vnd.ms-excel',
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 'application/vnd.ms-powerpoint',
-                'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+                'application/vnd.openxmlformats-officedocument.presentationml.presentation',
             ]
         );
 
@@ -1160,6 +1163,23 @@ class OroB2BAccountBundleInstaller implements
     }
 
     /**
+     * Create orob2b_windows_state table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BWindowsStateTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_windows_state');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('customer_user_id', 'integer', []);
+        $table->addColumn('data', Type::JSON_ARRAY, ['comment' => '(DC2Type:json_array)']);
+        $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addIndex(['customer_user_id'], 'orob2b_windows_state_acu_idx', []);
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
      * Add orob2b_category_visibility foreign keys.
      *
      * @param Schema $schema
@@ -1294,6 +1314,22 @@ class OroB2BAccountBundleInstaller implements
             ['account_group_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_windows_state foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BWindowsStateForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_windows_state');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account_user'),
+            ['customer_user_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 

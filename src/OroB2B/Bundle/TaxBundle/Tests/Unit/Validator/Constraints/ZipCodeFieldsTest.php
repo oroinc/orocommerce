@@ -14,12 +14,12 @@ class ZipCodeFieldsTest extends \PHPUnit_Framework_TestCase
      */
     protected $constraint;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->constraint = new ZipCodeFields();
     }
 
-    public function tearDown()
+    protected function tearDown()
     {
         unset($this->constraint);
     }

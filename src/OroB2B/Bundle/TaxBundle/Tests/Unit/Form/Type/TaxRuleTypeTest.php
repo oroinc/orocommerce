@@ -93,6 +93,8 @@ class TaxRuleTypeTest extends FormIntegrationTestCase
     protected function tearDown()
     {
         unset($this->formType);
+
+        parent::tearDown();
     }
 
     public function testGetName()
