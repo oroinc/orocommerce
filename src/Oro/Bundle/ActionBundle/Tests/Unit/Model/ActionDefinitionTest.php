@@ -85,7 +85,7 @@ class ActionDefinitionTest extends \PHPUnit_Framework_TestCase
     public function testGetAllowedFunctions()
     {
         $this->assertEquals(
-            [ActionDefinition::PREFUNCTIONS, ActionDefinition::INITFUNCTIONS, ActionDefinition::POSTFUNCTIONS],
+            [ActionDefinition::PREFUNCTIONS, ActionDefinition::FORM_INIT, ActionDefinition::FUNCTIONS],
             ActionDefinition::getAllowedFunctions()
         );
     }
@@ -103,6 +103,7 @@ class ActionDefinitionTest extends \PHPUnit_Framework_TestCase
                 ['applications', ['application1', 'application2']],
                 ['order', 77],
                 ['frontendOptions', ['config1', 'config2']],
+                ['buttonOptions', ['config1', 'config2']],
                 ['formOptions', ['config1', 'config2']],
                 ['formType', 'test_form_type'],
                 ['attributes', ['config1', 'config2']],

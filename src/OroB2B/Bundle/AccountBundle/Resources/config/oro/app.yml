@@ -33,3 +33,8 @@ security:
             provider:                       b2b_frontend_user
             context:                        account_identity
             anonymous:                      true
+
+doctrine:
+    orm:
+        resolve_target_entities:
+            OroB2B\Bundle\AccountBundle\Entity\CustomerUserIdentity: OroB2B\Bundle\AccountBundle\Entity\AccountUser

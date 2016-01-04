@@ -63,8 +63,7 @@ class ActionType extends AbstractType
         $resolver->setDefined(
             [
                 'attribute_fields',
-                'attribute_default_values',
-                'init_functions'
+                'attribute_default_values'
             ]
         );
 
@@ -80,8 +79,7 @@ class ActionType extends AbstractType
             [
                 'action' => 'Oro\Bundle\ActionBundle\Model\Action',
                 'attribute_fields' => 'array',
-                'attribute_default_values' => 'array',
-                'init_functions' => 'Oro\Bundle\WorkflowBundle\Model\Action\ActionInterface',
+                'attribute_default_values' => 'array'
             ]
         );
     }
@@ -91,7 +89,7 @@ class ActionType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $this->executeInitFunctions($builder, $options);
+        $this->initialization($builder, $options);
         $this->addEventListeners($builder, $options);
         $this->addAttributes($builder, $options);
     }
@@ -100,7 +98,7 @@ class ActionType extends AbstractType
      * @param FormBuilderInterface $builder
      * @param array $options
      */
-    protected function executeInitFunctions(FormBuilderInterface $builder, array $options)
+    protected function initialization(FormBuilderInterface $builder, array $options)
     {
         /** @var ActionData $data */
         $data = $builder->getData();

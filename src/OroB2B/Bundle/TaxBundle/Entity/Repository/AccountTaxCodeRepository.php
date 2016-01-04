@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityRepository;
 
 use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 
 class AccountTaxCodeRepository extends EntityRepository
 {
@@ -23,6 +24,25 @@ class AccountTaxCodeRepository extends EntityRepository
         return $this->createQueryBuilder('accountTaxCode')
             ->where(':account MEMBER OF accountTaxCode.accounts')
             ->setParameter('account', $account)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * @param AccountGroup $accountGroup
+     *
+     * @return AccountTaxCode|null
+     */
+    public function findOneByAccountGroup(AccountGroup $accountGroup)
+    {
+        if (!$accountGroup->getId()) {
+            return null;
+        }
+
+        return $this->createQueryBuilder('accountTaxCode')
+            ->where(':accountGroup MEMBER OF accountTaxCode.accountGroups')
+            ->setParameter('accountGroup', $accountGroup)
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();

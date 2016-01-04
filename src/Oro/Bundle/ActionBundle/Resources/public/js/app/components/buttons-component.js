@@ -118,6 +118,8 @@ define(function(require) {
                 }, this));
 
                 widget.render();
+            } else if ($element.data('page-url')) {
+                this.doRedirect($element.data('page-url'));
             } else {
                 mediator.execute('showLoading');
 

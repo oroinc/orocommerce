@@ -7,6 +7,7 @@ use Symfony\Component\DomCrawler\Form;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
 use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
 
 /**
@@ -83,6 +84,46 @@ class ProductControllerTest extends WebTestCase
 
         $html = $crawler->html();
         $this->assertContains($productTaxCode->getCode(), $html);
+    }
+
+    /**
+     * @depends testView
+     */
+    public function testTaxCodeViewContainsEntity()
+    {
+        /** @var ProductTaxCode $productTaxCode */
+        $productTaxCode = $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX . '.' . LoadProductTaxCodes::TAX_1);
+
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_tax_product_tax_code_view', ['id' => $productTaxCode->getId()])
+        );
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $grid = $crawler->filter('.inner-grid')->eq(0)->attr('data-page-component-options');
+        $this->assertContains(self::TEST_SKU, $grid);
+    }
+
+    /**
+     * @depends testTaxCodeViewContainsEntity
+     */
+    public function testGrid()
+    {
+        /** @var ProductTaxCode $productTaxCode */
+        $productTaxCode = $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX . '.' . LoadProductTaxCodes::TAX_1);
+
+        $response = $this->client->requestGrid(
+            'products-grid',
+            ['products-grid[_filter][sku][value]' => self::TEST_SKU]
+        );
+
+        $result = $this->getJsonResponseContent($response, 200);
+        $result = reset($result['data']);
+
+        $this->assertArrayHasKey('taxCode', $result);
+        $this->assertEquals($productTaxCode->getCode(), $result['taxCode']);
     }
 
     /**

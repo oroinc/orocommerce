@@ -53,7 +53,7 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
             ->execute();
         $this->assertResolvedEntitiesCount(0);
         $this->cacheBuilder->buildCache();
-        $this->assertResolvedEntitiesCount(20);
+        $this->assertResolvedEntitiesCount(19);
 
         // config fallback
         /** @var Product $firstProduct */
