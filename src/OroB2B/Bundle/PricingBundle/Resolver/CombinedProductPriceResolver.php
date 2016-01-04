@@ -22,12 +22,13 @@ class CombinedProductPriceResolver
         $this->registry = $registry;
     }
 
-    /**
-     * @param CombinedPriceList $priceList
-     */
-    public function combinePrices(CombinedPriceList $priceList)
+
+    public function combinePrices(CombinedPriceList $combinedPriceList)
     {
-        //TODO: BB-1842
+        $repo = $this->registry
+            ->getRepository('OroB2BPricingBundle:CombinedPriceListToPriceList');
+        $allowMerge = $repo->getPriceListsByCombined($combinedPriceList, true);
+        $notAllowMerge = $repo->getPriceListsByCombined($combinedPriceList, false);
     }
 
     /**

@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="orob2b_cmb_pl_to_pl")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository")
  */
 class CombinedPriceListToPriceList
 {
