@@ -138,7 +138,20 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
     public function validateWithExceptionProvider()
     {
         return [
-            'unknown_template' => [
+            'unknown button template' => [
+                'config' => [
+                    'action1' => [
+                        'routes' => [],
+                        'entities' => [],
+                        'button_options' => [
+                            'template' => 'unknown_template',
+                        ],
+                    ],
+                ],
+                'exceptionName' => 'Symfony\Component\Config\Definition\Exception\InvalidConfigurationException',
+                'exceptionMessage' => 'action1.button_options.template: Unable to find template "unknown_template"',
+            ],
+            'unknown frontend template' => [
                 'config' => [
                     'action1' => [
                         'routes' => [],
@@ -194,29 +207,6 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
                 'exceptionMessage' => 'action2.form_options.attribute_default_values: Unknown attribute "attribute3".',
             ],
         ];
-    }
-
-    /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage Unable to find template "unknown_template"
-     */
-    public function testValidateWithDialogTemplateException()
-    {
-        $this->twigLoader->expects($this->once())
-            ->method('exists')
-            ->willReturn(false);
-
-        $config = [
-            'exception_action' => [
-                'routes' => [],
-                'entities' => [],
-                'frontend_options' => [
-                    'dialog_template' => 'unknown_template',
-                ],
-            ],
-        ];
-
-        $this->validator->validate($config);
     }
 
     /**
@@ -335,9 +325,11 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
                         'valid_config_action' => array_merge($config, [
                             'entities' => ['Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity1'],
                             'routes' => ['route1'],
+                            'button_options' => [
+                                'template' => 'Template1'
+                            ],
                             'frontend_options' => [
-                                'template' => 'Template1',
-                                'dialog_template' => 'Template1',
+                                'template' => 'Template1'
                             ],
                         ]),
                     ],
