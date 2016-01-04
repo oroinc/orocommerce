@@ -277,6 +277,22 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     protected $owner;
 
     /**
+     * @var Collection|User[]
+     *
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\UserBundle\Entity\User")
+     * @ORM\JoinTable(
+     *      name="orob2b_account_user_sale_rep",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
+     *      }
+     * )
+     **/
+    protected $salesReps;
+
+    /**
      * @var \DateTime $createdAt
      *
      * @ORM\Column(name="created_at", type="datetime")
@@ -293,6 +309,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     public function __construct()
     {
         $this->addresses = new ArrayCollection();
+        $this->salesReps = new ArrayCollection();
         parent::__construct();
     }
 
@@ -656,6 +673,44 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
 
         foreach ($this->addresses as $accountUserAddress) {
             $accountUserAddress->setOwner($owner);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getSalesReps()
+    {
+        return $this->salesReps;
+    }
+
+    /**
+     * Add salesRep
+     *
+     * @param User $salesRep
+     * @return $this
+     */
+    public function addSalesRep(User $salesRep)
+    {
+        if (!$this->salesReps->contains($salesRep)) {
+            $this->salesReps[] = $salesRep;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove salesRep
+     *
+     * @param User $salesRep
+     * @return $this
+     */
+    public function removeSalesRep(User $salesRep)
+    {
+        if ($this->salesReps->contains($salesRep)) {
+            $this->salesReps->removeElement($salesRep);
         }
 
         return $this;

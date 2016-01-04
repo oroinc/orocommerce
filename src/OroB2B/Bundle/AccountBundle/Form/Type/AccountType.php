@@ -65,6 +65,13 @@ class AccountType extends AbstractType
                     'required' => false
                 ]
             )
+            ->add(
+                'salesReps',
+                'orob2b_account_sales_reps_collection',
+                [
+                    'label' => 'orob2b.account.sales_reps.label',
+                ]
+            )
         ;
     }
 

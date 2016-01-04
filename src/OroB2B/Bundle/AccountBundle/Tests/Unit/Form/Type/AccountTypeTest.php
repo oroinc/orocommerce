@@ -8,13 +8,14 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EnumSelectType;
+use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountGroupSelectType;
-use OroB2B\Bundle\AccountBundle\Form\Type\ParentAccountSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountType;
+use OroB2B\Bundle\AccountBundle\Form\Type\ParentAccountSelectType;
+use OroB2B\Bundle\AccountBundle\Form\Type\SalesRepsCollectionType;
+use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
 
 class AccountTypeTest extends FormIntegrationTestCase
@@ -77,6 +78,14 @@ class AccountTypeTest extends FormIntegrationTestCase
             ]
         );
 
+        $salesRepsCollectionType = new EntityType(
+            [
+                1 => $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 1),
+                2 => $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 2),
+            ],
+            SalesRepsCollectionType::NAME
+        );
+
         return [
             new PreloadedExtension(
                 [
@@ -84,7 +93,8 @@ class AccountTypeTest extends FormIntegrationTestCase
                     ParentAccountSelectType::NAME => $parentAccountSelectType,
                     'oro_address_collection'  => new AddressCollectionTypeStub(),
                     $addressEntityType->getName()  => $addressEntityType,
-                    EnumSelectType::NAME => $internalRatingEnumSelect
+                    EnumSelectType::NAME => $internalRatingEnumSelect,
+                    SalesRepsCollectionType::NAME => $salesRepsCollectionType,
                 ],
                 []
             )
@@ -144,7 +154,8 @@ class AccountTypeTest extends FormIntegrationTestCase
                     'group' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 1),
                     'parent' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2),
                     'addresses' => [$this->getAddresses()[1]],
-                    'internal_rating' => new StubEnumValue('2_of_5', '2 of 5')
+                    'internal_rating' => new StubEnumValue('2_of_5', '2 of 5'),
+                    'salesReps' => null,
                 ]
             ],
             'empty parent' => [
@@ -163,7 +174,8 @@ class AccountTypeTest extends FormIntegrationTestCase
                     'group' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 1),
                     'parent' => null,
                     'addresses' => [$this->getAddresses()[1]],
-                    'internal_rating' => new StubEnumValue('2_of_5', '2 of 5')
+                    'internal_rating' => new StubEnumValue('2_of_5', '2 of 5'),
+                    'salesReps' => null,
                 ]
             ],
             'empty group' => [
@@ -182,7 +194,8 @@ class AccountTypeTest extends FormIntegrationTestCase
                     'group' => null,
                     'parent' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2),
                     'addresses' => [$this->getAddresses()[1]],
-                    'internal_rating' => new StubEnumValue('2_of_5', '2 of 5')
+                    'internal_rating' => new StubEnumValue('2_of_5', '2 of 5'),
+                    'salesReps' => null,
                 ]
             ],
             'empty address' => [
@@ -201,7 +214,8 @@ class AccountTypeTest extends FormIntegrationTestCase
                     'group' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 1),
                     'parent' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2),
                     'addresses' => [],
-                    'internal_rating' => new StubEnumValue('2_of_5', '2 of 5')
+                    'internal_rating' => new StubEnumValue('2_of_5', '2 of 5'),
+                    'salesReps' => null,
                 ]
             ],
             'empty internal_rating' => [
@@ -220,6 +234,7 @@ class AccountTypeTest extends FormIntegrationTestCase
                     'parent' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2),
                     'internal_rating' => null,
                     'addresses' => [],
+                    'salesReps' => null,
                 ]
             ],
         ];

@@ -189,6 +189,22 @@ class Account extends ExtendAccount
     protected $organization;
 
     /**
+     * @var Collection|User[]
+     *
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\UserBundle\Entity\User")
+     * @ORM\JoinTable(
+     *      name="orob2b_account_sale_rep",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
+     *      }
+     * )
+     **/
+    protected $salesReps;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -198,6 +214,7 @@ class Account extends ExtendAccount
         $this->children = new ArrayCollection();
         $this->addresses = new ArrayCollection();
         $this->users = new ArrayCollection();
+        $this->salesReps = new ArrayCollection();
     }
 
     /**
@@ -502,6 +519,44 @@ class Account extends ExtendAccount
     public function setOrganization(Organization $organization = null)
     {
         $this->organization = $organization;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getSalesReps()
+    {
+        return $this->salesReps;
+    }
+
+    /**
+     * Add salesRep
+     *
+     * @param User $salesRep
+     * @return $this
+     */
+    public function addSalesRep(User $salesRep)
+    {
+        if (!$this->salesReps->contains($salesRep)) {
+            $this->salesReps[] = $salesRep;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove salesRep
+     *
+     * @param User $salesRep
+     * @return $this
+     */
+    public function removeSalesRep(User $salesRep)
+    {
+        if ($this->salesReps->contains($salesRep)) {
+            $this->salesReps->removeElement($salesRep);
+        }
 
         return $this;
     }

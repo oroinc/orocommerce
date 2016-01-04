@@ -16,14 +16,15 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as AccountSelectTypeStub;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntitySelectTypeStub;
+use OroB2B\Bundle\AccountBundle\Form\Type\SalesRepsCollectionType;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
+use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntitySelectTypeStub;
+use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityType;
 
 class FrontendAccountUserTypeTest extends AccountUserTypeTest
 {
@@ -75,6 +76,14 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
         $accountUserType->setDataClass(self::DATA_CLASS);
         $accountUserType->setAddressClass(self::ADDRESS_CLASS);
 
+        $salesRepsCollectionType = new EntityType(
+            [
+                1 => $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 1),
+                2 => $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 2),
+            ],
+            SalesRepsCollectionType::NAME
+        );
+
         return [
             new PreloadedExtension(
                 [
@@ -84,6 +93,7 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
                     $accountSelectType->getName() => $accountSelectType,
                     AddressCollectionTypeStub::NAME => new AddressCollectionTypeStub(),
                     $addressEntityType->getName() => $addressEntityType,
+                    SalesRepsCollectionType::NAME => $salesRepsCollectionType,
                 ],
                 []
             ),
