@@ -27,12 +27,12 @@ class Taxable
     protected $quantity;
 
     /**
-     * @var int
+     * @var float
      */
     protected $price;
 
     /**
-     * @var int
+     * @var float
      */
     protected $amount;
 
@@ -123,7 +123,7 @@ class Taxable
     }
 
     /**
-     * @return int
+     * @return float
      */
     public function getPrice()
     {
@@ -131,7 +131,7 @@ class Taxable
     }
 
     /**
-     * @param int $price
+     * @param float $price
      * @return $this
      */
     public function setPrice($price)
@@ -142,7 +142,7 @@ class Taxable
     }
 
     /**
-     * @return int
+     * @return float
      */
     public function getAmount()
     {
@@ -150,7 +150,7 @@ class Taxable
     }
 
     /**
-     * @param int $amount
+     * @param float $amount
      * @return $this
      */
     public function setAmount($amount)

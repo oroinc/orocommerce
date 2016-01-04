@@ -33,6 +33,14 @@ class TaxableTest extends \PHPUnit_Framework_TestCase
         ]);
     }
 
+    public function testItems()
+    {
+        $taxable = $this->createTaxable();
+        $items = new ArrayCollection(['some', 'items']);
+        $taxable->setItems($items);
+        $this->assertSame($items, $taxable->getItems());
+    }
+
     /**
      * @return Taxable
      */

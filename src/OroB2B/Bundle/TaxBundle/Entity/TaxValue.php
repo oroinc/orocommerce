@@ -6,6 +6,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareTrait;
+use Oro\Bundle\EntityBundle\EntityProperty\UpdatedAtAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\UpdatedAtAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
@@ -13,8 +17,11 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  * @ORM\Table(name="orob2b_tax_value")
  * @ORM\HasLifecycleCallbacks
  */
-class TaxValue
+class TaxValue implements CreatedAtAwareInterface, UpdatedAtAwareInterface
 {
+    use CreatedAtAwareTrait;
+    use UpdatedAtAwareTrait;
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -23,9 +30,9 @@ class TaxValue
     protected $id;
 
     /**
-     * @var int
+     * @var float
      *
-     * @ORM\Column(name="total_including_tax", type="integer")
+     * @ORM\Column(name="total_including_tax", type="float")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -37,9 +44,9 @@ class TaxValue
     protected $totalIncludingTax;
 
     /**
-     * @var int
+     * @var float
      *
-     * @ORM\Column(name="total_excluding_tax", type="integer")
+     * @ORM\Column(name="total_excluding_tax", type="float")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -51,9 +58,9 @@ class TaxValue
     protected $totalExcludingTax;
 
     /**
-     * @var int
+     * @var float
      *
-     * @ORM\Column(name="shipping_including_tax", type="integer")
+     * @ORM\Column(name="shipping_including_tax", type="float")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -65,9 +72,9 @@ class TaxValue
     protected $shippingIncludingTax;
 
     /**
-     * @var int
+     * @var float
      *
-     * @ORM\Column(name="shipping_excluding_tax", type="integer")
+     * @ORM\Column(name="shipping_excluding_tax", type="float")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -136,34 +143,6 @@ class TaxValue
      */
     protected $address;
 
-    /**
-     * @ORM\Column(name="created_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          }
-     *      }
-     * )
-     *
-     * @var \DateTime
-     */
-    protected $createdAt;
-
-    /**
-     * @ORM\Column(name="updated_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          }
-     *      }
-     * )
-     *
-     * @var \DateTime
-     */
-    protected $updatedAt;
-
     public function __construct()
     {
         $this->appliedTaxes = new ArrayCollection();
@@ -182,9 +161,9 @@ class TaxValue
     /**
      * Set totalIncludingTax
      *
-     * @param integer $totalIncludingTax
+     * @param float $totalIncludingTax
      *
-     * @return TaxValue
+     * @return $this
      */
     public function setTotalIncludingTax($totalIncludingTax)
     {
@@ -196,7 +175,7 @@ class TaxValue
     /**
      * Get totalIncludingTax
      *
-     * @return integer
+     * @return float
      */
     public function getTotalIncludingTax()
     {
@@ -206,9 +185,9 @@ class TaxValue
     /**
      * Set totalExcludingTax
      *
-     * @param integer $totalExcludingTax
+     * @param float $totalExcludingTax
      *
-     * @return TaxValue
+     * @return $this
      */
     public function setTotalExcludingTax($totalExcludingTax)
     {
@@ -220,7 +199,7 @@ class TaxValue
     /**
      * Get totalExcludingTax
      *
-     * @return integer
+     * @return float
      */
     public function getTotalExcludingTax()
     {
@@ -230,9 +209,9 @@ class TaxValue
     /**
      * Set shippingIncludingTax
      *
-     * @param integer $shippingIncludingTax
+     * @param float $shippingIncludingTax
      *
-     * @return TaxValue
+     * @return $this
      */
     public function setShippingIncludingTax($shippingIncludingTax)
     {
@@ -244,7 +223,7 @@ class TaxValue
     /**
      * Get shippingIncludingTax
      *
-     * @return integer
+     * @return float
      */
     public function getShippingIncludingTax()
     {
@@ -254,9 +233,9 @@ class TaxValue
     /**
      * Set shippingExcludingTax
      *
-     * @param integer $shippingExcludingTax
+     * @param float $shippingExcludingTax
      *
-     * @return TaxValue
+     * @return $this
      */
     public function setShippingExcludingTax($shippingExcludingTax)
     {
@@ -268,7 +247,7 @@ class TaxValue
     /**
      * Get shippingExcludingTax
      *
-     * @return integer
+     * @return float
      */
     public function getShippingExcludingTax()
     {
@@ -280,7 +259,7 @@ class TaxValue
      *
      * @param integer $entityId
      *
-     * @return TaxValue
+     * @return $this
      */
     public function setEntityId($entityId)
     {
@@ -304,7 +283,7 @@ class TaxValue
      *
      * @param string $address
      *
-     * @return TaxValue
+     * @return $this
      */
     public function setAddress($address)
     {
@@ -338,7 +317,7 @@ class TaxValue
      *
      * @param string $entityClass
      *
-     * @return TaxValue
+     * @return $this
      */
     public function setEntityClass($entityClass)
     {
@@ -352,7 +331,7 @@ class TaxValue
      *
      * @param TaxApply $appliedTax
      *
-     * @return TaxValue
+     * @return $this
      */
     public function addAppliedTax(TaxApply $appliedTax)
     {
@@ -384,44 +363,6 @@ class TaxValue
         if ($this->appliedTaxes->contains($appliedTax)) {
             $this->appliedTaxes->removeElement($appliedTax);
         }
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @param \DateTime $createdAt
-     * @return $this
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @param \DateTime $updatedAt
-     * @return $this
-     */
-    public function setUpdatedAt($updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
 
         return $this;
     }

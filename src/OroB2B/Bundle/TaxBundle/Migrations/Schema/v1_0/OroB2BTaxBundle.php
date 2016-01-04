@@ -194,10 +194,10 @@ class OroB2BTaxBundle implements Migration
         $table->addColumn('entity_class', 'string', ['length' => 255]);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addColumn('total_including_tax', 'integer', []);
-        $table->addColumn('total_excluding_tax', 'integer', []);
-        $table->addColumn('shipping_including_tax', 'integer', []);
-        $table->addColumn('shipping_excluding_tax', 'integer', []);
+        $table->addColumn('total_including_tax', 'float', []);
+        $table->addColumn('total_excluding_tax', 'float', []);
+        $table->addColumn('shipping_including_tax', 'float', []);
+        $table->addColumn('shipping_excluding_tax', 'float', []);
         $table->addColumn('entity_id', 'integer', []);
         $table->addColumn('address', 'string', ['length' => 255]);
         $table->setPrimaryKey(['id']);
@@ -230,14 +230,14 @@ class OroB2BTaxBundle implements Migration
         $table->addColumn('address', 'string', ['length' => 255]);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addColumn('unit_price_including_tax', 'integer', []);
-        $table->addColumn('unit_price_excluding_tax', 'integer', []);
-        $table->addColumn('unit_price_tax_amount', 'integer', []);
-        $table->addColumn('unit_price_adjustment', 'integer', []);
-        $table->addColumn('row_total_including_tax', 'integer', []);
-        $table->addColumn('row_total_excluding_tax', 'integer', []);
-        $table->addColumn('row_total_tax_amount', 'integer', []);
-        $table->addColumn('row_total_adjustment', 'integer', []);
+        $table->addColumn('unit_price_including_tax', 'float', []);
+        $table->addColumn('unit_price_excluding_tax', 'float', []);
+        $table->addColumn('unit_price_tax_amount', 'float', []);
+        $table->addColumn('unit_price_adjustment', 'float', []);
+        $table->addColumn('row_total_including_tax', 'float', []);
+        $table->addColumn('row_total_excluding_tax', 'float', []);
+        $table->addColumn('row_total_tax_amount', 'float', []);
+        $table->addColumn('row_total_adjustment', 'float', []);
         $table->addColumn('entity_id', 'integer', []);
         $table->setPrimaryKey(['id']);
     }
@@ -269,8 +269,8 @@ class OroB2BTaxBundle implements Migration
         $table->addColumn('rate', 'percent', ['comment' => '(DC2Type:percent)']);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addColumn('tax_amount', 'integer', []);
-        $table->addColumn('taxable_amount', 'integer', []);
+        $table->addColumn('tax_amount', 'float', []);
+        $table->addColumn('taxable_amount', 'float', []);
         $table->setPrimaryKey(['id']);
     }
 

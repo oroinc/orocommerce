@@ -4,6 +4,10 @@ namespace OroB2B\Bundle\TaxBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareTrait;
+use Oro\Bundle\EntityBundle\EntityProperty\UpdatedAtAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\UpdatedAtAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
@@ -11,8 +15,11 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  * @ORM\Table(name="orob2b_tax_apply")
  * @ORM\HasLifecycleCallbacks
  */
-class TaxApply
+class TaxApply implements CreatedAtAwareInterface, UpdatedAtAwareInterface
 {
+    use CreatedAtAwareTrait;
+    use UpdatedAtAwareTrait;
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -29,7 +36,7 @@ class TaxApply
     protected $tax;
 
     /**
-     * @var int
+     * @var float
      *
      * @ORM\Column(type="percent")
      * @ConfigField(
@@ -43,9 +50,9 @@ class TaxApply
     protected $rate;
 
     /**
-     * @var int
+     * @var float
      *
-     * @ORM\Column(name="tax_amount", type="integer")
+     * @ORM\Column(name="tax_amount", type="float")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -59,7 +66,7 @@ class TaxApply
     /**
      * @var int
      *
-     * @ORM\Column(name="taxable_amount", type="integer")
+     * @ORM\Column(name="taxable_amount", type="float")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -69,34 +76,6 @@ class TaxApply
      * )
      */
     protected $taxableAmount;
-
-    /**
-     * @ORM\Column(name="created_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          }
-     *      }
-     * )
-     *
-     * @var \DateTime
-     */
-    protected $createdAt;
-
-    /**
-     * @ORM\Column(name="updated_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          }
-     *      }
-     * )
-     *
-     * @var \DateTime
-     */
-    protected $updatedAt;
 
     /**
      * Get id
@@ -111,9 +90,9 @@ class TaxApply
     /**
      * Set rate
      *
-     * @param int $rate
+     * @param float $rate
      *
-     * @return TaxApply
+     * @return $this
      */
     public function setRate($rate)
     {
@@ -125,7 +104,7 @@ class TaxApply
     /**
      * Get rate
      *
-     * @return int
+     * @return float
      */
     public function getRate()
     {
@@ -135,9 +114,9 @@ class TaxApply
     /**
      * Set taxAmount
      *
-     * @param integer $taxAmount
+     * @param float $taxAmount
      *
-     * @return TaxApply
+     * @return $this
      */
     public function setTaxAmount($taxAmount)
     {
@@ -149,7 +128,7 @@ class TaxApply
     /**
      * Get taxAmount
      *
-     * @return integer
+     * @return float
      */
     public function getTaxAmount()
     {
@@ -159,9 +138,9 @@ class TaxApply
     /**
      * Set taxableAmount
      *
-     * @param integer $taxableAmount
+     * @param float $taxableAmount
      *
-     * @return TaxApply
+     * @return $this
      */
     public function setTaxableAmount($taxableAmount)
     {
@@ -173,7 +152,7 @@ class TaxApply
     /**
      * Get taxableAmount
      *
-     * @return integer
+     * @return float
      */
     public function getTaxableAmount()
     {
@@ -185,7 +164,7 @@ class TaxApply
      *
      * @param Tax $tax
      *
-     * @return TaxApply
+     * @return $this
      */
     public function setTax(Tax $tax = null)
     {
@@ -202,44 +181,6 @@ class TaxApply
     public function getTax()
     {
         return $this->tax;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @param \DateTime $createdAt
-     * @return $this
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @param \DateTime $updatedAt
-     * @return $this
-     */
-    public function setUpdatedAt($updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
     }
 
     /**

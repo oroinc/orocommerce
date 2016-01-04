@@ -6,6 +6,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareTrait;
+use Oro\Bundle\EntityBundle\EntityProperty\UpdatedAtAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\UpdatedAtAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
@@ -13,8 +17,11 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  * @ORM\Table(name="orob2b_tax_item_value")
  * @ORM\HasLifecycleCallbacks
  */
-class TaxItemValue
+class TaxItemValue implements CreatedAtAwareInterface, UpdatedAtAwareInterface
 {
+    use CreatedAtAwareTrait;
+    use UpdatedAtAwareTrait;
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -23,9 +30,9 @@ class TaxItemValue
     protected $id;
 
     /**
-     * @var int
+     * @var float
      *
-     * @ORM\Column(name="unit_price_including_tax", type="integer")
+     * @ORM\Column(name="unit_price_including_tax", type="float")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -37,9 +44,9 @@ class TaxItemValue
     protected $unitPriceIncludingTax;
 
     /**
-     * @var int
+     * @var float
      *
-     * @ORM\Column(name="unit_price_excluding_tax", type="integer")
+     * @ORM\Column(name="unit_price_excluding_tax", type="float")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -51,9 +58,9 @@ class TaxItemValue
     protected $unitPriceExcludingTax;
 
     /**
-     * @var int
+     * @var float
      *
-     * @ORM\Column(name="unit_price_tax_amount", type="integer")
+     * @ORM\Column(name="unit_price_tax_amount", type="float")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -65,9 +72,9 @@ class TaxItemValue
     protected $unitPriceTaxAmount;
 
     /**
-     * @var int
+     * @var float
      *
-     * @ORM\Column(name="unit_price_adjustment", type="integer")
+     * @ORM\Column(name="unit_price_adjustment", type="float")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -79,9 +86,9 @@ class TaxItemValue
     protected $unitPriceAdjustment;
 
     /**
-     * @var int
+     * @var float
      *
-     * @ORM\Column(name="row_total_including_tax", type="integer")
+     * @ORM\Column(name="row_total_including_tax", type="float")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -93,9 +100,9 @@ class TaxItemValue
     protected $rowTotalIncludingTax;
 
     /**
-     * @var int
+     * @var float
      *
-     * @ORM\Column(name="row_total_excluding_tax", type="integer")
+     * @ORM\Column(name="row_total_excluding_tax", type="float")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -107,9 +114,9 @@ class TaxItemValue
     protected $rowTotalExcludingTax;
 
     /**
-     * @var int
+     * @var float
      *
-     * @ORM\Column(name="row_total_tax_amount", type="integer")
+     * @ORM\Column(name="row_total_tax_amount", type="float")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -121,9 +128,9 @@ class TaxItemValue
     protected $rowTotalTaxAmount;
 
     /**
-     * @var int
+     * @var float
      *
-     * @ORM\Column(name="row_total_adjustment", type="integer")
+     * @ORM\Column(name="row_total_adjustment", type="float")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -192,34 +199,6 @@ class TaxItemValue
      */
     protected $appliedTaxes;
 
-    /**
-     * @ORM\Column(name="created_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          }
-     *      }
-     * )
-     *
-     * @var \DateTime
-     */
-    protected $createdAt;
-
-    /**
-     * @ORM\Column(name="updated_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          }
-     *      }
-     * )
-     *
-     * @var \DateTime
-     */
-    protected $updatedAt;
-
     public function __construct()
     {
         $this->appliedTaxes = new ArrayCollection();
@@ -238,9 +217,9 @@ class TaxItemValue
     /**
      * Set unitPriceIncludingTax
      *
-     * @param integer $unitPriceIncludingTax
+     * @param float $unitPriceIncludingTax
      *
-     * @return TaxItemValue
+     * @return $this
      */
     public function setUnitPriceIncludingTax($unitPriceIncludingTax)
     {
@@ -252,7 +231,7 @@ class TaxItemValue
     /**
      * Get unitPriceIncludingTax
      *
-     * @return integer
+     * @return float
      */
     public function getUnitPriceIncludingTax()
     {
@@ -262,9 +241,9 @@ class TaxItemValue
     /**
      * Set unitPriceExcludingTax
      *
-     * @param integer $unitPriceExcludingTax
+     * @param float $unitPriceExcludingTax
      *
-     * @return TaxItemValue
+     * @return $this
      */
     public function setUnitPriceExcludingTax($unitPriceExcludingTax)
     {
@@ -276,7 +255,7 @@ class TaxItemValue
     /**
      * Get unitPriceExcludingTax
      *
-     * @return integer
+     * @return float
      */
     public function getUnitPriceExcludingTax()
     {
@@ -286,9 +265,9 @@ class TaxItemValue
     /**
      * Set unitPriceTaxAmount
      *
-     * @param integer $unitPriceTaxAmount
+     * @param float $unitPriceTaxAmount
      *
-     * @return TaxItemValue
+     * @return $this
      */
     public function setUnitPriceTaxAmount($unitPriceTaxAmount)
     {
@@ -300,7 +279,7 @@ class TaxItemValue
     /**
      * Get unitPriceTaxAmount
      *
-     * @return integer
+     * @return float
      */
     public function getUnitPriceTaxAmount()
     {
@@ -310,9 +289,9 @@ class TaxItemValue
     /**
      * Set unitPriceAdjustment
      *
-     * @param integer $unitPriceAdjustment
+     * @param float $unitPriceAdjustment
      *
-     * @return TaxItemValue
+     * @return $this
      */
     public function setUnitPriceAdjustment($unitPriceAdjustment)
     {
@@ -324,7 +303,7 @@ class TaxItemValue
     /**
      * Get unitPriceAdjustment
      *
-     * @return integer
+     * @return float
      */
     public function getUnitPriceAdjustment()
     {
@@ -334,9 +313,9 @@ class TaxItemValue
     /**
      * Set rowTotalIncludingTax
      *
-     * @param integer $rowTotalIncludingTax
+     * @param float $rowTotalIncludingTax
      *
-     * @return TaxItemValue
+     * @return $this
      */
     public function setRowTotalIncludingTax($rowTotalIncludingTax)
     {
@@ -348,7 +327,7 @@ class TaxItemValue
     /**
      * Get rowTotalIncludingTax
      *
-     * @return integer
+     * @return float
      */
     public function getRowTotalIncludingTax()
     {
@@ -358,9 +337,9 @@ class TaxItemValue
     /**
      * Set rowTotalExcludingTax
      *
-     * @param integer $rowTotalExcludingTax
+     * @param float $rowTotalExcludingTax
      *
-     * @return TaxItemValue
+     * @return $this
      */
     public function setRowTotalExcludingTax($rowTotalExcludingTax)
     {
@@ -372,7 +351,7 @@ class TaxItemValue
     /**
      * Get rowTotalExcludingTax
      *
-     * @return integer
+     * @return float
      */
     public function getRowTotalExcludingTax()
     {
@@ -382,9 +361,9 @@ class TaxItemValue
     /**
      * Set rowTotalTaxAmount
      *
-     * @param integer $rowTotalTaxAmount
+     * @param float $rowTotalTaxAmount
      *
-     * @return TaxItemValue
+     * @return $this
      */
     public function setRowTotalTaxAmount($rowTotalTaxAmount)
     {
@@ -396,7 +375,7 @@ class TaxItemValue
     /**
      * Get rowTotalTaxAmount
      *
-     * @return integer
+     * @return float
      */
     public function getRowTotalTaxAmount()
     {
@@ -406,9 +385,9 @@ class TaxItemValue
     /**
      * Set rowTotalAdjustment
      *
-     * @param integer $rowTotalAdjustment
+     * @param float $rowTotalAdjustment
      *
-     * @return TaxItemValue
+     * @return $this
      */
     public function setRowTotalAdjustment($rowTotalAdjustment)
     {
@@ -420,7 +399,7 @@ class TaxItemValue
     /**
      * Get rowTotalAdjustment
      *
-     * @return integer
+     * @return float
      */
     public function getRowTotalAdjustment()
     {
@@ -432,7 +411,7 @@ class TaxItemValue
      *
      * @param string $entityClass
      *
-     * @return TaxItemValue
+     * @return $this
      */
     public function setEntityClass($entityClass)
     {
@@ -456,7 +435,7 @@ class TaxItemValue
      *
      * @param integer $entityId
      *
-     * @return TaxItemValue
+     * @return $this
      */
     public function setEntityId($entityId)
     {
@@ -480,7 +459,7 @@ class TaxItemValue
      *
      * @param string $address
      *
-     * @return TaxItemValue
+     * @return $this
      */
     public function setAddress($address)
     {
@@ -504,7 +483,7 @@ class TaxItemValue
      *
      * @param TaxApply $appliedTax
      *
-     * @return TaxItemValue
+     * @return $this
      */
     public function addAppliedTax(TaxApply $appliedTax)
     {
@@ -533,49 +512,11 @@ class TaxItemValue
     /**
      * Get appliedTaxes
      *
-     * @return Collection
+     * @return TaxApply[]|Collection
      */
     public function getAppliedTaxes()
     {
         return $this->appliedTaxes;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @param \DateTime $createdAt
-     * @return $this
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @param \DateTime $updatedAt
-     * @return $this
-     */
-    public function setUpdatedAt($updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
     }
 
     /**
