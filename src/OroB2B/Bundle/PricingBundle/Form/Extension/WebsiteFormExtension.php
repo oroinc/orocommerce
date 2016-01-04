@@ -149,14 +149,18 @@ class WebsiteFormExtension extends AbstractTypeExtension
      */
     protected function removeDeletedRelations(array $submitted, array $existing)
     {
-        $submittedIds = array_map(function ($item) {
-            /** @var PriceList $priceList */
-            $priceList = $item['priceList'];
-            if ($priceList instanceof PriceList) {
-                return $priceList->getId();
-            }
-            return null;
-        }, $submitted);
+        $submittedIds = array_map(
+            function ($item) {
+                /** @var PriceList $priceList */
+                $priceList = $item['priceList'];
+                if ($priceList instanceof PriceList) {
+                    return $priceList->getId();
+                }
+
+                return null;
+            },
+            $submitted
+        );
 
         $removed = array_diff(array_keys($existing), $submittedIds);
 

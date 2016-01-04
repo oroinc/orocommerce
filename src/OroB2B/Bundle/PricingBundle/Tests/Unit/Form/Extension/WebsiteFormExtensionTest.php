@@ -14,6 +14,9 @@ use OroB2B\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteType;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
 {
     const PRICE_LIST_TO_WEBSITE_CLASS = '\PriceListToWebsite';

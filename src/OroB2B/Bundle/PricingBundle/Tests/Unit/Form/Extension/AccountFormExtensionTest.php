@@ -15,6 +15,9 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use OroB2B\Bundle\PricingBundle\Form\Extension\AccountFormExtension;
 use OroB2B\Bundle\PricingBundle\Form\Type\AccountWebsiteScopedPriceListsType;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class AccountFormExtensionTest extends \PHPUnit_Framework_TestCase
 {
     /** @var  Registry|\PHPUnit_Framework_MockObject_MockObject */
