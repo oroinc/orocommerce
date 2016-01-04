@@ -18,7 +18,7 @@ OroB2B\Bundle\TaxBundle\Entity\Tax:
 
 OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode:
     alias:            orob2b_product_tax_code
-    search_template:  OroB2BTaxBundle:Autocomplete:product_tax_autocomplete_selection.html.twig
+    search_template:  OroB2BTaxBundle:ProductTaxCode:searchResult.html.twig
     fields:
         -
             name:                   code
@@ -31,7 +31,7 @@ OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode:
 
 OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode:
     alias:            orob2b_account_tax_code
-    search_template:  OroB2BTaxBundle:Autocomplete:account_tax_autocomplete_selection.html.twig
+    search_template:  OroB2BTaxBundle:AccountTaxCode:searchResult.html.twig
     fields:
         -
             name:                   code

@@ -24,16 +24,20 @@ abstract class AbstractFormViewListenerTest extends FormViewListenerTestCase
     /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject */
     protected $requestStack;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 
         $this->request = $this->getRequest();
         $this->requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
         $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
+    }
+
+    protected function tearDown()
+    {
+        unset($this->request, $this->requestStack);
+
+        parent::tearDown();
     }
 
     /**

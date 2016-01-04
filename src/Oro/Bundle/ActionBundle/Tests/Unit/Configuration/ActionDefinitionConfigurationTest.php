@@ -63,6 +63,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
                 'expected' => [
+                    'replace' => [],
                     'label' => 'Test Label 1',
                     'applications' => [],
                     'entities' => [],
@@ -73,11 +74,14 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                     'prefunctions' => [],
                     'preconditions' => [],
                     'conditions' => [],
-                    'initfunctions' => [],
-                    'postfunctions' => [],
+                    'form_init' => [],
+                    'functions' => [],
                     'attributes' => [],
                     'frontend_options' => [
-                        'dialog_options' => [],
+                        'options' => [],
+                        'show_dialog' => true
+                    ],
+                    'button_options' => [
                         'page_component_options' => [],
                         'data' => []
                     ],
@@ -86,6 +90,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
             'full valid configuration' => [
                 'input' => [
                     'action' => [
+                        'replace' => 'test_replace',
                         'label' => 'Test Label 2',
                         'applications' => ['app1', 'app2', 'app3'],
                         'entities' => ['Entity1', 'Entity2'],
@@ -94,21 +99,24 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'order' => 15,
                         'enabled' => false,
                         'frontend_options' => [
+                            'template' => 'template',
+                            'title' => 'dialog title',
+                            'options' => ['width' => 400],
+                            'confirmation' => 'Confirmation message',
+                            'show_dialog' => false
+                        ],
+                        'button_options' => [
                             'icon' => 'icon',
                             'class' => 'class',
                             'group' => 'group label',
                             'template' => 'template',
-                            'dialog_template' => 'template',
-                            'dialog_title' => 'dialog title',
-                            'dialog_options' => ['width' => 400],
                             'page_component_module' => 'testbundle/app/component',
                             'page_component_options' => [
                                 'param' => 'value'
                             ],
                             'data' => [
                                 'attribute' => 'attrValue'
-                            ],
-                            'confirmation' => 'Confirmation message'
+                            ]
                         ],
                         'form_options' => [
                             'attribute_fields' => [
@@ -129,10 +137,10 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'preconditions' => [
                             '@equal' => ['$field1', 'value1'],
                         ],
-                        'initfunctions' => [
+                        'form_init' => [
                             '@assign_value' => ['$field1', 'value2'],
                         ],
-                        'postfunctions' => [
+                        'functions' => [
                             '@call_method' => [],
                         ],
                         'attributes' => [
@@ -144,6 +152,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
                 'expected' => [
+                    'replace' => ['test_replace'],
                     'label' => 'Test Label 2',
                     'applications' => ['app1', 'app2', 'app3'],
                     'entities' => ['Entity1', 'Entity2'],
@@ -158,10 +167,10 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         '@equal' => ['$field1', 'value1'],
                     ],
                     'conditions' => [],
-                    'initfunctions' => [
+                    'form_init' => [
                         '@assign_value' => ['$field1', 'value2'],
                     ],
-                    'postfunctions' => [
+                    'functions' => [
                         '@call_method' => [],
                     ],
                     'attributes' => [
@@ -173,21 +182,24 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         ]
                     ],
                     'frontend_options' => [
+                        'template' => 'template',
+                        'title' => 'dialog title',
+                        'options' => ['width' => 400],
+                        'confirmation' => 'Confirmation message',
+                        'show_dialog' => false
+                    ],
+                    'button_options' => [
                         'icon' => 'icon',
                         'class' => 'class',
                         'group' => 'group label',
                         'template' => 'template',
-                        'dialog_template' => 'template',
-                        'dialog_title' => 'dialog title',
-                        'dialog_options' => ['width' => 400],
                         'page_component_module' => 'testbundle/app/component',
                         'page_component_options' => [
                             'param' => 'value'
                         ],
                         'data' => [
                             'attribute' => 'attrValue'
-                        ],
-                        'confirmation' => 'Confirmation message'
+                        ]
                     ],
                     'form_options' => [
                         'attribute_fields' => [
