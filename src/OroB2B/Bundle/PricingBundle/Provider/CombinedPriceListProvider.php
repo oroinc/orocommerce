@@ -59,12 +59,11 @@ class CombinedPriceListProvider
      */
     protected function getCombinedPriceListIdentifier(array $priceListsRelations)
     {
-        $key = '';
         /**
          * @var $priceListsRelations BasePriceListRelation[]
          */
+        $key = '';
         foreach ($priceListsRelations as $priceListRelation) {
-
             $isMergeAllowed = 'f';
             if ($priceListRelation->isMergeAllowed()) {
                 $isMergeAllowed = 't';
