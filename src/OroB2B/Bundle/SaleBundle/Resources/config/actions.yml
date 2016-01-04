@@ -113,7 +113,7 @@ actions:
         acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\OrderBundle\Entity\Order]
 
         button_options:
-                    icon: icon-edit
+            icon: icon-edit
 
         frontend_options:
             template: OroB2BSaleBundle:Action:quoteToOrder.html.twig
