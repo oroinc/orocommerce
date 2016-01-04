@@ -138,13 +138,14 @@ class ActionExtension extends AbstractExtension
 
         foreach ($this->actions as $action) {
             $datagridOptions = $action->getDefinition()->getDatagridOptions();
-            if (!$datagridOptions['mass_action']) {
+            if (empty($datagridOptions['mass_action'])) {
                 continue;
             }
 
-            $actions[$action->getName()] = array_merge([
-                'label' => $action->getDefinition()->getLabel(),
-            ], $datagridOptions['mass_action']);
+            $actions[$action->getName()] = array_merge(
+                ['label' => $action->getDefinition()->getLabel()],
+                $datagridOptions['mass_action']
+            );
         }
 
         $config->offsetSet('mass_actions', $actions);

@@ -185,10 +185,8 @@ class ShoppingListManager
      */
     public function getCurrent($create = false, $label = '')
     {
-        $em = $this->managerRegistry->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
-
         /* @var $repository ShoppingListRepository */
-        $repository = $em->getRepository('OroB2BShoppingListBundle:ShoppingList');
+        $repository = $this->getRepository('OroB2BShoppingListBundle:ShoppingList');
         $shoppingList = $repository->findCurrentForAccountUser($this->getAccountUser());
 
         if ($create && !$shoppingList instanceof ShoppingList) {

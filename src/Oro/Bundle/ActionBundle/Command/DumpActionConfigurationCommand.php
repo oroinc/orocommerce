@@ -20,11 +20,7 @@ class DumpActionConfigurationCommand extends ContainerAwareCommand
     {
         $this->setName('oro:action:configuration:dump')
             ->setDescription('Dump action configuration')
-            ->addArgument(
-                'action',
-                InputArgument::OPTIONAL,
-                'Names of the action that should be dumped'
-            );
+            ->addArgument('action', InputArgument::OPTIONAL, 'Names of the action that should be dumped');
     }
 
     /**
@@ -36,7 +32,6 @@ class DumpActionConfigurationCommand extends ContainerAwareCommand
 
         $errors = new ArrayCollection();
         $configuration = $this->getConfigurationProvider()->getActionConfiguration(true, $errors);
-
 
         if ($configuration) {
             $action = $input->getArgument('action');

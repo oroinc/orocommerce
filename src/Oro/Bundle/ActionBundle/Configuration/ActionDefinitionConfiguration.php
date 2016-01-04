@@ -230,10 +230,10 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
         $node
             ->addDefaultsIfNotSet()
             ->children()
-            ->arrayNode('mass_action')
-            ->prototype('variable')
-            ->end()
-            ->end()
+                ->arrayNode('mass_action')
+                    ->prototype('variable')
+                    ->end()
+                ->end()
             ->end();
 
         return $node;
