@@ -3,8 +3,8 @@
 namespace OroB2B\Bundle\InvoiceBundle\EventListener\ORM;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
-
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+
 use OroB2B\Bundle\InvoiceBundle\Doctrine\ORM\InvoiceNumberGeneratorInterface;
 use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
 use OroB2B\Bundle\PricingBundle\Provider\LineItemsSubtotalProvider;

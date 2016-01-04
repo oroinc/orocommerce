@@ -19,6 +19,7 @@ define(function (require) {
         initialize: function (options) {
             options.el.on('change', '.invoice-currency select', function(){
                 mediator.trigger('pricing:update-currency', $(this).val());
+                mediator.trigger('line-items-subtotals:update');
             });
         }
     });

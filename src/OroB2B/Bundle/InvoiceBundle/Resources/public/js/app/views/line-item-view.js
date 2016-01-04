@@ -41,7 +41,7 @@ define(function (require) {
             }, this.options);
             this.options = $.extend(true, {}, this.options, options || {});
             this.initLayout().done(_.bind(this.handleLayoutInit, this));
-            this.$el.on('click', '.removeLineItem', this.removeRow);
+            this.$el.on('click', '.removeLineItem', _.bind(this.removeRow, this));
         },
 
         setTotalPrice: function () {
@@ -212,6 +212,7 @@ define(function (require) {
 
         removeRow: function () {
             this.$el.trigger('content:remove');
+            mediator.trigger('line-items-subtotals:update');
             this.remove();
         },
 

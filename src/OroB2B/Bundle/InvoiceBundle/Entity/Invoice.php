@@ -477,7 +477,7 @@ class Invoice extends ExtendInvoice implements
     }
 
     /**
-     * @return mixed
+     * @return float
      */
     public function getSubtotal()
     {
@@ -485,7 +485,7 @@ class Invoice extends ExtendInvoice implements
     }
 
     /**
-     * @param mixed $subtotal
+     * @param float $subtotal
      * @return $this
      */
     public function setSubtotal($subtotal)

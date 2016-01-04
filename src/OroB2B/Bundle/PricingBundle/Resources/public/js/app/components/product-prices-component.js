@@ -435,7 +435,7 @@ define(function(require) {
             }
 
             mediator.off('pricing:refresh:products-tier-prices', this.setTierPrices, this);
-            mediator.off('pricing:update-currency', this.setCurrency(), this);
+            mediator.off('pricing:update-currency', this.setCurrency, this);
             mediator.off('pricing:refresh:line-items-matched-prices', this.setMatchedPrices, this);
 
             ProductPricesComponent.__super__.dispose.call(this);
