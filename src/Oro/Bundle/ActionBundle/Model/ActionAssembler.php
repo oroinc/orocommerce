@@ -80,6 +80,7 @@ class ActionAssembler extends AbstractAssembler
             ->setOrder($this->getOption($options, 'order', 0))
             ->setFormType($this->getOption($options, 'form_type', ActionType::NAME))
             ->setFrontendOptions($this->getOption($options, 'frontend_options', []))
+            ->setDatagridOptions($this->getOption($options, 'datagrid_options', []))
             ->setAttributes($this->getOption($options, 'attributes', []))
             ->setFormOptions($this->getOption($options, 'form_options', []));
 

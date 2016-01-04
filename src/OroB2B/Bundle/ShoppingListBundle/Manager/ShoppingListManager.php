@@ -179,6 +179,33 @@ class ShoppingListManager
     }
 
     /**
+     * @param bool $create
+     * @param string $label
+     * @return ShoppingList
+     */
+    public function getCurrent($create = false, $label = '')
+    {
+        $em = $this->managerRegistry->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
+
+        /* @var $repository ShoppingListRepository */
+        $repository = $em->getRepository('OroB2BShoppingListBundle:ShoppingList');
+        $shoppingList = $repository->findCurrentForAccountUser($this->getAccountUser());
+
+        if ($create && !$shoppingList instanceof ShoppingList) {
+            $label = $this->translator->trans($label ?: 'orob2b.shoppinglist.default.label');
+
+            $shoppingList = new ShoppingList();
+            $shoppingList
+                ->setOrganization($this->getAccountUser()->getOrganization())
+                ->setAccount($this->getAccountUser()->getAccount())
+                ->setAccountUser($this->getAccountUser())
+                ->setLabel($label);
+        }
+
+        return $shoppingList;
+    }
+
+    /**
      * @return array
      */
     public function getShoppingLists()

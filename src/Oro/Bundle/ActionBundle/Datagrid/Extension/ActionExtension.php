@@ -56,6 +56,7 @@ class ActionExtension extends AbstractExtension
             return false;
         }
         $this->processActionsConfig($config);
+        $this->processMassActionsConfig($config);
         $this->actionConfiguration = $config->offsetGetOr('action_configuration', []);
         $config->offsetSet('action_configuration', [$this, 'getActionsPermissions']);
 
@@ -125,6 +126,27 @@ class ActionExtension extends AbstractExtension
         }
 
         $config->offsetSet('actions', $actionsConfig);
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     */
+    protected function processMassActionsConfig(DatagridConfiguration $config)
+    {
+        $actions = $config->offsetGetOr('mass_actions', []);
+
+        foreach ($this->actions as $action) {
+            $datagridOptions = $action->getDefinition()->getDatagridOptions();
+            if (!$datagridOptions['mass_action']) {
+                continue;
+            }
+
+            $actions[$action->getName()] = array_merge([
+                'label' => $action->getDefinition()->getLabel(),
+            ], $datagridOptions['mass_action']);
+        }
+
+        $config->offsetSet('mass_actions', $actions);
     }
 
     /**

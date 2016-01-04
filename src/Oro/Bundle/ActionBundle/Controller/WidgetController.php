@@ -48,15 +48,22 @@ class WidgetController extends Controller
     {
         $data = $this->getContextHelper()->getActionData();
         $errors = new ArrayCollection();
-        $params = [];
+
+        $params = [
+            'action' => $this->getActionManager()->getAction($actionName, $data),
+            'actionData' => $data,
+        ];
 
         try {
             /** @var Form $form */
             $form = $this->get('oro_action.form_manager')->getActionForm($actionName, $data);
             $form->handleRequest($request);
 
+            $data['form'] = $form;
+
             if ($form->isValid()) {
-                $data = $this->getActionManager()->execute($actionName, $form->getData(), $errors);
+                //$data = $this->getActionManager()->execute($actionName, $form->getData(), $errors);
+                $data = $this->getActionManager()->execute($actionName, $data, $errors);
 
                 $params['response'] = $this->getResponse($data);
             }

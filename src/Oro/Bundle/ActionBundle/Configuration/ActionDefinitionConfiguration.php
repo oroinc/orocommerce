@@ -72,6 +72,7 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
                 ->end()
                 ->append($this->getAttributesNode())
                 ->append($this->getFrontendOptionsNode())
+                ->append($this->getDatagridOptionsNode())
                 ->append($this->getFormOptionsNode())
             ->end();
 
@@ -181,6 +182,25 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->arrayNode('data')
+                    ->prototype('variable')
+                    ->end()
+                ->end()
+            ->end();
+
+        return $node;
+    }
+
+    /**
+     * @return NodeDefinition
+     */
+    protected function getDatagridOptionsNode()
+    {
+        $builder = new TreeBuilder();
+        $node = $builder->root('datagrid_options');
+        $node
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->arrayNode('mass_action')
                     ->prototype('variable')
                     ->end()
                 ->end()

@@ -4,17 +4,19 @@ namespace OroB2B\Bundle\ShoppingListBundle\Form\Type;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\Validator\Constraints\Callback;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 
 class FrontendLineItemWidgetType extends AbstractType
@@ -42,13 +44,20 @@ class FrontendLineItemWidgetType extends AbstractType
     protected $tokenStorage;
 
     /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
      * @param ManagerRegistry $registry
      * @param TokenStorage    $tokenStorage
+     * @param TranslatorInterface $translator
      */
-    public function __construct(ManagerRegistry $registry, TokenStorage $tokenStorage)
+    public function __construct(ManagerRegistry $registry, TokenStorage $tokenStorage, TranslatorInterface $translator)
     {
         $this->registry = $registry;
         $this->tokenStorage = $tokenStorage;
+        $this->translator = $translator;
     }
 
     /**
@@ -61,6 +70,7 @@ class FrontendLineItemWidgetType extends AbstractType
                 'shoppingList',
                 'entity',
                 [
+                    'mapped' => false,
                     'required' => false,
                     'label' => 'orob2b.shoppinglist.lineitem.shopping_list.label',
                     'class' => $this->shoppingListClass,
@@ -68,6 +78,15 @@ class FrontendLineItemWidgetType extends AbstractType
                         return $repository->createFindForAccountUserQueryBuilder($this->getAccountUser());
                     },
                     'empty_value' => 'orob2b.shoppinglist.lineitem.create_new_shopping_list',
+                    'choice_label' => function(ShoppingList $shoppingList) {
+                        $label = $shoppingList->getLabel();
+
+                        if ($shoppingList->isCurrent()) {
+                            $label .= ' (current)';
+                        }
+
+                        return $label;
+                    },
                 ]
             )
             ->add(
@@ -78,7 +97,34 @@ class FrontendLineItemWidgetType extends AbstractType
                     'required' => true,
                     'label' => 'orob2b.shoppinglist.lineitem.new_shopping_list_label'
                 ]
+            )
+            ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetData'])
+            ->addEventListener(FormEvents::POST_SUBMIT, [$this, 'postSubmit']);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function postSetData(FormEvent $event)
+    {
+        /* @var $lineItem LineItem */
+        $lineItem = $event->getData();
+
+        $event->getForm()->get('shoppingList')->setData($lineItem->getShoppingList());
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function postSubmit(FormEvent $event)
+    {
+        $form = $event->getForm();
+
+        if (!$form->get('shoppingList')->getData() && !$form->get('shoppingListLabel')->getData()) {
+            $form->get('shoppingListLabel')->addError(
+                new FormError($this->translator->trans('orob2b.shoppinglist.not_empty', [], 'validators'))
             );
+        }
     }
 
     /**
@@ -93,36 +139,6 @@ class FrontendLineItemWidgetType extends AbstractType
         $currentShoppingList = $shoppingListRepository->findCurrentForAccountUser($this->getAccountUser());
 
         $view->children['shoppingList']->vars['currentShoppingList'] = $currentShoppingList;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults(
-            [
-                'constraints' => [
-                    new Callback([
-                        'groups' => ['add_product'],
-                        'methods' => [[$this, 'checkShoppingListLabel']]
-                    ])
-                ]
-            ]
-        );
-    }
-
-    /**
-     * @param LineItem $data
-     * @param ExecutionContextInterface $context
-     */
-    public function checkShoppingListLabel($data, ExecutionContextInterface $context)
-    {
-        if (!$data->getShoppingList()) {
-            $context->buildViolation('orob2b.shoppinglist.not_empty')
-                ->atPath('shoppingListLabel')
-                ->addViolation();
-        }
     }
 
     /**

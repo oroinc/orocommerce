@@ -6,6 +6,7 @@ define(function(require) {
     var ActionWidgetAction;
 
     var ModelAction = require('oro/datagrid/action/model-action');
+    var ActionManager = require('oroaction/js/action-manager');
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
     var $ = require('jquery');
@@ -110,41 +111,6 @@ define(function(require) {
         },
 
         /**
-         * @param {Object} response
-         */
-        doResponse: function(response) {
-            mediator.execute('hideLoading');
-            if (response.flashMessages) {
-                _.each(response.flashMessages, function(messages, type) {
-                    _.each(messages, function(message) {
-                        messenger.notificationFlashMessage(type, message);
-                    });
-                });
-            }
-
-            if (response.redirectUrl) {
-                this.doRedirect(response.redirectUrl);
-            } else if (response.refreshGrid) {
-                _.each(response.refreshGrid, function(gridname) {
-                    mediator.trigger('datagrid:doRefresh:' + gridname);
-                });
-            } else {
-                this.doPageReload();
-            }
-        },
-
-        /**
-         * @param {String} redirectUrl
-         */
-        doRedirect: function(redirectUrl) {
-            mediator.execute('redirectTo', {url: redirectUrl}, {redirect: true});
-        },
-
-        doPageReload: function() {
-            mediator.execute('refreshPage');
-        },
-
-        /**
          * @inheritDoc
          */
         doRun: function() {
@@ -155,7 +121,7 @@ define(function(require) {
 
                 Backbone.listenTo(widget, 'formSave', _.bind(function(response) {
                     widget.remove();
-                    this.doResponse(response);
+                    ActionManager.doResponse(response);
                 }, this));
 
                 widget.render();

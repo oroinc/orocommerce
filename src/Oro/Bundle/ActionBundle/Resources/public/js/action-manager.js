@@ -3,9 +3,9 @@
 define(function(require) {
     'use strict';
 
-    var ButtonsComponent;
+    var ActionManager;
+
     var BaseComponent = require('oroui/js/app/components/base/component');
-    var ActionManager = require('oroaction/js/action-manager');
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
     var $ = require('jquery');
@@ -15,7 +15,8 @@ define(function(require) {
     var DialogWidget = require('oro/dialog-widget');
     var DeleteConfirmation = require('oroui/js/delete-confirmation');
 
-    ButtonsComponent = BaseComponent.extend({
+    //actionManager = BaseComponent.extend({
+    ActionManager = {
         /**
          * @property {Object}
          */
@@ -142,10 +143,10 @@ define(function(require) {
         },
 
         /**
-         * @param {jQuery.Event} e
          * @param {Object} response
+         * @param {jQuery.Event} e
          */
-        doResponse: function(e, response) {
+        doResponse: function(response, e) {
             mediator.execute('hideLoading');
 
             if (response.flashMessages) {
@@ -157,7 +158,9 @@ define(function(require) {
             }
 
             if (response.redirectUrl) {
-                e.stopImmediatePropagation();
+                if (e !== undefined) {
+                    e.stopImmediatePropagation();
+                }
                 this.doRedirect(response.redirectUrl);
             } else if (response.refreshGrid) {
                 _.each(response.refreshGrid, function(gridname) {
@@ -173,7 +176,7 @@ define(function(require) {
          * @param {String} redirectUrl
          */
         doRedirect: function(redirectUrl) {
-            mediator.execute('redirectTo', {url: redirectUrl});
+            mediator.execute('redirectTo', {url: redirectUrl}, {redirect: true});
         },
 
         doPageReload: function() {
@@ -206,17 +209,17 @@ define(function(require) {
 
             return this.confirmModal;
         },
-        dispose: function() {
-            if (this.disposed) {
-                return;
-            }
+//        dispose: function() {
+//            if (this.disposed) {
+//                return;
+//            }
+//
+//            this.$container.off();
+//            delete this.confirmModal;
+//
+//            ActionManager.__super__.dispose.call(this);
+//        }
+    };
 
-            this.$container.off();
-            delete this.confirmModal;
-
-            ButtonsComponent.__super__.dispose.call(this);
-        }
-    });
-
-    return ButtonsComponent;
+    return ActionManager;
 });

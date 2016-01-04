@@ -38,6 +38,9 @@ class ActionDefinition
     /** @var array */
     private $frontendOptions = [];
 
+    /** @var array */
+    private $datagridOptions = [];
+
     /** @var string */
     private $formType;
 
@@ -217,6 +220,25 @@ class ActionDefinition
     public function setRoutes(array $routes)
     {
         $this->routes = $routes;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDatagridOptions()
+    {
+        return $this->datagridOptions;
+    }
+
+    /**
+     * @param array $datagridOptions
+     * @return $this
+     */
+    public function setDatagridOptions(array $datagridOptions)
+    {
+        $this->datagridOptions = $datagridOptions;
 
         return $this;
     }

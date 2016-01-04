@@ -155,16 +155,4 @@ class AjaxLineItemController extends Controller
 
         return new JsonResponse(array_merge($data, $response->getOptions()));
     }
-
-    /**
-     * @Route("/add_product", name="orob2b_shopping_list_add_products")
-     * @AclAncestor("orob2b_shopping_list_line_item_frontend_add")
-     * @Template("OroB2BShoppingListBundle:ShoppingList/Frontend/widget:addProductsBtn.html.twig")
-     *
-     * @return Response
-     */
-    public function productsAddBtnWidgetAction()
-    {
-        return $this->get('orob2b_shopping_list.shopping_list.manager')->getShoppingLists();
-    }
 }
