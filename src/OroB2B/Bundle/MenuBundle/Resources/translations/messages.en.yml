@@ -16,3 +16,9 @@ orob2b:
             route_parameters.label: 'Route parameters'
             display.label: 'Display'
             display_children.label: 'Display children'
+        controller:
+            menuitem:
+                saved.message: Menu Item has been saved
+        template:
+            menuitem:
+                select_existing_or_create_new: Please select a menu item on the left or create new one.

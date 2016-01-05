@@ -2,17 +2,17 @@
 
 namespace OroB2B\Bundle\AccountBundle\JsTree;
 
-use Oro\Component\Tree\Handler\AbstractTreeHandler;
-
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Component\Tree\Handler\AbstractTreeHandler;
 
 class AccountTreeHandler extends AbstractTreeHandler
 {
     /**
      * @param Account $root
+     * @param bool $includeRoot
      * @return array
      */
-    public function getNodes($root)
+    protected function getNodes($root, $includeRoot)
     {
         $entities = [];
 
@@ -21,7 +21,7 @@ class AccountTreeHandler extends AbstractTreeHandler
         foreach ($children->toArray() as $child) {
             $entities[] = $child;
 
-            $entities = array_merge($entities, $this->getNodes($child));
+            $entities = array_merge($entities, $this->getNodes($child, $includeRoot));
         }
 
         return $entities;
