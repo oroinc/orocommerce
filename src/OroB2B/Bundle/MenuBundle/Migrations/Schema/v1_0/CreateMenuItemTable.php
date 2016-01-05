@@ -41,17 +41,16 @@ class CreateMenuItemTable implements Migration, AttachmentExtensionAwareInterfac
     }
 
     /**
-     * Create orob2b_menu_item table
-     *
      * @param Schema $schema
      */
     protected function createOroB2BMenuItemTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_menu_item');
+        $tableName = 'orob2b_menu_item';
+        $table = $schema->createTable($tableName);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('parent_id', 'integer', ['notnull' => false]);
         $table->addColumn('serialized_data', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
-        $table->addColumn('uri', 'text', []);
+        $table->addColumn('uri', 'text', ['notnull' => false]);
         $table->addColumn('route', 'string', ['notnull' => false, 'length' => 128]);
         $table->addColumn('route_parameters', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->addColumn('display', 'boolean', []);
@@ -60,10 +59,11 @@ class CreateMenuItemTable implements Migration, AttachmentExtensionAwareInterfac
         $table->addColumn('tree_level', 'integer', []);
         $table->addColumn('tree_right', 'integer', []);
         $table->addColumn('tree_root', 'integer', ['notnull' => false]);
+        $table->addColumn('condition', 'text', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $this->attachmentExtension->addImageRelation(
             $schema,
-            'orob2b_menu_item',
+            $tableName,
             'image',
             [],
             self::MAX_MENU_ITEM_IMAGE_SIZE_IN_MB
@@ -71,8 +71,6 @@ class CreateMenuItemTable implements Migration, AttachmentExtensionAwareInterfac
     }
 
     /**
-     * Create orob2b_menu_item_title table
-     *
      * @param Schema $schema
      */
     protected function createOroB2BMenuItemTitleTable(Schema $schema)
@@ -85,8 +83,6 @@ class CreateMenuItemTable implements Migration, AttachmentExtensionAwareInterfac
     }
 
     /**
-     * Add orob2b_menu_item foreign keys.
-     *
      * @param Schema $schema
      */
     protected function addOroB2BMenuItemForeignKeys(Schema $schema)
@@ -101,8 +97,6 @@ class CreateMenuItemTable implements Migration, AttachmentExtensionAwareInterfac
     }
 
     /**
-     * Add orob2b_menu_item_title foreign keys.
-     *
      * @param Schema $schema
      */
     protected function addOroB2BMenuItemTitleForeignKeys(Schema $schema)

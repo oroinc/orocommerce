@@ -72,7 +72,7 @@ class MenuItem extends ExtendMenuItem
     /**
      * @var string
      *
-     * @ORM\Column(name="uri", type="text")
+     * @ORM\Column(name="uri", type="text", nullable=true)
      */
     protected $uri;
 
@@ -103,6 +103,13 @@ class MenuItem extends ExtendMenuItem
      * @ORM\Column(name="display_children", type="boolean")
      */
     protected $displayChildren = true;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="condition", type="text", nullable=true)
+     */
+    protected $condition;
 
     /**
      * {@inheritdoc}
@@ -279,6 +286,24 @@ class MenuItem extends ExtendMenuItem
     public function setDisplayChildren($displayChildren)
     {
         $this->displayChildren = $displayChildren;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCondition()
+    {
+        return $this->condition;
+    }
+
+    /**
+     * @param string $condition
+     * @return $this
+     */
+    public function setCondition($condition)
+    {
+        $this->condition = $condition;
         return $this;
     }
 }

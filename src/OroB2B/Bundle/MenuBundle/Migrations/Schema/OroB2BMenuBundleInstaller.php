@@ -53,16 +53,17 @@ class OroB2BMenuBundleInstaller implements Installation, AttachmentExtensionAwar
     }
 
     /**
+     * Create orob2b_menu_item table
+     *
      * @param Schema $schema
      */
     protected function createOrob2BMenuItemTable(Schema $schema)
     {
-        $tableName = 'orob2b_menu_item';
-        $table = $schema->createTable($tableName);
+        $table = $schema->createTable('orob2b_menu_item');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('parent_id', 'integer', ['notnull' => false]);
         $table->addColumn('serialized_data', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
-        $table->addColumn('uri', 'text', []);
+        $table->addColumn('uri', 'text', ['notnull' => false]);
         $table->addColumn('route', 'string', ['notnull' => false, 'length' => 128]);
         $table->addColumn('route_parameters', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->addColumn('display', 'boolean', []);
@@ -71,10 +72,11 @@ class OroB2BMenuBundleInstaller implements Installation, AttachmentExtensionAwar
         $table->addColumn('tree_level', 'integer', []);
         $table->addColumn('tree_right', 'integer', []);
         $table->addColumn('tree_root', 'integer', ['notnull' => false]);
+        $table->addColumn('condition', 'text', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $this->attachmentExtension->addImageRelation(
             $schema,
-            $tableName,
+            'orob2b_menu_item',
             'image',
             [],
             self::MAX_MENU_ITEM_IMAGE_SIZE_IN_MB
@@ -82,6 +84,8 @@ class OroB2BMenuBundleInstaller implements Installation, AttachmentExtensionAwar
     }
 
     /**
+     * Create orob2b_menu_item_title table
+     *
      * @param Schema $schema
      */
     protected function createOrob2BMenuItemTitleTable(Schema $schema)
@@ -94,6 +98,8 @@ class OroB2BMenuBundleInstaller implements Installation, AttachmentExtensionAwar
     }
 
     /**
+     * Add orob2b_menu_item foreign keys.
+     *
      * @param Schema $schema
      */
     protected function addOrob2BMenuItemForeignKeys(Schema $schema)
@@ -108,6 +114,8 @@ class OroB2BMenuBundleInstaller implements Installation, AttachmentExtensionAwar
     }
 
     /**
+     * Add orob2b_menu_item_title foreign keys.
+     *
      * @param Schema $schema
      */
     protected function addOrob2BMenuItemTitleForeignKeys(Schema $schema)

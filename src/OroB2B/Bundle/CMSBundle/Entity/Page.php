@@ -195,9 +195,6 @@ class Page
      */
     protected $slugs;
 
-    /**
-     * Constructor
-     */
     public function __construct()
     {
         $this->slugs      = new ArrayCollection();
