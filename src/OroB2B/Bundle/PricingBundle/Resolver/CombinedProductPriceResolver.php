@@ -23,11 +23,11 @@ class CombinedProductPriceResolver
     }
 
     /**
-     * @param CombinedPriceList $priceList
+     * @param CombinedPriceList $combinedPriceList
      */
-    public function combinePrices(CombinedPriceList $priceList)
+    public function combinePrices(CombinedPriceList $combinedPriceList)
     {
-        //TODO: BB-1842
+
     }
 
     /**
@@ -36,6 +36,6 @@ class CombinedProductPriceResolver
      */
     public function updatePricesByProduct(CombinedPriceList $combinedPriceList, Product $product)
     {
-        //TODO: BB-1843
+
     }
 }

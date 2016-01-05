@@ -24,7 +24,7 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
      */
     protected $data = [
         [
-            'name' => '1t_2f_3t',
+            'name' => '1t_2t_3t',
             'enabled' => true,
             'priceListsToAccounts' => [],
             'priceListsToAccountGroups' => [
@@ -41,7 +41,7 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
                 ],
                 [
                     'priceList' => 'price_list_2',
-                    'mergeAllowed' => false,
+                    'mergeAllowed' => true,
                 ],
                 [
                     'priceList' => 'price_list_3',
@@ -50,7 +50,7 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
             ],
         ],
         [
-            'name' => '3f_4t_2f',
+            'name' => '2t_3f_1t',
             'enabled' => true,
             'priceListsToAccounts' => [
                 [
@@ -62,15 +62,41 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
             'websites' => [],
             'priceListRelations' => [
                 [
+                    'priceList' => 'price_list_2',
+                    'mergeAllowed' => true,
+                ],
+                [
                     'priceList' => 'price_list_3',
                     'mergeAllowed' => false,
                 ],
                 [
-                    'priceList' => 'price_list_4',
+                    'priceList' => 'price_list_1',
+                    'mergeAllowed' => true,
+                ],
+            ],
+        ],
+        [
+            'name' => '2f_1t_3t',
+            'enabled' => true,
+            'priceListsToAccounts' => [
+                [
+                    'account' => 'account.level_1.2',
+                    'website' => LoadWebsiteData::WEBSITE1,
+                ]
+            ],
+            'priceListsToAccountGroups' => [],
+            'websites' => [],
+            'priceListRelations' => [
+                [
+                    'priceList' => 'price_list_2',
+                    'mergeAllowed' => false,
+                ],
+                [
+                    'priceList' => 'price_list_1',
                     'mergeAllowed' => true,
                 ],
                 [
-                    'priceList' => 'price_list_2',
+                    'priceList' => 'price_list_3',
                     'mergeAllowed' => false,
                 ],
             ],
