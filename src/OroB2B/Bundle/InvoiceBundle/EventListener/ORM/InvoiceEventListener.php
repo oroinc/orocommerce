@@ -72,9 +72,10 @@ class InvoiceEventListener
      */
     public function postPersist(Invoice $invoice, LifecycleEventArgs $event)
     {
-        if (is_null($invoice->getInvoiceNumber())) {
+        if (null === $invoice->getInvoiceNumber()) {
             $invoice->setInvoiceNumber($this->invoiceNumberGenerator->generate($invoice));
-            $event->getEntityManager()->flush($invoice);
+            $event->getEntityManager()->persist($invoice);
+//            $event->getEntityManager()->flush($invoice);
         }
     }
 

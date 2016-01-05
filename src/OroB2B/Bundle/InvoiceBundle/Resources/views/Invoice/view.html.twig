@@ -63,6 +63,7 @@
                         <th><span>{{ 'orob2b.product.entity_label'|trans }}</span></th>
                         <th><span>{{ 'orob2b.invoice.invoicelineitem.quantity.label'|trans }}</span></th>
                         <th><span>{{ 'orob2b.invoice.invoicelineitem.price.label'|trans }}</span></th>
+                        <th><span>{{ 'orob2b.invoice.invoicelineitem.price_total.label'|trans }}</span></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -81,6 +82,7 @@
                             </td>
                             <td>{{ lineItem.quantity|orob2b_format_product_unit_value(lineItem.productUnit) }}</td>
                             <td>{{ lineItem.price|oro_format_price }}</td>
+                            <td>{{ lineItem.totalPrice|oro_format_price }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>

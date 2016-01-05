@@ -51,7 +51,7 @@ services:
             - { name: doctrine.orm.entity_listener }
 
     orob2b_invoice.event_listener.orm.invoice_line_item_event_listener:
-            class: OroB2B\Bundle\InvoiceBundle\EventListener\ORM\InvoiceListItemEventListener
-            tags:
-                - { name: doctrine.orm.entity_listener }
+        class: OroB2B\Bundle\InvoiceBundle\EventListener\ORM\InvoiceListItemEventListener
+        tags:
+            - { name: doctrine.orm.entity_listener }
 

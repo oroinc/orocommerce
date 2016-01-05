@@ -1,4 +1,5 @@
 <?php
+
 namespace OroB2B\Bundle\InvoiceBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
@@ -23,11 +24,52 @@ class InvoiceLineItemEntityTest extends \PHPUnit_Framework_TestCase
             ['quantity', 10],
             ['productUnit', new ProductUnit()],
             ['productUnitCode', 'product-unit-code'],
+            ['priceType', InvoiceLineItem::PRICE_TYPE_UNIT],
             ['price', Price::create(9.99, 'USD'), false],
             ['invoice', new Invoice()],
         ];
 
         $invoiceLineItem = new InvoiceLineItem();
         $this->assertPropertyAccessors($invoiceLineItem, $properties);
+    }
+
+    public function testGetEntityIdentifier()
+    {
+        $invoiceLineItem = new InvoiceLineItem();
+        $this->assertSame($invoiceLineItem->getId(), $invoiceLineItem->getEntityIdentifier());
+    }
+
+    public function testGetProductHolder()
+    {
+        $invoiceLineItem = new InvoiceLineItem();
+        $this->assertSame($invoiceLineItem, $invoiceLineItem->getProductHolder());
+    }
+
+    public function testUpdateItemInformation()
+    {
+        $invoiceLineItem = new InvoiceLineItem();
+
+        $product = new Product();
+        $product->setSku('PROD1');
+
+        $productUnit = new ProductUnit();
+        $productUnit->setCode('PU1');
+
+        $invoiceLineItem->setProduct($product)
+            ->setProductUnit($productUnit);
+        $invoiceLineItem->updateItemInformation();
+
+        $this->assertSame('PROD1', $invoiceLineItem->getProductSku());
+        $this->assertSame('PU1', $invoiceLineItem->getProductUnitCode());
+    }
+
+    public function testGetTotalPrice()
+    {
+        $invoiceLineItem = new InvoiceLineItem();
+        $invoiceLineItem->setQuantity(5)
+            ->setPrice(Price::create(1.1111, 'USD'));
+
+        $this->assertSame(5.56, $invoiceLineItem->getTotalPrice()->getValue());
+        $this->assertSame('USD', $invoiceLineItem->getTotalPrice()->getCurrency());
     }
 }

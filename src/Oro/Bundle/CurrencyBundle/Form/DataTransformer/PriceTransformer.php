@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CurrencyBundle\Form\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
+
 use Oro\Bundle\CurrencyBundle\Model\Price;
 
 class PriceTransformer implements DataTransformerInterface
@@ -25,6 +26,7 @@ class PriceTransformer implements DataTransformerInterface
         if (!$price || !$price instanceof Price || filter_var($price->getValue(), FILTER_VALIDATE_FLOAT) === false) {
             return null;
         }
+
         return $price;
     }
 }

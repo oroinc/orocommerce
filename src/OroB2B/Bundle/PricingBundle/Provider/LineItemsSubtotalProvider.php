@@ -55,7 +55,7 @@ class LineItemsSubtotalProvider
                 continue;
             }
 
-            $subtotalAmount += $this->handleRowTotal($lineItem, $baseCurrency);
+            $subtotalAmount += $this->getRowTotal($lineItem, $baseCurrency);
         }
 
         $subtotal->setAmount(
@@ -71,7 +71,7 @@ class LineItemsSubtotalProvider
      * @param string $baseCurrency
      * @return float|int
      */
-    protected function handleRowTotal(PriceAwareInterface $lineItem, $baseCurrency)
+    protected function getRowTotal(PriceAwareInterface $lineItem, $baseCurrency)
     {
         $rowTotal = $lineItem->getPrice()->getValue();
         $rowCurrency = $lineItem->getPrice()->getCurrency();

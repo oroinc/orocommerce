@@ -131,6 +131,11 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
     protected $invoice;
 
     /**
+     * @var Price
+     */
+    protected $totalPrice;
+
+    /**
      * @return int
      */
     public function getId()
@@ -328,6 +333,22 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
     public function getProductHolder()
     {
         return $this;
+    }
+
+    /**
+     * @return Price
+     */
+    public function getTotalPrice()
+    {
+        if (!$this->totalPrice) {
+            $this->totalPrice = new Price();
+        }
+
+        $value = round($this->getPrice()->getValue() * $this->getQuantity(), 2);
+        $this->totalPrice->setValue($value)
+            ->setCurrency($this->getPrice()->getCurrency());
+
+        return $this->totalPrice;
     }
 
     public function updateItemInformation()
