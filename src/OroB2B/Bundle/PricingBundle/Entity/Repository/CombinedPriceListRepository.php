@@ -33,10 +33,11 @@ class CombinedPriceListRepository extends EntityRepository
     /**
      * @param Account $account
      * @param Website $website
+     * @param bool|true $isEnabled
      * @return null|CombinedPriceList
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function getCombinedPriceListByAccount(Account $account, Website $website)
+    public function getCombinedPriceListByAccount(Account $account, Website $website, $isEnabled = true)
     {
         $qb = $this->createQueryBuilder('priceList');
         $qb
@@ -48,18 +49,24 @@ class CombinedPriceListRepository extends EntityRepository
             )
             ->where($qb->expr()->eq('priceListToAccount.account', ':account'))
             ->andWhere($qb->expr()->eq('priceListToAccount.website', ':website'))
+            ->andWhere($qb->expr()->eq('priceList.enabled', ':enabled'))
             ->setParameter('account', $account)
             ->setParameter('website', $website)
+            ->setParameter('enabled', $isEnabled)
             ->setMaxResults(1);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
 
+
     /**
      * @param AccountGroup $accountGroup
-     * @return CombinedPriceList|null
+     * @param Website $website
+     * @param bool|true $isEnabled
+     * @return null|CombinedPriceList
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function getCombinedPriceListByAccountGroup(AccountGroup $accountGroup, Website $website)
+    public function getCombinedPriceListByAccountGroup(AccountGroup $accountGroup, Website $website, $isEnabled = true)
     {
         $qb = $this->createQueryBuilder('priceList');
         $qb
@@ -71,8 +78,10 @@ class CombinedPriceListRepository extends EntityRepository
             )
             ->where($qb->expr()->eq('priceListToAccountGroup.accountGroup', ':accountGroup'))
             ->andWhere($qb->expr()->eq('priceListToAccountGroup.website', ':website'))
+            ->andWhere($qb->expr()->eq('priceList.enabled', ':enabled'))
             ->setParameter('accountGroup', $accountGroup)
             ->setParameter('website', $website)
+            ->setParameter('enabled', $isEnabled)
             ->setMaxResults(1);
 
         return $qb->getQuery()->getOneOrNullResult();
@@ -80,9 +89,10 @@ class CombinedPriceListRepository extends EntityRepository
 
     /**
      * @param Website $website
+     * @param bool|true $isEnabled
      * @return CombinedPriceList|null
      */
-    public function getCombinedPriceListByWebsite(Website $website)
+    public function getCombinedPriceListByWebsite(Website $website, $isEnabled = true)
     {
         $qb = $this->createQueryBuilder('priceList');
 
@@ -94,7 +104,9 @@ class CombinedPriceListRepository extends EntityRepository
                 'priceListToWebsite.priceList = priceList'
             )
             ->where($qb->expr()->eq('priceListToWebsite.website', ':website'))
+            ->andWhere($qb->expr()->eq('priceList.enabled', ':enabled'))
             ->setParameter('website', $website)
+            ->setParameter('enabled', $isEnabled)
             ->setMaxResults(1);
 
         return $qb->getQuery()->getOneOrNullResult();
