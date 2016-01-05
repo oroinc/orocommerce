@@ -17,27 +17,27 @@ class CombinedProductPriceRepository extends ProductPriceRepository
      * @param CombinedPriceList $combinedPriceList
      * @param PriceList $priceList
      * @param Product $product
-     * @param boolean $mergeEnabled
+     * @param boolean $mergeAllowed
      */
     public function insertPricesByPriceListForProduct(
         InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor,
         CombinedPriceList $combinedPriceList,
         PriceList $priceList,
         Product $product,
-        $mergeEnabled
+        $mergeAllowed
     ) {
         $qb = $this->getEntityManager()
             ->getRepository('OroB2BPricingBundle:ProductPrice')
             ->createQueryBuilder('pp');
         $qb->select(
-            'pp.id',
             'IDENTITY(pp.product)',
-            'pp.unitCode',
+            'IDENTITY(pp.unit)',
             $qb->expr()->literal($combinedPriceList->getId()) . ' AS priceList',
             'pp.productSku',
             'pp.quantity',
             'pp.value',
-            'pp.currency'
+            'pp.currency',
+            $qb->expr()->literal($mergeAllowed ? 1 : 0) . ' AS mergeAllowed'
         )
             ->where(
                 $qb->expr()->andX(
@@ -47,23 +47,21 @@ class CombinedProductPriceRepository extends ProductPriceRepository
             )
             ->groupBy('pp.id')
             ->setParameter('currentPriceList', $priceList)
-            ->setParameter('currentProduct', $product)
-            ->setParameter('combinedPriceList', $combinedPriceList);
+            ->setParameter('currentProduct', $product);
 
-        $this->addUniquePriceCondition($qb, $mergeEnabled);
+        $this->addUniquePriceCondition($qb, $combinedPriceList, $mergeAllowed);
 
         $insertFromSelectQueryExecutor->execute(
             'OroB2BPricingBundle:CombinedProductPrice',
             [
-                'id',
                 'product',
-                'unitCode',
-                'unitCode',
+                'unit',
                 'priceList',
                 'productSku',
                 'quantity',
                 'value',
                 'currency',
+                'mergeAllowed'
             ],
             $qb
         );
@@ -77,17 +75,20 @@ class CombinedProductPriceRepository extends ProductPriceRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->delete($this->getEntityName(), 'combinedPrice')
-            ->where($qb->expr()->eq('combinedPrice.priceList', $combinedPriceList))
-            ->andWhere($qb->expr()->eq('combinedPrice.product', $product))
+            ->where($qb->expr()->eq('combinedPrice.priceList', ':combinedPriceList'))
+            ->andWhere($qb->expr()->eq('combinedPrice.product', ':product'))
+            ->setParameter('combinedPriceList', $combinedPriceList)
+            ->setParameter('product', $product)
             ->getQuery()
             ->execute();
     }
 
     /**
      * @param QueryBuilder $qb
+     * @param CombinedPriceList $combinedPriceList
      * @param boolean $mergeAllowed
      */
-    protected function addUniquePriceCondition(QueryBuilder $qb, $mergeAllowed)
+    protected function addUniquePriceCondition(QueryBuilder $qb, CombinedPriceList $combinedPriceList, $mergeAllowed)
     {
         if ($mergeAllowed) {
             $qb->leftJoin(
@@ -107,9 +108,10 @@ class CombinedProductPriceRepository extends ProductPriceRepository
                 $qb->expr()->andX(
                     $qb->expr()->eq('cpp', ':combinedPriceList'),
                     $qb->expr()->eq('pp.product', 'cpp.product'),
-                    $qb->expr()->eq('cpp.merge', false)
+                    $qb->expr()->eq('cpp.mergeAllowed', ':mergeAllowed')
                 )
             )
+                ->setParameter('mergeAllowed', false)
                 ->leftJoin(
                     'OroB2BPricingBundle:CombinedProductPrice',
                     'cpp2',
@@ -117,7 +119,7 @@ class CombinedProductPriceRepository extends ProductPriceRepository
                     $qb->expr()->andX(
                         $qb->expr()->eq('cpp2', ':combinedPriceList'),
                         $qb->expr()->eq('pp.product', 'cpp2.product'),
-                        $qb->expr()->eq('pp.unit_code', 'cpp2.unitCode'),
+                        $qb->expr()->eq('pp.unit', 'cpp2.unit'),
                         $qb->expr()->eq('pp.quantity', 'cpp2.quantity'),
                         $qb->expr()->eq('pp.currency', 'cpp2.currency')
                     )
@@ -127,5 +129,6 @@ class CombinedProductPriceRepository extends ProductPriceRepository
                     $qb->expr()->isNull('cpp2.id')
                 );
         }
+        $qb->setParameter('combinedPriceList', $combinedPriceList);
     }
 }

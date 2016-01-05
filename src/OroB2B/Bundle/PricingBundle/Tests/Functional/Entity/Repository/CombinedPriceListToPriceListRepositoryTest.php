@@ -77,6 +77,7 @@ class CombinedPriceListToPriceListRepositoryTest extends WebTestCase
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroB2BPricingBundle:CombinedPriceListToPriceList');
+        return $this->getContainer()->get('doctrine')
+            ->getRepository('OroB2BPricingBundle:CombinedPriceListToPriceList');
     }
 }
