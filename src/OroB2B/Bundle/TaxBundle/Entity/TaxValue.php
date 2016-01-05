@@ -143,6 +143,34 @@ class TaxValue implements CreatedAtAwareInterface, UpdatedAtAwareInterface
      */
     protected $address;
 
+    /**
+ * @var float
+ *
+ * @ORM\Column(name="total_tax_amount", type="float")
+ * @ConfigField(
+ *      defaultValues={
+ *          "dataaudit"={
+ *              "auditable"=true
+ *          }
+ *      }
+ * )
+ */
+    protected $totalTaxAmount;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="shipping_tax_amount", type="float")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $shippingTaxAmount;
+
     public function __construct()
     {
         $this->appliedTaxes = new ArrayCollection();
@@ -365,6 +393,42 @@ class TaxValue implements CreatedAtAwareInterface, UpdatedAtAwareInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @param float $totalTaxAmount
+     * @return $this
+     */
+    public function setTotalTaxAmount($totalTaxAmount)
+    {
+        $this->totalTaxAmount = $totalTaxAmount;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTotalTaxAmount()
+    {
+        return $this->totalTaxAmount;
+    }
+
+    /**
+     * @param float $shippingTaxAmount
+     * @return $this
+     */
+    public function setShippingTaxAmount($shippingTaxAmount)
+    {
+        $this->shippingTaxAmount = $shippingTaxAmount;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getShippingTaxAmount()
+    {
+        return $this->shippingTaxAmount;
     }
 
     /**
