@@ -49,22 +49,18 @@ class CombinedProductPriceResolver
     {
         $priceListRelationClassName = 'OroB2BPricingBundle:CombinedPriceListToPriceList';
         $combinedPriceClassName = 'OroB2BPricingBundle:CombinedProductPrice';
-        /**
-         * @var $priceListRelationRepository CombinedPriceListToPriceListRepository
-         */
+
+        /** @var CombinedPriceListToPriceListRepository $priceListRelationRepository */
         $priceListRelationRepository = $this->registry->getManagerForClass($priceListRelationClassName)
             ->getRepository($priceListRelationClassName);
-        /**
-         * @var $combinedPriceRepository CombinedProductPriceRepository
-         */
-        $combinedPriceRepository = $this->registry->getManagerForClass($combinedPriceClassName)
-            ->getRepository($combinedPriceClassName);
-
         $priceListsRelations = $priceListRelationRepository->getPriceListsByCombinedAndProduct(
             $combinedPriceList,
             $product
         );
 
+        /** @var CombinedProductPriceRepository $combinedPriceRepository */
+        $combinedPriceRepository = $this->registry->getManagerForClass($combinedPriceClassName)
+            ->getRepository($combinedPriceClassName);
         $combinedPriceRepository->deletePricesByProduct($combinedPriceList, $product);
         foreach ($priceListsRelations as $priceListRelation) {
             $combinedPriceRepository->insertPricesByPriceListForProduct(

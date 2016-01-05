@@ -4,7 +4,9 @@ namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
+
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class CombinedPriceListToPriceListRepository extends EntityRepository
@@ -12,7 +14,7 @@ class CombinedPriceListToPriceListRepository extends EntityRepository
     /**
      * @param CombinedPriceList $combinedPriceList
      * @param Product $product
-     * @return \OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList[]
+     * @return CombinedPriceListToPriceList[]
      */
     public function getPriceListsByCombinedAndProduct(CombinedPriceList $combinedPriceList, Product $product)
     {

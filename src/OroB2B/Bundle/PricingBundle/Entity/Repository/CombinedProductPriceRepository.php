@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
+
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -32,12 +33,12 @@ class CombinedProductPriceRepository extends ProductPriceRepository
         $qb->select(
             'IDENTITY(pp.product)',
             'IDENTITY(pp.unit)',
-            $qb->expr()->literal($combinedPriceList->getId()) . ' AS priceList',
+            (string)$qb->expr()->literal($combinedPriceList->getId()),
             'pp.productSku',
             'pp.quantity',
             'pp.value',
             'pp.currency',
-            $qb->expr()->literal($mergeAllowed ? 1 : 0) . ' AS mergeAllowed'
+            sprintf('CAST(%d as boolean)', (int)$mergeAllowed)
         )
             ->where(
                 $qb->expr()->andX(
