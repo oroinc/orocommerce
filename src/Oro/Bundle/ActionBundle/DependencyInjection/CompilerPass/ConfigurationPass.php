@@ -38,7 +38,7 @@ class ConfigurationPass implements CompilerPassInterface
 
             $resources = $configLoader->load($container);
             foreach ($resources as $resource) {
-                if (array_key_exists(ActionConfigurationProvider::ROOT_NODE_NAME, $resource->data) &&
+                if (array_key_exists(ActionConfigurationProvider::ROOT_NODE_NAME, (array)$resource->data) &&
                     is_array($resource->data[ActionConfigurationProvider::ROOT_NODE_NAME])
                 ) {
                     $config[$resource->bundleClass] = $resource->data[ActionConfigurationProvider::ROOT_NODE_NAME];
