@@ -12,16 +12,17 @@ use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Doctrine\ORM\Query;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as AccountSelectTypeStub;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
 use OroB2B\Bundle\AccountBundle\Form\Type\SalesRepsCollectionType;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntitySelectTypeStub;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityType;
@@ -124,15 +125,14 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
         $this->assertEquals($expectedData, $form->getData());
     }
 
-
     /**
      * @return array
      */
     public function submitProvider()
     {
-        $newAccountUser = new AccountUser();
+        $newAccountUser = $this->createAccountUser();
 
-        $existingAccountUser = new AccountUser();
+        $existingAccountUser = clone $newAccountUser;
 
         $class = new \ReflectionClass($existingAccountUser);
         $prop = $class->getProperty('id');
@@ -240,5 +240,17 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
             );
 
         return $translator;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|AccountUser
+     */
+    private function createAccountUser()
+    {
+        $accountUser = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountUser');
+        $accountUser->expects($this->any())->method('getOrganization')->willReturn(new Organization());
+        $accountUser->expects($this->any())->method('setSalesReps')->willReturn($this->returnSelf());
+
+        return $accountUser;
     }
 }

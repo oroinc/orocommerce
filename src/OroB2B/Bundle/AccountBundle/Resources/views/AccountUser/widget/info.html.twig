@@ -53,7 +53,7 @@
                     {% endif %}
                     {% set salesReps = salesReps|merge([salesRepView]) %}
                 {% endfor %}
-                {{ UI.renderHtmlProperty('orob2b.account.sales_reps.label'|trans, UI.renderList(salesReps)) }}
+                {{ UI.renderHtmlProperty('orob2b.account.accountuser.sales_reps.label'|trans, UI.renderList(salesReps)) }}
             {% endif %}
         </div>
     </div>

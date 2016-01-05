@@ -67,6 +67,7 @@ orob2b.account:
         addresses.label:             'Addresses'
         address_book.label:          'Address Book'
         owner.label:                 'Owner'
+        sales_reps.label:            'Assigned Sales Representatives'
 
         profile:
             company_name: 'Company Name'

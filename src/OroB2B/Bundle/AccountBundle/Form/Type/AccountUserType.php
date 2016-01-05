@@ -173,7 +173,7 @@ class AccountUserType extends AbstractType
             )
             ->add(
                 'salesReps',
-                'orob2b_account_sales_reps_collection',
+                SalesRepsCollectionType::NAME,
                 [
                     'label' => 'orob2b.account.sales_reps.label',
                 ]

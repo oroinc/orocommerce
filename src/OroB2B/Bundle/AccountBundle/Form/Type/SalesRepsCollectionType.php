@@ -40,6 +40,7 @@ class SalesRepsCollectionType extends AbstractType
                 'class' => $this->dataClass,
                 'property' => 'fullName',
                 'multiple' => true,
+                'required' => false,
             ]
         );
     }

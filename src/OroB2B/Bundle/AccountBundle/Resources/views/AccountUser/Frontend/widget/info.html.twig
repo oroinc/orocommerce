@@ -26,6 +26,19 @@
                 {% set roles = roles|merge([entityRole.label]) %}
             {% endfor %}
             {{ UI.renderHtmlProperty('orob2b.account.accountuser.roles.label'|trans, roles|join('<br />')) }}
+
+            {% if entity.salesReps.count() %}
+                {% set salesReps = [] %}
+                {% for salesRep in entity.salesReps %}
+                    {% if resource_granted('VIEW', salesRep) %}
+                        {% set salesRepView = UI.renderUrl(path('oro_user_view', {'id': salesRep.id}), salesRep.fullName) %}
+                    {% else %}
+                        {% set salesRepView = salesRep.fullName|escape %}
+                    {% endif %}
+                    {% set salesReps = salesReps|merge([salesRepView]) %}
+                {% endfor %}
+                {{ UI.renderHtmlProperty('orob2b.account.accountuser.sales_reps.label'|trans, UI.renderList(salesReps)) }}
+            {% endif %}
         </div>
     </div>
 </div>
