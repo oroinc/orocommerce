@@ -10,14 +10,12 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 
 class FrontendLineItemWidgetType extends AbstractType
@@ -79,15 +77,6 @@ class FrontendLineItemWidgetType extends AbstractType
                         return $repository->createFindForAccountUserQueryBuilder($this->getAccountUser());
                     },
                     'empty_value' => 'orob2b.shoppinglist.lineitem.create_new_shopping_list',
-                    'choice_label' => function (ShoppingList $shoppingList) {
-                        $label = $shoppingList->getLabel();
-
-                        if ($shoppingList->isCurrent()) {
-                            $label .= ' (current)';
-                        }
-
-                        return $label;
-                    },
                 ]
             )
             ->add(
@@ -101,14 +90,6 @@ class FrontendLineItemWidgetType extends AbstractType
             )
             ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetData'])
             ->addEventListener(FormEvents::POST_SUBMIT, [$this, 'postSubmit']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setAllowedTypes('shoppingList', ['OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', null]);
     }
 
     /**
