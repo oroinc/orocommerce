@@ -7,6 +7,9 @@ use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
 
+/**
+ * @dbIsolation
+ */
 class CombinedProductPriceResolverTest extends WebTestCase
 {
     /**
@@ -23,7 +26,8 @@ class CombinedProductPriceResolverTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists'
             ]
         );
         $this->resolver = $this->getContainer()->get('orob2b_pricing.resolver.combined_product_price_resolver');
