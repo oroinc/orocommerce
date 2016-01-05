@@ -26,5 +26,10 @@ class CombinedProductPrice extends BaseProductPrice
      **/
     protected $priceList;
 
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="merge", type="boolean", nullable=false)
+     */
     protected $merge;
 }

@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Resolver;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
@@ -15,11 +16,18 @@ class CombinedProductPriceResolver
     protected $registry;
 
     /**
-     * @param ManagerRegistry $registry
+     * @var InsertFromSelectQueryExecutor
      */
-    public function __construct(ManagerRegistry $registry)
+    protected $insertFromSelectExecutor;
+
+    /**
+     * @param ManagerRegistry $registry
+     * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
+     */
+    public function __construct(ManagerRegistry $registry, InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor)
     {
         $this->registry = $registry;
+        $this->insertFromSelectExecutor = $insertFromSelectQueryExecutor;
     }
 
 
@@ -27,16 +35,24 @@ class CombinedProductPriceResolver
     {
         $repo = $this->registry
             ->getRepository('OroB2BPricingBundle:CombinedPriceListToPriceList');
-        $allowMerge = $repo->getPriceListsByCombined($combinedPriceList, true);
-        $notAllowMerge = $repo->getPriceListsByCombined($combinedPriceList, false);
+
+        foreach ($repo->getPriceListsByCombined($combinedPriceList) as $combinedPriceListToPriceList) {
+            $this->registry->getRepository('OroB2BPricingBundle:CombinedProductPrice')->insertPrices(
+                $combinedPriceListToPriceList,
+                $this->insertFromSelectExecutor
+            );
+        }
     }
 
     /**
      * @param CombinedPriceList $combinedPriceList
      * @param Product $product
      */
-    public function updatePricesByProduct(CombinedPriceList $combinedPriceList, Product $product)
-    {
+    public
+    function updatePricesByProduct(
+        CombinedPriceList $combinedPriceList,
+        Product $product
+    ) {
         //TODO: BB-1843
     }
 }

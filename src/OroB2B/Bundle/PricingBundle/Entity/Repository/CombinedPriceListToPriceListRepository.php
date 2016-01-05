@@ -5,28 +5,23 @@ namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 
 class CombinedPriceListToPriceListRepository extends EntityRepository
 {
     /**
      * @param CombinedPriceList $combinedPriceList
-     * @param null|boolean $mergeAllowed
-     * @return PriceList[]|null
+     * @return CombinedPriceListToPriceList[]
      */
-    public function getPriceListsByCombined(CombinedPriceList $combinedPriceList, $mergeAllowed = null)
+    public function getPriceListsByCombined(CombinedPriceList $combinedPriceList)
     {
-        $qb = $this->createQueryBuilder('combinedPriceListToPriceList')
-            ->select('priceList')
+        return $this->createQueryBuilder('combinedPriceListToPriceList')
+            ->addSelect('priceList')
             ->innerJoin('combinedPriceListToPriceList.priceList', 'priceList')
             ->orderBy('combinedPriceListToPriceList.sortOrder')
             ->where('combinedPriceListToPriceList.combinedPriceList = :combinedPriceList')
-            ->setParameter('combinedPriceList', $combinedPriceList);
-        if ($mergeAllowed !== null) {
-            $qb->andWhere('combinedPriceListToPriceList.mergeAllowed = :mergeAllowed')
-                ->setParameter('mergeAllowed', $mergeAllowed);
-        }
-
-        return $qb->getQuery()->getResult();
+            ->setParameter('combinedPriceList', $combinedPriceList)
+            ->getQuery()
+            ->getResult();
     }
 }

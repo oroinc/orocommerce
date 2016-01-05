@@ -66,6 +66,7 @@ class AddCombinedPriceLists implements Migration
         $table->addColumn('quantity', 'float', []);
         $table->addColumn('value', 'money', ['precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']);
         $table->addColumn('currency', 'string', ['length' => 3]);
+        $table->addColumn('merge', 'boolean', []);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(
             [
