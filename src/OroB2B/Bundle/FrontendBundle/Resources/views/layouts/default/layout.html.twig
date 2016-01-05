@@ -59,7 +59,7 @@
 {% endblock %}
 
 {% block _content_widget %}
-    {% set hasSidebarLeft = views.sidebar_left is defined and views.sidebar_left.children|length > 0 %}
+    {% set hasSidebarLeft = block.sidebar_left is defined and block.sidebar_left.children|length > 0 %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " content" ~ (hasSidebarLeft ? " content_has-sidebar")
     }) %}
