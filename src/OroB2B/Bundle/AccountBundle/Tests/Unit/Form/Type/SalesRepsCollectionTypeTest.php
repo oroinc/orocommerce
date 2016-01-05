@@ -33,7 +33,7 @@ class SalesRepsCollectionTypeTest extends FormIntegrationTestCase
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                    'required'  => false,
+                    'required' => false,
                     'class'  => self::CLASS_USER_ENTITY,
                     'property' => 'fullName',
                     'multiple' => true,

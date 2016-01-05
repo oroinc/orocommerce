@@ -370,7 +370,6 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     {
         $accountUser = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountUser');
         $accountUser->expects($this->any())->method('getOrganization')->willReturn(new Organization());
-        $accountUser->expects($this->any())->method('setSalesReps')->willReturn($this->returnSelf());
 
         return $accountUser;
     }

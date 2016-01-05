@@ -7,15 +7,16 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use Doctrine\ORM\EntityManager;
 
+use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EnumSelectType;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountGroupSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountType;
 use OroB2B\Bundle\AccountBundle\Form\Type\ParentAccountSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\SalesRepsCollectionType;
-use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
 
 class AccountTypeTest extends FormIntegrationTestCase
@@ -28,6 +29,9 @@ class AccountTypeTest extends FormIntegrationTestCase
 
     /** @var AccountAddress[] */
     protected static $addresses;
+
+    /** @var User[] */
+    protected static $users;
 
     /**
      * {@inheritdoc}
@@ -79,11 +83,12 @@ class AccountTypeTest extends FormIntegrationTestCase
         );
 
         $salesRepsCollectionType = new EntityType(
+            $this->getUsers(),
+            SalesRepsCollectionType::NAME,
             [
-                1 => $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 1),
-                2 => $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 2),
-            ],
-            SalesRepsCollectionType::NAME
+                'class' => 'Oro\Bundle\UserBundle\Entity\User',
+                'multiple' => true
+            ]
         );
 
         return [
@@ -147,7 +152,8 @@ class AccountTypeTest extends FormIntegrationTestCase
                     'group' => 1,
                     'parent' => 2,
                     'addresses' => [1],
-                    'internal_rating' => '2_of_5'
+                    'internal_rating' => '2_of_5',
+                    'salesReps' => [1],
                 ],
                 'expectedData' => [
                     'name' => 'account_name',
@@ -155,7 +161,7 @@ class AccountTypeTest extends FormIntegrationTestCase
                     'parent' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2),
                     'addresses' => [$this->getAddresses()[1]],
                     'internal_rating' => new StubEnumValue('2_of_5', '2 of 5'),
-                    'salesReps' => null,
+                    'salesReps' => [$this->getUsers()[1]],
                 ]
             ],
             'empty parent' => [
@@ -167,7 +173,7 @@ class AccountTypeTest extends FormIntegrationTestCase
                     'group' => 1,
                     'parent' => null,
                     'addresses' => [1],
-                    'internal_rating' => '2_of_5'
+                    'internal_rating' => '2_of_5',
                 ],
                 'expectedData' => [
                     'name' => 'account_name',
@@ -175,7 +181,7 @@ class AccountTypeTest extends FormIntegrationTestCase
                     'parent' => null,
                     'addresses' => [$this->getAddresses()[1]],
                     'internal_rating' => new StubEnumValue('2_of_5', '2 of 5'),
-                    'salesReps' => null,
+                    'salesReps' => [],
                 ]
             ],
             'empty group' => [
@@ -187,7 +193,8 @@ class AccountTypeTest extends FormIntegrationTestCase
                     'group' => null,
                     'parent' => 2,
                     'addresses' => [1],
-                    'internal_rating' => '2_of_5'
+                    'internal_rating' => '2_of_5',
+                    'salesReps' => [1, 2],
                 ],
                 'expectedData' => [
                     'name' => 'account_name',
@@ -195,7 +202,7 @@ class AccountTypeTest extends FormIntegrationTestCase
                     'parent' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2),
                     'addresses' => [$this->getAddresses()[1]],
                     'internal_rating' => new StubEnumValue('2_of_5', '2 of 5'),
-                    'salesReps' => null,
+                    'salesReps' => [$this->getUsers()[1], $this->getUsers()[2]],
                 ]
             ],
             'empty address' => [
@@ -215,7 +222,7 @@ class AccountTypeTest extends FormIntegrationTestCase
                     'parent' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2),
                     'addresses' => [],
                     'internal_rating' => new StubEnumValue('2_of_5', '2 of 5'),
-                    'salesReps' => null,
+                    'salesReps' => [],
                 ]
             ],
             'empty internal_rating' => [
@@ -226,15 +233,14 @@ class AccountTypeTest extends FormIntegrationTestCase
                     'name' => 'account_name',
                     'group' => 1,
                     'parent' => 2,
-                    'internal_rating' => null
+                    'internal_rating' => []
                 ],
                 'expectedData' => [
                     'name' => 'account_name',
                     'group' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 1),
                     'parent' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2),
-                    'internal_rating' => null,
                     'addresses' => [],
-                    'salesReps' => null,
+                    'salesReps' => [],
                 ]
             ],
         ];
@@ -275,5 +281,19 @@ class AccountTypeTest extends FormIntegrationTestCase
             ];
         }
         return self::$addresses;
+    }
+
+    /**
+     * @return User[]
+     */
+    protected function getUsers()
+    {
+        if (!self::$users) {
+            self::$users = [
+                1 => $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 1),
+                2 => $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 2)
+            ];
+        }
+        return self::$users;
     }
 }
