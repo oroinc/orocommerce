@@ -105,7 +105,7 @@ class MenuItem extends ExtendMenuItem
     protected $displayChildren = true;
 
     /**
-     * Constructor
+     * {@inheritdoc}
      */
     public function __construct()
     {
