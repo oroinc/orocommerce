@@ -2,16 +2,18 @@ oro_system_configuration:
     groups:
         product:
             title: orob2b.product.system_configuration.groups.product.title
+        product_inventory:
+            title: orob2b.product.system_configuration.groups.product_inventory.title
+            icon: 'icon-list'
+        product_unit:
+            title: orob2b.product.system_configuration.groups.product_unit.title
             icon: 'icon-briefcase'
-        product_unit_settings:
-            title: orob2b.product.system_configuration.groups.product_unit_settings.title
-        default_visibility:
-            title: orob2b.product.system_configuration.groups.default_visibility.title
+        product_unit_rounding:
+            title: orob2b.product.system_configuration.groups.product_unit_rounding.title
         frontend_inventory_statuses_visibility:
             title: orob2b.product.system_configuration.groups.frontend_inventory_statuses_visibility.title
         backend_inventory_statuses_visibility:
             title: orob2b.product.system_configuration.groups.backend_inventory_statuses_visibility.title
-
     fields:
         orob2b_product.unit_rounding_type:
             data_type: string
@@ -38,15 +40,20 @@ oro_system_configuration:
 
     tree:
         system_configuration:
-            platform:
+            commerce:
                 children:
-                    catalog:
+                    product:
+                        priority: 700
                         children:
-                            product_settings:
+                            product_inventory:
+                                priority: 200
                                 children:
                                     frontend_inventory_statuses_visibility:
                                         children:
                                             - orob2b_product.general_frontend_product_visibility
-                                    product_unit_settings:
+                            product_unit:
+                                priority: 100
+                                children:
+                                    product_unit_rounding:
                                         children:
                                             - orob2b_product.unit_rounding_type
