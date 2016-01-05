@@ -30,7 +30,9 @@ class CombinedProductPriceResolver
         $this->insertFromSelectExecutor = $insertFromSelectQueryExecutor;
     }
 
-
+    /**
+     * @param CombinedPriceList $combinedPriceList
+     */
     public function combinePrices(CombinedPriceList $combinedPriceList)
     {
         $repo = $this->registry
@@ -48,11 +50,8 @@ class CombinedProductPriceResolver
      * @param CombinedPriceList $combinedPriceList
      * @param Product $product
      */
-    public
-    function updatePricesByProduct(
-        CombinedPriceList $combinedPriceList,
-        Product $product
-    ) {
+    public function updatePricesByProduct(CombinedPriceList $combinedPriceList, Product $product)
+    {
         //TODO: BB-1843
     }
 }
