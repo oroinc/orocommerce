@@ -4,7 +4,11 @@ namespace OroB2B\Bundle\PricingBundle\Resolver;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class CombinedProductPriceResolver
@@ -15,11 +19,18 @@ class CombinedProductPriceResolver
     protected $registry;
 
     /**
-     * @param ManagerRegistry $registry
+     * @var InsertFromSelectQueryExecutor
      */
-    public function __construct(ManagerRegistry $registry)
+    protected $insertFromSelectQueryExecutor;
+
+    /**
+     * @param ManagerRegistry $registry
+     * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
+     */
+    public function __construct(ManagerRegistry $registry, InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor)
     {
         $this->registry = $registry;
+        $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
     }
 
     /**
@@ -36,6 +47,33 @@ class CombinedProductPriceResolver
      */
     public function updatePricesByProduct(CombinedPriceList $combinedPriceList, Product $product)
     {
-        //TODO: BB-1843
+        $priceListRelationClassName = 'OroB2BPricingBundle:CombinedPriceListToPriceList';
+        $combinedPriceClassName = 'OroB2BPricingBundle:CombinedProductPrice';
+        /**
+         * @var $priceListRelationRepository CombinedPriceListToPriceListRepository
+         */
+        $priceListRelationRepository = $this->registry->getManagerForClass($priceListRelationClassName)
+            ->getRepository($priceListRelationClassName);
+        /**
+         * @var $combinedPriceRepository CombinedProductPriceRepository
+         */
+        $combinedPriceRepository = $this->registry->getManagerForClass($combinedPriceClassName)
+            ->getRepository($combinedPriceClassName);
+
+        $priceListsRelations = $priceListRelationRepository->getPriceListsByCombinedAndProduct(
+            $combinedPriceList,
+            $product
+        );
+
+        $combinedPriceRepository->deletePricesByProduct($combinedPriceList, $product);
+        foreach ($priceListsRelations as $priceListRelation) {
+            $combinedPriceRepository->insertPricesByPriceListForProduct(
+                $this->insertFromSelectQueryExecutor,
+                $combinedPriceList,
+                $priceListRelation->getPriceList(),
+                $product,
+                $priceListRelation->isMergeAllowed()
+            );
+        }
     }
 }
