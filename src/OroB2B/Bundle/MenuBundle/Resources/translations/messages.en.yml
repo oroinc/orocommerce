@@ -1,0 +1,18 @@
+orob2b:
+    menu:
+        menuitem:
+            entity_label: 'Menu Item'
+            entity_plural_label: 'Menu Items'
+            id.label: 'ID'
+            titles.label: 'Title'
+            image.label: 'Image'
+            left.label: 'Tree left index'
+            level.label: 'Tree level'
+            right.label: 'Tree right index'
+            root.label: 'Tree root'
+            parent_menu_item.label: 'Parent Menu Item'
+            uri.label: 'Uri'
+            route.label: 'Route'
+            route_parameters.label: 'Route parameters'
+            display.label: 'Display'
+            display_children.label: 'Display children'
