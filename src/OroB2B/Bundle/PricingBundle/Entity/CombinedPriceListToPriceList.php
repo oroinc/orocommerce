@@ -36,7 +36,7 @@ class CombinedPriceListToPriceList
     protected $priceList;
 
     /**
-     * @var int
+     * @var int order ASC
      *
      * @ORM\Column(name="sort_order", type="integer", nullable=false)
      */
