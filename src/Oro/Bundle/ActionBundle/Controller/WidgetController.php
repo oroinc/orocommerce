@@ -63,7 +63,6 @@ class WidgetController extends Controller
             $data['form'] = $form;
 
             if ($form->isValid()) {
-                //$data = $this->getActionManager()->execute($actionName, $form->getData(), $errors);
                 $data = $this->getActionManager()->execute($actionName, $data, $errors);
 
                 $params['response'] = $this->getResponse($data);
@@ -71,7 +70,6 @@ class WidgetController extends Controller
 
             $params['form'] = $form->createView();
             $params['context'] = $data->getValues();
-            $params['action'] = $this->getActionManager()->getAction($actionName, $data);
             $params['fromUrl'] = $request->get('fromUrl');
 
         } catch (\Exception $e) {

@@ -6,20 +6,18 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
+use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Form\Type\LineItemType;
 use OroB2B\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;

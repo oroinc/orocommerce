@@ -98,14 +98,12 @@ class ShoppingListLineItemHandler
     /**
      * @param AccountUser $accountUser
      * @param Product $product
-     * @param ShoppingList $shoppingList
      * @return LineItem
      */
-    public function prepareLineItemWithProduct(
-        AccountUser $accountUser,
-        Product $product,
-        ShoppingList $shoppingList = null
-    ) {
+    public function prepareLineItemWithProduct(AccountUser $accountUser, Product $product)
+    {
+        $shoppingList = $this->shoppingListManager->getCurrent();
+
         $lineItem = new LineItem();
         $lineItem
             ->setProduct($product)
@@ -127,13 +125,15 @@ class ShoppingListLineItemHandler
         $shoppingList = $form->get('lineItem')->get('shoppingList')->getData();
 
         if (!$shoppingList) {
-            /* @var $form \Symfony\Component\Form\Form */
+            /* @var $form Form */
             $name = $form->get('lineItem')->get('shoppingListLabel')->getData();
 
             $shoppingList = $this->shoppingListManager->createCurrent($name);
         }
 
         $lineItem->setShoppingList($shoppingList);
+
+        $this->shoppingListManager->addLineItem($lineItem, $shoppingList);
     }
 
     /**

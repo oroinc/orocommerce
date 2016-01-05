@@ -3,34 +3,38 @@
 define(function(require) {
     'use strict';
 
-    var ActionManager;
-
-    var BaseComponent = require('oroui/js/app/components/base/component');
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
     var $ = require('jquery');
     var mediator = require('oroui/js/mediator');
     var messenger = require('oroui/js/messenger');
     var widgetManager = require('oroui/js/widget-manager');
+    var Backbone = require('backbone');
     var DialogWidget = require('oro/dialog-widget');
     var DeleteConfirmation = require('oroui/js/delete-confirmation');
 
-    //actionManager = BaseComponent.extend({
-    ActionManager = {
+    var ActionManager = function(options) {
+        this.initialize(options);
+    };
+
+    _.extend(ActionManager.prototype, {
+
         /**
-         * @property {Object}
+         * @type {Object}
          */
         options: {
-            widgetAlias: 'action_buttons_widget'
+            widgetAlias: 'action_buttons_widget',
+            redirectUrl: '',
+            dialogUrl: '',
+            url: '',
+            confirmation: false,
+            showDialog: false,
+            dialogOptions: {},
+            messages: {},
         },
 
         /**
-         * @property {jQuery.Element}
-         */
-        $container: {},
-
-        /**
-         * @property {Object}
+         * @type {Object}
          */
         messages: {
             confirm_title: 'oro.action.confirm_title',
@@ -39,10 +43,14 @@ define(function(require) {
             confirm_cancel: 'Cancel'
         },
 
-        /** @param {Object} */
+        /**
+         * @type {Object}
+         */
         confirmModal: null,
 
-        /** @property {Function} */
+        /**
+         * @type {Function}
+         */
         confirmModalConstructor: DeleteConfirmation,
 
         /**
@@ -50,81 +58,40 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-
-            this.$container = $(this.options._sourceElement);
-            this.$container
-                .on('click', 'a.action-button', _.bind(this.onClick, this));
         },
 
         /**
          * @param {jQuery.Event} e
          */
-        onClick: function(e) {
-            e.preventDefault();
-            var $element = $(e.currentTarget);
-            if ($element.data('confirmation')) {
-                this.messages.confirm_content = $element.data('confirmation');
-                this.getConfirmDialog(_.bind(this.doExecute, this, e, $element)).open();
+        execute: function(e) {
+            if (this.options.confirmation) {
+                this.showConfirmDialog(_.bind(this.doExecute, this, e));
             } else {
-                this.doExecute(e, $element);
+                this.doExecute(e);
             }
-        },
-
-        /**
-         * @param {jQuery.Element} $element
-         * @return {Object}
-         * @private
-         */
-        _getDialogOptions: function($element) {
-            var dialogOptions = {
-                title: 'action',
-                url: $element.data('dialog-url'),
-                stateEnabled: false,
-                incrementalPosition: false,
-                loadingMaskEnabled: true,
-                dialogOptions: {
-                    modal: true,
-                    resizable: true,
-                    width: 475,
-                    autoResize: true
-                }
-            };
-
-            var additionalOptions = $element.data('dialog-options');
-            if (additionalOptions) {
-                if (additionalOptions.dialogOptions !== undefined) {
-                    additionalOptions.dialogOptions = _.extend(
-                        dialogOptions.dialogOptions,
-                        additionalOptions.dialogOptions
-                    );
-                }
-
-                dialogOptions = _.extend(dialogOptions, additionalOptions);
-            }
-
-            return dialogOptions;
         },
 
         /**
          * @param {jQuery.Event} e
-         * @param {jQuery.Element} $element
          */
-        doExecute: function(e, $element) {
-            if ($element.data('dialog-url')) {
-                var widget = new DialogWidget(this._getDialogOptions($element));
+        doExecute: function(e) {
+            if (this.options.showDialog) {
+                var widget = new DialogWidget(this._getDialogOptions(this.options));
 
-                this.listenTo(widget, 'formSave', _.bind(function(response) {
+                Backbone.listenTo(widget, 'formSave', _.bind(function(response) {
                     widget.remove();
-                    this.doResponse(e, response);
+                    this.doResponse(response, e);
                 }, this));
 
                 widget.render();
+            } else if (this.options.redirectUrl) {
+                this.doRedirect(this.options.redirectUrl);
             } else {
                 mediator.execute('showLoading');
 
-                $.getJSON($element.attr('href'))
+                $.getJSON(this.options.url)
                     .done(_.bind(function(response) {
-                        this.doResponse(e, response);
+                        this.doResponse(response, e);
                     }, this))
                     .fail(function(jqXHR) {
                         var message = __('Could not perform action');
@@ -144,7 +111,6 @@ define(function(require) {
 
         /**
          * @param {Object} response
-         * @param {jQuery.Event} e
          */
         doResponse: function(response, e) {
             mediator.execute('hideLoading');
@@ -190,36 +156,68 @@ define(function(require) {
         },
 
         /**
-         * Get view for confirm modal
-         *
          * @return {oroui.Modal}
          */
-        getConfirmDialog: function(callback) {
+        showConfirmDialog: function(callback) {
+            var messages = _.extend(this.messages, this.options.messages);
+
             if (!this.confirmModal) {
                 this.confirmModal = (new this.confirmModalConstructor({
-                    title: __(this.messages.confirm_title),
-                    content: __(this.messages.confirm_content),
-                    okText: __(this.messages.confirm_ok),
-                    cancelText: __(this.messages.confirm_cancel)
+                    title: __(messages.confirm_title),
+                    content: __(messages.confirm_content),
+                    okText: __(messages.confirm_ok),
+                    cancelText: __(messages.confirm_cancel)
                 }));
-                this.listenTo(this.confirmModal, 'ok', callback);
+                Backbone.listenTo(this.confirmModal, 'ok', callback);
             } else {
-                this.confirmModal.setContent(__(this.messages.confirm_content));
+                this.confirmModal.setContent(__(messages.confirm_content));
             }
 
-            return this.confirmModal;
+            this.confirmModal.open();
         },
-//        dispose: function() {
-//            if (this.disposed) {
-//                return;
-//            }
-//
-//            this.$container.off();
-//            delete this.confirmModal;
-//
-//            ActionManager.__super__.dispose.call(this);
-//        }
-    };
+
+        /**
+         * @return {Object}
+         * @private
+         */
+        _getDialogOptions: function() {
+            var options = {
+                title: 'action',
+                url: this.options.dialogUrl,
+                stateEnabled: false,
+                incrementalPosition: false,
+                loadingMaskEnabled: true,
+                dialogOptions: {
+                    modal: true,
+                    resizable: true,
+                    width: 475,
+                    autoResize: true
+                }
+            };
+
+            var additionalOptions = this.options.dialogOptions;
+            if (additionalOptions) {
+                if (additionalOptions.dialogOptions !== undefined) {
+                    additionalOptions.dialogOptions = _.extend(
+                        options.dialogOptions,
+                        additionalOptions.dialogOptions
+                    );
+                }
+
+                options = _.extend(options, additionalOptions);
+            }
+
+            return options;
+        },
+
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            delete this.confirmModal;
+        }
+    });
 
     return ActionManager;
 });

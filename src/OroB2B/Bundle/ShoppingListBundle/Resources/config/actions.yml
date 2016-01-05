@@ -101,23 +101,15 @@ actions:
         form_init:
             - @get_active_user: $.currentUser
             - @call_service_method:
-                service: orob2b_shopping_list.shopping_list.manager
-                method: getCurrent
-                attribute: $.currentShoppingList
-            - @call_service_method:
                 service: orob2b_shopping_list.handler.shopping_list_line_item
                 method: prepareLineItemWithProduct
-                method_parameters: [$.currentUser, $.data, $.currentShoppingList]
+                method_parameters: [$.currentUser, $.data]
                 attribute: $.lineItem
         functions:
             - @call_service_method:
                 service: orob2b_shopping_list.handler.shopping_list_line_item
                 method: processLineItem
                 method_parameters: [$.lineItem, $.form]
-            - @call_service_method:
-                service: orob2b_shopping_list.shopping_list.manager
-                method: addLineItem
-                method_parameters: [$.lineItem, $.lineItem.shoppingList]
             - @call_service_method:
                 service: orob2b_shopping_list.service.message_generator
                 method: getSuccessMessage
@@ -233,4 +225,3 @@ actions:
                 parameters:
                     route: orob2b_rfp_frontend_request_create
                     route_parameters: {'storage': true}
-
