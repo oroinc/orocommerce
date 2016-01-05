@@ -52,6 +52,9 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         }
     }
 
+    /**
+     * @return array
+     */
     public function getPricesByPriceListOnMergeAllowedDataProvider()
     {
         return [
@@ -93,7 +96,6 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         ];
     }
 
-
     /**
      * @dataProvider getPricesByPriceListOnMergeNotAllowedDataProvider
      * @param string $combinedPriceListReference
@@ -121,45 +123,12 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         }
     }
 
+    /**
+     * @return array
+     */
     public function getPricesByPriceListOnMergeNotAllowedDataProvider()
     {
-        return [
-            [
-                'combinedPriceListReference' => '1t_2f_3t',
-                'priceListReference' => 'price_list_2',
-                'expectedData' =>
-                    [
-                        [
-                            'unitId' => 'bottle',
-                            'currency' => 'USD',
-                            'productSku' => 'product.2',
-                            'quantity' => 14,
-                            'value' => '12.2000',
-                        ],
-                        [
-                            'unitId' => 'bottle',
-                            'currency' => 'EUR',
-                            'productSku' => 'product.2',
-                            'quantity' => 24,
-                            'value' => '16.5000',
-                        ],
-                        [
-                            'unitId' => 'liter',
-                            'currency' => 'USD',
-                            'productSku' => 'product.1',
-                            'quantity' => 15,
-                            'value' => '12.2000',
-                        ],
-                        [
-                            'unitId' => 'liter',
-                            'currency' => 'USD',
-                            'productSku' => 'product.2',
-                            'quantity' => 13,
-                            'value' => '12.2000',
-                        ],
-                    ],
-            ],
-        ];
+        return $this->getPricesByPriceListOnMergeAllowedDataProvider();
     }
 
     public function testInsertPrices()
