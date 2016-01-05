@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
 
@@ -44,16 +43,13 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider getCombinedPriceListDataProvider
-     * @param $data
-     * @param $expected
+     * @param array $data
+     * @param array $expected
      */
-    public function testGetCombinedPriceList($data, $expected)
+    public function testGetCombinedPriceList(array $data, array $expected)
     {
         $priceListsRelations = [];
         foreach ($data['priceListsRelations'] as $priceListData) {
-            /**
-             * @var BasePriceListRelation
-             */
             $priceList = $this->getMock('OroB2B\Bundle\PricingBundle\Entity\PriceList');
             $priceList->expects($this->any())
                 ->method('getId')
@@ -117,7 +113,7 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
                 'expected' => [
-                    'name' => '1t2f2t',
+                    'name' => '1t_2f_2t',
                     'currencies' => ['EUR', 'USD'],
                 ]
             ]
