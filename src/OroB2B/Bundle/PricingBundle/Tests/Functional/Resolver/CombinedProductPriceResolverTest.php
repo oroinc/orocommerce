@@ -90,7 +90,7 @@ class CombinedProductPriceResolverTest extends WebTestCase
                         '3 USD/1 bottle',
                     ],
                     'product.2' => [
-                        '1 USD/1 B',
+                        '1 USD/1 bottle',
                         '10 USD/10 bottle'
                     ]
                 ]
