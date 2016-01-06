@@ -38,14 +38,14 @@ class CombinedProductPriceResolver
      */
     public function combinePrices(CombinedPriceList $combinedPriceList)
     {
-
+        $this->updatePricesByProduct($combinedPriceList);
     }
 
     /**
      * @param CombinedPriceList $combinedPriceList
      * @param Product $product
      */
-    public function updatePricesByProduct(CombinedPriceList $combinedPriceList, Product $product)
+    public function updatePricesByProduct(CombinedPriceList $combinedPriceList, Product $product = null)
     {
         $priceListRelationClassName = 'OroB2BPricingBundle:CombinedPriceListToPriceList';
         $combinedPriceClassName = 'OroB2BPricingBundle:CombinedProductPrice';
@@ -63,12 +63,12 @@ class CombinedProductPriceResolver
             ->getRepository($combinedPriceClassName);
         $combinedPriceRepository->deletePricesByProduct($combinedPriceList, $product);
         foreach ($priceListsRelations as $priceListRelation) {
-            $combinedPriceRepository->insertPricesByPriceListForProduct(
+            $combinedPriceRepository->insertPricesByPriceList(
                 $this->insertFromSelectQueryExecutor,
                 $combinedPriceList,
                 $priceListRelation->getPriceList(),
-                $product,
-                $priceListRelation->isMergeAllowed()
+                $priceListRelation->isMergeAllowed(),
+                $product
             );
         }
     }
