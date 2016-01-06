@@ -9,6 +9,7 @@ use OroB2B\Component\Tree\Entity\Repository\NestedTreeRepository;
 
 abstract class AbstractTreeHandler
 {
+    const ROOT_PARENT_VALUE = '#';
     const SUCCESS_STATUS = true;
     const ERROR_STATUS = false;
 
@@ -39,8 +40,9 @@ abstract class AbstractTreeHandler
      */
     public function createTree($root = null, $includeRoot = true)
     {
-        $tree = $this->getNodes($this->getRootNode($root), $includeRoot);
-        return $this->formatTree($tree, $root);
+        $root = $this->getRootNode($root);
+        $tree = $this->getNodes($root, $includeRoot);
+        return $this->formatTree($tree, $root, $includeRoot);
     }
 
     /**
@@ -101,17 +103,41 @@ abstract class AbstractTreeHandler
     /**
      * @param array $entities
      * @param object|null $root
+     * @param bool $includeRoot
      * @return array
      */
-    protected function formatTree(array $entities, $root)
+    protected function formatTree(array $entities, $root, $includeRoot)
     {
         $formattedTree = [];
 
         foreach ($entities as $entity) {
-            $formattedTree[] = $this->formatEntity($entity, $root);
+            $node = $this->formatEntity($entity);
+            $rootId = $root ? $root->getId() : null;
+            $node['parent'] = $this->getParent($node['id'], $node['parent'], $rootId, $includeRoot);
+            $formattedTree[] = $node;
         }
 
         return $formattedTree;
+    }
+
+    /**
+     * @param int $entityId
+     * @param int $parentId
+     * @param int $rootId
+     * @param bool $includeRoot
+     * @return string
+     */
+    protected function getParent($entityId, $parentId, $rootId, $includeRoot)
+    {
+        $parent = self::ROOT_PARENT_VALUE;
+        if ($rootId && $entityId === $rootId) {
+            return $parent;
+        }
+        if ($parentId && !($rootId && $parentId === $rootId && !$includeRoot)) {
+            $parent = $parentId;
+        }
+
+        return $parent;
     }
 
     /**
@@ -132,10 +158,9 @@ abstract class AbstractTreeHandler
      * )
      *
      * @param object $entity
-     * @param object|null $root
      * @return array
      */
-    abstract protected function formatEntity($entity, $root);
+    abstract protected function formatEntity($entity);
 
     /**
      * @return NestedTreeRepository

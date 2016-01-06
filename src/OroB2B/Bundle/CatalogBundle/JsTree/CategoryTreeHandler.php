@@ -47,7 +47,7 @@ class CategoryTreeHandler extends AbstractTreeHandler
     {
         /** @var CategoryRepository $repository */
         $repository = $this->getEntityRepository();
-        $categories = $repository->getChildrenWithTitles(null, false, 'left', 'ASC');
+        $categories = $repository->getChildrenWithTitles($root, false, 'left', 'ASC', $includeRoot);
         $event = new CategoryTreeCreateAfterEvent($categories);
         $event->setUser($this->securityFacade->getLoggedUser());
         $this->eventDispatcher->dispatch(CategoryTreeCreateAfterEvent::NAME, $event);
@@ -92,14 +92,13 @@ class CategoryTreeHandler extends AbstractTreeHandler
      * )
      *
      * @param Category $entity
-     * @param Category|null $root
      * @return array
      */
-    protected function formatEntity($entity, $root)
+    protected function formatEntity($entity)
     {
         return [
             'id'     => $entity->getId(),
-            'parent' => $entity->getParentCategory() ? $entity->getParentCategory()->getId() : '#',
+            'parent' => $entity->getParentCategory() ? $entity->getParentCategory()->getId() : null,
             'text'   => $entity->getDefaultTitle()->getString(),
             'state'  => [
                 'opened' => $entity->getParentCategory() === null

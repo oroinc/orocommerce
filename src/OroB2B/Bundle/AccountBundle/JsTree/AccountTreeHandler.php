@@ -15,13 +15,26 @@ class AccountTreeHandler extends AbstractTreeHandler
     protected function getNodes($root, $includeRoot)
     {
         $entities = [];
+        if ($includeRoot) {
+            $entities[] = $root;
+        }
+        return array_merge($entities, $this->getAllChildren($root));
+    }
 
-        $children = $root->getChildren();
+    /**
+     * @param Account $entity
+     * @return array
+     */
+    protected function getAllChildren(Account $entity)
+    {
+        $entities = [];
+
+        $children = $entity->getChildren();
 
         foreach ($children->toArray() as $child) {
             $entities[] = $child;
 
-            $entities = array_merge($entities, $this->getNodes($child, $includeRoot));
+            $entities = array_merge($entities, $this->getAllChildren($child));
         }
 
         return $entities;
@@ -29,16 +42,13 @@ class AccountTreeHandler extends AbstractTreeHandler
 
     /**
      * @param Account $entity
-     * @param Account $root
      * @return array
      */
-    protected function formatEntity($entity, $root)
+    protected function formatEntity($entity)
     {
         return [
             'id'     => $entity->getId(),
-            'parent' => $entity->getParent() && $entity->getParent()->getId() !== $root->getId()
-                ? $entity->getParent()->getId()
-                : '#',
+            'parent' => $entity->getParent() ? $entity->getParent()->getId() : null,
             'text'   => $entity->getName(),
             'state'  => [
                 'opened' => !$entity->getChildren()->isEmpty()

@@ -15,30 +15,24 @@ class LoadMenuItemData extends AbstractFixture
      */
     protected static $menuItems = [
         'menu_item.1' => [
-            'title' => 'menu_item.1',
             'uri' => '#',
         ],
         'menu_item.1_2' => [
-            'title' => 'menu_item.1_2',
             'uri' => '#',
             'parent' => 'menu_item.1'
         ],
         'menu_item.1_3' => [
-            'title' => 'menu_item.1_3',
             'uri' => '#',
             'parent' => 'menu_item.1'
         ],
         'menu_item.4' => [
-            'title' => 'menu_item.4',
             'uri' => '#',
         ],
         'menu_item.4_5' => [
-            'title' => 'menu_item.4_5',
             'uri' => '#',
             'parent' => 'menu_item.4'
         ],
         'menu_item.4_5_6' => [
-            'title' => 'menu_item.4_5_6',
             'uri' => '#',
             'parent' => 'menu_item.4_5'
         ],
@@ -51,7 +45,7 @@ class LoadMenuItemData extends AbstractFixture
     {
         foreach (self::$menuItems as $menuItemReference => $data) {
             $title = new LocalizedFallbackValue();
-            $title->setString($data['title']);
+            $title->setString($menuItemReference);
             $entity = new MenuItem();
             $entity->addTitle($title)
                 ->setUri($data['uri']);

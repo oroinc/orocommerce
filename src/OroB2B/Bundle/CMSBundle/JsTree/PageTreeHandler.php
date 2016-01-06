@@ -37,14 +37,13 @@ class PageTreeHandler extends AbstractTreeHandler
      * )
      *
      * @param Page $entity
-     * @param Page|null $root
      * @return array
      */
-    protected function formatEntity($entity, $root)
+    protected function formatEntity($entity)
     {
         return [
             'id'     => $entity->getId(),
-            'parent' => $entity->getParentPage() ? $entity->getParentPage()->getId() : '#',
+            'parent' => $entity->getParentPage() ? $entity->getParentPage()->getId() : null,
             'text'   => $entity->getTitle(),
             'state'  => [
                 'opened' => $entity->getParentPage() === null

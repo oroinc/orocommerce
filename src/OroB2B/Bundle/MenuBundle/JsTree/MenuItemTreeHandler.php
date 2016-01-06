@@ -8,8 +8,6 @@ use OroB2B\Component\Tree\Handler\AbstractTreeHandler;
 
 class MenuItemTreeHandler extends AbstractTreeHandler
 {
-    const ROOT_PARENT_VALUE = '#';
-
     /**
      * {@inheritdoc}
      */
@@ -37,26 +35,15 @@ class MenuItemTreeHandler extends AbstractTreeHandler
     }
 
     /**
-     * {@inheritdoc}
+     * @param MenuItem $entity
+     * @return array
      */
-    public function createTree($root = null, $includeRoot = true)
+    protected function formatEntity($entity)
     {
-        return parent::createTree($root, false);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function formatEntity($entity, $root)
-    {
-        $parent = self::ROOT_PARENT_VALUE;
-        if ($entity->getParentMenuItem() && (!$root || $entity->getParentMenuItem()->getId() !== $root->getId())) {
-            $parent = $entity->getParentMenuItem()->getId();
-        }
         return [
             'id' => $entity->getId(),
-            'parent' => $parent,
-            'text' => $entity->getDefaultTitle(),
+            'parent' => $entity->getParentMenuItem() ? $entity->getParentMenuItem()->getId() : null,
+            'text' => $entity->getDefaultTitle()->getString(),
             'state' => [
                 'opened' => $entity->getParentMenuItem() === null
             ]
