@@ -55,18 +55,18 @@ class CombinedPriceListToPriceListRepositoryTest extends WebTestCase
     {
         return [
             'test getting price lists 1' => [
-                'combinedPriceList' => '1t_2f_3t',
+                'combinedPriceList' => '1t_2t_3t',
                 'product' => 'product.1',
                 'expectedPriceLists' => ['priceList1', 'priceList2'],
             ],
             'test getting price lists 2' => [
-                'combinedPriceList' => '1t_2f_3t',
+                'combinedPriceList' => '1t_2t_3t',
                 'product' => 'product.2',
                 'expectedPriceLists' => ['priceList1', 'priceList2'],
             ],
             'test getting price lists 3' => [
-                'combinedPriceList' => '3f_4t_2f',
-                'product' => 'product.3',
+                'combinedPriceList' => '2f_1t_3t',
+                'product' => 'product.7',
                 'expectedPriceLists' => [],
             ],
         ];

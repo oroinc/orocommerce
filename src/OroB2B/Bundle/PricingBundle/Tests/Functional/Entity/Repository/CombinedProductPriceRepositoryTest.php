@@ -32,12 +32,12 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
     }
 
     /**
-     * @dataProvider insertPricesByPriceListForProductDataProvider
+     * @dataProvider insertPricesByPriceListDataProvider
      * @param string $combinedPriceList
      * @param string $product
      * @param boolean $expectedExists
      */
-    public function testInsertPricesByPriceListForProduct($combinedPriceList, $product, $expectedExists)
+    public function testInsertPricesByPriceList($combinedPriceList, $product, $expectedExists)
     {
         /**
          * @var $combinedPriceList CombinedPriceList
@@ -60,12 +60,12 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         );
         $this->assertEmpty($prices);
         foreach ($combinedPriceListRelations as $combinedPriceListRelation) {
-            $combinedProductPriceRepository->insertPricesByPriceListForProduct(
+            $combinedProductPriceRepository->insertPricesByPriceList(
                 $this->insertFromSelectQueryExecutor,
                 $combinedPriceList,
                 $combinedPriceListRelation->getPriceList(),
-                $product,
-                $combinedPriceListRelation->isMergeAllowed()
+                $combinedPriceListRelation->isMergeAllowed(),
+                $product
             );
         }
         $prices = $combinedProductPriceRepository->findBy(
@@ -85,22 +85,22 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
     /**
      * @return array
      */
-    public function insertPricesByPriceListForProductDataProvider()
+    public function insertPricesByPriceListDataProvider()
     {
         return [
             'test getting price lists 1' => [
-                'combinedPriceList' => '1t_2f_3t',
+                'combinedPriceList' => '1t_2t_3t',
                 'product' => 'product.1',
                 'expectedExists' => true,
             ],
             'test getting price lists 2' => [
-                'combinedPriceList' => '1t_2f_3t',
+                'combinedPriceList' => '1t_2t_3t',
                 'product' => 'product.2',
                 'expectedExists' => true,
             ],
             'test getting price lists 3' => [
-                'combinedPriceList' => '3f_4t_2f',
-                'product' => 'product.3',
+                'combinedPriceList' => '2t_3f_1t',
+                'product' => 'product.7',
                 'expectedExists' => false,
             ],
         ];

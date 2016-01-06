@@ -338,8 +338,6 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('sort_order', 'integer', []);
         $table->addColumn('merge_allowed', 'boolean', []);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['price_list_id'], 'IDX_D06EE1B55688DED7', []);
-        $table->addIndex(['combined_price_list_id'], 'IDX_D06EE1B5F4E1C8D4', []);
         $table->addIndex(['combined_price_list_id', 'sort_order'], 'b2b_cmb_pl_to_pl_cmb_prod_sort_idx', []);
     }
 

@@ -280,9 +280,13 @@ class CombinedProductPriceResolverTest extends WebTestCase
         $this->getEntityManager()->flush($productPrice);
 
         $this->resolver->updatePricesByProduct($combinedPriceList, $product);
-
         $actualPrices = $this->getCombinedPrices($combinedPriceList);
+
+        $this->getEntityManager()->remove($productPrice);
+        $this->getEntityManager()->flush($productPrice);
+
         $this->assertEquals($expectedPrices, $actualPrices);
+
     }
 
     /**
@@ -298,12 +302,11 @@ class CombinedProductPriceResolverTest extends WebTestCase
                         '1 USD/1 liter',
                         '3 USD/1 bottle',
                         '10 USD/9 liter',
-                        '15 USD/10 liter'
+//                        '15 USD/10 liter'
                     ],
                     'product.2' => [
                         '1 USD/1 bottle',
                         '42 EUR/1 liter',
-                        '10 USD/10 bottle'
                     ]
                 ]
             ],
@@ -348,10 +351,14 @@ class CombinedProductPriceResolverTest extends WebTestCase
             ->getRepository('OroB2BPricingBundle:CombinedProductPrice');
 
         /** @var CombinedProductPrice[] $prices */
-        $prices = $repository->findBy(['priceList' => $combinedPriceList], ['quantity' => 'ASC', 'value' => 'ASC']);
+        $prices = $repository->findBy(
+            ['priceList' => $combinedPriceList],
+            ['product' => 'ASC', 'quantity' => 'ASC', 'value' => 'ASC']
+        );
+
         foreach ($prices as $price) {
-            $actualPrices[$price->getProduct()->getSku()] =
-                $price->getPrice()->getValue() . ' ' . $price->getPrice()->getCurrency()
+            $actualPrices[$price->getProduct()->getSku()][] =
+                (int)$price->getPrice()->getValue() . ' ' . $price->getPrice()->getCurrency()
                 . '/' . $price->getQuantity() . ' ' . $price->getProductUnitCode();
         }
 
