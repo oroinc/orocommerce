@@ -1,8 +1,6 @@
 <?php
 
-
 namespace OroB2B\Bundle\PricingBundle\Provider;
-
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
@@ -12,16 +10,16 @@ class PriceListSequenceMember
     protected $priceList;
 
     /** @var  boolean */
-    protected $allowMerge;
+    protected $mergeAllowed;
 
     /**
      * @param PriceList $priceList
-     * @param boolean $allowMerge
+     * @param boolean $mergeAllowed
      */
-    public function __construct(PriceList $priceList, $allowMerge)
+    public function __construct(PriceList $priceList, $mergeAllowed)
     {
         $this->priceList = $priceList;
-        $this->allowMerge = $allowMerge;
+        $this->mergeAllowed = $mergeAllowed;
     }
 
     /**
@@ -35,8 +33,8 @@ class PriceListSequenceMember
     /**
      * @return boolean
      */
-    public function isAllowMerge()
+    public function isMergeAllowed()
     {
-        return $this->allowMerge;
+        return $this->mergeAllowed;
     }
 }

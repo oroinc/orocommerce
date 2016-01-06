@@ -34,8 +34,8 @@ class PriceListToWebsiteRepository extends EntityRepository
         return $this->createQueryBuilder('PriceListToWebsite')
             ->innerJoin('PriceListToWebsite.priceList', 'priceList')
             ->where('PriceListToWebsite.website = :website')
-            ->setParameter('website', $website)
             ->orderBy('PriceListToWebsite.priority')
+            ->setParameter('website', $website)
             ->getQuery()
             ->getResult();
     }

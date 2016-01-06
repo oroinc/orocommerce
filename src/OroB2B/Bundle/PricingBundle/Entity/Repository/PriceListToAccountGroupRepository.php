@@ -40,6 +40,7 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
             ->innerJoin('PriceListToAccountGroup.accountGroup', 'accountGroup')
             ->where('accountGroup = :accountGroup')
             ->andWhere('PriceListToAccountGroup.website = :website')
+            ->orderBy('PriceListToAccountGroup.priority')
             ->setParameters(['accountGroup' => $accountGroup, 'website' => $website])
             ->getQuery()
             ->getResult();

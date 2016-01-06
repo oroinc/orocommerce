@@ -40,6 +40,7 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
             ->innerJoin('PriceListToAccount.account', 'account')
             ->where('account = :account')
             ->andWhere('PriceListToAccount.website = :website')
+            ->orderBy('PriceListToAccount.priority')
             ->setParameters(['account' => $account, 'website' => $website])
             ->getQuery()
             ->getResult();

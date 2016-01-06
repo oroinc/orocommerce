@@ -7,6 +7,11 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToWebsiteRepository;
 use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig;
 use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -23,7 +28,6 @@ class PriceListCollectionProvider
 
     /** @var  PriceListConfigConverter */
     protected $configConverter;
-
 
     /**
      * @param ManagerRegistry $registry
@@ -60,11 +64,15 @@ class PriceListCollectionProvider
         return $priceListCollection;
     }
 
+    /**
+     * @param Website $website
+     * @return PriceListSequenceMember[]
+     */
     public function getPriceListsByWebsite(Website $website)
     {
-        $priceListsToWebsite = $this->registry
-            ->getRepository('OroB2BPricingBundle:CombinedPriceListToWebsite')
-            ->getPriceLists($website);
+        /** @var PriceListToWebsiteRepository $repo */
+        $repo = $this->getRepository('OroB2BPricingBundle:PriceListToWebsite');
+        $priceListsToWebsite = $repo->getPriceLists($website);
         $priceListCollection = [];
         foreach ($priceListsToWebsite as $priceListToWebsite) {
             $priceListCollection[] = new PriceListSequenceMember(
@@ -72,7 +80,72 @@ class PriceListCollectionProvider
                 $priceListToWebsite->isMergeAllowed()
             );
         }
-//        $this->registry->getRepository('')
+        $fallbackEntity = $this->registry
+            ->getRepository('OroB2BPricingBundle:PriceListWebsiteFallback')
+            ->findOneBy(['website' => $website]);
+        if ($fallbackEntity->getFallback()) {
+            return array_merge($priceListCollection, $this->getPriceListsByConfig());
+        }
+
+        return $priceListCollection;
+    }
+
+    /**
+     * @param AccountGroup $accountGroup
+     * @param Website $website
+     * @return PriceListSequenceMember[]
+     */
+    public function getPriceListsByAccountGroup(AccountGroup $accountGroup, Website $website)
+    {
+        /** @var PriceListToAccountGroupRepository $repo */
+        $repo = $this->getRepository('OroB2BPricingBundle:PriceListToAccountGroup');
+        $priceListsToAccountGroup = $repo->getPriceLists($accountGroup, $website);
+        $priceListCollection = [];
+        foreach ($priceListsToAccountGroup as $priceListToAccountGroup) {
+            $priceListCollection[] = new PriceListSequenceMember(
+                $priceListToAccountGroup->getPriceList(),
+                $priceListToAccountGroup->isMergeAllowed()
+            );
+        }
+        $fallbackEntity = $this->registry
+            ->getRepository('OroB2BPricingBundle:PriceListAccountGroupFallback')
+            ->findOneBy(['accountGroup' => $accountGroup]);
+        if ($fallbackEntity->getFallback()) {
+            return array_merge($priceListCollection, $this->getPriceListsByWebsite($website));
+        }
+
+        return $priceListCollection;
+    }
+
+
+    /**
+     * @param Account $account
+     * @param Website $website
+     * @return PriceListSequenceMember[]
+     */
+    public function getPriceListsByAccount(Account $account, Website $website)
+    {
+        /** @var PriceListToAccountRepository $repo */
+        $repo = $this->getRepository('OroB2BPricingBundle:PriceListToAccount');
+        $priceListsToAccount = $repo->getPriceLists($account, $website);
+        $priceListCollection = [];
+        foreach ($priceListsToAccount as $priceListToAccount) {
+            $priceListCollection[] = new PriceListSequenceMember(
+                $priceListToAccount->getPriceList(),
+                $priceListToAccount->isMergeAllowed()
+            );
+        }
+        $fallbackEntity = $this->registry
+            ->getRepository('OroB2BPricingBundle:PriceListAccountFallback')
+            ->findOneBy(['account' => $account]);
+        if ($fallbackEntity->getFallback()) {
+            return array_merge(
+                $priceListCollection,
+                $this->getPriceListsByAccountGroup($account->getGroup(), $website)
+            );
+        }
+
+        return $priceListCollection;
     }
 
     /**
