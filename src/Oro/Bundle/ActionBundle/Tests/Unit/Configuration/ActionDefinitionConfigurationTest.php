@@ -209,11 +209,6 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                             'attribute' => 'attrValue'
                         ]
                     ],
-                    'datagrid_options' => [
-                        'mass_action' => [
-                            'icon' => 'test'
-                        ]
-                    ],
                     'form_options' => [
                         'attribute_fields' => [
                             'attribute_1' => [
@@ -227,6 +222,11 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                             'attribute_1' => 'value 1',
                         ]
                     ],
+                    'datagrid_options' => [
+                        'mass_action' => [
+                            'icon' => 'test'
+                        ]
+                    ]
                 ],
             ],
         ];
