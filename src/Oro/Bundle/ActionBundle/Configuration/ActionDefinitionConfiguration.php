@@ -230,10 +230,23 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
         $node
             ->addDefaultsIfNotSet()
             ->children()
+                ->scalarNode('mass_action_provider')
+                ->end()
                 ->arrayNode('mass_action')
                     ->prototype('variable')
                     ->end()
                 ->end()
+            ->end()
+            ->validate()
+                ->always(function ($config) {
+                    if (!empty($config['mass_action_provider']) && !empty($config['mass_action'])) {
+                        throw new \Exception(
+                            'Must be specified only one parameter "mass_action_provider" or "mass_action"'
+                        );
+                    }
+
+                    return $config;
+                })
             ->end();
 
         return $node;
