@@ -36,7 +36,7 @@ class LoadLevelFallbacks extends AbstractFixture implements DependentFixtureInte
     /**
      * @inheritDoc
      */
-    function getDependencies()
+    public function getDependencies()
     {
         return [
             'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
