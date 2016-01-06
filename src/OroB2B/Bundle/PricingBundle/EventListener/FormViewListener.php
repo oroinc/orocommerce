@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -72,7 +74,20 @@ class FormViewListener
         $priceLists = $this->doctrineHelper
             ->getEntityRepository('OroB2BPricingBundle:PriceListToAccount')
             ->findBy(['account' => $account], ['website' => 'ASC']);
-        $this->addPriceListInfo($event, $priceLists);
+        /** @var  PriceListAccountFallback $fallbackEntity */
+        $fallbackEntity = $this->doctrineHelper
+            ->getEntityRepository('OroB2BPricingBundle:PriceListAccountFallback')
+            ->findOneBy(['account' => $account]);
+        $choices = [
+            PriceListAccountFallback::CURRENT_ACCOUNT_ONLY =>
+                'orob2b.pricing.fallback.current_account_only.label',
+            PriceListAccountFallback::ACCOUNT_GROUP =>
+                'orob2b.pricing.fallback.account_group.label',
+        ];
+        $fallback = $fallbackEntity ? $choices[$fallbackEntity->getFallback()]
+            : $choices[PriceListAccountFallback::ACCOUNT_GROUP];
+
+        $this->addPriceListInfo($event, $priceLists, $fallback);
     }
 
     /**
@@ -93,7 +108,20 @@ class FormViewListener
         $priceLists = $this->doctrineHelper
             ->getEntityRepository('OroB2BPricingBundle:PriceListToAccountGroup')
             ->findBy(['accountGroup' => $accountGroup], ['website' => 'ASC']);
-        $this->addPriceListInfo($event, $priceLists);
+        /** @var  PriceListAccountFallback $fallbackEntity */
+        $fallbackEntity = $this->doctrineHelper
+            ->getEntityRepository('OroB2BPricingBundle:PriceListAccountGroupFallback')
+            ->findOneBy(['accountGroup' => $accountGroup]);
+        $choices = [
+            PriceListAccountGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY =>
+                'orob2b.pricing.fallback.current_account_group_only.label',
+            PriceListAccountGroupFallback::WEBSITE =>
+                'orob2b.pricing.fallback.website.label',
+        ];
+        $fallback = $fallbackEntity ? $choices[$fallbackEntity->getFallback()]
+            : $choices[PriceListAccountGroupFallback::WEBSITE];
+
+        $this->addPriceListInfo($event, $priceLists, $fallback);
     }
 
     /**
@@ -199,12 +227,13 @@ class FormViewListener
     /**
      * @param BeforeListRenderEvent $event
      * @param BasePriceListRelation[] $priceLists
+     * @param string $fallback
      */
-    protected function addPriceListInfo(BeforeListRenderEvent $event, $priceLists)
+    protected function addPriceListInfo(BeforeListRenderEvent $event, $priceLists, $fallback)
     {
         $template = $event->getEnvironment()->render(
             'OroB2BPricingBundle:Account:price_list_view.html.twig',
-            ['priceListsByWebsites' => $this->groupPriceListsByWebsite($priceLists)]
+            ['priceListsByWebsites' => $this->groupPriceListsByWebsite($priceLists), 'fallback' => $fallback]
         );
         $blockLabel = $this->translator->trans('orob2b.pricing.pricelist.entity_plural_label');
         $scrollData = $event->getScrollData();

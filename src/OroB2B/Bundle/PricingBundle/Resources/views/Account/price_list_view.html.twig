@@ -1,5 +1,8 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 <div class="row-fluid form-horizontal">
+    <p>{{ 'orob2b.pricing.fallback.label'|trans }}: <strong>{{ fallback|trans }}</strong></p>
+</div>
+<div class="row-fluid form-horizontal">
     <div class="responsive-block">
         {% if priceListsByWebsites %}
             <div class="oro-tabs">
