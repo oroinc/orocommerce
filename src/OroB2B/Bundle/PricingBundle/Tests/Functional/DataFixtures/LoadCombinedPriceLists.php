@@ -97,7 +97,7 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
                 ],
                 [
                     'priceList' => 'price_list_3',
-                    'mergeAllowed' => false,
+                    'mergeAllowed' => true,
                 ],
             ],
         ],
