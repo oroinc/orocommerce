@@ -30,19 +30,21 @@ class CombinedProductPriceRepository extends ProductPriceRepository
         $qb = $this->getEntityManager()
             ->getRepository('OroB2BPricingBundle:ProductPrice')
             ->createQueryBuilder('pp');
-        $qb->select(
-            'IDENTITY(pp.product)',
-            'IDENTITY(pp.unit)',
-            (string)$qb->expr()->literal($combinedPriceList->getId()),
-            'pp.productSku',
-            'pp.quantity',
-            'pp.value',
-            'pp.currency',
-            sprintf('CAST(%d as boolean)', (int)$mergeAllowed)
-        )
-        ->where($qb->expr()->eq('pp.priceList', ':currentPriceList'))
-        ->groupBy('pp.id')
-        ->setParameter('currentPriceList', $priceList);
+
+        $qb
+            ->select(
+                'IDENTITY(pp.product)',
+                'IDENTITY(pp.unit)',
+                (string)$qb->expr()->literal($combinedPriceList->getId()),
+                'pp.productSku',
+                'pp.quantity',
+                'pp.value',
+                'pp.currency',
+                sprintf('CAST(%d as boolean)', (int)$mergeAllowed)
+            )
+            ->where($qb->expr()->eq('pp.priceList', ':currentPriceList'))
+            ->groupBy('pp.id')
+            ->setParameter('currentPriceList', $priceList);
 
         if ($product) {
             $qb->andWhere($qb->expr()->eq('pp.product', ':currentProduct'))
@@ -69,20 +71,21 @@ class CombinedProductPriceRepository extends ProductPriceRepository
 
     /**
      * @param CombinedPriceList $combinedPriceList
-     * @param Product $product
+     * @param Product|null $product
      */
-    public function deletePricesByProduct(CombinedPriceList $combinedPriceList, Product $product = null)
+    public function deleteCombinedPrices(CombinedPriceList $combinedPriceList, Product $product = null)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->delete($this->getEntityName(), 'combinedPrice')
             ->where($qb->expr()->eq('combinedPrice.priceList', ':combinedPriceList'))
             ->setParameter('combinedPriceList', $combinedPriceList);
+
         if ($product) {
             $qb->andWhere($qb->expr()->eq('combinedPrice.product', ':product'))
                 ->setParameter('product', $product);
         }
-        $qb->getQuery()
-            ->execute();
+
+        $qb->getQuery()->execute();
     }
 
     /**
@@ -116,9 +119,7 @@ class CombinedProductPriceRepository extends ProductPriceRepository
                     $qb->expr()->eq('pp.currency', 'cpp2.currency')
                 )
             )
-            ->andWhere(
-                $qb->expr()->isNull('cpp2.id')
-            );
+            ->andWhere($qb->expr()->isNull('cpp2.id'));
         } else {
             $qb->leftJoin(
                 'OroB2BPricingBundle:CombinedProductPrice',
@@ -131,9 +132,7 @@ class CombinedProductPriceRepository extends ProductPriceRepository
             );
         }
 
-        $qb->andWhere(
-            $qb->expr()->isNull('cpp.id')
-        );
-        $qb->setParameter('combinedPriceList', $combinedPriceList->getId());
+        $qb->andWhere($qb->expr()->isNull('cpp.id'))
+            ->setParameter('combinedPriceList', $combinedPriceList->getId());
     }
 }

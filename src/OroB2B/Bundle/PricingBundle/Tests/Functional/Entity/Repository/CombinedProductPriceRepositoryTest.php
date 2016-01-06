@@ -47,11 +47,11 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         $product = $this->getReference($product);
 
         $repository = $this->getCombinedPriceListToPriceListRepository();
-        $combinedPriceListRelations = $repository->getPriceListsByCombinedAndProduct($combinedPriceList, $product);
+        $combinedPriceListRelations = $repository->getPriceListRelations($combinedPriceList, $product);
 
         $combinedProductPriceRepository = $this->getCombinedProductPriceRepository();
 
-        $combinedProductPriceRepository->deletePricesByProduct($combinedPriceList, $product);
+        $combinedProductPriceRepository->deleteCombinedPrices($combinedPriceList, $product);
         $prices = $combinedProductPriceRepository->findBy(
             [
                 'priceList' => $combinedPriceList,

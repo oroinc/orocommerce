@@ -13,19 +13,24 @@ class CombinedPriceListToPriceListRepository extends EntityRepository
 {
     /**
      * @param CombinedPriceList $combinedPriceList
-     * @param Product $product
+     * @param Product|null $product
      * @return CombinedPriceListToPriceList[]
      */
-    public function getPriceListsByCombinedAndProduct(CombinedPriceList $combinedPriceList, Product $product = null)
+    public function getPriceListRelations(CombinedPriceList $combinedPriceList, Product $product = null)
     {
-        $qb = $this->createQueryBuilder('combinedPriceListToPriceList')
-            ->addSelect('partial priceList.{id, name}');
+        $qb = $this->createQueryBuilder('combinedPriceListToPriceList');
 
-        $qb->innerJoin('combinedPriceListToPriceList.priceList', 'priceList');
         if ($product) {
-            $qb->innerJoin('priceList.prices', 'prices', Join::WITH, $qb->expr()->eq('prices.product', ':product'))
+            $qb->innerJoin('combinedPriceListToPriceList.priceList', 'priceList')
+                ->innerJoin(
+                    'priceList.prices',
+                    'prices',
+                    Join::WITH,
+                    $qb->expr()->eq('prices.product', ':product')
+                )
                 ->setParameter('product', $product);
         }
+
         $qb->orderBy('combinedPriceListToPriceList.sortOrder')
             ->where($qb->expr()->eq('combinedPriceListToPriceList.combinedPriceList', ':combinedPriceList'))
             ->setParameter('combinedPriceList', $combinedPriceList);
