@@ -58,7 +58,7 @@ class LoadProductPricesForCombination extends LoadProductPrices
             'product' => 'product.1',
             'price' => 15,
             'currency' => 'USD',
-            'qty' => 1,
+            'qty' => 10,
             'unit' => 'product_unit.liter',
             'reference' => 'product_price.6'
         ],
