@@ -16,6 +16,7 @@ orob2b:
             route_parameters.label: 'Route parameters'
             display.label: 'Display'
             display_children.label: 'Display children'
+            condition.label: 'Condition'
         controller:
             menuitem:
                 saved.message: Menu Item has been saved

@@ -159,54 +159,6 @@ class MenuItemTreeHandlerTest extends AbstractTreeHandlerTestCase
                     ],
                 ]
             ],
-            'all' => [
-                'root' => null,
-                'includeRoot' => true,
-                'expectedData' => [
-                    [
-                        'entity' => 'menu_item.1',
-                        'parent' => AbstractTreeHandler::ROOT_PARENT_VALUE,
-                        'state' => [
-                            'opened' => true
-                        ],
-                    ],
-                    [
-                        'entity' => 'menu_item.1_2',
-                        'parent' => 'menu_item.1',
-                        'state' => [
-                            'opened' => false
-                        ],
-                    ],
-                    [
-                        'entity' => 'menu_item.1_3',
-                        'parent' => 'menu_item.1',
-                        'state' => [
-                            'opened' => false
-                        ],
-                    ],
-                    [
-                        'entity' => 'menu_item.4',
-                        'parent' => AbstractTreeHandler::ROOT_PARENT_VALUE,
-                        'state' => [
-                            'opened' => true
-                        ],
-                    ],
-                    [
-                        'entity' => 'menu_item.4_5',
-                        'parent' => 'menu_item.4',
-                        'state' => [
-                            'opened' => false
-                        ],
-                    ],
-                    [
-                        'entity' => 'menu_item.4_5_6',
-                        'parent' => 'menu_item.4_5',
-                        'state' => [
-                            'opened' => false
-                        ],
-                    ],
-                ]
-            ],
         ];
     }
 
