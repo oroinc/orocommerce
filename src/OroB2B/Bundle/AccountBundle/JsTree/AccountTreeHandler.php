@@ -18,26 +18,7 @@ class AccountTreeHandler extends AbstractTreeHandler
         if ($includeRoot) {
             $entities[] = $root;
         }
-        return array_merge($entities, $this->getAllChildren($root));
-    }
-
-    /**
-     * @param Account $entity
-     * @return array
-     */
-    protected function getAllChildren(Account $entity)
-    {
-        $entities = [];
-
-        $children = $entity->getChildren();
-
-        foreach ($children->toArray() as $child) {
-            $entities[] = $child;
-
-            $entities = array_merge($entities, $this->getAllChildren($child));
-        }
-
-        return $entities;
+        return array_merge($entities, $this->buildTreeRecursive($root));
     }
 
     /**
@@ -54,6 +35,25 @@ class AccountTreeHandler extends AbstractTreeHandler
                 'opened' => !$entity->getChildren()->isEmpty()
             ]
         ];
+    }
+
+    /**
+     * @param Account $entity
+     * @return array
+     */
+    protected function buildTreeRecursive(Account $entity)
+    {
+        $entities = [];
+
+        $children = $entity->getChildren();
+
+        foreach ($children->toArray() as $child) {
+            $entities[] = $child;
+
+            $entities = array_merge($entities, $this->buildTreeRecursive($child));
+        }
+
+        return $entities;
     }
 
     /**

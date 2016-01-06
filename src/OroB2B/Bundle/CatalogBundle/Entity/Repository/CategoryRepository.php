@@ -9,10 +9,6 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Component\Tree\Entity\Repository\NestedTreeRepository;
 
-/**
- * @method CategoryRepository persistAsFirstChildOf() persistAsFirstChildOf(Category $node, Category $parent)
- * @method CategoryRepository persistAsNextSiblingOf() persistAsNextSiblingOf(Category $node, Category $sibling)
- */
 class CategoryRepository extends NestedTreeRepository
 {
     /**
