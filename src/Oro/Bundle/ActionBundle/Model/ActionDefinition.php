@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\ActionBundle\Model;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ */
 class ActionDefinition
 {
     const PREFUNCTIONS = 'prefunctions';
