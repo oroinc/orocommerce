@@ -17,6 +17,7 @@ parameters:
     orob2b_pricing.provider.currency.class: OroB2B\Bundle\PricingBundle\Provider\CurrencyProvider
     orob2b_pricing.provider.product_price.class: OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider
     orob2b_pricing.provider.combined_price_list.class: OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider
+    orob2b_pricing.provider.price_list_collection.class: OroB2B\Bundle\PricingBundle\Provider\PriceListCollectionProvider
 
     orob2b_pricing.resolver.combined_product_price_resolver.class: OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver
 
@@ -108,6 +109,13 @@ services:
         class: %orob2b_pricing.provider.combined_price_list.class%
         arguments:
             - @doctrine
+
+    orob2b_pricing.provider.price_list_collection:
+        class: %orob2b_pricing.provider.price_list_collection.class%
+        arguments:
+            - @doctrine
+            - @oro_config.manager
+            - @orob2b_pricing.system_config_converter
 
     orob2b_pricing.resolver.combined_product_price_resolver:
         class: %orob2b_pricing.resolver.combined_product_price_resolver.class%
