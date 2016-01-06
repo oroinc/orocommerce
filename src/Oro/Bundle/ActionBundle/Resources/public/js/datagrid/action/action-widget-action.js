@@ -50,7 +50,7 @@ define(function(require) {
                 confirmation: Boolean(this.options.confirmation),
                 messages: {
                     confirm_content: this.options.confirmation
-                },
+                }
             };
 
             this.actionManager = new ActionManager(options);
@@ -85,7 +85,7 @@ define(function(require) {
             delete this.actionManager;
 
             ActionWidgetAction.__super__.dispose.call(this);
-        },
+        }
     });
 
     return ActionWidgetAction;

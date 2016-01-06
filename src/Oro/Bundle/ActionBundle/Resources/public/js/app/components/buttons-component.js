@@ -53,7 +53,7 @@ define(function(require) {
                     confirmation: Boolean($element.data('confirmation')),
                     messages: {
                         confirm_content: $element.data('confirmation')
-                    },
+                    }
                 };
 
                 $element.data('action-manager', new ActionManager(options));

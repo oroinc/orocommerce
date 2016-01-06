@@ -30,7 +30,7 @@ define(function(require) {
             confirmation: false,
             showDialog: false,
             dialogOptions: {},
-            messages: {},
+            messages: {}
         },
 
         /**
@@ -111,6 +111,7 @@ define(function(require) {
 
         /**
          * @param {Object} response
+         * @param {jQuery.Event} e
          */
         doResponse: function(response, e) {
             mediator.execute('hideLoading');
