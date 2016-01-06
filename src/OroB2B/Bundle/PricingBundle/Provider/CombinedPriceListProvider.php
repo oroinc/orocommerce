@@ -1,0 +1,196 @@
+<?php
+
+namespace OroB2B\Bundle\PricingBundle\Provider;
+
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+
+use OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
+
+class CombinedPriceListProvider
+{
+    const GLUE = '_';
+    const MERGE_NOT_ALLOWED_FLAG = 'f';
+    const MERGE_ALLOWED_FLAG = 't';
+
+    /**
+     * @var ManagerRegistry
+     */
+    protected $registry;
+
+    /**
+     * @var string
+     */
+    protected $className;
+
+    /**
+     * @var CombinedProductPriceResolver
+     */
+    protected $resolver;
+
+    /**
+     * @var EntityManager
+     */
+    protected $manager;
+
+    /**
+     * @var EntityRepository
+     */
+    protected $repository;
+
+    /**
+     * @param ManagerRegistry $registry
+     */
+    public function __construct(ManagerRegistry $registry)
+    {
+        $this->registry = $registry;
+    }
+
+    /**
+     * @param string $className
+     */
+    public function setClassName($className)
+    {
+        $this->className = $className;
+    }
+
+    /**
+     * @param CombinedProductPriceResolver $resolver
+     */
+    public function setResolver(CombinedProductPriceResolver $resolver)
+    {
+        $this->resolver = $resolver;
+    }
+
+    /**
+     * @param BasePriceListRelation[] $priceListsRelations
+     * @return CombinedPriceList
+     */
+    public function getCombinedPriceList(array $priceListsRelations)
+    {
+        $normalizedCollection = $this->normalizeCollection($priceListsRelations);
+        $identifier = $this->getCombinedPriceListIdentifier($normalizedCollection);
+        $combinedPriceList = $this->getRepository()->findOneBy(['name' => $identifier]);
+
+        if (!$combinedPriceList) {
+            $combinedPriceList = $this->createCombinedPriceList($normalizedCollection, $identifier);
+            $this->resolver->combinePrices($combinedPriceList);
+        }
+
+        return $combinedPriceList;
+    }
+
+
+    /**
+     * @param BasePriceListRelation[] $priceListsRelations
+     * @return string
+     */
+    protected function getCombinedPriceListIdentifier(array $priceListsRelations)
+    {
+        $key = [];
+        foreach ($priceListsRelations as $priceListRelation) {
+            $isMergeAllowed = self::MERGE_NOT_ALLOWED_FLAG;
+            if ($priceListRelation->isMergeAllowed()) {
+                $isMergeAllowed = self::MERGE_ALLOWED_FLAG;
+            }
+            $key[] = $priceListRelation->getPriceList()->getId() . $isMergeAllowed;
+        }
+
+        return implode(self::GLUE, $key);
+    }
+
+    /**
+     * @param BasePriceListRelation[] $priceListsRelations
+     * @return array BasePriceListRelation[]
+     */
+    protected function normalizeCollection(array $priceListsRelations)
+    {
+        $normalizedCollection = [];
+        $usedPriceMap = [];
+        foreach ($priceListsRelations as $priceListsRelation) {
+            $priceListId = $priceListsRelation->getPriceList()->getId();
+            $isMergeAllowed = $priceListsRelation->isMergeAllowed();
+            if (($isMergeAllowed && isset($usedPriceMap[$priceListId][$isMergeAllowed]))
+                || (!$isMergeAllowed && isset($usedPriceMap[$priceListId]))
+            ) {
+                continue;
+            }
+
+            $normalizedCollection[] = $priceListsRelation;
+            $usedPriceMap[$priceListId][$isMergeAllowed] = true;
+        }
+
+        return $normalizedCollection;
+    }
+
+    /**
+     * @param BasePriceListRelation[] $priceListsRelations
+     * @param string $identifier
+     * @return CombinedPriceList
+     */
+    protected function createCombinedPriceList(array $priceListsRelations, $identifier)
+    {
+        $combinedPriceList = new CombinedPriceList();
+        $combinedPriceList->setName($identifier);
+        $combinedPriceList->setCurrencies($this->getCombinedCurrenciesList($priceListsRelations));
+
+        $manager = $this->getManager();
+        $manager->persist($combinedPriceList);
+
+        $i = 0;
+        foreach ($priceListsRelations as $priceListsRelation) {
+            $priceListToCombined = new CombinedPriceListToPriceList();
+            $priceListToCombined->setMergeAllowed($priceListsRelation->isMergeAllowed());
+            $priceListToCombined->setCombinedPriceList($combinedPriceList);
+            $priceListToCombined->setPriceList($priceListsRelation->getPriceList());
+            $priceListToCombined->setSortOrder($i++);
+            $manager->persist($priceListToCombined);
+        }
+        $manager->flush();
+
+        return $combinedPriceList;
+    }
+
+    /**
+     * @param BasePriceListRelation[] $priceListsRelations
+     * @return array
+     */
+    protected function getCombinedCurrenciesList($priceListsRelations)
+    {
+        $currencies = [];
+        foreach ($priceListsRelations as $priceListsRelation) {
+            $currencies = array_merge($currencies, $priceListsRelation->getPriceList()->getCurrencies());
+        }
+        $currencies = array_unique($currencies);
+
+        return $currencies;
+    }
+
+    /**
+     * @return EntityManager
+     */
+    protected function getManager()
+    {
+        if (!$this->manager) {
+            $this->manager = $this->registry->getManagerForClass($this->className);
+        }
+
+        return $this->manager;
+    }
+
+    /**
+     * @return EntityRepository
+     */
+    protected function getRepository()
+    {
+        if (!$this->repository) {
+            $this->repository = $this->getManager()->getRepository($this->className);
+        }
+
+        return $this->repository;
+    }
+}
