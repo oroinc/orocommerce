@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  *          )
  *      }
  * )
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository")
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository")
  */
 class CombinedProductPrice extends BaseProductPrice
 {
@@ -25,4 +25,11 @@ class CombinedProductPrice extends BaseProductPrice
      * @ORM\JoinColumn(name="combined_price_list_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      **/
     protected $priceList;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="merge_allowed", type="boolean", nullable=false)
+     */
+    protected $mergeAllowed = true;
 }
