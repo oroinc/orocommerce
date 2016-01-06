@@ -9,7 +9,7 @@ parameters:
     orob2b_shopping_list.processor.quick_add.class:  OroB2B\Bundle\ShoppingListBundle\Processor\QuickAddProcessor
     orob2b_shopping_list.service.message_generator.class: OroB2B\Bundle\ShoppingListBundle\Generator\MessageGenerator
     orob2b_shopping_list.service.product_data_storage.class: OroB2B\Bundle\ShoppingListBundle\Storage\ProductDataStorage
-    orob2b_shopping_list.action.datagrid.mass_action_provider.class: OroB2B\Bundle\ShoppingListBundle\DataGrid\Provider\MassAction\AddLineItemMassActionProvider
+    orob2b_shopping_list.action.datagrid.mass_action_provider.class: OroB2B\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction\AddLineItemMassActionProvider
 
 services:
     orob2b_shopping_list.validator.line_item:
