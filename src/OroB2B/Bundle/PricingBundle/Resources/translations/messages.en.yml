@@ -23,6 +23,14 @@ orob2b.pricing:
         form:
             pricelist_required: Please select a price list first...
     quantity.label: Quantity
+    fallback:
+        label: Fallback
+        current_account_only.label: Current account only
+        account_group.label: Account group
+        current_account_group_only.label: Current account group only
+        website.label: Website
+        current_website_only.label: Current website only
+        config.label: Config
     unit.label: Unit
     price.label: Price
     add_product_price: Add Product Price

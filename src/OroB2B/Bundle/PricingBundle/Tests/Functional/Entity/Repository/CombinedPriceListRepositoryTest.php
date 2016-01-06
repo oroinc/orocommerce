@@ -28,16 +28,16 @@ class CombinedPriceListRepositoryTest extends WebTestCase
     public function testGetPriceListRelations()
     {
         /** @var CombinedPriceList $priceList */
-        $priceList = $this->getReference('3f_4t_2f');
+        $priceList = $this->getReference('2t_3f_1t');
 
         $relations = $this->getRepository()->getPriceListRelations($priceList);
         $this->assertNotEmpty($relations);
         $this->assertCount(3, $relations);
 
         $expected = [
+            $this->getReference('price_list_2')->getId() => true,
             $this->getReference('price_list_3')->getId() => false,
-            $this->getReference('price_list_4')->getId() => true,
-            $this->getReference('price_list_2')->getId() => false,
+            $this->getReference('price_list_1')->getId() => true,
         ];
         $actual = [];
         foreach ($relations as $relation) {
@@ -52,7 +52,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $account = $this->getReference('account.level_1.2');
 
         /** @var CombinedPriceList $priceList */
-        $priceList = $this->getReference('3f_4t_2f');
+        $priceList = $this->getReference('2t_3f_1t');
 
         /** @var Website $websiteUs */
         $websiteUs = $this->getReference(LoadWebsiteData::WEBSITE1);
@@ -73,7 +73,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $accountGroup = $this->getReference('account_group.group1');
 
         /** @var CombinedPriceList $priceList */
-        $priceList = $this->getReference('1t_2f_3t');
+        $priceList = $this->getReference('1t_2t_3t');
 
         /** @var Website $websiteUs */
         $websiteUs = $this->getReference(LoadWebsiteData::WEBSITE1);
@@ -91,7 +91,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
     public function testWebsitePriceList()
     {
         /** @var CombinedPriceList $priceList */
-        $priceList = $this->getReference('1t_2f_3t');
+        $priceList = $this->getReference('1t_2t_3t');
 
         /** @var Website $websiteUs */
         $websiteUs = $this->getReference(LoadWebsiteData::WEBSITE1);

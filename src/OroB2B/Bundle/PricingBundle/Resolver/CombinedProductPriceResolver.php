@@ -34,11 +34,11 @@ class CombinedProductPriceResolver
     }
 
     /**
-     * @param CombinedPriceList $priceList
+     * @param CombinedPriceList $combinedPriceList
      */
-    public function combinePrices(CombinedPriceList $priceList)
+    public function combinePrices(CombinedPriceList $combinedPriceList)
     {
-        //TODO: BB-1842
+
     }
 
     /**

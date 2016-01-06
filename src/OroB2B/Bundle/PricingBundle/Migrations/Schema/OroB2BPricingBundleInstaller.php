@@ -51,6 +51,9 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $this->createOrob2BPriceListCombinedTable($schema);
         $this->createOrob2BPriceProductCombinedTable($schema);
         $this->createOrob2BPlistCurrCombinedTable($schema);
+        $this->createOrob2BPriceListAccountFallbackTable($schema);
+        $this->createOrob2BPriceListAccGroupFallbackTable($schema);
+        $this->createOrob2BPriceListWebsiteFallbackTable($schema);
         $this->createOrob2BCmbPriceListToAccTable($schema);
         $this->createOrob2BCmbPriceListToAccGrTable($schema);
         $this->createOrob2BCmbPriceListToWsTable($schema);
@@ -64,6 +67,9 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $this->addOrob2BPriceProductForeignKeys($schema);
         $this->addOrob2BPriceProductCombinedForeignKeys($schema);
         $this->addOrob2BPlistCurrCombinedForeignKeys($schema);
+        $this->addOrob2BPriceListAccountFallbackForeignKeys($schema);
+        $this->addOrob2BPriceListAccGroupFallbackForeignKeys($schema);
+        $this->addOrob2BPriceListWebsiteFallbackForeignKeys($schema);
         $this->addOrob2BCmbPriceListToAccGrForeignKeys($schema);
         $this->addOrob2BCmbPriceListToWsForeignKeys($schema);
         $this->addOrob2BCmbPriceListToAccForeignKeys($schema);
@@ -230,6 +236,51 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('combined_price_list_id', 'integer', []);
         $table->addColumn('currency', 'string', ['length' => 3]);
         $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Create orob2b_price_list_account_fallback table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BPriceListAccountFallbackTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_price_list_acc_fb');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('account_id', 'integer', []);
+        $table->addColumn('fallback', 'integer', []);
+        $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['account_id'], 'uniq_46a8cfeb9b6b5fba');
+    }
+
+    /**
+     * Create orob2b_price_list_acc_gr_fb table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BPriceListAccGroupFallbackTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_price_list_acc_gr_fb');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('account_group_id', 'integer', []);
+        $table->addColumn('fallback', 'integer', []);
+        $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['account_group_id'], 'uniq_54a229e0869a3bf1');
+    }
+
+    /**
+     * Create orob2b_price_list_website_fb table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BPriceListWebsiteFallbackTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_price_list_website_fb');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('website_id', 'integer', []);
+        $table->addColumn('fallback', 'integer', []);
+        $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['website_id'], 'uniq_ef7164d018f45c82');
     }
 
     /**
@@ -453,6 +504,54 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_price_list_combined'),
             ['combined_price_list_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * Add orob2b_price_list_account_fallback foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BPriceListAccountFallbackForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_price_list_acc_fb');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account'),
+            ['account_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * Add orob2b_price_list_acc_gr_fb foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BPriceListAccGroupFallbackForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_price_list_acc_gr_fb');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account_group'),
+            ['account_group_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * Add orob2b_price_list_website_fb foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BPriceListWebsiteFallbackForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_price_list_website_fb');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_website'),
+            ['website_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
