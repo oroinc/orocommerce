@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
@@ -39,10 +40,19 @@ class CombinedPriceListToPriceListRepositoryTest extends WebTestCase
         $priceListsRelations = $this->getRepository()->getPriceListRelations($combinedPriceList, $product);
 
         if ($expectedPriceLists) {
-            foreach ($priceListsRelations as $priceListsRelation) {
-                $exists = in_array($priceListsRelation->getPriceList()->getName(), $expectedPriceLists);
-                $this->assertEquals(true, $exists, 'Price lists not found');
-            }
+            $actualPriceLists = array_map(
+                function (CombinedPriceListToPriceList $relation) {
+                    return $relation->getPriceList()->getId();
+                },
+                $priceListsRelations
+            );
+            $expectedPriceLists = array_map(
+                function ($priceListReference) {
+                    return $this->getReference($priceListReference)->getId();
+                },
+                $expectedPriceLists
+            );
+            $this->assertEquals($expectedPriceLists, $actualPriceLists);
         } else {
             $this->assertEmpty($priceListsRelations);
         }
@@ -57,12 +67,12 @@ class CombinedPriceListToPriceListRepositoryTest extends WebTestCase
             'test getting price lists 1' => [
                 'combinedPriceList' => '1t_2t_3t',
                 'product' => 'product.1',
-                'expectedPriceLists' => ['priceList1', 'priceList2'],
+                'expectedPriceLists' => ['price_list_1', 'price_list_2'],
             ],
             'test getting price lists 2' => [
                 'combinedPriceList' => '1t_2t_3t',
                 'product' => 'product.2',
-                'expectedPriceLists' => ['priceList1', 'priceList2'],
+                'expectedPriceLists' => ['price_list_1', 'price_list_2'],
             ],
             'test getting price lists 3' => [
                 'combinedPriceList' => '2f_1t_3t',

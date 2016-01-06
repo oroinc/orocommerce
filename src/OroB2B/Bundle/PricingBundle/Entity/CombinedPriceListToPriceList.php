@@ -58,6 +58,14 @@ class CombinedPriceListToPriceList
     protected $mergeAllowed;
 
     /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
      * @return CombinedPriceList
      */
     public function getCombinedPriceList()
