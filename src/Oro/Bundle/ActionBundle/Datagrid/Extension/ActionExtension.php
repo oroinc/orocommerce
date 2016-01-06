@@ -97,14 +97,15 @@ class ActionExtension extends AbstractExtension
         $actionsConfig = $config->offsetGetOr('actions', []);
 
         foreach ($this->actions as $action) {
+            $buttonOptions = $action->getDefinition()->getButtonOptions();
             $frontendOptions = $action->getDefinition()->getFrontendOptions();
             $actionsConfig[$action->getName()] = [
                 'type' => 'action-widget',
                 'label' => $action->getDefinition()->getLabel(),
                 'rowAction' => false,
                 'link' => '#',
-                'icon' => !empty($frontendOptions['icon'])
-                    ? str_ireplace('icon-', '', $frontendOptions['icon'])
+                'icon' => !empty($buttonOptions['icon'])
+                    ? str_ireplace('icon-', '', $buttonOptions['icon'])
                     : 'edit',
                 'options' => [
                     'actionName' => $action->getName(),
@@ -116,8 +117,8 @@ class ActionExtension extends AbstractExtension
                     'dialogRoute' => $this->applicationsHelper->getDialogRoute(),
                     'dialogOptions' => [
                         'title' => $action->getDefinition()->getLabel(),
-                        'dialogOptions' => !empty($frontendOptions['dialog_options'])
-                            ? $frontendOptions['dialog_options']
+                        'dialogOptions' => !empty($frontendOptions['options'])
+                            ? $frontendOptions['options']
                             : [],
                     ]
                 ]
