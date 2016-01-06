@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\TaxBundle\Mapper;
 
+use OroB2B\Bundle\TaxBundle\Model\Taxable;
+
 interface TaxMapperInterface
 {
     /**

@@ -12,12 +12,12 @@ class Taxable
     protected $identifier;
 
     /**
-     * @var object
+     * @var string
      */
     protected $origin;
 
     /**
-     * @var object
+     * @var string
      */
     protected $destination;
 
@@ -66,7 +66,7 @@ class Taxable
     }
 
     /**
-     * @return object
+     * @return string
      */
     public function getOrigin()
     {
@@ -74,7 +74,7 @@ class Taxable
     }
 
     /**
-     * @param object $origin
+     * @param string $origin
      * @return $this
      */
     public function setOrigin($origin)
@@ -85,7 +85,7 @@ class Taxable
     }
 
     /**
-     * @return object
+     * @return string
      */
     public function getDestination()
     {
@@ -93,7 +93,7 @@ class Taxable
     }
 
     /**
-     * @param object $destination
+     * @param string $destination
      * @return $this
      */
     public function setDestination($destination)

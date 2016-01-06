@@ -6,6 +6,7 @@ use Doctrine\Common\Util\ClassUtils;
 
 use OroB2B\Bundle\TaxBundle\Mapper\TaxMapperInterface;
 use OroB2B\Bundle\TaxBundle\Mapper\UnmappableArgumentException;
+use OroB2B\Bundle\TaxBundle\Model\Taxable;
 
 class TaxFactory
 {
@@ -22,11 +23,6 @@ class TaxFactory
     public function addMapper(TaxMapperInterface $mapper)
     {
         $this->mappers[$mapper->getProcessingClassName()] = $mapper;
-    }
-
-    public function load()
-    {
-        //
     }
 
     /**
