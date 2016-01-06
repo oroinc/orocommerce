@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\InvoiceBundle\EventListener\ORM;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
-use Doctrine\ORM\Event\PreUpdateEventArgs;
 
 use OroB2B\Bundle\InvoiceBundle\Doctrine\ORM\InvoiceNumberGeneratorInterface;
 use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
@@ -45,9 +44,8 @@ class InvoiceEventListener
 
     /**
      * @param Invoice $invoice
-     * @param LifecycleEventArgs $event
      */
-    public function prePersist(Invoice $invoice, LifecycleEventArgs $event)
+    public function prePersist(Invoice $invoice)
     {
         $this->fillSubtotal($invoice);
 
@@ -58,9 +56,8 @@ class InvoiceEventListener
 
     /**
      * @param Invoice $invoice
-     * @param PreUpdateEventArgs $event
      */
-    public function preUpdate(Invoice $invoice, PreUpdateEventArgs $event)
+    public function preUpdate(Invoice $invoice)
     {
         $this->fillSubtotal($invoice);
         $invoice->setUpdatedAt(new \DateTime('now', new \DateTimeZone('UTC')));
@@ -73,9 +70,12 @@ class InvoiceEventListener
     public function postPersist(Invoice $invoice, LifecycleEventArgs $event)
     {
         if (null === $invoice->getInvoiceNumber()) {
-            $invoice->setInvoiceNumber($this->invoiceNumberGenerator->generate($invoice));
-            $event->getEntityManager()->persist($invoice);
-//            $event->getEntityManager()->flush($invoice);
+            $changeSet = [
+                'invoiceNumber' => [null, $this->invoiceNumberGenerator->generate($invoice)],
+            ];
+
+            $unitOfWork = $event->getEntityManager()->getUnitOfWork();
+            $unitOfWork->scheduleExtraUpdate($invoice, $changeSet);
         }
     }
 

@@ -2,12 +2,25 @@
 
 namespace Oro\Bundle\CurrencyBundle\Model;
 
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Embeddable()
+ */
 class Price implements CurrencyAwareInterface
 {
-    /** @var float */
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="value", type="money", nullable=true)
+     */
     protected $value;
 
-    /** @var string */
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="currency", type="string", nullable=true)
+     */
     protected $currency;
 
     /**

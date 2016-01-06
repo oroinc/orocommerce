@@ -16,11 +16,10 @@ class InvoiceListItemEventListener
         $lineItem->updateItemInformation();
         $invoice = $lineItem->getInvoice();
 
-//        if ($invoice->getId()) {
-//            $invoice->requireUpdate();
-//
-//            $metadata = $event->getEntityManager()->getClassMetadata(get_class($invoice));
-//            $event->getEntityManager()->getUnitOfWork()->recomputeSingleEntityChangeSet($metadata, $invoice);
-//        }
+        if ($invoice->getId()) {
+            $invoice->requireUpdate();
+            $metadata = $event->getEntityManager()->getClassMetadata(get_class($invoice));
+            $event->getEntityManager()->getUnitOfWork()->recomputeSingleEntityChangeSet($metadata, $invoice);
+        }
     }
 }

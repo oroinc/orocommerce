@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\InvoiceBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Model\PriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
@@ -39,7 +39,7 @@ use OroB2B\Bundle\InvoiceBundle\Model\ExtendInvoiceLineItem;
 class InvoiceLineItem extends ExtendInvoiceLineItem implements
     ProductUnitHolderInterface,
     ProductHolderInterface,
-    PriceAwareInterface,
+//    PriceAwareInterface,
     PriceTypeAwareInterface,
     QuantityAwareInterface
 {
@@ -97,21 +97,9 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
     protected $productUnitCode;
 
     /**
-     * @var float
-     *
-     * @ORM\Column(name="value", type="money", nullable=true)
-     */
-    protected $value;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="currency", type="string", nullable=true)
-     */
-    protected $currency;
-
-    /**
      * @var Price|null
+     *
+     * @ORM\Embedded(class="Oro\Bundle\CurrencyBundle\Entity\Price", columnPrefix=false)
      */
     protected $price;
 
@@ -134,6 +122,16 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
      * @var Price
      */
     protected $totalPrice;
+
+    /**
+     * InvoiceLineItem constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->price = new Price();
+    }
+
 
     /**
      * @return int
@@ -214,7 +212,7 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
      */
     public function setQuantity($quantity)
     {
-        $this->quantity = $quantity;
+        $this->quantity = (int)$quantity;
 
         return $this;
     }
@@ -281,10 +279,6 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
      */
     public function getPrice()
     {
-        if (null === $this->price) {
-            $this->price = Price::create($this->value, $this->currency);
-        }
-
         return $this->price;
     }
 
@@ -295,7 +289,6 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
     public function setPrice(Price $price = null)
     {
         $this->price = $price;
-        $this->updateItemPrice();
 
         return $this;
     }
@@ -360,16 +353,5 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
         if ($this->getProductUnit()) {
             $this->productUnitCode = $this->getProductUnit()->getCode();
         }
-
-        $this->updateItemPrice();
-    }
-
-    /**
-     * Splits price object into value and currency fields
-     */
-    private function updateItemPrice()
-    {
-        $this->value = is_null($this->price) ? null : $this->price->getValue();
-        $this->currency = is_null($this->price) ? null : $this->price->getCurrency();
     }
 }

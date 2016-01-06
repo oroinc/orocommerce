@@ -32,13 +32,17 @@ oro_system_configuration:
                     6: orob2b.pricing.system_configuration.fields.rounding_type.choices.half_up.label
         oro_b2b_pricing.precision:
             data_type: integer
-            type: number
+            type: integer
             priority: 20
             options:
                 label: orob2b.pricing.system_configuration.fields.precision.label
                 required: true
                 constraints:
                     - NotBlank: ~
+                    - Range:
+                        min: 0
+                    - Type:
+                        type: integer
 
     tree:
         system_configuration:

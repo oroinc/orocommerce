@@ -11,14 +11,15 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
+
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
+
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceTypeSelectorType;
-
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)

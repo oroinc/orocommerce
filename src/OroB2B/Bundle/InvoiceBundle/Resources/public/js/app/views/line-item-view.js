@@ -127,6 +127,9 @@ define(function (require) {
         },
 
         initPrices: function () {
+
+
+
             this.pricesComponent = new ProductPricesComponent({
                 _sourceElement: this.$el,
                 $product: this.fieldsByName.product,
@@ -225,9 +228,8 @@ define(function (require) {
             }
 
             mediator.off('line-items-subtotals:update', this.setTotalPrice, this);
-            mediator.off('pricing:update-currency', this.setTotalPrice, this);
 
-            ProductPricesComponent.__super__.dispose.call(this);
+            LineItemView.__super__.dispose.call(this);
         }
     });
 

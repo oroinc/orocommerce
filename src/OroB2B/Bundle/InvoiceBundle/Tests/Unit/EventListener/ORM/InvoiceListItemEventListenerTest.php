@@ -41,17 +41,17 @@ class InvoiceListItemEventListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $uof = $this->getMockBuilder('Doctrine\ORM\UnitOfWork')
+        $uow = $this->getMockBuilder('Doctrine\ORM\UnitOfWork')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $uof->expects($this->once())
+        $uow->expects($this->once())
             ->method('recomputeSingleEntityChangeSet')
             ->with($metadata, $invoice);
 
         $manager->expects($this->once())
             ->method('getUnitOfWork')
-            ->willReturn($uof);
+            ->willReturn($uow);
 
         $manager->expects($this->once())
             ->method('getClassMetadata')

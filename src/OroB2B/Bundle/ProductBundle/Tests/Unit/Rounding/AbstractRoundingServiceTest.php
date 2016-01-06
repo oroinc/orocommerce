@@ -162,33 +162,18 @@ abstract class AbstractRoundingServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @throws \OroB2B\Bundle\ProductBundle\Exception\InvalidRoundingTypeException
-     * @param mixed $roundingType
-     * @dataProvider invalidRoundingDataProvider
      */
-//    public function testInvalidRoundingTypeException($roundingType)
-//    {
-//        $this->configManager->expects($this->once())
-//            ->method('get')
-//            ->with($this->isType('string'))
-//            ->willReturn($roundingType);
-//
-//        $this->setExpectedException(
-//            '\OroB2B\Bundle\ProductBundle\Exception\InvalidRoundingTypeException',
-//            'The type of the rounding is not valid. Allowed the following types: half_up, half_down, ceil, floor.'
-//        );
-//
-//        $this->service->round(1.15, 1);
-//    }
-
-    /**
-     * @return array
-     */
-    public function invalidRoundingDataProvider()
+    public function testInvalidRoundingTypeException()
     {
-        return [
-            ['test'],
-            [false],
-            [null],
-        ];
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->willReturn(10);
+
+        $this->setExpectedException(
+            '\OroB2B\Bundle\ProductBundle\Exception\InvalidRoundingTypeException',
+            'The type of the rounding is not valid "intl" rounding mode.'
+        );
+
+        $this->service->round(1.15, 10);
     }
 }

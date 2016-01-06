@@ -57,9 +57,6 @@ class InvoiceEventListenerTest extends \PHPUnit_Framework_TestCase
     {
         $invoice = new Invoice();
         $manager = $this->getObjectManager();
-        $manager->expects($this->once())
-            ->method('flush')
-            ->with($invoice);
 
         $event = new LifecycleEventArgs($invoice, $manager);
         $generator = $this->getInvoiceNumberGenerator();
@@ -68,10 +65,20 @@ class InvoiceEventListenerTest extends \PHPUnit_Framework_TestCase
             ->method('generate')
             ->willReturn(5);
 
+        $uow = $this->getMockBuilder('Doctrine\ORM\UnitOfWork')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $uow->expects($this->once())
+            ->method('scheduleExtraUpdate')
+            ->with($invoice, ['invoiceNumber' => [null, 5]]);
+
+        $manager->expects($this->once())
+            ->method('getUnitOfWork')
+            ->willReturn($uow);
+
         $this->invoiceEventListener->setInvoiceNumberGenerator($generator);
         $this->invoiceEventListener->postPersist($invoice, $event);
-
-        $this->assertSame(5, $invoice->getInvoiceNumber());
     }
 
     /**

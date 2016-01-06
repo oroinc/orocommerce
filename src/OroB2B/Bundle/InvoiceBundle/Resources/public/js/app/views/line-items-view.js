@@ -53,6 +53,7 @@ define(function(require) {
             this.$el.on('content:remove', _.bind(this._onRemoveLineItem, this));
 
             this.initLayout();
+            this._reindexLineItems();
         },
 
         _onAddLineItem: function () {
@@ -64,21 +65,23 @@ define(function(require) {
         },
 
         _onRemoveLineItem: function (e) {
-            var lineItems;
-
-            lineItems = this.$el.find('.invoice-line-item');
-
             var i = 1;
-            lineItems.each(function (index, element) {
+            this.$el.find('.invoice-line-item').each(function (index, element) {
                 if(element === e.target) {
                     return;
                 }
                 $(element).find('.invoice-line-item-index').text(i);
                 i++
             })
+        },
+
+        _reindexLineItems: function(){
+            var i = 1;
+            this.$el.find('.invoice-line-item').each(function (index, element) {
+                $(element).find('.invoice-line-item-index').text(i);
+                i++
+            })
         }
-
-
     });
 
     return LineItemsView;

@@ -13,12 +13,12 @@ class PriceRoundingService extends AbstractRoundingService
     /** {@inheritdoc} */
     public function getRoundType()
     {
-        return $this->configManager->get('oro_b2b_pricing.rounding_type', self::ROUND_HALF_UP);
+        return (int)$this->configManager->get('oro_b2b_pricing.rounding_type', self::ROUND_HALF_UP);
     }
 
     /** {@inheritdoc} */
     public function getPrecision()
     {
-        return self::FALLBACK_PRECISION;
+        return (int)$this->configManager->get('oro_b2b_pricing.precision', self::FALLBACK_PRECISION);
     }
 }
