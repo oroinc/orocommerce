@@ -26,7 +26,7 @@ class CombinedProductPriceResolverTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPricesForCombination',
                 'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists'
             ]
         );
