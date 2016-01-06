@@ -46,7 +46,6 @@ class CombinedProductPriceRepository extends ProductPriceRepository
                     $qb->expr()->eq('pp.product', ':currentProduct')
                 )
             )
-            ->groupBy('pp.id')
             ->setParameter('currentPriceList', $priceList)
             ->setParameter('currentProduct', $product);
 
@@ -98,8 +97,25 @@ class CombinedProductPriceRepository extends ProductPriceRepository
                 Join::WITH,
                 $qb->expr()->andX(
                     $qb->expr()->eq('cpp', ':combinedPriceList'),
-                    $qb->expr()->eq('pp.product', 'cpp.product')
+                    $qb->expr()->eq('pp.product', 'cpp.product'),
+                    $qb->expr()->eq('cpp.mergeAllowed', ':mergeAllowed')
                 )
+            )
+            ->setParameter('mergeAllowed', false)
+            ->leftJoin(
+                'OroB2BPricingBundle:CombinedProductPrice',
+                'cpp2',
+                Join::WITH,
+                $qb->expr()->andX(
+                    $qb->expr()->eq('cpp2', ':combinedPriceList'),
+                    $qb->expr()->eq('pp.product', 'cpp2.product'),
+                    $qb->expr()->eq('pp.unit', 'cpp2.unit'),
+                    $qb->expr()->eq('pp.quantity', 'cpp2.quantity'),
+                    $qb->expr()->eq('pp.currency', 'cpp2.currency')
+                )
+            )
+            ->andWhere(
+                $qb->expr()->isNull('cpp2.id')
             );
         } else {
             $qb->leftJoin(
@@ -108,28 +124,14 @@ class CombinedProductPriceRepository extends ProductPriceRepository
                 Join::WITH,
                 $qb->expr()->andX(
                     $qb->expr()->eq('cpp', ':combinedPriceList'),
-                    $qb->expr()->eq('pp.product', 'cpp.product'),
-                    $qb->expr()->eq('cpp.mergeAllowed', ':mergeAllowed')
+                    $qb->expr()->eq('pp.product', 'cpp.product')
                 )
-            )
-                ->setParameter('mergeAllowed', false)
-                ->leftJoin(
-                    'OroB2BPricingBundle:CombinedProductPrice',
-                    'cpp2',
-                    Join::WITH,
-                    $qb->expr()->andX(
-                        $qb->expr()->eq('cpp2', ':combinedPriceList'),
-                        $qb->expr()->eq('pp.product', 'cpp2.product'),
-                        $qb->expr()->eq('pp.unit', 'cpp2.unit'),
-                        $qb->expr()->eq('pp.quantity', 'cpp2.quantity'),
-                        $qb->expr()->eq('pp.currency', 'cpp2.currency')
-                    )
-                )
-                ->andWhere(
-                    $qb->expr()->isNull('cpp.id'),
-                    $qb->expr()->isNull('cpp2.id')
-                );
+            );
         }
+
+        $qb->andWhere(
+            $qb->expr()->isNull('cpp.id')
+        );
         $qb->setParameter('combinedPriceList', $combinedPriceList);
     }
 }

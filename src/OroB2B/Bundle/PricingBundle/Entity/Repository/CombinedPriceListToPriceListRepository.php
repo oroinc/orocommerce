@@ -19,7 +19,7 @@ class CombinedPriceListToPriceListRepository extends EntityRepository
     public function getPriceListsByCombinedAndProduct(CombinedPriceList $combinedPriceList, Product $product)
     {
         $qb = $this->createQueryBuilder('combinedPriceListToPriceList')
-            ->addSelect('priceList');
+            ->addSelect('partial priceList.{id, name}');
 
         $qb->innerJoin('combinedPriceListToPriceList.priceList', 'priceList')
             ->innerJoin('priceList.prices', 'prices', Join::WITH, $qb->expr()->eq('prices.product', ':product'))
