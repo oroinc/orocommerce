@@ -10,6 +10,8 @@ use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -63,7 +65,13 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $listener->onFrontendProductView($event);
     }
 
-    public function testOnAccountView()
+    /**
+     * @dataProvider testOnAccountViewDataProvider
+     *
+     * @param PriceListAccountFallback|null $fallbackEntity
+     * @param integer $expectedFallbackValue
+     */
+    public function testOnAccountView($fallbackEntity, $expectedFallbackValue)
     {
         $accountId = 1;
         $account = new Account();
@@ -101,14 +109,30 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->with(['account' => $account])
             ->willReturn($priceListsToAccount);
 
+        $fallbackRepository = $this
+            ->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $fallbackRepository->expects($this->once())
+            ->method('findOneBy')
+            ->with(['account' => $account])
+            ->willReturn($fallbackEntity);
+
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
             ->with('OroB2BAccountBundle:Account', $accountId)
             ->willReturn($account);
-        $this->doctrineHelper->expects($this->once())
+        $this->doctrineHelper->expects($this->exactly(2))
             ->method('getEntityRepository')
-            ->with('OroB2BPricingBundle:PriceListToAccount')
-            ->willReturn($priceToAccountRepository);
+            ->will(
+                $this->returnValueMap(
+                    [
+                        ['OroB2BPricingBundle:PriceListToAccount', $priceToAccountRepository],
+                        ['OroB2BPricingBundle:PriceListAccountFallback', $fallbackRepository],
+                    ]
+                )
+            );
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
         $environment = $this->getMock('\Twig_Environment');
@@ -126,7 +150,8 @@ class FormViewListenerTest extends FormViewListenerTestCase
                             'priceLists' => [$priceListToAccount2],
                             'website' => $website2
                         ],
-                    ]
+                    ],
+                    'fallback' => $expectedFallbackValue,
                 ]
             )
             ->willReturn($templateHtml);
@@ -141,7 +166,28 @@ class FormViewListenerTest extends FormViewListenerTestCase
         );
     }
 
-    public function testOnAccountGroupView()
+    public function testOnAccountViewDataProvider()
+    {
+        return [
+            'notExistingFallback' => [
+                'fallbackEntity' => null,
+                'expectedFallbackValue' => 'orob2b.pricing.fallback.account_group.label',
+            ],
+            'existingDefaultFallback' => [
+                'fallbackEntity' => (new PriceListAccountFallback())
+                    ->setFallback(PriceListAccountFallback::CURRENT_ACCOUNT_ONLY),
+                'expectedFallbackValue' => 'orob2b.pricing.fallback.current_account_only.label',
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider testOnAccountGroupViewDataProvider
+     *
+     * @param PriceListAccountGroupFallback|null $fallbackEntity
+     * @param integer $expectedFallbackValue
+     */
+    public function testOnAccountGroupView($fallbackEntity, $expectedFallbackValue)
     {
         $accountGroupId = 1;
         $accountGroup = new AccountGroup();
@@ -179,14 +225,30 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->with(['accountGroup' => $accountGroup])
             ->willReturn($priceListsToAccount);
 
+        $fallbackRepository = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $fallbackRepository->expects($this->once())
+            ->method('findOneBy')
+            ->with(['accountGroup' => $accountGroup])
+            ->willReturn($fallbackEntity);
+
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
             ->with('OroB2BAccountBundle:AccountGroup', $accountGroupId)
             ->willReturn($accountGroup);
-        $this->doctrineHelper->expects($this->once())
+        $this->doctrineHelper->expects($this->exactly(2))
             ->method('getEntityRepository')
-            ->with('OroB2BPricingBundle:PriceListToAccountGroup')
-            ->willReturn($priceToAccountGroupRepository);
+            ->will(
+                $this->returnValueMap(
+                    [
+                        ['OroB2BPricingBundle:PriceListToAccountGroup', $priceToAccountGroupRepository],
+                        ['OroB2BPricingBundle:PriceListAccountGroupFallback', $fallbackRepository],
+                    ]
+                )
+            );
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
         $environment = $this->getMock('\Twig_Environment');
@@ -204,7 +266,8 @@ class FormViewListenerTest extends FormViewListenerTestCase
                             'priceLists' => [$priceListToAccountGroup2],
                             'website' => $website2
                         ],
-                    ]
+                    ],
+                    'fallback' => $expectedFallbackValue,
                 ]
             )
             ->willReturn($templateHtml);
@@ -217,6 +280,24 @@ class FormViewListenerTest extends FormViewListenerTestCase
             [$templateHtml],
             $scrollData[ScrollData::DATA_BLOCKS][1][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
         );
+    }
+
+    /**
+     * @return array
+     */
+    public function testOnAccountGroupViewDataProvider()
+    {
+        return [
+            'notExistingFallback' => [
+                'fallbackEntity' => null,
+                'expectedFallbackValue' => 'orob2b.pricing.fallback.website.label',
+            ],
+            'existingDefaultFallback' => [
+                'fallbackEntity' => (new PriceListAccountGroupFallback())
+                    ->setFallback(PriceListAccountGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY),
+                'expectedFallbackValue' => 'orob2b.pricing.fallback.current_account_group_only.label',
+            ],
+        ];
     }
 
     public function testOnEntityEdit()

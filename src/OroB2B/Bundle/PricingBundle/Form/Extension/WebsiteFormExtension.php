@@ -11,6 +11,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -48,11 +49,29 @@ class WebsiteFormExtension extends AbstractTypeExtension
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add(self::PRICE_LISTS_TO_WEBSITE_FIELD, PriceListCollectionType::NAME, [
-                'allow_add_after' => false,
-                'allow_add' => true,
-                'required' => false
-            ]);
+            ->add(
+                self::PRICE_LISTS_TO_WEBSITE_FIELD,
+                PriceListCollectionType::NAME,
+                [
+                    'allow_add_after' => false,
+                    'allow_add' => true,
+                    'required' => false,
+                ]
+            )
+            ->add(
+                'fallback',
+                'choice',
+                [
+                    'label' => 'orob2b.pricing.fallback.label',
+                    'mapped' => false,
+                    'choices' => [
+                        PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY =>
+                            'orob2b.pricing.fallback.current_website_only.label',
+                        PriceListWebsiteFallback::CONFIG =>
+                            'orob2b.pricing.fallback.config.label',
+                    ],
+                ]
+            );
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'], 10);
@@ -80,9 +99,8 @@ class WebsiteFormExtension extends AbstractTypeExtension
             return;
         }
 
-        $priceListsToWebsite = $this->getPriceListToWebsiteSaved($website);
         $data = [];
-        foreach ($priceListsToWebsite as $entity) {
+        foreach ($this->getPriceListToWebsiteSaved($website) as $entity) {
             $data[] = [
                 'priceList' => $entity->getPriceList(),
                 'priority' => $entity->getPriority(),
@@ -90,6 +108,13 @@ class WebsiteFormExtension extends AbstractTypeExtension
             ];
         }
         $event->getForm()->get(self::PRICE_LISTS_TO_WEBSITE_FIELD)->setData($data);
+        $fallback = $this->getFallback($website);
+        $fallbackField = $event->getForm()->get('fallback');
+        if (!$fallback || $fallback->getFallback() === PriceListWebsiteFallback::CONFIG) {
+            $fallbackField->setData(PriceListWebsiteFallback::CONFIG);
+        } else {
+            $fallbackField->setData(PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY);
+        }
     }
 
     /**
@@ -108,6 +133,14 @@ class WebsiteFormExtension extends AbstractTypeExtension
 
         $this->removeDeletedRelations($submitted, $existing);
         $this->persistSubmitted($submitted, $existing, $website);
+
+        $fallback = $this->getFallback($website);
+        if (!$fallback) {
+            $fallback = new PriceListWebsiteFallback();
+            $this->doctrine->getManagerForClass('OroB2BPricingBundle:PriceListWebsiteFallback')->persist($fallback);
+        }
+        $fallback->setWebsite($website);
+        $fallback->setFallback($form->get('fallback')->getData());
     }
 
     /**
@@ -116,20 +149,36 @@ class WebsiteFormExtension extends AbstractTypeExtension
      */
     protected function removeDeletedRelations(array $submitted, array $existing)
     {
-        $submittedIds = array_map(function ($item) {
-            /** @var PriceList $priceList */
-            $priceList = $item['priceList'];
-            if ($priceList instanceof PriceList) {
-                return $priceList->getId();
-            }
-            return null;
-        }, $submitted);
+        $submittedIds = array_map(
+            function ($item) {
+                /** @var PriceList $priceList */
+                $priceList = $item['priceList'];
+                if ($priceList instanceof PriceList) {
+                    return $priceList->getId();
+                }
+
+                return null;
+            },
+            $submitted
+        );
 
         $removed = array_diff(array_keys($existing), $submittedIds);
 
         foreach ($removed as $id) {
             $this->getPriceListToWebsiteManager()->remove($existing[$id]);
         }
+    }
+
+    /**
+     * @param Website $website
+     * @return null|PriceListWebsiteFallback
+     */
+    protected function getFallback(Website $website)
+    {
+        return $this->doctrine
+            ->getManagerForClass('OroB2BPricingBundle:PriceListWebsiteFallback')
+            ->getRepository('OroB2BPricingBundle:PriceListWebsiteFallback')
+            ->findOneBy(['website' => $website]);
     }
 
     /**
