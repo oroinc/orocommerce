@@ -62,6 +62,22 @@ class ShoppingListManager
     }
 
     /**
+     * Creates new shopping list
+     *
+     * @return ShoppingList
+     */
+    public function create()
+    {
+        $shoppingList = new ShoppingList();
+        $shoppingList
+            ->setOrganization($this->getAccountUser()->getOrganization())
+            ->setAccount($this->getAccountUser()->getAccount())
+            ->setAccountUser($this->getAccountUser());
+
+        return $shoppingList;
+    }
+
+    /**
      * Creates current shopping list
      *
      * @param string $label
@@ -70,14 +86,8 @@ class ShoppingListManager
      */
     public function createCurrent($label = '')
     {
-        $label = $label !== '' ? $label : $this->translator->trans('orob2b.shoppinglist.default.label');
-
-        $shoppingList = new ShoppingList();
-        $shoppingList
-            ->setOrganization($this->getAccountUser()->getOrganization())
-            ->setAccount($this->getAccountUser()->getAccount())
-            ->setAccountUser($this->getAccountUser())
-            ->setLabel($label);
+        $shoppingList = $this->create();
+        $shoppingList->setLabel($label !== '' ? $label : $this->translator->trans('orob2b.shoppinglist.default.label'));
 
         $this->setCurrent($this->getAccountUser(), $shoppingList);
 
@@ -192,12 +202,8 @@ class ShoppingListManager
         if ($create && !$shoppingList instanceof ShoppingList) {
             $label = $this->translator->trans($label ?: 'orob2b.shoppinglist.default.label');
 
-            $shoppingList = new ShoppingList();
-            $shoppingList
-                ->setOrganization($this->getAccountUser()->getOrganization())
-                ->setAccount($this->getAccountUser()->getAccount())
-                ->setAccountUser($this->getAccountUser())
-                ->setLabel($label);
+            $shoppingList = $this->create();
+            $shoppingList->setLabel($label);
         }
 
         return $shoppingList;
