@@ -248,9 +248,9 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table = $schema->createTable('orob2b_price_list_acc_fb');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('account_id', 'integer', []);
+        $table->addColumn('website_id', 'integer', []);
         $table->addColumn('fallback', 'integer', []);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['account_id'], 'uniq_46a8cfeb9b6b5fba');
     }
 
     /**
@@ -263,9 +263,9 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table = $schema->createTable('orob2b_price_list_acc_gr_fb');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('account_group_id', 'integer', []);
+        $table->addColumn('website_id', 'integer', []);
         $table->addColumn('fallback', 'integer', []);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['account_group_id'], 'uniq_54a229e0869a3bf1');
     }
 
     /**
@@ -280,7 +280,6 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('fallback', 'integer', []);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['website_id'], 'uniq_ef7164d018f45c82');
     }
 
     /**
@@ -521,6 +520,12 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_website'),
+            ['website_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
     }
 
     /**
@@ -534,6 +539,12 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_account_group'),
             ['account_group_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_website'),
+            ['website_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );

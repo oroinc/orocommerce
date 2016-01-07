@@ -17,7 +17,7 @@ class PriceListAccountGroupFallback extends PriceListFallback
 
     /** @var AccountGroup
      *
-     * @ORM\OneToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountGroup", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountGroup")
      * @ORM\JoinColumn(name="account_group_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     protected $accountGroup;

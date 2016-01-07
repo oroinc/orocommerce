@@ -17,13 +17,26 @@ class LoadPriceListFallbackSettings extends AbstractFixture implements Dependent
 {
     protected $fallbackSettings = [
         'account' => [
-            'account.level_1_1' => PriceListAccountFallback::ACCOUNT_GROUP,
-            'account.level_1.3' => PriceListAccountFallback::ACCOUNT_GROUP,
-            'account.level_1.2' => PriceListAccountFallback::CURRENT_ACCOUNT_ONLY,
+            'US' => [
+                'account.level_1_1' => PriceListAccountFallback::ACCOUNT_GROUP,
+                'account.level_1.3' => PriceListAccountFallback::ACCOUNT_GROUP,
+                'account.level_1.2' => PriceListAccountFallback::CURRENT_ACCOUNT_ONLY,
+            ],
+            'Canada' => [
+                'account.level_1_1' => PriceListAccountFallback::ACCOUNT_GROUP,
+                'account.level_1.3' => PriceListAccountFallback::ACCOUNT_GROUP,
+                'account.level_1.2' => PriceListAccountFallback::CURRENT_ACCOUNT_ONLY,
+            ],
         ],
         'accountGroup' => [
-            'account_group.group1' => PriceListAccountGroupFallback::WEBSITE,
-            'account_group.group2' => PriceListAccountGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY,
+            'US' => [
+                'account_group.group1' => PriceListAccountGroupFallback::WEBSITE,
+                'account_group.group2' => PriceListAccountGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY,
+            ],
+            'Canada' => [
+                'account_group.group1' => PriceListAccountGroupFallback::WEBSITE,
+                'account_group.group2' => PriceListAccountGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY,
+            ],
         ],
         'website' => [
             'US' => PriceListWebsiteFallback::CONFIG,
@@ -48,30 +61,46 @@ class LoadPriceListFallbackSettings extends AbstractFixture implements Dependent
      */
     public function load(ObjectManager $manager)
     {
-        foreach ($this->fallbackSettings['account'] as $accountReference => $fallbackValue) {
-            $priceListAccountFallback = new PriceListAccountFallback();
-            /** @var Account $account */
-            $account = $this->getReference($accountReference);
-            $priceListAccountFallback->setAccount($account);
-            $priceListAccountFallback->setFallback($fallbackValue);
-            $manager->persist($priceListAccountFallback);
+        foreach ($this->fallbackSettings['account'] as $websiteReference => $fallbackSettings) {
+            /** @var Website $website */
+            $website = $this->getReference($websiteReference);
+            foreach ($fallbackSettings as $accountReference => $fallbackValue) {
+                /** @var Account $account */
+                $account = $this->getReference($accountReference);
+
+                $priceListAccountFallback = new PriceListAccountFallback();
+                $priceListAccountFallback->setAccount($account);
+                $priceListAccountFallback->setWebsite($website);
+                $priceListAccountFallback->setFallback($fallbackValue);
+
+                $manager->persist($priceListAccountFallback);
+            }
         }
 
-        foreach ($this->fallbackSettings['accountGroup'] as $accountGroupReference => $fallbackValue) {
-            $priceListAccountGroupFallback = new PriceListAccountGroupFallback();
-            /** @var AccountGroup $accountGroup */
-            $accountGroup = $this->getReference($accountGroupReference);
-            $priceListAccountGroupFallback->setAccountGroup($accountGroup);
-            $priceListAccountGroupFallback->setFallback($fallbackValue);
-            $manager->persist($priceListAccountGroupFallback);
+        foreach ($this->fallbackSettings['accountGroup'] as $websiteReference => $fallbackSettings) {
+            /** @var Website $website */
+            $website = $this->getReference($websiteReference);
+            foreach ($fallbackSettings as $accountGroupReference => $fallbackValue) {
+                /** @var AccountGroup $accountGroup */
+                $accountGroup = $this->getReference($accountGroupReference);
+
+                $priceListAccountGroupFallback = new PriceListAccountGroupFallback();
+                $priceListAccountGroupFallback->setAccountGroup($accountGroup);
+                $priceListAccountGroupFallback->setWebsite($website);
+                $priceListAccountGroupFallback->setFallback($fallbackValue);
+
+                $manager->persist($priceListAccountGroupFallback);
+            }
         }
 
         foreach ($this->fallbackSettings['website'] as $websiteReference => $fallbackValue) {
-            $priceListWebsiteFallback = new PriceListWebsiteFallback();
             /** @var Website $website */
             $website = $this->getReference($websiteReference);
+
+            $priceListWebsiteFallback = new PriceListWebsiteFallback();
             $priceListWebsiteFallback->setWebsite($website);
             $priceListWebsiteFallback->setFallback($fallbackValue);
+
             $manager->persist($priceListWebsiteFallback);
         }
         $manager->flush();
