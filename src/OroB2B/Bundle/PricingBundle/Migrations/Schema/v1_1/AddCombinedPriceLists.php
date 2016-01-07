@@ -66,6 +66,7 @@ class AddCombinedPriceLists implements Migration
         $table->addColumn('quantity', 'float', []);
         $table->addColumn('value', 'money', ['precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']);
         $table->addColumn('currency', 'string', ['length' => 3]);
+        $table->addColumn('merge_allowed', 'boolean');
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(
             [
@@ -148,6 +149,7 @@ class AddCombinedPriceLists implements Migration
         $table->addColumn('sort_order', 'integer', []);
         $table->addColumn('merge_allowed', 'boolean', []);
         $table->setPrimaryKey(['id']);
+        $table->addIndex(['combined_price_list_id', 'sort_order'], 'b2b_cmb_pl_to_pl_cmb_prod_sort_idx', []);
     }
 
     /**

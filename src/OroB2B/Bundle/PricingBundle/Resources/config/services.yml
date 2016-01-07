@@ -121,6 +121,7 @@ services:
         class: %orob2b_pricing.resolver.combined_product_price_resolver.class%
         arguments:
             - @doctrine
+            - @oro_entity.orm.insert_from_select_query_executor
 
     orob2b_pricing.validator.unique_product_prices:
         class: %orob2b_pricing.validator.unique_product_prices.class%

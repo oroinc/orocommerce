@@ -58,7 +58,7 @@ class LoadProductPricesForCombination extends LoadProductPrices
             'product' => 'product.1',
             'price' => 15,
             'currency' => 'USD',
-            'qty' => 1,
+            'qty' => 10,
             'unit' => 'product_unit.liter',
             'reference' => 'product_price.6'
         ],
@@ -70,6 +70,15 @@ class LoadProductPricesForCombination extends LoadProductPrices
             'qty' => 10,
             'unit' => 'product_unit.bottle',
             'reference' => 'product_price.7'
+        ],
+        [
+            'priceList' => 'price_list_2',
+            'product' => 'product.1',
+            'price' => 2,
+            'currency' => 'EUR',
+            'qty' => 1,
+            'unit' => 'product_unit.liter',
+            'reference' => 'product_price.8'
         ],
     ];
 }
