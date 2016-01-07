@@ -17,7 +17,7 @@ class PriceListToWebsiteRepositoryTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
+        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations']);
     }
 
     public function testFindByPrimaryKey()
@@ -69,6 +69,7 @@ class PriceListToWebsiteRepositoryTest extends WebTestCase
             [
                 'website' => 'US',
                 'expectedPriceLists' => [
+                    'priceList3',
                     'priceList1'
                 ]
             ],

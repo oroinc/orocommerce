@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
@@ -40,7 +41,7 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
             ->innerJoin('PriceListToAccountGroup.accountGroup', 'accountGroup')
             ->where('accountGroup = :accountGroup')
             ->andWhere('PriceListToAccountGroup.website = :website')
-            ->orderBy('PriceListToAccountGroup.priority')
+            ->orderBy('PriceListToAccountGroup.priority', Criteria::DESC)
             ->setParameters(['accountGroup' => $accountGroup, 'website' => $website])
             ->getQuery()
             ->getResult();

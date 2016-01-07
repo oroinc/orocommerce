@@ -114,7 +114,7 @@ services:
         class: %orob2b_pricing.provider.price_list_collection.class%
         arguments:
             - @doctrine
-            - @oro_config.manager
+            - @oro_config.global
             - @orob2b_pricing.system_config_converter
 
     orob2b_pricing.resolver.combined_product_price_resolver:

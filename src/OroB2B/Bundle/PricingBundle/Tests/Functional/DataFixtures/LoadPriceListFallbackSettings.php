@@ -13,28 +13,26 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class LoadLevelFallbacks extends AbstractFixture implements DependentFixtureInterface
+class LoadPriceListFallbackSettings extends AbstractFixture implements DependentFixtureInterface
 {
-    protected $fallbacks = [
+    protected $fallbackSettings = [
         'account' => [
-            'account.level_1.1.1' => false,
-            'account.level_1.1' => true,
-            'account.level_1.2' => true,
-            'account.orphan' => false,
+            'account.level_1_1' => PriceListAccountFallback::ACCOUNT_GROUP,
+            'account.level_1.3' => PriceListAccountFallback::ACCOUNT_GROUP,
+            'account.level_1.2' => PriceListAccountFallback::CURRENT_ACCOUNT_ONLY,
         ],
         'accountGroup' => [
-            'account_group.group1' => true,
-            'account_group.group2' => false,
-            'account_group.group3' => false,
+            'account_group.group1' => PriceListAccountGroupFallback::WEBSITE,
+            'account_group.group2' => PriceListAccountGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY,
         ],
         'website' => [
-            'US' => true,
-            'Canada' => false,
+            'US' => PriceListWebsiteFallback::CONFIG,
+            'Canada' => PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY,
         ],
     ];
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getDependencies()
     {
@@ -46,11 +44,11 @@ class LoadLevelFallbacks extends AbstractFixture implements DependentFixtureInte
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function load(ObjectManager $manager)
     {
-        foreach ($this->fallbacks['account'] as $accountReference => $fallbackValue) {
+        foreach ($this->fallbackSettings['account'] as $accountReference => $fallbackValue) {
             $priceListAccountFallback = new PriceListAccountFallback();
             /** @var Account $account */
             $account = $this->getReference($accountReference);
@@ -59,7 +57,7 @@ class LoadLevelFallbacks extends AbstractFixture implements DependentFixtureInte
             $manager->persist($priceListAccountFallback);
         }
 
-        foreach ($this->fallbacks['accountGroup'] as $accountGroupReference => $fallbackValue) {
+        foreach ($this->fallbackSettings['accountGroup'] as $accountGroupReference => $fallbackValue) {
             $priceListAccountGroupFallback = new PriceListAccountGroupFallback();
             /** @var AccountGroup $accountGroup */
             $accountGroup = $this->getReference($accountGroupReference);
@@ -68,7 +66,7 @@ class LoadLevelFallbacks extends AbstractFixture implements DependentFixtureInte
             $manager->persist($priceListAccountGroupFallback);
         }
 
-        foreach ($this->fallbacks['website'] as $websiteReference => $fallbackValue) {
+        foreach ($this->fallbackSettings['website'] as $websiteReference => $fallbackValue) {
             $priceListWebsiteFallback = new PriceListWebsiteFallback();
             /** @var Website $website */
             $website = $this->getReference($websiteReference);

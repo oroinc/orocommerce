@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
@@ -34,7 +35,7 @@ class PriceListToWebsiteRepository extends EntityRepository
         return $this->createQueryBuilder('PriceListToWebsite')
             ->innerJoin('PriceListToWebsite.priceList', 'priceList')
             ->where('PriceListToWebsite.website = :website')
-            ->orderBy('PriceListToWebsite.priority')
+            ->orderBy('PriceListToWebsite.priority', Criteria::DESC)
             ->setParameter('website', $website)
             ->getQuery()
             ->getResult();

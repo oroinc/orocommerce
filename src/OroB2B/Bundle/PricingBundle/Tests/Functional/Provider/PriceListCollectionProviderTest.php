@@ -2,11 +2,14 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Provider;
 
+use Doctrine\ORM\EntityManager;
+
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
+use OroB2B\Bundle\PricingBundle\Provider\PriceListSequenceMember;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -14,7 +17,11 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  */
 class PriceListCollectionProviderTest extends WebTestCase
 {
-    /** @var  PriceListCollectionProvider */
+    const DEFAULT_PRICE_LIST = 1;
+
+    /**
+     * @var PriceListCollectionProvider
+     */
     protected $provider;
 
     protected function setUp()
@@ -24,8 +31,8 @@ class PriceListCollectionProviderTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadLevelFallbacks',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists',
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings',
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
             ]
         );
     }
@@ -35,39 +42,72 @@ class PriceListCollectionProviderTest extends WebTestCase
         $pricesChain = $this->provider->getPriceListsByConfig();
         $this->assertCount(1, $pricesChain);
         $this->assertTrue($pricesChain[0]->isMergeAllowed());
-        $this->assertTrue($pricesChain[0]->getPriceList()->isDefault());
     }
 
     /**
      * @dataProvider testGetPriceListsByWebsiteDataProvider
      * @param string $websiteReference
-     * @param array $expectedPriceListNames
+     * @param array $expectedPriceLists
      */
-    public function testGetPriceListsByWebsite($websiteReference, array $expectedPriceListNames)
+    public function testGetPriceListsByWebsite($websiteReference, array $expectedPriceLists)
     {
+        $expectedPriceLists = $this->resolveExpectedPriceLists($expectedPriceLists);
+
         /** @var Website $website */
         $website = $this->getReference($websiteReference);
         $result = $this->provider->getPriceListsByWebsite($website);
-        $this->assertCount(count($expectedPriceListNames), $result);
-        foreach ($expectedPriceListNames as $index => $priceListName) {
-            $this->assertEquals($priceListName, $result[$index]->getPriceList()->getName());
-        }
+        $this->assertEquals($expectedPriceLists, $this->resolveResult($result));
     }
 
+    /**
+     * @return array
+     */
     public function testGetPriceListsByWebsiteDataProvider()
     {
         return [
-            [
+            'website with settings and enabled fallback' => [
                 'websiteReference' => 'US',
                 'expectedPriceListNames' => [
-                    'priceList1',
-                    'Default Price List',
+                    /** From Website */
+                    [
+                        'priceList' => 'price_list_3',
+                        'mergeAllowed' => false,
+                    ],
+                    [
+                        'priceList' => 'price_list_1',
+                        'mergeAllowed' => true,
+                    ],
+                    /** End From Website */
+                    /** From config */
+                    [
+                        'priceList' => self::DEFAULT_PRICE_LIST,
+                        'mergeAllowed' => true,
+                    ],
+                    /** End From config */
                 ],
             ],
-            [
+            'website with settings and blocked fallback' => [
                 'websiteReference' => 'Canada',
                 'expectedPriceListNames' => [
-                    'priceList3',
+                    /** From Website */
+                    [
+                        'priceList' => 'price_list_3',
+                        'mergeAllowed' => true,
+                    ],
+                    /** End From Website */
+                ],
+            ],
+            'no website specific settings' => [
+                'websiteReference' => 'CA',
+                'expectedPriceListNames' => [
+                    /** From Website */
+                    /** End From Website */
+                    /** From config */
+                    [
+                        'priceList' => self::DEFAULT_PRICE_LIST,
+                        'mergeAllowed' => true,
+                    ],
+                    /** End From config */
                 ],
             ],
         ];
@@ -78,123 +118,249 @@ class PriceListCollectionProviderTest extends WebTestCase
      *
      * @param string $accountGroupReference
      * @param string $websiteReference
-     * @param array $expectedPriceListNames
+     * @param array $expectedPriceLists
      */
     public function testGetPriceListsByAccountGroup(
         $accountGroupReference,
         $websiteReference,
-        array $expectedPriceListNames
+        array $expectedPriceLists
     ) {
+        $expectedPriceLists = $this->resolveExpectedPriceLists($expectedPriceLists);
+
         /** @var AccountGroup $accountGroup */
         $accountGroup = $this->getReference($accountGroupReference);
         /** @var Website $website */
         $website = $this->getReference($websiteReference);
         $result = $this->provider->getPriceListsByAccountGroup($accountGroup, $website);
-        $this->assertCount(count($expectedPriceListNames), $result);
-        foreach ($expectedPriceListNames as $index => $priceListName) {
-            $this->assertEquals($priceListName, $result[$index]->getPriceList()->getName());
-        }
+        $this->assertEquals($expectedPriceLists, $this->resolveResult($result));
     }
 
+    /**
+     * @return array
+     */
     public function testGetPriceListsByAccountGroupDataProvider()
     {
         return [
-            [
+            'all fallbacks' => [
                 'accountGroupReference' => 'account_group.group1',
                 'websiteReference' => 'US',
                 'expectedPriceListNames' => [
-                    'priceList1',
-                    'priceList1',
-                    'Default Price List',
+                    /** From group */
+                    [
+                        'priceList' => 'price_list_5',
+                        'mergeAllowed' => false,
+                    ],
+                    [
+                        'priceList' => 'price_list_1',
+                        'mergeAllowed' => true,
+                    ],
+                    /** End From group */
+                    /** From Website */
+                    [
+                        'priceList' => 'price_list_3',
+                        'mergeAllowed' => false,
+                    ],
+                    [
+                        'priceList' => 'price_list_1',
+                        'mergeAllowed' => true,
+                    ],
+                    /** End From Website */
+                    /** From config */
+                    [
+                        'priceList' => self::DEFAULT_PRICE_LIST,
+                        'mergeAllowed' => true,
+                    ],
+                    /** End From config */
                 ],
             ],
-            [
+            'no group settings only website with blocked fallback' => [
                 'accountGroupReference' => 'account_group.group1',
                 'websiteReference' => 'Canada',
-                'expectedPriceListNames' => ['priceList3'],
+                'expectedPriceListNames' => [
+                    /** From group */
+                    /** End From group */
+                    /** From Website */
+                    [
+                        'priceList' => 'price_list_3',
+                        'mergeAllowed' => true,
+                    ],
+                    /** End From Website */
+                ],
             ],
-            [
+            'group with blocked fallback' => [
                 'accountGroupReference' => 'account_group.group2',
                 'websiteReference' => 'US',
-                'expectedPriceListNames' => ['priceList4'],
+                'expectedPriceListNames' => [
+                    /** From group */
+                    [
+                        'priceList' => 'price_list_4',
+                        'mergeAllowed' => true,
+                    ],
+                    /** End From group */
+                ],
             ],
-            [
+            'group with blocked fallback no group price lists' => [
                 'accountGroupReference' => 'account_group.group2',
                 'websiteReference' => 'Canada',
                 'expectedPriceListNames' => [],
             ],
-            [
+            'group without settings' => [
                 'accountGroupReference' => 'account_group.group3',
                 'websiteReference' => 'US',
-                'expectedPriceListNames' => [],
-            ],
-            [
-                'accountGroupReference' => 'account_group.group3',
-                'websiteReference' => 'Canada',
-                'expectedPriceListNames' => ['priceList5'],
+                'expectedPriceListNames' => [
+                    /** From Website */
+                    [
+                        'priceList' => 'price_list_3',
+                        'mergeAllowed' => false,
+                    ],
+                    [
+                        'priceList' => 'price_list_1',
+                        'mergeAllowed' => true,
+                    ],
+                    /** End From Website */
+                    /** From config */
+                    [
+                        'priceList' => self::DEFAULT_PRICE_LIST,
+                        'mergeAllowed' => true,
+                    ],
+                    /** End From config */
+                ],
             ],
         ];
     }
-
 
     /**
      * @dataProvider testGetPriceListsByAccountDataProvider
      *
      * @param string $accountReference
      * @param string $websiteReference
-     * @param array $expectedPriceListNames
+     * @param array $expectedPriceLists
      */
     public function testGetPriceListsByAccount(
         $accountReference,
         $websiteReference,
-        array $expectedPriceListNames
+        array $expectedPriceLists
     ) {
+        $expectedPriceLists = $this->resolveExpectedPriceLists($expectedPriceLists);
+
         /** @var Account $account */
         $account = $this->getReference($accountReference);
         /** @var Website $website */
         $website = $this->getReference($websiteReference);
         $result = $this->provider->getPriceListsByAccount($account, $website);
-        $this->assertCount(count($expectedPriceListNames), $result);
-        foreach ($expectedPriceListNames as $index => $priceListName) {
-            $this->assertEquals($priceListName, $result[$index]->getPriceList()->getName());
-        }
+        $this->assertEquals($expectedPriceLists, $this->resolveResult($result));
     }
 
+    /**
+     * @return array
+     */
     public function testGetPriceListsByAccountDataProvider()
     {
         return [
-            [
-                'accountReference' => 'account.orphan',
+            'account.level_1_1 US' => [
+                'accountReference' => 'account.level_1_1',
                 'websiteReference' => 'US',
                 'expectedPriceListNames' => [
-                    'priceList3',
+                    /** From account */
+                    [
+                        'priceList' => 'price_list_2',
+                        'mergeAllowed' => false,
+                    ],
+                    [
+                        'priceList' => 'price_list_1',
+                        'mergeAllowed' => true,
+                    ],
+                    /** End From account */
+                    /** From group */
+                    /** End From Group */
+                    /** From Website */
+                    [
+                        'priceList' => 'price_list_3',
+                        'mergeAllowed' => false,
+                    ],
+                    [
+                        'priceList' => 'price_list_1',
+                        'mergeAllowed' => true,
+                    ],
+                    /** End From Website */
+                    /** From config */
+                    [
+                        'priceList' => self::DEFAULT_PRICE_LIST,
+                        'mergeAllowed' => true,
+                    ],
+                    /** End From config */
                 ],
             ],
-            [
+            'account.orphan Canada' => [
                 'accountReference' => 'account.orphan',
                 'websiteReference' => 'Canada',
-                'expectedPriceListNames' => [],
+                'expectedPriceListNames' => [
+                    /** From Website */
+                    [
+                        'priceList' => 'price_list_3',
+                        'mergeAllowed' => true,
+                    ],
+                    /** End From Website */
+                ],
             ],
-            [
-                'accountReference' => 'account.level_1.1.1',
-                'websiteReference' => 'US',
-                'expectedPriceListNames' => [],
-            ],
-            [
-                'accountReference' => 'account.level_1.1.1',
-                'websiteReference' => 'Canada',
-                'expectedPriceListNames' => ['priceList5'],
-            ],
-            [
+            'account.level_1.2 US' => [
                 'accountReference' => 'account.level_1.2',
                 'websiteReference' => 'US',
-                'expectedPriceListNames' => ['priceList2', 'priceList4'],
+                'expectedPriceListNames' => [
+                    [
+                        'priceList' => 'price_list_2',
+                        'mergeAllowed' => true,
+                    ],
+                ],
             ],
-            [
+            'account.level_1.2 Canada' => [
                 'accountReference' => 'account.level_1.2',
                 'websiteReference' => 'Canada',
-                'expectedPriceListNames' => ['priceList2'],
+                'expectedPriceListNames' => [
+                ],
             ],
         ];
+    }
+
+    /**
+     * @param array $expectedPriceLists
+     * @return array
+     */
+    protected function resolveExpectedPriceLists(array $expectedPriceLists)
+    {
+        $result = [];
+        /** @var EntityManager $em */
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        foreach ($expectedPriceLists as $expectedPriceListData) {
+            if ($expectedPriceListData['priceList'] === self::DEFAULT_PRICE_LIST) {
+                $priceList = $em->getReference('OroB2BPricingBundle:PriceList', self::DEFAULT_PRICE_LIST);
+            } else {
+                $priceList = $this->getReference($expectedPriceListData['priceList']);
+            }
+            $result[] = [
+                'priceList' => $priceList->getName(),
+                'mergeAllowed' => $expectedPriceListData['mergeAllowed']
+            ];
+        }
+
+        return $result;
+
+    }
+
+    /**
+     * @param PriceListSequenceMember[] $sequenceMembers
+     * @return array
+     */
+    protected function resolveResult(array $sequenceMembers)
+    {
+        $result = [];
+        foreach ($sequenceMembers as $sequenceMember) {
+            $result[] = [
+                'priceList' => $sequenceMember->getPriceList()->getName(),
+                'mergeAllowed' => $sequenceMember->isMergeAllowed()
+            ];
+        }
+
+        return $result;
     }
 }
