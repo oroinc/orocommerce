@@ -4,9 +4,9 @@ namespace OroB2B\Bundle\PricingBundle\Provider;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\CurrencyBundle\Model\CurrencyAwareInterface;
-use Oro\Bundle\CurrencyBundle\Model\Price;
-use Oro\Bundle\CurrencyBundle\Model\PriceAwareInterface;
+use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use OroB2B\Bundle\PricingBundle\Entity\QuantityAwareInterface;

@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\InvoiceBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CurrencyBundle\Model\PriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;

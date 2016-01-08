@@ -287,7 +287,6 @@ class RequestTypeTest extends AbstractTest
 
         $priceType                  = $this->preparePriceType();
         $entityType                 = $this->prepareProductSelectType();
-        $optionalPriceType          = $this->prepareOptionalPriceType();
         $currencySelectionType      = new CurrencySelectionTypeStub();
         $requestProductItemType     = $this->prepareRequestProductItemType();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
@@ -307,7 +306,6 @@ class RequestTypeTest extends AbstractTest
                     OroDateType::NAME                       => new OroDateType(),
                     $priceType->getName()                   => $priceType,
                     $entityType->getName()                  => $entityType,
-                    $optionalPriceType->getName()           => $optionalPriceType,
                     $requestProductType->getName()          => $requestProductType,
                     $currencySelectionType->getName()       => $currencySelectionType,
                     $requestProductItemType->getName()      => $requestProductItemType,

@@ -7,7 +7,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\CurrencyBundle\Model\CurrencyAwareInterface;
+use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;

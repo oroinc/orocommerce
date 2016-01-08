@@ -8,7 +8,7 @@ use Symfony\Component\Form\PreloadedExtension;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;

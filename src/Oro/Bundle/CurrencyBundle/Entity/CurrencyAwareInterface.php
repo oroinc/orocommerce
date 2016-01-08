@@ -1,5 +1,5 @@
 <?php
-namespace Oro\Bundle\CurrencyBundle\Model;
+namespace Oro\Bundle\CurrencyBundle\Entity;
 
 interface CurrencyAwareInterface
 {

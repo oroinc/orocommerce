@@ -15,7 +15,7 @@ class PriceTypeGenerator extends \PHPUnit_Framework_TestCase
     public static function createPriceType()
     {
         $priceType = new PriceType(self::getPriceRoundingService());
-        $priceType->setDataClass('Oro\Bundle\CurrencyBundle\Model\Price');
+        $priceType->setDataClass('Oro\Bundle\CurrencyBundle\Entity\Price');
 
         return $priceType;
     }

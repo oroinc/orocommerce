@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\InvoiceBundle\Migrations\Data\Demo\ORM;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -13,8 +12,9 @@ use Doctrine\ORM\EntityManager;
 
 use OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 class LoadInvoiceLineItemDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -43,7 +43,7 @@ class LoadInvoiceLineItemDemoData extends AbstractFixture implements ContainerAw
             $filePath = current($filePath);
         }
 
-        $invoicesData = array();
+        $invoicesData = [];
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler);
 
@@ -53,6 +53,7 @@ class LoadInvoiceLineItemDemoData extends AbstractFixture implements ContainerAw
         }
 
         foreach ($invoicesData as $invoiceNumber => $invoiceData) {
+            /** @var Invoice $invoice */
             $invoice = $manager
                 ->getRepository('OroB2BInvoiceBundle:Invoice')
                 ->findOneBy(['invoiceNumber' => $invoiceNumber]);

@@ -45,7 +45,6 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
         );
 
         $priceType = PriceTypeGenerator::createPriceType();
-        $priceType->setDataClass('Oro\Bundle\CurrencyBundle\Model\Price');
 
         $orderPriceType = new PriceTypeSelectorType();
         $dateType = new OroDateType();

@@ -8,8 +8,7 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use Oro\Bundle\CurrencyBundle\Form\Type\OptionalPriceType;
-use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -73,17 +72,6 @@ abstract class AbstractTest extends FormIntegrationTestCase
     protected function preparePriceType()
     {
         return PriceTypeGenerator::createPriceType();
-    }
-
-    /**
-     * @return OptionalPriceType
-     */
-    protected function prepareOptionalPriceType()
-    {
-        $price = new OptionalPriceType();
-        $price->setDataClass('Oro\Bundle\CurrencyBundle\Model\OptionalPrice');
-
-        return $price;
     }
 
     /**
@@ -158,11 +146,11 @@ abstract class AbstractTest extends FormIntegrationTestCase
     /**
      * @param float $value
      * @param string $currency
-     * @return OptionalPrice
+     * @return Price
      */
     protected function createPrice($value, $currency)
     {
-        return OptionalPrice::create($value, $currency);
+        return Price::create($value, $currency);
     }
 
     /**
@@ -278,14 +266,14 @@ abstract class AbstractTest extends FormIntegrationTestCase
      * @param int $productId
      * @param int $quantity
      * @param string $unitCode
-     * @param OptionalPrice $price
+     * @param Price $price
      * @return RequestProductItem
      */
     protected function getRequestProductItem(
         $productId,
         $quantity = null,
         $unitCode = null,
-        OptionalPrice $price = null
+        Price $price = null
     ) {
         $requestProductItem = new RequestProductItem();
         $requestProductItem->setRequestProduct($this->getRequestProduct($productId));

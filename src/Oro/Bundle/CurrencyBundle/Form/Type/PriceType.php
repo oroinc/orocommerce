@@ -48,6 +48,8 @@ class PriceType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $isRequiredPrice = $this->resolvePriceIsRequired($options);
+
         if (empty($options['hide_currency'])) {
             $currencyType = CurrencySelectionType::NAME;
             $currencyOptions = [
@@ -55,7 +57,7 @@ class PriceType extends AbstractType
                 'currencies_list' => $options['currencies_list'],
                 'full_currency_list' => $options['full_currency_list'],
                 'compact' => $options['compact'],
-                'required' => true,
+                'required' => $isRequiredPrice,
                 'empty_value' => $options['currency_empty_value'],
             ];
         } else {
@@ -67,7 +69,7 @@ class PriceType extends AbstractType
 
         $builder
             ->add('value', 'number', [
-                'required' => true,
+                'required' => $isRequiredPrice,
                 'scale' => $this->roundingService->getPrecision(),
                 'rounding_mode' => $this->roundingService->getRoundType(),
                 'attr' => ['data-scale' => $this->roundingService->getPrecision()]
@@ -86,7 +88,6 @@ class PriceType extends AbstractType
             'data_class' => $this->dataClass,
             'hide_currency' => false,
             'additional_currencies' => null,
-            'cascade_validation' => true,
             'currencies_list' => null,
             'default_currency' => null,
             'full_currency_list' => false,
@@ -109,5 +110,18 @@ class PriceType extends AbstractType
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * @param array $options
+     * @return bool
+     */
+    protected function resolvePriceIsRequired(array $options)
+    {
+        if (is_array($options['validation_groups']) && in_array('Optional', $options['validation_groups'])) {
+            return false;
+        }
+
+        return true;
     }
 }

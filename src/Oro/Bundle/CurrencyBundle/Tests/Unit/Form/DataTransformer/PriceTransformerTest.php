@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CurrencyBundle\Tests\Unit\Form\DataTransformer;
 
 use Oro\Bundle\CurrencyBundle\Form\DataTransformer\PriceTransformer;
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 class PriceTransformerTest extends \PHPUnit_Framework_TestCase
 {
@@ -19,7 +19,7 @@ class PriceTransformerTest extends \PHPUnit_Framework_TestCase
 
     public function testTransform()
     {
-        $price = [Price::create(100, 'USD')];
+        $price = Price::create(100, 'USD');
         $this->assertSame($price, $this->transformer->transform($price));
     }
 

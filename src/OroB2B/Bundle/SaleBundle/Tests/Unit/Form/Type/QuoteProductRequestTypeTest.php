@@ -7,7 +7,7 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
@@ -205,11 +205,11 @@ class QuoteProductRequestTypeTest extends AbstractTest
     /**
      * @param float $value
      * @param string $currency
-     * @return OptionalPrice
+     * @return Price
      */
     protected function createPrice($value, $currency)
     {
-        return OptionalPrice::create($value, $currency);
+        return Price::create($value, $currency);
     }
 
     /**
@@ -218,7 +218,6 @@ class QuoteProductRequestTypeTest extends AbstractTest
     protected function getExtensions()
     {
         $priceType                  = PriceTypeGenerator::createPriceType();
-        $optionalPriceType          = $this->prepareOptionalPriceType();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
 
         return [
@@ -227,7 +226,6 @@ class QuoteProductRequestTypeTest extends AbstractTest
                     ProductUnitSelectionType::NAME          => new ProductUnitSelectionTypeStub(),
                     CurrencySelectionType::NAME             => new CurrencySelectionTypeStub(),
                     $priceType->getName()                   => $priceType,
-                    $optionalPriceType->getName()           => $optionalPriceType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
                     QuantityTypeTrait::$name                => $this->getQuantityType(),
                 ],

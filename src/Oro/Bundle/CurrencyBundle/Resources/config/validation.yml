@@ -1,20 +1,19 @@
-Oro\Bundle\CurrencyBundle\Model\Price:
-    properties:
-        value:
-            - NotBlank: ~
-            - Type:
-                type: numeric
-            - Range:
-                min: 0
-        currency:
-            - NotBlank: ~
-            - Currency: ~
-
-Oro\Bundle\CurrencyBundle\Model\OptionalPrice:
+Oro\Bundle\CurrencyBundle\Entity\Price:
     constraints:
         - Oro\Bundle\CurrencyBundle\Validator\Constraints\OptionalPrice:
             groups: [Optional]
     properties:
+        value:
+            - NotBlank:
+                groups: [Default]
+            - Type:
+                groups: [Default, Optional]
+                type: numeric
+            - Range:
+                groups: [Default, Optional]
+                min: 0
         currency:
+            - NotBlank:
+                groups: [Default]
             - Currency:
-                groups: [Optional]
+                groups: [Default, Optional]
