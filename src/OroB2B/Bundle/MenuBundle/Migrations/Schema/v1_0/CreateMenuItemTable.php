@@ -51,15 +51,13 @@ class CreateMenuItemTable implements Migration, AttachmentExtensionAwareInterfac
         $table->addColumn('parent_id', 'integer', ['notnull' => false]);
         $table->addColumn('serialized_data', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->addColumn('uri', 'text', ['notnull' => false]);
-        $table->addColumn('route', 'string', ['notnull' => false, 'length' => 128]);
-        $table->addColumn('route_parameters', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->addColumn('display', 'boolean', []);
         $table->addColumn('display_children', 'boolean', []);
         $table->addColumn('tree_left', 'integer', []);
         $table->addColumn('tree_level', 'integer', []);
         $table->addColumn('tree_right', 'integer', []);
         $table->addColumn('tree_root', 'integer', ['notnull' => false]);
-        $table->addColumn('condition', 'text', ['notnull' => false]);
+        $table->addColumn('mi_condition', 'text', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $this->attachmentExtension->addImageRelation(
             $schema,

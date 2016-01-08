@@ -57,6 +57,7 @@ class MenuItem extends ExtendMenuItem
      *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
      *      }
      * )
+     * @todo check unique for root
      */
     protected $titles;
 
@@ -77,20 +78,6 @@ class MenuItem extends ExtendMenuItem
     protected $uri;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="route", type="string", length=128, nullable=true)
-     */
-    protected $route;
-
-    /**
-     * @var array
-     *
-     * @ORM\Column(name="route_parameters", type="array", nullable=true)
-     */
-    protected $routeParameters;
-
-    /**
      * @var boolean
      *
      * @ORM\Column(name="display", type="boolean")
@@ -107,7 +94,7 @@ class MenuItem extends ExtendMenuItem
     /**
      * @var string
      *
-     * @ORM\Column(name="condition", type="text", nullable=true)
+     * @ORM\Column(name="mi_condition", type="text", nullable=true)
      */
     protected $condition;
 
@@ -170,15 +157,34 @@ class MenuItem extends ExtendMenuItem
      */
     public function getDefaultTitle()
     {
-        $titles = $this->titles->filter(function (LocalizedFallbackValue $title) {
-            return null === $title->getLocale();
-        });
+        $titles = $this->titles->filter(
+            function (LocalizedFallbackValue $title) {
+                return null === $title->getLocale();
+            }
+        );
 
-        if ($titles->count() != 1) {
+        if ($titles->count() > 1) {
             throw new \LogicException('There must be only one default title');
         }
 
         return $titles->first();
+    }
+
+    /**
+     * @param $string
+     * @return $this
+     */
+    public function setDefaultTitle($string)
+    {
+        $oldTitle = $this->getDefaultTitle();
+        if ($oldTitle) {
+            $this->removeTitle($oldTitle);
+        }
+        $newTitle = new LocalizedFallbackValue();
+        $newTitle->setString($string);
+        $this->addTitle($newTitle);
+
+        return $this;
     }
 
     /**
@@ -196,6 +202,7 @@ class MenuItem extends ExtendMenuItem
     public function setParentMenuItem(MenuItem $parentMenuItem = null)
     {
         $this->parentMenuItem = $parentMenuItem;
+
         return $this;
     }
 
@@ -214,6 +221,7 @@ class MenuItem extends ExtendMenuItem
     public function setUri($uri)
     {
         $this->uri = $uri;
+
         return $this;
     }
 
@@ -232,6 +240,7 @@ class MenuItem extends ExtendMenuItem
     public function setRoute($route)
     {
         $this->route = $route;
+
         return $this;
     }
 
@@ -250,6 +259,7 @@ class MenuItem extends ExtendMenuItem
     public function setRouteParameters($routeParameters)
     {
         $this->routeParameters = $routeParameters;
+
         return $this;
     }
 
@@ -268,6 +278,7 @@ class MenuItem extends ExtendMenuItem
     public function setDisplay($display)
     {
         $this->display = $display;
+
         return $this;
     }
 
@@ -286,6 +297,7 @@ class MenuItem extends ExtendMenuItem
     public function setDisplayChildren($displayChildren)
     {
         $this->displayChildren = $displayChildren;
+
         return $this;
     }
 
@@ -304,6 +316,7 @@ class MenuItem extends ExtendMenuItem
     public function setCondition($condition)
     {
         $this->condition = $condition;
+
         return $this;
     }
 }

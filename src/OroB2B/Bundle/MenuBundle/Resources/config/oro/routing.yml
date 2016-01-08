@@ -1,0 +1,13 @@
+orob2b_menu_bundle:
+    resource:     "@OroB2BMenuBundle/Controller"
+    type:         annotation
+
+orob2b_menu_api_menu_item:
+    resource:     "@OroB2BMenuBundle/Controller/Api/MenuItemController.php"
+    type:         rest
+    prefix:       api/rest/{version}/
+    requirements:
+        version:  latest|v1
+        _format:  json
+    defaults:
+        version:  latest

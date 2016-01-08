@@ -1,1 +1,34 @@
+parameters:
+    orob2b_menu.entity.menu_item.class:                    OroB2B\Bundle\MenuBundle\Entity\MenuItem
+    orob2b_menu.tree.menu_item_tree_handler.class:          OroB2B\Bundle\MenuBundle\JsTree\MenuItemTreeHandler
+    orob2b_menu.form.type.menu_item.class:                  OroB2B\Bundle\MenuBundle\Form\Type\MenuItemType
+    orob2b_menu.twig.menu_item_extension.class:             OroB2B\Bundle\MenuBundle\Twig\MenuItemExtension
+    orob2b_menu.menu_item.manager.api.class:                Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+
 services:
+    orob2b_menu.form.type.menu_item:
+        class: %orob2b_menu.form.type.menu_item.class%
+        calls:
+            - [setDataClass, [%orob2b_menu.entity.menu_item.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_menu_item }
+
+    orob2b_menu.tree.menu_item_tree_handler:
+        class: %orob2b_menu.tree.menu_item_tree_handler.class%
+        arguments:
+            - %orob2b_menu.entity.menu_item.class%
+            - @doctrine
+
+    orob2b_menu.twig.menu_item_extension:
+        class: %orob2b_menu.twig.menu_item_extension.class%
+        arguments:
+            - @orob2b_menu.tree.menu_item_tree_handler
+        tags:
+            - { name: twig.extension }
+
+    orob2b_menu.menu_item.manager.api:
+        class: %orob2b_menu.menu_item.manager.api.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %orob2b_menu.entity.menu_item.class%
+            - @doctrine.orm.entity_manager

@@ -1,0 +1,18 @@
+oro_menu_config:
+    items:
+        menu_roots_list:
+            label: 'orob2b.menu.menuitem.roots_plural_label'
+            route: 'orob2b_menu_item_roots'
+            extras:
+                position: 90
+                routes: ['/^orob2b_menu_\w+$/']
+
+    tree:
+        application_menu:
+            children:
+                system_tab:
+                    children:
+                        menu_roots_list: ~
+
+oro_titles:
+    orob2b_menu_item_roots: ~
