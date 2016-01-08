@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\FallbackBundle\ImportExport\DataConverter;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Oro\Bundle\UIBundle\Tools\ArrayUtils;
+use Oro\Component\PhpUtils\ArrayUtil;
 
 use OroB2B\Bundle\FallbackBundle\ImportExport\Normalizer\LocaleCodeFormatter;
 use OroB2B\Bundle\WebsiteBundle\Entity\Repository\LocaleRepository;
@@ -60,7 +60,7 @@ class LocalizedFallbackValueAwareDataConverter extends PropertyPathTitleDataConv
         if (null === $this->localeCodes) {
             /** @var LocaleRepository $localeRepository */
             $localeRepository = $this->registry->getRepository($this->localeClassName);
-            $this->localeCodes = ArrayUtils::arrayColumn($localeRepository->getLocaleCodes(), 'code');
+            $this->localeCodes = ArrayUtil::arrayColumn($localeRepository->getLocaleCodes(), 'code');
             array_unshift($this->localeCodes, LocaleCodeFormatter::DEFAULT_LOCALE);
         }
 
