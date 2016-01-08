@@ -23,6 +23,13 @@ class AccountTaxCodeAutocompleteTypeTest extends FormIntegrationTestCase
         $this->formType = $this->createTaxCodeAutocompleteType();
     }
 
+    protected function tearDown()
+    {
+        unset($this->formType);
+
+        parent::tearDown();
+    }
+
     /**
      * @return AccountTaxCodeAutocompleteType
      */
@@ -36,12 +43,10 @@ class AccountTaxCodeAutocompleteTypeTest extends FormIntegrationTestCase
         $this->assertEquals('orob2b_account_tax_code_autocomplete', $this->formType->getName());
     }
 
-
     public function testGetParent()
     {
         $this->assertEquals('oro_entity_create_or_select_inline', $this->formType->getParent());
     }
-
 
     public function testConfigureOptions()
     {
