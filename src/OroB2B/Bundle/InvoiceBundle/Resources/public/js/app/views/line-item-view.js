@@ -44,6 +44,13 @@ define(function (require) {
             this.$el.on('click', '.removeLineItem', _.bind(this.removeRow, this));
         },
 
+        updateCurrency: function () {
+            this.setTotalPrice();
+            this.options.currency = this.pricesComponent.getCurrency();
+            this.$el.find('[name="orob2b_invoice_type[lineItems][0][price][currency]"]')
+                .val(this.pricesComponent.getCurrency());
+        },
+
         setTotalPrice: function () {
             var totalPrice;
             if (!this.fieldsByName.priceValue) {
@@ -82,7 +89,7 @@ define(function (require) {
         initTotalPriceListener: function () {
             var self = this;
             this.setTotalPrice();
-            this.pricesComponent.on('currency:changed', _.bind(this.setTotalPrice, this));
+            this.pricesComponent.on('currency:changed', _.bind(this.updateCurrency, this));
 
             setTimeout(function () {
                 _.each([
@@ -127,9 +134,6 @@ define(function (require) {
         },
 
         initPrices: function () {
-
-
-
             this.pricesComponent = new ProductPricesComponent({
                 _sourceElement: this.$el,
                 $product: this.fieldsByName.product,
@@ -137,7 +141,7 @@ define(function (require) {
                 $priceType: this.fieldsByName.priceType,
                 $productUnit: this.fieldsByName.productUnit,
                 $quantity: this.fieldsByName.quantity,
-                $currency: this.options.currency
+                $currency: this.fieldsByName.currency.val()
             });
 
             this.subview('productPricesComponents', this.pricesComponent);
