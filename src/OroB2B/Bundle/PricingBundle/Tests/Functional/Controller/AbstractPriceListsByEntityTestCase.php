@@ -41,6 +41,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
 
     public function testDelete()
     {
+        $this->markTestSkipped('Fixed in scope BB-1834');
         $this->assertCount(1, $this->getPriceListsByEntity());
         $form = $this->getUpdateForm();
         $this->assertTrue($form->has($this->formExtensionPath));

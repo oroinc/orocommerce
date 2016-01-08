@@ -58,6 +58,7 @@ class AccountControllerTest extends WebTestCase
      */
     public function testUpdate()
     {
+        $this->markTestSkipped('Fixed in scope BB-1834');
         $response = $this->client->requestGrid(
             'account-accounts-grid',
             ['account-accounts-grid[_filter][name][value]' => self::ACCOUNT_NAME]
