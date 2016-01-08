@@ -74,7 +74,8 @@ class ActionDefinitionConfigurationValidator
         $this->errors = $errors;
 
         foreach ($configuration as $name => $action) {
-            $this->validateFrontendOptions($action, $name);
+            $this->validateTemplate($action, $name, 'button_options');
+            $this->validateTemplate($action, $name, 'frontend_options');
             $this->validateFormOptions($action, $name);
             $this->validateRoutes($action['routes'], $this->getPath($name, 'routes'));
             $this->validateEntities($action['entities'], $this->getPath($name, 'entities'));
@@ -84,10 +85,10 @@ class ActionDefinitionConfigurationValidator
     /**
      * @param array $config
      * @param string $path
+     * @param string $sectionName
      */
-    protected function validateFrontendOptions(array $config, $path)
+    protected function validateTemplate(array $config, $path, $sectionName)
     {
-        $sectionName = 'frontend_options';
         if (!array_key_exists($sectionName, $config)) {
             return;
         }
@@ -96,7 +97,6 @@ class ActionDefinitionConfigurationValidator
         $options = $config[$sectionName];
         
         $this->assertTemplate($options, $optionsPath, 'template');
-        $this->assertTemplate($options, $optionsPath, 'dialog_template');
     }
 
     /**

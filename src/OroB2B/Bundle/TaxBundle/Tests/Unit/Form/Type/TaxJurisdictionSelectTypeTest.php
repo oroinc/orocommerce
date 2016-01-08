@@ -20,6 +20,11 @@ class TaxJurisdictionSelectTypeTest extends \PHPUnit_Framework_TestCase
         $this->type = new TaxJurisdictionSelectType();
     }
 
+    protected function tearDown()
+    {
+        unset($this->type);
+    }
+
     public function testGetName()
     {
         $this->assertEquals(TaxJurisdictionSelectType::NAME, $this->type->getName());

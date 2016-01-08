@@ -70,6 +70,8 @@ class TaxJurisdictionTypeTest extends FormIntegrationTestCase
     protected function tearDown()
     {
         unset($this->formType, $this->country, $this->region);
+
+        parent::tearDown();
     }
 
     public function testGetName()
