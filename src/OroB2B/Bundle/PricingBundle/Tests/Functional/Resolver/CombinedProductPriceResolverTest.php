@@ -67,6 +67,7 @@ class CombinedProductPriceResolverTest extends WebTestCase
                 [
                     'product.1' => [
                         '1 USD/1 liter',
+                        '2 EUR/1 liter',
                         '3 USD/1 bottle',
                         '10 USD/9 liter',
                         '15 USD/10 liter'
@@ -81,6 +82,7 @@ class CombinedProductPriceResolverTest extends WebTestCase
                 '2t_3f_1t',
                 [
                     'product.1' => [
+                        '2 EUR/1 liter',
                         '2 USD/1 liter',
                         '3 USD/1 bottle',
                         '10 USD/9 liter',
@@ -94,6 +96,7 @@ class CombinedProductPriceResolverTest extends WebTestCase
                 '2f_1t_3t',
                 [
                     'product.1' => [
+                        '2 EUR/1 liter',
                         '2 USD/1 liter',
                         '3 USD/1 bottle',
                     ],
@@ -107,161 +110,17 @@ class CombinedProductPriceResolverTest extends WebTestCase
     }
 
     /**
-     * @dataProvider updatedCombinePricesDataProvider
-     * @param string $combinedPriceList
-     * @param array $expectedPrices
-     */
-    public function testUpdatePricesByProductPriceUpdate($combinedPriceList, array $expectedPrices)
-    {
-        /** @var CombinedPriceList $combinedPriceList */
-        $combinedPriceList = $this->getReference($combinedPriceList);
-        $this->resolver->combinePrices($combinedPriceList);
-        //$this->assertNotEmpty($this->getCombinedPrices($combinedPriceList));
-
-        /** @var ProductPrice $price */
-        $price = $this->getReference('product_price.7');
-        $price->setQuantity(20);
-        $this->getEntityManager()->persist($price);
-        $this->getEntityManager()->flush($price);
-
-        $this->resolver->updatePricesByProduct($combinedPriceList, $price->getProduct());
-
-        $actualPrices = $this->getCombinedPrices($combinedPriceList);
-        $this->assertEquals($expectedPrices, $actualPrices);
-    }
-
-    /**
-     * @return array
-     */
-    public function updatedCombinePricesDataProvider()
-    {
-        return [
-            [
-                '1t_2t_3t',
-                [
-                    'product.1' => [
-                        '1 USD/1 liter',
-                        '3 USD/1 bottle',
-                        '10 USD/9 liter',
-                        '15 USD/10 liter'
-                    ],
-                    'product.2' => [
-                        '1 USD/1 bottle',
-                        '10 USD/20 bottle'
-                    ]
-                ]
-            ],
-            [
-                '2t_3f_1t',
-                [
-                    'product.1' => [
-                        '2 USD/1 liter',
-                        '3 USD/1 bottle',
-                        '10 USD/9 liter',
-                    ],
-                    'product.2' => [
-                        '10 USD/20 bottle'
-                    ]
-                ]
-            ],
-            [
-                '2f_1t_3t',
-                [
-                    'product.1' => [
-                        '2 USD/1 liter',
-                        '3 USD/1 bottle',
-                    ],
-                    'product.2' => [
-                        '1 USD/1 bottle',
-                        '10 USD/20 bottle'
-                    ]
-                ]
-            ]
-        ];
-    }
-
-    /**
-     * @dataProvider removedCombinePricesDataProvider
-     * @param string $combinedPriceList
-     * @param array $expectedPrices
-     */
-    public function testUpdatePricesByProductPriceRemoved($combinedPriceList, array $expectedPrices)
-    {
-        /** @var CombinedPriceList $combinedPriceList */
-        $combinedPriceList = $this->getReference($combinedPriceList);
-        $this->resolver->combinePrices($combinedPriceList);
-        //$this->assertNotEmpty($this->getCombinedPrices($combinedPriceList));
-
-        /** @var ProductPrice $price */
-        $price = $this->getReference('product_price.7');
-        $this->getEntityManager()->remove($price);
-        $this->getEntityManager()->flush($price);
-
-        $this->resolver->updatePricesByProduct($combinedPriceList, $price->getProduct());
-
-        $actualPrices = $this->getCombinedPrices($combinedPriceList);
-        $this->assertEquals($expectedPrices, $actualPrices);
-    }
-
-    /**
-     * @return array
-     */
-    public function removedCombinePricesDataProvider()
-    {
-        return [
-            [
-                '1t_2t_3t',
-                [
-                    'product.1' => [
-                        '1 USD/1 liter',
-                        '3 USD/1 bottle',
-                        '10 USD/9 liter',
-                        '15 USD/10 liter'
-                    ],
-                    'product.2' => [
-                        '1 USD/1 bottle'
-                    ]
-                ]
-            ],
-            [
-                '2t_3f_1t',
-                [
-                    'product.1' => [
-                        '2 USD/1 liter',
-                        '3 USD/1 bottle',
-                        '10 USD/9 liter',
-                    ],
-                    'product.2' => [
-                        '1 USD/1 bottle'
-                    ]
-                ]
-            ],
-            [
-                '2f_1t_3t',
-                [
-                    'product.1' => [
-                        '2 USD/1 liter',
-                        '3 USD/1 bottle',
-                    ],
-                    'product.2' => [
-                        '1 USD/1 bottle',
-                    ]
-                ]
-            ]
-        ];
-    }
-
-    /**
+     * @depends testCombinePrices
      * @dataProvider addedCombinePricesDataProvider
      * @param string $combinedPriceList
      * @param array $expectedPrices
      */
-    public function testUpdatePricesByProductPriceAdded($combinedPriceList, array $expectedPrices)
+    public function testCombinePricesByProductPriceAdded($combinedPriceList, array $expectedPrices)
     {
         /** @var CombinedPriceList $combinedPriceList */
         $combinedPriceList = $this->getReference($combinedPriceList);
         $this->resolver->combinePrices($combinedPriceList);
-        //$this->assertNotEmpty($this->getCombinedPrices($combinedPriceList));
+        $this->assertNotEmpty($this->getCombinedPrices($combinedPriceList));
 
         /** @var Product $product */
         $product = $this->getReference('product.2');
@@ -279,9 +138,12 @@ class CombinedProductPriceResolverTest extends WebTestCase
         $this->getEntityManager()->persist($productPrice);
         $this->getEntityManager()->flush($productPrice);
 
-        $this->resolver->updatePricesByProduct($combinedPriceList, $product);
-
+        $this->resolver->combinePrices($combinedPriceList, $product);
         $actualPrices = $this->getCombinedPrices($combinedPriceList);
+
+        $this->getEntityManager()->remove($productPrice);
+        $this->getEntityManager()->flush($productPrice);
+
         $this->assertEquals($expectedPrices, $actualPrices);
     }
 
@@ -296,6 +158,7 @@ class CombinedProductPriceResolverTest extends WebTestCase
                 [
                     'product.1' => [
                         '1 USD/1 liter',
+                        '2 EUR/1 liter',
                         '3 USD/1 bottle',
                         '10 USD/9 liter',
                         '15 USD/10 liter'
@@ -303,7 +166,7 @@ class CombinedProductPriceResolverTest extends WebTestCase
                     'product.2' => [
                         '1 USD/1 bottle',
                         '42 EUR/1 liter',
-                        '10 USD/10 bottle'
+                        '10 USD/10 bottle',
                     ]
                 ]
             ],
@@ -311,6 +174,7 @@ class CombinedProductPriceResolverTest extends WebTestCase
                 '2t_3f_1t',
                 [
                     'product.1' => [
+                        '2 EUR/1 liter',
                         '2 USD/1 liter',
                         '3 USD/1 bottle',
                         '10 USD/9 liter',
@@ -325,11 +189,167 @@ class CombinedProductPriceResolverTest extends WebTestCase
                 '2f_1t_3t',
                 [
                     'product.1' => [
+                        '2 EUR/1 liter',
                         '2 USD/1 liter',
                         '3 USD/1 bottle',
                     ],
                     'product.2' => [
                         '42 EUR/1 liter',
+                    ]
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * @depends testCombinePricesByProductPriceAdded
+     * @dataProvider updatedCombinePricesDataProvider
+     * @param string $combinedPriceList
+     * @param array $expectedPrices
+     */
+    public function testCombinePricesByProductPriceUpdate($combinedPriceList, array $expectedPrices)
+    {
+        /** @var CombinedPriceList $combinedPriceList */
+        $combinedPriceList = $this->getReference($combinedPriceList);
+        $this->resolver->combinePrices($combinedPriceList);
+        $this->assertNotEmpty($this->getCombinedPrices($combinedPriceList));
+
+        /** @var ProductPrice $price */
+        $price = $this->getReference('product_price.7');
+        $price->setQuantity(20);
+        $this->getEntityManager()->persist($price);
+        $this->getEntityManager()->flush($price);
+
+        $this->resolver->combinePrices($combinedPriceList, $price->getProduct());
+
+        $actualPrices = $this->getCombinedPrices($combinedPriceList);
+        $this->assertEquals($expectedPrices, $actualPrices);
+    }
+
+    /**
+     * @return array
+     */
+    public function updatedCombinePricesDataProvider()
+    {
+        return [
+            [
+                '1t_2t_3t',
+                [
+                    'product.1' => [
+                        '1 USD/1 liter',
+                        '2 EUR/1 liter',
+                        '3 USD/1 bottle',
+                        '10 USD/9 liter',
+                        '15 USD/10 liter'
+                    ],
+                    'product.2' => [
+                        '1 USD/1 bottle',
+                        '10 USD/20 bottle'
+                    ]
+                ]
+            ],
+            [
+                '2t_3f_1t',
+                [
+                    'product.1' => [
+                        '2 EUR/1 liter',
+                        '2 USD/1 liter',
+                        '3 USD/1 bottle',
+                        '10 USD/9 liter',
+                    ],
+                    'product.2' => [
+                        '10 USD/20 bottle'
+                    ]
+                ]
+            ],
+            [
+                '2f_1t_3t',
+                [
+                    'product.1' => [
+                        '2 EUR/1 liter',
+                        '2 USD/1 liter',
+                        '3 USD/1 bottle',
+                    ],
+                    'product.2' => [
+                        '1 USD/1 bottle',
+                        '10 USD/20 bottle'
+                    ]
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * @depends testCombinePricesByProductPriceUpdate
+     * @dataProvider removedCombinePricesDataProvider
+     * @param string $combinedPriceList
+     * @param array $expectedPrices
+     */
+    public function testCombinePricesByProductPriceRemoved($combinedPriceList, array $expectedPrices)
+    {
+        /** @var CombinedPriceList $combinedPriceList */
+        $combinedPriceList = $this->getReference($combinedPriceList);
+        $this->resolver->combinePrices($combinedPriceList);
+        $this->assertNotEmpty($this->getCombinedPrices($combinedPriceList));
+
+        /** @var Product $product */
+        $product = $this->getReference('product.2');
+        /** @var ProductPrice $price */
+        $price = $this->getReference('product_price.7');
+        $this->getEntityManager()->remove($price);
+        $this->getEntityManager()->flush($price);
+
+        $this->resolver->combinePrices($combinedPriceList, $product);
+
+        $actualPrices = $this->getCombinedPrices($combinedPriceList);
+        $this->assertEquals($expectedPrices, $actualPrices);
+    }
+
+    /**
+     * @return array
+     */
+    public function removedCombinePricesDataProvider()
+    {
+        return [
+            [
+                '1t_2t_3t',
+                [
+                    'product.1' => [
+                        '1 USD/1 liter',
+                        '2 EUR/1 liter',
+                        '3 USD/1 bottle',
+                        '10 USD/9 liter',
+                        '15 USD/10 liter'
+                    ],
+                    'product.2' => [
+                        '1 USD/1 bottle'
+                    ]
+                ]
+            ],
+            [
+                '2t_3f_1t',
+                [
+                    'product.1' => [
+                        '2 EUR/1 liter',
+                        '2 USD/1 liter',
+                        '3 USD/1 bottle',
+                        '10 USD/9 liter',
+                    ],
+                    'product.2' => [
+                        '1 USD/1 bottle'
+                    ]
+                ]
+            ],
+            [
+                '2f_1t_3t',
+                [
+                    'product.1' => [
+                        '2 EUR/1 liter',
+                        '2 USD/1 liter',
+                        '3 USD/1 bottle',
+                    ],
+                    'product.2' => [
+                        '1 USD/1 bottle',
                     ]
                 ]
             ]
@@ -348,11 +368,19 @@ class CombinedProductPriceResolverTest extends WebTestCase
             ->getRepository('OroB2BPricingBundle:CombinedProductPrice');
 
         /** @var CombinedProductPrice[] $prices */
-        $prices = $repository->findBy(['priceList' => $combinedPriceList], ['quantity' => 'ASC', 'value' => 'ASC']);
+        $prices = $repository->findBy(
+            ['priceList' => $combinedPriceList],
+            ['product' => 'ASC', 'quantity' => 'ASC', 'value' => 'ASC', 'currency' => 'ASC']
+        );
+
         foreach ($prices as $price) {
-            $actualPrices[$price->getProduct()->getSku()] =
-                $price->getPrice()->getValue() . ' ' . $price->getPrice()->getCurrency()
-                . '/' . $price->getQuantity() . ' ' . $price->getProductUnitCode();
+            $actualPrices[$price->getProduct()->getSku()][] = sprintf(
+                '%d %s/%d %s',
+                $price->getPrice()->getValue(),
+                $price->getPrice()->getCurrency(),
+                $price->getQuantity(),
+                $price->getProductUnitCode()
+            );
         }
 
         return $actualPrices;

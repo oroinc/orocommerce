@@ -26,6 +26,7 @@ class PriceListTreeHandlerTest extends WebTestCase
 
     protected function setUp()
     {
+        $this->markTestSkipped('Will be refactored in scope of BB-1851');
         $this->initClient();
 
         $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);

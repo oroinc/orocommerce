@@ -6,6 +6,7 @@ use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class PriceListAccountFallbackTest extends \PHPUnit_Framework_TestCase
 {
@@ -19,6 +20,7 @@ class PriceListAccountFallbackTest extends \PHPUnit_Framework_TestCase
                 ['id', 42],
                 ['account', new Account()],
                 ['fallback', 1],
+                ['website', new Website()]
             ]
         );
     }

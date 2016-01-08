@@ -7,7 +7,6 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
 use OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 
@@ -67,7 +66,7 @@ class CombinedPriceListProvider
     }
 
     /**
-     * @param BasePriceListRelation[] $priceListsRelations
+     * @param PriceListSequenceMember[] $priceListsRelations
      * @return CombinedPriceList
      */
     public function getCombinedPriceList(array $priceListsRelations)
@@ -85,26 +84,26 @@ class CombinedPriceListProvider
     }
 
     /**
-     * @param BasePriceListRelation[] $priceListsRelations
+     * @param PriceListSequenceMember[] $priceListsRelations
      * @return string
      */
     protected function getCombinedPriceListIdentifier(array $priceListsRelations)
     {
         $key = [];
-        foreach ($priceListsRelations as $priceListRelation) {
+        foreach ($priceListsRelations as $priceListSequenceMember) {
             $isMergeAllowed = self::MERGE_NOT_ALLOWED_FLAG;
-            if ($priceListRelation->isMergeAllowed()) {
+            if ($priceListSequenceMember->isMergeAllowed()) {
                 $isMergeAllowed = self::MERGE_ALLOWED_FLAG;
             }
-            $key[] = $priceListRelation->getPriceList()->getId() . $isMergeAllowed;
+            $key[] = $priceListSequenceMember->getPriceList()->getId() . $isMergeAllowed;
         }
 
         return implode(self::GLUE, $key);
     }
 
     /**
-     * @param BasePriceListRelation[] $priceListsRelations
-     * @return array BasePriceListRelation[]
+     * @param PriceListSequenceMember[] $priceListsRelations
+     * @return array PriceListSequenceMember[]
      */
     protected function normalizeCollection(array $priceListsRelations)
     {
@@ -127,7 +126,7 @@ class CombinedPriceListProvider
     }
 
     /**
-     * @param BasePriceListRelation[] $priceListsRelations
+     * @param PriceListSequenceMember[] $priceListsRelations
      * @param string $identifier
      * @return CombinedPriceList
      */
@@ -155,7 +154,7 @@ class CombinedPriceListProvider
     }
 
     /**
-     * @param BasePriceListRelation[] $priceListsRelations
+     * @param PriceListSequenceMember[] $priceListsRelations
      * @return array
      */
     protected function getCombinedCurrenciesList($priceListsRelations)

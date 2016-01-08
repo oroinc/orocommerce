@@ -5,8 +5,16 @@ namespace OroB2B\Bundle\PricingBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="orob2b_cmb_pl_to_pl")
- * @ORM\Entity
+ * @ORM\Table(
+ *      name="orob2b_cmb_pl_to_pl",
+ *      indexes={
+ *          @ORM\Index(
+ *              name="b2b_cmb_pl_to_pl_cmb_prod_sort_idx",
+ *              columns={"combined_price_list_id", "sort_order"}
+ *          )
+ *      }
+ * )
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository")
  */
 class CombinedPriceListToPriceList
 {
@@ -48,6 +56,14 @@ class CombinedPriceListToPriceList
      * @ORM\Column(name="merge_allowed", type="boolean", nullable=false)
      */
     protected $mergeAllowed;
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * @return CombinedPriceList

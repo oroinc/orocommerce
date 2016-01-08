@@ -18,7 +18,7 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
+        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations']);
     }
 
     public function testFindByPrimaryKey()
@@ -78,6 +78,7 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
                 'account' => 'account_group.group1',
                 'website' => 'US',
                 'expectedPriceLists' => [
+                    'priceList5',
                     'priceList1'
                 ]
             ],

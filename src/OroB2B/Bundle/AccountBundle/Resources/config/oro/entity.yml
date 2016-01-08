@@ -27,3 +27,6 @@ oro_entity:
         OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility:
             alias:        account_group_category_visibility
             plural_alias: account_group_category_visibilities
+        OroB2B\Bundle\AccountBundle\Entity\WindowsState:
+            alias:        account_user_windows_state
+            plural_alias: account_user_windows_states

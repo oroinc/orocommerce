@@ -2,12 +2,9 @@
 
 namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
-use Doctrine\Common\Persistence\ObjectManager;
-
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository;
 
 class AccountGroupWebsiteScopedPriceListsType extends AbstractWebsiteScopedPriceListsType
 {

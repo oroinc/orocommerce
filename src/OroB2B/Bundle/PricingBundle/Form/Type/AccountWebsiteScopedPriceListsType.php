@@ -2,10 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
-use Doctrine\Common\Persistence\ObjectManager;
-
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 

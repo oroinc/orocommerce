@@ -10,7 +10,10 @@ parameters:
     orob2b_tax.validator.zip_code_fields.class: OroB2B\Bundle\TaxBundle\Validator\Constraints\ZipCodeFieldsValidator
 
     orob2b_tax.event_listener.account_form_view.class: OroB2B\Bundle\TaxBundle\EventListener\AccountFormViewListener
+    orob2b_tax.event_listener.account_group_form_view.class: OroB2B\Bundle\TaxBundle\EventListener\AccountGroupFormViewListener
     orob2b_tax.event_listener.product_form_view.class: OroB2B\Bundle\TaxBundle\EventListener\ProductFormViewListener
+    orob2b_tax.event_listener.tax_code_grid.class: OroB2B\Bundle\TaxBundle\EventListener\TaxCodeGridListener
+    orob2b_tax.event_listener.account_grid.class: OroB2B\Bundle\TaxBundle\EventListener\AccountTaxCodeGridListener
 
     orob2b_tax.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
@@ -50,6 +53,12 @@ services:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_account_tax_code }
         lazy: true
 
+    orob2b_tax.event_listener.abstract_form_view:
+        abstract: true
+        arguments:
+            - @oro_entity.doctrine_helper
+            - @request_stack
+
     orob2b_tax.event_listener.account_form_view:
         class: %orob2b_tax.event_listener.account_form_view.class%
         arguments:
@@ -60,6 +69,17 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-edit, method: onEdit }
+
+    orob2b_tax.event_listener.account_group_form_view:
+        class: %orob2b_tax.event_listener.account_group_form_view.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+            - @request_stack
+            - %orob2b_tax.entity.account_tax_code.class%
+            - %orob2b_account.entity.account_group.class%
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-view, method: onView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-edit, method: onEdit }
 
     orob2b_tax.event_listener.product_form_view:
         class: %orob2b_tax.event_listener.product_form_view.class%
@@ -80,11 +100,11 @@ services:
             - @doctrine.orm.entity_manager
 
     orob2b_tax.manager.tax_rule.api:
-            class: %orob2b_tax.manager.api.attribute.class%
-            parent: oro_soap.manager.entity_manager.abstract
-            arguments:
-                - %orob2b_tax.entity.tax_rule.class%
-                - @doctrine.orm.entity_manager
+        class: %orob2b_tax.manager.api.attribute.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %orob2b_tax.entity.tax_rule.class%
+            - @doctrine.orm.entity_manager
 
     orob2b_tax.manager.tax_jurisdiction.api:
         class: %orob2b_tax.manager.api.attribute.class%
@@ -115,6 +135,44 @@ services:
         class: %orob2b_tax.validator.zip_code_fields.class%
         tags:
             - { name: validator.constraint_validator, alias: orob2b_tax_zip_code_fields }
+
+    orob2b_tax.event_listener.account_grid:
+        class: %orob2b_tax.event_listener.tax_code_grid.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+            - %orob2b_tax.entity.account_tax_code.class%
+            - %orob2b_account.entity.account.class%
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-select-grid, method: onBuildBefore }
+
+
+    orob2b_tax.event_listener.account_grid_groups:
+        class: %orob2b_tax.event_listener.account_grid.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+            - %orob2b_tax.entity.account_tax_code.class%
+            - %orob2b_account.entity.account_group.class%
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-select-grid, method: onBuildBefore }
+
+    orob2b_tax.event_listener.account_group_grid:
+        class: %orob2b_tax.event_listener.tax_code_grid.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+            - %orob2b_tax.entity.account_tax_code.class%
+            - %orob2b_account.entity.account_group.class%
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-groups-select-grid, method: onBuildBefore }
+
+    orob2b_tax.event_listener.product_grid:
+        class: %orob2b_tax.event_listener.tax_code_grid.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+            - %orob2b_tax.entity.product_tax_code.class%
+            - %orob2b_product.product.class%
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-select-grid, method: onBuildBefore }
 
     orob2b_tax.provider.tax_provider_registry:
         class: %orob2b_tax.provider.tax_provider_registry.class%

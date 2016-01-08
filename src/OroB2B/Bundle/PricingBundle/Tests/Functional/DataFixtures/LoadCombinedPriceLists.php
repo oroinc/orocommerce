@@ -97,7 +97,7 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
                 ],
                 [
                     'priceList' => 'price_list_3',
-                    'mergeAllowed' => false,
+                    'mergeAllowed' => true,
                 ],
             ],
         ],
@@ -138,6 +138,9 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
     {
         return [
             'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists',
+            'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
+            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
+            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
         ];
     }
 
