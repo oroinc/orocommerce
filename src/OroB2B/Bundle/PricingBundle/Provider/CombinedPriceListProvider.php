@@ -84,7 +84,6 @@ class CombinedPriceListProvider
         return $combinedPriceList;
     }
 
-
     /**
      * @param BasePriceListRelation[] $priceListsRelations
      * @return string

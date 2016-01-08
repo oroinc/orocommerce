@@ -110,6 +110,7 @@ services:
         arguments:
             - @doctrine
             - %orob2b_pricing.entity.price_list_to_website.class%
+            - @event_dispatcher
         tags:
             - { name: form.type_extension, alias: orob2b_website_type }
 
@@ -117,6 +118,7 @@ services:
         class: %orob2b_pricing.form.type.orob2b_pricing_account_group_website_scoped_price_lists.class%
         arguments:
             - @doctrine
+            - @event_dispatcher
         tags:
             - { name: form.type, alias: orob2b_pricing_account_group_website_scoped_price_lists }
 
@@ -124,8 +126,10 @@ services:
         class: %orob2b_pricing.form.type.orob2b_pricing_account_website_scoped_price_lists.class%
         arguments:
             - @doctrine
+            - @event_dispatcher
         tags:
             - { name: form.type, alias: orob2b_pricing_account_website_scoped_price_lists }
+
     orob2b_pricing.form.type.price_list_system_config:
         class: %orob2b_pricing.form.type.price_list_system_config.class%
         arguments:

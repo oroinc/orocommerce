@@ -6,11 +6,13 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
+use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChangeBefore;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
@@ -31,15 +33,22 @@ class WebsiteFormExtension extends AbstractTypeExtension
     /** @var  RegistryInterface */
     protected $doctrine;
 
+    /** @var  EventDispatcherInterface */
+    protected $eventDispatcher;
+
     /**
-     * WebSiteFormExtension constructor.
      * @param RegistryInterface $doctrine
      * @param string $priceListToWebsiteClass
+     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(RegistryInterface $doctrine, $priceListToWebsiteClass)
-    {
+    public function __construct(
+        RegistryInterface $doctrine,
+        $priceListToWebsiteClass,
+        EventDispatcherInterface $eventDispatcher
+    ) {
         $this->doctrine = $doctrine;
         $this->priceListToWebsiteClass = $priceListToWebsiteClass;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
 
@@ -141,6 +150,11 @@ class WebsiteFormExtension extends AbstractTypeExtension
         }
         $fallback->setWebsite($website);
         $fallback->setFallback($form->get('fallback')->getData());
+
+        $this->eventDispatcher->dispatch(
+            PriceListCollectionChangeBefore::NAME,
+            new PriceListCollectionChangeBefore($website)
+        );
     }
 
     /**

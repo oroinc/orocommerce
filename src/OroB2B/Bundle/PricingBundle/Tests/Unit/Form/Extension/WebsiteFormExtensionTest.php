@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
+use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChangeBefore;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\Test\FormInterface;
@@ -33,6 +35,9 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
     /** @var  \PHPUnit_Framework_MockObject_MockObject */
     protected $managerMock;
 
+    /** @var  EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $eventDispatcher;
+
     public function setUp()
     {
         parent::setUp();
@@ -46,7 +51,9 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $extension = new WebsiteFormExtension($registry, self::PRICE_LIST_TO_WEBSITE_CLASS);
+        $extension = new WebsiteFormExtension(
+            $registry, self::PRICE_LIST_TO_WEBSITE_CLASS, $this->getEventDispatcher()
+        );
 
         /** @var \Symfony\Component\Form\Test\FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
         $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
@@ -98,7 +105,9 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $extension = new WebsiteFormExtension($registry, self::PRICE_LIST_TO_WEBSITE_CLASS);
+        $extension = new WebsiteFormExtension(
+            $registry, self::PRICE_LIST_TO_WEBSITE_CLASS, $this->getEventDispatcher()
+        );
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
@@ -120,10 +129,12 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
         $priceListFrom = $this->getFormMock();
         $priceListFrom->expects($this->once())
             ->method('setData')
-            ->with([
-                ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100, 'mergeAllowed' => true],
-                ['priceList' => $this->getExisting()[2]->getPriceList(), 'priority' => 200, 'mergeAllowed' => true],
-            ]);
+            ->with(
+                [
+                    ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100, 'mergeAllowed' => true],
+                    ['priceList' => $this->getExisting()[2]->getPriceList(), 'priority' => 200, 'mergeAllowed' => true],
+                ]
+            );
 
         $rootForm = $this->getFormMock();
         $fallbackField = $this->getFormMock();
@@ -172,10 +183,12 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
         $priceListFrom = $this->getMock('Symfony\Component\Form\FormInterface');
         $priceListFrom->expects($this->once())
             ->method('getData')
-            ->willReturn([
-                ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100, 'mergeAllowed' => true],
-                ['priceList' => null, 'priority' => 200, 'mergeAllowed' => true],
-            ]);
+            ->willReturn(
+                [
+                    ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100, 'mergeAllowed' => true],
+                    ['priceList' => null, 'priority' => 200, 'mergeAllowed' => true],
+                ]
+            );
 
         $rootForm = $this->getFormMock();
         $rootForm->expects($this->any())
@@ -211,7 +224,11 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('get');
 
         $event = new FormEvent($rootForm, $this->createWebsite());
-        $extension = new WebsiteFormExtension($this->getRegistryMock(), self::PRICE_LIST_TO_WEBSITE_CLASS);
+        $extension = new WebsiteFormExtension(
+            $this->getRegistryMock(),
+            self::PRICE_LIST_TO_WEBSITE_CLASS,
+            $this->getEventDispatcher()
+        );
         $extension->onPostSubmit($event);
     }
 
@@ -228,12 +245,14 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->setWebsite($website);
         $priceListFrom->expects($this->once())
             ->method('getData')
-            ->willReturn([
-                ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100, 'mergeAllowed' => true],
-                ['priceList' => $this->getExisting()[2]->getPriceList(), 'priority' => 200, 'mergeAllowed' => true],
-                ['priceList' => $addedPriceList, 'priority' => 300, 'mergeAllowed' => true],
-                ['priceList' => null, 'priority' => 400, 'mergeAllowed' => false]
-            ]);
+            ->willReturn(
+                [
+                    ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100, 'mergeAllowed' => true],
+                    ['priceList' => $this->getExisting()[2]->getPriceList(), 'priority' => 200, 'mergeAllowed' => true],
+                    ['priceList' => $addedPriceList, 'priority' => 300, 'mergeAllowed' => true],
+                    ['priceList' => null, 'priority' => 400, 'mergeAllowed' => false],
+                ]
+            );
 
         $rootForm = $this->getFormMock();
         $rootForm->expects($this->any())
@@ -255,12 +274,20 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
 
         $event = new FormEvent($rootForm, $website);
         $extension = $this->createExtension();
+        $this->eventDispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with(PriceListCollectionChangeBefore::NAME, new PriceListCollectionChangeBefore($website));
         $extension->onPostSubmit($event);
     }
 
     public function testGetExtendedType()
     {
-        $exception = new WebsiteFormExtension($this->getRegistryMock(), self::PRICE_LIST_TO_WEBSITE_CLASS);
+        $exception = new WebsiteFormExtension(
+            $this->getRegistryMock(),
+            self::PRICE_LIST_TO_WEBSITE_CLASS,
+            $this->getEventDispatcher()
+        );
         $this->assertSame(WebsiteType::NAME, $exception->getExtendedType());
     }
 
@@ -291,7 +318,7 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->willReturn($this->getManagerMock());
 
-        return new WebsiteFormExtension($registry, self::PRICE_LIST_TO_WEBSITE_CLASS);
+        return new WebsiteFormExtension($registry, self::PRICE_LIST_TO_WEBSITE_CLASS, $this->getEventDispatcher());
     }
 
     /**
@@ -389,6 +416,19 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
                 $this->existing[$priceList->getId()] = $priceListToWebsite;
             }
         }
+
         return $this->existing;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|EventDispatcherInterface
+     */
+    protected function getEventDispatcher()
+    {
+        if (!$this->eventDispatcher) {
+            $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        }
+
+        return $this->eventDispatcher;
     }
 }

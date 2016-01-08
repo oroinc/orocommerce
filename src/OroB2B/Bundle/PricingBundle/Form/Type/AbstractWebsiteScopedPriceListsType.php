@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -12,6 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChangeBefore;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepositoryInterface;
@@ -24,6 +26,9 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
      * @var ManagerRegistry
      */
     protected $registry;
+
+    /** @var  EventDispatcherInterface */
+    protected $eventDispatcher;
 
     /**
      * @param object $targetEntity
@@ -38,10 +43,12 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
 
     /**
      * @param ManagerRegistry $registry
+     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, EventDispatcherInterface $eventDispatcher)
     {
         $this->registry = $registry;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -148,6 +155,10 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
                 );
             }
         }
+        $this->eventDispatcher->dispatch(
+            PriceListCollectionChangeBefore::NAME,
+            new PriceListCollectionChangeBefore($targetEntity)
+        );
     }
 
     /**

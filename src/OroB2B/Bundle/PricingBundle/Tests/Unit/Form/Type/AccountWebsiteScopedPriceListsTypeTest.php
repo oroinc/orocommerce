@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChangeBefore;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -43,6 +45,9 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
     /** @var Website */
     protected $website;
 
+    /** @var  EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $eventDispatcher;
+
     /**
      * {@inheritdoc}
      */
@@ -75,7 +80,7 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
         $this->targetEntity = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 123]);
         $this->website = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', ['id' => 42]);
 
-        $this->formType = new AccountWebsiteScopedPriceListsType($registry);
+        $this->formType = new AccountWebsiteScopedPriceListsType($registry, $this->getEventDispatcher());
     }
 
     /**
@@ -143,9 +148,11 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
         $this->repository->expects($this->any())
             ->method('getPriceLists')
             ->with($this->targetEntity, $this->website)
-            ->willReturn([
-                $priceListToTargetEntity
-            ]);
+            ->willReturn(
+                [
+                    $priceListToTargetEntity,
+                ]
+            );
 
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
         $parentForm = $this->getMock('Symfony\Component\Form\FormInterface');
@@ -192,15 +199,17 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
 
         $event->expects($this->once())
             ->method('setData')
-            ->with([
-                '42' => [
-                    [
-                        'priceList' => $priceList,
-                        'priority' => 100,
-                        'mergeAllowed' => true,
-                    ]
+            ->with(
+                [
+                    '42' => [
+                        [
+                            'priceList' => $priceList,
+                            'priority' => 100,
+                            'mergeAllowed' => true,
+                        ],
+                    ],
                 ]
-            ]);
+            );
 
         $this->formType->onPreSetData($event);
     }
@@ -307,7 +316,10 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
                 $this->em->remove($actualPriceList);
             }
         }
-
+        $this->eventDispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with(PriceListCollectionChangeBefore::NAME, new PriceListCollectionChangeBefore());
         $this->formType->onPostSubmit($event);
     }
 
@@ -328,7 +340,7 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
                         'priceList' => $priceList1,
                         'priority' => 100,
                         'mergeAllowed' => true,
-                    ]
+                    ],
                 ],
                 'actualData' => [
                     [
@@ -341,7 +353,7 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
                         'priority' => 200,
                         'mergeAllowed' => true,
                     ],
-                ]
+                ],
             ],
             'with updated' => [
                 'submittedData' => [
@@ -349,15 +361,15 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
                         'priceList' => $priceList1,
                         'priority' => 100,
                         'mergeAllowed' => false,
-                    ]
+                    ],
                 ],
                 'actualData' => [
                     [
                         'priceList' => $priceList1,
                         'priority' => 3,
                         'mergeAllowed' => false,
-                    ]
-                ]
+                    ],
+                ],
             ],
             'with new' => [
                 'submittedData' => [
@@ -365,9 +377,9 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
                         'priceList' => $priceList1,
                         'priority' => 100,
                         'mergeAllowed' => true,
-                    ]
+                    ],
                 ],
-                'actualData' => []
+                'actualData' => [],
             ],
         ];
     }
@@ -382,7 +394,6 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
     public function testSkipOnPostSubmitInvalidForm()
     {
         $event = $this->getSkippedEvent(false, $this->targetEntity);
-
 
         $this->formType->onPostSubmit($event);
     }
@@ -425,5 +436,17 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
             ->with('priceListsByWebsites');
 
         return $event;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|EventDispatcherInterface
+     */
+    protected function getEventDispatcher()
+    {
+        if (!$this->eventDispatcher) {
+            $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        }
+
+        return $this->eventDispatcher;
     }
 }
