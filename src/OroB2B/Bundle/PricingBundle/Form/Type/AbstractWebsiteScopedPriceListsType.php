@@ -154,11 +154,11 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
                     $actualPriceListsToTargetEntity
                 );
             }
+            $this->eventDispatcher->dispatch(
+                PriceListCollectionChangeBefore::NAME,
+                new PriceListCollectionChangeBefore($targetEntity, $website)
+            );
         }
-        $this->eventDispatcher->dispatch(
-            PriceListCollectionChangeBefore::NAME,
-            new PriceListCollectionChangeBefore($targetEntity)
-        );
     }
 
     /**

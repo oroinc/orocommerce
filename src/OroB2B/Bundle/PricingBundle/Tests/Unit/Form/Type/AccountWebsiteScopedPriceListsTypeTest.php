@@ -234,7 +234,6 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
             $priceListToTargetEntity->setPriceList($item['priceList']);
             $priceListToTargetEntity->setPriority($item['priority']);
             $priceListToTargetEntity->setMergeAllowed($item['mergeAllowed']);
-
             $actualPriceLists[] = $priceListToTargetEntity;
         }
 
@@ -319,7 +318,10 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
         $this->eventDispatcher
             ->expects($this->once())
             ->method('dispatch')
-            ->with(PriceListCollectionChangeBefore::NAME, new PriceListCollectionChangeBefore());
+            ->with(
+                PriceListCollectionChangeBefore::NAME,
+                new PriceListCollectionChangeBefore($this->targetEntity, $this->website)
+            );
         $this->formType->onPostSubmit($event);
     }
 

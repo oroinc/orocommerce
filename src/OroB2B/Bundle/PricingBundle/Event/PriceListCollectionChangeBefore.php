@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\PricingBundle\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+
 class PriceListCollectionChangeBefore extends Event
 {
     const NAME = 'orob2b_pricing.price_list_collection.change_before';
@@ -14,11 +16,34 @@ class PriceListCollectionChangeBefore extends Event
     protected $targetEntity;
 
     /**
+     * @var Website|null
+     */
+    protected $website;
+
+    /**
      *
      * @param object|null $targetEntity
+     * @param Website $website
      */
-    public function __construct($targetEntity = null)
+    public function __construct($targetEntity = null, Website $website = null)
     {
         $this->targetEntity = $targetEntity;
+        $this->website = $website;
+    }
+
+    /**
+     * @return null|object
+     */
+    public function getTargetEntity()
+    {
+        return $this->targetEntity;
+    }
+
+    /**
+     * @return null|Website
+     */
+    public function getWebsite()
+    {
+        return $this->website;
     }
 }
