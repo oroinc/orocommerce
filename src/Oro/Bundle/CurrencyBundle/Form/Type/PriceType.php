@@ -76,7 +76,7 @@ class PriceType extends AbstractType
             ])
             ->add('currency', $currencyType, $currencyOptions);
 
-        $builder->addViewTransformer(new PriceTransformer());//todo remove this hack
+        $builder->addViewTransformer(new PriceTransformer());
     }
 
     /**
@@ -86,7 +86,6 @@ class PriceType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
-            'cascade_validation' => true,
             'hide_currency' => false,
             'additional_currencies' => null,
             'currencies_list' => null,

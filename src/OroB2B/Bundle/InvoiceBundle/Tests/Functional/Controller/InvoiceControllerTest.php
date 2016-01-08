@@ -18,7 +18,6 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
  */
 class InvoiceControllerTest extends WebTestCase
 {
-
     const PO_NUMBER = '12';
     const PO_NUMBER_UPDATED = '18';
 

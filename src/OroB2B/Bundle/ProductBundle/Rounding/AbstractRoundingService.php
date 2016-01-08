@@ -21,8 +21,14 @@ abstract class AbstractRoundingService implements RoundingServiceInterface
         $this->configManager = $configManager;
     }
 
-    /*
-     * {@inheritdoc}
+    /**
+     * @param float|int $value
+     * @param null $precision
+     * @param null $roundType
+     * @return float|int|number
+     * @throws InvalidRoundingTypeException
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function round($value, $precision = null, $roundType = null)
     {

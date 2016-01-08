@@ -17,4 +17,3 @@ orob2b_invoice_bundle_api:
         _format:  json
     defaults:
         version:  latest
-

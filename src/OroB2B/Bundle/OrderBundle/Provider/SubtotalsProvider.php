@@ -11,7 +11,7 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Model\Subtotal;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
-class SubtotalsProvider//todo remove, test
+class SubtotalsProvider
 {
     /**
      * @var TranslatorInterface
