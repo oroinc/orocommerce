@@ -51,7 +51,9 @@ orob2b:
             price_type.label: 'Price Type'
             price_total.label: 'Line Total'
             value.label: 'Price Value'
+            price.value.label: 'Price Value'
             currency.label: 'Price Currency'
+            price.currency.label: 'Price Currency'
             add_label: 'Add line item'
 
             select:

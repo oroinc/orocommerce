@@ -12,5 +12,5 @@ interface PriceAwareInterface
      * @param Price $price
      * @return $this
      */
-    public function setPrice(Price $price);
+    public function setPrice(Price $price = null);
 }

@@ -5,9 +5,12 @@ namespace OroB2B\Bundle\OrderBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrderLineItem;
+use OroB2B\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
+use OroB2B\Bundle\PricingBundle\Entity\QuantityAwareInterface;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
@@ -31,11 +34,13 @@ use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class OrderLineItem extends ExtendOrderLineItem implements ProductUnitHolderInterface, ProductHolderInterface
+class OrderLineItem extends ExtendOrderLineItem implements
+    ProductUnitHolderInterface,
+    ProductHolderInterface,
+    PriceAwareInterface,
+    PriceTypeAwareInterface,
+    QuantityAwareInterface
 {
-    const PRICE_TYPE_UNIT = 10;
-    const PRICE_TYPE_BUNDLED = 20;
-
     /**
      * @var int
      *
@@ -334,7 +339,7 @@ class OrderLineItem extends ExtendOrderLineItem implements ProductUnitHolderInte
      * @param Price $price
      * @return $this
      */
-    public function setPrice($price = null)
+    public function setPrice(Price $price = null)
     {
         $this->price = $price;
 

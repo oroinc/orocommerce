@@ -76,7 +76,7 @@ class PriceType extends AbstractType
             ])
             ->add('currency', $currencyType, $currencyOptions);
 
-        $builder->addViewTransformer(new PriceTransformer());
+        $builder->addViewTransformer(new PriceTransformer());//todo remove this hack
     }
 
     /**
@@ -86,6 +86,7 @@ class PriceType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
+            'cascade_validation' => true,
             'hide_currency' => false,
             'additional_currencies' => null,
             'currencies_list' => null,
@@ -118,7 +119,10 @@ class PriceType extends AbstractType
      */
     protected function resolvePriceIsRequired(array $options)
     {
-        if (is_array($options['validation_groups']) && in_array('Optional', $options['validation_groups'])) {
+        if (array_key_exists('validation_groups', $options)
+            && is_array($options['validation_groups'])
+            && in_array('Optional', $options['validation_groups'])
+        ) {
             return false;
         }
 
