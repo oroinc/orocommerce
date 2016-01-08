@@ -52,7 +52,9 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $extension = new WebsiteFormExtension(
-            $registry, self::PRICE_LIST_TO_WEBSITE_CLASS, $this->getEventDispatcher()
+            $registry,
+            self::PRICE_LIST_TO_WEBSITE_CLASS,
+            $this->getEventDispatcher()
         );
 
         /** @var \Symfony\Component\Form\Test\FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
@@ -106,7 +108,9 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $extension = new WebsiteFormExtension(
-            $registry, self::PRICE_LIST_TO_WEBSITE_CLASS, $this->getEventDispatcher()
+            $registry,
+            self::PRICE_LIST_TO_WEBSITE_CLASS,
+            $this->getEventDispatcher()
         );
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
