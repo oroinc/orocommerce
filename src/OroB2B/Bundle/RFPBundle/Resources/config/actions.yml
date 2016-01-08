@@ -24,11 +24,12 @@ actions:
                     form_type: oro_rich_text
             attribute_default_values:
                 request_status: $status
-        frontend_options:
+        button_options:
             icon: icon-edit
-            dialog_template: OroB2BRFPBundle:Action:changeStatusForm.html.twig
-            dialog_title: orob2b.rfp.widget.change_status_title
-            dialog_options:
+        frontend_options:
+            template: OroB2BRFPBundle:Action:changeStatusForm.html.twig
+            title: orob2b.rfp.widget.change_status_title
+            options:
                 width: 550
         functions:
             - @assign_value: [$status, $.request_status]
@@ -56,7 +57,7 @@ actions:
             - orob2b_rfp_request_view
         acl_resource: orob2b_sale_quote_create
         order: 20
-        frontend_options:
+        button_options:
             icon: icon-file-text
             class: icons-holder-text no-hash btn
         preconditions:
@@ -78,7 +79,7 @@ actions:
             - orob2b_product_frontend_quick_add
         acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\RFPBundle\Entity\Request]
         order: 10
-        frontend_options:
+        button_options:
             icon: icon-file-text
             data:
                 component_name: orob2b_rfp_quick_add_processor

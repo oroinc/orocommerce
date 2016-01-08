@@ -8,8 +8,9 @@ actions:
         datagrids:
             - quotes-grid
         order: 10
-        frontend_options:
+        button_options:
             icon: icon-time
+        frontend_options:
             confirmation: orob2b.sale.quote.actions.quote_expire_confirm
         preconditions:
             @equal: [$expired, false]
@@ -31,12 +32,14 @@ actions:
         order: 20
         acl_resource: oro_email_email_create
 
-        frontend_options:
+        button_options:
             icon: icon-envelope
             group: orob2b.sale.quote.notify_customer.label
-            dialog_template: OroB2BSaleBundle:Action:emailNotification.html.twig
-            dialog_title: orob2b.sale.quote.notify_customer.by_email.link.text
-            dialog_options:
+
+        frontend_options:
+            template: OroB2BSaleBundle:Action:emailNotification.html.twig
+            title: orob2b.sale.quote.notify_customer.by_email.link.text
+            options:
                 allowMaximize: true
                 allowMinimize: true
                 dblclick: maximize
@@ -80,7 +83,7 @@ actions:
             - orob2b_sale_quote_frontend_view
         order: 20
         acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\OrderBundle\Entity\Order]
-        frontend_options:
+        button_options:
             icon: icon-edit
         preconditions:
             @equal: [false, $hasOfferVariants]
@@ -109,10 +112,12 @@ actions:
         order: 20
         acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\OrderBundle\Entity\Order]
 
-        frontend_options:
+        button_options:
             icon: icon-edit
-            dialog_template: OroB2BSaleBundle:Action:quoteToOrder.html.twig
-            dialog_options:
+
+        frontend_options:
+            template: OroB2BSaleBundle:Action:quoteToOrder.html.twig
+            options:
                 modal: true,
                 resizable: true,
                 width: 1000

@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-use Oro\Bundle\UIBundle\Tools\ArrayUtils;
+use Oro\Component\PhpUtils\ArrayUtil;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -66,9 +66,9 @@ class QuickAddProcessor implements ComponentProcessorInterface
         );
         $shoppingList = $this->shoppingListLineItemHandler->getShoppingList($shoppingListId);
 
-        $productSkus = ArrayUtils::arrayColumn($data, 'productSku');
+        $productSkus = ArrayUtil::arrayColumn($data, 'productSku');
         $productIds = $this->getProductRepository()->getProductsIdsBySku($productSkus);
-        $productSkuQuantities = array_combine($productSkus, ArrayUtils::arrayColumn($data, 'productQuantity'));
+        $productSkuQuantities = array_combine($productSkus, ArrayUtil::arrayColumn($data, 'productQuantity'));
         $productIdsQuantities = array_combine($productIds, $productSkuQuantities);
 
         /** @var Session $session */
