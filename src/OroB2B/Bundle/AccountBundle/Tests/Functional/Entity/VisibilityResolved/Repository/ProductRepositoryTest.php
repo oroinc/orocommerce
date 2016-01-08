@@ -109,7 +109,7 @@ class ProductRepositoryTest extends WebTestCase
 
         $actual = $this->getActualArray();
 
-        $this->assertCount(19, $actual);
+        $this->assertCount(27, $actual);
         $this->assertInsertedByCategory($actual);
     }
 
@@ -130,7 +130,7 @@ class ProductRepositoryTest extends WebTestCase
         $this->repository->insertFromBaseTable($this->getInsertFromSelectExecutor(), $this->website);
         $actual = $this->getActualArray();
 
-        $this->assertCount(16, $actual);
+        $this->assertCount(24, $actual);
         $this->assertInsertedFromBaseTable($actual);
     }
 
@@ -152,7 +152,7 @@ class ProductRepositoryTest extends WebTestCase
         );
 
         $actual = $this->getActualArray();
-        $this->assertCount(19, $actual);
+        $this->assertCount(27, $actual);
         $this->assertInsertedByCategory($actual, $this->website);
     }
 
@@ -382,7 +382,7 @@ class ProductRepositoryTest extends WebTestCase
         $this->repository->deleteByProduct($product);
         $this->repository->insertByProduct($this->getInsertFromSelectExecutor(), $product, $category, true);
         $visibilities = $this->repository->findBy(['product' => $product]);
-        $this->assertSame(2, count($visibilities), 'Not expected count of resolved visibilities');
+        $this->assertSame(3, count($visibilities), 'Not expected count of resolved visibilities');
         $resolvedVisibility = $this->repository->findOneBy(
             [
                 'product' => $product,
@@ -397,7 +397,7 @@ class ProductRepositoryTest extends WebTestCase
         $this->repository->deleteByProduct($product);
         $this->repository->insertByProduct($this->getInsertFromSelectExecutor(), $product, $category, false);
         $visibilities = $this->repository->findBy(['product' => $product]);
-        $this->assertSame(3, count($visibilities), 'Not expected count of resolved visibilities');
+        $this->assertSame(4, count($visibilities), 'Not expected count of resolved visibilities');
     }
 
     /**

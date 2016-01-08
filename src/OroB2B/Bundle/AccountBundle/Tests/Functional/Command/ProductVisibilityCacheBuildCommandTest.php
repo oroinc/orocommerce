@@ -82,7 +82,7 @@ class ProductVisibilityCacheBuildCommandTest extends WebTestCase
                     'The cache is updated successfully',
                 ],
                 'expectedCounts' => [
-                    'productVisibility' => 19,
+                    'productVisibility' => 27,
                     'accountGroupProductVisibility' => 8,
                     'accountProductVisibility' => 5,
                 ]
