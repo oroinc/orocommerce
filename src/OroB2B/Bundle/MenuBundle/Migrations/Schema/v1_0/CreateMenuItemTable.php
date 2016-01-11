@@ -32,21 +32,22 @@ class CreateMenuItemTable implements Migration, AttachmentExtensionAwareInterfac
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOroB2BMenuItemTable($schema);
-        $this->createOroB2BMenuItemTitleTable($schema);
+        $this->createOrob2BMenuItemTable($schema);
+        $this->createOrob2BMenuItemTitleTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOroB2BMenuItemForeignKeys($schema);
-        $this->addOroB2BMenuItemTitleForeignKeys($schema);
+        $this->addOrob2BMenuItemForeignKeys($schema);
+        $this->addOrob2BMenuItemTitleForeignKeys($schema);
     }
 
     /**
+     * Create orob2b_menu_item table
+     *
      * @param Schema $schema
      */
-    protected function createOroB2BMenuItemTable(Schema $schema)
+    protected function createOrob2BMenuItemTable(Schema $schema)
     {
-        $tableName = 'orob2b_menu_item';
-        $table = $schema->createTable($tableName);
+        $table = $schema->createTable('orob2b_menu_item');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('parent_id', 'integer', ['notnull' => false]);
         $table->addColumn('serialized_data', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
@@ -61,7 +62,7 @@ class CreateMenuItemTable implements Migration, AttachmentExtensionAwareInterfac
         $table->setPrimaryKey(['id']);
         $this->attachmentExtension->addImageRelation(
             $schema,
-            $tableName,
+            'orob2b_menu_item',
             'image',
             [],
             self::MAX_MENU_ITEM_IMAGE_SIZE_IN_MB
@@ -69,9 +70,11 @@ class CreateMenuItemTable implements Migration, AttachmentExtensionAwareInterfac
     }
 
     /**
+     * Create orob2b_menu_item_title table
+     *
      * @param Schema $schema
      */
-    protected function createOroB2BMenuItemTitleTable(Schema $schema)
+    protected function createOrob2BMenuItemTitleTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_menu_item_title');
         $table->addColumn('menu_item_id', 'integer', []);
@@ -81,9 +84,11 @@ class CreateMenuItemTable implements Migration, AttachmentExtensionAwareInterfac
     }
 
     /**
+     * Add orob2b_menu_item foreign keys.
+     *
      * @param Schema $schema
      */
-    protected function addOroB2BMenuItemForeignKeys(Schema $schema)
+    protected function addOrob2BMenuItemForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_menu_item');
         $table->addForeignKeyConstraint(
@@ -95,9 +100,11 @@ class CreateMenuItemTable implements Migration, AttachmentExtensionAwareInterfac
     }
 
     /**
+     * Add orob2b_menu_item_title foreign keys.
+     *
      * @param Schema $schema
      */
-    protected function addOroB2BMenuItemTitleForeignKeys(Schema $schema)
+    protected function addOrob2BMenuItemTitleForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_menu_item_title');
         $table->addForeignKeyConstraint(

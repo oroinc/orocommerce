@@ -15,9 +15,6 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use OroB2B\Bundle\MenuBundle\Form\Type\MenuItemType;
 use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
 
-/**
- * @Route("/menuitem")
- */
 class MenuItemController extends Controller
 {
     /**

@@ -1,24 +1,20 @@
 <?php
+
 namespace OroB2B\Bundle\MenuBundle\Controller;
+
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 
-/**
- * @Route("/menuitem/ajax")
- */
 class AjaxMenuItemController extends Controller
 {
     /**
-     * @Route(
-     *      "/category-move",
-     *      name="orob2b_menu_item_move"
-     * )
+     * @Route("/move", name="orob2b_menu_item_move")
      * @Method({"PUT"})
      * @AclAncestor("orob2b_menu_item_update")
      *

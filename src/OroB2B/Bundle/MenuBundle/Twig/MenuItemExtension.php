@@ -7,7 +7,7 @@ use OroB2B\Bundle\MenuBundle\JsTree\MenuItemTreeHandler;
 
 class MenuItemExtension extends \Twig_Extension
 {
-    const NAME = 'orob2b_menu.menu_item';
+    const NAME = 'orob2b_menu_item_extension';
 
     /**
      * @var MenuItemTreeHandler
