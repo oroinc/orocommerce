@@ -20,6 +20,11 @@ parameters:
     orob2b_tax.provider.tax_provider_registry.class: OroB2B\Bundle\TaxBundle\Provider\TaxProviderRegistry
     orob2b_tax.provider.built_in_tax_provider.class: OroB2B\Bundle\TaxBundle\Provider\BuiltInTaxProvider
 
+    orobb2_tax.factory.tax.class: OroB2B\Bundle\TaxBundle\Factory\TaxFactory
+
+    orob2b_tax.order_tax.mapper.order_mapper.class: OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderMapper
+    orob2b_tax.order_tax.mapper.order_line_item_mapper.class: OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper
+
 services:
     orob2b_tax.manager.product_tax_code.api:
         class: %orob2b_tax.manager.api.attribute.class%
@@ -181,3 +186,18 @@ services:
         class: %orob2b_tax.provider.built_in_tax_provider.class%
         tags:
             - { name: orob2b_tax.tax_provider, priority: 255 }
+
+    orobb2_tax.factory.tax:
+        class: %orobb2_tax.factory.tax.class%
+
+    orob2b_tax.order_tax.mapper.order_mapper:
+        class: %orob2b_tax.order_tax.mapper.order_mapper.class%
+        arguments:
+            - @orob2b_tax.order_tax.mapper.order_line_item_mapper
+        tags:
+            - { name: orob2b_tax.tax_mapper }
+
+    orob2b_tax.order_tax.mapper.order_line_item_mapper:
+        class: %orob2b_tax.order_tax.mapper.order_line_item_mapper.class%
+        tags:
+            - { name: orob2b_tax.tax_mapper }
