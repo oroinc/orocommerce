@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\MenuBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Form\PreloadedExtension;
 
@@ -13,6 +12,7 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntity
 
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 
+use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
