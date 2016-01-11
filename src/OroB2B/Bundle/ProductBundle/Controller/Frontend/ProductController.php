@@ -49,7 +49,7 @@ class ProductController extends Controller
      * View list of products
      *
      * @Route("/view/{id}", name="orob2b_product_frontend_product_view", requirements={"id"="\d+"})
-     * @Layout(vars={"productId", "productHasImage"})
+     * @Layout()
      * @Acl(
      *      id="orob2b_product_frontend_view",
      *      type="entity",
@@ -65,8 +65,9 @@ class ProductController extends Controller
     public function viewAction(Product $product)
     {
         return [
-            'productId' => $product->getId(),
-            'productHasImage' => null !== $product->getImage()
+            'data' => [
+                'product' => $product,
+            ],
         ];
     }
 

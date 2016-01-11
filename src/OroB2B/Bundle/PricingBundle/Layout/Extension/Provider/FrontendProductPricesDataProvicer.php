@@ -13,8 +13,6 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class FrontendProductPricesDataProvicer implements DataProviderInterface
 {
-    const PRODUCT_ID_ALIAS = 'productId';
-
     /** @var array */
     protected $data;
 
@@ -49,14 +47,11 @@ class FrontendProductPricesDataProvicer implements DataProviderInterface
      */
     public function getData(ContextInterface $context)
     {
-        if (!$context->has(self::PRODUCT_ID_ALIAS)) {
-            throw new \RuntimeException(sprintf("Context[%s] should be specified.", self::PRODUCT_ID_ALIAS));
-        }
-        $productId = $context->get(self::PRODUCT_ID_ALIAS);
+        /** @var Product $product */
+        $product = $context->data()->get('product');
+        $productId = $product->getId();
 
         if (!$this->data[$productId]) {
-            /** @var Product $product */
-            $product = $this->doctrineHelper->getEntityReference('OroB2BProductBundle:Product', $productId);
             $priceList = $this->frontendPriceListRequestHandler->getPriceList();
 
             /** @var ProductPriceRepository $priceRepository */
@@ -64,7 +59,7 @@ class FrontendProductPricesDataProvicer implements DataProviderInterface
 
             $this->data[$productId] = $priceRepository->findByPriceListIdAndProductIds(
                 $priceList->getId(),
-                [$product->getId()]
+                [$productId]
             );
         }
 
