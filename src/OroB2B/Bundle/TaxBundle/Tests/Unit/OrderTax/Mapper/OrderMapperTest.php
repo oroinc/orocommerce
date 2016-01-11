@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\OrderTax\Mapper;
 
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
@@ -55,7 +56,7 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
 
         $taxable = $this->mapper->map($order);
 
-        $this->assertTaxable($taxable, self::ORDER_ID, self::ORDER_SUBTOTAL, (string)$order->getShippingAddress());
+        $this->assertTaxable($taxable, self::ORDER_ID, self::ORDER_SUBTOTAL, $order->getShippingAddress());
         $this->assertNotEmpty($taxable->getItems());
         $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Taxable', $taxable->getItems()->first());
     }
@@ -88,7 +89,7 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
      * @param Taxable $taxable
      * @param int $id
      * @param float $subtotal
-     * @param string $destination
+     * @param AbstractAddress $destination
      */
     protected function assertTaxable($taxable, $id, $subtotal, $destination)
     {

@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\TaxBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
 class Taxable
 {
@@ -12,12 +13,12 @@ class Taxable
     protected $identifier;
 
     /**
-     * @var string
+     * @var AbstractAddress
      */
     protected $origin;
 
     /**
-     * @var string
+     * @var AbstractAddress
      */
     protected $destination;
 
@@ -66,7 +67,7 @@ class Taxable
     }
 
     /**
-     * @return string
+     * @return AbstractAddress
      */
     public function getOrigin()
     {
@@ -74,7 +75,7 @@ class Taxable
     }
 
     /**
-     * @param string $origin
+     * @param AbstractAddress $origin
      * @return $this
      */
     public function setOrigin($origin)
@@ -85,7 +86,7 @@ class Taxable
     }
 
     /**
-     * @return string
+     * @return AbstractAddress
      */
     public function getDestination()
     {
@@ -93,7 +94,7 @@ class Taxable
     }
 
     /**
-     * @param string $destination
+     * @param AbstractAddress $destination
      * @return $this
      */
     public function setDestination($destination)

@@ -38,7 +38,7 @@ class OrderMapper implements TaxMapperInterface
             ->setIdentifier($order->getId())
             ->setItems($this->mapLineItems($order->getLineItems()))
             // TODO: Should we always use shipping address? or maybe billing address?
-            ->setDestination((string)$order->getShippingAddress());
+            ->setDestination($order->getShippingAddress());
 
         return $taxable;
     }
