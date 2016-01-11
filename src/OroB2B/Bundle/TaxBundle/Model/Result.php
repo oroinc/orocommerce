@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\TaxBundle\Model;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 final class Result extends \ArrayObject
 {
@@ -13,11 +13,11 @@ final class Result extends \ArrayObject
     /**
      * @param ResultElement $total
      * @param ResultElement $shipping
-     * @param ArrayCollection $taxes
+     * @param Collection $taxes
      *
      * @return Result
      */
-    public static function create(ResultElement $total, ResultElement $shipping, ArrayCollection $taxes)
+    public static function create(ResultElement $total, ResultElement $shipping, Collection $taxes)
     {
         $result = new Result();
 
@@ -45,7 +45,7 @@ final class Result extends \ArrayObject
     }
 
     /**
-     * @return ArrayCollection
+     * @return Collection
      */
     public function getTaxes()
     {
