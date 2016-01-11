@@ -7,7 +7,7 @@ use OroB2B\Bundle\TaxBundle\Entity\TaxApply;
 use OroB2B\Bundle\TaxBundle\Entity\TaxItemValue;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
 use OroB2B\Bundle\TaxBundle\Model\ResultItem;
-use OroB2B\src\OroB2B\Bundle\TaxBundle\Transformer\TaxItemValueToResultItemTransformer;
+use OroB2B\Bundle\TaxBundle\Transformer\TaxItemValueToResultItemTransformer;
 
 class TaxItemValueToResultItemTransformerTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,7 +25,6 @@ class TaxItemValueToResultItemTransformerTest extends \PHPUnit_Framework_TestCas
      * @var TaxItemValueToResultItemTransformer
      */
     protected $taxItemValueToResultItemTransformer;
-
 
     public function setUp()
     {
@@ -109,7 +108,6 @@ class TaxItemValueToResultItemTransformerTest extends \PHPUnit_Framework_TestCas
                 static::ROW_EXCLUDING_TAX,
                 static::ROW_TAX_AMOUNT,
                 static::ROW_ADJUSTMENT
-
             ),
             new ArrayCollection([new TaxApply()])
         );
