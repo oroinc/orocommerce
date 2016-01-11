@@ -14,8 +14,6 @@ class FrontendProductPricesDataProvicerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
-    const PRODUCT_ID = 24;
-
     /** @var FrontendProductPricesDataProvicer */
     protected $provider;
 
@@ -52,7 +50,7 @@ class FrontendProductPricesDataProvicerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Context[productId] should be specified.
+     * @expectedExceptionMessage Undefined data item index: product.
      */
     public function testGetDataWithEmptyContext()
     {
@@ -64,9 +62,9 @@ class FrontendProductPricesDataProvicerTest extends \PHPUnit_Framework_TestCase
     {
         $prices = [1 => 'test', 2 => 'test2'];
         $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', ['id'=> 23]);
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id'=> self::PRODUCT_ID]);
+        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id'=> 24]);
         $context = new LayoutContext();
-        $context->set(FrontendProductPricesDataProvicer::PRODUCT_ID_ALIAS, self::PRODUCT_ID);
+        $context->data()->set('product', null, $product);
 
         $repo = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
             ->disableOriginalConstructor()
@@ -79,11 +77,6 @@ class FrontendProductPricesDataProvicerTest extends \PHPUnit_Framework_TestCase
             ->method('getEntityRepository')
             ->with('OroB2BPricingBundle:ProductPrice')
             ->willReturn($repo);
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityReference')
-            ->with('OroB2BProductBundle:Product', self::PRODUCT_ID)
-            ->willReturn($product);
 
         $this->frontendPriceListRequestHandler->expects($this->once())
             ->method('getPriceList')
