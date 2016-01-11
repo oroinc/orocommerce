@@ -20,6 +20,8 @@ parameters:
     orob2b_tax.provider.tax_provider_registry.class: OroB2B\Bundle\TaxBundle\Provider\TaxProviderRegistry
     orob2b_tax.provider.built_in_tax_provider.class: OroB2B\Bundle\TaxBundle\Provider\BuiltInTaxProvider
 
+    orob2b_tax.matcher.country_matcher.class: OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher
+
 services:
     orob2b_tax.manager.product_tax_code.api:
         class: %orob2b_tax.manager.api.attribute.class%
@@ -181,3 +183,10 @@ services:
         class: %orob2b_tax.provider.built_in_tax_provider.class%
         tags:
             - { name: orob2b_tax.tax_provider, priority: 255 }
+
+    orob2b_tax.matcher.country_matcher:
+        class: %orob2b_tax.matcher.country_matcher.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+        calls:
+            - [setTaxRuleClass, [%orob2b_tax.entity.tax_rule.class%]]
