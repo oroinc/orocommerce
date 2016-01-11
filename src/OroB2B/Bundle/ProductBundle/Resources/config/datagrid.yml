@@ -93,11 +93,10 @@ datagrid:
         extends: products-select-grid-base
 
     products-select-grid-frontend:
+        acl_resource: orob2b_product_view_products
         extends: products-select-grid-base
         options:
-            skip_acl_check: true
-        source:
-            acl_resource: orob2b_product_view_products
+            skip_acl_apply: true
 
     products-grid:
         extends: products-select-grid-base
@@ -203,11 +202,11 @@ datagrid:
                 rowAction:     true
 
     orob2b_product-product_variants:
+        acl_resource: orob2b_product_view
         options:
             entityHint:        parentProduct
             entity_pagination: true
         source:
-            acl_resource: orob2b_product_view
             type:         orm
             query:
                 select:

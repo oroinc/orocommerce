@@ -1,9 +1,9 @@
 datagrid:
     account-accounts-select-grid:
+        acl_resource: orob2b_account_view
         options:
             entityHint:        account
         source:
-            acl_resource: orob2b_account_view
             type:         orm
             query:
                 select:
@@ -103,10 +103,10 @@ datagrid:
                 acl_resource:  orob2b_account_delete
 
     account-groups-select-grid:
+        acl_resource: orob2b_account_group_view
         options:
             entityHint:        account group
         source:
-            acl_resource: orob2b_account_group_view
             type:         orm
             query:
                 select:
@@ -170,9 +170,9 @@ datagrid:
                 acl_resource:  orob2b_account_group_delete
 
     account-group-accounts-grid-basic:
+        acl_resource: orob2b_account_view
         source:
             type: orm
-            acl_resource: orob2b_account_view
             query:
                 select:
                     - account.id
@@ -293,11 +293,11 @@ datagrid:
 
     account-account-user-grid-base:
         entity_name: %orob2b_account.entity.account_user.class%
+        acl_resource: orob2b_account_account_user_view
         options:
             entityHint:        account user
             entity_pagination: true
         source:
-            acl_resource: orob2b_account_account_user_view
             type:         orm
             query:
                 select:
@@ -488,9 +488,9 @@ datagrid:
                 icon:          trash
 
     account-account-user-roles-grid:
+        acl_resource: orob2b_account_account_user_role_view
         extends: basic-account-account-user-roles-grid
         source:
-            acl_resource: orob2b_account_account_user_role_view
             query:
                 select:
                     - role_account.name as account_name
@@ -528,7 +528,7 @@ datagrid:
         extends: basic-account-account-user-roles-grid
         extended_entity_name: %orob2b_account.entity.account_user_role.class%
         options:
-            skip_acl_check: true
+            skip_acl_apply: true
         properties:
             view_link:
                 route:  orob2b_account_frontend_account_user_role_view
@@ -579,9 +579,9 @@ datagrid:
                     excluded: '#roleRemoveUsers'
 
     account-account-users-grid-basic:
+        acl_resource: orob2b_account_account_user_view
         source:
             type: orm
-            acl_resource: orob2b_account_account_user_view
             query:
                 select:
                     - user.id
@@ -632,9 +632,9 @@ datagrid:
                 label: orob2b.account.accountuser.email.label
 
     account-account-users-grid-view:
+        acl_resource: orob2b_account_account_user_view
         extends: account-account-users-grid-view-basic
         source:
-            acl_resource: orob2b_account_account_user_view
             query:
                 select:
                     - userAccount.name as accountName
@@ -655,14 +655,13 @@ datagrid:
                     data_name: accountName
 
     frontend-account-account-users-grid-view:
+        acl_resource: orob2b_account_frontend_account_user_view
         extends: account-account-users-grid-view-basic
-        source:
-            acl_resource: orob2b_account_frontend_account_user_view
 
     account-account-users-grid-update:
+        acl_resource: orob2b_account_account_user_view
         extends: account-account-users-grid-update-basic
         source:
-            acl_resource: orob2b_account_account_user_view
             query:
                 select:
                     - userAccount.name as accountName
@@ -688,9 +687,8 @@ datagrid:
                 route: orob2b_api_account_delete_accountuserrole
 
     account-account-users-grid-frontend-update:
+        acl_resource: orob2b_account_frontend_account_user_view
         extends: account-account-users-grid-update-basic
-        source:
-            acl_resource: orob2b_account_frontend_account_user_view
         properties:
             update_link:
                 route: orob2b_account_frontend_account_user_role_update
@@ -900,9 +898,8 @@ datagrid:
             id: ~
 
     frontend-account-account-user-grid:
+        acl_resource: orob2b_account_frontend_account_user_view
         extends: account-account-user-grid-base
-        source:
-            acl_resource: orob2b_account_frontend_account_user_view
         properties:
             id: ~
             view_link:
@@ -976,9 +973,9 @@ datagrid:
                             alias: b2b_u
 
     frontend-audit-history-grid:
+        acl_resource: orob2b_account_dataaudit_history
         extends: audit-history-grid
         source:
-            acl_resource: orob2b_account_dataaudit_history
             query:
                 select:
                     author: |
