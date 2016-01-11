@@ -12,8 +12,6 @@ use Oro\Bundle\UIBundle\View\ScrollData;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 
@@ -30,11 +28,6 @@ class FormViewListener
     protected $doctrineHelper;
 
     /**
-     * @var FrontendPriceListRequestHandler
-     */
-    protected $frontendPriceListRequestHandler;
-
-    /**
      * @var RequestStack
      */
     protected $requestStack;
@@ -43,18 +36,15 @@ class FormViewListener
      * @param RequestStack $requestStack
      * @param TranslatorInterface $translator
      * @param DoctrineHelper $doctrineHelper
-     * @param FrontendPriceListRequestHandler $frontendPriceListRequestHandler
      */
     public function __construct(
         RequestStack $requestStack,
         TranslatorInterface $translator,
-        DoctrineHelper $doctrineHelper,
-        FrontendPriceListRequestHandler $frontendPriceListRequestHandler
+        DoctrineHelper $doctrineHelper
     ) {
         $this->requestStack = $requestStack;
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
-        $this->frontendPriceListRequestHandler = $frontendPriceListRequestHandler;
     }
 
     /**
@@ -131,37 +121,6 @@ class FormViewListener
             ['entity' => $product]
         );
         $this->addProductPricesBlock($event->getScrollData(), $template);
-    }
-
-    /**
-     * @param BeforeListRenderEvent $event
-     */
-    public function onFrontendProductView(BeforeListRenderEvent $event)
-    {
-        $request = $this->requestStack->getCurrentRequest();
-        if (!$request) {
-            return;
-        }
-
-        $productId = (int)$request->get('id');
-
-        /** @var Product $product */
-        $product = $this->doctrineHelper->getEntityReference('OroB2BProductBundle:Product', $productId);
-        $priceList = $this->frontendPriceListRequestHandler->getPriceList();
-
-        /** @var ProductPriceRepository $priceRepository */
-        $priceRepository = $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:ProductPrice');
-
-        $prices = $priceRepository->findByPriceListIdAndProductIds($priceList->getId(), [$product->getId()]);
-
-        $template = $event->getEnvironment()->render(
-            'OroB2BPricingBundle:Frontend/Product:productPrice.html.twig',
-            ['prices' => $prices]
-        );
-
-        $scrollData = $event->getScrollData();
-        $subBlockId = $scrollData->addSubBlock(0);
-        $scrollData->addSubBlockData(0, $subBlockId, $template);
     }
 
     /**
