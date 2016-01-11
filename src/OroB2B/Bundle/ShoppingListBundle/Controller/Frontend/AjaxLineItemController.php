@@ -9,76 +9,19 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
-use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 
 class AjaxLineItemController extends Controller
 {
-    /**
-     * Add Product to Shopping List (frontend grid action)
-     *
-     * @Route(
-     *      "/add-product-from-grid/{productId}",
-     *      name="orob2b_shopping_list_line_item_frontend_add_widget",
-     *      requirements={"productId"="\d+"}
-     * )
-     * @Template("OroB2BShoppingListBundle:LineItem/Frontend/widget:add.html.twig")
-     * @Acl(
-     *      id="orob2b_shopping_list_line_item_frontend_add",
-     *      type="entity",
-     *      class="OroB2BShoppingListBundle:LineItem",
-     *      permission="CREATE",
-     *      group_name="commerce"
-     * )
-     * @ParamConverter("product", class="OroB2BProductBundle:Product", options={"id" = "productId"})
-     *
-     * @param Request $request
-     * @param Product $product
-     *
-     * @return array|RedirectResponse
-     */
-    public function addProductAction(Request $request, Product $product)
-    {
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->getUser();
-        $lineItem = (new LineItem())
-            ->setProduct($product)
-            ->setAccountUser($accountUser)
-            ->setOrganization($accountUser->getOrganization());
-
-        $form = $this->createForm(FrontendLineItemWidgetType::NAME, $lineItem);
-
-        $handler = new LineItemHandler(
-            $form,
-            $request,
-            $this->getDoctrine(),
-            $this->get('orob2b_shopping_list.shopping_list.manager'),
-            $this->get('orob2b_product.service.quantity_rounding')
-        );
-        $result = $this->get('oro_form.model.update_handler')
-            ->handleUpdate($lineItem, $form, [], [], null, $handler);
-
-        if ($request->get('_wid')) {
-            $result = $handler->updateSavedId($result);
-            if ($lineItem->getShoppingList()) {
-                $result['shoppingListId'] = $lineItem->getShoppingList()->getId();
-            }
-        }
-
-        return $result;
-    }
-
     /**
      * Add Product to Shopping List (product view form)
      *
@@ -87,7 +30,13 @@ class AjaxLineItemController extends Controller
      *      name="orob2b_shopping_list_frontend_add_product",
      *      requirements={"productId"="\d+"}
      * )
-     * @AclAncestor("orob2b_shopping_list_line_item_frontend_add")
+     * @Acl(
+     *      id="orob2b_shopping_list_line_item_frontend_add",
+     *      type="entity",
+     *      class="OroB2BShoppingListBundle:LineItem",
+     *      permission="CREATE",
+     *      group_name="commerce"
+     * )
      * @ParamConverter("product", class="OroB2BProductBundle:Product", options={"id" = "productId"})
      *
      * @param Request $request
@@ -166,7 +115,7 @@ class AjaxLineItemController extends Controller
      *
      * @return JsonResponse
      */
-    public function addProductsCreateMassAction(Request $request, $gridName, $actionName)
+    public function addProductsToNewMassAction(Request $request, $gridName, $actionName)
     {
         $form = $this->createForm(ShoppingListType::NAME);
         $manager = $this->get('orob2b_shopping_list.shopping_list.manager');
