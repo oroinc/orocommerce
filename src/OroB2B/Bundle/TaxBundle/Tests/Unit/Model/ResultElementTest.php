@@ -18,6 +18,19 @@ class ResultElementTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(static::EXCLUDING_TAX, $resultElement->getExcludingTax());
         $this->assertEquals(static::TAX_AMOUNT, $resultElement->getTaxAmount());
         $this->assertEquals(static::ADJUSTMENT, $resultElement->getAdjustment());
+
+        $this->assertCount(4, $resultElement);
+        $expected = [
+            'includingTax' => self::INCLUDING_TAX,
+            'excludingTax' => self::EXCLUDING_TAX,
+            'taxAmount' => self::TAX_AMOUNT,
+            'adjustment' => self::ADJUSTMENT,
+        ];
+
+        foreach ($resultElement as $key => $value) {
+            $this->assertArrayHasKey($key, $expected);
+            $this->assertEquals($expected[$key], $value);
+        }
     }
 
     /**
@@ -25,6 +38,11 @@ class ResultElementTest extends \PHPUnit_Framework_TestCase
      */
     protected function createResultElementModel()
     {
-        return new ResultElement(static::INCLUDING_TAX, static::EXCLUDING_TAX, static::TAX_AMOUNT, static::ADJUSTMENT);
+        return ResultElement::create(
+            static::INCLUDING_TAX,
+            static::EXCLUDING_TAX,
+            static::TAX_AMOUNT,
+            static::ADJUSTMENT
+        );
     }
 }

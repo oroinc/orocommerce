@@ -2,36 +2,30 @@
 
 namespace OroB2B\Bundle\TaxBundle\Model;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
-final class Result
+final class Result extends \ArrayObject
 {
-    /**
-     * @var ResultElement
-     */
-    private $total;
+    const TOTAL = 'total';
+    const SHIPPING = 'shipping';
+    const TAXES = 'taxes';
 
     /**
-     * @var ResultElement
-     */
-    private $shipping;
-
-    /**
-     * @var Collection
-     */
-    private $taxes;
-
-    /**
-     * @param ResultElement   $total
-     * @param ResultElement   $shipping
+     * @param ResultElement $total
+     * @param ResultElement $shipping
      * @param Collection $taxes
+     *
+     * @return Result
      */
-    public function __construct(ResultElement $total, ResultElement $shipping, Collection $taxes)
+    public static function create(ResultElement $total, ResultElement $shipping, Collection $taxes)
     {
-        $this->total = $total;
-        $this->shipping = $shipping;
-        $this->taxes = $taxes;
+        $result = new Result();
+
+        $result->offsetSet(self::TOTAL, $total);
+        $result->offsetSet(self::SHIPPING, $shipping);
+        $result->offsetSet(self::TAXES, $taxes);
+
+        return $result;
     }
 
     /**
@@ -39,7 +33,7 @@ final class Result
      */
     public function getTotal()
     {
-        return $this->total;
+        return $this->offsetGet(self::TOTAL);
     }
 
     /**
@@ -47,7 +41,7 @@ final class Result
      */
     public function getShipping()
     {
-        return $this->shipping;
+        return $this->offsetGet(self::SHIPPING);
     }
 
     /**
@@ -55,6 +49,6 @@ final class Result
      */
     public function getTaxes()
     {
-        return $this->taxes;
+        return $this->offsetGet(self::TAXES);
     }
 }

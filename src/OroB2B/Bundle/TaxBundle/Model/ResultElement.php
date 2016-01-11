@@ -2,40 +2,31 @@
 
 namespace OroB2B\Bundle\TaxBundle\Model;
 
-final class ResultElement
+final class ResultElement extends \ArrayObject
 {
-    /**
-     * @var float
-     */
-    private $includingTax;
-
-    /**
-     * @var float
-     */
-    private $excludingTax;
-
-    /**
-     * @var float
-     */
-    private $taxAmount;
-
-    /**
-     * @var float
-     */
-    private $adjustment;
+    const INCLUDING_TAX = 'includingTax';
+    const EXCLUDING_TAX = 'excludingTax';
+    const TAX_AMOUNT = 'taxAmount';
+    const ADJUSTMENT = 'adjustment';
 
     /**
      * @param float $includingTax
      * @param float $excludingTax
      * @param float $taxAmount
      * @param float $adjustment
+     *
+     * @return ResultElement
      */
-    public function __construct($includingTax, $excludingTax, $taxAmount, $adjustment)
+    public static function create($includingTax, $excludingTax, $taxAmount, $adjustment)
     {
-        $this->includingTax = $includingTax;
-        $this->excludingTax = $excludingTax;
-        $this->taxAmount = $taxAmount;
-        $this->adjustment = $adjustment;
+        $resultElement = new ResultElement();
+
+        $resultElement->offsetSet(self::INCLUDING_TAX, $includingTax);
+        $resultElement->offsetSet(self::EXCLUDING_TAX, $excludingTax);
+        $resultElement->offsetSet(self::TAX_AMOUNT, $taxAmount);
+        $resultElement->offsetSet(self::ADJUSTMENT, $adjustment);
+
+        return $resultElement;
     }
 
     /**
@@ -43,7 +34,7 @@ final class ResultElement
      */
     public function getIncludingTax()
     {
-        return $this->includingTax;
+        return $this->offsetGet(self::INCLUDING_TAX);
     }
 
     /**
@@ -51,7 +42,7 @@ final class ResultElement
      */
     public function getExcludingTax()
     {
-        return $this->excludingTax;
+        return $this->offsetGet(self::EXCLUDING_TAX);
     }
 
     /**
@@ -59,7 +50,7 @@ final class ResultElement
      */
     public function getTaxAmount()
     {
-        return $this->taxAmount;
+        return $this->offsetGet(self::TAX_AMOUNT);
     }
 
     /**
@@ -67,6 +58,6 @@ final class ResultElement
      */
     public function getAdjustment()
     {
-        return $this->adjustment;
+        return $this->offsetGet(self::ADJUSTMENT);
     }
 }
