@@ -38,8 +38,6 @@ layout:
                     blockType: block
                 order_with_matrix:
                     blockType: block
-                quick_order_form:
-                    blockType: block
                 product_description_content:
                     blockType: container
                 product_description:
@@ -67,7 +65,6 @@ layout:
                                     product_specification: ~
                                     product_variants: ~
                                     order_with_matrix: ~
-                                    quick_order_form: ~
                                 product_description_content:
                                     product_description: ~
                                     attachments: ~
