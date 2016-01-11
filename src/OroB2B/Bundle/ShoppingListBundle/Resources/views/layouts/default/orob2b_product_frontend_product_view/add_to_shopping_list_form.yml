@@ -33,3 +33,5 @@ layout:
                         add_to_shopping_list_form_fields: ~
                         add_to_shopping_list_form_button: ~
                         add_to_shopping_list_form_end: ~
+    conditions:
+        @eq: [{ @acl: orob2b_shopping_list_line_item_frontend_add }, true]

@@ -2,17 +2,19 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Provider;
 
-
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\DataProviderInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
+
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 
 class AccountUserShoppingLists implements DataProviderInterface
 {
-    /** @var FormAccessor */
+    /**
+     * @var FormAccessor
+     */
     protected $data;
 
     /**
@@ -69,6 +71,9 @@ class AccountUserShoppingLists implements DataProviderInterface
         return $this->data;
     }
 
+    /**
+     * @return array|null
+     */
     protected function getAccountUserShoppingLists()
     {
         $accountUser = $this->securityFacade->getLoggedUser();

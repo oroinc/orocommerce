@@ -2,28 +2,33 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Provider;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\DataProviderInterface;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
-use Oro\Bundle\LayoutBundle\Layout\Form\FormAction;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
 
 class FrontendLineItemForm implements DataProviderInterface
 {
-    /** @var FormAccessor */
-    protected $data;
+    /**
+     * @var FormAccessor[]
+     */
+    protected $data = [];
 
-    /** @var FormInterface */
-    protected $form;
+    /**
+     * @var FormInterface[]
+     */
+    protected $form = [];
 
-    /** @var FormFactoryInterface */
+    /**
+     * @var FormFactoryInterface
+     */
     protected $formFactory;
 
     /**
@@ -56,24 +61,32 @@ class FrontendLineItemForm implements DataProviderInterface
      */
     public function getData(ContextInterface $context)
     {
-        if (!$this->data) {
-            $this->data = new FormAccessor(
-                $this->getForm($context->data()->get('product')),
-                FormAction::createByRoute('orob2b_account_frontend_account_user_register')
+        $product = $context->data()->get('product');
+        if (!isset($this->data[$product->getId()])) {
+            $this->data[$product->getId()] = new FormAccessor(
+                $this->getForm($product)
             );
         }
-        return $this->data;
+        return $this->data[$product->getId()];
     }
 
+    /**
+     * @param Product $product
+     * @return FormInterface
+     */
     public function getForm(Product $product)
     {
-        if (!$this->form) {
-            $this->form = $this->formFactory
+        if (!isset($this->form[$product->getId()])) {
+            $this->form[$product->getId()] = $this->formFactory
                 ->create(FrontendLineItemType::NAME, $this->getLineItem($product));
         }
-        return $this->form;
+        return $this->form[$product->getId()];
     }
 
+    /**
+     * @param Product $product
+     * @return LineItem|null
+     */
     public function getLineItem(Product $product)
     {
         $accountUser = $this->securityFacade->getLoggedUser();
@@ -81,11 +94,11 @@ class FrontendLineItemForm implements DataProviderInterface
             return null;
         }
 
-        $this->data = (new LineItem())
+        $lineItem = (new LineItem())
             ->setProduct($product)
             ->setAccountUser($accountUser)
             ->setOrganization($accountUser->getOrganization());
 
-        return $this->data;
+        return $lineItem;
     }
 }
