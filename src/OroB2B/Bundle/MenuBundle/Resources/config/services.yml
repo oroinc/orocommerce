@@ -1,1 +1,23 @@
+parameters:
+    # Entity
+    orob2b_menu.entity.menu_item.class: OroB2B\Bundle\MenuBundle\Entity\MenuItem
+
+    # Tree
+    orob2b_menu.tree.menu_item_tree_handler.class: OroB2B\Bundle\MenuBundle\JsTree\MenuItemTreeHandler
+
+    # Twig
+    orob2b_menu.twig.menu_item_extension.class: OroB2B\Bundle\MenuBundle\Twig\MenuItemExtension
 services:
+
+    orob2b_menu.tree.menu_item_tree_handler:
+        class: %orob2b_menu.tree.menu_item_tree_handler.class%
+        arguments:
+            - %orob2b_menu.entity.menu_item.class%
+            - @doctrine
+
+    orob2b_menu.twig.menu_item_extension:
+        class: %orob2b_menu.twig.menu_item_extension.class%
+        arguments:
+            - @orob2b_menu.tree.menu_item_tree_handler
+        tags:
+            - { name: twig.extension }

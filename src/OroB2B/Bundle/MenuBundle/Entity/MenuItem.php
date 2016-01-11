@@ -16,7 +16,7 @@ use OroB2B\Component\Tree\Entity\TreeTrait;
 
 /**
  * @ORM\Table(name="orob2b_menu_item")
- * @ORM\Entity(repositoryClass="Gedmo\Tree\Entity\Repository\NestedTreeRepository")
+ * @ORM\Entity(repositoryClass="OroB2B\Component\Tree\Entity\Repository\NestedTreeRepository")
  * @Gedmo\Tree(type="nested")
  * @Config(
  *      routeName="orob2b_menu_item_index",
@@ -107,7 +107,7 @@ class MenuItem extends ExtendMenuItem
     /**
      * @var string
      *
-     * @ORM\Column(name="condition", type="text", nullable=true)
+     * @ORM\Column(name="`condition`", type="text", nullable=true)
      */
     protected $condition;
 

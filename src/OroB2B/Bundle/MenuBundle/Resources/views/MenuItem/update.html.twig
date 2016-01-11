@@ -1,0 +1,35 @@
+{% extends 'OroUIBundle:actions:index.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% set pageTitle = 'orob2b.menu.menuitem.entity_plural_label'|trans %}
+
+{% block content %}
+    {{ parent() }}
+
+    <div class="left-panel-container">
+        <div class="placeholder">
+            <div class="scrollable-container">
+                <div class="left-panel scrollable-container">
+                    <div class="menu-item">
+                        {% set treeOptions = {
+                            'data' : orob2b_menu_item_list(),
+                            'updateAllowed' : resource_granted('orob2b_menu_item_update'),
+                            'onSelectRoute' : 'orob2b_menu_item_update',
+                            'onMoveRoute' : 'orob2b_menu_item_move'
+                        } %}
+                        <div
+                                data-page-component-module="oroui/js/app/components/basic-tree-manage-component"
+                                data-page-component-options="{{ treeOptions|json_encode }}"
+                        ></div>
+                    </div>
+                </div>
+                <div class="content">
+                    {% if resource_granted('orob2b_menu_item_create') and resource_granted('orob2b_menu_item_update') %}
+                        <div class="text-center">
+                            {{ 'orob2b.menu.template.menuitem.select_existing_or_create_new'|trans }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
