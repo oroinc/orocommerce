@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Builder;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
@@ -11,7 +12,6 @@ use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupReposit
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
 use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use OroB2B\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountGroupCombinedPriceListsBuilder
@@ -67,6 +67,10 @@ class AccountGroupCombinedPriceListsBuilder
      */
     protected $accountCombinedPriceListsBuilder;
 
+    /**
+     * @var CombinedPriceListGarbageCollector
+     */
+    protected $combinedPriceListGarbageCollector;
 
     /**
      * @param $registry
@@ -84,7 +88,7 @@ class AccountGroupCombinedPriceListsBuilder
     {
         $this->updatePriceListsOnCurrentLevel($accountGroup, $website);
         $this->updatePriceListsOnChildrenLevels($accountGroup, $website);
-        $this->deleteUnusedPriceLists($accountGroup, $website);
+        $this->combinedPriceListGarbageCollector->cleanCombinedPriceLists();
     }
 
     /**
@@ -98,89 +102,9 @@ class AccountGroupCombinedPriceListsBuilder
          * @var $accountGroupToPriceList PriceListToAccountGroup
          */
         foreach ($groupsIterator as $accountGroupToPriceList) {
-            $this->build($accountGroupToPriceList->getAccountGroup(), $website);
+            $this->updatePriceListsOnCurrentLevel($accountGroupToPriceList->getAccountGroup(), $website);
+            $this->updatePriceListsOnChildrenLevels($accountGroupToPriceList->getAccountGroup(), $website);
         }
-    }
-
-    /**
-     * @param Website $website
-     * @param AccountGroup $accountGroup
-     */
-    protected function updatePriceListsOnCurrentLevel(AccountGroup $accountGroup, Website $website)
-    {
-        $collection = $this->priceListCollectionProvider->getPriceListsByAccountGroup($accountGroup, $website);
-        $actualCombinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection);
-
-        $relation = $this->getCombinedPriceListToAccountGroupRepository()
-            ->findByPrimaryKey($actualCombinedPriceList, $accountGroup, $website);
-
-        if (!$relation) {
-            $this->connectNewPriceList($accountGroup, $actualCombinedPriceList);
-        }
-    }
-
-    /**
-     * @param Website $website
-     * @param AccountGroup $accountGroup
-     */
-    protected function updatePriceListsOnChildrenLevels(AccountGroup $accountGroup, Website $website)
-    {
-        $this->accountCombinedPriceListsBuilder->buildByAccountGroup($accountGroup, $website);
-    }
-
-    /**
-     * @param AccountGroup $accountGroup
-     * @param Website $website
-     */
-    protected function deleteUnusedPriceLists(AccountGroup $accountGroup, Website $website)
-    {
-
-    }
-
-    /**
-     * @param AccountGroup $accountGroup
-     * @param CombinedPriceList $combinedPriceList
-     */
-    protected function connectNewPriceList(AccountGroup $accountGroup, CombinedPriceList $combinedPriceList)
-    {
-        $relation = $this->getCombinedPriceListToAccountGroupRepository()->findOneBy(['accountGroup' => $accountGroup]);
-        $manager = $this->registry->getManagerForClass($this->combinedPriceListToAccountGroupClassName);
-        if (!$relation) {
-            $relation = new CombinedPriceListToAccountGroup();
-            $relation->setPriceList($combinedPriceList);
-            $relation->setAccountGroup($accountGroup);
-            $manager->persist($relation);
-        }
-        $relation->setPriceList($combinedPriceList);
-        $manager->flush();
-    }
-
-    /**
-     * @return PriceListToAccountGroupRepository
-     */
-    protected function getPriceListToAccountGroupRepository()
-    {
-        if (!$this->priceListToAccountGroupRepository) {
-            $class = $this->priceListToAccountGroupClassName;
-            $this->priceListToAccountGroupRepository = $this->registry->getManagerForClass($class)
-                ->getRepository($class);
-        }
-
-        return $this->priceListToAccountGroupRepository;
-    }
-
-    /**
-     * @return PriceListToAccountGroupRepository
-     */
-    protected function getCombinedPriceListToAccountGroupRepository()
-    {
-        if (!$this->combinedPriceListToAccountGroupRepository) {
-            $class = $this->combinedPriceListToAccountGroupClassName;
-            $this->combinedPriceListToAccountGroupRepository = $this->registry->getManagerForClass($class)
-                ->getRepository($class);
-        }
-
-        return $this->combinedPriceListToAccountGroupRepository;
     }
 
     /**
@@ -246,5 +170,85 @@ class AccountGroupCombinedPriceListsBuilder
     public function setAccountCombinedPriceListsBuilder($accountCombinedPriceListsBuilder)
     {
         $this->accountCombinedPriceListsBuilder = $accountCombinedPriceListsBuilder;
+    }
+
+    /**
+     * @param CombinedPriceListGarbageCollector $CPLGarbageCollector
+     */
+    public function setCombinedPriceListGarbageCollector(CombinedPriceListGarbageCollector $CPLGarbageCollector)
+    {
+        $this->combinedPriceListGarbageCollector = $CPLGarbageCollector;
+    }
+
+    /**
+     * @param Website $website
+     * @param AccountGroup $accountGroup
+     */
+    protected function updatePriceListsOnCurrentLevel(AccountGroup $accountGroup, Website $website)
+    {
+        $collection = $this->priceListCollectionProvider->getPriceListsByAccountGroup($accountGroup, $website);
+        $actualCombinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection);
+
+        $relation = $this->getCombinedPriceListToAccountGroupRepository()
+            ->findByPrimaryKey($actualCombinedPriceList, $accountGroup, $website);
+
+        if (!$relation) {
+            $this->connectNewPriceList($accountGroup, $actualCombinedPriceList);
+        }
+    }
+
+    /**
+     * @param Website $website
+     * @param AccountGroup $accountGroup
+     */
+    protected function updatePriceListsOnChildrenLevels(AccountGroup $accountGroup, Website $website)
+    {
+        $this->accountCombinedPriceListsBuilder->buildByAccountGroup($accountGroup, $website);
+    }
+
+    /**
+     * @param AccountGroup $accountGroup
+     * @param CombinedPriceList $combinedPriceList
+     */
+    protected function connectNewPriceList(AccountGroup $accountGroup, CombinedPriceList $combinedPriceList)
+    {
+        $relation = $this->getCombinedPriceListToAccountGroupRepository()->findOneBy(['accountGroup' => $accountGroup]);
+        $manager = $this->registry->getManagerForClass($this->combinedPriceListToAccountGroupClassName);
+        if (!$relation) {
+            $relation = new CombinedPriceListToAccountGroup();
+            $relation->setPriceList($combinedPriceList);
+            $relation->setAccountGroup($accountGroup);
+            $manager->persist($relation);
+        }
+        $relation->setPriceList($combinedPriceList);
+        $manager->flush();
+    }
+
+    /**
+     * @return PriceListToAccountGroupRepository
+     */
+    protected function getPriceListToAccountGroupRepository()
+    {
+        if (!$this->priceListToAccountGroupRepository) {
+            $class = $this->priceListToAccountGroupClassName;
+            $this->priceListToAccountGroupRepository = $this->registry->getManagerForClass($class)
+                ->getRepository($class);
+        }
+
+        return $this->priceListToAccountGroupRepository;
+    }
+
+    /**
+     * @return PriceListToAccountGroupRepository
+     */
+    protected function getCombinedPriceListToAccountGroupRepository()
+    {
+        if (!$this->combinedPriceListToAccountGroupRepository) {
+            $class = $this->combinedPriceListToAccountGroupClassName;
+            $this->combinedPriceListToAccountGroupRepository = $this->registry->getManagerForClass($class)
+                ->getRepository($class);
+        }
+
+        return $this->combinedPriceListToAccountGroupRepository;
     }
 }

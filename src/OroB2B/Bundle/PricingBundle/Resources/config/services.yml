@@ -3,6 +3,7 @@ parameters:
     orob2b_pricing.entity.price_list_to_account.class: OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount
     orob2b_pricing.entity.price_list_to_account_group.class: OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup
     orob2b_pricing.entity.price_list_to_website.class: OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite
+    orob2b_pricing.entity.combined_price_list.class: OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList
     orob2b_pricing.entity.combined_price_list_to_account.class: OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccount
     orob2b_pricing.entity.combined_price_list_to_account_group.class: OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup
     orob2b_pricing.entity.combined_price_list_to_website.class: OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite
@@ -28,6 +29,8 @@ parameters:
     orob2b_pricing.builder.website_combined_price_list_builder.class: OroB2B\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder
     orob2b_pricing.builder.account_group_combined_price_list_builder.class: OroB2B\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder
     orob2b_pricing.builder.account_combined_price_list_builder.class: OroB2B\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder
+
+    orob2b_pricing.builder.combined_price_list_garbage_collector.class: OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector
 
     orob2b_pricing.validator.unique_product_prices.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\UniqueProductPricesValidator
     orob2b_pricing.validator.unique_price_list.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\UniquePriceListValidator
@@ -131,15 +134,25 @@ services:
             - @doctrine
             - @oro_entity.orm.insert_from_select_query_executor
 
+
+    orob2b_pricing.builder.combined_price_list_garbage_collector:
+        class: %orob2b_pricing.builder.combined_price_list_garbage_collector.class%
+        arguments:
+            - @doctrine
+        calls:
+            - [setCombinedPriceListClass, [%orob2b_pricing.entity.combined_price_list.class%]]
+            - [setConfigManager, [@oro_config.global]]
+
     orob2b_pricing.builder.account_combined_price_list_builder:
         class: %orob2b_pricing.builder.account_combined_price_list_builder.class%
         arguments:
             - @doctrine
         calls:
             - [setCombinedPriceListProvider, [@orob2b_pricing.provider.combined_price_list]]
-            - [setPriceListCollectionProvider], [@orob2b_pricing.provider.price_list_collection]]
+            - [setPriceListCollectionProvider, [@orob2b_pricing.provider.price_list_collection]]
             - [setPriceListToAccountClassName, [%orob2b_pricing.entity.price_list_to_account.class%]]
             - [setCombinedPriceListToAccountClassName, [%orob2b_pricing.entity.combined_price_list_to_account.class%]]
+            - [setCombinedPriceListGarbageCollector, [@orob2b_pricing.builder.combined_price_list_garbage_collector]]
 
     orob2b_pricing.builder.account_group_combined_price_list_builder:
         class: %orob2b_pricing.builder.account_group_combined_price_list_builder.class%
@@ -147,10 +160,11 @@ services:
             - @doctrine
         calls:
             - [setCombinedPriceListProvider, [@orob2b_pricing.provider.combined_price_list]]
-            - [setPriceListCollectionProvider], [@orob2b_pricing.provider.price_list_collection]]
+            - [setPriceListCollectionProvider, [@orob2b_pricing.provider.price_list_collection]]
             - [setAccountCombinedPriceListsBuilder, [@orob2b_pricing.builder.account_combined_price_list_builder]]
             - [setPriceListToAccountGroupClassName, [%orob2b_pricing.entity.price_list_to_account_group.class%]]
             - [setCombinedPriceListToAccountGroupClassName, [%orob2b_pricing.entity.combined_price_list_to_account_group.class%]]
+            - [setCombinedPriceListGarbageCollector, [@orob2b_pricing.builder.combined_price_list_garbage_collector]]
 
     orob2b_pricing.builder.website_combined_price_list_builder:
         class: %orob2b_pricing.builder.website_combined_price_list_builder.class%
@@ -158,19 +172,18 @@ services:
             - @doctrine
         calls:
             - [setCombinedPriceListProvider, [@orob2b_pricing.provider.combined_price_list]]
-            - [setPriceListCollectionProvider], [@orob2b_pricing.provider.price_list_collection]]
+            - [setPriceListCollectionProvider, [@orob2b_pricing.provider.price_list_collection]]
             - [setAccountGroupCombinedPriceListsBuilder, [@orob2b_pricing.builder.account_group_combined_price_list_builder]]
             - [setPriceListToWebsiteClassName, [%orob2b_pricing.entity.price_list_to_website.class%]]
             - [setCombinedPriceListToWebsiteClassName, [%orob2b_pricing.entity.combined_price_list_to_website.class%]]
+            - [setCombinedPriceListGarbageCollector, [@orob2b_pricing.builder.combined_price_list_garbage_collector]]
 
     orob2b_pricing.builder.combined_price_list_builder:
         class: %orob2b_pricing.builder.combined_price_list_builder.class%
-        arguments:
-            - @doctrine
         calls:
             - [setCombinedPriceListProvider, [@orob2b_pricing.provider.combined_price_list]]
-            - [setPriceListCollectionProvider], [@orob2b_pricing.provider.price_list_collection]]
-            - [setWebsiteCombinedPriceListBuilder], [@orob2b_pricing.builder.website_combined_price_list_builder]]
+            - [setWebsiteCombinedPriceListBuilder, [@orob2b_pricing.builder.website_combined_price_list_builder]]
+            - [setCombinedPriceListGarbageCollector, [@orob2b_pricing.builder.combined_price_list_garbage_collector]]
 
     orob2b_pricing.validator.unique_product_prices:
         class: %orob2b_pricing.validator.unique_product_prices.class%

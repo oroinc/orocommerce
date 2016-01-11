@@ -60,6 +60,10 @@ class WebsiteCombinedPriceListsBuilder
      */
     protected $accountGroupCombinedPriceListsBuilder;
 
+    /**
+     * @var CombinedPriceListGarbageCollector
+     */
+    protected $combinedPriceListGarbageCollector;
 
     /**
      * @param $registry
@@ -76,7 +80,7 @@ class WebsiteCombinedPriceListsBuilder
     {
         $this->updatePriceListsOnCurrentLevel($website);
         $this->updatePriceListsOnChildrenLevels($website);
-        $this->deleteUnusedPriceLists($website);
+        $this->combinedPriceListGarbageCollector->cleanCombinedPriceLists();
     }
 
     public function buildForAll()
@@ -88,7 +92,6 @@ class WebsiteCombinedPriceListsBuilder
         foreach ($iterator as $websiteToPriceList) {
             $this->updatePriceListsOnCurrentLevel($websiteToPriceList->getWebsite());
             $this->updatePriceListsOnChildrenLevels($websiteToPriceList->getWebsite());
-            $this->deleteUnusedPriceLists($websiteToPriceList->getWebsite());
         }
     }
 
@@ -109,64 +112,11 @@ class WebsiteCombinedPriceListsBuilder
     }
 
     /**
-     * @param Website $website
+     * @param CombinedPriceListGarbageCollector $CPLGarbageCollector
      */
-    protected function updatePriceListsOnChildrenLevels(Website $website)
+    public function setCombinedPriceListGarbageCollector(CombinedPriceListGarbageCollector $CPLGarbageCollector)
     {
-        $this->accountGroupCombinedPriceListsBuilder->buildByWebsite($website);
-    }
-
-    /**
-     * @param Website $website
-     */
-    protected function deleteUnusedPriceLists(Website $website)
-    {
-
-    }
-
-    /**
-     * @param Website $website
-     * @param CombinedPriceList $combinedPriceList
-     */
-    protected function connectNewPriceList(Website $website, CombinedPriceList $combinedPriceList)
-    {
-        $relation = $this->getCombinedPriceListToWebsiteRepository()->findOneBy(['website' => $website]);
-        $manager = $this->registry->getManagerForClass($this->combinedPriceListToWebsiteClassName);
-        if (!$relation) {
-            $relation = new CombinedPriceListToWebsite();
-            $relation->setPriceList($combinedPriceList);
-            $relation->setWebsite($website);
-            $manager->persist($relation);
-        }
-        $relation->setPriceList($combinedPriceList);
-        $manager->flush();
-    }
-    /**
-     * @return PriceListToWebsiteRepository
-     */
-    protected function getPriceListToWebsiteRepository()
-    {
-        if (!$this->priceListToWebsiteRepository) {
-            $class = $this->priceListToWebsiteClassName;
-            $this->priceListToWebsiteRepository = $this->registry->getManagerForClass($class)
-                ->getRepository($class);
-        }
-
-        return $this->priceListToWebsiteRepository;
-    }
-
-    /**
-     * @return PriceListToWebsiteRepository
-     */
-    protected function getCombinedPriceListToWebsiteRepository()
-    {
-        if (!$this->combinedPriceListToWebsiteRepository) {
-            $class = $this->combinedPriceListToWebsiteClassName;
-            $this->combinedPriceListToWebsiteRepository = $this->registry->getManagerForClass($class)
-                ->getRepository($class);
-        }
-
-        return $this->combinedPriceListToWebsiteRepository;
+        $this->combinedPriceListGarbageCollector = $CPLGarbageCollector;
     }
 
     /**
@@ -209,5 +159,59 @@ class WebsiteCombinedPriceListsBuilder
     public function setAccountGroupCombinedPriceListsBuilder($accountGroupCombinedPriceListsBuilder)
     {
         $this->accountGroupCombinedPriceListsBuilder = $accountGroupCombinedPriceListsBuilder;
+    }
+
+    /**
+     * @param Website $website
+     */
+    protected function updatePriceListsOnChildrenLevels(Website $website)
+    {
+        $this->accountGroupCombinedPriceListsBuilder->buildByWebsite($website);
+    }
+
+    /**
+     * @param Website $website
+     * @param CombinedPriceList $combinedPriceList
+     */
+    protected function connectNewPriceList(Website $website, CombinedPriceList $combinedPriceList)
+    {
+        $relation = $this->getCombinedPriceListToWebsiteRepository()->findOneBy(['website' => $website]);
+        $manager = $this->registry->getManagerForClass($this->combinedPriceListToWebsiteClassName);
+        if (!$relation) {
+            $relation = new CombinedPriceListToWebsite();
+            $relation->setPriceList($combinedPriceList);
+            $relation->setWebsite($website);
+            $manager->persist($relation);
+        }
+        $relation->setPriceList($combinedPriceList);
+        $manager->flush();
+    }
+
+    /**
+     * @return PriceListToWebsiteRepository
+     */
+    protected function getPriceListToWebsiteRepository()
+    {
+        if (!$this->priceListToWebsiteRepository) {
+            $class = $this->priceListToWebsiteClassName;
+            $this->priceListToWebsiteRepository = $this->registry->getManagerForClass($class)
+                ->getRepository($class);
+        }
+
+        return $this->priceListToWebsiteRepository;
+    }
+
+    /**
+     * @return PriceListToWebsiteRepository
+     */
+    protected function getCombinedPriceListToWebsiteRepository()
+    {
+        if (!$this->combinedPriceListToWebsiteRepository) {
+            $class = $this->combinedPriceListToWebsiteClassName;
+            $this->combinedPriceListToWebsiteRepository = $this->registry->getManagerForClass($class)
+                ->getRepository($class);
+        }
+
+        return $this->combinedPriceListToWebsiteRepository;
     }
 }

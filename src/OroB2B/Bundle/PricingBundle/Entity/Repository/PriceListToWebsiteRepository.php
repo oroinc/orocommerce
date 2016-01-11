@@ -45,7 +45,7 @@ class PriceListToWebsiteRepository extends EntityRepository
     }
 
     /**
-     * @return BufferedQueryResultIterator
+     * @return BufferedQueryResultIterator|PriceListToWebsite[]
      */
     public function getPriceListToWebsiteIterator()
     {
@@ -54,14 +54,15 @@ class PriceListToWebsiteRepository extends EntityRepository
             ->innerJoin(
                 'OroB2BPricingBundle:PriceListAccountGroupFallback',
                 'priceListFallBack',
-                Join::ON,
+                Join::WITH,
                 $qb->expr()->andX(
                     $qb->expr()->eq('plToWebsite.website', 'priceListFallBack.website'),
                     $qb->expr()->eq('priceListFallBack.fallback', ':fallbackToWebsite')
                 )
             )
-            ->where('plToWebsite.website = :website')
-            ->orderBy('accountGroup.website')
+            ->andWhere('priceListFallBack.fallback = :fallbackToWebsite')
+            ->groupBy('plToWebsite.website')
+            ->orderBy('plToWebsite.website')
             ->setParameter('fallbackToWebsite', PriceListWebsiteFallback::CONFIG);
 
         $iterator = new BufferedQueryResultIterator($qb->getQuery());

@@ -38,7 +38,7 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        unset($this->provider, $this->registry);
+        unset($this->provider, $this->registry, $this->resolver);
     }
 
     /**

@@ -62,7 +62,7 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
             ->innerJoin(
                 'OroB2BPricingBundle:PriceListAccountGroupFallback',
                 'priceListFallBack',
-                Join::ON,
+                Join::WITH,
                 $qb->expr()->andX(
                     $qb->expr()->eq('plToAccountGroup.website', 'priceListFallBack.website'),
                     $qb->expr()->eq('plToAccountGroup.accountGroup', 'priceListFallBack.accountGroup'),

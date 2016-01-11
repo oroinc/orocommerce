@@ -106,6 +106,30 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $this->assertNull($this->getRepository()->getCombinedPriceListByWebsite($websiteCa));
     }
 
+    public function testDeleteUnusedPriceLists()
+    {
+        $combinedPriceList = new CombinedPriceList();
+        $combinedPriceList->setEnabled(true);
+        $combinedPriceList->setName('test_cpl');
+        $this->getManager()->persist($combinedPriceList);
+        $this->getManager()->flush();
+
+        $priceLists = $this->getRepository()->findBy(['name' => 'test_cpl']);
+        $this->assertNotEmpty($priceLists);
+
+        $this->getRepository()->deleteUnusedPriceLists($priceLists, null);
+        $priceLists = $this->getRepository()->findBy(['name' => 'test_cpl']);
+        $this->assertNotEmpty($priceLists);
+
+        $this->getRepository()->deleteUnusedPriceLists([], false);
+        $priceLists = $this->getRepository()->findBy(['name' => 'test_cpl']);
+        $this->assertNotEmpty($priceLists);
+
+        $this->getRepository()->deleteUnusedPriceLists();
+        $priceLists = $this->getRepository()->findBy(['name' => 'test_cpl']);
+        $this->assertEmpty($priceLists);
+    }
+
     /**
      * @return CombinedPriceListRepository
      */
