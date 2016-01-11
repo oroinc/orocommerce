@@ -59,7 +59,7 @@ define(function(require) {
                 $element.data('action-manager', new ActionManager(options));
             }
 
-            return $element.prop('action-manager');
+            return $element.data('action-manager');
         },
 
         dispose: function() {
