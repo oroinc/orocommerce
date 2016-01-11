@@ -29,7 +29,7 @@ class TaxItemValueToResultItemTransformer implements BaseTaxTransformer
             $taxItemValue->getRowTotalAdjustment()
         );
 
-        return new ResultItem($unit, $row, $taxItemValue->getAppliedTaxes());
+        return ResultItem::create($unit, $row, $taxItemValue->getAppliedTaxes());
     }
 
     /**
@@ -41,7 +41,7 @@ class TaxItemValueToResultItemTransformer implements BaseTaxTransformer
      */
     protected function createResultElement($includingTax, $excludingTax, $taxAmount, $adjustment)
     {
-        return new ResultElement($includingTax, $excludingTax, $taxAmount, $adjustment);
+        return ResultElement::create($includingTax, $excludingTax, $taxAmount, $adjustment);
     }
 
     /**

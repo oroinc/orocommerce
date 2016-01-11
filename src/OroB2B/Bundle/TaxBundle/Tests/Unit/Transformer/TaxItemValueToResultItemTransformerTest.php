@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Transformer;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use OroB2B\Bundle\TaxBundle\Entity\TaxApply;
 use OroB2B\Bundle\TaxBundle\Entity\TaxItemValue;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
@@ -90,7 +89,7 @@ class TaxItemValueToResultItemTransformerTest extends \PHPUnit_Framework_TestCas
      */
     protected function createResultElement($includingTax, $excludingTax, $taxAmount, $adjustment = 0)
     {
-        return new ResultElement($includingTax, $excludingTax, $taxAmount, $adjustment);
+        return ResultElement::create($includingTax, $excludingTax, $taxAmount, $adjustment);
     }
 
     /**
@@ -98,7 +97,7 @@ class TaxItemValueToResultItemTransformerTest extends \PHPUnit_Framework_TestCas
      */
     protected function createTaxItemResult()
     {
-        $taxResultItem = new ResultItem(
+        $taxResultItem = ResultItem::create(
             $this->createResultElement(
                 static::UNIT_INCLUDING_TAX,
                 static::UNIT_EXCLUDING_TAX,

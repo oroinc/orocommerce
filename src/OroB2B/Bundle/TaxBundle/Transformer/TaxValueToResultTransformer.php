@@ -27,7 +27,7 @@ class TaxValueToResultTransformer implements BaseTaxTransformer
             $taxValue->getShippingTaxAmount()
         );
 
-        return new Result($total, $shipping, $taxValue->getAppliedTaxes());
+        return Result::create($total, $shipping, $taxValue->getAppliedTaxes());
     }
 
     /**
@@ -39,7 +39,7 @@ class TaxValueToResultTransformer implements BaseTaxTransformer
      */
     protected function createResultElement($includingTax, $excludingTax, $taxAmount, $adjustment = 0)
     {
-        return new ResultElement($includingTax, $excludingTax, $taxAmount, $adjustment);
+        return ResultElement::create($includingTax, $excludingTax, $taxAmount, $adjustment);
     }
 
     /**
