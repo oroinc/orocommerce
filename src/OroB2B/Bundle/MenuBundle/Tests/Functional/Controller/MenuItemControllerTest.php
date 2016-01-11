@@ -6,6 +6,9 @@ use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+/**
+ * @dbIsolation
+ */
 class MenuItemControllerTest extends WebTestCase
 {
     protected function setUp()

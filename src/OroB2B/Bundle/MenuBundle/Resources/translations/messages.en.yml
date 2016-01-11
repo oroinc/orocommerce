@@ -20,6 +20,9 @@ orob2b:
             condition.label: 'Condition'
             roots_entity_label: 'Menu'
             roots_plural_label: 'Menus'
+            sections:
+                additional: 'Additional'
+                general: 'General'
         controller:
             menuitem:
                 saved.message: 'Menu Item has been saved'

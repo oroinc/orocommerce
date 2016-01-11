@@ -32,16 +32,3 @@ services:
         arguments:
             - %orob2b_menu.entity.menu_item.class%
             - @doctrine.orm.entity_manager
-
-    orob2b_menu.tree.menu_item_tree_handler:
-        class: %orob2b_menu.tree.menu_item_tree_handler.class%
-        arguments:
-            - %orob2b_menu.entity.menu_item.class%
-            - @doctrine
-
-    orob2b_menu.twig.menu_item_extension:
-        class: %orob2b_menu.twig.menu_item_extension.class%
-        arguments:
-            - @orob2b_menu.tree.menu_item_tree_handler
-        tags:
-            - { name: twig.extension }
