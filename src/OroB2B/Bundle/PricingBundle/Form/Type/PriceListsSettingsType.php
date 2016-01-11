@@ -2,21 +2,28 @@
 
 namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-
-use OroB2B\Bundle\AccountBundle\Entity\Account;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+
+use Doctrine\Bundle\DoctrineBundle\Registry;
+
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListFallback;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 
 class PriceListsSettingsType extends AbstractType
 {
+    const PRICE_LIST_COLLECTION_FIELD = 'priceListCollection';
+    const FALLBACK_FIELD = 'fallback';
+    const NAME = 'orob2b_pricing_price_lists_settings';
+
     /** @var  Registry */
     protected $registry;
-
-    const NAME = 'orob2b_pricing_price_lists_settings';
 
     /**
      * @param Registry $registry
@@ -42,24 +49,23 @@ class PriceListsSettingsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add(
-            'fallback',
+            self::FALLBACK_FIELD,
             'choice',
             [
                 'label' => 'orob2b.pricing.fallback.label',
-                'mapped' => false,
-                'choices' => [
-                    PriceListAccountFallback::CURRENT_ACCOUNT_ONLY =>
-                        'orob2b.pricing.fallback.current_account_only.label',
-                    PriceListAccountFallback::ACCOUNT_GROUP =>
-                        'orob2b.pricing.fallback.account_group.label',
-                ],
+                'mapped' => true,
+                'choices' => $options['fallback_choices'],
             ]
         );
+
         $builder->add(
-            'price_list_collection',
+            self::PRICE_LIST_COLLECTION_FIELD,
             PriceListCollectionType::NAME,
-            ['label' => 'orob2b.pricing.pricelist.entity_plural_label']
+            ['label' => 'orob2b.pricing.pricelist.entity_plural_label', 'mapped' => true]
         );
+
+        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
+        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit']);
     }
 
     /**
@@ -70,11 +76,10 @@ class PriceListsSettingsType extends AbstractType
         $resolver->setDefaults(
             [
                 'render_as_widget' => true,
-                'website' => null,
                 'label' => false,
             ]
         );
-        $resolver->setRequired(['target_class_name']);
+        $resolver->setRequired(['fallback_class_name', 'target_field_name', 'fallback_choices', 'website']);
     }
 
     /**
@@ -82,13 +87,20 @@ class PriceListsSettingsType extends AbstractType
      */
     public function onPostSetData(FormEvent $event)
     {
-        /** @var Account|null $account */
-        $account = $event->getData();
-        if (!$account || !$account->getId()) {
+        $form = $event->getForm();
+        /** @var object|null $account */
+        $targetEntity = $form->getParent()->getParent()->getData();
+        if (!$targetEntity || !$targetEntity->getId()) {
             return;
         }
-        $fallback = $this->getFallback($account);
-        $fallbackField = $event->getForm()->get('fallback');
+        $config = $form->getConfig();
+        $fallback = $this->getFallback(
+            $config->getOption('fallback_class_name'),
+            $targetEntity,
+            $config->getOption('target_field_name'),
+            $config->getOption('website')
+        );
+        $fallbackField = $form->get(self::FALLBACK_FIELD);
         if (!$fallback || $fallback->getFallback() === PriceListAccountFallback::ACCOUNT_GROUP) {
             $fallbackField->setData(PriceListAccountFallback::ACCOUNT_GROUP);
         } else {
@@ -106,29 +118,44 @@ class PriceListsSettingsType extends AbstractType
             return;
         }
         /** @var Account|null $account */
-        $account = $event->getData();
-        if (!$account || !$account->getId()) {
+        $targetEntity = $form->getParent()->getParent()->getData();
+        if (!$targetEntity || !$targetEntity->getId()) {
             return;
         }
-        $fallback = $this->getFallback($account);
+        $config = $form->getConfig();
+        /** @var Website $website */
+        $website = $config->getOption('website');
+        $fallbackClassName = $config->getOption('fallback_class_name');
+        $fallback = $this->getFallback(
+            $fallbackClassName,
+            $targetEntity,
+            $config->getOption('target_field_name'),
+            $config->getOption('website')
+        );
         if (!$fallback) {
-            $fallback = new PriceListAccountFallback();
-            $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListAccountFallback')->persist($fallback);
+            /** @var PriceListFallback $fallback */
+            $fallback = new $fallbackClassName;
+            $this->registry->getManagerForClass($fallbackClassName)->persist($fallback);
         }
-        $fallback->setAccount($account);
-        $fallback->setFallback($form->get('fallback')->getData());
+        $accessor = PropertyAccess::createPropertyAccessor();
+        $accessor->setValue($fallback, $config->getOption('target_field_name'), $targetEntity);
+        $fallback->setFallback($form->get(self::FALLBACK_FIELD)->getData());
+        $fallback->setWebsite($website);
     }
 
     /**
-     * @param Account $account
-     * @return null|PriceListAccountFallback
+     * @param string $className
+     * @param object $targetEntity
+     * @param string $targetFieldName
+     * @param Website $website
+     * @return null|PriceListFallback
      */
-    protected function getFallback($account)
+    protected function getFallback($className, $targetEntity, $targetFieldName, Website $website)
     {
-        /** @var PriceListAccountFallback $fallback */
+        /** @var PriceListFallback $fallback */
         return $this->registry
-            ->getManagerForClass('OroB2BPricingBundle:PriceListAccountFallback')
-            ->getRepository('OroB2BPricingBundle:PriceListAccountFallback')
-            ->findOneBy(['account' => $account]);
+            ->getManagerForClass($className)
+            ->getRepository($className)
+            ->findOneBy([$targetFieldName => $targetEntity, 'website' => $website]);
     }
 }

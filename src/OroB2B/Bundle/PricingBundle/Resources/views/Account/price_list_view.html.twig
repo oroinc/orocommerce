@@ -1,6 +1,5 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 <div class="row-fluid form-horizontal">
-    <p>{{ 'orob2b.pricing.fallback.label'|trans }}: <strong>{{ fallback|trans }}</strong></p>
 </div>
 <div class="row-fluid form-horizontal">
     <div class="responsive-block">
@@ -28,7 +27,8 @@
                                     <th>{{ 'orob2b.pricing.pricelist.merge_allowed.label'|trans }}</th>
                                 </tr>
                                 </thead>
-
+                                <p>{{ 'orob2b.pricing.fallback.label'|trans }}:
+                                    <strong>{{ fallbackByWebsites[websiteId]|trans }}</strong></p>
                                 <tbody>
                                 {% for priceListToAccount in priceListsByWebsite.priceLists %}
                                     {% set priceList = priceListToAccount.priceList %}
