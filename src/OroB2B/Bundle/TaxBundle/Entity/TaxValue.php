@@ -144,17 +144,17 @@ class TaxValue implements CreatedAtAwareInterface, UpdatedAtAwareInterface
     protected $address;
 
     /**
- * @var float
- *
- * @ORM\Column(name="total_tax_amount", type="float")
- * @ConfigField(
- *      defaultValues={
- *          "dataaudit"={
- *              "auditable"=true
- *          }
- *      }
- * )
- */
+     * @var float
+     *
+     * @ORM\Column(name="total_tax_amount", type="float")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
     protected $totalTaxAmount;
 
     /**

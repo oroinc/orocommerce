@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\src\OroB2B\Bundle\TaxBundle\Transformer;
+namespace OroB2B\Bundle\TaxBundle\Transformer;
 
 use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
-use OroB2B\Bundle\TaxBundle\Transformer\BaseTaxTransformer;
 
-class TaxValueToResultTransformer implements BaseTaxTransformer
+class TaxValueToResultTransformer implements TaxTransformerInterface
 {
     /**
      * @param TaxValue $taxValue

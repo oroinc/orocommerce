@@ -8,7 +8,7 @@ use OroB2B\Bundle\TaxBundle\Entity\TaxApply;
 use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
-use OroB2B\src\OroB2B\Bundle\TaxBundle\Transformer\TaxValueToResultTransformer;
+use OroB2B\Bundle\TaxBundle\Transformer\TaxValueToResultTransformer;
 
 class TaxValueToResultTransformerTest extends \PHPUnit_Framework_TestCase
 {

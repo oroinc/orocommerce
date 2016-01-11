@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\TaxBundle\Transformer;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\ResultItem;
 
-interface BaseTaxTransformer
+interface TaxTransformerInterface
 {
     /**
      * Transform object to Result|ResultItem
