@@ -21,6 +21,17 @@ class ResultTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->createShipping(), $resultItem->getShipping());
         $this->assertEquals($this->createTaxes(), $resultItem->getTaxes());
 
+        $this->assertCount(3, $resultItem);
+        $expected = [
+            'total' => $this->createTotal(),
+            'shipping' => $this->createShipping(),
+            'taxes' => $this->createTaxes(),
+        ];
+
+        foreach ($resultItem as $key => $value) {
+            $this->assertArrayHasKey($key, $expected);
+            $this->assertEquals($expected[$key], $value);
+        }
     }
 
     /**
@@ -28,7 +39,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
      */
     protected function createResultModel()
     {
-        return new Result(
+        return Result::create(
             $this->createTotal(),
             $this->createShipping(),
             $this->createTaxes()
@@ -40,7 +51,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
      */
     protected function createTotal()
     {
-        return new ResultElement(1, 2, 3, 4);
+        return ResultElement::create(1, 2, 3, 4);
     }
 
     /**
@@ -48,7 +59,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
      */
     protected function createShipping()
     {
-        return new ResultElement(5, 6, 7, 8);
+        return ResultElement::create(5, 6, 7, 8);
     }
 
     /**

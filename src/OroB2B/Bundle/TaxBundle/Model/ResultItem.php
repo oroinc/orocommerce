@@ -4,33 +4,28 @@ namespace OroB2B\Bundle\TaxBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-final class ResultItem
+final class ResultItem extends \ArrayObject
 {
-    /**
-     * @var ResultElement
-     */
-    private $unit;
-
-    /**
-     * @var ResultElement
-     */
-    private $row;
-
-    /**
-     * @var ArrayCollection
-     */
-    private $taxes;
+    const UNIT = 'unit';
+    const ROW = 'row';
+    const TAXES = 'taxes';
 
     /**
      * @param ResultElement   $unit
      * @param ResultElement   $row
      * @param ArrayCollection $taxes
+     *
+     * @return ResultItem
      */
-    public function __construct(ResultElement $unit, ResultElement $row, ArrayCollection $taxes)
+    public static function create(ResultElement $unit, ResultElement $row, ArrayCollection $taxes)
     {
-        $this->unit = $unit;
-        $this->row = $row;
-        $this->taxes = $taxes;
+        $resultItem = new ResultItem();
+
+        $resultItem->offsetSet(self::UNIT, $unit);
+        $resultItem->offsetSet(self::ROW, $row);
+        $resultItem->offsetSet(self::TAXES, $taxes);
+
+        return $resultItem;
     }
 
     /**
@@ -38,7 +33,7 @@ final class ResultItem
      */
     public function getUnit()
     {
-        return $this->unit;
+        return $this->offsetGet(self::UNIT);
     }
 
     /**
@@ -46,7 +41,7 @@ final class ResultItem
      */
     public function getRow()
     {
-        return $this->row;
+        return $this->offsetGet(self::ROW);
     }
 
     /**
@@ -54,6 +49,6 @@ final class ResultItem
      */
     public function getTaxes()
     {
-        return $this->taxes;
+        return $this->offsetGet(self::TAXES);
     }
 }
