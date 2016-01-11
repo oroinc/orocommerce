@@ -16,11 +16,14 @@
         },
         dataAttributes: {}
     } %}
-    {{ buttons.createAddToShoppingListButton({
-        new: commonOptions,
-        current: commonOptions,
-        existing: commonOptions,
-        shoppingLists: shoppingLists,
-        currentShoppingList: currentShoppingList
-    }) }}
+    <div class="pull-left"
+         data-page-component-module="orob2bshoppinglist/js/app/components/add-product-from-view-component">
+        {{ buttons.createAddToShoppingListButton({
+            new: commonOptions,
+            current: commonOptions,
+            existing: commonOptions,
+            shoppingLists: shoppingLists,
+            currentShoppingList: currentShoppingList
+        }) }}
+    </div>
 {% endblock %}

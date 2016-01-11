@@ -22,4 +22,5 @@ layout:
             parentId: product_specification_container
             siblingId: product_specification
     conditions:
-        @empty: [$context.product.image]
+        #@empty: [$context.product.image] #todo: wait for design
+        @empty: [true]
