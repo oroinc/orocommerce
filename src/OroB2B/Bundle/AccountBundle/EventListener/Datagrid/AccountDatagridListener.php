@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\EventListener\Datagrid;
 
-use Oro\Bundle\DataGridBundle\Datagrid\Builder;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 
@@ -90,7 +89,7 @@ class AccountDatagridListener
      */
     protected function showAllAccountItems(DatagridConfiguration $config)
     {
-        $config->offsetSetByPath(Builder::DATASOURCE_SKIP_ACL_CHECK, true);
+        $config->offsetSetByPath(DatagridConfiguration::DATASOURCE_SKIP_ACL_APPLY_PATH, true);
 
         $user = $this->getUser();
 

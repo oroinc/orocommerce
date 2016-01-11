@@ -8,7 +8,6 @@ use Doctrine\ORM\Query\AST\IdentificationVariableDeclaration;
 use Doctrine\ORM\Query\AST\RangeVariableDeclaration;
 use Doctrine\ORM\Query\AST\SelectStatement;
 
-use Oro\Bundle\DataGridBundle\Datagrid\Builder;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\OrmResultBefore;
@@ -175,7 +174,7 @@ class OrmDatasourceAclListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $datagridConfiguration->expects($expectedSkipAclCheck ? $this->once() : $this->never())
             ->method('offsetSetByPath')
-            ->with(Builder::DATASOURCE_SKIP_ACL_CHECK, true)
+            ->with(DatagridConfiguration::DATASOURCE_SKIP_ACL_APPLY_PATH, true)
             ->willReturnSelf();
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */

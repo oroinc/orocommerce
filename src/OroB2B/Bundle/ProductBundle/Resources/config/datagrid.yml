@@ -95,7 +95,7 @@ datagrid:
     products-select-grid-frontend:
         acl_resource: orob2b_product_view_products
         extends: products-select-grid-base
-        options:
+        source:
             skip_acl_apply: true
 
     products-grid:

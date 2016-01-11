@@ -525,9 +525,10 @@ datagrid:
                 acl_resource:  orob2b_account_account_user_role_delete
 
     frontend-account-account-user-roles-grid:
+        acl_resource: orob2b_account_frontend_account_user_role_index
         extends: basic-account-account-user-roles-grid
         extended_entity_name: %orob2b_account.entity.account_user_role.class%
-        options:
+        source:
             skip_acl_apply: true
         properties:
             view_link:
