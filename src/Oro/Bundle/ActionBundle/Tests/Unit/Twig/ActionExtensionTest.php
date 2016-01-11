@@ -5,6 +5,7 @@ namespace Oro\Bundle\ActionBundle\Tests\Unit\Twig;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 use Oro\Bundle\ActionBundle\Twig\ActionExtension;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -12,9 +13,13 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 class ActionExtensionTest extends \PHPUnit_Framework_TestCase
 {
     const ROUTE = 'test_route';
+    const REQUEST_URI = '/test/request/uri';
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|ActionManager */
     protected $actionManager;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ApplicationsHelper */
+    protected $appsHelper;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
     protected $doctrineHelper;
@@ -31,6 +36,10 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->appsHelper = $this->getMockBuilder('Oro\Bundle\ActionBundle\Helper\ApplicationsHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
@@ -39,12 +48,17 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->extension = new ActionExtension($this->actionManager, $this->doctrineHelper, $this->requestStack);
+        $this->extension = new ActionExtension(
+            $this->actionManager,
+            $this->appsHelper,
+            $this->doctrineHelper,
+            $this->requestStack
+        );
     }
 
     protected function tearDown()
     {
-        unset($this->extension, $this->actionManager, $this->doctrineHelper, $this->requestStack);
+        unset($this->extension, $this->actionManager, $this->appsHelper, $this->doctrineHelper, $this->requestStack);
     }
 
     public function testGetName()
@@ -55,10 +69,11 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
     public function testGetFunctions()
     {
         $functions = $this->extension->getFunctions();
-        $this->assertCount(2, $functions);
+        $this->assertCount(3, $functions);
 
         $expectedFunctions = [
             'oro_action_widget_parameters' => true,
+            'oro_action_widget_route' => false,
             'has_actions' => false,
         ];
 
@@ -86,6 +101,9 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('get')
             ->with('_route')
             ->willReturn(self::ROUTE);
+        $request->expects($this->once())
+            ->method('getRequestUri')
+            ->willReturn(self::REQUEST_URI);
 
         $this->requestStack->expects($this->once())
             ->method('getMasterRequest')
@@ -114,29 +132,49 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
         return [
             'empty context' => [
                 'context' => [],
-                'expected' => ['route' => self::ROUTE],
+                'expected' => ['route' => self::ROUTE, 'fromUrl' => self::REQUEST_URI],
             ],
             'entity_class' => [
                 'context' => ['entity_class' => '\stdClass'],
-                'expected' => ['route' => self::ROUTE, 'entityClass' => '\stdClass'],
+                'expected' => ['route' => self::ROUTE, 'entityClass' => '\stdClass', 'fromUrl' => self::REQUEST_URI],
             ],
             'new entity' => [
                 'context' => ['entity' => $this->getEntity()],
-                'expected' => ['route' => self::ROUTE],
+                'expected' => ['route' => self::ROUTE, 'fromUrl' => self::REQUEST_URI],
             ],
             'existing entity' => [
                 'context' => ['entity' => $this->getEntity(42)],
-                'expected' => ['route' => self::ROUTE, 'entityClass' => 'stdClass', 'entityId' => ['id' => 42]],
+                'expected' => [
+                    'route' => self::ROUTE,
+                    'entityClass' => 'stdClass',
+                    'entityId' => ['id' => 42],
+                    'fromUrl' => self::REQUEST_URI
+                ],
             ],
             'existing entity & entity_class' => [
                 'context' => ['entity' => $this->getEntity(43), 'entity_class' => 'testClass'],
-                'expected' => ['route' => self::ROUTE, 'entityClass' => 'stdClass', 'entityId' => ['id' => 43]],
+                'expected' => [
+                    'route' => self::ROUTE,
+                    'entityClass' => 'stdClass',
+                    'entityId' => ['id' => 43],
+                    'fromUrl' => self::REQUEST_URI
+                ],
             ],
             'new entity & entity_class' => [
                 'context' => ['entity' => $this->getEntity(), 'entity_class' => 'testClass'],
-                'expected' => ['route' => self::ROUTE, 'entityClass' => 'testClass'],
+                'expected' => ['route' => self::ROUTE, 'entityClass' => 'testClass', 'fromUrl' => self::REQUEST_URI],
             ],
         ];
+    }
+
+    public function testGetWidgetRoute()
+    {
+        $this->appsHelper->expects($this->once())
+            ->method('getWidgetRoute')
+            ->withAnyParameters()
+            ->willReturn('test_route');
+
+        $this->assertSame('test_route', $this->extension->getWidgetRoute());
     }
 
     /**
@@ -174,7 +212,6 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
     protected function getEntity($id = null)
     {
         $entity = new \stdClass();
-
         $entity->id = $id;
 
         return $entity;

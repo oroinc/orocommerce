@@ -37,42 +37,6 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         );
     }
 
-    public function testCreate()
-    {
-        /** @var PriceList $priceList */
-        $priceList = $this->getReference('price_list_1');
-        /** @var ProductUnit $unit */
-        $unit = $this->getReference('product_unit.bottle');
-        /** @var Product $product */
-        $product = $this->getReference('product.1');
-
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl(
-                'orob2b_product_price_create_widget',
-                [
-                    'priceListId' => $priceList->getId(),
-                    '_widgetContainer' => 'dialog',
-                    '_wid' => 'test-uuid'
-                ]
-            )
-        );
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
-        $form = $crawler->selectButton('Save')->form(
-            [
-                'orob2b_pricing_price_list_product_price[product]' => $product->getId(),
-                'orob2b_pricing_price_list_product_price[quantity]' => 10,
-                'orob2b_pricing_price_list_product_price[unit]' => $unit->getCode(),
-                'orob2b_pricing_price_list_product_price[price][value]' => 20,
-                'orob2b_pricing_price_list_product_price[price][currency]' => 'USD'
-            ]
-        );
-
-        $this->assertSaved($form);
-    }
-
     public function testUpdate()
     {
         /** @var ProductPrice $productPrice */
@@ -104,36 +68,6 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         );
 
         $this->assertSaved($form);
-    }
-
-    public function testCreateDuplicateEntry()
-    {
-        /** @var ProductPrice $productPrice */
-        $productPrice = $this->getReference('product_price.3');
-
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl(
-                'orob2b_product_price_create_widget',
-                [
-                    'priceListId' => $productPrice->getPriceList()->getId(),
-                    '_widgetContainer' => 'dialog',
-                    '_wid' => 'test-uuid'
-                ]
-            )
-        );
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
-        $form = $crawler->selectButton('Save')->form([
-            'orob2b_pricing_price_list_product_price[product]' => $productPrice->getProduct()->getId(),
-            'orob2b_pricing_price_list_product_price[quantity]' => $productPrice->getQuantity(),
-            'orob2b_pricing_price_list_product_price[unit]' => $productPrice->getUnit()->getCode(),
-            'orob2b_pricing_price_list_product_price[price][value]' => $productPrice->getPrice()->getValue(),
-            'orob2b_pricing_price_list_product_price[price][currency]' => $productPrice->getPrice()->getCurrency(),
-        ]);
-
-        $this->assertSubmitError($form, 'orob2b.pricing.validators.product_price.unique_entity.message');
     }
 
     public function testUpdateDuplicateEntry()
@@ -193,7 +127,6 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
                 'expected' => [
                     'bottle' => [
                         ['price' => 12.2, 'currency' => 'EUR', 'qty' => 1],
-                        ['price' => 20, 'currency' => 'USD', 'qty' => 10],
                         ['price' => 12.2, 'currency' => 'EUR', 'qty' => 11],
                     ],
                     'liter' => [
@@ -206,9 +139,6 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
                 'product' => 'product.1',
                 'priceList' => 'price_list_1',
                 'expected' => [
-                    'bottle' => [
-                        ['price' => 20, 'currency' => 'USD', 'qty' => 10],
-                    ],
                     'liter' => [
                         ['price' => 10.0000, 'currency' => 'USD', 'qty' => 1],
                         ['price' => 12.2000, 'currency' => 'USD', 'qty' => 10],

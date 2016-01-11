@@ -79,12 +79,6 @@ class PriceListTypeTest extends FormIntegrationTestCase
 
         $this->assertTrue($form->has('name'));
         $this->assertTrue($form->has('currencies'));
-        $this->assertTrue($form->has('appendAccounts'));
-        $this->assertTrue($form->has('removeAccounts'));
-        $this->assertTrue($form->has('appendAccountGroups'));
-        $this->assertTrue($form->has('removeAccountGroups'));
-        $this->assertTrue($form->has('appendWebsites'));
-        $this->assertTrue($form->has('removeWebsites'));
     }
 
     /**
@@ -128,12 +122,6 @@ class PriceListTypeTest extends FormIntegrationTestCase
         $result = $form->getData();
         $this->assertEquals($expectedData['name'], $result->getName());
         $this->assertEquals($expectedData['currencies'], array_values($result->getCurrencies()));
-        $this->assertEquals($expectedData['appendAccounts'], $form->get('appendAccounts')->getData());
-        $this->assertEquals($expectedData['removeAccounts'], $form->get('removeAccounts')->getData());
-        $this->assertEquals($expectedData['appendAccountGroups'], $form->get('appendAccountGroups')->getData());
-        $this->assertEquals($expectedData['removeAccountGroups'], $form->get('removeAccountGroups')->getData());
-        $this->assertEquals($expectedData['appendWebsites'], $form->get('appendWebsites')->getData());
-        $this->assertEquals($expectedData['removeWebsites'], $form->get('removeWebsites')->getData());
     }
     
     /**

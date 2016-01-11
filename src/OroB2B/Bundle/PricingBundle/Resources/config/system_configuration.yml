@@ -1,10 +1,20 @@
 oro_system_configuration:
     groups:
-        product_price_settings:
-            title: orob2b.pricing.system_configuration.groups.product_price_settings.title
-
+        default_price_lists:
+            title: orob2b.pricing.system_configuration.groups.default_price_lists.title
+        price_rounding:
+            title: orob2b.pricing.system_configuration.groups.price_rounding.title
+        pricing:
+            title: orob2b.pricing.system_configuration.groups.pricing.title
+            icon: 'icon-credit-card'
     fields:
-        orob2b_pricing.rounding_type:
+        oro_b2b_pricing.default_price_lists:
+            data_type: array
+            type: orob2b_pricing_price_list_system_config
+            options:
+                label: orob2b.pricing.system_configuration.fields.price_lists.title
+                resettable: false
+        oro_b2b_pricing.rounding_type:
             data_type: string
             type: choice
             priority: 10
@@ -23,14 +33,18 @@ oro_system_configuration:
 
     tree:
         system_configuration:
-            platform:
+            commerce:
                 children:
-                    general_setup:
+                    catalog:
                         children:
-                            product:
-                                priority: 220
+                            pricing:
+                                priority: 100
                                 children:
-                                    product_price_settings:
+                                    price_rounding:
+                                        priority: 200
+                                        children:
+                                            - oro_b2b_pricing.rounding_type
+                                    default_price_lists:
                                         priority: 100
                                         children:
-                                            - orob2b_pricing.rounding_type
+                                            - oro_b2b_pricing.default_price_lists

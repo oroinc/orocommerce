@@ -2,36 +2,19 @@ actions:
     orob2b_sale_expire_quote_action:
         label: orob2b.sale.quote.actions.quote_expire
         enabled: true
-        applications:
-            - backend
-            - frontend
-        entities:
-            - OroB2B\Bundle\SaleBundle\Entity\Quote
+        applications: [backend]
+        routes:
+            - orob2b_sale_quote_view
+        datagrids:
+            - quotes-grid
         order: 10
-        frontend_options:
+        button_options:
             icon: icon-time
-        prefunctions:
-            - @create_datetime:
-                attribute: $.compare_date
-            - @call_method:
-                object: $.compare_date
-                method: modify
-                method_parameters: ['+7 days']
+        frontend_options:
+            confirmation: orob2b.sale.quote.actions.quote_expire_confirm
         preconditions:
-            @or:
-                - @and:
-                    - @equal: [$expired, false]
-                    - @not:
-                        - @collection_element_value_exists: [$quoteProducts, $productSku, 'abc123']
-                    - @or:
-                        - @empty: $shipUntil
-                        - @lt: [$shipUntil, $.compare_date]
-                - @and:
-                    - @equal: [$expired, false]
-                    - @or:
-                        - @empty: $shipUntil
-                        - @gt: [$shipUntil, $.compare_date]
-        postfunctions:
+            @equal: [$expired, false]
+        functions:
             - @assign_value: [$expired, true]
             - @flash_message:
                 message: orob2b.sale.quote.message.quote.expire.success
@@ -40,3 +23,137 @@ actions:
                     id: $id
             - @redirect:
                 route: 'orob2b_sale_quote_index'
+
+    orob2b_sale_notify_customer_by_email_action:
+        label: orob2b.sale.quote.notify_customer.by_email.link.text
+        applications: [backend, frontend]
+        entities:
+            - OroB2B\Bundle\SaleBundle\Entity\Quote
+        order: 20
+        acl_resource: oro_email_email_create
+
+        button_options:
+            icon: icon-envelope
+            group: orob2b.sale.quote.notify_customer.label
+
+        frontend_options:
+            template: OroB2BSaleBundle:Action:emailNotification.html.twig
+            title: orob2b.sale.quote.notify_customer.by_email.link.text
+            options:
+                allowMaximize: true
+                allowMinimize: true
+                dblclick: maximize
+                maximizedHeightDecreaseBy: minimize-bar
+                width: 1000
+
+        attributes:
+            email:
+                label: ' '
+                type: object
+                options:
+                    class: Oro\Bundle\EmailBundle\Form\Model\Email
+
+        form_options:
+            attribute_fields:
+                email:
+                    form_type: oro_email_email
+
+        form_init:
+            - @call_service_method:
+                attribute: $.email
+                service: orob2b_sale.helper.notification
+                method: getEmailModel
+                method_parameters: [$.data]
+            - @call_service_method:
+                attribute: $.appendSignature
+                service: oro_config.user
+                method: get
+                method_parameters: ['oro_email.append_signature']
+
+        functions:
+            - @call_service_method:
+                service: orob2b_sale.helper.notification
+                method: send
+                method_parameters: [$.email, $.data]
+
+    orob2b_sale_frontend_quote_accept_and_submit_to_order:
+        label: orob2b.frontend.sale.btn.accept_quote_create_order
+        applications: [frontend]
+        routes:
+            - orob2b_sale_quote_frontend_view
+        order: 20
+        acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\OrderBundle\Entity\Order]
+        button_options:
+            icon: icon-edit
+        preconditions:
+            @equal: [false, $hasOfferVariants]
+        functions:
+            - @get_active_user: $.user
+            - @call_service_method:
+                service: orob2b_sale.service.quote_to_order_converter
+                method: convert
+                method_parameters: [$.data, $.user, null, true]
+                attribute: $.order
+            - @flash_message:
+                message: orob2b.frontend.sale.message.quote.create_order.success
+                type: 'success'
+            - @redirect:
+                constraints:
+                    @acl_resource: orob2b_order_frontend_view
+                parameters:
+                    route: 'orob2b_order_frontend_view'
+                    route_parameters: {id: $.order.id}
+
+    orob2b_sale_frontend_quote_accept_and_submit_to_order_from_widget:
+        label: orob2b.frontend.sale.btn.accept_quote_create_order
+        applications: [frontend]
+        routes:
+            - orob2b_sale_quote_frontend_view
+        order: 20
+        acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\OrderBundle\Entity\Order]
+
+        button_options:
+            icon: icon-edit
+
+        frontend_options:
+            template: OroB2BSaleBundle:Action:quoteToOrder.html.twig
+            options:
+                modal: true,
+                resizable: true,
+                width: 1000
+                height: 500
+                allowMaximize: true
+                dblclick: maximize
+
+        preconditions:
+            @equal: [true, $hasOfferVariants]
+
+        attributes:
+            quote_to_order:
+                label: ' '
+                type: array
+
+        form_options:
+            attribute_fields:
+                quote_to_order:
+                    form_type: orob2b_sale_quote_to_order
+
+        form_init:
+            - @assign_value: [$.quote_to_order, $.data]
+
+        functions:
+            - @get_active_user: $.user
+            - @call_service_method:
+                service: orob2b_sale.service.quote_to_order_converter
+                method: convert
+                method_parameters: [$.data, $.user, $.quote_to_order, true]
+                attribute: $.order
+            - @flash_message:
+                message: orob2b.frontend.sale.message.quote.create_order.success
+                type: 'success'
+            - @redirect:
+                constraints:
+                    @acl_resource: orob2b_order_frontend_view
+                parameters:
+                    route: 'orob2b_order_frontend_view'
+                    route_parameters: {id: $.order.id}

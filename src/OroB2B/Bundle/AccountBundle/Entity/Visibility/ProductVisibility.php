@@ -11,16 +11,22 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 /**
- * @ORM\Entity
- * @ORM\Table(name="orob2b_product_visibility")
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Repository\ProductVisibilityRepository")
+ * @ORM\Table(
+ *      name="orob2b_product_visibility",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(
+ *              name="orob2b_prod_vis_uidx",
+ *              columns={"website_id", "product_id"}
+ *          )
+ *      }
+ * )
  * @Config
  */
 class ProductVisibility implements VisibilityInterface, WebsiteAwareInterface
 {
     const CATEGORY = 'category';
     const CONFIG = 'config';
-    const HIDDEN = 'hidden';
-    const VISIBLE = 'visible';
 
     /**
      * @var integer
@@ -53,6 +59,11 @@ class ProductVisibility implements VisibilityInterface, WebsiteAwareInterface
      * @ORM\Column(name="visibility", type="string", length=255, nullable=true)
      */
     protected $visibility;
+
+    public function __clone()
+    {
+        $this->id = null;
+    }
 
     /**
      * @return int

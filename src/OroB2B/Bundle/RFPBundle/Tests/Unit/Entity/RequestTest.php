@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Component\Testing\Unit\EntityTestCase;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -12,8 +12,10 @@ use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 
-class RequestTest extends EntityTestCase
+class RequestTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTestCaseTrait;
+
     public function testConstruct()
     {
         $request = new Request();
@@ -42,7 +44,7 @@ class RequestTest extends EntityTestCase
             ['phone', '(555)5555-555-55'],
             ['company', 'JohnDow Inc.'],
             ['role', 'cto'],
-            ['body', 'test_request_body'],
+            ['note', 'test_request_notes'],
             ['status', new RequestStatus(), false],
             ['createdAt', $date, false],
             ['updatedAt', $date, false],

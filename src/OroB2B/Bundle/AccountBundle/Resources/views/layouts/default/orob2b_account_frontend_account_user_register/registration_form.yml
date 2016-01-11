@@ -21,14 +21,11 @@ layout:
                 registration_form_start:
                     blockType: form_start
                     options:
-                        form_name: 'frontend_account_registration_form'
-                        form_method: 'POST'
-                        form_route_name: 'orob2b_account_frontend_account_user_register'
+                        form: { @value: $data.orob2b_account_frontend_account_user_register }
                 registration_form_fields:
                     blockType: form
                     options:
-                        form_name: 'frontend_account_registration_form'
-                        form_data: { @value: $data.orob2b_account_new_account_user }
+                        form: { @value: $data.orob2b_account_frontend_account_user_register }
                 registration_form_submit:
                     blockType: button
                     options:
@@ -38,7 +35,7 @@ layout:
                 registration_form_end:
                     blockType: form_end
                     options:
-                        form_name: 'frontend_account_registration_form'
+                        form: { @value: $data.orob2b_account_frontend_account_user_register }
             tree:
                 content:
                     registration_page:

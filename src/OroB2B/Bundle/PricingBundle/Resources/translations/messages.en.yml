@@ -15,12 +15,16 @@ orob2b.pricing:
         accounts.label: Accounts
         websites.label: Websites
         prices.label: Prices
+        priority.label: Priority
+
         form:
             pricelist_required: Please select a price list first...
     quantity.label: Quantity
     unit.label: Unit
     price.label: Price
     add_product_price: Add Product Price
+    add_price_list: Add Price List
+    no_price_lists: No price lists
 
     productprice:
         entity_label: Product Price
@@ -43,10 +47,10 @@ orob2b.pricing:
         show_tier_prices.label: Show Tier Prices
         price_in_%currency%: 'Price (%currency%)'
         price_%unit%_in_%currency%: 'Price (%currency%/%unit%)'
-
         action:
             save: Save
             cancel: Cancel
+        save.success: Product Price has been added
 
     menu:
         price_lists_tab.label: Price lists management
@@ -76,8 +80,11 @@ orob2b.pricing:
 
     system_configuration:
         groups:
-            product_price_settings.title: Pricing Settings
+            default_price_lists.title: Default Price Lists
+            price_rounding.title: Pricing Rounding
+            pricing.title: Pricing
         fields:
+            price_lists.title: Price Lists
             rounding_type:
                 label: Pricing Rounding Type
                 tooltip: Select the rounding type that can be used for product prices.

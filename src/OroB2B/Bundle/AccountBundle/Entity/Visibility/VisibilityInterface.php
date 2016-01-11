@@ -4,6 +4,9 @@ namespace OroB2B\Bundle\AccountBundle\Entity\Visibility;
 
 interface VisibilityInterface
 {
+    const HIDDEN = 'hidden';
+    const VISIBLE = 'visible';
+
     /**
      * @param object $target
      * @return string

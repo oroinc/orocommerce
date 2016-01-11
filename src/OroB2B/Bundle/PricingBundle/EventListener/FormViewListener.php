@@ -13,6 +13,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 
 class FormViewListener
 {
@@ -56,18 +57,12 @@ class FormViewListener
             return;
         }
 
-        $accountId = (int)$request->get('id');
         /** @var Account $account */
-        $account = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:Account', $accountId);
-        $priceList = $this->getPriceListRepository()->getPriceListByAccount($account);
-
-        if ($priceList) {
-            $template = $event->getEnvironment()->render(
-                'OroB2BPricingBundle:Account:price_list_view.html.twig',
-                ['priceList' => $priceList]
-            );
-            $event->getScrollData()->addSubBlockData(0, 0, $template);
-        }
+        $account = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:Account', (int)$request->get('id'));
+        $priceLists = $this->doctrineHelper
+            ->getEntityRepository('OroB2BPricingBundle:PriceListToAccount')
+            ->findBy(['account' => $account], ['website' => 'ASC']);
+        $this->addPriceListInfo($event, $priceLists);
     }
 
     /**
@@ -80,18 +75,15 @@ class FormViewListener
             return;
         }
 
-        $groupId = (int)$request->get('id');
-        /** @var AccountGroup $group */
-        $group = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:AccountGroup', $groupId);
-        $priceList = $this->getPriceListRepository()->getPriceListByAccountGroup($group);
-
-        if ($priceList) {
-            $template = $event->getEnvironment()->render(
-                'OroB2BPricingBundle:Account:price_list_view.html.twig',
-                ['priceList' => $priceList]
-            );
-            $event->getScrollData()->addSubBlockData(0, 0, $template);
-        }
+        /** @var AccountGroup $accountGroup */
+        $accountGroup = $this->doctrineHelper->getEntityReference(
+            'OroB2BAccountBundle:AccountGroup',
+            (int)$request->get('id')
+        );
+        $priceLists = $this->doctrineHelper
+            ->getEntityRepository('OroB2BPricingBundle:PriceListToAccountGroup')
+            ->findBy(['accountGroup' => $accountGroup], ['website' => 'ASC']);
+        $this->addPriceListInfo($event, $priceLists);
     }
 
     /**
@@ -103,7 +95,11 @@ class FormViewListener
             'OroB2BPricingBundle:Account:price_list_update.html.twig',
             ['form' => $event->getFormView()]
         );
-        $event->getScrollData()->addSubBlockData(0, 0, $template);
+        $blockLabel = $this->translator->trans('orob2b.pricing.pricelist.entity_plural_label');
+        $scrollData = $event->getScrollData();
+        $blockId = $scrollData->addBlock($blockLabel, 0);
+        $subBlockId = $scrollData->addSubBlock($blockId);
+        $scrollData->addSubBlockData($blockId, $subBlockId, $template);
     }
 
     /**
@@ -157,5 +153,53 @@ class FormViewListener
         $blockId = $scrollData->addBlock($blockLabel);
         $subBlockId = $scrollData->addSubBlock($blockId);
         $scrollData->addSubBlockData($blockId, $subBlockId, $html);
+    }
+
+    /**
+     * @param BeforeListRenderEvent $event
+     * @param BasePriceListRelation[] $priceLists
+     */
+    protected function addPriceListInfo(BeforeListRenderEvent $event, $priceLists)
+    {
+        $template = $event->getEnvironment()->render(
+            'OroB2BPricingBundle:Account:price_list_view.html.twig',
+            ['priceListsByWebsites' => $this->groupPriceListsByWebsite($priceLists)]
+        );
+        $blockLabel = $this->translator->trans('orob2b.pricing.pricelist.entity_plural_label');
+        $scrollData = $event->getScrollData();
+        $blockId = $scrollData->addBlock($blockLabel, 0);
+        $subBlockId = $scrollData->addSubBlock($blockId);
+        $scrollData->addSubBlockData($blockId, $subBlockId, $template);
+    }
+
+    /**
+     * @param BasePriceListRelation[] $priceLists
+     * @return array
+     */
+    protected function groupPriceListsByWebsite(array $priceLists)
+    {
+        $result = [];
+        foreach ($priceLists as $priceList) {
+            $website = $priceList->getWebsite();
+            $result[$website->getId()]['priceLists'][] = $priceList;
+            $result[$website->getId()]['website'] = $website;
+        }
+
+        foreach ($result as &$websitePriceLists) {
+            usort(
+                $websitePriceLists['priceLists'],
+                function (BasePriceListRelation $priceList1, BasePriceListRelation $priceList2) {
+                    $priority1 = $priceList1->getPriority();
+                    $priority2 = $priceList2->getPriority();
+                    if ($priority1 == $priority2) {
+                        return 0;
+                    }
+
+                    return ($priority1 < $priority2) ? -1 : 1;
+                }
+            );
+        }
+
+        return $result;
     }
 }

@@ -1,11 +1,96 @@
-parameters:
-    orob2b_rfp.datagrid.action.request_change_status_dialog.class: OroB2B\Bundle\RFPBundle\Datagrid\Action\RequestChangeStatusDialogAction
+actions:
+    orob2b_rfp_change_status_action:
+        label: orob2b.rfp.btn.change_status
+        applications: [backend]
+        routes:
+            - orob2b_rfp_request_view
+        datagrids:
+            - rfp-requests-grid
+        order: 10
+        attributes:
+            request_status:
+                property_path: entity.status
+            request_note:
+                property_path: entity.note
+                label: oro.note.entity_label
+                type: string
+        form_options:
+            attribute_fields:
+                request_status:
+                    form_type: orob2b_rfp_request_status_select
+                    options:
+                        required: true
+                request_note:
+                    form_type: oro_rich_text
+            attribute_default_values:
+                request_status: $status
+        button_options:
+            icon: icon-edit
+        frontend_options:
+            template: OroB2BRFPBundle:Action:changeStatusForm.html.twig
+            title: orob2b.rfp.widget.change_status_title
+            options:
+                width: 550
+        functions:
+            - @assign_value: [$status, $.request_status]
+            - @format_string:
+                attribute: $.message
+                string: 'New status: %%status%% <p></p> %%note%%'
+                arguments:
+                    status: $.request_status.label
+                    note: $.request_note
+            - @create_entity:
+                class: Oro\Bundle\NoteBundle\Entity\Note
+                attribute: $.note
+                data:
+                    target: $.data
+                    message: $.message
+                flush: true
+            - @flash_message:
+                message: orob2b.rfp.message.request_status_changed
+                type: 'info'
 
-services:
-    orob2b_rfp.datagrid.action.request_change_status_dialog:
-        class: %orob2b_rfp.datagrid.action.request_change_status_dialog.class%
-        arguments:
-            - @translator
-        scope: prototype
-        tags:
-            - { name: oro_datagrid.extension.action.type, type: request-change-status-dialog }
+    orob2b_rfp_create_quote_action:
+        label: orob2b.rfp.btn.create_quote
+        applications: [backend]
+        routes:
+            - orob2b_rfp_request_view
+        acl_resource: orob2b_sale_quote_create
+        order: 20
+        button_options:
+            icon: icon-file-text
+            class: icons-holder-text no-hash btn
+        preconditions:
+            @equal: [$status.draft, false]
+        functions:
+            - @call_service_method:
+                service: orob2b_rfp.service.request_to_quote_data_storage
+                method: saveToStorage
+                method_parameters: [$.data]
+            - @redirect:
+                parameters:
+                    route: orob2b_sale_quote_create
+                    route_parameters: {'storage': true}
+
+    orob2b_rfp_frontend_request_a_quote_action:
+        label: orob2b.rfp.btn.add_to_rfp
+        applications: [frontend]
+        routes:
+            - orob2b_product_frontend_quick_add
+        acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\RFPBundle\Entity\Request]
+        order: 10
+        button_options:
+            icon: icon-file-text
+            data:
+                component_name: orob2b_rfp_quick_add_processor
+            page_component_module: orob2bproduct/js/app/components/quick-add-form-button-component
+            page_component_options:
+                component_name: '[name$="[component]"]'
+                component_additional: '[name$="[additional]"]'
+        prefunctions:
+            - @call_service_method:
+                service: orob2b_rfp.processor.quick_add
+                method: isAllowed
+                attribute: $.isAllowed
+        preconditions:
+            @equal: [true, $.isAllowed]

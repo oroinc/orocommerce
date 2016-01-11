@@ -9,6 +9,7 @@ use Oro\Bundle\WorkflowBundle\Model\Action\ActionFactory as FunctionFactory;
 use Oro\Bundle\WorkflowBundle\Model\Action\ActionInterface as FunctionInterface;
 use Oro\Bundle\WorkflowBundle\Model\Action\Configurable as ConfigurableAction;
 
+use Oro\Bundle\WorkflowBundle\Model\AttributeManager;
 use Oro\Bundle\WorkflowBundle\Model\Condition\AbstractCondition;
 use Oro\Bundle\WorkflowBundle\Model\Condition\Configurable as ConfigurableCondition;
 
@@ -22,33 +23,45 @@ class Action
     /** @var ConditionFactory */
     private $conditionFactory;
 
+    /** @var AttributeAssembler */
+    private $attributeAssembler;
+
+    /** @var FormOptionsAssembler */
+    private $formOptionsAssembler;
+
     /** @var ActionDefinition */
     private $definition;
 
-    /** @var FunctionInterface */
-    private $preFunction;
+    /** @var FunctionInterface[] */
+    private $functions = [];
 
-    /** @var AbstractCondition */
-    private $preCondition;
+    /** @var AbstractCondition[] */
+    private $conditions = [];
 
-    /** @var AbstractCondition */
-    private $condition;
+    /** @var AttributeManager[] */
+    private $attributeManagers = [];
 
-    /** @var FunctionInterface */
-    private $postFunction;
+    /** @var array */
+    private $formOptions;
 
     /**
      * @param FunctionFactory $functionFactory
      * @param ConditionFactory $conditionFactory
+     * @param AttributeAssembler $attributeAssembler
+     * @param FormOptionsAssembler $formOptionsAssembler
      * @param ActionDefinition $definition
      */
     public function __construct(
         FunctionFactory $functionFactory,
         ConditionFactory $conditionFactory,
+        AttributeAssembler $attributeAssembler,
+        FormOptionsAssembler $formOptionsAssembler,
         ActionDefinition $definition
     ) {
         $this->functionFactory = $functionFactory;
         $this->conditionFactory = $conditionFactory;
+        $this->attributeAssembler = $attributeAssembler;
+        $this->formOptionsAssembler = $formOptionsAssembler;
         $this->definition = $definition;
     }
 
@@ -77,147 +90,159 @@ class Action
     }
 
     /**
-     * @return FunctionInterface
+     * @param ActionData $data
      */
-    protected function getPreFunctions()
+    public function init(ActionData $data)
     {
-        if ($this->preFunction === null) {
-            $this->preFunction = false;
-            $preFunctionsConfig = $this->definition->getPreFunctions();
-            if ($preFunctionsConfig) {
-                $this->preFunction = $this->functionFactory->create(ConfigurableAction::ALIAS, $preFunctionsConfig);
-            }
-        }
-
-        return $this->preFunction;
+        $this->executeFunctions($data, ActionDefinition::FORM_INIT);
     }
 
     /**
-     * @return AbstractCondition
+     * @param ActionData $data
+     * @param Collection $errors
+     * @throws ForbiddenActionException
      */
-    protected function getPreCondition()
+    public function execute(ActionData $data, Collection $errors = null)
     {
-        if ($this->preCondition === null) {
-            $this->preCondition = false;
-            $preConditionsConfig = $this->definition->getPreConditions();
-            if ($preConditionsConfig) {
-                $this->preCondition = $this->conditionFactory
-                    ->create(ConfigurableCondition::ALIAS, $preConditionsConfig);
-            }
+        if (!$this->isAllowed($data, $errors)) {
+            throw new ForbiddenActionException(sprintf('Action "%s" is not allowed.', $this->getName()));
         }
 
-        return $this->preCondition;
-    }
-
-    /**
-     * @return AbstractCondition
-     */
-    protected function getCondition()
-    {
-        if ($this->condition === null) {
-            $this->condition = false;
-            $conditionConfig = $this->definition->getConditions();
-            if ($conditionConfig) {
-                $this->condition = $this->conditionFactory->create(ConfigurableCondition::ALIAS, $conditionConfig);
-            }
-        }
-
-        return $this->condition;
-    }
-
-    /**
-     * @return FunctionInterface
-     */
-    protected function getPostFunctions()
-    {
-        if ($this->postFunction === null) {
-            $this->postFunction = false;
-            $postFunctionsConfig = $this->definition->getPostFunctions();
-            if ($postFunctionsConfig) {
-                $this->postFunction = $this->functionFactory->create(ConfigurableAction::ALIAS, $postFunctionsConfig);
-            }
-        }
-
-        return $this->postFunction;
+        $this->executeFunctions($data, ActionDefinition::FUNCTIONS);
     }
 
     /**
      * Check that action is available to show
      *
-     * @param ActionContext $context
+     * @param ActionData $data
      * @param Collection $errors
      * @return bool
      */
-    public function isAvailable(ActionContext $context, Collection $errors = null)
+    public function isAvailable(ActionData $data, Collection $errors = null)
     {
-        return $this->isPreConditionAllowed($context, $errors);
+        if ($this->hasForm()) {
+            return $this->isPreConditionAllowed($data, $errors);
+        } else {
+            return $this->isAllowed($data, $errors);
+        }
     }
 
     /**
-     * Check is transition allowed to execute
+     * Check is action allowed to execute
      *
-     * @param ActionContext $context
+     * @param ActionData $data
      * @param Collection|null $errors
      * @return bool
      */
-    public function isAllowed(ActionContext $context, Collection $errors = null)
+    public function isAllowed(ActionData $data, Collection $errors = null)
     {
-        return $this->isPreConditionAllowed($context, $errors) && $this->isConditionAllowed($context, $errors);
+        return $this->isPreConditionAllowed($data, $errors) &&
+            $this->evaluateConditions($data, ActionDefinition::CONDITIONS, $errors);
     }
 
     /**
-     * @param ActionContext $context
-     */
-    public function init(ActionContext $context)
-    {
-        // ToDo - implement init
-    }
-
-    /**
-     * @param ActionContext $context
-     * @param Collection $errors
-     * @throws ForbiddenActionException
-     */
-    public function execute(ActionContext $context, Collection $errors = null)
-    {
-        if (!$this->isAllowed($context, $errors)) {
-            throw new ForbiddenActionException(sprintf('Action "%s" is not allowed.', $this->getName()));
-        }
-
-        if ($this->getPostFunctions()) {
-            $this->getPostFunctions()->execute($context);
-        }
-    }
-
-    /**
-     * @param ActionContext $context
+     * @param ActionData $data
      * @param Collection $errors
      * @return bool
      */
-    protected function isPreConditionAllowed(ActionContext $context, Collection $errors = null)
+    protected function isPreConditionAllowed(ActionData $data, Collection $errors = null)
     {
-        if ($this->getPreFunctions()) {
-            $this->getPreFunctions()->execute($context);
+        $this->executeFunctions($data, ActionDefinition::PREFUNCTIONS);
+
+        return $this->evaluateConditions($data, ActionDefinition::PRECONDITIONS, $errors);
+    }
+
+    /**
+     * @param ActionData $data
+     * @return AttributeManager
+     */
+    public function getAttributeManager(ActionData $data)
+    {
+        $hash = spl_object_hash($data);
+
+        if (!array_key_exists($hash, $this->attributeManagers)) {
+            $this->attributeManagers[$hash] = false;
+
+            $config = $this->definition->getAttributes();
+            if ($config) {
+                $this->attributeManagers[$hash] = new AttributeManager(
+                    $this->attributeAssembler->assemble($data, $config)
+                );
+            }
         }
 
-        if ($this->getPreCondition()) {
-            return $this->getPreCondition()->evaluate($context, $errors);
+        return $this->attributeManagers[$hash];
+    }
+
+    /**
+     * @param ActionData $data
+     * @return array
+     */
+    public function getFormOptions(ActionData $data)
+    {
+        if ($this->formOptions === null) {
+            $this->formOptions = [];
+            $formOptionsConfig = $this->definition->getFormOptions();
+            if ($formOptionsConfig) {
+                $this->formOptions = $this->formOptionsAssembler
+                    ->assemble($formOptionsConfig, $this->getAttributeManager($data)->getAttributes());
+            }
+        }
+
+        return $this->formOptions;
+    }
+
+    /**
+     * @param ActionData $data
+     * @param string $name
+     */
+    protected function executeFunctions(ActionData $data, $name)
+    {
+        if (!array_key_exists($name, $this->functions)) {
+            $this->functions[$name] = false;
+
+            $config = $this->definition->getFunctions($name);
+            if ($config) {
+                $this->functions[$name] = $this->functionFactory->create(ConfigurableAction::ALIAS, $config);
+            }
+        }
+
+        if ($this->functions[$name] instanceof FunctionInterface) {
+            $this->functions[$name]->execute($data);
+        }
+    }
+
+    /**
+     * @param ActionData $data
+     * @param string $name
+     * @param Collection $errors
+     * @return boolean
+     */
+    protected function evaluateConditions(ActionData $data, $name, Collection $errors = null)
+    {
+        if (!array_key_exists($name, $this->conditions)) {
+            $this->conditions[$name] = false;
+
+            $config = $this->definition->getConditions($name);
+            if ($config) {
+                $this->conditions[$name] = $this->conditionFactory->create(ConfigurableCondition::ALIAS, $config);
+            }
+        }
+
+        if ($this->conditions[$name] instanceof ConfigurableCondition) {
+            return $this->conditions[$name]->evaluate($data, $errors);
         }
 
         return true;
     }
 
     /**
-     * @param ActionContext $context
-     * @param Collection $errors
      * @return bool
      */
-    protected function isConditionAllowed(ActionContext $context, Collection $errors = null)
+    public function hasForm()
     {
-        if ($this->getCondition()) {
-            return $this->getCondition()->evaluate($context, $errors);
-        }
+        $formOptionsConfig = $this->definition->getFormOptions();
 
-        return true;
+        return !empty($formOptionsConfig['attribute_fields']);
     }
 }
