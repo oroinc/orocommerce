@@ -75,10 +75,26 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expected' => [
                     'new' => [
-                        'type' => 'addproductstonew',
+                        'type' => 'window',
                         'label' => 'orob2b.shoppinglist.product.create_new_shopping_list.label',
                         'icon' => 'plus',
-                        'data_identifier' => 'product.id'
+                        'data_identifier' => 'product.id',
+                        'frontend_type' => 'add-products-mass',
+                        'handler' => 'orob2b_shopping_list.mass_action.add_products_handler',
+                        'route' => 'orob2b_shopping_list_add_products_to_new_massaction',
+                        'frontend_options' => [
+                            'title' => 'orob2b.shoppinglist.product.add_to_shopping_list.label',
+                            'regionEnabled' => false,
+                            'incrementalPosition' => false,
+                            'dialogOptions' => [
+                                'modal' => true,
+                                'resizable' => false,
+                                'width' => 480,
+                                'autoResize' => true,
+                                'dialogClass' => 'shopping-list-dialog'
+                            ],
+                            'alias' => 'add_products_to_new_shopping_list_mass_action',
+                        ],
                     ]
                 ]
             ],
@@ -96,6 +112,8 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                         'label' => 'orob2b.shoppinglist.actions.add_to_shopping_list',
                         'icon' => 'shopping-cart',
                         'data_identifier' => 'product.id',
+                        'frontend_type' => 'add-products-mass',
+                        'handler' => 'orob2b_shopping_list.mass_action.add_products_handler',
                         'route_parameters' => [
                             'shoppingList' => 1
                         ]
@@ -105,15 +123,33 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                         'label' => 'orob2b.shoppinglist.actions.add_to_shopping_list',
                         'icon' => 'shopping-cart',
                         'data_identifier' => 'product.id',
+                        'frontend_type' => 'add-products-mass',
+                        'handler' => 'orob2b_shopping_list.mass_action.add_products_handler',
                         'route_parameters' => [
                             'shoppingList' => 2
                         ]
                     ],
                     'new' => [
-                        'type' => 'addproductstonew',
+                        'type' => 'window',
                         'label' => 'orob2b.shoppinglist.product.create_new_shopping_list.label',
                         'icon' => 'plus',
-                        'data_identifier' => 'product.id'
+                        'data_identifier' => 'product.id',
+                        'frontend_type' => 'add-products-mass',
+                        'handler' => 'orob2b_shopping_list.mass_action.add_products_handler',
+                        'route' => 'orob2b_shopping_list_add_products_to_new_massaction',
+                        'frontend_options' => [
+                            'title' => 'orob2b.shoppinglist.product.add_to_shopping_list.label',
+                            'regionEnabled' => false,
+                            'incrementalPosition' => false,
+                            'dialogOptions' => [
+                                'modal' => true,
+                                'resizable' => false,
+                                'width' => 480,
+                                'autoResize' => true,
+                                'dialogClass' => 'shopping-list-dialog'
+                            ],
+                            'alias' => 'add_products_to_new_shopping_list_mass_action',
+                        ],
                     ]
                 ]
             ],
@@ -130,6 +166,8 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                         'label' => 'orob2b.shoppinglist.actions.add_to_shopping_list',
                         'icon' => 'shopping-cart',
                         'data_identifier' => 'product.id',
+                        'frontend_type' => 'add-products-mass',
+                        'handler' => 'orob2b_shopping_list.mass_action.add_products_handler',
                         'route_parameters' => [
                             'shoppingList' => 42
                         ]
@@ -139,15 +177,33 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                         'label' => 'orob2b.shoppinglist.actions.add_to_shopping_list',
                         'icon' => 'shopping-cart',
                         'data_identifier' => 'product.id',
+                        'frontend_type' => 'add-products-mass',
+                        'handler' => 'orob2b_shopping_list.mass_action.add_products_handler',
                         'route_parameters' => [
                             'shoppingList' => 3
                         ]
                     ],
                     'new' => [
-                        'type' => 'addproductstonew',
+                        'type' => 'window',
                         'label' => 'orob2b.shoppinglist.product.create_new_shopping_list.label',
                         'icon' => 'plus',
-                        'data_identifier' => 'product.id'
+                        'data_identifier' => 'product.id',
+                        'frontend_type' => 'add-products-mass',
+                        'handler' => 'orob2b_shopping_list.mass_action.add_products_handler',
+                        'route' => 'orob2b_shopping_list_add_products_to_new_massaction',
+                        'frontend_options' => [
+                            'title' => 'orob2b.shoppinglist.product.add_to_shopping_list.label',
+                            'regionEnabled' => false,
+                            'incrementalPosition' => false,
+                            'dialogOptions' => [
+                                'modal' => true,
+                                'resizable' => false,
+                                'width' => 480,
+                                'autoResize' => true,
+                                'dialogClass' => 'shopping-list-dialog'
+                            ],
+                            'alias' => 'add_products_to_new_shopping_list_mass_action',
+                        ],
                     ]
                 ]
             ]

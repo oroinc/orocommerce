@@ -38,15 +38,33 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
         foreach ($this->getShoppingLists() as $shoppingList) {
             $name = $shoppingList->isCurrent() ? 'current' : 'list' . $shoppingList->getId();
 
-            $actions[$name] = $this->getConfig($shoppingList);
+            $actions[$name] = $this->getConfig([
+                'label' => $this->getLabel($shoppingList),
+                'route_parameters' => [
+                    'shoppingList' => $shoppingList->getId(),
+                ],
+            ]);
         }
 
-        $actions['new'] = [
-            'type' => 'addproductstonew',
+        $actions['new'] = $this->getConfig([
+            'type' => 'window',
             'label' => $this->translator->trans('orob2b.shoppinglist.product.create_new_shopping_list.label'),
             'icon' => 'plus',
-            'data_identifier' => 'product.id'
-        ];
+            'route' => 'orob2b_shopping_list_add_products_to_new_massaction',
+            'frontend_options' => [
+                'title' => $this->translator->trans('orob2b.shoppinglist.product.add_to_shopping_list.label'),
+                'regionEnabled' => false,
+                'incrementalPosition' => false,
+                'dialogOptions' => [
+                    'modal' => true,
+                    'resizable' => false,
+                    'width' => 480,
+                    'autoResize' => true,
+                    'dialogClass' => 'shopping-list-dialog',
+                ],
+                'alias' => 'add_products_to_new_shopping_list_mass_action',
+            ],
+        ]);
 
         return $actions;
     }
@@ -66,20 +84,18 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
     }
 
     /**
-     * @param ShoppingList $shoppingList
+     * @param array $options
      * @return array
      */
-    protected function getConfig(ShoppingList $shoppingList)
+    protected function getConfig($options)
     {
-        return [
+        return array_merge([
             'type' => 'addproducts',
-            'label' => $this->getLabel($shoppingList),
             'icon' => 'shopping-cart',
             'data_identifier' => 'product.id',
-            'route_parameters' => [
-                'shoppingList' => $shoppingList->getId()
-            ],
-        ];
+            'frontend_type' => 'add-products-mass',
+            'handler' => 'orob2b_shopping_list.mass_action.add_products_handler',
+        ], $options);
     }
 
     /**

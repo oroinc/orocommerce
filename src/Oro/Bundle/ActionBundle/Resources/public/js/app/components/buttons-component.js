@@ -38,9 +38,9 @@ define(function(require) {
         },
 
         /**
-         *
          * @param {jQuery.Element} $element
          * @returns {ActionManager}
+         * @private
          */
         _getActionManager: function($element) {
             if (!$element.data('action-manager')) {
@@ -59,7 +59,7 @@ define(function(require) {
                 $element.data('action-manager', new ActionManager(options));
             }
 
-            return $element.data('action-manager');
+            return $element.prop('action-manager');
         },
 
         dispose: function() {

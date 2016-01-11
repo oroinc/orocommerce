@@ -18,6 +18,19 @@ define([
     AddProductsAction = MassAction.extend({
 
         /**
+         * @inheritdoc
+         */
+        initialize: function() {
+            AddProductsAction.__super__.initialize.apply(this, arguments);
+
+            this.listenTo(mediator, 'widget_success:add_products_to_new_shopping_list_mass_action', this._onSuccess, this);
+        },
+
+        _onSuccess: function () {
+            mediator.trigger('datagrid:doRefresh:' + this.datagrid.name);
+        },
+
+        /**
          * @private
          */
         _checkSelectionState: function() {

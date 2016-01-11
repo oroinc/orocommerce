@@ -157,6 +157,7 @@ define(function(require) {
         },
 
         /**
+         * @param {function} callback
          * @return {oroui.Modal}
          */
         showConfirmDialog: function(callback) {
