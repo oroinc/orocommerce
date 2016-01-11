@@ -207,6 +207,8 @@ class OroB2BTaxBundleInstaller implements Installation
         $table->addColumn('shipping_excluding_tax', 'float', []);
         $table->addColumn('entity_id', 'integer', []);
         $table->addColumn('address', 'string', ['length' => 255]);
+        $table->addColumn('total_tax_amount', 'float', []);
+        $table->addColumn('shipping_tax_amount', 'float', []);
         $table->setPrimaryKey(['id']);
     }
 

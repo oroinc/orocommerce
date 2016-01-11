@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\TaxBundle\Model;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 final class ResultItem
 {
@@ -17,16 +17,16 @@ final class ResultItem
     private $row;
 
     /**
-     * @var ArrayCollection
+     * @var Collection
      */
     private $taxes;
 
     /**
      * @param ResultElement   $unit
      * @param ResultElement   $row
-     * @param ArrayCollection $taxes
+     * @param Collection $taxes
      */
-    public function __construct(ResultElement $unit, ResultElement $row, ArrayCollection $taxes)
+    public function __construct(ResultElement $unit, ResultElement $row, Collection $taxes)
     {
         $this->unit = $unit;
         $this->row = $row;
@@ -50,7 +50,7 @@ final class ResultItem
     }
 
     /**
-     * @return ArrayCollection
+     * @return Collection
      */
     public function getTaxes()
     {
