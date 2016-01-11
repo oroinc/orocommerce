@@ -61,9 +61,9 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'type' => PriceListCollectionType::NAME,
+                'type' => PriceListsSettingsType::NAME,
                 'options' => [
-                    'render_as_widget' => true,
+                    'target_class_name' => $this->getClassName(),
                 ],
                 'label' => false,
                 'required' => false,
@@ -99,7 +99,6 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         $priceListsByWebsites = $form->get('priceListsByWebsites');
 
         $formData = $this->prepareFormData($targetEntity, $priceListsByWebsites);
-
         $event->setData($formData);
     }
 
@@ -137,7 +136,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
                 }
             }
 
-            foreach ($priceListsByWebsite->all() as $priceListWithPriority) {
+            foreach ($priceListsByWebsite->get('price_list_collection')->all() as $priceListWithPriority) {
                 $priceListWithPriorityData = $priceListWithPriority->getData();
                 $this->updatePriceListToTargetEntity(
                     $em,
@@ -209,7 +208,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
     {
         $submittedPriceLists = [];
 
-        foreach ($priceListsByWebsite->getData() as $item) {
+        foreach ($priceListsByWebsite->get('price_list_collection')->getData() as $item) {
             $submittedPriceLists[] = $item['priceList'];
         }
 
@@ -241,7 +240,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
                 $actualPriceLists[] = $priceLists;
             }
 
-            $formData[$website->getId()] = $actualPriceLists;
+            $formData[$website->getId()]['price_list_collection'] = $actualPriceLists;
         }
 
         return $formData;
