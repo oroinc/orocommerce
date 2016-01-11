@@ -30,7 +30,7 @@ class MenuItemControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains($menuItem->getDefaultTitle(), $crawler->html());
+        $this->assertContains($menuItem->getDefaultTitle()->getString(), $crawler->html());
         $this->assertContains(
             'Please select a menu item on the left or create new one.',
             $crawler->filter('.content .text-center')->html()
@@ -56,7 +56,6 @@ class MenuItemControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
         $this->assertContains('Menu has been saved', $html);
-        $this->assertContains($title, $html);
     }
 
     public function testCreateChild()
