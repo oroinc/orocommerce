@@ -4,21 +4,18 @@ namespace OroB2B\Bundle\TaxBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareInterface;
-use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareTrait;
-use Oro\Bundle\EntityBundle\EntityProperty\UpdatedAtAwareInterface;
-use Oro\Bundle\EntityBundle\EntityProperty\UpdatedAtAwareTrait;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
+
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="orob2b_tax_apply")
- * @ORM\HasLifecycleCallbacks
  */
-class TaxApply implements CreatedAtAwareInterface, UpdatedAtAwareInterface
+class TaxApply implements DatesAwareInterface
 {
-    use CreatedAtAwareTrait;
-    use UpdatedAtAwareTrait;
+    use DatesAwareTrait;
 
     /**
      * @ORM\Id
@@ -39,13 +36,6 @@ class TaxApply implements CreatedAtAwareInterface, UpdatedAtAwareInterface
      * @var float
      *
      * @ORM\Column(type="percent")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $rate;
 
@@ -53,13 +43,6 @@ class TaxApply implements CreatedAtAwareInterface, UpdatedAtAwareInterface
      * @var float
      *
      * @ORM\Column(name="tax_amount", type="float")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $taxAmount;
 
@@ -67,15 +50,16 @@ class TaxApply implements CreatedAtAwareInterface, UpdatedAtAwareInterface
      * @var int
      *
      * @ORM\Column(name="taxable_amount", type="float")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $taxableAmount;
+
+    /**
+     * @var TaxValue
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\TaxBundle\Entity\TaxValue", inversedBy="appliedTaxes")
+     * @ORM\JoinColumn(name="tax_value_id", referencedColumnName="id", onDelete="CASCADE")
+     */
+    protected $taxValue;
 
     /**
      * Get id
@@ -184,23 +168,21 @@ class TaxApply implements CreatedAtAwareInterface, UpdatedAtAwareInterface
     }
 
     /**
-     * Pre persist event handler
-     *
-     * @ORM\PrePersist
+     * @param TaxValue $taxValue
+     * @return TaxApply
      */
-    public function prePersist()
+    public function setTaxValue(TaxValue $taxValue)
     {
-        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->taxValue = $taxValue;
+
+        return $this;
     }
 
     /**
-     * Pre update event handler
-     *
-     * @ORM\PreUpdate
+     * @return TaxValue
      */
-    public function preUpdate()
+    public function getTaxValue()
     {
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        return $this->taxValue;
     }
 }
