@@ -18,7 +18,7 @@ use OroB2B\Bundle\TaxBundle\Model\Result;
  * @ORM\Table(
  *     name="orob2b_tax_value",
  *     indexes={
- *         @ORM\Index(name="orob2b_tax_value_class_id_ids", columns={"entity_class", "entity_id"})
+ *         @ORM\Index(name="orob2b_tax_value_class_id_idx", columns={"entity_class", "entity_id"})
  *     }
  * )
  */

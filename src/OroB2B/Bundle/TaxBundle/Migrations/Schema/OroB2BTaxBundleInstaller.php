@@ -215,7 +215,7 @@ class OroB2BTaxBundleInstaller implements Installation
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['entity_class', 'entity_id'], 'orob2b_tax_value_class_id_ids');
+        $table->addIndex(['entity_class', 'entity_id'], 'orob2b_tax_value_class_id_idx');
     }
 
     /**

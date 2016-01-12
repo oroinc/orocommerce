@@ -27,10 +27,10 @@ class TaxValueToResultTransformerTest extends \PHPUnit_Framework_TestCase
     const UNIT_PRICE_TAX_AMOUNT = 650;
     const UNIT_PRICE_TAX_ADJUSTMENT = 20;
 
-    const ROW_PRICE_INCLUDING_TAX = 40;
-    const ROW_PRICE_EXCLUDING_TAX = 42;
-    const ROW_PRICE_TAX_AMOUNT = 650;
-    const ROW_PRICE_TAX_ADJUSTMENT = 20;
+    const ROW_PRICE_INCLUDING_TAX = 50;
+    const ROW_PRICE_EXCLUDING_TAX = 52;
+    const ROW_PRICE_TAX_AMOUNT = 750;
+    const ROW_PRICE_TAX_ADJUSTMENT = 30;
     /**
      * @var TaxValueToResultTransformer
      */
@@ -137,12 +137,6 @@ class TaxValueToResultTransformerTest extends \PHPUnit_Framework_TestCase
                     static::UNIT_PRICE_EXCLUDING_TAX,
                     static::UNIT_PRICE_TAX_AMOUNT,
                     static::UNIT_PRICE_TAX_ADJUSTMENT
-                ),
-                Result::UNIT => $this->createResultElement(
-                    static::ROW_PRICE_INCLUDING_TAX,
-                    static::ROW_PRICE_EXCLUDING_TAX,
-                    static::ROW_PRICE_TAX_AMOUNT,
-                    static::ROW_PRICE_TAX_ADJUSTMENT
                 ),
                 Result::TAXES => new ArrayCollection([new TaxApply()]),
             ]
