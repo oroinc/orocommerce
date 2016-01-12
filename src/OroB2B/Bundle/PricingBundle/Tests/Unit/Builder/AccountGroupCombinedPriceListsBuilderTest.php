@@ -166,7 +166,7 @@ class AccountGroupCombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestC
         $accountGroupCPLBuilder = $this->getMockBuilder($accountCPLBuilderClass)
             ->disableOriginalConstructor()
             ->getMock();
-        $accountGroupCPLBuilder->expects($this->any())->method('buildForAll');
+        $accountGroupCPLBuilder->expects($this->once())->method('buildByAccountGroup');
 
         return $accountGroupCPLBuilder;
     }

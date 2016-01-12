@@ -146,7 +146,7 @@ class WebsiteCombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
         $accountGroupCPLBuilder = $this->getMockBuilder($accountGroupCPLBuilderClass)
             ->disableOriginalConstructor()
             ->getMock();
-        $accountGroupCPLBuilder->expects($this->any())->method('buildForAll');
+        $accountGroupCPLBuilder->expects($this->once())->method('buildByWebsite');
 
         return $accountGroupCPLBuilder;
     }
