@@ -25,6 +25,8 @@ parameters:
     orob2b_tax.order_tax.mapper.order_mapper.class: OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderMapper
     orob2b_tax.order_tax.mapper.order_line_item_mapper.class: OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper
 
+    orob2b_tax.matcher.country_matcher.class: OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher
+
 services:
     orob2b_tax.manager.product_tax_code.api:
         class: %orob2b_tax.manager.api.attribute.class%
@@ -201,3 +203,13 @@ services:
         class: %orob2b_tax.order_tax.mapper.order_line_item_mapper.class%
         tags:
             - { name: orob2b_tax.tax_mapper }
+
+    orob2b_tax.abstract.matcher:
+        abstract: true
+        arguments:
+            - @oro_entity.doctrine_helper
+            - %orob2b_tax.entity.tax_rule.class%
+
+    orob2b_tax.matcher.country_matcher:
+        class: %orob2b_tax.matcher.country_matcher.class%
+        parent: orob2b_tax.abstract.matcher
