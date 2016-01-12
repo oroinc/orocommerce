@@ -138,8 +138,8 @@ class AccountCombinedPriceListsBuilder
      */
     public function setCombinedPriceListToAccountClassName($priceListToAccountClassName)
     {
-        $this->priceListToAccountClassName = $priceListToAccountClassName;
-        $this->priceListToAccountRepository = null;
+        $this->combinedPriceListToAccountClassName = $priceListToAccountClassName;
+        $this->combinedPriceListToAccountRepository = null;
     }
 
     /**

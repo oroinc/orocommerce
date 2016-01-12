@@ -9,7 +9,6 @@ use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
 use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use OroB2B\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -34,11 +33,6 @@ class AccountGroupCombinedPriceListsBuilder
     /**
      * @var string
      */
-    protected $priceListToAccountClassName;
-
-    /**
-     * @var string
-     */
     protected $combinedPriceListToAccountGroupClassName;
 
 
@@ -51,11 +45,6 @@ class AccountGroupCombinedPriceListsBuilder
      * @var PriceListToAccountGroupRepository
      */
     protected $priceListToAccountGroupRepository;
-
-    /**
-     * @var PriceListToAccountRepository
-     */
-    protected $priceListToAccountRepository;
 
     /**
      * @var Registry
@@ -108,20 +97,6 @@ class AccountGroupCombinedPriceListsBuilder
     }
 
     /**
-     * @return PriceListToAccountRepository
-     */
-    public function getPriceListToAccountRepository()
-    {
-        if (!$this->priceListToAccountRepository) {
-            $class = $this->priceListToAccountClassName;
-            $this->priceListToAccountRepository = $this->registry->getManagerForClass($class)
-                ->getRepository($class);
-        }
-
-        return $this->priceListToAccountRepository;
-    }
-
-    /**
      * @param CombinedPriceListProvider $combinedPriceListProvider
      */
     public function setCombinedPriceListProvider($combinedPriceListProvider)
@@ -142,8 +117,8 @@ class AccountGroupCombinedPriceListsBuilder
      */
     public function setCombinedPriceListToAccountGroupClassName($priceListToAccountGroupClassName)
     {
-        $this->priceListToAccountGroupClassName = $priceListToAccountGroupClassName;
-        $this->priceListToAccountGroupRepository = null;
+        $this->combinedPriceListToAccountGroupClassName = $priceListToAccountGroupClassName;
+        $this->combinedPriceListToAccountGroupRepository = null;
     }
 
     /**
@@ -153,15 +128,6 @@ class AccountGroupCombinedPriceListsBuilder
     {
         $this->priceListToAccountGroupClassName = $priceListToAccountGroupClassName;
         $this->priceListToAccountGroupRepository = null;
-    }
-
-    /**
-     * @param string $priceListToAccountClassName
-     */
-    public function setPriceListToAccountClassName($priceListToAccountClassName)
-    {
-        $this->priceListToAccountClassName = $priceListToAccountClassName;
-        $this->priceListToAccountRepository = null;
     }
 
     /**
