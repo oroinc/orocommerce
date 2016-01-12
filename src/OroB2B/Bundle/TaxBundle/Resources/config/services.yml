@@ -26,6 +26,7 @@ parameters:
     orob2b_tax.order_tax.mapper.order_line_item_mapper.class: OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper
 
     orob2b_tax.matcher.country_matcher.class: OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher
+    orob2b_tax.matcher.zip_code_matcher.class: OroB2B\Bundle\TaxBundle\Matcher\ZipCodeMatcher
 
 services:
     orob2b_tax.manager.product_tax_code.api:
@@ -210,3 +211,9 @@ services:
             - @oro_entity.doctrine_helper
         calls:
             - [setTaxRuleClass, [%orob2b_tax.entity.tax_rule.class%]]
+
+    orob2b_tax.matcher.zip_code_matcher:
+        class: %orob2b_tax.matcher.zip_code_matcher.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+            - %orob2b_tax.entity.tax_rule.class%
