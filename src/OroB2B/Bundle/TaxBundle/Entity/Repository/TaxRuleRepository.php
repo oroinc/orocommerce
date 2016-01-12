@@ -19,7 +19,17 @@ class TaxRuleRepository extends EntityRepository
      */
     public function findByCountry(Country $country)
     {
-        return $this->findBy(['taxJurisdiction.country' => $country]);
+        $qb = $this->createQueryBuilder('taxRule');
+        $qb
+            ->join('taxRule.taxJurisdiction', 'taxJurisdiction')
+            ->leftJoin('taxJurisdiction.zipCodes', 'zipCodes')
+            ->where($qb->expr()->eq('taxJurisdiction.country', ':country'))
+            ->andWhere($qb->expr()->isNull('taxJurisdiction.region'))
+            ->andWhere($qb->expr()->isNull('taxJurisdiction.regionText'))
+            ->andWhere($qb->expr()->isNull('zipCodes.id'))
+            ->setParameter('country', $country);
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
