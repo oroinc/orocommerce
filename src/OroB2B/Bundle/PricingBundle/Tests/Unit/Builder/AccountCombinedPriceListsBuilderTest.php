@@ -80,8 +80,8 @@ class AccountCombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
         $accountId,
         $priceListCollection,
         $currentCPLId,
-        $actualCPLId)
-    {
+        $actualCPLId
+    ) {
         $priceListCollectionProvider = $this->getPriceListCollectionProviderMock($priceListCollection);
         $CPLProvider = $this->getCombinedPriceListProviderMock($priceListCollection, $actualCPLId);
         $garbageCollector = $this->getGarbageCollectorMock(false);
