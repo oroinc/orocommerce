@@ -3,32 +3,11 @@
 namespace OroB2B\Bundle\TaxBundle\Matcher;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository;
 
-class ZipCodeMatcher implements MatcherInterface
+class ZipCodeMatcher extends AbstractMatcher
 {
-    /**
-     * @var DoctrineHelper
-     */
-    protected $doctrineHelper;
-
-    /**
-     * @var string
-     */
-    protected $taxRuleClass;
-
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param string $taxRuleClass
-     */
-    public function __construct(DoctrineHelper $doctrineHelper, $taxRuleClass)
-    {
-        $this->doctrineHelper = $doctrineHelper;
-        $this->taxRuleClass = (string)$taxRuleClass;
-    }
-
     /**
      * {@inheritdoc}
      */
