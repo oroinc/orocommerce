@@ -89,9 +89,22 @@ orob2b.tax:
             tax_calculation.title: 'Tax Calculation'
             tax_provider.title: 'Tax Provider'
             tax_enable.title: 'Enable Taxation'
+            tax_calculator.title: 'Calculator'
+            tax_matcher.title: 'Matcher'
         fields:
             tax_provider.label: 'Provider'
             tax_enable.label: 'Enabled'
+            start_calculation_with:
+                label: 'Start Calculation With'
+                unit_price.label: 'Unit Price'
+                row_total.label: 'Row Total'
+            product_prices_include_tax.label: 'Product Prices Include Tax'
+            shipping_origin_as_base.label: 'Use Shipping Origin as Base in'
+            destination_as_base.label: 'Use Destination as Base in'
+            destination:
+                label: 'Destination'
+                billing_address.label: 'Billing Address'
+                shipping_addressl.label: 'Shipping Address'
 
     providers:
         built_in.label: Built-In Table Rates
