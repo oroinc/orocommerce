@@ -66,8 +66,8 @@ class AccountCombinedPriceListsBuilder
     }
 
     /**
-     * @param Website $website
      * @param Account $account
+     * @param Website $website
      */
     public function build(Account $account, Website $website)
     {
@@ -78,9 +78,8 @@ class AccountCombinedPriceListsBuilder
     /**
      * @param AccountGroup $accountGroup
      * @param Website $website
-     * @param bool $needToCleanGarbage
      */
-    public function buildByAccountGroup(AccountGroup $accountGroup, Website $website, $needToCleanGarbage = false)
+    public function buildByAccountGroup(AccountGroup $accountGroup, Website $website)
     {
         $groupsIterator = $this->getPriceListToAccountRepository()
             ->getPriceListToAccountByWebsiteIterator($accountGroup, $website);
@@ -89,9 +88,6 @@ class AccountCombinedPriceListsBuilder
          */
         foreach ($groupsIterator as $accountToPriceList) {
             $this->updatePriceListsOnCurrentLevel($accountToPriceList->getAccount(), $website);
-        }
-        if ($needToCleanGarbage) {
-            $this->combinedPriceListGarbageCollector->cleanCombinedPriceLists();
         }
     }
 
