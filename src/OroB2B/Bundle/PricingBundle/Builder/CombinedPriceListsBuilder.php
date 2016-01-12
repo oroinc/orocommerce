@@ -58,7 +58,6 @@ class CombinedPriceListsBuilder
     protected function updatePriceListsOnChildrenLevels()
     {
         $this->websiteCombinedPriceListBuilder->buildForAll();
-        $this->combinedPriceListGarbageCollector->cleanCombinedPriceLists();
     }
 
     /**
