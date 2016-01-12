@@ -22,13 +22,11 @@ class TaxRuleRepository extends EntityRepository
         $qb
             ->join('taxRule.taxJurisdiction', 'taxJurisdiction')
             ->leftJoin('taxJurisdiction.zipCodes', 'zipCodes')
-            ->where('taxJurisdiction.country = :country')
-            ->andWhere('taxJurisdiction.region is null')
-            ->andWhere('taxJurisdiction.regionText is null')
-            ->andWhere('zipCodes.id is null')
-            ->setParameters([
-                'country' => $country
-            ]);
+            ->where($qb->expr()->eq('taxJurisdiction.country', ':country'))
+            ->andWhere($qb->expr()->isNull('taxJurisdiction.region'))
+            ->andWhere($qb->expr()->isNull('taxJurisdiction.regionText'))
+            ->andWhere($qb->expr()->isNull('zipCodes.id'))
+            ->setParameter('country', $country);
 
         return $qb->getQuery()->getResult();
     }
