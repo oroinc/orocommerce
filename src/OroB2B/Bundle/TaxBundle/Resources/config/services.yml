@@ -204,9 +204,12 @@ services:
         tags:
             - { name: orob2b_tax.tax_mapper }
 
-    orob2b_tax.matcher.country_matcher:
-        class: %orob2b_tax.matcher.country_matcher.class%
+    orob2b_tax.abstract.matcher:
+        abstract: true
         arguments:
             - @oro_entity.doctrine_helper
-        calls:
-            - [setTaxRuleClass, [%orob2b_tax.entity.tax_rule.class%]]
+            - %orob2b_tax.entity.tax_rule.class%
+
+    orob2b_tax.matcher.country_matcher:
+        class: %orob2b_tax.matcher.country_matcher.class%
+        parent: orob2b_tax.abstract.matcher
