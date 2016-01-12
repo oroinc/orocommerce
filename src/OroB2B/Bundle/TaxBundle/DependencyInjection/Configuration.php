@@ -25,6 +25,11 @@ class Configuration implements ConfigurationInterface
             [
                 'tax_enable' => ['value' => true],
                 'tax_provider' => ['value' => BuiltInTaxProvider::NAME],
+                'start_calculation_with' => ['value' => 'unit_price'],
+                'product_prices_include_tax' => ['value' => false],
+                'shipping_origin_as_base' => ['value' => []],
+                'destination_as_base' => ['value' => []],
+                'destination' => ['value' => 'billing_address'],
             ]
         );
 

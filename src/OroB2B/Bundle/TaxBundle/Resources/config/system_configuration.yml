@@ -9,6 +9,10 @@ oro_system_configuration:
             title: orob2b.tax.system_configuration.groups.tax_enable.title
         tax_provider:
             title: orob2b.tax.system_configuration.groups.tax_provider.title
+        tax_calculator:
+            title: orob2b.tax.system_configuration.groups.tax_calculator.title
+        tax_matcher:
+            title: orob2b.tax.system_configuration.groups.tax_matcher.title
 
     fields:
         orob2b_tax.tax_enable:
@@ -23,6 +27,60 @@ oro_system_configuration:
             options:
                 label: orob2b.tax.system_configuration.fields.tax_provider.label
 
+        orob2b_tax.start_calculation_with:
+            data_type: string
+            type: choice
+            options:
+                label: orob2b.tax.system_configuration.fields.start_calculation_with.label
+                required: true
+                constraints:
+                    - NotBlank: ~
+                choice_translation_domain: messages
+                choices:
+                    unit_price: orob2b.tax.system_configuration.fields.start_calculation_with.unit_price.label
+                    row_total: orob2b.tax.system_configuration.fields.start_calculation_with.row_total.label
+
+        orob2b_tax.product_prices_include_tax:
+            data_type: boolean
+            type: oro_config_checkbox
+            options:
+                label: orob2b.tax.system_configuration.fields.product_prices_include_tax.label
+
+        orob2b_tax.shipping_origin_as_base:
+            data_type: string
+            type: oro_locale_country
+            options:
+                label: orob2b.tax.system_configuration.fields.shipping_origin_as_base.label
+                required: true
+                constraints:
+                    - NotBlank: ~
+                multiple: true
+                expanded: true
+
+        orob2b_tax.destination_as_base:
+            data_type: string
+            type: oro_locale_country
+            options:
+                label: orob2b.tax.system_configuration.fields.destination_as_base.label
+                required: true
+                constraints:
+                    - NotBlank: ~
+                multiple: true
+                expanded: true
+
+        orob2b_tax.destination:
+            data_type: string
+            type: choice
+            options:
+                label: orob2b.tax.system_configuration.fields.destination.label
+                required: true
+                constraints:
+                    - NotBlank: ~
+                choice_translation_domain: messages
+                choices:
+                    billing_address: orob2b.tax.system_configuration.fields.destination.billing_address.label
+                    shipping_address: orob2b.tax.system_configuration.fields.destination.shipping_addressl.label
+
     tree:
         system_configuration:
             commerce:
@@ -33,8 +91,21 @@ oro_system_configuration:
                             tax_calculation:
                                 children:
                                     tax_enable:
+                                        priority: 100
                                         children:
                                             - orob2b_tax.tax_enable
                                     tax_provider:
+                                        priority: 90
                                         children:
                                             - orob2b_tax.tax_provider
+                                    tax_calculator:
+                                        priority: 80
+                                        children:
+                                            - orob2b_tax.start_calculation_with
+                                            - orob2b_tax.product_prices_include_tax
+                                    tax_matcher:
+                                        priority: 70
+                                        children:
+                                            - orob2b_tax.shipping_origin_as_base
+                                            - orob2b_tax.destination_as_base
+                                            - orob2b_tax.destination
