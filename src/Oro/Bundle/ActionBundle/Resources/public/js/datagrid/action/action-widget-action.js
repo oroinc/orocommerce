@@ -10,7 +10,7 @@ define(function(require) {
     var ActionWidgetAction = ModelAction.extend({
 
         /**
-         * @type {Object}
+         * @property {Object}
          */
         options: {
             datagrid: null,
@@ -30,7 +30,7 @@ define(function(require) {
         },
 
         /**
-         * @type {ActionManager}
+         * @property {ActionManager}
          */
         actionManager: null,
 
