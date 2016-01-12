@@ -13,7 +13,7 @@ use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use OroB2B\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class AccountCombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
+class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBuilderTest
 {
     /**
      * @var string
