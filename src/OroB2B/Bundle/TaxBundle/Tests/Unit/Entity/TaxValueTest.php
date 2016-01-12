@@ -15,13 +15,15 @@ class TaxValueTest extends \PHPUnit_Framework_TestCase
     {
         $properties = [
             ['id', 1],
-            ['totalIncludingTax', 20],
-            ['totalExcludingTax', 20],
-            ['shippingIncludingTax', 30],
-            ['shippingExcludingTax', 30],
+            ['totalIncludingTax', 20.1],
+            ['totalExcludingTax', 20.2],
+            ['shippingIncludingTax', 30.3],
+            ['shippingExcludingTax', 30.4],
             ['entityClass', 'OroB2B\Bundle\SomeBundle\Entity\EntityClass'],
             ['entityId', 5],
             ['address', 'Kiev, SomeStreet str., 55'],
+            ['totalTaxAmount', 40.5],
+            ['shippingTaxAmount', 50.4],
             ['createdAt', new \DateTime()],
             ['updatedAt', new \DateTime()],
         ];
