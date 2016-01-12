@@ -36,6 +36,8 @@ layout:
                             product: {@value: $data.product}
                 product_variants:
                     blockType: block
+                    options:
+                        visible: { @value: $data.product.hasVariants }
                 order_with_matrix:
                     blockType: block
                 product_description_content:

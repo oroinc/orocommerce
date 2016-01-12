@@ -1,12 +1,3 @@
-{% block _orob2b_shopping_list_frontend_line_item_quantity_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " product__qty-input"
-    }) %}
-    {{ block_widget(block, {
-        attr: attr
-    }) }}
-{% endblock %}
-
 {% block _add_to_shopping_list_form_button_widget %}
     {% import 'OroB2BShoppingListBundle:ShoppingList/Frontend:buttons.html.twig' as buttons %}
     {% set commonOptions = {
@@ -19,6 +10,7 @@
     <div class="pull-left"
          data-page-component-module="orob2bshoppinglist/js/app/components/add-product-from-view-component">
         {{ buttons.createAddToShoppingListButton({
+            layout: true,
             new: commonOptions,
             current: commonOptions,
             existing: commonOptions,
