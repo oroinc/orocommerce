@@ -48,8 +48,7 @@ class CountryMatcherTest extends \PHPUnit_Framework_TestCase
             ->with(self::TAX_RULE_CLASS)
             ->willReturn($this->taxRuleRepository);
 
-        $this->matcher = new RegionMatcher($this->doctrineHelper);
-        $this->matcher->setTaxRuleClass(self::TAX_RULE_CLASS);
+        $this->matcher = new RegionMatcher($this->doctrineHelper, self::TAX_RULE_CLASS);
     }
 
     protected function tearDown()
