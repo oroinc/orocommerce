@@ -47,9 +47,14 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
     abstract protected function getFallbackChoices();
 
     /**
-     * @return mixed
+     * @return string
      */
     abstract protected function getFallbackClassName();
+
+    /**
+     * @return string
+     */
+    abstract protected function getDefaultFallback();
 
     /**
      * @param ManagerRegistry $registry
@@ -81,6 +86,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
                     'fallback_class_name' => $this->getFallbackClassName(),
                     'target_field_name' => $this->getTargetFieldName(),
                     'fallback_choices' => $this->getFallbackChoices(),
+                    'default_fallback' => $this->getDefaultFallback(),
                 ],
                 'label' => false,
                 'required' => false,

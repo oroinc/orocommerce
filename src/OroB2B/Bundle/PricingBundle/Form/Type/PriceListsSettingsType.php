@@ -56,14 +56,12 @@ class PriceListsSettingsType extends AbstractType
                 'mapped' => true,
                 'choices' => $options['fallback_choices'],
             ]
-        );
-
-        $builder->add(
-            self::PRICE_LIST_COLLECTION_FIELD,
-            PriceListCollectionType::NAME,
-            ['label' => 'orob2b.pricing.pricelist.entity_plural_label', 'mapped' => true]
-        );
-
+        )
+            ->add(
+                self::PRICE_LIST_COLLECTION_FIELD,
+                PriceListCollectionType::NAME,
+                ['label' => 'orob2b.pricing.pricelist.entity_plural_label', 'mapped' => true]
+            );
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit']);
     }
@@ -79,7 +77,15 @@ class PriceListsSettingsType extends AbstractType
                 'label' => false,
             ]
         );
-        $resolver->setRequired(['fallback_class_name', 'target_field_name', 'fallback_choices', 'website']);
+        $resolver->setRequired(
+            [
+                'fallback_class_name',
+                'target_field_name',
+                'fallback_choices',
+                'website',
+                'default_fallback',
+            ]
+        );
     }
 
     /**
@@ -88,7 +94,7 @@ class PriceListsSettingsType extends AbstractType
     public function onPostSetData(FormEvent $event)
     {
         $form = $event->getForm();
-        /** @var object|null $account */
+        /** @var object|null $targetEntity */
         $targetEntity = $form->getParent()->getParent()->getData();
         if (!$targetEntity || !$targetEntity->getId()) {
             return;
@@ -101,10 +107,11 @@ class PriceListsSettingsType extends AbstractType
             $config->getOption('website')
         );
         $fallbackField = $form->get(self::FALLBACK_FIELD);
-        if (!$fallback || $fallback->getFallback() === PriceListAccountFallback::ACCOUNT_GROUP) {
-            $fallbackField->setData(PriceListAccountFallback::ACCOUNT_GROUP);
+        $defaultFallback = $config->getOption('default_fallback');
+        if (!$fallback || $fallback->getFallback() === $defaultFallback) {
+            $fallbackField->setData($defaultFallback);
         } else {
-            $fallbackField->setData(PriceListAccountFallback::CURRENT_ACCOUNT_ONLY);
+            $fallbackField->setData($fallback->getFallback());
         }
     }
 

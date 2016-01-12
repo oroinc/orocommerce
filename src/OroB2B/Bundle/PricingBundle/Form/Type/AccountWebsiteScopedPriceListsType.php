@@ -67,4 +67,12 @@ class AccountWebsiteScopedPriceListsType extends AbstractWebsiteScopedPriceLists
     {
         return 'OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback';
     }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getDefaultFallback()
+    {
+        return PriceListAccountFallback::ACCOUNT_GROUP;
+    }
 }
