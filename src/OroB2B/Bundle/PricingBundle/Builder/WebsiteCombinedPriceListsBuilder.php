@@ -32,11 +32,6 @@ class WebsiteCombinedPriceListsBuilder
     /**
      * @var string
      */
-    protected $priceListToAccountGroupClassName;
-
-    /**
-     * @var string
-     */
     protected $combinedPriceListToWebsiteClassName;
 
 
@@ -136,12 +131,12 @@ class WebsiteCombinedPriceListsBuilder
     }
 
     /**
-     * @param mixed $priceListToWebsiteClassName
+     * @param mixed $combinedPriceListToWebsiteClassName
      */
-    public function setCombinedPriceListToWebsiteClassName($priceListToWebsiteClassName)
+    public function setCombinedPriceListToWebsiteClassName($combinedPriceListToWebsiteClassName)
     {
-        $this->priceListToWebsiteClassName = $priceListToWebsiteClassName;
-        $this->priceListToWebsiteRepository = null;
+        $this->combinedPriceListToWebsiteClassName = $combinedPriceListToWebsiteClassName;
+        $this->combinedPriceListToWebsiteRepository = null;
     }
 
     /**

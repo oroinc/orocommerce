@@ -14,22 +14,6 @@ use OroB2B\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
 class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var string
-     */
-    protected $CPLClass;
-
-    /**
-     * @var string
-     */
-    protected $websiteCPLBuilderClass;
-
-    protected function setUp()
-    {
-        $this->CPLClass = 'OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList';
-        $this->websiteCPLBuilderClass = 'OroB2B\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder';
-    }
-
-    /**
      * @dataProvider testBuildDataProvider
      * @param $configCPLId
      * @param $priceListCollection
@@ -126,7 +110,8 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
      */
     protected function getWebsiteCPLBuilder()
     {
-        $websiteCPLBuilder = $this->getMockBuilder($this->websiteCPLBuilderClass)
+        $websiteCPLBuilderClass = 'OroB2B\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder';
+        $websiteCPLBuilder = $this->getMockBuilder($websiteCPLBuilderClass)
             ->disableOriginalConstructor()
             ->getMock();
         $websiteCPLBuilder->expects($this->once())->method('buildForAll');
