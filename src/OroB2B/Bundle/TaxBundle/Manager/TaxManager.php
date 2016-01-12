@@ -2,29 +2,47 @@
 
 namespace OroB2B\Bundle\TaxBundle\Manager;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
+use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
+use OroB2B\Bundle\TaxBundle\Factory\TaxFactory;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Transformer\TaxTransformerInterface;
 
 class TaxManager
 {
-    /** @var DoctrineHelper */
-    protected $doctrineHelper;
-
     /** @var TaxTransformerInterface[] */
     private $transformers = [];
+
+    /** @var TaxFactory */
+    protected $taxFactory;
+
+    /** @var EventDispatcherInterface */
+    protected $eventDispatcher;
+
+    /** @var DoctrineHelper */
+    protected $doctrineHelper;
 
     /** @var string */
     protected $taxValueClass;
 
     /**
+     * @param TaxFactory $taxFactory
+     * @param EventDispatcherInterface $eventDispatcher
      * @param DoctrineHelper $doctrineHelper
      * @param string $taxValueClass
      */
-    public function __construct(DoctrineHelper $doctrineHelper, $taxValueClass)
-    {
+    public function __construct(
+        TaxFactory $taxFactory,
+        EventDispatcherInterface $eventDispatcher,
+        DoctrineHelper $doctrineHelper,
+        $taxValueClass
+    ) {
+        $this->taxFactory = $taxFactory;
+        $this->eventDispatcher = $eventDispatcher;
         $this->doctrineHelper = $doctrineHelper;
         $this->taxValueClass = (string)$taxValueClass;
     }
@@ -76,5 +94,24 @@ class TaxManager
         }
 
         return $transformer->transform($taxValue);
+    }
+
+    /**
+     * @param object $object
+     * @return Result
+     */
+    public function getTax($object)
+    {
+        try {
+            $taxResult = $this->loadTax($object);
+        } catch (\InvalidArgumentException $e) {
+            $taxResult = new Result();
+        }
+
+        $taxable = $this->taxFactory->create($object);
+
+        $this->eventDispatcher->dispatch(ResolveTaxEvent::NAME, new ResolveTaxEvent($taxable, $taxResult));
+
+        return $taxResult;
     }
 }

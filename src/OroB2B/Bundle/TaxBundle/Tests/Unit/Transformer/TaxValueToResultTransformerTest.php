@@ -98,7 +98,12 @@ class TaxValueToResultTransformerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(static::UNIT_PRICE_TAX_AMOUNT, $unit->getTaxAmount());
         $this->assertEquals(static::UNIT_PRICE_TAX_ADJUSTMENT, $unit->getAdjustment());
 
-        $this->assertNull($result->getRow());
+        $row = $result->getRow();
+        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\ResultElement', $row);
+        $this->assertEmpty($row->getIncludingTax());
+        $this->assertEmpty($row->getExcludingTax());
+        $this->assertEmpty($row->getTaxAmount());
+        $this->assertEmpty($row->getAdjustment());
     }
 
     /**

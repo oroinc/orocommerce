@@ -71,4 +71,25 @@ class ResultTest extends \PHPUnit_Framework_TestCase
     {
         return new ArrayCollection(['test tax']);
     }
+
+    public function testConstruct()
+    {
+        $this->assertEquals(
+            $this->createResultModel(),
+            new Result(
+                [
+                    Result::TOTAL => new ResultElement(
+                        [
+                            ResultElement::INCLUDING_TAX => 1,
+                            ResultElement::EXCLUDING_TAX => 2,
+                            ResultElement::TAX_AMOUNT => 3,
+                            ResultElement::ADJUSTMENT => 4,
+                        ]
+                    ),
+                    Result::SHIPPING => $this->createShipping(),
+                    Result::TAXES => $this->createTaxes(),
+                ]
+            )
+        );
+    }
 }

@@ -18,7 +18,7 @@ final class Result extends \ArrayObject
      */
     public function getTotal()
     {
-        return $this->getOffset(self::TOTAL);
+        return $this->getOffset(self::TOTAL, new ResultElement());
     }
 
     /**
@@ -26,7 +26,7 @@ final class Result extends \ArrayObject
      */
     public function getShipping()
     {
-        return $this->getOffset(self::SHIPPING);
+        return $this->getOffset(self::SHIPPING, new ResultElement());
     }
 
     /**
@@ -34,7 +34,7 @@ final class Result extends \ArrayObject
      */
     public function getUnit()
     {
-        return $this->getOffset(self::UNIT);
+        return $this->getOffset(self::UNIT, new ResultElement());
     }
 
     /**
@@ -42,7 +42,7 @@ final class Result extends \ArrayObject
      */
     public function getRow()
     {
-        return $this->getOffset(self::ROW);
+        return $this->getOffset(self::ROW, new ResultElement());
     }
 
     /**
@@ -62,6 +62,10 @@ final class Result extends \ArrayObject
     {
         if ($this->offsetExists((string)$offset)) {
             return $this->offsetGet((string)$offset);
+        }
+
+        if (null !== $default) {
+            $this->offsetSet($offset, $default);
         }
 
         return $default;
