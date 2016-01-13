@@ -6,6 +6,7 @@ use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\TaxBundle\Entity\TaxApply;
 use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
+use OroB2B\Bundle\TaxBundle\Model\Result;
 
 class TaxValueTest extends \PHPUnit_Framework_TestCase
 {
@@ -14,18 +15,10 @@ class TaxValueTest extends \PHPUnit_Framework_TestCase
     public function testProperties()
     {
         $properties = [
-            ['id', 1],
-            ['totalIncludingTax', 20.1],
-            ['totalExcludingTax', 20.2],
-            ['shippingIncludingTax', 30.3],
-            ['shippingExcludingTax', 30.4],
+            ['result', new Result(['test' => 'value']), false],
             ['entityClass', 'OroB2B\Bundle\SomeBundle\Entity\EntityClass'],
             ['entityId', 5],
             ['address', 'Kiev, SomeStreet str., 55'],
-            ['totalTaxAmount', 40.5],
-            ['shippingTaxAmount', 50.4],
-            ['createdAt', new \DateTime()],
-            ['updatedAt', new \DateTime()],
         ];
 
         $this->assertPropertyAccessors($this->createTaxValue(), $properties);
@@ -39,21 +32,6 @@ class TaxValueTest extends \PHPUnit_Framework_TestCase
         $this->assertPropertyCollections($this->createTaxValue(), [
             ['appliedTaxes', new TaxApply()],
         ]);
-    }
-
-    public function testPreUpdate()
-    {
-        $taxValue = $this->createTaxValue();
-        $taxValue->preUpdate();
-        $this->assertInstanceOf('\DateTime', $taxValue->getUpdatedAt());
-    }
-
-    public function testPrePersist()
-    {
-        $taxValue = $this->createTaxValue();
-        $taxValue->prePersist();
-        $this->assertInstanceOf('\DateTime', $taxValue->getUpdatedAt());
-        $this->assertInstanceOf('\DateTime', $taxValue->getCreatedAt());
     }
 
     /**
