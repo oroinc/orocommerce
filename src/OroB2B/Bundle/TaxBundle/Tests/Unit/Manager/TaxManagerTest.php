@@ -2,12 +2,12 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Manager;
 
-use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
+use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
 use OroB2B\Bundle\TaxBundle\Factory\TaxFactory;
 use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
