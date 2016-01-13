@@ -6,6 +6,7 @@ parameters:
     orob2b_tax.entity.tax.class: OroB2B\Bundle\TaxBundle\Entity\Tax
     orob2b_tax.entity.tax_rule.class: OroB2B\Bundle\TaxBundle\Entity\TaxRule
     orob2b_tax.entity.zip_code.class: OroB2B\Bundle\TaxBundle\Entity\ZipCode
+    orob2b_tax.entity.tax_value.class: OroB2B\Bundle\TaxBundle\Entity\TaxValue
 
     orob2b_tax.validator.zip_code_fields.class: OroB2B\Bundle\TaxBundle\Validator\Constraints\ZipCodeFieldsValidator
 
@@ -21,10 +22,13 @@ parameters:
     orob2b_tax.provider.built_in_tax_provider.class: OroB2B\Bundle\TaxBundle\Provider\BuiltInTaxProvider
     orob2b_tax.provider.taxation_settings_provider.class: OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider
 
+    orob2b_tax.manager.tax_manager.class: OroB2B\Bundle\TaxBundle\Manager\TaxManager
+    orob2b_tax.transformer.tax_value.class: OroB2B\Bundle\TaxBundle\Transformer\TaxValueToResultTransformer
     orobb2_tax.factory.tax.class: OroB2B\Bundle\TaxBundle\Factory\TaxFactory
-
     orob2b_tax.order_tax.mapper.order_mapper.class: OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderMapper
     orob2b_tax.order_tax.mapper.order_line_item_mapper.class: OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper
+
+    orob2b_tax.matcher.country_matcher.class: OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher
 
 services:
     orob2b_tax.manager.product_tax_code.api:
@@ -188,6 +192,17 @@ services:
         tags:
             - { name: orob2b_tax.tax_provider, priority: 255 }
 
+    orob2b_tax.transformer.tax_value:
+        class: %orob2b_tax.transformer.tax_value.class%
+
+    orob2b_tax.manager.tax_manager:
+        class: %orob2b_tax.manager.tax_manager.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+            - %orob2b_tax.entity.tax_value.class%
+        calls:
+            - [addTransformer, [%orob2b_order.entity.order.class%, @orob2b_tax.transformer.tax_value]]
+
     orobb2_tax.factory.tax:
         class: %orobb2_tax.factory.tax.class%
 
@@ -207,3 +222,13 @@ services:
         class: %orob2b_tax.provider.taxation_settings_provider.class%
         arguments:
             - @oro_config.manager
+
+    orob2b_tax.abstract.matcher:
+        abstract: true
+        arguments:
+            - @oro_entity.doctrine_helper
+            - %orob2b_tax.entity.tax_rule.class%
+
+    orob2b_tax.matcher.country_matcher:
+        class: %orob2b_tax.matcher.country_matcher.class%
+        parent: orob2b_tax.abstract.matcher
