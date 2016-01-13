@@ -29,6 +29,9 @@ class TaxManager
     /** @var string */
     protected $taxValueClass;
 
+    /** @var TaxValue[] */
+    protected $taxValues = [];
+
     /**
      * @param TaxFactory $taxFactory
      * @param EventDispatcherInterface $eventDispatcher
@@ -57,13 +60,12 @@ class TaxManager
     }
 
     /**
-     * @param object $object
+     * @param string $className
      * @return TaxTransformerInterface
      * @throws \InvalidArgumentException if TaxTransformerInterface is missing for $className
      */
-    protected function getTaxTransformer($object)
+    protected function getTaxTransformer($className)
     {
-        $className = $this->doctrineHelper->getEntityClass($object);
         if (!array_key_exists($className, $this->transformers)) {
             throw new \InvalidArgumentException(sprintf('TaxTransformerInterface is missing for %s', $className));
         }
@@ -77,32 +79,49 @@ class TaxManager
      */
     public function loadTax($object)
     {
-        $transformer = $this->getTaxTransformer($object);
+        $entityClass = $this->doctrineHelper->getEntityClass($object);
+        $transformer = $this->getTaxTransformer($entityClass);
 
-        $taxValue = $this->getTaxValue($object);
+        $entityId = $this->getSingleEntityIdentifier($object);
+
+        $taxValue = $this->getTaxValue($entityClass, $entityId);
 
         return $transformer->transform($taxValue);
     }
 
     /**
-     * @param object $object
+     * @param string $entityClass
+     * @param string $entityId
      * @return TaxValue
      */
-    protected function getTaxValue($object)
+    protected function getTaxValue($entityClass, $entityId)
     {
-        $taxValue = $this->doctrineHelper->getEntityRepositoryForClass($this->taxValueClass)
-            ->findOneBy(
-                [
-                    'entityClass' => $this->doctrineHelper->getEntityClass($object),
-                    'entityId' => $this->getSingleEntityIdentifier($object),
-                ]
-            );
+        $key = $this->getTaxValueCacheKey($entityClass, $entityId);
 
-        if (!$taxValue) {
-            return new TaxValue();
+        if (array_key_exists($key, $this->taxValues)) {
+            return $this->taxValues[$key];
         }
 
+        $taxValue = $this->doctrineHelper->getEntityRepositoryForClass($this->taxValueClass)
+            ->findOneBy(['entityClass' => $entityClass, 'entityId' => $entityId]);
+
+        if (!$taxValue) {
+            $taxValue = new TaxValue();
+        }
+
+        $this->taxValues[$key] = $taxValue;
+
         return $taxValue;
+    }
+
+    /**
+     * @param string $entityClass
+     * @param string $entityId
+     * @return string
+     */
+    protected function getTaxValueCacheKey($entityClass, $entityId)
+    {
+        return sprintf('%s#%s', $entityClass, $entityId);
     }
 
     /**
@@ -145,14 +164,17 @@ class TaxManager
      */
     public function saveTax($object)
     {
-        $transformer = $this->getTaxTransformer($object);
+        $entityClass = $this->doctrineHelper->getEntityClass($object);
+        $entityId = $this->getSingleEntityIdentifier($object);
+
+        $transformer = $this->getTaxTransformer($entityClass);
 
         $result = $this->getTax($object);
 
-        $taxValue = $transformer->reverseTransform($this->getTaxValue($object), $result);
+        $taxValue = $transformer->reverseTransform($this->getTaxValue($entityClass, $entityId), $result);
 
-        $taxValue->setEntityClass($this->doctrineHelper->getEntityClass($object));
-        $taxValue->setEntityId($this->getSingleEntityIdentifier($object));
+        $taxValue->setEntityClass($entityClass);
+        $taxValue->setEntityId($entityId);
 
         /** @todo: context from resolver */
         $taxValue->setAddress('address');
