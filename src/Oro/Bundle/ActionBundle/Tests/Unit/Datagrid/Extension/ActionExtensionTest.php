@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ActionBundle\Tests\Unit\Datagrid\Extension;
 
 use Oro\Bundle\ActionBundle\Datagrid\Extension\ActionExtension;
+use Oro\Bundle\ActionBundle\Datagrid\Provider\MassActionProviderRegistry;
 use Oro\Bundle\ActionBundle\Model\Action;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionDefinition;
@@ -14,6 +15,11 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 
 class ActionExtensionTest extends \PHPUnit_Framework_TestCase
 {
+    const PROVIDER_ALIAS = 'test_mass_action_provider';
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|MassActionProviderRegistry */
+    protected $massActionProviderRegistry;
+
     /** @var ActionExtension */
     protected $extension;
 
@@ -30,46 +36,71 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
         $contextHelper = $this->getMockBuilder('Oro\Bundle\ActionBundle\Helper\ContextHelper')
             ->disableOriginalConstructor()
             ->getMock();
+        $contextHelper->expects($this->any())
+            ->method('getActionData')
+            ->willReturn(new ActionData(['data' => ['param']]));
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|ApplicationsHelper $applicationHelper */
         $applicationHelper = $this->getMockBuilder('Oro\Bundle\ActionBundle\Helper\ApplicationsHelper')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $actionData = new ActionData(['data' => ['param']]);
+        $provider = $this->getMock('Oro\Bundle\ActionBundle\Datagrid\Provider\MassActionProviderInterface');
+        $provider->expects($this->any())
+            ->method('getActions')
+            ->willReturn(['test_config' => ['label' => 'test_label']]);
 
-        $contextHelper->expects($this->any())
-            ->method('getActionData')
-            ->willReturn($actionData);
+        $this->massActionProviderRegistry = $this
+            ->getMockBuilder('Oro\Bundle\ActionBundle\Datagrid\Provider\MassActionProviderRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->extension = new ActionExtension($this->manager, $contextHelper, $applicationHelper);
+        $this->massActionProviderRegistry->expects($this->any())
+            ->method('getProvider')
+            ->with(self::PROVIDER_ALIAS)
+            ->willReturn($provider);
+
+        $this->extension = new ActionExtension(
+            $this->manager,
+            $contextHelper,
+            $applicationHelper,
+            $this->massActionProviderRegistry
+        );
     }
 
     protected function tearDown()
     {
-        unset($this->extension, $this->manager);
+        unset($this->extension, $this->manager, $this->massActionProviderRegistry);
     }
 
     /**
-     * @param array $configData
+     * @param DatagridConfiguration $config
      * @param Action[] $actions
      * @param bool $expected
+     * @param array $expectedConfiguration
      *
      * @dataProvider isApplicableProvider
      */
-    public function testIsApplicable(array $configData, array $actions, $expected)
-    {
+    public function testIsApplicable(
+        DatagridConfiguration $config,
+        array $actions,
+        $expected,
+        array $expectedConfiguration = []
+    ) {
         $this->manager->expects($this->once())
             ->method('getActions')
             ->willReturn($actions);
-
-        $config = DatagridConfiguration::create($configData);
 
         $this->assertEquals($expected, $this->extension->isApplicable($config));
 
         if ($expected) {
             $this->assertNotEmpty($config->offsetGetOr('actions'));
             $this->assertNotEmpty($config->offsetGetOr('action_configuration'));
+
+            foreach ($expectedConfiguration as $name => $params) {
+                $this->assertNotEmpty($config->offsetGetOr($name));
+                $this->assertEquals($params, $config->offsetGetOr($name));
+            }
         }
     }
 
@@ -96,18 +127,41 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
      */
     public function isApplicableProvider()
     {
+        $action1 = $this->createAction(
+            'test_action',
+            true,
+            [
+                'getDatagridOptions' => ['mass_action_provider' => self::PROVIDER_ALIAS]
+            ]
+        );
+
+        $action2 = $this->createAction(
+            'test_action',
+            true,
+            [
+                'getDatagridOptions' => ['mass_action' => ['label' => 'test_mass_action_label']]
+            ]
+        );
+
         return [
-            'applicable' => [
-                'configData' => [
-                    'name' => ' datagrid1',
-                ],
-                'actions' => [$this->createAction()],
-                'expected' => true
+            'applicable with provider' => [
+                'config' => DatagridConfiguration::create(['name' => ' datagrid1']),
+                'actions' => [$action1],
+                'expected' => true,
+                'expectedConfiguration' => [
+                    'mass_actions' => ['test_actiontest_config' => ['label' => 'test_label']]
+                ]
+            ],
+            'applicable with single mass action' => [
+                'config' => DatagridConfiguration::create(['name' => ' datagrid1']),
+                'actions' => [$action2],
+                'expected' => true,
+                'expectedConfiguration' => [
+                    'mass_actions' => ['test_action' => ['label' => 'test_mass_action_label']]
+                ]
             ],
             'not applicable' => [
-                'configData' => [
-                    'name' => ' datagrid1',
-                ],
+                'config' => DatagridConfiguration::create(['name' => ' datagrid1']),
                 'actions' => [],
                 'expected' => false
             ]
@@ -145,13 +199,20 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $name
      * @param bool $isAllowed
+     * @param array $definitionParams
      *
      * @return Action|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function createAction($name = 'test_action', $isAllowed = true)
+    protected function createAction($name = 'test_action', $isAllowed = true, array $definitionParams = [])
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ActionDefinition $definition */
         $definition = $this->getMock('Oro\Bundle\ActionBundle\Model\ActionDefinition');
+
+        foreach ($definitionParams as $method => $params) {
+            $definition->expects($this->any())
+                ->method($method)
+                ->willReturn($params);
+        }
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|Action $action */
         $action = $this->getMockBuilder('Oro\Bundle\ActionBundle\Model\Action')
