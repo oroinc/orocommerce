@@ -209,9 +209,6 @@ services:
     orob2b_tax.matcher.zip_code_matcher:
         parent: orob2b_tax.abstract.matcher
         class: %orob2b_tax.matcher.zip_code_matcher.class%
-        arguments:
-            - @oro_entity.doctrine_helper
-            - %orob2b_tax.entity.tax_rule.class%
 
     orob2b_tax.abstract.matcher:
         abstract: true
