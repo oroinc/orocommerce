@@ -64,10 +64,6 @@ final class Result extends \ArrayObject
             return $this->offsetGet((string)$offset);
         }
 
-        if (null !== $default) {
-            $this->offsetSet($offset, $default);
-        }
-
         return $default;
     }
 }
