@@ -144,7 +144,9 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
                         $this->assertSame($taxable, $event->getTaxable());
                         $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Result', $event->getResult());
 
-                        $event->getResult()->getUnit()->offsetSet(ResultElement::EXCLUDING_TAX, 20);
+                        $unit = $event->getResult()->getUnit();
+                        $unit->offsetSet(ResultElement::EXCLUDING_TAX, 20);
+                        $event->getResult()->offsetSet(Result::UNIT, $unit);
 
                         return true;
                     }
@@ -193,7 +195,9 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
                         $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Result', $event->getResult());
                         $this->assertSame($taxResult, $event->getResult());
 
-                        $event->getResult()->getUnit()->offsetSet(ResultElement::EXCLUDING_TAX, 20);
+                        $unit = $event->getResult()->getUnit();
+                        $unit->offsetSet(ResultElement::EXCLUDING_TAX, 20);
+                        $event->getResult()->offsetSet(Result::UNIT, $unit);
 
                         return true;
                     }
