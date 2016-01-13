@@ -14,6 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 
+use OroB2B\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 use OroB2B\Bundle\PricingBundle\Form\Type\AccountWebsiteScopedPriceListsType;
@@ -64,7 +65,7 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
 
         $this->em->expects($this->any())
             ->method('getRepository')
-            ->with('OroB2BPricingBundle:PriceListToAccount')
+            ->with('OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount')
             ->willReturn($this->repository);
 
         /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry */
@@ -74,7 +75,7 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
 
         $registry->expects($this->any())
             ->method('getManagerForClass')
-            ->with('OroB2BPricingBundle:PriceListToAccount')
+            ->with('OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount')
             ->willReturn($this->em);
 
         $this->targetEntity = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 123]);
@@ -202,10 +203,12 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
             ->with(
                 [
                     '42' => [
-                        [
-                            'priceList' => $priceList,
-                            'priority' => 100,
-                            'mergeAllowed' => true,
+                        'priceListCollection' => [
+                            [
+                                'priceList' => $priceList,
+                                'priority' => 100,
+                                'mergeAllowed' => true,
+                            ],
                         ],
                     ],
                 ]
@@ -245,6 +248,7 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
         $parentForm = $this->getMock('Symfony\Component\Form\FormInterface');
         $priceListByWebsitesForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $priceListCollection = $this->getMock('Symfony\Component\Form\FormInterface');
 
         $formConfig = $this->getMock('Symfony\Component\Form\FormConfigInterface');
 
@@ -261,9 +265,14 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
             ->method('getData')
             ->willReturn($this->targetEntity);
 
-        $priceListByWebsitesForm->expects($this->once())
+        $priceListCollection->expects($this->once())
             ->method('getData')
             ->willReturn($submittedData);
+
+        $priceListByWebsitesForm->expects($this->any())
+            ->method('get')
+            ->with(PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD)
+            ->willReturn($priceListCollection);
 
         $priceListWithPriorityForm = $this->getMock('Symfony\Component\Form\FormConfigInterface');
 
@@ -271,7 +280,7 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
             ->method('getData')
             ->willReturnOnConsecutiveCalls($submittedData[0]);
 
-        $priceListByWebsitesForm->expects($this->once())
+        $priceListCollection->expects($this->once())
             ->method('all')
             ->willReturnOnConsecutiveCalls([$priceListWithPriorityForm]);
 

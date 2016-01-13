@@ -65,22 +65,20 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $listener->onFrontendProductView($event);
     }
 
-    /**
-     * @dataProvider testOnAccountViewDataProvider
-     *
-     * @param PriceListAccountFallback|null $fallbackEntity
-     * @param integer $expectedFallbackValue
-     */
-    public function testOnAccountView($fallbackEntity, $expectedFallbackValue)
+    public function testOnAccountView()
     {
         $accountId = 1;
         $account = new Account();
         $websiteId1 = 12;
         $websiteId2 = 13;
+        $websiteId3 = 14;
+
         /** @var Website $website1 */
         $website1 = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', $websiteId1);
         /** @var Website $website2 */
         $website2 = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', $websiteId2);
+        /** @var Website $website3 */
+        $website3 = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', $websiteId3);
 
         $priceListToAccount1 = new PriceListToAccount();
         $priceListToAccount1->setAccount($account);
@@ -91,6 +89,11 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $priceListsToAccount = [$priceListToAccount1, $priceListToAccount2];
         $templateHtml = 'template_html';
 
+        $fallbackEntity = new PriceListAccountFallback();
+        $fallbackEntity->setAccount($account);
+        $fallbackEntity->setWebsite($website3);
+        $fallbackEntity->setFallback(PriceListAccountFallback::CURRENT_ACCOUNT_ONLY);
+
         $request = new Request(['id' => $accountId]);
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
         $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
@@ -98,6 +101,15 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         /** @var FormViewListener $listener */
         $listener = $this->getListener($requestStack);
+
+        $websiteRepository = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $websiteRepository->expects($this->once())
+            ->method('findAll')
+            ->willReturn([$website1, $website2, $website3]);
 
         $priceToAccountRepository = $this
             ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository')
@@ -115,21 +127,22 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->getMock();
 
         $fallbackRepository->expects($this->once())
-            ->method('findOneBy')
+            ->method('findBy')
             ->with(['account' => $account])
-            ->willReturn($fallbackEntity);
+            ->willReturn([$fallbackEntity]);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
             ->with('OroB2BAccountBundle:Account', $accountId)
             ->willReturn($account);
-        $this->doctrineHelper->expects($this->exactly(2))
+        $this->doctrineHelper->expects($this->exactly(3))
             ->method('getEntityRepository')
             ->will(
                 $this->returnValueMap(
                     [
                         ['OroB2BPricingBundle:PriceListToAccount', $priceToAccountRepository],
                         ['OroB2BPricingBundle:PriceListAccountFallback', $fallbackRepository],
+                        ['OroB2BWebsiteBundle:Website', $websiteRepository],
                     ]
                 )
             );
@@ -140,18 +153,33 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->method('render')
             ->with(
                 'OroB2BPricingBundle:Account:price_list_view.html.twig',
-                ['priceListsByWebsites' =>
-                    [
-                        $websiteId1 => [
-                            'priceLists' => [$priceListToAccount1],
-                            'website' => $website1
+                [
+                    'priceListsByWebsites' =>
+                        [
+                            $websiteId1 => [
+                                'priceLists' => [$priceListToAccount1],
+                                'website' => $website1,
+                            ],
+                            $websiteId2 => [
+                                'priceLists' => [$priceListToAccount2],
+                                'website' => $website2,
+                            ],
                         ],
-                        $websiteId2 => [
-                            'priceLists' => [$priceListToAccount2],
-                            'website' => $website2
+                    'fallbackByWebsites' =>
+                        [
+                            $websiteId1 => [
+                                'value' => 'orob2b.pricing.fallback.account_group.label',
+                                'website' => $website1,
+                            ],
+                            $websiteId2 => [
+                                'value' => 'orob2b.pricing.fallback.account_group.label',
+                                'website' => $website2,
+                            ],
+                            $websiteId3 => [
+                                'value' => 'orob2b.pricing.fallback.current_account_only.label',
+                                'website' => $website3,
+                            ],
                         ],
-                    ],
-                    'fallback' => $expectedFallbackValue,
                 ]
             )
             ->willReturn($templateHtml);
@@ -166,37 +194,19 @@ class FormViewListenerTest extends FormViewListenerTestCase
         );
     }
 
-    public function testOnAccountViewDataProvider()
-    {
-        return [
-            'notExistingFallback' => [
-                'fallbackEntity' => null,
-                'expectedFallbackValue' => 'orob2b.pricing.fallback.account_group.label',
-            ],
-            'existingDefaultFallback' => [
-                'fallbackEntity' => (new PriceListAccountFallback())
-                    ->setFallback(PriceListAccountFallback::CURRENT_ACCOUNT_ONLY),
-                'expectedFallbackValue' => 'orob2b.pricing.fallback.current_account_only.label',
-            ],
-        ];
-    }
-
-    /**
-     * @dataProvider testOnAccountGroupViewDataProvider
-     *
-     * @param PriceListAccountGroupFallback|null $fallbackEntity
-     * @param integer $expectedFallbackValue
-     */
-    public function testOnAccountGroupView($fallbackEntity, $expectedFallbackValue)
+    public function testOnAccountGroupView()
     {
         $accountGroupId = 1;
         $accountGroup = new AccountGroup();
         $websiteId1 = 12;
         $websiteId2 = 13;
+        $websiteId3 = 14;
         /** @var Website $website1 */
         $website1 = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', $websiteId1);
         /** @var Website $website2 */
         $website2 = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', $websiteId2);
+        /** @var Website $website3 */
+        $website3 = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', $websiteId3);
 
         $priceListToAccountGroup1 = new PriceListToAccountGroup();
         $priceListToAccountGroup1->setAccountGroup($accountGroup);
@@ -207,13 +217,27 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $priceListsToAccount = [$priceListToAccountGroup1, $priceListToAccountGroup2];
         $templateHtml = 'template_html';
 
+        $fallbackEntity = new PriceListAccountGroupFallback();
+        $fallbackEntity->setAccountGroup($accountGroup);
+        $fallbackEntity->setWebsite($website3);
+        $fallbackEntity->setFallback(PriceListAccountFallback::CURRENT_ACCOUNT_ONLY);
         $request = new Request(['id' => $accountGroupId]);
+
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
         $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
         /** @var FormViewListener $listener */
         $listener = $this->getListener($requestStack);
+
+        $websiteRepository = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $websiteRepository->expects($this->once())
+            ->method('findAll')
+            ->willReturn([$website1, $website2, $website3]);
 
         $priceToAccountGroupRepository = $this
             ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository')
@@ -231,21 +255,22 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->getMock();
 
         $fallbackRepository->expects($this->once())
-            ->method('findOneBy')
+            ->method('findBy')
             ->with(['accountGroup' => $accountGroup])
-            ->willReturn($fallbackEntity);
+            ->willReturn([$fallbackEntity]);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
             ->with('OroB2BAccountBundle:AccountGroup', $accountGroupId)
             ->willReturn($accountGroup);
-        $this->doctrineHelper->expects($this->exactly(2))
+        $this->doctrineHelper->expects($this->exactly(3))
             ->method('getEntityRepository')
             ->will(
                 $this->returnValueMap(
                     [
                         ['OroB2BPricingBundle:PriceListToAccountGroup', $priceToAccountGroupRepository],
                         ['OroB2BPricingBundle:PriceListAccountGroupFallback', $fallbackRepository],
+                        ['OroB2BWebsiteBundle:Website', $websiteRepository],
                     ]
                 )
             );
@@ -256,18 +281,33 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->method('render')
             ->with(
                 'OroB2BPricingBundle:Account:price_list_view.html.twig',
-                ['priceListsByWebsites' =>
-                    [
-                        $websiteId1 => [
-                            'priceLists' => [$priceListToAccountGroup1],
-                            'website' => $website1
+                [
+                    'priceListsByWebsites' =>
+                        [
+                            $websiteId1 => [
+                                'priceLists' => [$priceListToAccountGroup1],
+                                'website' => $website1,
+                            ],
+                            $websiteId2 => [
+                                'priceLists' => [$priceListToAccountGroup2],
+                                'website' => $website2,
+                            ],
                         ],
-                        $websiteId2 => [
-                            'priceLists' => [$priceListToAccountGroup2],
-                            'website' => $website2
+                    'fallbackByWebsites' =>
+                        [
+                            $websiteId1 => [
+                                'value' => 'orob2b.pricing.fallback.website.label',
+                                'website' => $website1,
+                            ],
+                            $websiteId2 => [
+                                'value' => 'orob2b.pricing.fallback.website.label',
+                                'website' => $website2,
+                            ],
+                            $websiteId3 => [
+                                'value' => 'orob2b.pricing.fallback.current_account_group_only.label',
+                                'website' => $website3,
+                            ],
                         ],
-                    ],
-                    'fallback' => $expectedFallbackValue,
                 ]
             )
             ->willReturn($templateHtml);
@@ -280,24 +320,6 @@ class FormViewListenerTest extends FormViewListenerTestCase
             [$templateHtml],
             $scrollData[ScrollData::DATA_BLOCKS][1][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
         );
-    }
-
-    /**
-     * @return array
-     */
-    public function testOnAccountGroupViewDataProvider()
-    {
-        return [
-            'notExistingFallback' => [
-                'fallbackEntity' => null,
-                'expectedFallbackValue' => 'orob2b.pricing.fallback.website.label',
-            ],
-            'existingDefaultFallback' => [
-                'fallbackEntity' => (new PriceListAccountGroupFallback())
-                    ->setFallback(PriceListAccountGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY),
-                'expectedFallbackValue' => 'orob2b.pricing.fallback.current_account_group_only.label',
-            ],
-        ];
     }
 
     public function testOnEntityEdit()
@@ -469,11 +491,11 @@ class FormViewListenerTest extends FormViewListenerTestCase
                 [
                     ScrollData::SUB_BLOCKS => [
                         [
-                            ScrollData::DATA => []
-                        ]
-                    ]
-                ]
-            ]
+                            ScrollData::DATA => [],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         return new BeforeListRenderEvent($environment, new ScrollData($defaultData), $formView);

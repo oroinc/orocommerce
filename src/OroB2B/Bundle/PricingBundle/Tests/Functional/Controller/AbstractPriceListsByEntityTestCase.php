@@ -8,6 +8,7 @@ use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
+use Symfony\Component\DomCrawler\Field\InputFormField;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -22,10 +23,37 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
     /** @var PriceList[] $priceLists */
     protected $priceLists;
 
+    /**
+     * @return BasePriceListRelation[]
+     */
+    abstract public function getPriceListsByEntity();
+
+    /**
+     * @return string
+     */
+    abstract public function getUpdateUrl();
+
+    /**
+     * @return string
+     */
+    abstract public function getViewUrl();
+
+    /**
+     * @return string
+     */
+    abstract public function getMainFormName();
+
     public function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations']);
+        $this->loadFixtures(
+            [
+                'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists',
+            ]
+        );
         $this->formExtensionPath = sprintf('%s[priceListsByWebsites]', $this->getMainFormName());
         $this->websites = [
             $this->getReference('Canada'),
@@ -39,30 +67,25 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         ];
     }
 
-    public function testDelete()
-    {
-        $this->markTestSkipped('Fixed in scope BB-1834');
-        $this->assertCount(1, $this->getPriceListsByEntity());
-        $form = $this->getUpdateForm();
-        $this->assertTrue($form->has($this->formExtensionPath));
-        $form->remove($this->formExtensionPath);
-        $this->client->submit($form);
-        $this->assertCount(0, $this->getPriceListsByEntity());
-    }
-
-    /**
-     * @depends testDelete
-     */
     public function testAdd()
     {
         $form = $this->getUpdateForm();
         $formValues = $form->getValues();
         foreach ($this->websites as $website) {
             $i = 0;
+            $fallbackPath = sprintf('%s[%d][fallback]', $this->formExtensionPath, $website->getId());
+            $formValues[$fallbackPath] = (int)($website->getId() % 2 == 0);
             foreach ($this->priceLists as $priceList) {
-                $collectionElementPath = sprintf('%s[%d][%d]', $this->formExtensionPath, $website->getId(), $i);
+                $collectionElementPath = sprintf(
+                    '%s[%d][priceListCollection][%d]',
+                    $this->formExtensionPath,
+                    $website->getId(),
+                    $i
+                );
                 $formValues[sprintf('%s[priceList]', $collectionElementPath)] = $priceList->getId();
-                $formValues[sprintf('%s[priority]', $collectionElementPath)] = ++$i;
+                $formValues[sprintf('%s[priority]', $collectionElementPath)] = $i + 1;
+                $formValues[sprintf('%s[mergeAllowed]', $collectionElementPath)] = $i % 2 == 0;
+                $i++;
             }
         }
         $params = $this->explodeArrayPaths($formValues);
@@ -81,11 +104,32 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         );
         foreach ($this->websites as $website) {
             $i = 0;
+            $collectionPath = sprintf(
+                '%s[%d][priceListCollection]',
+                $this->formExtensionPath,
+                $website->getId()
+            );
+            /** @var array $priceListCollection */
+            $priceListCollection = $form->get($collectionPath);
+            $this->assertTrue($this->checkSortingByPriority($priceListCollection));
+            $fallbackPath = sprintf('%s[%d][fallback]', $this->formExtensionPath, $website->getId());
+            $this->assertEquals($form->get($fallbackPath)->getValue(), (int)($website->getId() % 2 == 0));
             foreach ($this->priceLists as $priceList) {
+                $collectionElementPath = sprintf(
+                    '%s[%d][priceListCollection][%d]',
+                    $this->formExtensionPath,
+                    $website->getId(),
+                    $i
+                );
                 $this->assertTrue($this->checkPriceListExistInDatabase($priceList));
-                $collectionElementPath = sprintf('%s[%d][%d]', $this->formExtensionPath, $website->getId(), $i);
+
                 $this->assertTrue(isset($formValues[sprintf('%s[priceList]', $collectionElementPath)]));
                 $this->assertTrue(isset($formValues[sprintf('%s[priority]', $collectionElementPath)]));
+                if ($i % 2 == 0) {
+                    $this->assertTrue(isset($formValues[sprintf('%s[mergeAllowed]', $collectionElementPath)]));
+                } else {
+                    $this->assertFalse(isset($formValues[sprintf('%s[mergeAllowed]', $collectionElementPath)]));
+                }
                 $this->assertContains(
                     (int)$formValues[sprintf('%s[priceList]', $collectionElementPath)],
                     $priceListsIds
@@ -94,6 +138,30 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
                 $i++;
             }
         }
+    }
+
+    /**
+     * @param array $priceListCollection
+     *
+     * @return bool
+     */
+    protected function checkSortingByPriority(array $priceListCollection)
+    {
+        foreach ($priceListCollection as $priceList) {
+            /** @var InputFormField $priorityField */
+            $priorityField = $priceList['priority'];
+            $currentValue = $priorityField->getValue();
+            if (!isset($lastValue)) {
+                $lastValue = $currentValue;
+                continue;
+            }
+            if ($currentValue > $lastValue) {
+                return false;
+            }
+            $lastValue = $currentValue;
+        }
+
+        return true;
     }
 
     /**
@@ -108,15 +176,52 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $html = $crawler->html();
         foreach ($this->websites as $website) {
+            $insideTab = $crawler->filter('div #website' . $website->getId());
+            $this->assertContains($website->getName(), $crawler->html());
+            $fallbackText = $insideTab->filter('p strong')->text();
+            if ((int)($website->getId() % 2 == 0)) {
+                $this->assertNotContains('only', $fallbackText);
+            } else {
+                $this->assertContains('only', $fallbackText);
+            };
             $i = 0;
-            $this->assertContains($website->getName(), $html);
             foreach ($this->priceLists as $priceList) {
-                $this->assertContains($priceList->getName(), $html);
-                $this->assertContains((string)++$i, $html);
+                $row = $insideTab->filter(sprintf('.price_list%s', $priceList->getId()));
+                $mergeAllowedText = $row->filter('.price_list_merge_allowed')->text();
+                if ($i % 2 == 0) {
+                    $this->assertEquals('Yes', $mergeAllowedText);
+                } else {
+                    $this->assertEquals('No', $mergeAllowedText);
+                }
+                $this->assertEquals($i + 1, $row->filter('.price_list_priority')->text());
+                $this->assertContains($priceList->getName(), $row->filter('.price_list_link')->text());
+                $i++;
             }
         }
+    }
+
+    /**
+     * @depends testView
+     */
+    public function testDelete()
+    {
+        $this->assertCount(6, $this->getPriceListsByEntity());
+        $form = $this->getUpdateForm();
+        $this->assertTrue($form->has($this->formExtensionPath));
+        //Test remove all price lists by one website
+        $form->remove(
+            $this->formExtensionPath . sprintf('[%s][priceListCollection]', $this->getReference('Canada')->getId())
+        );
+        $this->client->submit($form);
+        $this->assertCount(3, $this->getPriceListsByEntity());
+        $form = $this->getUpdateForm();
+        //Test remove one price list
+        $form->remove(
+            $this->formExtensionPath . sprintf('[%s][priceListCollection][1]', $this->getReference('US')->getId())
+        );
+        $this->client->submit($form);
+        $this->assertCount(2, $this->getPriceListsByEntity());
     }
 
     public function testValidation()
@@ -127,8 +232,18 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         $website = $this->getReference('Canada');
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_1');
-        $collectionElementPath1 = sprintf('%s[%d][%d]', $this->formExtensionPath, $website->getId(), 0);
-        $collectionElementPath2 = sprintf('%s[%d][%d]', $this->formExtensionPath, $website->getId(), 1);
+        $collectionElementPath1 = sprintf(
+            '%s[%d][priceListCollection][%d]',
+            $this->formExtensionPath,
+            $website->getId(),
+            0
+        );
+        $collectionElementPath2 = sprintf(
+            '%s[%d][priceListCollection][%d]',
+            $this->formExtensionPath,
+            $website->getId(),
+            1
+        );
         $formValues[sprintf('%s[priceList]', $collectionElementPath1)] = $priceList->getId();
         $formValues[sprintf('%s[priority]', $collectionElementPath1)] = '';
         $this->checkValidationMessage($formValues, 'This value should not be blank');
@@ -145,8 +260,10 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
      * @param array $formValues
      * @param $message
      */
-    protected function checkValidationMessage(array $formValues, $message)
-    {
+    protected function checkValidationMessage(
+        array $formValues,
+        $message
+    ) {
         $params = $this->explodeArrayPaths($formValues);
         $crawler = $this->client->request(
             'POST',
@@ -176,26 +293,6 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
 
         return $parameters;
     }
-
-    /**
-     * @return BasePriceListRelation[]
-     */
-    abstract public function getPriceListsByEntity();
-
-    /**
-     * @return string
-     */
-    abstract public function getUpdateUrl();
-
-    /**
-     * @return string
-     */
-    abstract public function getViewUrl();
-
-    /**
-     * @return string
-     */
-    abstract public function getMainFormName();
 
     /**
      * @return Form

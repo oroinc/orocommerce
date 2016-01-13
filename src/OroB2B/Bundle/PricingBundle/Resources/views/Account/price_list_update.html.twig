@@ -1,5 +1,4 @@
 {% set websites = form.priceListsByWebsites.vars.websites %}
-{{ form_row(form.fallback) }}
 <div class="responsive-cell price-lists-by-websites">
     <div class="oro-tabs">
         <ul class="nav nav-tabs">
@@ -15,7 +14,8 @@
             {% for website in websites %}
                 <div class="tab-pane{% if website.id == websites|first.id %} active{% endif %}"
                      id="website{{ website.id }}"><br>
-                    {{ form_row(form.priceListsByWebsites[website.id]) }}
+                    {{ form_row(form.priceListsByWebsites[website.id].fallback) }}
+                    {{ form_row(form.priceListsByWebsites[website.id].priceListCollection) }}
                 </div>
             {% endfor %}
         </div>
