@@ -1,9 +1,11 @@
 parameters:
     orob2b_pricing.entity.price_list.class: OroB2B\Bundle\PricingBundle\Entity\PriceList
+    orob2b_pricing.entity.combined_price_list.class: OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList
     orob2b_pricing.entity.price_list_to_account.class: OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount
     orob2b_pricing.entity.price_list_to_account_group.class: OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup
     orob2b_pricing.entity.price_list_to_website.class: OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite
     orob2b_pricing.entity.product_price.class: OroB2B\Bundle\PricingBundle\Entity\ProductPrice
+    orob2b_pricing.entity.combined_product_price.class: OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice
     orob2b_pricing.entity.price_list_currency.class: OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency
 
     orob2b_pricing.price_list.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
@@ -230,7 +232,9 @@ services:
         arguments:
             - @doctrine
             - @orob2b_website.manager
-            - %orob2b_pricing.entity.price_list.class%
+            - @oro_config.global
+        calls:
+            - [setPriceListClass, [%orob2b_pricing.entity.combined_price_list.class%]]
 
     orob2b_pricing.filter.product_price:
             class: %orob2b_pricing.filter.product_price.class%
