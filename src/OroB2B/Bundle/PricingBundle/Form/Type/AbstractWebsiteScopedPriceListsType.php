@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceListFallback;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -157,7 +158,21 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
 
         foreach ($priceListsByWebsites->all() as $priceListsByWebsite) {
             $this->changed = false;
+
             $website = $priceListsByWebsite->getConfig()->getOption('website');
+            $submittedFallback = $priceListsByWebsite->get('fallback')->getData();
+            $actualFallback = $this->getFallback(
+                $this->getFallbackClassName(),
+                $targetEntity,
+                $this->getTargetFieldName(),
+                $website
+            );
+            if ((!$actualFallback && $submittedFallback != $this->getDefaultFallback())
+                || ($actualFallback && $submittedFallback != $actualFallback)
+            ) {
+                $this->changed = true;
+            }
+
             $actualPriceListsToTargetEntity = $this->getActualPriceListsToTargetEntity($targetEntity, $website);
 
             $submittedPriceLists = $this->getWebsiteSubmittedPriceLists($priceListsByWebsite);
@@ -181,12 +196,29 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
                     $actualPriceListsToTargetEntity
                 );
             }
-            
-            $this->eventDispatcher->dispatch(
-                PriceListCollectionChange::BEFORE_CHANGE,
-                new PriceListCollectionChange($targetEntity, $website)
-            );
+            if ($this->changed) {
+                $this->eventDispatcher->dispatch(
+                    PriceListCollectionChange::BEFORE_CHANGE,
+                    new PriceListCollectionChange($targetEntity, $website)
+                );
+            }
         }
+    }
+
+    /**
+     * @param string $className
+     * @param object $targetEntity
+     * @param string $targetFieldName
+     * @param Website $website
+     * @return null|PriceListFallback
+     */
+    protected function getFallback($className, $targetEntity, $targetFieldName, Website $website)
+    {
+        /** @var PriceListFallback $fallback */
+        return $this->registry
+            ->getManagerForClass($className)
+            ->getRepository($className)
+            ->findOneBy([$targetFieldName => $targetEntity, 'website' => $website]);
     }
 
     /**

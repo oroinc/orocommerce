@@ -92,7 +92,12 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $event->getSettings());
     }
 
-    public function testUpdateAfter()
+    /**
+     * @dataProvider updateAfterDataProvider
+     * @param array $changeSet
+     * @param boolean $dispatch
+     */
+    public function testUpdateAfter($changeSet, $dispatch)
     {
         $converted = [
             ['priceList' => 1, 'priority' => 100],
@@ -118,11 +123,28 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $subscriber = new PriceListSystemConfigSubscriber($converter, $this->getEventDispatcher());
         $subscriber->beforeSave($event);
-        $this->eventDispatcher
-            ->expects($this->once())
-            ->method('dispatch')
-            ->with(PriceListCollectionChange::BEFORE_CHANGE, new PriceListCollectionChange());
-        $subscriber->updateAfter(new ConfigUpdateEvent([]));
+        if ($dispatch) {
+            $this->eventDispatcher
+                ->expects($this->once())
+                ->method('dispatch')
+                ->with(PriceListCollectionChange::BEFORE_CHANGE, new PriceListCollectionChange());
+        } else {
+            $this->eventDispatcher
+                ->expects($this->never())
+                ->method('dispatch');
+        }
+        $subscriber->updateAfter(new ConfigUpdateEvent($changeSet));
+    }
+
+    /**
+     * @return array
+     */
+    public function updateAfterDataProvider()
+    {
+        return [
+                'changed' => ['changeSet' => ['some', 'changes'], 'dispatch' => true],
+                'notChanged' => ['changeSet' => [], 'dispatch' => false],
+        ];
     }
 
     public function testUpdateAfterWithNotApplicable()
