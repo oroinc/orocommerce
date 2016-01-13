@@ -62,7 +62,9 @@ class TaxValueToResultTransformerTest extends \PHPUnit_Framework_TestCase
     {
         $taxResult = $this->createTaxResult();
 
-        $taxValue = $this->taxValueToResultTransformer->reverseTransform($taxResult);
+        $baseTaxValue = new TaxValue();
+        $taxValue = $this->taxValueToResultTransformer->reverseTransform($baseTaxValue, $taxResult);
+        $this->assertSame($baseTaxValue, $taxValue);
 
         $this->assertResult($taxValue->getResult());
 

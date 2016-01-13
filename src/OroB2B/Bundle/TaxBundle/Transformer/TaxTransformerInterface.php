@@ -18,8 +18,9 @@ interface TaxTransformerInterface
     /**
      * Reverse transform Result to object
      *
+     * @param TaxValue $taxValue
      * @param Result $result
      * @return TaxValue
      */
-    public function reverseTransform(Result $result);
+    public function reverseTransform(TaxValue $taxValue, Result $result);
 }

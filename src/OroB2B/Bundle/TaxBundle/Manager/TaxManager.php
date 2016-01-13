@@ -57,17 +57,18 @@ class TaxManager
     }
 
     /**
-     * @param string $className
+     * @param object $object
      * @return TaxTransformerInterface
      * @throws \InvalidArgumentException if TaxTransformerInterface is missing for $className
      */
-    protected function getTaxTransformer($className)
+    protected function getTaxTransformer($object)
     {
-        if (!array_key_exists((string)$className, $this->transformers)) {
+        $className = $this->doctrineHelper->getEntityClass($object);
+        if (!array_key_exists($className, $this->transformers)) {
             throw new \InvalidArgumentException(sprintf('TaxTransformerInterface is missing for %s', $className));
         }
 
-        return $this->transformers[(string)$className];
+        return $this->transformers[$className];
     }
 
     /**
@@ -76,24 +77,47 @@ class TaxManager
      */
     public function loadTax($object)
     {
-        $className = $this->doctrineHelper->getEntityClass($object);
-        $transformer = $this->getTaxTransformer($className);
+        $transformer = $this->getTaxTransformer($object);
 
+        $taxValue = $this->getTaxValue($object);
+
+        return $transformer->transform($taxValue);
+    }
+
+    /**
+     * @param object $object
+     * @return TaxValue
+     */
+    protected function getTaxValue($object)
+    {
+        $taxValue = $this->doctrineHelper->getEntityRepositoryForClass($this->taxValueClass)
+            ->findOneBy(
+                [
+                    'entityClass' => $this->doctrineHelper->getEntityClass($object),
+                    'entityId' => $this->getSingleEntityIdentifier($object),
+                ]
+            );
+
+        if (!$taxValue) {
+            return new TaxValue();
+        }
+
+        return $taxValue;
+    }
+
+    /**
+     * @param object $object
+     * @return mixed|null
+     */
+    protected function getSingleEntityIdentifier($object)
+    {
         $identifier = $this->doctrineHelper->getSingleEntityIdentifier($object);
 
         if (!$identifier) {
-            throw new \InvalidArgumentException(sprintf('Can\'t load TaxValue for new %s entity', $className));
+            throw new \InvalidArgumentException('Object identifier is missing');
         }
 
-        /** @var TaxValue $taxValue */
-        $taxValue = $this->doctrineHelper->getEntityRepositoryForClass($this->taxValueClass)
-            ->findOneBy(['entityClass' => $className, 'entityId' => $identifier]);
-
-        if (!$taxValue) {
-            throw new \InvalidArgumentException(sprintf('TaxValue for %s#%s not found', $className, $identifier));
-        }
-
-        return $transformer->transform($taxValue);
+        return $identifier;
     }
 
     /**
@@ -113,5 +137,30 @@ class TaxManager
         $this->eventDispatcher->dispatch(ResolveTaxEvent::NAME, new ResolveTaxEvent($taxable, $taxResult));
 
         return $taxResult;
+    }
+
+    /**
+     * @param object $object
+     * @return Result
+     */
+    public function saveTax($object)
+    {
+        $transformer = $this->getTaxTransformer($object);
+
+        $result = $this->getTax($object);
+
+        $taxValue = $transformer->reverseTransform($this->getTaxValue($object), $result);
+
+        $taxValue->setEntityClass($this->doctrineHelper->getEntityClass($object));
+        $taxValue->setEntityId($this->getSingleEntityIdentifier($object));
+
+        /** @todo: context from resolver */
+        $taxValue->setAddress('address');
+
+        $em = $this->doctrineHelper->getEntityManager($taxValue);
+        $em->persist($taxValue);
+        $em->flush($taxValue);
+
+        return $result;
     }
 }
