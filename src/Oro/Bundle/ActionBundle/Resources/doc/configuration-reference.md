@@ -16,12 +16,14 @@ Table of Contents
    - [Example](#example-2)
  - [Attributes Configuration](#attributes-configuration)
    - [Example](#example-3)
- - [Form Options Configuration](#form-options-configuration)
+ - [Datagrid Options Configuration](#datagrid-options-configuration)
    - [Example](#example-4)
- - [Pre Conditions and Conditions Configuration](#pre-conditions-and-conditions-configuration)
+ - [Form Options Configuration](#form-options-configuration)
    - [Example](#example-5)
- - [Pre Functions, Form Init Functions and Functions Configuration](#pre-functions-form-init-functions-and-functions-configuration)
+ - [Pre Conditions and Conditions Configuration](#pre-conditions-and-conditions-configuration)
    - [Example](#example-6)
+ - [Pre Functions, Form Init Functions and Functions Configuration](#pre-functions-form-init-functions-and-functions-configuration)
+   - [Example](#example-7)
 
 Overview
 ========
@@ -134,6 +136,8 @@ Single action configuration has next properties:
     Contains configuration for Pre Conditions
 * **attributes**
     Contains configuration for Attributes
+* **datagrid_options**
+    Contains configuration for Datagrid Options
 * **form_options**
     Contains configuration for Transitions
 * **form_init**
@@ -166,6 +170,8 @@ actions:                                             # root elements
         preconditions:                               # configuration for Pre Conditions
                                                      # ...
         attributes:                                  # configuration for Attributes
+                                                     # ...
+        datagrid_options:                            # configuration for Datagrid Options
                                                      # ...
         form_options:                                # configuration for Form Options
                                                      # ...
@@ -326,16 +332,59 @@ Example
 actions:
     demo_action:
         # ...
-        user:
-            label: 'User'
-            type: entity
-            options:
-                class: Oro\Bundle\UserBundle\Entity\User
-        company_name:
-            label: 'Company name'
-            type: string
-        group_name:
-            property_path: user.group.name
+        attributes:
+            user:
+                label: 'User'
+                type: entity
+                options:
+                    class: Oro\Bundle\UserBundle\Entity\User
+            company_name:
+                label: 'Company name'
+                type: string
+            group_name:
+                property_path: user.group.name
+```
+
+Datagrid Options Configuration
+==============================
+
+Datagrid options allow to define options of datagrid mass action. It provide two way to set mass action configuration:
+using service which return array of mas action configurations or set inline configuration of mass action.
+
+Single datagrid options can be described with next configuration:
+
+* **mass_action_provider**
+    *string*
+    Service name. This service must be marked with "oro_action.datagrid.mass_action_provider" tag. Also it must
+    implements Oro\Bundle\ActionBundle\Datagrid\Provider\MassActionProviderInterface. Method "getActions" of this
+    provider must return array of mass action configurations.
+* **mass_action**
+    *array*
+    Mass action configuration. See datagrid documentation.
+
+**Notice**
+It must be used only one parameter "mass_action_provider" or "mass_action".
+
+Example
+-------
+
+```
+actions:
+    demo_action:
+        # ...
+        datagrid_options:
+            mass_action_provider:
+                acme.action.datagrid.mass_action_provider
+            mass_action:
+                type: window
+                label: acme.demo.mass_action.label
+                icon: plus
+                route: acme_demo_bundle_massaction
+                frontend_options:
+                    title: acme.demo.mass_action.action.label
+                    dialogOptions:
+                        modal: true
+                        ...
 ```
 
 Form Options Configuration

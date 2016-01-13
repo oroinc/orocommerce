@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction;
+namespace OroB2B\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction;
 
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -8,7 +8,6 @@ use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerInterface;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
 
-use OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction\AddProductsMassActionArgsParser as ArgsParser;
 use OroB2B\Bundle\ShoppingListBundle\Generator\MessageGenerator;
 use OroB2B\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 
@@ -37,7 +36,7 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
      */
     public function handle(MassActionHandlerArgs $args)
     {
-        $argsParser = new ArgsParser($args);
+        $argsParser = new AddProductsMassActionArgsParser($args);
         $shoppingList = $this->shoppingListLineItemHandler->getShoppingList($argsParser->getShoppingListId());
         if (!$shoppingList) {
             return $this->generateResponse($args);
