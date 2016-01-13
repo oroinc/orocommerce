@@ -45,4 +45,19 @@ class ResultElementTest extends \PHPUnit_Framework_TestCase
             static::ADJUSTMENT
         );
     }
+
+    public function testConstruct()
+    {
+        $this->assertEquals(
+            $this->createResultElementModel(),
+            new ResultElement(
+                [
+                    ResultElement::EXCLUDING_TAX => static::EXCLUDING_TAX,
+                    ResultElement::INCLUDING_TAX => static::INCLUDING_TAX,
+                    ResultElement::TAX_AMOUNT => static::TAX_AMOUNT,
+                    ResultElement::ADJUSTMENT => static::ADJUSTMENT,
+                ]
+            )
+        );
+    }
 }
