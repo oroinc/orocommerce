@@ -165,20 +165,21 @@ class FormViewListenerTest extends FormViewListenerTestCase
                                 'website' => $website2,
                             ],
                         ],
-                    'fallbackByWebsites' => [
-                        $websiteId1 => [
-                            'value' => 'orob2b.pricing.fallback.account_group.label',
-                            'website' => $website1,
+                    'fallbackByWebsites' =>
+                        [
+                            $websiteId1 => [
+                                'value' => 'orob2b.pricing.fallback.account_group.label',
+                                'website' => $website1,
+                            ],
+                            $websiteId2 => [
+                                'value' => 'orob2b.pricing.fallback.account_group.label',
+                                'website' => $website2,
+                            ],
+                            $websiteId3 => [
+                                'value' => 'orob2b.pricing.fallback.current_account_only.label',
+                                'website' => $website3,
+                            ],
                         ],
-                        $websiteId2 => [
-                            'value' => 'orob2b.pricing.fallback.account_group.label',
-                            'website' => $website2,
-                        ],
-                        $websiteId3 => [
-                            'value' => 'orob2b.pricing.fallback.current_account_only.label',
-                            'website' => $website3,
-                        ],
-                    ],
                 ]
             )
             ->willReturn($templateHtml);
@@ -292,20 +293,21 @@ class FormViewListenerTest extends FormViewListenerTestCase
                                 'website' => $website2,
                             ],
                         ],
-                    'fallbackByWebsites' => [
-                        $websiteId1 => [
-                            'value' => 'orob2b.pricing.fallback.website.label',
-                            'website' => $website1,
+                    'fallbackByWebsites' =>
+                        [
+                            $websiteId1 => [
+                                'value' => 'orob2b.pricing.fallback.website.label',
+                                'website' => $website1,
+                            ],
+                            $websiteId2 => [
+                                'value' => 'orob2b.pricing.fallback.website.label',
+                                'website' => $website2,
+                            ],
+                            $websiteId3 => [
+                                'value' => 'orob2b.pricing.fallback.current_account_group_only.label',
+                                'website' => $website3,
+                            ],
                         ],
-                        $websiteId2 => [
-                            'value' => 'orob2b.pricing.fallback.website.label',
-                            'website' => $website2,
-                        ],
-                        $websiteId3 => [
-                            'value' => 'orob2b.pricing.fallback.current_account_group_only.label',
-                            'website' => $website3,
-                        ],
-                    ],
                 ]
             )
             ->willReturn($templateHtml);
@@ -489,11 +491,11 @@ class FormViewListenerTest extends FormViewListenerTestCase
                 [
                     ScrollData::SUB_BLOCKS => [
                         [
-                            ScrollData::DATA => []
-                        ]
-                    ]
-                ]
-            ]
+                            ScrollData::DATA => [],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         return new BeforeListRenderEvent($environment, new ScrollData($defaultData), $formView);

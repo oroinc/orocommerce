@@ -24,31 +24,31 @@
                             <tbody>
 
                             {% if  priceListsByWebsites[websiteId] is defined %}
-                            <table class="grid table-hover table table-bordered">
-                                <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>{{ 'orob2b.pricing.pricelist.entity_label'|trans }}</th>
-                                    <th>{{ 'orob2b.pricing.pricelist.priority.label'|trans }}</th>
-                                    <th>{{ 'orob2b.pricing.pricelist.merge_allowed.label'|trans }}</th>
-                                </tr>
-                                </thead>
-
-                                {% for priceListToAccount in priceListsByWebsites[websiteId]['priceLists'] %}
-                                    {% set priceList = priceListToAccount.priceList %}
+                                <table class="grid table-hover table table-bordered">
+                                    <thead>
                                     <tr>
-                                        <td>{{ loop.index }}</td>
-                                        <td>
-                                            <a href="{{ path('orob2b_pricing_price_list_view', {'id': priceList.id}) }}">
-                                                {{ priceList.name }}
-                                            </a>
-                                        </td>
-                                        <td>{{ priceListToAccount.priority }}</td>
-                                        <td>{{ priceListToAccount.mergeAllowed ? 'orob2b.pricing.pricelist.merge_allowed.yes.label'|trans : 'orob2b.pricing.pricelist.merge_allowed.no.label'|trans }}</td>
+                                        <th>#</th>
+                                        <th>{{ 'orob2b.pricing.pricelist.entity_label'|trans }}</th>
+                                        <th>{{ 'orob2b.pricing.pricelist.priority.label'|trans }}</th>
+                                        <th>{{ 'orob2b.pricing.pricelist.merge_allowed.label'|trans }}</th>
                                     </tr>
-                                {% endfor %}
-                            </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                    {% for priceListToAccount in priceListsByWebsites[websiteId]['priceLists'] %}
+                                        {% set priceList = priceListToAccount.priceList %}
+                                        <tr class="price_list{{ priceList.id }}">
+                                            <td>{{ loop.index }}</td>
+                                            <td>
+                                                <a href="{{ path('orob2b_pricing_price_list_view', {'id': priceList.id}) }}" class="price_list_link">
+                                                    {{ priceList.name }}
+                                                </a>
+                                            </td>
+                                            <td class="price_list_priority">{{ priceListToAccount.priority }}</td>
+                                            <td class="price_list_merge_allowed">{{ priceListToAccount.mergeAllowed ? 'orob2b.pricing.pricelist.merge_allowed.yes.label'|trans : 'orob2b.pricing.pricelist.merge_allowed.no.label'|trans }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
                             {% endif %}
                         </div>
                     {% endfor %}
