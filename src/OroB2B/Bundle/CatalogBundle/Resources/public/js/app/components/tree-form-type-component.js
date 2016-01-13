@@ -4,7 +4,7 @@ define(function(require) {
     var TreeFormTypeComponent;
     var $ = require('jquery');
     var _ = require('underscore');
-    var BasicTreeComponent = require('orob2bcatalog/js/app/components/basic-tree-component');
+    var BasicTreeComponent = require('oroui/js/app/components/basic-tree-component');
 
     /**
      * Additional option:

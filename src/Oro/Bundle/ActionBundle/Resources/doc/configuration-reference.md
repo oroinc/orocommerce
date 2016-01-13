@@ -10,16 +10,20 @@ Table of Contents
  - [Configuration Replacing](#configuration-replacing)
  - [Defining an Action](#defining-an-action)
    - [Example](#example)
- - [Frontend Options Configuration](#frontend-options-configuration)
+ - [Button Options Configuration](#button-options-configuration)
    - [Example](#example-1)
- - [Attributes Configuration](#attributes-configuration)
+ - [Frontend Options Configuration](#frontend-options-configuration)
    - [Example](#example-2)
- - [Form Options Configuration](#form-options-configuration)
+ - [Attributes Configuration](#attributes-configuration)
    - [Example](#example-3)
- - [Pre Conditions and Conditions Configuration](#pre-conditions-and-conditions-configuration)
+ - [Datagrid Options Configuration](#datagrid-options-configuration)
    - [Example](#example-4)
- - [Pre Functions, Form Init Functions and Functions Configuration](#pre-functions-form-init-functions-and-functions-configuration)
+ - [Form Options Configuration](#form-options-configuration)
    - [Example](#example-5)
+ - [Pre Conditions and Conditions Configuration](#pre-conditions-and-conditions-configuration)
+   - [Example](#example-6)
+ - [Pre Functions, Form Init Functions and Functions Configuration](#pre-functions-form-init-functions-and-functions-configuration)
+   - [Example](#example-7)
 
 Overview
 ========
@@ -132,6 +136,8 @@ Single action configuration has next properties:
     Contains configuration for Pre Conditions
 * **attributes**
     Contains configuration for Attributes
+* **datagrid_options**
+    Contains configuration for Datagrid Options
 * **form_options**
     Contains configuration for Transitions
 * **form_init**
@@ -165,6 +171,8 @@ actions:                                             # root elements
                                                      # ...
         attributes:                                  # configuration for Attributes
                                                      # ...
+        datagrid_options:                            # configuration for Datagrid Options
+                                                     # ...
         form_options:                                # configuration for Form Options
                                                      # ...
         form_init:                                   # configuration for Form Init Functions
@@ -175,12 +183,12 @@ actions:                                             # root elements
                                                      # ...
 ```
 
-Frontend Options Configuration
+Button Options Configuration
 ==============================
 
-Frontend Options allow to change action button style, override button or dialog template and set widget options.
+Button Options allow to change action button style, override button template and add some data attributes.
 
-Frontend Options configuration has next options:
+Button Options configuration has next options:
 
 * **icon**
     *string*
@@ -205,21 +213,6 @@ Frontend Options configuration has next options:
 * **page_component_options**
     *array*
     List of options of js-component module for the action-button (attribute *data-page-component-options*).
-* **dialog_template**
-    *string*
-    You can set custom action dialog template.
-    Should be extended from `OroActionBundle:Widget:widget/form.html.twig`
-* **dialog_title**
-    *string*
-    Custom title of action dialog window.
-* **dialog_options**
-    *array*
-    Parameters related to widget component. Can be specified next options: *allowMaximize*, *allowMinimize*, *dblclick*,
-    *maximizedHeightDecreaseBy*, *width*, etc.
-* **confirmation**
-    *string*
-    You can show confirmation message before start action`s execution. Translate constant should be available
-    for JS - placed in jsmessages.*.yml
 
 Example
 -------
@@ -227,7 +220,7 @@ Example
 actions:
     demo_action:
         # ...
-        frontend_options:
+        button_options:
             icon: icon-ok
             class: btn
             group: aсme.demo.actions.demogroup.label
@@ -238,15 +231,52 @@ actions:
             page_component_options:
                 component_name: '[name$="[component]"]'
                 component_additional: '[name$="[additional]"]'
+```
+
+Frontend Options Configuration
+==============================
+
+Frontend Options allow to override action dialog or page template, title and set widget options.
+
+Frontend Options configuration has next options:
+
+* **template**
+    *string*
+    You can set custom action dialog template.
+    Should be extended from `OroActionBundle:Action:form.html.twig`
+* **title**
+    *string*
+    Custom title of action dialog window.
+* **options**
+    *array*
+    Parameters related to widget component. Can be specified next options: *allowMaximize*, *allowMinimize*, *dblclick*,
+    *maximizedHeightDecreaseBy*, *width*, etc.
+* **confirmation**
+    *string*
+    You can show confirmation message before start action`s execution. Translate constant should be available
+    for JS - placed in jsmessages.*.yml
+* **show_dialog**
+    *boolean*
+    By default this value is `true`. It mean that on action execution, if form parameters are set, will be shown modal
+    dialog with form. Otherwise will be shown separate page (like entity update page) with form.
+
+Example
+-------
+```
+actions:
+    demo_action:
+        # ...
+        frontend_options:
             confirmation: aсme.demo.actions.action_perform_confirm
-            dialog_template: OroActionBundle:Widget:widget/form.html.twig
-            dialog_title: aсme.demo.actions.dialog.title
-            dialog_options:
+            template: OroActionBundle:Action:form.html.twig
+            title: aсme.demo.actions.dialog.title
+            options:
                 allowMaximize: true
                 allowMinimize: true
                 dblclick: maximize
                 maximizedHeightDecreaseBy: minimize-bar
                 width: 500
+            show_dialog: true
 ```
 
 Attributes Configuration
@@ -302,16 +332,59 @@ Example
 actions:
     demo_action:
         # ...
-        user:
-            label: 'User'
-            type: entity
-            options:
-                class: Oro\Bundle\UserBundle\Entity\User
-        company_name:
-            label: 'Company name'
-            type: string
-        group_name:
-            property_path: user.group.name
+        attributes:
+            user:
+                label: 'User'
+                type: entity
+                options:
+                    class: Oro\Bundle\UserBundle\Entity\User
+            company_name:
+                label: 'Company name'
+                type: string
+            group_name:
+                property_path: user.group.name
+```
+
+Datagrid Options Configuration
+==============================
+
+Datagrid options allow to define options of datagrid mass action. It provide two way to set mass action configuration:
+using service which return array of mas action configurations or set inline configuration of mass action.
+
+Single datagrid options can be described with next configuration:
+
+* **mass_action_provider**
+    *string*
+    Service name. This service must be marked with "oro_action.datagrid.mass_action_provider" tag. Also it must
+    implements Oro\Bundle\ActionBundle\Datagrid\Provider\MassActionProviderInterface. Method "getActions" of this
+    provider must return array of mass action configurations.
+* **mass_action**
+    *array*
+    Mass action configuration. See datagrid documentation.
+
+**Notice**
+It must be used only one parameter "mass_action_provider" or "mass_action".
+
+Example
+-------
+
+```
+actions:
+    demo_action:
+        # ...
+        datagrid_options:
+            mass_action_provider:
+                acme.action.datagrid.mass_action_provider
+            mass_action:
+                type: window
+                label: acme.demo.mass_action.label
+                icon: plus
+                route: acme_demo_bundle_massaction
+                frontend_options:
+                    title: acme.demo.mass_action.action.label
+                    dialogOptions:
+                        modal: true
+                        ...
 ```
 
 Form Options Configuration

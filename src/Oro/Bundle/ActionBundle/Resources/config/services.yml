@@ -9,6 +9,7 @@ parameters:
     oro_action.form_manager.class: Oro\Bundle\ActionBundle\Model\ActionFormManager
     oro_action.datagrid.action_extension.class: Oro\Bundle\ActionBundle\Datagrid\Extension\ActionExtension
     oro_action.datagrid.action.action_widget_action.class: Oro\Bundle\ActionBundle\Datagrid\Action\ActionWidgetAction
+    oro_action.datagrid.mass_action_provider.registry.class: Oro\Bundle\ActionBundle\Datagrid\Provider\MassActionProviderRegistry
 
 services:
     oro_action.helper.context:
@@ -98,6 +99,7 @@ services:
             - @oro_action.manager
             - @oro_action.helper.context
             - @oro_action.helper.applications
+            - @oro_action.datagrid.mass_action_provider.registry
         tags:
             - { name: oro_datagrid.extension }
         lazy: true
@@ -109,3 +111,6 @@ services:
         scope: prototype
         tags:
             - { name: oro_datagrid.extension.action.type, type: action-widget }
+
+    oro_action.datagrid.mass_action_provider.registry:
+        class: %oro_action.datagrid.mass_action_provider.registry.class%

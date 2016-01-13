@@ -1,8 +1,9 @@
 parameters:
-    orob2b_shopping_list.mass_action.add_products.class: OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction\AddProductsMassAction
-    orob2b_shopping_list.mass_action.add_products_handler.class: OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction\AddProductsMassActionHandler
+    orob2b_shopping_list.mass_action.add_products.class: OroB2B\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\AddProductsMassAction
+    orob2b_shopping_list.mass_action.add_products_handler.class: OroB2B\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\AddProductsMassActionHandler
+
 services:
-    orob2b_shopping_list.mass_action.add:
+    orob2b_shopping_list.mass_action.add_products:
         class: %orob2b_shopping_list.mass_action.add_products.class%
         arguments:
             - @oro_entity_merge.metadata.registry
