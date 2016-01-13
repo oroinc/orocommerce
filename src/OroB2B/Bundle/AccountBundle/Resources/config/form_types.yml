@@ -45,7 +45,7 @@ parameters:
 
     orob2b_account.form.type.entity_visibility_type.class: OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType
 
-    orob2b_account.form.type.sales_reps_collection_type.class: OroB2B\Bundle\AccountBundle\Form\Type\SalesRepsCollectionType
+    orob2b_account.form.type.sales_representatives_collection_type.class: OroB2B\Bundle\AccountBundle\Form\Type\SalesRepresentativesCollectionType
 
 services:
     orob2b_account.form.type.account:
@@ -286,9 +286,9 @@ services:
             - [setAccountClass,[%orob2b_account.entity.account.class%]]
             - [setAccountGroupClass,[%orob2b_account.entity.account_group.class%]]
 
-    orob2b_account.form.type.sales_reps_collection:
-        class: %orob2b_account.form.type.sales_reps_collection_type.class%
+    orob2b_account.form.type.sales_representatives_collection:
+        class: %orob2b_account.form.type.sales_representatives_collection_type.class%
         calls:
             - [setDataClass, [%oro_user.entity.class%]]
         tags:
-            - { name: form.type, alias: orob2b_account_sales_reps_collection }
+            - { name: form.type, alias: orob2b_account_sales_representatives_collection }

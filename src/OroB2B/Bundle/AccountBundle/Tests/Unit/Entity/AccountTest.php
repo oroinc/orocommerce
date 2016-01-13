@@ -29,7 +29,7 @@ class AccountTest extends \PHPUnit_Framework_TestCase
         ]);
         $this->assertPropertyCollections(new Account(), [
             ['users', new AccountUser()],
-            ['salesReps', new User()],
+            ['salesRepresentatives', new User()],
         ]);
     }
 

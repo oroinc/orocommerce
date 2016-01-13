@@ -12,7 +12,6 @@ use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Doctrine\ORM\Query;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as AccountSelectTypeStub;
@@ -22,7 +21,6 @@ use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
-use OroB2B\Bundle\AccountBundle\Form\Type\SalesRepsCollectionType;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntitySelectTypeStub;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityType;
@@ -77,14 +75,6 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
         $accountUserType->setDataClass(self::DATA_CLASS);
         $accountUserType->setAddressClass(self::ADDRESS_CLASS);
 
-        $salesRepsCollectionType = new EntityType(
-            [
-                1 => $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 1),
-                2 => $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 2),
-            ],
-            SalesRepsCollectionType::NAME
-        );
-
         return [
             new PreloadedExtension(
                 [
@@ -93,8 +83,7 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
                     FrontendAccountUserRoleSelectType::NAME => $frontendUserRoleSelectType,
                     $accountSelectType->getName() => $accountSelectType,
                     AddressCollectionTypeStub::NAME => new AddressCollectionTypeStub(),
-                    $addressEntityType->getName() => $addressEntityType,
-                    SalesRepsCollectionType::NAME => $salesRepsCollectionType,
+                    $addressEntityType->getName() => $addressEntityType
                 ],
                 []
             ),
@@ -130,9 +119,9 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
      */
     public function submitProvider()
     {
-        $newAccountUser = $this->createAccountUser();
+        $newAccountUser = new AccountUser();
 
-        $existingAccountUser = clone $newAccountUser;
+        $existingAccountUser = new AccountUser();
 
         $class = new \ReflectionClass($existingAccountUser);
         $prop = $class->getProperty('id');
@@ -240,16 +229,5 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
             );
 
         return $translator;
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|AccountUser
-     */
-    private function createAccountUser()
-    {
-        $accountUser = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountUser');
-        $accountUser->expects($this->any())->method('getOrganization')->willReturn(new Organization());
-
-        return $accountUser;
     }
 }

@@ -49,7 +49,7 @@ class AccountUserTest extends AbstractUserTest
     {
         $this->assertPropertyCollections(new AccountUser(), [
             ['addresses', $this->createAddressEntity()],
-            ['salesReps', new User()],
+            ['salesRepresentatives', new User()],
         ]);
     }
 

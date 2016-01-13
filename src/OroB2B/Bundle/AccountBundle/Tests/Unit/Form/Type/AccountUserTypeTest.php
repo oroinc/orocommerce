@@ -20,7 +20,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType;
-use OroB2B\Bundle\AccountBundle\Form\Type\SalesRepsCollectionType;
+use OroB2B\Bundle\AccountBundle\Form\Type\SalesRepresentativesCollectionType;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntitySelectTypeStub;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityType;
@@ -84,7 +84,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
                 1 => $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 1),
                 2 => $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 2),
             ],
-            SalesRepsCollectionType::NAME
+            SalesRepresentativesCollectionType::NAME
         );
 
         return [
@@ -95,7 +95,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
                     $accountSelectType->getName() => $accountSelectType,
                     AddressCollectionTypeStub::NAME => new AddressCollectionTypeStub(),
                     $addressEntityType->getName() => $addressEntityType,
-                    SalesRepsCollectionType::NAME => $salesRepsCollectionType,
+                    SalesRepresentativesCollectionType::NAME => $salesRepsCollectionType,
                 ],
                 []
             ),

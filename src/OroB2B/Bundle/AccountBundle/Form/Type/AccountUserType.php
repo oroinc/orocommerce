@@ -172,10 +172,10 @@ class AccountUserType extends AbstractType
                 ]
             )
             ->add(
-                'salesReps',
-                SalesRepsCollectionType::NAME,
+                'salesRepresentatives',
+                SalesRepresentativesCollectionType::NAME,
                 [
-                    'label' => 'orob2b.account.sales_reps.label',
+                    'label' => 'orob2b.account.sales_representatives.label',
                 ]
             );
 

@@ -281,7 +281,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      *
      * @ORM\ManyToMany(targetEntity="Oro\Bundle\UserBundle\Entity\User")
      * @ORM\JoinTable(
-     *      name="orob2b_account_user_sale_rep",
+     *      name="orob2b_account_user_sales_reps",
      *      joinColumns={
      *          @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
@@ -290,7 +290,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      *      }
      * )
      **/
-    protected $salesReps;
+    protected $salesRepresentatives;
 
     /**
      * @var \DateTime $createdAt
@@ -309,7 +309,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     public function __construct()
     {
         $this->addresses = new ArrayCollection();
-        $this->salesReps = new ArrayCollection();
+        $this->salesRepresentatives = new ArrayCollection();
         parent::__construct();
     }
 
@@ -681,36 +681,32 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     /**
      * @return Collection|User[]
      */
-    public function getSalesReps()
+    public function getSalesRepresentatives()
     {
-        return $this->salesReps;
+        return $this->salesRepresentatives;
     }
 
     /**
-     * Add salesRep
-     *
-     * @param User $salesRep
+     * @param User $salesRepresentative
      * @return $this
      */
-    public function addSalesRep(User $salesRep)
+    public function addSalesRepresentative(User $salesRepresentative)
     {
-        if (!$this->salesReps->contains($salesRep)) {
-            $this->salesReps[] = $salesRep;
+        if (!$this->salesRepresentatives->contains($salesRepresentative)) {
+            $this->salesRepresentatives->add($salesRepresentative);
         }
 
         return $this;
     }
 
     /**
-     * Remove salesRep
-     *
-     * @param User $salesRep
+     * @param User $salesRepresentative
      * @return $this
      */
-    public function removeSalesRep(User $salesRep)
+    public function removeSalesRepresentative(User $salesRepresentative)
     {
-        if ($this->salesReps->contains($salesRep)) {
-            $this->salesReps->removeElement($salesRep);
+        if ($this->salesRepresentatives->contains($salesRepresentative)) {
+            $this->salesRepresentatives->removeElement($salesRepresentative);
         }
 
         return $this;

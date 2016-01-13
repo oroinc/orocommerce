@@ -15,7 +15,7 @@ orob2b.account:
     form.choose_parent: 'Choose parent account...'
     address_book.label: 'Address Book'
     owner.label: 'Owner'
-    sales_reps.label: 'Assigned Sales Representatives'
+    sales_representatives.label: 'Assigned Sales Representatives'
 
     address:
         add: 'Add Address'
@@ -67,7 +67,7 @@ orob2b.account:
         addresses.label:             'Addresses'
         address_book.label:          'Address Book'
         owner.label:                 'Owner'
-        sales_reps.label:            'Assigned Sales Representatives'
+        sales_representatives.label: 'Assigned Sales Representatives'
 
         profile:
             company_name: 'Company Name'

@@ -5,13 +5,11 @@ namespace OroB2B\Bundle\AccountBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class SalesRepsCollectionType extends AbstractType
+class SalesRepresentativesCollectionType extends AbstractType
 {
-    const NAME = 'orob2b_account_sales_reps_collection';
+    const NAME = 'orob2b_account_sales_representatives_collection';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $dataClass;
 
     /**

@@ -43,9 +43,9 @@
                 {{ UI.renderHtmlProperty('orob2b.account.accountuser.roles.label'|trans, roles|join('<br />')) }}
             {% endif %}
 
-            {% if entity.salesReps.count() %}
+            {% if entity.salesRepresentatives.count() %}
                 {% set salesReps = [] %}
-                {% for salesRep in entity.salesReps %}
+                {% for salesRep in entity.salesRepresentatives %}
                     {% if resource_granted('VIEW', salesRep) %}
                         {% set salesRepView = UI.renderUrl(path('oro_user_view', {'id': salesRep.id}), salesRep.fullName) %}
                     {% else %}
@@ -53,7 +53,7 @@
                     {% endif %}
                     {% set salesReps = salesReps|merge([salesRepView]) %}
                 {% endfor %}
-                {{ UI.renderHtmlProperty('orob2b.account.accountuser.sales_reps.label'|trans, UI.renderList(salesReps)) }}
+                {{ UI.renderHtmlProperty('orob2b.account.accountuser.sales_representatives.label'|trans, UI.renderList(salesReps)) }}
             {% endif %}
         </div>
     </div>

@@ -2,28 +2,26 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\AccountBundle\Form\Type\SalesRepsCollectionType;
+use OroB2B\Bundle\AccountBundle\Form\Type\SalesRepresentativesCollectionType;
 
-class SalesRepsCollectionTypeTest extends FormIntegrationTestCase
+class SalesRepresentativesCollectionTypeTest extends \PHPUnit_Framework_TestCase
 {
     const CLASS_USER_ENTITY = 'Oro\Bundle\UserBundle\Entity\User';
-    /**
-     * @var SalesRepsCollectionType
-     */
+
+    /** @var SalesRepresentativesCollectionType */
     protected $formType;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp()
     {
-        parent::setUp();
-
-        $this->formType = new SalesRepsCollectionType();
+        $this->formType = new SalesRepresentativesCollectionType();
         $this->formType->setDataClass(self::CLASS_USER_ENTITY);
+    }
+
+    protected function tearDown()
+    {
+        unset($this->formType);
     }
 
     public function testSetDefaultOptions()
@@ -32,13 +30,14 @@ class SalesRepsCollectionTypeTest extends FormIntegrationTestCase
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
-            ->with([
+            ->with(
+                [
                     'required' => false,
                     'class'  => self::CLASS_USER_ENTITY,
                     'property' => 'fullName',
                     'multiple' => true,
-            ])
-        ;
+                ]
+            );
 
         $this->formType->setDefaultOptions($resolver);
     }
@@ -50,6 +49,6 @@ class SalesRepsCollectionTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals(SalesRepsCollectionType::NAME, $this->formType->getName());
+        $this->assertEquals(SalesRepresentativesCollectionType::NAME, $this->formType->getName());
     }
 }
