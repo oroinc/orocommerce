@@ -24,6 +24,8 @@ class Taxable
 
     /**
      * @var int
+     *
+     * The tax engine does NOT use this as a multiplier with price to get the Amount.
      */
     protected $quantity;
 

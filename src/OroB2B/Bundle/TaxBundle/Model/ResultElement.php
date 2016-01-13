@@ -19,7 +19,7 @@ final class ResultElement extends \ArrayObject
      */
     public static function create($includingTax, $excludingTax, $taxAmount, $adjustment)
     {
-        $resultElement = new ResultElement();
+        $resultElement = new static;
 
         $resultElement->offsetSet(self::INCLUDING_TAX, $includingTax);
         $resultElement->offsetSet(self::EXCLUDING_TAX, $excludingTax);

@@ -2,15 +2,11 @@
 
 namespace OroB2B\Bundle\TaxBundle\Model;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-
 final class Result extends \ArrayObject
 {
     const TOTAL = 'total';
     const SHIPPING = 'shipping';
     const UNIT = 'unit';
-    const ROW = 'row';
     const TAXES = 'taxes';
 
     /**
@@ -38,19 +34,11 @@ final class Result extends \ArrayObject
     }
 
     /**
-     * @return ResultElement
-     */
-    public function getRow()
-    {
-        return $this->getOffset(self::ROW, new ResultElement());
-    }
-
-    /**
-     * @return Collection
+     * @return TaxResultElement[]
      */
     public function getTaxes()
     {
-        return $this->getOffset(self::TAXES, new ArrayCollection());
+        return $this->getOffset(self::TAXES, []);
     }
 
     /**
@@ -65,5 +53,13 @@ final class Result extends \ArrayObject
         }
 
         return $default;
+    }
+
+    /** {@inheritdoc} */
+    public function serialize()
+    {
+        $this->offsetUnset(self::TAXES);
+
+        parent::serialize();
     }
 }

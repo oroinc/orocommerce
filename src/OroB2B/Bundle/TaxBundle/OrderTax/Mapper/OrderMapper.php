@@ -9,6 +9,7 @@ use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\TaxBundle\Mapper\TaxMapperInterface;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
+use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class OrderMapper implements TaxMapperInterface
 {
@@ -20,11 +21,18 @@ class OrderMapper implements TaxMapperInterface
     protected $orderLineItemMapper;
 
     /**
-     * @param OrderLineItemMapper $orderLineItemMapper
+     * @var TaxationSettingsProvider
      */
-    public function __construct(OrderLineItemMapper $orderLineItemMapper)
+    protected $settingsProvider;
+
+    /**
+     * @param OrderLineItemMapper $orderLineItemMapper
+     * @param TaxationSettingsProvider $settingsProvider
+     */
+    public function __construct(OrderLineItemMapper $orderLineItemMapper, TaxationSettingsProvider $settingsProvider)
     {
         $this->orderLineItemMapper = $orderLineItemMapper;
+        $this->settingsProvider = $settingsProvider;
     }
 
     /**
@@ -37,8 +45,11 @@ class OrderMapper implements TaxMapperInterface
             ->setAmount($order->getSubtotal())
             ->setIdentifier($order->getId())
             ->setItems($this->mapLineItems($order->getLineItems()))
-            // TODO: Should we always use shipping address? or maybe billing address?
-            ->setDestination($order->getShippingAddress());
+            ->setDestination(
+                $this->settingsProvider->isBillingAddressDestination() ?
+                    $order->getBillingAddress() : $order->getShippingAddress()
+            )
+            ->setOrigin($this->settingsProvider->getOrigin());
 
         return $taxable;
     }

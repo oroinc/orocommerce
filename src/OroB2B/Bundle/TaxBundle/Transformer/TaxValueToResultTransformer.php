@@ -2,8 +2,10 @@
 
 namespace OroB2B\Bundle\TaxBundle\Transformer;
 
+use OroB2B\Bundle\TaxBundle\Entity\TaxApply;
 use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
 use OroB2B\Bundle\TaxBundle\Model\Result;
+use OroB2B\Bundle\TaxBundle\Model\TaxResultElement;
 
 class TaxValueToResultTransformer implements TaxTransformerInterface
 {
@@ -12,7 +14,17 @@ class TaxValueToResultTransformer implements TaxTransformerInterface
     {
         $result = $taxValue->getResult();
 
-        $result->offsetSet(Result::TAXES, $taxValue->getAppliedTaxes());
+        $taxResultElements = [];
+        foreach ($taxValue->getAppliedTaxes() as $taxApply) {
+            $taxResultElements[] = TaxResultElement::create(
+                $taxApply->getTax()->getId(),
+                $taxApply->getRate(),
+                $taxApply->getTaxableAmount(),
+                $taxApply->getTaxAmount()
+            );
+        }
+
+        $result->offsetSet(Result::TAXES, $taxResultElements);
 
         return $result;
     }
@@ -22,8 +34,16 @@ class TaxValueToResultTransformer implements TaxTransformerInterface
     {
         $taxValue = new TaxValue();
 
-        foreach ($result->getTaxes() as $applyTax) {
-            $taxValue->addAppliedTax($applyTax);
+        foreach ($result->getTaxes() as $taxResultElement) {
+            $taxApply = new TaxApply();
+
+            /** @todo: reference */
+            $taxApply->setTax($taxResultElement->offsetGet(TaxResultElement::TAX));
+            $taxApply->setRate($taxResultElement->offsetGet(TaxResultElement::RATE));
+            $taxApply->setTaxableAmount($taxResultElement->offsetGet(TaxResultElement::TAXABLE_AMOUNT));
+            $taxApply->setTaxAmount($taxResultElement->offsetGet(TaxResultElement::TAX_AMOUNT));
+
+            $taxValue->addAppliedTax($taxApply);
         }
 
         $result->offsetUnset(Result::TAXES);
