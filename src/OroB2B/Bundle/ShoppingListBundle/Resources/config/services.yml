@@ -11,6 +11,7 @@ parameters:
     orob2b_shopping_list.service.product_data_storage.class: OroB2B\Bundle\ShoppingListBundle\Storage\ProductDataStorage
     orob2b_shopping_list.provider.account_user_shopping_lists.class: OroB2B\Bundle\ShoppingListBundle\Provider\AccountUserShoppingLists
     orob2b_shopping_list.provider.frontend_line_item_form.class: OroB2B\Bundle\ShoppingListBundle\Provider\FrontendLineItemForm
+    orob2b_shopping_list.provider.shopping_list_form.class: OroB2B\Bundle\ShoppingListBundle\Provider\ShoppingListForm
 
 services:
     orob2b_shopping_list.validator.line_item:
@@ -87,6 +88,13 @@ services:
             - [setBackendSystemConfigurationPath, ['oro_b2b_shopping_list.backend_product_visibility']]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
+
+    orob2b_shopping_list.provider.shopping_list_form:
+        class: %orob2b_shopping_list.provider.shopping_list_form.class%
+        arguments:
+            - @form.factory
+        tags:
+            - { name: layout.data_provider, alias: orob2b_shopping_list_shopping_list_form }
 
     orob2b_shopping_list.provider.frontend_line_item_form:
         class: %orob2b_shopping_list.provider.frontend_line_item_form.class%
