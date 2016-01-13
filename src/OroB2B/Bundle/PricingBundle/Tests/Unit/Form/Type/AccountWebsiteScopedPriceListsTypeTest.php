@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChangeBefore;
+use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\FormEvent;
@@ -319,8 +319,8 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('dispatch')
             ->with(
-                PriceListCollectionChangeBefore::NAME,
-                new PriceListCollectionChangeBefore($this->targetEntity, $this->website)
+                PriceListCollectionChange::BEFORE_CHANGE,
+                new PriceListCollectionChange($this->targetEntity, $this->website)
             );
         $this->formType->onPostSubmit($event);
     }

@@ -12,7 +12,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChangeBefore;
+use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
@@ -35,6 +35,9 @@ class WebsiteFormExtension extends AbstractTypeExtension
 
     /** @var  EventDispatcherInterface */
     protected $eventDispatcher;
+
+    /** @var  boolean */
+    protected $changed;
 
     /**
      * @param RegistryInterface $doctrine
@@ -131,6 +134,8 @@ class WebsiteFormExtension extends AbstractTypeExtension
      */
     public function onPostSubmit(FormEvent $event)
     {
+        $this->changed = false;
+        /** @var Website $website */
         $website = $event->getData();
         $form = $event->getForm();
         if (!$website || !$form->isValid()) {
@@ -144,17 +149,26 @@ class WebsiteFormExtension extends AbstractTypeExtension
         $this->persistSubmitted($submitted, $existing, $website);
 
         $fallback = $this->getFallback($website);
+        $submittedFallback = $form->get('fallback')->getData();
         if (!$fallback) {
             $fallback = new PriceListWebsiteFallback();
             $this->doctrine->getManagerForClass('OroB2BPricingBundle:PriceListWebsiteFallback')->persist($fallback);
+            $this->changed = true;
+        } else {
+            if ($fallback->getWebsite()->getId() != $website->getId()
+                || $fallback->getWebsite()->getId() != $submittedFallback
+            ) {
+                $this->changed = true;
+            }
         }
         $fallback->setWebsite($website);
-        $fallback->setFallback($form->get('fallback')->getData());
-
-        $this->eventDispatcher->dispatch(
-            PriceListCollectionChangeBefore::NAME,
-            new PriceListCollectionChangeBefore($website)
-        );
+        $fallback->setFallback($submittedFallback);
+        if ($this->changed) {
+            $this->eventDispatcher->dispatch(
+                PriceListCollectionChange::BEFORE_CHANGE,
+                new PriceListCollectionChange($website)
+            );
+        }
     }
 
     /**
@@ -180,6 +194,7 @@ class WebsiteFormExtension extends AbstractTypeExtension
 
         foreach ($removed as $id) {
             $this->getPriceListToWebsiteManager()->remove($existing[$id]);
+            $this->changed = true;
         }
     }
 
@@ -209,8 +224,13 @@ class WebsiteFormExtension extends AbstractTypeExtension
                 continue;
             }
             if (in_array($priceList->getId(), $ids, true)) {
-                $existing[$priceList->getId()]->setPriority($item['priority']);
-                $existing[$priceList->getId()]->setMergeAllowed($item['mergeAllowed']);
+                if ($existing[$priceList->getId()]->getPriority() != $item['priority']
+                    || $existing[$priceList->getId()]->isMergeAllowed() != $item['mergeAllowed']
+                ) {
+                    $existing[$priceList->getId()]->setPriority($item['priority']);
+                    $existing[$priceList->getId()]->setMergeAllowed($item['mergeAllowed']);
+                    $this->changed = true;
+                }
             } else {
                 $entity = new PriceListToWebsite();
                 $entity->setWebsite($website)
@@ -218,6 +238,7 @@ class WebsiteFormExtension extends AbstractTypeExtension
                     ->setMergeAllowed($item['mergeAllowed'])
                     ->setPriceList($priceList);
                 $this->getPriceListToWebsiteManager()->persist($entity);
+                $this->changed = true;
             }
         }
     }

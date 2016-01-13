@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
-use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChangeBefore;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -10,6 +9,7 @@ use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 
+use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
@@ -23,7 +23,7 @@ class PriceListSystemConfigSubscriber implements EventSubscriberInterface
     protected $eventDispatcher;
 
     /** @var  boolean */
-    protected $isApplicable;
+    protected $applicable;
 
     /**
      * PriceListSystemConfigSubscriber constructor.
@@ -57,13 +57,20 @@ class PriceListSystemConfigSubscriber implements EventSubscriberInterface
     {
         $settingsKey = $this->getSettingsKey(ConfigManager::SECTION_MODEL_SEPARATOR);
         $settings = $event->getSettings();
-        if (is_array($settings) && array_key_exists($settingsKey, $settings)) {
-            $this->isApplicable = true;
+        if ($this->checkApplicableBySettings($settings, $settingsKey)) {
             $settings[$settingsKey]['value'] = $this->converter->convertBeforeSave($settings[$settingsKey]['value']);
             $event->setSettings($settings);
-        } else {
-            $this->isApplicable = false;
         }
+    }
+
+    /**
+     * @param mixed $settings
+     * @param string $settingsKey
+     * @return bool
+     */
+    protected function checkApplicableBySettings($settings, $settingsKey)
+    {
+        return $this->applicable = is_array($settings) && array_key_exists($settingsKey, $settings);
     }
 
     /**
@@ -71,10 +78,10 @@ class PriceListSystemConfigSubscriber implements EventSubscriberInterface
      */
     public function updateAfter(ConfigUpdateEvent $event)
     {
-        if ($this->isApplicable) {
+        if ($this->applicable && $event->getChangeSet()) {
             $this->eventDispatcher->dispatch(
-                PriceListCollectionChangeBefore::NAME,
-                new PriceListCollectionChangeBefore()
+                PriceListCollectionChange::BEFORE_CHANGE,
+                new PriceListCollectionChange()
             );
         }
     }

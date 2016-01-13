@@ -6,9 +6,9 @@ use Symfony\Component\EventDispatcher\Event;
 
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class PriceListCollectionChangeBefore extends Event
+class PriceListCollectionChange extends Event
 {
-    const NAME = 'orob2b_pricing.price_list_collection.change_before';
+    const BEFORE_CHANGE = 'orob2b_pricing.price_list_collection.change_before';
 
     /**
      * @var object|null

@@ -13,7 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChangeBefore;
+use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepositoryInterface;
@@ -29,6 +29,9 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
 
     /** @var  EventDispatcherInterface */
     protected $eventDispatcher;
+
+    /** @var  boolean */
+    protected $changed;
 
     /**
      * @param object $targetEntity
@@ -132,6 +135,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         $em = $this->registry->getManagerForClass($this->getClassName());
 
         foreach ($priceListsByWebsites->all() as $priceListsByWebsite) {
+            $this->changed = false;
             $website = $priceListsByWebsite->getConfig()->getOption('website');
             $actualPriceListsToTargetEntity = $this->getActualPriceListsToTargetEntity($targetEntity, $website);
 
@@ -141,6 +145,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
             foreach ($actualPriceListsToTargetEntity as $priceListToTargetEntity) {
                 if (!in_array($priceListToTargetEntity->getPriceList(), $submittedPriceLists)) {
                     $em->remove($priceListToTargetEntity);
+                    $this->changed = true;
                 }
             }
 
@@ -154,9 +159,10 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
                     $actualPriceListsToTargetEntity
                 );
             }
+            
             $this->eventDispatcher->dispatch(
-                PriceListCollectionChangeBefore::NAME,
-                new PriceListCollectionChangeBefore($targetEntity, $website)
+                PriceListCollectionChange::BEFORE_CHANGE,
+                new PriceListCollectionChange($targetEntity, $website)
             );
         }
     }
@@ -182,10 +188,16 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         if (in_array($priceList->getId(), array_keys($actualPriceListsToTargetEntity))) {
             /** @var BasePriceListRelation $priceListToTargetEntity */
             $priceListToTargetEntity = $actualPriceListsToTargetEntity[$priceList->getId()];
+            if ($priceListToTargetEntity->getPriority() != $priceListWithPriorityData['priority']
+                || $priceListToTargetEntity->isMergeAllowed() != $priceListWithPriorityData['mergeAllowed']
+            ) {
+                $this->changed = true;
+            }
         } else {
             $priceListToTargetEntity = $this->createPriceListToTargetEntity($targetEntity);
             $priceListToTargetEntity->setWebsite($website);
             $priceListToTargetEntity->setPriceList($priceListWithPriorityData['priceList']);
+            $this->changed = true;
         }
         $priceListToTargetEntity->setPriority($priceListWithPriorityData['priority']);
         $priceListToTargetEntity->setMergeAllowed($priceListWithPriorityData['mergeAllowed']);

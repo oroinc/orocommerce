@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
 
-use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChangeBefore;
+use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
@@ -121,7 +121,7 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->eventDispatcher
             ->expects($this->once())
             ->method('dispatch')
-            ->with(PriceListCollectionChangeBefore::NAME, new PriceListCollectionChangeBefore());
+            ->with(PriceListCollectionChange::BEFORE_CHANGE, new PriceListCollectionChange());
         $subscriber->updateAfter(new ConfigUpdateEvent([]));
     }
 

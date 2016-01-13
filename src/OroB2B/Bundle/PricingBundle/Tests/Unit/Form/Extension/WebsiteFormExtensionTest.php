@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
-use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChangeBefore;
+use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -281,7 +281,7 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
         $this->eventDispatcher
             ->expects($this->once())
             ->method('dispatch')
-            ->with(PriceListCollectionChangeBefore::NAME, new PriceListCollectionChangeBefore($website));
+            ->with(PriceListCollectionChange::BEFORE_CHANGE, new PriceListCollectionChange($website));
         $extension->onPostSubmit($event);
     }
 
