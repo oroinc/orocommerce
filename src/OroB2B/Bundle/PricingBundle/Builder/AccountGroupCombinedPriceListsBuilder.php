@@ -70,27 +70,24 @@ class AccountGroupCombinedPriceListsBuilder
     }
 
     /**
-     * @param AccountGroup $accountGroup
      * @param Website $website
+     * @param AccountGroup|null $currentAccountGroup
      */
-    public function build(Website $website, AccountGroup $accountGroup)
+    public function build(Website $website, AccountGroup $currentAccountGroup = null)
     {
-        $this->updatePriceListsOnCurrentLevel($website, $accountGroup);
-        $this->updatePriceListsOnChildrenLevels($website, $accountGroup);
-        $this->combinedPriceListGarbageCollector->cleanCombinedPriceLists();
-    }
+        $accountGroups = [$currentAccountGroup];
+        if (!$currentAccountGroup) {
+            $accountGroups = $this->getPriceListToAccountGroupRepository()
+                ->getAccountGroupIteratorByFallback($website, PriceListAccountGroupFallback::WEBSITE);
+        }
 
-    /**
-     * @param Website $website
-     */
-    public function buildByWebsite(Website $website)
-    {
-        $accountGroupToPriceListIterator = $this->getPriceListToAccountGroupRepository()
-            ->getAccountGroupIteratorByFallback($website, PriceListAccountGroupFallback::WEBSITE);
-
-        foreach ($accountGroupToPriceListIterator as $accountGroup) {
+        foreach ($accountGroups as $accountGroup) {
             $this->updatePriceListsOnCurrentLevel($website, $accountGroup);
             $this->updatePriceListsOnChildrenLevels($website, $accountGroup);
+        }
+
+        if ($currentAccountGroup) {
+            $this->combinedPriceListGarbageCollector->cleanCombinedPriceLists();
         }
     }
 

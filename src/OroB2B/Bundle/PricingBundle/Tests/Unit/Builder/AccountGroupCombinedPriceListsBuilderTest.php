@@ -104,7 +104,7 @@ class AccountGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLis
         $class = 'OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup';
         $CPLBuilder->setPriceListToAccountGroupClassName($class);
 
-        $CPLBuilder->buildByWebsite($website);
+        $CPLBuilder->build($website);
     }
 
     /**

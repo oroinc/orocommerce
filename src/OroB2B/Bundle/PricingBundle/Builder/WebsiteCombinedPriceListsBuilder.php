@@ -69,23 +69,23 @@ class WebsiteCombinedPriceListsBuilder
     }
 
     /**
-     * @param Website $website
+     * @param Website|null $currentWebsite
      */
-    public function build(Website $website)
+    public function build(Website $currentWebsite = null)
     {
-        $this->updatePriceListsOnCurrentLevel($website);
-        $this->updatePriceListsOnChildrenLevels($website);
-        $this->combinedPriceListGarbageCollector->cleanCombinedPriceLists();
-    }
+        $websites = [$currentWebsite];
+        if (!$currentWebsite) {
+            $websites = $this->getPriceListToWebsiteRepository()
+                ->getWebsiteIteratorByFallback(PriceListWebsiteFallback::CONFIG);
+        }
 
-    public function buildForAll()
-    {
-        $websiteToPriceListIterator = $this->getPriceListToWebsiteRepository()
-            ->getWebsiteIteratorByFallback(PriceListWebsiteFallback::CONFIG);
-
-        foreach ($websiteToPriceListIterator as $website) {
+        foreach ($websites as $website) {
             $this->updatePriceListsOnCurrentLevel($website);
             $this->updatePriceListsOnChildrenLevels($website);
+        }
+
+        if ($currentWebsite) {
+            $this->combinedPriceListGarbageCollector->cleanCombinedPriceLists();
         }
     }
 
@@ -160,7 +160,7 @@ class WebsiteCombinedPriceListsBuilder
      */
     protected function updatePriceListsOnChildrenLevels(Website $website)
     {
-        $this->accountGroupCombinedPriceListsBuilder->buildByWebsite($website);
+        $this->accountGroupCombinedPriceListsBuilder->build($website);
     }
 
     /**
