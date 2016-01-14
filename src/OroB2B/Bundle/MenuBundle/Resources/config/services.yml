@@ -56,7 +56,7 @@ services:
             - [setEntityClass, [%orob2b_menu.entity.menu_item.class%]]
             - [setCache, [@orob2b_menu.cache]]
 
-    orob2b_menu.event_listener.orm.menu_item_cache_subscriber:
+    orob2b_menu.event_listener.orm.menu_item_cache_listener:
         class: OroB2B\Bundle\MenuBundle\Entity\Listener\MenuItemListener
         arguments:
             - @orob2b_menu.menu_provider
