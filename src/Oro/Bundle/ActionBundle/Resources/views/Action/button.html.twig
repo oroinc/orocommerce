@@ -19,7 +19,7 @@
                     data-dialog-url="{{ params.actionUrl }}"
                     data-dialog-options="{{ dialogOptions|json_encode }}"
                 {% endif %}
-                data-confirmation="{{ params.buttonOptions.confirmation|default('') }}"
+                data-confirmation="{{ params.frontendOptions.confirmation|default('') }}"
                 {% if params.buttonOptions.page_component_module is defined %}data-page-component-module={{ params.buttonOptions.page_component_module }}{% endif %}
                 {% if params.buttonOptions.page_component_options is defined %}data-page-component-options={{ params.buttonOptions.page_component_options|json_encode }}{% endif %}
                 {% if params.buttonOptions.data is defined %}

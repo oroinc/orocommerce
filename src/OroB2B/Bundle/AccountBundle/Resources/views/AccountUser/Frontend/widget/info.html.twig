@@ -26,6 +26,14 @@
                 {% set roles = roles|merge([entityRole.label]) %}
             {% endfor %}
             {{ UI.renderHtmlProperty('orob2b.account.accountuser.roles.label'|trans, roles|join('<br />')) }}
+
+            {% if entity.salesRepresentatives.count() %}
+                {% set salesReps = [] %}
+                {% for salesRep in entity.salesRepresentatives %}
+                    {% set salesReps = salesReps|merge([salesRep.fullName|escape]) %}
+                {% endfor %}
+                {{ UI.renderHtmlProperty('orob2b.account.accountuser.sales_representatives.label'|trans, UI.renderList(salesReps)) }}
+            {% endif %}
         </div>
     </div>
 </div>
