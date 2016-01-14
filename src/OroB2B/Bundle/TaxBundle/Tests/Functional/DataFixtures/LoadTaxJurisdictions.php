@@ -28,7 +28,7 @@ class LoadTaxJurisdictions extends AbstractFixture implements DependentFixtureIn
     public function load(ObjectManager $manager)
     {
         $this->createTaxJurisdiction($manager, self::TAX_1, self::DESCRIPTION_1);
-        $this->createTaxJurisdiction($manager, self::TAX_2, self::DESCRIPTION_2);
+        $this->createTaxJurisdiction($manager, self::TAX_2, self::DESCRIPTION_2, self::STATE);
 
         $manager->flush();
     }
@@ -47,15 +47,19 @@ class LoadTaxJurisdictions extends AbstractFixture implements DependentFixtureIn
      * @param ObjectManager|EntityManager $manager
      * @param string $code
      * @param string $description
+     * @param string $region
      * @return TaxJurisdiction
+     * @throws \Doctrine\ORM\ORMException
      */
-    protected function createTaxJurisdiction(ObjectManager $manager, $code, $description)
+    protected function createTaxJurisdiction(ObjectManager $manager, $code, $description, $region = null)
     {
         $taxJurisdiction = new TaxJurisdiction();
         $taxJurisdiction->setCode($code);
         $taxJurisdiction->setDescription($description);
         $taxJurisdiction->setCountry($manager->getReference('OroAddressBundle:Country', self::COUNTRY));
-        $taxJurisdiction->setRegion($manager->getReference('OroAddressBundle:Region', self::STATE));
+        if ($region) {
+            $taxJurisdiction->setRegion($manager->getReference('OroAddressBundle:Region', $region));
+        }
 
         $manager->persist($taxJurisdiction);
         $this->addReference(self::REFERENCE_PREFIX . '.' . $code, $taxJurisdiction);

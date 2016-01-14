@@ -33,13 +33,16 @@ class TaxFactoryTest extends \PHPUnit_Framework_TestCase
             ->willReturn('stdClass');
 
         $mapper
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('map')
             ->willReturn(new Taxable());
 
         $this->factory->addMapper($mapper);
         $taxable = $this->factory->create(new \stdClass());
         $this->assertInstanceOf('\OroB2B\Bundle\TaxBundle\Model\Taxable', $taxable);
+
+        // cache
+        $this->assertSame($taxable, $taxable = $this->factory->create(new \stdClass()));
     }
 
     /**

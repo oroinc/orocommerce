@@ -11,6 +11,7 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper;
 use OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderMapper;
+use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class OrderMapperTest extends \PHPUnit_Framework_TestCase
 {
@@ -29,10 +30,17 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
      */
     protected $orderLineItemMapper;
 
+    /**
+     * @var TaxationSettingsProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $settingsProvider;
+
     protected function setUp()
     {
         $this->orderLineItemMapper = $this->getMock('OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper');
-        $this->mapper = new OrderMapper($this->orderLineItemMapper);
+        $this->settingsProvider = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
+            ->disableOriginalConstructor()->getMock();
+        $this->mapper = new OrderMapper($this->orderLineItemMapper, $this->settingsProvider);
     }
 
     protected function tearDown()

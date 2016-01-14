@@ -15,8 +15,8 @@ class LoadTaxes extends AbstractFixture
     const DESCRIPTION_1 = 'Tax description 1';
     const DESCRIPTION_2 = 'Tax description 2';
 
-    const RATE_1 = 10;
-    const RATE_2 = 20;
+    const RATE_1 = 0.1;
+    const RATE_2 = 0.2;
 
     const REFERENCE_PREFIX = 'tax';
 

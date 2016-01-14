@@ -49,7 +49,12 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
             }
         );
 
-        $this->manager = new TaxManager($this->factory, $this->eventDispatcher, $this->doctrineHelper, '\stdClass');
+        $this->manager = new TaxManager(
+            $this->factory,
+            $this->eventDispatcher,
+            $this->doctrineHelper,
+            'OroB2B\Bundle\TaxBundle\Entity\TaxValue'
+        );
     }
 
     /**

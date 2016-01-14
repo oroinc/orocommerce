@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\TaxBundle\Resolver;
 
 use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
 use OroB2B\Bundle\TaxBundle\Model\Result;
+use OroB2B\Bundle\TaxBundle\Model\ResultElement;
 use OroB2B\Bundle\TaxBundle\Model\TaxResultElement;
 
 class CustomerAddressResolver extends AbstractAddressResolver
@@ -12,31 +13,38 @@ class CustomerAddressResolver extends AbstractAddressResolver
     public function resolve(ResolveTaxEvent $event)
     {
         $taxable = $event->getTaxable();
-        $address = $taxable->getDestination();
+        if ($taxable->getItems()->isEmpty()) {
+            return;
+        }
+
+        $address = $this->getAddress($taxable);
+        if (!$address) {
+            return;
+        }
+
         $taxRules = $this->matcher->match($address);
-        $result = $event->getResult();
+        $taxableAmount = $taxable->getAmount();
+
+        $totalInclTax = 0;
+        $totalExclTax = 0;
         $taxResults = [];
 
-        $isItem = $taxable->getItems()->isEmpty();
-        $taxableAmount = $taxable->getAmount();
-        $totalTaxAmount = 0;
         foreach ($taxRules as $taxRule) {
-            $taxAmount = $this->calculator->calculate($taxableAmount, $taxRule);
-            $totalTaxAmount += $taxAmount;
+            $resultElement = $this->calculator->calculate($taxableAmount, $taxRule);
+            $totalInclTax += $resultElement->getIncludingTax();
+            $totalExclTax += $resultElement->getExcludingTax();
 
-            $tax = $taxRule->getTax();
-            $taxResults[] = TaxResultElement::create($tax->getId(), $tax->getRate(), $taxableAmount, $taxAmount);
+            $taxResults[] = TaxResultElement::create(
+                $taxRule->getTax()->getId(),
+                $taxRule->getTax()->getRate(),
+                $taxableAmount,
+                $resultElement->getTaxAmount()
+            );
         }
 
-        $result->offsetSet(Result::TOTAL, $totalTaxAmount);
+        $result = $event->getResult();
+        $result->offsetSet(Result::TOTAL, ResultElement::create($totalInclTax, $totalExclTax));
+        $result->offsetSet(Result::SHIPPING, new ResultElement());
         $result->offsetSet(Result::TAXES, $taxResults);
-
-        if ($isItem) {
-            $priceTaxAmount = 0;
-            foreach ($taxRules as $taxRule) {
-                $priceTaxAmount += $this->calculator->calculate($taxable->getPrice(), $taxRule);
-            }
-            $result->offsetSet(Result::UNIT, $priceTaxAmount);
-        }
     }
 }

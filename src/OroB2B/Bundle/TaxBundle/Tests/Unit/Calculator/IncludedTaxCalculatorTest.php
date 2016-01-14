@@ -8,7 +8,7 @@ use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
 use OroB2B\Bundle\TaxBundle\Rounding\TaxRoundingService;
 
-class PriceIncludedTaxCalculatorTest extends \PHPUnit_Framework_TestCase
+class IncludedTaxCalculatorTest extends \PHPUnit_Framework_TestCase
 {
     /** @var IncludedTaxCalculator */
     protected $calculator;

@@ -4,14 +4,14 @@ namespace OroB2B\Bundle\TaxBundle\OrderTax\Mapper;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Util\ClassUtils;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\TaxBundle\Mapper\TaxMapperInterface;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
-use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
-class OrderMapper implements TaxMapperInterface
+class OrderMapper extends AbstractOrderMapper
 {
     const PROCESSING_CLASS_NAME = 'OroB2B\Bundle\OrderBundle\Entity\Order';
 
@@ -19,21 +19,6 @@ class OrderMapper implements TaxMapperInterface
      * @var OrderLineItemMapper
      */
     protected $orderLineItemMapper;
-
-    /**
-     * @var TaxationSettingsProvider
-     */
-    protected $settingsProvider;
-
-    /**
-     * @param OrderLineItemMapper $orderLineItemMapper
-     * @param TaxationSettingsProvider $settingsProvider
-     */
-    public function __construct(OrderLineItemMapper $orderLineItemMapper, TaxationSettingsProvider $settingsProvider)
-    {
-        $this->orderLineItemMapper = $orderLineItemMapper;
-        $this->settingsProvider = $settingsProvider;
-    }
 
     /**
      * {@inheritdoc}
@@ -44,11 +29,9 @@ class OrderMapper implements TaxMapperInterface
         $taxable = (new Taxable())
             ->setAmount($order->getSubtotal())
             ->setIdentifier($order->getId())
+            ->setClassName(ClassUtils::getClass($order))
             ->setItems($this->mapLineItems($order->getLineItems()))
-            ->setDestination(
-                $this->settingsProvider->isBillingAddressDestination() ?
-                    $order->getBillingAddress() : $order->getShippingAddress()
-            )
+            ->setDestination($this->getOrderAddress($order))
             ->setOrigin($this->settingsProvider->getOrigin());
 
         return $taxable;
@@ -75,5 +58,13 @@ class OrderMapper implements TaxMapperInterface
         );
 
         return $taxableItems;
+    }
+
+    /**
+     * @param TaxMapperInterface $orderLineItemMapper
+     */
+    public function setOrderLineItemMapper(TaxMapperInterface $orderLineItemMapper)
+    {
+        $this->orderLineItemMapper = $orderLineItemMapper;
     }
 }

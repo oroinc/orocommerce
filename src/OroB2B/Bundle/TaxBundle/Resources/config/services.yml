@@ -23,6 +23,7 @@ parameters:
     orob2b_tax.provider.taxation_settings_provider.class: OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider
 
     orob2b_tax.manager.tax_manager.class: OroB2B\Bundle\TaxBundle\Manager\TaxManager
+    orob2b_tax.manager.tax_value_manager.class: OroB2B\Bundle\TaxBundle\Manager\TaxValueManager
     orob2b_tax.transformer.tax_value.class: OroB2B\Bundle\TaxBundle\Transformer\TaxValueToResultTransformer
     orob2b_tax.factory.tax.class: OroB2B\Bundle\TaxBundle\Factory\TaxFactory
     orob2b_tax.order_tax.mapper.order_mapper.class: OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderMapper
@@ -39,6 +40,7 @@ parameters:
 
     orob2b_tax.resolver.abstract_address.class: OroB2B\Bundle\TaxBundle\Resolver\AbstractAddressResolver
     orob2b_tax.resolver.customer_address.class: OroB2B\Bundle\TaxBundle\Resolver\CustomerAddressResolver
+    orob2b_tax.resolver.customer_address.item.class: OroB2B\Bundle\TaxBundle\Resolver\CustomerAddressItemResolver
 
 services:
     orob2b_tax.manager.product_tax_code.api:
@@ -204,16 +206,24 @@ services:
 
     orob2b_tax.transformer.tax_value:
         class: %orob2b_tax.transformer.tax_value.class%
+        arguments:
+            - @orob2b_tax.manager.tax_value_manager
+            - %orob2b_tax.entity.tax.class%
 
     orob2b_tax.manager.tax_manager:
         class: %orob2b_tax.manager.tax_manager.class%
         arguments:
             - @orob2b_tax.factory.tax
             - @event_dispatcher
-            - @oro_entity.doctrine_helper
-            - %orob2b_tax.entity.tax_value.class%
+            - @orob2b_tax.manager.tax_value_manager
         calls:
             - [addTransformer, [%orob2b_order.entity.order.class%, @orob2b_tax.transformer.tax_value]]
+
+    orob2b_tax.manager.tax_value_manager:
+        class: %orob2b_tax.manager.tax_value_manager.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+            - %orob2b_tax.entity.tax_value.class%
 
     orob2b_tax.factory.tax:
         class: %orob2b_tax.factory.tax.class%
@@ -221,13 +231,16 @@ services:
     orob2b_tax.order_tax.mapper.order_mapper:
         class: %orob2b_tax.order_tax.mapper.order_mapper.class%
         arguments:
-            - @orob2b_tax.order_tax.mapper.order_line_item_mapper
             - @orob2b_tax.provider.taxation_settings_provider
+        calls:
+            - [setOrderLineItemMapper, [@orob2b_tax.order_tax.mapper.order_line_item_mapper]]
         tags:
             - { name: orob2b_tax.tax_mapper }
 
     orob2b_tax.order_tax.mapper.order_line_item_mapper:
         class: %orob2b_tax.order_tax.mapper.order_line_item_mapper.class%
+        arguments:
+            - @orob2b_tax.provider.taxation_settings_provider
         tags:
             - { name: orob2b_tax.tax_mapper }
 
@@ -245,6 +258,9 @@ services:
     orob2b_tax.matcher.country_matcher:
         class: %orob2b_tax.matcher.country_matcher.class%
         parent: orob2b_tax.abstract.matcher
+
+    orob2b_tax.matcher.zip_matcher:
+        parent: orob2b_tax.matcher.country_matcher
 
     orob2b_tax.rounding.tax:
         class: %orob2b_tax.rounding.tax.class%
@@ -276,11 +292,18 @@ services:
         abstract: true
         arguments:
             - @orob2b_tax.provider.taxation_settings_provider
-            - orob2b_tax.matcher.country_matcher # @todo: zip matcher
+            - @orob2b_tax.matcher.zip_matcher
             - @orob2b_tax.calculator
+            - @orob2b_tax.rounding.tax
 
     orob2b_tax.resolver.customer_address:
         class: %orob2b_tax.resolver.customer_address.class%
         parent: orob2b_tax.resolver.abstract_address
         tags:
-            - { name: orob2b_tax.resolve }
+            - { name: kernel.event_listener, event: orob2b_tax.resolve, method: resolve }
+
+    orob2b_tax.resolver.customer_address.item:
+        class: %orob2b_tax.resolver.customer_address.item.class%
+        parent: orob2b_tax.resolver.abstract_address
+        tags:
+            - { name: kernel.event_listener, event: orob2b_tax.resolve, method: resolve }

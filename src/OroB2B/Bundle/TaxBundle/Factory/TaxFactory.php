@@ -16,6 +16,11 @@ class TaxFactory
     protected $mappers = [];
 
     /**
+     * @var Taxable[]
+     */
+    protected $taxable = [];
+
+    /**
      * Add Tax Mapper
      *
      * @param TaxMapperInterface $mapper
@@ -32,6 +37,12 @@ class TaxFactory
      */
     public function create($object)
     {
+        $oid = spl_object_hash($object);
+
+        if (array_key_exists($oid, $this->taxable)) {
+            return $this->taxable[$oid];
+        }
+
         $objectClassName = ClassUtils::getClass($object);
         if (!array_key_exists($objectClassName, $this->mappers)) {
             throw new UnmappableArgumentException(
@@ -39,6 +50,8 @@ class TaxFactory
             );
         }
 
-        return $this->mappers[$objectClassName]->map($object);
+        $this->taxable[$oid] = $this->mappers[$objectClassName]->map($object);
+
+        return $this->taxable[$oid];
     }
 }

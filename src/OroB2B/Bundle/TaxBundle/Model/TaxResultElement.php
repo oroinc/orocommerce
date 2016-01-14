@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\TaxBundle\Model;
 
-class TaxResultElement extends \ArrayObject
+class TaxResultElement extends AbstractResult
 {
     const TAX = 'tax';
     const RATE = 'rate';
