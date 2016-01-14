@@ -180,6 +180,8 @@ services:
 
     orob2b_pricing.builder.combined_price_list_builder:
         class: %orob2b_pricing.builder.combined_price_list_builder.class%
+        arguments:
+            - @oro_config.global
         calls:
             - [setCombinedPriceListProvider, [@orob2b_pricing.provider.combined_price_list]]
             - [setWebsiteCombinedPriceListBuilder, [@orob2b_pricing.builder.website_combined_price_list_builder]]

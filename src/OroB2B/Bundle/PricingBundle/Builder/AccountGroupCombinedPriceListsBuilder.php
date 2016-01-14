@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Builder;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -47,7 +47,7 @@ class AccountGroupCombinedPriceListsBuilder
     protected $priceListToAccountGroupRepository;
 
     /**
-     * @var Registry
+     * @var ManagerRegistry
      */
     protected $registry;
 
@@ -62,21 +62,21 @@ class AccountGroupCombinedPriceListsBuilder
     protected $combinedPriceListGarbageCollector;
 
     /**
-     * @param $registry
+     * @param ManagerRegistry $registry
      */
-    public function __construct(Registry $registry)
+    public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
     }
 
     /**
-     * @param Website $website
      * @param AccountGroup $accountGroup
+     * @param Website $website
      */
-    public function build(AccountGroup $accountGroup, Website $website)
+    public function build(Website $website, AccountGroup $accountGroup)
     {
-        $this->updatePriceListsOnCurrentLevel($accountGroup, $website);
-        $this->updatePriceListsOnChildrenLevels($accountGroup, $website);
+        $this->updatePriceListsOnCurrentLevel($website, $accountGroup);
+        $this->updatePriceListsOnChildrenLevels($website, $accountGroup);
         $this->combinedPriceListGarbageCollector->cleanCombinedPriceLists();
     }
 
@@ -85,14 +85,14 @@ class AccountGroupCombinedPriceListsBuilder
      */
     public function buildByWebsite(Website $website)
     {
-        $groupsIterator = $this->getPriceListToAccountGroupRepository()
+        $accountGroupToPriceListIterator = $this->getPriceListToAccountGroupRepository()
             ->getPriceListToAccountGroupByWebsiteIterator($website);
         /**
          * @var $accountGroupToPriceList PriceListToAccountGroup
          */
-        foreach ($groupsIterator as $accountGroupToPriceList) {
-            $this->updatePriceListsOnCurrentLevel($accountGroupToPriceList->getAccountGroup(), $website);
-            $this->updatePriceListsOnChildrenLevels($accountGroupToPriceList->getAccountGroup(), $website);
+        foreach ($accountGroupToPriceListIterator as $accountGroupToPriceList) {
+            $this->updatePriceListsOnCurrentLevel($website, $accountGroupToPriceList->getAccountGroup());
+            $this->updatePriceListsOnChildrenLevels($website, $accountGroupToPriceList->getAccountGroup());
         }
     }
 
@@ -150,7 +150,7 @@ class AccountGroupCombinedPriceListsBuilder
      * @param Website $website
      * @param AccountGroup $accountGroup
      */
-    protected function updatePriceListsOnCurrentLevel(AccountGroup $accountGroup, Website $website)
+    protected function updatePriceListsOnCurrentLevel(Website $website, AccountGroup $accountGroup)
     {
         $collection = $this->priceListCollectionProvider->getPriceListsByAccountGroup($accountGroup, $website);
         $actualCombinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection);
@@ -164,12 +164,12 @@ class AccountGroupCombinedPriceListsBuilder
     }
 
     /**
-     * @param Website $website
      * @param AccountGroup $accountGroup
+     * @param Website $website
      */
-    protected function updatePriceListsOnChildrenLevels(AccountGroup $accountGroup, Website $website)
+    protected function updatePriceListsOnChildrenLevels(Website $website, AccountGroup $accountGroup)
     {
-        $this->accountCombinedPriceListsBuilder->buildByAccountGroup($accountGroup, $website);
+        $this->accountCombinedPriceListsBuilder->buildByAccountGroup($website, $accountGroup);
     }
 
     /**

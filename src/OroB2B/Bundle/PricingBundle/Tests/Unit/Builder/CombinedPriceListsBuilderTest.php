@@ -30,9 +30,8 @@ class CombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBuilderTes
         $CPLProvider = $this->getCombinedPriceListProviderMock($priceListCollection, $actualCPLId);
         $garbageCollector = $this->getGarbageCollectorMock(true);
 
-        $CPLBuilder = new CombinedPriceListsBuilder();
+        $CPLBuilder = new CombinedPriceListsBuilder($configManager);
         $CPLBuilder->setWebsiteCombinedPriceListBuilder($websiteCPLBuilder);
-        $CPLBuilder->setConfigManager($configManager);
         $CPLBuilder->setPriceListCollectionProvider($priceListCollectionProvider);
         $CPLBuilder->setCombinedPriceListProvider($CPLProvider);
         $CPLBuilder->setCombinedPriceListGarbageCollector($garbageCollector);

@@ -9,7 +9,7 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_
 {
     /**
      * @param $collection
-     * @param $actualCPLId
+     * @param int $actualCPLId
      * @return CombinedPriceListProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getCombinedPriceListProviderMock($collection, $actualCPLId)
@@ -32,7 +32,7 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_
     }
 
     /**
-     * @param $buildForOne
+     * @param boolean $buildForOne
      * @return CombinedPriceListGarbageCollector|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getGarbageCollectorMock($buildForOne)

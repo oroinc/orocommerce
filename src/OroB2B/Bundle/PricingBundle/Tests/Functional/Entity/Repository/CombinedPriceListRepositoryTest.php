@@ -106,7 +106,8 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $this->assertNull($this->getRepository()->getCombinedPriceListByWebsite($websiteCa));
     }
 
-    public function testDeleteUnusedPriceLists()
+
+    public function testDeleteUnusedPriceListsWithIgnore()
     {
         $combinedPriceList = new CombinedPriceList();
         $combinedPriceList->setEnabled(true);
@@ -114,19 +115,50 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $this->getManager()->persist($combinedPriceList);
         $this->getManager()->flush();
 
-        $priceLists = $this->getRepository()->findBy(['name' => 'test_cpl']);
+        $combinedPriceList2 = new CombinedPriceList();
+        $combinedPriceList2->setEnabled(true);
+        $combinedPriceList2->setName('test_cpl2');
+        $this->getManager()->persist($combinedPriceList2);
+        $this->getManager()->flush();
+
+        $combinedPriceListRepository = $this->getRepository();
+
+        $priceLists = $combinedPriceListRepository->findBy(['name' => 'test_cpl']);
         $this->assertNotEmpty($priceLists);
 
-        $this->getRepository()->deleteUnusedPriceLists($priceLists, null);
-        $priceLists = $this->getRepository()->findBy(['name' => 'test_cpl']);
+        $combinedPriceListRepository->deleteUnusedPriceLists($priceLists, null);
+        $priceLists = $combinedPriceListRepository->findBy(['name' => 'test_cpl']);
         $this->assertNotEmpty($priceLists);
 
-        $this->getRepository()->deleteUnusedPriceLists([], false);
-        $priceLists = $this->getRepository()->findBy(['name' => 'test_cpl']);
+        $priceLists = $combinedPriceListRepository->findBy(['name' => 'test_cpl2']);
+        $this->assertEmpty($priceLists);
+    }
+
+    public function testDeleteUnusedPriceLists()
+    {
+        $combinedPriceList = new CombinedPriceList();
+        $combinedPriceList->setEnabled(false);
+        $combinedPriceList->setName('test_cpl2');
+        $this->getManager()->persist($combinedPriceList);
+        $this->getManager()->flush();
+
+        $combinedPriceListRepository = $this->getRepository();
+
+        $combinedPriceListRepository->deleteUnusedPriceLists([], false);
+
+        $priceLists = $combinedPriceListRepository->findBy(['name' => 'test_cpl']);
         $this->assertNotEmpty($priceLists);
 
-        $this->getRepository()->deleteUnusedPriceLists();
-        $priceLists = $this->getRepository()->findBy(['name' => 'test_cpl']);
+        $priceLists = $combinedPriceListRepository->findBy(['name' => 'test_cpl2']);
+        $this->assertEmpty($priceLists);
+
+    }
+
+    public function testDeleteUnusedDisabledPriceLists()
+    {
+        $combinedPriceListRepository = $this->getRepository();
+        $combinedPriceListRepository->deleteUnusedPriceLists();
+        $priceLists = $combinedPriceListRepository->findBy(['name' => 'test_cpl']);
         $this->assertEmpty($priceLists);
     }
 

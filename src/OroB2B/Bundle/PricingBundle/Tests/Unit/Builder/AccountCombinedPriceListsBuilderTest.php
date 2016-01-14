@@ -62,7 +62,7 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
         $class = 'OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount';
         $CPLBuilder->setPriceListToAccountClassName($class);
 
-        $CPLBuilder->build($account, $website);
+        $CPLBuilder->build($website, $account);
     }
 
     /**
@@ -115,7 +115,7 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
         $class = 'OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount';
         $CPLBuilder->setPriceListToAccountClassName($class);
 
-        $CPLBuilder->buildByAccountGroup($accountGroup, $website);
+        $CPLBuilder->buildByAccountGroup($website, $accountGroup);
     }
 
     /**
@@ -304,10 +304,10 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
             $relation = $this->getMock('OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount');
             $relation->expects($this->once())->method('getAccount')->willReturn($account);
 
-            $PLToAccountRepository->expects($this->once())->method('getPriceListToAccountByWebsiteIterator')
+            $PLToAccountRepository->expects($this->once())->method('getRelationByAccountGroupIterator')
                 ->willReturn([$relation]);
         } else {
-            $PLToAccountRepository->expects($this->never())->method('getPriceListToAccountByWebsiteIterator');
+            $PLToAccountRepository->expects($this->never())->method('getRelationByAccountGroupIterator');
         }
 
         return $PLToAccountRepository;

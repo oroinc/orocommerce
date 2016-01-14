@@ -52,11 +52,11 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
     }
 
     /**
-     * @param AccountGroup $accountGroup
      * @param Website $website
+     * @param AccountGroup $accountGroup
      * @return BufferedQueryResultIterator
      */
-    public function getPriceListToAccountByWebsiteIterator(AccountGroup $accountGroup, Website $website)
+    public function getRelationByAccountGroupIterator(AccountGroup $accountGroup, Website $website)
     {
         $qb = $this->createQueryBuilder('plToAccount');
         $qb->innerJoin('plToAccount.account', 'account')
@@ -67,14 +67,13 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
                 $qb->expr()->andX(
                     $qb->expr()->eq('plToAccount.website', 'priceListFallBack.website'),
                     $qb->expr()->eq('plToAccount.account', 'priceListFallBack.account'),
-                    $qb->expr()->eq('priceListFallBack.fallback', ':fallbackToWebsite')
+                    $qb->expr()->eq('priceListFallBack.fallback', ':fallbackToGroup')
                 )
             )
             ->where('plToAccount.website = :website')
             ->andWhere('account.group = :accountGroup')
-            ->orderBy('account.id')
             ->setParameter('accountGroup', $accountGroup)
-            ->setParameter('fallbackToWebsite', PriceListAccountFallback::ACCOUNT_GROUP)
+            ->setParameter('fallbackToGroup', PriceListAccountFallback::ACCOUNT_GROUP)
             ->setParameter('website', $website);
 
         $iterator = new BufferedQueryResultIterator($qb->getQuery());

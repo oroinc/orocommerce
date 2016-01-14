@@ -2,18 +2,17 @@
 
 namespace OroB2B\Bundle\PricingBundle\Builder;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 
 class CombinedPriceListGarbageCollector
 {
     /**
-     * @var Registry
+     * @var ManagerRegistry
      */
     protected $registry;
 
@@ -33,16 +32,16 @@ class CombinedPriceListGarbageCollector
     protected $configManager;
 
     /**
-     * @param Registry $registry
+     * @param ManagerRegistry $registry
      */
-    public function __construct(Registry $registry)
+    public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
     }
 
     public function cleanCombinedPriceLists()
     {
-        $configCombinedPriceList = $this->configManager->get($this->getConfigKeyToPriceList());
+        $configCombinedPriceList = $this->configManager->get(Configuration::getConfigKeyToPriceList());
         $exceptPriceLists = [];
         if ($configCombinedPriceList) {
             $exceptPriceLists[] = $configCombinedPriceList;
@@ -78,18 +77,5 @@ class CombinedPriceListGarbageCollector
         }
 
         return $this->combinedPriceListsRepository;
-    }
-
-    /**
-     * @return string
-     */
-    protected function getConfigKeyToPriceList()
-    {
-        $key = implode(
-            ConfigManager::SECTION_MODEL_SEPARATOR,
-            [OroB2BPricingExtension::ALIAS, Configuration::COMBINED_PRICE_LIST]
-        );
-
-        return $key;
     }
 }

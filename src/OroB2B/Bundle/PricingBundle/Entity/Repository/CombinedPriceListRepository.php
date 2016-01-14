@@ -123,8 +123,9 @@ class CombinedPriceListRepository extends EntityRepository
         $bufferSize = $this->getBufferSize();
         $iterator->setBufferSize($bufferSize);
 
-        $deleteQb = $this->createQueryBuilder('cplDelete')
+        $deleteQb = $this->_em->createQueryBuilder()
             ->delete('OroB2BPricingBundle:CombinedPriceList', 'cplDelete');
+
         $deleteQb->where($deleteQb->expr()->in('cplDelete.id', ':unusedPriceLists'));
 
         $priceListsIdForDelete = [];
@@ -176,7 +177,7 @@ class CombinedPriceListRepository extends EntityRepository
                 Join::WITH,
                 $selectQb->expr()->eq($alias . '.priceList', 'priceList.id')
             );
-            $selectQb->andWhere($alias.'.priceList IS NULL');
+            $selectQb->andWhere($alias . '.priceList IS NULL');
         }
         if ($exceptPriceLists) {
             $selectQb->andWhere($selectQb->expr()->notIn('priceList', ':exceptPriceLists'))
@@ -184,11 +185,9 @@ class CombinedPriceListRepository extends EntityRepository
         }
         if ($priceListsEnabled !== null) {
             $selectQb->andWhere($selectQb->expr()->eq('priceList.enabled', ':isEnabled'))
-            ->setParameter('isEnabled', $priceListsEnabled);
+                ->setParameter('isEnabled', $priceListsEnabled);
         }
 
-        $iterator = new BufferedQueryResultIterator($selectQb->getQuery());
-
-        return $iterator;
+        return new BufferedQueryResultIterator($selectQb->getQuery());
     }
 }

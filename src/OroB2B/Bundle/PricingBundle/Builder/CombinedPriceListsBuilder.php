@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\PricingBundle\Builder;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use OroB2B\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
@@ -37,6 +36,14 @@ class CombinedPriceListsBuilder
      */
     protected $combinedPriceListGarbageCollector;
 
+    /**
+     * @param ConfigManager $configManager
+     */
+    public function __construct(ConfigManager $configManager)
+    {
+        $this->configManager = $configManager;
+    }
+
     public function build()
     {
         $this->updatePriceListsOnCurrentLevel();
@@ -49,7 +56,7 @@ class CombinedPriceListsBuilder
         $collection = $this->priceListCollectionProvider->getPriceListsByConfig();
         $actualCombinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection);
 
-        $combinedPriceListId = $this->configManager->get($this->getConfigKeyToPriceList());
+        $combinedPriceListId = $this->configManager->get(Configuration::getConfigKeyToPriceList());
         if ($combinedPriceListId != $actualCombinedPriceList->getId()) {
             $this->connectNewPriceList($actualCombinedPriceList);
         }
@@ -93,31 +100,11 @@ class CombinedPriceListsBuilder
     }
 
     /**
-     * @param ConfigManager $configManager
-     */
-    public function setConfigManager(ConfigManager $configManager)
-    {
-        $this->configManager = $configManager;
-    }
-
-    /**
      * @param CombinedPriceList $priceList
      */
     protected function connectNewPriceList(CombinedPriceList $priceList)
     {
-        $this->configManager->set($this->getConfigKeyToPriceList(), $priceList->getId());
-    }
-
-    /**
-     * @return string
-     */
-    protected function getConfigKeyToPriceList()
-    {
-        $key = implode(
-            ConfigManager::SECTION_MODEL_SEPARATOR,
-            [OroB2BPricingExtension::ALIAS, Configuration::COMBINED_PRICE_LIST]
-        );
-
-        return $key;
+        $this->configManager->set(Configuration::getConfigKeyToPriceList(), $priceList->getId());
+        $this->configManager->flush();
     }
 }

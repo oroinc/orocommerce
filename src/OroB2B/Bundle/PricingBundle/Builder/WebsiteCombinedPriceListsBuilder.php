@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Builder;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
@@ -46,7 +46,7 @@ class WebsiteCombinedPriceListsBuilder
     protected $priceListToWebsiteRepository;
 
     /**
-     * @var Registry
+     * @var ManagerRegistry
      */
     protected $registry;
 
@@ -61,9 +61,9 @@ class WebsiteCombinedPriceListsBuilder
     protected $combinedPriceListGarbageCollector;
 
     /**
-     * @param $registry
+     * @param ManagerRegistry $registry
      */
-    public function __construct(Registry $registry)
+    public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
     }
@@ -80,11 +80,11 @@ class WebsiteCombinedPriceListsBuilder
 
     public function buildForAll()
     {
-        $iterator = $this->getPriceListToWebsiteRepository()->getPriceListToWebsiteIterator();
+        $websiteToPriceListIterator = $this->getPriceListToWebsiteRepository()->getPriceListToWebsiteIterator();
         /**
          * @var $websiteToPriceList PriceListToWebsite
          */
-        foreach ($iterator as $websiteToPriceList) {
+        foreach ($websiteToPriceListIterator as $websiteToPriceList) {
             $this->updatePriceListsOnCurrentLevel($websiteToPriceList->getWebsite());
             $this->updatePriceListsOnChildrenLevels($websiteToPriceList->getWebsite());
         }
