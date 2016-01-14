@@ -228,19 +228,58 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
      * @dataProvider onPostSubmitDataProvider
      * @param array $submittedData
      * @param array $actualData
+     * @param boolean $expectDispatch
      */
-    public function testOnPostSubmit(array $submittedData, array $actualData)
+    public function testOnPostSubmit(array $submittedData, array $actualData, $expectDispatch)
     {
-        $actualPriceLists = [];
-        foreach ($actualData as $item) {
-            $priceListToTargetEntity = new PriceListToAccount();
-            $priceListToTargetEntity->setPriceList($item['priceList']);
-            $priceListToTargetEntity->setPriority($item['priority']);
-            $priceListToTargetEntity->setMergeAllowed($item['mergeAllowed']);
-            $actualPriceLists[] = $priceListToTargetEntity;
-        }
+        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->repository->expects($this->any())
+        $priceListToAccountRepository = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $repo = $this
+            ->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repo->expects($this->once())
+            ->method('findOneBy')
+            ->willReturn(isset($actualData['fallback']) ? $actualData['fallback'] : null);
+        $em->expects($this->any())
+            ->method('getRepository')
+            ->will(
+                $this->returnValueMap(
+                    [
+                        ['OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount', $priceListToAccountRepository],
+                        ['OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback', $repo],
+                    ]
+                )
+            );
+
+        /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry */
+        $registry = $this->getMockBuilder('\Doctrine\Common\Persistence\ManagerRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($em);
+
+
+        $actualPriceLists = [];
+        if (isset($actualData['priceLists'])) {
+            foreach ($actualData['priceLists'] as $item) {
+                $priceListToTargetEntity = new PriceListToAccount();
+                $priceListToTargetEntity->setPriceList($item['priceList']);
+                $priceListToTargetEntity->setPriority($item['priority']);
+                $priceListToTargetEntity->setMergeAllowed($item['mergeAllowed']);
+                $actualPriceLists[] = $priceListToTargetEntity;
+            }
+        }
+        $priceListToAccountRepository->expects($this->any())
             ->method('getPriceLists')
             ->with($this->targetEntity, $this->website)
             ->willReturn($actualPriceLists);
@@ -267,18 +306,29 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
 
         $priceListCollection->expects($this->once())
             ->method('getData')
-            ->willReturn($submittedData);
+            ->willReturn($submittedData['priceLists']);
+
+        $fallbackForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $fallbackForm->expects($this->once())
+            ->method('getData')
+            ->willReturn($submittedData['fallback']);
 
         $priceListByWebsitesForm->expects($this->any())
             ->method('get')
-            ->with(PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD)
-            ->willReturn($priceListCollection);
+            ->will(
+                $this->returnValueMap(
+                    [
+                        [PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD, $priceListCollection],
+                        [PriceListsSettingsType::FALLBACK_FIELD, $fallbackForm],
+                    ]
+                )
+            );
 
         $priceListWithPriorityForm = $this->getMock('Symfony\Component\Form\FormConfigInterface');
 
         $priceListWithPriorityForm->expects($this->any())
             ->method('getData')
-            ->willReturnOnConsecutiveCalls($submittedData[0]);
+            ->willReturnOnConsecutiveCalls($submittedData['priceLists'][0]);
 
         $priceListCollection->expects($this->once())
             ->method('all')
@@ -315,7 +365,7 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
             function ($submittedItem) {
                 return $submittedItem['priceList'];
             },
-            $submittedData
+            $submittedData['priceLists']
         );
 
         /** @var BasePriceListRelation[] $actualPriceLists */
@@ -324,13 +374,20 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
                 $this->em->remove($actualPriceList);
             }
         }
-        $this->eventDispatcher
-            ->expects($this->once())
-            ->method('dispatch')
-            ->with(
-                PriceListCollectionChange::BEFORE_CHANGE,
-                new PriceListCollectionChange($this->targetEntity, $this->website)
-            );
+        if ($expectDispatch) {
+            $this->eventDispatcher
+                ->expects($this->once())
+                ->method('dispatch')
+                ->with(
+                    PriceListCollectionChange::BEFORE_CHANGE,
+                    new PriceListCollectionChange($this->targetEntity, $this->website)
+                );
+        } else {
+            $this->eventDispatcher
+                ->expects($this->never())
+                ->method('dispatch');
+        }
+        $this->formType = new AccountWebsiteScopedPriceListsType($registry, $this->getEventDispatcher());
         $this->formType->onPostSubmit($event);
     }
 
@@ -347,50 +404,114 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
         return [
             'with removed' => [
                 'submittedData' => [
-                    [
-                        'priceList' => $priceList1,
-                        'priority' => 100,
-                        'mergeAllowed' => true,
+                    'fallback' => 1,
+                    'priceLists' => [
+                        [
+                            'priceList' => $priceList1,
+                            'priority' => 100,
+                            'mergeAllowed' => true,
+                        ],
                     ],
                 ],
                 'actualData' => [
-                    [
-                        'priceList' => $priceList1,
-                        'priority' => 100,
-                        'mergeAllowed' => true,
-                    ],
-                    [
-                        'priceList' => $priceList2,
-                        'priority' => 200,
-                        'mergeAllowed' => true,
+                    'fallback' => 1,
+                    'priceLists' => [
+                        [
+                            'priceList' => $priceList1,
+                            'priority' => 100,
+                            'mergeAllowed' => true,
+                        ],
+                        [
+                            'priceList' => $priceList2,
+                            'priority' => 200,
+                            'mergeAllowed' => true,
+                        ],
                     ],
                 ],
+                'expectDispatch' => true,
             ],
             'with updated' => [
                 'submittedData' => [
-                    [
-                        'priceList' => $priceList1,
-                        'priority' => 100,
-                        'mergeAllowed' => false,
+                    'fallback' => 1,
+                    'priceLists' => [
+                        [
+                            'priceList' => $priceList1,
+                            'priority' => 100,
+                            'mergeAllowed' => false,
+                        ],
                     ],
                 ],
                 'actualData' => [
-                    [
-                        'priceList' => $priceList1,
-                        'priority' => 3,
-                        'mergeAllowed' => false,
+                    'fallback' => 1,
+                    'priceLists' => [
+                        [
+                            'priceList' => $priceList1,
+                            'priority' => 3,
+                            'mergeAllowed' => false,
+                        ],
                     ],
                 ],
+                'expectDispatch' => true,
             ],
             'with new' => [
                 'submittedData' => [
-                    [
-                        'priceList' => $priceList1,
-                        'priority' => 100,
-                        'mergeAllowed' => true,
+                    'fallback' => 1,
+                    'priceLists' => [
+                        [
+                            'priceList' => $priceList1,
+                            'priority' => 100,
+                            'mergeAllowed' => true,
+                        ],
                     ],
                 ],
                 'actualData' => [],
+                'expectDispatch' => true,
+            ],
+            'same' => [
+                'submittedData' => [
+                    'fallback' => 1,
+                    'priceLists' => [
+                        [
+                            'priceList' => $priceList1,
+                            'priority' => 100,
+                            'mergeAllowed' => true,
+                        ],
+                    ],
+                ],
+                'actualData' => [
+                    'fallback' => 1,
+                    'priceLists' => [
+                        [
+                            'priceList' => $priceList1,
+                            'priority' => 100,
+                            'mergeAllowed' => true,
+                        ],
+                    ],
+                ],
+                'expectDispatch' => false,
+            ],
+            'fallback change' => [
+                'submittedData' => [
+                    'fallback' => 2,
+                    'priceLists' => [
+                        [
+                            'priceList' => $priceList1,
+                            'priority' => 100,
+                            'mergeAllowed' => true,
+                        ],
+                    ],
+                ],
+                'actualData' => [
+                    'fallback' => 1,
+                    'priceLists' => [
+                        [
+                            'priceList' => $priceList1,
+                            'priority' => 100,
+                            'mergeAllowed' => true,
+                        ],
+                    ],
+                ],
+                'expectDispatch' => true,
             ],
         ];
     }
