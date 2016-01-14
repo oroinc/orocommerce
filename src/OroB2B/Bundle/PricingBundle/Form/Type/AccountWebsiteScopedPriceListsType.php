@@ -40,7 +40,7 @@ class AccountWebsiteScopedPriceListsType extends AbstractWebsiteScopedPriceLists
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getFallbackChoices()
     {
@@ -53,7 +53,7 @@ class AccountWebsiteScopedPriceListsType extends AbstractWebsiteScopedPriceLists
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getTargetFieldName()
     {
@@ -61,7 +61,7 @@ class AccountWebsiteScopedPriceListsType extends AbstractWebsiteScopedPriceLists
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getFallbackClassName()
     {
@@ -69,7 +69,7 @@ class AccountWebsiteScopedPriceListsType extends AbstractWebsiteScopedPriceLists
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getDefaultFallback()
     {

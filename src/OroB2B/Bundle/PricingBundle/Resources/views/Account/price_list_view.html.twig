@@ -6,23 +6,28 @@
         {% if priceListsByWebsites %}
             <div class="oro-tabs">
                 <ul class="nav nav-tabs">
-                    {% for websiteId, fallbackByWebsite in fallbackByWebsites %}
-                        <li {% if websiteId == fallbackByWebsites|first.website.id %} class="active" {% endif %}>
+                    {% for websiteId, website in websites %}
+                        <li {% if websiteId == websites|first.id %} class="active" {% endif %}>
                             <a href="#website{{ websiteId }}" data-toggle="tab">
-                                {{ fallbackByWebsite.website.name }}
+                                {{ website.name }}
                             </a>
                         </li>
                     {% endfor %}
                 </ul>
                 <div class="tab-content">
-                    {% for websiteId, fallbackByWebsite in fallbackByWebsites %}
-                        <div class="tab-pane{% if websiteId == fallbackByWebsites|first.website.id %} active{% endif %} price-list-by-account-grid"
+                    {% for websiteId, website in websites %}
+                        <div class="tab-pane{% if websiteId == websites|first.id %} active{% endif %} price-list-by-account-grid"
                              id="website{{ websiteId }}"><br>
 
                             <p>{{ 'orob2b.pricing.fallback.label'|trans }}:
-                                <strong>{{ fallbackByWebsites[websiteId]['value']|trans }}</strong></p>
-                            <tbody>
-
+                                <strong>
+                                    {% if fallbackByWebsites[websiteId] is defined %}
+                                        {{ choices[fallbackByWebsites[websiteId]]|trans }}
+                                    {% else %}
+                                        {{ choices[0]|trans }}
+                                    {% endif %}
+                                </strong>
+                            </p>
                             {% if  priceListsByWebsites[websiteId] is defined %}
                                 <table class="grid table-hover table table-bordered">
                                     <thead>
@@ -34,17 +39,21 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {% for priceListToAccount in priceListsByWebsites[websiteId]['priceLists'] %}
+                                    {% for priceListToAccount in priceListsByWebsites[websiteId] %}
                                         {% set priceList = priceListToAccount.priceList %}
                                         <tr class="price_list{{ priceList.id }}">
                                             <td>{{ loop.index }}</td>
                                             <td>
-                                                <a href="{{ path('orob2b_pricing_price_list_view', {'id': priceList.id}) }}" class="price_list_link">
+                                                <a href="{{ path('orob2b_pricing_price_list_view', {'id': priceList.id}) }}"
+                                                   class="price_list_link">
                                                     {{ priceList.name }}
                                                 </a>
                                             </td>
                                             <td class="price_list_priority">{{ priceListToAccount.priority }}</td>
-                                            <td class="price_list_merge_allowed">{{ priceListToAccount.mergeAllowed ? 'orob2b.pricing.pricelist.merge_allowed.yes.label'|trans : 'orob2b.pricing.pricelist.merge_allowed.no.label'|trans }}</td>
+                                            <td class="price_list_merge_allowed">
+                                                {{ priceListToAccount.mergeAllowed
+                                                ? 'orob2b.pricing.pricelist.merge_allowed.yes.label'|trans
+                                                : 'orob2b.pricing.pricelist.merge_allowed.no.label'|trans }}</td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>

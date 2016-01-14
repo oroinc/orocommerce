@@ -108,7 +108,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->getMock();
 
         $websiteRepository->expects($this->once())
-            ->method('findAll')
+            ->method('findBy')
             ->willReturn([$website1, $website2, $website3]);
 
         $priceToAccountRepository = $this
@@ -156,30 +156,19 @@ class FormViewListenerTest extends FormViewListenerTestCase
                 [
                     'priceListsByWebsites' =>
                         [
-                            $websiteId1 => [
-                                'priceLists' => [$priceListToAccount1],
-                                'website' => $website1,
-                            ],
-                            $websiteId2 => [
-                                'priceLists' => [$priceListToAccount2],
-                                'website' => $website2,
-                            ],
+                            $websiteId1 => [$priceListToAccount1],
+                            $websiteId2 => [$priceListToAccount2],
+
                         ],
                     'fallbackByWebsites' =>
                         [
-                            $websiteId1 => [
-                                'value' => 'orob2b.pricing.fallback.account_group.label',
-                                'website' => $website1,
-                            ],
-                            $websiteId2 => [
-                                'value' => 'orob2b.pricing.fallback.account_group.label',
-                                'website' => $website2,
-                            ],
-                            $websiteId3 => [
-                                'value' => 'orob2b.pricing.fallback.current_account_only.label',
-                                'website' => $website3,
-                            ],
+                            $websiteId3 => PriceListAccountFallback::CURRENT_ACCOUNT_ONLY,
                         ],
+                    'websites' => [$website1, $website2, $website3],
+                    'choices' => [
+                        'orob2b.pricing.fallback.account_group.label',
+                        'orob2b.pricing.fallback.current_account_only.label',
+                    ],
                 ]
             )
             ->willReturn($templateHtml);
@@ -236,7 +225,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->getMock();
 
         $websiteRepository->expects($this->once())
-            ->method('findAll')
+            ->method('findBy')
             ->willReturn([$website1, $website2, $website3]);
 
         $priceToAccountGroupRepository = $this
@@ -284,30 +273,19 @@ class FormViewListenerTest extends FormViewListenerTestCase
                 [
                     'priceListsByWebsites' =>
                         [
-                            $websiteId1 => [
-                                'priceLists' => [$priceListToAccountGroup1],
-                                'website' => $website1,
-                            ],
-                            $websiteId2 => [
-                                'priceLists' => [$priceListToAccountGroup2],
-                                'website' => $website2,
-                            ],
+                            $websiteId1 => [$priceListToAccountGroup1],
+                            $websiteId2 => [$priceListToAccountGroup2],
+
                         ],
                     'fallbackByWebsites' =>
                         [
-                            $websiteId1 => [
-                                'value' => 'orob2b.pricing.fallback.website.label',
-                                'website' => $website1,
-                            ],
-                            $websiteId2 => [
-                                'value' => 'orob2b.pricing.fallback.website.label',
-                                'website' => $website2,
-                            ],
-                            $websiteId3 => [
-                                'value' => 'orob2b.pricing.fallback.current_account_group_only.label',
-                                'website' => $website3,
-                            ],
+                            $websiteId3 => PriceListAccountGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY,
                         ],
+                    'websites' => [$website1, $website2, $website3],
+                    'choices' => [
+                        'orob2b.pricing.fallback.website.label',
+                        'orob2b.pricing.fallback.current_account_group_only.label',
+                    ],
                 ]
             )
             ->willReturn($templateHtml);
