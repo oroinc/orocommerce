@@ -7,7 +7,16 @@ parameters:
 
     # Twig
     orob2b_menu.twig.menu_item_extension.class: OroB2B\Bundle\MenuBundle\Twig\MenuItemExtension
+
+    # Menu services
+    orob2b_menu.menu_serializer.class: OroB2B\Bundle\MenuBundle\Menu\MenuSerializer
+    orob2b_menu.menu_provider.class: OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider
+
 services:
+    orob2b_menu.cache:
+        parent: oro.cache.abstract
+        calls:
+            - [ setNamespace, [ 'orob2b_menu' ] ]
 
     orob2b_menu.tree.menu_item_tree_handler:
         class: %orob2b_menu.tree.menu_item_tree_handler.class%
@@ -21,3 +30,28 @@ services:
             - @orob2b_menu.tree.menu_item_tree_handler
         tags:
             - { name: twig.extension }
+
+    orob2b_menu.menu_array_loader:
+        class: Knp\Menu\Loader\ArrayLoader
+        arguments:
+            - @knp_menu.factory
+
+    orob2b_menu.menu_manipulator:
+        class: Knp\Menu\Util\MenuManipulator
+
+    orob2b_menu.menu_serializer:
+        class: %orob2b_menu.menu_serializer.class%
+        arguments:
+            - @orob2b_menu.menu_array_loader
+            - @orob2b_menu.menu_manipulator
+
+    orob2b_menu.menu_provider:  #orob2b_menu.menu.database_builder
+        class: %orob2b_menu.menu_provider.class%
+        arguments:
+            - @oro_menu.builder_chain
+            - @orob2b_website.locale_helper
+            - @orob2b_menu.menu_serializer
+            - @doctrine
+        calls:
+            - [setEntityClass, [%orob2b_menu.entity.menu_item.class%]]
+            - [setCache, [@orob2b_menu.cache]]
