@@ -9,7 +9,6 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
 use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
-use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use OroB2B\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -197,30 +196,6 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
             ->willReturn($priceListCollection);
 
         return $priceListCollectionProvider;
-    }
-
-    /**
-     * @param $collection
-     * @param $actualCPLId
-     * @return CombinedPriceListProvider|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getCombinedPriceListProviderMock($collection, $actualCPLId)
-    {
-        $actualCPL = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $actualCPL->expects($this->any())->method('getId')->willReturn($actualCPLId);
-
-        $CPLProvider = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $CPLProvider->expects($this->once())
-            ->method('getCombinedPriceList')
-            ->with($collection)
-            ->willReturn($actualCPL);
-
-        return $CPLProvider;
     }
 
     /**
