@@ -22,7 +22,7 @@ trait FallbackTrait
         $localeTitle = $locale ? $locale->getTitle() : 'default';
 
         // TODO: implement with fallback
-        if ($values->count() === 0 || $values->count() > 1) {
+        if ($values->count() > 1) {
             throw new \LogicException(sprintf('There must be only one %s title', $localeTitle));
         }
 
