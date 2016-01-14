@@ -2,18 +2,15 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Calculator;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
-use OroB2B\Bundle\TaxBundle\Calculator\PriceIncludedTaxCalculator;
+use OroB2B\Bundle\TaxBundle\Calculator\IncludedTaxCalculator;
 use OroB2B\Bundle\TaxBundle\Entity\Tax;
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use OroB2B\Bundle\TaxBundle\Rounding\TaxRoundingService;
 
 class PriceIncludedTaxCalculatorTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var PriceIncludedTaxCalculator */
+    /** @var IncludedTaxCalculator */
     protected $calculator;
 
     protected function setUp()
@@ -30,21 +27,21 @@ class PriceIncludedTaxCalculatorTest extends \PHPUnit_Framework_TestCase
                 );
             }
         );
-        $this->calculator = new PriceIncludedTaxCalculator($roundingService);
+        $this->calculator = new IncludedTaxCalculator($roundingService);
     }
 
     /**
      * @param ResultElement $expectedResult
-     * @param Taxable $taxable
-     * @param ArrayCollection $taxRules
+     * @param string $taxableAmount
+     * @param $taxRule TaxRule
      *
      * @dataProvider calculateDataProvider
      */
-    public function testCalculate(ResultElement $expectedResult, Taxable $taxable, ArrayCollection $taxRules)
+    public function testCalculate(ResultElement $expectedResult, $taxableAmount, TaxRule $taxRule)
     {
         $this->assertEquals(
             $expectedResult,
-            $this->calculator->calculate($taxable, $taxRules)
+            $this->calculator->calculate($taxableAmount, $taxRule)
         );
     }
 
@@ -59,55 +56,55 @@ class PriceIncludedTaxCalculatorTest extends \PHPUnit_Framework_TestCase
             // use cases
             'Finney County' => [
                 ResultElement::create('17.21', '15.99', '1.22', '0.003'),
-                (new Taxable())->setPrice('17.21'),
-                new ArrayCollection([$this->createTaxRule('0.0765')]),
+                '17.21',
+                $this->createTaxRule('0.0765'),
             ],
             'Fremont County' => [
                 ResultElement::create('59.04', '56.23', '2.81', '0.0014'),
-                (new Taxable())->setPrice('59.04'),
-                new ArrayCollection([$this->createTaxRule('0.05')]),
+                '59.04',
+                $this->createTaxRule('0.05'),
             ],
             'Tulare County' => [
                 ResultElement::create('14.41', '13.34', '1.07', '0.0026'),
-                (new Taxable())->setPrice('14.41'),
-                new ArrayCollection([$this->createTaxRule('0.08')]),
+                '14.41',
+                $this->createTaxRule('0.08'),
             ],
             'Mclean County' => [
                 ResultElement::create('35.88', '33.77', '2.11', '0.0006'),
-                (new Taxable())->setPrice('35.88'),
-                new ArrayCollection([$this->createTaxRule('0.0625')]),
+                '35.88',
+                $this->createTaxRule('0.0625'),
             ],
 
             // edge cases
             [
                 ResultElement::create('15.98', '7.99', '7.99', '0'),
-                (new Taxable())->setPrice('15.98'),
-                new ArrayCollection([$this->createTaxRule('1')]),
+                '15.98',
+                $this->createTaxRule('1'),
             ],
             [
                 ResultElement::create('15.98', '5.33', '10.65', '0.0033'),
-                (new Taxable())->setPrice('15.98'),
-                new ArrayCollection([$this->createTaxRule('2')]),
+                '15.98',
+                $this->createTaxRule('2'),
             ],
             [
                 ResultElement::create('15.98', '8.03', '7.95', '0.0002'),
-                (new Taxable())->setPrice('15.98'),
-                new ArrayCollection([$this->createTaxRule('0.99')]),
+                '15.98',
+                $this->createTaxRule('0.99'),
             ],
             [
                 ResultElement::create('15.98', '15.96', '0.02', '0.004'),
-                (new Taxable())->setPrice('15.98'),
-                new ArrayCollection([$this->createTaxRule('0.001')]),
+                '15.98',
+                $this->createTaxRule('0.001'),
             ],
             [
                 ResultElement::create('15.98', '15.96', '0.02', '0.0039'),
-                (new Taxable())->setPrice('15.98'),
-                new ArrayCollection([$this->createTaxRule('0.0015')]),
+                '15.98',
+                $this->createTaxRule('0.0015'),
             ],
             [
                 ResultElement::create('15.98', '13.32', '2.66', '0.0033'),
-                (new Taxable())->setPrice('15.98'),
-                new ArrayCollection([$this->createTaxRule('-0.2')]),
+                '15.98',
+                $this->createTaxRule('-0.2'),
             ],
         ];
     }

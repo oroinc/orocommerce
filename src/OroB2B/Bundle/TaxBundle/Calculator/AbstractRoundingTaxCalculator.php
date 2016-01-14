@@ -23,23 +23,6 @@ abstract class AbstractRoundingTaxCalculator implements TaxCalculatorInterface
     }
 
     /**
-     * @param Collection|TaxRule[] $taxRules
-     * @return float
-     */
-    protected function getTaxRate(Collection $taxRules)
-    {
-        $taxRate = 0.00;
-
-        $taxRules->map(
-            function (TaxRule $taxRule) use (&$taxRate) {
-                $taxRate += $taxRule->getTax()->getRate();
-            }
-        );
-
-        return abs($taxRate);
-    }
-
-    /**
      * @param float $includingTax
      * @param float $excludingTax
      * @param float $taxAmount

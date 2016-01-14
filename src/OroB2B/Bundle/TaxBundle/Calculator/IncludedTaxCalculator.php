@@ -10,7 +10,7 @@ class IncludedTaxCalculator extends AbstractRoundingTaxCalculator
     public function calculate($amount, TaxRule $taxRule)
     {
         $inclTax = $amount;
-        $taxRate = $taxRule->getTax();
+        $taxRate = abs($taxRule->getTax()->getRate());
 
         $taxAmount = ($inclTax * $taxRate) / (1 + $taxRate);
         $taxAmountRounded = $this->roundingService->round($taxAmount);
