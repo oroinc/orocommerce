@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToWebsiteRepository;
 use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use OroB2B\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
@@ -80,13 +80,12 @@ class WebsiteCombinedPriceListsBuilder
 
     public function buildForAll()
     {
-        $websiteToPriceListIterator = $this->getPriceListToWebsiteRepository()->getPriceListToWebsiteIterator();
-        /**
-         * @var $websiteToPriceList PriceListToWebsite
-         */
-        foreach ($websiteToPriceListIterator as $websiteToPriceList) {
-            $this->updatePriceListsOnCurrentLevel($websiteToPriceList->getWebsite());
-            $this->updatePriceListsOnChildrenLevels($websiteToPriceList->getWebsite());
+        $websiteToPriceListIterator = $this->getPriceListToWebsiteRepository()
+            ->getWebsiteIteratorByFallback(PriceListWebsiteFallback::CONFIG);
+
+        foreach ($websiteToPriceListIterator as $website) {
+            $this->updatePriceListsOnCurrentLevel($website);
+            $this->updatePriceListsOnChildrenLevels($website);
         }
     }
 

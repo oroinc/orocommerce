@@ -7,7 +7,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository;
 use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use OroB2B\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
@@ -86,13 +86,11 @@ class AccountGroupCombinedPriceListsBuilder
     public function buildByWebsite(Website $website)
     {
         $accountGroupToPriceListIterator = $this->getPriceListToAccountGroupRepository()
-            ->getPriceListToAccountGroupByWebsiteIterator($website);
-        /**
-         * @var $accountGroupToPriceList PriceListToAccountGroup
-         */
-        foreach ($accountGroupToPriceListIterator as $accountGroupToPriceList) {
-            $this->updatePriceListsOnCurrentLevel($website, $accountGroupToPriceList->getAccountGroup());
-            $this->updatePriceListsOnChildrenLevels($website, $accountGroupToPriceList->getAccountGroup());
+            ->getAccountGroupIteratorByFallback($website, PriceListAccountGroupFallback::WEBSITE);
+
+        foreach ($accountGroupToPriceListIterator as $accountGroup) {
+            $this->updatePriceListsOnCurrentLevel($website, $accountGroup);
+            $this->updatePriceListsOnChildrenLevels($website, $accountGroup);
         }
     }
 

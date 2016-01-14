@@ -8,7 +8,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccount;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
 use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use OroB2B\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
@@ -81,12 +81,10 @@ class AccountCombinedPriceListsBuilder
     public function buildByAccountGroup(Website $website, AccountGroup $accountGroup)
     {
         $accountToPriceListIterator = $this->getPriceListToAccountRepository()
-            ->getRelationByAccountGroupIterator($accountGroup, $website);
-        /**
-         * @var $accountToPriceList PriceListToAccount
-         */
-        foreach ($accountToPriceListIterator as $accountToPriceList) {
-            $this->updatePriceListsOnCurrentLevel($website, $accountToPriceList->getAccount());
+            ->getAccountIteratorByFallback($accountGroup, $website, PriceListAccountFallback::ACCOUNT_GROUP);
+
+        foreach ($accountToPriceListIterator as $account) {
+            $this->updatePriceListsOnCurrentLevel($website, $account);
         }
     }
 

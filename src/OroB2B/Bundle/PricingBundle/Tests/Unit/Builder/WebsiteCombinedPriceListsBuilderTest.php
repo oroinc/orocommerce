@@ -206,13 +206,10 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
             ->getMock();
 
         if ($website) {
-            $relation = $this->getMock('OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite');
-            $relation->expects($this->exactly(2))->method('getWebsite')->willReturn($website);
-
-            $PLToWebsiteRepository->expects($this->once())->method('getPriceListToWebsiteIterator')
-                ->willReturn([$relation]);
+            $PLToWebsiteRepository->expects($this->once())->method('getWebsiteIteratorByFallback')
+                ->willReturn([$website]);
         } else {
-            $PLToWebsiteRepository->expects($this->never())->method('getPriceListToWebsiteIterator');
+            $PLToWebsiteRepository->expects($this->never())->method('getWebsiteIteratorByFallback');
         }
 
         return $PLToWebsiteRepository;

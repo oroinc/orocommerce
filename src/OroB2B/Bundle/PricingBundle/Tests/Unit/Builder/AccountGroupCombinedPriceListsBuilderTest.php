@@ -228,13 +228,10 @@ class AccountGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLis
             ->getMock();
 
         if ($accountGroup) {
-            $relation = $this->getMock('OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup');
-            $relation->expects($this->exactly(2))->method('getAccountGroup')->willReturn($accountGroup);
-
-            $PLToAccountGroupRepository->expects($this->once())->method('getPriceListToAccountGroupByWebsiteIterator')
-                ->willReturn([$relation]);
+            $PLToAccountGroupRepository->expects($this->once())->method('getAccountGroupIteratorByFallback')
+                ->willReturn([$accountGroup]);
         } else {
-            $PLToAccountGroupRepository->expects($this->never())->method('getPriceListToAccountGroupByWebsiteIterator');
+            $PLToAccountGroupRepository->expects($this->never())->method('getAccountGroupIteratorByFallback');
         }
 
         return $PLToAccountGroupRepository;

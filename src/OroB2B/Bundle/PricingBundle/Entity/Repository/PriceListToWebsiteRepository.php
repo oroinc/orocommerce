@@ -4,12 +4,12 @@ namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
-
 use Doctrine\ORM\Query\Expr\Join;
+
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -45,25 +45,34 @@ class PriceListToWebsiteRepository extends EntityRepository
     }
 
     /**
-     * @return BufferedQueryResultIterator|PriceListToWebsite[]
+     * @param int $fallback
+     * @return BufferedQueryResultIterator|Website[]
      */
-    public function getPriceListToWebsiteIterator()
+    public function getWebsiteIteratorByFallback($fallback)
     {
-        $qb = $this->createQueryBuilder('plToWebsite');
+        $qb = $this->_em->createQueryBuilder()
+            ->select('distinct website')
+            ->from('OroB2BWebsiteBundle:Website', 'website');
+
         $qb->innerJoin(
-            'OroB2BPricingBundle:PriceListAccountGroupFallback',
+            'OroB2BPricingBundle:PriceListToWebsite',
+            'plToWebsite',
+            Join::WITH,
+            $qb->expr()->andX(
+                $qb->expr()->eq('plToWebsite.website', 'website')
+            )
+        )
+        ->innerJoin(
+            'OroB2BPricingBundle:PriceListWebsiteFallback',
             'priceListFallBack',
             Join::WITH,
             $qb->expr()->andX(
-                $qb->expr()->eq('plToWebsite.website', 'priceListFallBack.website'),
-                $qb->expr()->eq('priceListFallBack.fallback', ':fallbackToConfig')
+                $qb->expr()->eq('priceListFallBack.website', 'website'),
+                $qb->expr()->eq('priceListFallBack.fallback', ':websiteFallback')
             )
         )
-        ->andWhere('priceListFallBack.fallback = :fallbackToWebsite')
-        ->setParameter('fallbackToConfig', PriceListWebsiteFallback::CONFIG);
+        ->setParameter('websiteFallback', $fallback);
 
-        $iterator = new BufferedQueryResultIterator($qb->getQuery());
-
-        return $iterator;
+        return new BufferedQueryResultIterator($qb->getQuery());
     }
 }

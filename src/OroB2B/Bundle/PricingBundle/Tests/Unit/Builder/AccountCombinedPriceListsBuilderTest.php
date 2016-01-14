@@ -301,13 +301,10 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
             ->getMock();
 
         if ($account) {
-            $relation = $this->getMock('OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount');
-            $relation->expects($this->once())->method('getAccount')->willReturn($account);
-
-            $PLToAccountRepository->expects($this->once())->method('getRelationByAccountGroupIterator')
-                ->willReturn([$relation]);
+            $PLToAccountRepository->expects($this->once())->method('getAccountIteratorByFallback')
+                ->willReturn([$account]);
         } else {
-            $PLToAccountRepository->expects($this->never())->method('getRelationByAccountGroupIterator');
+            $PLToAccountRepository->expects($this->never())->method('getAccountIteratorByFallback');
         }
 
         return $PLToAccountRepository;
