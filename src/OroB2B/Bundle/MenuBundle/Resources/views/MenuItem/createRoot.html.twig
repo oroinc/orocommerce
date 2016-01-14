@@ -22,10 +22,10 @@
     {% set entityLabel = 'orob2b.menu.menuitem.roots_entity_label' %}
     {% set title = 'oro.ui.create_entity'|trans({'%entityName%': entityLabel|trans}) %}
     {% set breadcrumbs = {
-    'entity':      entity,
-    'indexPath':   path('orob2b_menu_item_roots'),
-    'indexLabel':  'orob2b.menu.menuitem.roots_plural_label'|trans,
-    'entityTitle': title
+        'entity':      entity,
+        'indexPath':   path('orob2b_menu_item_roots'),
+        'indexLabel':  'orob2b.menu.menuitem.roots_plural_label'|trans,
+        'entityTitle': title
     } %}
 
     {{ parent() }}
@@ -34,17 +34,17 @@
 {% block content_data %}
     {% set id = 'menuitem-edit' %}
     {% set dataForm = [
-    form_row(form.defaultTitle),
+        form_row(form.defaultTitle),
     ] %}
     {% if entity.parentMenuItem is not null %}
         {% set dataForm = dataForm|merge([form_row(form.uri)]) %}
     {% endif %}
     {% set dataBlocks = [{
-    'title': 'orob2b.menu.menuitem.sections.general'|trans,
-    'class': 'active',
-    'subblocks': [{
-    'title': '',
-    'data': dataForm
+        'title': 'orob2b.menu.menuitem.sections.general'|trans,
+        'class': 'active',
+        'subblocks': [{
+        'title': '',
+        'data': dataForm
     }]
     }] %}
 
@@ -54,12 +54,12 @@
     {% endfor %}
     {% if additionalData is not empty %}
         {% set dataBlocks = dataBlocks|merge([{
-        'title': 'orob2b.menu.menuitem.sections.additional'|trans,
-        'subblocks': [{
-        'title': '',
-        'useSpan': false,
-        'data' : additionalData
-        }]
+            'title': 'orob2b.menu.menuitem.sections.additional'|trans,
+            'subblocks': [{
+                'title': '',
+                'useSpan': false,
+                'data' : additionalData
+            }]
         }] ) %}
     {% endif %}
 
