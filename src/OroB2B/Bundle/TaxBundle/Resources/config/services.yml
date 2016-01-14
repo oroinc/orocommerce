@@ -224,6 +224,8 @@ services:
     orob2b_tax.matcher.zip_code_matcher:
         parent: orob2b_tax.abstract.matcher
         class: %orob2b_tax.matcher.zip_code_matcher.class%
+        calls:
+            - [setCountryMatcher, [@orob2b_tax.matcher.country_matcher]]
 
     orob2b_tax.abstract.matcher:
         abstract: true
