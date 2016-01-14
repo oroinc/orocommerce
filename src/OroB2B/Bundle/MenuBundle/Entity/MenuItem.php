@@ -17,6 +17,7 @@ use OroB2B\Component\Tree\Entity\TreeTrait;
 /**
  * @ORM\Table(name="orob2b_menu_item")
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\MenuBundle\Entity\Repository\MenuItemRepository")
+ * @ORM\EntityListeners({ "OroB2B\Bundle\MenuBundle\Entity\Listener\MenuItemListener" })
  * @Gedmo\Tree(type="nested")
  * @Config(
  *      routeName="orob2b_menu_item_index",
