@@ -8,7 +8,6 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Knp\Menu\ItemInterface;
 use Knp\Menu\Provider\MenuProviderInterface;
 
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
 use OroB2B\Bundle\MenuBundle\Entity\Repository\MenuItemRepository;
 use OroB2B\Bundle\WebsiteBundle\Locale\LocaleHelper;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
@@ -91,7 +90,7 @@ class DatabaseMenuProvider implements MenuProviderInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function get($alias, array $options = [])
     {
@@ -111,7 +110,7 @@ class DatabaseMenuProvider implements MenuProviderInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function has($alias, array $options = [])
     {
@@ -151,7 +150,6 @@ class DatabaseMenuProvider implements MenuProviderInterface
             ->getManagerForClass($this->entityClass)
             ->getRepository($this->entityClass);
 
-        /** @var MenuItem[] $menus */
         $menus = $repo->findRoots();
         foreach ($menus as $menu) {
             $alias = $menu->getDefaultTitle()->getString();
