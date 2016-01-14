@@ -11,7 +11,7 @@ class ZipCodeMatcher extends AbstractMatcher
     /**
      * @var AbstractMatcher
      */
-    protected $countryMatcher;
+    protected $regionMatcher;
 
     /**
      * {@inheritdoc}
@@ -21,8 +21,7 @@ class ZipCodeMatcher extends AbstractMatcher
         $regionText = $address->getRegion() ? null : $address->getRegionText();
         $country = $address->getRegion() ? null : $address->getCountry();
 
-        $countryTaxRules = $this->countryMatcher->match($address);
-        // TODO: Add regionMatcher usage
+        $regionTaxRules = $this->regionMatcher->match($address);
         $zipCodeTaxRules = $this->getTaxRuleRepository()->findByZipCode(
             $address->getPostalCode(),
             $address->getRegion(),
@@ -32,7 +31,7 @@ class ZipCodeMatcher extends AbstractMatcher
 
         $result = [];
         /** @var TaxRule $taxRule */
-        foreach (array_merge($countryTaxRules, $zipCodeTaxRules) as $taxRule) {
+        foreach (array_merge($regionTaxRules, $zipCodeTaxRules) as $taxRule) {
             if (!array_key_exists($taxRule->getId(), $result)) {
                 $result[$taxRule->getId()] = $taxRule;
             }
@@ -42,11 +41,11 @@ class ZipCodeMatcher extends AbstractMatcher
     }
 
     /**
-     * @param AbstractMatcher $countryMatcher
+     * @param AbstractMatcher $regionMatcher
      * @todo replace AbstractMatcher on MatcherInterface
      */
-    public function setCountryMatcher(AbstractMatcher $countryMatcher)
+    public function setRegionMatcher(AbstractMatcher $regionMatcher)
     {
-        $this->countryMatcher = $countryMatcher;
+        $this->regionMatcher = $regionMatcher;
     }
 }

@@ -3,12 +3,16 @@
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Matcher;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository;
+use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 use OroB2B\Bundle\TaxBundle\Matcher\AbstractMatcher;
 
 abstract class AbstractMatcherTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     const TAX_RULE_CLASS = 'OroB2B\Bundle\TaxBundle\Entity\TaxRule';
 
     /**
@@ -48,5 +52,14 @@ abstract class AbstractMatcherTest extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         unset($this->matcher, $this->doctrineHelper, $this->taxRuleRepository);
+    }
+
+    /**
+     * @param int $id
+     * @return TaxRule
+     */
+    protected function getTaxRule($id)
+    {
+        return $this->getEntity('OroB2B\Bundle\TaxBundle\Entity\TaxRule', ['id' => $id]);
     }
 }

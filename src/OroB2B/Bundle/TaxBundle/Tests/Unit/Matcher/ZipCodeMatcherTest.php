@@ -5,16 +5,12 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Matcher;
 use Oro\Bundle\AddressBundle\Entity\Address;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Component\Testing\Unit\EntityTrait;
 
-use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
-use OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher;
+use OroB2B\Bundle\TaxBundle\Matcher\RegionMatcher;
 use OroB2B\Bundle\TaxBundle\Matcher\ZipCodeMatcher;
 
 class ZipCodeMatcherTest extends AbstractMatcherTest
 {
-    use EntityTrait;
-
     const REGION_AS_OBJECT = 'region_as_object';
     const REGION_AS_TEXT = 'region_as_text';
 
@@ -22,9 +18,9 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
     const POSTAL_CODE = '02097';
 
     /**
-     * @var CountryMatcher|\PHPUnit_Framework_MockObject_MockObject
+     * @var RegionMatcher|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $countryMatcher;
+    protected $regionMatcher;
 
     protected function setUp()
     {
@@ -32,17 +28,17 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
 
         $this->matcher = new ZipCodeMatcher($this->doctrineHelper, self::TAX_RULE_CLASS);
 
-        $this->countryMatcher = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher')
+        $this->regionMatcher = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Matcher\RegionMatcher')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->matcher->setCountryMatcher($this->countryMatcher);
+        $this->matcher->setRegionMatcher($this->regionMatcher);
     }
 
     protected function tearDown()
     {
         parent::tearDown();
-        unset($this->countryMatcher);
+        unset($this->regionMatcher);
     }
 
     /**
@@ -65,15 +61,15 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
             $address->setRegionText(self::REGION_TEXT);
         }
 
-        $countryMatcherTaxRules = [
+        $regionMatcherTaxRules = [
             $this->getTaxRule(1)
         ];
 
-        $this->countryMatcher
+        $this->regionMatcher
             ->expects($this->once())
             ->method('match')
             ->with($address)
-            ->willReturn($countryMatcherTaxRules);
+            ->willReturn($regionMatcherTaxRules);
 
         $zipCodeMatcherTaxRules = [
             $this->getTaxRule(1),
@@ -107,14 +103,5 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
                 'regionPresent' => self::REGION_AS_TEXT,
             ],
         ];
-    }
-
-    /**
-     * @param int $id
-     * @return TaxRule
-     */
-    protected function getTaxRule($id)
-    {
-        return $this->getEntity('OroB2B\Bundle\TaxBundle\Entity\TaxRule', ['id' => $id]);
     }
 }
