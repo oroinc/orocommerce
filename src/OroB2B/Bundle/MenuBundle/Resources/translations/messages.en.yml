@@ -17,6 +17,9 @@ orob2b:
             display.label: 'Display'
             display_children.label: 'Display children'
             condition.label: 'Condition'
+            parent.label: 'Parent Menu Item'
+            children.label: 'Children'
+            data.label: 'Data'
         controller:
             menuitem:
                 saved.message: Menu Item has been saved
