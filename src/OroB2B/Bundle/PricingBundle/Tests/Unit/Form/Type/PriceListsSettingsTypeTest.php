@@ -9,6 +9,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
@@ -41,7 +42,10 @@ class PriceListsSettingsTypeTest extends \PHPUnit_Framework_TestCase
         $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->priceListsSettingsType = new PriceListsSettingsType($this->registry);
+        $this->priceListsSettingsType = new PriceListsSettingsType(
+            $this->registry,
+            PropertyAccess::createPropertyAccessor()
+        );
     }
 
     public function testBuildForm()
@@ -155,34 +159,22 @@ class PriceListsSettingsTypeTest extends \PHPUnit_Framework_TestCase
             ],
             'existingFallback' => [
                 'fallbackEntity' => new PriceListAccountFallback(),
-                'expectedFallbackValue' => PriceListAccountFallback::CURRENT_ACCOUNT_ONLY,
+                'expectedFallbackValue' => PriceListAccountFallback::ACCOUNT_GROUP,
             ],
             'existingDefaultFallback' => [
                 'fallbackEntity' => (new PriceListAccountFallback())
-                    ->setFallback(PriceListAccountFallback::ACCOUNT_GROUP),
-                'expectedFallbackValue' => PriceListAccountFallback::ACCOUNT_GROUP,
+                    ->setFallback(PriceListAccountFallback::CURRENT_ACCOUNT_ONLY),
+                'expectedFallbackValue' => PriceListAccountFallback::CURRENT_ACCOUNT_ONLY,
             ],
         ];
     }
 
-    /**
-     * @dataProvider withoutTargetEntityDataProvider
-     * @param null|object $targetEntity
-     */
-    public function testOnPostSetDataWithoutTargetEntity($targetEntity)
+    public function testOnPostSetDataWithoutTargetEntity()
     {
         $form = $this->getForm();
-        $this->setDataFromMainForm($form, $targetEntity);
+        $this->setDataFromMainForm($form, null);
         $form->expects($this->never())->method('getConfig');
         $this->priceListsSettingsType->onPostSetData(new FormEvent($form, null));
-    }
-
-    public function withoutTargetEntityDataProvider()
-    {
-        return [
-            'withoutTargetEntity' => [null],
-            'targetEntityWithoutId' => [new Account()],
-        ];
     }
 
     public function testOnPostSubmitWithInvalidForm()
@@ -193,15 +185,11 @@ class PriceListsSettingsTypeTest extends \PHPUnit_Framework_TestCase
         $this->priceListsSettingsType->onPostSubmit(new FormEvent($form, null));
     }
 
-    /**
-     * @dataProvider withoutTargetEntityDataProvider
-     * @param null|object $targetEntity
-     */
-    public function testOnPostSubmitWithoutTargetEntity($targetEntity)
+    public function testOnPostSubmitWithoutTargetEntity()
     {
         $form = $this->getForm();
         $form->expects($this->once())->method('isValid')->willReturn(true);
-        $this->setDataFromMainForm($form, $targetEntity);
+        $this->setDataFromMainForm($form, null);
         $form->expects($this->never())->method('getConfig');
         $this->priceListsSettingsType->onPostSubmit(new FormEvent($form, null));
     }
@@ -244,7 +232,7 @@ class PriceListsSettingsTypeTest extends \PHPUnit_Framework_TestCase
         if (!$fallbackEntity) {
             $this->em->expects($this->once())->method('persist');
         }
-        $form->expects($this->once())->method('getConfig')->willReturn($config);
+        $form->expects($this->any())->method('getConfig')->willReturn($config);
         $this->priceListsSettingsType->onPostSubmit(new FormEvent($form, null));
         if ($fallbackEntity) {
             $this->assertEquals($targetEntity, $fallbackEntity->getAccount());

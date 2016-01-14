@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceListFallback;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -11,9 +10,12 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceListFallback;
 use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
@@ -33,6 +35,16 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
 
     /** @var  boolean */
     protected $changed;
+
+    /**
+     * @var EntityManager
+     */
+    protected $entityManager;
+
+    /**
+     * @var EntityRepository
+     */
+    protected $repository;
 
     /**
      * @param object $targetEntity
@@ -120,16 +132,16 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
      */
     public function onPreSetData(FormEvent $event)
     {
-        $form = $event->getForm()->getParent();
+        $parentForm = $event->getForm()->getParent();
         /** @var object|null $targetEntity */
-        $targetEntity = $form->getData();
+        $targetEntity = $parentForm->getData();
 
         if (!$targetEntity || !$targetEntity->getId()) {
             return;
         }
 
         /** @var FormInterface $priceListsByWebsites */
-        $priceListsByWebsites = $form->get('priceListsByWebsites');
+        $priceListsByWebsites = $parentForm->get('priceListsByWebsites');
 
         $formData = $this->prepareFormData($targetEntity, $priceListsByWebsites);
         $event->setData($formData);
@@ -140,9 +152,10 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
      */
     public function onPostSubmit(FormEvent $event)
     {
+        $parentForm = $event->getForm()->getParent();
         /** @var object|null $targetEntity */
-        $targetEntity = $event->getForm()->getParent()->getData();
-        if (!$targetEntity || !$targetEntity->getId()) {
+        $targetEntity = $parentForm->getData();
+        if (!$targetEntity) {
             return;
         }
 
@@ -152,9 +165,9 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         }
 
         /** @var FormInterface $priceListsByWebsites */
-        $priceListsByWebsites = $form->getParent()->get('priceListsByWebsites');
+        $priceListsByWebsites = $parentForm->get('priceListsByWebsites');
 
-        $em = $this->registry->getManagerForClass($this->getClassName());
+        $em = $this->getEntityManager();
 
         foreach ($priceListsByWebsites->all() as $priceListsByWebsite) {
             $this->changed = false;
@@ -184,9 +197,11 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
                     $this->changed = true;
                 }
             }
+            $priceListsWithPriority = $priceListsByWebsite
+                ->get(PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD)
+                ->all();
 
-            foreach ($priceListsByWebsite->get(PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD)->all(
-            ) as $priceListWithPriority) {
+            foreach ($priceListsWithPriority as $priceListWithPriority) {
                 $priceListWithPriorityData = $priceListWithPriority->getData();
                 $this->updatePriceListToTargetEntity(
                     $em,
@@ -235,7 +250,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         array $priceListWithPriorityData,
         array $actualPriceListsToTargetEntity
     ) {
-        $priceList = $priceListWithPriorityData['priceList'];
+        $priceList = $priceListWithPriorityData[PriceListSelectWithPriorityType::PRICE_LIST_FIELD];
         if (!$priceList instanceof PriceList) {
             return;
         }
@@ -250,11 +265,14 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         } else {
             $priceListToTargetEntity = $this->createPriceListToTargetEntity($targetEntity);
             $priceListToTargetEntity->setWebsite($website);
-            $priceListToTargetEntity->setPriceList($priceListWithPriorityData['priceList']);
+            $priceListToTargetEntity
+                ->setPriceList($priceListWithPriorityData[PriceListSelectWithPriorityType::PRICE_LIST_FIELD]);
             $this->changed = true;
         }
-        $priceListToTargetEntity->setPriority($priceListWithPriorityData['priority']);
-        $priceListToTargetEntity->setMergeAllowed($priceListWithPriorityData['mergeAllowed']);
+        $priceListToTargetEntity
+            ->setPriority($priceListWithPriorityData[PriceListSelectWithPriorityType::PRIORITY_FIELD]);
+        $priceListToTargetEntity
+            ->setMergeAllowed($priceListWithPriorityData[PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD]);
         $em->persist($priceListToTargetEntity);
     }
 
@@ -265,9 +283,8 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
      */
     protected function getActualPriceListsToTargetEntity($targetEntity, Website $website)
     {
-        /** @var PriceListRepositoryInterface $repo */
-        $repo = $this->registry->getManagerForClass($this->getClassName())->getRepository($this->getClassName());
-        $actualPriceListsToTargetEntity = $repo->getPriceLists($targetEntity, $website);
+        $repo = $this->getRepository();
+        $actualPriceListsToTargetEntity = !$targetEntity->getId() ? [] : $repo->getPriceLists($targetEntity, $website);
 
         $result = [];
         foreach ($actualPriceListsToTargetEntity as $priceListToTargetEntity) {
@@ -287,7 +304,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         $submittedPriceLists = [];
 
         foreach ($priceListsByWebsite->get(PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD)->getData() as $item) {
-            $submittedPriceLists[] = $item['priceList'];
+            $submittedPriceLists[] = $item[PriceListSelectWithPriorityType::PRICE_LIST_FIELD];
         }
 
         return $submittedPriceLists;
@@ -301,8 +318,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
     protected function prepareFormData($targetEntity, FormInterface $priceListsByWebsites)
     {
         $formData = [];
-        /** @var PriceListRepositoryInterface $repo */
-        $repo = $this->registry->getManagerForClass($this->getClassName())->getRepository($this->getClassName());
+        $repo = $this->getRepository();
         foreach ($priceListsByWebsites->all() as $priceListsByWebsite) {
             /** @var Website $website */
             $website = $priceListsByWebsite->getConfig()->getOption('website');
@@ -311,9 +327,11 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
             $actualPriceLists = [];
             /** @var object $priceListToTargetEntity */
             foreach ($actualPriceListsToTargetEntity as $priceListToTargetEntity) {
-                $priceLists['priceList'] = $priceListToTargetEntity->getPriceList();
-                $priceLists['priority'] = $priceListToTargetEntity->getPriority();
-                $priceLists['mergeAllowed'] = $priceListToTargetEntity->isMergeAllowed();
+                $priceLists[PriceListSelectWithPriorityType::PRICE_LIST_FIELD] =
+                    $priceListToTargetEntity->getPriceList();
+                $priceLists[PriceListSelectWithPriorityType::PRIORITY_FIELD] = $priceListToTargetEntity->getPriority();
+                $priceLists[PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD] =
+                    $priceListToTargetEntity->isMergeAllowed();
 
                 $actualPriceLists[] = $priceLists;
             }
@@ -322,5 +340,29 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         }
 
         return $formData;
+    }
+
+    /**
+     * @return EntityManager
+     */
+    protected function getEntityManager()
+    {
+        if (!$this->entityManager) {
+            $this->entityManager = $this->registry->getManagerForClass($this->getClassName());
+        }
+
+        return $this->entityManager;
+    }
+
+    /**
+     * @return PriceListRepositoryInterface
+     */
+    protected function getRepository()
+    {
+        if (!$this->repository) {
+            $this->repository = $this->getEntityManager()->getRepository($this->getClassName());
+        }
+
+        return $this->repository;
     }
 }

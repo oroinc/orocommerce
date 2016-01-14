@@ -10,7 +10,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class AddPriceListsFallback implements Migration
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {

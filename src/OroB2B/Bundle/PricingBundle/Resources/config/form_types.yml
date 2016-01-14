@@ -75,6 +75,7 @@ services:
         class: %orob2b_pricing.form.price_lists_settings.class%
         arguments:
             - @doctrine
+            - @property_accessor
         tags:
             - { name: form.type, alias: orob2b_pricing_price_lists_settings }
 

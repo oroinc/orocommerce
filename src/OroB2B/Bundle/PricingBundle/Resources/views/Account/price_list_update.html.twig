@@ -14,8 +14,7 @@
             {% for website in websites %}
                 <div class="tab-pane{% if website.id == websites|first.id %} active{% endif %}"
                      id="website{{ website.id }}"><br>
-                    {{ form_row(form.priceListsByWebsites[website.id].fallback) }}
-                    {{ form_row(form.priceListsByWebsites[website.id].priceListCollection) }}
+                    {{ form_row(form.priceListsByWebsites[website.id]) }}
                 </div>
             {% endfor %}
         </div>

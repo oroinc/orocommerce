@@ -4,38 +4,59 @@ namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
+use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepositoryInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListFallback;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 
 class PriceListsSettingsType extends AbstractType
 {
-    const PRICE_LIST_COLLECTION_FIELD = 'priceListCollection';
-    const FALLBACK_FIELD = 'fallback';
     const NAME = 'orob2b_pricing_price_lists_settings';
 
-    /** @var  Registry */
+    const PRICE_LIST_COLLECTION_FIELD = 'priceListCollection';
+    const FALLBACK_FIELD = 'fallback';
+
+    /**
+     * @var ManagerRegistry
+     */
     protected $registry;
 
     /**
-     * @param Registry $registry
+     * @var EntityManager
      */
-    public function __construct(Registry $registry)
-    {
-        $this->registry = $registry;
-    }
-
+    protected $entityManager;
 
     /**
-     * @inheritDoc
+     * @var EntityRepository
+     */
+    protected $repository;
+
+    /**
+     * @var PropertyAccessorInterface
+     */
+    protected $propertyAccessor;
+
+    /**
+     * @param ManagerRegistry $registry
+     * @param PropertyAccessorInterface $propertyAccessor
+     */
+    public function __construct(ManagerRegistry $registry, PropertyAccessorInterface $propertyAccessor)
+    {
+        $this->registry = $registry;
+        $this->propertyAccessor = $propertyAccessor;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -100,15 +121,10 @@ class PriceListsSettingsType extends AbstractType
             return;
         }
         $config = $form->getConfig();
-        $fallback = $this->getFallback(
-            $config->getOption('fallback_class_name'),
-            $targetEntity,
-            $config->getOption('target_field_name'),
-            $config->getOption('website')
-        );
+        $fallback = $this->getFallback($config, $targetEntity);
         $fallbackField = $form->get(self::FALLBACK_FIELD);
         $defaultFallback = $config->getOption('default_fallback');
-        if (!$fallback || $fallback->getFallback() === $defaultFallback) {
+        if (!$fallback || !$fallback->getFallback()) {
             $fallbackField->setData($defaultFallback);
         } else {
             $fallbackField->setData($fallback->getFallback());
@@ -126,43 +142,63 @@ class PriceListsSettingsType extends AbstractType
         }
         /** @var Account|null $account */
         $targetEntity = $form->getParent()->getParent()->getData();
-        if (!$targetEntity || !$targetEntity->getId()) {
+        if (!$targetEntity) {
             return;
         }
         $config = $form->getConfig();
-        /** @var Website $website */
-        $website = $config->getOption('website');
         $fallbackClassName = $config->getOption('fallback_class_name');
-        $fallback = $this->getFallback(
-            $fallbackClassName,
-            $targetEntity,
-            $config->getOption('target_field_name'),
-            $config->getOption('website')
-        );
+        $fallback = $this->getFallback($form->getConfig(), $targetEntity);
         if (!$fallback) {
             /** @var PriceListFallback $fallback */
             $fallback = new $fallbackClassName;
-            $this->registry->getManagerForClass($fallbackClassName)->persist($fallback);
+            $this->getEntityManager($fallbackClassName)->persist($fallback);
         }
-        $accessor = PropertyAccess::createPropertyAccessor();
-        $accessor->setValue($fallback, $config->getOption('target_field_name'), $targetEntity);
+        $this->propertyAccessor->setValue($fallback, $config->getOption('target_field_name'), $targetEntity);
         $fallback->setFallback($form->get(self::FALLBACK_FIELD)->getData());
-        $fallback->setWebsite($website);
+        $fallback->setWebsite($config->getOption('website'));
+    }
+
+    /**
+     * @param FormConfigInterface $config
+     * @param object $targetEntity
+     * @return object
+     */
+    protected function getFallback(FormConfigInterface $config, $targetEntity)
+    {
+        $fallbackClassName = $config->getOption('fallback_class_name');
+
+        return $this->getRepository($fallbackClassName)
+            ->findOneBy(
+                [
+                    $config->getOption('target_field_name') => $targetEntity,
+                    'website' => $config->getOption('website'),
+                ]
+            );
     }
 
     /**
      * @param string $className
-     * @param object $targetEntity
-     * @param string $targetFieldName
-     * @param Website $website
-     * @return null|PriceListFallback
+     * @return EntityManager
      */
-    protected function getFallback($className, $targetEntity, $targetFieldName, Website $website)
+    protected function getEntityManager($className)
     {
-        /** @var PriceListFallback $fallback */
-        return $this->registry
-            ->getManagerForClass($className)
-            ->getRepository($className)
-            ->findOneBy([$targetFieldName => $targetEntity, 'website' => $website]);
+        if (!$this->entityManager) {
+            $this->entityManager = $this->registry->getManagerForClass($className);
+        }
+
+        return $this->entityManager;
+    }
+
+    /**
+     * @param string $className
+     * @return PriceListRepositoryInterface|EntityRepository
+     */
+    protected function getRepository($className)
+    {
+        if (!$this->repository) {
+            $this->repository = $this->getEntityManager($className)->getRepository($className);
+        }
+
+        return $this->repository;
     }
 }
