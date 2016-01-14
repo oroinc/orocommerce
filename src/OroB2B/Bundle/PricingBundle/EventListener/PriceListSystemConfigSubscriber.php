@@ -57,7 +57,7 @@ class PriceListSystemConfigSubscriber implements EventSubscriberInterface
     {
         $settingsKey = $this->getSettingsKey(ConfigManager::SECTION_MODEL_SEPARATOR);
         $settings = $event->getSettings();
-        if ($this->checkApplicableBySettings($settings, $settingsKey)) {
+        if ($this->isSettingsApplicable($settings, $settingsKey)) {
             $settings[$settingsKey]['value'] = $this->converter->convertBeforeSave($settings[$settingsKey]['value']);
             $event->setSettings($settings);
         }
@@ -68,9 +68,11 @@ class PriceListSystemConfigSubscriber implements EventSubscriberInterface
      * @param string $settingsKey
      * @return bool
      */
-    protected function checkApplicableBySettings($settings, $settingsKey)
+    protected function isSettingsApplicable($settings, $settingsKey)
     {
-        return $this->applicable = is_array($settings) && array_key_exists($settingsKey, $settings);
+        $this->applicable = is_array($settings) && array_key_exists($settingsKey, $settings);
+
+        return $this->applicable;
     }
 
     /**

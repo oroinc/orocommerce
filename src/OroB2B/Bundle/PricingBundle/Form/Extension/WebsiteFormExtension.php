@@ -36,9 +36,6 @@ class WebsiteFormExtension extends AbstractTypeExtension
     /** @var  EventDispatcherInterface */
     protected $eventDispatcher;
 
-    /** @var  boolean */
-    protected $changed;
-
     /**
      * @param RegistryInterface $doctrine
      * @param string $priceListToWebsiteClass
@@ -134,7 +131,6 @@ class WebsiteFormExtension extends AbstractTypeExtension
      */
     public function onPostSubmit(FormEvent $event)
     {
-        $this->changed = false;
         /** @var Website $website */
         $website = $event->getData();
         $form = $event->getForm();
@@ -145,25 +141,23 @@ class WebsiteFormExtension extends AbstractTypeExtension
         $submitted = (array)$form->get(self::PRICE_LISTS_TO_WEBSITE_FIELD)->getData();
         $existing = $this->getPriceListToWebsiteSaved($website);
 
-        $this->removeDeletedRelations($submitted, $existing);
-        $this->persistSubmitted($submitted, $existing, $website);
+        $hasChanges = $this->removeDeletedRelations($submitted, $existing);
+        $hasChanges = $this->persistSubmitted($submitted, $existing, $website) || $hasChanges;
 
         $fallback = $this->getFallback($website);
         $submittedFallback = $form->get('fallback')->getData();
         if (!$fallback) {
             $fallback = new PriceListWebsiteFallback();
             $this->doctrine->getManagerForClass('OroB2BPricingBundle:PriceListWebsiteFallback')->persist($fallback);
-            $this->changed = true;
-        } else {
-            if ($fallback->getWebsite()->getId() != $website->getId()
-                || $fallback->getWebsite()->getId() != $submittedFallback
-            ) {
-                $this->changed = true;
-            }
+            $hasChanges = true;
+        } elseif ($fallback->getFallback() != $submittedFallback) {
+            $hasChanges = true;
         }
+
         $fallback->setWebsite($website);
         $fallback->setFallback($submittedFallback);
-        if ($this->changed) {
+
+        if ($hasChanges) {
             $this->eventDispatcher->dispatch(
                 PriceListCollectionChange::BEFORE_CHANGE,
                 new PriceListCollectionChange($website)
@@ -174,6 +168,7 @@ class WebsiteFormExtension extends AbstractTypeExtension
     /**
      * @param array $submitted
      * @param PriceListToWebsite[] $existing
+     * @return bool
      */
     protected function removeDeletedRelations(array $submitted, array $existing)
     {
@@ -191,11 +186,11 @@ class WebsiteFormExtension extends AbstractTypeExtension
         );
 
         $removed = array_diff(array_keys($existing), $submittedIds);
-
         foreach ($removed as $id) {
             $this->getPriceListToWebsiteManager()->remove($existing[$id]);
-            $this->changed = true;
         }
+
+        return count($removed) > 0;
     }
 
     /**
@@ -214,22 +209,26 @@ class WebsiteFormExtension extends AbstractTypeExtension
      * @param array $submitted
      * @param PriceListToWebsite[] $existing
      * @param Website $website
+     * @return bool
      */
     protected function persistSubmitted(array $submitted, array $existing, Website $website)
     {
+        $hasChanges = false;
         $ids = array_keys($existing);
         foreach ($submitted as $item) {
             $priceList = $item['priceList'];
             if (!$priceList instanceof PriceList) {
                 continue;
             }
+
             if (in_array($priceList->getId(), $ids, true)) {
-                if ($existing[$priceList->getId()]->getPriority() != $item['priority']
-                    || $existing[$priceList->getId()]->isMergeAllowed() != $item['mergeAllowed']
+                $existingPriceListRelation = $existing[$priceList->getId()];
+                if ($existingPriceListRelation->getPriority() != $item['priority']
+                    || $existingPriceListRelation->isMergeAllowed() != $item['mergeAllowed']
                 ) {
-                    $existing[$priceList->getId()]->setPriority($item['priority']);
-                    $existing[$priceList->getId()]->setMergeAllowed($item['mergeAllowed']);
-                    $this->changed = true;
+                    $existingPriceListRelation->setPriority($item['priority']);
+                    $existingPriceListRelation->setMergeAllowed($item['mergeAllowed']);
+                    $hasChanges = true;
                 }
             } else {
                 $entity = new PriceListToWebsite();
@@ -238,9 +237,11 @@ class WebsiteFormExtension extends AbstractTypeExtension
                     ->setMergeAllowed($item['mergeAllowed'])
                     ->setPriceList($priceList);
                 $this->getPriceListToWebsiteManager()->persist($entity);
-                $this->changed = true;
+                $hasChanges = true;
             }
         }
+
+        return $hasChanges;
     }
 
     /**
