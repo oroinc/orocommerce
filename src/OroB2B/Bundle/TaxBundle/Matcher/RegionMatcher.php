@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\TaxBundle\Matcher;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
-use OroB2B\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository;
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 
 class RegionMatcher extends AbstractMatcher
@@ -19,11 +18,8 @@ class RegionMatcher extends AbstractMatcher
      */
     public function match(AbstractAddress $address)
     {
-        /** @var TaxRuleRepository $taxRuleRepository */
-        $taxRuleRepository = $this->doctrineHelper->getEntityRepositoryForClass($this->taxRuleClass);
-
         $countryTaxRules = $this->countryMatcher->match($address);
-        $regionTaxRules = $taxRuleRepository->findByCountryAndRegion(
+        $regionTaxRules = $this->getTaxRuleRepository()->findByCountryAndRegion(
             $address->getCountry(),
             $address->getRegion(),
             $address->getRegionText()
