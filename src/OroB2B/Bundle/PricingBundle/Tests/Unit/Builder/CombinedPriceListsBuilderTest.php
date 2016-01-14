@@ -111,7 +111,7 @@ class CombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBuilderTes
         $websiteCPLBuilder = $this->getMockBuilder($websiteCPLBuilderClass)
             ->disableOriginalConstructor()
             ->getMock();
-        $websiteCPLBuilder->expects($this->once())->method('buildForAll');
+        $websiteCPLBuilder->expects($this->once())->method('build');
 
         return $websiteCPLBuilder;
     }

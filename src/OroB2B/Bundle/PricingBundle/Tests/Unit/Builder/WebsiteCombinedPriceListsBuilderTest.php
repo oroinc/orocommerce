@@ -87,7 +87,7 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
         $class = 'OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite';
         $CPLBuilder->setPriceListToWebsiteClassName($class);
 
-        $CPLBuilder->buildForAll();
+        $CPLBuilder->build();
     }
 
     /**
@@ -144,7 +144,7 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
         $accountGroupCPLBuilder = $this->getMockBuilder($accountGroupCPLBuilderClass)
             ->disableOriginalConstructor()
             ->getMock();
-        $accountGroupCPLBuilder->expects($this->once())->method('buildByWebsite');
+        $accountGroupCPLBuilder->expects($this->once())->method('build');
 
         return $accountGroupCPLBuilder;
     }
