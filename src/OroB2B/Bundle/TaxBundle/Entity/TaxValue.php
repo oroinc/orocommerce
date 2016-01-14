@@ -6,21 +6,24 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareInterface;
-use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareTrait;
-use Oro\Bundle\EntityBundle\EntityProperty\UpdatedAtAwareInterface;
-use Oro\Bundle\EntityBundle\EntityProperty\UpdatedAtAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
+
+use OroB2B\Bundle\TaxBundle\Model\Result;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="orob2b_tax_value")
- * @ORM\HasLifecycleCallbacks
+ * @ORM\Table(
+ *     name="orob2b_tax_value",
+ *     indexes={
+ *         @ORM\Index(name="orob2b_tax_value_class_id_idx", columns={"entity_class", "entity_id"})
+ *     }
+ * )
  */
-class TaxValue implements CreatedAtAwareInterface, UpdatedAtAwareInterface
+class TaxValue implements DatesAwareInterface
 {
-    use CreatedAtAwareTrait;
-    use UpdatedAtAwareTrait;
+    use DatesAwareTrait;
 
     /**
      * @ORM\Id
@@ -30,71 +33,18 @@ class TaxValue implements CreatedAtAwareInterface, UpdatedAtAwareInterface
     protected $id;
 
     /**
-     * @var float
+     * @var Result
      *
-     * @ORM\Column(name="total_including_tax", type="float")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @ORM\Column(name="result", type="object")
      */
-    protected $totalIncludingTax;
+    protected $result;
 
     /**
-     * @var float
-     *
-     * @ORM\Column(name="total_excluding_tax", type="float")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $totalExcludingTax;
-
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="shipping_including_tax", type="float")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $shippingIncludingTax;
-
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="shipping_excluding_tax", type="float")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $shippingExcludingTax;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\TaxBundle\Entity\TaxApply")
-     * @ORM\JoinTable(
-     *      name="orob2b_tax_apply_to_tax_value",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="tax_value_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="tax_apply_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
+     * @ORM\OneToMany(
+     *      targetEntity="OroB2B\Bundle\TaxBundle\Entity\TaxApply",
+     *      mappedBy="taxValue",
+     *      cascade={"persist", "remove"},
+     *      orphanRemoval=true
      * )
      *
      * @var TaxApply[]|Collection
@@ -105,13 +55,6 @@ class TaxValue implements CreatedAtAwareInterface, UpdatedAtAwareInterface
      * @var string
      *
      * @ORM\Column(name="entity_class", type="string", length=255)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $entityClass;
 
@@ -119,167 +62,20 @@ class TaxValue implements CreatedAtAwareInterface, UpdatedAtAwareInterface
      * @var int
      *
      * @ORM\Column(name="entity_id", type="integer")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $entityId;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=255)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @ORM\Column(type="text")
      */
     protected $address;
-
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="total_tax_amount", type="float")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $totalTaxAmount;
-
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="shipping_tax_amount", type="float")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $shippingTaxAmount;
 
     public function __construct()
     {
         $this->appliedTaxes = new ArrayCollection();
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set totalIncludingTax
-     *
-     * @param float $totalIncludingTax
-     *
-     * @return $this
-     */
-    public function setTotalIncludingTax($totalIncludingTax)
-    {
-        $this->totalIncludingTax = $totalIncludingTax;
-
-        return $this;
-    }
-
-    /**
-     * Get totalIncludingTax
-     *
-     * @return float
-     */
-    public function getTotalIncludingTax()
-    {
-        return $this->totalIncludingTax;
-    }
-
-    /**
-     * Set totalExcludingTax
-     *
-     * @param float $totalExcludingTax
-     *
-     * @return $this
-     */
-    public function setTotalExcludingTax($totalExcludingTax)
-    {
-        $this->totalExcludingTax = $totalExcludingTax;
-
-        return $this;
-    }
-
-    /**
-     * Get totalExcludingTax
-     *
-     * @return float
-     */
-    public function getTotalExcludingTax()
-    {
-        return $this->totalExcludingTax;
-    }
-
-    /**
-     * Set shippingIncludingTax
-     *
-     * @param float $shippingIncludingTax
-     *
-     * @return $this
-     */
-    public function setShippingIncludingTax($shippingIncludingTax)
-    {
-        $this->shippingIncludingTax = $shippingIncludingTax;
-
-        return $this;
-    }
-
-    /**
-     * Get shippingIncludingTax
-     *
-     * @return float
-     */
-    public function getShippingIncludingTax()
-    {
-        return $this->shippingIncludingTax;
-    }
-
-    /**
-     * Set shippingExcludingTax
-     *
-     * @param float $shippingExcludingTax
-     *
-     * @return $this
-     */
-    public function setShippingExcludingTax($shippingExcludingTax)
-    {
-        $this->shippingExcludingTax = $shippingExcludingTax;
-
-        return $this;
-    }
-
-    /**
-     * Get shippingExcludingTax
-     *
-     * @return float
-     */
-    public function getShippingExcludingTax()
-    {
-        return $this->shippingExcludingTax;
+        $this->result = new Result();
     }
 
     /**
@@ -396,59 +192,21 @@ class TaxValue implements CreatedAtAwareInterface, UpdatedAtAwareInterface
     }
 
     /**
-     * @param float $totalTaxAmount
+     * @param Result $result
      * @return $this
      */
-    public function setTotalTaxAmount($totalTaxAmount)
+    public function setResult(Result $result)
     {
-        $this->totalTaxAmount = $totalTaxAmount;
+        $this->result = $result;
+
         return $this;
     }
 
     /**
-     * @return float
+     * @return Result
      */
-    public function getTotalTaxAmount()
+    public function getResult()
     {
-        return $this->totalTaxAmount;
-    }
-
-    /**
-     * @param float $shippingTaxAmount
-     * @return $this
-     */
-    public function setShippingTaxAmount($shippingTaxAmount)
-    {
-        $this->shippingTaxAmount = $shippingTaxAmount;
-        return $this;
-    }
-
-    /**
-     * @return float
-     */
-    public function getShippingTaxAmount()
-    {
-        return $this->shippingTaxAmount;
-    }
-
-    /**
-     * Pre persist event handler
-     *
-     * @ORM\PrePersist
-     */
-    public function prePersist()
-    {
-        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-    }
-
-    /**
-     * Pre update event handler
-     *
-     * @ORM\PreUpdate
-     */
-    public function preUpdate()
-    {
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        return $this->result;
     }
 }
