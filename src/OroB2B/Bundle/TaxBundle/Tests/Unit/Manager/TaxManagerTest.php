@@ -41,7 +41,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->doctrineHelper->expects($this->once())->method('getEntityClass')->willReturnCallback(
+        $this->doctrineHelper->expects($this->any())->method('getEntityClass')->willReturnCallback(
             function ($object) {
                 $this->assertInternalType('object', $object);
 
@@ -66,7 +66,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Can't load TaxValue for new stdClass entity
+     * @expectedExceptionMessage Object identifier is missing
      */
     public function testNewEntity()
     {
@@ -80,14 +80,15 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
         $this->manager->loadTax(new \stdClass());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage TaxValue for stdClass#1 not found
-     */
     public function testTaxValueMissing()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|TaxTransformerInterface $transformer */
         $transformer = $this->getMock('OroB2B\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
+        $transformer->expects($this->once())->method('transform')->willReturnCallback(
+            function (TaxValue $taxValue) {
+                return $taxValue->getResult();
+            }
+        );
         $this->manager->addTransformer('stdClass', $transformer);
 
         $this->doctrineHelper->expects($this->once())->method('getSingleEntityIdentifier')->willReturn(1);
@@ -96,7 +97,9 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
         $repository->expects($this->once())->method('findOneBy')->with($this->isType('array'))->willReturn(null);
         $this->doctrineHelper->expects($this->once())->method('getEntityRepositoryForClass')->willReturn($repository);
 
-        $this->manager->loadTax(new \stdClass());
+        $result = $this->manager->loadTax(new \stdClass());
+        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Result', $result);
+        $this->assertEquals(new Result(), $result);
     }
 
     public function testTaxValue()
@@ -210,5 +213,42 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(null, $result->getUnit()->getIncludingTax());
         $this->assertEquals(10, $result->getRow()->getExcludingTax());
         $this->assertEquals(null, $result->getRow()->getIncludingTax());
+    }
+
+    public function testSave()
+    {
+        $entity = new \stdClass();
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|TaxTransformerInterface $transformer */
+        $transformer = $this->getMock('OroB2B\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
+        $transformer->expects($this->once())->method('reverseTransform')->willReturnCallback(
+            function (TaxValue $taxValue, Result $result) {
+                $taxValue->setResult($result);
+
+                return $taxValue;
+            }
+        );
+        $transformer->expects($this->once())->method('transform')->willReturnCallback(
+            function (TaxValue $taxValue) {
+                return $taxValue->getResult();
+            }
+        );
+        $this->manager->addTransformer('stdClass', $transformer);
+
+        $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $taxValue = new TaxValue();
+        $repository->expects($this->once())->method('findOneBy')->with($this->isType('array'))->willReturn($taxValue);
+        $this->doctrineHelper->expects($this->once())->method('getEntityRepositoryForClass')->willReturn($repository);
+        $this->doctrineHelper->expects($this->exactly(2))->method('getSingleEntityIdentifier')->willReturn(1);
+
+        $taxable = new Taxable();
+        $this->factory->expects($this->once())->method('create')->willReturn($taxable);
+
+        $em = $this->getMock('Doctrine\ORM\EntityManagerInterface');
+        $em->expects($this->once())->method('persist')->with($taxValue);
+        $em->expects($this->once())->method('flush')->with($taxValue);
+        $this->doctrineHelper->expects($this->once())->method('getEntityManager')->willReturn($em);
+
+        $this->manager->saveTax($entity);
     }
 }
