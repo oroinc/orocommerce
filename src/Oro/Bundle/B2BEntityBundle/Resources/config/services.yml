@@ -1,1 +1,15 @@
+parameters:
+    oro_b2bentity.event_listener.doctrine_post_flush_listener.class: OroB2B\src\Oro\Bundle\B2BEntityBundle\EventListener\DoctrinePostFlushListener
+    oro_b2bentity.extra_insert_entity_storage.class: OroB2B\src\Oro\Bundle\B2BEntityBundle\Storage\ExtraInsertEntityStorage
 
+services:
+    oro_b2bentity.extra_insert_entity_storage:
+        class: %oro_b2bentity.extra_insert_entity_storage.class%
+
+    oro_b2bentity.event_listener.doctrine_post_flush_listener:
+        class:  %oro_b2bentity.event_listener.doctrine_post_flush_listener.class%
+        arguments:
+            - @doctrine
+            - @oro_b2bentity.extra_insert_entity_storage
+        tags:
+            - { name: doctrine.event_listener, event: postFlush }
