@@ -3,7 +3,9 @@
 namespace OroB2B\Bundle\MenuBundle\Tests\Functional\Entity\Repository;
 
 use Gedmo\Tool\Logging\DBAL\QueryAnalyzer;
-use Oro\Component\Testing\WebTestCase;
+
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
 use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
 use OroB2B\Bundle\MenuBundle\Entity\Repository\MenuItemRepository;
 
@@ -129,5 +131,30 @@ class MenuItemRepositoryTest extends WebTestCase
             $tree = array_merge($tree, $this->prepareActualData($child));
         }
         return [$root->getDefaultTitle()->getString() => $tree];
+    }
+
+    public function testFindRootByDefaultTitle()
+    {
+        /** @var MenuItem $menu */
+        $menu = $this->getReference('menu_item.1');
+        $title = $menu->getDefaultTitle()->getString();
+        $actual = $this->repository->findRootByDefaultTitle($title);
+
+        $this->assertEquals($menu, $actual);
+    }
+
+    public function testFindRoots()
+    {
+        $expected = [
+            $this->getReference('menu_item.1'),
+            $this->getReference('menu_item.4')
+        ];
+        $actual = $this->repository->findRoots();
+
+        $this->assertCount(2, $actual);
+
+        foreach ($actual as $item) {
+            $this->assertContains($item, $expected);
+        }
     }
 }

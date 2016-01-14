@@ -45,21 +45,12 @@ class AccountUserTest extends AbstractUserTest
         return $this->getUser();
     }
 
-    public function testProperties()
+    public function testCollections()
     {
-        $account = new Account();
-
-        $user = $this->getUser();
-        $user->setFirstName('John');
-        $user->setLastName('Doe');
-        $user->setEmail('test@example.com');
-        $user->setAccount($account);
-
-        $this->assertEquals('John', $user->getFirstName());
-        $this->assertEquals('Doe', $user->getLastName());
-        $this->assertEquals('test@example.com', $user->getUsername());
-        $this->assertEquals('test@example.com', $user->getEmail());
-        $this->assertEquals($account, $user->getAccount());
+        $this->assertPropertyCollections(new AccountUser(), [
+            ['addresses', $this->createAddressEntity()],
+            ['salesRepresentatives', new User()],
+        ]);
     }
 
     public function testCreateAccount()
@@ -124,13 +115,14 @@ class AccountUserTest extends AbstractUserTest
     public function provider()
     {
         return [
+            ['account', new Account()],
             ['username', 'test'],
             ['email', 'test'],
             ['nameprefix', 'test'],
-            ['firstname', 'test'],
-            ['middlename', 'test'],
-            ['lastname', 'test'],
-            ['namesuffix', 'test'],
+            ['firstName', 'test'],
+            ['middleName', 'test'],
+            ['lastName', 'test'],
+            ['nameSuffix', 'test'],
             ['birthday', new \DateTime()],
             ['password', 'test'],
             ['plainPassword', 'test'],
@@ -141,7 +133,7 @@ class AccountUserTest extends AbstractUserTest
             ['loginCount', 11],
             ['createdAt', new \DateTime()],
             ['updatedAt', new \DateTime()],
-            ['salt', md5('user')]
+            ['salt', md5('user')],
         ];
     }
 
