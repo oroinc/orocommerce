@@ -1,9 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\EventListener;
+namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Component\Testing\WebTestCase;
@@ -19,18 +20,33 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
  */
 class ProductPriceEntityListenerTest extends WebTestCase
 {
+    /**
+     * @var Product
+     */
+    protected $testProduct;
+
+    /**
+     * @var PriceList
+     */
+    protected $testPriceList;
+
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([
             'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
         ]);
+        $this->testProduct = $this->getProduct();
+        $this->testPriceList = $this->getPriceList();
     }
 
     public function testOnCreate()
     {
-        $product = $this->getProduct();
-        $priceList = $this->getPriceList();
+        $this->clearTable();
+
         $productUnit = $this->getProductUnit();
 
         $price1 = Price::create(10, 'USD');
@@ -38,8 +54,8 @@ class ProductPriceEntityListenerTest extends WebTestCase
         $productPrice1
             ->setQuantity(10)
             ->setUnit($productUnit)
-            ->setProduct($product)
-            ->setPriceList($priceList)
+            ->setProduct($this->testProduct)
+            ->setPriceList($this->testPriceList)
             ->setPrice($price1);
         $this->getProductPriceManager()->persist($productPrice1);
 
@@ -48,18 +64,82 @@ class ProductPriceEntityListenerTest extends WebTestCase
         $productPrice2
             ->setQuantity(100)
             ->setUnit($productUnit)
-            ->setProduct($product)
-            ->setPriceList($priceList)
+            ->setProduct($this->testProduct)
+            ->setPriceList($this->testPriceList)
             ->setPrice($price2);
         $this->getProductPriceManager()->persist($productPrice2);
 
         $this->getProductPriceManager()->flush();
         $actual = $this->getChangedProductPriceRepository()->findBy([
-            'product' => $product,
-            'priceList' => $priceList,
+            'product' => $this->testProduct,
+            'priceList' => $this->testPriceList,
         ]);
 
         $this->assertCount(1, $actual);
+    }
+
+    /**
+     * @depends testOnCreate
+     */
+    public function testOnUpdate()
+    {
+        $this->clearTable();
+        $this->markTestSkipped();//todo fix
+
+        /** @var ProductPrice[] $productPrices */
+        $productPrices = $this->getProductPriceRepository()->findBy([
+            'product' => $this->testProduct,
+            'priceList' => $this->testPriceList,
+        ]);
+
+        foreach ($productPrices as $productPrice) {
+            $oldPrice = $productPrice->getPrice();
+            $price = Price::create($oldPrice->getValue(), 'EUR');
+            $productPrice->setPrice($price);
+            $this->getProductPriceManager()->persist($productPrice);
+        }
+
+        $this->getProductPriceManager()->flush();
+        $actual = $this->getChangedProductPriceRepository()->findBy([
+            'product' => $this->testProduct,
+            'priceList' => $this->testPriceList,
+        ]);
+
+        $this->assertCount(1, $actual);
+    }
+
+    /**
+     * @depends testOnCreate
+     */
+    public function testOnDelete()
+    {
+        $this->clearTable();
+
+        $productPrices = $this->getProductPriceRepository()->findBy([
+            'product' => $this->testProduct,
+            'priceList' => $this->testPriceList,
+        ]);
+
+        foreach ($productPrices as $productPrice) {
+            $this->getProductPriceManager()->remove($productPrice);
+        }
+
+        $this->getProductPriceManager()->flush();
+        $actual = $this->getChangedProductPriceRepository()->findBy([
+            'product' => $this->testProduct,
+            'priceList' => $this->testPriceList,
+        ]);
+
+        $this->assertCount(1, $actual);
+    }
+
+    protected function clearTable()
+    {
+        $this->getChangedProductPriceRepository()
+            ->createQueryBuilder('cpp')
+            ->delete()
+            ->getQuery()
+            ->execute();
     }
 
     /**
@@ -121,6 +201,14 @@ class ProductPriceEntityListenerTest extends WebTestCase
     }
 
     /**
+     * @return ProductPrice
+     */
+    protected function getProductPrice()
+    {
+        return $this->getProductPriceRepository()->findOneBy([]);
+    }
+
+    /**
      * @return ObjectManager
      */
     protected function getChangedProductPriceManager()
@@ -132,7 +220,7 @@ class ProductPriceEntityListenerTest extends WebTestCase
     }
 
     /**
-     * @return ObjectRepository
+     * @return EntityRepository
      */
     protected function getChangedProductPriceRepository()
     {
