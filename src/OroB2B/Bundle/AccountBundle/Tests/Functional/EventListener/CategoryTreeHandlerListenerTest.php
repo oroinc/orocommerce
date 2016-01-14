@@ -319,7 +319,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        return $crawler->filter('.category.b2b-tree div')->attr('data-page-component-options');
+        return $crawler->filter('.category div')->attr('data-page-component-options');
     }
 
     /**
