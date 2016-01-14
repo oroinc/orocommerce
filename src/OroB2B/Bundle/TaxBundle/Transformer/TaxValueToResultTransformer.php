@@ -30,10 +30,8 @@ class TaxValueToResultTransformer implements TaxTransformerInterface
     }
 
     /** {@inheritdoc} */
-    public function reverseTransform(Result $result)
+    public function reverseTransform(TaxValue $taxValue, Result $result)
     {
-        $taxValue = new TaxValue();
-
         foreach ($result->getTaxes() as $taxResultElement) {
             $taxApply = new TaxApply();
 
