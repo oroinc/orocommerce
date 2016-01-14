@@ -4,35 +4,40 @@
 {% if privilegeConfig.view_type == 'grid' %}
     <table class="table table-striped acl-table">
         <tbody>
-        <tr>
-            <th>
-                &nbsp;
-            </th>
-            {% set width = ((100/(privilegeConfig['permissions']|length + 1))-1)|number_format(0) %}
-            {% for field in privilegeConfig['permissions'] %}
-                <th width="{{ width }}%">
-                    {{ field|trans }}
-                </th>
-            {% endfor %}
-        </tr>
-        {% for privilege in privileges.data[privilegeConfigName] %}
             <tr>
-                <td>
-                    <strong>{{ privilege.identity.name|trans }}</strong>
-                </td>
-                {% for field in privilegeConfig['permissions'] %}
-                    <td>
-                        {% for permission in privilege.permissions %}
-                            {% if permission.name == field %}
-                                {% set accessLevel = prefix ~ (privileges.accessLevelNames[permission.accessLevel-1])|default(none_ownership) %}
-                                <div>{{ accessLevel|trans }}</div>
-                            {% endif %}
-                        {% endfor %}
-                        &nbsp;
-                    </td>
-                {% endfor %}
+                <th class="span6">&nbsp;</th>
+                <th>Action Permissions</th>
             </tr>
-        {% endfor %}
+            {% for privilege in privileges.data[privilegeConfigName] %}
+                <tr>
+                    <td>
+                        <strong>{{ privilege.identity.name|trans }}</strong>
+                    </td>
+                    <td>
+                        <div class="table-responsive">
+                            <table class="table table-condensed">
+                                <tbody>
+                                    {% for field in privilegeConfig['permissions'] %}
+                                        <tr>
+                                            <td class="span8">
+                                                {{ field|trans }}
+                                            </td>
+                                            <td>
+                                                {% for permission in privilege.permissions %}
+                                                    {% if permission.name == field %}
+                                                        {% set accessLevel = prefix ~ (privileges.accessLevelNames[permission.accessLevel-1])|default(none_ownership) %}
+                                                        <div>{{ accessLevel|trans }}</div>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
 {% else %}
