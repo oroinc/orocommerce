@@ -49,5 +49,4 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_
 
         return $collector;
     }
-
 }
