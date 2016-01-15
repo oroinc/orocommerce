@@ -50,7 +50,7 @@ class PriceListToWebsiteRepository extends EntityRepository
      */
     public function getWebsiteIteratorByFallback($fallback)
     {
-        $qb = $this->_em->createQueryBuilder()
+        $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('distinct website')
             ->from('OroB2BWebsiteBundle:Website', 'website');
 

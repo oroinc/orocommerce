@@ -57,7 +57,7 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
      */
     public function getAccountGroupIteratorByFallback(Website $website, $fallback)
     {
-        $qb = $this->_em->createQueryBuilder()
+        $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('distinct accountGroup')
             ->from('OroB2BAccountBundle:AccountGroup', 'accountGroup');
 

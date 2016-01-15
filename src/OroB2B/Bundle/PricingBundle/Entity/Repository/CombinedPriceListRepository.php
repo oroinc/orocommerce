@@ -123,8 +123,8 @@ class CombinedPriceListRepository extends EntityRepository
         $bufferSize = $this->getBufferSize();
         $iterator->setBufferSize($bufferSize);
 
-        $deleteQb = $this->_em->createQueryBuilder()
-            ->delete('OroB2BPricingBundle:CombinedPriceList', 'cplDelete');
+        $deleteQb = $this->getEntityManager()->createQueryBuilder()
+            ->delete($this->getEntityName(), 'cplDelete');
 
         $deleteQb->where($deleteQb->expr()->in('cplDelete.id', ':unusedPriceLists'));
 
@@ -133,7 +133,7 @@ class CombinedPriceListRepository extends EntityRepository
         foreach ($iterator as $priceList) {
             $priceListsIdForDelete[] = $priceList->getId();
             $i++;
-            if ($i == $bufferSize) {
+            if ($i === $bufferSize) {
                 $deleteQb->setParameter('unusedPriceLists', $priceListsIdForDelete)
                     ->getQuery()->execute();
                 $priceListsIdForDelete = [];
