@@ -84,7 +84,6 @@ class ProductPriceEntityListenerTest extends WebTestCase
     public function testOnUpdate()
     {
         $this->clearTable();
-        $this->markTestSkipped();//todo fix
 
         /** @var ProductPrice[] $productPrices */
         $productPrices = $this->getProductPriceRepository()->findBy([
@@ -109,7 +108,7 @@ class ProductPriceEntityListenerTest extends WebTestCase
     }
 
     /**
-     * @depends testOnCreate
+     * @depends testOnUpdate
      */
     public function testOnDelete()
     {
@@ -131,6 +130,63 @@ class ProductPriceEntityListenerTest extends WebTestCase
         ]);
 
         $this->assertCount(1, $actual);
+    }
+
+    /**
+     * temporary performance and memory usage test
+     * can be deleted after approve
+     */
+    public function testConceptWithExtraDoctrineActions()
+    {
+        $this->clearTable();
+
+        $this->markTestSkipped('No need run test while build process');
+
+        $productUnit = $this->getProductUnit();
+
+        for ($i = 1; $i < 501; $i++) {
+            $priceList = new PriceList();
+            $priceList->setName('PL' . $i)
+                ->setCurrencies(['USD']);
+
+            $this->getProductPriceManager()->persist($priceList);
+
+            $price = Price::create(10, 'USD');
+            $productPrice = new ProductPrice();
+            $productPrice
+                ->setQuantity(10)
+                ->setUnit($productUnit)
+                ->setProduct($this->testProduct)
+                ->setPriceList($priceList)
+                ->setPrice($price);
+
+            $this->getProductPriceManager()->persist($productPrice);
+        }
+
+        $this->getProductPriceManager()->flush();
+        $this->clearTable();
+        $this->getProductPriceManager()->clear();
+
+        /** @var ProductPrice[] $productPrices */
+        $productPrices = $this->getProductPriceRepository()->findBy([]);
+
+        $start = microtime(true);
+        echo PHP_EOL . 'start_memory: ' . memory_get_usage(true) . PHP_EOL;
+        echo PHP_EOL . 'start: ' . $start . PHP_EOL;
+
+        foreach ($productPrices as $productPrice) {
+            $oldPrice = $productPrice->getPrice();
+            $price = Price::create($oldPrice->getValue(), 'EUR');
+            $productPrice->setPrice($price);
+            $this->getProductPriceManager()->persist($productPrice);
+        }
+
+        $this->getProductPriceManager()->flush();
+
+        $end = microtime(true);
+        echo PHP_EOL . 'end_memory: ' . memory_get_usage(true) . PHP_EOL;
+        echo PHP_EOL . 'end: ' . microtime() . PHP_EOL;
+        echo PHP_EOL . 'duration: ' . ($end - $start) . PHP_EOL;
     }
 
     protected function clearTable()

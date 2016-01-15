@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\src\Oro\Bundle\B2BEntityBundle\EventListener;
+namespace Oro\Bundle\B2BEntityBundle\EventListener;
 
-use Doctrine\ORM\Event\PostFlushEventArgs;
+use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-use OroB2B\src\Oro\Bundle\B2BEntityBundle\Storage\ExtraInsertEntityStorageInterface;
+use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorageInterface;
 
 class DoctrinePostFlushListener
 {
@@ -15,27 +15,52 @@ class DoctrinePostFlushListener
     protected $registry;
 
     /**
-     * @var ExtraInsertEntityStorageInterface
+     * @var ExtraActionEntityStorageInterface
      */
     protected $storage;
 
     /**
-     * @param RegistryInterface $registry
-     * @param ExtraInsertEntityStorageInterface $storage
+     * @var ObjectManager[]
      */
-    public function __construct(RegistryInterface $registry, ExtraInsertEntityStorageInterface $storage)
+    protected $managers = [];
+
+    /**
+     * @param RegistryInterface $registry
+     * @param ExtraActionEntityStorageInterface $storage
+     */
+    public function __construct(RegistryInterface $registry, ExtraActionEntityStorageInterface $storage)
     {
         $this->registry = $registry;
         $this->storage = $storage;
     }
 
-    /**
-     * Save collected changes
-     *
-     * @param PostFlushEventArgs $args
-     */
-    public function postFlush(PostFlushEventArgs $args)
+    public function postFlush()
     {
-        return;
+        if ($this->storage->hasScheduledForInsert()) {
+            foreach ($this->storage->getScheduledForInsert() as $entity) {
+                $em = $this->getEntityManager($entity);
+                $em->persist($entity);
+            }
+            $this->storage->clearScheduledForInsert();
+
+            foreach ($this->managers as $em) {
+                $em->flush();
+            }
+        }
+    }
+
+    /**
+     * @param $entity
+     * @return ObjectManager
+     */
+    protected function getEntityManager($entity)
+    {
+        $entityClassName = get_class($entity);
+
+        if (!array_key_exists($entityClassName, $this->managers)) {
+            $this->managers[$entityClassName] = $this->registry->getManagerForClass($entityClassName);
+        }
+
+        return $this->managers[$entityClassName];
     }
 }

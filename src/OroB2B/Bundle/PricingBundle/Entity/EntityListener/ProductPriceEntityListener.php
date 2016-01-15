@@ -6,12 +6,27 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
+use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorageInterface;
+
 use OroB2B\Bundle\PricingBundle\Entity\ChangedProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 
 class ProductPriceEntityListener
 {
+    /**
+     * @var ExtraActionEntityStorageInterface
+     */
+    protected $extraActionsStorage;
+
+    /**
+     * @param ExtraActionEntityStorageInterface $extraActionsStorage
+     */
+    public function __construct(ExtraActionEntityStorageInterface $extraActionsStorage)
+    {
+        $this->extraActionsStorage = $extraActionsStorage;
+    }
+
     /**
      * @param ProductPrice $productPrice
      * @param LifecycleEventArgs $event
@@ -52,16 +67,15 @@ class ProductPriceEntityListener
      */
     public function preUpdate(ProductPrice $productPrice, PreUpdateEventArgs $event)
     {
-        // todo does not work yet
-
         $em = $event->getEntityManager();
         $changedProductPrice = $this->createChangedProductPrice($productPrice);
 
-        if ($this->isChangedProductPriceCreated($em, $changedProductPrice)) {
+        if ($this->isChangedProductPriceCreated($em, $changedProductPrice)
+            || $this->extraActionsStorage->isScheduledForInsert($changedProductPrice)) {
             return;
         }
 
-        $em->persist($changedProductPrice);
+        $this->extraActionsStorage->scheduleForExtraInsert($changedProductPrice);
     }
 
     /**
@@ -73,6 +87,7 @@ class ProductPriceEntityListener
         /** @var PriceList $priceList */
         $priceList = $productPrice->getPriceList();
         $product = $productPrice->getProduct();
+
         return new ChangedProductPrice($priceList, $product);
     }
 
@@ -94,7 +109,6 @@ class ProductPriceEntityListener
         //check if entity exists in db
         $repository = $em->getRepository('OroB2BPricingBundle:ChangedProductPrice');
 
-        //todo repository
         return (bool)$repository->findOneBy([
                 'priceList' => $changedProductPrice->getPriceList(),
                 'product' => $changedProductPrice->getProduct()
