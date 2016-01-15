@@ -5,9 +5,11 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\OrderTax\Mapper;
 use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Component\Testing\Unit\EntityTrait;
 
+use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper;
+use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,9 +24,17 @@ class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
      */
     protected $mapper;
 
+    /**
+     * @var TaxationSettingsProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $settingsProvider;
+
     protected function setUp()
     {
-        $this->mapper = new OrderLineItemMapper();
+        $this->settingsProvider = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
+            ->disableOriginalConstructor()->getMock();
+
+        $this->mapper = new OrderLineItemMapper($this->settingsProvider);
     }
 
     protected function tearDown()
@@ -66,8 +76,9 @@ class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
         /** @var OrderLineItem $lineItem */
         $lineItem = $this->getEntity('OroB2B\Bundle\OrderBundle\Entity\OrderLineItem', ['id' => $id]);
         $lineItem
-            ->setPrice($priceValue ? Price::create($priceValue, 'USD') : null)
-            ->setQuantity($quantity);
+            ->setPrice($priceValue ? Price::create($priceValue, 'USD') : new Price())
+            ->setQuantity($quantity)
+            ->setOrder(new Order());
 
         return $lineItem;
     }
@@ -83,7 +94,7 @@ class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Taxable', $taxable);
         $this->assertEquals($id, $taxable->getIdentifier());
         $this->assertEquals($quantity, $taxable->getQuantity());
-        $this->assertEquals($priceValue, $taxable->getPrice());
+        $this->assertEquals($priceValue, $taxable->getPrice()->getValue());
         $this->assertEquals(0, $taxable->getAmount());
         $this->assertEmpty($taxable->getItems());
     }

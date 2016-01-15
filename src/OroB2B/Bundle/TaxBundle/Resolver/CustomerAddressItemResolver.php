@@ -18,7 +18,7 @@ class CustomerAddressItemResolver extends AbstractAddressResolver
             return;
         }
 
-        $address = $this->getAddress($taxable);
+        $address = $taxable->getDestination();
         if (!$address) {
             return;
         }
@@ -84,7 +84,7 @@ class CustomerAddressItemResolver extends AbstractAddressResolver
             $rowTotalAdjustment += $resultElement->getAdjustment();
 
             $taxResults[] = TaxResultElement::create(
-                $taxRule->getTax()->getId(),
+                $taxRule->getTax() ? $taxRule->getTax()->getId() : null,
                 $taxRule->getTax()->getRate(),
                 $taxableAmount,
                 $resultElement->getTaxAmount()

@@ -35,7 +35,7 @@ class TaxValueToResultTransformer implements TaxTransformerInterface
         $taxResultElements = [];
         foreach ($taxValue->getAppliedTaxes() as $taxApply) {
             $taxResultElements[] = TaxResultElement::create(
-                $taxApply->getTax()->getId(),
+                $taxApply->getTax() ? $taxApply->getTax()->getId() : null,
                 $taxApply->getRate(),
                 $taxApply->getTaxableAmount(),
                 $taxApply->getTaxAmount()

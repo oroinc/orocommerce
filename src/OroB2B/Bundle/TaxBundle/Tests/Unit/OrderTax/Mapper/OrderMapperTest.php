@@ -37,10 +37,14 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->orderLineItemMapper = $this->getMock('OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper');
+        $this->orderLineItemMapper = $this
+            ->getMockBuilder('OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper')
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->settingsProvider = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
             ->disableOriginalConstructor()->getMock();
-        $this->mapper = new OrderMapper($this->orderLineItemMapper, $this->settingsProvider);
+        $this->mapper = new OrderMapper($this->settingsProvider);
+        $this->mapper->setOrderLineItemMapper($this->orderLineItemMapper);
     }
 
     protected function tearDown()
