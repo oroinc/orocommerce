@@ -55,3 +55,11 @@ services:
         calls:
             - [setEntityClass, [%orob2b_menu.entity.menu_item.class%]]
             - [setCache, [@orob2b_menu.cache]]
+
+    orob2b_menu.event_listener.locale_listener:
+        class: OroB2B\Bundle\MenuBundle\EventListener\LocaleListener
+        arguments:
+            - @orob2b_menu.menu_provider
+        tags:
+            - { name: doctrine.event_listener, event: postPersist }
+            - { name: doctrine.event_listener, event: postUpdate }
