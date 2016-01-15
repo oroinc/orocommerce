@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\TaxBundle\Calculator;
 
-use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
-use OroB2B\Bundle\TaxBundle\Model\ResultElement;
 use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class Calculator implements TaxCalculatorInterface
@@ -33,16 +31,14 @@ class Calculator implements TaxCalculatorInterface
     }
 
     /**
-     * @param string $amount
-     * @param TaxRule $taxRule
-     * @return ResultElement
+     * {@inheritdoc}
      */
-    public function calculate($amount, TaxRule $taxRule)
+    public function calculate($amount, $taxRate)
     {
         if ($this->settingsProvider->isProductPricesIncludeTax()) {
-            return $this->includedTaxCalculator->calculate($amount, $taxRule);
+            return $this->includedTaxCalculator->calculate($amount, $taxRate);
         }
 
-        return $this->taxCalculator->calculate($amount, $taxRule);
+        return $this->taxCalculator->calculate($amount, $taxRate);
     }
 }

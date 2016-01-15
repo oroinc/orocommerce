@@ -2,15 +2,13 @@
 
 namespace OroB2B\Bundle\TaxBundle\Calculator;
 
-use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
-
 class IncludedTaxCalculator extends AbstractRoundingTaxCalculator
 {
     /** {@inheritdoc} */
-    public function calculate($amount, TaxRule $taxRule)
+    public function calculate($amount, $taxRate)
     {
         $inclTax = $amount;
-        $taxRate = abs($taxRule->getTax()->getRate());
+        $taxRate = abs($taxRate);
 
         $taxAmount = ($inclTax * $taxRate) / (1 + $taxRate);
         $taxAmountRounded = $this->roundingService->round($taxAmount);

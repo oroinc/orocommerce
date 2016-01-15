@@ -24,26 +24,32 @@ class CustomerAddressResolver extends AbstractAddressResolver
 
         $taxRules = $this->matcher->match($address);
         $taxableAmount = $taxable->getAmount();
+        $roundedTaxableAmount = $this->roundingService->round($taxableAmount);
 
-        $totalInclTax = 0;
-        $totalExclTax = 0;
+        $taxAmount = 0;
         $taxResults = [];
 
         foreach ($taxRules as $taxRule) {
-            $resultElement = $this->calculator->calculate($taxableAmount, $taxRule);
-            $totalInclTax += $resultElement->getIncludingTax();
-            $totalExclTax += $resultElement->getExcludingTax();
+            $taxRate = $taxRule->getTax()->getRate();
+            $resultElement = $this->calculator->calculate($taxableAmount, $taxRate);
+            $taxAmount += $resultElement->getTaxAmount();
 
             $taxResults[] = TaxResultElement::create(
                 $taxRule->getTax() ? $taxRule->getTax()->getId() : null,
-                $taxRule->getTax()->getRate(),
-                $taxableAmount,
+                $taxRate,
+                $roundedTaxableAmount,
                 $resultElement->getTaxAmount()
             );
         }
 
         $result = $event->getResult();
-        $result->offsetSet(Result::TOTAL, ResultElement::create($totalInclTax, $totalExclTax));
+        $result->offsetSet(
+            Result::TOTAL,
+            ResultElement::create(
+                $roundedTaxableAmount,
+                $this->roundingService->round($taxableAmount - $taxAmount)
+            )
+        );
         $result->offsetSet(Result::SHIPPING, new ResultElement());
         $result->offsetSet(Result::TAXES, $taxResults);
     }
