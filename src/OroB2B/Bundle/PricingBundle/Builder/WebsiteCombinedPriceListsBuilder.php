@@ -70,8 +70,9 @@ class WebsiteCombinedPriceListsBuilder
 
     /**
      * @param Website|null $currentWebsite
+     * @param boolean|false $force
      */
-    public function build(Website $currentWebsite = null)
+    public function build(Website $currentWebsite = null, $force = false)
     {
         $websites = [$currentWebsite];
         if (!$currentWebsite) {
@@ -80,8 +81,8 @@ class WebsiteCombinedPriceListsBuilder
         }
 
         foreach ($websites as $website) {
-            $this->updatePriceListsOnCurrentLevel($website);
-            $this->updatePriceListsOnChildrenLevels($website);
+            $this->updatePriceListsOnCurrentLevel($website, $force);
+            $this->updatePriceListsOnChildrenLevels($website, $force);
         }
 
         if ($currentWebsite) {
@@ -91,11 +92,12 @@ class WebsiteCombinedPriceListsBuilder
 
     /**
      * @param Website $website
+     * @param boolean $force
      */
-    protected function updatePriceListsOnCurrentLevel(Website $website)
+    protected function updatePriceListsOnCurrentLevel(Website $website, $force)
     {
         $collection = $this->priceListCollectionProvider->getPriceListsByWebsite($website);
-        $actualCombinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection);
+        $actualCombinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection, $force);
 
         $relation = $this->getCombinedPriceListToWebsiteRepository()
             ->findByPrimaryKey($actualCombinedPriceList, $website);
@@ -157,10 +159,11 @@ class WebsiteCombinedPriceListsBuilder
 
     /**
      * @param Website $website
+     * @param boolean $force
      */
-    protected function updatePriceListsOnChildrenLevels(Website $website)
+    protected function updatePriceListsOnChildrenLevels(Website $website, $force)
     {
-        $this->accountGroupCombinedPriceListsBuilder->build($website);
+        $this->accountGroupCombinedPriceListsBuilder->build($website, null, $force);
     }
 
     /**

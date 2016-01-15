@@ -72,8 +72,9 @@ class AccountGroupCombinedPriceListsBuilder
     /**
      * @param Website $website
      * @param AccountGroup|null $currentAccountGroup
+     * @param boolean|false $force
      */
-    public function build(Website $website, AccountGroup $currentAccountGroup = null)
+    public function build(Website $website, AccountGroup $currentAccountGroup = null, $force = false)
     {
         $accountGroups = [$currentAccountGroup];
         if (!$currentAccountGroup) {
@@ -82,8 +83,8 @@ class AccountGroupCombinedPriceListsBuilder
         }
 
         foreach ($accountGroups as $accountGroup) {
-            $this->updatePriceListsOnCurrentLevel($website, $accountGroup);
-            $this->updatePriceListsOnChildrenLevels($website, $accountGroup);
+            $this->updatePriceListsOnCurrentLevel($website, $accountGroup, $force);
+            $this->updatePriceListsOnChildrenLevels($website, $accountGroup, $force);
         }
 
         if ($currentAccountGroup) {
@@ -144,11 +145,12 @@ class AccountGroupCombinedPriceListsBuilder
     /**
      * @param Website $website
      * @param AccountGroup $accountGroup
+     * @param boolean $force
      */
-    protected function updatePriceListsOnCurrentLevel(Website $website, AccountGroup $accountGroup)
+    protected function updatePriceListsOnCurrentLevel(Website $website, AccountGroup $accountGroup, $force)
     {
         $collection = $this->priceListCollectionProvider->getPriceListsByAccountGroup($accountGroup, $website);
-        $actualCombinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection);
+        $actualCombinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection, $force);
 
         $relation = $this->getCombinedPriceListToAccountGroupRepository()
             ->findByPrimaryKey($actualCombinedPriceList, $accountGroup, $website);
@@ -159,12 +161,13 @@ class AccountGroupCombinedPriceListsBuilder
     }
 
     /**
-     * @param AccountGroup $accountGroup
      * @param Website $website
+     * @param AccountGroup $accountGroup
+     * @param boolean $force
      */
-    protected function updatePriceListsOnChildrenLevels(Website $website, AccountGroup $accountGroup)
+    protected function updatePriceListsOnChildrenLevels(Website $website, AccountGroup $accountGroup, $force)
     {
-        $this->accountCombinedPriceListsBuilder->buildByAccountGroup($website, $accountGroup);
+        $this->accountCombinedPriceListsBuilder->buildByAccountGroup($website, $accountGroup, $force);
     }
 
     /**

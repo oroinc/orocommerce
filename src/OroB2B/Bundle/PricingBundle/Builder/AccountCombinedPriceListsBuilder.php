@@ -67,24 +67,26 @@ class AccountCombinedPriceListsBuilder
     /**
      * @param Website $website
      * @param Account $account
+     * @param boolean|false $force
      */
-    public function build(Website $website, Account $account)
+    public function build(Website $website, Account $account, $force = false)
     {
-        $this->updatePriceListsOnCurrentLevel($website, $account);
+        $this->updatePriceListsOnCurrentLevel($website, $account, $force);
         $this->combinedPriceListGarbageCollector->cleanCombinedPriceLists();
     }
 
     /**
      * @param Website $website
      * @param AccountGroup $accountGroup
+     * @param boolean|false $force
      */
-    public function buildByAccountGroup(Website $website, AccountGroup $accountGroup)
+    public function buildByAccountGroup(Website $website, AccountGroup $accountGroup, $force = false)
     {
         $accountToPriceListIterator = $this->getPriceListToAccountRepository()
             ->getAccountIteratorByFallback($accountGroup, $website, PriceListAccountFallback::ACCOUNT_GROUP);
 
         foreach ($accountToPriceListIterator as $account) {
-            $this->updatePriceListsOnCurrentLevel($website, $account);
+            $this->updatePriceListsOnCurrentLevel($website, $account, $force);
         }
     }
 
@@ -147,11 +149,12 @@ class AccountCombinedPriceListsBuilder
     /**
      * @param Website $website
      * @param Account $account
+     * @param boolean $force
      */
-    protected function updatePriceListsOnCurrentLevel(Website $website, Account $account)
+    protected function updatePriceListsOnCurrentLevel(Website $website, Account $account, $force)
     {
         $collection = $this->priceListCollectionProvider->getPriceListsByAccount($account, $website);
-        $actualCombinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection);
+        $actualCombinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection, $force);
 
         $relation = $this->getCombinedPriceListToAccountRepository()
             ->findByPrimaryKey($actualCombinedPriceList, $account, $website);

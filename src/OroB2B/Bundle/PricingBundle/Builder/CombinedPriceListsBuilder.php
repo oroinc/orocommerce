@@ -44,17 +44,23 @@ class CombinedPriceListsBuilder
         $this->configManager = $configManager;
     }
 
-    public function build()
+    /**
+     * @param boolean|false $force
+     */
+    public function build($force = false)
     {
-        $this->updatePriceListsOnCurrentLevel();
-        $this->updatePriceListsOnChildrenLevels();
+        $this->updatePriceListsOnCurrentLevel($force);
+        $this->updatePriceListsOnChildrenLevels($force);
         $this->combinedPriceListGarbageCollector->cleanCombinedPriceLists();
     }
 
-    protected function updatePriceListsOnCurrentLevel()
+    /**
+     * @param boolean $force
+     */
+    protected function updatePriceListsOnCurrentLevel($force)
     {
         $collection = $this->priceListCollectionProvider->getPriceListsByConfig();
-        $actualCombinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection);
+        $actualCombinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection, $force);
 
         $combinedPriceListId = $this->configManager->get(Configuration::getConfigKeyToPriceList());
         if ($combinedPriceListId != $actualCombinedPriceList->getId()) {
@@ -62,9 +68,12 @@ class CombinedPriceListsBuilder
         }
     }
 
-    protected function updatePriceListsOnChildrenLevels()
+    /**
+     * @param boolean $force
+     */
+    protected function updatePriceListsOnChildrenLevels($force)
     {
-        $this->websiteCombinedPriceListBuilder->build();
+        $this->websiteCombinedPriceListBuilder->build(null, $force);
     }
 
     /**
