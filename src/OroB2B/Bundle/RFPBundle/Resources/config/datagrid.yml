@@ -1,11 +1,11 @@
 datagrid:
     rfp-requests-grid:
+        acl_resource: orob2b_rfp_request_view
         extended_entity_name: %orob2b_rfp.entity.request.class%
         options:
             entityHint:        request
             entity_pagination: true
         source:
-            acl_resource: orob2b_rfp_request_view
             type:         orm
             query:
                 select:
@@ -171,12 +171,12 @@ datagrid:
                 acl_resource:  orob2b_rfp_request_update
 
     rfp-request-statuses-grid:
+        acl_resource: orob2b_rfp_request_status_view
         extended_entity_name: %orob2b_rfp.entity.request.status.class%
         options:
             entityHint:        status
             entity_pagination: true
         source:
-            acl_resource: orob2b_rfp_request_status_view
             type:         orm
             query:
                 select:

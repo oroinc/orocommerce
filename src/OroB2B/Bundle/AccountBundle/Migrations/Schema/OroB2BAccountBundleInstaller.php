@@ -63,6 +63,10 @@ class OroB2BAccountBundleInstaller implements
     const ORO_B2B_ACCOUNT_GROUP_PRODUCT_VISIBILITY_RESOLVED = 'orob2b_acc_grp_prod_vsb_resolv';
     const ORO_B2B_ACCOUNT_PRODUCT_VISIBILITY_RESOLVED = 'orob2b_acc_prod_vsb_resolv';
 
+    const ORO_USER_TABLE_NAME = 'oro_user';
+    const ORO_B2B_ACCOUNT_SALES_REPRESENTATIVES_TABLE_NAME = 'orob2b_account_sales_reps';
+    const ORO_B2B_ACCOUNT_USER_SALES_REPRESENTATIVES_TABLE_NAME = 'orob2b_account_user_sales_reps';
+
     /** @var ExtendExtension */
     protected $extendExtension;
 
@@ -110,7 +114,7 @@ class OroB2BAccountBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_3';
     }
 
     /**
@@ -161,6 +165,9 @@ class OroB2BAccountBundleInstaller implements
         $this->createOroB2BAccountGroupProductVisibilityResolvedTable($schema);
         $this->createOroB2BAccountProductVisibilityResolvedTable($schema);
 
+        $this->createOroB2BAccountSalesRepresentativesTable($schema);
+        $this->createOroB2BAccountUserSalesRepresentativesTable($schema);
+
         /** Foreign keys generation **/
         $this->addOroB2BAccountUserForeignKeys($schema);
         $this->addOroB2BAccountUserAccessAccountUserRoleForeignKeys($schema);
@@ -191,6 +198,9 @@ class OroB2BAccountBundleInstaller implements
         $this->addOroB2BProductVisibilityResolvedForeignKeys($schema);
         $this->addOroB2BAccountGroupProductVisibilityResolvedForeignKeys($schema);
         $this->addOroB2BAccountProductVisibilityResolvedForeignKeys($schema);
+
+        $this->addOroB2BAccountSalesRepresentativesForeignKeys($schema);
+        $this->addOroB2BAccountUserSalesRepresentativesForeignKeys($schema);
     }
 
     /**
@@ -627,6 +637,32 @@ class OroB2BAccountBundleInstaller implements
         $table->addColumn('source', 'smallint', ['notnull' => false]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['account_id', 'website_id', 'product_id']);
+    }
+
+    /**
+     * Create orob2b_account_sales_representatives table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BAccountSalesRepresentativesTable(Schema $schema)
+    {
+        $table = $schema->createTable(self::ORO_B2B_ACCOUNT_SALES_REPRESENTATIVES_TABLE_NAME);
+        $table->addColumn('account_id', 'integer');
+        $table->addColumn('user_id', 'integer');
+        $table->setPrimaryKey(['account_id', 'user_id']);
+    }
+
+    /**
+     * Create orob2b_account_user_sales_representatives table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BAccountUserSalesRepresentativesTable(Schema $schema)
+    {
+        $table = $schema->createTable(self::ORO_B2B_ACCOUNT_USER_SALES_REPRESENTATIVES_TABLE_NAME);
+        $table->addColumn('account_user_id', 'integer');
+        $table->addColumn('user_id', 'integer');
+        $table->setPrimaryKey(['account_user_id', 'user_id']);
     }
 
     /**
@@ -1442,6 +1478,50 @@ class OroB2BAccountBundleInstaller implements
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_catalog_category'),
             ['category_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_account_sales_representatives foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BAccountSalesRepresentativesForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable(self::ORO_B2B_ACCOUNT_SALES_REPRESENTATIVES_TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::ORO_USER_TABLE_NAME),
+            ['user_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::ORO_B2B_ACCOUNT_TABLE_NAME),
+            ['account_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_account_user_sales_representatives foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BAccountUserSalesRepresentativesForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable(self::ORO_B2B_ACCOUNT_USER_SALES_REPRESENTATIVES_TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::ORO_USER_TABLE_NAME),
+            ['user_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::ORO_B2B_ACCOUNT_USER_TABLE_NAME),
+            ['account_user_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );

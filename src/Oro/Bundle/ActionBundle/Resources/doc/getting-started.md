@@ -116,6 +116,20 @@ actions:
                 options:                                            # attribute options
                     class: \Acme\Bundle\DemoBundle\Model\MyModel    # (optional) entity class name, set if type is entity
 
+        datagrid_options:
+            mass_action_provider:                                   # (optional) service name, marked with "oro_action.datagrid.mass_action_provider" tag
+                acme.action.datagrid.mass_action_provider           # and must implement Oro\Bundle\ActionBundle\Datagrid\Provider\MassActionProviderInterface
+            mass_action:                                            # (optional) configuration of datagrid mass action
+                type: window
+                label: acme.demo.mass_action.label
+                icon: plus
+                route: acme_demo_bundle_massaction
+                frontend_options:
+                    title: acme.demo.mass_action.action.label
+                    dialogOptions:
+                        modal: true
+                        ...
+
         form_options:                                               # (optional) parameters which will be passed to form dialog
             attribute_fields:                                       # list of attribute fields which will be shown in dialog
                 demo_attr:                                          # attribute name (must be configured in `attributes` block of action config)
