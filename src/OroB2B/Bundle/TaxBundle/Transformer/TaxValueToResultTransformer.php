@@ -4,61 +4,28 @@ namespace OroB2B\Bundle\TaxBundle\Transformer;
 
 use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
 use OroB2B\Bundle\TaxBundle\Model\Result;
-use OroB2B\Bundle\TaxBundle\Model\ResultElement;
 
 class TaxValueToResultTransformer implements TaxTransformerInterface
 {
-    /**
-     * @param TaxValue $taxValue
-     * @return Result
-     */
-    public function transform($taxValue)
+    /** {@inheritdoc} */
+    public function transform(TaxValue $taxValue)
     {
-        $total = $this->createResultElement(
-            $taxValue->getTotalIncludingTax(),
-            $taxValue->getTotalExcludingTax(),
-            $taxValue->getTotalTaxAmount()
-        );
+        $result = $taxValue->getResult();
 
-        $shipping = $this->createResultElement(
-            $taxValue->getShippingIncludingTax(),
-            $taxValue->getShippingExcludingTax(),
-            $taxValue->getShippingTaxAmount()
-        );
+        $result->offsetSet(Result::TAXES, $taxValue->getAppliedTaxes());
 
-        return Result::create($total, $shipping, $taxValue->getAppliedTaxes());
+        return $result;
     }
 
-    /**
-     * @param float $includingTax
-     * @param float $excludingTax
-     * @param float $taxAmount
-     * @param int   $adjustment
-     * @return ResultElement
-     */
-    protected function createResultElement($includingTax, $excludingTax, $taxAmount, $adjustment = 0)
+    /** {@inheritdoc} */
+    public function reverseTransform(TaxValue $taxValue, Result $result)
     {
-        return ResultElement::create($includingTax, $excludingTax, $taxAmount, $adjustment);
-    }
-
-    /**
-     * {@inheritdoc}
-     * @param Result $result
-     */
-    public function reverseTransform($result)
-    {
-        $taxValue = new TaxValue();
-        $taxValue
-            ->setTotalIncludingTax($result->getTotal()->getIncludingTax())
-            ->setTotalExcludingTax($result->getTotal()->getExcludingTax())
-            ->setTotalTaxAmount($result->getTotal()->getTaxAmount())
-            ->setShippingIncludingTax($result->getShipping()->getIncludingTax())
-            ->setShippingExcludingTax($result->getShipping()->getExcludingTax())
-            ->setShippingTaxAmount($result->getShipping()->getTaxAmount());
-
         foreach ($result->getTaxes() as $applyTax) {
             $taxValue->addAppliedTax($applyTax);
         }
+
+        $result->offsetUnset(Result::TAXES);
+        $taxValue->setResult($result);
 
         return $taxValue;
     }

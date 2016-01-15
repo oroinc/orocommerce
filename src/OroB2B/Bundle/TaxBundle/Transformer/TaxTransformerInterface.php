@@ -2,24 +2,25 @@
 
 namespace OroB2B\Bundle\TaxBundle\Transformer;
 
+use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
 use OroB2B\Bundle\TaxBundle\Model\Result;
-use OroB2B\Bundle\TaxBundle\Model\ResultItem;
 
 interface TaxTransformerInterface
 {
     /**
-     * Transform object to Result|ResultItem
+     * Transform object to Result
      *
-     * @param mixed $object
-     * @return Result|ResultItem
+     * @param TaxValue $taxValue
+     * @return Result
      */
-    public function transform($object);
+    public function transform(TaxValue $taxValue);
 
     /**
-     * Reverse transform Result|ResultItem to object
+     * Reverse transform Result to object
      *
-     * @param Result|ResultItem $result
-     * @return mixed
+     * @param TaxValue $taxValue
+     * @param Result $result
+     * @return TaxValue
      */
-    public function reverseTransform($result);
+    public function reverseTransform(TaxValue $taxValue, Result $result);
 }
