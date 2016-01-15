@@ -79,7 +79,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $website2 = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', $websiteId2);
         /** @var Website $website3 */
         $website3 = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', $websiteId3);
-
+        $websites = [$website1, $website2, $website3];
         $priceListToAccount1 = new PriceListToAccount();
         $priceListToAccount1->setAccount($account);
         $priceListToAccount1->setWebsite($website1);
@@ -102,50 +102,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         /** @var FormViewListener $listener */
         $listener = $this->getListener($requestStack);
 
-        $websiteRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $websiteRepository->expects($this->once())
-            ->method('findBy')
-            ->willReturn([$website1, $website2, $website3]);
-
-        $priceToAccountRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $priceToAccountRepository->expects($this->once())
-            ->method('findBy')
-            ->with(['account' => $account])
-            ->willReturn($priceListsToAccount);
-
-        $fallbackRepository = $this
-            ->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $fallbackRepository->expects($this->once())
-            ->method('findBy')
-            ->with(['account' => $account])
-            ->willReturn([$fallbackEntity]);
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityReference')
-            ->with('OroB2BAccountBundle:Account', $accountId)
-            ->willReturn($account);
-        $this->doctrineHelper->expects($this->exactly(3))
-            ->method('getEntityRepository')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        ['OroB2BPricingBundle:PriceListToAccount', $priceToAccountRepository],
-                        ['OroB2BPricingBundle:PriceListAccountFallback', $fallbackRepository],
-                        ['OroB2BWebsiteBundle:Website', $websiteRepository],
-                    ]
-                )
-            );
+        $this->setRepositoryExpectationsForAccount($websites, $account, $priceListsToAccount, $fallbackEntity);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
         $environment = $this->getMock('\Twig_Environment');
@@ -154,16 +111,13 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->with(
                 'OroB2BPricingBundle:Account:price_list_view.html.twig',
                 [
-                    'priceListsByWebsites' =>
-                        [
-                            $websiteId1 => [$priceListToAccount1],
-                            $websiteId2 => [$priceListToAccount2],
-
-                        ],
-                    'fallbackByWebsites' =>
-                        [
-                            $websiteId3 => PriceListAccountFallback::CURRENT_ACCOUNT_ONLY,
-                        ],
+                    'priceListsByWebsites' => [
+                        $websiteId1 => [$priceListToAccount1],
+                        $websiteId2 => [$priceListToAccount2],
+                    ],
+                    'fallbackByWebsites' => [
+                        $websiteId3 => PriceListAccountFallback::CURRENT_ACCOUNT_ONLY,
+                    ],
                     'websites' => [$website1, $website2, $website3],
                     'choices' => [
                         'orob2b.pricing.fallback.account_group.label',
@@ -196,14 +150,14 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $website2 = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', $websiteId2);
         /** @var Website $website3 */
         $website3 = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', $websiteId3);
-
+        $websites = [$website1, $website2, $website3];
         $priceListToAccountGroup1 = new PriceListToAccountGroup();
         $priceListToAccountGroup1->setAccountGroup($accountGroup);
         $priceListToAccountGroup1->setWebsite($website1);
         $priceListToAccountGroup1->setPriority(3);
         $priceListToAccountGroup2 = clone $priceListToAccountGroup1;
         $priceListToAccountGroup2->setWebsite($website2);
-        $priceListsToAccount = [$priceListToAccountGroup1, $priceListToAccountGroup2];
+        $priceListsToAccountGroup = [$priceListToAccountGroup1, $priceListToAccountGroup2];
         $templateHtml = 'template_html';
 
         $fallbackEntity = new PriceListAccountGroupFallback();
@@ -219,50 +173,12 @@ class FormViewListenerTest extends FormViewListenerTestCase
         /** @var FormViewListener $listener */
         $listener = $this->getListener($requestStack);
 
-        $websiteRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $websiteRepository->expects($this->once())
-            ->method('findBy')
-            ->willReturn([$website1, $website2, $website3]);
-
-        $priceToAccountGroupRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $priceToAccountGroupRepository->expects($this->once())
-            ->method('findBy')
-            ->with(['accountGroup' => $accountGroup])
-            ->willReturn($priceListsToAccount);
-
-        $fallbackRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $fallbackRepository->expects($this->once())
-            ->method('findBy')
-            ->with(['accountGroup' => $accountGroup])
-            ->willReturn([$fallbackEntity]);
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityReference')
-            ->with('OroB2BAccountBundle:AccountGroup', $accountGroupId)
-            ->willReturn($accountGroup);
-        $this->doctrineHelper->expects($this->exactly(3))
-            ->method('getEntityRepository')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        ['OroB2BPricingBundle:PriceListToAccountGroup', $priceToAccountGroupRepository],
-                        ['OroB2BPricingBundle:PriceListAccountGroupFallback', $fallbackRepository],
-                        ['OroB2BWebsiteBundle:Website', $websiteRepository],
-                    ]
-                )
-            );
+        $this->setRepositoryExpectationsForAccountGroup(
+            $websites,
+            $accountGroup,
+            $priceListsToAccountGroup,
+            $fallbackEntity
+        );
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
         $environment = $this->getMock('\Twig_Environment');
@@ -271,16 +187,14 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->with(
                 'OroB2BPricingBundle:Account:price_list_view.html.twig',
                 [
-                    'priceListsByWebsites' =>
-                        [
-                            $websiteId1 => [$priceListToAccountGroup1],
-                            $websiteId2 => [$priceListToAccountGroup2],
+                    'priceListsByWebsites' => [
+                        $websiteId1 => [$priceListToAccountGroup1],
+                        $websiteId2 => [$priceListToAccountGroup2],
 
-                        ],
-                    'fallbackByWebsites' =>
-                        [
-                            $websiteId3 => PriceListAccountGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY,
-                        ],
+                    ],
+                    'fallbackByWebsites' => [
+                        $websiteId3 => PriceListAccountGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY,
+                    ],
                     'websites' => [$website1, $website2, $website3],
                     'choices' => [
                         'orob2b.pricing.fallback.website.label',
@@ -506,5 +420,119 @@ class FormViewListenerTest extends FormViewListenerTestCase
             $this->doctrineHelper,
             $this->frontendPriceListRequestHandler
         );
+    }
+
+    /**
+     * @param Website[] $websites
+     * @param Account $account
+     * @param PriceListToAccount[] $priceListsToAccount
+     * @param PriceListAccountFallback $fallbackEntity
+     */
+    protected function setRepositoryExpectationsForAccount(
+        $websites,
+        Account $account,
+        $priceListsToAccount,
+        PriceListAccountFallback $fallbackEntity
+    ) {
+        $websiteRepository = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $websiteRepository->expects($this->once())
+            ->method('findBy')
+            ->willReturn($websites);
+
+        $priceToAccountRepository = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $priceToAccountRepository->expects($this->once())
+            ->method('findBy')
+            ->with(['account' => $account])
+            ->willReturn($priceListsToAccount);
+
+        $fallbackRepository = $this
+            ->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $fallbackRepository->expects($this->once())
+            ->method('findBy')
+            ->with(['account' => $account])
+            ->willReturn([$fallbackEntity]);
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityReference')
+            ->willReturn($account);
+        $this->doctrineHelper->expects($this->exactly(3))
+            ->method('getEntityRepository')
+            ->will(
+                $this->returnValueMap(
+                    [
+                        ['OroB2BPricingBundle:PriceListToAccount', $priceToAccountRepository],
+                        ['OroB2BPricingBundle:PriceListAccountFallback', $fallbackRepository],
+                        ['OroB2BWebsiteBundle:Website', $websiteRepository],
+                    ]
+                )
+            );
+    }
+
+    /**
+     * @param Website[] $websites
+     * @param AccountGroup $accountGroup
+     * @param PriceListToAccountGroup[] $priceListsToAccountGroup
+     * @param PriceListAccountGroupFallback $fallbackEntity
+     */
+    protected function setRepositoryExpectationsForAccountGroup(
+        $websites,
+        AccountGroup $accountGroup,
+        $priceListsToAccountGroup,
+        PriceListAccountGroupFallback $fallbackEntity
+    ) {
+        $websiteRepository = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $websiteRepository->expects($this->once())
+            ->method('findBy')
+            ->willReturn($websites);
+
+        $priceToAccountGroupRepository = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $priceToAccountGroupRepository->expects($this->once())
+            ->method('findBy')
+            ->with(['accountGroup' => $accountGroup])
+            ->willReturn($priceListsToAccountGroup);
+
+        $fallbackRepository = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $fallbackRepository->expects($this->once())
+            ->method('findBy')
+            ->with(['accountGroup' => $accountGroup])
+            ->willReturn([$fallbackEntity]);
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityReference')
+            ->willReturn($accountGroup);
+        $this->doctrineHelper->expects($this->exactly(3))
+            ->method('getEntityRepository')
+            ->will(
+                $this->returnValueMap(
+                    [
+                        ['OroB2BPricingBundle:PriceListToAccountGroup', $priceToAccountGroupRepository],
+                        ['OroB2BPricingBundle:PriceListAccountGroupFallback', $fallbackRepository],
+                        ['OroB2BWebsiteBundle:Website', $websiteRepository],
+                    ]
+                )
+            );
     }
 }
