@@ -882,6 +882,6 @@ services:
     orob2b_account.menu.condition.logged_in_expression_language_provider:
         class: %orob2b_account.menu.condition.logged_in_expression_language_provider.class%
         arguments:
-            - @security.token_storage
+            - @orob2b_account.security.account_user_provider
         tags:
             - { name: orob2b_menu.condition.expression_language_provider, alias: is_logged_in }

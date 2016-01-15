@@ -3,8 +3,8 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Menu\Condition;
 
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
+use OroB2B\Bundle\AccountBundle\Security\AccountUserProvider;
 use OroB2B\Bundle\AccountBundle\Menu\Condition\LoggedInExpressionLanguageProvider;
 
 class LoggedInExpressionLanguageProviderTest extends \PHPUnit_Framework_TestCase
@@ -15,15 +15,15 @@ class LoggedInExpressionLanguageProviderTest extends \PHPUnit_Framework_TestCase
     protected $provider;
 
     /**
-     * @var TokenStorageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var AccountUserProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $tokenStorage;
+    protected $accountUserProvider;
 
     public function setUp()
     {
-        $this->tokenStorage =
-            $this->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
-        $this->provider = new LoggedInExpressionLanguageProvider($this->tokenStorage);
+        $this->accountUserProvider = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Security\AccountUserProvider')
+            ->disableOriginalConstructor()->getMock();
+        $this->provider = new LoggedInExpressionLanguageProvider($this->accountUserProvider);
     }
 
     public function testGetFunctions()
@@ -36,17 +36,15 @@ class LoggedInExpressionLanguageProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Symfony\Component\ExpressionLanguage\ExpressionFunction', $function);
         $this->assertEquals('is_logged_in()', call_user_func($function->getCompiler()));
 
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-        $user = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountUser');
+        $this->accountUserProvider->expects($this->at(0))
+            ->method('getLoggedUser')
+            ->willReturn(null);
 
-        $token->expects($this->once())
-            ->method('getUser')
-            ->willReturn($user);
+        $this->accountUserProvider->expects($this->at(1))
+            ->method('getLoggedUser')
+            ->willReturn($this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountUser'));
 
-        $this->tokenStorage->expects($this->once())
-            ->method('getToken')
-            ->willReturn($token);
-
+        $this->assertFalse(call_user_func($function->getEvaluator()));
         $this->assertTrue(call_user_func($function->getEvaluator()));
     }
 }

@@ -4,23 +4,22 @@ namespace OroB2B\Bundle\AccountBundle\Menu\Condition;
 
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Security\AccountUserProvider;
 
 class LoggedInExpressionLanguageProvider implements ExpressionFunctionProviderInterface
 {
     /**
-     * @var TokenStorageInterface
+     * @var AccountUserProvider
      */
-    protected $tokenStorage;
+    protected $accountUserProvider;
 
     /**
-     * @param TokenStorageInterface $tokenStorage
+     * @param AccountUserProvider $accountUserProvider
      */
-    public function __construct(TokenStorageInterface $tokenStorage)
+    public function __construct(AccountUserProvider $accountUserProvider)
     {
-        $this->tokenStorage = $tokenStorage;
+        $this->accountUserProvider = $accountUserProvider;
     }
 
     /**
@@ -40,7 +39,6 @@ class LoggedInExpressionLanguageProvider implements ExpressionFunctionProviderIn
      */
     public function isLoggedIn()
     {
-        $token = $this->tokenStorage->getToken();
-        return $token && ($user = $token->getUser()) instanceof AccountUser;
+        return $this->accountUserProvider->getLoggedUser() !== null;
     }
 }
