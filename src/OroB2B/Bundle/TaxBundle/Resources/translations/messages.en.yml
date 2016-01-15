@@ -91,6 +91,9 @@ orob2b.tax:
             tax_enable.title: 'Enable Taxation'
             tax_calculator.title: 'Calculator'
             tax_matcher.title: 'Matcher'
+            tax_digital_products.title: 'Digital Products Tax Codes'
+            tax_digital_products_us.title: 'US'
+            tax_digital_products_eu.title: 'EU'
         fields:
             tax_provider.label: 'Provider'
             tax_enable.label: 'Enabled'
@@ -105,6 +108,8 @@ orob2b.tax:
                 label: 'Destination'
                 billing_address.label: 'Billing Address'
                 shipping_addressl.label: 'Shipping Address'
+            digital_products_us.label: 'Digital Products Tax Codes in US'
+            digital_products_eu.label: 'Digital Products Tax Codes in EU'
 
     providers:
         built_in.label: Built-In Table Rates

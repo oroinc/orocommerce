@@ -58,4 +58,20 @@ class TaxationSettingsProvider
     {
         return $this->configManager->get('orob2b_tax.destination');
     }
+
+    /**
+     * @return array
+     */
+    public function getDigitalProductsTaxCodesUs()
+    {
+        return $this->configManager->get('orob2b_tax.digital_products_us');
+    }
+
+    /**
+     * @return array
+     */
+    public function getDigitalProductsTaxCodesEu()
+    {
+        return $this->configManager->get('orob2b_tax.digital_products_eu');
+    }
 }
