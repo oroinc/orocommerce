@@ -3,12 +3,18 @@
 namespace Oro\Bundle\B2BEntityBundle\EventListener;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorageInterface;
 
-class DoctrinePostFlushListener
+class DoctrinePostFlushListener implements OptionalListenerInterface
 {
+    /**
+     * @var bool
+     */
+    protected $enabled = true;
+
     /**
      * @var RegistryInterface
      */
@@ -36,6 +42,10 @@ class DoctrinePostFlushListener
 
     public function postFlush()
     {
+        if (!$this->enabled) {
+            return;
+        }
+
         if ($this->storage->hasScheduledForInsert()) {
             foreach ($this->storage->getScheduledForInsert() as $entity) {
                 $em = $this->getEntityManager($entity);
@@ -62,5 +72,13 @@ class DoctrinePostFlushListener
         }
 
         return $this->managers[$entityClassName];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setEnabled($enabled = true)
+    {
+        $this->enabled = $enabled;
     }
 }

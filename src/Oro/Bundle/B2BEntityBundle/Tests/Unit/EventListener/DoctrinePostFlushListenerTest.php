@@ -19,7 +19,7 @@ class DoctrinePostFlushListenerTest extends \PHPUnit_Framework_TestCase
 
         $testEntity1 = new TestClass();
         $testEntity2 = new TestClass2();
-        $storage = new ExtraActionEntityStorage();
+        $storage = $this->getStorage();
         $storage->scheduleForExtraInsert($testEntity1);
         $storage->scheduleForExtraInsert($testEntity2);
 
@@ -51,6 +51,19 @@ class DoctrinePostFlushListenerTest extends \PHPUnit_Framework_TestCase
 
         $listener = new DoctrinePostFlushListener($registry, $storage);
         $listener->postFlush();
+        $this->assertFalse($storage->hasScheduledForInsert());
+    }
+
+    public function testPostFlushDisabled()
+    {
+        $testEntity = new TestClass();
+        $storage = $this->getStorage();
+        $storage->scheduleForExtraInsert($testEntity);
+
+        $listener = new DoctrinePostFlushListener($this->getRegistryMock(), $storage);
+        $listener->setEnabled(false);
+        $listener->postFlush();
+        $this->assertTrue($storage->hasScheduledForInsert());
     }
 
     /**
@@ -71,5 +84,13 @@ class DoctrinePostFlushListenerTest extends \PHPUnit_Framework_TestCase
         return $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
             ->disableOriginalConstructor()
             ->getMock();
+    }
+
+    /**
+     * @return ExtraActionEntityStorage
+     */
+    protected function getStorage()
+    {
+        return new ExtraActionEntityStorage();
     }
 }
