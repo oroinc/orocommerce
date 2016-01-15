@@ -24,6 +24,10 @@ parameters:
     oro_action.function.remove_entity.class: Oro\Bundle\WorkflowBundle\Model\Action\RemoveEntity
     oro_action.function.assign_constant_value.class: Oro\Bundle\WorkflowBundle\Model\Action\AssignConstantValue
     oro_action.function.copy_tagging.class: Oro\Bundle\WorkflowBundle\Model\Action\CopyTagging
+    oro_action.function.call_service_method.class: Oro\Bundle\ActionBundle\Action\CallServiceMethod
+    oro_action.function.refresh_grid.class: Oro\Bundle\ActionBundle\Action\RefreshGrid
+    oro_action.function.run_action.class: Oro\Bundle\ActionBundle\Action\RunAction
+    oro_action.function.find_entities.class: Oro\Bundle\ActionBundle\Action\FindEntities
 
 services:
     oro_action.context_accessor:
@@ -206,16 +210,51 @@ services:
             - { name: oro_action.function, alias: copy_tagging }
 
     oro_action.function.call_service_method:
-        class: Oro\Bundle\ActionBundle\Action\CallServiceMethod
+        class: %oro_action.function.call_service_method.class%
         arguments:
             - @oro_action.context_accessor
             - @service_container
         tags:
             - { name: oro_action.function, alias: call_service_method }
+            - { name: oro_workflow.action, alias: call_service_method }
 
     oro_action.function.refresh_grid:
-        class: Oro\Bundle\ActionBundle\Action\RefreshGrid
+        class: %oro_action.function.refresh_grid.class%
         arguments:
             - @oro_action.context_accessor
         tags:
             - { name: oro_action.function, alias: refresh_grid }
+
+    oro_action.function.run_action:
+        class: %oro_action.function.run_action.class%
+        arguments:
+            - @oro_action.context_accessor
+            - @oro_action.manager
+            - @oro_action.helper.context
+        tags:
+            - { name: oro_action.function, alias: call_service_method }
+            - { name: oro_workflow.action, alias: run_action }
+
+    oro_action.function.find_entities:
+        class: %oro_action.function.find_entities.class%
+        arguments:
+            - @oro_action.context_accessor
+            - @doctrine
+        tags:
+            - { name: oro_action.function, alias: call_service_method }
+            - { name: oro_workflow.action, alias: find_entities }
+
+    oro_action.function.send_email_template:
+        class: %oro_email.workflow.action.send_email_template.class%
+        arguments:
+            - @oro_action.context_accessor
+            - @oro_email.mailer.processor
+            - @oro_email.email.address.helper
+            - @oro_entity.entity_name_resolver
+            - @oro_email.email_renderer
+            - @doctrine.orm.entity_manager
+            - @validator
+        calls:
+            - [setLogger, [@logger]]
+        tags:
+            - { name: oro_action.function, alias: send_email_template }

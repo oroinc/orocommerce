@@ -157,3 +157,28 @@ actions:
                 parameters:
                     route: 'orob2b_order_frontend_view'
                     route_parameters: {id: $.order.id}
+
+    orob2b_sale_send_no_quote_alert:
+        label: Send no Quote Alert
+        enabled: true
+        applications: []
+        order: 10
+        functions:
+            - @foreach:
+                array: $accountUser.salesRepresentatives
+                value: $.saleRep
+                actions:
+                    - @send_email_template:
+                        from: $accountUser.owner.email
+                        to: $.saleRep.email
+                        template: 'request_no_quote_alert'
+                        entity: $.data
+            - @foreach:
+                array: $account.salesRepresentatives
+                value: $.saleRep
+                actions:
+                    - @send_email_template:
+                        from: $accountUser.owner.email
+                        to: $.saleRep.email
+                        template: 'request_no_quote_alert'
+                        entity: $.data
