@@ -4,9 +4,12 @@ namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
+
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -19,12 +22,12 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 class PriceListToAccountGroupRepository extends EntityRepository implements PriceListRepositoryInterface
 {
     /**
-     * @param PriceList $priceList
+     * @param BasePriceList $priceList
      * @param AccountGroup $accountGroup
      * @param Website $website
      * @return PriceListToAccountGroup
      */
-    public function findByPrimaryKey(PriceList $priceList, AccountGroup $accountGroup, Website $website)
+    public function findByPrimaryKey(BasePriceList $priceList, AccountGroup $accountGroup, Website $website)
     {
         return $this->findOneBy(['accountGroup' => $accountGroup, 'priceList' => $priceList, 'website' => $website]);
     }
@@ -45,5 +48,42 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
             ->setParameters(['accountGroup' => $accountGroup, 'website' => $website])
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * @param Website $website
+     * @param int $fallback
+     * @return BufferedQueryResultIterator|AccountGroup[]
+     */
+    public function getAccountGroupIteratorByFallback(Website $website, $fallback)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder()
+            ->select('distinct accountGroup')
+            ->from('OroB2BAccountBundle:AccountGroup', 'accountGroup');
+
+        $qb->innerJoin(
+            'OroB2BPricingBundle:PriceListToAccountGroup',
+            'plToAccountGroup',
+            Join::WITH,
+            $qb->expr()->andX(
+                $qb->expr()->eq('plToAccountGroup.accountGroup', 'accountGroup'),
+                $qb->expr()->eq('plToAccountGroup.website', ':website')
+            )
+        );
+
+        $qb->innerJoin(
+            'OroB2BPricingBundle:PriceListAccountGroupFallback',
+            'priceListFallBack',
+            Join::WITH,
+            $qb->expr()->andX(
+                $qb->expr()->eq('priceListFallBack.accountGroup', 'accountGroup'),
+                $qb->expr()->eq('priceListFallBack.website', ':website'),
+                $qb->expr()->eq('priceListFallBack.fallback', ':fallbackToWebsite')
+            )
+        )
+        ->setParameter('website', $website)
+        ->setParameter('fallbackToWebsite', $fallback);
+
+        return new BufferedQueryResultIterator($qb->getQuery());
     }
 }

@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Doctrine\Common\Persistence\ObjectRepository;
 use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
 
@@ -15,7 +16,7 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
     protected $provider;
 
     /**
-     * @var CombinedProductPriceResolver
+     * @var \PHPUnit_Framework_MockObject_MockObject|CombinedProductPriceResolver
      */
     protected $resolver;
 
@@ -23,6 +24,11 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
      * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
      */
     protected $registry;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ObjectRepository
+     */
+    protected $repository;
 
     protected function setUp()
     {
@@ -38,39 +44,24 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        unset($this->provider, $this->registry);
+        unset($this->provider, $this->registry, $this->resolver);
     }
 
     /**
      * @dataProvider getCombinedPriceListDataProvider
      * @param array $data
+     * @param boolean $force
      * @param array $expected
      */
-    public function testGetCombinedPriceList(array $data, array $expected)
+    public function testGetCombinedPriceList(array $data, $force, array $expected)
     {
-        $priceListsRelations = [];
-        foreach ($data['priceListsRelations'] as $priceListData) {
-            $priceList = $this->getMock('OroB2B\Bundle\PricingBundle\Entity\PriceList');
-            $priceList->expects($this->any())
-                ->method('getId')
-                ->willReturn($priceListData['price_list_id']);
-            $priceList->expects($this->any())
-                ->method('getCurrencies')
-                ->willReturn($priceListData['currencies']);
+        $this->repository->expects($this->any())
+            ->method('findOneBy')
+            ->willReturn($data['priceListFromRepository']);
 
-            $priceListRelation = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation')
-                ->disableOriginalConstructor()
-                ->getMock();
-            $priceListRelation->expects($this->any())
-                ->method('getPriceList')
-                ->willReturn($priceList);
-            $priceListRelation->expects($this->any())
-                ->method('isMergeAllowed')
-                ->willReturn($priceListData['mergeAllowed']);
+        $this->resolver->expects($this->exactly($expected['combineCallsCount']))->method('combinePrices');
 
-            $priceListsRelations[] = $priceListRelation;
-        }
-
+        $priceListsRelations = $this->getPriceListsRelationMocks($data['priceListsRelationsData']);
         $combinedPriceList = $this->provider->getCombinedPriceList($priceListsRelations);
         $this->assertInstanceOf(
             'OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList',
@@ -79,6 +70,7 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected['name'], $combinedPriceList->getName());
         $this->assertEquals($expected['currencies'], $combinedPriceList->getCurrencies());
 
+        $this->provider->getCombinedPriceList($priceListsRelations, $force);
     }
 
     /**
@@ -86,10 +78,14 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function getCombinedPriceListDataProvider()
     {
+        $priceList = $this->getMock('OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList');
+        $priceList->expects($this->any())->method('getName')->willReturn('');
+        $priceList->expects($this->any())->method('getCurrencies')->willReturn([]);
+
         return [
-            'duplicate price lists' => [
+            'duplicate price lists force call' => [
                 'data' => [
-                    'priceListsRelations' => [
+                    'priceListsRelationsData' => [
                         [
                             'price_list_id' => 1,
                             'currencies' => ['USD'],
@@ -111,12 +107,27 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
                             'mergeAllowed' => true,
                         ],
                     ],
+                    'priceListFromRepository' => null,
                 ],
+                'force' => false,
                 'expected' => [
                     'name' => '1t_2f_2t',
                     'currencies' => ['EUR', 'USD'],
+                    'combineCallsCount' => 2,
                 ]
-            ]
+            ],
+            'empty price lists normal call' => [
+                'data' => [
+                    'priceListsRelationsData' => [],
+                    'priceListFromRepository' => $priceList,
+                ],
+                'force' => true,
+                'expected' => [
+                    'name' => '',
+                    'currencies' => [],
+                    'combineCallsCount' => 1,
+                ]
+            ],
         ];
     }
 
@@ -125,14 +136,9 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected function getRegistryMockWithRepository()
     {
-
-        $repository = $this->getMockBuilder('\Doctrine\Common\Persistence\ObjectRepository')
+        $this->repository = $this->getMockBuilder('\Doctrine\Common\Persistence\ObjectRepository')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $repository->expects($this->any())
-            ->method('findBy')
-            ->willReturn(null);
 
         $manager = $this->getMockBuilder('\Doctrine\Common\Persistence\ObjectManager')
             ->disableOriginalConstructor()
@@ -140,7 +146,7 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
 
         $manager->expects($this->any())
             ->method('getRepository')
-            ->willReturn($repository);
+            ->willReturn($this->repository);
 
         $registry = $this->getRegistryMock();
 
@@ -149,6 +155,38 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($manager);
 
         return $registry;
+    }
+
+    /**
+     * @param array $relations
+     * @return array
+     */
+    protected function getPriceListsRelationMocks(array $relations)
+    {
+        $priceListsRelations = [];
+        foreach ($relations as $priceListData) {
+            $priceList = $this->getMock('OroB2B\Bundle\PricingBundle\Entity\PriceList');
+            $priceList->expects($this->any())
+                ->method('getId')
+                ->willReturn($priceListData['price_list_id']);
+            $priceList->expects($this->any())
+                ->method('getCurrencies')
+                ->willReturn($priceListData['currencies']);
+
+            $priceListRelation = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation')
+                ->disableOriginalConstructor()
+                ->getMock();
+            $priceListRelation->expects($this->any())
+                ->method('getPriceList')
+                ->willReturn($priceList);
+            $priceListRelation->expects($this->any())
+                ->method('isMergeAllowed')
+                ->willReturn($priceListData['mergeAllowed']);
+
+            $priceListsRelations[] = $priceListRelation;
+        }
+
+        return $priceListsRelations;
     }
 
 

@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -18,7 +19,12 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations']);
+        $this->loadFixtures(
+            [
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings',
+            ]
+        );
     }
 
     public function testFindByPrimaryKey()
@@ -95,6 +101,40 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
                 'expectedPriceLists' => [
                     'priceList5'
                 ]
+            ],
+        ];
+    }
+
+
+    /**
+     * @dataProvider getPriceListIteratorDataProvider
+     * @param string $website
+     * @param array $expectedAccounts
+     */
+    public function testGetAccountGroupIteratorByFallback($website, $expectedAccounts)
+    {
+        /** @var $website Website */
+        $website = $this->getReference($website);
+
+        $iterator = $this->getRepository()
+            ->getEntitiesIteratorByFallback($website, PriceListAccountGroupFallback::WEBSITE);
+
+        $actualSiteMap = [];
+        foreach ($iterator as $accountGroup) {
+            $actualSiteMap[] = $accountGroup->getName();
+        }
+        $this->assertSame($expectedAccounts, $actualSiteMap);
+    }
+
+    /**
+     * @return array
+     */
+    public function getPriceListIteratorDataProvider()
+    {
+        return [
+            [
+                'website' => 'US',
+                'expectedAccounts' => ['account_group.group1']
             ],
         ];
     }
