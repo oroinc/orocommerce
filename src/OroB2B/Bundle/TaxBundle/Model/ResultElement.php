@@ -34,7 +34,7 @@ final class ResultElement extends \ArrayObject
      */
     public function getIncludingTax()
     {
-        return $this->offsetGet(self::INCLUDING_TAX);
+        return $this->getOffset(self::INCLUDING_TAX);
     }
 
     /**
@@ -42,7 +42,7 @@ final class ResultElement extends \ArrayObject
      */
     public function getExcludingTax()
     {
-        return $this->offsetGet(self::EXCLUDING_TAX);
+        return $this->getOffset(self::EXCLUDING_TAX);
     }
 
     /**
@@ -50,7 +50,7 @@ final class ResultElement extends \ArrayObject
      */
     public function getTaxAmount()
     {
-        return $this->offsetGet(self::TAX_AMOUNT);
+        return $this->getOffset(self::TAX_AMOUNT);
     }
 
     /**
@@ -58,6 +58,20 @@ final class ResultElement extends \ArrayObject
      */
     public function getAdjustment()
     {
-        return $this->offsetGet(self::ADJUSTMENT);
+        return $this->getOffset(self::ADJUSTMENT, 0);
+    }
+
+    /**
+     * @param string $offset
+     * @param null $default
+     * @return mixed
+     */
+    protected function getOffset($offset, $default = null)
+    {
+        if ($this->offsetExists((string)$offset)) {
+            return $this->offsetGet((string)$offset);
+        }
+
+        return $default;
     }
 }

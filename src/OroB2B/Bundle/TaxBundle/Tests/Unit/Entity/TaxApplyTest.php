@@ -6,6 +6,7 @@ use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\TaxBundle\Entity\Tax;
 use OroB2B\Bundle\TaxBundle\Entity\TaxApply;
+use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
 
 class TaxApplyTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,6 +17,7 @@ class TaxApplyTest extends \PHPUnit_Framework_TestCase
         $properties = [
             ['id', 1],
             ['tax', new Tax()],
+            ['taxValue', new TaxValue()],
             ['rate', 20],
             ['taxAmount', 20],
             ['taxableAmount', 30],
@@ -24,21 +26,6 @@ class TaxApplyTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this->assertPropertyAccessors($this->createTaxApply(), $properties);
-    }
-
-    public function testPreUpdate()
-    {
-        $taxValue = $this->createTaxApply();
-        $taxValue->preUpdate();
-        $this->assertInstanceOf('\DateTime', $taxValue->getUpdatedAt());
-    }
-
-    public function testPrePersist()
-    {
-        $taxValue = $this->createTaxApply();
-        $taxValue->prePersist();
-        $this->assertInstanceOf('\DateTime', $taxValue->getUpdatedAt());
-        $this->assertInstanceOf('\DateTime', $taxValue->getCreatedAt());
     }
 
     /**
