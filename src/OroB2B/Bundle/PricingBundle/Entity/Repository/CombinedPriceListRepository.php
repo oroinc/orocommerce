@@ -3,14 +3,16 @@
 namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-
 use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccount;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class CombinedPriceListRepository extends EntityRepository
@@ -189,5 +191,47 @@ class CombinedPriceListRepository extends EntityRepository
         }
 
         return new BufferedQueryResultIterator($selectQb->getQuery());
+    }
+
+    /**
+     * @param CombinedPriceList $combinedPriceList
+     * @param Account|AccountGroup|Website $targetEntity
+     */
+    public function updateCombinedPriceListConnection(CombinedPriceList $combinedPriceList, $targetEntity)
+    {
+        $em = $this->getEntityManager();
+        $relation = null;
+        if ($targetEntity instanceof Account) {
+            $relation = $em->getRepository('OroB2BPricingBundle:CombinedPriceListToAccount')
+                ->findOneBy(['account' => $targetEntity]);
+            if (!$relation) {
+                $relation = new CombinedPriceListToAccount();
+                $relation->setAccount($targetEntity);
+                $em->persist($relation);
+            }
+        } elseif ($targetEntity instanceof AccountGroup) {
+            $relation = $em->getRepository('OroB2BPricingBundle:CombinedPriceListToAccountGroup')
+                ->findOneBy(['account' => $targetEntity]);
+            if (!$relation) {
+                $relation = new CombinedPriceListToAccountGroup();
+                $relation->setAccountGroup($targetEntity);
+                $em->persist($relation);
+            }
+        } elseif ($targetEntity instanceof Website) {
+            $relation = $em->getRepository('OroB2BPricingBundle:CombinedPriceListToWebsite')
+                ->findOneBy(['account' => $targetEntity]);
+            if (!$relation) {
+                $relation = new CombinedPriceListToWebsite();
+                $relation->setWebsite($targetEntity);
+                $em->persist($relation);
+            }
+        } else {
+            throw new \InvalidArgumentException(sprintf('Unknown target "%s"', get_class($targetEntity)));
+        }
+
+        if (!$relation->getPriceList() || $relation->getPriceList()->getId() !== $combinedPriceList->getId()) {
+            $relation->setPriceList($combinedPriceList);
+            $em->flush($relation);
+        }
     }
 }

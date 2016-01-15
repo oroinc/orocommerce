@@ -34,14 +34,16 @@ class CombinedPriceListsBuilder
     /**
      * @var CombinedPriceListGarbageCollector
      */
-    protected $combinedPriceListGarbageCollector;
+    protected $garbageCollector;
 
     /**
      * @param ConfigManager $configManager
+     * @param CombinedPriceListGarbageCollector $garbageCollector
      */
-    public function __construct(ConfigManager $configManager)
+    public function __construct(ConfigManager $configManager, CombinedPriceListGarbageCollector $garbageCollector)
     {
         $this->configManager = $configManager;
+        $this->garbageCollector = $garbageCollector;
     }
 
     /**
@@ -51,7 +53,7 @@ class CombinedPriceListsBuilder
     {
         $this->updatePriceListsOnCurrentLevel($force);
         $this->updatePriceListsOnChildrenLevels($force);
-        $this->combinedPriceListGarbageCollector->cleanCombinedPriceLists();
+        $this->garbageCollector->cleanCombinedPriceLists();
     }
 
     /**
@@ -62,8 +64,8 @@ class CombinedPriceListsBuilder
         $collection = $this->priceListCollectionProvider->getPriceListsByConfig();
         $actualCombinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection, $force);
 
-        $combinedPriceListId = $this->configManager->get(Configuration::getConfigKeyToPriceList());
-        if ($combinedPriceListId != $actualCombinedPriceList->getId()) {
+        $combinedPriceListId = (int)$this->configManager->get(Configuration::getConfigKeyToPriceList());
+        if ($combinedPriceListId !== $actualCombinedPriceList->getId()) {
             $this->connectNewPriceList($actualCombinedPriceList);
         }
     }
@@ -79,7 +81,7 @@ class CombinedPriceListsBuilder
     /**
      * @param CombinedPriceListProvider $combinedPriceListProvider
      */
-    public function setCombinedPriceListProvider($combinedPriceListProvider)
+    public function setCombinedPriceListProvider(CombinedPriceListProvider $combinedPriceListProvider)
     {
         $this->combinedPriceListProvider = $combinedPriceListProvider;
     }
@@ -98,14 +100,6 @@ class CombinedPriceListsBuilder
     public function setWebsiteCombinedPriceListBuilder(WebsiteCombinedPriceListsBuilder $websiteCPLBuilder)
     {
         $this->websiteCombinedPriceListBuilder = $websiteCPLBuilder;
-    }
-
-    /**
-     * @param CombinedPriceListGarbageCollector $CPLGarbageCollector
-     */
-    public function setCombinedPriceListGarbageCollector(CombinedPriceListGarbageCollector $CPLGarbageCollector)
-    {
-        $this->combinedPriceListGarbageCollector = $CPLGarbageCollector;
     }
 
     /**
