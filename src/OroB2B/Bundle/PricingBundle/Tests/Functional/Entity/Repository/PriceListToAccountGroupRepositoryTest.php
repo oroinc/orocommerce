@@ -117,7 +117,7 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
         $website = $this->getReference($website);
 
         $iterator = $this->getRepository()
-            ->getEntitiesIteratorByFallback($website, PriceListAccountGroupFallback::WEBSITE);
+            ->getAccountGroupIteratorByFallback($website, PriceListAccountGroupFallback::WEBSITE);
 
         $actualSiteMap = [];
         foreach ($iterator as $accountGroup) {

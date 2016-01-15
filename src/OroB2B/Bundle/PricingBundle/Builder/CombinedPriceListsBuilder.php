@@ -38,12 +38,31 @@ class CombinedPriceListsBuilder
 
     /**
      * @param ConfigManager $configManager
+     * @param PriceListCollectionProvider $priceListCollectionProvider
+     * @param CombinedPriceListProvider $combinedPriceListProvider
      * @param CombinedPriceListGarbageCollector $garbageCollector
      */
-    public function __construct(ConfigManager $configManager, CombinedPriceListGarbageCollector $garbageCollector)
-    {
+    public function __construct(
+        ConfigManager $configManager,
+        PriceListCollectionProvider $priceListCollectionProvider,
+        CombinedPriceListProvider $combinedPriceListProvider,
+        CombinedPriceListGarbageCollector $garbageCollector
+    ) {
         $this->configManager = $configManager;
+        $this->priceListCollectionProvider = $priceListCollectionProvider;
+        $this->combinedPriceListProvider = $combinedPriceListProvider;
         $this->garbageCollector = $garbageCollector;
+    }
+
+    /**
+     * @param WebsiteCombinedPriceListsBuilder $builder
+     * @return $this
+     */
+    public function setWebsiteCombinedPriceListBuilder(WebsiteCombinedPriceListsBuilder $builder)
+    {
+        $this->websiteCombinedPriceListBuilder = $builder;
+
+        return $this;
     }
 
     /**
@@ -52,7 +71,7 @@ class CombinedPriceListsBuilder
     public function build($force = false)
     {
         $this->updatePriceListsOnCurrentLevel($force);
-        $this->updatePriceListsOnChildrenLevels($force);
+        $this->websiteCombinedPriceListBuilder->build(null, $force);
         $this->garbageCollector->cleanCombinedPriceLists();
     }
 
@@ -63,51 +82,18 @@ class CombinedPriceListsBuilder
     {
         $collection = $this->priceListCollectionProvider->getPriceListsByConfig();
         $actualCombinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection, $force);
-
-        $combinedPriceListId = (int)$this->configManager->get(Configuration::getConfigKeyToPriceList());
-        if ($combinedPriceListId !== $actualCombinedPriceList->getId()) {
-            $this->connectNewPriceList($actualCombinedPriceList);
-        }
-    }
-
-    /**
-     * @param boolean $force
-     */
-    protected function updatePriceListsOnChildrenLevels($force)
-    {
-        $this->websiteCombinedPriceListBuilder->build(null, $force);
-    }
-
-    /**
-     * @param CombinedPriceListProvider $combinedPriceListProvider
-     */
-    public function setCombinedPriceListProvider(CombinedPriceListProvider $combinedPriceListProvider)
-    {
-        $this->combinedPriceListProvider = $combinedPriceListProvider;
-    }
-
-    /**
-     * @param PriceListCollectionProvider $priceListCollectionProvider
-     */
-    public function setPriceListCollectionProvider(PriceListCollectionProvider $priceListCollectionProvider)
-    {
-        $this->priceListCollectionProvider = $priceListCollectionProvider;
-    }
-
-    /**
-     * @param WebsiteCombinedPriceListsBuilder $websiteCPLBuilder
-     */
-    public function setWebsiteCombinedPriceListBuilder(WebsiteCombinedPriceListsBuilder $websiteCPLBuilder)
-    {
-        $this->websiteCombinedPriceListBuilder = $websiteCPLBuilder;
+        $this->updateCombinedPriceListConnection($actualCombinedPriceList);
     }
 
     /**
      * @param CombinedPriceList $priceList
      */
-    protected function connectNewPriceList(CombinedPriceList $priceList)
+    protected function updateCombinedPriceListConnection(CombinedPriceList $priceList)
     {
-        $this->configManager->set(Configuration::getConfigKeyToPriceList(), $priceList->getId());
-        $this->configManager->flush();
+        $configKey = Configuration::getConfigKeyToPriceList();
+        if ((int)$this->configManager->get($configKey) !== $priceList->getId()) {
+            $this->configManager->set($configKey, $priceList->getId());
+            $this->configManager->flush();
+        }
     }
 }

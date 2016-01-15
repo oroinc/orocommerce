@@ -195,41 +195,54 @@ class CombinedPriceListRepository extends EntityRepository
 
     /**
      * @param CombinedPriceList $combinedPriceList
-     * @param Account|AccountGroup|Website $targetEntity
+     * @param Website $website
+     * @param Account|AccountGroup $targetEntity
      */
-    public function updateCombinedPriceListConnection(CombinedPriceList $combinedPriceList, $targetEntity)
-    {
+    public function updateCombinedPriceListConnection(
+        CombinedPriceList $combinedPriceList,
+        Website $website,
+        $targetEntity = null
+    ) {
         $em = $this->getEntityManager();
         $relation = null;
+        $isNew = false;
         if ($targetEntity instanceof Account) {
             $relation = $em->getRepository('OroB2BPricingBundle:CombinedPriceListToAccount')
-                ->findOneBy(['account' => $targetEntity]);
+                ->findOneBy(['account' => $targetEntity, 'website' => $website]);
             if (!$relation) {
                 $relation = new CombinedPriceListToAccount();
                 $relation->setAccount($targetEntity);
+                $relation->setWebsite($website);
+                $relation->setPriceList($combinedPriceList);
                 $em->persist($relation);
+                $isNew = true;
             }
         } elseif ($targetEntity instanceof AccountGroup) {
             $relation = $em->getRepository('OroB2BPricingBundle:CombinedPriceListToAccountGroup')
-                ->findOneBy(['account' => $targetEntity]);
+                ->findOneBy(['accountGroup' => $targetEntity, 'website' => $website]);
             if (!$relation) {
                 $relation = new CombinedPriceListToAccountGroup();
                 $relation->setAccountGroup($targetEntity);
+                $relation->setWebsite($website);
+                $relation->setPriceList($combinedPriceList);
                 $em->persist($relation);
+                $isNew = true;
             }
-        } elseif ($targetEntity instanceof Website) {
+        } elseif (!$targetEntity) {
             $relation = $em->getRepository('OroB2BPricingBundle:CombinedPriceListToWebsite')
-                ->findOneBy(['account' => $targetEntity]);
+                ->findOneBy(['website' => $website]);
             if (!$relation) {
                 $relation = new CombinedPriceListToWebsite();
-                $relation->setWebsite($targetEntity);
+                $relation->setWebsite($website);
+                $relation->setPriceList($combinedPriceList);
                 $em->persist($relation);
+                $isNew = true;
             }
         } else {
             throw new \InvalidArgumentException(sprintf('Unknown target "%s"', get_class($targetEntity)));
         }
 
-        if (!$relation->getPriceList() || $relation->getPriceList()->getId() !== $combinedPriceList->getId()) {
+        if ($isNew || $relation->getPriceList()->getId() !== $combinedPriceList->getId()) {
             $relation->setPriceList($combinedPriceList);
             $em->flush($relation);
         }

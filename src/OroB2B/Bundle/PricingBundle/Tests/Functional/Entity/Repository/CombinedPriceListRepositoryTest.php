@@ -8,6 +8,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -58,7 +59,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $websiteUs = $this->getReference(LoadWebsiteData::WEBSITE1);
 
         /** @var Website $websiteCa */
-        $websiteCa = $this->getReference(LoadWebsiteData::WEBSITE2);
+        $websiteCa = $this->getReference(LoadWebsiteData::WEBSITE3);
 
         $this->assertEquals(
             $priceList->getId(),
@@ -160,6 +161,128 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $combinedPriceListRepository->deleteUnusedPriceLists();
         $priceLists = $combinedPriceListRepository->findBy(['name' => 'test_cpl']);
         $this->assertEmpty($priceLists);
+    }
+
+    /**
+     * @dataProvider updateCombinedPriceListConnectionDataProvider
+     * @param string $priceList
+     * @param string $website
+     * @param callable $getActual
+     * @param string|null $targetEntity
+     */
+    public function testUpdateCombinedPriceListConnection(
+        $priceList,
+        $website,
+        callable $getActual,
+        $targetEntity = null
+    ) {
+        /** @var CombinedPriceList $priceList */
+        $priceList = $this->getReference($priceList);
+        /** @var Website $website */
+        $website = $this->getReference($website);
+
+        if ($targetEntity) {
+            /** @var Account|AccountGroup $targetEntity */
+            $targetEntity = $this->getReference($targetEntity);
+        }
+
+        $this->getRepository()->updateCombinedPriceListConnection($priceList, $website, $targetEntity);
+        /** @var BasePriceListRelation $actual */
+        $actual = call_user_func($getActual, $website, $targetEntity);
+        $this->assertEquals($priceList->getId(), $actual->getPriceList()->getId());
+    }
+
+    /**
+     * @return array
+     */
+    public function updateCombinedPriceListConnectionDataProvider()
+    {
+        $getConnection = function ($relationEntityClass, Website $website, array $additionalCriteria = []) {
+            return $this->getContainer()->get('doctrine')
+                ->getManagerForClass($relationEntityClass)
+                ->getRepository($relationEntityClass)
+                ->findOneBy(array_merge(['website' => $website], $additionalCriteria));
+        };
+
+        $getAccountConnection = function (Website $website, Account $targetEntity) use ($getConnection) {
+            return call_user_func(
+                $getConnection,
+                'OroB2BPricingBundle:CombinedPriceListToAccount',
+                $website,
+                ['account' => $targetEntity]
+            );
+        };
+
+        $getAccountGroupConnection = function (Website $website, AccountGroup $targetEntity) use ($getConnection) {
+            return call_user_func(
+                $getConnection,
+                'OroB2BPricingBundle:CombinedPriceListToAccountGroup',
+                $website,
+                ['accountGroup' => $targetEntity]
+            );
+        };
+
+        $getWebsiteConnection = function (Website $website) use ($getConnection) {
+            return call_user_func(
+                $getConnection,
+                'OroB2BPricingBundle:CombinedPriceListToWebsite',
+                $website
+            );
+        };
+
+        return [
+            'not changed for account' => [
+                '2t_3f_1t',
+                LoadWebsiteData::WEBSITE1,
+                $getAccountConnection,
+                'account.level_1.2'
+            ],
+            'changed for account' => [
+                '2f_1t_3t',
+                LoadWebsiteData::WEBSITE1,
+                $getAccountConnection,
+                'account.level_1.2'
+            ],
+            'new for account' => [
+                '2f_1t_3t',
+                LoadWebsiteData::WEBSITE1,
+                $getAccountConnection,
+                'account.level_1'
+            ],
+            'not changed for account group' => [
+                '1t_2t_3t',
+                LoadWebsiteData::WEBSITE1,
+                $getAccountGroupConnection,
+                'account_group.group1'
+            ],
+            'changed for account group' => [
+                '2f_1t_3t',
+                LoadWebsiteData::WEBSITE1,
+                $getAccountGroupConnection,
+                'account_group.group1'
+            ],
+            'new for account group' => [
+                '2f_1t_3t',
+                LoadWebsiteData::WEBSITE2,
+                $getAccountGroupConnection,
+                'account_group.group1'
+            ],
+            'not changed for website' => [
+                '1t_2t_3t',
+                LoadWebsiteData::WEBSITE1,
+                $getWebsiteConnection
+            ],
+            'changed for website' => [
+                '2f_1t_3t',
+                LoadWebsiteData::WEBSITE1,
+                $getWebsiteConnection
+            ],
+            'new for website' => [
+                '1t_2t_3t',
+                LoadWebsiteData::WEBSITE2,
+                $getWebsiteConnection
+            ],
+        ];
     }
 
     /**

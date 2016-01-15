@@ -97,10 +97,9 @@ abstract class AbstractCombinedPriceListBuilder
     protected function getPriceListToEntityRepository()
     {
         if (!$this->priceListToEntityRepository) {
-            $class = $this->priceListToEntityClassName;
             $this->priceListToEntityRepository = $this->registry
-                ->getManagerForClass($class)
-                ->getRepository($class);
+                ->getManagerForClass($this->priceListToEntityClassName)
+                ->getRepository($this->priceListToEntityClassName);
         }
 
         return $this->priceListToEntityRepository;
