@@ -26,11 +26,11 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
 
     /**
      * @dataProvider testBuildDataProvider
-     * @param $websiteId
-     * @param $accountId
-     * @param $currentCPLId
-     * @param $priceListCollection
-     * @param $actualCPLId
+     * @param int $websiteId
+     * @param int $accountId
+     * @param int $currentCPLId
+     * @param array $priceListCollection
+     * @param int $actualCPLId
      */
     public function testBuild($websiteId, $accountId, $priceListCollection, $currentCPLId, $actualCPLId)
     {
@@ -66,12 +66,12 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
 
     /**
      * @dataProvider testBuildForAllDataProvider
-     * @param $websiteId
-     * @param $accountGroupId
-     * @param $accountId
-     * @param $currentCPLId
-     * @param $priceListCollection
-     * @param $actualCPLId
+     * @param int $websiteId
+     * @param int $accountGroupId
+     * @param int $accountId
+     * @param int $currentCPLId
+     * @param array $priceListCollection
+     * @param int $actualCPLId
      */
     public function testBuildForAll(
         $websiteId,
@@ -181,7 +181,7 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
     }
 
     /**
-     * @param $priceListCollection
+     * @param array $priceListCollection
      * @return \PHPUnit_Framework_MockObject_MockObject|PriceListCollectionProvider
      */
     protected function getPriceListCollectionProviderMock($priceListCollection)
@@ -199,7 +199,7 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
     }
 
     /**
-     * @param $buildForOne
+     * @param bool $buildForOne
      * @return CombinedPriceListGarbageCollector|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getGarbageCollectorMock($buildForOne)
@@ -218,9 +218,9 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
     }
 
     /**
-     * @param $account
-     * @param $currentCPLId
-     * @param $actualCPLId
+     * @param Account $account
+     * @param int $currentCPLId
+     * @param int $actualCPLId
      * @return Registry|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getRegistryWithRepository($account, $currentCPLId, $actualCPLId)
@@ -265,7 +265,7 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
     }
 
     /**
-     * @param $account
+     * @param Account $account
      * @return PriceListToAccountRepository|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getPriceListToAccountRepositoryMock($account)
@@ -286,8 +286,8 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
     }
 
     /**
-     * @param $currentCPLId
-     * @param $actualCPLId
+     * @param int $currentCPLId
+     * @param int $actualCPLId
      * @return PriceListToAccountRepository|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getCombinedPriceListToAccountRepositoryMock($currentCPLId, $actualCPLId)

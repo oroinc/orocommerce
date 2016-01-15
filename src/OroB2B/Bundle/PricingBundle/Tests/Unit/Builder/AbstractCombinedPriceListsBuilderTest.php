@@ -8,7 +8,7 @@ use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @param $collection
+     * @param array $collection
      * @param int $actualCPLId
      * @return CombinedPriceListProvider|\PHPUnit_Framework_MockObject_MockObject
      */

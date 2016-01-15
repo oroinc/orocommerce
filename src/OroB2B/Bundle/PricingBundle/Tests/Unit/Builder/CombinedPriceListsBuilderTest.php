@@ -13,9 +13,9 @@ class CombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBuilderTes
 {
     /**
      * @dataProvider testBuildDataProvider
-     * @param $configCPLId
-     * @param $priceListCollection
-     * @param $actualCPLId
+     * @param int $configCPLId
+     * @param array $priceListCollection
+     * @param int $actualCPLId
      */
     public function testBuild($configCPLId, $priceListCollection, $actualCPLId)
     {
@@ -64,7 +64,7 @@ class CombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBuilderTes
     }
 
     /**
-     * @param $configCPLId
+     * @param int $configCPLId
      * @return \PHPUnit_Framework_MockObject_MockObject|ConfigManager
      */
     protected function getConfigManagerMock($configCPLId)
@@ -85,7 +85,7 @@ class CombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBuilderTes
     }
 
     /**
-     * @param $priceListCollection
+     * @param array $priceListCollection
      * @return \PHPUnit_Framework_MockObject_MockObject|PriceListCollectionProvider
      */
     protected function getPriceListCollectionProviderMock($priceListCollection)

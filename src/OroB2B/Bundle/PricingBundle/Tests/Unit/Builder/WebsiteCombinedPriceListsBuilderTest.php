@@ -24,10 +24,10 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
 
     /**
      * @dataProvider testBuildDataProvider
-     * @param $websiteId
-     * @param $currentCPLId
-     * @param $priceListCollection
-     * @param $actualCPLId
+     * @param int $websiteId
+     * @param int $currentCPLId
+     * @param array $priceListCollection
+     * @param int $actualCPLId
      */
     public function testBuild($websiteId, $priceListCollection, $currentCPLId, $actualCPLId)
     {
@@ -58,10 +58,10 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
 
     /**
      * @dataProvider testBuildDataProvider
-     * @param $websiteId
-     * @param $currentCPLId
-     * @param $priceListCollection
-     * @param $actualCPLId
+     * @param int $websiteId
+     * @param int $currentCPLId
+     * @param array $priceListCollection
+     * @param int $actualCPLId
      */
     public function testBuildForAll($websiteId, $priceListCollection, $currentCPLId, $actualCPLId)
     {
@@ -118,7 +118,7 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
     }
 
     /**
-     * @param $priceListCollection
+     * @param array $priceListCollection
      * @return \PHPUnit_Framework_MockObject_MockObject|PriceListCollectionProvider
      */
     protected function getPriceListCollectionProviderMock($priceListCollection)
@@ -150,9 +150,9 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
     }
 
     /**
-     * @param $website
-     * @param $currentCPLId
-     * @param $actualCPLId
+     * @param Website $website
+     * @param int $currentCPLId
+     * @param int $actualCPLId
      * @return Registry|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getRegistryWithRepository($website, $currentCPLId, $actualCPLId)
@@ -195,7 +195,7 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
     }
 
     /**
-     * @param $website
+     * @param Website $website
      * @return PriceListToWebsiteRepository|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getPriceListToWebsiteRepositoryMock($website)
@@ -216,8 +216,8 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
     }
 
     /**
-     * @param $currentCPLId
-     * @param $actualCPLId
+     * @param int $currentCPLId
+     * @param int $actualCPLId
      * @return PriceListToWebsiteRepository|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getCombinedPriceListToWebsiteRepositoryMock($currentCPLId, $actualCPLId)

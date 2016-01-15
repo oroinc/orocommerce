@@ -139,9 +139,9 @@ services:
         class: %orob2b_pricing.builder.combined_price_list_garbage_collector.class%
         arguments:
             - @doctrine
+            - @oro_config.global
         calls:
             - [setCombinedPriceListClass, [%orob2b_pricing.entity.combined_price_list.class%]]
-            - [setConfigManager, [@oro_config.global]]
 
     orob2b_pricing.builder.account_combined_price_list_builder:
         class: %orob2b_pricing.builder.account_combined_price_list_builder.class%

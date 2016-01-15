@@ -33,10 +33,12 @@ class CombinedPriceListGarbageCollector
 
     /**
      * @param ManagerRegistry $registry
+     * @param ConfigManager $configManager
      */
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, ConfigManager $configManager)
     {
         $this->registry = $registry;
+        $this->configManager = $configManager;
     }
 
     public function cleanCombinedPriceLists()
@@ -56,14 +58,6 @@ class CombinedPriceListGarbageCollector
     {
         $this->combinedPriceListClass = $combinedPriceListClass;
         $this->combinedPriceListsRepository = null;
-    }
-
-    /**
-     * @param ConfigManager $configManager
-     */
-    public function setConfigManager(ConfigManager $configManager)
-    {
-        $this->configManager = $configManager;
     }
 
     /**
