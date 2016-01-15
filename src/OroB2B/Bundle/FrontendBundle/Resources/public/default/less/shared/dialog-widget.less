@@ -26,6 +26,47 @@
     }
   }
 
+  .ui-dialog-titlebar-close {
+    background: none;
+    border: 0;
+    opacity: .2;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    .ui-icon-closethick {
+      text-indent: 0;
+
+      &:before {
+        content: "clear";
+        font-family: 'Material Icons';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 2.4rem;
+        display: inline-block;
+        vertical-align: middle;
+        width: 1em;
+        height: 1em;
+        line-height: 1;
+        text-transform: none;
+        letter-spacing: normal;
+        word-wrap: normal;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-feature-settings: 'liga';
+        -moz-font-feature-settings: 'liga';
+        font-feature-settings: 'liga';
+      }
+    }
+
+    .ui-button-text {
+      font-size: 0;
+      text-indent: -999rem;
+    }
+  }
+
   .ui-dialog-titlebar-buttonpane {
     position: absolute;
     top: .5rem;

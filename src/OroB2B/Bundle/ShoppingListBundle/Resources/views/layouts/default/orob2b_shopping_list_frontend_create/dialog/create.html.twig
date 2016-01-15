@@ -31,3 +31,11 @@
         {{ block_widget(block) }}
     </div>
 {% endblock %}
+
+{% block _form_actions_reset_widget %}
+    <input type="reset" class="btn theme-btn_sm btn_gray" value="Cancel" />
+{% endblock %}
+
+{% block _form_actions_create_widget %}
+    <input type="submit" class="btn theme-btn_sm btn_orange ml1-md" value="Create and Add" />
+{% endblock %}
