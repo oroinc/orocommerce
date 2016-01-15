@@ -139,6 +139,20 @@ class DatabaseMenuProvider implements MenuProviderInterface
     }
 
     /**
+     * @param string $alias
+     */
+    public function deleteCacheByAlias($alias)
+    {
+        if (!$this->cache) {
+            return;
+        }
+        $locales = $this->localeHelper->getAll();
+        foreach ($locales as $locale) {
+            $this->deleteMenuCache($alias, [DatabaseMenuProvider::LOCALE_OPTION => $locale]);
+        }
+    }
+
+    /**
      * @param Locale $locale
      */
     public function rebuildCacheByLocale(Locale $locale)
@@ -146,16 +160,25 @@ class DatabaseMenuProvider implements MenuProviderInterface
         if (!$this->cache) {
             return;
         }
-        /** @var MenuItemRepository $repo */
-        $repo = $this->registry
-            ->getManagerForClass($this->entityClass)
-            ->getRepository($this->entityClass);
-
-        /** @var MenuItem[] $menus */
-        $menus = $repo->findRoots();
+        $menus = $this->getRoots();
         foreach ($menus as $menu) {
             $alias = $menu->getDefaultTitle()->getString();
             $this->buildMenu($alias, [DatabaseMenuProvider::LOCALE_OPTION => $locale]);
+        }
+    }
+
+    /**
+     * @param Locale $locale
+     */
+    public function deleteCacheByLocale(Locale $locale)
+    {
+        if (!$this->cache) {
+            return;
+        }
+        $menus = $this->getRoots();
+        foreach ($menus as $menu) {
+            $alias = $menu->getDefaultTitle()->getString();
+            $this->deleteMenuCache($alias, [DatabaseMenuProvider::LOCALE_OPTION => $locale]);
         }
     }
 
@@ -178,6 +201,16 @@ class DatabaseMenuProvider implements MenuProviderInterface
     /**
      * @param string $alias
      * @param array $options
+     */
+    protected function deleteMenuCache($alias, array $options = [])
+    {
+        $menuIdentifier = $this->getMenuIdentifier($alias, $options);
+        $this->cache->delete($menuIdentifier);
+    }
+
+    /**
+     * @param string $alias
+     * @param array $options
      * @return string
      */
     protected function getMenuIdentifier($alias, array $options = [])
@@ -189,5 +222,18 @@ class DatabaseMenuProvider implements MenuProviderInterface
         }
 
         return sprintf("%s:%s", $alias, $locale->getCode());
+    }
+
+    /**
+     * @return MenuItem[]
+     */
+    protected function getRoots()
+    {
+        /** @var MenuItemRepository $repo */
+        $repo = $this->registry
+            ->getManagerForClass($this->entityClass)
+            ->getRepository($this->entityClass);
+
+        return $repo->findRoots();
     }
 }
