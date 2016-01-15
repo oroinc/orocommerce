@@ -6,7 +6,8 @@
         {% if priceListsByWebsites %}
             <div class="oro-tabs">
                 <ul class="nav nav-tabs">
-                    {% for websiteId, website in websites %}
+                    {% for website in websites %}
+                        {% set websiteId = website.id %}
                         <li {% if websiteId == websites|first.id %} class="active" {% endif %}>
                             <a href="#website{{ websiteId }}" data-toggle="tab">
                                 {{ website.name }}
@@ -15,7 +16,8 @@
                     {% endfor %}
                 </ul>
                 <div class="tab-content">
-                    {% for websiteId, website in websites %}
+                    {% for website in websites %}
+                        {% set websiteId = website.id %}
                         <div class="tab-pane{% if websiteId == websites|first.id %} active{% endif %} price-list-by-account-grid"
                              id="website{{ websiteId }}"><br>
 
