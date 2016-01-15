@@ -76,7 +76,7 @@ class MenuItemRepository extends NestedTreeRepository
 
         $qb->select('m')
             ->innerJoin('m.titles', 'mt', Join::WITH, $qb->expr()->isNull('mt.locale'))
-            ->where($qb->expr()->isNull('m.parentMenuItem'));
+            ->where($qb->expr()->isNull('m.parent'));
 
         return $qb;
     }

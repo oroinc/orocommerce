@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\MenuBundle\Tests\Functional\Entity\Repository;
 
 use Gedmo\Tool\Logging\DBAL\QueryAnalyzer;
 
+use Doctrine\ORM\EntityManager;
+
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
@@ -15,6 +17,11 @@ use OroB2B\Bundle\MenuBundle\Entity\Repository\MenuItemRepository;
 class MenuItemRepositoryTest extends WebTestCase
 {
     /**
+     * @var EntityManager
+     */
+    protected $em;
+
+    /**
      * @var MenuItemRepository
      */
     protected $repository;
@@ -24,7 +31,8 @@ class MenuItemRepositoryTest extends WebTestCase
         $this->initClient();
 
         $this->loadFixtures(['OroB2B\Bundle\MenuBundle\Tests\Functional\DataFixtures\LoadMenuItemData']);
-        $this->repository = $this->getContainer()->get('doctrine')->getRepository('OroB2BMenuBundle:MenuItem');
+        $this->em = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BMenuBundle:MenuItem');
+        $this->repository = $this->em->getRepository('OroB2BMenuBundle:MenuItem');
     }
 
     /**
@@ -145,16 +153,18 @@ class MenuItemRepositoryTest extends WebTestCase
 
     public function testFindRoots()
     {
-        $expected = [
-            $this->getReference('menu_item.1'),
-            $this->getReference('menu_item.4')
-        ];
+        $initCount = count($this->repository->findRoots());
+
+        $menuItem = new MenuItem();
+        $menuItem->setDefaultTitle('test');
+
+        $this->em->persist($menuItem);
+        $this->em->flush();
+
         $actual = $this->repository->findRoots();
 
-        $this->assertCount(2, $actual);
+        $this->assertCount($initCount + 1, $actual);
 
-        foreach ($actual as $item) {
-            $this->assertContains($item, $expected);
-        }
+        $this->assertContains($menuItem, $actual);
     }
 }

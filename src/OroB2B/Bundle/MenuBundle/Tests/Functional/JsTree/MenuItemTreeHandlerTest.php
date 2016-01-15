@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\MenuBundle\Tests\Functional\JsTree;
 
 use Doctrine\ORM\EntityManager;
+
 use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
 use OroB2B\Component\Tree\Handler\AbstractTreeHandler;
 use OroB2B\Component\Tree\Test\AbstractTreeHandlerTestCase;
