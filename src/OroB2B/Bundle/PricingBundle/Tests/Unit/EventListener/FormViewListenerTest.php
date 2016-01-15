@@ -154,16 +154,14 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->with(
                 'OroB2BPricingBundle:Account:price_list_view.html.twig',
                 [
-                    'priceListsByWebsites' =>
-                        [
-                            $websiteId1 => [$priceListToAccount1],
-                            $websiteId2 => [$priceListToAccount2],
+                    'priceListsByWebsites' => [
+                        $websiteId1 => [$priceListToAccount1],
+                        $websiteId2 => [$priceListToAccount2],
 
-                        ],
-                    'fallbackByWebsites' =>
-                        [
-                            $websiteId3 => PriceListAccountFallback::CURRENT_ACCOUNT_ONLY,
-                        ],
+                    ],
+                    'fallbackByWebsites' => [
+                        $websiteId3 => PriceListAccountFallback::CURRENT_ACCOUNT_ONLY,
+                    ],
                     'websites' => [$website1, $website2, $website3],
                     'choices' => [
                         'orob2b.pricing.fallback.account_group.label',
@@ -271,16 +269,14 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->with(
                 'OroB2BPricingBundle:Account:price_list_view.html.twig',
                 [
-                    'priceListsByWebsites' =>
-                        [
-                            $websiteId1 => [$priceListToAccountGroup1],
-                            $websiteId2 => [$priceListToAccountGroup2],
+                    'priceListsByWebsites' => [
+                        $websiteId1 => [$priceListToAccountGroup1],
+                        $websiteId2 => [$priceListToAccountGroup2],
 
-                        ],
-                    'fallbackByWebsites' =>
-                        [
-                            $websiteId3 => PriceListAccountGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY,
-                        ],
+                    ],
+                    'fallbackByWebsites' => [
+                        $websiteId3 => PriceListAccountGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY,
+                    ],
                     'websites' => [$website1, $website2, $website3],
                     'choices' => [
                         'orob2b.pricing.fallback.website.label',
