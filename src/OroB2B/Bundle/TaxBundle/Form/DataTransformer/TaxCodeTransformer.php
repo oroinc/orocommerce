@@ -55,7 +55,7 @@ class TaxCodeTransformer implements DataTransformerInterface
         }
 
         $taxCodes = $this->doctrine->getRepository($this->taxCodeClassName)
-            ->findBy(['id' => $ids] ?: []);
+            ->findBy(['id' => $ids]) ?: [];
 
         usort(
             $taxCodes,
