@@ -28,6 +28,8 @@ parameters:
     orob2b_tax.order_tax.mapper.order_line_item_mapper.class: OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper
 
     orob2b_tax.matcher.country_matcher.class: OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher
+    orob2b_tax.matcher.region_matcher.class: OroB2B\Bundle\TaxBundle\Matcher\RegionMatcher
+    orob2b_tax.matcher.zip_code_matcher.class: OroB2B\Bundle\TaxBundle\Matcher\ZipCodeMatcher
 
 services:
     orob2b_tax.manager.product_tax_code.api:
@@ -219,6 +221,12 @@ services:
         tags:
             - { name: orob2b_tax.tax_mapper }
 
+    orob2b_tax.matcher.zip_code_matcher:
+        parent: orob2b_tax.abstract.matcher
+        class: %orob2b_tax.matcher.zip_code_matcher.class%
+        calls:
+            - [setRegionMatcher, [@orob2b_tax.matcher.region_matcher]]
+
     orob2b_tax.abstract.matcher:
         abstract: true
         arguments:
@@ -228,3 +236,9 @@ services:
     orob2b_tax.matcher.country_matcher:
         class: %orob2b_tax.matcher.country_matcher.class%
         parent: orob2b_tax.abstract.matcher
+
+    orob2b_tax.matcher.region_matcher:
+        class: %orob2b_tax.matcher.region_matcher.class%
+        parent: orob2b_tax.abstract.matcher
+        calls:
+            - [setCountryMatcher, [@orob2b_tax.matcher.country_matcher]]
