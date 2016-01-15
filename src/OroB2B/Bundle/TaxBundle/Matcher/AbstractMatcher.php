@@ -45,4 +45,24 @@ abstract class AbstractMatcher
      * @return TaxRule[]
      */
     abstract public function match(AbstractAddress $address);
+
+    /**
+     * @param ...TaxRule[]
+     * @return TaxRule[]
+     */
+    protected function mergeResult()
+    {
+        $arguments = func_get_args();
+
+        $result = [];
+
+        /** @var TaxRule[] $argument */
+        foreach ($arguments as $argument) {
+            foreach ($argument as $taxRule) {
+                $result[$taxRule->getId()] = $taxRule;
+            }
+        }
+
+        return array_values($result);
+    }
 }

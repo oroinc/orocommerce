@@ -4,8 +4,6 @@ namespace OroB2B\Bundle\TaxBundle\Matcher;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
-use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
-
 class ZipCodeMatcher extends AbstractMatcher
 {
     /**
@@ -29,15 +27,7 @@ class ZipCodeMatcher extends AbstractMatcher
             $country
         );
 
-        $result = [];
-        /** @var TaxRule $taxRule */
-        foreach (array_merge($regionTaxRules, $zipCodeTaxRules) as $taxRule) {
-            if (!array_key_exists($taxRule->getId(), $result)) {
-                $result[$taxRule->getId()] = $taxRule;
-            }
-        }
-
-        return array_values($result);
+        return $this->mergeResult($regionTaxRules, $zipCodeTaxRules);
     }
 
     /**

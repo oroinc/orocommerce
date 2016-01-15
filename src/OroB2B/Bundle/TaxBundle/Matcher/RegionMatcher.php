@@ -4,8 +4,6 @@ namespace OroB2B\Bundle\TaxBundle\Matcher;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
-use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
-
 class RegionMatcher extends AbstractMatcher
 {
     /**
@@ -25,14 +23,7 @@ class RegionMatcher extends AbstractMatcher
             $address->getRegionText()
         );
 
-        $result = [];
-        /** @var TaxRule $taxRule */
-        foreach (array_merge($countryTaxRules, $regionTaxRules) as $taxRule) {
-            if (!array_key_exists($taxRule->getId(), $result)) {
-                $result[$taxRule->getId()] = $taxRule;
-            }
-        }
-        return array_values($result);
+        return $this->mergeResult($countryTaxRules, $regionTaxRules);
     }
 
     /**

@@ -36,8 +36,8 @@ class TaxRuleRepository extends EntityRepository
      * Find TaxRules by Country
      *
      * @param Country $country
-     * @param Region|null  $region
-     * @param null    $regionText
+     * @param Region|null $region
+     * @param null $regionText
      * @return TaxRule[]
      */
     public function findByCountryAndRegion(Country $country, Region $region = null, $regionText = null)
