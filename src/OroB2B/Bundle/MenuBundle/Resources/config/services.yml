@@ -9,6 +9,7 @@ parameters:
     orob2b_menu.twig.menu_item_extension.class: OroB2B\Bundle\MenuBundle\Twig\MenuItemExtension
 
     # Menu services
+    orob2b_menu.factory.class: Knp\Menu\MenuFactory
     orob2b_menu.menu_serializer.class: OroB2B\Bundle\MenuBundle\Menu\MenuSerializer
     orob2b_menu.menu_provider.class: OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider
 
@@ -34,7 +35,12 @@ services:
     orob2b_menu.menu_array_loader:
         class: Knp\Menu\Loader\ArrayLoader
         arguments:
-            - @knp_menu.factory
+            - @oro_menu.factory
+
+    orob2b_menu.factory:
+        class: %orob2b_menu.factory.class%
+        calls:
+            - [ addExtension, [ @orob2b_menu.menu.condition.condition_extension ] ]
 
     orob2b_menu.menu_manipulator:
         class: Knp\Menu\Util\MenuManipulator
