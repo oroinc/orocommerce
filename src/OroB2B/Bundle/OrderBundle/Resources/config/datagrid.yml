@@ -101,9 +101,8 @@ datagrid:
                 icon:          trash
 
     frontend-orders-grid:
+        acl_resource: orob2b_order_frontend_view
         extends: base-orders-grid
-        source:
-            acl_resource: orob2b_order_frontend_view
         columns:
             paymentTermLabel:
                 label:         orob2b.order.payment_term.label
@@ -164,9 +163,9 @@ datagrid:
                 acl_resource:  orob2b_order_frontend_delete
 
     orders-grid:
+        acl_resource: orob2b_order_view
         extends: base-orders-grid
         source:
-            acl_resource: orob2b_order_view
             query:
                 select:
                     - CONCAT(order_owner.firstName, ' ', order_owner.lastName) as owner
@@ -265,13 +264,13 @@ datagrid:
                 acl_resource:  orob2b_order_delete
 
     embed-orders-grid:
+        acl_resource: orob2b_order_view
         extended_entity_name: %orob2b_order.entity.order.class%
         options:
             entityHint:        order
             entity_pagination: true
         source:
             type:         orm
-            acl_resource: orob2b_order_view
             query:
                 select:
                     - order1.id

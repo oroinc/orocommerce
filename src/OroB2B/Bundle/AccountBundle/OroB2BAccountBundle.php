@@ -7,6 +7,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 use OroB2B\Bundle\AccountBundle\DependencyInjection\Compiler\DataAuditEntityMappingPass;
 use OroB2B\Bundle\AccountBundle\DependencyInjection\Compiler\OwnerTreeListenerPass;
+use OroB2B\Bundle\AccountBundle\DependencyInjection\Compiler\WindowsStateManagerPass;
 use OroB2B\Bundle\AccountBundle\DependencyInjection\OroB2BAccountExtension;
 
 class OroB2BAccountBundle extends Bundle
@@ -20,6 +21,7 @@ class OroB2BAccountBundle extends Bundle
 
         $container->addCompilerPass(new OwnerTreeListenerPass());
         $container->addCompilerPass(new DataAuditEntityMappingPass());
+        $container->addCompilerPass(new WindowsStateManagerPass());
     }
 
     /**

@@ -1,11 +1,11 @@
 datagrid:
     shopping-list-grid:
+        acl_resource: orob2b_shopping_list_view
         extended_entity_name: %orob2b_shopping_list.entity.shopping_list.class%
         options:
             entityHint:        shopping list
             entity_pagination: true
         source:
-            acl_resource: orob2b_shopping_list_view
             type:         orm
             query:
                 select:
@@ -90,12 +90,12 @@ datagrid:
                 rowAction:     true
 
     frontend-shopping-list-grid:
+        acl_resource:      orob2b_shopping_list_frontend_view
         extended_entity_name:  %orob2b_shopping_list.entity.shopping_list.class%
         options:
             entityHint:        shopping list
             entity_pagination: true
         source:
-            acl_resource:      orob2b_shopping_list_frontend_view
             type:              orm
             query:
                 select:
@@ -171,11 +171,11 @@ datagrid:
                 acl_resource:  orob2b_shopping_list_frontend_delete
 
     shopping-list-line-items-grid:
+        acl_resource:      orob2b_shopping_list_view
         extended_entity_name: %orob2b_shopping_list.entity.line_item.class%
         options:
             entityHint:        line item
         source:
-            acl_resource:      orob2b_shopping_list_view
             type:              orm
             query:
                 select:
@@ -258,12 +258,12 @@ datagrid:
                 acl_resource:  orob2b_shopping_list_line_item_delete
 
     frontend-shopping-list-line-items-grid:
+        acl_resource:   orob2b_shopping_list_frontend_view
         extended_entity_name: %orob2b_shopping_list.entity.line_item.class%
         options:
             entityHint:     line item
-            skip_acl_check: true
         source:
-            acl_resource:   orob2b_shopping_list_frontend_view
+            skip_acl_apply: true
             type:           orm
             query:
                 select:

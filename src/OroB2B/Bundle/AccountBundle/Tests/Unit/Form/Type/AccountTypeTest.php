@@ -7,14 +7,16 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use Doctrine\ORM\EntityManager;
 
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EnumSelectType;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountGroupSelectType;
-use OroB2B\Bundle\AccountBundle\Form\Type\ParentAccountSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountType;
+use OroB2B\Bundle\AccountBundle\Form\Type\ParentAccountSelectType;
+use OroB2B\Bundle\AccountBundle\Form\Type\SalesRepresentativesCollectionType;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
 
 class AccountTypeTest extends FormIntegrationTestCase
@@ -27,6 +29,9 @@ class AccountTypeTest extends FormIntegrationTestCase
 
     /** @var AccountAddress[] */
     protected static $addresses;
+
+    /** @var User[] */
+    protected static $users;
 
     /**
      * {@inheritdoc}
@@ -77,6 +82,15 @@ class AccountTypeTest extends FormIntegrationTestCase
             ]
         );
 
+        $salesRepsCollectionType = new EntityType(
+            $this->getUsers(),
+            SalesRepresentativesCollectionType::NAME,
+            [
+                'class' => 'Oro\Bundle\UserBundle\Entity\User',
+                'multiple' => true
+            ]
+        );
+
         return [
             new PreloadedExtension(
                 [
@@ -84,7 +98,8 @@ class AccountTypeTest extends FormIntegrationTestCase
                     ParentAccountSelectType::NAME => $parentAccountSelectType,
                     'oro_address_collection'  => new AddressCollectionTypeStub(),
                     $addressEntityType->getName()  => $addressEntityType,
-                    EnumSelectType::NAME => $internalRatingEnumSelect
+                    EnumSelectType::NAME => $internalRatingEnumSelect,
+                    SalesRepresentativesCollectionType::NAME => $salesRepsCollectionType,
                 ],
                 []
             )
@@ -137,14 +152,16 @@ class AccountTypeTest extends FormIntegrationTestCase
                     'group' => 1,
                     'parent' => 2,
                     'addresses' => [1],
-                    'internal_rating' => '2_of_5'
+                    'internal_rating' => '2_of_5',
+                    'salesRepresentatives' => [1],
                 ],
                 'expectedData' => [
                     'name' => 'account_name',
                     'group' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 1),
                     'parent' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2),
                     'addresses' => [$this->getAddresses()[1]],
-                    'internal_rating' => new StubEnumValue('2_of_5', '2 of 5')
+                    'internal_rating' => new StubEnumValue('2_of_5', '2 of 5'),
+                    'salesRepresentatives' => [$this->getUsers()[1]],
                 ]
             ],
             'empty parent' => [
@@ -156,14 +173,15 @@ class AccountTypeTest extends FormIntegrationTestCase
                     'group' => 1,
                     'parent' => null,
                     'addresses' => [1],
-                    'internal_rating' => '2_of_5'
+                    'internal_rating' => '2_of_5',
                 ],
                 'expectedData' => [
                     'name' => 'account_name',
                     'group' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 1),
                     'parent' => null,
                     'addresses' => [$this->getAddresses()[1]],
-                    'internal_rating' => new StubEnumValue('2_of_5', '2 of 5')
+                    'internal_rating' => new StubEnumValue('2_of_5', '2 of 5'),
+                    'salesRepresentatives' => [],
                 ]
             ],
             'empty group' => [
@@ -175,14 +193,16 @@ class AccountTypeTest extends FormIntegrationTestCase
                     'group' => null,
                     'parent' => 2,
                     'addresses' => [1],
-                    'internal_rating' => '2_of_5'
+                    'internal_rating' => '2_of_5',
+                    'salesRepresentatives' => [1, 2],
                 ],
                 'expectedData' => [
                     'name' => 'account_name',
                     'group' => null,
                     'parent' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2),
                     'addresses' => [$this->getAddresses()[1]],
-                    'internal_rating' => new StubEnumValue('2_of_5', '2 of 5')
+                    'internal_rating' => new StubEnumValue('2_of_5', '2 of 5'),
+                    'salesRepresentatives' => [$this->getUsers()[1], $this->getUsers()[2]],
                 ]
             ],
             'empty address' => [
@@ -201,7 +221,8 @@ class AccountTypeTest extends FormIntegrationTestCase
                     'group' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 1),
                     'parent' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2),
                     'addresses' => [],
-                    'internal_rating' => new StubEnumValue('2_of_5', '2 of 5')
+                    'internal_rating' => new StubEnumValue('2_of_5', '2 of 5'),
+                    'salesRepresentatives' => [],
                 ]
             ],
             'empty internal_rating' => [
@@ -212,14 +233,14 @@ class AccountTypeTest extends FormIntegrationTestCase
                     'name' => 'account_name',
                     'group' => 1,
                     'parent' => 2,
-                    'internal_rating' => null
+                    'internal_rating' => []
                 ],
                 'expectedData' => [
                     'name' => 'account_name',
                     'group' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 1),
                     'parent' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2),
-                    'internal_rating' => null,
                     'addresses' => [],
+                    'salesRepresentatives' => [],
                 ]
             ],
         ];
@@ -260,5 +281,19 @@ class AccountTypeTest extends FormIntegrationTestCase
             ];
         }
         return self::$addresses;
+    }
+
+    /**
+     * @return User[]
+     */
+    protected function getUsers()
+    {
+        if (!self::$users) {
+            self::$users = [
+                1 => $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 1),
+                2 => $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 2)
+            ];
+        }
+        return self::$users;
     }
 }

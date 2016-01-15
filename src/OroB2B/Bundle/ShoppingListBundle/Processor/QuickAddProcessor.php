@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-use Oro\Bundle\UIBundle\Tools\ArrayUtils;
+use Oro\Component\PhpUtils\ArrayUtil;
 
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
@@ -65,11 +65,11 @@ class QuickAddProcessor implements ComponentProcessorInterface
 
         $shoppingList = $this->shoppingListLineItemHandler->getShoppingList($shoppingListId);
 
-        $productSkus = ArrayUtils::arrayColumn($data, ProductDataStorage::PRODUCT_SKU_KEY);
+        $productSkus = ArrayUtil::arrayColumn($data, ProductDataStorage::PRODUCT_SKU_KEY);
         $productIds = $this->getProductRepository()->getProductsIdsBySku($productSkus);
         $productSkuQuantities = array_combine(
             $productSkus,
-            ArrayUtils::arrayColumn($data, ProductDataStorage::PRODUCT_QUANTITY_KEY)
+            ArrayUtil::arrayColumn($data, ProductDataStorage::PRODUCT_QUANTITY_KEY)
         );
         $productIdsQuantities = array_combine($productIds, $productSkuQuantities);
 
@@ -84,7 +84,10 @@ class QuickAddProcessor implements ComponentProcessorInterface
                 $productIdsQuantities
             );
 
-            $flashBag->add('success', $this->messageGenerator->getSuccessMessage($shoppingListId, $entitiesCount));
+            $flashBag->add(
+                'success',
+                $this->messageGenerator->getSuccessMessage($shoppingList->getId(), $entitiesCount)
+            );
         } catch (AccessDeniedException $e) {
             $flashBag->add('error', $this->messageGenerator->getFailedMessage());
         }
