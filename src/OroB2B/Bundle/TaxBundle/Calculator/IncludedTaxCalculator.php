@@ -17,7 +17,7 @@ class IncludedTaxCalculator extends AbstractRoundingTaxCalculator
 
         $exclTax = $inclTax - $taxAmount;
 
-        $adjustment = abs($taxAmount - $taxAmountRounded);
+        $adjustment = $taxAmount - $taxAmountRounded;
 
         return $this->returnRoundedResult($inclTax, $exclTax, $taxAmount, $adjustment);
     }
