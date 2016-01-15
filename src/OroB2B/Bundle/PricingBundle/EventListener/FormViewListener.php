@@ -23,6 +23,9 @@ use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class FormViewListener
 {
     /**

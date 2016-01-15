@@ -13,6 +13,9 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
 {
     /** @var string */
