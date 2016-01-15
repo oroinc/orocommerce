@@ -123,6 +123,9 @@ services:
         class: %orob2b_pricing.provider.combined_price_list.class%
         arguments:
             - @doctrine
+        calls:
+            - [setClassName, [%orob2b_pricing.entity.combined_price_list.class%]]
+            - [setResolver, [@orob2b_pricing.resolver.combined_product_price_resolver]]
 
     orob2b_pricing.provider.price_list_collection:
         class: %orob2b_pricing.provider.price_list_collection.class%
@@ -185,6 +188,7 @@ services:
         calls:
             - [setCombinedPriceListProvider, [@orob2b_pricing.provider.combined_price_list]]
             - [setWebsiteCombinedPriceListBuilder, [@orob2b_pricing.builder.website_combined_price_list_builder]]
+            - [setPriceListCollectionProvider, [@orob2b_pricing.provider.price_list_collection]]
 
     orob2b_pricing.validator.unique_product_prices:
         class: %orob2b_pricing.validator.unique_product_prices.class%
