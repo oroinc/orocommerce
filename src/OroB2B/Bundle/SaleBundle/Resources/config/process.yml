@@ -1,21 +1,22 @@
 definitions:
     expire_quotes:
         label:   orob2b.sale.process.expire_quotes.label
-        enabled: true
+        enabled: false
         order:   50
         entity:  OroB2B\Bundle\RFPBundle\Entity\Request
         actions_configuration:
             - @create_datetime:
                 attribute: $.date
             - @find_entities:
-                class: OroB2B\Bundle\SaleBundle\Entity\Quote
-                attribute: $.quotes
-                where:
-                    and:
-                        - e.expired = false
-                        - e.validUntil < :date
-                query_parameters:
-                    date: $.date
+                parameters:
+                    class: OroB2B\Bundle\SaleBundle\Entity\Quote
+                    attribute: $.quotes
+                    where:
+                        and:
+                            - e.expired = false
+                            - e.validUntil < :date
+                    query_parameters:
+                        date: $.date
             - @foreach:
                 array: $.quotes
                 value: $.quote
@@ -27,7 +28,7 @@ definitions:
 
     send_no_quote_alert:
         label:   orob2b.sale.process.send_no_quote_alert.label
-        enabled: true
+        enabled: false
         order:   50
         entity:  OroB2B\Bundle\RFPBundle\Entity\Request
         actions_configuration:
