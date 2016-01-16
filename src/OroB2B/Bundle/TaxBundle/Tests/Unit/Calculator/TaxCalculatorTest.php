@@ -39,15 +39,15 @@ class TaxCalculatorTest extends \PHPUnit_Framework_TestCase
     /**
      * @param ResultElement $expectedResult
      * @param string $taxableAmount
-     * @param $taxRule TaxRule
+     * @param string $taxRate
      *
      * @dataProvider calculateDataProvider
      */
-    public function testCalculate(ResultElement $expectedResult, $taxableAmount, TaxRule $taxRule)
+    public function testCalculate(ResultElement $expectedResult, $taxableAmount, $taxRate)
     {
         $this->assertEquals(
             $expectedResult,
-            $this->calculator->calculate($taxableAmount, $taxRule)
+            $this->calculator->calculate($taxableAmount, $taxRate)
         );
     }
 
@@ -60,58 +60,17 @@ class TaxCalculatorTest extends \PHPUnit_Framework_TestCase
     {
         return [
             // use cases
-            'Finney County' => [
-                ResultElement::create('18.53', '17.21', '1.32', '-0.0034'),
-                '17.21',
-                $this->createTaxRule('0.0765'),
-            ],
-            'Fremont County' => [
-                ResultElement::create('61.99', '59.04', '2.95', '0.002'),
-                '59.04',
-                $this->createTaxRule('0.05'),
-            ],
-            'Tulare County' => [
-                ResultElement::create('15.56', '14.41', '1.15', '0.0028'),
-                '14.41',
-                $this->createTaxRule('0.08'),
-            ],
-            'Mclean County' => [
-                ResultElement::create('38.12', '35.88', '2.24', '0.0025'),
-                '35.88',
-                $this->createTaxRule('0.0625'),
-            ],
-
+            'Finney County' => [ResultElement::create('18.53', '17.21', '1.32', '-0.0034'), '17.21', '0.0765'],
+            'Fremont County' => [ResultElement::create('61.99', '59.04', '2.95', '0.002'), '59.04', '0.05'],
+            'Tulare County' => [ResultElement::create('15.56', '14.41', '1.15', '0.0028'), '14.41', '0.08'],
+            'Mclean County' => [ResultElement::create('38.12', '35.88', '2.24', '0.0025'), '35.88', '0.0625'],
             // edge cases
-            [
-                ResultElement::create('31.96', '15.98', '15.98', '0'),
-                '15.98',
-                $this->createTaxRule('1'),
-            ],
-            [
-                ResultElement::create('47.94', '15.98', '31.96', '0'),
-                '15.98',
-                $this->createTaxRule('2'),
-            ],
-            [
-                ResultElement::create('31.8', '15.98', '15.82', '0.0002'),
-                '15.98',
-                $this->createTaxRule('0.99'),
-            ],
-            [
-                ResultElement::create('16', '15.98', '0.02', '-0.004'),
-                '15.98',
-                $this->createTaxRule('0.001'),
-            ],
-            [
-                ResultElement::create('16', '15.98', '0.02', '0.004'),
-                '15.98',
-                $this->createTaxRule('0.0015'),
-            ],
-            [
-                ResultElement::create('19.18', '15.98', '3.2', '-0.004'),
-                '15.98',
-                $this->createTaxRule('-0.2'),
-            ],
+            [ResultElement::create('31.96', '15.98', '15.98', '0'), '15.98', '1'],
+            [ResultElement::create('47.94', '15.98', '31.96', '0'), '15.98', '2'],
+            [ResultElement::create('31.8', '15.98', '15.82', '0.0002'), '15.98', '0.99'],
+            [ResultElement::create('16', '15.98', '0.02', '-0.004'), '15.98', '0.001'],
+            [ResultElement::create('16', '15.98', '0.02', '0.004'), '15.98', '0.0015'],
+            [ResultElement::create('19.18', '15.98', '3.2', '-0.004'), '15.98', '-0.2'],
         ];
     }
 
