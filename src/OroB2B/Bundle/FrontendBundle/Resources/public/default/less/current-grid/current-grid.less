@@ -1075,15 +1075,23 @@
   .filter-items-hint {
     background: #ebebeb;
     position: relative;
-    padding-left: 13rem;
+    padding: 0 13rem .5rem 13rem;
     margin: 0 -1rem 0 -13rem;
-    font-size: 0;
     line-height: 2rem;
+
+    .reset-filter-button {
+      top: .5rem;
+      right: .5rem;
+      &:before {
+        font-family: 'FontAwesome';
+        content: "\f00d";
+      }
+    }
 
     > span {
       display: inline-block;
       vertical-align: middle;
-      margin: .25rem .5rem .25rem 0;
+      margin: .5rem .5rem 0 0;
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
