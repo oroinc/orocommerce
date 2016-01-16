@@ -159,7 +159,7 @@ actions:
                     route_parameters: {id: $.order.id}
 
     orob2b_sale_send_no_quote_alert:
-        label: Send no Quote Alert
+        label: orob2b.sale.quote.actions.send_no_quote_alert
         enabled: true
         applications: []
         order: 10

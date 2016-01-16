@@ -59,6 +59,7 @@ orob2b:
 
             actions:
                 quote_expire: 'Expire Quote'
+                send_no_quote_alert: 'Send no Quote alert for the Request'
 
             message:
                 quote.expire.success: 'Quote #%id% was successfully expired'
@@ -66,6 +67,10 @@ orob2b:
         system_configuration:
             fields:
                 backend_product_visibility.title: 'Can Be Added to Quotes'
+
+        process:
+            expire_quotes.label: Expire old Quotes
+            send_no_quote_alert.label: Send alerts about Requests Without Quote
 
         quoteproduct:
             entity_label: 'Quote Product'
