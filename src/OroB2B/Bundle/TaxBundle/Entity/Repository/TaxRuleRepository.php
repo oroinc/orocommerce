@@ -115,4 +115,3 @@ class TaxRuleRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 }
-
