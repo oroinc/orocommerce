@@ -4,13 +4,14 @@ namespace OroB2B\Bundle\TaxBundle\OrderTax\Mapper;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Util\ClassUtils;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\TaxBundle\Mapper\TaxMapperInterface;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
 
-class OrderMapper implements TaxMapperInterface
+class OrderMapper extends AbstractOrderMapper
 {
     const PROCESSING_CLASS_NAME = 'OroB2B\Bundle\OrderBundle\Entity\Order';
 
@@ -18,14 +19,6 @@ class OrderMapper implements TaxMapperInterface
      * @var OrderLineItemMapper
      */
     protected $orderLineItemMapper;
-
-    /**
-     * @param OrderLineItemMapper $orderLineItemMapper
-     */
-    public function __construct(OrderLineItemMapper $orderLineItemMapper)
-    {
-        $this->orderLineItemMapper = $orderLineItemMapper;
-    }
 
     /**
      * {@inheritdoc}
@@ -36,9 +29,10 @@ class OrderMapper implements TaxMapperInterface
         $taxable = (new Taxable())
             ->setAmount($order->getSubtotal())
             ->setIdentifier($order->getId())
+            ->setClassName(ClassUtils::getClass($order))
             ->setItems($this->mapLineItems($order->getLineItems()))
-            // TODO: Should we always use shipping address? or maybe billing address?
-            ->setDestination($order->getShippingAddress());
+            ->setDestination($this->getOrderAddress($order))
+            ->setOrigin($this->settingsProvider->getOrigin());
 
         return $taxable;
     }
@@ -64,5 +58,13 @@ class OrderMapper implements TaxMapperInterface
         );
 
         return $taxableItems;
+    }
+
+    /**
+     * @param TaxMapperInterface $orderLineItemMapper
+     */
+    public function setOrderLineItemMapper(TaxMapperInterface $orderLineItemMapper)
+    {
+        $this->orderLineItemMapper = $orderLineItemMapper;
     }
 }

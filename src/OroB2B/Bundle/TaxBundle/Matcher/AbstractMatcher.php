@@ -2,13 +2,12 @@
 
 namespace OroB2B\Bundle\TaxBundle\Matcher;
 
-use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository;
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 
-abstract class AbstractMatcher
+abstract class AbstractMatcher implements MatcherInterface
 {
     /**
      * @var DoctrineHelper
@@ -37,14 +36,6 @@ abstract class AbstractMatcher
     {
         return $this->doctrineHelper->getEntityRepositoryForClass($this->taxRuleClass);
     }
-
-    /**
-     * Find TaxRules by address
-     *
-     * @param AbstractAddress $address
-     * @return TaxRule[]
-     */
-    abstract public function match(AbstractAddress $address);
 
     /**
      * @param ...TaxRule[]

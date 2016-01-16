@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\TaxBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
+use Oro\Bundle\CurrencyBundle\Model\Price;
 
 class Taxable
 {
@@ -11,6 +12,11 @@ class Taxable
      * @var int
      */
     protected $identifier;
+
+    /**
+     * @var string
+     */
+    protected $className;
 
     /**
      * @var AbstractAddress
@@ -28,7 +34,7 @@ class Taxable
     protected $quantity;
 
     /**
-     * @var float
+     * @var Price
      */
     protected $price;
 
@@ -124,7 +130,7 @@ class Taxable
     }
 
     /**
-     * @return float
+     * @return Price
      */
     public function getPrice()
     {
@@ -132,10 +138,10 @@ class Taxable
     }
 
     /**
-     * @param float $price
+     * @param Price $price
      * @return $this
      */
-    public function setPrice($price)
+    public function setPrice(Price $price)
     {
         $this->price = $price;
 
@@ -204,5 +210,24 @@ class Taxable
         }
 
         return $this;
+    }
+
+    /**
+     * @param string $className
+     * @return Taxable
+     */
+    public function setClassName($className)
+    {
+        $this->className = $className;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getClassName()
+    {
+        return $this->className;
     }
 }
