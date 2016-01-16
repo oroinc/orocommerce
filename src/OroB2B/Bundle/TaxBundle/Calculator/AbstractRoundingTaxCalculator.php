@@ -2,10 +2,7 @@
 
 namespace OroB2B\Bundle\TaxBundle\Calculator;
 
-use Doctrine\Common\Collections\Collection;
-
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
-use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
 use OroB2B\Bundle\TaxBundle\Rounding\TaxRoundingService;
 

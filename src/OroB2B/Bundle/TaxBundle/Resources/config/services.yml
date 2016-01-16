@@ -30,6 +30,8 @@ parameters:
     orob2b_tax.order_tax.mapper.order_line_item_mapper.class: OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper
 
     orob2b_tax.matcher.country_matcher.class: OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher
+    orob2b_tax.matcher.region_matcher.class: OroB2B\Bundle\TaxBundle\Matcher\RegionMatcher
+    orob2b_tax.matcher.zip_code_matcher.class: OroB2B\Bundle\TaxBundle\Matcher\ZipCodeMatcher
 
     orob2b_tax.calculator.class: OroB2B\Bundle\TaxBundle\Calculator\Calculator
     orob2b_tax.calculator.absract_rounding.class: OroB2B\Bundle\TaxBundle\Calculator\AbstractRoundingTaxCalculator
@@ -259,8 +261,17 @@ services:
         class: %orob2b_tax.matcher.country_matcher.class%
         parent: orob2b_tax.abstract.matcher
 
-    orob2b_tax.matcher.zip_matcher:
-        parent: orob2b_tax.matcher.country_matcher
+    orob2b_tax.matcher.region_matcher:
+        class: %orob2b_tax.matcher.region_matcher.class%
+        parent: orob2b_tax.abstract.matcher
+        calls:
+            - [setCountryMatcher, [@orob2b_tax.matcher.country_matcher]]
+
+    orob2b_tax.matcher.zip_code_matcher:
+        parent: orob2b_tax.abstract.matcher
+        class: %orob2b_tax.matcher.zip_code_matcher.class%
+        calls:
+            - [setRegionMatcher, [@orob2b_tax.matcher.region_matcher]]
 
     orob2b_tax.rounding.tax:
         class: %orob2b_tax.rounding.tax.class%
@@ -292,7 +303,7 @@ services:
         abstract: true
         arguments:
             - @orob2b_tax.provider.taxation_settings_provider
-            - @orob2b_tax.matcher.zip_matcher
+            - @orob2b_tax.matcher.zip_code_matcher
             - @orob2b_tax.calculator
             - @orob2b_tax.rounding.tax
 

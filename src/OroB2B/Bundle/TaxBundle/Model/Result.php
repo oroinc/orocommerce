@@ -55,6 +55,6 @@ final class Result extends AbstractResult
     {
         $this->offsetUnset(self::TAXES);
 
-        parent::serialize();
+        return parent::serialize();
     }
 }

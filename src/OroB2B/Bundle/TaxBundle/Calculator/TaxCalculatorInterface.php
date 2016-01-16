@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\TaxBundle\Calculator;
 
-use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
 
 interface TaxCalculatorInterface
@@ -11,8 +10,8 @@ interface TaxCalculatorInterface
 
     /**
      * @param string $amount
-     * @param TaxRule $taxRule
+     * @param string $taxRate
      * @return ResultElement
      */
-    public function calculate($amount, TaxRule $taxRule);
+    public function calculate($amount, $taxRate);
 }

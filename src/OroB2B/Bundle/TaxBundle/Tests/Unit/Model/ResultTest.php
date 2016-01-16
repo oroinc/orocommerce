@@ -92,4 +92,13 @@ class ResultTest extends \PHPUnit_Framework_TestCase
             )
         );
     }
+
+    public function testTaxesDropped()
+    {
+        $result = $this->createResultModel();
+
+        /** @var Result $newResult */
+        $newResult = unserialize(serialize($result));
+        $this->assertEquals([], $newResult->getTaxes());
+    }
 }

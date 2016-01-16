@@ -47,10 +47,12 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
      * @dataProvider submitDataProvider
      * @param string $submittedData
      * @param string $expectedData
+     * @param bool $valid
      */
     public function testSubmit(
         $submittedData,
-        $expectedData
+        $expectedData,
+        $valid
     ) {
         $form = $this->factory->create($this->formType);
 
@@ -60,7 +62,7 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
 
 
         $form->submit($submittedData);
-        $this->assertTrue($form->isValid());
+        $this->assertEquals($valid, $form->isValid());
         $this->assertEquals($expectedData, $form->getData());
     }
 
@@ -76,6 +78,7 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
                     'zipRangeEnd' => '234',
                 ],
                 'expectedData' => ZipCodeTestHelper::getRangeZipCode('123', '234'),
+                'valid' => true,
             ],
             'same range' => [
                 'submittedData' => [
@@ -83,6 +86,7 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
                     'zipRangeEnd' => '123',
                 ],
                 'expectedData' => ZipCodeTestHelper::getSingleValueZipCode('123'),
+                'valid' => true,
             ],
             'start range only' => [
                 'submittedData' => [
@@ -90,6 +94,7 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
                     'zipRangeEnd' => null,
                 ],
                 'expectedData' => ZipCodeTestHelper::getSingleValueZipCode('123'),
+                'valid' => true,
             ],
             'end range only' => [
                 'submittedData' => [
@@ -97,7 +102,17 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
                     'zipRangeEnd' => '123',
                 ],
                 'expectedData' => ZipCodeTestHelper::getSingleValueZipCode('123'),
+                'valid' => true,
             ],
+            // TODO: should pass test after BB-1957
+//            'alphanumeric zip code' => [
+//                'submittedData' => [
+//                    'zipRangeStart' => '1A30D',
+//                    'zipRangeEnd' => '1A32B',
+//                ],
+//                'expectedData' => null,
+//                'valid' => false,
+//            ],
         ];
     }
 }

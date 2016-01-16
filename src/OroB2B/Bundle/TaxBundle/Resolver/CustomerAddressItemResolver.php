@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\TaxBundle\Resolver;
 
+use OroB2B\Bundle\TaxBundle\Calculator\TaxCalculatorInterface;
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
 use OroB2B\Bundle\TaxBundle\Model\Result;
@@ -18,7 +19,7 @@ class CustomerAddressItemResolver extends AbstractAddressResolver
             return;
         }
 
-        $address = $this->getAddress($taxable);
+        $address = $taxable->getDestination();
         if (!$address) {
             return;
         }
@@ -39,22 +40,23 @@ class CustomerAddressItemResolver extends AbstractAddressResolver
      */
     protected function resolveUnitPrice(Result $result, array $taxRules, $taxableAmount)
     {
-        $unitPriceInclTax = 0;
-        $unitPriceExclTax = 0;
-        $unitPriceTaxAmount = 0;
-        $unitPriceAdjustment = 0;
+        $taxAmount = 0;
+        $taxAdjustment = 0;
 
         foreach ($taxRules as $taxRule) {
-            $resultElement = $this->calculator->calculate($taxableAmount, $taxRule);
-            $unitPriceInclTax += $resultElement->getIncludingTax();
-            $unitPriceExclTax += $resultElement->getExcludingTax();
-            $unitPriceTaxAmount += $resultElement->getTaxAmount();
-            $unitPriceAdjustment += $resultElement->getAdjustment();
+            $resultElement = $this->calculator->calculate($taxableAmount, $taxRule->getTax()->getRate());
+            $taxAmount += $resultElement->getTaxAmount();
+            $taxAdjustment += $resultElement->getAdjustment();
         }
 
         $result->offsetSet(
             Result::UNIT,
-            ResultElement::create($unitPriceInclTax, $unitPriceExclTax, $unitPriceTaxAmount, $unitPriceAdjustment)
+            ResultElement::create(
+                $this->roundingService->round($taxableAmount),
+                $this->roundingService->round($taxableAmount - $taxAmount),
+                $this->roundingService->round($taxAmount),
+                $this->roundingService->round($taxAdjustment, TaxCalculatorInterface::ADJUSTMENT_SCALE)
+            )
         );
     }
 
@@ -65,35 +67,38 @@ class CustomerAddressItemResolver extends AbstractAddressResolver
      */
     protected function resolveRowTotal(Result $result, array $taxRules, $taxableAmount)
     {
-        $rowTotalInclTax = 0;
-        $rowTotalExclTax = 0;
-        $rowTotalTaxAmount = 0;
-        $rowTotalAdjustment = 0;
+        $taxAmount = 0;
+        $taxAdjustment = 0;
 
         $taxResults = [];
 
         if ($this->settingsProvider->isStartCalculationWithRowTotal()) {
             $taxableAmount = (string)$this->roundingService->round($taxableAmount);
         }
+        $roundedTaxableAmount = $this->roundingService->round($taxableAmount);
 
         foreach ($taxRules as $taxRule) {
-            $resultElement = $this->calculator->calculate($taxableAmount, $taxRule);
-            $rowTotalInclTax += $resultElement->getIncludingTax();
-            $rowTotalExclTax += $resultElement->getExcludingTax();
-            $rowTotalTaxAmount += $resultElement->getTaxAmount();
-            $rowTotalAdjustment += $resultElement->getAdjustment();
+            $taxRate = $taxRule->getTax()->getRate();
+            $resultElement = $this->calculator->calculate($taxableAmount, $taxRate);
+            $taxAmount += $resultElement->getTaxAmount();
+            $taxAdjustment += $resultElement->getAdjustment();
 
             $taxResults[] = TaxResultElement::create(
-                $taxRule->getTax()->getId(),
-                $taxRule->getTax()->getRate(),
-                $taxableAmount,
+                $taxRule->getTax() ? $taxRule->getTax()->getId() : null,
+                $taxRate,
+                $roundedTaxableAmount,
                 $resultElement->getTaxAmount()
             );
         }
 
         $result->offsetSet(
             Result::ROW,
-            ResultElement::create($rowTotalInclTax, $rowTotalExclTax, $rowTotalTaxAmount, $rowTotalAdjustment)
+            ResultElement::create(
+                $roundedTaxableAmount,
+                $this->roundingService->round($taxableAmount - $taxAmount),
+                $this->roundingService->round($taxAmount),
+                $this->roundingService->round($taxAdjustment, TaxCalculatorInterface::ADJUSTMENT_SCALE)
+            )
         );
 
         $result->offsetSet(Result::TAXES, $taxResults);
