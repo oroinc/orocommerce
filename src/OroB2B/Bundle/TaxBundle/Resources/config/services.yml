@@ -30,6 +30,8 @@ parameters:
     orob2b_tax.data_transformer.tax_code_transformer.class: OroB2B\Bundle\TaxBundle\Form\DataTransformer\TaxCodeTransformer
 
     orob2b_tax.matcher.country_matcher.class: OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher
+    orob2b_tax.matcher.region_matcher.class: OroB2B\Bundle\TaxBundle\Matcher\RegionMatcher
+    orob2b_tax.matcher.zip_code_matcher.class: OroB2B\Bundle\TaxBundle\Matcher\ZipCodeMatcher
 
 
 services:
@@ -233,6 +235,12 @@ services:
             - @doctrine
             - %orob2b_tax.entity.product_tax_code.class%
 
+    orob2b_tax.matcher.zip_code_matcher:
+        parent: orob2b_tax.abstract.matcher
+        class: %orob2b_tax.matcher.zip_code_matcher.class%
+        calls:
+            - [setRegionMatcher, [@orob2b_tax.matcher.region_matcher]]
+
     orob2b_tax.abstract.matcher:
         abstract: true
         arguments:
@@ -242,3 +250,9 @@ services:
     orob2b_tax.matcher.country_matcher:
         class: %orob2b_tax.matcher.country_matcher.class%
         parent: orob2b_tax.abstract.matcher
+
+    orob2b_tax.matcher.region_matcher:
+        class: %orob2b_tax.matcher.region_matcher.class%
+        parent: orob2b_tax.abstract.matcher
+        calls:
+            - [setCountryMatcher, [@orob2b_tax.matcher.country_matcher]]
