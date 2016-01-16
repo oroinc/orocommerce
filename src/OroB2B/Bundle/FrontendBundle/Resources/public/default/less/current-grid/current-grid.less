@@ -433,7 +433,7 @@
     }
 
     td {
-      padding: 1rem .5rem;
+      padding: .5rem;
       vertical-align: middle;
       font-size: 0;
 
@@ -452,8 +452,39 @@
       &.sort-cell {
         > span {
           position: relative;
-        }
+          display: block;
+          width: 2rem;
+          height: 2rem;
+          color: @base-font-color-light;
+          cursor: move;
 
+          .ui-sortable-handle {
+            font-family: 'Material Icons';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 2rem;
+            display: inline-block;
+            vertical-align: middle;
+            width: 1em;
+            height: 1em;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+            -moz-osx-font-smoothing: grayscale;
+            -webkit-font-feature-settings: 'liga';
+            -moz-font-feature-settings: 'liga';
+            font-feature-settings: 'liga';
+            margin: 0;
+            padding: 0;
+
+            &:before {
+              content: "list";
+            }
+          }
+        }
       }
     }
   }
