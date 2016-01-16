@@ -180,7 +180,7 @@ class FindEntitiesTest extends \PHPUnit_Framework_TestCase
             'where' => $where,
             'attribute' => new PropertyPath('entities'),
             'order_by' => $orderBy,
-            'parameters' => $parameters,
+            'query_parameters' => $parameters,
         ];
 
         $context = new ItemStub();
@@ -234,7 +234,7 @@ class FindEntitiesTest extends \PHPUnit_Framework_TestCase
             'full data' => [
                 'where' => ['and' => ['e.name = :name']],
                 'orderBy' => ['createdDate' => 'asc'],
-                'parameters' => ['name' => 'Test Name'],
+                'query_parameters' => ['name' => 'Test Name'],
                 'expected' => [],
             ]
         ];

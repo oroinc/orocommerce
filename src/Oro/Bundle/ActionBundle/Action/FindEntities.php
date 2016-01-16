@@ -190,8 +190,8 @@ class FindEntities extends AbstractAction
      */
     protected function getParameters($context)
     {
-        return array_key_exists('parameters', $this->options)
-            ? $this->parseArrayValues($context, $this->options['parameters'])
+        return array_key_exists('query_parameters', $this->options)
+            ? $this->parseArrayValues($context, $this->options['query_parameters'])
             : [];
     }
 

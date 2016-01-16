@@ -8,15 +8,14 @@ definitions:
             - @create_datetime:
                 attribute: $.date
             - @find_entities:
-                parameters:
-                    class: OroB2B\Bundle\SaleBundle\Entity\Quote
-                    attribute: $.quotes
-                    where:
-                        and:
-                            - e.expired = false
-                            - e.validUntil < :date
-                    parameters:
-                        date: $.date
+                class: OroB2B\Bundle\SaleBundle\Entity\Quote
+                attribute: $.quotes
+                where:
+                    and:
+                        - e.expired = false
+                        - e.validUntil < :date
+                query_parameters:
+                    date: $.date
             - @foreach:
                 array: $.quotes
                 value: $.quote
