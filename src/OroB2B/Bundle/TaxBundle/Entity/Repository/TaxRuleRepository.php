@@ -103,13 +103,16 @@ class TaxRuleRepository extends EntityRepository
             ->andWhere(
                 $qb->expr()->orX(
                     $qb->expr()->andX(
-                        $qb->expr()->lte('zipCodes.zipRangeStart', $zipCode),
-                        $qb->expr()->gte('zipCodes.zipRangeEnd', $zipCode)
+                        $qb->expr()->lte('CAST(zipCodes.zipRangeStart as int)', ':zipCodeForRange'),
+                        $qb->expr()->gte('CAST(zipCodes.zipRangeEnd as int)', ':zipCodeForRange')
                     ),
-                    $qb->expr()->eq('zipCodes.zipCode', $zipCode)
+                    $qb->expr()->eq('zipCodes.zipCode', ':zipCode')
                 )
-            );
+            )
+        ->setParameter('zipCode', $zipCode)
+        ->setParameter('zipCodeForRange', (int)$zipCode);
 
         return $qb->getQuery()->getResult();
     }
 }
+
