@@ -2,16 +2,12 @@
 
 namespace Oro\Bundle\ActionBundle\Tests\Unit\Action;
 
-use Oro\Bundle\ActionBundle\Action\RunAction;
-use Oro\Bundle\ActionBundle\Model\ActionManager;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\PropertyAccess\PropertyPath;
 
-use Oro\Bundle\ActionBundle\Action\CallServiceMethod;
+use Oro\Bundle\ActionBundle\Action\RunAction;
+use Oro\Bundle\ActionBundle\Helper\ContextHelper;
 use Oro\Bundle\ActionBundle\Model\ActionData;
-use Oro\Bundle\ActionBundle\Tests\Unit\Action\Stub\TestService;
-
+use Oro\Bundle\ActionBundle\Model\ActionManager;
 use Oro\Bundle\WorkflowBundle\Model\ContextAccessor;
 
 class RunActionTest extends \PHPUnit_Framework_TestCase
@@ -22,9 +18,9 @@ class RunActionTest extends \PHPUnit_Framework_TestCase
     protected $eventDispatcher;
 
     /** @var RunAction */
-    protected $action;
+    protected $function;
 
-    /** @var ActionManager */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ActionManager */
     protected $manager;
 
     protected function setUp()
@@ -43,30 +39,29 @@ class RunActionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->action = new RunAction(new ContextAccessor(), $this->manager, $contextHelper);
-        $this->action->setDispatcher($this->eventDispatcher);
+        $this->function = new RunAction(new ContextAccessor(), $this->manager, $contextHelper);
+        $this->function->setDispatcher($this->eventDispatcher);
     }
 
     protected function tearDown()
     {
-        unset($this->action, $this->eventDispatcher, $this->container);
+        unset($this->function, $this->eventDispatcher, $this->container);
     }
 
     public function testInitialize()
     {
         $options = [
-            'name' => 'test_action',
+            'action' => self::ACTION_NAME,
             'entity_class' => 'testClass',
             'entity_id' => 1,
-            'attribute' => 'test'
         ];
 
         $this->assertInstanceOf(
             'Oro\Bundle\WorkflowBundle\Model\Action\ActionInterface',
-            $this->action->initialize($options)
+            $this->function->initialize($options)
         );
 
-        $this->assertAttributeEquals($options, 'options', $this->action);
+        $this->assertAttributeEquals($options, 'options', $this->function);
     }
 
     /**
@@ -79,16 +74,9 @@ class RunActionTest extends \PHPUnit_Framework_TestCase
      */
     public function testInitializeException(array $inputData, $exception, $exceptionMessage, $hasService = true)
     {
-        $this->container->expects($this->any())
-            ->method('has')
-            ->willReturn($hasService);
-        $this->container->expects($this->any())
-            ->method('get')
-            ->willReturn(new TestService());
-
         $this->setExpectedException($exception, $exceptionMessage);
 
-        $this->action->initialize($inputData);
+        $this->function->initialize($inputData);
     }
 
     /**
@@ -104,7 +92,7 @@ class RunActionTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'inputData' => [
-                    'action' => 'test_action'
+                    'action' => self::ACTION_NAME
                 ],
                 'expectedException' => 'Oro\Bundle\ActionBundle\Exception\InvalidParameterException',
                 'expectedExceptionMessage' => 'Entity class parameter is required',
@@ -112,7 +100,7 @@ class RunActionTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'inputData' => [
-                    'action' => 'test_action',
+                    'action' => self::ACTION_NAME,
                     'entity_class' => 'entityClass'
                 ],
                 'expectedException' => 'Oro\Bundle\ActionBundle\Exception\InvalidParameterException',
@@ -123,58 +111,49 @@ class RunActionTest extends \PHPUnit_Framework_TestCase
 
     public function testExecuteMethod()
     {
-        $this->container->expects($this->exactly(1))
-            ->method('execute')
-            ->with('test_action')
-            ->willReturn(true);
+        $this->assertManagerCalled();
 
         $data = new ActionData(['param' => 'value']);
         $options = [
-            'action' => 'test_action',
+            'action' => self::ACTION_NAME,
             'entity_class' => 'entityClass',
             'entity_id' => '1',
         ];
 
-        $this->action->initialize($options);
-        $this->action->execute($data);
+        $this->function->initialize($options);
+        $this->function->execute($data);
 
         $this->assertEquals(
-            ['param' => 'value', 'test' => TestService::TEST_METHOD_RESULT . 'value'],
+            ['param' => 'value'],
             $data->getValues()
         );
     }
 
     public function testExecuteWithoutAttribute()
     {
-        $this->assertContainerCalled('test_service');
-
         $data = new ActionData(['param' => 'value']);
+        $this->assertManagerCalled();
+
         $options = array(
-            'service' => 'test_service',
-            'method' => 'testMethod',
-            'method_parameters' => ['test']
+            'action' => self::ACTION_NAME,
+            'entity_class' => 'testClass',
+            'entity_id' => 1,
         );
 
-        $this->action->initialize($options);
-        $this->action->execute($data);
+        $this->function->initialize($options);
+        $this->function->execute($data);
 
         $this->assertEquals(['param' => 'value'], $data->getValues());
     }
 
     /**
-     * @param string $serviceName
-     * @param int $hasCalls
-     * @param int $getCalls
+     * @param int $executeCalls
      */
-    protected function assertContainerCalled($serviceName, $hasCalls = 1, $getCalls = 2)
+    protected function assertManagerCalled($executeCalls = 1)
     {
-        $this->container->expects($this->exactly($hasCalls))
-            ->method('has')
-            ->with($serviceName)
+        $this->manager->expects($this->exactly($executeCalls))
+            ->method('execute')
+            ->withAnyParameters()
             ->willReturn(true);
-        $this->container->expects($this->exactly($getCalls))
-            ->method('get')
-            ->with($serviceName)
-            ->willReturn(new TestService());
     }
 }

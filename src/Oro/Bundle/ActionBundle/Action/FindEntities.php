@@ -108,13 +108,11 @@ class FindEntities extends AbstractAction
         $where = $this->getWhere($context);
         $parameters =  $this->getParameters($context);
 
-        $orderBy = $this->getOrderBy($context);
-        $orderBy = $this->applyTrim($orderBy);
-
         $queryBuilder = $entityManager->getRepository($entityClassName)->createQueryBuilder('e');
-
         $this->addWhere($queryBuilder, $where);
         $this->addParameters($queryBuilder, $parameters);
+
+        $orderBy = $this->getOrderBy($context);
 
         // apply sorting
         foreach ($orderBy as $field => $direction) {
@@ -215,25 +213,6 @@ class FindEntities extends AbstractAction
     {
         foreach ($data as $key => $value) {
             $data[$key] = $this->contextAccessor->getValue($context, $value);
-        }
-
-        return $data;
-    }
-
-    /**
-     * @param $data
-     * @return array|string
-     */
-    protected function applyTrim($data)
-    {
-        if (is_array($data)) {
-            foreach ($data as $key => $value) {
-                if (is_scalar($value)) {
-                    $data[$key] = trim($value);
-                }
-            }
-        } elseif (is_string($data)) {
-            $data = trim($data);
         }
 
         return $data;

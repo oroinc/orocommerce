@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ActionBundle\Action;
 
+use Symfony\Component\PropertyAccess\PropertyPathInterface;
+
 use Oro\Bundle\ActionBundle\Helper\ContextHelper;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 use Oro\Bundle\ActionBundle\Exception\InvalidParameterException;
@@ -60,13 +62,30 @@ class RunAction extends AbstractAction
      */
     protected function executeAction($context)
     {
+        $result = $this->actionManager->execute($this->options['action'], $this->getActionData($context));
+
+        $attribute = $this->getAttribute();
+        if ($attribute) {
+            $this->contextAccessor->setValue($context, $attribute, $result);
+        }
+    }
+
+    protected function getActionData($context)
+    {
         $entityId = $this->contextAccessor->getValue($context, $this->options['entity_id']);
         $entityClass = $this->contextAccessor->getValue($context, $this->options['entity_class']);
 
-        $actionData = $this->contextHelper->getActionData([
+        return $this->contextHelper->getActionData([
             ContextHelper::ENTITY_CLASS_PARAM => $entityClass,
-            ContextHelper::ENTITY_ID_PARAM => $entityId
+            ContextHelper::ENTITY_ID_PARAM => $entityId,
         ]);
-        $this->actionManager->execute($this->options['action'], $actionData);
+    }
+
+    /**
+     * @return PropertyPathInterface|null
+     */
+    protected function getAttribute()
+    {
+        return $this->getOption($this->options, 'attribute', null);
     }
 }
