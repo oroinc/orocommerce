@@ -232,7 +232,7 @@ services:
             - @oro_action.manager
             - @oro_action.helper.context
         tags:
-            - { name: oro_action.function, alias: call_service_method }
+            - { name: oro_action.function, alias: run_action }
             - { name: oro_workflow.action, alias: run_action }
 
     oro_action.function.find_entities:
@@ -241,7 +241,7 @@ services:
             - @oro_action.context_accessor
             - @doctrine
         tags:
-            - { name: oro_action.function, alias: call_service_method }
+            - { name: oro_action.function, alias: find_entities }
             - { name: oro_workflow.action, alias: find_entities }
 
     oro_action.function.send_email_template:
