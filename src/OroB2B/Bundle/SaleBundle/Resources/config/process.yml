@@ -16,7 +16,6 @@ definitions:
                         - e.validUntil < :date
                 query_parameters:
                     date: $.date
-                        date: $.date
             - @foreach:
                 array: $.quotes
                 value: $.quote
