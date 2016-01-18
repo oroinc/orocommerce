@@ -2,40 +2,12 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Calculator;
 
-use OroB2B\Bundle\TaxBundle\Entity\Tax;
-use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
+use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
 use OroB2B\Bundle\TaxBundle\Calculator\TaxCalculator;
-use OroB2B\Bundle\TaxBundle\Rounding\TaxRoundingService;
 
-class TaxCalculatorTest extends \PHPUnit_Framework_TestCase
+class TaxCalculatorTest extends AbstractTaxCalculatorTest
 {
-    /** @var TaxCalculator */
-    protected $calculator;
-
-    protected function setUp()
-    {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TaxRoundingService $roundingService */
-        $roundingService = $this
-            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Rounding\TaxRoundingService')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $roundingService
-            ->expects($this->any())
-            ->method('round')
-            ->willReturnCallback(
-                function ($value, $precision, $roundType) {
-                    return (string)round(
-                        $value,
-                        $precision ?: TaxRoundingService::TAX_PRECISION,
-                        $roundType === TaxRoundingService::HALF_DOWN ? PHP_ROUND_HALF_DOWN : PHP_ROUND_HALF_UP
-                    );
-                }
-            );
-        $this->calculator = new TaxCalculator($roundingService);
-    }
-
     /**
      * @param ResultElement $expectedResult
      * @param string $taxableAmount
@@ -75,16 +47,10 @@ class TaxCalculatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param int $taxRate
-     * @return TaxRule
+     * {@inheritdoc}
      */
-    protected function createTaxRule($taxRate)
+    protected function getCalculator(RoundingServiceInterface $roundingService)
     {
-        $taxRule = new TaxRule();
-        $tax = new Tax();
-        $tax->setRate($taxRate);
-        $taxRule->setTax($tax);
-
-        return $taxRule;
+        return new TaxCalculator($roundingService);
     }
 }
