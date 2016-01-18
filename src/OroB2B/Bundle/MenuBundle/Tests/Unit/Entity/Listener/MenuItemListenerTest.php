@@ -84,6 +84,31 @@ class MenuItemListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->postUpdate($this->entity, $this->event);
     }
 
+    public function testPostRemoveWithRegularMenuItem()
+    {
+        $this->entity = new MenuItem();
+        $this->entity->setParentMenuItem(new MenuItem());
+        $this->assertCacheRebuild();
+
+        $this->event = $this->getEventMock($this->entity);
+        $this->menuProvider->expects($this->never())
+            ->method('clearCacheByAlias');
+        $this->listener->postRemove($this->entity, $this->event);
+    }
+
+    public function testPostRemove()
+    {
+        $alias = 'test_menu';
+        $menuItem = new MenuItem();
+        $title = new LocalizedFallbackValue();
+        $title->setString($alias);
+        $menuItem->addTitle($title);
+        $this->menuProvider->expects($this->once())
+            ->method('clearCacheByAlias')
+            ->with($alias);
+        $this->listener->postRemove($menuItem, $this->getEventMock($menuItem));
+    }
+
     /**
      * @param $entity
      * @return LifecycleEventArgs

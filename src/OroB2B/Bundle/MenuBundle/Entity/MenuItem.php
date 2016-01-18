@@ -32,6 +32,8 @@ class MenuItem extends ExtendMenuItem
 {
     use TreeTrait;
 
+    const LOCALE_OPTION = 'orob2b_website_locale';
+
     /**
      * @var integer
      *

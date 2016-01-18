@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\MenuBundle\Tests\Unit\Menu;
 
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -96,7 +95,7 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider->setCache($this->cache);
 
         $alias = 'test_menu';
-        $options = [];
+        $options = ['extras' => [MenuItem::LOCALE_OPTION => $this->currentLocale]];
         $menu = $this->getMock('Knp\Menu\ItemInterface');
         $serializedMenu = ['menuItem1.1', 'menuItem2.1'];
 
@@ -178,7 +177,7 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'alias' => 'test_menu2',
-                'options' => [DatabaseMenuProvider::LOCALE_OPTION => (new Locale)->setCode('kz')],
+                'options' => ['extras' => [MenuItem::LOCALE_OPTION => (new Locale)->setCode('kz')]],
                 'menuIdentifier' => 'test_menu2:kz',
                 'expected' => false
             ]
@@ -249,8 +248,8 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
             ->method('build')
             ->willReturnMap(
                 [
-                    [$alias, [DatabaseMenuProvider::LOCALE_OPTION => $enLocale], $menuEn],
-                    [$alias, [DatabaseMenuProvider::LOCALE_OPTION => $kzLocale], $menuKz]
+                    [$alias, ['extras' => [MenuItem::LOCALE_OPTION => $enLocale]], $menuEn],
+                    [$alias, ['extras' => [MenuItem::LOCALE_OPTION => $kzLocale]], $menuKz]
                 ]
             );
         $this->serializer->expects($this->exactly(2))
@@ -268,6 +267,37 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
                 ['test_menu:kz', $serializedMenuKz]
             );
         $this->provider->rebuildCacheByAlias($alias);
+    }
+
+    public function testClearCacheByAliasWithoutCache()
+    {
+        $this->localeHelper->expects($this->never())
+            ->method('getAll');
+        $this->provider->clearCacheByAlias('test_menu');
+    }
+
+    public function testClearCacheByAlias()
+    {
+        $this->provider->setCache($this->cache);
+
+        $alias = 'test_menu';
+        $enLocale = (new Locale())->setCode('en');
+        $kzLocale = (new Locale())->setCode('kz');
+        $this->localeHelper->expects($this->once())
+            ->method('getAll')
+            ->willReturn(
+                [
+                    $enLocale,
+                    $kzLocale,
+                ]
+            );
+        $this->cache->expects($this->exactly(2))
+            ->method('delete')
+            ->withConsecutive(
+                ['test_menu:en'],
+                ['test_menu:kz']
+            );
+        $this->provider->clearCacheByAlias($alias);
     }
 
     public function testRebuildCacheByLocaleWithoutCache()
@@ -316,8 +346,8 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
             ->method('build')
             ->willReturnMap(
                 [
-                    ['menu1', [DatabaseMenuProvider::LOCALE_OPTION => $locale], $menu1],
-                    ['menu2', [DatabaseMenuProvider::LOCALE_OPTION => $locale], $menu2]
+                    ['menu1', ['extras'=> [MenuItem::LOCALE_OPTION => $locale]], $menu1],
+                    ['menu2', ['extras'=> [MenuItem::LOCALE_OPTION => $locale]], $menu2]
                 ]
             );
         $this->serializer->expects($this->exactly(2))
@@ -336,6 +366,54 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
             );
 
         $this->provider->rebuildCacheByLocale($locale);
+    }
+
+    public function testClearCacheByLocaleWithoutCache()
+    {
+        $this->registry->expects($this->never())
+            ->method('getManagerForClass');
+        $this->provider->clearCacheByLocale($this->currentLocale);
+    }
+
+    public function testClearCacheByLocale()
+    {
+        $this->provider->setCache($this->cache);
+        $locale = new Locale();
+        $locale->setCode('kz');
+        $menu1root = $this->createRootMenuItem('menu1');
+        $menu2root = $this->createRootMenuItem('menu2');
+
+        $repo = $this->getMockBuilder('OroB2B\Bundle\MenuBundle\Entity\Repository\MenuItemRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repo->expects($this->once())
+            ->method('findRoots')
+            ->willReturn(
+                [
+                    $menu1root,
+                    $menu2root
+                ]
+            );
+        $om = $this->getMockBuilder('\Doctrine\Common\Persistence\ObjectManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $om->expects($this->once())
+            ->method('getRepository')
+            ->with(self::ENTITY_CLASS)
+            ->willReturn($repo);
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(self::ENTITY_CLASS)
+            ->willReturn($om);
+
+        $this->cache->expects($this->exactly(2))
+            ->method('delete')
+            ->withConsecutive(
+                ['menu1:kz'],
+                ['menu2:kz']
+            );
+
+        $this->provider->clearCacheByLocale($locale);
     }
 
     /**

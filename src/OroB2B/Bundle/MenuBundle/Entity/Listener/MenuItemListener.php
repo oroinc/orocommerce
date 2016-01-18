@@ -2,8 +2,9 @@
 
 namespace OroB2B\Bundle\MenuBundle\Entity\Listener;
 
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+
+use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
 use OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
 
 class MenuItemListener
@@ -11,14 +12,14 @@ class MenuItemListener
     /**
      * @var DatabaseMenuProvider
      */
-    protected $menuProvider;
+    protected $provider;
 
     /**
-     * @param DatabaseMenuProvider $menuProvider
+     * @param DatabaseMenuProvider $cacheManager
      */
-    public function __construct(DatabaseMenuProvider $menuProvider)
+    public function __construct(DatabaseMenuProvider $cacheManager)
     {
-        $this->menuProvider = $menuProvider;
+        $this->provider = $cacheManager;
     }
 
     /**
@@ -43,6 +44,20 @@ class MenuItemListener
      * @param MenuItem $menuItem
      * @param LifecycleEventArgs $event
      */
+    public function postRemove(MenuItem $menuItem, LifecycleEventArgs $event)
+    {
+        if ($menuItem->getParentMenuItem()) {
+            $this->rebuildCache($menuItem, $event);
+        } else {
+            $alias = $menuItem->getDefaultTitle()->getString();
+            $this->provider->clearCacheByAlias($alias);
+        }
+    }
+
+    /**
+     * @param MenuItem $menuItem
+     * @param LifecycleEventArgs $event
+     */
     protected function rebuildCache(MenuItem $menuItem, LifecycleEventArgs $event)
     {
         $rootId = $menuItem->getRoot();
@@ -53,7 +68,6 @@ class MenuItemListener
         $root = $event->getEntityManager()->find('OroB2BMenuBundle:MenuItem', $rootId);
 
         $alias = $root->getDefaultTitle()->getString();
-        $this->menuProvider->rebuildCacheByAlias($alias);
+        $this->provider->rebuildCacheByAlias($alias);
     }
-    // @todo consider clear cache by root alias on delete
 }
