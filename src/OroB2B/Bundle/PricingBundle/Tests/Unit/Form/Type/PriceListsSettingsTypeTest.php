@@ -3,10 +3,9 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -20,7 +19,6 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListFallback;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -46,52 +44,29 @@ class PriceListsSettingsTypeTest extends \PHPUnit_Framework_TestCase
             $this->registry,
             PropertyAccess::createPropertyAccessor()
         );
+        parent::setUp();
     }
 
     public function testBuildForm()
     {
-        $fallbackChoices = ['some', 'choises'];
-        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
-        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
-        $builder->expects($this->exactly(2))->method('add')->will(
-            $this->returnValueMap(
-                [
-                    [
-                        PriceListsSettingsType::FALLBACK_FIELD,
-                        'choice',
-                        [
-                            'label' => 'orob2b.pricing.fallback.label',
-                            'mapped' => true,
-                            'choices' => $fallbackChoices,
-                        ],
-                        $builder,
-                    ],
-                    [
-                        PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD,
-                        PriceListCollectionType::NAME,
-                        ['label' => 'orob2b.pricing.pricelist.entity_plural_label', 'mapped' => true],
-                        $builder,
-                    ],
-                ]
-            )
-        );
-        $builder->expects($this->exactly(2))->method('addEventListener')->will(
-            $this->returnValueMap(
-                [
-                    [
-                        FormEvents::POST_SET_DATA,
-                        [$builder, 'onPostSetData'],
-                        $builder,
-                    ],
-                    [
-                        FormEvents::POST_SUBMIT,
-                        [$builder, 'onPostSubmit'],
-                        $builder,
-                    ],
-                ]
-            )
-        );
-        $this->priceListsSettingsType->buildForm($builder, ['fallback_choices' => $fallbackChoices]);
+        $options = [
+            'default_fallback' => '',
+            'fallback_choices' => [],
+            'fallback_class_name' => '',
+            'target_field_name' => '',
+            'website' => '',
+        ];
+
+        /** @var FormBuilder|\PHPUnit_Framework_MockObject_MockObject $builder */
+        $builder = $this->getMockBuilder('Symfony\Component\Form\FormBuilder')
+            ->setMethods(['addEventListener'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $builder->expects($this->exactly(2))->method('addEventListener');
+        $this->priceListsSettingsType->buildForm($builder, $options);
+
+        $this->assertTrue($builder->has(PriceListsSettingsType::FALLBACK_FIELD));
+        $this->assertTrue($builder->has(PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD));
     }
 
     public function testConfigureOptions()
