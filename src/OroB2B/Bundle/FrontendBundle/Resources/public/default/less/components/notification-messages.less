@@ -1,5 +1,9 @@
 .notification {
 
+  &:empty {
+    display: none;
+  }
+
   &.notification_success {
     background: @theme-success-bg-color;
     color: @theme-success-font-color;
@@ -81,7 +85,6 @@
   }
 
   &.notification_lg {
-    padding: 1rem 0;
     min-height: 5rem;
     line-height: 3rem;
   }

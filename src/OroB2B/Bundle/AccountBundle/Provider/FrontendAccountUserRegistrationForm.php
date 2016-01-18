@@ -29,7 +29,7 @@ class FrontendAccountUserRegistrationForm implements DataProviderInterface
     /** @var FormInterface */
     protected $form;
 
-    /** @var ManagerRegistry */
+    /** @var FormFactoryInterface */
     protected $formFactory;
 
     /** @var ManagerRegistry */

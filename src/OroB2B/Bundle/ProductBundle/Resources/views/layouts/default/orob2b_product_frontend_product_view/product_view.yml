@@ -36,9 +36,9 @@ layout:
                             product: {@value: $data.product}
                 product_variants:
                     blockType: block
+                    options:
+                        visible: { @value: $data.product.hasVariants }
                 order_with_matrix:
-                    blockType: block
-                quick_order_form:
                     blockType: block
                 product_description_content:
                     blockType: container
@@ -67,7 +67,6 @@ layout:
                                     product_specification: ~
                                     product_variants: ~
                                     order_with_matrix: ~
-                                    quick_order_form: ~
                                 product_description_content:
                                     product_description: ~
                                     attachments: ~

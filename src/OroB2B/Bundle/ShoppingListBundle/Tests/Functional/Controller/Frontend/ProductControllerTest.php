@@ -37,7 +37,7 @@ class ProductControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_shopping_list_product_shopping_list_form', ['productId' => $product->getId()])
+            $this->getUrl('orob2b_product_frontend_product_view', ['id' => $product->getId()])
         );
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
