@@ -39,8 +39,6 @@ services:
 
     orob2b_menu.factory:
         class: %orob2b_menu.factory.class%
-        calls:
-            - [ addExtension, [ @orob2b_menu.menu.condition.condition_extension ] ]
 
     orob2b_menu.menu_manipulator:
         class: Knp\Menu\Util\MenuManipulator

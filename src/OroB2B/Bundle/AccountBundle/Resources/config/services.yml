@@ -884,3 +884,5 @@ services:
         arguments:
             - @router
             - @orob2b_account.security.account_user_provider
+        tags:
+            - { name: orob2b_menu.factory_extension, alias: acl_extension }
