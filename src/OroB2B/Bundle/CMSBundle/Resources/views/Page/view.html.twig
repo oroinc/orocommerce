@@ -75,13 +75,15 @@
     {% set id = 'pageView' %}
     {% set data = {'dataBlocks': dataBlocks} %}
 
-    <div class="cms-page-container">
-        <div class="page b2b-tree page-tree">
+    <div class="cms-page-container tree-component-component">
+        <div class="page page-tree tree-component">
             {% set treeOptions = {
                 'key' : 'b2b-page',
                 'data' : orob2b_page_list(),
                 'nodeId' : entity.id,
                 'updateAllowed' : resource_granted('orob2b_cms_page_update'),
+                'onSelectRoute' : 'orob2b_cms_page_view',
+                'onMoveRoute' : 'orob2b_cms_page_move',
                 'reloadWidget': 'page-info-widget'
             } %}
             <div
