@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormBuilder;
@@ -245,9 +246,12 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->getMock();
+        $fallbackEntity = new PriceListAccountFallback();
+        $fallbackEntity->setWebsite($this->website);
+        $fallbackEntity->setFallback(isset($actualData['fallback']) ? $actualData['fallback'] : null);
         $repo->expects($this->once())
-            ->method('findOneBy')
-            ->willReturn(isset($actualData['fallback']) ? $actualData['fallback'] : null);
+            ->method('findBy')
+            ->willReturn([$fallbackEntity]);
         $em->expects($this->any())
             ->method('getRepository')
             ->will(
@@ -267,7 +271,6 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
         $registry->expects($this->any())
             ->method('getManagerForClass')
             ->willReturn($em);
-
 
         $actualPriceLists = [];
         if (isset($actualData['priceLists'])) {
