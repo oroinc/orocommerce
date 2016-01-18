@@ -17,13 +17,13 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as AccountSelectTypeStub;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntitySelectTypeStub;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
+use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntitySelectTypeStub;
+use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityType;
 
 class FrontendAccountUserTypeTest extends AccountUserTypeTest
 {
@@ -83,7 +83,7 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
                     FrontendAccountUserRoleSelectType::NAME => $frontendUserRoleSelectType,
                     $accountSelectType->getName() => $accountSelectType,
                     AddressCollectionTypeStub::NAME => new AddressCollectionTypeStub(),
-                    $addressEntityType->getName() => $addressEntityType,
+                    $addressEntityType->getName() => $addressEntityType
                 ],
                 []
             ),
@@ -113,7 +113,6 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
         $this->assertTrue($result);
         $this->assertEquals($expectedData, $form->getData());
     }
-
 
     /**
      * @return array
