@@ -31,10 +31,10 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
      */
     public function buildByAccountGroup(Website $website, AccountGroup $accountGroup, $force = false)
     {
-        $accountToPriceListIterator = $this->getPriceListToEntityRepository()
+        $accounts = $this->getPriceListToEntityRepository()
             ->getAccountIteratorByFallback($accountGroup, $website, PriceListAccountFallback::ACCOUNT_GROUP);
 
-        foreach ($accountToPriceListIterator as $account) {
+        foreach ($accounts as $account) {
             $this->updatePriceListsOnCurrentLevel($website, $account, $force);
         }
     }
@@ -50,6 +50,6 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
         $combinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection, $force);
 
         $this->getCombinedPriceListRepository()
-            ->updateCombinedPriceListConnection($combinedPriceList, $account);
+            ->updateCombinedPriceListConnection($combinedPriceList, $website, $account);
     }
 }

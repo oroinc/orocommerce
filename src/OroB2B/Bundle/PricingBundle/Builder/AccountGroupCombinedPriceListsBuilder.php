@@ -59,6 +59,6 @@ class AccountGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBui
         $combinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection, $force);
 
         $this->getCombinedPriceListRepository()
-            ->updateCombinedPriceListConnection($combinedPriceList, $accountGroup);
+            ->updateCombinedPriceListConnection($combinedPriceList, $website, $accountGroup);
     }
 }

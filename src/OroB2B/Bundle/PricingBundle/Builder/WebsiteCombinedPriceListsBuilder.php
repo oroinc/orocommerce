@@ -41,7 +41,7 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
 
         foreach ($websites as $website) {
             $this->updatePriceListsOnCurrentLevel($website, $force);
-            $this->accountGroupCombinedPriceListsBuilder->build($website, $force);
+            $this->accountGroupCombinedPriceListsBuilder->build($website, null, $force);
         }
 
         if ($currentWebsite) {

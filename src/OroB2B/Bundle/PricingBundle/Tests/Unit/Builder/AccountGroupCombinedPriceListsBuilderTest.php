@@ -2,261 +2,122 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Builder;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
 use OroB2B\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository;
-use OroB2B\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBuilderTest
 {
     /**
-     * @var string
+     * @var AccountGroupCombinedPriceListsBuilder
      */
-    protected $combinedPriceListClass;
+    protected $builder;
 
+    /**
+     * @var AccountCombinedPriceListsBuilder|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $accountBuilder;
+
+    /**
+     * @return string
+     */
+    protected function getPriceListToEntityRepositoryClass()
+    {
+        return 'OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
-        $this->combinedPriceListClass = 'OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList';
-    }
+        parent::setUp();
 
-    /**
-     * @dataProvider testBuildDataProvider
-     * @param int $websiteId
-     * @param int $accountGroupId
-     * @param int $currentCPLId
-     * @param array $priceListCollection
-     * @param int $actualCPLId
-     */
-    public function testBuild($websiteId, $accountGroupId, $priceListCollection, $currentCPLId, $actualCPLId)
-    {
-        $accountGroupCPLBuilder = $this->getAccountCPLBuilderMock();
-        $priceListCollectionProvider = $this->getPriceListCollectionProviderMock($priceListCollection);
-        $CPLProvider = $this->getCombinedPriceListProviderMock($priceListCollection, $actualCPLId);
-        $garbageCollector = $this->getGarbageCollectorMock(true);
-
-        /**
-         * @var $website Website|\PHPUnit_Framework_MockObject_MockObject
-         */
-        $website = $this->getMock('OroB2B\Bundle\WebsiteBundle\Entity\Website');
-        $website->expects($this->any())->method('getId')->willReturn($websiteId);
-
-        /**
-         * @var $accountGroup AccountGroup|\PHPUnit_Framework_MockObject_MockObject
-         */
-        $accountGroup = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountGroup');
-        $accountGroup->expects($this->any())->method('getId')->willReturn($accountGroupId);
-
-        $registry = $this->getRegistryWithRepository(null, $currentCPLId, $actualCPLId);
-        $CPLBuilder = new AccountGroupCombinedPriceListsBuilder($registry);
-        $CPLBuilder->setAccountCombinedPriceListsBuilder($accountGroupCPLBuilder);
-        $CPLBuilder->setPriceListCollectionProvider($priceListCollectionProvider);
-        $CPLBuilder->setCombinedPriceListProvider($CPLProvider);
-        $CPLBuilder->setCombinedPriceListGarbageCollector($garbageCollector);
-
-        $class = 'OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup';
-        $CPLBuilder->setCombinedPriceListToAccountGroupClassName($class);
-        $class = 'OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup';
-        $CPLBuilder->setPriceListToAccountGroupClassName($class);
-
-        $CPLBuilder->build($website, $accountGroup);
-    }
-
-    /**
-     * @dataProvider testBuildDataProvider
-     * @param int $websiteId
-     * @param int $accountGroupId
-     * @param int $currentCPLId
-     * @param int $priceListCollection
-     * @param int $actualCPLId
-     */
-    public function testBuildForAll($websiteId, $accountGroupId, $priceListCollection, $currentCPLId, $actualCPLId)
-    {
-        $accountCPLBuilder = $this->getAccountCPLBuilderMock();
-        $priceListCollectionProvider = $this->getPriceListCollectionProviderMock($priceListCollection);
-        $CPLProvider = $this->getCombinedPriceListProviderMock($priceListCollection, $actualCPLId);
-        $garbageCollector = $this->getGarbageCollectorMock(false);
-
-        /**
-         * @var $website Website|\PHPUnit_Framework_MockObject_MockObject
-         */
-        $website = $this->getMock('OroB2B\Bundle\WebsiteBundle\Entity\Website');
-        $website->expects($this->any())->method('getId')->willReturn($websiteId);
-
-        /**
-         * @var $accountGroup AccountGroup|\PHPUnit_Framework_MockObject_MockObject
-         */
-        $accountGroup = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountGroup');
-        $accountGroup->expects($this->any())->method('getId')->willReturn($accountGroupId);
-
-        $registry = $this->getRegistryWithRepository($accountGroup, $currentCPLId, $actualCPLId);
-        $CPLBuilder = new AccountGroupCombinedPriceListsBuilder($registry);
-        $CPLBuilder->setAccountCombinedPriceListsBuilder($accountCPLBuilder);
-        $CPLBuilder->setPriceListCollectionProvider($priceListCollectionProvider);
-        $CPLBuilder->setCombinedPriceListProvider($CPLProvider);
-        $CPLBuilder->setCombinedPriceListGarbageCollector($garbageCollector);
-
-        $class = 'OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup';
-        $CPLBuilder->setCombinedPriceListToAccountGroupClassName($class);
-        $class = 'OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup';
-        $CPLBuilder->setPriceListToAccountGroupClassName($class);
-
-        $CPLBuilder->build($website);
-    }
-
-    /**
-     * @return array
-     */
-    public function testBuildDataProvider()
-    {
-        return [
-            'no changes' => [
-                'websiteId' => 1,
-                'accountGroupId' => 1,
-                'priceListCollection' => [1,2,3],
-                'currentCPLId' => 1,
-                'actualCPLId' => 1,
-            ],
-            'change cpl' => [
-                'websiteId' => 1,
-                'accountGroupId' => 1,
-                'priceListCollection' => [1,2,3],
-                'currentCPLId' => 2,
-                'actualCPLId' => 1,
-            ],
-            'new cpl' => [
-                'websiteId' => 1,
-                'accountGroupId' => 1,
-                'priceListCollection' => [1,2,3],
-                'currentCPLId' => null,
-                'actualCPLId' => 1,
-            ],
-        ];
-    }
-
-    /**
-     * @param array $priceListCollection
-     * @return \PHPUnit_Framework_MockObject_MockObject|PriceListCollectionProvider
-     */
-    protected function getPriceListCollectionProviderMock($priceListCollection)
-    {
-        $providerClass = 'OroB2B\Bundle\PricingBundle\Provider\PriceListCollectionProvider';
-        $priceListCollectionProvider = $this->getMockBuilder($providerClass)
+        $this->accountBuilder = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $priceListCollectionProvider->expects($this->once())
+        $this->builder = new AccountGroupCombinedPriceListsBuilder(
+            $this->registry,
+            $this->priceListCollectionProvider,
+            $this->combinedPriceListProvider,
+            $this->garbageCollector
+        );
+        $this->builder->setPriceListToEntityClassName($this->priceListToEntityClass);
+        $this->builder->setCombinedPriceListClassName($this->combinedPriceListClass);
+        $this->builder->setAccountCombinedPriceListsBuilder($this->accountBuilder);
+    }
+
+    /**
+     * @dataProvider trueFalseDataProvider
+     * @param bool $force
+     */
+    public function testBuildForAll($force)
+    {
+        $website = new Website();
+        $accountGroup = new AccountGroup();
+
+        $this->priceListToEntityRepository->expects($this->once())
+            ->method('getAccountGroupIteratorByFallback')
+            ->with($website, PriceListAccountGroupFallback::WEBSITE)
+            ->will($this->returnValue([$accountGroup]));
+        $this->garbageCollector->expects($this->never())
+            ->method($this->anything());
+
+        $this->assertRebuild($force, $website, $accountGroup);
+
+        $this->builder->build($website, null, $force);
+    }
+
+    /**
+     * @dataProvider trueFalseDataProvider
+     * @param bool $force
+     */
+    public function testBuildForAccountGroup($force)
+    {
+        $website = new Website();
+        $accountGroup = new AccountGroup();
+
+        $this->priceListToEntityRepository->expects($this->never())
+            ->method('getAccountGroupIteratorByFallback');
+        $this->garbageCollector->expects($this->once())
+            ->method('cleanCombinedPriceLists');
+
+        $this->assertRebuild($force, $website, $accountGroup);
+
+        $this->builder->build($website, $accountGroup, $force);
+    }
+
+    /**
+     * @param bool $force
+     * @param Website $website
+     * @param AccountGroup $accountGroup
+     */
+    protected function assertRebuild($force, Website $website, AccountGroup $accountGroup)
+    {
+        $priceListCollection = [$this->getPriceListSequenceMember()];
+        $combinedPriceList = new CombinedPriceList();
+
+        $this->priceListCollectionProvider->expects($this->once())
             ->method('getPriceListsByAccountGroup')
+            ->with($accountGroup, $website)
             ->willReturn($priceListCollection);
 
-        return $priceListCollectionProvider;
-    }
+        $this->combinedPriceListProvider->expects($this->once())
+            ->method('getCombinedPriceList')
+            ->with($priceListCollection, $force)
+            ->will($this->returnValue($combinedPriceList));
 
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|AccountCombinedPriceListsBuilder
-     */
-    protected function getAccountCPLBuilderMock()
-    {
-        $accountCPLBuilderClass = 'OroB2B\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder';
-        $accountGroupCPLBuilder = $this->getMockBuilder($accountCPLBuilderClass)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $accountGroupCPLBuilder->expects($this->once())->method('buildByAccountGroup');
+        $this->combinedPriceListRepository->expects($this->once())
+            ->method('updateCombinedPriceListConnection')
+            ->with($combinedPriceList, $website, $accountGroup);
 
-        return $accountGroupCPLBuilder;
-    }
-
-    /**
-     * @param AccountGroup $accountGroup
-     * @param int $currentCPLId
-     * @param int $actualCPLId
-     * @return Registry|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getRegistryWithRepository($accountGroup, $currentCPLId, $actualCPLId)
-    {
-        $PLToAccountGroupClass = 'OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup';
-        $PLToAccountGroupRepository = $this->getPriceListToAccountGroupRepositoryMock($accountGroup);
-
-        $CPLToAccountGroupClass = 'OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup';
-        $CPLRepository = $this->getCombinedPriceListToAccountGroupRepositoryMock($currentCPLId, $actualCPLId);
-
-        /**
-         * @var $registry \PHPUnit_Framework_MockObject_MockObject|Registry
-         */
-        $registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        if ($currentCPLId != $actualCPLId) {
-            $em->expects($this->once())->method('flush');
-        } else {
-            $em->expects($this->never())->method('flush');
-        }
-
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->willReturnMap([
-                [$PLToAccountGroupClass, $PLToAccountGroupRepository],
-                [$CPLToAccountGroupClass, $CPLRepository],
-            ]);
-
-        $registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-
-
-        return $registry;
-    }
-
-    /**
-     * @param AccountGroup $accountGroup
-     * @return PriceListToAccountGroupRepository|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getPriceListToAccountGroupRepositoryMock($accountGroup)
-    {
-        $class = 'OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository';
-        $PLToAccountGroupRepository = $this->getMockBuilder($class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        if ($accountGroup) {
-            $PLToAccountGroupRepository->expects($this->once())->method('getAccountGroupIteratorByFallback')
-                ->willReturn([$accountGroup]);
-        } else {
-            $PLToAccountGroupRepository->expects($this->never())->method('getAccountGroupIteratorByFallback');
-        }
-
-        return $PLToAccountGroupRepository;
-    }
-
-    /**
-     * @param int $currentCPLId
-     * @param int $actualCPLId
-     * @return PriceListToAccountGroupRepository|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getCombinedPriceListToAccountGroupRepositoryMock($currentCPLId, $actualCPLId)
-    {
-        $CPLToAccountGroupRepoClass = 'OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository';
-        $CPLToAccountGroupRepository = $this->getMockBuilder($CPLToAccountGroupRepoClass)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $relation = null;
-        if ($currentCPLId == $actualCPLId) {
-            $relation = $this->getMock('OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup');
-        }
-        $CPLToAccountGroupRepository->expects($this->once())
-            ->method('findByPrimaryKey')
-            ->willReturn($relation);
-
-        return $CPLToAccountGroupRepository;
+        $this->accountBuilder->expects($this->once())
+            ->method('buildByAccountGroup')
+            ->with($website, $accountGroup, $force);
     }
 }
