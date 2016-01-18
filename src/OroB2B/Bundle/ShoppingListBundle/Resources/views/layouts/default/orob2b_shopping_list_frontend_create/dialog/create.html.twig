@@ -3,17 +3,23 @@
         '_wid': app.request.get('_wid'),
         'savedId': savedId|default(null)
     } %}
-    <div class="widget-content"
-         data-page-component-module="orob2bfrontend/js/app/components/widget-form-component"
-         data-page-component-options="{{ pageComponentOptions|merge({message: 'orob2b.shoppinglist.flash.success'})|json_encode }}"
-    >
+    {% set attr = {
+        'data-page-component-module': 'orob2bfrontend/js/app/components/widget-form-component',
+        'data-page-component-options': pageComponentOptions|merge({message: 'orob2b.shoppinglist.flash.success'})|json_encode
+    }|merge(attr)|merge({
+        class: attr.class|default('') ~ " widget-content"
+    }) %}
+    <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block _form_errors_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " alert alert-error"
+    }) %}
     {% if form.vars.errors|length > 0 %}
-        <div class="alert alert-error">
+        <div{{ block('block_attributes') }}>
             {{ form_errors(form) }}
         </div>
     {% endif %}
@@ -27,15 +33,24 @@
 {% endblock %}
 
 {% block _form_actions_widget %}
-    <div class="widget-actions">
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " widget-actions"
+    }) %}
+    <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block _form_actions_reset_widget %}
-    <input type="reset" class="btn theme-btn_sm btn_gray" value="Cancel" />
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " btn theme-btn_sm btn_gray"
+    }) %}
+    {{ block('button_widget') }}
 {% endblock %}
 
 {% block _form_actions_create_widget %}
-    <input type="submit" class="btn theme-btn_sm btn_orange ml1-md" value="Create and Add" />
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " btn theme-btn_sm btn_orange ml1-md"
+    }) %}
+    {{ block('button_widget') }}
 {% endblock %}

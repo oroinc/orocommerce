@@ -100,6 +100,7 @@ class ShoppingListController extends Controller
             ->setAccount($accountUser->getAccount())
             ->setAccountUser($accountUser);
         if ($this->get('request')->get('_theme')) {
+            //TODO: remove "_theme" check after @Template removal
             return [
                 'data' => [
                     'shoppingList' => $shoppingList,
