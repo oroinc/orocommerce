@@ -112,8 +112,8 @@ class PriceListsSettingsTypeTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider onPostSetDataDataProvider
-     * @param $fallbackEntity
-     * @param $expectedFallbackValue
+     * @param PriceListFallback $fallbackEntity
+     * @param integer $expectedFallbackValue
      */
     public function testOnPostSetData($fallbackEntity, $expectedFallbackValue)
     {

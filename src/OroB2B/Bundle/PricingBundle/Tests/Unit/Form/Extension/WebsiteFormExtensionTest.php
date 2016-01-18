@@ -191,8 +191,8 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider testOnPostSubmitDataProvider
-     * @param $submittedData
-     * @param $expectedDispatch
+     * @param array $submittedData
+     * @param boolean $expectedDispatch
      */
     public function testOnPostSubmit($submittedData, $expectedDispatch)
     {
