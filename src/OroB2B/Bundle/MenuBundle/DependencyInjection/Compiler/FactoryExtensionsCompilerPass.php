@@ -16,7 +16,14 @@ class FactoryExtensionsCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
+        if (!$container->hasDefinition(self::FACTORY_SERVICE_ID)) {
+            return;
+        }
+
         $extensions = $container->findTaggedServiceIds(self::TAG_NAME);
+        if (empty($extensions)) {
+            return;
+        }
 
         $service = $container->getDefinition(self::FACTORY_SERVICE_ID);
 
