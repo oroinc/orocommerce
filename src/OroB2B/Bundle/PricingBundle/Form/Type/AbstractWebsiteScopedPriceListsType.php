@@ -173,8 +173,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
             $website = $priceListsByWebsite->getConfig()->getOption('website');
             $submittedFallback = $priceListsByWebsite->get('fallback')->getData();
             $actualFallback = $this->getFallbackByWebsite($fallbacks, $website);
-            $hasFallbackChanges = (!$actualFallback && $submittedFallback != $this->getDefaultFallback())
-                || ($actualFallback && $submittedFallback != $actualFallback->getFallback());
+            $hasFallbackChanges = $this->hasFallbackChanges($actualFallback, $submittedFallback);
             $actualPriceListsToTargetEntity = $this->getActualPriceListsToTargetEntity($targetEntity, $website);
 
             $submittedPriceLists = $this->getWebsiteSubmittedPriceLists($priceListsByWebsite);
@@ -402,5 +401,18 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         }
 
         return $hasChanges;
+    }
+
+    /**
+     * @param PriceListFallback $actualFallback
+     * @param integer $submittedFallback
+     * @return bool
+     */
+    protected function hasFallbackChanges($actualFallback, $submittedFallback)
+    {
+        $hasFallbackChanges = (!$actualFallback && $submittedFallback != $this->getDefaultFallback())
+            || ($actualFallback && $submittedFallback != $actualFallback->getFallback());
+
+        return $hasFallbackChanges;
     }
 }

@@ -233,59 +233,7 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
      */
     public function testOnPostSubmit(array $submittedData, array $actualData, $expectDispatch)
     {
-        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $priceListToAccountRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $repo = $this
-            ->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $fallbackEntity = new PriceListAccountFallback();
-        $fallbackEntity->setWebsite($this->website);
-        $fallbackEntity->setFallback(isset($actualData['fallback']) ? $actualData['fallback'] : null);
-        $repo->expects($this->once())
-            ->method('findBy')
-            ->willReturn([$fallbackEntity]);
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        ['OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount', $priceListToAccountRepository],
-                        ['OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback', $repo],
-                    ]
-                )
-            );
-
-        /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry */
-        $registry = $this->getMockBuilder('\Doctrine\Common\Persistence\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-        $actualPriceLists = [];
-        if (isset($actualData['priceLists'])) {
-            foreach ($actualData['priceLists'] as $item) {
-                $priceListToTargetEntity = new PriceListToAccount();
-                $priceListToTargetEntity->setPriceList($item['priceList']);
-                $priceListToTargetEntity->setPriority($item['priority']);
-                $priceListToTargetEntity->setMergeAllowed($item['mergeAllowed']);
-                $actualPriceLists[] = $priceListToTargetEntity;
-            }
-        }
-        $priceListToAccountRepository->expects($this->any())
-            ->method('getPriceLists')
-            ->with($this->targetEntity, $this->website)
-            ->willReturn($actualPriceLists);
+        list($registry, $actualPriceLists) = $this->setRepositoryExpectations($actualData);
 
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
         $parentForm = $this->getMock('Symfony\Component\Form\FormInterface');
@@ -377,24 +325,13 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
                 $this->em->remove($actualPriceList);
             }
         }
-        if ($expectDispatch) {
-            $this->eventDispatcher
-                ->expects($this->once())
-                ->method('dispatch')
-                ->with(
-                    PriceListCollectionChange::BEFORE_CHANGE,
-                    new PriceListCollectionChange($this->targetEntity, $this->website)
-                );
-        } else {
-            $this->eventDispatcher
-                ->expects($this->never())
-                ->method('dispatch');
-        }
+        $this->setDispatchExpectation($expectDispatch);
         $this->formType = new AccountWebsiteScopedPriceListsType($registry, $this->getEventDispatcher());
         $this->formType->onPostSubmit($event);
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     public function onPostSubmitDataProvider()
@@ -583,5 +520,88 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
         }
 
         return $this->eventDispatcher;
+    }
+
+    /**
+     * @param array $actualData
+     * @return array
+     */
+    protected function setRepositoryExpectations(array $actualData)
+    {
+        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $priceListToAccountRepository = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $repo = $this
+            ->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $fallbackEntity = new PriceListAccountFallback();
+        $fallbackEntity->setWebsite($this->website);
+        $fallbackEntity->setFallback(isset($actualData['fallback']) ? $actualData['fallback'] : null);
+        $repo->expects($this->once())
+            ->method('findBy')
+            ->willReturn([$fallbackEntity]);
+        $em->expects($this->any())
+            ->method('getRepository')
+            ->will(
+                $this->returnValueMap(
+                    [
+                        ['OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount', $priceListToAccountRepository],
+                        ['OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback', $repo],
+                    ]
+                )
+            );
+
+        /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry */
+        $registry = $this->getMockBuilder('\Doctrine\Common\Persistence\ManagerRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($em);
+
+        $actualPriceLists = [];
+        if (isset($actualData['priceLists'])) {
+            foreach ($actualData['priceLists'] as $item) {
+                $priceListToTargetEntity = new PriceListToAccount();
+                $priceListToTargetEntity->setPriceList($item['priceList']);
+                $priceListToTargetEntity->setPriority($item['priority']);
+                $priceListToTargetEntity->setMergeAllowed($item['mergeAllowed']);
+                $actualPriceLists[] = $priceListToTargetEntity;
+            }
+        }
+        $priceListToAccountRepository->expects($this->any())
+            ->method('getPriceLists')
+            ->with($this->targetEntity, $this->website)
+            ->willReturn($actualPriceLists);
+
+        return [$registry, $actualPriceLists];
+    }
+
+    /**
+     * @param boolean $expectDispatch
+     */
+    protected function setDispatchExpectation($expectDispatch)
+    {
+        if ($expectDispatch) {
+            $this->eventDispatcher
+                ->expects($this->once())
+                ->method('dispatch')
+                ->with(
+                    PriceListCollectionChange::BEFORE_CHANGE,
+                    new PriceListCollectionChange($this->targetEntity, $this->website)
+                );
+        } else {
+            $this->eventDispatcher
+                ->expects($this->never())
+                ->method('dispatch');
+        }
     }
 }
