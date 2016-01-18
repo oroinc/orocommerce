@@ -95,6 +95,29 @@ class LocaleListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->postUpdate($event);
     }
 
+    public function testPostRemove()
+    {
+        $entity = new Locale();
+        $event = $this->getEventMock($entity);
+
+        $this->menuProvider->expects($this->once())
+            ->method('clearCacheByLocale')
+            ->with($entity);
+
+        $this->listener->postRemove($event);
+    }
+
+    public function testPostRemoveWithWrongEntity()
+    {
+        $entity = new \stdClass;
+        $event = $this->getEventMock($entity);
+
+        $this->menuProvider->expects($this->never())
+            ->method('clearCacheByLocale');
+
+        $this->listener->postPersist($event);
+    }
+
     /**
      * @param object $entity
      * @return LifecycleEventArgs

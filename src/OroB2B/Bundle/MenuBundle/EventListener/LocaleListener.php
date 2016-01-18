@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\MenuBundle\EventListener;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
-use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 class LocaleListener
 {
@@ -32,7 +31,7 @@ class LocaleListener
         if (!$this->isLocaleEntity($entity)) {
             return;
         }
-        $this->rebuildCache($entity);
+        $this->menuProvider->rebuildCacheByLocale($entity);
     }
 
     /**
@@ -47,8 +46,20 @@ class LocaleListener
         $uow = $args->getEntityManager()->getUnitOfWork();
         $changes = $uow->getEntityChangeSet($entity);
         if (array_key_exists('parentLocale', $changes) === true) {
-            $this->rebuildCache($entity);
+            $this->menuProvider->rebuildCacheByLocale($entity);
         }
+    }
+
+    /**
+     * @param LifecycleEventArgs $args
+     */
+    public function postRemove(LifecycleEventArgs $args)
+    {
+        $entity = $args->getEntity();
+        if (!$this->isLocaleEntity($entity)) {
+            return;
+        }
+        $this->menuProvider->clearCacheByLocale($entity);
     }
 
     /**
@@ -58,13 +69,5 @@ class LocaleListener
     protected function isLocaleEntity($entity)
     {
         return ClassUtils::getClass($entity) === 'OroB2B\Bundle\WebsiteBundle\Entity\Locale';
-    }
-
-    /**
-     * @param Locale $entity
-     */
-    protected function rebuildCache($entity)
-    {
-        $this->menuProvider->rebuildCacheByLocale($entity);
     }
 }
