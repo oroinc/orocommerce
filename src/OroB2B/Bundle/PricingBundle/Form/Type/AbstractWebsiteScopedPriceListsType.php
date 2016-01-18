@@ -173,35 +173,29 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
             $website = $priceListsByWebsite->getConfig()->getOption('website');
             $submittedFallback = $priceListsByWebsite->get('fallback')->getData();
             $actualFallback = $this->getFallbackByWebsite($fallbacks, $website);
-            $hasChanges = (!$actualFallback && $submittedFallback != $this->getDefaultFallback())
+            $hasFallbackChanges = (!$actualFallback && $submittedFallback != $this->getDefaultFallback())
                 || ($actualFallback && $submittedFallback != $actualFallback->getFallback());
             $actualPriceListsToTargetEntity = $this->getActualPriceListsToTargetEntity($targetEntity, $website);
 
             $submittedPriceLists = $this->getWebsiteSubmittedPriceLists($priceListsByWebsite);
+            $hasRemoveChanges = $this->removePriceListRelations(
+                $actualPriceListsToTargetEntity,
+                $submittedPriceLists,
+                $em
+            );
 
-            /** @var BasePriceListRelation[] $actualPriceListsToTargetEntity */
-            foreach ($actualPriceListsToTargetEntity as $priceListToTargetEntity) {
-                if (!in_array($priceListToTargetEntity->getPriceList(), $submittedPriceLists)) {
-                    $em->remove($priceListToTargetEntity);
-                    $hasChanges = true;
-                }
-            }
             $priceListsWithPriority = $priceListsByWebsite
                 ->get(PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD)
                 ->all();
 
-            foreach ($priceListsWithPriority as $priceListWithPriority) {
-                $priceListWithPriorityData = $priceListWithPriority->getData();
-                $hasUpdateChanges = $this->updatePriceListToTargetEntity(
-                    $em,
-                    $targetEntity,
-                    $website,
-                    $priceListWithPriorityData,
-                    $actualPriceListsToTargetEntity
-                );
-                $hasChanges = $hasUpdateChanges || $hasChanges;
-            }
-            if ($hasChanges) {
+            $hasUpdateChanges = $this->updatePriceListsRelations(
+                $priceListsWithPriority,
+                $em,
+                $targetEntity,
+                $website,
+                $actualPriceListsToTargetEntity
+            );
+            if ($hasRemoveChanges || $hasUpdateChanges || $hasFallbackChanges) {
                 $this->eventDispatcher->dispatch(
                     PriceListCollectionChange::BEFORE_CHANGE,
                     new PriceListCollectionChange($targetEntity, $website)
@@ -269,7 +263,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
     /**
      * @param object $targetEntity
      * @param Website $website
-     * @return PriceList[]
+     * @return BasePriceListRelation[]
      */
     protected function getActualPriceListsToTargetEntity($targetEntity, Website $website)
     {
@@ -354,5 +348,59 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         }
 
         return $this->repository;
+    }
+
+    /**
+     * @param BasePriceListRelation[] $actualPriceListsToTargetEntity
+     * @param array $submittedPriceLists
+     * @param EntityManager $em
+     * @return bool
+     */
+    protected function removePriceListRelations(
+        $actualPriceListsToTargetEntity,
+        $submittedPriceLists,
+        EntityManager $em
+    ) {
+        $hasChanges = false;
+        /** @var BasePriceListRelation[] $actualPriceListsToTargetEntity */
+        foreach ($actualPriceListsToTargetEntity as $priceListToTargetEntity) {
+            if (!in_array($priceListToTargetEntity->getPriceList(), $submittedPriceLists)) {
+                $em->remove($priceListToTargetEntity);
+                $hasChanges = true;
+            }
+        }
+
+        return $hasChanges;
+    }
+
+    /**
+     * @param FormInterface[] $priceListsWithPriority
+     * @param EntityManager $em
+     * @param object $targetEntity
+     * @param Website $website
+     * @param BasePriceListRelation[] $actualPriceListsToTargetEntity
+     * @return bool
+     */
+    protected function updatePriceListsRelations(
+        $priceListsWithPriority,
+        $em,
+        $targetEntity,
+        Website $website,
+        $actualPriceListsToTargetEntity
+    ) {
+        $hasChanges = false;
+        foreach ($priceListsWithPriority as $priceListWithPriority) {
+            $priceListWithPriorityData = $priceListWithPriority->getData();
+            $hasUpdateChanges = $this->updatePriceListToTargetEntity(
+                $em,
+                $targetEntity,
+                $website,
+                $priceListWithPriorityData,
+                $actualPriceListsToTargetEntity
+            );
+            $hasChanges = $hasChanges || $hasUpdateChanges;
+        }
+
+        return $hasChanges;
     }
 }
