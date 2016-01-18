@@ -15,6 +15,11 @@ class Configuration implements ConfigurationInterface
     const COMBINED_PRICE_LIST = 'combined_price_list';
 
     /**
+     * @var
+     */
+    protected static $configKeyToPriceList;
+
+    /**
      * {@inheritDoc}
      */
     public function getConfigTreeBuilder()
@@ -34,5 +39,20 @@ class Configuration implements ConfigurationInterface
         );
 
         return $treeBuilder;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getConfigKeyToPriceList()
+    {
+        if (!self::$configKeyToPriceList) {
+            self::$configKeyToPriceList = implode(
+                '.',
+                [OroB2BPricingExtension::ALIAS, Configuration::COMBINED_PRICE_LIST]
+            );
+        }
+
+        return self::$configKeyToPriceList;
     }
 }
