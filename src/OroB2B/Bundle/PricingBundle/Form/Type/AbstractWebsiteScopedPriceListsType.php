@@ -20,6 +20,9 @@ use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepositoryInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
 {
     /**
