@@ -81,7 +81,7 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
             'priceListsToAccounts' => [
                 [
                     'account' => 'account.level_1.2',
-                    'website' => LoadWebsiteData::WEBSITE1,
+                    'website' => LoadWebsiteData::WEBSITE2,
                 ]
             ],
             'priceListsToAccountGroups' => [],

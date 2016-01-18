@@ -105,7 +105,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
 
     /**
      * @param ProductPrice $defaultData
-     * @param $submittedData
+     * @param array $submittedData
      * @param ProductPrice $expectedData
      * @dataProvider submitProvider
      */

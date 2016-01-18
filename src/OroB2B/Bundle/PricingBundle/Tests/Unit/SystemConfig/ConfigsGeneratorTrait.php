@@ -8,7 +8,7 @@ use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig;
 trait ConfigsGeneratorTrait
 {
     /**
-     * @param $count
+     * @param int $count
      * @return PriceListConfig[]
      */
     public function createConfigs($count)

@@ -67,16 +67,20 @@ class CombinedPriceListProvider
 
     /**
      * @param PriceListSequenceMember[] $priceListsRelations
+     * @param boolean $force
      * @return CombinedPriceList
      */
-    public function getCombinedPriceList(array $priceListsRelations)
+    public function getCombinedPriceList(array $priceListsRelations, $force = false)
     {
         $normalizedCollection = $this->normalizeCollection($priceListsRelations);
         $identifier = $this->getCombinedPriceListIdentifier($normalizedCollection);
         $combinedPriceList = $this->getRepository()->findOneBy(['name' => $identifier]);
 
-        if (!$combinedPriceList) {
-            $combinedPriceList = $this->createCombinedPriceList($normalizedCollection, $identifier);
+        if (!$combinedPriceList || $force) {
+            if (!$combinedPriceList) {
+                $combinedPriceList = $this->createCombinedPriceList($identifier);
+            }
+            $this->updateCombinedPriceList($combinedPriceList, $normalizedCollection);
             $this->resolver->combinePrices($combinedPriceList);
         }
 
@@ -127,19 +131,28 @@ class CombinedPriceListProvider
     }
 
     /**
-     * @param PriceListSequenceMember[] $priceListsRelations
      * @param string $identifier
      * @return CombinedPriceList
      */
-    protected function createCombinedPriceList(array $priceListsRelations, $identifier)
+    protected function createCombinedPriceList($identifier)
     {
         $combinedPriceList = new CombinedPriceList();
         $combinedPriceList->setName($identifier);
-        $combinedPriceList->setCurrencies($this->getCombinedCurrenciesList($priceListsRelations));
 
         $manager = $this->getManager();
         $manager->persist($combinedPriceList);
 
+        return $combinedPriceList;
+    }
+
+    /**
+     * @param CombinedPriceList $combinedPriceList
+     * @param PriceListSequenceMember[] $priceListsRelations
+     */
+    protected function updateCombinedPriceList(CombinedPriceList $combinedPriceList, array $priceListsRelations)
+    {
+        $manager = $this->getManager();
+        $combinedPriceList->setCurrencies($this->getCombinedCurrenciesList($priceListsRelations));
         $i = 0;
         foreach ($priceListsRelations as $priceListsRelation) {
             $priceListToCombined = new CombinedPriceListToPriceList();
@@ -150,8 +163,6 @@ class CombinedPriceListProvider
             $manager->persist($priceListToCombined);
         }
         $manager->flush();
-
-        return $combinedPriceList;
     }
 
     /**
