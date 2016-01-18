@@ -16,18 +16,18 @@ class PriceListSelectTypeStub extends AbstractType
     {
         return PriceListSelectType::NAME;
     }
-//
-//    /**
-//     * {@inheritdoc}
-//     */
-//    public function setDefaultOptions(OptionsResolverInterface $resolver)
-//    {
-//        $resolver->setDefaults([
-//            'class' => 'OroB2B\Bundle\PricingBundle\Entity\PriceList',
-//            'property' => 'name',
-//            'create_enabled' => false
-//        ]);
-//    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults([
+            'class' => 'OroB2B\Bundle\PricingBundle\Entity\PriceList',
+            'property' => 'name',
+            'create_enabled' => false
+        ]);
+    }
 
     /**
      * {@inheritdoc}
