@@ -6,7 +6,7 @@ use Doctrine\ORM\QueryBuilder;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 class FrontendProductListModifier
@@ -34,10 +34,13 @@ class FrontendProductListModifier
     /**
      * @param QueryBuilder $queryBuilder
      * @param string|null $currency
-     * @param PriceList|null $priceList
+     * @param BasePriceList|null $priceList
      */
-    public function applyPriceListLimitations(QueryBuilder $queryBuilder, $currency = null, PriceList $priceList = null)
-    {
+    public function applyPriceListLimitations(
+        QueryBuilder $queryBuilder,
+        $currency = null,
+        BasePriceList $priceList = null
+    ) {
         $token = $this->tokenStorage->getToken();
         /** @var AccountUser $user */
         if ($token && ($user = $token->getUser()) instanceof AccountUser) {

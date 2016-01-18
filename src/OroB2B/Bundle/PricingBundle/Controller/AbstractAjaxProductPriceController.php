@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\UserBundle\Entity\User;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -151,11 +151,11 @@ class AbstractAjaxProductPriceController extends Controller
     /**
      * Get product units that for which prices in given currency are exists.
      *
-     * @param PriceList $priceList
+     * @param BasePriceList $priceList
      * @param Request $request
      * @return JsonResponse
      */
-    protected function getProductUnitsByCurrency(PriceList $priceList, Request $request)
+    protected function getProductUnitsByCurrency(BasePriceList $priceList, Request $request)
     {
         $priceClass = $this->getParameter('orob2b_pricing.entity.product_price.class');
         $productClass = $this->getParameter('orob2b_product.product.class');

@@ -40,7 +40,7 @@ class CombinedPriceListRepository extends EntityRepository
      * @return null|CombinedPriceList
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function getCombinedPriceListByAccount(Account $account, Website $website, $isEnabled = true)
+    public function getPriceListByAccount(Account $account, Website $website, $isEnabled = true)
     {
         $qb = $this->createQueryBuilder('priceList');
         $qb
@@ -69,7 +69,7 @@ class CombinedPriceListRepository extends EntityRepository
      * @return null|CombinedPriceList
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function getCombinedPriceListByAccountGroup(AccountGroup $accountGroup, Website $website, $isEnabled = true)
+    public function getPriceListByAccountGroup(AccountGroup $accountGroup, Website $website, $isEnabled = true)
     {
         $qb = $this->createQueryBuilder('priceList');
         $qb
@@ -95,7 +95,7 @@ class CombinedPriceListRepository extends EntityRepository
      * @param bool|true $isEnabled
      * @return CombinedPriceList|null
      */
-    public function getCombinedPriceListByWebsite(Website $website, $isEnabled = true)
+    public function getPriceListByWebsite(Website $website, $isEnabled = true)
     {
         $qb = $this->createQueryBuilder('priceList');
 

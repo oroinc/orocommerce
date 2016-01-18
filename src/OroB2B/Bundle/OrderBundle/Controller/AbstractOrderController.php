@@ -10,8 +10,8 @@ use Oro\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 
 abstract class AbstractOrderController extends Controller
 {
@@ -97,7 +97,7 @@ abstract class AbstractOrderController extends Controller
 
     /**
      * @param Order $order
-     * @return PriceList
+     * @return BasePriceList
      */
     protected function getPriceList(Order $order)
     {

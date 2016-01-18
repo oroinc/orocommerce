@@ -8,7 +8,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
@@ -48,7 +48,7 @@ class PriceListTreeHandler
 
     /**
      * @param AccountUser|null $accountUser
-     * @return PriceList
+     * @return BasePriceList
      */
     public function getPriceList(AccountUser $accountUser = null)
     {
@@ -57,13 +57,13 @@ class PriceListTreeHandler
             $account = $accountUser->getAccount();
 
             if ($account) {
-                $priceList = $this->getPriceListRepository()->getCombinedPriceListByAccount($account, $website);
+                $priceList = $this->getPriceListRepository()->getPriceListByAccount($account, $website);
                 if ($priceList) {
                     return $priceList;
                 }
                 if ($account->getGroup()) {
                     $priceList = $this->getPriceListRepository()
-                        ->getCombinedPriceListByAccountGroup($account->getGroup(), $website);
+                        ->getPriceListByAccountGroup($account->getGroup(), $website);
                     if ($priceList) {
                         return $priceList;
                     }
@@ -71,7 +71,7 @@ class PriceListTreeHandler
             }
         }
 
-        $priceList =  $priceList = $this->getPriceListRepository()->getCombinedPriceListByWebsite($website);
+        $priceList =  $priceList = $this->getPriceListRepository()->getPriceListByWebsite($website);
         if (!$priceList) {
             $priceList = $this->getPriceListFromConfig();
         }
@@ -80,7 +80,7 @@ class PriceListTreeHandler
     }
 
     /**
-     * @return null|PriceList
+     * @return null|BasePriceList
      */
     protected function getPriceListFromConfig()
     {

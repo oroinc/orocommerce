@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
@@ -66,10 +66,10 @@ class ProductPriceProvider
 
     /**
      * @param array $productsPriceCriteria
-     * @param PriceList|null $priceList
+     * @param BasePriceList|null $priceList
      * @return array|Price[]
      */
-    public function getMatchedPrices(array $productsPriceCriteria, PriceList $priceList = null)
+    public function getMatchedPrices(array $productsPriceCriteria, BasePriceList $priceList = null)
     {
         if (!$priceList) {
             $priceList = $this->requestHandler->getPriceList();
