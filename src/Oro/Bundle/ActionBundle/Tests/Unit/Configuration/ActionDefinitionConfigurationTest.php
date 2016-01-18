@@ -85,6 +85,9 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'page_component_options' => [],
                         'data' => []
                     ],
+                    'datagrid_options' => [
+                        'mass_action' => []
+                    ]
                 ],
             ],
             'full valid configuration' => [
@@ -116,6 +119,11 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                             ],
                             'data' => [
                                 'attribute' => 'attrValue'
+                            ]
+                        ],
+                        'datagrid_options' => [
+                            'mass_action' => [
+                                'icon' => 'test'
                             ]
                         ],
                         'form_options' => [
@@ -214,6 +222,11 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                             'attribute_1' => 'value 1',
                         ]
                     ],
+                    'datagrid_options' => [
+                        'mass_action' => [
+                            'icon' => 'test'
+                        ]
+                    ]
                 ],
             ],
         ];
@@ -228,7 +241,8 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
             $this->invalidConfigurationProvider(),
             $this->invalidAttributeProvider(),
             $this->invalidFormOptionsProvider(),
-            $this->invalidAttributesProvider()
+            $this->invalidAttributesProvider(),
+            $this->invalidDatagridOptionsProvider()
         );
     }
 
@@ -603,6 +617,39 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                 'message' =>
                     'Invalid configuration for path "action.attributes.attribute9": ' .
                     'Option "class" cannot be used for "bool" type'
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function invaliddatagridOptionsProvider()
+    {
+        return [
+            'incorrect action[datagrid_options]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'datagrid_options' => '',
+                    ],
+                ],
+                'message' => 'Invalid type for path "action.datagrid_options". Expected array, but got string'
+            ],
+            'specified both options of action[datagrid_options]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'datagrid_options' => [
+                            'mass_action_provider' => 'test',
+                            'mass_action' => [
+                                'data' => 'value'
+                            ]
+                        ],
+                    ],
+                ],
+                'message' => 'Invalid configuration for path "action.datagrid_options": ' .
+                    'Must be specified only one parameter "mass_action_provider" or "mass_action"'
             ],
         ];
     }

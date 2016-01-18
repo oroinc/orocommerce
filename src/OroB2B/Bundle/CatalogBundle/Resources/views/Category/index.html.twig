@@ -20,10 +20,12 @@
         <div class="placeholder">
             <div class="scrollable-container">
                 <div class="left-panel scrollable-container">
-                    <div class="category b2b-tree">
+                    <div class="category">
                         {% set treeOptions = {
                             'data' : orob2b_category_list(),
-                            'updateAllowed' : resource_granted('orob2b_catalog_category_update')
+                            'updateAllowed' : resource_granted('orob2b_catalog_category_update'),
+                            'onSelectRoute' : 'orob2b_catalog_category_update',
+                            'onMoveRoute' : 'orob2b_catalog_category_move'
                         } %}
                         <div
                             data-page-component-module="orob2bcatalog/js/app/components/tree-manage-component"
