@@ -7,7 +7,7 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 class RegionMatcher extends AbstractMatcher
 {
     /**
-     * @var AbstractMatcher
+     * @var MatcherInterface
      */
     protected $countryMatcher;
 
@@ -27,10 +27,9 @@ class RegionMatcher extends AbstractMatcher
     }
 
     /**
-     * @param AbstractMatcher $countryMatcher
-     * @todo replace AbstractMatcher on MatcherInterface
+     * @param MatcherInterface $countryMatcher
      */
-    public function setCountryMatcher(AbstractMatcher $countryMatcher)
+    public function setCountryMatcher(MatcherInterface $countryMatcher)
     {
         $this->countryMatcher = $countryMatcher;
     }

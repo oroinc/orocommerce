@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
@@ -19,7 +20,7 @@ class TaxableTest extends \PHPUnit_Framework_TestCase
             ['origin', 'address'],
             ['destination', 'address'],
             ['quantity', 20],
-            ['price', 30],
+            ['price', Price::create(30, 'USD')],
             ['amount', 100]
         ];
 

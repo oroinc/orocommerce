@@ -7,7 +7,7 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 class ZipCodeMatcher extends AbstractMatcher
 {
     /**
-     * @var AbstractMatcher
+     * @var MatcherInterface
      */
     protected $regionMatcher;
 
@@ -31,10 +31,9 @@ class ZipCodeMatcher extends AbstractMatcher
     }
 
     /**
-     * @param AbstractMatcher $regionMatcher
-     * @todo replace AbstractMatcher on MatcherInterface
+     * @param MatcherInterface $regionMatcher
      */
-    public function setRegionMatcher(AbstractMatcher $regionMatcher)
+    public function setRegionMatcher(MatcherInterface $regionMatcher)
     {
         $this->regionMatcher = $regionMatcher;
     }

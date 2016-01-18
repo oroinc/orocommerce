@@ -57,7 +57,7 @@ class LoadTaxJurisdictions extends AbstractFixture implements DependentFixtureIn
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts'
+            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
         ];
     }
 
@@ -70,6 +70,7 @@ class LoadTaxJurisdictions extends AbstractFixture implements DependentFixtureIn
      * @param string $regionText
      * @param ZipCode $zipCode
      * @return TaxJurisdiction
+     * @throws \Doctrine\ORM\ORMException
      */
     protected function createTaxJurisdiction(
         ObjectManager $manager,
