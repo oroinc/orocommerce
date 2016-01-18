@@ -172,9 +172,9 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         foreach ($priceListsByWebsites->all() as $priceListsByWebsite) {
             $website = $priceListsByWebsite->getConfig()->getOption('website');
             $submittedFallback = $priceListsByWebsite->get('fallback')->getData();
-            $actualFallback = $this->getFallbackByWebsite($fallbacks, $website)->getFallback();
+            $actualFallback = $this->getFallbackByWebsite($fallbacks, $website);
             $hasChanges = (!$actualFallback && $submittedFallback != $this->getDefaultFallback())
-                || ($actualFallback && $submittedFallback != $actualFallback);
+                || ($actualFallback && $submittedFallback != $actualFallback->getFallback());
             $actualPriceListsToTargetEntity = $this->getActualPriceListsToTargetEntity($targetEntity, $website);
 
             $submittedPriceLists = $this->getWebsiteSubmittedPriceLists($priceListsByWebsite);
