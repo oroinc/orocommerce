@@ -75,7 +75,7 @@ class CategoryControllerTest extends WebTestCase
 
         $accountGroupCategoryVisibilityData = $this->getChangeSetData(
             $crawler,
-            'account-category-visibility-changeset'
+            'accountgroup-category-visibility-changeset'
         );
 
         $this->checkVisibilityValue(
@@ -86,7 +86,7 @@ class CategoryControllerTest extends WebTestCase
 
         $accountCategoryVisibilityData = $this->getChangeSetData(
             $crawler,
-            'accountgroup-category-visibility-changeset'
+            'account-category-visibility-changeset'
         );
 
         $this->checkVisibilityValue($accountCategoryVisibilityData, $this->account->getId(), $visibilityForAccount);

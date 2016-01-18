@@ -1,9 +1,9 @@
 datagrid:
     pricing-price-list-select-grid:
+        acl_resource:      orob2b_pricing_price_list_view
         options:
             entityHint:        priceList
         source:
-            acl_resource:      orob2b_pricing_price_list_view
             type:              orm
             query:
                 select:
@@ -106,10 +106,10 @@ datagrid:
         action_configuration: [@orob2b_pricing.datagrid.price_list_permissions_provider, "getPermissions"]
 
     base-price-list-relations-grid:
+        acl_resource:      orob2b_pricing_price_list_view
         options:
             entity_pagination: true
         source:
-            acl_resource:      orob2b_pricing_price_list_view
             type:              orm
             query:
                 select:
@@ -247,8 +247,8 @@ datagrid:
                 acl_resource: orob2b_website_view
 
     base-price-list-select-relations-grid:
+        acl_resource:       orob2b_pricing_price_list_update
         source:
-            acl_resource:       orob2b_pricing_price_list_update
             type:               orm
             query:
                 select:
@@ -390,10 +390,10 @@ datagrid:
                     excluded:   '#priceListRemoveWebsites'
 
     price-list-product-prices-grid:
+        acl_resource:      orob2b_pricing_product_price_view
         options:
             entityHint:        productPrice
         source:
-            acl_resource:      orob2b_pricing_product_price_view
             type:              orm
             query:
                 select:
@@ -520,10 +520,10 @@ datagrid:
                 acl_resource:  orob2b_pricing_product_price_delete
 
     product-prices-grid:
+        acl_resource:      orob2b_pricing_product_price_view
         options:
             entityHint:        price
         source:
-            acl_resource:      orob2b_pricing_product_price_view
             type:              orm
             query:
                 select:
