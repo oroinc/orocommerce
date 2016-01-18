@@ -1,4 +1,5 @@
 <?php
+
 namespace Oro\Component\Testing\Unit\Form\Extension\Stub;
 
 use Symfony\Component\Form\Extension\Validator\Type\BaseValidatorExtension;
@@ -8,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class FormTypeValidatorExtensionStub extends BaseValidatorExtension
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function configureOptions(OptionsResolver $resolver)
     {
