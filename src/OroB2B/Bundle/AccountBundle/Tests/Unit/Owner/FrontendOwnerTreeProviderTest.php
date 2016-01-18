@@ -172,9 +172,6 @@ class FrontendOwnerTreeProviderTest extends \PHPUnit_Framework_TestCase
         $accountUserManager->expects($this->any())
             ->method('getConnection')
             ->will($this->returnValue($connection));
-        $connection->expects($this->any())
-            ->method('isConnected')
-            ->will($this->returnValue(true));
         $schemaManager = $this->getMockBuilder('Doctrine\DBAL\Schema\MySqlSchemaManager')
             ->disableOriginalConstructor()
             ->getMock();
@@ -182,8 +179,9 @@ class FrontendOwnerTreeProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getSchemaManager')
             ->will($this->returnValue($schemaManager));
         $schemaManager->expects($this->any())
-            ->method('listTableNames')
-            ->will($this->returnValue(['test']));
+            ->method('tablesExist')
+            ->with('test')
+            ->willReturn(true);
 
         $this->treeProvider->warmUpCache();
         /** @var OwnerTree $tree */
