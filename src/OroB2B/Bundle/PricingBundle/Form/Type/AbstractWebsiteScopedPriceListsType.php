@@ -192,13 +192,14 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
 
             foreach ($priceListsWithPriority as $priceListWithPriority) {
                 $priceListWithPriorityData = $priceListWithPriority->getData();
-                $hasChanges = $hasChanges || $this->updatePriceListToTargetEntity(
-                        $em,
-                        $targetEntity,
-                        $website,
-                        $priceListWithPriorityData,
-                        $actualPriceListsToTargetEntity
-                    );
+                $hasUpdateChanges = $this->updatePriceListToTargetEntity(
+                    $em,
+                    $targetEntity,
+                    $website,
+                    $priceListWithPriorityData,
+                    $actualPriceListsToTargetEntity
+                );
+                $hasChanges = $hasUpdateChanges || $hasChanges;
             }
             if ($hasChanges) {
                 $this->eventDispatcher->dispatch(
