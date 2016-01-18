@@ -293,6 +293,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('account_id', 'integer', []);
         $table->addColumn('combined_price_list_id', 'integer', []);
         $table->addColumn('website_id', 'integer', []);
+        $table->addUniqueIndex(['website_id', 'account_id'], 'orob2b_cpl_to_acc_ws_unq');
         $table->setPrimaryKey(['account_id', 'combined_price_list_id', 'website_id']);
     }
 
@@ -307,6 +308,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('account_group_id', 'integer', []);
         $table->addColumn('combined_price_list_id', 'integer', []);
         $table->addColumn('website_id', 'integer', []);
+        $table->addUniqueIndex(['website_id', 'account_group_id'], 'orob2b_cpl_to_acc_gr_ws_unq');
         $table->setPrimaryKey(['account_group_id', 'combined_price_list_id', 'website_id']);
     }
 

@@ -49,7 +49,7 @@ class LoadPriceListToAccountDemoData extends LoadBasePriceListRelationDemoData
 
     /**
      * @param EntityManager $manager
-     * @param $name
+     * @param string $name
      * @return Account
      */
     protected function getAccountByName(EntityManager $manager, $name)

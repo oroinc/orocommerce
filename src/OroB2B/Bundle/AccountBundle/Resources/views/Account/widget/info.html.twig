@@ -46,6 +46,19 @@
                 {{ UI.renderHtmlProperty('orob2b.account.users.label'|trans, UI.renderList(users)) }}
             {% endif %}
 
+            {% if entity.salesRepresentatives.count() %}
+                {% set salesReps = [] %}
+                {% for salesRep in entity.salesRepresentatives %}
+                    {% if resource_granted('VIEW', salesRep) %}
+                        {% set salesRepView = UI.renderUrl(path('oro_user_view', {'id': salesRep.id}), salesRep.fullName) %}
+                    {% else %}
+                        {% set salesRepView = salesRep.fullName|escape %}
+                    {% endif %}
+                    {% set salesReps = salesReps|merge([salesRepView]) %}
+                {% endfor %}
+                {{ UI.renderHtmlProperty('orob2b.account.sales_representatives.label'|trans, UI.renderList(salesReps)) }}
+            {% endif %}
+
             {% if entity.children.count() %}
                 {% set accountTree %}
                     <div class="account-children">

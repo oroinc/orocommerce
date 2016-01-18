@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToWebsiteRepository;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -17,7 +18,10 @@ class PriceListToWebsiteRepositoryTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations']);
+        $this->loadFixtures([
+            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
+            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings',
+        ]);
     }
 
     public function testFindByPrimaryKey()
@@ -79,6 +83,33 @@ class PriceListToWebsiteRepositoryTest extends WebTestCase
                     'priceList3'
                 ]
             ],
+        ];
+    }
+
+    /**
+     * @dataProvider getWebsiteIteratorDataProvider
+     * @param array $expectedWebsites
+     */
+    public function testGetWebsiteIteratorByFallback($expectedWebsites)
+    {
+        $iterator = $this->getRepository()->getWebsiteIteratorByFallback(PriceListWebsiteFallback::CONFIG);
+
+        $actualSiteMap = [];
+        foreach ($iterator as $website) {
+            $actualSiteMap[] = $website->getName();
+        }
+        $this->assertSame($expectedWebsites, $actualSiteMap);
+    }
+
+    /**
+     * @return array
+     */
+    public function getWebsiteIteratorDataProvider()
+    {
+        return [
+            [
+                'expectedWebsites' => ['US']
+            ]
         ];
     }
 

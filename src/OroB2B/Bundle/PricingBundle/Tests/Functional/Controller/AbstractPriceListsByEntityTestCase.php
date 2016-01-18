@@ -306,7 +306,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
 
     /**
      * @param array $formValues
-     * @param $message
+     * @param string $message
      */
     protected function checkValidationMessage(array $formValues, $message)
     {
