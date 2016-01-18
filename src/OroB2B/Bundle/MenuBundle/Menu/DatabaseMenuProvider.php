@@ -13,10 +13,12 @@ use OroB2B\Bundle\MenuBundle\Entity\Repository\MenuItemRepository;
 use OroB2B\Bundle\WebsiteBundle\Locale\LocaleHelper;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class DatabaseMenuProvider implements MenuProviderInterface
 {
     const CACHE_NAMESPACE = 'orob2b_menu_instance';
-    const LOCALE_OPTION = 'orob2b_website_locale';
 
     /**
      * @var array
@@ -91,7 +93,7 @@ class DatabaseMenuProvider implements MenuProviderInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function get($alias, array $options = [])
     {
@@ -111,7 +113,7 @@ class DatabaseMenuProvider implements MenuProviderInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function has($alias, array $options = [])
     {
@@ -134,7 +136,21 @@ class DatabaseMenuProvider implements MenuProviderInterface
         }
         $locales = $this->localeHelper->getAll();
         foreach ($locales as $locale) {
-            $this->buildMenu($alias, [DatabaseMenuProvider::LOCALE_OPTION => $locale]);
+            $this->buildMenu($alias, ['extras' => [MenuItem::LOCALE_OPTION => $locale]]);
+        }
+    }
+
+    /**
+     * @param string $alias
+     */
+    public function clearCacheByAlias($alias)
+    {
+        if (!$this->cache) {
+            return;
+        }
+        $locales = $this->localeHelper->getAll();
+        foreach ($locales as $locale) {
+            $this->clearMenuCache($alias, ['extras' => [MenuItem::LOCALE_OPTION => $locale]]);
         }
     }
 
@@ -146,16 +162,25 @@ class DatabaseMenuProvider implements MenuProviderInterface
         if (!$this->cache) {
             return;
         }
-        /** @var MenuItemRepository $repo */
-        $repo = $this->registry
-            ->getManagerForClass($this->entityClass)
-            ->getRepository($this->entityClass);
-
-        /** @var MenuItem[] $menus */
-        $menus = $repo->findRoots();
+        $menus = $this->getRoots();
         foreach ($menus as $menu) {
             $alias = $menu->getDefaultTitle()->getString();
-            $this->buildMenu($alias, [DatabaseMenuProvider::LOCALE_OPTION => $locale]);
+            $this->buildMenu($alias, ['extras' => [MenuItem::LOCALE_OPTION => $locale]]);
+        }
+    }
+
+    /**
+     * @param Locale $locale
+     */
+    public function clearCacheByLocale(Locale $locale)
+    {
+        if (!$this->cache) {
+            return;
+        }
+        $menus = $this->getRoots();
+        foreach ($menus as $menu) {
+            $alias = $menu->getDefaultTitle()->getString();
+            $this->clearMenuCache($alias, ['extras' => [MenuItem::LOCALE_OPTION => $locale]]);
         }
     }
 
@@ -166,6 +191,7 @@ class DatabaseMenuProvider implements MenuProviderInterface
      */
     protected function buildMenu($alias, array $options = [])
     {
+        $this->setDefaultLocaleIfNotExists($options);
         $menu = $this->builder->build($alias, $options);
         if ($this->cache) {
             $menuIdentifier = $this->getMenuIdentifier($alias, $options);
@@ -178,16 +204,45 @@ class DatabaseMenuProvider implements MenuProviderInterface
     /**
      * @param string $alias
      * @param array $options
+     */
+    protected function clearMenuCache($alias, array $options = [])
+    {
+        $menuIdentifier = $this->getMenuIdentifier($alias, $options);
+        $this->cache->delete($menuIdentifier);
+    }
+
+    /**
+     * @param string $alias
+     * @param array $options
      * @return string
      */
     protected function getMenuIdentifier($alias, array $options = [])
     {
-        if (array_key_exists(self::LOCALE_OPTION, $options)) {
-            $locale = $options[self::LOCALE_OPTION];
-        } else {
-            $locale = $this->localeHelper->getCurrentLocale();
-        }
+        $this->setDefaultLocaleIfNotExists($options);
+        /** @var Locale $locale */
+        $locale = $options['extras'][MenuItem::LOCALE_OPTION];
 
         return sprintf("%s:%s", $alias, $locale->getCode());
+    }
+
+    /**
+     * @param $options
+     */
+    protected function setDefaultLocaleIfNotExists(&$options)
+    {
+        if (!array_key_exists('extras', $options) || !array_key_exists(MenuItem::LOCALE_OPTION, $options['extras'])) {
+            $options['extras'][MenuItem::LOCALE_OPTION] = $this->localeHelper->getCurrentLocale();
+        }
+    }
+
+    /**
+     * @return MenuItem[]
+     */
+    protected function getRoots()
+    {
+        return $this->registry
+            ->getManagerForClass($this->entityClass)
+            ->getRepository($this->entityClass)
+            ->findRoots();
     }
 }
