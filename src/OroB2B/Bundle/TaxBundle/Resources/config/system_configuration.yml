@@ -54,27 +54,25 @@ oro_system_configuration:
             options:
                 label: orob2b.tax.system_configuration.fields.product_prices_include_tax.label
 
-        orob2b_tax.shipping_origin_as_base:
+        orob2b_tax.use_as_base_by_default:
             data_type: string
-            type: oro_locale_country
+            type: choice
             options:
-                label: orob2b.tax.system_configuration.fields.shipping_origin_as_base.label
+                label: orob2b.tax.system_configuration.fields.use_as_base.default.label
                 required: true
                 constraints:
                     - NotBlank: ~
-                multiple: true
-                expanded: true
+                choice_translation_domain: messages
+                choices:
+                    shipping_origin: orob2b.tax.system_configuration.fields.use_as_base.shipping_origin.label
+                    destination: orob2b.tax.system_configuration.fields.use_as_base.destination.label
 
-        orob2b_tax.destination_as_base:
-            data_type: string
-            type: oro_locale_country
+        orob2b_tax.use_as_base_exceptions:
+            data_type: array
+            type: orob2b_tax_base_exception_collection
             options:
-                label: orob2b.tax.system_configuration.fields.destination_as_base.label
-                required: true
-                constraints:
-                    - NotBlank: ~
-                multiple: true
-                expanded: true
+                label: orob2b.tax.system_configuration.fields.use_as_base.exceptions.label
+                data_transformer: orob2b_tax.data_transformer.product_tax_base_exception_transformer
 
         orob2b_tax.destination:
             data_type: string
@@ -135,8 +133,8 @@ oro_system_configuration:
                                     tax_matcher:
                                         priority: 70
                                         children:
-                                            - orob2b_tax.shipping_origin_as_base
-                                            - orob2b_tax.destination_as_base
+                                            - orob2b_tax.use_as_base_by_default
+                                            - orob2b_tax.use_as_base_exceptions
                                             - orob2b_tax.destination
                             tax_digital_products:
                                 priority: 90

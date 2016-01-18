@@ -59,3 +59,20 @@
     <td> - </td>
     <td>{{ form_widget(form.zipRangeEnd) }} {{ form_errors(form.zipRangeEnd) }}</td>
 {% endblock %}
+
+{% block orob2b_tax_base_exception_widget %}
+    <div class="float-holder">
+        <table>
+            <tr>
+                <td>{{ form_widget(form.country, { 'attr': {'class': 'tax-base-exception-country'} }) }}</td>
+                <td>{{ form_widget(form.region, { 'attr': {'class': 'tax-base-exception-region'} }) }}</td>
+                <td>{{ form_widget(form.option, { 'attr': {'class': 'tax-base-exception-option'} }) }}</td>
+            </tr>
+            <tr>
+                <td>{{ form_errors(form.country) }}</td>
+                <td>{{ form_errors(form.region) }}</td>
+                <td>{{ form_errors(form.option) }}</td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}
