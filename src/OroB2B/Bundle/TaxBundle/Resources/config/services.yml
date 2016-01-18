@@ -20,7 +20,9 @@ parameters:
 
     orob2b_tax.provider.tax_provider_registry.class: OroB2B\Bundle\TaxBundle\Provider\TaxProviderRegistry
     orob2b_tax.provider.built_in_tax_provider.class: OroB2B\Bundle\TaxBundle\Provider\BuiltInTaxProvider
+
     orob2b_tax.provider.taxation_settings_provider.class: OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider
+    orob2b_tax.provider.taxation_address_provider.class: OroB2B\Bundle\TaxBundle\Provider\TaxationAddressProvider
 
     orob2b_tax.manager.tax_manager.class: OroB2B\Bundle\TaxBundle\Manager\TaxManager
     orob2b_tax.manager.tax_value_manager.class: OroB2B\Bundle\TaxBundle\Manager\TaxValueManager
@@ -234,7 +236,7 @@ services:
     orob2b_tax.order_tax.mapper.order_mapper:
         class: %orob2b_tax.order_tax.mapper.order_mapper.class%
         arguments:
-            - @orob2b_tax.provider.taxation_settings_provider
+            - @orob2b_tax.provider.taxation_address_provider
         calls:
             - [setOrderLineItemMapper, [@orob2b_tax.order_tax.mapper.order_line_item_mapper]]
         tags:
@@ -243,7 +245,7 @@ services:
     orob2b_tax.order_tax.mapper.order_line_item_mapper:
         class: %orob2b_tax.order_tax.mapper.order_line_item_mapper.class%
         arguments:
-            - @orob2b_tax.provider.taxation_settings_provider
+            - @orob2b_tax.provider.taxation_address_provider
         tags:
             - { name: orob2b_tax.tax_mapper }
 
@@ -251,6 +253,11 @@ services:
         class: %orob2b_tax.provider.taxation_settings_provider.class%
         arguments:
             - @oro_config.manager
+
+    orob2b_tax.provider.taxation_address_provider:
+        class: %orob2b_tax.provider.taxation_address_provider.class%
+        arguments:
+            - @orob2b_tax.provider.taxation_settings_provider
 
     orob2b_tax.data_transformer.product_tax_code_transformer:
         class: %orob2b_tax.data_transformer.tax_code_transformer.class%

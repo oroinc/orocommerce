@@ -2,12 +2,16 @@
 
 namespace OroB2B\Bundle\TaxBundle\Provider;
 
+use Oro\Bundle\AddressBundle\Entity\Address;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 class TaxationSettingsProvider
 {
     const DESTINATION_BILLING_ADDRESS = 'billing_address';
     const DESTINATION_SHIPPING_ADDRESS = 'shipping_address';
+
+    const DEFAULT_ADDRESS_TYPE_ORIGIN = 'default_address_type_origin';
+    const DEFAULT_ADDRESS_TYPE_DESTINATION = 'default_address_type_destination';
 
     const START_CALCULATION_UNIT_PRICE = 'unit_price';
     const START_CALCULATION_ROW_TOTAL = 'row_total';
@@ -98,7 +102,7 @@ class TaxationSettingsProvider
     }
 
     /**
-     * @return string
+     * @return bool
      */
     public function isBillingAddressDestination()
     {
@@ -106,11 +110,36 @@ class TaxationSettingsProvider
     }
 
     /**
-     * @return string
+     * @return bool
      */
     public function isShippingAddressDestination()
     {
         return $this->getDestination() === self::DESTINATION_SHIPPING_ADDRESS;
+    }
+
+    /**
+     * @todo get this from real config
+     * @return string
+     */
+    public function getDefaultAddressType()
+    {
+        return self::DEFAULT_ADDRESS_TYPE_DESTINATION;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOriginDefaultAddressType()
+    {
+        return $this->getDefaultAddressType() === self::DEFAULT_ADDRESS_TYPE_ORIGIN;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDestinationDefaultAddressType()
+    {
+        return $this->getDefaultAddressType() === self::DEFAULT_ADDRESS_TYPE_DESTINATION;
     }
 
     /**
@@ -119,5 +148,6 @@ class TaxationSettingsProvider
     public function getOrigin()
     {
         /** @todo: add address form to config */
+        return new Address();
     }
 }
