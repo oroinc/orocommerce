@@ -49,11 +49,10 @@ class LocaleHelper
     public function getAll()
     {
         return $this->getRepository()->findAll();
-
     }
 
     /**
-     * @return \Doctrine\Common\Persistence\ObjectRepository
+     * @return \OroB2B\Bundle\WebsiteBundle\Entity\Repository\LocaleRepository
      */
     protected function getRepository()
     {

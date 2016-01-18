@@ -39,7 +39,7 @@ class MenuSerializer
 
     /**
      * @param array $data
-     * @return \Knp\Menu\ItemInterface
+     * @return ItemInterface
      */
     public function deserialize(array $data)
     {
