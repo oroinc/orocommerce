@@ -4,7 +4,9 @@ namespace OroB2B\Bundle\MenuBundle\Tests\Unit\Entity\Listener;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+
 use Oro\Component\Testing\Unit\EntityTrait;
+
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\MenuBundle\Entity\Listener\MenuItemListener;
 use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
