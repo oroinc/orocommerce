@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\TaxBundle\Model;
 
-final class ResultElement extends \ArrayObject
+final class ResultElement extends AbstractResult
 {
     const INCLUDING_TAX = 'includingTax';
     const EXCLUDING_TAX = 'excludingTax';
@@ -17,9 +17,9 @@ final class ResultElement extends \ArrayObject
      *
      * @return ResultElement
      */
-    public static function create($includingTax, $excludingTax, $taxAmount, $adjustment)
+    public static function create($includingTax, $excludingTax, $taxAmount = 0.00, $adjustment = 0.00)
     {
-        $resultElement = new ResultElement();
+        $resultElement = new static;
 
         $resultElement->offsetSet(self::INCLUDING_TAX, $includingTax);
         $resultElement->offsetSet(self::EXCLUDING_TAX, $excludingTax);
@@ -59,19 +59,5 @@ final class ResultElement extends \ArrayObject
     public function getAdjustment()
     {
         return $this->getOffset(self::ADJUSTMENT, 0);
-    }
-
-    /**
-     * @param string $offset
-     * @param null $default
-     * @return mixed
-     */
-    protected function getOffset($offset, $default = null)
-    {
-        if ($this->offsetExists((string)$offset)) {
-            return $this->offsetGet((string)$offset);
-        }
-
-        return $default;
     }
 }

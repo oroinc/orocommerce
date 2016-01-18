@@ -2,12 +2,13 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Transformer;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 use OroB2B\Bundle\TaxBundle\Entity\TaxApply;
 use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
+use OroB2B\Bundle\TaxBundle\Manager\TaxValueManager;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
+use OroB2B\Bundle\TaxBundle\Model\Taxable;
+use OroB2B\Bundle\TaxBundle\Model\TaxResultElement;
 use OroB2B\Bundle\TaxBundle\Transformer\TaxValueToResultTransformer;
 
 class TaxValueToResultTransformerTest extends \PHPUnit_Framework_TestCase
@@ -36,9 +37,16 @@ class TaxValueToResultTransformerTest extends \PHPUnit_Framework_TestCase
      */
     protected $taxValueToResultTransformer;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|TaxValueManager */
+    protected $taxValueManager;
+
     public function setUp()
     {
-        $this->taxValueToResultTransformer = new TaxValueToResultTransformer();
+        $this->taxValueManager = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Manager\TaxValueManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->taxValueToResultTransformer = new TaxValueToResultTransformer($this->taxValueManager, 'stdClass');
     }
 
     public function testTransform()
@@ -54,22 +62,30 @@ class TaxValueToResultTransformerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertResult($result);
 
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $result->getTaxes());
+        $this->assertInternalType('array', $result->getTaxes());
         $this->assertCount(1, $result->getTaxes());
     }
 
     public function testReverseTransform()
     {
+        $taxValue = new TaxValue();
+        $appliedTax = new TaxApply();
+        $taxValue->addAppliedTax($appliedTax);
+        $this->taxValueManager->expects($this->once())->method('getTaxValue')->willReturn($taxValue);
+
         $taxResult = $this->createTaxResult();
 
-        $baseTaxValue = new TaxValue();
-        $taxValue = $this->taxValueToResultTransformer->reverseTransform($baseTaxValue, $taxResult);
-        $this->assertSame($baseTaxValue, $taxValue);
+        $taxable = new Taxable();
+        $taxValue = $this->taxValueToResultTransformer->reverseTransform($taxResult, $taxable);
 
         $this->assertResult($taxValue->getResult());
 
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $taxValue->getResult()->getTaxes());
+        $this->assertInternalType('array', $taxValue->getResult()->getTaxes());
         $this->assertCount(0, $taxValue->getResult()->getTaxes());
+
+        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $taxValue->getAppliedTaxes());
+        $this->assertCount(1, $taxValue->getAppliedTaxes());
+        $this->assertNotSame($appliedTax, $taxValue->getAppliedTaxes()->first());
     }
 
     /**
@@ -145,7 +161,7 @@ class TaxValueToResultTransformerTest extends \PHPUnit_Framework_TestCase
                     static::UNIT_PRICE_TAX_AMOUNT,
                     static::UNIT_PRICE_TAX_ADJUSTMENT
                 ),
-                Result::TAXES => new ArrayCollection([new TaxApply()]),
+                Result::TAXES => [TaxResultElement::create('2', '0.07', '10', '0.7')],
             ]
         );
 
