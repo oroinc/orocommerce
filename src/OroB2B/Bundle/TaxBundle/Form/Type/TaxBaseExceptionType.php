@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\TaxBundle\Model\TaxBaseException;
+use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
 
 class TaxBaseExceptionType extends AbstractType
 {
@@ -16,6 +17,19 @@ class TaxBaseExceptionType extends AbstractType
      * @var string
      */
     protected $dataClass;
+
+    /**
+     * @var AddressCountryAndRegionSubscriber
+     */
+    private $countryAndRegionSubscriber;
+
+    /**
+     * @param AddressCountryAndRegionSubscriber $eventListener
+     */
+    public function __construct(AddressCountryAndRegionSubscriber $eventListener)
+    {
+        $this->countryAndRegionSubscriber = $eventListener;
+    }
 
     /**
      * @param string $dataClass
@@ -31,6 +45,7 @@ class TaxBaseExceptionType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $builder->addEventSubscriber($this->countryAndRegionSubscriber);
         $builder
             ->add('country', 'oro_country', array('required' => true, 'label' => 'oro.address.country.label'))
             ->add('region', 'oro_region', array('required' => false, 'label' => 'oro.address.region.label'))
@@ -66,8 +81,7 @@ class TaxBaseExceptionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => $this->dataClass,
-                'widget' => 'orob2b_tax_base_exception_type_widget'
+                'data_class' => $this->dataClass
             ]
         );
     }
@@ -79,5 +93,4 @@ class TaxBaseExceptionType extends AbstractType
     {
         return self::NAME;
     }
-
 }

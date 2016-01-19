@@ -107,6 +107,7 @@ orob2b.tax:
                 exceptions.label: 'Use as Base Exceptions'
                 shipping_origin.label: 'Shipping Origin'
                 destination.label: 'Destination'
+                option.label: 'Option'
             destination:
                 label: 'Destination'
                 billing_address.label: 'Billing Address'

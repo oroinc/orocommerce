@@ -4,54 +4,103 @@ namespace OroB2B\Bundle\TaxBundle\Form\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\AddressBundle\Entity\Country;
+use Oro\Bundle\AddressBundle\Entity\Region;
+
 use OroB2B\Bundle\TaxBundle\Model\TaxBaseException;
 
 class TaxBaseExceptionTransformer implements DataTransformerInterface
 {
     /**
-     * {@inheritdoc}
-     * @param TaxBaseException[]|array $taxBaseExceptions
+     * @var DoctrineHelper
      */
-    public function transform($taxBaseExceptions)
+    protected $doctrineHelper;
+
+    /**
+     * PriceListSystemConfigSubscriber constructor.
+     * @param DoctrineHelper $doctrineHelper
+     */
+    public function __construct(DoctrineHelper $doctrineHelper)
     {
-        if (empty($taxBaseExceptions)) {
-            return [];
-        }
-
-        $result = [];
-        foreach ($taxBaseExceptions as $taxBaseException) {
-            $result[] = $taxBaseException;
-        }
-
-        return $result;
+        $this->doctrineHelper = $doctrineHelper;
     }
 
     /**
      * {@inheritdoc}
-     * @param array $ids
+     * @param array $values
      */
-    public function reverseTransform($ids)
+    public function transform($values)
     {
-        if (empty($ids)) {
+        if (empty($values)) {
             return [];
         }
 
-        $taxCodes = [];
-        foreach ($ids as $id) {
-            $taxCodes[] = $id;
+        $countryIds = array_unique(array_column($values, 'country'));
+        /** @var Country[] $countriesRaw */
+        $countriesRaw = $this->doctrineHelper
+            ->getEntityRepository('OroAddressBundle:Country')
+            ->findBy(['iso2Code' => $countryIds]);
+
+        $countries = [];
+        foreach ($countriesRaw as $country) {
+            $countries[$country->getIso2Code()] = $country;
         }
 
-        /*
-         usort(
-            $taxCodes,
+        $regionIds = array_unique(array_column($values, 'region'));
+        /** @var Region[] $regionsRaw */
+        $regionsRaw = $this->doctrineHelper
+            ->getEntityRepository('OroAddressBundle:Region')
+            ->findBy(['combinedCode' => $regionIds]);
+
+        $regions = [];
+        foreach ($regionsRaw as $region) {
+            $regions[$region->getCombinedCode()] = $region;
+        }
+
+        usort(
+            $values,
             function ($a, $b) {
-                /** @var TaxBaseException $a * /
-                /** @var TaxBaseException $b * /
-                return ($a->getCode() < $b->getCode()) ? -1 : 1;
+                if ($a['country'] != $b['country']) {
+                    return ($a['country'] < $b['country']) ? -1 : 1;
+                } else {
+                    return ($a['region'] < $b['region']) ? -1 : 1;
+                }
             }
         );
-        */
 
-        return $taxCodes;
+        $entities = [];
+        foreach ($values as $value) {
+            $entity = new TaxBaseException();
+            $entity
+                ->setCountry($countries[$value['country']])
+                ->setRegion($regions[$value['region']])
+                ->setOption($value['option']);
+            $entities[] = $entity;
+        }
+
+        return $entities;
+    }
+
+    /**
+     * {@inheritdoc}
+     * @param TaxBaseException[]|array $entities
+     */
+    public function reverseTransform($entities)
+    {
+        if (empty($entities)) {
+            return [];
+        }
+
+        $values = [];
+        foreach ($entities as $entity) {
+            $values[] = [
+                'country' => $entity->getCountry()->getIso2Code(),
+                'region' => $entity->getRegion()->getCombinedCode(),
+                'option' => $entity->getOption(),
+            ];
+        }
+
+        return $values;
     }
 }

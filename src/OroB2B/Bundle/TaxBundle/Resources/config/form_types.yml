@@ -124,6 +124,8 @@ services:
 
     orob2b_tax.form.type.tax_base_exception:
         class: %orob2b_tax.form.type.tax_base_exception.class%
+        arguments:
+            - @oro_address.form.listener.address
         calls:
             - [setDataClass, [%orob2b_tax.entity.tax_base_exception.class%]]
         tags:

@@ -95,4 +95,13 @@ class TaxBaseException
         return $this->option;
     }
 
+    /**
+     * Get Region text
+     *
+     * @return null
+     */
+    public function getRegionText()
+    {
+        return null;
+    }
 }

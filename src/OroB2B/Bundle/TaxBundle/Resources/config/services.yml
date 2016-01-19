@@ -237,6 +237,8 @@ services:
 
     orob2b_tax.data_transformer.product_tax_base_exception_transformer:
         class: %orob2b_tax.data_transformer.tax_base_exception_transformer.class%
+        arguments:
+            - @oro_entity.doctrine_helper
 
     orob2b_tax.abstract.matcher:
         abstract: true

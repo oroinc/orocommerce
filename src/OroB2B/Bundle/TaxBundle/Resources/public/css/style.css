@@ -1,0 +1,25 @@
+.tax-base-exception {
+    margin-top:30px;
+    margin-bottom:10px;
+}
+
+.tax-base-exception-country,
+.tax-base-exception-region {
+    width: 232px!important;
+}
+
+.tax-base-exception-country select,
+.tax-base-exception-region select,
+.tax-base-exception .select2-container {
+    width: 230px!important;
+}
+
+.tax-base-exception-option select,
+.tax-base-exception-option .selector span {
+    width: 130px!important;
+}
+
+.tax-base-exception-option,
+.tax-base-exception-option .selector {
+    width: 132px!important;
+}
