@@ -14,6 +14,13 @@ oro_system_configuration:
         tax_matcher:
             title: orob2b.tax.system_configuration.groups.tax_matcher.title
 
+        tax_digital_products:
+            title: orob2b.tax.system_configuration.groups.tax_digital_products.title
+        us_sales_tax:
+            title: orob2b.tax.system_configuration.groups.us_sales_tax.title
+        eu_vat_tax:
+            title: orob2b.tax.system_configuration.groups.eu_vat_tax.title
+
     fields:
         orob2b_tax.tax_enable:
             data_type: boolean
@@ -81,6 +88,18 @@ oro_system_configuration:
                     billing_address: orob2b.tax.system_configuration.fields.destination.billing_address.label
                     shipping_address: orob2b.tax.system_configuration.fields.destination.shipping_addressl.label
 
+        orob2b_tax.digital_products_us:
+            data_type: array
+            type: orob2b_product_tax_code_multiselect
+            options:
+                label: orob2b.tax.system_configuration.fields.digital_products_us.label
+
+        orob2b_tax.digital_products_eu:
+            data_type: array
+            type: orob2b_product_tax_code_multiselect
+            options:
+                label: orob2b.tax.system_configuration.fields.digital_products_eu.label
+
     tree:
         system_configuration:
             commerce:
@@ -89,6 +108,7 @@ oro_system_configuration:
                         priority: 500
                         children:
                             tax_calculation:
+                                priority: 100
                                 children:
                                     tax_enable:
                                         priority: 100
@@ -109,3 +129,15 @@ oro_system_configuration:
                                             - orob2b_tax.shipping_origin_as_base
                                             - orob2b_tax.destination_as_base
                                             - orob2b_tax.destination
+                            us_sales_tax:
+                                priority: 90
+                                children:
+                                    tax_digital_products:
+                                        children:
+                                            - orob2b_tax.digital_products_us
+                            eu_vat_tax:
+                                priority: 90
+                                children:
+                                    tax_digital_products:
+                                        children:
+                                            - orob2b_tax.digital_products_eu

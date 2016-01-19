@@ -30,6 +30,8 @@ class Configuration implements ConfigurationInterface
                 'shipping_origin_as_base' => ['value' => []],
                 'destination_as_base' => ['value' => []],
                 'destination' => ['value' => 'billing_address'],
+                'digital_products_us' => ['type' => 'array', 'value' => []],
+                'digital_products_eu' => ['type' => 'array', 'value' => []],
             ]
         );
 

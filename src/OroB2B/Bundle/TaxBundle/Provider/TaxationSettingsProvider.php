@@ -82,6 +82,22 @@ class TaxationSettingsProvider
     }
 
     /**
+     * @return array
+     */
+    public function getDigitalProductsTaxCodesUs()
+    {
+        return (array)$this->configManager->get('orob2b_tax.digital_products_us');
+    }
+
+    /**
+     * @return array
+     */
+    public function getDigitalProductsTaxCodesEu()
+    {
+        return (array)$this->configManager->get('orob2b_tax.digital_products_eu');
+    }
+
+    /**
      * @return string
      */
     public function isBillingAddressDestination()
