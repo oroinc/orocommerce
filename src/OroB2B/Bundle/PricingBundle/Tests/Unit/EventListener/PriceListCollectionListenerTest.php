@@ -51,6 +51,9 @@ class PriceListCollectionListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onChangeCollectionBefore($event);
     }
 
+    /**
+     * @return array
+     */
     public function onChangeCollectionBeforeDataProvider()
     {
         $account = new Account();
