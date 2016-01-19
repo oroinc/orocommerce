@@ -169,16 +169,22 @@ actions:
                 value: $.saleRep
                 actions:
                     - @send_email_template:
-                        from: $accountUser.owner.email
-                        to: $.saleRep.email
-                        template: 'request_no_quote_alert'
-                        entity: $.data
+                        conditions:
+                            - @not_empty: [$accountUser.owner.email]
+                        parameters:
+                            from: $accountUser.owner.email
+                            to: $.saleRep.email
+                            template: 'request_no_quote_alert'
+                            entity: $.data
             - @foreach:
                 array: $account.salesRepresentatives
                 value: $.saleRep
                 actions:
                     - @send_email_template:
-                        from: $accountUser.owner.email
-                        to: $.saleRep.email
-                        template: 'request_no_quote_alert'
-                        entity: $.data
+                        conditions:
+                            @not_empty: [$accountUser.owner.email]
+                        parameters:
+                            from: $accountUser.owner.email
+                            to: $.saleRep.email
+                            template: 'request_no_quote_alert'
+                            entity: $.data

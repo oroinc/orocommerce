@@ -112,7 +112,7 @@ class RequestHelperTest extends \PHPUnit_Framework_TestCase
             ->withAnyParameters()
             ->willReturn($this->repository);
 
-        $this->registry->expects($this->once())
+        $this->registry->expects($this->exactly(2))
             ->method('getManagerForClass')
             ->withAnyParameters()
             ->willReturn($this->manager)
