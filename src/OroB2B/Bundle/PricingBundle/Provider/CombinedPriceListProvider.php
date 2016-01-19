@@ -87,7 +87,6 @@ class CombinedPriceListProvider
         return $combinedPriceList;
     }
 
-
     /**
      * @param PriceListSequenceMember[] $priceListsRelations
      * @return string

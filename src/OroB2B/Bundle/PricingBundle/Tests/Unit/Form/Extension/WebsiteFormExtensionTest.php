@@ -2,10 +2,13 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
+use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\Test\FormInterface;
 
+use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 use OroB2B\Bundle\PricingBundle\Form\Extension\WebsiteFormExtension;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
@@ -33,21 +36,31 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
     /** @var  \PHPUnit_Framework_MockObject_MockObject */
     protected $managerMock;
 
+    /** @var  EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $eventDispatcher;
+
+    /** @var  WebsiteFormExtension */
+    protected $extension;
+
     public function setUp()
     {
         parent::setUp();
         $this->priceLists = $this->createPriceLists(2);
+        /** @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject $registry */
+        $registry = $this->getMockBuilder('Symfony\Bridge\Doctrine\RegistryInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $this->extension = new WebsiteFormExtension(
+            $registry,
+            self::PRICE_LIST_TO_WEBSITE_CLASS,
+            $this->eventDispatcher
+        );
+
     }
 
     public function testBuild()
     {
-        /** @var \Symfony\Bridge\Doctrine\RegistryInterface $registry */
-        $registry = $this->getMockBuilder('Symfony\Bridge\Doctrine\RegistryInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $extension = new WebsiteFormExtension($registry, self::PRICE_LIST_TO_WEBSITE_CLASS);
-
         /** @var \Symfony\Component\Form\Test\FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
         $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
         $builder->expects($this->at(0))
@@ -83,30 +96,23 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
 
         $builder->expects($this->at(2))
             ->method('addEventListener')
-            ->with(FormEvents::POST_SET_DATA, [$extension, 'onPostSetData']);
+            ->with(FormEvents::POST_SET_DATA, [$this->extension, 'onPostSetData']);
         $builder->expects($this->at(3))
             ->method('addEventListener')
-            ->with(FormEvents::POST_SUBMIT, [$extension, 'onPostSubmit'], 10);
+            ->with(FormEvents::POST_SUBMIT, [$this->extension, 'onPostSubmit'], 10);
 
-        $extension->buildForm($builder, []);
+        $this->extension->buildForm($builder, []);
     }
 
     public function testOnPostSetDataWebsiteNotExists()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Bridge\Doctrine\RegistryInterface $registry */
-        $registry = $this->getMockBuilder('Symfony\Bridge\Doctrine\RegistryInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $extension = new WebsiteFormExtension($registry, self::PRICE_LIST_TO_WEBSITE_CLASS);
-
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
 
         $form->expects($this->never())->method('get');
         $event = new FormEvent($form, []);
 
-        $extension->onPostSetData($event);
+        $this->extension->onPostSetData($event);
     }
 
     /**
@@ -120,10 +126,12 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
         $priceListFrom = $this->getFormMock();
         $priceListFrom->expects($this->once())
             ->method('setData')
-            ->with([
-                ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100, 'mergeAllowed' => true],
-                ['priceList' => $this->getExisting()[2]->getPriceList(), 'priority' => 200, 'mergeAllowed' => true],
-            ]);
+            ->with(
+                [
+                    ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100, 'mergeAllowed' => true],
+                    ['priceList' => $this->getExisting()[2]->getPriceList(), 'priority' => 200, 'mergeAllowed' => true],
+                ]
+            );
 
         $rootForm = $this->getFormMock();
         $fallbackField = $this->getFormMock();
@@ -167,39 +175,6 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testOnPostSubmitDeleted()
-    {
-        $priceListFrom = $this->getMock('Symfony\Component\Form\FormInterface');
-        $priceListFrom->expects($this->once())
-            ->method('getData')
-            ->willReturn([
-                ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100, 'mergeAllowed' => true],
-                ['priceList' => null, 'priority' => 200, 'mergeAllowed' => true],
-            ]);
-
-        $rootForm = $this->getFormMock();
-        $rootForm->expects($this->any())
-            ->method('get')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        ['priceList', $priceListFrom],
-                        ['fallback', $this->getFormMock()],
-                    ]
-                )
-            );
-        $rootForm->expects($this->once())->method('isValid')->willReturn(true);
-
-        $this->getManagerMock()
-            ->expects($this->once())
-            ->method('remove')
-            ->with($this->getExisting()[2]);
-
-        $event = new FormEvent($rootForm, $this->createWebsite());
-        $extension = $this->createExtension();
-        $extension->onPostSubmit($event);
-    }
-
     public function testOnPostSubmitFormInvalid()
     {
         $rootForm = $this->getFormMock();
@@ -211,30 +186,34 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('get');
 
         $event = new FormEvent($rootForm, $this->createWebsite());
-        $extension = new WebsiteFormExtension($this->getRegistryMock(), self::PRICE_LIST_TO_WEBSITE_CLASS);
-        $extension->onPostSubmit($event);
+        $this->extension->onPostSubmit($event);
     }
 
-    public function testOnPostSubmitNew()
+    /**
+     * @dataProvider testOnPostSubmitDataProvider
+     * @param array $submittedData
+     * @param boolean $expectedDispatch
+     */
+    public function testOnPostSubmit($submittedData, $expectedDispatch)
     {
         $priceListFrom = $this->getMock('Symfony\Component\Form\FormInterface');
         $website = $this->createWebsite();
 
-        /** @var PriceList $addedPriceList */
-        $addedPriceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 3);
-        $expected = new PriceListToWebsite();
-        $expected->setPriceList($addedPriceList)
-            ->setPriority(300)
-            ->setWebsite($website);
+        // get deleted relations
+        $deletedPriceListRelations = $this->getRemovedPriceLists($submittedData['priceLists']);
+
+        // get new submitted relations
+        list($submittedData['priceLists'], $newPriceListRelations) = $this->createNewPriceLists(
+            $submittedData['priceLists'],
+            $website
+        );
         $priceListFrom->expects($this->once())
             ->method('getData')
-            ->willReturn([
-                ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100, 'mergeAllowed' => true],
-                ['priceList' => $this->getExisting()[2]->getPriceList(), 'priority' => 200, 'mergeAllowed' => true],
-                ['priceList' => $addedPriceList, 'priority' => 300, 'mergeAllowed' => true],
-                ['priceList' => null, 'priority' => 400, 'mergeAllowed' => false]
-            ]);
-
+            ->willReturn($submittedData['priceLists']);
+        $fallbackForm = $this->getFormMock();
+        $fallbackForm->expects($this->once())
+            ->method('getData')
+            ->willReturn($submittedData['fallback']);
         $rootForm = $this->getFormMock();
         $rootForm->expects($this->any())
             ->method('get')
@@ -242,26 +221,191 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
                 $this->returnValueMap(
                     [
                         ['priceList', $priceListFrom],
-                        ['fallback', $this->getFormMock()],
+                        ['fallback', $fallbackForm],
                     ]
                 )
             );
+        $fallback = (new PriceListWebsiteFallback())->setFallback(PriceListWebsiteFallback::CONFIG);
+        $this->getRepositoryMock()->expects($this->at(1))->method('findOneBy')->willReturn($fallback);
         $rootForm->expects($this->once())->method('isValid')->willReturn(true);
-
-        $this->getManagerMock()
-            ->expects($this->at(1))
-            ->method('persist')
-            ->with($expected);
-
+        // for new created submitted relations
+        if ($newPriceListRelations) {
+            $this->getManagerMock()
+                ->expects($this->exactly(count($newPriceListRelations)))
+                ->method('persist')
+                ->willReturnCallback(
+                    function ($entity) use ($newPriceListRelations) {
+                        $this->assertTrue(in_array($entity, $newPriceListRelations));
+                    }
+                );
+        }
+        // for deleted relations
+        if ($deletedPriceListRelations) {
+            $this->getManagerMock()
+                ->expects($this->exactly(count($deletedPriceListRelations)))
+                ->method('remove')
+                ->willReturnCallback(
+                    function ($entity) use ($deletedPriceListRelations) {
+                        $this->assertTrue(in_array($entity, $deletedPriceListRelations));
+                    }
+                );
+        }
         $event = new FormEvent($rootForm, $website);
+        if ($expectedDispatch) {
+            $this->eventDispatcher
+                ->expects($this->once())
+                ->method('dispatch')
+                ->with(PriceListCollectionChange::BEFORE_CHANGE, new PriceListCollectionChange($website));
+        } else {
+            $this->eventDispatcher
+                ->expects($this->never())
+                ->method('dispatch');
+        }
         $extension = $this->createExtension();
         $extension->onPostSubmit($event);
     }
 
+    public function testOnPostSubmitDataProvider()
+    {
+        return [
+            'sameData' => [
+                'submittedData' => [
+                    'fallback' => PriceListWebsiteFallback::CONFIG,
+                    'priceLists' => [
+                        ['priceList' => 1, 'priority' => 100, 'mergeAllowed' => true],
+                        ['priceList' => 2, 'priority' => 200, 'mergeAllowed' => true]
+                    ]
+                ],
+                'expectDispatch' => false
+            ],
+            'fallbackChangeOnly' => [
+                'submittedData' => [
+                    'fallback' => PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY,
+                    'priceLists' => [
+                        ['priceList' => 1, 'priority' => 100, 'mergeAllowed' => true],
+                        ['priceList' => 2, 'priority' => 200, 'mergeAllowed' => true]
+                    ]
+                ],
+                'expectDispatch' => true
+            ],
+            'addNew' => [
+                'submittedData' => [
+                    'fallback' => PriceListWebsiteFallback::CONFIG,
+                    'priceLists' => [
+                        ['priceList' => 1, 'priority' => 100, 'mergeAllowed' => true],
+                        ['priceList' => 2, 'priority' => 200, 'mergeAllowed' => true],
+                        ['priceList' => 'new', 'priority' => 22, 'mergeAllowed' => false],
+                        ['priceList' => 'new', 'priority' => 1, 'mergeAllowed' => true]
+                    ]
+                ],
+                'expectDispatch' => true
+            ],
+            'remove' => [
+                'submittedData' => [
+                    'fallback' => PriceListWebsiteFallback::CONFIG,
+                    'priceLists' => [
+                        ['priceList' => 1, 'priority' => 100, 'mergeAllowed' => true],
+                    ]
+                ],
+                'expectDispatch' => true
+            ],
+            'update' => [
+                'submittedData' => [
+                    'fallback' => PriceListWebsiteFallback::CONFIG,
+                    'priceLists' => [
+                        ['priceList' => 1, 'priority' => 100, 'mergeAllowed' => true],
+                        ['priceList' => 2, 'priority' => 100, 'mergeAllowed' => true]
+                    ]
+                ],
+                'expectDispatch' => true
+            ],
+            'updateAndRemove' => [
+                'submittedData' => [
+                    'fallback' => PriceListWebsiteFallback::CONFIG,
+                    'priceLists' => [
+                        ['priceList' => 2, 'priority' => 100, 'mergeAllowed' => true],
+                    ]
+                ],
+                'expectDispatch' => true
+            ],
+            'updateAndCreate' => [
+                'submittedData' => [
+                    'fallback' => PriceListWebsiteFallback::CONFIG,
+                    'priceLists' => [
+                        ['priceList' => 2, 'priority' => 100, 'mergeAllowed' => true],
+                        ['priceList' => 'new', 'priority' => 100, 'mergeAllowed' => false],
+                    ]
+                ],
+                'expectDispatch' => true
+            ],
+            'updateAndCreateAndRemove' => [
+                'submittedData' => [
+                    'fallback' => PriceListWebsiteFallback::CONFIG,
+                    'priceLists' => [
+                        ['priceList' => 1, 'priority' => 100, 'mergeAllowed' => false],
+                        ['priceList' => 'new', 'priority' => 12, 'mergeAllowed' => true],
+                    ]
+                ],
+                'expectDispatch' => true
+            ],
+        ];
+    }
+
+    /**
+     * @param array $submitted
+     * @param Website $website
+     * @return array
+     */
+    protected function createNewPriceLists(array $submitted, Website $website)
+    {
+        $i = 3;
+        $newPriceListRelations = [];
+        foreach ($submitted as &$priceList) {
+            if ($priceList['priceList'] === 'new') {
+                /** @var PriceList $priceListEntity */
+                $priceListEntity = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', $i++);
+                $priceList['priceList'] = $priceListEntity;
+                $priceListRelation = new PriceListToWebsite();
+                $priceListRelation->setPriority($priceList['priority'])
+                    ->setWebsite($website)
+                    ->setPriceList($priceListEntity)
+                    ->setMergeAllowed($priceList['mergeAllowed']);
+                $newPriceListRelations[] = $priceListRelation;
+            } else {
+                $priceList['priceList'] = $this->getExisting()[$priceList['priceList']]->getPriceList();
+            }
+        }
+
+
+        return [$submitted, $newPriceListRelations];
+    }
+
+    /**
+     * @param array $submitted
+     * @return PriceListToWebsite[]
+     */
+    protected function getRemovedPriceLists(array $submitted)
+    {
+        $deletedRelations = [];
+        foreach ($this->getExisting() as $key => $existPriceListRelation) {
+            $deleted = true;
+            foreach ($submitted as $submittedRelation) {
+                if ($submittedRelation['priceList'] === $key) {
+                    $deleted = false;
+                    break;
+                }
+            }
+            if ($deleted) {
+                $deletedRelations[] = $existPriceListRelation;
+            }
+        }
+
+        return $deletedRelations;
+    }
+
     public function testGetExtendedType()
     {
-        $exception = new WebsiteFormExtension($this->getRegistryMock(), self::PRICE_LIST_TO_WEBSITE_CLASS);
-        $this->assertSame(WebsiteType::NAME, $exception->getExtendedType());
+        $this->assertSame(WebsiteType::NAME, $this->extension->getExtendedType());
     }
 
     /**
@@ -285,23 +429,16 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function createExtension()
     {
-        $registry = $this->getRegistryMock();
+        /** @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject $registry */
+        $registry = $this->getMockBuilder('Symfony\Bridge\Doctrine\RegistryInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $registry->expects($this->any())
             ->method('getManagerForClass')
             ->willReturn($this->getManagerMock());
 
-        return new WebsiteFormExtension($registry, self::PRICE_LIST_TO_WEBSITE_CLASS);
-    }
-
-    /**
-     * @return \Symfony\Bridge\Doctrine\RegistryInterface|\PHPUnit_Framework_MockObject_MockObject $registry
-     */
-    protected function getRegistryMock()
-    {
-        return $this->getMockBuilder('Symfony\Bridge\Doctrine\RegistryInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
+        return new WebsiteFormExtension($registry, self::PRICE_LIST_TO_WEBSITE_CLASS, $this->getEventDispatcher());
     }
 
     /**
@@ -389,6 +526,19 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
                 $this->existing[$priceList->getId()] = $priceListToWebsite;
             }
         }
+
         return $this->existing;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|EventDispatcherInterface
+     */
+    protected function getEventDispatcher()
+    {
+        if (!$this->eventDispatcher) {
+            $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        }
+
+        return $this->eventDispatcher;
     }
 }
