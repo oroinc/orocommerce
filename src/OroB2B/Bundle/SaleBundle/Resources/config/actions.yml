@@ -170,7 +170,7 @@ actions:
                 actions:
                     - @send_email_template:
                         conditions:
-                            - @not_empty: [$accountUser.owner.email]
+                            @not_empty: $accountUser.owner
                         parameters:
                             from: $accountUser.owner.email
                             to: $.saleRep.email
@@ -180,9 +180,15 @@ actions:
                 array: $account.salesRepresentatives
                 value: $.saleRep
                 actions:
+                    - @call_method:
+                        object: $accountUser.salesRepresentatives
+                        method: toArray
+                        attribute: $.accountUserSalesReps
                     - @send_email_template:
                         conditions:
-                            @not_empty: [$accountUser.owner.email]
+                            @and:
+                                - @not_empty: $accountUser.owner
+                                - @not_in: [$.saleRep, $.accountUserSalesReps]
                         parameters:
                             from: $accountUser.owner.email
                             to: $.saleRep.email
