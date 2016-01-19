@@ -17,6 +17,7 @@ use Oro\Bundle\CurrencyBundle\Model\Price;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListProductPriceType;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {
@@ -112,5 +113,13 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
 
         return $this->get('oro_form.model.update_handler')
             ->handleUpdate($productPrice, $form, null, null, null);
+    }
+
+    /**
+     * @return PriceListRequestHandler
+     */
+    protected function getRequestHandler()
+    {
+        return $this->get('orob2b_pricing.model.price_list_request_handler');
     }
 }

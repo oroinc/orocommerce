@@ -2,8 +2,10 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
+use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig;
 use OroB2B\Bundle\PricingBundle\Tests\Functional\Controller\AbstractAjaxProductPriceControllerTest;
@@ -17,6 +19,9 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
     /** @var string  */
     protected $pricesByPriceListActionUrl = 'orob2b_pricing_frontend_price_by_pricelist';
 
+    /** @var ConfigManager */
+    protected $configManager;
+
     protected function setUp()
     {
         $this->initClient(
@@ -26,10 +31,10 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists'
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
             ]
         );
+        $this->configManager = $this->getContainer()->get('oro_config.global');
     }
 
     /**
@@ -192,12 +197,18 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BPricingBundle:PriceList')
             ->getRepository('OroB2BPricingBundle:PriceList')->setDefault($priceList);
 
-        $configManager = $this->getContainer()->get('oro_config.global');
-        $configManager->set(
+        $this->configManager->set(
             'oro_b2b_pricing.default_price_lists',
             [new PriceListConfig($priceList, 100, true)]
         );
-        $configManager->flush();
+        $this->configManager->flush();
         $this->getContainer()->get('orob2b_pricing.builder.combined_price_list_builder')->build(true);
+    }
+
+    public function tearDown()
+    {
+        $this->configManager->set('oro_b2b_pricing.default_price_lists', []);
+        $this->configManager->reset(Configuration::getConfigKeyToPriceList());
+        $this->configManager->flush();
     }
 }

@@ -17,6 +17,8 @@ use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 
 class AbstractAjaxProductPriceController extends Controller
 {
@@ -36,12 +38,11 @@ class AbstractAjaxProductPriceController extends Controller
             $priceListId = $request->get('price_list_id');
         }
         if (!$priceListId) {
-            $priceListId = $this->get('orob2b_pricing.model.frontend.price_list_request_handler')
-                ->getPriceList()->getId();
+            $priceListId = $this->getRequestHandler()->getPriceList()->getId();
         }
 
         return new JsonResponse(
-            $this->get('orob2b_pricing.provider.product_price')->getPriceByPriceListIdAndProductIds(
+            $this->getProductPriceProvider()->getPriceByPriceListIdAndProductIds(
                 $priceListId,
                 $request->get('product_ids', []),
                 $request->get('currency')
@@ -168,5 +169,21 @@ class AbstractAjaxProductPriceController extends Controller
         $units = $repository->getProductUnitsByPriceList($priceList, $product, $request->get('currency'));
 
         return new JsonResponse(['units' => $this->getProductUnitFormatter()->formatChoices($units)]);
+    }
+
+    /**
+     * @return ProductPriceProvider
+     */
+    protected function getProductPriceProvider()
+    {
+        return $this->get('orob2b_pricing.provider.product_price');
+    }
+
+    /**
+     * @return AbstractPriceListRequestHandler
+     */
+    protected function getRequestHandler()
+    {
+        return $this->get('orob2b_pricing.model.price_list_request_handler');
     }
 }

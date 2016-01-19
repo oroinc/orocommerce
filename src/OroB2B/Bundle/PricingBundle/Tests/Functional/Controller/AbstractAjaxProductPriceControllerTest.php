@@ -34,12 +34,13 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
             'price_list_id' => $priceList->getId(),
             'product_ids' => [$product->getId()]
         ];
-
+        $this->setDefaultPriceList($priceList);
         if ($currency) {
             $params['currency'] = $currency;
         }
 
-        $this->client->request('GET', $this->getUrl($this->pricesByPriceListActionUrl, $params));
+        $url = $this->getUrl($this->pricesByPriceListActionUrl, $params);
+        $this->client->request('GET', $url);
 
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);
@@ -71,5 +72,13 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
                 ['bottle']
             ]
         ];
+    }
+
+    /**
+     * @param PriceList $priceList
+     */
+    protected function setDefaultPriceList(PriceList $priceList)
+    {
+
     }
 }
