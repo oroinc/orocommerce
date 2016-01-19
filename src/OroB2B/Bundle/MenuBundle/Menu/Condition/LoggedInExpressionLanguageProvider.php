@@ -1,25 +1,25 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Menu\Condition;
+namespace OroB2B\Bundle\MenuBundle\Menu\Condition;
 
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
 
-use OroB2B\Bundle\AccountBundle\Security\AccountUserProvider;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 class LoggedInExpressionLanguageProvider implements ExpressionFunctionProviderInterface
 {
     /**
-     * @var AccountUserProvider
+     * @var SecurityFacade
      */
-    protected $accountUserProvider;
+    protected $securityFacade;
 
     /**
-     * @param AccountUserProvider $accountUserProvider
+     * @param SecurityFacade $securityFacade
      */
-    public function __construct(AccountUserProvider $accountUserProvider)
+    public function __construct(SecurityFacade $securityFacade)
     {
-        $this->accountUserProvider = $accountUserProvider;
+        $this->securityFacade = $securityFacade;
     }
 
     /**
@@ -39,6 +39,6 @@ class LoggedInExpressionLanguageProvider implements ExpressionFunctionProviderIn
      */
     public function isLoggedIn()
     {
-        return $this->accountUserProvider->getLoggedUser() !== null;
+        return $this->securityFacade->getLoggedUser() !== null;
     }
 }

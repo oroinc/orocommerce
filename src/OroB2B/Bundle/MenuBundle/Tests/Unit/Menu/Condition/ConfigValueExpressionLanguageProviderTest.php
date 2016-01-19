@@ -2,8 +2,9 @@
 
 namespace OroB2B\Bundle\MenuBundle\Tests\Unit\Menu\Condition;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
+
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\MenuBundle\Menu\Condition\ConfigValueExpressionLanguageProvider;
 
@@ -15,14 +16,15 @@ class ConfigValueExpressionLanguageProviderTest extends \PHPUnit_Framework_TestC
     protected $provider;
 
     /**
-     * @var ContainerInterface
+     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $container;
+    protected $configManager;
 
     public function setUp()
     {
-        $this->container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
-        $this->provider = new ConfigValueExpressionLanguageProvider($this->container);
+        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
+            ->disableOriginalConstructor()->getMock();
+        $this->provider = new ConfigValueExpressionLanguageProvider($this->configManager);
     }
 
     public function testGetFunctions()
@@ -42,8 +44,8 @@ class ConfigValueExpressionLanguageProviderTest extends \PHPUnit_Framework_TestC
         $this->assertNull(call_user_func($function->getEvaluator(), [], $paramName));
 
         $configValue = 'config_value';
-        $this->container->expects($this->once())
-            ->method('getParameter')
+        $this->configManager->expects($this->once())
+            ->method('get')
             ->with($paramName)
             ->willReturn($configValue);
         $this->assertEquals($configValue, call_user_func($function->getEvaluator(), [], $paramName));

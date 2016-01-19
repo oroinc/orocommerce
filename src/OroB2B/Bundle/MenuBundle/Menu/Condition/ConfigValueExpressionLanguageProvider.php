@@ -2,23 +2,24 @@
 
 namespace OroB2B\Bundle\MenuBundle\Menu\Condition;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
+
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 class ConfigValueExpressionLanguageProvider implements ExpressionFunctionProviderInterface
 {
     /**
-     * @var ContainerInterface
+     * @var ConfigManager
      */
-    protected $container;
+    protected $configManager;
 
     /**
-     * @param ContainerInterface $container
+     * @param ConfigManager $configManager
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(ConfigManager $configManager)
     {
-        $this->container = $container;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -40,6 +41,6 @@ class ConfigValueExpressionLanguageProvider implements ExpressionFunctionProvide
      */
     public function getConfigValue(array $variables, $parameter)
     {
-        return $this->container->getParameter($parameter);
+        return $this->configManager->get($parameter);
     }
 }

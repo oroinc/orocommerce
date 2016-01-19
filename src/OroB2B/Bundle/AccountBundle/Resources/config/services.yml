@@ -42,17 +42,14 @@ parameters:
     orob2b_account.mailer.processor.class: OroB2B\Bundle\AccountBundle\Mailer\Processor
     orob2b_account_user.manager.class: OroB2B\Bundle\AccountBundle\Entity\AccountUserManager
 
+    orob2b_account.account_user_menu.builder.class: OroB2B\Bundle\AccountBundle\Menu\AccountUserMenuBuilder
     orob2b_account.placeholder.filter.class:  OroB2B\Bundle\AccountBundle\Placeholder\PlaceholderFilter
 
     orob2b_account.account_user.password.handler.abstract.class: OroB2B\Bundle\AccountBundle\Form\Handler\AbstractAccountUserPasswordHandler
     orob2b_account.account_user.password_request.handler.class: OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserPasswordRequestHandler
     orob2b_account.account_user.password_reset.handler.class: OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserPasswordResetHandler
 
-    # Menu
-    orob2b_account.menu.condition.logged_in_expression_language_provider.class: OroB2B\Bundle\AccountBundle\Menu\Condition\LoggedInExpressionLanguageProvider
-    orob2b_account.account_user_menu.builder.class: OroB2B\Bundle\AccountBundle\Menu\AccountUserMenuBuilder
-
-    # Listeners
+    #Listeners
     orob2b_account.event_listener.category_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryListener
     orob2b_account.event_listener.login.class: OroB2B\Bundle\AccountBundle\EventListener\LoginListener
     orob2b_account.event_listener.ormdatasource_acl.class: OroB2B\Bundle\AccountBundle\EventListener\OrmDatasourceAclListener
@@ -878,10 +875,3 @@ services:
             - @security.csrf.token_manager
         tags:
             - { name: layout.data_provider, alias: orob2b_account_sign_in }
-
-    orob2b_account.menu.condition.logged_in_expression_language_provider:
-        class: %orob2b_account.menu.condition.logged_in_expression_language_provider.class%
-        arguments:
-            - @orob2b_account.security.account_user_provider
-        tags:
-            - { name: orob2b_menu.condition.expression_language_provider, alias: is_logged_in }
