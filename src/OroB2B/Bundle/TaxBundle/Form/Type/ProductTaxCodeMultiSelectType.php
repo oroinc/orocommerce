@@ -45,6 +45,13 @@ class ProductTaxCodeMultiSelectType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['attr'] = ['data-selected-data' => json_encode((array)$form->getData())];
+        $data = array_filter(
+            (array)$form->getData(),
+            function ($value) {
+                return $value !== '';
+            }
+        );
+
+        $view->vars['attr'] = ['data-selected-data' => json_encode($data)];
     }
 }
