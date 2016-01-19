@@ -8,7 +8,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 
 use OroB2B\Bundle\TaxBundle\Provider\BuiltInTaxProvider;
-use OroB2B\Bundle\TaxBundle\Model\TaxBaseException;
+use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
 
 class Configuration implements ConfigurationInterface
 {
@@ -45,9 +45,9 @@ class Configuration implements ConfigurationInterface
                 ],
                 'use_as_base_by_default' => [
                     'type' => 'text',
-                    'value' => TaxBaseException::USE_AS_BASE_SHIPPING_ORIGIN
+                    'value' => TaxBaseExclusion::USE_AS_BASE_SHIPPING_ORIGIN
                 ],
-                'use_as_base_exceptions' => [
+                'use_as_base_exclusions' => [
                     'type' => 'array',
                     'value' => []
                 ],

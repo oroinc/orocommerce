@@ -4,13 +4,15 @@ namespace OroB2B\Bundle\TaxBundle\Form\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
 
+use Oro\Component\PhpUtils\ArrayUtil;
+
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 
-use OroB2B\Bundle\TaxBundle\Model\TaxBaseException;
+use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
 
-class TaxBaseExceptionTransformer implements DataTransformerInterface
+class TaxBaseExclusionTransformer implements DataTransformerInterface
 {
     /**
      * @var DoctrineHelper
@@ -18,7 +20,6 @@ class TaxBaseExceptionTransformer implements DataTransformerInterface
     protected $doctrineHelper;
 
     /**
-     * PriceListSystemConfigSubscriber constructor.
      * @param DoctrineHelper $doctrineHelper
      */
     public function __construct(DoctrineHelper $doctrineHelper)
@@ -36,7 +37,7 @@ class TaxBaseExceptionTransformer implements DataTransformerInterface
             return [];
         }
 
-        $countryIds = array_unique(array_column($values, 'country'));
+        $countryIds = array_unique(ArrayUtil::arrayColumn($values, 'country'));
         /** @var Country[] $countriesRaw */
         $countriesRaw = $this->doctrineHelper
             ->getEntityRepository('OroAddressBundle:Country')
@@ -47,7 +48,7 @@ class TaxBaseExceptionTransformer implements DataTransformerInterface
             $countries[$country->getIso2Code()] = $country;
         }
 
-        $regionIds = array_unique(array_column($values, 'region'));
+        $regionIds = array_unique(ArrayUtil::arrayColumn($values, 'region'));
         /** @var Region[] $regionsRaw */
         $regionsRaw = $this->doctrineHelper
             ->getEntityRepository('OroAddressBundle:Region')
@@ -58,20 +59,9 @@ class TaxBaseExceptionTransformer implements DataTransformerInterface
             $regions[$region->getCombinedCode()] = $region;
         }
 
-        usort(
-            $values,
-            function ($a, $b) {
-                if ($a['country'] != $b['country']) {
-                    return ($a['country'] < $b['country']) ? -1 : 1;
-                } else {
-                    return ($a['region'] < $b['region']) ? -1 : 1;
-                }
-            }
-        );
-
         $entities = [];
         foreach ($values as $value) {
-            $entity = new TaxBaseException();
+            $entity = new TaxBaseExclusion();
             $entity
                 ->setCountry($countries[$value['country']])
                 ->setRegion($regions[$value['region']])
@@ -84,7 +74,7 @@ class TaxBaseExceptionTransformer implements DataTransformerInterface
 
     /**
      * {@inheritdoc}
-     * @param TaxBaseException[]|array $entities
+     * @param TaxBaseExclusion[]|array $entities
      */
     public function reverseTransform($entities)
     {

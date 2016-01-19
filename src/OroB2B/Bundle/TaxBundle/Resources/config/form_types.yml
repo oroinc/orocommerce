@@ -17,8 +17,8 @@ parameters:
     orob2b_tax.form.extension.account_group_tax.class: OroB2B\Bundle\TaxBundle\Form\Extension\AccountGroupTaxExtension
 
     orob2b_tax.form.type.tax_provider_type.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxProviderType
-    orob2b_tax.form.type.tax_base_exception.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxBaseExceptionType
-    orob2b_tax.form.type.tax_base_exception_collection.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxBaseExceptionCollectionType
+    orob2b_tax.form.type.tax_base_exclusion.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxBaseExclusionType
+    orob2b_tax.form.type.tax_base_exclusion_collection.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxBaseExclusionCollectionType
 
 services:
     orob2b_tax.form.type.product_tax_code:
@@ -122,16 +122,16 @@ services:
         tags:
             - { name: form.type, alias: orob2b_tax_provider_type }
 
-    orob2b_tax.form.type.tax_base_exception:
-        class: %orob2b_tax.form.type.tax_base_exception.class%
+    orob2b_tax.form.type.tax_base_exclusion:
+        class: %orob2b_tax.form.type.tax_base_exclusion.class%
         arguments:
             - @oro_address.form.listener.address
         calls:
-            - [setDataClass, [%orob2b_tax.entity.tax_base_exception.class%]]
+            - [setDataClass, [%orob2b_tax.entity.tax_base_exclusion.class%]]
         tags:
-            - { name: form.type, alias: orob2b_tax_base_exception }
+            - { name: form.type, alias: orob2b_tax_base_exclusion }
 
-    orob2b_tax.form.type.tax_base_exception_collection:
-        class: %orob2b_tax.form.type.tax_base_exception_collection.class%
+    orob2b_tax.form.type.tax_base_exclusion_collection:
+        class: %orob2b_tax.form.type.tax_base_exclusion_collection.class%
         tags:
-            - { name: form.type, alias: orob2b_tax_base_exception_collection }
+            - { name: form.type, alias: orob2b_tax_base_exclusion_collection }

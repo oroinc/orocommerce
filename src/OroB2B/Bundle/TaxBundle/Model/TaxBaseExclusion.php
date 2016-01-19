@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\TaxBundle\Model;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 
-class TaxBaseException
+class TaxBaseExclusion
 {
     const USE_AS_BASE_SHIPPING_ORIGIN = 'shipping_origin';
     const USE_AS_BASE_DESTINATION = 'destination';
@@ -30,7 +30,7 @@ class TaxBaseException
      * Set country
      *
      * @param Country $country
-     * @return TaxBaseException
+     * @return TaxBaseExclusion
      */
     public function setCountry($country)
     {
@@ -53,7 +53,7 @@ class TaxBaseException
      * Set region
      *
      * @param Region $region
-     * @return TaxBaseException
+     * @return TaxBaseExclusion
      */
     public function setRegion($region)
     {
@@ -76,7 +76,7 @@ class TaxBaseException
      * Set option
      *
      * @param string $option
-     * @return TaxBaseException
+     * @return TaxBaseExclusion
      */
     public function setOption($option)
     {

@@ -7,7 +7,7 @@ parameters:
     orob2b_tax.entity.tax_rule.class: OroB2B\Bundle\TaxBundle\Entity\TaxRule
     orob2b_tax.entity.zip_code.class: OroB2B\Bundle\TaxBundle\Entity\ZipCode
     orob2b_tax.entity.tax_value.class: OroB2B\Bundle\TaxBundle\Entity\TaxValue
-    orob2b_tax.entity.tax_base_exception.class: OroB2B\Bundle\TaxBundle\Model\TaxBaseException
+    orob2b_tax.entity.tax_base_exclusion.class: OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion
 
     orob2b_tax.validator.zip_code_fields.class: OroB2B\Bundle\TaxBundle\Validator\Constraints\ZipCodeFieldsValidator
 
@@ -30,7 +30,7 @@ parameters:
     orob2b_tax.order_tax.mapper.order_mapper.class: OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderMapper
     orob2b_tax.order_tax.mapper.order_line_item_mapper.class: OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper
     orob2b_tax.data_transformer.tax_code_transformer.class: OroB2B\Bundle\TaxBundle\Form\DataTransformer\TaxCodeTransformer
-    orob2b_tax.data_transformer.tax_base_exception_transformer.class: OroB2B\Bundle\TaxBundle\Form\DataTransformer\TaxBaseExceptionTransformer
+    orob2b_tax.data_transformer.tax_base_exclusion_transformer.class: OroB2B\Bundle\TaxBundle\Form\DataTransformer\TaxBaseExclusionTransformer
 
     orob2b_tax.matcher.country_matcher.class: OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher
     orob2b_tax.matcher.region_matcher.class: OroB2B\Bundle\TaxBundle\Matcher\RegionMatcher
@@ -260,8 +260,8 @@ services:
             - @doctrine
             - %orob2b_tax.entity.product_tax_code.class%
 
-    orob2b_tax.data_transformer.product_tax_base_exception_transformer:
-        class: %orob2b_tax.data_transformer.tax_base_exception_transformer.class%
+    orob2b_tax.data_transformer.product_tax_base_exclusion_transformer:
+        class: %orob2b_tax.data_transformer.tax_base_exclusion_transformer.class%
         arguments:
             - @oro_entity.doctrine_helper
 

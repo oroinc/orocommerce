@@ -104,7 +104,7 @@ orob2b.tax:
             product_prices_include_tax.label: 'Product Prices Include Tax'
             use_as_base:
                 default.label: 'Use as Base by Default'
-                exceptions.label: 'Use as Base Exceptions'
+                exclusions.label: 'Use as Base Exclusions'
                 shipping_origin.label: 'Shipping Origin'
                 destination.label: 'Destination'
                 option.label: 'Option'

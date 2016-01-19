@@ -60,80 +60,65 @@
     <td>{{ form_widget(form.zipRangeEnd) }} {{ form_errors(form.zipRangeEnd) }}</td>
 {% endblock %}
 
-{% block _tax_calculation_orob2b_tax___use_as_base_exceptions_value_entry_widget %}
-    <td class="tax-base-exception-country">
-        <div>{{ form_widget(form.country) }}</div>
-        {{ form_errors(form.country) }}
-    </td>
-    <td class="tax-base-exception-region">
-        <div>{{ form_widget(form.region) }}</div>
-        {{ form_errors(form.region) }}
-    </td>
-    <td class="tax-base-exception-option">
-        <div>{{ form_widget(form.option) }}</div>
-        {{ form_errors(form.option) }}
-    </td>
+{% block _tax_calculation_orob2b_tax___use_as_base_exclusions_value_entry_widget %}
+    <div class="tax-base-exclusion tax-base-exclusion-country">
+        {{ form_widget(form.country, { 'attr': {'diabled': 'disabled'} }) }}{{ form_errors(form.country) }}
+    </div>
+    <div class="tax-base-exclusion tax-base-exclusion-region">
+        {{ form_widget(form.region, { 'attr': {'diabled': 'disabled'} }) }}{{ form_errors(form.region) }}
+    </div>
+    <div class="tax-base-exclusion tax-base-exclusion-option">
+        {{ form_widget(form.option, { 'attr': {'diabled': 'disabled'} }) }}{{ form_errors(form.option) }}
+    </div>
 {% endblock %}
 
-{% macro _tax_calculation_orob2b_tax___use_as_base_exceptions_value_item_prototype(widget) %}
+{% macro _tax_calculation_orob2b_tax___use_as_base_exclusions_value_item_prototype(widget) %}
+    {% set allow_delete = widget.vars.allow_delete %}
+    {% set allow_add_after = widget.vars.allow_add_after %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.prototype.vars.name %}
         {% set disabled = widget.vars.disabled %}
-        {% set allow_delete = widget.vars.allow_delete %}
-        {% set allow_add_after = widget.vars.allow_add_after %}
     {% else %}
         {% set form = widget %}
         {% set name = widget.vars.full_name %}
         {% set disabled = widget.parent.vars.disabled %}
-        {% set allow_delete = widget.parent.vars.allow_delete %}
-        {% set allow_add_after = widget.parent.vars.allow_add_after %}
     {% endif %}
-    <tr data-content="{{ name }}" data-validation-optional-group>
-        <div class="row-oro oro-multiselect-holder{% if not allow_delete %} not-removable{% endif %}">
-            {{ form_widget(form, {disabled: disabled}) }}
-            <td class="tax-base-exception-action">
-                {% if allow_delete %}
-                    <button class="removeRow btn btn-action btn-link" type="button" data-related="{{ name }}">×</button>
-                {% endif %}
-                {% if allow_add_after %}
-                    <button class="addAfterRow btn btn-action btn-link" type="button" data-related="{{ name }}">+</button>
-                {% endif %}
-            </td>
-        </div>
-    </tr>
+    <div class="row-oro oro-multiselect-holder well tax-base-exclusion-row{% if not allow_delete %} not-removable{% endif %}" data-content="{{ name }}" data-validation-optional-group>
+        {% if allow_delete %}
+            <button class="removeRow btn btn-action btn-link tax-base-exclusion-remove-row" type="button" data-related="{{ name }}">×</button>
+        {% endif %}
+        {% if allow_add_after %}
+            <button class="addAfterRow btn btn-action btn-link" type="button" data-related="{{ name }}">+</button>
+        {% endif %}
+        {{ form_widget(form) }}
+    </div>
 {% endmacro %}
 
-{% block _tax_calculation_orob2b_tax___use_as_base_exceptions_value_widget %}
+{% block _tax_calculation_orob2b_tax___use_as_base_exclusions_value_widget %}
     {% spaceless %}
         {% if prototype is defined %}
-            {% set prototype_html = _self._tax_calculation_orob2b_tax___use_as_base_exceptions_value_item_prototype(form) %}
+            {% set prototype_html = _self._tax_calculation_orob2b_tax___use_as_base_exclusions_value_item_prototype(form) %}
         {% endif %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection collection-fields-list' }) %}
         {% set id = id ~ '_collection' %}
         <div class="row-oro">
             {% set prototype_name = form.vars.prototype_name %}
             <div {{ block('widget_container_attributes') }} data-last-index="{{ form.children|length}}" data-row-count-add="{{ form.vars.row_count_add }}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
-                <table class="tax-base-exception">
-                    <tr>
-                        <th class="tax-base-exception-country">{{ 'oro.address.country.label'|trans }}</th>
-                        <th class="tax-base-exception-region">{{ 'oro.address.region.label'|trans }}</th>
-                        <th class="tax-base-exception-option">{{ 'orob2b.tax.system_configuration.fields.use_as_base.option.label'|trans }}</th>
-                        <th class="tax-base-exception-action"></th>
-                    </tr>
-                    {% if form.children|length %}
-                        {% for child in form.children %}
-                            {{ _self._tax_calculation_orob2b_tax___use_as_base_exceptions_value_item_prototype(child) }}
-                        {% endfor %}
-                    {% elseif show_form_when_empty and prototype_html is defined %}
-                        {% for i in 0..(form.vars.row_count_initial - 1) %}
-                            {{ prototype_html|replace({(prototype_name): i})|raw }}
-                        {% endfor %}
-                    {% endif %}
-                </table>
+                {% if form.children|length %}
+                    {% for child in form.children %}
+                        {{ _self._tax_calculation_orob2b_tax___use_as_base_exclusions_value_item_prototype(child) }}
+                    {% endfor %}
+                {% elseif show_form_when_empty and prototype_html is defined %}
+                    {% for i in 0..(form.vars.row_count_initial - 1) %}
+                        {{ prototype_html|replace({(prototype_name): i})|raw }}
+                    {% endfor %}
+                {% endif %}
             </div>
             {% if allow_add %}
-                <a class="btn add-list-item" href="javascript: void(0);"><i class="icon-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+                <a class="btn add-list-item" href="javascript: void(0);" {{ disabled ? 'disabled' : 'disabled' }}>
+                    <i class="icon-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}
+                </a>
             {% endif %}
         </div>
         {% if handle_primary and (prototype is not defined or prototype.primary is defined) %}

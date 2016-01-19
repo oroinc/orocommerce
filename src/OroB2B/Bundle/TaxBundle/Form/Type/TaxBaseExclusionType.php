@@ -6,12 +6,12 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\TaxBundle\Model\TaxBaseException;
+use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
 
-class TaxBaseExceptionType extends AbstractType
+class TaxBaseExclusionType extends AbstractType
 {
-    const NAME = 'orob2b_tax_base_exception';
+    const NAME = 'orob2b_tax_base_exclusion';
 
     /**
      * @var string
@@ -47,17 +47,17 @@ class TaxBaseExceptionType extends AbstractType
     {
         $builder->addEventSubscriber($this->countryAndRegionSubscriber);
         $builder
-            ->add('country', 'oro_country', array('required' => true, 'label' => 'oro.address.country.label'))
-            ->add('region', 'oro_region', array('required' => false, 'label' => 'oro.address.region.label'))
+            ->add('country', 'oro_country', ['required' => true, 'label' => 'oro.address.country.label'])
+            ->add('region', 'oro_region', ['required' => false, 'label' => 'oro.address.region.label'])
             ->add(
                 'option',
                 'choice',
                 [
                     'required' => true,
                     'choices' => [
-                        TaxBaseException::USE_AS_BASE_SHIPPING_ORIGIN =>
+                        TaxBaseExclusion::USE_AS_BASE_SHIPPING_ORIGIN =>
                             'orob2b.tax.system_configuration.fields.use_as_base.shipping_origin.label',
-                        TaxBaseException::USE_AS_BASE_DESTINATION =>
+                        TaxBaseExclusion::USE_AS_BASE_DESTINATION =>
                             'orob2b.tax.system_configuration.fields.use_as_base.destination.label',
                     ]
                 ]

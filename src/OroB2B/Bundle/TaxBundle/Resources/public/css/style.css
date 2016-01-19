@@ -1,25 +1,22 @@
-.tax-base-exception {
-    margin-top:30px;
-    margin-bottom:10px;
+.tax-base-exclusion {
+    margin: 2px 0;
 }
 
-.tax-base-exception-country,
-.tax-base-exception-region {
-    width: 232px!important;
+.tax-base-exclusion-option select {
+    margin: 0 !important;
 }
 
-.tax-base-exception-country select,
-.tax-base-exception-region select,
-.tax-base-exception .select2-container {
-    width: 230px!important;
+.tax-base-exclusion-option .selector {
+    margin: 0 !important;
+    width: 294px !important;
 }
 
-.tax-base-exception-option select,
-.tax-base-exception-option .selector span {
-    width: 130px!important;
+.tax-base-exclusion-row {
+    padding: 3px !important;
+    width: 300px;
 }
 
-.tax-base-exception-option,
-.tax-base-exception-option .selector {
-    width: 132px!important;
+.tax-base-exclusion-remove-row {
+    float: right !important;
+    margin: 0 !important;
 }

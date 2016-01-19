@@ -7,9 +7,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
-class TaxBaseExceptionCollectionType extends AbstractType
+class TaxBaseExclusionCollectionType extends AbstractType
 {
-    const NAME = 'orob2b_tax_base_exception_collection';
+    const NAME = 'orob2b_tax_base_exclusion_collection';
 
     /**
      * {@inheritdoc}
@@ -26,7 +26,7 @@ class TaxBaseExceptionCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'type' => TaxBaseExceptionType::NAME,
+                'type' => TaxBaseExclusionType::NAME,
                 'show_form_when_empty' => false
             ]
         );

@@ -67,12 +67,12 @@ oro_system_configuration:
                     shipping_origin: orob2b.tax.system_configuration.fields.use_as_base.shipping_origin.label
                     destination: orob2b.tax.system_configuration.fields.use_as_base.destination.label
 
-        orob2b_tax.use_as_base_exceptions:
+        orob2b_tax.use_as_base_exclusions:
             data_type: array
-            type: orob2b_tax_base_exception_collection
+            type: orob2b_tax_base_exclusion_collection
             options:
-                label: orob2b.tax.system_configuration.fields.use_as_base.exceptions.label
-                data_transformer: orob2b_tax.data_transformer.product_tax_base_exception_transformer
+                label: orob2b.tax.system_configuration.fields.use_as_base.exclusions.label
+                data_transformer: orob2b_tax.data_transformer.product_tax_base_exclusion_transformer
 
         orob2b_tax.destination:
             data_type: string
@@ -134,7 +134,7 @@ oro_system_configuration:
                                         priority: 70
                                         children:
                                             - orob2b_tax.use_as_base_by_default
-                                            - orob2b_tax.use_as_base_exceptions
+                                            - orob2b_tax.use_as_base_exclusions
                                             - orob2b_tax.destination
                             tax_digital_products:
                                 priority: 90
