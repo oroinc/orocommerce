@@ -265,6 +265,9 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
         $extension->onPostSubmit($event);
     }
 
+    /**
+     * @return array
+     */
     public function testOnPostSubmitDataProvider()
     {
         return [
