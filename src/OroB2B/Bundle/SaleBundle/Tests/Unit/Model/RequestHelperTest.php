@@ -59,7 +59,7 @@ class RequestHelperTest extends \PHPUnit_Framework_TestCase
 
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
 
-        $this->helper = new RequestHelper($this->registry);
+        $this->helper = new RequestHelper($this->registry, 'OroB2BSaleBundle:Quote', 'OroB2BRFPBundle:Request');
     }
 
     protected function tearDown()

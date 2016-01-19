@@ -71,6 +71,9 @@ class FindEntitiesTest extends \PHPUnit_Framework_TestCase
         $this->function->initialize($options);
     }
 
+    /**
+     * @return array
+     */
     public function initializeExceptionDataProvider()
     {
         return [
@@ -145,6 +148,9 @@ class FindEntitiesTest extends \PHPUnit_Framework_TestCase
         $this->assertAttributeEquals($expected, 'options', $this->function);
     }
 
+    /**
+     * @return array
+     */
     public function initializeDataProvider()
     {
         return [

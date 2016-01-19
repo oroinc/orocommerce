@@ -4,10 +4,9 @@ namespace OroB2B\Bundle\SaleBundle\Model;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 
 use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
 
 class RequestHelper
 {
@@ -15,11 +14,25 @@ class RequestHelper
     protected $registry;
 
     /**
-     * @param ManagerRegistry $registry
+     * @var string
      */
-    public function __construct(ManagerRegistry $registry)
+    protected $quoteClass;
+
+    /**
+     * @var string
+     */
+    protected $requestClass;
+
+    /**
+     * @param ManagerRegistry $registry
+     * @param string $quoteClass
+     * @param string $requestClass
+     */
+    public function __construct(ManagerRegistry $registry, $quoteClass, $requestClass)
     {
         $this->registry = $registry;
+        $this->quoteClass = $quoteClass;
+        $this->requestClass = $requestClass;
     }
 
     /**
@@ -30,22 +43,32 @@ class RequestHelper
     {
         $date = new \DateTime();
         $date->modify(sprintf('-%d days', $days));
-        /** @var EntityManager $manager */
-        $manager = $this->registry->getManagerForClass('OroB2BRFPBundle:Request');
-        $subQueryBuilder = $manager
-            ->getRepository('OroB2BSaleBundle:Quote')
+        $subQueryBuilder = $this
+            ->getEntityRepositoryForClass($this->quoteClass)
             ->createQueryBuilder('q');
         $subQueryBuilder->where('q.request = r.id');
-        $queryBuilder = $manager
-            ->getRepository('OroB2BRFPBundle:Request')
+
+        $queryBuilder = $this
+            ->getEntityRepositoryForClass($this->requestClass)
             ->createQueryBuilder('r');
+
         $queryBuilder
             ->select('r')
             ->where($queryBuilder->expr()->not($queryBuilder->expr()->exists($subQueryBuilder->getDql())))
             ->andWhere('r.createdAt < :date')
             ->setParameter('date', $date);
-        ;
 
         return $queryBuilder->getQuery()->getResult();
+    }
+
+    /**
+     * @param $entityClass
+     * @return EntityRepository
+     */
+    public function getEntityRepositoryForClass($entityClass)
+    {
+        return $this->registry
+            ->getManagerForClass($entityClass)
+            ->getRepository($entityClass);
     }
 }

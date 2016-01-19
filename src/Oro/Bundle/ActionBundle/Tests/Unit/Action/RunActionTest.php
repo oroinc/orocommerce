@@ -70,9 +70,8 @@ class RunActionTest extends \PHPUnit_Framework_TestCase
      * @param array $inputData
      * @param string $exception
      * @param string $exceptionMessage
-     * @param bool $hasService
      */
-    public function testInitializeException(array $inputData, $exception, $exceptionMessage, $hasService = true)
+    public function testInitializeException(array $inputData, $exception, $exceptionMessage)
     {
         $this->setExpectedException($exception, $exceptionMessage);
 
@@ -96,7 +95,6 @@ class RunActionTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expectedException' => 'Oro\Bundle\ActionBundle\Exception\InvalidParameterException',
                 'expectedExceptionMessage' => 'Entity class parameter is required',
-                'hasService' => false
             ],
             [
                 'inputData' => [
