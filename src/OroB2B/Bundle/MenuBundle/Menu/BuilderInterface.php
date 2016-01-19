@@ -7,11 +7,11 @@ use Knp\Menu\ItemInterface;
 interface BuilderInterface
 {
     /**
-     * Modify menu by adding, removing or editing items.
+     * Create menu by alias
      *
      * @param string $alias
-     * @param array                   $options
-     * @param string|null             $alias
+     * @param array $options
+     * @param string|null $alias
      * @return ItemInterface
      */
     public function build($alias, array $options = []);

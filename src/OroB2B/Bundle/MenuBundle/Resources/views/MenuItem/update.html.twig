@@ -11,7 +11,7 @@
                 <div class="left-panel scrollable-container">
                     <div class="menu-item">
                         {% set treeOptions = {
-                            'data' : orob2b_menu_item_list(),
+                            'data' : orob2b_menu_item_list(entity),
                             'updateAllowed' : resource_granted('orob2b_menu_item_update'),
                             'onSelectRoute' : 'orob2b_menu_item_update',
                             'onMoveRoute' : 'orob2b_menu_item_move'
