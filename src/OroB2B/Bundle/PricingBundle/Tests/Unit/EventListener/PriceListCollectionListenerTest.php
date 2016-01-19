@@ -1,6 +1,5 @@
 <?php
 
-
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit;
 
 use Doctrine\ORM\EntityManager;
