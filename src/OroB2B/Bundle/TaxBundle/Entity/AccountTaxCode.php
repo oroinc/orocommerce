@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 
 /**
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository")
@@ -45,9 +46,26 @@ class AccountTaxCode extends AbstractTaxCode
      */
     protected $accounts;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountGroup")
+     * @ORM\JoinTable(
+     *      name="orob2b_tax_acc_grp_tc_acc_grp",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="account_group_tax_code_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="account_group_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *      }
+     * )
+     *
+     * @var AccountGroup[]|Collection
+     */
+    protected $accountGroups;
+
     public function __construct()
     {
         $this->accounts = new ArrayCollection();
+        $this->accountGroups = new ArrayCollection();
     }
 
     /**
@@ -88,5 +106,45 @@ class AccountTaxCode extends AbstractTaxCode
     public function getAccounts()
     {
         return $this->accounts;
+    }
+
+    /**
+     * Add accountGroup
+     *
+     * @param AccountGroup $accountGroup
+     * @return $this
+     */
+    public function addAccountGroup(AccountGroup $accountGroup)
+    {
+        if (!$this->accountGroups->contains($accountGroup)) {
+            $this->accountGroups->add($accountGroup);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove accountGroup
+     *
+     * @param AccountGroup $accountGroup
+     * @return $this
+     */
+    public function removeAccountGroup(AccountGroup $accountGroup)
+    {
+        if ($this->accountGroups->contains($accountGroup)) {
+            $this->accountGroups->removeElement($accountGroup);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get accountGroups
+     *
+     * @return AccountGroup[]|Collection
+     */
+    public function getAccountGroups()
+    {
+        return $this->accountGroups;
     }
 }

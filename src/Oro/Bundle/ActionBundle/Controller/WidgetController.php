@@ -26,7 +26,7 @@ class WidgetController extends Controller
      *
      * @return array
      */
-    public function buttonsAction()
+    public function buttonsAction(Request $request)
     {
         return [
             'actions' => $this->getActionManager()->getActions(),
@@ -34,6 +34,7 @@ class WidgetController extends Controller
             'actionData' => $this->getContextHelper()->getActionData(),
             'dialogRoute' => $this->getApplicationsHelper()->getDialogRoute(),
             'executionRoute' => $this->getApplicationsHelper()->getExecutionRoute(),
+            'fromUrl' => $request->get('fromUrl'),
         ];
     }
 
@@ -48,21 +49,29 @@ class WidgetController extends Controller
     {
         $data = $this->getContextHelper()->getActionData();
         $errors = new ArrayCollection();
-        $params = [];
+
+        $params = [
+            'action' => $this->getActionManager()->getAction($actionName, $data),
+            'actionData' => $data,
+        ];
 
         try {
             /** @var Form $form */
             $form = $this->get('oro_action.form_manager')->getActionForm($actionName, $data);
             $form->handleRequest($request);
 
+            $data['form'] = $form;
+
             if ($form->isValid()) {
-                $data = $this->getActionManager()->execute($actionName, $form->getData(), $errors);
+                $data = $this->getActionManager()->execute($actionName, $data, $errors);
 
                 $params['response'] = $this->getResponse($data);
             }
 
             $params['form'] = $form->createView();
             $params['context'] = $data->getValues();
+            $params['fromUrl'] = $request->get('fromUrl');
+
         } catch (\Exception $e) {
             if (!$errors->count()) {
                 $errors->add(['message' => $e->getMessage()]);
@@ -71,7 +80,7 @@ class WidgetController extends Controller
 
         $params['errors'] = $errors;
 
-        return $this->render($this->getActionManager()->getDialogTemplate($actionName), $params);
+        return $this->render($this->getActionManager()->getFrontendTemplate($actionName), $params);
     }
 
     /**

@@ -1,11 +1,11 @@
 datagrid:
     payment-terms-grid:
+        acl_resource: orob2b_payment_term_view
         extended_entity_name: %orob2b_payment.entity.payment_term.class%
         options:
             entityHint:        payment_term
             entity_pagination: true
         source:
-            acl_resource: orob2b_payment_term_view
             type:         orm
             query:
                 select:
@@ -67,10 +67,10 @@ datagrid:
                 acl_resource:  orob2b_payment_term_delete
 
     payment-terms-select-grid:
+        acl_resource: orob2b_payment_term_view
         options:
             entityHint:        payment_term
         source:
-            acl_resource: orob2b_payment_term_view
             type:         orm
             query:
                 select:
@@ -96,10 +96,10 @@ datagrid:
                     data_name: paymentTerm.label
 
     base-payment-term-relations-grid:
+        acl_resource: orob2b_payment_term_view
         options:
             entity_pagination: true
         source:
-            acl_resource: orob2b_payment_term_view
             type: orm
             query:
                 select:
@@ -173,8 +173,8 @@ datagrid:
                 acl_resource: orob2b_account_view
 
     base-payment-term-select-relations-grid:
+        acl_resource: orob2b_payment_term_update
         source:
-            acl_resource: orob2b_payment_term_update
             type: orm
             query:
                 select:

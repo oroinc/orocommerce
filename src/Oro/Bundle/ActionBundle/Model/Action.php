@@ -94,7 +94,7 @@ class Action
      */
     public function init(ActionData $data)
     {
-        $this->executeFunctions($data, ActionDefinition::INITFUNCTIONS);
+        $this->executeFunctions($data, ActionDefinition::FORM_INIT);
     }
 
     /**
@@ -108,7 +108,7 @@ class Action
             throw new ForbiddenActionException(sprintf('Action "%s" is not allowed.', $this->getName()));
         }
 
-        $this->executeFunctions($data, ActionDefinition::POSTFUNCTIONS);
+        $this->executeFunctions($data, ActionDefinition::FUNCTIONS);
     }
 
     /**

@@ -13,6 +13,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 class ActionExtensionTest extends \PHPUnit_Framework_TestCase
 {
     const ROUTE = 'test_route';
+    const REQUEST_URI = '/test/request/uri';
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|ActionManager */
     protected $actionManager;
@@ -100,6 +101,9 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('get')
             ->with('_route')
             ->willReturn(self::ROUTE);
+        $request->expects($this->once())
+            ->method('getRequestUri')
+            ->willReturn(self::REQUEST_URI);
 
         $this->requestStack->expects($this->once())
             ->method('getMasterRequest')
@@ -128,27 +132,37 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
         return [
             'empty context' => [
                 'context' => [],
-                'expected' => ['route' => self::ROUTE],
+                'expected' => ['route' => self::ROUTE, 'fromUrl' => self::REQUEST_URI],
             ],
             'entity_class' => [
                 'context' => ['entity_class' => '\stdClass'],
-                'expected' => ['route' => self::ROUTE, 'entityClass' => '\stdClass'],
+                'expected' => ['route' => self::ROUTE, 'entityClass' => '\stdClass', 'fromUrl' => self::REQUEST_URI],
             ],
             'new entity' => [
                 'context' => ['entity' => $this->getEntity()],
-                'expected' => ['route' => self::ROUTE],
+                'expected' => ['route' => self::ROUTE, 'fromUrl' => self::REQUEST_URI],
             ],
             'existing entity' => [
                 'context' => ['entity' => $this->getEntity(42)],
-                'expected' => ['route' => self::ROUTE, 'entityClass' => 'stdClass', 'entityId' => ['id' => 42]],
+                'expected' => [
+                    'route' => self::ROUTE,
+                    'entityClass' => 'stdClass',
+                    'entityId' => ['id' => 42],
+                    'fromUrl' => self::REQUEST_URI
+                ],
             ],
             'existing entity & entity_class' => [
                 'context' => ['entity' => $this->getEntity(43), 'entity_class' => 'testClass'],
-                'expected' => ['route' => self::ROUTE, 'entityClass' => 'stdClass', 'entityId' => ['id' => 43]],
+                'expected' => [
+                    'route' => self::ROUTE,
+                    'entityClass' => 'stdClass',
+                    'entityId' => ['id' => 43],
+                    'fromUrl' => self::REQUEST_URI
+                ],
             ],
             'new entity & entity_class' => [
                 'context' => ['entity' => $this->getEntity(), 'entity_class' => 'testClass'],
-                'expected' => ['route' => self::ROUTE, 'entityClass' => 'testClass'],
+                'expected' => ['route' => self::ROUTE, 'entityClass' => 'testClass', 'fromUrl' => self::REQUEST_URI],
             ],
         ];
     }

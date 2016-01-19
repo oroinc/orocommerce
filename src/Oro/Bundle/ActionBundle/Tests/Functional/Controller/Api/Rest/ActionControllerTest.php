@@ -110,7 +110,7 @@ class ActionControllerTest extends WebTestCase
                 'entities' => [],
                 'routes' => [],
                 'datagrids' => [],
-                'postfunctions' => [['@assign_value' => ['$message', self::MESSAGE_NEW]]],
+                'functions' => [['@assign_value' => ['$message', self::MESSAGE_NEW]]],
             ]
         ];
 

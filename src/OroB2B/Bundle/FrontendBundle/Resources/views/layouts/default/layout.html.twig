@@ -1,4 +1,10 @@
-{% block _requirejs_widget %}
+{% block _scripts_before_widget %}
+    {% block scripts_before %}
+        {% placeholder scripts_before %}
+    {% endblock %}
+{% endblock %}
+
+{% block _require_js_widget %}
     {% set requirejs_config_extend %}
         {%- placeholder requirejs_config_extend -%}
     {% endset %}
@@ -6,6 +12,27 @@
         compressed: not app.debug,
         config_extend: requirejs_config_extend
     } %}
+    {% placeholder scripts_after %}
+    <script>
+        require({
+            config: {
+                'oro/datagrid/cell/action-cell': {showCloseButton: true},
+                'orodatagrid/js/app/plugins/grid/column-manager-plugin': {icon: 'gear'},
+                'orodatagrid/js/datagrid/action-launcher': {iconHideText: false},
+                'oro/filter/abstract-filter': {
+                    placeholder: null,
+                    labelPrefix: '{{ 'orob2b_frontend.filter.by'|trans  }} '
+                },
+                'orofilter/js/filter-hint': {inline: false}
+            }
+        });
+    </script>
+{% endblock %}
+
+{% block _require_modules_widget %}
+    <script type="text/javascript">
+        require(['oroui/js/app']);
+    </script>
 {% endblock %}
 
 {% block _wrapper_widget %}
@@ -33,18 +60,41 @@
 {% endblock %}
 
 {% block _content_widget %}
+    {% set hasSidebarLeft = blocks.sidebar_left is defined and blocks.sidebar_left.children|length > 0 %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " content"
+        class: attr.class|default('') ~ " content" ~ (hasSidebarLeft ? " content_has-sidebar")
     }) %}
     <div{{ block('block_attributes') }}>
         <div class="content__container">
             <div class="container-fluid">
-                <div class="content__inner">
+                <div class="content__inner" id="container">
                     {{ block_widget(block) }}
                 </div>
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block _page_title_widget %}
+    {% if text %}
+        {% if class_prefix %}
+            {% set attr = attr|merge({
+                class: attr.class|default('') ~ " {{ class_prefix }}-page-title"
+            }) %}
+        {% endif %}
+        <h1{{ block('block_attributes') }}>{{ block_widget(block) }}</h1>
+    {% endif %}
+{% endblock %}
+
+{% block _sidebar_left_widget %}
+    {% if block.count > 0 %}
+        {% set attr = attr|merge({
+            class: attr.class|default('') ~ " sidebar sidebar_left"
+        }) %}
+        <aside{{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </aside>
+    {% endif %}
 {% endblock %}
 
 {% block _footer_widget %}
