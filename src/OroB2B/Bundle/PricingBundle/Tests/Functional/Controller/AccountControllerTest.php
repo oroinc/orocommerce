@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountType;
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 
 /**
  * @dbIsolation

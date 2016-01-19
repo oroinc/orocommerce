@@ -384,10 +384,10 @@ class FormViewListenerTest extends FormViewListenerTestCase
                     ScrollData::SUB_BLOCKS => [
                         [
                             ScrollData::DATA => [],
-                        ],
-                    ],
-                ],
-            ],
+                        ]
+                    ]
+                ]
+            ]
         ];
 
         return new BeforeListRenderEvent($environment, new ScrollData($defaultData), $formView);
