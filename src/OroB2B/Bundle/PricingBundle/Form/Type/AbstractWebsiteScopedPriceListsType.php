@@ -33,7 +33,9 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
      */
     protected $registry;
 
-    /** @var  EventDispatcherInterface */
+    /**
+     * @var  EventDispatcherInterface
+     */
     protected $eventDispatcher;
 
     /**

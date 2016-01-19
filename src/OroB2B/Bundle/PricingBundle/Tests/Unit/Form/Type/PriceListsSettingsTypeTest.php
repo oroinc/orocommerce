@@ -216,6 +216,9 @@ class PriceListsSettingsTypeTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * @return array
+     */
     public function testOnPostSubmitDataProvider()
     {
         return [

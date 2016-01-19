@@ -16,13 +16,19 @@ use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
 
 class PriceListSystemConfigSubscriber implements EventSubscriberInterface
 {
-    /** @var PriceListConfigConverter */
+    /**
+     * @var PriceListConfigConverter
+     */
     protected $converter;
 
-    /** @var  EventDispatcherInterface */
+    /**
+     * @var  EventDispatcherInterface
+     */
     protected $eventDispatcher;
 
-    /** @var  boolean */
+    /**
+     * @var  boolean
+     */
     protected $applicable;
 
     /**

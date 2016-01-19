@@ -101,6 +101,7 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
      * @dataProvider updateAfterDataProvider
      * @param array $changeSet
      * @param boolean $dispatch
+     * @param string $key
      */
     public function testUpdateAfter($changeSet, $dispatch, $key)
     {
