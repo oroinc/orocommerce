@@ -19,10 +19,9 @@ trait FallbackTrait
             return $locale === $title->getLocale();
         });
 
-        $localeTitle = $locale ? $locale->getTitle() : 'default';
-
         // TODO: implement with fallback
         if ($values->count() > 1) {
+            $localeTitle = $locale ? $locale->getTitle() : 'default';
             throw new \LogicException(sprintf('There must be only one %s title', $localeTitle));
         }
 
