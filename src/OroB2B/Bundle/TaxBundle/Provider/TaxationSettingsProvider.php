@@ -6,6 +6,12 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 class TaxationSettingsProvider
 {
+    const DESTINATION_BILLING_ADDRESS = 'billing_address';
+    const DESTINATION_SHIPPING_ADDRESS = 'shipping_address';
+
+    const START_CALCULATION_UNIT_PRICE = 'unit_price';
+    const START_CALCULATION_ROW_TOTAL = 'row_total';
+
     /**
      * @var ConfigManager
      */
@@ -25,6 +31,22 @@ class TaxationSettingsProvider
     public function getStartCalculationWith()
     {
         return $this->configManager->get('orob2b_tax.start_calculation_with');
+    }
+
+    /**
+     * @return string
+     */
+    public function isStartCalculationWithUnitPrice()
+    {
+        return $this->getStartCalculationWith() === self::START_CALCULATION_UNIT_PRICE;
+    }
+
+    /**
+     * @return string
+     */
+    public function isStartCalculationWithRowTotal()
+    {
+        return $this->getStartCalculationWith() === self::START_CALCULATION_ROW_TOTAL;
     }
 
     /**
@@ -73,5 +95,29 @@ class TaxationSettingsProvider
     public function getDigitalProductsTaxCodesEu()
     {
         return (array)$this->configManager->get('orob2b_tax.digital_products_eu');
+    }
+
+    /**
+     * @return string
+     */
+    public function isBillingAddressDestination()
+    {
+        return $this->getDestination() === self::DESTINATION_BILLING_ADDRESS;
+    }
+
+    /**
+     * @return string
+     */
+    public function isShippingAddressDestination()
+    {
+        return $this->getDestination() === self::DESTINATION_SHIPPING_ADDRESS;
+    }
+
+    /**
+     * @return \Oro\Bundle\AddressBundle\Entity\AbstractAddress
+     */
+    public function getOrigin()
+    {
+        /** @todo: add address form to config */
     }
 }

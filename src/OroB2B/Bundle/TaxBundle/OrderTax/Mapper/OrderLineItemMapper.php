@@ -3,10 +3,9 @@
 namespace OroB2B\Bundle\TaxBundle\OrderTax\Mapper;
 
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\TaxBundle\Mapper\TaxMapperInterface;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
 
-class OrderLineItemMapper implements TaxMapperInterface
+class OrderLineItemMapper extends AbstractOrderMapper
 {
     const PROCESSING_CLASS_NAME = 'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem';
 
@@ -18,8 +17,10 @@ class OrderLineItemMapper implements TaxMapperInterface
     {
         $taxable = (new Taxable())
             ->setIdentifier($lineItem->getId())
+            ->setClassName($this->getProcessingClassName())
             ->setQuantity($lineItem->getQuantity())
-            ->setPrice($lineItem->getValue() ?: 0);
+            ->setDestination($this->getOrderAddress($lineItem->getOrder()))
+            ->setPrice($lineItem->getPrice());
 
         return $taxable;
     }

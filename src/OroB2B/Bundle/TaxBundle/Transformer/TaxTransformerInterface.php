@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\TaxBundle\Transformer;
 
 use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
 use OroB2B\Bundle\TaxBundle\Model\Result;
+use OroB2B\Bundle\TaxBundle\Model\Taxable;
 
 interface TaxTransformerInterface
 {
@@ -18,9 +19,9 @@ interface TaxTransformerInterface
     /**
      * Reverse transform Result to object
      *
-     * @param TaxValue $taxValue
      * @param Result $result
+     * @param Taxable $taxable
      * @return TaxValue
      */
-    public function reverseTransform(TaxValue $taxValue, Result $result);
+    public function reverseTransform(Result $result, Taxable $taxable);
 }
