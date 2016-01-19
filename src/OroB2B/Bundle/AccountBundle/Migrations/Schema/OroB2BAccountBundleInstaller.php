@@ -118,7 +118,7 @@ class OroB2BAccountBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_3';
     }
 
     /**
@@ -1656,5 +1656,4 @@ class OroB2BAccountBundleInstaller implements
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
-}
 }
