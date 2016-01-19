@@ -54,7 +54,8 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     {
         return $this->getProductUnitsByCurrency(
             $this->get('orob2b_pricing.model.frontend.price_list_request_handler')->getPriceList(),
-            $request
+            $request,
+            $this->getParameter('orob2b_pricing.entity.combined_product_price.class')
         );
     }
 }

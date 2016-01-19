@@ -111,12 +111,22 @@ services:
             - @doctrine
             - %orob2b_pricing.entity.product_price.class%
 
-    orob2b_pricing.provider.product_price:
+    orob2b_pricing.provider.abstract_product_price:
         class: %orob2b_pricing.provider.product_price.class%
+        abstract: true
         arguments:
             - @doctrine
             - @orob2b_pricing.model.frontend.price_list_request_handler
-            - %orob2b_pricing.entity.product_price.class%
+
+    orob2b_pricing.provider.product_price:
+        parent: orob2b_pricing.provider.abstract_product_price
+        calls:
+            - [setClassName, [%orob2b_pricing.entity.product_price.class%]]
+
+    orob2b_pricing.provider.combined_product_price:
+        parent: orob2b_pricing.provider.abstract_product_price
+        calls:
+            - [setClassName, [%orob2b_pricing.entity.combined_product_price.class%]]
 
     orob2b_pricing.provider.combined_price_list:
         class: %orob2b_pricing.provider.combined_price_list.class%

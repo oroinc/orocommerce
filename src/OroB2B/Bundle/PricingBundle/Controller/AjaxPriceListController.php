@@ -11,7 +11,6 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 
@@ -60,10 +59,10 @@ class AjaxPriceListController extends Controller
      *      requirements={"id"="\d+"})
      * @AclAncestor("orob2b_product_update")
      *
-     * @param BasePriceList $priceList
+     * @param PriceList $priceList
      * @return JsonResponse
      */
-    public function getPriceListCurrencyList(BasePriceList $priceList)
+    public function getPriceListCurrencyList(PriceList $priceList)
     {
         $currencyNames = Intl::getCurrencyBundle()->getCurrencyNames($this->get('oro_locale.settings')->getLocale());
 

@@ -31,13 +31,11 @@ class ProductPriceProvider
     /**
      * @param ManagerRegistry $registry
      * @param FrontendPriceListRequestHandler $requestHandler
-     * @param string $className
      */
-    public function __construct(ManagerRegistry $registry, FrontendPriceListRequestHandler $requestHandler, $className)
+    public function __construct(ManagerRegistry $registry, FrontendPriceListRequestHandler $requestHandler)
     {
         $this->registry = $registry;
         $this->requestHandler = $requestHandler;
-        $this->className = $className;
     }
 
     /**
@@ -146,5 +144,13 @@ class ProductPriceProvider
     protected function getRepository()
     {
         return $this->registry->getManagerForClass($this->className)->getRepository($this->className);
+    }
+
+    /**
+     * @param string $className
+     */
+    public function setClassName($className)
+    {
+        $this->className = $className;
     }
 }
