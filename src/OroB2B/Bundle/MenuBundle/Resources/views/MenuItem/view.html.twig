@@ -1,8 +1,11 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
 {% import 'OroUIBundle::macros.html.twig' as UI %}
-{% set pageTitle = 'orob2b.menu.menuitem.entity_plural_label'|trans %}
 
 {% set entityId = entity.id %}
+
+{% oro_title_set({params : {
+    "%title%": entity.defaultTitle|default('N/A'|trans)
+} }) %}
 
 {% block navButtons %}
     {% if entityId %}
@@ -41,7 +44,6 @@
 {% endblock pageHeader %}
 {% block stats %}{% endblock %}
 
-
 {% block content_data %}
     <div class="left-panel-container">
         <div class="placeholder">
@@ -52,6 +54,7 @@
                             'data' : orob2b_menu_item_list(entity),
                             'updateAllowed' : resource_granted('orob2b_menu_item_update'),
                             'onSelectRoute' : 'orob2b_menu_item_update',
+                            'onRootSelectRoute': 'orob2b_menu_item_view',
                             'onMoveRoute' : 'orob2b_menu_item_move'
                         } %}
                         <div
