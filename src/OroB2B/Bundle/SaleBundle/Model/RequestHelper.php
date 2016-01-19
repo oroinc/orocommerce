@@ -20,32 +20,14 @@ class RequestHelper
 
     /**
      * @param ManagerRegistry $registry
+     * @param string $quoteClass
+     * @param string $requestClass
      */
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, $quoteClass, $requestClass)
     {
         $this->registry = $registry;
-    }
-
-    /**
-     * @param string $quoteClass
-     * @return RequestHelper
-     */
-    public function setQuoteClass($quoteClass)
-    {
         $this->quoteClass = $quoteClass;
-
-        return $this;
-    }
-
-    /**
-     * @param string $requestClass
-     * @return RequestHelper
-     */
-    public function setRequestClass($requestClass)
-    {
         $this->requestClass = $requestClass;
-
-        return $this;
     }
 
     /**
