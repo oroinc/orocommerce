@@ -92,8 +92,8 @@ orob2b.tax:
             tax_calculator.title: 'Calculator'
             tax_matcher.title: 'Matcher'
             tax_digital_products.title: 'Digital Products Tax Codes'
-            tax_digital_products_us.title: 'US'
-            tax_digital_products_eu.title: 'EU'
+            us_sales_tax.title: 'US Sales Tax'
+            eu_vat_tax.title: 'EU VAT tax'
         fields:
             tax_provider.label: 'Provider'
             tax_enable.label: 'Enabled'

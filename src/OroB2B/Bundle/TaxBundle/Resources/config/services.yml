@@ -29,7 +29,6 @@ parameters:
     orob2b_tax.factory.tax.class: OroB2B\Bundle\TaxBundle\Factory\TaxFactory
     orob2b_tax.order_tax.mapper.order_mapper.class: OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderMapper
     orob2b_tax.order_tax.mapper.order_line_item_mapper.class: OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper
-    orob2b_tax.data_transformer.tax_code_transformer.class: OroB2B\Bundle\TaxBundle\Form\DataTransformer\TaxCodeTransformer
     orob2b_tax.data_transformer.tax_base_exclusion_transformer.class: OroB2B\Bundle\TaxBundle\Form\DataTransformer\TaxBaseExclusionTransformer
 
     orob2b_tax.matcher.country_matcher.class: OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher
@@ -253,12 +252,6 @@ services:
         class: %orob2b_tax.provider.taxation_settings_provider.class%
         arguments:
             - @oro_config.manager
-
-    orob2b_tax.data_transformer.product_tax_code_transformer:
-        class: %orob2b_tax.data_transformer.tax_code_transformer.class%
-        arguments:
-            - @doctrine
-            - %orob2b_tax.entity.product_tax_code.class%
 
     orob2b_tax.data_transformer.product_tax_base_exclusion_transformer:
         class: %orob2b_tax.data_transformer.tax_base_exclusion_transformer.class%

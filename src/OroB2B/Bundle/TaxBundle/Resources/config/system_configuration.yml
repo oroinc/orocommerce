@@ -16,11 +16,10 @@ oro_system_configuration:
 
         tax_digital_products:
             title: orob2b.tax.system_configuration.groups.tax_digital_products.title
-            icon: icon-list-alt
-        tax_digital_products_us:
-            title: orob2b.tax.system_configuration.groups.tax_digital_products_us.title
-        tax_digital_products_eu:
-            title: orob2b.tax.system_configuration.groups.tax_digital_products_eu.title
+        us_sales_tax:
+            title: orob2b.tax.system_configuration.groups.us_sales_tax.title
+        eu_vat_tax:
+            title: orob2b.tax.system_configuration.groups.eu_vat_tax.title
 
     fields:
         orob2b_tax.tax_enable:
@@ -89,23 +88,15 @@ oro_system_configuration:
 
         orob2b_tax.digital_products_us:
             data_type: array
-            type: oro_jqueryselect2_hidden
+            type: orob2b_product_tax_code_multiselect
             options:
                 label: orob2b.tax.system_configuration.fields.digital_products_us.label
-                autocomplete_alias: orob2b_product_tax_code
-                data_transformer: orob2b_tax.data_transformer.product_tax_code_transformer
-                configs:
-                    multiple: true
 
         orob2b_tax.digital_products_eu:
             data_type: array
-            type: oro_jqueryselect2_hidden
+            type: orob2b_product_tax_code_multiselect
             options:
                 label: orob2b.tax.system_configuration.fields.digital_products_eu.label
-                autocomplete_alias: orob2b_product_tax_code
-                data_transformer: orob2b_tax.data_transformer.product_tax_code_transformer
-                configs:
-                    multiple: true
 
     tree:
         system_configuration:
@@ -136,12 +127,15 @@ oro_system_configuration:
                                             - orob2b_tax.use_as_base_by_default
                                             - orob2b_tax.use_as_base_exclusions
                                             - orob2b_tax.destination
-                            tax_digital_products:
+                            us_sales_tax:
                                 priority: 90
                                 children:
-                                    tax_digital_products_us:
+                                    tax_digital_products:
                                         children:
                                             - orob2b_tax.digital_products_us
-                                    tax_digital_products_eu:
+                            eu_vat_tax:
+                                priority: 90
+                                children:
+                                    tax_digital_products:
                                         children:
                                             - orob2b_tax.digital_products_eu
