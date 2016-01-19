@@ -4,9 +4,11 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\Form\Type\Stub\FormStub;
 
 use OroB2B\Bundle\TaxBundle\Form\Type\ProductTaxCodeMultiSelectType;
 
@@ -60,13 +62,27 @@ class ProductTaxCodeMultiSelectTypeTest extends FormIntegrationTestCase
     {
         $view = new FormView();
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $form->expects($this->once())
-            ->method('getData')
-            ->will($this->returnValue($data));
+
+        $form = $this->factory->create($this->formType);
+        $form->setData($data);
         $this->formType->buildView($view, $form, []);
 
         $this->assertEquals($expected, $view->vars['attr']);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getExtensions()
+    {
+        return [
+            new PreloadedExtension(
+                [
+                    'oro_jqueryselect2_hidden' => new FormStub('oro_jqueryselect2_hidden'),
+                ],
+                []
+            ),
+        ];
     }
 
     /**
@@ -78,10 +94,11 @@ class ProductTaxCodeMultiSelectTypeTest extends FormIntegrationTestCase
             [null, ['data-selected-data' => '[]']],
             [[], ['data-selected-data' => '[]']],
             ['', ['data-selected-data' => '[]']],
-            ['string', ['data-selected-data' => '["string"]']],
+            ['string', ['data-selected-data' => '[]']],
             [0, ['data-selected-data' => '[0]']],
-            [1, ['data-selected-data' => '[1]']],
-            [[['id' => 1, 'code' => 'ABCD']], ['data-selected-data' => '[{"id":1,"code":"ABCD"}]']],
+            ['0', ['data-selected-data' => '[0]']],
+            ['1', ['data-selected-data' => '[1]']],
+            [[0, 1, '0', '1', 's'], ['data-selected-data' => '[0,1,0,1]']],
         ];
     }
 }

@@ -3,6 +3,9 @@
 namespace OroB2B\Bundle\TaxBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -27,6 +30,31 @@ class ProductTaxCodeMultiSelectType extends AbstractType
         return 'oro_jqueryselect2_hidden';
     }
 
+    /** {@inheritdoc} */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function (FormEvent $event) {
+                $data = $event->getData();
+                if (!is_array($data)) {
+                    $data = (array)$data;
+                }
+
+                $data = array_filter(
+                    $data,
+                    function ($value) {
+                        return false !== filter_var($value, FILTER_VALIDATE_INT);
+                    }
+                );
+
+                $data = array_map('intval', $data);
+
+                $event->setData($data);
+            }
+        );
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -45,13 +73,6 @@ class ProductTaxCodeMultiSelectType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $data = array_filter(
-            (array)$form->getData(),
-            function ($value) {
-                return $value !== '';
-            }
-        );
-
-        $view->vars['attr'] = ['data-selected-data' => json_encode($data)];
+        $view->vars['attr'] = ['data-selected-data' => json_encode($form->getData())];
     }
 }
