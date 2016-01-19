@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\ActionBundle\Tests\Unit\Action;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
 use Oro\Bundle\ActionBundle\Action\FindEntities;
@@ -17,37 +20,28 @@ class FindEntitiesTest extends \PHPUnit_Framework_TestCase
     protected $function;
 
     /**
-     * @var ContextAccessor
-     */
-    protected $contextAccessor;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
      */
     protected $registry;
 
     protected function setUp()
     {
-        $this->contextAccessor = new ContextAccessor();
+        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
 
-        $this->registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var EventDispatcherInterface $dispatcher */
+        $dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
-        $this->function = new FindEntities($this->contextAccessor, $this->registry);
-        $dispatcher = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcher')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->function = new FindEntities(new ContextAccessor(), $this->registry);
         $this->function->setDispatcher($dispatcher);
     }
 
     protected function tearDown()
     {
-        unset($this->contextAccessor, $this->registry, $this->function);
+        unset($this->registry, $this->function);
     }
 
     /**
-     * @return PropertyPath
+     * @return \PHPUnit_Framework_MockObject_MockObject|PropertyPath
      */
     protected function getPropertyPath()
     {
@@ -96,6 +90,13 @@ class FindEntitiesTest extends \PHPUnit_Framework_TestCase
                 ],
                 'message' => 'Attribute must be valid property definition.'
             ],
+            'no where or order_by' => [
+                'options' => [
+                    'class' => 'stdClass',
+                    'attribute' => $this->getPropertyPath()
+                ],
+                'message' => 'One of parameters "where" or "order_by" must be defined'
+            ],
             'invalid where' => [
                 'options' => [
                     'class' => 'stdClass',
@@ -121,20 +122,19 @@ class FindEntitiesTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecuteNotManageableEntity()
     {
-        $options = [
-            'class' => '\stdClass',
-            'attribute' => $this->getPropertyPath(),
-            'where' => ['and' => []]
-        ];
-        $context = new ItemStub([]);
-
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
             ->with('\stdClass')
-            ->will($this->returnValue(null));
+            ->willReturn(null);
 
-        $this->function->initialize($options);
-        $this->function->execute($context);
+        $this->function->initialize(
+            [
+                'class' => '\stdClass',
+                'attribute' => $this->getPropertyPath(),
+                'where' => ['and' => []]
+            ]
+        );
+        $this->function->execute(new ItemStub([]));
     }
 
     /**
@@ -173,76 +173,75 @@ class FindEntitiesTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    /**
-     * @param array $where
-     * @param array $orderBy
-     * @param array $parameters
-     * @dataProvider executeDataProvider
-     */
-    public function testExecute(array $where, array $orderBy, array $parameters)
+    public function testExecute()
     {
+        $parameters = ['name' => 'Test Name'];
+
         $options = [
             'class' => '\stdClass',
-            'where' => $where,
+            'where' => [
+                'and' => ['e.name = :name'],
+                'or' => ['e.label = :label']
+            ],
             'attribute' => new PropertyPath('entities'),
-            'order_by' => $orderBy,
+            'order_by' => ['createdDate' => 'asc'],
             'query_parameters' => $parameters,
         ];
 
-        $context = new ItemStub();
         $entity = new \stdClass();
 
-        $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')->disableOriginalConstructor()
-            ->setMethods(['getResult'])->getMockForAbstractClass();
-        $query->expects($this->once())->method('getResult')->will($this->returnValue([$entity]));
-
-        $expectedField = 'e.name';
-        $expectedParameter = 'name';
-        $expectedOrder = 'e.createdDate';
+        $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
+            ->disableOriginalConstructor()
+            ->setMethods(['getResult'])
+            ->getMockForAbstractClass();
+        $query->expects($this->once())
+            ->method('getResult')
+            ->willReturn([$entity]);
 
         $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')->disableOriginalConstructor()->getMock();
-        $queryBuilder->expects($this->once())->method('andWhere')
-            ->with("$expectedField = :$expectedParameter")->will($this->returnSelf());
-        $queryBuilder->expects($this->once())->method('setParameters')
-            ->with($parameters)->will($this->returnSelf());
-        $queryBuilder->expects($this->once())->method('orderBy')
-            ->with($expectedOrder, $options['order_by']['createdDate'])->will($this->returnSelf());
-        $queryBuilder->expects($this->once())->method('getQuery')->will($this->returnValue($query));
+        $queryBuilder->expects($this->once())
+            ->method('andWhere')
+            ->with('e.name = :name')
+            ->willReturnSelf();
+        $queryBuilder->expects($this->once())
+            ->method('orWhere')
+            ->with('e.label = :label')
+            ->willReturnSelf();
+        $queryBuilder->expects($this->once())
+            ->method('setParameters')
+            ->with($parameters)
+            ->willReturnSelf();
+        $queryBuilder->expects($this->once())
+            ->method('orderBy')
+            ->with('e.createdDate', $options['order_by']['createdDate'])
+            ->willReturnSelf();
+        $queryBuilder->expects($this->once())
+            ->method('getQuery')
+            ->willReturn($query);
 
-        $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repository->expects($this->once())->method('createQueryBuilder')
-            ->with('e')->will($this->returnValue($queryBuilder));
+        $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')->disableOriginalConstructor()->getMock();
+        $repository->expects($this->once())
+            ->method('createQueryBuilder')
+            ->with('e')
+            ->willReturn($queryBuilder);
 
-        $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $em->expects($this->once())->method('getRepository')
-            ->with($options['class'])->will($this->returnValue($repository));
+        $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
+        $em->expects($this->once())
+            ->method('getRepository')
+            ->with($options['class'])
+            ->willReturn($repository);
 
-        $this->registry->expects($this->once())->method('getManagerForClass')
-            ->with($options['class'])->will($this->returnValue($em));
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with($options['class'])
+            ->willReturn($em);
+
+        $context = new ItemStub();
 
         $this->function->initialize($options);
         $this->function->execute($context);
 
         $attributeName = (string)$options['attribute'];
         $this->assertEquals([$entity], $context->$attributeName);
-    }
-
-    /**
-     * @return array
-     */
-    public function executeDataProvider()
-    {
-        return [
-            'full data' => [
-                'where' => ['and' => ['e.name = :name']],
-                'orderBy' => ['createdDate' => 'asc'],
-                'query_parameters' => ['name' => 'Test Name'],
-                'expected' => [],
-            ]
-        ];
     }
 }

@@ -96,5 +96,6 @@ services:
         class: %orob2b_sale.service.request_helper.class%
         arguments:
             - @doctrine
-            - %orob2b_sale.entity.quote.class%
-            - %orob2b_rfp.entity.request.class%
+        calls:
+            - [ setQuoteClass, [ %orob2b_sale.entity.quote.class% ] ]
+            - [ setRequestClass, [ %orob2b_rfp.entity.request.class% ] ]

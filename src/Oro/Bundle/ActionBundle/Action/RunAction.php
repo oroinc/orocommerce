@@ -5,6 +5,7 @@ namespace Oro\Bundle\ActionBundle\Action;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
 use Oro\Bundle\ActionBundle\Helper\ContextHelper;
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 use Oro\Bundle\ActionBundle\Exception\InvalidParameterException;
 use Oro\Bundle\WorkflowBundle\Model\Action\AbstractAction;
@@ -32,6 +33,7 @@ class RunAction extends AbstractAction
         ContextHelper $contextHelper
     ) {
         parent::__construct($contextAccessor);
+
         $this->actionManager = $actionManager;
         $this->contextHelper = $contextHelper;
     }
@@ -52,6 +54,7 @@ class RunAction extends AbstractAction
         if (empty($options['entity_id'])) {
             throw new InvalidParameterException('Entity id parameter is required');
         }
+
         $this->options = $options;
 
         return $this;
@@ -70,6 +73,10 @@ class RunAction extends AbstractAction
         }
     }
 
+    /**
+     * @param mixed $context
+     * @return ActionData
+     */
     protected function getActionData($context)
     {
         $entityId = $this->contextAccessor->getValue($context, $this->options['entity_id']);

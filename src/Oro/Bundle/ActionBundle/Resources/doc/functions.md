@@ -43,7 +43,7 @@ OR
 ```
 
 Find Entities
--------------------
+-------------
 
 **Class:** Oro\Bundle\ActionBundle\Action\FindEntities
 
@@ -56,7 +56,7 @@ Find Entities
  - class - entity class
  - where - array of SQL-expressions for where-conditions (optional if `order_by` set)
  - query_parameters - list of parameters that will be passed to query (optional).
- - order_by - list of fields with order for sorting results  (optional if `where` set).
+ - order_by - list of fields with order for sorting results (optional if `where` set).
 
 **Configuration Example**
 ```
@@ -73,7 +73,7 @@ Find Entities
 ```
 
 Run Action
--------------------
+----------
 
 **Class:** Oro\Bundle\ActionBundle\Action\RunAction
 

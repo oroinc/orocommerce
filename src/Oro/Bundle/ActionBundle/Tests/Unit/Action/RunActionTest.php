@@ -25,8 +25,8 @@ class RunActionTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
         $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+
         /** @var \PHPUnit_Framework_MockObject_MockObject|ContextHelper $contextHelper */
         $contextHelper = $this->getMockBuilder('Oro\Bundle\ActionBundle\Helper\ContextHelper')
             ->disableOriginalConstructor()
@@ -45,7 +45,7 @@ class RunActionTest extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        unset($this->function, $this->eventDispatcher, $this->container);
+        unset($this->function, $this->eventDispatcher, $this->manager);
     }
 
     public function testInitialize()
@@ -107,51 +107,67 @@ class RunActionTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testExecuteMethod()
+    /**
+     * @dataProvider executeActionDataProvider
+     *
+     * @param array $params
+     * @param array $options
+     * @param ActionData $expected
+     * @param array $result
+     */
+    public function testExecuteAction(array $params, array $options, ActionData $expected, array $result = [])
     {
-        $this->assertManagerCalled();
+        $this->assertManagerCalled($result);
 
-        $data = new ActionData(['param' => 'value']);
-        $options = [
-            'action' => self::ACTION_NAME,
-            'entity_class' => 'entityClass',
-            'entity_id' => '1',
-        ];
+        $data = new ActionData($params);
 
         $this->function->initialize($options);
         $this->function->execute($data);
 
-        $this->assertEquals(
-            ['param' => 'value'],
-            $data->getValues()
-        );
-    }
-
-    public function testExecuteWithoutAttribute()
-    {
-        $data = new ActionData(['param' => 'value']);
-        $this->assertManagerCalled();
-
-        $options = array(
-            'action' => self::ACTION_NAME,
-            'entity_class' => 'testClass',
-            'entity_id' => 1,
-        );
-
-        $this->function->initialize($options);
-        $this->function->execute($data);
-
-        $this->assertEquals(['param' => 'value'], $data->getValues());
+        $this->assertEquals($expected, $data);
     }
 
     /**
-     * @param int $executeCalls
+     * @return array
      */
-    protected function assertManagerCalled($executeCalls = 1)
+    public function executeActionDataProvider()
     {
-        $this->manager->expects($this->exactly($executeCalls))
+        $actionData1 = new ActionData(['param' => 'value']);
+
+        $actionData2 = clone $actionData1;
+        $actionData2->offsetSet('new_param', new ActionData(['new_param_data' => 'value']));
+
+        return [
+            'without attribute' => [
+                'params' => ['param' => 'value'],
+                'options' => [
+                    'action' => self::ACTION_NAME,
+                    'entity_class' => 'testClass',
+                    'entity_id' => 1
+                ],
+                'expected' => $actionData1
+            ],
+            'with attribute' => [
+                'params' => ['param' => 'value'],
+                'options' => [
+                    'action' => self::ACTION_NAME,
+                    'entity_class' => 'testClass',
+                    'entity_id' => 1,
+                    'attribute' => 'new_param'
+                ],
+                'expected' => $actionData2,
+                'result' => ['new_param_data' => 'value']
+            ]
+        ];
+    }
+
+    /**
+     * @param array $data
+     */
+    protected function assertManagerCalled(array $data)
+    {
+        $this->manager->expects($this->once())
             ->method('execute')
-            ->withAnyParameters()
-            ->willReturn(true);
+            ->willReturn(new ActionData($data));
     }
 }

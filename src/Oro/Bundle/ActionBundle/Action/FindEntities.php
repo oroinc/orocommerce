@@ -55,13 +55,12 @@ class FindEntities extends AbstractAction
         if (empty($options['attribute'])) {
             throw new InvalidParameterException('Attribute name parameter is required');
         }
+
         if (!$options['attribute'] instanceof PropertyPathInterface) {
             throw new InvalidParameterException('Attribute must be valid property definition.');
         }
 
-        $options = $this->validateConditionOptions($options);
-
-        $this->options = $options;
+        $this->options = $this->validateConditionOptions($options);
 
         return $this;
     }
@@ -74,9 +73,7 @@ class FindEntities extends AbstractAction
     protected function validateConditionOptions(array $options)
     {
         if (empty($options['where']) && empty($options['order_by'])) {
-            throw new InvalidParameterException(
-                'One of parameters "where" or "order_by" must be defined'
-            );
+            throw new InvalidParameterException('One of parameters "where" or "order_by" must be defined');
         }
 
         if (!empty($options['where']) && !is_array($options['where'])) {
@@ -103,14 +100,12 @@ class FindEntities extends AbstractAction
     protected function getEntitiesByConditions($context)
     {
         $entityClassName = $this->getEntityClassName();
-        $entityManager = $this->getEntityManager($entityClassName);
+        $queryBuilder = $this->getEntityManager($entityClassName)
+            ->getRepository($entityClassName)
+            ->createQueryBuilder('e');
 
-        $where = $this->getWhere($context);
-        $parameters =  $this->getParameters($context);
-
-        $queryBuilder = $entityManager->getRepository($entityClassName)->createQueryBuilder('e');
-        $this->addWhere($queryBuilder, $where);
-        $this->addParameters($queryBuilder, $parameters);
+        $this->addWhere($queryBuilder, $this->getWhere($context));
+        $this->addParameters($queryBuilder, $this->getParameters($context));
 
         $orderBy = $this->getOrderBy($context);
 

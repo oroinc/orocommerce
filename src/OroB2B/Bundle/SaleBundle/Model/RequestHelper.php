@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\SaleBundle\Model;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
 
@@ -13,56 +12,73 @@ class RequestHelper
     /** @var ManagerRegistry */
     protected $registry;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $quoteClass;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $requestClass;
 
     /**
      * @param ManagerRegistry $registry
-     * @param string $quoteClass
-     * @param string $requestClass
      */
-    public function __construct(ManagerRegistry $registry, $quoteClass, $requestClass)
+    public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
+    }
+
+    /**
+     * @param string $quoteClass
+     * @return RequestHelper
+     */
+    public function setQuoteClass($quoteClass)
+    {
         $this->quoteClass = $quoteClass;
+
+        return $this;
+    }
+
+    /**
+     * @param string $requestClass
+     * @return RequestHelper
+     */
+    public function setRequestClass($requestClass)
+    {
         $this->requestClass = $requestClass;
+
+        return $this;
     }
 
     /**
      * @param int $days
-     * @return Collection|Request[]
+     * @return array|Request[]
      */
     public function getRequestsWoQuote($days = 2)
     {
-        $date = new \DateTime();
+        $date = new \DateTime('now', new \DateTimeZone('UTC'));
         $date->modify(sprintf('-%d days', $days));
-        $subQueryBuilder = $this
-            ->getEntityRepositoryForClass($this->quoteClass)
-            ->createQueryBuilder('q');
-        $subQueryBuilder->where('q.request = r.id');
 
-        $queryBuilder = $this
-            ->getEntityRepositoryForClass($this->requestClass)
-            ->createQueryBuilder('r');
+        $subQueryBuilder = $this->getEntityRepositoryForClass($this->quoteClass)
+            ->createQueryBuilder('q')
+            ->where('q.request = r.id');
 
-        $queryBuilder
-            ->select('r')
-            ->where($queryBuilder->expr()->not($queryBuilder->expr()->exists($subQueryBuilder->getDql())))
-            ->andWhere('r.createdAt < :date')
-            ->setParameter('date', $date);
+        $queryBuilder = $this->getEntityRepositoryForClass($this->requestClass)->createQueryBuilder('r');
 
-        return $queryBuilder->getQuery()->getResult();
+        return $queryBuilder->select('r')
+            ->where(
+                $queryBuilder->expr()->not(
+                    $queryBuilder->expr()->exists(
+                        $subQueryBuilder->getDQL()
+                    )
+                ),
+                'r.createdAt < :date'
+            )
+            ->setParameter('date', $date)
+            ->getQuery()
+            ->getResult();
     }
 
     /**
-     * @param $entityClass
+     * @param string $entityClass
      * @return EntityRepository
      */
     public function getEntityRepositoryForClass($entityClass)
