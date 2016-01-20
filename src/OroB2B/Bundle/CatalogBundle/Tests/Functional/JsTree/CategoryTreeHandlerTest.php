@@ -185,9 +185,9 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    protected function getActualTree()
+    protected function getActualNodeHierarchy($entityId, $parentId, $position)
     {
         $entities = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BCatalogBundle:Category')
             ->getRepository('OroB2BCatalogBundle:Category')->findBy([], ['level' => 'DESC', 'left' => 'DESC']);

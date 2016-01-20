@@ -32,7 +32,7 @@ class MenuItemType extends AbstractType
                 $form = $event->getForm();
                 /** @var MenuItem $data */
                 $data = $event->getData();
-                if (!$data || !$data->getParentMenuItem()) { // root menu item
+                if (!$data || !$data->getParent()) { // root menu item
                     $form->add(
                         'defaultTitle',
                         'text',

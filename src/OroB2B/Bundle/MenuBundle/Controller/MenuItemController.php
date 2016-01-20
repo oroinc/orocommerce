@@ -41,7 +41,7 @@ class MenuItemController extends Controller
      */
     public function viewAction(MenuItem $menuItem)
     {
-        if (null !== $menuItem->getParentMenuItem()) {
+        if (null !== $menuItem->getParent()) {
             throw $this->createNotFoundException();
         }
 
@@ -93,7 +93,7 @@ class MenuItemController extends Controller
     public function createChildAction(MenuItem $parent)
     {
         $child = new MenuItem();
-        $child->setParentMenuItem($parent);
+        $child->setParent($parent);
         $child->setRoot($parent->getRoot());
 
         return $this->update($child);
@@ -113,7 +113,7 @@ class MenuItemController extends Controller
      */
     public function updateAction(MenuItem $menuItem)
     {
-        if (null === $menuItem->getParentMenuItem()) {
+        if (null === $menuItem->getParent()) {
             throw $this->createNotFoundException();
         }
 

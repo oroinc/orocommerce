@@ -71,6 +71,7 @@ class OroB2BMenuBundleInstaller implements Installation, AttachmentExtensionAwar
         $table->addColumn('tree_right', 'integer', []);
         $table->addColumn('tree_root', 'integer', ['notnull' => false]);
         $table->addColumn('mi_condition', 'text', ['notnull' => false]);
+        $table->addColumn('data', 'array', ['comment' => '(DC2Type:array)']);
         $table->setPrimaryKey(['id']);
         $this->attachmentExtension->addImageRelation(
             $schema,

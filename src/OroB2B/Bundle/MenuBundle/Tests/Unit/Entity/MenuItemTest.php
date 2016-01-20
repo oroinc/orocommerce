@@ -26,7 +26,7 @@ class MenuItemTest extends \PHPUnit_Framework_TestCase
     {
         $properties = [
             ['id', 1],
-            ['parentMenuItem', new MenuItem()],
+            ['parent', new MenuItem()],
             ['uri', 'http://localhost'],
             ['display', false],
             ['displayChildren', false],
@@ -45,7 +45,7 @@ class MenuItemTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($this->entity->getTitles()->toArray());
     }
 
-    public function testTitleAccessors()
+    public function testTitleAccessor()
     {
         $menuItem = $this->entity;
         $this->assertEmpty($menuItem->getTitles()->toArray());

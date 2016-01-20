@@ -10,8 +10,10 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
+use OroB2B\Bundle\FallbackBundle\Entity\FallbackTrait;
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\MenuBundle\Model\ExtendMenuItem;
+use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 use OroB2B\Component\Tree\Entity\TreeTrait;
 
 /**
@@ -30,6 +32,7 @@ use OroB2B\Component\Tree\Entity\TreeTrait;
 class MenuItem extends ExtendMenuItem
 {
     use TreeTrait;
+    use FallbackTrait;
 
     /**
      * @var integer
@@ -68,7 +71,15 @@ class MenuItem extends ExtendMenuItem
      * @ORM\ManyToOne(targetEntity="MenuItem")
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
      */
-    protected $parentMenuItem;
+    protected $parent;
+
+    /**
+     * @var Collection|MenuItem[]
+     *
+     * @ORM\OneToMany(targetEntity="MenuItem", mappedBy="parent", cascade={"persist"})
+     * @ORM\OrderBy({"left" = "ASC"})
+     */
+    protected $children;
 
     /**
      * @var string
@@ -99,6 +110,13 @@ class MenuItem extends ExtendMenuItem
     protected $condition;
 
     /**
+     * @var array
+     *
+     * @ORM\Column(name="data", type="array")
+     */
+    protected $data = [];
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
@@ -106,6 +124,7 @@ class MenuItem extends ExtendMenuItem
         parent::__construct();
 
         $this->titles = new ArrayCollection();
+        $this->children = new ArrayCollection();
     }
 
     /**
@@ -153,21 +172,20 @@ class MenuItem extends ExtendMenuItem
     }
 
     /**
+     * @param Locale|null $locale
+     * @return LocalizedFallbackValue
+     */
+    public function getTitle(Locale $locale = null)
+    {
+        return $this->getLocalizedFallbackValue($this->titles, $locale);
+    }
+
+    /**
      * @return LocalizedFallbackValue
      */
     public function getDefaultTitle()
     {
-        $titles = $this->titles->filter(
-            function (LocalizedFallbackValue $title) {
-                return null === $title->getLocale();
-            }
-        );
-
-        if ($titles->count() > 1) {
-            throw new \LogicException('There must be only one default title');
-        }
-
-        return $titles->first();
+        return $this->getLocalizedFallbackValue($this->titles);
     }
 
     /**
@@ -190,18 +208,18 @@ class MenuItem extends ExtendMenuItem
     /**
      * @return MenuItem
      */
-    public function getParentMenuItem()
+    public function getParent()
     {
-        return $this->parentMenuItem;
+        return $this->parent;
     }
 
     /**
-     * @param MenuItem|null $parentMenuItem
+     * @param MenuItem|null $parent
      * @return $this
      */
-    public function setParentMenuItem(MenuItem $parentMenuItem = null)
+    public function setParent(MenuItem $parent = null)
     {
-        $this->parentMenuItem = $parentMenuItem;
+        $this->parent = $parent;
 
         return $this;
     }
@@ -279,6 +297,45 @@ class MenuItem extends ExtendMenuItem
     {
         $this->condition = $condition;
 
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
+     * @param array $data
+     * @return $this
+     */
+    public function setData($data)
+    {
+        $this->data = $data;
+        return $this;
+    }
+
+    /**
+     * @return Collection|MenuItem[]
+     */
+    public function getChildren()
+    {
+        return $this->children;
+    }
+
+    /**
+     * @param MenuItem $item
+     * @return $this
+     */
+    public function addChild(MenuItem $item)
+    {
+        if (!$this->children->contains($item)) {
+            $item->setParent($this);
+            $this->children->add($item);
+        }
         return $this;
     }
 }

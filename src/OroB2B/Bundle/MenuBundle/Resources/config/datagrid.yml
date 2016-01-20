@@ -18,7 +18,7 @@ datagrid:
                         - { join: m.titles, alias: t}
                 where:
                     and:
-                        - m.parentMenuItem IS NULL
+                        - m.parent IS NULL
                         - t.locale IS NULL
         columns:
             title:

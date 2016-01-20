@@ -37,7 +37,7 @@
     {% set dataForm = [
         form_row(form.defaultTitle),
     ] %}
-    {% if entity.parentMenuItem is not null %}
+    {% if entity.parent is not null %}
         {% set dataForm = dataForm|merge([form_row(form.uri)]) %}
     {% endif %}
     {% set dataBlocks = [{

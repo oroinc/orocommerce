@@ -76,7 +76,7 @@ class MenuItemTypeTest extends FormIntegrationTestCase
     public function testBuildFormForRegularMenuItem()
     {
         $menuItem = new MenuItem();
-        $menuItem->setParentMenuItem(new MenuItem());
+        $menuItem->setParent(new MenuItem());
         $form = $this->factory->create($this->formType, $menuItem);
 
         $this->assertTrue($form->has('titles'));
@@ -125,7 +125,7 @@ class MenuItemTypeTest extends FormIntegrationTestCase
         $menuItem = new MenuItem();
         $menuItem->setDefaultTitle('menu_item_title');
         $menuItem->setUri('uri');
-        $menuItem->setParentMenuItem($root);
+        $menuItem->setParent($root);
 
         return [
             'root menu item' => [

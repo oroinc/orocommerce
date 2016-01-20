@@ -1,0 +1,34 @@
+<?php
+
+namespace OroB2B\Bundle\MenuBundle\Entity\Manager;
+
+use Knp\Menu\ItemInterface;
+
+use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
+
+class MenuItemManager
+{
+    /**
+     * @param ItemInterface $item
+     * @return MenuItem
+     */
+    public function createFromItem(ItemInterface $item)
+    {
+        $entity = new MenuItem();
+        $entity->setDefaultTitle($item->getName())
+            ->setUri($item->getUri())
+            ->setDisplay($item->isDisplayed())
+            ->setDisplayChildren($item->getDisplayChildren())
+            ->setData([
+                'attributes' => $item->getAttributes(),
+                'linkAttributes' => $item->getLinkAttributes(),
+                'childrenAttributes' => $item->getChildrenAttributes(),
+                'labelAttributes' => $item->getLabelAttributes(),
+                'extras' => $item->getExtras(),
+            ]);
+        foreach ($item->getChildren() as $child) {
+            $entity->addChild($this->createFromItem($child));
+        }
+        return $entity;
+    }
+}

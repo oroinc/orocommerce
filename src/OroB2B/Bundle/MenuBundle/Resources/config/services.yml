@@ -2,6 +2,11 @@ parameters:
 
     # Entity
     orob2b_menu.entity.menu_item.class: OroB2B\Bundle\MenuBundle\Entity\MenuItem
+    orob2b_menu.entity.menu_item_manager.class: OroB2B\Bundle\MenuBundle\Entity\Manager\MenuItemManager
+
+    # Menu
+    orob2b_menu.menu.database_builder.class: OroB2B\Bundle\MenuBundle\Menu\DatabaseBuilder
+    orob2b_menu.menu.factory.class: Knp\Menu\MenuFactory
 
     # Tree
     orob2b_menu.tree.menu_item_tree_handler.class: OroB2B\Bundle\MenuBundle\JsTree\MenuItemTreeHandler
@@ -16,8 +21,12 @@ parameters:
     orob2b_menu.menu_item.manager.api.class:                Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
     # Menu services
+    orob2b_menu.factory.class: Knp\Menu\MenuFactory
     orob2b_menu.menu_serializer.class: OroB2B\Bundle\MenuBundle\Menu\MenuSerializer
     orob2b_menu.menu_provider.class: OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider
+    orob2b_menu.menu.condition.condition_extension.class: OroB2B\Bundle\MenuBundle\Menu\Condition\ConditionExtension
+    orob2b_menu.menu.condition.config_value_expression_language_provider.class: OroB2B\Bundle\MenuBundle\Menu\Condition\ConfigValueExpressionLanguageProvider
+    orob2b_menu.menu.condition.logged_in_expression_language_provider.class: OroB2B\Bundle\MenuBundle\Menu\Condition\LoggedInExpressionLanguageProvider
 
 services:
     orob2b_menu.cache:
@@ -38,6 +47,18 @@ services:
             - %orob2b_menu.entity.menu_item.class%
             - @doctrine
 
+    orob2b_menu.entity.menu_item_manager:
+        class: %orob2b_menu.entity.menu_item_manager.class%
+
+    orob2b_menu.menu.factory:
+        class: %orob2b_menu.menu.factory.class%
+
+    orob2b_menu.menu.database_builder:
+        class: %orob2b_menu.menu.database_builder.class%
+        arguments:
+            - @doctrine
+            - @orob2b_menu.menu.factory
+
     orob2b_menu.twig.menu_item_extension:
         class: %orob2b_menu.twig.menu_item_extension.class%
         arguments:
@@ -55,7 +76,12 @@ services:
     orob2b_menu.menu_array_loader:
         class: Knp\Menu\Loader\ArrayLoader
         arguments:
-            - @knp_menu.factory
+            - @oro_menu.factory
+
+    orob2b_menu.factory:
+        class: %orob2b_menu.factory.class%
+        calls:
+            - [ addExtension, [ @orob2b_menu.menu.condition.condition_extension ] ]
 
     orob2b_menu.menu_manipulator:
         class: Knp\Menu\Util\MenuManipulator
@@ -76,3 +102,20 @@ services:
         calls:
             - [setEntityClass, [%orob2b_menu.entity.menu_item.class%]]
             - [setCache, [@orob2b_menu.cache]]
+
+    orob2b_menu.menu.condition.condition_extension:
+        class: %orob2b_menu.menu.condition.condition_extension.class%
+
+    orob2b_menu.menu.condition.config_value_expression_language_provider:
+        class: %orob2b_menu.menu.condition.config_value_expression_language_provider.class%
+        arguments:
+            - @oro_config.manager
+        tags:
+            - { name: orob2b_menu.condition.expression_language_provider, alias: config_value }
+
+    orob2b_menu.menu.condition.logged_in_expression_language_provider:
+        class: %orob2b_menu.menu.condition.logged_in_expression_language_provider.class%
+        arguments:
+            - @oro_security.security_facade
+        tags:
+            - { name: orob2b_menu.condition.expression_language_provider, alias: is_logged_in }
