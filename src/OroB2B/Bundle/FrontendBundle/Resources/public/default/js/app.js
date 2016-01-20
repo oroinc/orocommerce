@@ -5,7 +5,8 @@ requirejs.config({
         raty: '/bundles/orob2bfrontend/default/js/vendors/jquery.raty',
         chosen: '/bundles/orob2bfrontend/default/js/vendors/chosen.jquery.min',
         slick: '/bundles/orob2bfrontend/default/js/vendors/slick.min',
-        main: '/bundles/orob2bfrontend/default/js/main.min'
+        perfectScrollbar: '/bundles/orob2bfrontend/default/js/vendors/perfect-scrollbar.jquery.min',
+        fastclick: '/bundles/orob2bfrontend/default/js/vendors/fastclick'
     },
     shim: {
         'main': {
