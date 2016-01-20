@@ -42,6 +42,17 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
     {
         $nodeDefinition
             ->children()
+                ->arrayNode('replace')
+                    ->beforeNormalization()
+                        ->always(
+                            function ($replace) {
+                                return (array)$replace;
+                            }
+                        )
+                        ->end()
+                    ->prototype('scalar')
+                    ->end()
+                ->end()
                 ->scalarNode('label')
                     ->isRequired()
                     ->cannotBeEmpty()
@@ -71,7 +82,9 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
                     ->defaultTrue()
                 ->end()
                 ->append($this->getAttributesNode())
+                ->append($this->getButtonOptionsNode())
                 ->append($this->getFrontendOptionsNode())
+                ->append($this->getDatagridOptionsNode())
                 ->append($this->getFormOptionsNode())
             ->end();
 
@@ -157,10 +170,10 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
     /**
      * @return NodeDefinition
      */
-    protected function getFrontendOptionsNode()
+    protected function getButtonOptionsNode()
     {
         $builder = new TreeBuilder();
-        $node = $builder->root('frontend_options');
+        $node = $builder->root('button_options');
         $node
             ->addDefaultsIfNotSet()
             ->children()
@@ -168,13 +181,6 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
                 ->scalarNode('class')->end()
                 ->scalarNode('group')->end()
                 ->scalarNode('template')->end()
-                ->scalarNode('confirmation')->end()
-                ->scalarNode('dialog_title')->end()
-                ->arrayNode('dialog_options')
-                    ->prototype('variable')
-                    ->end()
-                ->end()
-                ->scalarNode('dialog_template')->end()
                 ->scalarNode('page_component_module')->end()
                 ->arrayNode('page_component_options')
                     ->prototype('variable')
@@ -189,6 +195,63 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
         return $node;
     }
 
+    /**
+     * @return NodeDefinition
+     */
+    protected function getFrontendOptionsNode()
+    {
+        $builder = new TreeBuilder();
+        $node = $builder->root('frontend_options');
+        $node
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->scalarNode('confirmation')->end()
+                ->arrayNode('options')
+                    ->prototype('variable')
+                    ->end()
+                ->end()
+                ->scalarNode('template')->end()
+                ->scalarNode('title')->end()
+                ->booleanNode('show_dialog')
+                    ->defaultTrue()
+                ->end()
+            ->end();
+
+        return $node;
+    }
+
+    /**
+     * @return NodeDefinition
+     */
+    protected function getDatagridOptionsNode()
+    {
+        $builder = new TreeBuilder();
+        $node = $builder->root('datagrid_options');
+        $node
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->scalarNode('mass_action_provider')
+                ->end()
+                ->arrayNode('mass_action')
+                    ->prototype('variable')
+                    ->end()
+                ->end()
+            ->end()
+            ->validate()
+                ->always(function ($config) {
+                    if (!empty($config['mass_action_provider']) && !empty($config['mass_action'])) {
+                        throw new \Exception(
+                            'Must be specified only one parameter "mass_action_provider" or "mass_action"'
+                        );
+                    }
+
+                    return $config;
+                })
+            ->end();
+
+        return $node;
+    }
+    
     /**
      * @return NodeDefinition
      */

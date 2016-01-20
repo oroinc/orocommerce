@@ -2,11 +2,14 @@
 
 namespace Oro\Bundle\ActionBundle\Model;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ */
 class ActionDefinition
 {
     const PREFUNCTIONS = 'prefunctions';
-    const INITFUNCTIONS = 'initfunctions';
-    const POSTFUNCTIONS = 'postfunctions';
+    const FORM_INIT = 'form_init';
+    const FUNCTIONS = 'functions';
 
     const PRECONDITIONS = 'preconditions';
     const CONDITIONS = 'conditions';
@@ -36,7 +39,13 @@ class ActionDefinition
     private $order = 0;
 
     /** @var array */
+    private $buttonOptions = [];
+
+    /** @var array */
     private $frontendOptions = [];
+
+    /** @var array */
+    private $datagridOptions = [];
 
     /** @var string */
     private $formType;
@@ -66,7 +75,7 @@ class ActionDefinition
      */
     public static function getAllowedFunctions()
     {
-        return [self::PREFUNCTIONS, self::INITFUNCTIONS, self::POSTFUNCTIONS];
+        return [self::PREFUNCTIONS, self::FORM_INIT, self::FUNCTIONS];
     }
 
     /**
@@ -217,6 +226,44 @@ class ActionDefinition
     public function setRoutes(array $routes)
     {
         $this->routes = $routes;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getButtonOptions()
+    {
+        return $this->buttonOptions;
+    }
+
+    /**
+     * @param array $buttonOptions
+     * @return $this
+     */
+    public function setButtonOptions(array $buttonOptions)
+    {
+        $this->buttonOptions = $buttonOptions;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDatagridOptions()
+    {
+        return $this->datagridOptions;
+    }
+
+    /**
+     * @param array $datagridOptions
+     * @return $this
+     */
+    public function setDatagridOptions(array $datagridOptions)
+    {
+        $this->datagridOptions = $datagridOptions;
 
         return $this;
     }

@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\TaxBundle\EventListener;
 
-use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 abstract class AbstractFormViewListener

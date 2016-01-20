@@ -80,6 +80,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
         $groupIds = [
             AccountGroupCategoryVisibilityResolved::VISIBILITY_VISIBLE => [],
             AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN => [],
+            AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG => [],
         ];
         foreach ($groupVisibilities as $visibilityId => $groupVisibility) {
             $resolvedVisibility = $this->resolveVisibility($groupVisibilities, $categoryVisibilities, $groupVisibility);
@@ -125,7 +126,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
 
         // config value (default)
         if (null === $resolvedVisibility) {
-            $resolvedVisibility = $this->getVisibilityFromConfig();
+            $resolvedVisibility = AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
         }
 
         $groupVisibilities[$visibilityId]['resolved_visibility'] = $resolvedVisibility;

@@ -16,8 +16,6 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
  */
 class AccountCategoryVisibilityResolved extends BaseCategoryVisibilityResolved
 {
-    const VISIBILITY_FALLBACK_TO_ALL = 0;
-
     /**
      * @var Account
      *

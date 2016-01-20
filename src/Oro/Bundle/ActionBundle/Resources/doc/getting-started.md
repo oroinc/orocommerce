@@ -7,6 +7,7 @@ Table of Contents
  - [Main Entities](#main-entities)
  - [How it works?](#how-it-works)
  - [Configuration](#configuration)
+ - [Action Diagram](#action-diagram)
  - [Configuration Validation](#configuration-validation)
 
 What are Actions?
@@ -45,9 +46,9 @@ Attribute contains name and label as additional parameters.
 * **Condition** - defines whether specific Action is allowed with specified input data. Conditions can be nested.
 
 * **Functions** - operations are assigned to Action and executed when Action is performed.
-There are two kind of actions: Pre Functions, Init Functions and Post Functions.
-The difference between them is that Pre Functions are executed before Action button redder, Init Functions are executed
-before Action and Post Functions are executed after Action.
+There are two kind of actions: Pre Functions, Form Init Functions and Functions.
+The difference between them is that Pre Functions are executed before Action button redder, Form Init Functions are
+executed before Action and Functions are executed after Action.
 Actions can be used to perform any operations with data in Action Data or other entities.
 
 How it works?
@@ -57,7 +58,7 @@ Each action relates to the some entity types (i.e. consists full class name) or\
 where action should be displayed or\and datagrids. Before page loading Action Bundle chooses actions that
 are corresponded to page's entity\route. Then these actions checking for Pre conditions.
 If all Pre conditions are met - Action's button is displaying.
-After user click on the button - all postfunctions will be executed if pre conditions and conditions are met.
+After user click on the button - all functions will be executed if pre conditions and conditions are met.
 
 Configuration
 -------------
@@ -83,19 +84,29 @@ actions:
         order: 10                                                   # (optional, default = 0) display order of action button
         acl_resource: acme_demo_myentity_view                       # (optional) ACL resource name that will be checked while checking that action execution is allowed
 
-        frontend_options:                                           # (optional) display options for action button:
+        button_options:                                             # (optional) display options for action button
             icon: icon-time                                         # (optional) class of button icon
             class: btn                                              # (optional) class of button
             group: aсme.demo.actions.demogroup.label                # (optional) group action to drop-down on the label
             template: customTemplate.html.twig                      # (optional) custom button template
-            dialog_template: customDialogTemplate.html.twig         # (optional) custom dialog template
-            dialog_title: Custom Dialog Title                       # (optional) custom dialog title
-            dialog_options:                                         # (optional) modal dialog options
+            page_component_module:                                  # (optional) js-component module
+                acme/js/app/components/demo-component
+            page_component_options:                                 # (optional) js-component module options
+                parameterName: parameterValue
+            data:                                                   # custom data attributes which will be added to button
+                attributeName: attributeValue
+
+        frontend_options:                                           # (optional) display options for action button
+            template: customDialogTemplate.html.twig                # (optional) custom template, can be used both for page or dialog
+            title: Custom Title                                     # (optional) custom title
+            options:                                                # (optional) modal dialog options
                 allowMaximize: true
                 allowMinimize: true
                 dblclick: maximize
                 maximizedHeightDecreaseBy: minimize-bar
                 width: 1000
+            show_dialog: true                                       # (optional, by default: true) if `false` - action will be opened on page
+            confirmation: aсme.demo.action_perform_confirm          # (optional) Confirmation message before start action`s execution
 
         attributes:                                                 # (optional) list of all existing attributes
             demo_attr:                                              # attribute name
@@ -104,6 +115,20 @@ actions:
                 property_path: data.demo                            # (optional if label and type are set) path to entity property, which helps to automatically defined attribute metadata
                 options:                                            # attribute options
                     class: \Acme\Bundle\DemoBundle\Model\MyModel    # (optional) entity class name, set if type is entity
+
+        datagrid_options:
+            mass_action_provider:                                   # (optional) service name, marked with "oro_action.datagrid.mass_action_provider" tag
+                acme.action.datagrid.mass_action_provider           # and must implement Oro\Bundle\ActionBundle\Datagrid\Provider\MassActionProviderInterface
+            mass_action:                                            # (optional) configuration of datagrid mass action
+                type: window
+                label: acme.demo.mass_action.label
+                icon: plus
+                route: acme_demo_bundle_massaction
+                frontend_options:
+                    title: acme.demo.mass_action.action.label
+                    dialogOptions:
+                        modal: true
+                        ...
 
         form_options:                                               # (optional) parameters which will be passed to form dialog
             attribute_fields:                                       # list of attribute fields which will be shown in dialog
@@ -116,7 +141,7 @@ actions:
             attribute_default_values:                               # (optional) define default values for attributes
                 demo_attr: $demo                                    # use attribute name and property path or simple string for attribute value
 
-        initfunctions:                                              # (optional) any needed functions which will execute before showing form dialog
+        form_init:                                                  # (optional) any needed functions which will execute before showing form dialog
             - @assign_value:                                        # function alias
                 conditions:                                         # (optional) conditions list to allow current function
                     @empty: $description                            # condition definition
@@ -132,7 +157,7 @@ actions:
         conditions:                                                 # (optional) pre conditions for display Action button
             @gt: [$updatedAt, $.date]                               # condition definition
 
-        postfunctions:                                              # (optional) any needed post functions which will execute after click on th button
+        functions:                                                  # (optional) any needed functions which will execute after click on th button
             - @assign_value: [$expired, true]                       # function definition
 ```
 
@@ -140,7 +165,7 @@ This configuration describes action that relates to the ``MyEntity`` entity. On 
 of this entity (in case of field 'updatedAt' > new DateTime('now')) will be displayed button with label
 "adme.demo.myentity.actions.myentity_action". After click on this button - will run postfunction "assign_value" and set
 field 'expired' to `true`.
-If `form_options` are specified after click on button will be shown form dialog with attributes fields. And postfunctions
+If `form_options` are specified after click on button will be shown form dialog with attributes fields. And functions
 will run only on form submit.
 
 Configuration Validation

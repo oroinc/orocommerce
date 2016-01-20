@@ -7,18 +7,23 @@ Table of Contents
  - [Configuration File](#configuration-file)
  - [Configuration Loading](#configuration-loading)
  - [Configuration Merging](#configuration-merging)
+ - [Configuration Replacing](#configuration-replacing)
  - [Defining an Action](#defining-an-action)
    - [Example](#example)
- - [Frontend Options Configuration](#frontend-options-configuration)
+ - [Button Options Configuration](#button-options-configuration)
    - [Example](#example-1)
- - [Attributes Configuration](#attributes-configuration)
+ - [Frontend Options Configuration](#frontend-options-configuration)
    - [Example](#example-2)
- - [Form Options Configuration](#form-options-configuration)
+ - [Attributes Configuration](#attributes-configuration)
    - [Example](#example-3)
- - [Pre Conditions and Conditions Configuration](#pre-conditions-and-conditions-configuration)
+ - [Datagrid Options Configuration](#datagrid-options-configuration)
    - [Example](#example-4)
- - [Pre Functions, Init Functions and Post Functions Configuration](#pre-functions-init-functions-and-post-functions-configuration)
+ - [Form Options Configuration](#form-options-configuration)
    - [Example](#example-5)
+ - [Pre Conditions and Conditions Configuration](#pre-conditions-and-conditions-configuration)
+   - [Example](#example-6)
+ - [Pre Functions, Form Init Functions and Functions Configuration](#pre-functions-form-init-functions-and-functions-configuration)
+   - [Example](#example-7)
 
 Overview
 ========
@@ -74,14 +79,20 @@ configuration.
 Merging uses simple rules:
  * if node value is scalar - value will be replaced
  * if node value is array - this array will be complemented by values from the second configuration
- * if array node `replace` is exist on the same level and it contain original node name - value will be replaced
 
 After first step application knows about all actions and have only one configuration for each action.
 
 **Extending**
 On this step application collects configurations for all actions which contain `extends`. Then main action 
 configuration, which specified in `extends`, copied and merged with configuration of original action. Merging use same 
-way, which use `overriding` step (first and second rules).
+way, which use `overriding` step (rules).
+
+Configuration Replacing
+=======================
+
+In merge process we can replace any node on any level of our configuration. If node `replace` is exist and it contains
+some nodes which located on the same level of node `replace` - value of these nodes will be replaced by values from
+_last_ configuration from queue.
 
 Defining an Action
 ==================
@@ -125,14 +136,16 @@ Single action configuration has next properties:
     Contains configuration for Pre Conditions
 * **attributes**
     Contains configuration for Attributes
+* **datagrid_options**
+    Contains configuration for Datagrid Options
 * **form_options**
     Contains configuration for Transitions
-* **initfunctions**
-    Contains configuration for Init Functions
+* **form_init**
+    Contains configuration for Form Init Functions
 * **conditions**
     Contains configuration for Conditions
-* **postfunctions**
-    Contains configuration for Post Functions
+* **functions**
+    Contains configuration for Functions
 
 Example
 -------
@@ -158,22 +171,24 @@ actions:                                             # root elements
                                                      # ...
         attributes:                                  # configuration for Attributes
                                                      # ...
+        datagrid_options:                            # configuration for Datagrid Options
+                                                     # ...
         form_options:                                # configuration for Form Options
                                                      # ...
-        initfunctions:                               # configuration for Init Functions
+        form_init:                                   # configuration for Form Init Functions
                                                      # ...
         conditions:                                  # configuration for Conditions
                                                      # ...
-        postfunctions:                               # configuration for Post Functions
+        functions:                                   # configuration for Functions
                                                      # ...
 ```
 
-Frontend Options Configuration
+Button Options Configuration
 ==============================
 
-Frontend Options allow to change action button style, override button or dialog template and set widget options.
+Button Options allow to change action button style, override button template and add some data attributes.
 
-Frontend Options configuration has next options:
+Button Options configuration has next options:
 
 * **icon**
     *string*
@@ -198,21 +213,6 @@ Frontend Options configuration has next options:
 * **page_component_options**
     *array*
     List of options of js-component module for the action-button (attribute *data-page-component-options*).
-* **dialog_template**
-    *string*
-    You can set custom action dialog template.
-    Should be extended from `OroActionBundle:Widget:widget/form.html.twig`
-* **dialog_title**
-    *string*
-    Custom title of action dialog window.
-* **dialog_options**
-    *array*
-    Parameters related to widget component. Can be specified next options: *allowMaximize*, *allowMinimize*, *dblclick*,
-    *maximizedHeightDecreaseBy*, *width*, etc.
-* **confirmation**
-    *string*
-    You can show confirmation message before start action`s execution. Translate constant should be available
-    for JS - placed in jsmessages.*.yml
 
 Example
 -------
@@ -220,7 +220,7 @@ Example
 actions:
     demo_action:
         # ...
-        frontend_options:
+        button_options:
             icon: icon-ok
             class: btn
             group: aсme.demo.actions.demogroup.label
@@ -231,15 +231,52 @@ actions:
             page_component_options:
                 component_name: '[name$="[component]"]'
                 component_additional: '[name$="[additional]"]'
+```
+
+Frontend Options Configuration
+==============================
+
+Frontend Options allow to override action dialog or page template, title and set widget options.
+
+Frontend Options configuration has next options:
+
+* **template**
+    *string*
+    You can set custom action dialog template.
+    Should be extended from `OroActionBundle:Action:form.html.twig`
+* **title**
+    *string*
+    Custom title of action dialog window.
+* **options**
+    *array*
+    Parameters related to widget component. Can be specified next options: *allowMaximize*, *allowMinimize*, *dblclick*,
+    *maximizedHeightDecreaseBy*, *width*, etc.
+* **confirmation**
+    *string*
+    You can show confirmation message before start action`s execution. Translate constant should be available
+    for JS - placed in jsmessages.*.yml
+* **show_dialog**
+    *boolean*
+    By default this value is `true`. It mean that on action execution, if form parameters are set, will be shown modal
+    dialog with form. Otherwise will be shown separate page (like entity update page) with form.
+
+Example
+-------
+```
+actions:
+    demo_action:
+        # ...
+        frontend_options:
             confirmation: aсme.demo.actions.action_perform_confirm
-            dialog_template: OroActionBundle:Widget:widget/form.html.twig
-            dialog_title: aсme.demo.actions.dialog.title
-            dialog_options:
+            template: OroActionBundle:Action:form.html.twig
+            title: aсme.demo.actions.dialog.title
+            options:
                 allowMaximize: true
                 allowMinimize: true
                 dblclick: maximize
                 maximizedHeightDecreaseBy: minimize-bar
                 width: 500
+            show_dialog: true
 ```
 
 Attributes Configuration
@@ -295,16 +332,59 @@ Example
 actions:
     demo_action:
         # ...
-        user:
-            label: 'User'
-            type: entity
-            options:
-                class: Oro\Bundle\UserBundle\Entity\User
-        company_name:
-            label: 'Company name'
-            type: string
-        group_name:
-            property_path: user.group.name
+        attributes:
+            user:
+                label: 'User'
+                type: entity
+                options:
+                    class: Oro\Bundle\UserBundle\Entity\User
+            company_name:
+                label: 'Company name'
+                type: string
+            group_name:
+                property_path: user.group.name
+```
+
+Datagrid Options Configuration
+==============================
+
+Datagrid options allow to define options of datagrid mass action. It provide two way to set mass action configuration:
+using service which return array of mas action configurations or set inline configuration of mass action.
+
+Single datagrid options can be described with next configuration:
+
+* **mass_action_provider**
+    *string*
+    Service name. This service must be marked with "oro_action.datagrid.mass_action_provider" tag. Also it must
+    implements Oro\Bundle\ActionBundle\Datagrid\Provider\MassActionProviderInterface. Method "getActions" of this
+    provider must return array of mass action configurations.
+* **mass_action**
+    *array*
+    Mass action configuration. See datagrid documentation.
+
+**Notice**
+It must be used only one parameter "mass_action_provider" or "mass_action".
+
+Example
+-------
+
+```
+actions:
+    demo_action:
+        # ...
+        datagrid_options:
+            mass_action_provider:
+                acme.action.datagrid.mass_action_provider
+            mass_action:
+                type: window
+                label: acme.demo.mass_action.label
+                icon: plus
+                route: acme_demo_bundle_massaction
+                frontend_options:
+                    title: acme.demo.mass_action.action.label
+                    dialogOptions:
+                        modal: true
+                        ...
 ```
 
 Form Options Configuration
@@ -381,19 +461,19 @@ actions:
             @not_empty: [$group]
 ```
 
-Pre Functions, Init Functions and Post Functions Configuration
+Pre Functions, Form Init Functions and Functions Configuration
 ==============================================================
 
 * **prefunctions**
-    Configuration of Pre Functions that may be performed before pre conditions, conditions, init functions and post
+    Configuration of Pre Functions that may be performed before pre conditions, conditions, form init functions and post
     functions. It can be used to prepare some data in Action Data that will be used in pre conditions validation.
-* **initfunctions**
-    Configuration of Init Functions that may be performed on Action Data before conditions and post functions.
+* **form_init**
+    Configuration of Form Init Functions that may be performed on Action Data before conditions and functions.
     One of possible init actions usage scenario is to fill attributes with default values, which will be used in action
     form if it exist.
-* **postfunctions**
-    Configuration of Post Functions that must be performed after all previous steps are performed. This is main action
-    step that must contain action logic. It will be performed only after conditions will be qualified.
+* **functions**
+    Configuration of Functions that must be performed after all previous steps are performed. This is main action step
+    that must contain action logic. It will be performed only after conditions will be qualified.
 
 Similarly to Conditions - alias of Function starts from "@" symbol and must refer to registered Functions. For example
 "@assign_value" refers to Function which set specified value to attribute in Action Data.
@@ -407,9 +487,9 @@ actions:
         # ...
         prefunctions:
             - @assign_value: [$name, 'User Name']
-        initfunctions:
+        form_init:
             - @assign_value: [$group, 'Group Name']
-        postfunctions:
+        functions:
             - @create_entity:
                 class: Acme\Bundle\DemoBundle\Entity\User
                 attribute: $user
@@ -417,3 +497,8 @@ actions:
                     name: $name
                     group: $group
 ```
+
+Action Diagram
+--------------
+
+Following diagram shows action processes logic in graphical representation: ![Action Diagram](images/getting-started_action-diagram.png)

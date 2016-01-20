@@ -4,10 +4,12 @@ namespace OroB2B\Bundle\ShoppingListBundle\Handler;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Symfony\Component\Form\Form;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -91,6 +93,47 @@ class ShoppingListLineItemHandler
         }
 
         return $this->shoppingListManager->bulkAddLineItems($lineItems, $shoppingList, self::FLUSH_BATCH_SIZE);
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     * @param Product $product
+     * @return LineItem
+     */
+    public function prepareLineItemWithProduct(AccountUser $accountUser, Product $product)
+    {
+        $shoppingList = $this->shoppingListManager->getCurrent();
+
+        $lineItem = new LineItem();
+        $lineItem
+            ->setProduct($product)
+            ->setAccountUser($accountUser);
+
+        if (null !== $shoppingList) {
+            $lineItem->setShoppingList($shoppingList);
+        }
+
+        return $lineItem;
+    }
+
+    /**
+     * @param LineItem $lineItem
+     * @param Form $form
+     */
+    public function processLineItem(LineItem $lineItem, Form $form)
+    {
+        $shoppingList = $form->get('lineItem')->get('shoppingList')->getData();
+
+        if (!$shoppingList) {
+            /* @var $form Form */
+            $name = $form->get('lineItem')->get('shoppingListLabel')->getData();
+
+            $shoppingList = $this->shoppingListManager->createCurrent($name);
+        }
+
+        $lineItem->setShoppingList($shoppingList);
+
+        $this->shoppingListManager->addLineItem($lineItem, $shoppingList);
     }
 
     /**
