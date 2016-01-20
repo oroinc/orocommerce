@@ -124,11 +124,17 @@ class CategoryRepository extends EntityRepository
             return;
         }
 
+        $sourceCondition = sprintf(
+            'CASE WHEN c.parentCategory IS NOT NULL THEN %s ELSE %s END',
+            CategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+            CategoryVisibilityResolved::SOURCE_STATIC
+        );
+
         $queryBuilder = $this->getEntityManager()->createQueryBuilder()
             ->select(
                 'c.id',
                 (string)$visibility,
-                (string)CategoryVisibilityResolved::SOURCE_PARENT_CATEGORY
+                $sourceCondition
             )
             ->from('OroB2BCatalogBundle:Category', 'c')
             ->leftJoin('OroB2BAccountBundle:Visibility\CategoryVisibility', 'cv', 'WITH', 'cv.category = c')
@@ -146,7 +152,16 @@ class CategoryRepository extends EntityRepository
     }
 
     /**
-     * @return array [['category_id' => <int>, 'parent_category_id' => <int>, 'resolved_visibility' => <int|null>], ...]
+     * [
+     *      [
+     *          'category_id' => <int>,
+     *          'parent_category_id' => <int|null>,
+     *          'resolved_visibility' => <int|null>
+     *      ],
+     *      ...
+     * ]
+     *
+     * @return array
      */
     public function getCategoriesWithResolvedVisibilities()
     {

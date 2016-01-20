@@ -59,9 +59,7 @@ class LoadCategoryVisibilityResolvedData extends AbstractFixture implements Depe
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
-            'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
+            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
         ];
     }
     
