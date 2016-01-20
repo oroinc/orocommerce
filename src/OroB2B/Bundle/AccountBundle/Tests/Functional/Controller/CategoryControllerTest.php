@@ -173,6 +173,7 @@ class CategoryControllerTest extends WebTestCase
         $token = $crawler->filterXPath('//input[@name="orob2b_catalog_category[_token]"]/@value')->text();
 
         $parameters['orob2b_catalog_category'] = array_merge(
+            $parameters['orob2b_catalog_category'],
             [
                 '_token' => $token,
                 'visibility' => [
@@ -180,8 +181,7 @@ class CategoryControllerTest extends WebTestCase
                     'account' => $visibilityForAccount,
                     'accountGroup' => $visibilityForAccountGroup,
                 ],
-            ],
-            $parameters['orob2b_catalog_category']
+            ]
         );
 
         $crawler = $this->client->request(
