@@ -226,44 +226,6 @@ class MenuItem extends ExtendMenuItem
     }
 
     /**
-     * @return string
-     */
-    public function getRoute()
-    {
-        return $this->route;
-    }
-
-    /**
-     * @param string $route
-     * @return $this
-     */
-    public function setRoute($route)
-    {
-        $this->route = $route;
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getRouteParameters()
-    {
-        return $this->routeParameters;
-    }
-
-    /**
-     * @param array $routeParameters
-     * @return $this
-     */
-    public function setRouteParameters($routeParameters)
-    {
-        $this->routeParameters = $routeParameters;
-
-        return $this;
-    }
-
-    /**
      * @return boolean
      */
     public function getDisplay()

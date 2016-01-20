@@ -9,8 +9,6 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
-
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
 
@@ -45,11 +43,6 @@ class MenuItemType extends AbstractType
                     );
                 } else {
                     $form
-                        ->add(
-                            'parentMenuItem',
-                            EntityIdentifierType::NAME,
-                            ['class' => $this->dataClass, 'multiple' => false]
-                        )
                         ->add(
                             'titles',
                             LocalizedFallbackValueCollectionType::NAME,

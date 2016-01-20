@@ -8,9 +8,6 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Form\PreloadedExtension;
 
 use Oro\Component\Testing\Unit\Form\Extension\Stub\FormTypeValidatorExtensionStub;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
-
-use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
@@ -35,8 +32,7 @@ class MenuItemTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
-                    EntityIdentifierType::NAME => new StubEntityIdentifierType([]),
+                    LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub()
                 ],
                 ['form' => [new FormTypeValidatorExtensionStub()]]
             )
@@ -70,7 +66,7 @@ class MenuItemTypeTest extends FormIntegrationTestCase
         $this->assertEquals('orob2b_menu_item', $this->formType->getName());
     }
 
-    public function atestBuildFormForRootMenuItem()
+    public function testBuildFormForRootMenuItem()
     {
         $form = $this->factory->create($this->formType);
 
@@ -83,7 +79,6 @@ class MenuItemTypeTest extends FormIntegrationTestCase
         $menuItem->setParentMenuItem(new MenuItem());
         $form = $this->factory->create($this->formType, $menuItem);
 
-        $this->assertTrue($form->has('parentMenuItem'));
         $this->assertTrue($form->has('titles'));
         $this->assertTrue($form->has('uri'));
     }

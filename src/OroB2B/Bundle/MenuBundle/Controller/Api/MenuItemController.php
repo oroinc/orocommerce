@@ -20,7 +20,7 @@ class MenuItemController extends RestController implements ClassResourceInterfac
     /**
      * Delete menu or menu item
      *
-     * @param int $id User id
+     * @param int $id MenuItem id
      *
      * @return \Symfony\Component\HttpFoundation\Response
      *

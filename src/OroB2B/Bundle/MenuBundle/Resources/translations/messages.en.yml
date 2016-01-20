@@ -13,8 +13,6 @@ orob2b:
             root.label: 'Tree root'
             parent_menu_item.label: 'Parent Menu Item'
             uri.label: 'URI'
-            route.label: 'Route'
-            route_parameters.label: 'Route parameters'
             display.label: 'Display'
             display_children.label: 'Display children'
             condition.label: 'Condition'

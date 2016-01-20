@@ -19,3 +19,4 @@ oro_titles:
     orob2b_menu_item_view: '%%title%%'
     orob2b_menu_item_update: '%%title%% - oro.ui.edit'
     orob2b_menu_item_create: 'oro.ui.create_entity'
+    orob2b_menu_item_create_root: 'oro.ui.create_entity'

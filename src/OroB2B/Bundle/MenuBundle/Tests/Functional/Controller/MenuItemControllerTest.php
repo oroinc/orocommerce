@@ -72,7 +72,7 @@ class MenuItemControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         /** @var Form $form */
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Save')->form();
         $form['orob2b_menu_item[titles][values][default]'] = $title;
         $form['orob2b_menu_item[uri]'] = $uri;
 
@@ -97,7 +97,7 @@ class MenuItemControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         /** @var Form $form */
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Save')->form();
         $form['orob2b_menu_item[titles][values][default]'] = $title;
         $form['orob2b_menu_item[uri]'] = $uri;
 

@@ -5,9 +5,10 @@
 
 {% set entityId = entity.id %}
 
-{% if entityId %}
-    {% oro_title_set({params : {"%title%": entity.defaultTitle} }) %}
-{% endif %}
+{% oro_title_set({params : {
+    "%title%": entity.defaultTitle|default('N/A'|trans),
+    "%entityName%": 'orob2b.menu.menuitem.roots_entity_label'|trans,
+} }) %}
 
 {% block navButtons %}
     {{ UI.cancelButton(path('orob2b_menu_item_roots')) }}
