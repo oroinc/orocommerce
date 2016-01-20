@@ -28,8 +28,6 @@ class MenuItemTest extends \PHPUnit_Framework_TestCase
             ['id', 1],
             ['parent', new MenuItem()],
             ['uri', 'http://localhost'],
-            ['route', 'route_name'],
-            ['routeParameters', ['first' => 1, 'second' => 2]],
             ['display', false],
             ['displayChildren', false],
             ['left', 1],
@@ -111,9 +109,19 @@ class MenuItemTest extends \PHPUnit_Framework_TestCase
     public function getDefaultTitleExceptionDataProvider()
     {
         return [
-//            'no default localized' => [[]],
             'several default localized' => [[$this->createLocalizedValue(true), $this->createLocalizedValue(true)]],
         ];
+    }
+
+    public function testSetDefaultTitle()
+    {
+        $menuItem = $this->entity;
+        $menuItem->setDefaultTitle('test_title_string1');
+        $this->assertEquals('test_title_string1', $menuItem->getDefaultTitle());
+
+        // check second time to make sure we don't have an exception in getter
+        $menuItem->setDefaultTitle('test_title_string2');
+        $this->assertEquals('test_title_string2', $menuItem->getDefaultTitle());
     }
 
     /**

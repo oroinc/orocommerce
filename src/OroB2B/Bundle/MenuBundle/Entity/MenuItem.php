@@ -60,6 +60,7 @@ class MenuItem extends ExtendMenuItem
      *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
      *      }
      * )
+     * @todo check unique for root
      */
     protected $titles;
 
@@ -88,20 +89,6 @@ class MenuItem extends ExtendMenuItem
     protected $uri;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="route", type="string", length=128, nullable=true)
-     */
-    protected $route;
-
-    /**
-     * @var array
-     *
-     * @ORM\Column(name="route_parameters", type="array", nullable=true)
-     */
-    protected $routeParameters;
-
-    /**
      * @var boolean
      *
      * @ORM\Column(name="display", type="boolean")
@@ -118,7 +105,7 @@ class MenuItem extends ExtendMenuItem
     /**
      * @var string
      *
-     * @ORM\Column(name="`condition`", type="text", nullable=true)
+     * @ORM\Column(name="mi_condition", type="text", nullable=true)
      */
     protected $condition;
 
@@ -233,6 +220,7 @@ class MenuItem extends ExtendMenuItem
     public function setParent(MenuItem $parent = null)
     {
         $this->parent = $parent;
+
         return $this;
     }
 
@@ -251,42 +239,7 @@ class MenuItem extends ExtendMenuItem
     public function setUri($uri)
     {
         $this->uri = $uri;
-        return $this;
-    }
 
-    /**
-     * @return string
-     */
-    public function getRoute()
-    {
-        return $this->route;
-    }
-
-    /**
-     * @param string $route
-     * @return $this
-     */
-    public function setRoute($route)
-    {
-        $this->route = $route;
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getRouteParameters()
-    {
-        return $this->routeParameters;
-    }
-
-    /**
-     * @param array $routeParameters
-     * @return $this
-     */
-    public function setRouteParameters($routeParameters)
-    {
-        $this->routeParameters = $routeParameters;
         return $this;
     }
 
@@ -305,6 +258,7 @@ class MenuItem extends ExtendMenuItem
     public function setDisplay($display)
     {
         $this->display = $display;
+
         return $this;
     }
 
@@ -323,6 +277,7 @@ class MenuItem extends ExtendMenuItem
     public function setDisplayChildren($displayChildren)
     {
         $this->displayChildren = $displayChildren;
+
         return $this;
     }
 
@@ -341,6 +296,7 @@ class MenuItem extends ExtendMenuItem
     public function setCondition($condition)
     {
         $this->condition = $condition;
+
         return $this;
     }
 

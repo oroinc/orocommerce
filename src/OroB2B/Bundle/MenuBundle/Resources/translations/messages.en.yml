@@ -1,5 +1,6 @@
 orob2b:
     menu:
+        menu_roots_list.label: 'Menus'
         menuitem:
             entity_label: 'Menu Item'
             entity_plural_label: 'Menu Items'
@@ -10,19 +11,22 @@ orob2b:
             level.label: 'Tree level'
             right.label: 'Tree right index'
             root.label: 'Tree root'
-            parent_menu_item.label: 'Parent Menu Item'
-            uri.label: 'Uri'
-            route.label: 'Route'
-            route_parameters.label: 'Route parameters'
+            uri.label: 'URI'
             display.label: 'Display'
             display_children.label: 'Display children'
             condition.label: 'Condition'
             parent.label: 'Parent Menu Item'
             children.label: 'Children'
             data.label: 'Data'
+            roots_entity_label: 'Menu'
+            roots_plural_label: 'Menus'
+            sections:
+                additional: 'Additional'
+                general: 'General'
         controller:
             menuitem:
-                saved.message: Menu Item has been saved
+                saved.message: 'Menu Item has been saved'
+                root.saved.message: 'Menu has been saved'
         template:
             menuitem:
                 select_existing_or_create_new: Please select a menu item on the left or create new one.

@@ -15,7 +15,7 @@ use Oro\Bundle\TranslationBundle\Translation\Translator;
 
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
+use OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
