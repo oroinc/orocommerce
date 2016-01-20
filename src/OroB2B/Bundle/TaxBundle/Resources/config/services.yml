@@ -7,7 +7,8 @@ parameters:
     orob2b_tax.entity.tax_rule.class: OroB2B\Bundle\TaxBundle\Entity\TaxRule
     orob2b_tax.entity.zip_code.class: OroB2B\Bundle\TaxBundle\Entity\ZipCode
     orob2b_tax.entity.tax_value.class: OroB2B\Bundle\TaxBundle\Entity\TaxValue
-    orob2b_tax.entity.tax_base_exclusion.class: OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion
+
+    orob2b_tax.model.tax_base_exclusion.class: OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion
 
     orob2b_tax.validator.zip_code_fields.class: OroB2B\Bundle\TaxBundle\Validator\Constraints\ZipCodeFieldsValidator
 

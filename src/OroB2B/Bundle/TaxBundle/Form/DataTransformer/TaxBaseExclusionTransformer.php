@@ -4,8 +4,6 @@ namespace OroB2B\Bundle\TaxBundle\Form\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
 
-use Oro\Component\PhpUtils\ArrayUtil;
-
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
@@ -33,39 +31,30 @@ class TaxBaseExclusionTransformer implements DataTransformerInterface
      */
     public function transform($values)
     {
-        if (empty($values)) {
+        if (empty($values) || !is_array($values)) {
             return [];
-        }
-
-        $countryIds = array_unique(ArrayUtil::arrayColumn($values, 'country'));
-        /** @var Country[] $countriesRaw */
-        $countriesRaw = $this->doctrineHelper
-            ->getEntityRepository('OroAddressBundle:Country')
-            ->findBy(['iso2Code' => $countryIds]);
-
-        $countries = [];
-        foreach ($countriesRaw as $country) {
-            $countries[$country->getIso2Code()] = $country;
-        }
-
-        $regionIds = array_unique(ArrayUtil::arrayColumn($values, 'region'));
-        /** @var Region[] $regionsRaw */
-        $regionsRaw = $this->doctrineHelper
-            ->getEntityRepository('OroAddressBundle:Region')
-            ->findBy(['combinedCode' => $regionIds]);
-
-        $regions = [];
-        foreach ($regionsRaw as $region) {
-            $regions[$region->getCombinedCode()] = $region;
         }
 
         $entities = [];
         foreach ($values as $value) {
             $entity = new TaxBaseExclusion();
-            $entity
-                ->setCountry($countries[$value['country']])
-                ->setRegion($regions[$value['region']])
-                ->setOption($value['option']);
+
+            if (!empty($value['country'])) {
+                /** @var Country $country */
+                $country = $this->doctrineHelper->getEntityReference('OroAddressBundle:Country', $value['country']);
+                $entity->setCountry($country);
+            }
+
+            if (!empty($value['region'])) {
+                /** @var Region $region */
+                $region = $this->doctrineHelper->getEntityReference('OroAddressBundle:Region', $value['region']);
+                $entity->setRegion($region);
+            }
+
+            if (!empty($value['option'])) {
+                $entity->setOption($value['option']);
+            }
+
             $entities[] = $entity;
         }
 
@@ -74,19 +63,19 @@ class TaxBaseExclusionTransformer implements DataTransformerInterface
 
     /**
      * {@inheritdoc}
-     * @param TaxBaseExclusion[]|array $entities
+     * @param TaxBaseExclusion[] $entities
      */
     public function reverseTransform($entities)
     {
-        if (empty($entities)) {
+        if (empty($entities) || !is_array($entities)) {
             return [];
         }
 
         $values = [];
         foreach ($entities as $entity) {
             $values[] = [
-                'country' => $entity->getCountry()->getIso2Code(),
-                'region' => $entity->getRegion()->getCombinedCode(),
+                'country' => $entity->getCountry() ? $entity->getCountry()->getIso2Code() : null,
+                'region' => $entity->getRegion() ? $entity->getRegion()->getCombinedCode() : null,
                 'option' => $entity->getOption(),
             ];
         }
