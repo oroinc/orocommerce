@@ -44,7 +44,7 @@ class OrderControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
             ]
         );
 
@@ -393,6 +393,7 @@ class OrderControllerTest extends WebTestCase
      */
     protected function setDefaultPriceList($name)
     {
+        $
         /** @var PriceList $priceList */
         $priceList = $this->getReference($name);
         $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BPricingBundle:PriceList')
