@@ -179,7 +179,7 @@ class OrderController extends AbstractOrderController
     }
 
     /**
-     * @return ProductPriceProvider
+     * {@inheritdoc}
      */
     protected function getProductPriceProvider()
     {

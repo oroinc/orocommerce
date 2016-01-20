@@ -20,7 +20,7 @@ use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 
-class AbstractAjaxProductPriceController extends Controller
+abstract class AbstractAjaxProductPriceController extends Controller
 {
     /** @var EntityManager[] */
     protected $managers = [];
@@ -172,18 +172,12 @@ class AbstractAjaxProductPriceController extends Controller
     }
 
     /**
-     * @return ProductPriceProvider
-     */
-    protected function getProductPriceProvider()
-    {
-        return $this->get('orob2b_pricing.provider.product_price');
-    }
-
-    /**
      * @return AbstractPriceListRequestHandler
      */
-    protected function getRequestHandler()
-    {
-        return $this->get('orob2b_pricing.model.price_list_request_handler');
-    }
+    abstract protected function getRequestHandler();
+
+    /**
+     * @return ProductPriceProvider
+     */
+    abstract protected function getProductPriceProvider();
 }

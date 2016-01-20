@@ -17,7 +17,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
-use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 /**
  * @ORM\Table(name="orob2b_order",indexes={@ORM\Index(name="orob2b_order_created_at_index", columns={"created_at"})})
@@ -295,7 +295,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
     protected $lineItems;
 
     /**
-     * @var BasePriceList
+     * @var PriceList
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList")
      * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="SET NULL")
@@ -732,7 +732,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
     }
 
     /**
-     * @return BasePriceList
+     * @return PriceList
      */
     public function getPriceList()
     {
@@ -740,10 +740,10 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
     }
 
     /**
-     * @param BasePriceList $priceList
+     * @param PriceList $priceList
      * @return Order
      */
-    public function setPriceList(BasePriceList $priceList = null)
+    public function setPriceList(PriceList $priceList = null)
     {
         $this->priceList = $priceList;
 

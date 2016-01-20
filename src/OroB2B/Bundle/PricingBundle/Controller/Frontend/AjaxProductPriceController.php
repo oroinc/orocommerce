@@ -60,13 +60,6 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
             $this->getParameter('orob2b_pricing.entity.combined_product_price.class')
         );
     }
-    /**
-     * @return ProductPriceProvider
-     */
-    protected function getProductPriceProvider()
-    {
-        return $this->get('orob2b_pricing.provider.combined_product_price');
-    }
 
     /**
      * @return FrontendPriceListRequestHandler
@@ -74,5 +67,13 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     protected function getRequestHandler()
     {
         return $this->get('orob2b_pricing.model.frontend.price_list_request_handler');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getProductPriceProvider()
+    {
+        return $this->get('orob2b_pricing.provider.combined_product_price');
     }
 }

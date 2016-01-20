@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller\Frontend;
 
 use Doctrine\Common\Persistence\ObjectManager;
+
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;

@@ -122,4 +122,12 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     {
         return $this->get('orob2b_pricing.model.price_list_request_handler');
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getProductPriceProvider()
+    {
+        return $this->get('orob2b_pricing.provider.product_price');
+    }
 }
