@@ -149,7 +149,7 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
             ]);
 
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $parentForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $rootForm = $this->getMock('Symfony\Component\Form\FormInterface');
         $priceListByWebsitesForm = $this->getMock('Symfony\Component\Form\FormInterface');
 
         $formConfig = $this->getMock('Symfony\Component\Form\FormConfigInterface');
@@ -163,24 +163,17 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
             ->method('getConfig')
             ->willReturn($formConfig);
 
-        $parentForm->expects($this->once())
+        $rootForm->expects($this->once())
             ->method('getData')
             ->willReturn($this->targetEntity);
 
-        $priceListsByWebsitesForm = $this->getMock('Symfony\Component\Form\FormInterface');
-        $priceListsByWebsitesForm->expects($this->once())
+        $form->expects($this->once())
             ->method('all')
             ->willReturn([$priceListByWebsitesForm]);
 
-
-        $parentForm->expects($this->once())
-            ->method('get')
-            ->with('priceListsByWebsites')
-            ->willReturn($priceListsByWebsitesForm);
-
         $form->expects($this->once())
-            ->method('getParent')
-            ->willReturn($parentForm);
+            ->method('getRoot')
+            ->willReturn($rootForm);
 
         /** @var $event FormEvent|\PHPUnit_Framework_MockObject_MockObject */
         $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')
@@ -240,7 +233,7 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
             ->willReturn($actualPriceLists);
 
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $parentForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $rootForm = $this->getMock('Symfony\Component\Form\FormInterface');
         $priceListByWebsitesForm = $this->getMock('Symfony\Component\Form\FormInterface');
         $priceListCollection = $this->getMock('Symfony\Component\Form\FormInterface');
 
@@ -255,7 +248,7 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
             ->method('getConfig')
             ->willReturn($formConfig);
 
-        $parentForm->expects($this->once())
+        $rootForm->expects($this->once())
             ->method('getData')
             ->willReturn($this->targetEntity);
 
@@ -278,19 +271,13 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
             ->method('all')
             ->willReturnOnConsecutiveCalls([$priceListWithPriorityForm]);
 
-        $priceListsByWebsitesForm = $this->getMock('Symfony\Component\Form\FormInterface');
-        $priceListsByWebsitesForm->expects($this->any())
+        $form->expects($this->any())
             ->method('all')
             ->willReturn([$priceListByWebsitesForm]);
 
-        $parentForm->expects($this->once())
-            ->method('get')
-            ->with('priceListsByWebsites')
-            ->willReturn($priceListsByWebsitesForm);
-
         $form->expects($this->any())
-            ->method('getParent')
-            ->willReturn($parentForm);
+            ->method('getRoot')
+            ->willReturn($rootForm);
 
         $form->expects($this->once())
             ->method('isValid')
@@ -409,7 +396,7 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
         $parentForm = $this->getMock('Symfony\Component\Form\FormInterface');
 
         $form->expects($this->once())
-            ->method('getParent')
+            ->method('getRoot')
             ->willReturn($parentForm);
 
         if ($targetEntity && $isValidForm) {
@@ -430,10 +417,6 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
         $event->expects($this->any())
             ->method('getForm')
             ->willReturn($form);
-
-        $parentForm->expects($this->never())
-            ->method('get')
-            ->with('priceListsByWebsites');
 
         return $event;
     }
