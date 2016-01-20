@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Model;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\SaleBundle\Model\RequestHelper;
@@ -14,11 +12,6 @@ use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadRequestData;
  */
 class RequestHelperTest extends WebTestCase
 {
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
     /**
      * @var RequestHelper
      */
@@ -45,7 +38,7 @@ class RequestHelperTest extends WebTestCase
      * @param int $days
      * @param array $expected
      */
-    public function testGetRequestsWoQuote($days, $expected)
+    public function testGetRequestsWoQuote($days, array $expected)
     {
         $expectedRequests = [];
         foreach ($expected as $item) {
