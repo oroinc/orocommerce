@@ -36,11 +36,11 @@ class PriceListCollectionProviderTest extends WebTestCase
                 'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
             ]
         );
-        $this->setDefaultPriceList();
     }
 
     public function testGetPriceListsByConfig()
     {
+        $this->setPriceListToConfig();
         $pricesChain = $this->provider->getPriceListsByConfig();
         $this->assertCount(1, $pricesChain);
         $this->assertTrue($pricesChain[0]->isMergeAllowed());
@@ -349,7 +349,7 @@ class PriceListCollectionProviderTest extends WebTestCase
 
     }
 
-    protected function setDefaultPriceList()
+    protected function setPriceListToConfig()
     {
         $em = $this->getContainer()->get('doctrine')->getManager();
         $priceList = $em->getReference('OroB2BPricingBundle:PriceList', self::DEFAULT_PRICE_LIST);

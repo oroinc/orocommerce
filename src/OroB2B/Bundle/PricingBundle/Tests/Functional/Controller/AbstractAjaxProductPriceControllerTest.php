@@ -34,7 +34,6 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
             'price_list_id' => $priceList->getId(),
             'product_ids' => [$product->getId()]
         ];
-        $this->setDefaultPriceList($priceList);
         if ($currency) {
             $params['currency'] = $currency;
         }
@@ -72,13 +71,5 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
                 ['bottle']
             ]
         ];
-    }
-
-    /**
-     * @param PriceList $priceList
-     */
-    protected function setDefaultPriceList(PriceList $priceList)
-    {
-
     }
 }
