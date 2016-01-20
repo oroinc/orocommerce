@@ -6,7 +6,6 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -22,6 +21,7 @@ use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use OroB2B\Bundle\TaxBundle\Form\Type\ZipCodeCollectionType;
 use OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction;

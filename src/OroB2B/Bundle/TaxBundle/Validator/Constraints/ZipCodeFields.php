@@ -17,6 +17,11 @@ class ZipCodeFields extends Constraint
     public $rangeShouldHaveBothFieldMessage = 'orob2b.tax.validator.constraints.range_start_and_end_required';
 
     /**
+     * @var string
+     */
+    public $onlyNumericRangesSupported = 'orob2b.tax.validator.constraints.only_numeric_ranges_supported';
+
+    /**
      * {@inheritdoc}
      */
     public function getTargets()

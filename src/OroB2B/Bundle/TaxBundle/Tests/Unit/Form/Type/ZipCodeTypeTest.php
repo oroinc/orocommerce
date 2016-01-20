@@ -2,10 +2,12 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use OroB2B\Bundle\TaxBundle\Form\Type\ZipCodeType;
 use OroB2B\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
+use OroB2B\Bundle\TaxBundle\Validator\Constraints\ZipCodeFields;
+use OroB2B\Bundle\TaxBundle\Validator\Constraints\ZipCodeFieldsValidator;
 
 class ZipCodeTypeTest extends FormIntegrationTestCase
 {
@@ -74,45 +76,67 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
         return [
             'different range' => [
                 'submittedData' => [
-                    'zipRangeStart' => '123',
-                    'zipRangeEnd' => '234',
+                    'zipRangeStart' => '00123',
+                    'zipRangeEnd' => '00234',
                 ],
-                'expectedData' => ZipCodeTestHelper::getRangeZipCode('123', '234'),
+                'expectedData' => ZipCodeTestHelper::getRangeZipCode('00123', '00234'),
                 'valid' => true,
             ],
             'same range' => [
                 'submittedData' => [
-                    'zipRangeStart' => '123',
-                    'zipRangeEnd' => '123',
+                    'zipRangeStart' => '00123',
+                    'zipRangeEnd' => '00123',
                 ],
-                'expectedData' => ZipCodeTestHelper::getSingleValueZipCode('123'),
+                'expectedData' => ZipCodeTestHelper::getSingleValueZipCode('00123'),
                 'valid' => true,
             ],
             'start range only' => [
                 'submittedData' => [
-                    'zipRangeStart' => '123',
+                    'zipRangeStart' => '00123',
                     'zipRangeEnd' => null,
                 ],
-                'expectedData' => ZipCodeTestHelper::getSingleValueZipCode('123'),
+                'expectedData' => ZipCodeTestHelper::getSingleValueZipCode('00123'),
                 'valid' => true,
             ],
             'end range only' => [
                 'submittedData' => [
                     'zipRangeStart' => null,
-                    'zipRangeEnd' => '123',
+                    'zipRangeEnd' => '00123',
                 ],
-                'expectedData' => ZipCodeTestHelper::getSingleValueZipCode('123'),
+                'expectedData' => ZipCodeTestHelper::getSingleValueZipCode('00123'),
                 'valid' => true,
             ],
-            // TODO: should pass test after BB-1957
-//            'alphanumeric zip code' => [
-//                'submittedData' => [
-//                    'zipRangeStart' => '1A30D',
-//                    'zipRangeEnd' => '1A32B',
-//                ],
-//                'expectedData' => null,
-//                'valid' => false,
-//            ],
+            'alphanumeric zip code' => [
+                'submittedData' => [
+                    'zipRangeStart' => '1A30D',
+                    'zipRangeEnd' => '1A32B',
+                ],
+                'expectedData' => ZipCodeTestHelper::getRangeZipCode('1A30D', '1A32B'),
+                'valid' => false,
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getValidators()
+    {
+        $zipCodeFieldsConstraint = new ZipCodeFields();
+        $zipCodeFieldsValidator = new ZipCodeFieldsValidator();
+
+        return [
+            $zipCodeFieldsConstraint->validatedBy() => $zipCodeFieldsValidator
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
+    {
+        return [
+            $this->getValidatorExtension(true),
         ];
     }
 }
