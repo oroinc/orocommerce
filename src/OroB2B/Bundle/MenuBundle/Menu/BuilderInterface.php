@@ -6,6 +6,8 @@ use Knp\Menu\ItemInterface;
 
 interface BuilderInterface
 {
+    const IS_ALLOWED_OPTION_KEY = 'isAllowed';
+
     /**
      * Create menu by alias
      *
