@@ -50,10 +50,10 @@ class LoadOrderItems extends AbstractFixture implements DependentFixtureInterfac
         $order = $this->getReference(LoadOrders::ORDER_1);
         $billingAddress = new OrderAddress();
         $billingAddress->setCountry(
-            $manager->getRepository('OroAddressBundle:Country')->find(LoadTaxJurisdictions::COUNTRY)
+            $manager->getRepository('OroAddressBundle:Country')->find(LoadTaxJurisdictions::COUNTRY_US)
         );
         $billingAddress->setRegion(
-            $manager->getRepository('OroAddressBundle:Region')->find(LoadTaxJurisdictions::STATE)
+            $manager->getRepository('OroAddressBundle:Region')->find(LoadTaxJurisdictions::STATE_US_NY)
         );
         $order->setBillingAddress($billingAddress);
 

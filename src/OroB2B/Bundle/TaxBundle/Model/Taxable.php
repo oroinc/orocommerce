@@ -138,10 +138,10 @@ class Taxable
     }
 
     /**
-     * @param Price $price
+     * @param Price|null $price
      * @return $this
      */
-    public function setPrice(Price $price)
+    public function setPrice(Price $price = null)
     {
         $this->price = $price;
 
