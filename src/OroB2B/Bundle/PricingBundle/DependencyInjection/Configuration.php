@@ -32,9 +32,10 @@ class Configuration implements ConfigurationInterface
             $rootNode,
             [
                 self::COMBINED_PRICE_LIST => null,
-                self::DEFAULT_PRICE_LISTS => [ 'type' => 'array', 'value' => []],
+                self::DEFAULT_PRICE_LISTS => ['type' => 'array', 'value' => []],
                 'rounding_type' => ['value' => PriceRoundingService::HALF_UP],
                 'precision' => ['value' => PriceRoundingService::FALLBACK_PRECISION],
+                'realtime_combined_price_lists_update' => true
             ]
         );
 
