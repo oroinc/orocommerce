@@ -65,10 +65,18 @@ services:
     orob2b_menu.menu_provider:  #orob2b_menu.menu.database_builder
         class: %orob2b_menu.menu_provider.class%
         arguments:
-            - @oro_menu.builder_chain
+            - @orob2b_menu.menu.database_builder
             - @orob2b_website.locale_helper
             - @orob2b_menu.menu_serializer
             - @doctrine
         calls:
             - [setEntityClass, [%orob2b_menu.entity.menu_item.class%]]
             - [setCache, [@orob2b_menu.cache]]
+
+    orob2b_menu.layout.block_type.menu:
+        class: OroB2B\Bundle\MenuBundle\Layout\Block\Type\MenuType
+        arguments:
+            - @orob2b_menu.menu_provider
+            - @knp_menu.matcher
+        tags:
+             - { name: layout.block_type, alias: menu }
