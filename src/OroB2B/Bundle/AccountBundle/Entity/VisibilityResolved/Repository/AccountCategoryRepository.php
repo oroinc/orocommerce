@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
@@ -17,6 +18,7 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 class AccountCategoryRepository extends EntityRepository
 {
     use CategoryVisibilityResolvedTermTrait;
+    use BasicOperationRepositoryTrait;
 
     /**
      * @param Category $category

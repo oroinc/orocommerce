@@ -33,9 +33,9 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
         $update = [];
         $where = ['account' => $account, 'website' => $website, 'product' => $product];
 
-        $em = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved');
-        $er = $em->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved');
+        $er = $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved')
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved');
         $hasAccountProductVisibilityResolved = $er->hasEntity($where);
 
         if (!$hasAccountProductVisibilityResolved && $selectedVisibility !== AccountProductVisibility::ACCOUNT_GROUP) {

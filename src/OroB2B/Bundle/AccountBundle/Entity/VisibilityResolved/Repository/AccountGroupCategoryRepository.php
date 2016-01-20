@@ -174,7 +174,7 @@ class AccountGroupCategoryRepository extends EntityRepository
      */
     public function getFallbackToGroupVisibility(Category $category, AccountGroup $accountGroup, $configValue)
     {
-        $qb = $this->_em->createQueryBuilder();
+        $qb = $this->getEntityManager()->createQueryBuilder();
 
         $qb->select('COALESCE(agcvr.visibility, COALESCE(cvr.visibility, '. $qb->expr()->literal($configValue).'))')
             ->from('OroB2BCatalogBundle:Category', 'category')

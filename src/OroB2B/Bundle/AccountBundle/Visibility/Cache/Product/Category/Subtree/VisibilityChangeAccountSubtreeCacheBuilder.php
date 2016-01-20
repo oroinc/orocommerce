@@ -9,32 +9,20 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
-class VisibilityChangeAccountSubtreeCacheBuilder extends AbstractCategorySubtreeCacheBuilder
+class VisibilityChangeAccountSubtreeCacheBuilder extends AbstractSubtreeCacheBuilder
 {
     /**
      * @param Category $category
      * @param Account $account
+     * @param int $categoryVisibility
      */
-    public function resolveVisibilitySettings(Category $category, Account $account)
+    public function resolveVisibilitySettings(Category $category, Account $account, $categoryVisibility)
     {
-        $accountCategoryVisibility = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountCategoryVisibility')
-            ->getRepository('OroB2BAccountBundle:Visibility\AccountCategoryVisibility')
-            ->findOneBy(['category' => $category, 'account' => $account]);
-
         $childCategoryIds = $this->getChildCategoryIdsForUpdate($category, $account);
 
-        if ($accountCategoryVisibility) {
-            $visibility = $accountCategoryVisibility->getVisibility();
-            $this->updateCategoryVisibilityCache($category, $account, $childCategoryIds, $visibility);
-        } else {
-            $this->updateCategoryVisibilityCache(
-                $category,
-                $account,
-                $childCategoryIds,
-                AccountCategoryVisibility::PARENT_CATEGORY
-            );
-        }
+        $this->registry->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->updateAccountCategoryVisibilityByCategory($account, $childCategoryIds, $categoryVisibility);
 
         $visibility = $this->categoryVisibilityResolver->isCategoryVisibleForAccount($category, $account);
         $visibility = $this->convertVisibility($visibility);
