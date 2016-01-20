@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Controller\Frontend;
 
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
@@ -14,7 +12,6 @@ use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 
 use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
@@ -108,14 +105,11 @@ class OrderControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertViewPage(
-            $crawler,
-            [
-                self::ORDER_PO_NUMBER,
-                'Customer Notes',
-                $date,
-            ]
-        );
+        $this->assertViewPage($crawler, [
+            self::ORDER_PO_NUMBER,
+            'Customer Notes',
+            $date,
+        ]);
 
         /** @var ProductPrice $productPrice */
         $productPrice = $this->getReference('product_price.1');
@@ -348,13 +342,9 @@ class OrderControllerTest extends WebTestCase
 
         for ($i = 0; $i < $count; $i++) {
             $data = [
-                'product' => $crawler->filter(
-                    'input[name="orob2b_order_frontend_type[lineItems][' . $i . '][product]"]'
-                )
+                'product' => $crawler->filter('input[name="orob2b_order_frontend_type[lineItems]['.$i.'][product]"]')
                     ->extract('value')[0],
-                'quantity' => $crawler->filter(
-                    'input[name="orob2b_order_frontend_type[lineItems][' . $i . '][quantity]"]'
-                )
+                'quantity' => $crawler->filter('input[name="orob2b_order_frontend_type[lineItems]['.$i.'][quantity]"]')
                     ->extract('value')[0]
             ];
 
@@ -366,18 +356,18 @@ class OrderControllerTest extends WebTestCase
                     [
                         'productUnit' => $crawler
                             ->filter(
-                                'select[name="orob2b_order_frontend_type[lineItems][' . $i . '][productUnit]"] :selected'
+                                'select[name="orob2b_order_frontend_type[lineItems]['.$i.'][productUnit]"] :selected'
                             )
                             ->html(),
                         'price' => trim(
                             $crawler->filter(
                                 'tr[data-content="orob2b_order_frontend_type[lineItems]['
-                                . $i . ']"] .order-line-item-price-value'
+                                .$i.']"] .order-line-item-price-value'
                             )
                                 ->html()
                         ),
                         'shipBy' => $crawler->filter(
-                            'input[name="orob2b_order_frontend_type[lineItems][' . $i . '][shipBy]"]'
+                            'input[name="orob2b_order_frontend_type[lineItems]['.$i.'][shipBy]"]'
                         )
                             ->extract('value')[0]
                     ]
