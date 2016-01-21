@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\Menu;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\VoidCache;
 
-use Knp\Menu\Factory;
+use Knp\Menu\Factory\ExtensionInterface;
 use Knp\Menu\ItemInterface;
 
 use Symfony\Component\Routing\RouterInterface;
@@ -14,8 +14,9 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use OroB2B\Bundle\MenuBundle\Menu\BuilderInterface;
 use OroB2B\Bundle\AccountBundle\Security\AccountUserProvider;
 
-class AclExtension implements Factory\ExtensionInterface
+class AclExtension implements ExtensionInterface
 {
+    const CACHE_NAMESPACE = 'orob2b_menu_acl';
     const ACL_RESOURCE_ID_KEY = 'aclResourceId';
     const ROUTE_CONTROLLER_KEY = '_controller';
     const CONTROLLER_ACTION_DELIMITER = '::';
@@ -61,6 +62,7 @@ class AclExtension implements Factory\ExtensionInterface
     public function setCache(CacheProvider $cache)
     {
         $this->cache = $cache;
+        $this->cache->setNamespace(self::CACHE_NAMESPACE);
     }
 
     /**
@@ -71,7 +73,6 @@ class AclExtension implements Factory\ExtensionInterface
      */
     public function buildItem(ItemInterface $item, array $options)
     {
-
     }
 
     /**
@@ -136,6 +137,7 @@ class AclExtension implements Factory\ExtensionInterface
                 'key' => $key
             ];
         }
+
         return false;
     }
 
