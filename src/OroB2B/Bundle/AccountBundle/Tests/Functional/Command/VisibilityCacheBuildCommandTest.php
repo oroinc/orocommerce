@@ -89,8 +89,6 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
      */
     public function executeDataProvider()
     {
-        // TODO: use correct number of category resolved entities
-        // TODO: should be fixed in scopes of BB-1794, BB-1796 and BB-1798
         return [
             'withoutParam' => [
                 'params' => [],
@@ -102,7 +100,7 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
                 'expectedCounts' => [
                     'categoryVisibility' => 8,
                     'accountGroupCategoryVisibility' => 14,
-                    'accountCategoryVisibility' => 0,
+                    'accountCategoryVisibility' => 35,
                     'productVisibility' => 19,
                     'accountGroupProductVisibility' => 8,
                     'accountProductVisibility' => 5,
@@ -118,7 +116,7 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
                 'expectedCounts' => [
                     'categoryVisibility' => 8,
                     'accountGroupCategoryVisibility' => 14,
-                    'accountCategoryVisibility' => 0,
+                    'accountCategoryVisibility' => 35,
                     'productVisibility' => 6,
                     'accountGroupProductVisibility' => 6,
                     'accountProductVisibility' => 4,
