@@ -60,13 +60,16 @@ abstract class AbstractTreeHandlerTestCase extends WebTestCase
     {
         $result = $this->handler->moveNode($entityId, $parentId, $position);
         $this->assertEquals($expectedStatus, $result);
-        $this->assertEquals($expectedData, $this->getActualTree());
+        $this->assertEquals($expectedData, $this->getActualNodeHierarchy($entityId, $parentId, $position));
     }
 
     /**
+     * @param int $entityId
+     * @param int $parentId
+     * @param int $position
      * @return array
      */
-    protected function getActualTree()
+    protected function getActualNodeHierarchy($entityId, $parentId, $position)
     {
         return [];
     }

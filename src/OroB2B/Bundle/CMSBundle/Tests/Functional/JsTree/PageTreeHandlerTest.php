@@ -211,9 +211,9 @@ class PageTreeHandlerTest extends AbstractTreeHandlerTestCase
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    protected function getActualTree()
+    protected function getActualNodeHierarchy($entityId, $parentId, $position)
     {
         $entities = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BCMSBundle:Page')
             ->getRepository('OroB2BCMSBundle:Page')->findBy([], ['level' => 'DESC', 'left' => 'DESC']);
