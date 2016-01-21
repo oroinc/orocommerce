@@ -45,7 +45,7 @@ class CategoryControllerTest extends WebTestCase
         );
 
         $this->category = $this->getReference(LoadCategoryData::THIRD_LEVEL1);
-        $this->account = $this->getReference(LoadAccounts::DEFAULT_ACCOUNT_NAME);
+        $this->account = $this->getReference('account.level_1');
         $this->group = $this->getReference(LoadGroups::GROUP1);
     }
 

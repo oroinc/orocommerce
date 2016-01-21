@@ -47,7 +47,7 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 
         $repository = $this->getRepository();
 
-        $hasAccountCategoryVisibilityResolved = $this->getCategoryVisibilityResolved($category, $account);
+        $hasAccountCategoryVisibilityResolved = $repository->hasEntity($where);
 
         if (!$hasAccountCategoryVisibilityResolved
             && $selectedVisibility !== AccountCategoryVisibility::ACCOUNT_GROUP
