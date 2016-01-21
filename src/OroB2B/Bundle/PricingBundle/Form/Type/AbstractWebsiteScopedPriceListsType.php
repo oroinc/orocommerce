@@ -134,18 +134,15 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
      */
     public function onPreSetData(FormEvent $event)
     {
-        $parentForm = $event->getForm()->getParent();
+        $form = $event->getForm();
         /** @var object|null $targetEntity */
-        $targetEntity = $parentForm->getData();
+        $targetEntity = $form->getRoot()->getData();
 
         if (!$targetEntity || !$targetEntity->getId()) {
             return;
         }
 
-        /** @var FormInterface $priceListsByWebsites */
-        $priceListsByWebsites = $parentForm->get('priceListsByWebsites');
-
-        $formData = $this->prepareFormData($targetEntity, $priceListsByWebsites);
+        $formData = $this->prepareFormData($targetEntity, $form);
         $event->setData($formData);
     }
 
@@ -154,22 +151,21 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
      */
     public function onPostSubmit(FormEvent $event)
     {
-        $parentForm = $event->getForm()->getParent();
+        $form = $event->getForm();
+
         /** @var object|null $targetEntity */
-        $targetEntity = $parentForm->getData();
+        $targetEntity = $form->getRoot()->getData();
         if (!$targetEntity) {
             return;
         }
-
-        $form = $event->getForm();
         if (!$form->isValid()) {
             return;
         }
 
-        /** @var FormInterface $priceListsByWebsites */
-        $priceListsByWebsites = $parentForm->get('priceListsByWebsites');
-
         $em = $this->getEntityManager();
+        /** @var FormInterface $priceListsByWebsites */
+        $priceListsByWebsites = $form->getParent()->get('priceListsByWebsites');
+
         $fallbacks = $this->registry
             ->getManagerForClass($this->getFallbackClassName())
             ->getRepository($this->getFallbackClassName())
@@ -272,7 +268,12 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
     protected function getActualPriceListsToTargetEntity($targetEntity, Website $website)
     {
         $repo = $this->getRepository();
-        $actualPriceListsToTargetEntity = !$targetEntity->getId() ? [] : $repo->getPriceLists($targetEntity, $website);
+        if (!$targetEntity->getId()) {
+            $actualPriceListsToTargetEntity = [];
+        } else {
+            $actualPriceListsToTargetEntity =
+                $repo->getPriceLists($targetEntity, $website, PriceListCollectionType::DEFAULT_ORDER);
+        }
 
         $result = [];
         foreach ($actualPriceListsToTargetEntity as $priceListToTargetEntity) {
@@ -310,7 +311,8 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         foreach ($priceListsByWebsites->all() as $priceListsByWebsite) {
             /** @var Website $website */
             $website = $priceListsByWebsite->getConfig()->getOption('website');
-            $actualPriceListsToTargetEntity = $repo->getPriceLists($targetEntity, $website);
+            $actualPriceListsToTargetEntity =
+                $repo->getPriceLists($targetEntity, $website, PriceListCollectionType::DEFAULT_ORDER);
 
             $actualPriceLists = [];
             /** @var object $priceListToTargetEntity */

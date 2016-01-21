@@ -45,10 +45,10 @@ class AccountGroupWebsiteScopedPriceListsType extends AbstractWebsiteScopedPrice
     protected function getFallbackChoices()
     {
         return [
-            PriceListAccountGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY =>
-                'orob2b.pricing.fallback.current_account_group_only.label',
             PriceListAccountGroupFallback::WEBSITE =>
                 'orob2b.pricing.fallback.website.label',
+            PriceListAccountGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY =>
+                'orob2b.pricing.fallback.current_account_group_only.label',
         ];
     }
 

@@ -116,7 +116,7 @@ class PriceListsSettingsType extends AbstractType
     {
         $form = $event->getForm();
         /** @var object|null $targetEntity */
-        $targetEntity = $form->getParent()->getParent()->getData();
+        $targetEntity = $form->getRoot()->getData();
         if (!$targetEntity || !$targetEntity->getId()) {
             return;
         }
@@ -141,7 +141,7 @@ class PriceListsSettingsType extends AbstractType
             return;
         }
         /** @var Account|null $account */
-        $targetEntity = $form->getParent()->getParent()->getData();
+        $targetEntity = $form->getRoot()->getData();
         if (!$targetEntity) {
             return;
         }
