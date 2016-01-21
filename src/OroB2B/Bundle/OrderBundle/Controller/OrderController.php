@@ -19,6 +19,7 @@ use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
 use OroB2B\Bundle\OrderBundle\Model\OrderRequestHandler;
 use OroB2B\Bundle\OrderBundle\Form\Handler\OrderHandler;
+use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 
 class OrderController extends AbstractOrderController
 {
@@ -175,5 +176,13 @@ class OrderController extends AbstractOrderController
     protected function getOrderHandler()
     {
         return $this->get('orob2b_order.model.order_request_handler');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getProductPriceProvider()
+    {
+        return $this->get('orob2b_pricing.provider.product_price');
     }
 }

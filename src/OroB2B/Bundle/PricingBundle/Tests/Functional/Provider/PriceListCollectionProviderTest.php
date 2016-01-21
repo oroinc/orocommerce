@@ -10,6 +10,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
 use OroB2B\Bundle\PricingBundle\Provider\PriceListSequenceMember;
+use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -39,6 +40,7 @@ class PriceListCollectionProviderTest extends WebTestCase
 
     public function testGetPriceListsByConfig()
     {
+        $this->setPriceListToConfig();
         $pricesChain = $this->provider->getPriceListsByConfig();
         $this->assertCount(1, $pricesChain);
         $this->assertTrue($pricesChain[0]->isMergeAllowed());
@@ -345,6 +347,19 @@ class PriceListCollectionProviderTest extends WebTestCase
 
         return $result;
 
+    }
+
+    protected function setPriceListToConfig()
+    {
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        $priceList = $em->getReference('OroB2BPricingBundle:PriceList', self::DEFAULT_PRICE_LIST);
+
+        $configManager = $this->getContainer()->get('oro_config.global');
+        $configManager->set(
+            'oro_b2b_pricing.default_price_lists',
+            [new PriceListConfig($priceList, 100, true)]
+        );
+        $configManager->flush();
     }
 
     /**
