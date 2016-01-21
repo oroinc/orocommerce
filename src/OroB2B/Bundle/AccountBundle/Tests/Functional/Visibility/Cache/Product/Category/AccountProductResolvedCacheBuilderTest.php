@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product\Category;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\ORM\AbstractQuery;
 
 use Oro\Component\Testing\WebTestCase;
 
@@ -91,10 +92,13 @@ class AccountProductResolvedCacheBuilderTest extends WebTestCase
         $em->flush();
 
         $visibilityResolved = $this->getVisibilityResolved();
-        $this->assertEquals($visibility, $visibilityResolved->getSourceCategoryVisibility());
-        $this->assertEquals(BaseCategoryVisibilityResolved::SOURCE_STATIC, $visibilityResolved->getSource());
-        $this->assertEquals($this->category, $visibilityResolved->getCategory());
-        $this->assertEquals(BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE, $visibilityResolved->getVisibility());
+        $this->assertEquals(
+            $visibility->getVisibility(),
+            $visibilityResolved['sourceCategoryVisibility']['visibility']
+        );
+        $this->assertEquals(BaseCategoryVisibilityResolved::SOURCE_STATIC, $visibilityResolved['source']);
+        $this->assertEquals($this->category->getId(), $visibilityResolved['category_id']);
+        $this->assertEquals(BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE, $visibilityResolved['visibility']);
     }
 
     /**
@@ -109,10 +113,13 @@ class AccountProductResolvedCacheBuilderTest extends WebTestCase
         $em->flush();
 
         $visibilityResolved = $this->getVisibilityResolved();
-        $this->assertEquals($visibility, $visibilityResolved->getSourceCategoryVisibility());
-        $this->assertEquals(BaseCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY, $visibilityResolved->getSource());
-        $this->assertEquals($this->category, $visibilityResolved->getCategory());
-        $this->assertEquals(BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE, $visibilityResolved->getVisibility());
+        $this->assertEquals(
+            $visibility->getVisibility(),
+            $visibilityResolved['sourceCategoryVisibility']['visibility']
+        );
+        $this->assertEquals(BaseCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY, $visibilityResolved['source']);
+        $this->assertEquals($this->category->getId(), $visibilityResolved['category_id']);
+        $this->assertEquals(BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE, $visibilityResolved['visibility']);
     }
 
     /**
@@ -132,17 +139,28 @@ class AccountProductResolvedCacheBuilderTest extends WebTestCase
     }
 
     /**
-     * @return null|AccountCategoryVisibilityResolved
+     * @return array
      */
     protected function getVisibilityResolved()
     {
-        $em = $this->registry->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved');
-        $entity = $em->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
-            ->findByPrimaryKey($this->category, $this->account);
-
-        if ($entity) {
-            $em->refresh($entity);
-        }
+        $em = $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved');
+        $qb = $em->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->createQueryBuilder('accountCategoryVisibilityResolved');
+        $entity = $qb->select('accountCategoryVisibilityResolved', 'accountCategoryVisibility')
+            ->leftJoin('accountCategoryVisibilityResolved.sourceCategoryVisibility', 'accountCategoryVisibility')
+            ->where(
+                $qb->expr()->andX(
+                    $qb->expr()->eq('accountCategoryVisibilityResolved.category', ':category'),
+                    $qb->expr()->eq('accountCategoryVisibilityResolved.account', ':account')
+                )
+            )
+            ->setParameters([
+                'category' => $this->category,
+                'account' => $this->account,
+            ])
+            ->getQuery()
+            ->getOneOrNullResult(AbstractQuery::HYDRATE_ARRAY);
 
         return $entity;
     }
@@ -158,20 +176,23 @@ class AccountProductResolvedCacheBuilderTest extends WebTestCase
     }
 
     /**
-     * @param AccountCategoryVisibilityResolved $categoryVisibilityResolved
+     * @param array $categoryVisibilityResolved
      * @param VisibilityInterface $categoryVisibility
      * @param integer $expectedVisibility
      */
     protected function assertStatic(
-        AccountCategoryVisibilityResolved $categoryVisibilityResolved,
+        array $categoryVisibilityResolved,
         VisibilityInterface $categoryVisibility,
         $expectedVisibility
     ) {
         $this->assertNotNull($categoryVisibilityResolved);
-        $this->assertEquals($this->category, $categoryVisibilityResolved->getCategory());
-        $this->assertEquals($this->account, $categoryVisibilityResolved->getAccount());
-        $this->assertEquals(AccountCategoryVisibilityResolved::SOURCE_STATIC, $categoryVisibilityResolved->getSource());
-        $this->assertEquals($categoryVisibility, $categoryVisibilityResolved->getSourceCategoryVisibility());
-        $this->assertEquals($expectedVisibility, $categoryVisibilityResolved->getVisibility());
+        $this->assertEquals($this->category->getId(), $categoryVisibilityResolved['category_id']);
+        $this->assertEquals($this->account->getId(), $categoryVisibilityResolved['account_id']);
+        $this->assertEquals(AccountCategoryVisibilityResolved::SOURCE_STATIC, $categoryVisibilityResolved['source']);
+        $this->assertEquals(
+            $categoryVisibility->getVisibility(),
+            $categoryVisibilityResolved['sourceCategoryVisibility']['visibility']
+        );
+        $this->assertEquals($expectedVisibility, $categoryVisibilityResolved['visibility']);
     }
 }

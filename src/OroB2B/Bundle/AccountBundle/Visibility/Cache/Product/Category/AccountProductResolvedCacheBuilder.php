@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category;
 
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
@@ -13,7 +12,6 @@ use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibility
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeAccountSubtreeCacheBuilder;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
@@ -150,16 +148,6 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
     {
         return $this->getEntityManager()
             ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved');
-    }
-
-    /**
-     * @param Category $category
-     * @param Account $account
-     * @return null|AccountCategoryVisibilityResolved
-     */
-    protected function getCategoryVisibilityResolved(Category $category, Account $account)
-    {
-        return $this->getRepository()->findByPrimaryKey($category, $account);
     }
 
     /**
