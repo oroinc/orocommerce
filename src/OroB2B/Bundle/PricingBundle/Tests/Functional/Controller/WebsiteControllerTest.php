@@ -75,13 +75,15 @@ class WebsiteControllerTest extends WebTestCase
         );
         $form = $this->getUpdateForm();
         $formValues = $form->getValues();
-        $i = 0;
+        $elementsCount = count($this->priceLists);
+        $i = $elementsCount - 1;
         foreach ($this->priceLists as $priceList) {
             $collectionElementPath = sprintf('%s[%d]', $this->formExtensionPath, $i);
             $this->assertTrue(isset($formValues[sprintf('%s[priceList]', $collectionElementPath)]));
             $this->assertTrue(isset($formValues[sprintf('%s[priority]', $collectionElementPath)]));
             $this->assertEquals($formValues[sprintf('%s[priceList]', $collectionElementPath)], $priceList->getId());
-            $this->assertEquals($formValues[sprintf('%s[priority]', $collectionElementPath)], ++$i);
+            $this->assertEquals($formValues[sprintf('%s[priority]', $collectionElementPath)], $elementsCount - $i);
+            $i--;
         }
     }
 

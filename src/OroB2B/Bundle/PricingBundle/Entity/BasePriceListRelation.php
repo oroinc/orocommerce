@@ -83,7 +83,7 @@ class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInte
     }
 
     /**
-     * @return mixed
+     * @return Website
      */
     public function getWebsite()
     {

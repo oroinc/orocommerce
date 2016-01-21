@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -11,6 +9,12 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListFallback;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
@@ -19,6 +23,9 @@ use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class FormViewListener
 {
     /**
@@ -71,23 +78,21 @@ class FormViewListener
 
         /** @var Account $account */
         $account = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:Account', (int)$request->get('id'));
+        /** @var PriceListToAccount[] $priceLists */
         $priceLists = $this->doctrineHelper
             ->getEntityRepository('OroB2BPricingBundle:PriceListToAccount')
             ->findBy(['account' => $account], ['website' => 'ASC']);
-        /** @var  PriceListAccountFallback $fallbackEntity */
-        $fallbackEntity = $this->doctrineHelper
+        /** @var  PriceListAccountFallback[] $fallbackEntities */
+        $fallbackEntities = $this->doctrineHelper
             ->getEntityRepository('OroB2BPricingBundle:PriceListAccountFallback')
-            ->findOneBy(['account' => $account]);
+            ->findBy(['account' => $account]);
         $choices = [
             PriceListAccountFallback::CURRENT_ACCOUNT_ONLY =>
                 'orob2b.pricing.fallback.current_account_only.label',
             PriceListAccountFallback::ACCOUNT_GROUP =>
                 'orob2b.pricing.fallback.account_group.label',
         ];
-        $fallback = $fallbackEntity ? $choices[$fallbackEntity->getFallback()]
-            : $choices[PriceListAccountFallback::ACCOUNT_GROUP];
-
-        $this->addPriceListInfo($event, $priceLists, $fallback);
+        $this->addPriceListInfo($event, $priceLists, $fallbackEntities, $this->getWebsites(), $choices);
     }
 
     /**
@@ -105,23 +110,31 @@ class FormViewListener
             'OroB2BAccountBundle:AccountGroup',
             (int)$request->get('id')
         );
+        /** @var PriceListToAccountGroup[] $priceLists */
         $priceLists = $this->doctrineHelper
             ->getEntityRepository('OroB2BPricingBundle:PriceListToAccountGroup')
             ->findBy(['accountGroup' => $accountGroup], ['website' => 'ASC']);
-        /** @var  PriceListAccountFallback $fallbackEntity */
-        $fallbackEntity = $this->doctrineHelper
+        /** @var  PriceListAccountGroupFallback[] $fallbackEntities */
+        $fallbackEntities = $this->doctrineHelper
             ->getEntityRepository('OroB2BPricingBundle:PriceListAccountGroupFallback')
-            ->findOneBy(['accountGroup' => $accountGroup]);
+            ->findBy(['accountGroup' => $accountGroup]);
         $choices = [
             PriceListAccountGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY =>
                 'orob2b.pricing.fallback.current_account_group_only.label',
             PriceListAccountGroupFallback::WEBSITE =>
                 'orob2b.pricing.fallback.website.label',
         ];
-        $fallback = $fallbackEntity ? $choices[$fallbackEntity->getFallback()]
-            : $choices[PriceListAccountGroupFallback::WEBSITE];
+        $this->addPriceListInfo($event, $priceLists, $fallbackEntities, $this->getWebsites(), $choices);
+    }
 
-        $this->addPriceListInfo($event, $priceLists, $fallback);
+    /**
+     * @return Website[]
+     */
+    protected function getWebsites()
+    {
+        return $this->doctrineHelper
+            ->getEntityRepository('OroB2BWebsiteBundle:Website')
+            ->findBy([], ['id' => 'ASC']);
     }
 
     /**
@@ -227,13 +240,25 @@ class FormViewListener
     /**
      * @param BeforeListRenderEvent $event
      * @param BasePriceListRelation[] $priceLists
-     * @param string $fallback
+     * @param array $fallbackEntities
+     * @param Website[] $websites
+     * @param array $choices
      */
-    protected function addPriceListInfo(BeforeListRenderEvent $event, $priceLists, $fallback)
-    {
+    protected function addPriceListInfo(
+        BeforeListRenderEvent $event,
+        $priceLists,
+        $fallbackEntities,
+        $websites,
+        $choices
+    ) {
         $template = $event->getEnvironment()->render(
             'OroB2BPricingBundle:Account:price_list_view.html.twig',
-            ['priceListsByWebsites' => $this->groupPriceListsByWebsite($priceLists), 'fallback' => $fallback]
+            [
+                'priceListsByWebsites' => $this->groupPriceListsByWebsite($priceLists),
+                'fallbackByWebsites' => $this->groupFallbackByWebsites($fallbackEntities),
+                'websites' => $websites,
+                'choices' => $choices,
+            ]
         );
         $blockLabel = $this->translator->trans('orob2b.pricing.pricelist.entity_plural_label');
         $scrollData = $event->getScrollData();
@@ -250,14 +275,12 @@ class FormViewListener
     {
         $result = [];
         foreach ($priceLists as $priceList) {
-            $website = $priceList->getWebsite();
-            $result[$website->getId()]['priceLists'][] = $priceList;
-            $result[$website->getId()]['website'] = $website;
+            $result[$priceList->getWebsite()->getId()][] = $priceList;
         }
 
         foreach ($result as &$websitePriceLists) {
             usort(
-                $websitePriceLists['priceLists'],
+                $websitePriceLists,
                 function (BasePriceListRelation $priceList1, BasePriceListRelation $priceList2) {
                     $priority1 = $priceList1->getPriority();
                     $priority2 = $priceList2->getPriority();
@@ -268,6 +291,20 @@ class FormViewListener
                     return ($priority1 < $priority2) ? -1 : 1;
                 }
             );
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param PriceListFallback[] $entities
+     * @return array
+     */
+    protected function groupFallbackByWebsites(array $entities)
+    {
+        $result = [];
+        foreach ($entities as $entity) {
+            $result[$entity->getWebsite()->getId()] = $entity->getFallback();
         }
 
         return $result;

@@ -2,15 +2,20 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller;
 
+use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Form;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
-use Symfony\Component\DomCrawler\Form;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
 {
     /** @var string */
@@ -22,101 +27,249 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
     /** @var PriceList[] $priceLists */
     protected $priceLists;
 
+    /**
+     * @return BasePriceListRelation[]
+     */
+    abstract public function getPriceListsByEntity();
+
+    /**
+     * @param null|integer $id
+     * @return string
+     */
+    abstract public function getUpdateUrl($id = null);
+
+    /**
+     * @return string
+     */
+    abstract public function getCreateUrl();
+
+    /**
+     * @return string
+     */
+    abstract public function getViewUrl();
+
+    /**
+     * @return string
+     */
+    abstract public function getMainFormName();
+
     public function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations']);
+        $this->loadFixtures(
+            [
+                'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists',
+            ]
+        );
         $this->formExtensionPath = sprintf('%s[priceListsByWebsites]', $this->getMainFormName());
-        $this->websites = [
-            $this->getReference('Canada'),
-            $this->getReference('US'),
-        ];
-
-        $this->priceLists = [
-            $this->getReference('price_list_1'),
-            $this->getReference('price_list_2'),
-            $this->getReference('price_list_3'),
-        ];
-    }
-
-    public function testDelete()
-    {
-        $this->markTestSkipped('Fixed in scope BB-1834');
-        $this->assertCount(1, $this->getPriceListsByEntity());
-        $form = $this->getUpdateForm();
-        $this->assertTrue($form->has($this->formExtensionPath));
-        $form->remove($this->formExtensionPath);
-        $this->client->submit($form);
-        $this->assertCount(0, $this->getPriceListsByEntity());
     }
 
     /**
-     * @depends testDelete
+     * @dataProvider priceListRelationDataProvider
+     * @param array $submittedData
+     * @param array $expectedData
      */
-    public function testAdd()
+    public function testAddOnCreate(array $submittedData, array  $expectedData)
     {
         $form = $this->getUpdateForm();
         $formValues = $form->getValues();
-        foreach ($this->websites as $website) {
-            $i = 0;
-            foreach ($this->priceLists as $priceList) {
-                $collectionElementPath = sprintf('%s[%d][%d]', $this->formExtensionPath, $website->getId(), $i);
-                $formValues[sprintf('%s[priceList]', $collectionElementPath)] = $priceList->getId();
-                $formValues[sprintf('%s[priority]', $collectionElementPath)] = ++$i;
-            }
-        }
-        $params = $this->explodeArrayPaths($formValues);
+        $params = $this->setSubmittedValues($submittedData, $formValues);
+        $this->client->followRedirects();
+        $crawler = $this->client->request(
+            'POST',
+            $this->getCreateUrl(),
+            $params
+        );
+        $form = $this->getUpdateForm($this->getAccountId($crawler));
+        $this->checkExpectedData($expectedData, $form);
+    }
+
+    /**
+     * @dataProvider priceListRelationDataProvider
+     * @param array $submittedData
+     * @param array $expectedData
+     */
+    public function testAddOnUpdate(array $submittedData, array  $expectedData)
+    {
+        $form = $this->getUpdateForm();
+        $formValues = $form->getValues();
+
+        $params = $this->setSubmittedValues($submittedData, $formValues);
+
         $this->client->request(
             'POST',
             $this->getUpdateUrl(),
             $params
         );
         $form = $this->getUpdateForm();
-        $formValues = $form->getValues();
-        $priceListsIds = array_map(
-            function (PriceList $priceList) {
-                return $priceList->getId();
-            },
-            $this->priceLists
+
+        $this->checkExpectedData($expectedData, $form);
+    }
+
+    /**
+     * @return array
+     */
+    public function priceListRelationDataProvider()
+    {
+        return [
+            [
+                'submittedData' => [
+                    LoadWebsiteData::WEBSITE1 => [
+                        'fallback' => 0,
+                        'priceLists' => [
+                            ['priceList' => 'price_list_1', 'priority' => 3, 'mergeAllowed' => false],
+                            ['priceList' => 'price_list_2', 'priority' => 23, 'mergeAllowed' => true],
+                            ['priceList' => 'price_list_3', 'priority' => 22, 'mergeAllowed' => true],
+                        ],
+                    ],
+                    LoadWebsiteData::WEBSITE2 => [
+                        'fallback' => 1,
+                        'priceLists' => [
+                            ['priceList' => 'price_list_1', 'priority' => 231, 'mergeAllowed' => false],
+                            ['priceList' => 'price_list_3', 'priority' => 7, 'mergeAllowed' => true],
+                            ['priceList' => 'price_list_2', 'priority' => 22, 'mergeAllowed' => false],
+                        ],
+                    ],
+                ],
+
+                'expectedData' => [
+                    1 => [
+                        'fallback' => 0,
+                        'priceLists' => [],
+                    ],
+                    LoadWebsiteData::WEBSITE1 => [
+                        'fallback' => 0,
+                        'priceLists' => [
+                            ['priceList' => 'price_list_2', 'priority' => 23, 'mergeAllowed' => true],
+                            ['priceList' => 'price_list_3', 'priority' => 22, 'mergeAllowed' => true],
+                            ['priceList' => 'price_list_1', 'priority' => 3, 'mergeAllowed' => false],
+                        ],
+                    ],
+                    LoadWebsiteData::WEBSITE2 => [
+                        'fallback' => 1,
+                        'priceLists' => [
+                            ['priceList' => 'price_list_1', 'priority' => 231, 'mergeAllowed' => false],
+                            ['priceList' => 'price_list_2', 'priority' => 22, 'mergeAllowed' => false],
+                            ['priceList' => 'price_list_3', 'priority' => 7, 'mergeAllowed' => true],
+                        ],
+                    ],
+                    LoadWebsiteData::WEBSITE3 => [
+                        'fallback' => 0,
+                        'priceLists' => [],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @param integer $actualIndex
+     * @param array $array
+     * @return integer
+     */
+    protected function getOrderIndex($actualIndex, array $array)
+    {
+        $keys = array_keys($array);
+
+        return array_search($actualIndex, $keys);
+    }
+
+    /**
+     * @param string|integer $identifier
+     * @return null|Website
+     */
+    protected function getWebsite($identifier)
+    {
+        if (is_int($identifier)) {
+            return $this->getContainer()
+                ->get('doctrine')
+                ->getRepository('OroB2BWebsiteBundle:Website')
+                ->find($identifier);
+        }
+
+        return $this->getReference($identifier);
+    }
+
+    /**
+     * @dataProvider priceListRelationDataProvider
+     * @depends      testAddOnUpdate
+     */
+    public function testView()
+    {
+        $expectedData = func_get_args()[1];
+        $crawler = $this->client->request(
+            'GET',
+            $this->getViewUrl()
         );
-        foreach ($this->websites as $website) {
-            $i = 0;
-            foreach ($this->priceLists as $priceList) {
-                $this->assertTrue($this->checkPriceListExistInDatabase($priceList));
-                $collectionElementPath = sprintf('%s[%d][%d]', $this->formExtensionPath, $website->getId(), $i);
-                $this->assertTrue(isset($formValues[sprintf('%s[priceList]', $collectionElementPath)]));
-                $this->assertTrue(isset($formValues[sprintf('%s[priority]', $collectionElementPath)]));
-                $this->assertContains(
-                    (int)$formValues[sprintf('%s[priceList]', $collectionElementPath)],
-                    $priceListsIds
-                );
-                $this->assertContains($formValues[sprintf('%s[priority]', $collectionElementPath)], [1, 2, 3]);
-                $i++;
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        foreach ($expectedData as $websiteReference => $priceListsWithFallback) {
+            $website = $this->getWebsite($websiteReference);
+            $insideTab = $crawler->filter('div #website' . $website->getId());
+            $this->assertContains($website->getName(), $crawler->html());
+            $fallbackText = $insideTab->filter('p strong')->text();
+            if ($priceListsWithFallback['fallback']) {
+                $this->assertContains('only', $fallbackText);
+            } else {
+                $this->assertNotContains('only', $fallbackText);
+            };
+            foreach ($priceListsWithFallback['priceLists'] as $priceListRelation) {
+                /** @var PriceList $priceList */
+                $priceList = $this->getReference($priceListRelation['priceList']);
+                $row = $insideTab->filter(sprintf('.price_list%s', $priceList->getId()));
+                $mergeAllowedText = $row->filter('.price_list_merge_allowed')->text();
+                if ($priceListRelation['mergeAllowed']) {
+                    $this->assertContains('Yes', $mergeAllowedText);
+                } else {
+                    $this->assertContains('No', $mergeAllowedText);
+                }
+                $this->assertEquals($priceListRelation['priority'], $row->filter('.price_list_priority')->text());
+                $this->assertContains($priceList->getName(), $row->filter('.price_list_link')->text());
             }
         }
     }
 
     /**
-     * @depends testAdd
+     * @depends testView
      */
-    public function testView()
+    public function testDelete()
     {
-        $crawler = $this->client->request(
-            'GET',
-            $this->getViewUrl()
-        );
+        $priceListsRelations = $this->getPriceListsByEntity();
+        $this->assertCount(6, $priceListsRelations);
+        $this->assertTrue($this->checkPriceListRelationExist($priceListsRelations, 'US', 'price_list_3'));
+        $form = $this->getUpdateForm();
+        $this->assertTrue($form->has($this->formExtensionPath));
+        //Test remove one price list
+        $path = sprintf('[%s][priceListCollection][1]', $this->getReference(LoadWebsiteData::WEBSITE1)->getId());
+        $form->remove($this->formExtensionPath . $path);
+        $this->client->submit($form);
+        $priceListsRelations = $this->getPriceListsByEntity();
+        $this->assertCount(5, $priceListsRelations);
+        $this->assertFalse($this->checkPriceListRelationExist($priceListsRelations, 'US', 'price_list_3'));
+    }
 
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $html = $crawler->html();
-        foreach ($this->websites as $website) {
-            $i = 0;
-            $this->assertContains($website->getName(), $html);
-            foreach ($this->priceLists as $priceList) {
-                $this->assertContains($priceList->getName(), $html);
-                $this->assertContains((string)++$i, $html);
+    /**
+     * @param BasePriceListRelation[] $priceListsRelations
+     * @param string $websiteReference
+     * @param string $priceListReference
+     * @return bool
+     */
+    protected function checkPriceListRelationExist(array $priceListsRelations, $websiteReference, $priceListReference)
+    {
+        $website = $this->getWebsite($websiteReference);
+        $priceList = $this->getReference($priceListReference);
+        foreach ($priceListsRelations as $priceListRelation) {
+            if ($priceListRelation->getWebsite()->getId() == $website->getId()
+                && $priceList->getId() == $priceListRelation->getPriceList()->getId()
+            ) {
+                return true;
             }
         }
+
+        return false;
     }
 
     public function testValidation()
@@ -127,8 +280,18 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         $website = $this->getReference('Canada');
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_1');
-        $collectionElementPath1 = sprintf('%s[%d][%d]', $this->formExtensionPath, $website->getId(), 0);
-        $collectionElementPath2 = sprintf('%s[%d][%d]', $this->formExtensionPath, $website->getId(), 1);
+        $collectionElementPath1 = sprintf(
+            '%s[%d][priceListCollection][%d]',
+            $this->formExtensionPath,
+            $website->getId(),
+            0
+        );
+        $collectionElementPath2 = sprintf(
+            '%s[%d][priceListCollection][%d]',
+            $this->formExtensionPath,
+            $website->getId(),
+            1
+        );
         $formValues[sprintf('%s[priceList]', $collectionElementPath1)] = $priceList->getId();
         $formValues[sprintf('%s[priority]', $collectionElementPath1)] = '';
         $this->checkValidationMessage($formValues, 'This value should not be blank');
@@ -178,33 +341,14 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
     }
 
     /**
-     * @return BasePriceListRelation[]
-     */
-    abstract public function getPriceListsByEntity();
-
-    /**
-     * @return string
-     */
-    abstract public function getUpdateUrl();
-
-    /**
-     * @return string
-     */
-    abstract public function getViewUrl();
-
-    /**
-     * @return string
-     */
-    abstract public function getMainFormName();
-
-    /**
+     * @param null|integer $id
      * @return Form
      */
-    protected function getUpdateForm()
+    protected function getUpdateForm($id = null)
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUpdateUrl()
+            $this->getUpdateUrl($id)
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -226,5 +370,86 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         }
 
         return false;
+    }
+
+    /**
+     * @param array $submittedData
+     * @param array $formValues
+     * @return array
+     */
+    protected function setSubmittedValues(array $submittedData, array $formValues)
+    {
+        foreach ($submittedData as $websiteReference => $priceLists) {
+            /** @var Website $website */
+            $website = $this->getWebsite($websiteReference);
+            $fallbackPath = sprintf('%s[%d][fallback]', $this->formExtensionPath, $website->getId());
+            $formValues[$fallbackPath] = $priceLists['fallback'];
+            foreach ($priceLists['priceLists'] as $priceListKey => $priceList) {
+                $collectionElementPath = sprintf(
+                    '%s[%d][priceListCollection][%d]',
+                    $this->formExtensionPath,
+                    $website->getId(),
+                    $priceListKey
+                );
+                /** @var PriceList $priceListEntity */
+                $priceListEntity = $this->getReference($priceList['priceList']);
+                $formValues[sprintf('%s[priceList]', $collectionElementPath)] = $priceListEntity->getId();
+                $formValues[sprintf('%s[priority]', $collectionElementPath)] = $priceList['priority'];
+                $formValues[sprintf('%s[mergeAllowed]', $collectionElementPath)] = $priceList['mergeAllowed'];
+            }
+        }
+
+        return $this->explodeArrayPaths($formValues);
+    }
+
+    /**
+     * @param array $expectedData
+     * @param Form $form
+     */
+    protected function checkExpectedData(array $expectedData, Form $form)
+    {
+        $formValues = $this->explodeArrayPaths($form->getValues());
+        $priceListsByWebsite = $formValues[$this->getMainFormName()]['priceListsByWebsites'];
+        foreach ($expectedData as $websiteReference => $expectedFallbackWithPriceLists) {
+            $websiteId = $this->getWebsite($websiteReference)->getId();
+            $this->assertTrue(isset($priceListsByWebsite[$websiteId]));
+            $this->assertEquals(
+                $this->getOrderIndex($websiteReference, $expectedData),
+                $this->getOrderIndex($websiteId, $priceListsByWebsite)
+            );
+            $actualFallbackWithPriceLists = $priceListsByWebsite[$websiteId];
+            $this->assertEquals($expectedFallbackWithPriceLists['fallback'], $actualFallbackWithPriceLists['fallback']);
+            if ($expectedFallbackWithPriceLists['priceLists']) {
+                foreach ($expectedFallbackWithPriceLists['priceLists'] as $key => $expectedPriceListRelation) {
+                    $actualPriceListRelation = $actualFallbackWithPriceLists['priceListCollection'][$key];
+                    if (!$expectedPriceListRelation['mergeAllowed']) {
+                        $this->assertFalse(isset($actualPriceListRelation['mergeAllowed']));
+                    } else {
+                        $this->assertTrue(isset($actualPriceListRelation['mergeAllowed']));
+                    }
+                    $this->assertEquals(
+                        $expectedPriceListRelation['priority'],
+                        $actualPriceListRelation['priority']
+                    );
+                    $priceListId = $this->getReference($expectedPriceListRelation['priceList'])->getId();
+                    $this->assertEquals($actualPriceListRelation['priceList'], $priceListId);
+                }
+            } else {
+                $this->assertCount(1, $actualFallbackWithPriceLists['priceListCollection']);
+                $this->assertEmpty($actualFallbackWithPriceLists['priceListCollection'][0]['priority']);
+                $this->assertEmpty($actualFallbackWithPriceLists['priceListCollection'][0]['priceList']);
+            }
+        }
+    }
+
+    /**
+     * @param Crawler $crawler
+     * @return mixed
+     */
+    protected function getAccountId(Crawler $crawler)
+    {
+        preg_match_all('#/update/(.+?)\"#is', $crawler->html(), $arr);
+
+        return max($arr[1]);
     }
 }

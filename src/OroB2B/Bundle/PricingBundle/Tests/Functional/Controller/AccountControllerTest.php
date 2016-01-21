@@ -16,15 +16,23 @@ class AccountControllerTest extends AbstractPriceListsByEntityTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->account = $this->getReference('account.level_1.1.1');
+        $this->account = $this->getReference('account.level_1_1');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getUpdateUrl()
+    public function getUpdateUrl($id = null)
     {
-        return $this->getUrl('orob2b_account_update', ['id' => $this->account->getId()]);
+        return $this->getUrl('orob2b_account_update', ['id' => $id ?: $this->account->getId()]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCreateUrl()
+    {
+        return $this->getUrl('orob2b_account_create');
     }
 
     /**

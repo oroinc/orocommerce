@@ -5,11 +5,12 @@ namespace OroB2B\Bundle\PricingBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 /**
  * @ORM\MappedSuperclass
  */
-class PriceListFallback
+class PriceListFallback implements WebsiteAwareInterface
 {
     /**
      * @var integer $id
@@ -76,7 +77,7 @@ class PriceListFallback
      *
      * @return $this
      */
-    public function setWebsite($website)
+    public function setWebsite(Website $website)
     {
         $this->website = $website;
 
