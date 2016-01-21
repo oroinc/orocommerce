@@ -183,10 +183,7 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
             ->method('getRoot')
             ->willReturn($rootForm);
 
-        /** @var $event FormEvent|\PHPUnit_Framework_MockObject_MockObject */
-        $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->getEventMock();
 
         $event->expects($this->once())
             ->method('getForm')
@@ -299,11 +296,7 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
         $form->expects($this->once())
             ->method('isValid')
             ->willReturn(true);
-
-        /** @var $event FormEvent|\PHPUnit_Framework_MockObject_MockObject */
-        $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->getEventMock();
 
         $event->expects($this->any())
             ->method('getForm')
@@ -491,10 +484,7 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
             ->method('getData')
             ->willReturn($targetEntity);
 
-        /** @var $event FormEvent|\PHPUnit_Framework_MockObject_MockObject */
-        $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->getEventMock();
 
         $event->expects($this->any())
             ->method('getForm')
@@ -596,5 +586,18 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
                 ->expects($this->never())
                 ->method('dispatch');
         }
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|FormEvent
+     */
+    protected function getEventMock()
+    {
+        /** @var $event FormEvent|\PHPUnit_Framework_MockObject_MockObject */
+        $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        return $event;
     }
 }
