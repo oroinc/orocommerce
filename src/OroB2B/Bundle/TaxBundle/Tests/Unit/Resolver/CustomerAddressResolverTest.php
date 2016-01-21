@@ -52,6 +52,7 @@ class CustomerAddressResolverTest extends AbstractAddressResolverTestCase
         $taxable = new Taxable();
         $taxable->addItem(new Taxable());
         $taxable->setDestination(new OrderAddress());
+        $taxable->setAmount(0);
         $event = new ResolveTaxEvent($taxable, new Result());
 
         $this->matcher->expects($this->once())->method('match')->willReturn([]);

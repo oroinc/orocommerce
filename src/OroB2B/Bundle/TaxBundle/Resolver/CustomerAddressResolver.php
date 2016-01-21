@@ -17,7 +17,7 @@ class CustomerAddressResolver extends AbstractAddressResolver
             return;
         }
 
-        if (!$taxable->getAmount()) {
+        if (null === $taxable->getAmount()) {
             return;
         }
 

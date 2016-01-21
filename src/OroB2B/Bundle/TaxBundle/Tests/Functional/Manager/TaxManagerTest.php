@@ -60,7 +60,7 @@ class TaxManagerTest extends WebTestCase
     ) {
         $this->configManager->set('orob2b_tax.product_prices_include_tax', $includingTaxCalculator);
         $manager = $this->getContainer()->get('orob2b_tax.manager.tax_manager');
-        $order = ($orderName) ? $this->getReference($orderName) : new Order();
+        $order = $orderName ? $this->getReference($orderName) : new Order();
 
         $result = $manager->getTax($order);
 
@@ -115,18 +115,21 @@ class TaxManagerTest extends WebTestCase
      * @param string $unit
      * @param string $row
      */
-    public function testGetTaxFirstItem($orderItemName, $includingTaxCalculator, $unit, $row)
+    public function testGetTaxItem($orderItemName, $includingTaxCalculator, $unit, $row)
     {
         $this->configManager->set('orob2b_tax.product_prices_include_tax', $includingTaxCalculator);
 
         $manager = $this->getContainer()->get('orob2b_tax.manager.tax_manager');
 
-        $order = $this->getReference(LoadOrders::ORDER_1);
+        if ($orderItemName) {
+            $orderItem = $this->getReference($orderItemName);
+        } else {
+            $order = $this->getReference(LoadOrders::ORDER_1);
+            $orderItem = new OrderLineItem();
+            $orderItem->setOrder($order);
+        }
 
-        $orderLineItem =
-            ($orderItemName) ? $this->getReference($orderItemName) : (new OrderLineItem())->setOrder($order);
-
-        $result = $manager->getTax($orderLineItem);
+        $result = $manager->getTax($orderItem);
 
         $this->assertResult(
             $result->getUnit(),
@@ -234,7 +237,7 @@ class TaxManagerTest extends WebTestCase
         $this->configManager->set('orob2b_tax.product_prices_include_tax', $includingTaxCalculator);
         $manager = $this->getContainer()->get('orob2b_tax.manager.tax_manager');
 
-        $order = ($orderName) ? $this->getReference($orderName) : new Order();
+        $order = $orderName ? $this->getReference($orderName) : new Order();
         $result = $manager->saveTax($order);
 
         if (!$hasResult) {
@@ -318,8 +321,13 @@ class TaxManagerTest extends WebTestCase
         $this->configManager->set('orob2b_tax.product_prices_include_tax', $includingTaxCalculator);
         $manager = $this->getContainer()->get('orob2b_tax.manager.tax_manager');
 
-        $order = $this->getReference(LoadOrders::ORDER_1);
-        $orderItem = ($orderItemName) ? $this->getReference($orderItemName) : (new OrderLineItem())->setOrder($order);
+        if ($orderItemName) {
+            $orderItem = $this->getReference($orderItemName);
+        } else {
+            $order = $this->getReference(LoadOrders::ORDER_1);
+            $orderItem = new OrderLineItem();
+            $orderItem->setOrder($order);
+        }
 
         $result = $manager->saveTax($orderItem);
 

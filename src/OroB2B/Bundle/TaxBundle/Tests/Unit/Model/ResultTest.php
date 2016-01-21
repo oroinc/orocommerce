@@ -101,4 +101,13 @@ class ResultTest extends \PHPUnit_Framework_TestCase
         $newResult = unserialize(serialize($result));
         $this->assertEquals([], $newResult->getTaxes());
     }
+
+    public function testSerializeWithoutTaxes()
+    {
+        $result = $this->createResultModel();
+        $result->offsetUnset(Result::TAXES);
+
+        $newResult = unserialize(serialize($result));
+        $this->assertEquals([], $newResult->getTaxes());
+    }
 }
