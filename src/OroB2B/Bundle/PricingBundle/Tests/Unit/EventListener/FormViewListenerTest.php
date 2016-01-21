@@ -282,7 +282,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 11);
 
         /** @var PriceList $priceList */
-        $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 42);
+        $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList', 42);
 
         $request = new Request(['id' => $product->getId()]);
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
@@ -293,7 +293,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $listener = $this->getListener($requestStack);
 
         $productPriceRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $productPriceRepository->expects($this->once())
@@ -303,7 +303,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
-            ->with('OroB2BPricingBundle:ProductPrice')
+            ->with('OroB2BPricingBundle:CombinedProductPrice')
             ->willReturn($productPriceRepository);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')

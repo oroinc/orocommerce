@@ -191,7 +191,7 @@ class FormViewListener
         $priceList = $this->frontendPriceListRequestHandler->getPriceList();
 
         /** @var ProductPriceRepository $priceRepository */
-        $priceRepository = $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:ProductPrice');
+        $priceRepository = $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:CombinedProductPrice');
 
         $prices = $priceRepository->findByPriceListIdAndProductIds($priceList->getId(), [$product->getId()]);
 
