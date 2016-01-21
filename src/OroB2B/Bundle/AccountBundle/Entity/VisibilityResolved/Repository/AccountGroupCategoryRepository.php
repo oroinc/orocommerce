@@ -176,7 +176,7 @@ class AccountGroupCategoryRepository extends EntityRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
-        $qb->select('COALESCE(agcvr.visibility, COALESCE(cvr.visibility, '. $qb->expr()->literal($configValue).'))')
+        $qb->select('COALESCE(agcvr.visibility, cvr.visibility, '. $qb->expr()->literal($configValue).')')
             ->from('OroB2BCatalogBundle:Category', 'category')
             ->leftJoin(
                 'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
