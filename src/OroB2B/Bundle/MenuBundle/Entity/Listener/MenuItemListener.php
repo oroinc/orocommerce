@@ -15,11 +15,11 @@ class MenuItemListener
     protected $provider;
 
     /**
-     * @param DatabaseMenuProvider $cacheManager
+     * @param DatabaseMenuProvider $provider
      */
-    public function __construct(DatabaseMenuProvider $cacheManager)
+    public function __construct(DatabaseMenuProvider $provider)
     {
-        $this->provider = $cacheManager;
+        $this->provider = $provider;
     }
 
     /**

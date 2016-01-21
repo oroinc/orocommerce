@@ -9,7 +9,6 @@ use Knp\Menu\ItemInterface;
 use Knp\Menu\Provider\MenuProviderInterface;
 
 use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
-use OroB2B\Bundle\MenuBundle\Entity\Repository\MenuItemRepository;
 use OroB2B\Bundle\WebsiteBundle\Locale\LocaleHelper;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
