@@ -10,6 +10,8 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -42,6 +44,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             (new AccountUser())
                 ->setFirstName('skip')
                 ->setAccount(new Account())
+                ->setOrganization(new Organization())
         );
 
         $this->manager = new ShoppingListManager(
@@ -50,6 +53,16 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             $this->getTranslator(),
             $this->getRoundingService()
         );
+    }
+
+    public function testCreate()
+    {
+        $shoppingList = $this->manager->create();
+
+        $this->assertInstanceOf('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', $shoppingList);
+        $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\Account', $shoppingList->getAccount());
+        $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $shoppingList->getAccountUser());
+        $this->assertInstanceOf('Oro\Bundle\OrganizationBundle\Entity\Organization', $shoppingList->getOrganization());
     }
 
     public function testCreateCurrent()
@@ -106,6 +119,36 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         /** @var LineItem $resultingItem */
         $resultingItem = array_shift($this->lineItems);
         $this->assertEquals(15, $resultingItem->getQuantity());
+    }
+
+    public function testAddLineItemDuplicateAndConcatNotes()
+    {
+        $shoppingList = new ShoppingList();
+        $reflectionClass = new \ReflectionClass(get_class($shoppingList));
+        $reflectionProperty = $reflectionClass->getProperty('id');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($shoppingList, 1);
+
+        $lineItem = (new LineItem())
+            ->setUnit(
+                (new ProductUnit())
+                    ->setCode('test')
+                    ->setDefaultPrecision(1)
+            )
+            ->setNotes('Notes');
+
+        $this->manager->addLineItem($lineItem, $shoppingList);
+
+        $lineItemDuplicate = clone $lineItem;
+        $lineItemDuplicate->setNotes('Duplicated Notes');
+
+        $this->manager->addLineItem($lineItemDuplicate, $shoppingList, true, true);
+
+        $this->assertEquals(1, $shoppingList->getLineItems()->count());
+
+        /** @var LineItem $resultingItem */
+        $resultingItem = array_shift($this->lineItems);
+        $this->assertSame('Notes Duplicated Notes', $resultingItem->getNotes());
     }
 
     public function testGetForCurrentUser()

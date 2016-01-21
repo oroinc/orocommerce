@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Model;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 
 abstract class AbstractPriceListRequestHandler
 {
@@ -24,7 +24,7 @@ abstract class AbstractPriceListRequestHandler
     }
 
     /**
-     * @return PriceList
+     * @return BasePriceList
      */
     abstract public function getPriceList();
 

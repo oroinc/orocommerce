@@ -73,7 +73,7 @@ use Oro\Bundle\UserBundle\Entity\User;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class AccountUser extends AbstractUser implements FullNameInterface, EmailHolderInterface
+class AccountUser extends AbstractUser implements FullNameInterface, EmailHolderInterface, CustomerUserIdentity
 {
     const SECURITY_GROUP = 'commerce';
 
@@ -277,6 +277,22 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     protected $owner;
 
     /**
+     * @var Collection|User[]
+     *
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\UserBundle\Entity\User")
+     * @ORM\JoinTable(
+     *      name="orob2b_account_user_sales_reps",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
+     *      }
+     * )
+     **/
+    protected $salesRepresentatives;
+
+    /**
      * @var \DateTime $createdAt
      *
      * @ORM\Column(name="created_at", type="datetime")
@@ -293,6 +309,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     public function __construct()
     {
         $this->addresses = new ArrayCollection();
+        $this->salesRepresentatives = new ArrayCollection();
         parent::__construct();
     }
 
@@ -656,6 +673,40 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
 
         foreach ($this->addresses as $accountUserAddress) {
             $accountUserAddress->setOwner($owner);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getSalesRepresentatives()
+    {
+        return $this->salesRepresentatives;
+    }
+
+    /**
+     * @param User $salesRepresentative
+     * @return $this
+     */
+    public function addSalesRepresentative(User $salesRepresentative)
+    {
+        if (!$this->salesRepresentatives->contains($salesRepresentative)) {
+            $this->salesRepresentatives->add($salesRepresentative);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param User $salesRepresentative
+     * @return $this
+     */
+    public function removeSalesRepresentative(User $salesRepresentative)
+    {
+        if ($this->salesRepresentatives->contains($salesRepresentative)) {
+            $this->salesRepresentatives->removeElement($salesRepresentative);
         }
 
         return $this;

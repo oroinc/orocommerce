@@ -1,4 +1,6 @@
 orob2b_frontend:
+    filter:
+        by: Filter By
     widget_form_component:
         save_flash_success: Saved successfully
     form:
@@ -10,7 +12,9 @@ orob2b_frontend:
         demo.title: 'OroPlatform theme'
     system_configuration:
         groups:
-            frontend.title: 'Frontend'
+            design.title: 'Design'
+            theme.title: 'Theme'
             theme_settings.title: 'Theme Settings'
+            commerce.title: 'Commerce'
         fields:
             frontend_theme.label: 'Theme'

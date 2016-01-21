@@ -36,7 +36,8 @@ class LoadPriceListToAccountDemoData extends LoadBasePriceListRelationDemoData
             $priceListToAccount->setAccount($account)
                 ->setPriceList($priceList)
                 ->setWebsite($website)
-                ->setPriority($row['priority']);
+                ->setPriority($row['priority'])
+                ->setMergeAllowed($row['mergeAllowed']);
 
             $manager->persist($priceListToAccount);
         }
@@ -48,7 +49,7 @@ class LoadPriceListToAccountDemoData extends LoadBasePriceListRelationDemoData
 
     /**
      * @param EntityManager $manager
-     * @param $name
+     * @param string $name
      * @return Account
      */
     protected function getAccountByName(EntityManager $manager, $name)

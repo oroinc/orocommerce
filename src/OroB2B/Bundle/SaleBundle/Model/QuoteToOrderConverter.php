@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\SaleBundle\Model;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -24,35 +26,34 @@ class QuoteToOrderConverter
     /** @var SubtotalsProvider */
     protected $subtotalsProvider;
 
+    /** @var ManagerRegistry */
+    protected $registry;
+
     /**
      * @param OrderCurrencyHandler $orderCurrencyHandler
      * @param SubtotalsProvider $subtotalsProvider
+     * @param ManagerRegistry $registry
      */
-    public function __construct(OrderCurrencyHandler $orderCurrencyHandler, SubtotalsProvider $subtotalsProvider)
-    {
+    public function __construct(
+        OrderCurrencyHandler $orderCurrencyHandler,
+        SubtotalsProvider $subtotalsProvider,
+        ManagerRegistry $registry
+    ) {
         $this->orderCurrencyHandler = $orderCurrencyHandler;
         $this->subtotalsProvider = $subtotalsProvider;
+        $this->registry = $registry;
     }
 
     /**
      * @param Quote $quote
      * @param AccountUser|null $user
      * @param array|null $selectedOffers
+     * @param bool $needFlush
      * @return Order
      */
-    public function convert(Quote $quote, AccountUser $user = null, array $selectedOffers = null)
+    public function convert(Quote $quote, AccountUser $user = null, array $selectedOffers = null, $needFlush = false)
     {
-        $accountUser = $user ?: $quote->getAccountUser();
-        $account = $user ? $user->getAccount() : $quote->getAccount();
-
-        $order = new Order();
-        $order
-            ->setAccount($account)
-            ->setAccountUser($accountUser)
-            ->setOwner($quote->getOwner())
-            ->setOrganization($quote->getOrganization())
-            ->setPoNumber($quote->getPoNumber())
-            ->setShipUntil($quote->getShipUntil());
+        $order = $this->createOrder($quote, $user);
 
         if (!$selectedOffers) {
             foreach ($quote->getQuoteProducts() as $quoteProduct) {
@@ -74,6 +75,34 @@ class QuoteToOrderConverter
 
         $this->orderCurrencyHandler->setOrderCurrency($order);
         $this->fillSubtotals($order);
+
+        if ($needFlush) {
+            $manager = $this->registry->getManagerForClass('OroB2BOrderBundle:Order');
+            $manager->persist($order);
+            $manager->flush($order);
+        }
+
+        return $order;
+    }
+
+    /**
+     * @param Quote $quote
+     * @param AccountUser|null $user
+     * @return Order
+     */
+    protected function createOrder(Quote $quote, AccountUser $user = null)
+    {
+        $accountUser = $user ?: $quote->getAccountUser();
+        $account = $user ? $user->getAccount() : $quote->getAccount();
+
+        $order = new Order();
+        $order
+            ->setAccount($account)
+            ->setAccountUser($accountUser)
+            ->setOwner($quote->getOwner())
+            ->setOrganization($quote->getOrganization())
+            ->setPoNumber($quote->getPoNumber())
+            ->setShipUntil($quote->getShipUntil());
 
         return $order;
     }

@@ -28,14 +28,10 @@ class AccountGroupFormExtensionTest extends \PHPUnit_Framework_TestCase
         /** @var FormBuilder|\PHPUnit_Framework_MockObject_MockObject $builder */
         $builder = $this->getMockBuilder('Symfony\Component\Form\FormBuilder')
             ->disableOriginalConstructor()
+            ->setMethods(['addEventListener'])
             ->getMock();
 
-        $builder->expects($this->once())
-            ->method('add')
-            ->with(
-                'priceListsByWebsites',
-                AccountGroupWebsiteScopedPriceListsType::NAME
-            );
         $this->getExtension()->buildForm($builder, []);
+        $this->assertTrue($builder->has('priceListsByWebsites'));
     }
 }

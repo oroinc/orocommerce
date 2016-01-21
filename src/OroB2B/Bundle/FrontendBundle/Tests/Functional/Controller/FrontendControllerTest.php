@@ -30,7 +30,10 @@ class FrontendControllerTest extends WebTestCase
         $this->client->request('GET', $this->getUrl('_frontend'));
         $crawler = $this->client->followRedirect();
         $this->assertNotContains($this->getBackendPrefix(), $crawler->html());
-        $this->assertEquals('Login', $crawler->filter('h2.title')->html());
+        $this->assertEquals(
+            'Sign In',
+            $crawler->filter('form.create-account__form_signin h2.create-account__title')->html()
+        );
     }
 
     public function testRedirectToProduct()
@@ -60,7 +63,7 @@ class FrontendControllerTest extends WebTestCase
 
         $this->client->request('GET', $this->getUrl('_frontend'));
         $crawler = $this->client->followRedirect();
-        $this->assertEquals('Hello World!', $crawler->filter('title')->html());
+        $this->assertEquals('OroCommerce', $crawler->filter('title')->html());
 
         // Check that backend theme was not affected
         $crawler = $this->client->request('GET', $this->getUrl('oro_user_security_login'));
@@ -71,7 +74,10 @@ class FrontendControllerTest extends WebTestCase
 
         $this->client->request('GET', $this->getUrl('_frontend'));
         $crawler = $this->client->followRedirect();
-        $this->assertEquals('Login', $crawler->filter('h2.title')->html());
+        $this->assertEquals(
+            'Sign In',
+            $crawler->filter('form.create-account__form_signin h2.create-account__title')->html()
+        );
     }
 
     /**

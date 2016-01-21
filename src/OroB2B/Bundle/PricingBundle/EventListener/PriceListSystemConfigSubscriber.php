@@ -2,27 +2,44 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
+use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 
+use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
 
 class PriceListSystemConfigSubscriber implements EventSubscriberInterface
 {
-    /** @var PriceListConfigConverter */
+    /**
+     * @var PriceListConfigConverter
+     */
     protected $converter;
+
+    /**
+     * @var  EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
+     * @var  boolean
+     */
+    protected $applicable;
 
     /**
      * PriceListSystemConfigSubscriber constructor.
      * @param PriceListConfigConverter $converter
+     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(PriceListConfigConverter $converter)
+    public function __construct(PriceListConfigConverter $converter, EventDispatcherInterface $eventDispatcher)
     {
         $this->converter = $converter;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -46,9 +63,34 @@ class PriceListSystemConfigSubscriber implements EventSubscriberInterface
     {
         $settingsKey = $this->getSettingsKey(ConfigManager::SECTION_MODEL_SEPARATOR);
         $settings = $event->getSettings();
-        if (is_array($settings) && array_key_exists($settingsKey, $settings)) {
+        if ($this->isSettingsApplicable($settings, $settingsKey)) {
             $settings[$settingsKey]['value'] = $this->converter->convertBeforeSave($settings[$settingsKey]['value']);
             $event->setSettings($settings);
+        }
+    }
+
+    /**
+     * @param mixed $settings
+     * @param string $settingsKey
+     * @return bool
+     */
+    protected function isSettingsApplicable($settings, $settingsKey)
+    {
+        $this->applicable = is_array($settings) && array_key_exists($settingsKey, $settings);
+
+        return $this->applicable;
+    }
+
+    /**
+     * @param ConfigUpdateEvent $event
+     */
+    public function updateAfter(ConfigUpdateEvent $event)
+    {
+        if ($this->applicable && $event->getChangeSet()) {
+            $this->eventDispatcher->dispatch(
+                PriceListCollectionChange::BEFORE_CHANGE,
+                new PriceListCollectionChange()
+            );
         }
     }
 
@@ -59,7 +101,8 @@ class PriceListSystemConfigSubscriber implements EventSubscriberInterface
     {
         return [
             ConfigSettingsUpdateEvent::FORM_PRESET => 'formPreSet',
-            ConfigSettingsUpdateEvent::BEFORE_SAVE => 'beforeSave'
+            ConfigSettingsUpdateEvent::BEFORE_SAVE => 'beforeSave',
+            ConfigUpdateEvent::EVENT_NAME => 'updateAfter',
         ];
     }
 
@@ -69,10 +112,13 @@ class PriceListSystemConfigSubscriber implements EventSubscriberInterface
      */
     protected function getSettingsKey($separator)
     {
-        $settingsKey = implode($separator, [
-            OroB2BPricingExtension::ALIAS,
-            Configuration::DEFAULT_PRICE_LISTS
-        ]);
+        $settingsKey = implode(
+            $separator,
+            [
+                OroB2BPricingExtension::ALIAS,
+                Configuration::DEFAULT_PRICE_LISTS,
+            ]
+        );
 
         return $settingsKey;
     }

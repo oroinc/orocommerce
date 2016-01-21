@@ -14,6 +14,9 @@ parameters:
 
     orob2b_tax.form.extension.product_tax.class: OroB2B\Bundle\TaxBundle\Form\Extension\ProductTaxExtension
     orob2b_tax.form.extension.account_tax.class: OroB2B\Bundle\TaxBundle\Form\Extension\AccountTaxExtension
+    orob2b_tax.form.extension.account_group_tax.class: OroB2B\Bundle\TaxBundle\Form\Extension\AccountGroupTaxExtension
+
+    orob2b_tax.form.type.tax_provider_type.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxProviderType
 
 services:
     orob2b_tax.form.type.product_tax_code:
@@ -55,6 +58,14 @@ services:
             - %orob2b_tax.entity.account_tax_code.class%
         tags:
             - { name: form.type_extension, alias: orob2b_account_type }
+
+    orob2b_tax.form.extension.account_group_tax:
+        class: %orob2b_tax.form.extension.account_group_tax.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+            - %orob2b_tax.entity.account_tax_code.class%
+        tags:
+            - { name: form.type_extension, alias: orob2b_account_group_type }
 
     orob2b_tax.form.type.tax:
         class: %orob2b_tax.form.type.tax.class%
@@ -101,3 +112,10 @@ services:
             - [setDataClass, [%orob2b_tax.entity.zip_code.class%]]
         tags:
             - { name: form.type, alias: orob2b_tax_zip_code_type }
+
+    orob2b_tax.form.type.tax_provider_type:
+        class: %orob2b_tax.form.type.tax_provider_type.class%
+        arguments:
+            - @orob2b_tax.provider.tax_provider_registry
+        tags:
+            - { name: form.type, alias: orob2b_tax_provider_type }

@@ -24,9 +24,13 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $expected = [
             'settings' => [
                 'resolved' => 1,
+                'combined_price_list' => [
+                    'value' => null,
+                    'scope' => 'app'
+                ],
                 'default_price_lists' => [
-                        'value' => [],
-                        'scope' => 'app'
+                    'value' => [],
+                    'scope' => 'app'
                 ],
                 'rounding_type' => [
                     'value' => 'half_up',

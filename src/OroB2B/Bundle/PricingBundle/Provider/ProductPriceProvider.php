@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
@@ -31,13 +31,11 @@ class ProductPriceProvider
     /**
      * @param ManagerRegistry $registry
      * @param FrontendPriceListRequestHandler $requestHandler
-     * @param string $className
      */
-    public function __construct(ManagerRegistry $registry, FrontendPriceListRequestHandler $requestHandler, $className)
+    public function __construct(ManagerRegistry $registry, FrontendPriceListRequestHandler $requestHandler)
     {
         $this->registry = $registry;
         $this->requestHandler = $requestHandler;
-        $this->className = $className;
     }
 
     /**
@@ -66,10 +64,10 @@ class ProductPriceProvider
 
     /**
      * @param array $productsPriceCriteria
-     * @param PriceList|null $priceList
+     * @param BasePriceList|null $priceList
      * @return array|Price[]
      */
-    public function getMatchedPrices(array $productsPriceCriteria, PriceList $priceList = null)
+    public function getMatchedPrices(array $productsPriceCriteria, BasePriceList $priceList = null)
     {
         if (!$priceList) {
             $priceList = $this->requestHandler->getPriceList();
@@ -146,5 +144,13 @@ class ProductPriceProvider
     protected function getRepository()
     {
         return $this->registry->getManagerForClass($this->className)->getRepository($this->className);
+    }
+
+    /**
+     * @param string $className
+     */
+    public function setClassName($className)
+    {
+        $this->className = $className;
     }
 }

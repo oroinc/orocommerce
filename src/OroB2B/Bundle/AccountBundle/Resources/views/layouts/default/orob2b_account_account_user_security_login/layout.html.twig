@@ -1,0 +1,110 @@
+{% block _login_page_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}_half-cols"
+    }) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _login_form_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " {{ class_prefix }}__form-container form-container-x6"
+    }) %}
+    <div{{ block('block_attributes') }}>
+        <form action="{{ path('orob2b_account_account_user_security_check') }}"
+              class="{{ class_prefix }}__form {{ class_prefix }}__form_signin"
+              method="post">
+            {{ block_widget(block) }}
+        </form>
+    </div>
+{% endblock %}
+
+{% block _login_form_label_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " {{ class_prefix }}__title"
+    }) %}
+    <h2{{ block('block_attributes') }}>{{ block_widget(block) }}</h2>
+{% endblock %}
+
+{% block _login_form_error_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " notification notification_xmd notification_error notification-radiused mb1-md"
+    }) %}
+    <div{{ block('block_attributes') }}>
+        <div>
+            <span class="notification__sign notification__sign_error">
+              <i class="icon-attention fs20"></i>
+            </span>
+            <span>{{ block_widget(block) }}</span>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _login_form_username_widget %}
+    {% set attr = {
+        required: 'required',
+        autofocus: true
+    }|merge(attr)|merge({
+        class: attr.class|default('') ~ " input input_block input_md {{ class_prefix }}__form__input"
+    }) %}
+    {% set label_attr = label_attr|merge({
+        class: label_attr.class|default('') ~ " {{ class_prefix }}__form__label"
+    }) %}
+    <fieldset class="{{ class_prefix }}__form__row">
+        <div class="{{ class_prefix }}__form__col form__col_x12">
+            {{ block_row(block, {
+                attr: attr,
+                label_attr: label_attr
+            }) }}
+        </div>
+    </fieldset>
+{% endblock %}
+
+{% block _login_form_password_widget %}
+    {% set attr = {
+        required: 'required'
+    }|merge(attr)|merge({
+        class: attr.class|default('') ~ " input input_block input_md {{ class_prefix }}__form__input"
+    }) %}
+    {% set label_attr = label_attr|merge({
+        class: label_attr.class|default('') ~ " {{ class_prefix }}__form__label"
+    }) %}
+    <fieldset class="{{ class_prefix }}__form__row">
+        <div class="{{ class_prefix }}__form__col form__col_x12">
+            {{ block_row(block, {
+                attr: attr,
+                label_attr: label_attr
+            }) }}
+        </div>
+    </fieldset>
+{% endblock %}
+
+{% block _login_form_remember_widget %}
+    {% set label_attr = {
+        'data-checkbox': null
+    }|merge(label_attr)|merge({
+        class: label_attr.class|default('') ~ " checkbox_custom checkbox_custom_blue",
+    }) %}
+    <fieldset class="{{ class_prefix }}__form__row">
+        <div class="{{ class_prefix }}__form__col">
+            <label{{ block('block_label_attributes') }}>
+                {{ block_widget(block) }}
+                <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
+                <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
+                <span class="checkbox_custom__text fs13">{{ label|block_text(translation_domain) }}</span>
+            </label>
+        </div>
+    </fieldset>
+{% endblock %}
+
+{% block _login_form_submit_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " btn btn_orange btn_lg {{ class_prefix }}__form__submit"
+    }) %}
+    <fieldset class="{{ class_prefix }}__form__row mt1-sm">
+        <div class="{{ class_prefix }}__form__col form__col_x12">
+            {{ block('button_widget') }}
+        </div>
+    </fieldset>
+{% endblock %}

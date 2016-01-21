@@ -102,16 +102,16 @@ class ActionTest extends \PHPUnit_Framework_TestCase
     public function testInit()
     {
         $config = [
-            ['initfunctions', ['initfunctions']],
+            ['form_init', ['form_init']],
         ];
 
         $functions = [
-            'initfunctions' => $this->createFunction($this->once(), $this->data),
+            'form_init' => $this->createFunction($this->once(), $this->data),
         ];
 
         $this->definition->expects($this->any())
             ->method('getFunctions')
-            ->will($this->returnValueMap($config));
+            ->willReturnMap($config);
 
         $this->functionFactory->expects($this->any())
             ->method('create')
@@ -439,7 +439,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
 
         $config = [
             ['prefunctions', ['prefunctions']],
-            ['postfunctions', ['postfunctions']],
+            ['functions', ['functions']],
             ['preconditions', ['preconditions']],
             ['conditions', ['conditions']],
         ];
@@ -450,7 +450,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
                 'config' => $config,
                 'functions' => [
                     'prefunctions' => $this->createFunction($this->once(), $data),
-                    'postfunctions' => $this->createFunction($this->never(), $data),
+                    'functions' => $this->createFunction($this->never(), $data),
                 ],
                 'conditions' => [
                     'preconditions' => $this->createCondition($this->once(), $data, false),
@@ -464,7 +464,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
                 'config' => $config,
                 'functions' => [
                     'prefunctions' => $this->createFunction($this->once(), $data),
-                    'postfunctions' => $this->createFunction($this->never(), $data),
+                    'functions' => $this->createFunction($this->never(), $data),
                 ],
                 'conditions' => [
                     'preconditions' => $this->createCondition($this->once(), $data, true),
@@ -478,7 +478,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
                 'config' => $config,
                 'functions' => [
                     'prefunctions' => $this->createFunction($this->once(), $data),
-                    'postfunctions' => $this->createFunction($this->once(), $data),
+                    'functions' => $this->createFunction($this->once(), $data),
                 ],
                 'conditions' => [
                     'preconditions' => $this->createCondition($this->once(), $data, true),

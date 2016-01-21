@@ -64,3 +64,9 @@ orob2b_account_frontend_country_region_api:
     type:     rest
     options:
         frontend: true
+
+orob2b_frontend_windows_api:
+    resource: "@OroB2BAccountBundle/Controller/Api/Rest/FrontendWindowsStateController.php"
+    type:     rest
+    options:
+        frontend: true

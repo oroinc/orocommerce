@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -18,7 +20,12 @@ class PriceListToAccountRepositoryTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
+        $this->loadFixtures(
+            [
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings',
+            ]
+        );
     }
 
     public function testFindByPrimaryKey()
@@ -82,7 +89,14 @@ class PriceListToAccountRepositoryTest extends WebTestCase
                 'account' => 'account.orphan',
                 'website' => 'US',
                 'expectedPriceLists' => [
-                    'priceList3'
+                ]
+            ],
+            [
+                'account' => 'account.level_1_1',
+                'website' => 'US',
+                'expectedPriceLists' => [
+                    'priceList2',
+                    'priceList1'
                 ]
             ],
             [
@@ -91,6 +105,43 @@ class PriceListToAccountRepositoryTest extends WebTestCase
                 'expectedPriceLists' => [
                     'priceList5'
                 ]
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getPriceListIteratorDataProvider
+     * @param string $accountGroup
+     * @param string $website
+     * @param array $expectedAccounts
+     */
+    public function testGetAccountIteratorByFallback($accountGroup, $website, $expectedAccounts)
+    {
+        /** @var $accountGroup  AccountGroup */
+        $accountGroup = $this->getReference($accountGroup);
+        /** @var $website Website */
+        $website = $this->getReference($website);
+
+        $iterator = $this->getRepository()
+            ->getAccountIteratorByFallback($accountGroup, $website, PriceListAccountFallback::ACCOUNT_GROUP);
+
+        $actualSiteMap = [];
+        foreach ($iterator as $account) {
+            $actualSiteMap[] = $account->getName();
+        }
+        $this->assertSame($expectedAccounts, $actualSiteMap);
+    }
+
+    /**
+     * @return array
+     */
+    public function getPriceListIteratorDataProvider()
+    {
+        return [
+            [
+                'accountGroup' => 'account_group.group1',
+                'website' => 'US',
+                'expectedAccounts' => ['account.level_1.3']
             ],
         ];
     }

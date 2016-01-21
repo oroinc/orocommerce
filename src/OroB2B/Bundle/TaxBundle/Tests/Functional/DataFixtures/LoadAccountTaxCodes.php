@@ -7,7 +7,9 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
+use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
 
 class LoadAccountTaxCodes extends AbstractFixture implements DependentFixtureInterface
@@ -33,8 +35,14 @@ class LoadAccountTaxCodes extends AbstractFixture implements DependentFixtureInt
      */
     public function load(ObjectManager $manager)
     {
-        $this->createAccountTaxCode($manager, self::TAX_1, self::DESCRIPTION_1, [LoadAccounts::DEFAULT_ACCOUNT_NAME]);
-        $this->createAccountTaxCode($manager, self::TAX_2, self::DESCRIPTION_2, []);
+        $this->createAccountTaxCode(
+            $manager,
+            self::TAX_1,
+            self::DESCRIPTION_1,
+            [LoadAccounts::DEFAULT_ACCOUNT_NAME],
+            []
+        );
+        $this->createAccountTaxCode($manager, self::TAX_2, self::DESCRIPTION_2, [], [LoadGroups::GROUP2]);
 
         $manager->flush();
     }
@@ -44,10 +52,16 @@ class LoadAccountTaxCodes extends AbstractFixture implements DependentFixtureInt
      * @param string $code
      * @param string $description
      * @param array $accountRefs
+     * @param array $accountGroupsRefs
      * @return AccountTaxCode
      */
-    protected function createAccountTaxCode(ObjectManager $manager, $code, $description, $accountRefs)
-    {
+    protected function createAccountTaxCode(
+        ObjectManager $manager,
+        $code,
+        $description,
+        array $accountRefs,
+        array $accountGroupsRefs
+    ) {
         $accountTaxCode = new AccountTaxCode();
         $accountTaxCode->setCode($code);
         $accountTaxCode->setDescription($description);
@@ -55,6 +69,12 @@ class LoadAccountTaxCodes extends AbstractFixture implements DependentFixtureInt
             /** @var Account $account */
             $account = $this->getReference($accountRef);
             $accountTaxCode->addAccount($account);
+        }
+
+        foreach ($accountGroupsRefs as $accountGroupRef) {
+            /** @var AccountGroup $account */
+            $account = $this->getReference($accountGroupRef);
+            $accountTaxCode->addAccountGroup($account);
         }
 
         $manager->persist($accountTaxCode);

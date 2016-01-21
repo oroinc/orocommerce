@@ -16,10 +16,21 @@ orob2b.pricing:
         websites.label: Websites
         prices.label: Prices
         priority.label: Priority
+        merge_allowed.label: Merge Allowed
+        merge_allowed.yes.label: Yes
+        merge_allowed.no.label: No
 
         form:
             pricelist_required: Please select a price list first...
     quantity.label: Quantity
+    fallback:
+        label: Fallback
+        current_account_only.label: Current account only
+        account_group.label: Account group
+        current_account_group_only.label: Current account group only
+        website.label: Website
+        current_website_only.label: Current website only
+        config.label: Config
     unit.label: Unit
     price.label: Price
     add_product_price: Add Product Price
@@ -79,11 +90,12 @@ orob2b.pricing:
                 product: View Product
 
     system_configuration:
-        price_lists: Price Lists
-        default_price_lists: Default Price Lists
         groups:
-            product_price_settings.title: Pricing Settings
+            default_price_lists.title: Default Price Lists
+            price_rounding.title: Pricing Rounding
+            pricing.title: Pricing
         fields:
+            price_lists.title: Price Lists
             rounding_type:
                 label: Pricing Rounding Type
                 tooltip: Select the rounding type that can be used for product prices.

@@ -1,11 +1,11 @@
 datagrid:
     quotes-grid:
+        acl_resource: orob2b_sale_quote_view
         extended_entity_name: %orob2b_sale.entity.quote.class%
         options:
             entityHint:        quote
             entity_pagination: true
         source:
-            acl_resource: orob2b_sale_quote_view
             type:         orm
             query:
                 select:
@@ -154,6 +154,7 @@ datagrid:
                 acl_resource:  orob2b_sale_quote_delete
 
     frontend-quotes-grid:
+        acl_resource: orob2b_sale_quote_frontend_index
         extended_entity_name: %orob2b_sale.entity.quote.class%
         options:
             entityHint:        quote
@@ -161,7 +162,6 @@ datagrid:
             accountUserOwner:
                 accountUserColumn: accountUserName
         source:
-            acl_resource: orob2b_sale_quote_frontend_index
             type:         orm
             query:
                 select:

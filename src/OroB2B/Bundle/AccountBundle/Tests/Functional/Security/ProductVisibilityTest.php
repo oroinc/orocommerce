@@ -24,6 +24,7 @@ class ProductVisibilityTest extends WebTestCase
         $this->loadFixtures([
             'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
             'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
+            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
         ]);
 
     }
@@ -78,7 +79,7 @@ class ProductVisibilityTest extends WebTestCase
                     LoadProductData::PRODUCT_2 => 200,
                     LoadProductData::PRODUCT_3 => 200,
                     LoadProductData::PRODUCT_4 => 403,
-                    LoadProductData::PRODUCT_5 => 200,
+                    LoadProductData::PRODUCT_5 => 403,
                 ]
             ],
         ];
