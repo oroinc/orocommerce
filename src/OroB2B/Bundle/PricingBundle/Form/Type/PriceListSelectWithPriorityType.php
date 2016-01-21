@@ -12,6 +12,10 @@ class PriceListSelectWithPriorityType extends AbstractType
 {
     const NAME = 'orob2b_pricing_price_list_select_with_priority';
 
+    const PRICE_LIST_FIELD = 'priceList';
+    const PRIORITY_FIELD = 'priority';
+    const MERGE_ALLOWED_FIELD = 'mergeAllowed';
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -20,7 +24,7 @@ class PriceListSelectWithPriorityType extends AbstractType
     {
         $builder
             ->add(
-                'priceList',
+                self::PRICE_LIST_FIELD,
                 PriceListSelectType::NAME,
                 [
                     'empty_data' => null,
@@ -31,7 +35,7 @@ class PriceListSelectWithPriorityType extends AbstractType
                 ]
             )
             ->add(
-                'priority',
+                self::PRIORITY_FIELD,
                 'text',
                 [
                     'empty_data' => null,
@@ -41,7 +45,7 @@ class PriceListSelectWithPriorityType extends AbstractType
                 ]
             )
             ->add(
-                'mergeAllowed',
+                self::MERGE_ALLOWED_FIELD,
                 'checkbox',
                 [
                     'label' => 'orob2b.pricing.pricelist.merge_allowed.label'

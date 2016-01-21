@@ -50,7 +50,7 @@ class LoadPriceListToAccountGroupGroupDemoData extends LoadBasePriceListRelation
 
     /**
      * @param EntityManager $manager
-     * @param $name
+     * @param string $name
      * @return AccountGroup
      */
     protected function getAccountGroupByName(EntityManager $manager, $name)

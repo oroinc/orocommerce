@@ -13,7 +13,7 @@ use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -183,7 +183,7 @@ class ProductPriceDatagridListener
     }
 
     /**
-     * @return PriceList
+     * @return BasePriceList
      */
     protected function getPriceList()
     {

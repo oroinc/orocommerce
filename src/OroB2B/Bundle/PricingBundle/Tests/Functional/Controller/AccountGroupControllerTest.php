@@ -22,9 +22,17 @@ class AccountGroupControllerTest extends AbstractPriceListsByEntityTestCase
     /**
      * {@inheritdoc}
      */
-    public function getUpdateUrl()
+    public function getUpdateUrl($id = null)
     {
-        return $this->getUrl('orob2b_account_group_update', ['id' => $this->accountGroup->getId()]);
+        return $this->getUrl('orob2b_account_group_update', ['id' => $id ?: $this->accountGroup->getId()]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCreateUrl()
+    {
+        return $this->getUrl('orob2b_account_group_create');
     }
 
     /**

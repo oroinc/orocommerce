@@ -81,7 +81,7 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
             'priceListsToAccounts' => [
                 [
                     'account' => 'account.level_1.2',
-                    'website' => LoadWebsiteData::WEBSITE1,
+                    'website' => LoadWebsiteData::WEBSITE2,
                 ]
             ],
             'priceListsToAccountGroups' => [],
@@ -98,6 +98,32 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
                 [
                     'priceList' => 'price_list_3',
                     'mergeAllowed' => true,
+                ],
+            ],
+        ],
+        [
+            'name' => '1f',
+            'enabled' => true,
+            'priceListsToAccounts' => [],
+            'priceListsToAccountGroups' => [],
+            'websites' => ['default'],
+            'priceListRelations' => [
+                [
+                    'priceList' => 'price_list_1',
+                    'mergeAllowed' => false,
+                ],
+            ],
+        ],
+        [
+            'name' => '2f',
+            'enabled' => true,
+            'priceListsToAccounts' => [],
+            'priceListsToAccountGroups' => [],
+            'websites' => ['default'],
+            'priceListRelations' => [
+                [
+                    'priceList' => 'price_list_2',
+                    'mergeAllowed' => false,
                 ],
             ],
         ],
@@ -233,9 +259,13 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
         CombinedPriceList $combinedPriceList
     ) {
         foreach ($priceListData['websites'] as $websiteReference) {
-            /** @var Website $website */
-            $website = $this->getReference($websiteReference);
-
+            if ($websiteReference === 'default') {
+                /** @var Website $website */
+                $website = $manager->getRepository('OroB2BWebsiteBundle:Website')->find(1);
+            } else {
+                /** @var Website $website */
+                $website = $this->getReference($websiteReference);
+            }
             $priceListToWebsite = new CombinedPriceListToWebsite();
             $priceListToWebsite->setWebsite($website);
             $priceListToWebsite->setPriceList($combinedPriceList);

@@ -7,7 +7,15 @@ use Doctrine\ORM\Mapping as ORM;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 
 /**
- * @ORM\Table(name="orob2b_cmb_price_list_to_acc")
+ * @ORM\Table(
+ *      name="orob2b_cmb_price_list_to_acc",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(name="orob2b_cpl_to_acc_ws_unq", columns={
+ *              "website_id",
+ *              "account_id"
+ *          })
+ *      }
+ * )
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository")
  */
 class CombinedPriceListToAccount extends BaseCombinedPriceListRelation

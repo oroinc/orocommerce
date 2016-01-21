@@ -3,13 +3,16 @@
 namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-
 use Doctrine\ORM\Query\Expr\Join;
 
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccount;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class CombinedPriceListRepository extends EntityRepository
@@ -37,7 +40,7 @@ class CombinedPriceListRepository extends EntityRepository
      * @return null|CombinedPriceList
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function getCombinedPriceListByAccount(Account $account, Website $website, $isEnabled = true)
+    public function getPriceListByAccount(Account $account, Website $website, $isEnabled = true)
     {
         $qb = $this->createQueryBuilder('priceList');
         $qb
@@ -66,7 +69,7 @@ class CombinedPriceListRepository extends EntityRepository
      * @return null|CombinedPriceList
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function getCombinedPriceListByAccountGroup(AccountGroup $accountGroup, Website $website, $isEnabled = true)
+    public function getPriceListByAccountGroup(AccountGroup $accountGroup, Website $website, $isEnabled = true)
     {
         $qb = $this->createQueryBuilder('priceList');
         $qb
@@ -92,7 +95,7 @@ class CombinedPriceListRepository extends EntityRepository
      * @param bool|true $isEnabled
      * @return CombinedPriceList|null
      */
-    public function getCombinedPriceListByWebsite(Website $website, $isEnabled = true)
+    public function getPriceListByWebsite(Website $website, $isEnabled = true)
     {
         $qb = $this->createQueryBuilder('priceList');
 
@@ -110,5 +113,138 @@ class CombinedPriceListRepository extends EntityRepository
             ->setMaxResults(1);
 
         return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * @param array CombinedPriceList[] $exceptPriceLists
+     * @param bool|null $priceListsEnabled
+     */
+    public function deleteUnusedPriceLists(array $exceptPriceLists = [], $priceListsEnabled = true)
+    {
+        $iterator = $this->getUnusedPriceListsIterator($exceptPriceLists, $priceListsEnabled);
+        $bufferSize = $this->getBufferSize();
+        $iterator->setBufferSize($bufferSize);
+
+        $deleteQb = $this->getEntityManager()->createQueryBuilder()
+            ->delete($this->getEntityName(), 'cplDelete');
+
+        $deleteQb->where($deleteQb->expr()->in('cplDelete.id', ':unusedPriceLists'));
+
+        $priceListsIdForDelete = [];
+        $i = 0;
+        foreach ($iterator as $priceList) {
+            $priceListsIdForDelete[] = $priceList->getId();
+            $i++;
+            if ($i === $bufferSize) {
+                $deleteQb->setParameter('unusedPriceLists', $priceListsIdForDelete)
+                    ->getQuery()->execute();
+                $priceListsIdForDelete = [];
+                $i = 0;
+            }
+        }
+        if ($priceListsIdForDelete) {
+            $deleteQb->setParameter('unusedPriceLists', $priceListsIdForDelete)
+                ->getQuery()->execute();
+        }
+    }
+
+    /**
+     * @return int
+     */
+    protected function getBufferSize()
+    {
+        return BufferedQueryResultIterator::DEFAULT_BUFFER_SIZE;
+    }
+
+    /**
+     * @param array $exceptPriceLists
+     * @param bool|null $priceListsEnabled
+     * @return BufferedQueryResultIterator
+     */
+    protected function getUnusedPriceListsIterator(array $exceptPriceLists = [], $priceListsEnabled = true)
+    {
+        $selectQb = $this->createQueryBuilder('priceList')
+            ->select('priceList');
+
+        $relations = [
+            'priceListToWebsite' => 'OroB2BPricingBundle:CombinedPriceListToWebsite',
+            'priceListToAccountGroup' => 'OroB2BPricingBundle:CombinedPriceListToAccountGroup',
+            'priceListToAccount' => 'OroB2BPricingBundle:CombinedPriceListToAccount',
+        ];
+
+        foreach ($relations as $alias => $entityName) {
+            $selectQb->leftJoin(
+                $entityName,
+                $alias,
+                Join::WITH,
+                $selectQb->expr()->eq($alias . '.priceList', 'priceList.id')
+            );
+            $selectQb->andWhere($alias . '.priceList IS NULL');
+        }
+        if ($exceptPriceLists) {
+            $selectQb->andWhere($selectQb->expr()->notIn('priceList', ':exceptPriceLists'))
+                ->setParameter('exceptPriceLists', $exceptPriceLists);
+        }
+        if ($priceListsEnabled !== null) {
+            $selectQb->andWhere($selectQb->expr()->eq('priceList.enabled', ':isEnabled'))
+                ->setParameter('isEnabled', $priceListsEnabled);
+        }
+
+        return new BufferedQueryResultIterator($selectQb->getQuery());
+    }
+
+    /**
+     * @param CombinedPriceList $combinedPriceList
+     * @param Website $website
+     * @param Account|AccountGroup $targetEntity
+     */
+    public function updateCombinedPriceListConnection(
+        CombinedPriceList $combinedPriceList,
+        Website $website,
+        $targetEntity = null
+    ) {
+        $em = $this->getEntityManager();
+        $relation = null;
+        $isNew = false;
+        if ($targetEntity instanceof Account) {
+            $relation = $em->getRepository('OroB2BPricingBundle:CombinedPriceListToAccount')
+                ->findOneBy(['account' => $targetEntity, 'website' => $website]);
+            if (!$relation) {
+                $relation = new CombinedPriceListToAccount();
+                $relation->setAccount($targetEntity);
+                $relation->setWebsite($website);
+                $relation->setPriceList($combinedPriceList);
+                $em->persist($relation);
+                $isNew = true;
+            }
+        } elseif ($targetEntity instanceof AccountGroup) {
+            $relation = $em->getRepository('OroB2BPricingBundle:CombinedPriceListToAccountGroup')
+                ->findOneBy(['accountGroup' => $targetEntity, 'website' => $website]);
+            if (!$relation) {
+                $relation = new CombinedPriceListToAccountGroup();
+                $relation->setAccountGroup($targetEntity);
+                $relation->setWebsite($website);
+                $relation->setPriceList($combinedPriceList);
+                $em->persist($relation);
+                $isNew = true;
+            }
+        } elseif (!$targetEntity) {
+            $relation = $em->getRepository('OroB2BPricingBundle:CombinedPriceListToWebsite')
+                ->findOneBy(['website' => $website]);
+            if (!$relation) {
+                $relation = new CombinedPriceListToWebsite();
+                $relation->setWebsite($website);
+                $relation->setPriceList($combinedPriceList);
+                $em->persist($relation);
+                $isNew = true;
+            }
+        } else {
+            throw new \InvalidArgumentException(sprintf('Unknown target "%s"', get_class($targetEntity)));
+        }
+
+        if ($isNew || $relation->getPriceList()->getId() !== $combinedPriceList->getId()) {
+            $relation->setPriceList($combinedPriceList);
+            $em->flush($relation);
+        }
     }
 }

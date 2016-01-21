@@ -10,6 +10,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class PriceListWebsiteFallback extends PriceListFallback
 {
-    const CURRENT_WEBSITE_ONLY = 0;
-    const CONFIG = 1;
+    const CONFIG = 0;
+    const CURRENT_WEBSITE_ONLY = 1;
 }

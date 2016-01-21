@@ -12,8 +12,8 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
  */
 class PriceListAccountGroupFallback extends PriceListFallback
 {
-    const CURRENT_ACCOUNT_GROUP_ONLY = 0;
-    const WEBSITE = 1;
+    const WEBSITE = 0;
+    const CURRENT_ACCOUNT_GROUP_ONLY = 1;
 
     /** @var AccountGroup
      *

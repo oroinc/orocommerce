@@ -89,7 +89,7 @@ class PriceListConfigConverter
     }
 
     /**
-     * @param $config
+     * @param array $config
      * @param PriceList[] $priceLists
      * @return PriceListConfig
      */

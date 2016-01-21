@@ -42,6 +42,7 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->provider = new ProductPriceProvider($this->registry, $this->requestHandler, self::CLASS_NAME);
+        $this->provider->setClassName('\stdClass');
     }
 
     protected function tearDown()
