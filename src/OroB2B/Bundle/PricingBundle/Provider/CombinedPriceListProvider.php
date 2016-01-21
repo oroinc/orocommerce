@@ -138,6 +138,7 @@ class CombinedPriceListProvider
     {
         $combinedPriceList = new CombinedPriceList();
         $combinedPriceList->setName($identifier);
+        $combinedPriceList->setEnabled(true);
 
         $manager = $this->getManager();
         $manager->persist($combinedPriceList);

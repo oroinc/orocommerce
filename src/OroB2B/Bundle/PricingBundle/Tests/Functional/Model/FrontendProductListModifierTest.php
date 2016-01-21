@@ -80,7 +80,6 @@ class FrontendProductListModifierTest extends WebTestCase
      */
     public function testApplyPriceListLimitations($currency, array $expectedProductSku, $priceList = null)
     {
-        $this->markTestSkipped('Will complete in scope BB-1852');
         if ($priceList) {
             $priceList = $this->getReference($priceList);
             $this->priceListTreeHandler->expects($this->never())
