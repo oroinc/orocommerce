@@ -35,13 +35,23 @@ layout:
                     blockType: container
                 content:
                     blockType: container
+                sidebar_left:
+                    blockType: container
+                page_title:
+                    blockType: text
+                    options:
+                        text: ~
                 footer:
                     blockType: container
                 scripts:
                     blockType: script
                     options:
-                        content: 'require(["orob2bfrontend/default/js/main.min"])'
-                requirejs:
+                        content: 'require(["orob2bfrontend/default/js/main"])'
+                scripts_before:
+                    blockType: block
+                require_js:
+                    blockType: block
+                require_modules:
                     blockType: block
             tree:
                 root:
@@ -49,12 +59,16 @@ layout:
                         meta_charset: ~
                         meta_viewport: ~
                         styles: ~
-                        requirejs: ~
+                        scripts_before: ~
+                        require_js: ~
+                        require_modules: ~
                     body:
                         wrapper:
                             header: ~
                             notification: ~
                             main:
-                                content: ~
+                                content:
+                                    page_title: ~
+                                sidebar_left: ~
                             footer: ~
                         scripts: ~

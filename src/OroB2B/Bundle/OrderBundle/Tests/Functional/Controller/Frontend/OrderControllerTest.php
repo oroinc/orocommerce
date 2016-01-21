@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Controller\Frontend;
 
+use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
@@ -11,7 +12,6 @@ use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 
 use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
@@ -44,7 +44,7 @@ class OrderControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
             ]
         );
 
@@ -66,8 +66,6 @@ class OrderControllerTest extends WebTestCase
      */
     public function testCreate()
     {
-        $this->setDefaultPriceList('price_list_1');
-
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_frontend_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -130,8 +128,6 @@ class OrderControllerTest extends WebTestCase
 
     public function testQuickAdd()
     {
-        $this->setDefaultPriceList('price_list_1');
-
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_frontend_quick_add'));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
@@ -221,12 +217,6 @@ class OrderControllerTest extends WebTestCase
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save')->form();
-
-        /** @var PriceList $defaultPriceList */
-        $defaultPriceList = $this->getReference('price_list_1');
-
-        $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BPricingBundle:PriceList')
-            ->getRepository('OroB2BPricingBundle:PriceList')->setDefault($defaultPriceList);
 
         /** @var Product $product */
         $product = $this->getReference('product.2');
@@ -389,21 +379,10 @@ class OrderControllerTest extends WebTestCase
     }
 
     /**
-     * @param $name
-     */
-    protected function setDefaultPriceList($name)
-    {
-        /** @var PriceList $priceList */
-        $priceList = $this->getReference($name);
-        $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BPricingBundle:PriceList')
-            ->getRepository('OroB2BPricingBundle:PriceList')->setDefault($priceList);
-    }
-
-    /**
-     * @param ProductPrice $productPrice
+     * @param CombinedProductPrice $productPrice
      * @return string
      */
-    protected function formatProductPrice(ProductPrice $productPrice)
+    protected function formatProductPrice(CombinedProductPrice $productPrice)
     {
         $price = $productPrice->getPrice();
 

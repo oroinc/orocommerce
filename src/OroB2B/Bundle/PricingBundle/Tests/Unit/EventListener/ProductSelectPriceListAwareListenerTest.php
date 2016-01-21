@@ -71,6 +71,7 @@ class ProductSelectPriceListAwareListenerTest extends \PHPUnit_Framework_TestCas
      */
     public function testOnDBQuery($applicable, $parameters = [], $withPriceList = false)
     {
+        $this->markTestSkipped('Will complete in scope BB-1852');
         $this->event->expects($this->any())
             ->method('getDataParameters')
             ->willReturn(new ParameterBag($parameters));

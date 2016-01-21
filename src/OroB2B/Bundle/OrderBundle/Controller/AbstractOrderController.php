@@ -10,8 +10,9 @@ use Oro\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 
 abstract class AbstractOrderController extends Controller
 {
@@ -42,7 +43,7 @@ abstract class AbstractOrderController extends Controller
         );
 
         if ($productIds) {
-            $tierPrices = $this->get('orob2b_pricing.provider.product_price')->getPriceByPriceListIdAndProductIds(
+            $tierPrices = $this->getProductPriceProvider()->getPriceByPriceListIdAndProductIds(
                 $this->getPriceList($order)->getId(),
                 $productIds->toArray(),
                 $order->getCurrency()
@@ -97,7 +98,7 @@ abstract class AbstractOrderController extends Controller
 
     /**
      * @param Order $order
-     * @return PriceList
+     * @return BasePriceList
      */
     protected function getPriceList(Order $order)
     {
@@ -108,6 +109,12 @@ abstract class AbstractOrderController extends Controller
         if (!$priceList) {
             $priceList = $this->get('orob2b_pricing.model.frontend.price_list_request_handler')->getPriceList();
         }
+
         return $priceList;
     }
+
+    /**
+     * @return ProductPriceProvider
+     */
+    abstract protected function getProductPriceProvider();
 }

@@ -816,6 +816,13 @@
       margin-top: 0;
       margin-bottom: 1.5rem;
     }
+
+    ~ .add-to-compare-link {
+
+      @media (min-width: 992px) {
+        margin-top: 0;
+      }
+    }
   }
 
   &.product-item__qty_quick-view {
@@ -845,32 +852,32 @@
   }
 }
 
-.product-item__more-info {
+.oro-more-info-toggler {
 
   &.within-fixed-checkout {
     position: relative;
     margin: 1rem 0;
   }
 
-  &.product-item__more-info_indented {
+  &.oro-more-info-toggler_indented {
 
-    .product-item__more-info__container {
+    .oro-more-info-toggler__container {
       padding-left: 2rem;
       margin-bottom: 1.5rem;
     }
   }
 
-  //&.product-item__more-info_gallery-view {}
+  //&.oro-more-info-toggler_gallery-view {}
 
-  &.product-item__more-info_list-view {
+  &.oro-more-info-toggler_list-view {
     display: none;
   }
 
-  &.product-item__more-info_no-image-view {
+  &.oro-more-info-toggler_no-image-view {
     display: none;
   }
 
-  &.product-item__more-info_no-image-view2 {
+  &.oro-more-info-toggler_no-image-view2 {
     display: none;
   }
 
@@ -893,11 +900,11 @@
   }
 }
 
-.product-item__more-info__container {
+.oro-more-info-toggler__container {
   display: none;
 }
 
-.product-item__more-info__list {
+.oro-more-info-toggler__list {
   .list-normalize;
   margin: .8rem 0 0 1.9rem;
 
@@ -933,5 +940,18 @@
 
   &.product-item__desctiption_in-cart {
     padding: 0 0 0 10rem;
+  }
+}
+
+.add-to-compare-link {
+  display: inline-block;
+  margin: 1rem 0 0;
+  white-space: nowrap;
+
+  i {
+    font-size: 1.6rem;
+    margin-right: .3rem;
+    position: relative;
+    top: .1rem;
   }
 }
