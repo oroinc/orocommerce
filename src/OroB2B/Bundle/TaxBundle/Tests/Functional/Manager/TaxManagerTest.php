@@ -77,16 +77,16 @@ class TaxManagerTest extends WebTestCase
                 'orderName' => LoadOrders::ORDER_1,
                 'includingTax' => '789',
                 'excludingTax' => '717.27',
-                'taxAmount' => '71.73',
-                'adjustment' => '-0.0027',
+                'taxAmount' => null,
+                'adjustment' => null,
                 'includingTaxCalculator' => true
             ],
             'with saved order and tax calculator' => [
                 'orderName' => LoadOrders::ORDER_1,
                 'includingTax' => '867.9',
                 'excludingTax' => '789',
-                'taxAmount' => '78.9',
-                'adjustment' => '0',
+                'taxAmount' => null,
+                'adjustment' => null,
                 'includingTaxCalculator' => false
             ],
             'with empty order and including tax calculator' => [
@@ -275,8 +275,8 @@ class TaxManagerTest extends WebTestCase
                 'expected' => [
                     'includingTax' => '789',
                     'excludingTax' => '717.27',
-                    'taxAmount' => '71.73',
-                    'adjustment' => '-0.0027',
+                    'taxAmount' => null,
+                    'adjustment' => null,
                 ],
             ],
             'with saved order and tax calculator' => [
@@ -286,8 +286,8 @@ class TaxManagerTest extends WebTestCase
                 'expected' => [
                     'includingTax' => '867.9',
                     'excludingTax' => '789',
-                    'taxAmount' => '78.9',
-                    'adjustment' => '0',
+                    'taxAmount' => null,
+                    'adjustment' => null,
                 ],
             ],
             'with empty order and including tax calculator' => [
