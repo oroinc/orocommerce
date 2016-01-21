@@ -83,6 +83,109 @@ class AccountControllerTest extends WebTestCase
     }
 
     /**
+     * @depends testView
+     */
+    public function testTaxCodeViewContainsEntity()
+    {
+        /** @var AccountTaxCode $accountTaxCode */
+        $accountTaxCode = $this->getReference(LoadAccountTaxCodes::REFERENCE_PREFIX . '.' . LoadAccountTaxCodes::TAX_1);
+
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_tax_account_tax_code_view', ['id' => $accountTaxCode->getId()])
+        );
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $grid = $crawler->filter('.inner-grid')->eq(0)->attr('data-page-component-options');
+        $this->assertContains(self::ACCOUNT_NAME, $grid);
+    }
+
+    /**
+     * @depends testTaxCodeViewContainsEntity
+     */
+    public function testGrid()
+    {
+        /** @var AccountTaxCode $accountTaxCode */
+        $accountTaxCode = $this->getReference(LoadAccountTaxCodes::REFERENCE_PREFIX . '.' . LoadAccountTaxCodes::TAX_1);
+
+        $response = $this->client->requestGrid(
+            'account-accounts-grid',
+            ['account-accounts-grid[_filter][name][value]' => self::ACCOUNT_NAME]
+        );
+
+        $result = $this->getJsonResponseContent($response, 200);
+        $result = reset($result['data']);
+
+        $this->assertArrayHasKey('taxCode', $result);
+        $this->assertArrayHasKey('accountGroupTaxCode', $result);
+        $this->assertEquals($accountTaxCode->getCode(), $result['taxCode']);
+        $this->assertNull($result['accountGroupTaxCode']);
+    }
+
+    /**
+     * @depends testGrid
+     */
+    public function testGridAccountTaxCodeFallbackToAccountGroup()
+    {
+        /** @var AccountTaxCode $accountTaxCode */
+        $accountTaxCode = $this->getReference(LoadAccountTaxCodes::REFERENCE_PREFIX . '.' . LoadAccountTaxCodes::TAX_2);
+
+        /** @var Account $account */
+        $account = $this->getReference('account.level_1.2');
+
+        $response = $this->client->requestGrid(
+            'account-accounts-grid',
+            ['account-accounts-grid[_filter][name][value]' => $account->getName()]
+        );
+
+        $result = $this->getJsonResponseContent($response, 200);
+        $result = reset($result['data']);
+
+        $this->assertArrayHasKey('taxCode', $result);
+        $this->assertEmpty($result['taxCode']);
+
+        $this->assertArrayHasKey('accountGroupTaxCode', $result);
+        $this->assertEquals($accountTaxCode->getCode(), $result['accountGroupTaxCode']);
+    }
+
+    /**
+     * @depends testGridAccountTaxCodeFallbackToAccountGroup
+     */
+    public function testViewAccountTaxCodeFallbackToAccountGroup()
+    {
+        /** @var Account $account */
+        $account = $this->getReference('account.level_1.2');
+
+        $response = $this->client->requestGrid(
+            'account-accounts-grid',
+            ['account-accounts-grid[_filter][name][value]' => $account->getName()]
+        );
+
+        $result = $this->getJsonResponseContent($response, 200);
+        $result = reset($result['data']);
+
+        $id = $result['id'];
+
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_account_view', ['id' => $id])
+        );
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $html = $crawler->html();
+
+        /** @var AccountTaxCode $accountTaxCode */
+        $accountTaxCode = $this->getReference(LoadAccountTaxCodes::REFERENCE_PREFIX . '.' . LoadAccountTaxCodes::TAX_2);
+
+        $this->assertContains($accountTaxCode->getCode(), $html);
+        $this->assertContains('(Defined for Account Group)', $html);
+    }
+
+    /**
      * @param Crawler           $crawler
      * @param string            $name
      * @param Account           $parent

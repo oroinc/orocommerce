@@ -66,9 +66,8 @@ datagrid:
                 params: [ id ]
 
     websites-grid:
+        acl_resource: orob2b_website_view
         extends: base-websites-grid
-        source:
-            acl_resource: orob2b_website_view
         properties:
             view_link:
                 route: orob2b_website_view

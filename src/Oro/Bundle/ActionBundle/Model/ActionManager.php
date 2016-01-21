@@ -12,7 +12,8 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 class ActionManager
 {
-    const DEFAULT_DIALOG_TEMPLATE = 'OroActionBundle:Widget:widget/form.html.twig';
+    const DEFAULT_FORM_TEMPLATE = 'OroActionBundle:Action:form.html.twig';
+    const DEFAULT_PAGE_TEMPLATE = 'OroActionBundle:Action:page.html.twig';
 
     /** @var DoctrineHelper */
     protected $doctrineHelper;
@@ -166,16 +167,18 @@ class ActionManager
      * @param array|null $context
      * @return string
      */
-    public function getDialogTemplate($actionName, array $context = null)
+    public function getFrontendTemplate($actionName, array $context = null)
     {
-        $template = self::DEFAULT_DIALOG_TEMPLATE;
+        $template = self::DEFAULT_FORM_TEMPLATE;
         $action = $this->getAction($actionName, $this->contextHelper->getActionData($context));
 
         if ($action) {
             $frontendOptions = $action->getDefinition()->getFrontendOptions();
 
-            if (array_key_exists('dialog_template', $frontendOptions)) {
-                $template = $frontendOptions['dialog_template'];
+            if (array_key_exists('template', $frontendOptions)) {
+                $template = $frontendOptions['template'];
+            } elseif (array_key_exists('show_dialog', $frontendOptions) && !$frontendOptions['show_dialog']) {
+                $template = self::DEFAULT_PAGE_TEMPLATE;
             }
         }
 

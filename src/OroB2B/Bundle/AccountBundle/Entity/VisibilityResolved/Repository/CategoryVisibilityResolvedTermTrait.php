@@ -101,8 +101,13 @@ trait CategoryVisibilityResolvedTermTrait
      */
     protected function formatConfigFallback($select, $configValue)
     {
+        // wrap into COALESCE in case of multiple fields
+        if (strpos($select, ',') !== false) {
+            $select = sprintf('COALESCE(%s)', $select);
+        }
+
         return sprintf(
-            'CASE WHEN COALESCE(%1$s, %3$s) != %2$s THEN COALESCE(%1$s, %3$s) ELSE %3$s END',
+            'CASE WHEN %1$s IS NOT NULL AND %1$s != %2$s THEN %1$s ELSE %3$s END',
             $select,
             AccountCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
             $configValue

@@ -1,16 +1,14 @@
 actions:
     orob2b_shoppinglist_action_createorder:
         label: orob2b.shoppinglist.btn.create_order
-        enabled: true
-        applications:
-            - backend
+        applications: [backend]
         routes:
             - orob2b_shopping_list_view
         acl_resource: orob2b_order_create
         order: 10
-        frontend_options:
+        button_options:
             icon: icon-briefcase
-        postfunctions:
+        functions:
             - @call_service_method:
                 service: orob2b_shopping_list.service.product_data_storage
                 method: saveToStorage
@@ -22,16 +20,14 @@ actions:
 
     orob2b_shoppinglist_frontend_action_createorder:
         label: orob2b.frontend.shoppinglist.btn.create_order
-        enabled: true
-        applications:
-            - frontend
+        applications: [frontend]
         routes:
             - orob2b_shopping_list_frontend_view
         acl_resource: orob2b_order_frontend_create
         order: 10
-        frontend_options:
+        button_options:
             icon: icon-briefcase
-        postfunctions:
+        functions:
             - @call_service_method:
                 service: orob2b_shopping_list.service.product_data_storage
                 method: saveToStorage
@@ -41,54 +37,72 @@ actions:
                     route: orob2b_order_frontend_create
                     route_parameters: {'storage': true}
 
-    orob2b_shoppinglist_frontend_quick_add_to_shoppinglist:
+    orob2b_shoppinglist_frontend_products_add_to_shoppinglist:
         label: orob2b.shoppinglist.product.add_to_shopping_list.label
         applications: [frontend]
-        routes:
-            - orob2b_product_frontend_quick_add
         acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
         order: 30
-        frontend_options:
-            template: OroB2BShoppingListBundle:Action:quickAdd.html.twig
+        routes:
+            - orob2b_product_frontend_quick_add
+        button_options:
+            template: OroB2BShoppingListBundle:Action:buttons.html.twig
+            page_component_module: orob2bshoppinglist/js/app/components/quick-add-button-component
         prefunctions:
-            - @call_service_method:
-                service: orob2b_shopping_list.processor.quick_add
-                method: isAllowed
-                attribute: $.isAllowed
             - @call_service_method:
                 service: orob2b_shopping_list.shopping_list.manager
                 method: getShoppingLists
                 attribute: $.params
+            - @call_service_method:
+                service: orob2b_shopping_list.processor.quick_add
+                method: isAllowed
+                attribute: $.isAllowed
         preconditions:
             @equal: [true, $.isAllowed]
 
-    orob2b_shoppinglist_frontend_action_request_quote:
-        label: orob2b.frontend.shoppinglist.btn.request_quote_create_rfp
-        enabled: true
-        applications:
-            - frontend
-        routes:
-            - orob2b_shopping_list_frontend_view
-        acl_resource: orob2b_rfp_frontend_request_create
-        order: 20
+    orob2b_shoppinglist_frontend_addlineitem:
+        extends: orob2b_shoppinglist_lineitem_base
+        label: orob2b.shoppinglist.product.add_to_shopping_list.label
+        applications: [frontend]
+        acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
+        datagrids: [frontend-products-grid]
+        datagrid_options:
+            mass_action_provider: orob2b_shopping_list_add_products
+        button_options:
+            icon: icon-shopping-cart
+            page_component_module: orob2bshoppinglist/js/app/components/add-product-component
         frontend_options:
-            icon: icon-briefcase
-        postfunctions:
+            template: OroB2BShoppingListBundle:Action:lineItem.html.twig
+            title: orob2b.shoppinglist.lineitem.add_line_item
+        form_options:
+            attribute_fields:
+                lineItem:
+                    form_type: orob2b_shopping_list_frontend_line_item_widget
+        form_init:
+            - @get_active_user: $.currentUser
             - @call_service_method:
-                service: orob2b_shopping_list.service.product_data_storage
-                method: saveToStorage
-                method_parameters: [$.data]
-            - @redirect:
-                parameters:
-                    route: orob2b_rfp_frontend_request_create
-                    route_parameters: {'storage': true}
+                service: orob2b_shopping_list.handler.shopping_list_line_item
+                method: prepareLineItemWithProduct
+                method_parameters: [$.currentUser, $.data]
+                attribute: $.lineItem
+        functions:
+            - @call_service_method:
+                service: orob2b_shopping_list.handler.shopping_list_line_item
+                method: processLineItem
+                method_parameters: [$.lineItem, $.form]
+            - @call_service_method:
+                service: orob2b_shopping_list.service.message_generator
+                method: getSuccessMessage
+                method_parameters: [$.lineItem.shoppingList.id, 1, orob2b.shoppinglist.lineitem.flash.added]
+                attribute: $.successMessage
+            - @flash_message: { message: $.successMessage, type: success }
+            - @refresh_grid: frontend-products-grid
 
     orob2b_shoppinglist_lineitem_base:
         label: ' '
         frontend_options:
-            dialog_template: OroB2BShoppingListBundle:Action:lineItem.html.twig
-            dialog_title: orob2b.shoppinglist.lineitem.add_line_item
-            dialog_options:
+            template: OroB2BShoppingListBundle:Action:lineItem.html.twig
+            title: orob2b.shoppinglist.lineitem.add_line_item
+            options:
                 width: 460
         attributes:
             lineItem:
@@ -112,9 +126,11 @@ actions:
         routes:
             - orob2b_shopping_list_view
         acl_resource: [CREATE, entity:OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
-        frontend_options:
+        button_options:
             icon: icon-plus
-            dialog_options:
+            page_component_module: orob2bproduct/js/app/components/product-unit-component
+        frontend_options:
+            options:
                 modal: false
                 stateEnabled: false
                 incrementalPosition: false
@@ -122,14 +138,14 @@ actions:
                 allowMinimize: true
                 dblclick: maximize
                 maximizedHeightDecreaseBy: minimize-bar
-        initfunctions:
+        form_init:
             - @create_object:
                 class: OroB2B\Bundle\ShoppingListBundle\Entity\LineItem
                 attribute: $.lineItem
             - @assign_value: [$.lineItem.shoppingList, $.data]
             - @assign_value: [$.lineItem.accountUser, $.data.accountUser]
             - @assign_value: [$.lineItem.organization, $.data.organization]
-        postfunctions:
+        functions:
             - @call_service_method:
                 service: orob2b_shopping_list.shopping_list.manager
                 method: addLineItem
@@ -142,13 +158,14 @@ actions:
     orob2b_shoppinglist_updatelineitem_base:
         extends: orob2b_shoppinglist_lineitem_base
         label: orob2b.shoppinglist.lineitem.edit_line_item
-        frontend_options:
+        button_options:
             icon: icon-edit
-            dialog_options:
+        frontend_options:
+            options:
                 modal: true
-        initfunctions:
+        form_init:
             - @assign_value: [$.lineItem, $.data]
-        postfunctions:
+        functions:
             - @flash_message:
                 message: orob2b.shoppinglist.lineitem.flash.updated
                 type: 'success'
@@ -158,7 +175,7 @@ actions:
         acl_resource: [EDIT, entity:OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
         datagrids:
             - shopping-list-line-items-grid
-        postfunctions:
+        functions:
             - @refresh_grid: shopping-list-line-items-grid
 
     orob2b_shoppinglist_frontend_updatelineitem:
@@ -166,5 +183,24 @@ actions:
         acl_resource: [EDIT, entity:commerce@OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
         datagrids:
             - frontend-shopping-list-line-items-grid
-        postfunctions:
+        functions:
             - @refresh_grid: frontend-shopping-list-line-items-grid
+
+    orob2b_shoppinglist_frontend_action_request_quote:
+        label: orob2b.frontend.shoppinglist.btn.request_quote_create_rfp
+        applications: [frontend]
+        routes:
+            - orob2b_shopping_list_frontend_view
+        acl_resource: orob2b_rfp_frontend_request_create
+        order: 20
+        button_options:
+            icon: icon-briefcase
+        functions:
+            - @call_service_method:
+                service: orob2b_shopping_list.service.product_data_storage
+                method: saveToStorage
+                method_parameters: [$.data]
+            - @redirect:
+                parameters:
+                    route: orob2b_rfp_frontend_request_create
+                    route_parameters: {'storage': true}
