@@ -41,8 +41,12 @@ class ProductSelectTypeTest extends AbstractProductSelectTypeTest
             [
                 [],
                 'expectedProducts' => [
+                    LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
                     LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_7,
+                    LoadProductData::PRODUCT_8,
                 ],
             ],
         ];
