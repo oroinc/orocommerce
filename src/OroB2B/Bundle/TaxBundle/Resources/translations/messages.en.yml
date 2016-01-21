@@ -94,6 +94,7 @@ orob2b.tax:
             tax_digital_products.title: 'Digital Products Tax Codes'
             us_sales_tax.title: 'US Sales Tax'
             eu_vat_tax.title: 'EU VAT tax'
+            origin_address.title: 'Origin Address'
         fields:
             tax_provider.label: 'Provider'
             tax_enable.label: 'Enabled'
@@ -114,6 +115,7 @@ orob2b.tax:
                 shipping_addressl.label: 'Shipping Address'
             digital_products_us.label: 'Digital Products Tax Codes in US'
             digital_products_eu.label: 'Digital Products Tax Codes in EU'
+            origin_address.label: 'Origin Address'
 
     providers:
         built_in.label: Built-In Table Rates

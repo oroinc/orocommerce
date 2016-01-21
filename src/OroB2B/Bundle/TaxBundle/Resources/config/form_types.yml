@@ -20,6 +20,7 @@ parameters:
     orob2b_tax.form.type.tax_provider_type.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxProviderType
     orob2b_tax.form.type.tax_base_exclusion.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxBaseExclusionType
     orob2b_tax.form.type.tax_base_exclusion_collection.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxBaseExclusionCollectionType
+    orob2b_tax.form.type.origin_address.class: OroB2B\Bundle\TaxBundle\Form\Type\OriginAddressType
 
 services:
     orob2b_tax.form.type.product_tax_code:
@@ -44,7 +45,7 @@ services:
     orob2b_tax.form.type.product_tax_code_multiselect:
         class: %orob2b_tax.form.type.product_tax_code_multiselect.class%
         tags:
-            - { name: form.type, alias: orob2b_product_tax_code_multiselect }
+            - { name: form.type, alias: orob2b_tax_product_tax_code_multiselect }
 
     orob2b_tax.form.type.account_tax_code_autocomplete:
         class: %orob2b_tax.form.type.account_tax_code_autocomplete.class%
@@ -141,3 +142,12 @@ services:
         class: %orob2b_tax.form.type.tax_base_exclusion_collection.class%
         tags:
             - { name: form.type, alias: orob2b_tax_base_exclusion_collection }
+
+    orob2b_tax.form.type.origin_address:
+        class: %orob2b_tax.form.type.origin_address.class%
+        arguments:
+            - @oro_address.form.listener.address
+        calls:
+            - [setDataClass, [%orob2b_tax.model.address.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_tax_origin_address }

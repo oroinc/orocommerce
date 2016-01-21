@@ -9,11 +9,9 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
 
-use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
-
-class TaxBaseExclusionType extends AbstractType
+class OriginAddressType extends AbstractType
 {
-    const NAME = 'orob2b_tax_base_exclusion';
+    const NAME = 'orob2b_tax_origin_address';
 
     /**
      * @var string
@@ -23,7 +21,7 @@ class TaxBaseExclusionType extends AbstractType
     /**
      * @var AddressCountryAndRegionSubscriber
      */
-    private $countryAndRegionSubscriber;
+    protected $countryAndRegionSubscriber;
 
     /**
      * @param AddressCountryAndRegionSubscriber $eventListener
@@ -42,8 +40,7 @@ class TaxBaseExclusionType extends AbstractType
     }
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
+     * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -59,18 +56,23 @@ class TaxBaseExclusionType extends AbstractType
                     'constraints' => [new NotBlank()],
                 ]
             )
-            ->add('region', 'oro_region', ['required' => false, 'label' => 'oro.address.region.label'])
             ->add(
-                'option',
-                'choice',
+                'region',
+                'oro_region',
                 [
                     'required' => true,
-                    'choices' => [
-                        TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN =>
-                            'orob2b.tax.system_configuration.fields.use_as_base.shipping_origin.label',
-                        TaxationSettingsProvider::USE_AS_BASE_DESTINATION =>
-                            'orob2b.tax.system_configuration.fields.use_as_base.destination.label',
-                    ],
+                    'label' => 'oro.address.region.label',
+                    'configs' => ['allowClear' => false, 'placeholder' => 'oro.address.form.choose_region'],
+                    'constraints' => [new NotBlank()],
+                ]
+            )
+            ->add(
+                'postal_code',
+                'text',
+                [
+                    'required' => true,
+                    'label' => 'oro.address.postal_code.label',
+                    'attr' => ['placeholder' => 'oro.address.postal_code.label'],
                     'constraints' => [new NotBlank()],
                 ]
             )
@@ -78,10 +80,9 @@ class TaxBaseExclusionType extends AbstractType
                 'region_text',
                 'hidden',
                 [
-                    'required' => false,
-                    'mapped' => false,
-                    'random_id' => true,
+                    'required' => true,
                     'label' => 'oro.address.region_text.label',
+                    'attr' => ['placeholder' => 'oro.address.region_text.label'],
                 ]
             );
     }
@@ -99,7 +100,7 @@ class TaxBaseExclusionType extends AbstractType
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getName()
     {

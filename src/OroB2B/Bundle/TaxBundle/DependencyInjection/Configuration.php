@@ -59,6 +59,7 @@ class Configuration implements ConfigurationInterface
                     'type' => 'array',
                     'value' => []
                 ],
+                'origin_address' => ['type' => 'array', 'value' => []],
             ]
         );
 
