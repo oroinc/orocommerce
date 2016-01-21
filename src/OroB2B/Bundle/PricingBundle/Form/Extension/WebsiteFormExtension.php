@@ -161,7 +161,6 @@ class WebsiteFormExtension extends AbstractTypeExtension
         }
 
         $fallback->setWebsite($website);
-<<<<<<< HEAD
         $fallback->setFallback($submittedFallback);
 
         if ($hasChanges) {
@@ -170,9 +169,7 @@ class WebsiteFormExtension extends AbstractTypeExtension
                 new PriceListCollectionChange($website)
             );
         }
-=======
         $fallback->setFallback($form->get(self::PRICE_LISTS_FALLBACK_FIELD)->getData());
->>>>>>> feature/BB-1561_price_lists_priority_settings_application
     }
 
     /**
