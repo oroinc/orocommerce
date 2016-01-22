@@ -58,8 +58,7 @@ class CategoriesTest extends Selenium2TestCase
             ->saveCategory();
 
         // assert second level category created
-        $categories->assertTitle('Master Catalog - Products')
-            ->assertTitle(self::$secondCategory . ' - Edit - Master Catalog - Products')
+        $categories->assertTitle(self::$secondCategory . ' - Edit - Master Catalog - Products')
             ->openTreeSubcategories(self::$firstCategory)
             ->assertCategoryExists(self::$secondCategory)
             ->assertContainsSubcategory(self::$firstCategory, self::$secondCategory);
