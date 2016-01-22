@@ -247,10 +247,13 @@ class QuickAddControllerTest extends WebTestCase
      */
     private function parseTargetUrl($content)
     {
-        $pattern = '/targetUrl = "(.+)"/';
+        $pattern = '/data-page-component-options\s*=\s*"(.+)"/';
         $this->assertRegExp($pattern, $content);
         preg_match($pattern, $content, $matches);
 
-        return stripslashes($matches[1]);
+        $parsedOptions = json_decode(html_entity_decode($matches[1]), true);
+        $this->assertArrayHasKey('targetUrl', $parsedOptions);
+
+        return stripslashes($parsedOptions['targetUrl']);
     }
 }
