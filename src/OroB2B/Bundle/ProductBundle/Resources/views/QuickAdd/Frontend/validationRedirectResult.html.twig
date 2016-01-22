@@ -1,9 +1,8 @@
-<div class="widget-content">
-    <script type="text/javascript">
-        require(['oroui/js/mediator'],
-                function(mediator) {
-                    var targetUrl = {{ targetUrl|json_encode|raw }};
-                    mediator.execute('redirectTo', {url: targetUrl}, {redirect: true});
-                });
-    </script>
-</div>
+{% set componentOptions = {
+    targetUrl: targetUrl
+} %}
+
+<div class="widget-content"
+     data-page-component-module="orob2bproduct/js/app/components/redirect-component"
+     data-page-component-options="{{ componentOptions|json_encode }}"
+/>
