@@ -35,7 +35,7 @@ class Configuration implements ConfigurationInterface
                 self::DEFAULT_PRICE_LISTS => ['type' => 'array', 'value' => []],
                 'rounding_type' => ['value' => PriceRoundingService::HALF_UP],
                 'precision' => ['value' => PriceRoundingService::FALLBACK_PRECISION],
-                'realtime_combined_price_lists_update' => true
+                'price_lists_update_strategy' => ['value' => 'scheduled'],
             ]
         );
 
