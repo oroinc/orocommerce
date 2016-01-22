@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit;
+namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityManager;
 
