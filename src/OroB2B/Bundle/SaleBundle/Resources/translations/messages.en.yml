@@ -68,10 +68,6 @@ orob2b:
             fields:
                 backend_product_visibility.title: 'Can Be Added to Quotes'
 
-        process:
-            expire_quotes.label: Expire old Quotes
-            send_no_quote_alert.label: Send alerts about Requests Without Quote
-
         quoteproduct:
             entity_label: 'Quote Product'
             entity_plural_label: 'Quote Products'

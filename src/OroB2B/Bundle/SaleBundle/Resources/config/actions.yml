@@ -176,14 +176,14 @@ actions:
                             to: $.saleRep.email
                             template: 'request_no_quote_alert'
                             entity: $.data
+            - @call_method:
+                object: $accountUser.salesRepresentatives
+                method: toArray
+                attribute: $.accountUserSalesReps
             - @foreach:
                 array: $account.salesRepresentatives
                 value: $.saleRep
                 actions:
-                    - @call_method:
-                        object: $accountUser.salesRepresentatives
-                        method: toArray
-                        attribute: $.accountUserSalesReps
                     - @send_email_template:
                         conditions:
                             @and:

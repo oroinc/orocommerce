@@ -1,6 +1,6 @@
 definitions:
     expire_quotes:
-        label:   orob2b.sale.process.expire_quotes.label
+        label:   'Expire old Quotes'
         enabled: false
         order:   50
         entity:  OroB2B\Bundle\RFPBundle\Entity\Request
@@ -26,7 +26,7 @@ definitions:
                         entity_id: $.quote.id
 
     send_no_quote_alert:
-        label:   orob2b.sale.process.send_no_quote_alert.label
+        label:   'Send alerts about Requests Without Quote'
         enabled: false
         order:   50
         entity:  OroB2B\Bundle\RFPBundle\Entity\Request
