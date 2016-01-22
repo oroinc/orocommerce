@@ -12,6 +12,8 @@ use Oro\Component\Layout\Block\Type\AbstractType;
 
 class MenuType extends AbstractType
 {
+    const NAME = 'menu';
+
     /**
      * @var MenuProviderInterface
      */
@@ -46,7 +48,6 @@ class MenuType extends AbstractType
                 'ancestorClass' => 'current_ancestor',
                 'firstClass' => 'first',
                 'lastClass' => 'last',
-                'compressed' => false,
                 'allow_safe_labels' => false,
                 'clear_matcher' => true,
                 'leaf_class' => null,
@@ -77,6 +78,6 @@ class MenuType extends AbstractType
      */
     public function getName()
     {
-        return 'menu';
+        return self::NAME;
     }
 }
