@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Model;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\SaleBundle\Model\RequestHelper;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
 /**
@@ -12,29 +11,19 @@ use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadRequestData;
  */
 class RequestHelperTest extends WebTestCase
 {
-    /**
-     * @var RequestHelper
-     */
-    protected $requestHelper;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp()
     {
         $this->initClient();
-        $this->loadFixtures([
-            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadRequestData',
-        ]);
-        $this->requestHelper = new RequestHelper(
-            static::getContainer()->get('doctrine'),
-            'OroB2BSaleBundle:Quote',
-            'OroB2BRFPBundle:Request'
+        $this->loadFixtures(
+            [
+                'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadRequestData',
+            ]
         );
     }
 
     /**
      * @dataProvider getRequestsWoQuoteDataProvider
+     *
      * @param int $days
      * @param array $expected
      */
@@ -44,7 +33,11 @@ class RequestHelperTest extends WebTestCase
         foreach ($expected as $item) {
             $expectedRequests[] = $this->getReference($item);
         }
-        $this->assertEquals($expectedRequests, $this->requestHelper->getRequestsWoQuote($days));
+
+        $this->assertEquals(
+            $expectedRequests,
+            $this->getContainer()->get('orob2b_sale.service.request_helper')->getRequestsWoQuote($days)
+        );
     }
 
     /**

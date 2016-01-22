@@ -71,6 +71,11 @@ class LoadRequestData extends AbstractFixture implements FixtureInterface, Depen
     public function load(ObjectManager $manager)
     {
         foreach ($this->requests as $key => $rawRequest) {
+            $days = $rawRequest['note'] === self::REQUEST_WITHOUT_QUOTE_OLD ? 5 : 1;
+
+            $date = new \DateTime('now', new \DateTimeZone('UTC'));
+            $date->modify(sprintf('-%d days', $days));
+
             $request = new Request();
             $request
                 ->setFirstName($rawRequest['first_name'])
@@ -79,13 +84,11 @@ class LoadRequestData extends AbstractFixture implements FixtureInterface, Depen
                 ->setPhone($rawRequest['phone'])
                 ->setCompany($rawRequest['company'])
                 ->setRole($rawRequest['role'])
-                ->setNote($rawRequest['note']);
+                ->setNote($rawRequest['note'])
+                ->setCreatedAt($date);
 
-            $date = new \DateTime('now', new \DateTimeZone('UTC'));
-            $days = $rawRequest['note'] === self::REQUEST_WITHOUT_QUOTE_OLD ? 5: 1;
-            $date->modify(sprintf('-%d days', $days));
-            $request->setCreatedAt($date);
             $manager->persist($request);
+
             $this->addReference($key, $request);
         }
 
@@ -93,9 +96,10 @@ class LoadRequestData extends AbstractFixture implements FixtureInterface, Depen
         $quote
             ->setQid(self::QUOTE1)
             ->setRequest($this->getReference(self::REQUEST_WITH_QUOTE));
-        $manager->persist($quote);
-        $this->addReference(self::QUOTE1, $quote);
 
+        $manager->persist($quote);
         $manager->flush();
+
+        $this->addReference(self::QUOTE1, $quote);
     }
 }
