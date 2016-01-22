@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\MenuBundle\Tests\Unit\Entity\EventListener;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Mapping as ORM;
+
 use OroB2B\Bundle\MenuBundle\EventListener\LocaleListener;
 use OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;

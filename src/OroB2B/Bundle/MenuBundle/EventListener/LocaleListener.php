@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\MenuBundle\EventListener;
 
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+
 use OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
 
 class LocaleListener
@@ -14,7 +15,6 @@ class LocaleListener
     protected $menuProvider;
 
     /**
-     * LocaleListener constructor.
      * @param DatabaseMenuProvider $menuProvider
      */
     public function __construct(DatabaseMenuProvider $menuProvider)
