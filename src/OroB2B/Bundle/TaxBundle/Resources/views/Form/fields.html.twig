@@ -127,3 +127,17 @@
         </div>
     {% endspaceless %}
 {% endblock %}
+
+{% block tax_address_block %}
+    {% set use_parent_scope_value = form.parent.parent.vars.value.use_parent_scope_value %}
+    <div class="control-group">
+        <div class="controls tax-address">
+            {{ form_widget(form, {disabled: use_parent_scope_value}) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block _tax_calculation_orob2b_tax___origin_address_value_country_row %}{{ block('tax_address_block') }}{% endblock %}
+{% block _tax_calculation_orob2b_tax___origin_address_value_region_row %}{{ block('tax_address_block') }}{% endblock %}
+{% block _tax_calculation_orob2b_tax___origin_address_value_region_text_row %}{{ block('tax_address_block') }}{% endblock %}
+{% block _tax_calculation_orob2b_tax___origin_address_value_postal_code_row %}{{ block('tax_address_block') }}{% endblock %}

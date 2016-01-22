@@ -33,7 +33,7 @@ class ProductTaxCodeMultiSelectTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals('orob2b_product_tax_code_multiselect', $this->formType->getName());
+        $this->assertEquals('orob2b_tax_product_tax_code_multiselect', $this->formType->getName());
     }
 
     public function testGetParent()
@@ -62,7 +62,6 @@ class ProductTaxCodeMultiSelectTypeTest extends FormIntegrationTestCase
     {
         $view = new FormView();
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-
         $form = $this->factory->create($this->formType);
         $form->setData($data);
         $this->formType->buildView($view, $form, []);
