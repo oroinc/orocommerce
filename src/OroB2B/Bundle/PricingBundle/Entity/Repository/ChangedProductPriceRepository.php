@@ -15,6 +15,11 @@ class ChangedProductPriceRepository extends EntityRepository
      */
     public function isCreated(ChangedProductPrice $changedProductPrice)
     {
+        //product or priceList can be not flushed yet
+        if (!$changedProductPrice->getProduct()->getId() || !$changedProductPrice->getPriceList()->getId()) {
+            return false;
+        }
+
         return (bool)$this->createQueryBuilder('cpp')
             ->select()
             ->where('cpp.priceList = :priceList')
