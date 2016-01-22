@@ -26,11 +26,11 @@ class TaxBaseExclusionType extends AbstractType
     private $countryAndRegionSubscriber;
 
     /**
-     * @param AddressCountryAndRegionSubscriber $eventListener
+     * @param AddressCountryAndRegionSubscriber $countryAndRegionSubscriber
      */
-    public function __construct(AddressCountryAndRegionSubscriber $eventListener)
+    public function __construct(AddressCountryAndRegionSubscriber $countryAndRegionSubscriber)
     {
-        $this->countryAndRegionSubscriber = $eventListener;
+        $this->countryAndRegionSubscriber = $countryAndRegionSubscriber;
     }
 
     /**

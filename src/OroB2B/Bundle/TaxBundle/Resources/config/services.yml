@@ -286,7 +286,7 @@ services:
         arguments:
             - @oro_config.manager
 
-    orob2b_tax.form.data_transformer.product_tax_base_exclusion_transformer:
+    orob2b_tax.form.data_transformer.tax_base_exclusion_transformer:
         class: %orob2b_tax.form.data_transformer.tax_base_exclusion_transformer.class%
         arguments:
             - @oro_entity.doctrine_helper
