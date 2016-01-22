@@ -59,6 +59,7 @@ orob2b:
 
             actions:
                 quote_expire: 'Expire Quote'
+                send_no_quote_alert: 'Send no Quote alert for the Request'
 
             message:
                 quote.expire.success: 'Quote #%id% was successfully expired'

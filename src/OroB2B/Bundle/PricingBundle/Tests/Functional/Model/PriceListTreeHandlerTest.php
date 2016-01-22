@@ -2,12 +2,16 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Model;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
 use OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -24,22 +28,31 @@ class PriceListTreeHandlerTest extends WebTestCase
      */
     protected $websiteManager;
 
+    /**
+     * @var ConfigManager
+     */
+    protected $configManager;
+
     protected function setUp()
     {
-        $this->markTestSkipped('Will be refactored in scope of BB-1851');
         $this->initClient();
 
-        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
+        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists']);
 
         $this->websiteManager = $this->getMockBuilder('OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager')
             ->disableOriginalConstructor()
             ->getMock();
 
+        /** @var $configManager ConfigManager */
+        $this->configManager = $this->getContainer()->get('oro_config.global');
+
         $this->handler = new PriceListTreeHandler(
             $this->getContainer()->get('doctrine'),
             $this->websiteManager,
-            $this->getContainer()->getParameter('orob2b_pricing.entity.price_list.class')
+            $this->configManager
         );
+        $class = $this->getContainer()->getParameter('orob2b_pricing.entity.combined_price_list.class');
+        $this->handler->setPriceListClass($class);
     }
 
     /**
@@ -54,11 +67,40 @@ class PriceListTreeHandlerTest extends WebTestCase
         $accountUser->setAccount($this->getAccount($accountReference));
 
         $this->websiteManager->expects($this->any())->method('getCurrentWebsite')
-            ->willReturn($this->getReference('US'));
+            ->willReturn($this->getReference(LoadWebsiteData::WEBSITE1));
 
         $this->assertEquals(
-            $this->handler->getPriceList($accountUser)->getId(),
-            $this->getReference($expectedPriceListReference)->getId()
+            $this->getReference($expectedPriceListReference)->getName(),
+            $this->handler->getPriceList($accountUser)->getName()
+        );
+    }
+
+    /**
+     * @param string $accountReference
+     * @param string $configPriceListReference
+     * @param string $expectedPriceListReference
+     *
+     * @dataProvider priceListFromConfigDataProvider
+     */
+    public function testGetPriceListFromConfig(
+        $accountReference,
+        $configPriceListReference,
+        $expectedPriceListReference
+    ) {
+        $accountUser = new AccountUser();
+        $accountUser->setAccount($this->getAccount($accountReference));
+        $key = implode(
+            ConfigManager::SECTION_MODEL_SEPARATOR,
+            [OroB2BPricingExtension::ALIAS, Configuration::COMBINED_PRICE_LIST]
+        );
+        $configPriceList = $this->getReference($configPriceListReference);
+        $this->configManager->set($key, $configPriceList->getId());
+        $this->websiteManager->expects($this->any())->method('getCurrentWebsite')
+            ->willReturn($this->getReference(LoadWebsiteData::WEBSITE1));
+
+        $this->assertEquals(
+            $this->getReference($expectedPriceListReference)->getName(),
+            $this->handler->getPriceList($accountUser)->getName()
         );
     }
 
@@ -68,40 +110,21 @@ class PriceListTreeHandlerTest extends WebTestCase
     public function accountUserDataProvider()
     {
         return [
-            'get PriceList from account' => ['account.level_1.2', 'price_list_2'],
-            'get PriceList from parent' => ['account.level_1.2.1', 'price_list_2'],
-            'get PriceList from parents parent' => ['account.level_1.2.1.1', 'price_list_2'],
-            'get PriceList from group' => ['account.level_1.3', 'price_list_1'],
-            'get PriceList from parent group' => ['account.level_1.4.1', 'price_list_5'],
-            'get PriceList from parents parent group' => ['account.level_1.4.1', 'price_list_5'],
-            'get PriceList from website' => ['account.level_1_1', 'price_list_1'],
+            'get PriceList from account' => ['account.level_1.2', '2t_3f_1t'],
+            'get PriceList from group' => ['account.level_1.3', '1t_2t_3t'],
+            'get PriceList from website' => ['account.level_1.2.1', '1t_2t_3t'],
+            'get PriceList from config' => ['account.level_1.2.1', '1t_2t_3t'],
         ];
     }
-
-    public function testDefaultWithoutAccountUser()
+    /**
+     * @return array
+     */
+    public function priceListFromConfigDataProvider()
     {
-        $this->websiteManager->expects($this->once())->method('getCurrentWebsite')->willReturn(null);
-
-        $this->assertTrue($this->handler->getPriceList()->isDefault());
-    }
-
-    public function testDefaultWithoutAccount()
-    {
-        $accountUser = new AccountUser();
-
-        $this->websiteManager->expects($this->once())->method('getCurrentWebsite');
-
-        $this->assertTrue($this->handler->getPriceList($accountUser)->isDefault());
-    }
-
-    public function testDefaultIfNotFound()
-    {
-        $accountUser = new AccountUser();
-        $accountUser->setAccount($this->getAccount('account.level_1_1'));
-
-        $this->websiteManager->expects($this->once())->method('getCurrentWebsite')->willReturn(null);
-
-        $this->assertTrue($this->handler->getPriceList($accountUser)->isDefault());
+        return [
+            'get PriceList from account' => ['account.level_1.2', '1t_2t_3t', '2t_3f_1t'],
+            'get PriceList from config' => ['account.level_1.2.1', '1t_2t_3t', '1t_2t_3t'],
+        ];
     }
 
     /**

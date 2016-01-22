@@ -54,9 +54,7 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
     public function testFormPreSet()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager $configManager */
-        $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $configManager = $this->getConfigManager();
         $settings = [
             'oro_b2b_pricing___default_price_lists' => [
                 'value' => [[1, 100], [2, 200]],
@@ -99,10 +97,7 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
             ],
         ];
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager $configManager */
-        $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $configManager = $this->getConfigManager();
 
         $event = new ConfigSettingsUpdateEvent($configManager, $settings);
 
@@ -120,6 +115,7 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
      * @dataProvider updateAfterDataProvider
      * @param array $changeSet
      * @param boolean $dispatch
+     * @param string $key
      */
     public function testUpdateAfter($changeSet, $dispatch, $key)
     {
@@ -128,10 +124,8 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
             ['priceList' => 2, 'priority' => 200],
         ];
         $values = $this->createConfigs(2);
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager $configManager */
-        $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $configManager = $this->getConfigManager();
+
         $settings = [
             $key => [
                 'value' => $values,
@@ -206,5 +200,18 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
             ],
             $this->subscriber->getSubscribedEvents()
         );
+    }
+
+    /**
+     * @return ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getConfigManager()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager $configManager */
+        $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        return $configManager;
     }
 }

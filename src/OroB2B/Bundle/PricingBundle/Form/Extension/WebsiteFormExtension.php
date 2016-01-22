@@ -2,9 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Form\Extension;
 
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManagerInterface;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -24,11 +22,16 @@ use OroB2B\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
 class WebsiteFormExtension extends AbstractTypeExtension
 {
     const PRICE_LISTS_TO_WEBSITE_FIELD = 'priceList';
+    const PRICE_LISTS_FALLBACK_FIELD = 'fallback';
 
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $priceListToWebsiteClass;
 
-    /** @var  EntityManagerInterface */
+    /**
+     * @var  EntityManagerInterface
+     */
     protected $entityManager;
 
     /** @var  ManagerRegistry */
@@ -68,16 +71,16 @@ class WebsiteFormExtension extends AbstractTypeExtension
                 ]
             )
             ->add(
-                'fallback',
+                self::PRICE_LISTS_FALLBACK_FIELD,
                 'choice',
                 [
                     'label' => 'orob2b.pricing.fallback.label',
                     'mapped' => false,
                     'choices' => [
-                        PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY =>
-                            'orob2b.pricing.fallback.current_website_only.label',
                         PriceListWebsiteFallback::CONFIG =>
                             'orob2b.pricing.fallback.config.label',
+                        PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY =>
+                            'orob2b.pricing.fallback.current_website_only.label',
                     ],
                 ]
             );
@@ -118,7 +121,7 @@ class WebsiteFormExtension extends AbstractTypeExtension
         }
         $event->getForm()->get(self::PRICE_LISTS_TO_WEBSITE_FIELD)->setData($data);
         $fallback = $this->getFallback($website);
-        $fallbackField = $event->getForm()->get('fallback');
+        $fallbackField = $event->getForm()->get(self::PRICE_LISTS_FALLBACK_FIELD);
         if (!$fallback || $fallback->getFallback() === PriceListWebsiteFallback::CONFIG) {
             $fallbackField->setData(PriceListWebsiteFallback::CONFIG);
         } else {
@@ -150,7 +153,7 @@ class WebsiteFormExtension extends AbstractTypeExtension
             $fallback = new PriceListWebsiteFallback();
             $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListWebsiteFallback')->persist($fallback);
             $hasChanges = true;
-        } elseif ($fallback->getFallback() != $submittedFallback) {
+        } elseif ($fallback->getFallback() !== $submittedFallback) {
             $hasChanges = true;
         }
 
@@ -163,6 +166,7 @@ class WebsiteFormExtension extends AbstractTypeExtension
                 new PriceListCollectionChange($website)
             );
         }
+        $fallback->setFallback($form->get(self::PRICE_LISTS_FALLBACK_FIELD)->getData());
     }
 
     /**
@@ -223,8 +227,8 @@ class WebsiteFormExtension extends AbstractTypeExtension
 
             if (in_array($priceList->getId(), $ids, true)) {
                 $existingPriceListRelation = $existing[$priceList->getId()];
-                if ($existingPriceListRelation->getPriority() != $item['priority']
-                    || $existingPriceListRelation->isMergeAllowed() != $item['mergeAllowed']
+                if ($existingPriceListRelation->getPriority() !== $item['priority']
+                    || $existingPriceListRelation->isMergeAllowed() !== $item['mergeAllowed']
                 ) {
                     $existingPriceListRelation->setPriority($item['priority']);
                     $existingPriceListRelation->setMergeAllowed($item['mergeAllowed']);
@@ -245,7 +249,7 @@ class WebsiteFormExtension extends AbstractTypeExtension
     }
 
     /**
-     * @return ObjectManager|null
+     * @return EntityManagerInterface|null
      */
     protected function getPriceListToWebsiteManager()
     {
@@ -258,7 +262,7 @@ class WebsiteFormExtension extends AbstractTypeExtension
 
     /**
      * @param Website $website
-     * @return array|\OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite[]
+     * @return array|PriceListToWebsite[]
      */
     protected function getPriceListToWebsiteSaved(Website $website)
     {
@@ -266,7 +270,7 @@ class WebsiteFormExtension extends AbstractTypeExtension
         /** @var PriceListToWebsite[] $entities */
         $entities = $this->getPriceListToWebsiteManager()
             ->getRepository($this->priceListToWebsiteClass)
-            ->findBy(['website' => $website], ['priority' => Criteria::ASC]);
+            ->findBy(['website' => $website], ['priority' => PriceListCollectionType::DEFAULT_ORDER]);
 
         foreach ($entities as $entity) {
             $result[$entity->getPriceList()->getId()] = $entity;

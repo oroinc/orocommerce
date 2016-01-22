@@ -216,6 +216,9 @@ class PriceListsSettingsTypeTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * @return array
+     */
     public function testOnPostSubmitDataProvider()
     {
         return [
@@ -240,11 +243,9 @@ class PriceListsSettingsTypeTest extends \PHPUnit_Framework_TestCase
      */
     public function setDataFromMainForm(FormInterface $form, $data)
     {
-        $mainForm = $this->getForm();
-        $mainForm->expects($this->once())->method('getData')->willReturn($data);
-        $parentForm = $this->getForm();
-        $parentForm->expects($this->once())->method('getParent')->willReturn($mainForm);
-        $form->expects($this->once())->method('getParent')->willReturn($parentForm);
+        $rootForm = $this->getForm();
+        $rootForm->expects($this->once())->method('getData')->willReturn($data);
+        $form->expects($this->once())->method('getRoot')->willReturn($rootForm);
     }
 
     /**

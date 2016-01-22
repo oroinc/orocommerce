@@ -442,6 +442,10 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         }
     }
 
+    /**
+     * @param Crawler $crawler
+     * @return mixed
+     */
     protected function getAccountId(Crawler $crawler)
     {
         preg_match_all('#/update/(.+?)\"#is', $crawler->html(), $arr);

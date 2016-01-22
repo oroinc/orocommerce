@@ -33,7 +33,9 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
      */
     protected $registry;
 
-    /** @var  EventDispatcherInterface */
+    /**
+     * @var  EventDispatcherInterface
+     */
     protected $eventDispatcher;
 
     /**
@@ -132,18 +134,15 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
      */
     public function onPreSetData(FormEvent $event)
     {
-        $parentForm = $event->getForm()->getParent();
+        $form = $event->getForm();
         /** @var object|null $targetEntity */
-        $targetEntity = $parentForm->getData();
+        $targetEntity = $form->getRoot()->getData();
 
         if (!$targetEntity || !$targetEntity->getId()) {
             return;
         }
 
-        /** @var FormInterface $priceListsByWebsites */
-        $priceListsByWebsites = $parentForm->get('priceListsByWebsites');
-
-        $formData = $this->prepareFormData($targetEntity, $priceListsByWebsites);
+        $formData = $this->prepareFormData($targetEntity, $form);
         $event->setData($formData);
     }
 
@@ -152,22 +151,21 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
      */
     public function onPostSubmit(FormEvent $event)
     {
-        $parentForm = $event->getForm()->getParent();
+        $form = $event->getForm();
+
         /** @var object|null $targetEntity */
-        $targetEntity = $parentForm->getData();
+        $targetEntity = $form->getRoot()->getData();
         if (!$targetEntity) {
             return;
         }
-
-        $form = $event->getForm();
         if (!$form->isValid()) {
             return;
         }
 
-        /** @var FormInterface $priceListsByWebsites */
-        $priceListsByWebsites = $parentForm->get('priceListsByWebsites');
-
         $em = $this->getEntityManager();
+        /** @var FormInterface $priceListsByWebsites */
+        $priceListsByWebsites = $form->getParent()->get('priceListsByWebsites');
+
         $fallbacks = $this->registry
             ->getManagerForClass($this->getFallbackClassName())
             ->getRepository($this->getFallbackClassName())
@@ -214,7 +212,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
     protected function getFallbackByWebsite($fallbacks, Website $website)
     {
         foreach ($fallbacks as $fallback) {
-            if ($fallback->getWebsite()->getId() == $website->getId()) {
+            if ($fallback->getWebsite()->getId() === $website->getId()) {
                 return $fallback;
             }
         }
@@ -241,11 +239,11 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         if (!$priceList instanceof PriceList) {
             return false;
         }
-        if (in_array($priceList->getId(), array_keys($actualPriceListsToTargetEntity))) {
+        if (in_array($priceList->getId(), array_keys($actualPriceListsToTargetEntity), true)) {
             /** @var BasePriceListRelation $priceListToTargetEntity */
             $priceListToTargetEntity = $actualPriceListsToTargetEntity[$priceList->getId()];
-            $hasChanges = $priceListToTargetEntity->getPriority() != $priceListWithPriorityData['priority']
-                || $priceListToTargetEntity->isMergeAllowed() != $priceListWithPriorityData['mergeAllowed'];
+            $hasChanges = $priceListToTargetEntity->getPriority() !== $priceListWithPriorityData['priority']
+                || $priceListToTargetEntity->isMergeAllowed() !== $priceListWithPriorityData['mergeAllowed'];
         } else {
             $priceListToTargetEntity = $this->createPriceListToTargetEntity($targetEntity);
             $priceListToTargetEntity->setWebsite($website);
@@ -270,7 +268,12 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
     protected function getActualPriceListsToTargetEntity($targetEntity, Website $website)
     {
         $repo = $this->getRepository();
-        $actualPriceListsToTargetEntity = !$targetEntity->getId() ? [] : $repo->getPriceLists($targetEntity, $website);
+        if (!$targetEntity->getId()) {
+            $actualPriceListsToTargetEntity = [];
+        } else {
+            $actualPriceListsToTargetEntity =
+                $repo->getPriceLists($targetEntity, $website, PriceListCollectionType::DEFAULT_ORDER);
+        }
 
         $result = [];
         foreach ($actualPriceListsToTargetEntity as $priceListToTargetEntity) {
@@ -308,7 +311,8 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         foreach ($priceListsByWebsites->all() as $priceListsByWebsite) {
             /** @var Website $website */
             $website = $priceListsByWebsite->getConfig()->getOption('website');
-            $actualPriceListsToTargetEntity = $repo->getPriceLists($targetEntity, $website);
+            $actualPriceListsToTargetEntity =
+                $repo->getPriceLists($targetEntity, $website, PriceListCollectionType::DEFAULT_ORDER);
 
             $actualPriceLists = [];
             /** @var object $priceListToTargetEntity */
@@ -366,7 +370,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         $hasChanges = false;
         /** @var BasePriceListRelation[] $actualPriceListsToTargetEntity */
         foreach ($actualPriceListsToTargetEntity as $priceListToTargetEntity) {
-            if (!in_array($priceListToTargetEntity->getPriceList(), $submittedPriceLists)) {
+            if (!in_array($priceListToTargetEntity->getPriceList(), $submittedPriceLists, true)) {
                 $em->remove($priceListToTargetEntity);
                 $hasChanges = true;
             }
@@ -413,8 +417,8 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
      */
     protected function hasFallbackChanges($actualFallback, $submittedFallback)
     {
-        $hasFallbackChanges = (!$actualFallback && $submittedFallback != $this->getDefaultFallback())
-            || ($actualFallback && $submittedFallback != $actualFallback->getFallback());
+        $hasFallbackChanges = (!$actualFallback && $submittedFallback !== $this->getDefaultFallback())
+            || ($actualFallback && $submittedFallback !== $actualFallback->getFallback());
 
         return $hasFallbackChanges;
     }

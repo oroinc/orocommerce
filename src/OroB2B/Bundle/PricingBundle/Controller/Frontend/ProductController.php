@@ -39,9 +39,15 @@ class ProductController extends Controller
             $accountUser = null;
         }
 
-        $currenciesList = $this->get('orob2b_pricing.model.price_list_tree_handler')
-            ->getPriceList($accountUser)
-            ->getCurrencies();
+        $priceList = $this->get('orob2b_pricing.model.price_list_tree_handler')
+            ->getPriceList($accountUser);
+
+        $currenciesList = null;
+        if ($priceList) {
+            if ($priceList->getCurrencies()) {
+                $currenciesList = $priceList->getCurrencies();
+            }
+        }
 
         $selectedCurrencies = $this->getHandler()->getPriceListSelectedCurrencies();
         $formOptions = [

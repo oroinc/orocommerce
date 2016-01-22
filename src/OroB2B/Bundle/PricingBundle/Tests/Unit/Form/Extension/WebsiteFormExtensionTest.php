@@ -211,7 +211,7 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('getData')
             ->willReturn($submittedData['priceLists']);
         $fallbackForm = $this->getFormMock();
-        $fallbackForm->expects($this->once())
+        $fallbackForm->expects($this->any())
             ->method('getData')
             ->willReturn($submittedData['fallback']);
         $rootForm = $this->getFormMock();
@@ -265,6 +265,9 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
         $extension->onPostSubmit($event);
     }
 
+    /**
+     * @return array
+     */
     public function testOnPostSubmitDataProvider()
     {
         return [
