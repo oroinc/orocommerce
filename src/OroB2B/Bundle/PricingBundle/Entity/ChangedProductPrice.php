@@ -4,15 +4,15 @@ namespace OroB2B\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\B2BEntityBundle\Storage\ObjectIdentifierAwareInterface;
+
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
- * ChangedProductPrice
- *
  * @ORM\Table(name="orob2b_changed_product_price")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\ChangedProductPriceRepository")
  */
-class ChangedProductPrice
+class ChangedProductPrice implements ObjectIdentifierAwareInterface
 {
     /**
      * @var PriceList
@@ -33,7 +33,6 @@ class ChangedProductPrice
     protected $product;
 
     /**
-     * ChangedProductPrice constructor.
      * @param PriceList $priceList
      * @param Product $product
      */
@@ -57,5 +56,13 @@ class ChangedProductPrice
     public function getProduct()
     {
         return $this->product;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getObjectIdentifier()
+    {
+        return get_class($this) . '_' . $this->product->getId() . '_' . $this->priceList->getId();
     }
 }

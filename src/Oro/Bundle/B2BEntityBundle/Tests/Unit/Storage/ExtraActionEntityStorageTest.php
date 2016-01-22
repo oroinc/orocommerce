@@ -3,6 +3,7 @@
 namespace OroB2B\src\Oro\Bundle\B2BEntityBundle\Tests\Unit\Storage;
 
 use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorage;
+use Oro\Bundle\B2BEntityBundle\Tests\Stub\ObjectIdentifierAware;
 
 class ExtraActionEntityStorageTest extends \PHPUnit_Framework_TestCase
 {
@@ -24,7 +25,7 @@ class ExtraActionEntityStorageTest extends \PHPUnit_Framework_TestCase
         $object = $this->createTestObject();
 
         $this->storage->scheduleForExtraInsert($object);
-        $this->assertSame([$object], $this->storage->getScheduledForInsert());
+        $this->assertSame([$object->getObjectIdentifier() => $object], $this->storage->getScheduledForInsert());
     }
 
     public function testHasScheduledForExtraInsert()
@@ -59,13 +60,11 @@ class ExtraActionEntityStorageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \stdClass
+     * @return ObjectIdentifierAware
      */
     protected function createTestObject()
     {
-        $object = new \stdClass();
-        $object->testProperty = 1;
-        $object->testProperty2 = 2;
+        $object = new ObjectIdentifierAware(1, 2);
 
         return $object;
     }

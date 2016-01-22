@@ -3,9 +3,10 @@
 namespace Oro\Bundle\B2BEntityBundle\EventListener;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\ORM\EntityManager;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorageInterface;
 
 class DoctrinePostFlushListener implements OptionalListenerInterface
@@ -16,9 +17,9 @@ class DoctrinePostFlushListener implements OptionalListenerInterface
     protected $enabled = true;
 
     /**
-     * @var RegistryInterface
+     * @var DoctrineHelper
      */
-    protected $registry;
+    protected $doctrineHelper;
 
     /**
      * @var ExtraActionEntityStorageInterface
@@ -26,18 +27,19 @@ class DoctrinePostFlushListener implements OptionalListenerInterface
     protected $storage;
 
     /**
-     * @var ObjectManager[]
+     * @var \SplObjectStorage|EntityManager[]
      */
-    protected $managers = [];
+    protected $managers;
 
     /**
-     * @param RegistryInterface $registry
+     * @param DoctrineHelper $doctrineHelper
      * @param ExtraActionEntityStorageInterface $storage
      */
-    public function __construct(RegistryInterface $registry, ExtraActionEntityStorageInterface $storage)
+    public function __construct(DoctrineHelper $doctrineHelper, ExtraActionEntityStorageInterface $storage)
     {
-        $this->registry = $registry;
+        $this->doctrineHelper = $doctrineHelper;
         $this->storage = $storage;
+        $this->managers = new \SplObjectStorage();
     }
 
     public function postFlush()
@@ -60,18 +62,15 @@ class DoctrinePostFlushListener implements OptionalListenerInterface
     }
 
     /**
-     * @param $entity
+     * @param object $entity
      * @return ObjectManager
      */
     protected function getEntityManager($entity)
     {
-        $entityClassName = get_class($entity);
+        $em = $this->doctrineHelper->getEntityManager($entity);
+        $this->managers->attach($em);
 
-        if (!array_key_exists($entityClassName, $this->managers)) {
-            $this->managers[$entityClassName] = $this->registry->getManagerForClass($entityClassName);
-        }
-
-        return $this->managers[$entityClassName];
+        return $em;
     }
 
     /**

@@ -5,16 +5,16 @@ namespace Oro\Bundle\B2BEntityBundle\Storage;
 class ExtraActionEntityStorage implements ExtraActionEntityStorageInterface
 {
     /**
-     * @var array
+     * @var ObjectIdentifierAwareInterface[]
      */
     protected $entities = [];
 
     /**
      * {@inheritdoc}
      */
-    public function scheduleForExtraInsert($entity)
+    public function scheduleForExtraInsert(ObjectIdentifierAwareInterface $entity)
     {
-        $this->entities[] = $entity;
+        $this->entities[$entity->getObjectIdentifier()] = $entity;
     }
 
     /**
@@ -44,14 +44,8 @@ class ExtraActionEntityStorage implements ExtraActionEntityStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function isScheduledForInsert($entity)
+    public function isScheduledForInsert(ObjectIdentifierAwareInterface $entity)
     {
-        foreach ($this->entities as $entityInStorage) {
-            if ($entity == $entityInStorage) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_key_exists($entity->getObjectIdentifier(), $this->entities);
     }
 }

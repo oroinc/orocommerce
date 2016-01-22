@@ -6,10 +6,11 @@ services:
     oro_b2bentity.extra_insert_entity_storage:
         class: %oro_b2bentity.extra_insert_entity_storage.class%
 
+    #todo refactor after BB-1289
     oro_b2bentity.event_listener.doctrine_post_flush_listener:
         class:  %oro_b2bentity.event_listener.doctrine_post_flush_listener.class%
         arguments:
-            - @doctrine
+            - @oro_entity.doctrine_helper
             - @oro_b2bentity.extra_insert_entity_storage
         tags:
             - { name: doctrine.event_listener, event: postFlush }

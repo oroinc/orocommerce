@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PricingBundle\Entity\EntityListener;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
@@ -11,9 +12,15 @@ use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use OroB2B\Bundle\PricingBundle\Entity\ChangedProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\ChangedProductPriceRepository;
 
 class ProductPriceEntityListener
 {
+    /**
+     * @var EntityRepository
+     */
+    protected $repository;
+
     /**
      * @var ExtraActionEntityStorageInterface
      */
@@ -33,7 +40,7 @@ class ProductPriceEntityListener
      */
     public function prePersist(ProductPrice $productPrice, LifecycleEventArgs $event)
     {
-        $this->persistChangedProductPrice($productPrice, $event);
+        $this->handleChanges($productPrice, $event);
     }
 
     /**
@@ -42,23 +49,7 @@ class ProductPriceEntityListener
      */
     public function preRemove(ProductPrice $productPrice, LifecycleEventArgs $event)
     {
-        $this->persistChangedProductPrice($productPrice, $event);
-    }
-
-    /**
-     * @param ProductPrice $productPrice
-     * @param LifecycleEventArgs $event
-     */
-    protected function persistChangedProductPrice(ProductPrice $productPrice, LifecycleEventArgs $event)
-    {
-        $changedProductPrice = $this->createChangedProductPrice($productPrice);
-
-        $em = $event->getEntityManager();
-        if ($this->isChangedProductPriceCreated($em, $changedProductPrice)) {
-            return;
-        }
-
-        $em->persist($changedProductPrice);
+        $this->handleChanges($productPrice, $event);
     }
 
     /**
@@ -67,11 +58,21 @@ class ProductPriceEntityListener
      */
     public function preUpdate(ProductPrice $productPrice, PreUpdateEventArgs $event)
     {
-        $em = $event->getEntityManager();
+        $this->handleChanges($productPrice, $event);
+    }
+
+    /**
+     * @param ProductPrice $productPrice
+     * @param LifecycleEventArgs $event
+     */
+    protected function handleChanges(ProductPrice $productPrice, LifecycleEventArgs $event)
+    {
         $changedProductPrice = $this->createChangedProductPrice($productPrice);
 
-        if ($this->isChangedProductPriceCreated($em, $changedProductPrice)
-            || $this->extraActionsStorage->isScheduledForInsert($changedProductPrice)) {
+        $em = $event->getEntityManager();
+        if ($this->extraActionsStorage->isScheduledForInsert($changedProductPrice)
+            || $this->getRepository($em)->isCreated($changedProductPrice)
+        ) {
             return;
         }
 
@@ -93,25 +94,14 @@ class ProductPriceEntityListener
 
     /**
      * @param EntityManager $em
-     * @param ChangedProductPrice $changedProductPrice
-     * @return bool
+     * @return ChangedProductPriceRepository
      */
-    protected function isChangedProductPriceCreated(EntityManager $em, ChangedProductPrice $changedProductPrice)
+    protected function getRepository(EntityManager $em)
     {
-        //check if same entity already has been scheduled for insert
-        $uow = $em->getUnitOfWork();
-        foreach ($uow->getScheduledEntityInsertions() as $entity) {
-            if ($entity == $changedProductPrice) {
-                return true;
-            }
-        };
+        if (!$this->repository) {
+            $this->repository = $em->getRepository('OroB2BPricingBundle:ChangedProductPrice');
+        }
 
-        //check if entity exists in db
-        $repository = $em->getRepository('OroB2BPricingBundle:ChangedProductPrice');
-
-        return (bool)$repository->findOneBy([
-                'priceList' => $changedProductPrice->getPriceList(),
-                'product' => $changedProductPrice->getProduct()
-        ]);
+        return $this->repository;
     }
 }
