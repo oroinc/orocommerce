@@ -154,20 +154,27 @@ class PriceListToAccountRepositoryTest extends WebTestCase
         $account = $this->getReference('account.level_1.3');
         /** @var Website $website */
         $website = $this->getReference('US');
-        $result = $this->getRepository()->getAccountWebsitePairsByAccountGroup($accountGroup, [$website->getId()]);
+        $result = $this->getRepository()->getAccountWebsitePairsByAccountGroupIds(
+            [$accountGroup->getId()],
+            [$website->getId()]
+        );
         $this->assertCount(1, $result);
         $this->assertEquals($result[0]['account'], $account);
         $this->assertEquals($result[0]['website'], $website);
     }
 
-    public function testGetWebsitesByAccount()
+    public function testGetAccountWebsitePairsByAccountIds()
     {
-        /** @var Account $account */
-        $account = $this->getReference('account.level_1_1');
-        /** @var Website[] $result */
-        $result = $this->getRepository()->getWebsitesByAccount($account);
-        $this->assertCount(1, $result);
-        $this->assertEquals([$this->getReference('US')], $result);
+        /** @var Account $account1 */
+        $account1 = $this->getReference('account.level_1_1');
+        /** @var Account $account2 */
+        $account2 = $this->getReference('account.level_1.3');
+        /** @var Website $website */
+        $website = $this->getReference('US');
+        $result = $this->getRepository()->getAccountWebsitePairsByAccountIds([$account1->getId(), $account2->getId()]);
+        $this->assertCount(2, $result);
+        $this->assertContains(['account' => $account1, 'website' => $website], $result);
+        $this->assertContains(['account' => $account2, 'website' => $website], $result);
     }
 
     /**

@@ -19,21 +19,17 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 
 class AccountGroupChangesListener
 {
-    /**
-     * @var ManagerRegistry
-     */
+    /** @var ManagerRegistry */
     protected $registry;
 
-    /**
-     * @var  EventDispatcherInterface
-     */
+    /** @var  EventDispatcherInterface */
     protected $eventDispatcher;
 
-    /** @var  AccountGroup */
-    protected $accountGroup;
+    /** @var  integer[] */
+    protected $accountGroupIds;
 
-    /** @var  Account */
-    protected $account;
+    /** @var  integer[] */
+    protected $accountIds;
 
     /** @var   PriceListToAccountRepository */
     protected $priceListToAccountRepository;
@@ -53,15 +49,15 @@ class AccountGroupChangesListener
      */
     public function postFlush(PostFlushEventArgs $args)
     {
-        if ($this->accountGroup) {
-            if ($this->recalculateByGroup($this->accountGroup)) {
-                $this->accountGroup = null;
+        if ($this->accountGroupIds) {
+            if ($this->recalculateByGroupIds($this->accountGroupIds)) {
+                $this->accountGroupIds = null;
                 $args->getEntityManager()->flush();
             };
         }
-        if ($this->account) {
-            if ($this->recalculateByAccount($this->account)) {
-                $this->account = null;
+        if ($this->accountIds) {
+            if ($this->recalculateByAccount($this->accountIds)) {
+                $this->accountIds = null;
                 $args->getEntityManager()->flush();
             }
         }
@@ -76,13 +72,12 @@ class AccountGroupChangesListener
 
         foreach ($unitOfWork->getScheduledEntityUpdates() as $entity) {
             if ($entity instanceof Account) {
-                $changeSet = $event->getEntityManager()->getUnitOfWork()->getEntityChangeSet($entity);
-                if (isset($changeSet['group'])) {
-                    $this->account = $entity;
+                $changeSet = $unitOfWork->getEntityChangeSet($entity);
+                if (isset($changeSet['group']) && !in_array($entity->getId(), $this->accountIds)) {
+                    $this->accountIds[] = $entity->getId();
                 }
             }
         }
-
     }
 
     /**
@@ -92,63 +87,44 @@ class AccountGroupChangesListener
     {
         $unitOfWork = $event->getEntityManager()->getUnitOfWork();
         foreach ($unitOfWork->getScheduledEntityDeletions() as $entity) {
-            if ($entity instanceof AccountGroup) {
-                $this->accountGroup = $entity;
+            if ($entity instanceof AccountGroup && !in_array($entity->getId(), $this->accountGroupIds)) {
+                $this->accountGroupIds[] = $entity->getId();
             }
         }
     }
 
     /**
-     * @param AccountGroup $accountGroup
+     * @param integer[] $accountGroupIds
      * @return bool
      */
-    protected function recalculateByGroup(AccountGroup $accountGroup)
+    protected function recalculateByGroupIds($accountGroupIds)
     {
-        $dispatched = false;
         /** @var integer[] $websiteIds */
         $websiteIds = $this->registry
             ->getManagerForClass('OroB2BPricingBundle:PriceListToAccountGroup')
             ->getRepository('OroB2BPricingBundle:PriceListToAccountGroup')
-            ->getWebsiteIdsByAccountGroup($accountGroup);
+            ->getWebsiteIdsByAccountGroups($accountGroupIds);
 
         if ($websiteIds) {
             $accountWebsitePairs = $this->getPriceListToAccountRepository()
-                ->getAccountWebsitePairsByAccountGroup($accountGroup, $websiteIds);
-            foreach ($accountWebsitePairs as $accountWebsitePair) {
-                /** @var Account $account */
-                $account = $accountWebsitePair['account'];
-                /** @var Website $website */
-                $website = $accountWebsitePair['website'];
-                $this->eventDispatcher->dispatch(
-                    PriceListCollectionChange::BEFORE_CHANGE,
-                    new PriceListCollectionChange($account, $website)
-                );
-                $dispatched = true;
-            }
+                ->getAccountWebsitePairsByAccountGroupIds($accountGroupIds, $websiteIds);
+
+            return $this->dispatchAccountWebsitePairs($accountWebsitePairs);
         }
 
-        return $dispatched;
+        return false;
     }
 
     /**
-     * @param Account $account
+     * @param integer[] $accountIds
      * @return bool
      */
-    protected function recalculateByAccount(Account $account)
+    protected function recalculateByAccount($accountIds)
     {
-        $dispatched = false;
+        $accountWebsitePairs = $this->getPriceListToAccountRepository()
+            ->getAccountWebsitePairsByAccountIds($accountIds);
 
-        $websites = $this->getPriceListToAccountRepository()->getWebsitesByAccount($account);
-        foreach ($websites as $website) {
-            $this->eventDispatcher->dispatch(
-                PriceListCollectionChange::BEFORE_CHANGE,
-                new PriceListCollectionChange($account, $website)
-            );
-            $dispatched = true;
-
-        }
-
-        return $dispatched;
+        return $this->dispatchAccountWebsitePairs($accountWebsitePairs);
     }
 
     /**
@@ -163,5 +139,27 @@ class AccountGroupChangesListener
         }
 
         return $this->priceListToAccountRepository;
+    }
+
+    /**
+     * @param $accountWebsitePairs
+     * @return bool
+     */
+    protected function dispatchAccountWebsitePairs($accountWebsitePairs)
+    {
+        $dispatched = false;
+        foreach ($accountWebsitePairs as $accountWebsitePair) {
+            /** @var Account $account */
+            $account = $accountWebsitePair['account'];
+            /** @var Website $website */
+            $website = $accountWebsitePair['website'];
+            $this->eventDispatcher->dispatch(
+                PriceListCollectionChange::BEFORE_CHANGE,
+                new PriceListCollectionChange($account, $website)
+            );
+            $dispatched = true;
+        }
+
+        return $dispatched;
     }
 }

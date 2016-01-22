@@ -145,7 +145,7 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
         $group = $this->getReference('account_group.group1');
         /** @var Website $website */
         $website = $this->getReference('US');
-        $ids = $this->getRepository()->getWebsiteIdsByAccountGroup($group);
+        $ids = $this->getRepository()->getWebsiteIdsByAccountGroups([$group->getId()]);
         $this->assertCount(1, $ids);
         $this->assertEquals($website->getId(), $ids[0]);
     }
