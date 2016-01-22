@@ -2,11 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
-
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -14,6 +10,13 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
+
+use OroB2B\Bundle\PricingBundle\Entity\PriceListFallback;
+use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepositoryInterface;
@@ -29,6 +32,11 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
      * @var ManagerRegistry
      */
     protected $registry;
+
+    /**
+     * @var  EventDispatcherInterface
+     */
+    protected $eventDispatcher;
 
     /**
      * @var EntityManager
@@ -73,10 +81,12 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
 
     /**
      * @param ManagerRegistry $registry
+     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, EventDispatcherInterface $eventDispatcher)
     {
         $this->registry = $registry;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -153,33 +163,61 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         }
 
         $em = $this->getEntityManager();
-        foreach ($form->all() as $priceListsByWebsite) {
+        /** @var FormInterface $priceListsByWebsites */
+        $priceListsByWebsites = $form->getParent()->get('priceListsByWebsites');
+
+        $fallbacks = $this->registry
+            ->getManagerForClass($this->getFallbackClassName())
+            ->getRepository($this->getFallbackClassName())
+            ->findBy([$this->getTargetFieldName() => $targetEntity]);
+        foreach ($priceListsByWebsites->all() as $priceListsByWebsite) {
             $website = $priceListsByWebsite->getConfig()->getOption('website');
+            $submittedFallback = $priceListsByWebsite->get('fallback')->getData();
+            $actualFallback = $this->getFallbackByWebsite($fallbacks, $website);
+            $hasFallbackChanges = $this->hasFallbackChanges($actualFallback, $submittedFallback);
             $actualPriceListsToTargetEntity = $this->getActualPriceListsToTargetEntity($targetEntity, $website);
 
             $submittedPriceLists = $this->getWebsiteSubmittedPriceLists($priceListsByWebsite);
+            $hasRemoveChanges = $this->removePriceListRelations(
+                $actualPriceListsToTargetEntity,
+                $submittedPriceLists,
+                $em
+            );
 
-            /** @var BasePriceListRelation[] $actualPriceListsToTargetEntity */
-            foreach ($actualPriceListsToTargetEntity as $priceListToTargetEntity) {
-                if (!in_array($priceListToTargetEntity->getPriceList(), $submittedPriceLists)) {
-                    $em->remove($priceListToTargetEntity);
-                }
-            }
             $priceListsWithPriority = $priceListsByWebsite
                 ->get(PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD)
                 ->all();
 
-            foreach ($priceListsWithPriority as $priceListWithPriority) {
-                $priceListWithPriorityData = $priceListWithPriority->getData();
-                $this->updatePriceListToTargetEntity(
-                    $em,
-                    $targetEntity,
-                    $website,
-                    $priceListWithPriorityData,
-                    $actualPriceListsToTargetEntity
+            $hasUpdateChanges = $this->updatePriceListsRelations(
+                $priceListsWithPriority,
+                $em,
+                $targetEntity,
+                $website,
+                $actualPriceListsToTargetEntity
+            );
+            if ($hasRemoveChanges || $hasUpdateChanges || $hasFallbackChanges) {
+                $this->eventDispatcher->dispatch(
+                    PriceListCollectionChange::BEFORE_CHANGE,
+                    new PriceListCollectionChange($targetEntity, $website)
                 );
             }
         }
+    }
+
+    /**
+     * @param PriceListFallback[] $fallbacks
+     * @param Website $website
+     * @return PriceListFallback|null
+     */
+    protected function getFallbackByWebsite($fallbacks, Website $website)
+    {
+        foreach ($fallbacks as $fallback) {
+            if ($fallback->getWebsite()->getId() === $website->getId()) {
+                return $fallback;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -188,6 +226,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
      * @param Website $website
      * @param array $priceListWithPriorityData
      * @param array $actualPriceListsToTargetEntity
+     * @return bool
      */
     protected function updatePriceListToTargetEntity(
         ObjectManager $em,
@@ -198,28 +237,33 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
     ) {
         $priceList = $priceListWithPriorityData[PriceListSelectWithPriorityType::PRICE_LIST_FIELD];
         if (!$priceList instanceof PriceList) {
-            return;
+            return false;
         }
-        if (in_array($priceList->getId(), array_keys($actualPriceListsToTargetEntity))) {
+        if (in_array($priceList->getId(), array_keys($actualPriceListsToTargetEntity), true)) {
             /** @var BasePriceListRelation $priceListToTargetEntity */
             $priceListToTargetEntity = $actualPriceListsToTargetEntity[$priceList->getId()];
+            $hasChanges = $priceListToTargetEntity->getPriority() !== $priceListWithPriorityData['priority']
+                || $priceListToTargetEntity->isMergeAllowed() !== $priceListWithPriorityData['mergeAllowed'];
         } else {
             $priceListToTargetEntity = $this->createPriceListToTargetEntity($targetEntity);
             $priceListToTargetEntity->setWebsite($website);
             $priceListToTargetEntity
                 ->setPriceList($priceListWithPriorityData[PriceListSelectWithPriorityType::PRICE_LIST_FIELD]);
+            $hasChanges = true;
         }
         $priceListToTargetEntity
             ->setPriority($priceListWithPriorityData[PriceListSelectWithPriorityType::PRIORITY_FIELD]);
         $priceListToTargetEntity
             ->setMergeAllowed($priceListWithPriorityData[PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD]);
         $em->persist($priceListToTargetEntity);
+
+        return $hasChanges;
     }
 
     /**
      * @param object $targetEntity
      * @param Website $website
-     * @return PriceList[]
+     * @return BasePriceListRelation[]
      */
     protected function getActualPriceListsToTargetEntity($targetEntity, Website $website)
     {
@@ -310,5 +354,72 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         }
 
         return $this->repository;
+    }
+
+    /**
+     * @param BasePriceListRelation[] $actualPriceListsToTargetEntity
+     * @param array $submittedPriceLists
+     * @param EntityManager $em
+     * @return bool
+     */
+    protected function removePriceListRelations(
+        $actualPriceListsToTargetEntity,
+        $submittedPriceLists,
+        EntityManager $em
+    ) {
+        $hasChanges = false;
+        /** @var BasePriceListRelation[] $actualPriceListsToTargetEntity */
+        foreach ($actualPriceListsToTargetEntity as $priceListToTargetEntity) {
+            if (!in_array($priceListToTargetEntity->getPriceList(), $submittedPriceLists, true)) {
+                $em->remove($priceListToTargetEntity);
+                $hasChanges = true;
+            }
+        }
+
+        return $hasChanges;
+    }
+
+    /**
+     * @param FormInterface[] $priceListsWithPriority
+     * @param EntityManager $em
+     * @param object $targetEntity
+     * @param Website $website
+     * @param BasePriceListRelation[] $actualPriceListsToTargetEntity
+     * @return bool
+     */
+    protected function updatePriceListsRelations(
+        $priceListsWithPriority,
+        $em,
+        $targetEntity,
+        Website $website,
+        $actualPriceListsToTargetEntity
+    ) {
+        $hasChanges = false;
+        foreach ($priceListsWithPriority as $priceListWithPriority) {
+            $priceListWithPriorityData = $priceListWithPriority->getData();
+            $hasUpdateChanges = $this->updatePriceListToTargetEntity(
+                $em,
+                $targetEntity,
+                $website,
+                $priceListWithPriorityData,
+                $actualPriceListsToTargetEntity
+            );
+            $hasChanges = $hasChanges || $hasUpdateChanges;
+        }
+
+        return $hasChanges;
+    }
+
+    /**
+     * @param PriceListFallback $actualFallback
+     * @param integer $submittedFallback
+     * @return bool
+     */
+    protected function hasFallbackChanges($actualFallback, $submittedFallback)
+    {
+        $hasFallbackChanges = (!$actualFallback && $submittedFallback !== $this->getDefaultFallback())
+            || ($actualFallback && $submittedFallback !== $actualFallback->getFallback());
+
+        return $hasFallbackChanges;
     }
 }

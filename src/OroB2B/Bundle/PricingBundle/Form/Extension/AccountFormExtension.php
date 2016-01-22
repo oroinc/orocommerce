@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
+
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountType;
 use OroB2B\Bundle\PricingBundle\Form\Type\AccountWebsiteScopedPriceListsType;
 

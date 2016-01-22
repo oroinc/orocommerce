@@ -10,7 +10,9 @@ use OroB2B\Bundle\AccountBundle\Form\Type\AccountGroupType;
  */
 class AccountGroupControllerTest extends AbstractPriceListsByEntityTestCase
 {
-    /** @var  AccountGroup */
+    /**
+     * @var  AccountGroup
+     */
     protected $accountGroup;
 
     public function setUp()
