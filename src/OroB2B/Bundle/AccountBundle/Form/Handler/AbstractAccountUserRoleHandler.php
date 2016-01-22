@@ -101,11 +101,16 @@ abstract class AbstractAccountUserRoleHandler extends AclRoleHandler
      */
     protected function processPrivileges(AbstractRole $role)
     {
+        $objectIdentityDescriptor = 'entity:OroB2B\Bundle\ProductBundle\Entity\Product';
+
+        $extension = $this->aclManager->getExtensionSelector()->select($objectIdentityDescriptor);
+        $maskBuilder = $extension->getMaskBuilder('VIEW');
+
         // product view always must be set
         $this->aclManager->setPermission(
             $this->aclManager->getSid($role),
-            $this->aclManager->getOid('entity:OroB2B\Bundle\ProductBundle\Entity\Product'),
-            EntityMaskBuilder::MASK_VIEW_SYSTEM
+            $this->aclManager->getOid($objectIdentityDescriptor),
+            $maskBuilder->getMask('MASK_VIEW_SYSTEM')
         );
 
         parent::processPrivileges($role);
