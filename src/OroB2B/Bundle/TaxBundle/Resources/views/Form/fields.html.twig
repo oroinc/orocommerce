@@ -60,21 +60,12 @@
     <td>{{ form_widget(form.zipRangeEnd) }} {{ form_errors(form.zipRangeEnd) }}</td>
 {% endblock %}
 
-{% block _tax_calculation_orob2b_tax___use_as_base_exclusions_value_entry_widget %}
-    <div class="tax-base-exclusion tax-base-exclusion-country">
-        {{ form_widget(form.country) }}{{ form_errors(form.country) }}
-        {{ oro_form_js_validation(form.country) }}
-    </div>
-    <div class="tax-base-exclusion tax-base-exclusion-region">
-        {{ form_widget(form.region) }}{{ form_errors(form.region) }}
-        {{ oro_form_js_validation(form.region) }}
-    </div>
-    <div class="tax-base-exclusion tax-base-exclusion-option">
-        {{ form_widget(form.option) }}{{ form_errors(form.option) }}
-    </div>
-{% endblock %}
+{% block _tax_calculation_orob2b_tax___use_as_base_exclusions_value_entry_country_row %}{{ _self.tax_address_block(form, false) }}{% endblock %}
+{% block _tax_calculation_orob2b_tax___use_as_base_exclusions_value_entry_region_row %}{{ _self.tax_address_block(form, false) }}{% endblock %}
+{% block _tax_calculation_orob2b_tax___use_as_base_exclusions_value_entry_region_text_row %}{{ _self.tax_address_block(form, false) }}{% endblock %}
+{% block _tax_calculation_orob2b_tax___use_as_base_exclusions_value_entry_option_row %}{{ _self.tax_address_block(form, false) }}{% endblock %}
 
-{% macro _tax_calculation_orob2b_tax___use_as_base_exclusions_value_item_prototype(widget) %}
+{% macro oro_collection_item_prototype(widget) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.prototype.vars.name %}
@@ -88,21 +79,23 @@
         {% set allow_delete = widget.parent.vars.allow_delete %}
         {% set allow_add_after = widget.parent.vars.allow_add_after %}
     {% endif %}
-    <div class="row-oro oro-multiselect-holder well tax-base-exclusion-row{% if not allow_delete %} not-removable{% endif %}" data-content="{{ name }}">
-        {% if allow_delete %}
-            <button class="removeRow btn btn-action btn-link tax-base-exclusion-remove-row" type="button" data-related="{{ name }}">×</button>
-        {% endif %}
-        {% if allow_add_after %}
-            <button class="addAfterRow btn btn-action btn-link" type="button" data-related="{{ name }}">+</button>
-        {% endif %}
-        {{ form_widget(form) }}
+    <div data-content="{{ name }}" data-validation-optional-group class="well tax-address-row {{ form.vars.name }}">
+        <div class="row-oro oro-multiselect-holder{% if not allow_delete %} not-removable{% endif %}">
+            {{ form_widget(form, {disabled: disabled}) }}
+            {% if allow_delete %}
+                <button class="removeRow btn btn-action btn-link" type="button" data-related="{{ name }}">×</button>
+            {% endif %}
+            {% if allow_add_after %}
+                <button class="addAfterRow btn btn-action btn-link" type="button" data-related="{{ name }}">+</button>
+            {% endif %}
+        </div>
     </div>
 {% endmacro %}
 
 {% block _tax_calculation_orob2b_tax___use_as_base_exclusions_value_widget %}
     {% spaceless %}
         {% if prototype is defined %}
-            {% set prototype_html = _self._tax_calculation_orob2b_tax___use_as_base_exclusions_value_item_prototype(form) %}
+            {% set prototype_html = _self.oro_collection_item_prototype(form) %}
         {% endif %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection collection-fields-list' }) %}
         {% set id = id ~ '_collection' %}
@@ -111,7 +104,7 @@
             <div {{ block('widget_container_attributes') }} data-last-index="{{ form.children|length}}" data-row-count-add="{{ form.vars.row_count_add }}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
                 {% if form.children|length %}
                     {% for child in form.children %}
-                        {{ _self._tax_calculation_orob2b_tax___use_as_base_exclusions_value_item_prototype(child) }}
+                        {{ _self.oro_collection_item_prototype(child) }}
                     {% endfor %}
                 {% elseif show_form_when_empty and prototype_html is defined %}
                     {% for i in 0..(form.vars.row_count_initial - 1) %}
@@ -128,16 +121,11 @@
     {% endspaceless %}
 {% endblock %}
 
-{% block tax_address_block %}
-    {% set use_parent_scope_value = form.parent.parent.vars.value.use_parent_scope_value %}
-    <div class="control-group">
-        <div class="controls tax-address">
-            {{ form_widget(form, {disabled: use_parent_scope_value}) }}
-        </div>
-    </div>
-{% endblock %}
+{% macro tax_address_block(form, disabled) %}
+    <div class="controls tax-address {{ form.vars.name }}">{{ form_widget(form, {disabled: disabled}) }}</div>
+{% endmacro %}
 
-{% block _tax_calculation_orob2b_tax___origin_address_value_country_row %}{{ block('tax_address_block') }}{% endblock %}
-{% block _tax_calculation_orob2b_tax___origin_address_value_region_row %}{{ block('tax_address_block') }}{% endblock %}
-{% block _tax_calculation_orob2b_tax___origin_address_value_region_text_row %}{{ block('tax_address_block') }}{% endblock %}
-{% block _tax_calculation_orob2b_tax___origin_address_value_postal_code_row %}{{ block('tax_address_block') }}{% endblock %}
+{% block _tax_calculation_orob2b_tax___origin_address_value_country_row %}<div class="control-group">{{ _self.tax_address_block(form, form.vars.value is empty) }}</div>{% endblock %}
+{% block _tax_calculation_orob2b_tax___origin_address_value_region_row %}<div class="control-group">{{ _self.tax_address_block(form, form.vars.value is empty) }}</div>{% endblock %}
+{% block _tax_calculation_orob2b_tax___origin_address_value_region_text_row %}<div class="control-group">{{ _self.tax_address_block(form, form.vars.value is empty) }}</div>{% endblock %}
+{% block _tax_calculation_orob2b_tax___origin_address_value_postal_code_row %}<div class="control-group">{{ _self.tax_address_block(form, form.vars.value is empty) }}</div>{% endblock %}

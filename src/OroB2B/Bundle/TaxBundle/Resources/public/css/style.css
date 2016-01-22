@@ -1,26 +1,32 @@
-.tax-base-exclusion {
-    margin: 2px 0;
-}
-
-.tax-base-exclusion-option select {
-    margin: 0 !important;
-}
-
-.tax-base-exclusion-option .selector {
+.tax-address-row .option .selector {
     margin: 0 !important;
     width: 294px !important;
 }
 
-.tax-base-exclusion-row {
-    padding: 3px !important;
-    width: 300px;
+.tax-address-row .region input {
+    width: 280px !important;
+    margin-bottom: 2px !important;
 }
 
-.tax-base-exclusion-remove-row {
+.tax-address-row {
+    padding: 3px !important;
+    width: 300px;
+    margin-bottom: 3px !important;
+}
+
+.tax-address-row .removeRow {
     float: right !important;
     margin: 0 !important;
 }
 
-.controls.tax-address {
-    margin-left: 0 !important;
+.tax-address {
+    margin: 0 !important;
+}
+
+.tax-address-row .tax-address {
+    margin: 2px 0 !important;
+}
+
+.tax-address-row .row-oro {
+    margin: 0 !important;
 }

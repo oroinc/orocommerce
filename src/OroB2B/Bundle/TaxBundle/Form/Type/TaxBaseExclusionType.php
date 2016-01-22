@@ -59,7 +59,14 @@ class TaxBaseExclusionType extends AbstractType
                     'constraints' => [new NotBlank()],
                 ]
             )
-            ->add('region', 'oro_region', ['required' => false, 'label' => 'oro.address.region.label'])
+            ->add(
+                'region',
+                'oro_region',
+                [
+                    'required' => false,
+                    'label' => 'oro.address.region.label',
+                ]
+            )
             ->add(
                 'option',
                 'choice',
@@ -78,10 +85,9 @@ class TaxBaseExclusionType extends AbstractType
                 'region_text',
                 'hidden',
                 [
-                    'required' => false,
-                    'mapped' => false,
-                    'random_id' => true,
+                    'required' => true,
                     'label' => 'oro.address.region_text.label',
+                    'attr' => ['placeholder' => 'oro.address.region_text.label'],
                 ]
             );
     }
