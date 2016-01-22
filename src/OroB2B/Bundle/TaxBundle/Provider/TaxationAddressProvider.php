@@ -23,23 +23,26 @@ class TaxationAddressProvider
      */
     public function getAddressForTaxation(Order $order)
     {
-        if ($this->settingsProvider->isOriginDefaultAddressType()) {
-            return $this->settingsProvider->getOrigin();
-        }
-
         $orderAddress = $this->getDestinationAddress($order);
 
         if (null === $orderAddress) {
             return null;
         }
 
-        // TODO: Check $orderAddress on base exceptions
-        if (false) {
-            // $exceptionAddressType have to get from found exception
-            $exceptionAddressType = TaxationSettingsProvider::DESTINATION_BILLING_ADDRESS;
-
-            $orderAddress = $this->getDestinationAddressByType($order, $exceptionAddressType);
+        $exclusionUsed = false;
+        $exclusions = $this->settingsProvider->getBaseAddressExclusions();
+        foreach ($exclusions as $exclusion) {
+            if ($orderAddress->getCountry() === $exclusion->getCountry() &&
+                ($exclusion->getRegion() === null || $exclusion->getRegion() === $orderAddress->getRegion())
+            ) {
+                $orderAddress = $this->getDestinationAddressByType($order, $exclusion->getOption());
+            }
         }
+
+        if (!$exclusionUsed && $this->settingsProvider->isOriginBaseByDefaultAddressType()) {
+            return $this->settingsProvider->getOrigin();
+        }
+
         return $orderAddress;
     }
 
@@ -60,10 +63,13 @@ class TaxationAddressProvider
     protected function getDestinationAddressByType(Order $order, $type)
     {
         $orderAddress = null;
-        if ($type === TaxationSettingsProvider::DESTINATION_BILLING_ADDRESS) {
-            $orderAddress = $order->getBillingAddress();
-        } elseif ($type === TaxationSettingsProvider::DESTINATION_SHIPPING_ADDRESS) {
-            $orderAddress = $order->getShippingAddress();
+        switch ($type) {
+            case TaxationSettingsProvider::DESTINATION_BILLING_ADDRESS:
+                $orderAddress = $order->getBillingAddress();
+                break;
+            case TaxationSettingsProvider::DESTINATION_SHIPPING_ADDRESS:
+                $orderAddress = $order->getShippingAddress();
+                break;
         }
 
         return $orderAddress;

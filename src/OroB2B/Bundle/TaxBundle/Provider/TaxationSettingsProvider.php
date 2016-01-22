@@ -5,13 +5,12 @@ namespace OroB2B\Bundle\TaxBundle\Provider;
 use Oro\Bundle\AddressBundle\Entity\Address;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
+use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
+
 class TaxationSettingsProvider
 {
     const DESTINATION_BILLING_ADDRESS = 'billing_address';
     const DESTINATION_SHIPPING_ADDRESS = 'shipping_address';
-
-    const DEFAULT_ADDRESS_TYPE_ORIGIN = 'default_address_type_origin';
-    const DEFAULT_ADDRESS_TYPE_DESTINATION = 'default_address_type_destination';
 
     const START_CALCULATION_UNIT_PRICE = 'unit_price';
     const START_CALCULATION_ROW_TOTAL = 'row_total';
@@ -65,22 +64,6 @@ class TaxationSettingsProvider
     }
 
     /**
-     * @return array
-     */
-    public function getShippingOriginAsBase()
-    {
-        return $this->configManager->get('orob2b_tax.shipping_origin_as_base');
-    }
-
-    /**
-     * @return bool
-     */
-    public function getDestinationAsBase()
-    {
-        return $this->configManager->get('orob2b_tax.destination_as_base');
-    }
-
-    /**
      * @return string
      */
     public function getDestination()
@@ -121,28 +104,43 @@ class TaxationSettingsProvider
     }
 
     /**
-     * @todo get this from real config
      * @return string
      */
-    public function getDefaultAddressType()
+    public function getBaseByDefaultAddressType()
     {
-        return self::DEFAULT_ADDRESS_TYPE_DESTINATION;
+        return $this->configManager->get('orob2b_tax.use_as_base_by_default');
     }
 
     /**
      * @return bool
      */
-    public function isOriginDefaultAddressType()
+    public function isOriginBaseByDefaultAddressType()
     {
-        return $this->getDefaultAddressType() === self::DEFAULT_ADDRESS_TYPE_ORIGIN;
+        return $this->getBaseByDefaultAddressType() === self::USE_AS_BASE_SHIPPING_ORIGIN;
     }
 
     /**
      * @return bool
      */
-    public function isDestinationDefaultAddressType()
+    public function isDestinationBaseByDefaultAddressType()
     {
-        return $this->getDefaultAddressType() === self::DEFAULT_ADDRESS_TYPE_DESTINATION;
+        return $this->getBaseByDefaultAddressType() === self::USE_AS_BASE_DESTINATION;
+    }
+
+    /**
+     * @return TaxBaseExclusion[]
+     */
+    public function getBaseAddressExclusions()
+    {
+        $exclusionsData = (array)$this->configManager->get('orob2b_tax.use_as_base_exclusions');
+
+        $exclusions = [];
+        foreach ($exclusionsData as $exclusion) {
+            // TODO: We should transform this to entities
+            $exclusions[] = new TaxBaseExclusion($exclusion);
+        }
+
+        return $exclusions;
     }
 
     /**

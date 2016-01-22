@@ -45,6 +45,11 @@ class TaxController extends Controller
      */
     public function viewAction(Tax $tax)
     {
+        $em = $this->get('doctrine.orm.default_entity_manager');
+        $order = $em->getRepository('OroB2BOrderBundle:Order')->findOneBy([]);
+        $taxManager = $this->get('orob2b_tax.manager.tax_manager');
+        $result = $taxManager->getTax($order);
+        $a = 0;
         return [
             'entity' => $tax
         ];
