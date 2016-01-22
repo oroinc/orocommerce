@@ -20,7 +20,8 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
         $visibility = $this->categoryVisibilityResolver->isCategoryVisible($category);
         $visibility = $this->convertVisibility($visibility);
 
-        $categoryIds = $this->getCategoryIdsForUpdate($category, null);
+        $childCategoryIds = $this->getChildCategoryIdsForUpdate($category);
+        $categoryIds = $this->getCategoryIdsForUpdate($category, $childCategoryIds);
         $this->updateProductVisibilityByCategory($categoryIds, $visibility);
 
         $this->updateAppropriateVisibilityRelatedEntities($category, $visibility);

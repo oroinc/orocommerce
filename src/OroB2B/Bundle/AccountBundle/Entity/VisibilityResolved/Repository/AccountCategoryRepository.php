@@ -21,20 +21,21 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 class AccountCategoryRepository extends EntityRepository
 {
     use CategoryVisibilityResolvedTermTrait;
+    use BasicOperationRepositoryTrait;
 
     /**
      * @param Category $category
      * @param Account $account
-     * @param int $configValue
-     * @return bool
+     * @return int visible|hidden|config
      */
-    public function isCategoryVisible(Category $category, Account $account, $configValue)
+    public function getFallbackToAccountVisibility(Category $category, Account $account)
     {
         $accountGroup = $account->getGroup();
 
         $qb = $this->getEntityManager()->createQueryBuilder();
 
-        $qb->select($this->formatConfigFallback('acvr.visibility, cvr.visibility', $configValue))
+        $configFallback = BaseCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
+        $qb->select('COALESCE(acvr.visibility, cvr.visibility, ' . $qb->expr()->literal($configFallback) . ')')
             ->from('OroB2BCatalogBundle:Category', 'category')
             ->leftJoin(
                 'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
@@ -44,7 +45,9 @@ class AccountCategoryRepository extends EntityRepository
             );
 
         if ($accountGroup) {
-            $qb->select($this->formatConfigFallback('acvr.visibility, agcvr.visibility, cvr.visibility', $configValue))
+            $qb->select('COALESCE(' .
+                'acvr.visibility, agcvr.visibility, cvr.visibility, ' . $qb->expr()->literal($configFallback) .
+            ')')
                 ->leftJoin(
                     'OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
                     'agcvr',
@@ -71,9 +74,23 @@ class AccountCategoryRepository extends EntityRepository
             ->setParameter('category', $category)
             ->setParameter('account', $account);
 
-        $visibility = $qb->getQuery()->getSingleScalarResult();
+        return (int)$qb->getQuery()->getSingleScalarResult();
+    }
 
-        return (int)$visibility === BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE;
+    /**
+     * @param Category $category
+     * @param Account $account
+     * @param int $configValue
+     * @return bool
+     */
+    public function isCategoryVisible(Category $category, Account $account, $configValue)
+    {
+        $visibility = $this->getFallbackToAccountVisibility($category, $account);
+        if ($visibility === AccountCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG) {
+            $visibility = $configValue;
+        }
+
+        return $visibility === AccountCategoryVisibilityResolved::VISIBILITY_VISIBLE;
     }
 
     /**
@@ -104,6 +121,37 @@ class AccountCategoryRepository extends EntityRepository
         $categoryVisibilityResolved = $qb->getQuery()->getArrayResult();
 
         return array_map('current', $categoryVisibilityResolved);
+    }
+
+    /**
+     * @param array $categoryIds
+     * @param int $visibility
+     * @param Account $account
+     */
+    public function updateAccountCategoryVisibilityByCategory(Account $account, array $categoryIds, $visibility)
+    {
+        if (!$categoryIds) {
+            return;
+        }
+
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->update('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved', 'acvr')
+            ->set('acvr.visibility', $visibility)
+            ->where($qb->expr()->eq('acvr.account', ':account'))
+            ->andWhere($qb->expr()->in('IDENTITY(acvr.category)', ':categoryIds'))
+            ->setParameters(['account' => $account, 'categoryIds' => $categoryIds]);
+
+        $qb->getQuery()->execute();
+    }
+
+    /**
+     * @param Category $category
+     * @param Account $account
+     * @return null|AccountCategoryVisibilityResolved
+     */
+    public function findByPrimaryKey(Category $category, Account $account)
+    {
+        return $this->findOneBy(['account' => $account, 'category' => $category]);
     }
 
     public function clearTable()

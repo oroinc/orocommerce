@@ -2,12 +2,18 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category;
 
+use Doctrine\ORM\EntityManager;
+
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeAccountSubtreeCacheBuilder;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
@@ -32,7 +38,78 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
         $category = $visibilitySettings->getCategory();
         $account = $visibilitySettings->getAccount();
 
-        $this->visibilityChangeAccountSubtreeCacheBuilder->resolveVisibilitySettings($category, $account);
+        $selectedVisibility = $visibilitySettings->getVisibility();
+
+        $insert = false;
+        $delete = false;
+        $update = [];
+        $where = ['account' => $account, 'category' => $category];
+
+        $repository = $this->getRepository();
+
+        $hasAccountCategoryVisibilityResolved = $repository->hasEntity($where);
+
+        if (!$hasAccountCategoryVisibilityResolved
+            && $selectedVisibility !== AccountCategoryVisibility::ACCOUNT_GROUP
+        ) {
+            $insert = true;
+        }
+
+        if (in_array($selectedVisibility, [AccountCategoryVisibility::HIDDEN, AccountCategoryVisibility::VISIBLE])) {
+            $visibility = $this->convertStaticVisibility($selectedVisibility);
+            $update = [
+                'visibility' => $visibility,
+                'sourceCategoryVisibility' => $visibilitySettings,
+                'source' => AccountCategoryVisibilityResolved::SOURCE_STATIC,
+            ];
+        } elseif ($selectedVisibility === AccountCategoryVisibility::CATEGORY) {
+            $visibility = $this->registry
+                ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+                ->getRepository('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+                ->getFallbackToAllVisibility($category);
+            $update = [
+                'visibility' => $visibility,
+                'sourceCategoryVisibility' => $visibilitySettings,
+                'source' => AccountCategoryVisibilityResolved::SOURCE_STATIC,
+            ];
+        } elseif ($selectedVisibility === AccountCategoryVisibility::ACCOUNT_GROUP) {
+            // Fallback to account group is default for account and should be removed if exists
+            if ($hasAccountCategoryVisibilityResolved) {
+                $delete = true;
+            }
+
+            $accountGroup = $account->getGroup();
+            if ($accountGroup) {
+                $visibility = $this->registry
+                    ->getManagerForClass(
+                        'OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved'
+                    )
+                    ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+                    ->getFallbackToGroupVisibility($category, $accountGroup);
+            } else {
+                $visibility = $this->registry
+                    ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+                    ->getRepository('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+                    ->getFallbackToAllVisibility($category);
+            }
+        } elseif ($selectedVisibility === AccountCategoryVisibility::PARENT_CATEGORY) {
+            $visibility = $this->getParentCategoryVisibility($category, $account);
+            $update = [
+                'visibility' => $visibility,
+                'sourceCategoryVisibility' => $visibilitySettings,
+                'source' => AccountCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+            ];
+        } else {
+            throw new \InvalidArgumentException(sprintf('Unknown visibility %s', $selectedVisibility));
+        }
+
+        $this->executeDbQuery($repository, $insert, $delete, $update, $where);
+
+        $this->visibilityChangeAccountSubtreeCacheBuilder->resolveVisibilitySettings(
+            $category,
+            $account,
+            $visibility
+        );
     }
 
     /**
@@ -127,5 +204,38 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
         $accountVisibilities[$visibilityId]['resolved_visibility'] = $resolvedVisibility;
 
         return $resolvedVisibility;
+    }
+
+    /**
+     * @return EntityManager
+     */
+    protected function getEntityManager()
+    {
+        return $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved');
+    }
+
+    /**
+     * @return AccountCategoryRepository
+     */
+    protected function getRepository()
+    {
+        return $this->getEntityManager()
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved');
+    }
+
+    /**
+     * @param Category $category
+     * @param Account $account
+     * @return int
+     */
+    protected function getParentCategoryVisibility(Category $category, Account $account)
+    {
+        $parentCategory = $category->getParentCategory();
+        if ($parentCategory) {
+            return $this->getRepository()->getFallbackToAccountVisibility($parentCategory, $account);
+        } else {
+            return AccountCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
+        }
     }
 }

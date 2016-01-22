@@ -24,7 +24,8 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
         $visibility = $this->categoryVisibilityResolver->isCategoryVisibleForAccountGroup($category, $accountGroup);
         $visibility = $this->convertVisibility($visibility);
 
-        $categoryIds = $this->getCategoryIdsForUpdate($category, $accountGroup);
+        $childCategoryIds = $this->getChildCategoryIdsForUpdate($category, $accountGroup);
+        $categoryIds = $this->getCategoryIdsForUpdate($category, $childCategoryIds);
         $this->updateProductVisibilityByCategory($categoryIds, $visibility, $accountGroup);
 
         $this->accountGroup = $accountGroup;

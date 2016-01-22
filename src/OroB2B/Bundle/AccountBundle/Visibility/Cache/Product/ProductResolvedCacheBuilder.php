@@ -56,7 +56,10 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
                     'category' => $category
                 ];
             } else {
-                $update = $this->resolveConfigValue($visibilitySettings);
+                // default fallback
+                if ($hasProductVisibilityResolved) {
+                    $delete = true;
+                }
             }
         } elseif ($selectedVisibility === ProductVisibility::CONFIG) {
             if ($hasProductVisibilityResolved) {

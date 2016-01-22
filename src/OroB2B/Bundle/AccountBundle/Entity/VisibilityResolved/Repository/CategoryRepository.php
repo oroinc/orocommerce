@@ -29,21 +29,12 @@ class CategoryRepository extends EntityRepository
      */
     public function isCategoryVisible(Category $category, $configValue)
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select($this->formatConfigFallback('cvr.visibility', $configValue))
-            ->from('OroB2BCatalogBundle:Category', 'category')
-            ->leftJoin(
-                'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
-                'cvr',
-                Join::WITH,
-                $qb->expr()->eq('cvr.category', 'category')
-            )
-            ->where($qb->expr()->eq('category', ':category'))
-            ->setParameter('category', $category);
+        $visibility = $this->getFallbackToAllVisibility($category);
+        if ($visibility === CategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG) {
+            $visibility = $configValue;
+        }
 
-        $visibility = $qb->getQuery()->getSingleScalarResult();
-
-        return (int)$visibility === CategoryVisibilityResolved::VISIBILITY_VISIBLE;
+        return $visibility === CategoryVisibilityResolved::VISIBILITY_VISIBLE;
     }
 
     /**
@@ -165,5 +156,28 @@ class CategoryRepository extends EntityRepository
             )
             ->getQuery()
             ->getScalarResult();
+    }
+
+    /**
+     * @param Category $category
+     * @return int visible|hidden|config
+     */
+    public function getFallbackToAllVisibility(Category $category)
+    {
+        $configFallback = CategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->select('COALESCE(cvr.visibility, '. $qb->expr()->literal($configFallback).')')
+            ->from('OroB2BCatalogBundle:Category', 'category')
+            ->leftJoin(
+                'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+                'cvr',
+                Join::WITH,
+                $qb->expr()->eq('cvr.category', 'category')
+            )
+            ->where($qb->expr()->eq('category', ':category'))
+            ->setParameter('category', $category);
+
+        return (int)$qb->getQuery()->getSingleScalarResult();
     }
 }
