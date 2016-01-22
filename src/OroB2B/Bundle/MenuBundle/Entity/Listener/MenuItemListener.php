@@ -4,22 +4,24 @@ namespace OroB2B\Bundle\MenuBundle\Entity\Listener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
+use Oro\Component\DependencyInjection\ServiceLink;
+
 use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
 use OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
 
 class MenuItemListener
 {
     /**
-     * @var DatabaseMenuProvider
+     * @var ServiceLink
      */
-    protected $provider;
+    protected $providerLink;
 
     /**
-     * @param DatabaseMenuProvider $provider
+     * @param ServiceLink $providerLink
      */
-    public function __construct(DatabaseMenuProvider $provider)
+    public function __construct(ServiceLink $providerLink)
     {
-        $this->provider = $provider;
+        $this->providerLink = $providerLink;
     }
 
     /**
@@ -46,11 +48,14 @@ class MenuItemListener
      */
     public function postRemove(MenuItem $menuItem, LifecycleEventArgs $event)
     {
-        if ($menuItem->getParentMenuItem()) {
+        if ($menuItem->getParent()) {
             $this->rebuildCache($menuItem, $event);
         } else {
+            if (!$menuItem->getDefaultTitle()) {
+                return;
+            }
             $alias = $menuItem->getDefaultTitle()->getString();
-            $this->provider->clearCacheByAlias($alias);
+            $this->getProvider()->clearCacheByAlias($alias);
         }
     }
 
@@ -66,8 +71,19 @@ class MenuItemListener
         }
         /** @var MenuItem $root */
         $root = $event->getEntityManager()->find('OroB2BMenuBundle:MenuItem', $rootId);
+        if (!$root) {
+            return;
+        }
 
         $alias = $root->getDefaultTitle()->getString();
-        $this->provider->rebuildCacheByAlias($alias);
+        $this->getProvider()->rebuildCacheByAlias($alias);
+    }
+
+    /**
+     * @return DatabaseMenuProvider
+     */
+    protected function getProvider()
+    {
+        return $this->providerLink->getService();
     }
 }

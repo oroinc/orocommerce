@@ -57,10 +57,10 @@ class DatabaseBuilder implements BuilderInterface
      */
     protected function getLocale(array $options)
     {
-        if (isset($options['extras']) && isset($options['extras'][DatabaseMenuProvider::LOCALE_OPTION])
-            && $options['extras'][DatabaseMenuProvider::LOCALE_OPTION] instanceof Locale
+        if (array_key_exists('extras', $options) && array_key_exists(MenuItem::LOCALE_OPTION, $options['extras'])
+            && $options['extras'][MenuItem::LOCALE_OPTION] instanceof Locale
         ) {
-            return $options['extras'][DatabaseMenuProvider::LOCALE_OPTION];
+            return $options['extras'][MenuItem::LOCALE_OPTION];
         }
         return null;
     }

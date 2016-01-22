@@ -15,16 +15,22 @@ trait FallbackTrait
      */
     protected function getLocalizedFallbackValue(Collection $values, Locale $locale = null)
     {
-        $values = $values->filter(function (LocalizedFallbackValue $title) use ($locale) {
-            return $locale === $title->getLocale();
-        });
+        $filteredValues = $values->filter(
+            function (LocalizedFallbackValue $title) use ($locale) {
+                return $locale === $title->getLocale();
+            }
+        );
 
         // TODO: implement with fallback
-        if ($values->count() > 1) {
+        if ($filteredValues->count() > 1) {
             $localeTitle = $locale ? $locale->getTitle() : 'default';
             throw new \LogicException(sprintf('There must be only one %s title', $localeTitle));
         }
+        $value = $filteredValues->first();
+        if (!$value && $locale !== null) {
+            $value = $this->getLocalizedFallbackValue($values); // get default value
+        }
 
-        return $values->first();
+        return $value;
     }
 }

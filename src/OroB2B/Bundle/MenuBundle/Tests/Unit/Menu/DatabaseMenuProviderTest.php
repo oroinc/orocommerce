@@ -87,7 +87,7 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->cache = $this->getMockBuilder('Doctrine\Common\Cache\CacheProvider')
             ->disableOriginalConstructor()
-            ->setMethods(['fetch', 'save', 'contains'])
+            ->setMethods(['fetch', 'save', 'contains', 'delete'])
             ->getMockForAbstractClass();
     }
 

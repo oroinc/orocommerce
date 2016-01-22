@@ -7,7 +7,7 @@
 {% set formAction = entityId ? url('orob2b_menu_item_update', {'id': entityId}) : url('orob2b_menu_item_create', {'id': parentId}) %}
 
 {% oro_title_set({params : {
-    "%title%": entity.defaultTitle|default('N/A'|trans),
+    "%title%": entity.defaultTitle.string|default('N/A'|trans),
     "%entityName%": (parentId ? 'orob2b.menu.menuitem.entity_label' : 'orob2b.menu.menuitem.roots_entity_label')|trans,
 } }) %}
 
