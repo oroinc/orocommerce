@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\EventListener;
+namespace OroB2B\Bundle\TaxBundle\EventListener\Config;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
@@ -12,7 +12,7 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 use OroB2B\Bundle\TaxBundle\DependencyInjection\OroB2BTaxExtension;
 use OroB2B\Bundle\TaxBundle\Model\Address;
 
-class AddressConfigEventListener
+class AddressEventListener
 {
     const KEY = 'origin_address';
 

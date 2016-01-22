@@ -7,33 +7,26 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 
-use OroB2B\Bundle\TaxBundle\Form\Type\TaxBaseExclusionType;
-use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
+use OroB2B\Bundle\TaxBundle\Form\Type\OriginAddressType;
+use OroB2B\Bundle\TaxBundle\Model\Address;
 use OroB2B\Bundle\TaxBundle\Tests\Unit\Stub\AddressCountryAndRegionSubscriberStub;
 
-class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
+class OriginAddressTypeTest extends AbstractAddressTestCase
 {
-    /** @var TaxBaseExclusionType */
+    /** @var OriginAddressType */
     protected $formType;
 
     protected function setUp()
     {
-        $this->formType = new TaxBaseExclusionType(new AddressCountryAndRegionSubscriberStub());
-        $this->formType->setDataClass('\ArrayObject');
+        $this->formType = new OriginAddressType(new AddressCountryAndRegionSubscriberStub());
+        $this->formType->setDataClass('OroB2B\Bundle\TaxBundle\Model\Address');
 
         parent::setUp();
     }
 
-    protected function tearDown()
-    {
-        unset($this->formType);
-
-        parent::tearDown();
-    }
-
     public function testGetName()
     {
-        $this->assertEquals('orob2b_tax_base_exclusion', $this->formType->getName());
+        $this->assertEquals('orob2b_tax_origin_address', $this->formType->getName());
     }
 
     public function testConfigureOptions()
@@ -43,7 +36,7 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
         $options = $resolver->resolve();
 
         $this->assertArrayHasKey('data_class', $options);
-        $this->assertEquals('\ArrayObject', $options['data_class']);
+        $this->assertEquals('OroB2B\Bundle\TaxBundle\Model\Address', $options['data_class']);
     }
 
     /**
@@ -86,66 +79,70 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
         return [
             'valid form' => [
                 'isValid' => true,
-                'defaultData' => new TaxBaseExclusion(),
-                'viewData' => new TaxBaseExclusion(),
+                'defaultData' => new Address(),
+                'viewData' => new Address(),
                 'submittedData' => [
                     'country' => 'US',
                     'region' => 'US-AL',
-                    'option' => 'shipping_origin',
+                    'region_text' => 'Alabama',
+                    'postal_code' => '35004',
                 ],
                 'expectedData' => [
                     'country' => $country,
                     'region' => (new Region('US-AL'))->setCountry($country),
-                    'region_text' => null,
-                    'option' => 'shipping_origin',
+                    'region_text' => 'Alabama',
+                    'postal_code' => '35004',
                 ],
             ],
-            'valid without region' => [
-                'isValid' => true,
-                'defaultData' => new TaxBaseExclusion(),
-                'viewData' => new TaxBaseExclusion(),
+            'invalid without region' => [
+                'isValid' => false,
+                'defaultData' => new Address(),
+                'viewData' => new Address(),
                 'submittedData' => [
                     'country' => 'US',
                     'region' => null,
-                    'option' => 'shipping_origin',
+                    'region_text' => 'Alabama',
+                    'postal_code' => '35004',
                 ],
                 'expectedData' => [
                     'country' => $country,
                     'region' => null,
-                    'region_text' => null,
-                    'option' => 'shipping_origin',
+                    'region_text' => 'Alabama',
+                    'postal_code' => '35004',
                 ],
             ],
             'invalid without country' => [
                 'isValid' => false,
-                'defaultData' => new TaxBaseExclusion(),
-                'viewData' => new TaxBaseExclusion(),
+                'defaultData' => new Address(),
+                'viewData' => new Address(),
                 'submittedData' => [
                     'country' => null,
                     'region' => 'US-AL',
-                    'option' => 'shipping_origin',
+                    'region_text' => 'Alabama',
+                    'postal_code' => '35004',
                 ],
                 'expectedData' => [
                     'country' => null,
                     'region' => (new Region('US-AL'))->setCountry($country),
-                    'region_text' => null,
-                    'option' => 'shipping_origin',
+                    'region_text' => 'Alabama',
+                    'postal_code' => '35004',
                 ],
             ],
-            'invalid without option' => [
+            'invalid without postal code' => [
                 'isValid' => false,
-                'defaultData' => new TaxBaseExclusion(),
-                'viewData' => new TaxBaseExclusion(),
+                'defaultData' => new Address(),
+                'viewData' => new Address(),
                 'submittedData' => [
                     'country' => 'US',
                     'region' => 'US-AL',
-                    'option' => 'false',
+                    'region_text' => 'Alabama',
+                    'postal_code' => null,
                 ],
                 'expectedData' => [
                     'country' => $country,
                     'region' => (new Region('US-AL'))->setCountry($country),
-                    'region_text' => null,
-                    'option' => null,
+                    'region_text' => 'Alabama',
+                    'postal_code' => null,
                 ],
             ],
         ];

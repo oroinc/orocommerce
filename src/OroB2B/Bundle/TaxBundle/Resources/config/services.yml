@@ -18,7 +18,8 @@ parameters:
     orob2b_tax.event_listener.product_form_view.class: OroB2B\Bundle\TaxBundle\EventListener\ProductFormViewListener
     orob2b_tax.event_listener.tax_code_grid.class: OroB2B\Bundle\TaxBundle\EventListener\TaxCodeGridListener
     orob2b_tax.event_listener.account_grid.class: OroB2B\Bundle\TaxBundle\EventListener\AccountTaxCodeGridListener
-    orob2b_tax.event_listener.address_config.class: OroB2B\Bundle\TaxBundle\EventListener\AddressConfigEventListener
+    orob2b_tax.event_listener.config.address.class: OroB2B\Bundle\TaxBundle\EventListener\Config\AddressEventListener
+    orob2b_tax.event_listener.config.digital_products.class: OroB2B\Bundle\TaxBundle\EventListener\Config\DigitalProductEventListener
 
     orob2b_tax.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
@@ -204,10 +205,30 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-select-grid, method: onBuildBefore }
 
-    orob2b_tax.event_listener.address_config:
-        class: %orob2b_tax.event_listener.address_config.class%
+    orob2b_tax.event_listener.config.address:
+        class: %orob2b_tax.event_listener.config.address.class%
         arguments:
             - @oro_entity.doctrine_helper
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
+
+    orob2b_tax.event_listener.config.digital_products_eu:
+        class: %orob2b_tax.event_listener.config.digital_products.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+            - %orob2b_tax.entity.product_tax_code.class%
+            - 'digital_products_eu'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
+
+    orob2b_tax.event_listener.config.digital_products_us:
+        class: %orob2b_tax.event_listener.config.digital_products.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+            - %orob2b_tax.entity.product_tax_code.class%
+            - 'digital_products_us'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
