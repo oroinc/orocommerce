@@ -53,7 +53,18 @@ class MenuItemListenerTest extends \PHPUnit_Framework_TestCase
         $this->menuProvider = $this->getMockBuilder('OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->listener = new MenuItemListener($this->menuProvider);
+
+        $menuProviderLink = $this
+            ->getMockBuilder('Oro\Component\DependencyInjection\ServiceLink')
+            ->setMethods(['getService'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $menuProviderLink->expects($this->any())
+            ->method('getService')
+            ->will($this->returnValue($this->menuProvider));
+
+        $this->listener = new MenuItemListener($menuProviderLink);
 
         $this->entity = new MenuItem();
 
@@ -89,7 +100,7 @@ class MenuItemListenerTest extends \PHPUnit_Framework_TestCase
     public function testPostRemoveWithRegularMenuItem()
     {
         $this->entity = new MenuItem();
-        $this->entity->setParentMenuItem(new MenuItem());
+        $this->entity->setParent(new MenuItem());
         $this->assertCacheRebuild();
 
         $this->event = $this->getEventMock($this->entity);

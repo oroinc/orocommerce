@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\MenuBundle\Tests\Functional\JsTree;
 
+use Doctrine\ORM\EntityManager;
+
 use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
 use OroB2B\Component\Tree\Handler\AbstractTreeHandler;
 use OroB2B\Component\Tree\Test\AbstractTreeHandlerTestCase;
@@ -111,54 +113,6 @@ class MenuItemTreeHandlerTest extends AbstractTreeHandlerTestCase
                     ],
                 ]
             ],
-            'all without root' => [
-                'root' => null,
-                'includeRoot' => false,
-                'expectedData' => [
-                    [
-                        'entity' => 'menu_item.1',
-                        'parent' => AbstractTreeHandler::ROOT_PARENT_VALUE,
-                        'state' => [
-                            'opened' => true
-                        ],
-                    ],
-                    [
-                        'entity' => 'menu_item.1_2',
-                        'parent' => 'menu_item.1',
-                        'state' => [
-                            'opened' => false
-                        ],
-                    ],
-                    [
-                        'entity' => 'menu_item.1_3',
-                        'parent' => 'menu_item.1',
-                        'state' => [
-                            'opened' => false
-                        ],
-                    ],
-                    [
-                        'entity' => 'menu_item.4',
-                        'parent' => AbstractTreeHandler::ROOT_PARENT_VALUE,
-                        'state' => [
-                            'opened' => true
-                        ],
-                    ],
-                    [
-                        'entity' => 'menu_item.4_5',
-                        'parent' => 'menu_item.4',
-                        'state' => [
-                            'opened' => false
-                        ],
-                    ],
-                    [
-                        'entity' => 'menu_item.4_5_6',
-                        'parent' => 'menu_item.4_5',
-                        'state' => [
-                            'opened' => false
-                        ],
-                    ],
-                ]
-            ],
         ];
     }
 
@@ -181,6 +135,7 @@ class MenuItemTreeHandlerTest extends AbstractTreeHandlerTestCase
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     public function moveDataProvider()
@@ -199,12 +154,26 @@ class MenuItemTreeHandlerTest extends AbstractTreeHandlerTestCase
                     'menu_item.1_3' => [
                         'parent' => 'menu_item.1_2'
                     ],
+                ]
+            ],
+            [
+                'entity' => 'menu_item.4_5_6',
+                'parent' => 'menu_item.4',
+                'position' => 1,
+                'expectedStatus' => ['status' => AbstractTreeHandler::SUCCESS_STATUS],
+                'expectedData' => [
                     'menu_item.4' => [],
                     'menu_item.4_5' => [
                         'parent' => 'menu_item.4'
                     ],
                     'menu_item.4_5_6' => [
+                        'parent' => 'menu_item.4'
+                    ],
+                    'menu_item.4_5_7' => [
                         'parent' => 'menu_item.4_5'
+                    ],
+                    'menu_item.4_5_6_8' => [
+                        'parent' => 'menu_item.4_5_6'
                     ],
                 ]
             ],
@@ -212,21 +181,23 @@ class MenuItemTreeHandlerTest extends AbstractTreeHandlerTestCase
                 'entity' => 'menu_item.4_5_6',
                 'parent' => AbstractTreeHandler::ROOT_PARENT_VALUE,
                 'position' => 1,
-                'expectedStatus' => ['status' => AbstractTreeHandler::SUCCESS_STATUS],
+                'expectedStatus' => [
+                    'status' => AbstractTreeHandler::ERROR_STATUS,
+                    'error' => 'Existing menu can\'t be the root',
+                ],
                 'expectedData' => [
-                    'menu_item.1' => [],
-                    'menu_item.1_2' => [
-                        'parent' => 'menu_item.1'
-                    ],
-                    'menu_item.1_3' => [
-                        'parent' => 'menu_item.1_2'
-                    ],
                     'menu_item.4' => [],
                     'menu_item.4_5' => [
                         'parent' => 'menu_item.4'
                     ],
                     'menu_item.4_5_6' => [
                         'parent' => 'menu_item.4'
+                    ],
+                    'menu_item.4_5_7' => [
+                        'parent' => 'menu_item.4_5'
+                    ],
+                    'menu_item.4_5_6_8' => [
+                        'parent' => 'menu_item.4_5_6'
                     ],
                 ]
             ],
@@ -239,13 +210,6 @@ class MenuItemTreeHandlerTest extends AbstractTreeHandlerTestCase
                     'error' => 'You can\'t move Menu Item to another menu.',
                 ],
                 'expectedData' => [
-                    'menu_item.1' => [],
-                    'menu_item.1_2' => [
-                        'parent' => 'menu_item.1'
-                    ],
-                    'menu_item.1_3' => [
-                        'parent' => 'menu_item.1_2'
-                    ],
                     'menu_item.4' => [],
                     'menu_item.4_5' => [
                         'parent' => 'menu_item.4'
@@ -253,22 +217,31 @@ class MenuItemTreeHandlerTest extends AbstractTreeHandlerTestCase
                     'menu_item.4_5_6' => [
                         'parent' => 'menu_item.4'
                     ],
+                    'menu_item.4_5_7' => [
+                        'parent' => 'menu_item.4_5'
+                    ],
+                    'menu_item.4_5_6_8' => [
+                        'parent' => 'menu_item.4_5_6'
+                    ],
                 ]
             ],
         ];
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    protected function getActualTree()
+    protected function getActualNodeHierarchy($entityId, $parentId, $position)
     {
-        $entities = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BMenuBundle:MenuItem')
-            ->getRepository('OroB2BMenuBundle:MenuItem')->findBy([], ['level' => 'DESC', 'left' => 'DESC']);
+        /** @var EntityManager $em */
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BMenuBundle:MenuItem');
+        $entity = $em->getReference('OroB2BMenuBundle:MenuItem', $entityId);
+        $entities = $em->getRepository('OroB2BMenuBundle:MenuItem')
+            ->findBy(['root' => $entity->getRoot()], ['level' => 'DESC', 'left' => 'DESC']);
         return array_reduce($entities, function ($result, MenuItem $menuItem) {
             $result[$menuItem->getDefaultTitle()->getString()] = [];
-            if ($menuItem->getParentMenuItem()) {
-                $result[$menuItem->getDefaultTitle()->getString()]['parent'] = $menuItem->getParentMenuItem()
+            if ($menuItem->getParent()) {
+                $result[$menuItem->getDefaultTitle()->getString()]['parent'] = $menuItem->getParent()
                     ->getDefaultTitle()->getString();
             }
             return $result;
