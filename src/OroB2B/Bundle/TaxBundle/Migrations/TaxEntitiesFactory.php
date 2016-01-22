@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\TaxBundle\Migrations;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
@@ -20,7 +20,7 @@ class TaxEntitiesFactory
     /**
      * @param string $code
      * @param string $description
-     * @param EntityManager $persistTo (optional)
+     * @param ObjectManager $persistTo (optional)
      * @param AbstractFixture $addReferenceTo (optional)
      *
      * @return AccountTaxCode
@@ -28,7 +28,7 @@ class TaxEntitiesFactory
     public function createAccountTaxCode(
         $code,
         $description,
-        EntityManager $persistTo = null,
+        ObjectManager $persistTo = null,
         AbstractFixture $addReferenceTo = null
     ) {
         $taxCode = new AccountTaxCode();
@@ -49,7 +49,7 @@ class TaxEntitiesFactory
     /**
      * @param string $code
      * @param string $description
-     * @param EntityManager $persistTo (optional)
+     * @param ObjectManager $persistTo (optional)
      * @param AbstractFixture $addReferenceTo (optional)
      *
      * @return ProductTaxCode
@@ -57,7 +57,7 @@ class TaxEntitiesFactory
     public function createProductTaxCode(
         $code,
         $description,
-        EntityManager $persistTo = null,
+        ObjectManager $persistTo = null,
         AbstractFixture $addReferenceTo = null
     ) {
         $taxCode = new ProductTaxCode();
@@ -79,7 +79,7 @@ class TaxEntitiesFactory
      * @param float $rate
      * @param string $code
      * @param string $description
-     * @param EntityManager $persistTo (optional)
+     * @param ObjectManager $persistTo (optional)
      * @param AbstractFixture $addReferenceTo (optional)
      *
      * @return Tax
@@ -88,7 +88,7 @@ class TaxEntitiesFactory
         $code,
         $rate,
         $description,
-        EntityManager $persistTo = null,
+        ObjectManager $persistTo = null,
         AbstractFixture $addReferenceTo = null
     ) {
         $tax = new Tax();
@@ -113,7 +113,7 @@ class TaxEntitiesFactory
      * @param Country $country
      * @param Region $region
      * @param array $zipCodes
-     * @param EntityManager $persistTo (optional)
+     * @param ObjectManager $persistTo (optional)
      * @param AbstractFixture $addReferenceTo (optional)
      *
      * @return TaxJurisdiction
@@ -124,7 +124,7 @@ class TaxEntitiesFactory
         Country $country,
         Region $region,
         $zipCodes,
-        EntityManager $persistTo = null,
+        ObjectManager $persistTo = null,
         AbstractFixture $addReferenceTo = null
     ) {
         $jurisdiction = new TaxJurisdiction();
@@ -167,7 +167,7 @@ class TaxEntitiesFactory
      * @param TaxJurisdiction $taxJurisdiction
      * @param Tax $tax
      * @param string $description (optional)
-     * @param EntityManager $persistTo (optional)
+     * @param ObjectManager $persistTo (optional)
      * @param AbstractFixture $addReferenceTo (optional)
      *
      * @return TaxRule
@@ -179,7 +179,7 @@ class TaxEntitiesFactory
         TaxJurisdiction $taxJurisdiction,
         Tax $tax,
         $description = '',
-        EntityManager $persistTo = null,
+        ObjectManager $persistTo = null,
         AbstractFixture $addReferenceTo = null
     ) {
         $taxRule = new TaxRule();

@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\TaxBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
@@ -41,11 +40,11 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
 
     /**
      * {@inheritdoc}
+     *
+     * @param ObjectManager $manager
      */
     public function load(ObjectManager $manager)
     {
-        /** @var EntityManager $manager */
-
         $data = require 'data/tax_table_rates.php';
 
         $this->loadAccountTaxCodes($manager, $data['account_tax_codes']);
@@ -58,12 +57,12 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
     }
 
     /**
-     * @param EntityManager $manager
+     * @param ObjectManager $manager
      * @param array $accountTaxCodes
      *
      * @return $this
      */
-    private function loadAccountTaxCodes(EntityManager $manager, $accountTaxCodes)
+    private function loadAccountTaxCodes(ObjectManager $manager, $accountTaxCodes)
     {
         foreach ($accountTaxCodes as $code => $data) {
             $taxCode = $this->entitiesFactory->createAccountTaxCode($code, $data['description'], $manager, $this);
@@ -89,12 +88,12 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
     }
 
     /**
-     * @param EntityManager $manager
+     * @param ObjectManager $manager
      * @param array $productTaxCodes
      *
      * @return $this
      */
-    private function loadProductTaxCodes(EntityManager $manager, $productTaxCodes)
+    private function loadProductTaxCodes(ObjectManager $manager, $productTaxCodes)
     {
         foreach ($productTaxCodes as $code => $data) {
             $taxCode = $this->entitiesFactory->createProductTaxCode($code, $data['description'], $manager, $this);
@@ -108,12 +107,12 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
     }
 
     /**
-     * @param EntityManager $manager
+     * @param ObjectManager $manager
      * @param array $taxes
      *
      * @return $this
      */
-    private function loadTaxes(EntityManager $manager, $taxes)
+    private function loadTaxes(ObjectManager $manager, $taxes)
     {
         foreach ($taxes as $code => $data) {
             $this->entitiesFactory->createTax($code, $data['rate'], $data['description'], $manager, $this);
@@ -123,12 +122,12 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
     }
 
     /**
-     * @param EntityManager $manager
+     * @param ObjectManager $manager
      * @param array $taxJurisdictions
      *
      * @return $this
      */
-    private function loadTaxJurisdictions(EntityManager $manager, $taxJurisdictions)
+    private function loadTaxJurisdictions(ObjectManager $manager, $taxJurisdictions)
     {
         foreach ($taxJurisdictions as $code => $data) {
             $country = $this->getCountryByIso2Code($manager, $data['country']);
@@ -149,19 +148,31 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
     }
 
     /**
-     * @param EntityManager $manager
+     * @param ObjectManager $manager
      * @param array $taxRules
      *
      * @return $this
      */
-    private function loadTaxRules(EntityManager $manager, $taxRules)
+    private function loadTaxRules(ObjectManager $manager, $taxRules)
     {
         foreach ($taxRules as $rule) {
+            /** @var \OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode $accountTaxCode */
+            $accountTaxCode = $this->getReference($rule['account_tax_code']);
+
+            /** @var \OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode $productTaxCode */
+            $productTaxCode = $this->getReference($rule['product_tax_code']);
+
+            /** @var \OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction $taxJurisdiction */
+            $taxJurisdiction = $this->getReference($rule['tax_jurisdiction']);
+
+            /** @var \OroB2B\Bundle\TaxBundle\Entity\Tax $tax */
+            $tax = $this->getReference($rule['tax']);
+
             $this->entitiesFactory->createTaxRule(
-                $this->getReference($rule['account_tax_code']),
-                $this->getReference($rule['product_tax_code']),
-                $this->getReference($rule['tax_jurisdiction']),
-                $this->getReference($rule['tax']),
+                $accountTaxCode,
+                $productTaxCode,
+                $taxJurisdiction,
+                $tax,
                 isset($rule['description']) ? $rule['description'] : '',
                 $manager
             );
@@ -172,24 +183,24 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
 
     //region Helper methods for the methods that the corresponding repositories do not have
     /**
-     * @param EntityManager $manager
+     * @param ObjectManager $manager
      * @param string $iso2Code
      *
      * @return Country|null
      */
-    private function getCountryByIso2Code(EntityManager $manager, $iso2Code)
+    private function getCountryByIso2Code(ObjectManager $manager, $iso2Code)
     {
         return $manager->getRepository('OroAddressBundle:Country')->findOneBy(['iso2Code' => $iso2Code]);
     }
 
     /**
-     * @param EntityManager $manager
+     * @param ObjectManager $manager
      * @param Country $country
      * @param string $code
      *
      * @return Region|null
      */
-    private function getRegionByCountryAndCode(EntityManager $manager, Country $country, $code)
+    private function getRegionByCountryAndCode(ObjectManager $manager, Country $country, $code)
     {
         return $manager->getRepository('OroAddressBundle:Region')->findOneBy(['country' => $country, 'code' => $code]);
     }
