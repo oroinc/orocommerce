@@ -48,6 +48,7 @@ parameters:
     orob2b_pricing.event_listener.frontend.product_price_datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener
     orob2b_pricing.event_listener.product_duplicate.class: OroB2B\Bundle\PricingBundle\EventListener\ProductDuplicateListener
     orob2b_pricing.event_listener.product_select_price_list_aware.class: OroB2B\Bundle\PricingBundle\EventListener\ProductSelectPriceListAwareListener
+    orob2b_pricing.event_listener.price_list_collection.class: OroB2B\Bundle\PricingBundle\EventListener\PriceListCollectionListener
     orob2b_pricing.event_subscriber.system_config.class: OroB2B\Bundle\PricingBundle\EventListener\PriceListSystemConfigSubscriber
 
     orob2b_pricing.model.price_list_request_handler.abstract.class: OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler
@@ -240,6 +241,7 @@ services:
 #            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-grid, method: onBuildBeforeAccounts }
 #            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-groups-grid, method: onBuildBeforeAccountGroups }
 
+
     orob2b_pricing.event_listener.account_group:
         class: %orob2b_pricing.event_listener.account_group_changes.class%
         arguments:
@@ -249,6 +251,13 @@ services:
             - { name: doctrine.event_listener, event: postFlush }
             - { name: doctrine.event_listener, event: preUpdate }
             - { name: doctrine.event_listener, event: preRemove }
+
+    orob2b_pricing.event_listener.price_list_collection:
+        class: %orob2b_pricing.event_listener.price_list_collection.class%
+        arguments:
+            - @doctrine
+        tags:
+            - { name: kernel.event_listener, event: orob2b_pricing.price_list_collection.change_before, method: onChangeCollectionBefore }
 
     orob2b_pricing.event_listener.product_price_datagrid:
         class: %orob2b_pricing.event_listener.product_price_datagrid.class%
@@ -371,6 +380,7 @@ services:
         arguments:
             - @orob2b_pricing.system_config_converter
             - @event_dispatcher
+            - @doctrine
         tags:
             - { name: kernel.event_subscriber }
 
