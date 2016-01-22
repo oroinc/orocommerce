@@ -24,7 +24,7 @@ class OroB2BMenuBundle extends Bundle
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function build(ContainerBuilder $container)
     {
