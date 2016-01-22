@@ -5,9 +5,11 @@ namespace OroB2B\Bundle\TaxBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
-use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
+
+use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class TaxBaseExclusionType extends AbstractType
 {
@@ -47,7 +49,16 @@ class TaxBaseExclusionType extends AbstractType
     {
         $builder->addEventSubscriber($this->countryAndRegionSubscriber);
         $builder
-            ->add('country', 'oro_country', ['required' => true, 'label' => 'oro.address.country.label'])
+            ->add(
+                'country',
+                'oro_country',
+                [
+                    'required' => true,
+                    'label' => 'oro.address.country.label',
+                    'configs' => ['allowClear' => false],
+                    'constraints' => [new NotBlank()],
+                ]
+            )
             ->add('region', 'oro_region', ['required' => false, 'label' => 'oro.address.region.label'])
             ->add(
                 'option',
@@ -55,11 +66,12 @@ class TaxBaseExclusionType extends AbstractType
                 [
                     'required' => true,
                     'choices' => [
-                        TaxBaseExclusion::USE_AS_BASE_SHIPPING_ORIGIN =>
+                        TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN =>
                             'orob2b.tax.system_configuration.fields.use_as_base.shipping_origin.label',
-                        TaxBaseExclusion::USE_AS_BASE_DESTINATION =>
+                        TaxationSettingsProvider::USE_AS_BASE_DESTINATION =>
                             'orob2b.tax.system_configuration.fields.use_as_base.destination.label',
-                    ]
+                    ],
+                    'constraints' => [new NotBlank()],
                 ]
             )
             ->add(
@@ -69,7 +81,7 @@ class TaxBaseExclusionType extends AbstractType
                     'required' => false,
                     'mapped' => false,
                     'random_id' => true,
-                    'label' => 'oro.address.region_text.label'
+                    'label' => 'oro.address.region_text.label',
                 ]
             );
     }
@@ -81,7 +93,7 @@ class TaxBaseExclusionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => $this->dataClass
+                'data_class' => $this->dataClass,
             ]
         );
     }

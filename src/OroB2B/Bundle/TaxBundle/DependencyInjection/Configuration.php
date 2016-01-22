@@ -8,13 +8,10 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 
 use OroB2B\Bundle\TaxBundle\Provider\BuiltInTaxProvider;
-use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
+use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class Configuration implements ConfigurationInterface
 {
-    const DEFAULT_START_CALCULATION_WITH = 'unit_price';
-    const DEFAULT_DESTINATION = 'billing_address';
-
     /**
      * {@inheritDoc}
      */
@@ -37,7 +34,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 'start_calculation_with' => [
                     'type' => 'text',
-                    'value' => self::DEFAULT_START_CALCULATION_WITH
+                    'value' => TaxationSettingsProvider::START_CALCULATION_UNIT_PRICE
                 ],
                 'product_prices_include_tax' => [
                     'type' => 'boolean',
@@ -45,14 +42,14 @@ class Configuration implements ConfigurationInterface
                 ],
                 'use_as_base_by_default' => [
                     'type' => 'text',
-                    'value' => TaxBaseExclusion::USE_AS_BASE_SHIPPING_ORIGIN
+                    'value' => TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN
                 ],
                 'use_as_base_exclusions' => [
                     'type' => 'array',
                     'value' => []
                 ],
                 'destination' => [
-                    'value' => self::DEFAULT_DESTINATION
+                    'value' => TaxationSettingsProvider::DESTINATION_SHIPPING_ADDRESS
                 ],
                 'digital_products_us' => [
                     'type' => 'array',

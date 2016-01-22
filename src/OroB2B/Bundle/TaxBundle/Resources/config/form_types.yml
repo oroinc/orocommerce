@@ -133,7 +133,7 @@ services:
         arguments:
             - @oro_address.form.listener.address
         calls:
-            - [setDataClass, [%orob2b_tax.entity.tax_base_exclusion.class%]]
+            - [setDataClass, [%orob2b_tax.model.tax_base_exclusion.class%]]
         tags:
             - { name: form.type, alias: orob2b_tax_base_exclusion }
 

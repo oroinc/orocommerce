@@ -16,6 +16,9 @@ class TaxationSettingsProvider
     const START_CALCULATION_UNIT_PRICE = 'unit_price';
     const START_CALCULATION_ROW_TOTAL = 'row_total';
 
+    const USE_AS_BASE_SHIPPING_ORIGIN = 'shipping_origin';
+    const USE_AS_BASE_DESTINATION = 'destination';
+
     /**
      * @var ConfigManager
      */

@@ -4,37 +4,17 @@ namespace OroB2B\Bundle\TaxBundle\Model;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
+use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
-class TaxBaseExclusion
+class TaxBaseExclusion extends AbstractResult
 {
-    const USE_AS_BASE_SHIPPING_ORIGIN = 'shipping_origin';
-    const USE_AS_BASE_DESTINATION = 'destination';
-
     /**
-     * @var Country
-     */
-    protected $country;
-
-    /**
-     * @var Region
-     */
-    protected $region;
-
-    /**
-     * @var string
-     */
-    protected $option;
-
-
-    /**
-     * Set country
-     *
      * @param Country $country
      * @return TaxBaseExclusion
      */
     public function setCountry($country)
     {
-        $this->country = $country;
+        $this->offsetSet('country', $country);
 
         return $this;
     }
@@ -46,7 +26,7 @@ class TaxBaseExclusion
      */
     public function getCountry()
     {
-        return $this->country;
+        return $this->getOffset('country');
     }
 
     /**
@@ -57,7 +37,7 @@ class TaxBaseExclusion
      */
     public function setRegion($region)
     {
-        $this->region = $region;
+        $this->offsetSet('region', $region);
 
         return $this;
     }
@@ -69,7 +49,7 @@ class TaxBaseExclusion
      */
     public function getRegion()
     {
-        return $this->region;
+        return $this->getOffset('region');
     }
 
     /**
@@ -80,7 +60,18 @@ class TaxBaseExclusion
      */
     public function setOption($option)
     {
-        $this->option = $option;
+        $options = [
+            TaxationSettingsProvider::USE_AS_BASE_DESTINATION,
+            TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN,
+        ];
+
+        if (!in_array($option, $options, true)) {
+            throw new \InvalidArgumentException(
+                sprintf('Option values is "%s", one of "%s" allowed', $option, implode(',', $options))
+            );
+        }
+
+        $this->offsetSet('option', $option);
 
         return $this;
     }
@@ -92,7 +83,7 @@ class TaxBaseExclusion
      */
     public function getOption()
     {
-        return $this->option;
+        return $this->getOffset('option');
     }
 
     /**
