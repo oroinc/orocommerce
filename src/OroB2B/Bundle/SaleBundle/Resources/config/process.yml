@@ -1,0 +1,45 @@
+definitions:
+    expire_quotes:
+        label:   'Expire old Quotes'
+        enabled: false
+        order:   50
+        entity:  OroB2B\Bundle\RFPBundle\Entity\Request
+        actions_configuration:
+            - @create_datetime:
+                attribute: $.date
+            - @find_entities:
+                class: OroB2B\Bundle\SaleBundle\Entity\Quote
+                attribute: $.quotes
+                where:
+                    and:
+                        - e.expired = false
+                        - e.validUntil < :date
+                query_parameters:
+                    date: $.date
+            - @foreach:
+                array: $.quotes
+                value: $.quote
+                actions:
+                    - @run_action:
+                        action: orob2b_sale_expire_quote_action
+                        entity_class: OroB2B\Bundle\SaleBundle\Entity\Quote
+                        entity_id: $.quote.id
+
+    send_no_quote_alert:
+        label:   'Send alerts about Requests Without Quote'
+        enabled: false
+        order:   50
+        entity:  OroB2B\Bundle\RFPBundle\Entity\Request
+        actions_configuration:
+            - @call_service_method:
+                attribute: $.requests
+                service: orob2b_sale.service.request_helper
+                method: getRequestsWoQuote
+            - @foreach:
+                array: $.requests
+                value: $.request
+                actions:
+                    - @run_action:
+                        action: orob2b_sale_send_no_quote_alert
+                        entity_class: OroB2B\Bundle\RFPBundle\Entity\Request
+                        entity_id: $.request.id
