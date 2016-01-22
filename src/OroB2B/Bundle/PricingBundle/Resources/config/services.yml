@@ -242,8 +242,13 @@ services:
 
     orob2b_pricing.event_listener.account_group:
         class: %orob2b_pricing.event_listener.account_group_changes.class%
+        arguments:
+            - @doctrine
+            - @event_dispatcher
         tags:
-            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: postFlush }
+            - { name: doctrine.event_listener, event: preUpdate }
+            - { name: doctrine.event_listener, event: preRemove }
 
     orob2b_pricing.event_listener.product_price_datagrid:
         class: %orob2b_pricing.event_listener.product_price_datagrid.class%

@@ -146,6 +146,30 @@ class PriceListToAccountRepositoryTest extends WebTestCase
         ];
     }
 
+    public function testGetAccountWebsitePairsByAccountGroup()
+    {
+        /** @var AccountGroup $accountGroup */
+        $accountGroup = $this->getReference('account_group.group1');
+        /** @var Account $account */
+        $account = $this->getReference('account.level_1.3');
+        /** @var Website $website */
+        $website = $this->getReference('US');
+        $result = $this->getRepository()->getAccountWebsitePairsByAccountGroup($accountGroup, [$website->getId()]);
+        $this->assertCount(1, $result);
+        $this->assertEquals($result[0]['account'], $account);
+        $this->assertEquals($result[0]['website'], $website);
+    }
+
+    public function testGetWebsitesByAccount()
+    {
+        /** @var Account $account */
+        $account = $this->getReference('account.level_1_1');
+        /** @var Website[] $result */
+        $result = $this->getRepository()->getWebsitesByAccount($account);
+        $this->assertCount(1, $result);
+        $this->assertEquals([$this->getReference('US')], $result);
+    }
+
     /**
      * @return PriceListToAccountRepository
      */

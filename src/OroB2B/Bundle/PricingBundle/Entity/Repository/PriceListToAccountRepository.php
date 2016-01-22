@@ -87,4 +87,58 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
 
         return new BufferedQueryResultIterator($qb->getQuery());
     }
+
+    /**
+     * @param AccountGroup $accountGroup
+     * @param integer[] $websiteIds
+     * @return array
+     */
+    public function getAccountWebsitePairsByAccountGroup(AccountGroup $accountGroup, $websiteIds)
+    {
+        $qb = $this->createQueryBuilder('PriceListToAccount');
+
+        $pairs = $qb->select(
+            'IDENTITY(PriceListToAccount.account) as account_id',
+            'IDENTITY(PriceListToAccount.website) as website_id'
+        )
+            ->innerJoin('PriceListToAccount.account', 'account')
+            ->where('account.group = :accountGroup')
+            ->andWhere($qb->expr()->in('PriceListToAccount.website', ':websiteIds'))
+            ->groupBy('PriceListToAccount.account', 'PriceListToAccount.website')
+            ->setParameter('accountGroup', $accountGroup)
+            ->setParameter('websiteIds', $websiteIds)
+            ->getQuery()
+            ->getResult();
+        $em = $this->getEntityManager();
+        $result = [];
+        foreach ($pairs as $pair) {
+            $entityPair['account'] = $em->getReference('OroB2BAccountBundle:Account', $pair['account_id']);
+            $entityPair['website'] = $em->getReference('OroB2BWebsiteBundle:Website', $pair['website_id']);
+            $result[] = $entityPair;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param Account $account
+     * @return Website[]
+     */
+    public function getWebsitesByAccount(Account $account)
+    {
+        $qb = $this->createQueryBuilder('PriceListToAccount');
+
+        $websiteIds = $qb->select('distinct(PriceListToAccount.website)')
+            ->where('PriceListToAccount.account = :account')
+            ->setParameter('account', $account)
+            ->getQuery()
+            ->getResult();
+        $em = $this->getEntityManager();
+        $result = [];
+        foreach (array_map('current', $websiteIds) as $websiteId) {
+            $result[] = $em->getReference('OroB2BWebsiteBundle:Website', $websiteId);
+        }
+
+        return $result;
+    }
 }
