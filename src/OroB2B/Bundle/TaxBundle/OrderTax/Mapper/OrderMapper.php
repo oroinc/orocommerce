@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\TaxBundle\OrderTax\Mapper;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Util\ClassUtils;
 
@@ -27,7 +26,7 @@ class OrderMapper extends AbstractOrderMapper
     public function map($order)
     {
         $taxable = (new Taxable())
-            ->setAmount($order->getSubtotal())
+            ->setRawAmount($order->getSubtotal())
             ->setIdentifier($order->getId())
             ->setClassName(ClassUtils::getClass($order))
             ->setItems($this->mapLineItems($order->getLineItems()))
@@ -47,17 +46,19 @@ class OrderMapper extends AbstractOrderMapper
 
     /**
      * @param Collection|OrderLineItem[] $lineItems
-     * @return ArrayCollection
+     * @return \SplObjectStorage
      */
     protected function mapLineItems($lineItems)
     {
-        $taxableItems = $lineItems->map(
-            function (OrderLineItem $item) {
-                return $this->orderLineItemMapper->map($item);
+        $storage = new \SplObjectStorage();
+
+        $lineItems->map(
+            function (OrderLineItem $item) use ($storage) {
+                $storage->attach($this->orderLineItemMapper->map($item));
             }
         );
 
-        return $taxableItems;
+        return $storage;
     }
 
     /**

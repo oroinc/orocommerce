@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
@@ -30,14 +28,14 @@ class TaxableTest extends \PHPUnit_Framework_TestCase
     public function testRelations()
     {
         $this->assertPropertyCollections($this->createTaxable(), [
-            ['items', new ArrayCollection()],
+            ['items', new \SplObjectStorage()],
         ]);
     }
 
     public function testItems()
     {
         $taxable = $this->createTaxable();
-        $items = new ArrayCollection(['some', 'items']);
+        $items = new \SplObjectStorage(['some', 'items']);
         $taxable->setItems($items);
         $this->assertSame($items, $taxable->getItems());
     }

@@ -94,7 +94,7 @@ class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Taxable', $taxable);
         $this->assertEquals($id, $taxable->getIdentifier());
         $this->assertEquals($quantity, $taxable->getQuantity());
-        $this->assertEquals($priceValue, $taxable->getPrice()->getValue());
+        $this->assertEquals($priceValue, $taxable->getPrice());
         $this->assertEquals(0, $taxable->getAmount());
         $this->assertEmpty($taxable->getItems());
     }

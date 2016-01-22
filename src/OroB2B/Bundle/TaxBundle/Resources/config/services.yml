@@ -41,11 +41,8 @@ parameters:
     orob2b_tax.matcher.zip_code_matcher.class: OroB2B\Bundle\TaxBundle\Matcher\ZipCodeMatcher
 
     orob2b_tax.calculator.class: OroB2B\Bundle\TaxBundle\Calculator\Calculator
-    orob2b_tax.calculator.absract_rounding.class: OroB2B\Bundle\TaxBundle\Calculator\AbstractRoundingTaxCalculator
     orob2b_tax.calculator.included_tax.class: OroB2B\Bundle\TaxBundle\Calculator\IncludedTaxCalculator
     orob2b_tax.calculator.tax.class: OroB2B\Bundle\TaxBundle\Calculator\TaxCalculator
-
-    orob2b_tax.rounding.tax.class: OroB2B\Bundle\TaxBundle\Rounding\TaxRoundingService
 
     orob2b_tax.resolver.abstract_address.class: OroB2B\Bundle\TaxBundle\Resolver\AbstractAddressResolver
     orob2b_tax.resolver.customer_address.class: OroB2B\Bundle\TaxBundle\Resolver\CustomerAddressResolver
@@ -313,10 +310,6 @@ services:
         calls:
             - [setRegionMatcher, [@orob2b_tax.matcher.region_matcher]]
 
-    orob2b_tax.rounding.tax:
-        class: %orob2b_tax.rounding.tax.class%
-        parent: orob2b_product.service.abstract_rounding
-
     orob2b_tax.calculator:
         class: %orob2b_tax.calculator.class%
         arguments:
@@ -324,19 +317,11 @@ services:
             - @orob2b_tax.calculator.included_tax
             - @orob2b_tax.calculator.tax
 
-    orob2b_tax.calculator.absract_rounding:
-        class: %orob2b_tax.calculator.absract_rounding.class%
-        abstract: true
-        arguments:
-            - @orob2b_tax.rounding.tax
-
     orob2b_tax.calculator.included_tax:
         class: %orob2b_tax.calculator.included_tax.class%
-        parent: orob2b_tax.calculator.absract_rounding
 
     orob2b_tax.calculator.tax:
         class: %orob2b_tax.calculator.tax.class%
-        parent: orob2b_tax.calculator.absract_rounding
 
     orob2b_tax.resolver.abstract_address:
         class: %orob2b_tax.resolver.abstract_address.class%
@@ -345,7 +330,6 @@ services:
             - @orob2b_tax.provider.taxation_settings_provider
             - @orob2b_tax.matcher.zip_code_matcher
             - @orob2b_tax.calculator
-            - @orob2b_tax.rounding.tax
 
     orob2b_tax.resolver.customer_address:
         class: %orob2b_tax.resolver.customer_address.class%

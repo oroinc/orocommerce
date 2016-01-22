@@ -6,8 +6,10 @@ final class Result extends AbstractResult
 {
     const TOTAL = 'total';
     const SHIPPING = 'shipping';
+
     const UNIT = 'unit';
     const ROW = 'row';
+
     const TAXES = 'taxes';
 
     /**

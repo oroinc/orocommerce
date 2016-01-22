@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\TaxBundle\Model;
 
+use Brick\Math\BigNumber;
+
 final class ResultElement extends AbstractResult
 {
     const INCLUDING_TAX = 'includingTax';
@@ -10,15 +12,19 @@ final class ResultElement extends AbstractResult
     const ADJUSTMENT = 'adjustment';
 
     /**
-     * @param float $includingTax
-     * @param float $excludingTax
-     * @param float $taxAmount
-     * @param float $adjustment
+     * @param BigNumber $includingTax
+     * @param BigNumber $excludingTax
+     * @param BigNumber $taxAmount
+     * @param BigNumber $adjustment
      *
      * @return ResultElement
      */
-    public static function create($includingTax, $excludingTax, $taxAmount = 0.00, $adjustment = 0.00)
-    {
+    public static function create(
+        BigNumber $includingTax,
+        BigNumber $excludingTax,
+        BigNumber $taxAmount = null,
+        BigNumber $adjustment = null
+    ) {
         $resultElement = new static;
 
         $resultElement->offsetSet(self::INCLUDING_TAX, $includingTax);
@@ -30,7 +36,27 @@ final class ResultElement extends AbstractResult
     }
 
     /**
-     * @return float
+     * @param mixed $includingTax
+     * @param mixed $excludingTax
+     * @param mixed $taxAmount
+     * @param mixed $adjustment
+     *
+     * @return ResultElement
+     */
+    public static function createFromRaw($includingTax, $excludingTax, $taxAmount = null, $adjustment = null)
+    {
+        $resultElement = new static;
+
+        $resultElement->offsetSet(self::INCLUDING_TAX, BigNumber::of($includingTax));
+        $resultElement->offsetSet(self::EXCLUDING_TAX, BigNumber::of($excludingTax));
+        $resultElement->offsetSet(self::TAX_AMOUNT, BigNumber::of($taxAmount));
+        $resultElement->offsetSet(self::ADJUSTMENT, BigNumber::of($adjustment));
+
+        return $resultElement;
+    }
+
+    /**
+     * @return BigNumber
      */
     public function getIncludingTax()
     {
@@ -38,7 +64,7 @@ final class ResultElement extends AbstractResult
     }
 
     /**
-     * @return float
+     * @return BigNumber
      */
     public function getExcludingTax()
     {
@@ -46,7 +72,7 @@ final class ResultElement extends AbstractResult
     }
 
     /**
-     * @return float
+     * @return BigNumber
      */
     public function getTaxAmount()
     {
@@ -54,7 +80,7 @@ final class ResultElement extends AbstractResult
     }
 
     /**
-     * @return float
+     * @return BigNumber
      */
     public function getAdjustment()
     {

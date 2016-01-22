@@ -5,8 +5,6 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Resolver;
 use Oro\Bundle\CurrencyBundle\Model\Price;
 
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
-use OroB2B\Bundle\TaxBundle\Entity\Tax;
-use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
@@ -22,12 +20,13 @@ class CustomerAddressItemResolverTest extends AbstractAddressResolverTestCase
     /** {@inheritdoc} */
     protected function createResolver()
     {
-        return new CustomerAddressItemResolver(
-            $this->settingsProvider,
-            $this->matcher,
-            $this->calculator,
-            $this->rounding
-        );
+        return new CustomerAddressItemResolver($this->settingsProvider, $this->matcher, $this->calculator);
+    }
+
+    /** {@inheritdoc} */
+    protected function getTaxable()
+    {
+        return new Taxable();
     }
 
     public function testItemNotApplicable()
@@ -43,68 +42,40 @@ class CustomerAddressItemResolverTest extends AbstractAddressResolverTestCase
         $this->assertEmptyResult($event);
     }
 
-    public function testDestinationMissing()
-    {
-        $event = new ResolveTaxEvent(new Taxable(), new Result());
-
-        $this->assertNothing();
-
-        $this->resolver->resolve($event);
-
-        $this->assertEmptyResult($event);
-    }
-
     public function testEmptyRules()
     {
-        $taxable = new Taxable();
-        $taxable->setPrice(Price::create(1, 'USD'));
+        $taxable = $this->getTaxable();
         $taxable->setDestination(new OrderAddress());
+        $taxable->setRawPrice(Price::create(1, 'USD'));
+        $taxable->setRawAmount('1');
         $event = new ResolveTaxEvent($taxable, new Result());
 
         $this->matcher->expects($this->once())->method('match')->willReturn([]);
-        $this->calculator->expects($this->never())->method($this->anything());
-
         $this->resolver->resolve($event);
 
-        $this->assertEquals(ResultElement::create(0, 0), $event->getResult()->getRow());
-        $this->assertEquals(ResultElement::create(0, 0), $event->getResult()->getUnit());
+        $this->assertEquals(
+            [
+                ResultElement::INCLUDING_TAX => '1',
+                ResultElement::EXCLUDING_TAX => '1',
+                ResultElement::TAX_AMOUNT => '0',
+                ResultElement::ADJUSTMENT => '0',
+            ],
+            $this->extractScalarValues($event->getResult()->getUnit())
+        );
+        $this->assertEquals(
+            [
+                ResultElement::INCLUDING_TAX => '1',
+                ResultElement::EXCLUDING_TAX => '1',
+                ResultElement::TAX_AMOUNT => '0',
+                ResultElement::ADJUSTMENT => '0',
+            ],
+            $this->extractScalarValues($event->getResult()->getRow())
+        );
         $this->assertEquals([], $event->getResult()->getTaxes());
     }
 
-    /**
-     * @dataProvider rulesDataProvider
-     * @param string $taxableAmount
-     * @param array $taxRules
-     * @param Result $expectedResult
-     * @param bool $startWithRowTotal
-     */
-    public function testRules($taxableAmount, array $taxRules, Result $expectedResult, $startWithRowTotal = false)
-    {
-        $taxable = new Taxable();
-        $taxable->setPrice(Price::create($taxableAmount, 'USD'));
-        $taxable->setQuantity(3);
-        $taxable->setAmount($taxableAmount);
-        $taxable->setDestination(new OrderAddress());
-        $event = new ResolveTaxEvent($taxable, new Result());
 
-        $this->matcher->expects($this->once())->method('match')->willReturn($taxRules);
-        $this->assertRoundServiceCalled();
-        $this->settingsProvider->expects($this->once())->method('isStartCalculationWithRowTotal')
-            ->willReturn($startWithRowTotal);
-        $this->rounding->expects($this->any())->method('round')->willReturnCallback(
-            function ($value) {
-                return (string)round($value, 2);
-            }
-        );
-
-        $this->resolver->resolve($event);
-
-        $this->assertEquals($expectedResult, $event->getResult());
-    }
-
-    /**
-     * @return array
-     */
+    /** {@inheritdoc} */
     public function rulesDataProvider()
     {
         return [
@@ -113,10 +84,27 @@ class CustomerAddressItemResolverTest extends AbstractAddressResolverTestCase
                 [$this->getTaxRule('city', '0.08')],
                 new Result(
                     [
-                        Result::ROW => ResultElement::create('59.97', '55.17', '4.8', '0'),
-                        Result::UNIT => ResultElement::create('19.99', '18.39', '1.6', '0'),
+                        Result::ROW => ResultElement::createFromRaw('64.7676', '59.97', '4.7976', '0.0024'),
+                        Result::UNIT => ResultElement::createFromRaw('21.5892', '19.99', '1.5992', '0.0008'),
                         Result::TAXES => [
-                            TaxResultElement::create(null, '0.08', '59.97', '4.8'),
+                            TaxResultElement::create(null, '0.08', '59.97', '4.7976'),
+                        ],
+                    ]
+                ),
+            ],
+            [
+                '19.99',
+                [
+                    $this->getTaxRule('city', '0.08'),
+                    $this->getTaxRule('region', '0.07'),
+                ],
+                new Result(
+                    [
+                        Result::ROW => ResultElement::createFromRaw('68.9655', '59.97', '8.9955', '0.0045'),
+                        Result::UNIT => ResultElement::createFromRaw('22.9885', '19.99', '2.9985', '0.0015'),
+                        Result::TAXES => [
+                            TaxResultElement::create(null, '0.08', '59.97', '4.7976'),
+                            TaxResultElement::create(null, '0.07', '59.97', '4.1979'),
                         ],
                     ]
                 ),
@@ -130,18 +118,18 @@ class CustomerAddressItemResolverTest extends AbstractAddressResolverTestCase
                 ],
                 new Result(
                     [
-                        Result::ROW => ResultElement::create('59.97', '47.37', '12.6', '0'),
-                        Result::UNIT => ResultElement::create('19.99', '15.79', '4.2', '0'),
+                        Result::ROW => ResultElement::createFromRaw('72.5637', '59.97', '12.5937', '0.0063'),
+                        Result::UNIT => ResultElement::createFromRaw('24.1879', '19.99', '4.1979', '0.0021'),
                         Result::TAXES => [
-                            TaxResultElement::create(null, '0.08', '59.97', '4.8'),
-                            TaxResultElement::create(null, '0.07', '59.97', '4.2'),
-                            TaxResultElement::create(null, '0.06', '59.97', '3.6'),
+                            TaxResultElement::create(null, '0.08', '59.97', '4.7976'),
+                            TaxResultElement::create(null, '0.07', '59.97', '4.1979'),
+                            TaxResultElement::create(null, '0.06', '59.97', '3.5982'),
                         ],
                     ]
                 ),
             ],
             [
-                '19.99',
+                '19.989',
                 [
                     $this->getTaxRule('city', '0.08'),
                     $this->getTaxRule('region', '0.07'),
@@ -149,12 +137,12 @@ class CustomerAddressItemResolverTest extends AbstractAddressResolverTestCase
                 ],
                 new Result(
                     [
-                        Result::ROW => ResultElement::create('59.97', '47.37', '12.6', '0'),
-                        Result::UNIT => ResultElement::create('19.99', '15.79', '4.2', '0'),
+                        Result::ROW => ResultElement::createFromRaw('72.5637', '59.97', '12.5937', '0.0063'),
+                        Result::UNIT => ResultElement::createFromRaw('24.18669', '19.989', '4.19769', '0.00231'),
                         Result::TAXES => [
-                            TaxResultElement::create(null, '0.08', '59.97', '4.8'),
-                            TaxResultElement::create(null, '0.07', '59.97', '4.2'),
-                            TaxResultElement::create(null, '0.06', '59.97', '3.6'),
+                            TaxResultElement::create(null, '0.08', '59.97', '4.7976'),
+                            TaxResultElement::create(null, '0.07', '59.97', '4.1979'),
+                            TaxResultElement::create(null, '0.06', '59.97', '3.5982'),
                         ],
                     ]
                 ),
@@ -163,26 +151,7 @@ class CustomerAddressItemResolverTest extends AbstractAddressResolverTestCase
         ];
     }
 
-    /**
-     * @param string $taxCode
-     * @param string $taxRate
-     * @return TaxRule
-     */
-    protected function getTaxRule($taxCode, $taxRate)
-    {
-        $taxRule = new TaxRule();
-        $tax = new Tax();
-        $tax
-            ->setRate($taxRate)
-            ->setCode($taxCode);
-        $taxRule->setTax($tax);
-
-        return $taxRule;
-    }
-
-    /**
-     * @param ResolveTaxEvent $event
-     */
+    /** {@inheritdoc} */
     protected function assertEmptyResult(ResolveTaxEvent $event)
     {
         $this->assertEquals(new ResultElement(), $event->getResult()->getUnit());
