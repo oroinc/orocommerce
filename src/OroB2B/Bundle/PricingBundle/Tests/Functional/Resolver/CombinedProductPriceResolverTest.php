@@ -296,6 +296,7 @@ class CombinedProductPriceResolverTest extends WebTestCase
         $product = $this->getReference('product.2');
         /** @var ProductPrice $price */
         $price = $this->getReference('product_price.7');
+        $uow= $this->getEntityManager()->getUnitOfWork();
         $this->getEntityManager()->remove($price);
         $this->getEntityManager()->flush($price);
 
@@ -303,6 +304,10 @@ class CombinedProductPriceResolverTest extends WebTestCase
 
         $actualPrices = $this->getCombinedPrices($combinedPriceList);
         $this->assertEquals($expectedPrices, $actualPrices);
+
+        //recreate price for next test
+        $this->getEntityManager()->persist($price);
+        $this->getEntityManager()->flush($price);
     }
 
     /**
