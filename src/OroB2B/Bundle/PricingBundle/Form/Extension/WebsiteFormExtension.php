@@ -156,7 +156,7 @@ class WebsiteFormExtension extends AbstractTypeExtension
             $fallback = new PriceListWebsiteFallback();
             $this->doctrine->getManagerForClass('OroB2BPricingBundle:PriceListWebsiteFallback')->persist($fallback);
             $hasChanges = true;
-        } elseif ($fallback->getFallback() != $submittedFallback) {
+        } elseif ($fallback->getFallback() !== $submittedFallback) {
             $hasChanges = true;
         }
 
@@ -230,8 +230,8 @@ class WebsiteFormExtension extends AbstractTypeExtension
 
             if (in_array($priceList->getId(), $ids, true)) {
                 $existingPriceListRelation = $existing[$priceList->getId()];
-                if ($existingPriceListRelation->getPriority() != $item['priority']
-                    || $existingPriceListRelation->isMergeAllowed() != $item['mergeAllowed']
+                if ($existingPriceListRelation->getPriority() !== $item['priority']
+                    || $existingPriceListRelation->isMergeAllowed() !== $item['mergeAllowed']
                 ) {
                     $existingPriceListRelation->setPriority($item['priority']);
                     $existingPriceListRelation->setMergeAllowed($item['mergeAllowed']);

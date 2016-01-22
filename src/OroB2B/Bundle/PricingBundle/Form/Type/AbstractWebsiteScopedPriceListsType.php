@@ -212,7 +212,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
     protected function getFallbackByWebsite($fallbacks, Website $website)
     {
         foreach ($fallbacks as $fallback) {
-            if ($fallback->getWebsite()->getId() == $website->getId()) {
+            if ($fallback->getWebsite()->getId() === $website->getId()) {
                 return $fallback;
             }
         }
@@ -239,11 +239,11 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         if (!$priceList instanceof PriceList) {
             return false;
         }
-        if (in_array($priceList->getId(), array_keys($actualPriceListsToTargetEntity))) {
+        if (in_array($priceList->getId(), array_keys($actualPriceListsToTargetEntity), true)) {
             /** @var BasePriceListRelation $priceListToTargetEntity */
             $priceListToTargetEntity = $actualPriceListsToTargetEntity[$priceList->getId()];
-            $hasChanges = $priceListToTargetEntity->getPriority() != $priceListWithPriorityData['priority']
-                || $priceListToTargetEntity->isMergeAllowed() != $priceListWithPriorityData['mergeAllowed'];
+            $hasChanges = $priceListToTargetEntity->getPriority() !== $priceListWithPriorityData['priority']
+                || $priceListToTargetEntity->isMergeAllowed() !== $priceListWithPriorityData['mergeAllowed'];
         } else {
             $priceListToTargetEntity = $this->createPriceListToTargetEntity($targetEntity);
             $priceListToTargetEntity->setWebsite($website);
@@ -370,7 +370,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         $hasChanges = false;
         /** @var BasePriceListRelation[] $actualPriceListsToTargetEntity */
         foreach ($actualPriceListsToTargetEntity as $priceListToTargetEntity) {
-            if (!in_array($priceListToTargetEntity->getPriceList(), $submittedPriceLists)) {
+            if (!in_array($priceListToTargetEntity->getPriceList(), $submittedPriceLists, true)) {
                 $em->remove($priceListToTargetEntity);
                 $hasChanges = true;
             }
@@ -417,8 +417,8 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
      */
     protected function hasFallbackChanges($actualFallback, $submittedFallback)
     {
-        $hasFallbackChanges = (!$actualFallback && $submittedFallback != $this->getDefaultFallback())
-            || ($actualFallback && $submittedFallback != $actualFallback->getFallback());
+        $hasFallbackChanges = (!$actualFallback && $submittedFallback !== $this->getDefaultFallback())
+            || ($actualFallback && $submittedFallback !== $actualFallback->getFallback());
 
         return $hasFallbackChanges;
     }
