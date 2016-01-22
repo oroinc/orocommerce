@@ -688,7 +688,6 @@ services:
         arguments:
             - @doctrine
             - @orob2b_account.visibility.resolver.category_visibility_resolver
-            - @oro_config.global
             - @oro_entity.orm.insert_from_select_query_executor
 
     orob2b_account.visibility.cache.product.account_group_product_resolved_cache_builder:
@@ -753,9 +752,11 @@ services:
 
     orob2b_account.visibility.cache.product.category.subtree.category_subtree_cache_builder:
         class: %orob2b_account.visibility.cache.product.category.subtree.category_subtree_cache_builder.class%
+        abstract: true
         arguments:
             - @doctrine
             - @orob2b_account.visibility.resolver.category_visibility_resolver
+            - @oro_config.manager
 
     orob2b_account.visibility.cache.product.category.subtree.visibility_change_category_subtree_cache_builder:
         class: %orob2b_account.visibility.cache.product.category.subtree.visibility_change_category_subtree_cache_builder.class%

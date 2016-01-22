@@ -32,11 +32,6 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
     protected $categoryVisibilityResolver;
 
     /**
-     * @var ConfigManager
-     */
-    protected $configManager;
-
-    /**
      * @var InsertFromSelectQueryExecutor
      */
     protected $insertFromSelectQueryExecutor;
@@ -54,18 +49,15 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
     /**
      * @param ManagerRegistry $registry
      * @param CategoryVisibilityResolver $categoryVisibilityResolver
-     * @param ConfigManager $configManager
      * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
      */
     public function __construct(
         ManagerRegistry $registry,
         CategoryVisibilityResolver $categoryVisibilityResolver,
-        ConfigManager $configManager,
         InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
     ) {
         $this->registry = $registry;
         $this->categoryVisibilityResolver = $categoryVisibilityResolver;
-        $this->configManager = $configManager;
         $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
     }
 
@@ -100,20 +92,6 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
     }
 
     /**
-     * @param VisibilityInterface|null $productVisibility
-     * @return array
-     */
-    protected function resolveConfigValue(VisibilityInterface $productVisibility = null)
-    {
-        return [
-            'sourceProductVisibility' => $productVisibility,
-            'visibility' => $this->getVisibilityFromConfig(),
-            'source' => BaseProductVisibilityResolved::SOURCE_STATIC,
-            'category' => null,
-        ];
-    }
-
-    /**
      * @param EntityRepository|BasicOperationRepositoryTrait $repository
      * @param bool $insert
      * @param bool $delete
@@ -132,26 +110,23 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
     }
 
     /**
-     * @return int
-     */
-    protected function getVisibilityFromConfig()
-    {
-        if (!$this->visibilityFromConfig) {
-            $visibilityFromConfig = $this->configManager->get('oro_b2b_account.product_visibility');
-            $this->visibilityFromConfig
-                = $this->convertVisibility($visibilityFromConfig === VisibilityInterface::VISIBLE);
-        }
-
-        return $this->visibilityFromConfig;
-    }
-
-    /**
      * @param boolean $isVisible
      * @return integer
      */
     protected function convertVisibility($isVisible)
     {
         return $isVisible ? BaseVisibilityResolved::VISIBILITY_VISIBLE
+            : BaseVisibilityResolved::VISIBILITY_HIDDEN;
+    }
+
+    /**
+     * @param string $visibility
+     * @return int
+     */
+    protected function convertStaticVisibility($visibility)
+    {
+        return $visibility === VisibilityInterface::VISIBLE
+            ? BaseVisibilityResolved::VISIBILITY_VISIBLE
             : BaseVisibilityResolved::VISIBILITY_HIDDEN;
     }
 

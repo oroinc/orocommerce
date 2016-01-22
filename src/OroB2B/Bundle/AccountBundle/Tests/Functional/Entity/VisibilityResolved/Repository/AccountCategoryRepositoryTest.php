@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\VisibilityResolved
 use Oro\Component\Testing\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
@@ -18,9 +19,9 @@ class AccountCategoryRepositoryTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->loadFixtures([
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityResolvedData'
-        ]);
+        $this->loadFixtures(['OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData']);
+        // TODO: remove cache generation in scope of BB-1803
+        $this->getContainer()->get('orob2b_account.visibility.cache.product.category.cache_builder')->buildCache();
     }
 
     /**
@@ -52,49 +53,49 @@ class AccountCategoryRepositoryTest extends WebTestCase
             [
                 'categoryName' => 'category_1',
                 'accountName' => 'account.level_1',
-                'configValue' => 1,
+                'configValue' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 'expectedVisibility' => true,
             ],
             [
                 'categoryName' => 'category_1',
                 'accountName' => 'account.level_1.1',
-                'configValue' => 1,
+                'configValue' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 'expectedVisibility' => false,
             ],
             [
                 'categoryName' => 'category_1',
                 'accountName' => 'account.level_1.2',
-                'configValue' => 1,
+                'configValue' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 'expectedVisibility' => true,
             ],
             [
                 'categoryName' => 'category_1_2',
                 'accountName' => 'account.level_1',
-                'configValue' => 1,
-                'expectedVisibility' => true,
+                'configValue' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                'expectedVisibility' => false,
             ],
             [
                 'categoryName' => 'category_1_2',
                 'accountName' => 'account.level_1.1',
-                'configValue' => 1,
+                'configValue' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 'expectedVisibility' => false,
             ],
             [
                 'categoryName' => 'category_1_2_3',
                 'accountName' => 'account.level_1',
-                'configValue' => 1,
-                'expectedVisibility' => true,
+                'configValue' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                'expectedVisibility' => false,
             ],
             [
                 'categoryName' => 'category_1_2_3',
                 'accountName' => 'account.level_1.1',
-                'configValue' => 1,
+                'configValue' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 'expectedVisibility' => false,
             ],
             [
                 'categoryName' => 'category_1_2_3',
                 'accountName' => 'account.level_1.2',
-                'configValue' => 1,
+                'configValue' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 'expectedVisibility' => true,
             ]
         ];
@@ -138,20 +139,20 @@ class AccountCategoryRepositoryTest extends WebTestCase
             [
                 'visibility' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 'accountName' => 'account.level_1',
-                'configValue' => 1,
+                'configValue' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 'expected' => [
                     'category_1',
-                    'category_1_2',
-                    'category_1_2_3',
-                    'category_1_2_3_4',
                     'category_1_5',
                 ]
             ],
             [
                 'visibility' => BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN,
                 'accountName' => 'account.level_1',
-                'configValue' => 1,
+                'configValue' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 'expected' => [
+                    'category_1_2',
+                    'category_1_2_3',
+                    'category_1_2_3_4',
                     'category_1_5_6',
                     'category_1_5_6_7',
                 ]
@@ -159,19 +160,20 @@ class AccountCategoryRepositoryTest extends WebTestCase
             [
                 'visibility' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 'accountName' => 'account.level_1.1',
-                'configValue' => 1,
-                'expected' => []
+                'configValue' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                'expected' => [
+                    'category_1_5',
+                ]
             ],
             [
                 'visibility' => BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN,
                 'accountName' => 'account.level_1.1',
-                'configValue' => 1,
+                'configValue' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 'expected' => [
                     'category_1',
                     'category_1_2',
                     'category_1_2_3',
                     'category_1_2_3_4',
-                    'category_1_5',
                     'category_1_5_6',
                     'category_1_5_6_7',
                 ]
@@ -179,7 +181,7 @@ class AccountCategoryRepositoryTest extends WebTestCase
             [
                 'visibility' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 'accountName' => 'account.level_1.2',
-                'configValue' => 1,
+                'configValue' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 'expected' => [
                     'category_1',
                     'category_1_2',
@@ -192,7 +194,7 @@ class AccountCategoryRepositoryTest extends WebTestCase
             [
                 'visibility' => BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN,
                 'accountName' => 'account.level_1.2',
-                'configValue' => 1,
+                'configValue' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 'expected' => [
                     'category_1_5_6_7',
                 ]
@@ -200,7 +202,7 @@ class AccountCategoryRepositoryTest extends WebTestCase
             [
                 'visibility' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 'accountName' => 'account.level_1.2.1',
-                'configValue' => 1,
+                'configValue' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 'expected' => [
                     'category_1',
                     'category_1_2',
@@ -214,12 +216,91 @@ class AccountCategoryRepositoryTest extends WebTestCase
             [
                 'visibility' => BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN,
                 'accountName' => 'account.level_1.2.1',
-                'configValue' => 1,
+                'configValue' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 'expected' => [
                     'category_1_5_6_7'
                 ]
             ],
         ];
+    }
+
+    /**
+     * @dataProvider updateAccountCategoryVisibilityByCategoryDataProvider
+     * @param string $account
+     * @param array $categories
+     * @param int $visibility
+     */
+    public function testUpdateAccountCategoryVisibilityByCategory($account, array $categories, $visibility)
+    {
+        /** @var Account $account */
+        $account = $this->getReference($account);
+
+        /** @var Category[] $categoriesForUpdate */
+        $categoriesForUpdate = [];
+        foreach ($categories as $categoryName) {
+            $categoriesForUpdate[] = $this->getReference($categoryName);
+        }
+
+        $categoryIdsForUpdate = array_filter(
+            $categoriesForUpdate,
+            function (Category $category) {
+                return $category->getId();
+            }
+        );
+
+        $this->getRepository()->updateAccountCategoryVisibilityByCategory(
+            $account,
+            $categoryIdsForUpdate,
+            $visibility
+        );
+
+        foreach ($categoriesForUpdate as $category) {
+            $visibilityResolved = $this->getRepository()->findByPrimaryKey($category, $account);
+            $this->assertEquals($visibility, $visibilityResolved->getVisibility());
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function updateAccountCategoryVisibilityByCategoryDataProvider()
+    {
+        return [
+            'Change visibility to visible' => [
+                'account' => 'account.level_1',
+                'categories' => [
+                    'category_1',
+                    'category_1_5_6',
+                    'category_1_5_6_7'
+                ],
+                'visibility' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE
+            ],
+            'Change visibility to hidden' => [
+                'account' => 'account.level_1.1',
+                'categories' => [
+                    'category_1_2',
+                    'category_1_2_3',
+                    'category_1_2_3_4'
+                ],
+                'visibility' => BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN
+            ]
+        ];
+    }
+
+    public function testFindByPrimaryKey()
+    {
+        /** @var AccountCategoryVisibilityResolved $actualEntity */
+        $actualEntity = $this->getRepository()->findOneBy([]);
+        if (!$actualEntity) {
+            $this->markTestSkipped('Can\'t test method because fixture was not loaded.');
+        }
+
+        $expectedEntity = $this->getRepository()->findByPrimaryKey(
+            $actualEntity->getCategory(),
+            $actualEntity->getAccount()
+        );
+
+        $this->assertEquals(spl_object_hash($expectedEntity), spl_object_hash($actualEntity));
     }
 
     /**

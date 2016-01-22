@@ -31,33 +31,12 @@ class AccountGroupCategoryRepository extends EntityRepository
      */
     public function isCategoryVisible(Category $category, AccountGroup $accountGroup, $configValue)
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select($this->formatConfigFallback('agcvr.visibility, cvr.visibility', $configValue))
-            ->from('OroB2BCatalogBundle:Category', 'category')
-            ->leftJoin(
-                'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
-                'cvr',
-                Join::WITH,
-                $qb->expr()->eq('cvr.category', 'category')
-            )
-            ->leftJoin(
-                'OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
-                'agcvr',
-                Join::WITH,
-                $qb->expr()->andX(
-                    $qb->expr()->eq('agcvr.category', 'category'),
-                    $qb->expr()->eq('agcvr.accountGroup', ':accountGroup')
-                )
-            )
-            ->where($qb->expr()->eq('category', ':category'))
-            ->setParameters([
-                'category' => $category,
-                'accountGroup' => $accountGroup,
-            ]);
+        $visibility = $this->getFallbackToGroupVisibility($category, $accountGroup);
+        if ($visibility === AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG) {
+            $visibility = $configValue;
+        }
 
-        $visibility = $qb->getQuery()->getSingleScalarResult();
-
-        return (int)$visibility === BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE;
+        return $visibility === AccountGroupCategoryVisibilityResolved::VISIBILITY_VISIBLE;
     }
 
     /**
@@ -164,5 +143,97 @@ class AccountGroupCategoryRepository extends EntityRepository
                 $queryBuilder
             );
         }
+    }
+
+    /**
+     * @param Category $category
+     * @param AccountGroup $accountGroup
+     * @return int visible|hidden|config
+     */
+    public function getFallbackToGroupVisibility(Category $category, AccountGroup $accountGroup)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $configFallback = AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
+        $qb->select('COALESCE(agcvr.visibility, cvr.visibility, '. $qb->expr()->literal($configFallback).')')
+            ->from('OroB2BCatalogBundle:Category', 'category')
+            ->leftJoin(
+                'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+                'cvr',
+                Join::WITH,
+                $qb->expr()->eq('cvr.category', 'category')
+            )
+            ->leftJoin(
+                'OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
+                'agcvr',
+                Join::WITH,
+                $qb->expr()->andX(
+                    $qb->expr()->eq('agcvr.category', 'category'),
+                    $qb->expr()->eq('agcvr.accountGroup', ':accountGroup')
+                )
+            )
+            ->where($qb->expr()->eq('category', ':category'))
+            ->setParameters([
+                'category' => $category,
+                'accountGroup' => $accountGroup
+            ]);
+
+        return (int)$qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * [
+     *      [
+     *          'visibility_id' => <int>,
+     *          'parent_visibility_id' => <int|null>,
+     *          'parent_visibility' => <string|null>,
+     *          'category_id' => <int>,
+     *          'parent_category_id' => <int|null>,
+     *          'parent_category_resolved_visibility' => <int|null>
+     *      ],
+     *      ...
+     * ]
+     *
+     * @return array
+     */
+    public function getParentCategoryVisibilities()
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        return $qb->select(
+            'agcv.id as visibility_id',
+            'agcv_parent.id as parent_visibility_id',
+            'agcv_parent.visibility as parent_visibility',
+            'c.id as category_id',
+            'IDENTITY(c.parentCategory) as parent_category_id',
+            'cvr_parent.visibility as parent_category_resolved_visibility'
+        )
+        ->from('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility', 'agcv')
+        // join to category that includes only parent category entities
+        ->innerJoin(
+            'agcv.category',
+            'c',
+            'WITH',
+            'agcv.visibility = ' . $qb->expr()->literal(AccountGroupCategoryVisibility::PARENT_CATEGORY)
+        )
+        // join to parent category visibility
+        ->leftJoin(
+            'OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility',
+            'agcv_parent',
+            'WITH',
+            'agcv_parent.accountGroup = agcv.accountGroup AND agcv_parent.category = c.parentCategory'
+        )
+        // join to resolved category visibility for parent category
+        ->leftJoin(
+            'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+            'cvr_parent',
+            'WITH',
+            'cvr_parent.category = c.parentCategory'
+        )
+        // order is important to make sure that higher level categories will be processed first
+        ->addOrderBy('c.level', 'ASC')
+        ->addOrderBy('c.left', 'ASC')
+        ->getQuery()
+        ->getScalarResult();
     }
 }
