@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
@@ -26,6 +28,9 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
     /** @var  PriceListSystemConfigSubscriber */
     protected $subscriber;
 
+    /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    protected $registry;
+
     public function setUp()
     {
         /** @var PriceListConfigConverter|\PHPUnit_Framework_MockObject_MockObject $converterMock */
@@ -34,7 +39,16 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
-        $this->subscriber = new PriceListSystemConfigSubscriber($this->converterMock, $this->eventDispatcher);
+        /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry */
+        $this->registry = $this->getMockBuilder('\Doctrine\Common\Persistence\ManagerRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->subscriber = new PriceListSystemConfigSubscriber(
+            $this->converterMock,
+            $this->eventDispatcher,
+            $this->registry
+        );
     }
 
     public function testFormPreSet()
@@ -132,11 +146,17 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $this->subscriber->beforeSave($event);
         if ($dispatch) {
+            $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+                ->disableOriginalConstructor()
+                ->getMock();
+            $em->expects($this->once())->method('flush');
+            $this->registry->expects($this->once())->method('getManager')->willReturn($em);
             $this->eventDispatcher
                 ->expects($this->once())
                 ->method('dispatch')
                 ->with(PriceListCollectionChange::BEFORE_CHANGE, new PriceListCollectionChange());
         } else {
+            $this->registry->expects($this->never())->method('getManager');
             $this->eventDispatcher
                 ->expects($this->never())
                 ->method('dispatch');

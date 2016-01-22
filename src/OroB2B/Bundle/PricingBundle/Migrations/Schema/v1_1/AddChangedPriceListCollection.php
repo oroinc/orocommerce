@@ -30,9 +30,6 @@ class AddPriceListCollection implements Migration
         $table->addColumn('account_group_id', 'integer', ['notnull' => false]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
-        $table->addIndex(['website_id'], 'idx_2e1b092718f45c82', []);
-        $table->addIndex(['account_group_id'], 'idx_2e1b0927869a3bf1', []);
-        $table->addIndex(['account_id'], 'idx_2e1b09279b6b5fba', []);
         $table->setPrimaryKey(['id']);
     }
 

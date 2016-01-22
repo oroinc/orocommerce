@@ -3,9 +3,10 @@
 namespace OroB2B\Bundle\PricingBundle\Form\Extension;
 
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManagerInterface;
 
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -30,27 +31,26 @@ class WebsiteFormExtension extends AbstractTypeExtension
     /** @var  EntityManagerInterface */
     protected $entityManager;
 
-    /** @var  RegistryInterface */
-    protected $doctrine;
+    /** @var  ManagerRegistry */
+    protected $registry;
 
     /** @var  EventDispatcherInterface */
     protected $eventDispatcher;
 
     /**
-     * @param RegistryInterface $doctrine
+     * @param ManagerRegistry $registry
      * @param string $priceListToWebsiteClass
      * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
-        RegistryInterface $doctrine,
+        ManagerRegistry $registry,
         $priceListToWebsiteClass,
         EventDispatcherInterface $eventDispatcher
     ) {
-        $this->doctrine = $doctrine;
+        $this->registry = $registry;
         $this->priceListToWebsiteClass = $priceListToWebsiteClass;
         $this->eventDispatcher = $eventDispatcher;
     }
-
 
     /**
      * {@inheritdoc}
@@ -148,7 +148,7 @@ class WebsiteFormExtension extends AbstractTypeExtension
         $submittedFallback = $form->get('fallback')->getData();
         if (!$fallback) {
             $fallback = new PriceListWebsiteFallback();
-            $this->doctrine->getManagerForClass('OroB2BPricingBundle:PriceListWebsiteFallback')->persist($fallback);
+            $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListWebsiteFallback')->persist($fallback);
             $hasChanges = true;
         } elseif ($fallback->getFallback() != $submittedFallback) {
             $hasChanges = true;
@@ -199,7 +199,7 @@ class WebsiteFormExtension extends AbstractTypeExtension
      */
     protected function getFallback(Website $website)
     {
-        return $this->doctrine
+        return $this->registry
             ->getManagerForClass('OroB2BPricingBundle:PriceListWebsiteFallback')
             ->getRepository('OroB2BPricingBundle:PriceListWebsiteFallback')
             ->findOneBy(['website' => $website]);
@@ -245,12 +245,12 @@ class WebsiteFormExtension extends AbstractTypeExtension
     }
 
     /**
-     * @return \Doctrine\Common\Persistence\ObjectManager|null
+     * @return ObjectManager|null
      */
     protected function getPriceListToWebsiteManager()
     {
         if (!$this->entityManager) {
-            $this->entityManager = $this->doctrine->getManagerForClass($this->priceListToWebsiteClass);
+            $this->entityManager = $this->registry->getManagerForClass($this->priceListToWebsiteClass);
         }
 
         return $this->entityManager;

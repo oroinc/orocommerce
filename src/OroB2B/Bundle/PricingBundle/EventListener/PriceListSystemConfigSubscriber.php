@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -25,15 +27,23 @@ class PriceListSystemConfigSubscriber implements EventSubscriberInterface
     /** @var  boolean */
     protected $applicable;
 
+    /** @var  ManagerRegistry */
+    protected $registry;
+
     /**
      * PriceListSystemConfigSubscriber constructor.
      * @param PriceListConfigConverter $converter
      * @param EventDispatcherInterface $eventDispatcher
+     * @param ManagerRegistry $registry
      */
-    public function __construct(PriceListConfigConverter $converter, EventDispatcherInterface $eventDispatcher)
-    {
+    public function __construct(
+        PriceListConfigConverter $converter,
+        EventDispatcherInterface $eventDispatcher,
+        ManagerRegistry $registry
+    ) {
         $this->converter = $converter;
         $this->eventDispatcher = $eventDispatcher;
+        $this->registry = $registry;
     }
 
     /**
@@ -64,7 +74,7 @@ class PriceListSystemConfigSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param mixed $settings
+     * @param array $settings
      * @param string $settingsKey
      * @return bool
      */
@@ -85,6 +95,7 @@ class PriceListSystemConfigSubscriber implements EventSubscriberInterface
                 PriceListCollectionChange::BEFORE_CHANGE,
                 new PriceListCollectionChange()
             );
+            $this->registry->getManager()->flush();
         }
     }
 

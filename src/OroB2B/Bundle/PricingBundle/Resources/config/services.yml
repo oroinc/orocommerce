@@ -352,6 +352,7 @@ services:
         arguments:
             - @orob2b_pricing.system_config_converter
             - @event_dispatcher
+            - @doctrine
         tags:
             - { name: kernel.event_subscriber }
 

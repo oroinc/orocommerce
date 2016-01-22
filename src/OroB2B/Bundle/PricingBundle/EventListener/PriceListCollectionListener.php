@@ -23,6 +23,9 @@ class PriceListCollectionListener
         $this->registry = $registry;
     }
 
+    /**
+     * @param PriceListCollectionChange $event
+     */
     public function onChangeCollectionBefore(PriceListCollectionChange $event)
     {
         $changedPriceListCollection = new ChangedPriceListCollection();
