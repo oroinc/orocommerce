@@ -135,7 +135,7 @@ class CategoryRepositoryTest extends WebTestCase
             [
                 'category_id' => self::ROOT_CATEGORY,
                 'parent_category_id' => null,
-                'resolved_visibility' => null,
+                'resolved_visibility' => CategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
             ],
             [
                 'category_id' => 'category_1',
