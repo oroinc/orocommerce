@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Migrations\Schema\v1_3;
+namespace OroB2B\Bundle\AccountBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroB2BAccountBundle implements Migration
+class AddSalesRepresentativesTables implements Migration
 {
     const ORO_USER_TABLE_NAME = 'oro_user';
 
