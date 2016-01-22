@@ -98,7 +98,10 @@ class AccountProductResolvedCacheBuilderTest extends WebTestCase
         );
         $this->assertEquals(BaseCategoryVisibilityResolved::SOURCE_STATIC, $visibilityResolved['source']);
         $this->assertEquals($this->category->getId(), $visibilityResolved['category_id']);
-        $this->assertEquals(BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE, $visibilityResolved['visibility']);
+        $this->assertEquals(
+            BaseCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+            $visibilityResolved['visibility']
+        );
     }
 
     /**
@@ -119,7 +122,10 @@ class AccountProductResolvedCacheBuilderTest extends WebTestCase
         );
         $this->assertEquals(BaseCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY, $visibilityResolved['source']);
         $this->assertEquals($this->category->getId(), $visibilityResolved['category_id']);
-        $this->assertEquals(BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE, $visibilityResolved['visibility']);
+        $this->assertEquals(
+            BaseCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+            $visibilityResolved['visibility']
+        );
     }
 
     /**

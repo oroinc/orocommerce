@@ -222,7 +222,7 @@ class AccountGroupCategoryRepositoryTest extends WebTestCase
                     'parent_visibility' => null,
                     'category_id' => 'category_1',
                     'parent_category_id' => self::ROOT_CATEGORY,
-                    'parent_category_resolved_visibility' => null,
+                    'parent_category_resolved_visibility' => CategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
                 ],
                 [
                     'visibility_id' => 'category_1_2.visibility.account_group.group1',

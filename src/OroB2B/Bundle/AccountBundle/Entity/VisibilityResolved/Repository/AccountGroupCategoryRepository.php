@@ -31,33 +31,12 @@ class AccountGroupCategoryRepository extends EntityRepository
      */
     public function isCategoryVisible(Category $category, AccountGroup $accountGroup, $configValue)
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select($this->formatConfigFallback('agcvr.visibility, cvr.visibility', $configValue))
-            ->from('OroB2BCatalogBundle:Category', 'category')
-            ->leftJoin(
-                'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
-                'cvr',
-                Join::WITH,
-                $qb->expr()->eq('cvr.category', 'category')
-            )
-            ->leftJoin(
-                'OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
-                'agcvr',
-                Join::WITH,
-                $qb->expr()->andX(
-                    $qb->expr()->eq('agcvr.category', 'category'),
-                    $qb->expr()->eq('agcvr.accountGroup', ':accountGroup')
-                )
-            )
-            ->where($qb->expr()->eq('category', ':category'))
-            ->setParameters([
-                'category' => $category,
-                'accountGroup' => $accountGroup,
-            ]);
+        $visibility = $this->getFallbackToGroupVisibility($category, $accountGroup);
+        if ($visibility === AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG) {
+            $visibility = $configValue;
+        }
 
-        $visibility = $qb->getQuery()->getSingleScalarResult();
-
-        return (int)$visibility === BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE;
+        return $visibility === AccountGroupCategoryVisibilityResolved::VISIBILITY_VISIBLE;
     }
 
     /**
@@ -169,14 +148,14 @@ class AccountGroupCategoryRepository extends EntityRepository
     /**
      * @param Category $category
      * @param AccountGroup $accountGroup
-     * @param int $configValue
-     * @return int
+     * @return int visible|hidden|config
      */
-    public function getFallbackToGroupVisibility(Category $category, AccountGroup $accountGroup, $configValue)
+    public function getFallbackToGroupVisibility(Category $category, AccountGroup $accountGroup)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
-        $qb->select('COALESCE(agcvr.visibility, cvr.visibility, '. $qb->expr()->literal($configValue).')')
+        $configFallback = AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
+        $qb->select('COALESCE(agcvr.visibility, cvr.visibility, '. $qb->expr()->literal($configFallback).')')
             ->from('OroB2BCatalogBundle:Category', 'category')
             ->leftJoin(
                 'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
@@ -199,7 +178,7 @@ class AccountGroupCategoryRepository extends EntityRepository
                 'accountGroup' => $accountGroup
             ]);
 
-        return $qb->getQuery()->getSingleScalarResult();
+        return (int)$qb->getQuery()->getSingleScalarResult();
     }
 
     /**

@@ -14,7 +14,7 @@ class VisibilityChangeAccountSubtreeCacheBuilder extends AbstractSubtreeCacheBui
     /**
      * @param Category $category
      * @param Account $account
-     * @param int $categoryVisibility
+     * @param int $categoryVisibility visible|hidden|config
      */
     public function resolveVisibilitySettings(Category $category, Account $account, $categoryVisibility)
     {
@@ -24,11 +24,8 @@ class VisibilityChangeAccountSubtreeCacheBuilder extends AbstractSubtreeCacheBui
             ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
             ->updateAccountCategoryVisibilityByCategory($account, $childCategoryIds, $categoryVisibility);
 
-        $visibility = $this->categoryVisibilityResolver->isCategoryVisibleForAccount($category, $account);
-        $visibility = $this->convertVisibility($visibility);
-
         $categoryIds = $this->getCategoryIdsForUpdate($category, $childCategoryIds);
-        $this->updateAccountProductVisibilityByCategory($categoryIds, $visibility, $account);
+        $this->updateAccountProductVisibilityByCategory($categoryIds, $categoryVisibility, $account);
     }
 
     /**

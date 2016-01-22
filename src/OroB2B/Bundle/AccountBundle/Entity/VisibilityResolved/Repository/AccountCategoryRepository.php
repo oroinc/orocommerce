@@ -26,16 +26,16 @@ class AccountCategoryRepository extends EntityRepository
     /**
      * @param Category $category
      * @param Account $account
-     * @param int $configValue
-     * @return int
+     * @return int visible|hidden|config
      */
-    public function getCategoryVisibility(Category $category, Account $account, $configValue)
+    public function getFallbackToAccountVisibility(Category $category, Account $account)
     {
         $accountGroup = $account->getGroup();
 
         $qb = $this->getEntityManager()->createQueryBuilder();
 
-        $qb->select($this->formatConfigFallback('acvr.visibility, cvr.visibility', $configValue))
+        $configFallback = BaseCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
+        $qb->select('COALESCE(acvr.visibility, cvr.visibility, ' . $qb->expr()->literal($configFallback) . ')')
             ->from('OroB2BCatalogBundle:Category', 'category')
             ->leftJoin(
                 'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
@@ -45,7 +45,9 @@ class AccountCategoryRepository extends EntityRepository
             );
 
         if ($accountGroup) {
-            $qb->select($this->formatConfigFallback('acvr.visibility, agcvr.visibility, cvr.visibility', $configValue))
+            $qb->select('COALESCE(' .
+                'acvr.visibility, agcvr.visibility, cvr.visibility, ' . $qb->expr()->literal($configFallback) .
+            ')')
                 ->leftJoin(
                     'OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
                     'agcvr',
@@ -72,7 +74,7 @@ class AccountCategoryRepository extends EntityRepository
             ->setParameter('category', $category)
             ->setParameter('account', $account);
 
-        return $qb->getQuery()->getSingleScalarResult();
+        return (int)$qb->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -83,9 +85,12 @@ class AccountCategoryRepository extends EntityRepository
      */
     public function isCategoryVisible(Category $category, Account $account, $configValue)
     {
-        $visibility = $this->getCategoryVisibility($category, $account, $configValue);
+        $visibility = $this->getFallbackToAccountVisibility($category, $account);
+        if ($visibility === AccountCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG) {
+            $visibility = $configValue;
+        }
 
-        return (int)$visibility === BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE;
+        return $visibility === AccountCategoryVisibilityResolved::VISIBILITY_VISIBLE;
     }
 
     /**

@@ -85,9 +85,7 @@ abstract class AbstractSubtreeCacheBuilder
      */
     protected function getCategoryIdsForUpdate(Category $category, array $childCategoryIds)
     {
-        $categoryIds = array_merge($childCategoryIds, [$category->getId()]);
-
-        return $categoryIds;
+        return array_merge($childCategoryIds, [$category->getId()]);
     }
 
     /**
