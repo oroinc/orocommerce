@@ -155,7 +155,7 @@ class CategoryControllerTest extends WebTestCase
         );
         $response = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($response, 200);
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Save')->form();
         $parameters = $this->explodeArrayPaths($form->getValues());
         $token = $crawler->filterXPath('//input[@name="orob2b_catalog_category[_token]"]/@value')->text();
 
