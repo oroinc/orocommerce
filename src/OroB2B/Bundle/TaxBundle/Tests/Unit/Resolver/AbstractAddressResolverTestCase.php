@@ -176,7 +176,7 @@ abstract class AbstractAddressResolverTestCase extends \PHPUnit_Framework_TestCa
                 ResultElement::TAX_AMOUNT => '0',
                 ResultElement::ADJUSTMENT => '0',
             ],
-            $this->extractScalarValues($event->getResult()->getUnit())
+            $this->extractScalarValues($event->getTaxable()->getResult()->getUnit())
         );
         $this->assertEquals(
             [
@@ -185,9 +185,9 @@ abstract class AbstractAddressResolverTestCase extends \PHPUnit_Framework_TestCa
                 ResultElement::TAX_AMOUNT => '0',
                 ResultElement::ADJUSTMENT => '0',
             ],
-            $this->extractScalarValues($event->getResult()->getRow())
+            $this->extractScalarValues($event->getTaxable()->getResult()->getRow())
         );
-        $this->assertEquals([], $event->getResult()->getTaxes());
+        $this->assertEquals([], $event->getTaxable()->getResult()->getTaxes());
     }
 
     /**
@@ -212,7 +212,7 @@ abstract class AbstractAddressResolverTestCase extends \PHPUnit_Framework_TestCa
 
         $this->resolver->resolve($event);
 
-        $this->compareResult($expectedResult, $event->getResult());
+        $this->compareResult($expectedResult, $event->getTaxable()->getResult());
     }
 
     /**

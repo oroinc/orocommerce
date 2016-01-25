@@ -29,26 +29,25 @@ class TaxableTest extends \PHPUnit_Framework_TestCase
     public function testAddItem()
     {
         $taxable = $this->createTaxable();
-        $item = new \stdClass();
+        $item = new Taxable();
         $taxable->addItem($item);
-        $taxable->getItems()->rewind();
         $this->assertSame($item, $taxable->getItems()->current());
     }
 
     public function testAddRemoveItem()
     {
         $taxable = $this->createTaxable();
-        $item = new \stdClass();
-        $item2 = new \stdClass();
+        $item = new Taxable();
+        $item2 = new Taxable();
         $taxable->addItem($item);
         $taxable->addItem($item2);
-        $taxable->getItems()->rewind();
-        $this->assertSame($item, $taxable->getItems()->current());
-        $taxable->getItems()->next();
-        $this->assertSame($item2, $taxable->getItems()->current());
-
+        $items = $taxable->getItems();
+        $this->assertSame($item, $items->current());
+        $items->next();
+        $this->assertSame($item2, $items->current());
+        $this->assertNotSame($item2, $taxable->getItems()->current());
         $taxable->removeItem($item);
-        $taxable->getItems()->rewind();
+        $this->assertSame($item2, $items->current());
         $this->assertSame($item2, $taxable->getItems()->current());
     }
 

@@ -70,7 +70,6 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTaxable($taxable, self::ORDER_ID, self::ORDER_SUBTOTAL, $order->getShippingAddress());
         $this->assertCount(1, $taxable->getItems());
-        $taxable->getItems()->rewind();
         $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Taxable', $taxable->getItems()->current());
     }
 

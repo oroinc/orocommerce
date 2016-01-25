@@ -2,9 +2,7 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Manager;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
-use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
+use OroB2B\Bundle\TaxBundle\Event\TaxEventDispatcher;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
 use OroB2B\Bundle\TaxBundle\Factory\TaxFactory;
@@ -22,7 +20,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
     /**  @var \PHPUnit_Framework_MockObject_MockObject|TaxFactory */
     protected $factory;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|EventDispatcherInterface */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|TaxEventDispatcher */
     protected $eventDispatcher;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|TaxValueManager */
@@ -34,7 +32,8 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $this->eventDispatcher = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Event\TaxEventDispatcher')
+            ->disableOriginalConstructor()->getMock();
 
         $this->taxValueManager = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Manager\TaxValueManager')
             ->disableOriginalConstructor()
@@ -112,18 +111,18 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->eventDispatcher->expects($this->once())->method('dispatch')
             ->with(
-                ResolveTaxEvent::NAME,
                 $this->callback(
-                    function ($event) use ($taxable) {
-                        /** @var ResolveTaxEvent $event */
-                        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent', $event);
-                        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Taxable', $event->getTaxable());
-                        $this->assertSame($taxable, $event->getTaxable());
-                        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Result', $event->getResult());
+                    function ($dispatchedTaxable) use ($taxable) {
+                        /** @var Taxable $dispatchedTaxable */
+                        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Taxable', $dispatchedTaxable);
+                        $this->assertSame($taxable, $dispatchedTaxable);
 
-                        $unit = $event->getResult()->getUnit();
+                        /** @var Result $dispatchedResult */
+                        $dispatchedResult = $dispatchedTaxable->getResult();
+                        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Result', $dispatchedResult);
+                        $unit = $dispatchedResult->getUnit();
                         $unit->offsetSet(ResultElement::EXCLUDING_TAX, 20);
-                        $event->getResult()->offsetSet(Result::UNIT, $unit);
+                        $dispatchedResult->offsetSet(Result::UNIT, $unit);
 
                         return true;
                     }
@@ -161,19 +160,20 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->eventDispatcher->expects($this->once())->method('dispatch')
             ->with(
-                ResolveTaxEvent::NAME,
                 $this->callback(
-                    function ($event) use ($taxable, $taxResult) {
-                        /** @var ResolveTaxEvent $event */
-                        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent', $event);
-                        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Taxable', $event->getTaxable());
-                        $this->assertSame($taxable, $event->getTaxable());
-                        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Result', $event->getResult());
-                        $this->assertSame($taxResult, $event->getResult());
+                    function ($dispatchedTaxable) use ($taxable, $taxResult) {
+                        /** @var Taxable $dispatchedTaxable */
+                        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Taxable', $dispatchedTaxable);
+                        $this->assertSame($taxable, $dispatchedTaxable);
 
-                        $unit = $event->getResult()->getUnit();
+                        /** @var Result $dispatchedResult */
+                        $dispatchedResult = $dispatchedTaxable->getResult();
+                        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Result', $dispatchedResult);
+                        $this->assertSame($taxResult, $taxResult);
+                        /** @var Result $dispatchedResult */
+                        $unit = $dispatchedResult->getUnit();
                         $unit->offsetSet(ResultElement::EXCLUDING_TAX, 20);
-                        $event->getResult()->offsetSet(Result::UNIT, $unit);
+                        $dispatchedResult->offsetSet(Result::UNIT, $unit);
 
                         return true;
                     }

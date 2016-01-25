@@ -42,9 +42,14 @@ class Taxable
     protected $amount = 0;
 
     /**
-     * @var \SplObjectStorage
+     * @var \SplObjectStorage|Taxable[]
      */
     protected $items;
+
+    /**
+     * @var Result
+     */
+    protected $result;
 
     public function __construct()
     {
@@ -166,10 +171,12 @@ class Taxable
     }
 
     /**
-     * @return \SplObjectStorage
+     * @return \SplObjectStorage|Taxable[]
      */
     public function getItems()
     {
+        $this->items->rewind();
+
         return $this->items;
     }
 
@@ -185,10 +192,10 @@ class Taxable
     }
 
     /**
-     * @param mixed $item
+     * @param Taxable $item
      * @return $this
      */
-    public function addItem($item)
+    public function addItem(Taxable $item)
     {
         if (!$this->items->contains($item)) {
             $this->items->attach($item);
@@ -198,10 +205,10 @@ class Taxable
     }
 
     /**
-     * @param mixed $item
+     * @param Taxable $item
      * @return $this
      */
-    public function removeItem($item)
+    public function removeItem(Taxable $item)
     {
         if ($this->items->contains($item)) {
             $this->items->detach($item);
@@ -216,7 +223,7 @@ class Taxable
      */
     public function setClassName($className)
     {
-        $this->className = $className;
+        $this->className = (string)$className;
 
         return $this;
     }
@@ -227,5 +234,25 @@ class Taxable
     public function getClassName()
     {
         return $this->className;
+    }
+
+    /**
+     * @return Result
+     */
+    public function getResult()
+    {
+        if (!$this->result) {
+            $this->result = new Result();
+        }
+
+        return $this->result;
+    }
+
+    /**
+     * @param Result $result
+     */
+    public function setResult(Result $result)
+    {
+        $this->result = $result;
     }
 }

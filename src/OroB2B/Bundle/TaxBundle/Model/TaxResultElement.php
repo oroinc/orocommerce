@@ -20,11 +20,43 @@ class TaxResultElement extends AbstractResult
     {
         $resultElement = new static;
 
-        $resultElement->offsetSet(self::TAX, $taxId);
-        $resultElement->offsetSet(self::RATE, $rate);
-        $resultElement->offsetSet(self::TAXABLE_AMOUNT, $taxableAmount);
-        $resultElement->offsetSet(self::TAX_AMOUNT, $taxAmount);
+        $resultElement->offsetSet(self::TAX, (string)$taxId);
+        $resultElement->offsetSet(self::RATE, (string)$rate);
+        $resultElement->offsetSet(self::TAXABLE_AMOUNT, (string)$taxableAmount);
+        $resultElement->offsetSet(self::TAX_AMOUNT, (string)$taxAmount);
 
         return $resultElement;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTax()
+    {
+        return $this->getOffset(self::TAX);
+    }
+
+    /**
+     * @return string
+     */
+    public function getRate()
+    {
+        return $this->getOffset(self::RATE);
+    }
+
+    /**
+     * @return string
+     */
+    public function getTaxableAmount()
+    {
+        return $this->getOffset(self::TAXABLE_AMOUNT);
+    }
+
+    /**
+     * @return string
+     */
+    public function getTaxAmount()
+    {
+        return $this->getOffset(self::TAX_AMOUNT);
     }
 }

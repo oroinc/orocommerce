@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Resolver;
 
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
@@ -39,39 +38,6 @@ class CustomerAddressItemResolverTest extends AbstractAddressResolverTestCase
 
         $this->assertEmptyResult($event);
     }
-
-    public function testEmptyRules()
-    {
-        $taxable = $this->getTaxable();
-        $taxable->setDestination(new OrderAddress());
-        $taxable->setPrice('1');
-        $taxable->setAmount('1');
-        $event = new ResolveTaxEvent($taxable, new Result());
-
-        $this->matcher->expects($this->once())->method('match')->willReturn([]);
-        $this->resolver->resolve($event);
-
-        $this->assertEquals(
-            [
-                ResultElement::INCLUDING_TAX => '1',
-                ResultElement::EXCLUDING_TAX => '1',
-                ResultElement::TAX_AMOUNT => '0',
-                ResultElement::ADJUSTMENT => '0',
-            ],
-            $this->extractScalarValues($event->getResult()->getUnit())
-        );
-        $this->assertEquals(
-            [
-                ResultElement::INCLUDING_TAX => '1',
-                ResultElement::EXCLUDING_TAX => '1',
-                ResultElement::TAX_AMOUNT => '0',
-                ResultElement::ADJUSTMENT => '0',
-            ],
-            $this->extractScalarValues($event->getResult()->getRow())
-        );
-        $this->assertEquals([], $event->getResult()->getTaxes());
-    }
-
 
     /** {@inheritdoc} */
     public function rulesDataProvider()
@@ -152,8 +118,8 @@ class CustomerAddressItemResolverTest extends AbstractAddressResolverTestCase
     /** {@inheritdoc} */
     protected function assertEmptyResult(ResolveTaxEvent $event)
     {
-        $this->assertEquals(new ResultElement(), $event->getResult()->getUnit());
-        $this->assertEquals(new ResultElement(), $event->getResult()->getRow());
-        $this->assertEquals([], $event->getResult()->getTaxes());
+        $this->assertEquals(new ResultElement(), $event->getTaxable()->getResult()->getUnit());
+        $this->assertEquals(new ResultElement(), $event->getTaxable()->getResult()->getRow());
+        $this->assertEquals([], $event->getTaxable()->getResult()->getTaxes());
     }
 }
