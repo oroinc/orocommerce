@@ -1,0 +1,144 @@
+{% block _scripts_before_widget %}
+    {% block scripts_before %}
+        {% placeholder scripts_before %}
+    {% endblock %}
+{% endblock %}
+
+{% block _require_js_widget %}
+    {% set requirejs_config_extend %}
+        {%- placeholder requirejs_config_extend -%}
+    {% endset %}
+    {% include 'OroRequireJSBundle::scripts.html.twig' with {
+        compressed: not app.debug,
+        config_extend: requirejs_config_extend
+    } %}
+    {% placeholder scripts_after %}
+    <script>
+        require({
+            config: {
+                'oro/datagrid/cell/action-cell': {showCloseButton: true},
+                'orodatagrid/js/datagrid/action-launcher': {iconHideText: false},
+                'oro/filter/abstract-filter': {
+                    placeholder: null,
+                    labelPrefix: '{{ 'orob2b_frontend.filter.by'|trans  }} '
+                },
+                'orofilter/js/filter-hint': {inline: false},
+                'orob2bshoppinglist/js/app/widget/shopping-list-widget': {
+                    routeParams: {_theme: 'default'}
+                }
+            }
+        });
+    </script>
+{% endblock %}
+
+{% block _require_modules_widget %}
+    <script type="text/javascript">
+        require(['oroui/js/app']);
+    </script>
+{% endblock %}
+
+{% block _wrapper_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " wrapper"
+    }) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _header_widget %}
+    <header{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </header>
+{% endblock %}
+
+{% block _main_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " main"
+    }) %}
+    <main{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </main>
+{% endblock %}
+
+{% block _content_widget %}
+    {% set hasSidebarLeft = views.sidebar_left is defined and views.sidebar_left.children|length > 0 %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " content" ~ (hasSidebarLeft ? " content_has-sidebar")
+    }) %}
+    <div{{ block('block_attributes') }}>
+        <div class="content__container">
+            <div class="container-fluid">
+                <div class="content__inner" id="container">
+                    {{ block_widget(block) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _page_title_widget %}
+    {% if text %}
+        {% if class_prefix %}
+            {% set attr = attr|merge({
+                class: attr.class|default('') ~ " {{ class_prefix }}-page-title"
+            }) %}
+        {% endif %}
+        <h1{{ block('block_attributes') }}>{{ block_widget(block) }}</h1>
+    {% endif %}
+{% endblock %}
+
+{% block _sidebar_left_widget %}
+    {% if block.count > 0 %}
+        {% set attr = attr|merge({
+            class: attr.class|default('') ~ " sidebar sidebar_left"
+        }) %}
+        <aside{{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </aside>
+    {% endif %}
+{% endblock %}
+
+{% block _footer_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " footer"
+    }) %}
+    <footer{{ block('block_attributes') }}>
+        <div class="container-fluid">
+            {{ block_widget(block) }}
+        </div>
+    </footer>
+{% endblock %}
+
+{% block _notification_widget %}
+    {% set attr = {
+        id: 'flash-messages'
+    }|merge(attr)|merge({
+        class: attr.class|default('') ~ " notification notification_notice notification_lg"
+    }) %}
+    <div{{ block('block_attributes') }}></div>
+    <script type="text/template" id="message-item-template">
+        <div class="container-fluid alert">
+            <span class="badge badge_sm_xs badge_notice"><i class="icon-check"></i></span>
+            <span class="fs16 ml1-md ml1-sm"><%= message %></span>
+        </div>
+    </script>
+    <script type="text/javascript">
+        require(['jquery', 'oroui/js/messenger'],
+            function($, messenger) {
+                messenger.setup({
+                    container: '#{{ attr.id }}',
+                    template: _.template($.trim($('#message-item-template').html()))
+                });
+                {% if app.session.flashbag.peekAll|length > 0 %}
+                $(function() {
+                    {% for type, messages in app.session.flashbag.all %}
+                        {% for message in messages %}
+                            messenger.notificationFlashMessage({{ type|json_encode|raw }}, {{ message|trans|json_encode|raw }});
+                        {% endfor %}
+                    {% endfor %}
+                });
+                {% endif %}
+            });
+    </script>
+{% endblock %}
