@@ -20,7 +20,7 @@ class Address extends AbstractAddress
     /** {@inheritdoc} */
     public function setRegion($region)
     {
-        $this->region = $region;
+        parent::setRegion($region);
 
         $this->data->offsetSet('region', $region);
     }
@@ -28,7 +28,7 @@ class Address extends AbstractAddress
     /** {@inheritdoc} */
     public function setRegionText($regionText)
     {
-        $this->regionText = $regionText;
+        parent::setRegionText($regionText);
 
         $this->data->offsetSet('region_text', $regionText);
     }
@@ -36,7 +36,7 @@ class Address extends AbstractAddress
     /** {@inheritdoc} */
     public function setPostalCode($postalCode)
     {
-        $this->postalCode = $postalCode;
+        parent::setPostalCode($postalCode);
 
         $this->data->offsetSet('postal_code', $postalCode);
     }
@@ -44,7 +44,7 @@ class Address extends AbstractAddress
     /** {@inheritdoc} */
     public function setCountry($country)
     {
-        $this->country = $country;
+        parent::setCountry($country);
 
         $this->data->offsetSet('country', $country);
     }
