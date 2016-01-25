@@ -12,13 +12,16 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
 {
     /**
      * @param Category $category
+     * @param int $visibility
      */
-    public function resolveVisibilitySettings(Category $category)
+    public function resolveVisibilitySettings(Category $category, $visibility)
     {
-        $visibility = $this->categoryVisibilityResolver->isCategoryVisible($category);
-        $visibility = $this->convertVisibility($visibility);
-
         $childCategoryIds = $this->getChildCategoryIdsForUpdate($category);
+
+        $this->registry->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->updateCategoryVisibilityByCategory($childCategoryIds, $visibility);
+
         $categoryIds = $this->getCategoryIdsForUpdate($category, $childCategoryIds);
         $this->updateProductVisibilityByCategory($categoryIds, $visibility);
 
