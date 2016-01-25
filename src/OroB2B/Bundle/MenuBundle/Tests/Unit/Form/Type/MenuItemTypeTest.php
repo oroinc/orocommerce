@@ -81,6 +81,7 @@ class MenuItemTypeTest extends FormIntegrationTestCase
 
         $this->assertTrue($form->has('titles'));
         $this->assertTrue($form->has('uri'));
+        $this->assertTrue($form->has('condition'));
     }
 
     /**
@@ -125,6 +126,7 @@ class MenuItemTypeTest extends FormIntegrationTestCase
         $menuItem = new MenuItem();
         $menuItem->setDefaultTitle('menu_item_title');
         $menuItem->setUri('uri');
+        $menuItem->setCondition('1 > 2');
         $menuItem->setParent($root);
 
         return [
@@ -146,12 +148,14 @@ class MenuItemTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'titles' => [['string'=>'new_menu_item_title']],
                     'uri' => 'new_uri',
+                    'condition' => '1 > 2'
                 ],
                 'expectedData' => [
                     'titles' => new ArrayCollection(
                         [(new LocalizedFallbackValue())->setString('new_menu_item_title')]
                     ),
                     'uri' => 'new_uri',
+                    'condition' => '1 > 2'
                 ]
             ],
 

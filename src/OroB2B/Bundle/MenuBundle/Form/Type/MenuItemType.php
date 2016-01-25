@@ -59,6 +59,11 @@ class MenuItemType extends AbstractType
                                 'required' => false,
                                 'label' => 'orob2b.menu.menuitem.uri.label',
                             ]
+                        )
+                        ->add(
+                            'condition',
+                            'text',
+                            ['required' => false]
                         );
                 }
             }
