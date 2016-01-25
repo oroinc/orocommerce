@@ -72,7 +72,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
                 ->getFallbackToAllVisibility($category);
             $update = [
                 'visibility' => $visibility,
-                'sourceCategoryVisibility' => $visibilitySettings,
+                'sourceCategoryVisibility' => null,
                 'source' => AccountGroupCategoryVisibilityResolved::SOURCE_STATIC,
             ];
         } elseif ($selectedVisibility == AccountGroupCategoryVisibility::PARENT_CATEGORY) {
