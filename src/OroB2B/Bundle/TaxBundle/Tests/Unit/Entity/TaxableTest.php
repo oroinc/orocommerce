@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Entity;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
@@ -18,32 +17,45 @@ class TaxableTest extends \PHPUnit_Framework_TestCase
             ['origin', 'address'],
             ['destination', 'address'],
             ['quantity', 20],
-            ['price', Price::create(30, 'USD')],
-            ['amount', 100]
+            ['price', '10'],
+            ['amount', '100'],
+            ['items', new \SplObjectStorage(), false],
+            ['className', '\stdClass'],
         ];
 
         $this->assertPropertyAccessors($this->createTaxable(), $properties);
     }
 
-    public function testRelations()
-    {
-        $this->assertPropertyCollections($this->createTaxable(), [
-            ['items', new \SplObjectStorage()],
-        ]);
-    }
-
-    public function testItems()
+    public function testAddItem()
     {
         $taxable = $this->createTaxable();
-        $items = new \SplObjectStorage(['some', 'items']);
-        $taxable->setItems($items);
-        $this->assertSame($items, $taxable->getItems());
+        $item = new \stdClass();
+        $taxable->addItem($item);
+        $taxable->getItems()->rewind();
+        $this->assertSame($item, $taxable->getItems()->current());
+    }
+
+    public function testAddRemoveItem()
+    {
+        $taxable = $this->createTaxable();
+        $item = new \stdClass();
+        $item2 = new \stdClass();
+        $taxable->addItem($item);
+        $taxable->addItem($item2);
+        $taxable->getItems()->rewind();
+        $this->assertSame($item, $taxable->getItems()->current());
+        $taxable->getItems()->next();
+        $this->assertSame($item2, $taxable->getItems()->current());
+
+        $taxable->removeItem($item);
+        $taxable->getItems()->rewind();
+        $this->assertSame($item2, $taxable->getItems()->current());
     }
 
     /**
      * @return Taxable
      */
-    private function createTaxable()
+    protected function createTaxable()
     {
         return new Taxable();
     }

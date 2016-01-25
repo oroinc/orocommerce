@@ -31,7 +31,7 @@ class CustomerAddressItemResolver extends AbstractAddressResolver
         }
 
         $taxRules = $this->matcher->match($address);
-        $taxableUnitPrice = $taxable->getPrice();
+        $taxableUnitPrice = BigDecimal::of($taxable->getPrice());
         $taxableAmount = $taxableUnitPrice->multipliedBy($taxable->getQuantity());
 
         $result = $event->getResult();

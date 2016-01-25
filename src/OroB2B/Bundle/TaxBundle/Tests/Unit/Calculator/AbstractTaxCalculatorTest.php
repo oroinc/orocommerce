@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Calculator;
 
-use Brick\Math\BigNumber;
-
 use OroB2B\Bundle\TaxBundle\Calculator\TaxCalculatorInterface;
 
 abstract class AbstractTaxCalculatorTest extends \PHPUnit_Framework_TestCase
@@ -27,12 +25,7 @@ abstract class AbstractTaxCalculatorTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             $expectedResult,
-            array_map(
-                function (BigNumber $number) {
-                    return (string)$number;
-                },
-                array_values($this->calculator->calculate($taxableAmount, $taxRate)->getArrayCopy())
-            )
+            array_values($this->calculator->calculate($taxableAmount, $taxRate)->getArrayCopy())
         );
     }
 

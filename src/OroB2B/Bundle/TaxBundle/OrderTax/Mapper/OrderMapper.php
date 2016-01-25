@@ -26,7 +26,7 @@ class OrderMapper extends AbstractOrderMapper
     public function map($order)
     {
         $taxable = (new Taxable())
-            ->setRawAmount($order->getSubtotal())
+            ->setAmount($order->getSubtotal())
             ->setIdentifier($order->getId())
             ->setClassName(ClassUtils::getClass($order))
             ->setItems($this->mapLineItems($order->getLineItems()))

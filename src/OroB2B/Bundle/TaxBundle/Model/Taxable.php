@@ -2,11 +2,7 @@
 
 namespace OroB2B\Bundle\TaxBundle\Model;
 
-use Brick\Math\BigDecimal;
-use Brick\Math\BigInteger;
-
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
-use Oro\Bundle\CurrencyBundle\Model\Price;
 
 class Taxable
 {
@@ -31,19 +27,19 @@ class Taxable
     protected $destination;
 
     /**
-     * @var BigInteger
+     * @var int
      */
-    protected $quantity;
+    protected $quantity = 1;
 
     /**
-     * @var BigDecimal
+     * @var string
      */
-    protected $price;
+    protected $price = 0;
 
     /**
-     * @var BigDecimal
+     * @var string
      */
-    protected $amount;
+    protected $amount = 0;
 
     /**
      * @var \SplObjectStorage
@@ -53,7 +49,6 @@ class Taxable
     public function __construct()
     {
         $this->items = new \SplObjectStorage();
-        $this->quantity = BigInteger::one();
     }
 
     /**
@@ -114,7 +109,7 @@ class Taxable
     }
 
     /**
-     * @return BigInteger
+     * @return int
      */
     public function getQuantity()
     {
@@ -122,10 +117,10 @@ class Taxable
     }
 
     /**
-     * @param BigInteger $quantity
+     * @param int $quantity
      * @return $this
      */
-    public function setQuantity(BigInteger $quantity)
+    public function setQuantity($quantity)
     {
         $this->quantity = $quantity;
 
@@ -133,18 +128,7 @@ class Taxable
     }
 
     /**
-     * @param mixed $quantity
-     * @return $this
-     */
-    public function setRawQuantity($quantity)
-    {
-        $this->quantity = BigInteger::of($quantity);
-
-        return $this;
-    }
-
-    /**
-     * @return BigDecimal
+     * @return string
      */
     public function getPrice()
     {
@@ -152,29 +136,18 @@ class Taxable
     }
 
     /**
-     * @param BigDecimal $price
+     * @param string $price
      * @return $this
      */
-    public function setPrice(BigDecimal $price)
+    public function setPrice($price)
     {
-        $this->price = $price;
+        $this->price = (string)$price;
 
         return $this;
     }
 
     /**
-     * @param Price $price
-     * @return $this
-     */
-    public function setRawPrice(Price $price = null)
-    {
-        $this->price = $price ? BigDecimal::of($price->getValue()) : BigDecimal::zero();
-
-        return $this;
-    }
-
-    /**
-     * @return BigDecimal
+     * @return string
      */
     public function getAmount()
     {
@@ -182,23 +155,12 @@ class Taxable
     }
 
     /**
-     * @param BigDecimal $amount
+     * @param string $amount
      * @return $this
      */
-    public function setAmount(BigDecimal $amount)
+    public function setAmount($amount)
     {
-        $this->amount = $amount;
-
-        return $this;
-    }
-
-    /**
-     * @param mixed $amount
-     * @return $this
-     */
-    public function setRawAmount($amount)
-    {
-        $this->amount = BigDecimal::of($amount);
+        $this->amount = (string)$amount;
 
         return $this;
     }

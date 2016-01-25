@@ -4,8 +4,6 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Resolver;
 
 use Brick\Math\BigNumber;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
-
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\TaxBundle\Calculator\TaxCalculator;
 use OroB2B\Bundle\TaxBundle\Calculator\TaxCalculatorInterface;
@@ -132,10 +130,26 @@ abstract class AbstractAddressResolverTestCase extends \PHPUnit_Framework_TestCa
      */
     abstract protected function assertEmptyResult(ResolveTaxEvent $event);
 
-
     public function testDestinationMissing()
     {
-        $event = new ResolveTaxEvent($this->getTaxable(), new Result());
+        $taxable = $this->getTaxable();
+        $taxable->setPrice('1');
+        $taxable->setAmount('1');
+
+        $event = new ResolveTaxEvent($taxable, new Result());
+
+        $this->assertNothing();
+
+        $this->resolver->resolve($event);
+
+        $this->assertEmptyResult($event);
+    }
+
+    public function testEmptyAmount()
+    {
+        $taxable = $this->getTaxable();
+
+        $event = new ResolveTaxEvent($taxable, new Result());
 
         $this->assertNothing();
 
@@ -148,8 +162,8 @@ abstract class AbstractAddressResolverTestCase extends \PHPUnit_Framework_TestCa
     {
         $taxable = $this->getTaxable();
         $taxable->setDestination(new OrderAddress());
-        $taxable->setRawPrice(Price::create(1, 'USD'));
-        $taxable->setRawAmount('1');
+        $taxable->setPrice('1');
+        $taxable->setAmount('1');
         $event = new ResolveTaxEvent($taxable, new Result());
 
         $this->matcher->expects($this->once())->method('match')->willReturn([]);
@@ -186,9 +200,9 @@ abstract class AbstractAddressResolverTestCase extends \PHPUnit_Framework_TestCa
     public function testRules($taxableAmount, array $taxRules, Result $expectedResult, $startWithRowTotal = false)
     {
         $taxable = $this->getTaxable();
-        $taxable->setRawPrice(Price::create($taxableAmount, 'USD'));
-        $taxable->setRawQuantity(3);
-        $taxable->setRawAmount($taxableAmount);
+        $taxable->setPrice($taxableAmount);
+        $taxable->setQuantity(3);
+        $taxable->setAmount($taxableAmount);
         $taxable->setDestination(new OrderAddress());
         $event = new ResolveTaxEvent($taxable, new Result());
 

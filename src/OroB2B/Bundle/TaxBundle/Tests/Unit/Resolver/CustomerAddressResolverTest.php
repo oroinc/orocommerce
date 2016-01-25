@@ -45,8 +45,7 @@ class CustomerAddressResolverTest extends AbstractAddressResolverTestCase
     {
         $taxable = $this->getTaxable();
         $taxable->setDestination(new OrderAddress());
-        $taxable->setRawAmount('1');
-        $taxable->setRawAmount(0);
+        $taxable->setAmount('1');
 
         $event = new ResolveTaxEvent($taxable, new Result());
 
@@ -76,7 +75,7 @@ class CustomerAddressResolverTest extends AbstractAddressResolverTestCase
                 [$this->getTaxRule('city', '0.08')],
                 new Result(
                     [
-                        Result::TOTAL => ResultElement::createFromRaw('21.5892', '19.99', '1.5992', '0.0008'),
+                        Result::TOTAL => ResultElement::create('21.5892', '19.99', '1.5992', '0.0008'),
                         Result::SHIPPING => new ResultElement(),
                         Result::TAXES => [
                             TaxResultElement::create(null, '0.08', '19.99', '1.5992'),
@@ -92,7 +91,7 @@ class CustomerAddressResolverTest extends AbstractAddressResolverTestCase
                 ],
                 new Result(
                     [
-                        Result::TOTAL => ResultElement::createFromRaw('22.9885', '19.99', '2.9985', '0.0015'),
+                        Result::TOTAL => ResultElement::create('22.9885', '19.99', '2.9985', '0.0015'),
                         Result::SHIPPING => new ResultElement(),
                         Result::TAXES => [
                             TaxResultElement::create(null, '0.08', '19.99', '1.5992'),
@@ -110,7 +109,7 @@ class CustomerAddressResolverTest extends AbstractAddressResolverTestCase
                 ],
                 new Result(
                     [
-                        Result::TOTAL => ResultElement::createFromRaw('24.1879', '19.99', '4.1979', '0.0021'),
+                        Result::TOTAL => ResultElement::create('24.1879', '19.99', '4.1979', '0.0021'),
                         Result::SHIPPING => new ResultElement(),
                         Result::TAXES => [
                             TaxResultElement::create(null, '0.08', '19.99', '1.5992'),

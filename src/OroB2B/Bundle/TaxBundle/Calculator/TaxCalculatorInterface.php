@@ -6,7 +6,6 @@ use OroB2B\Bundle\TaxBundle\Model\ResultElement;
 
 interface TaxCalculatorInterface
 {
-    /** @todo: config */
     const CALCULATION_SCALE = 9;
     const SCALE = 2;
 

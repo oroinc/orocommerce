@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\TaxBundle\Model;
 
-use Brick\Math\BigNumber;
-
 final class ResultElement extends AbstractResult
 {
     const INCLUDING_TAX = 'includingTax';
@@ -12,51 +10,31 @@ final class ResultElement extends AbstractResult
     const ADJUSTMENT = 'adjustment';
 
     /**
-     * @param BigNumber $includingTax
-     * @param BigNumber $excludingTax
-     * @param BigNumber $taxAmount
-     * @param BigNumber $adjustment
+     * @param string $includingTax
+     * @param string $excludingTax
+     * @param string $taxAmount
+     * @param string $adjustment
      *
      * @return ResultElement
      */
     public static function create(
-        BigNumber $includingTax,
-        BigNumber $excludingTax,
-        BigNumber $taxAmount = null,
-        BigNumber $adjustment = null
+        $includingTax,
+        $excludingTax,
+        $taxAmount = null,
+        $adjustment = null
     ) {
         $resultElement = new static;
 
-        $resultElement->offsetSet(self::INCLUDING_TAX, $includingTax);
-        $resultElement->offsetSet(self::EXCLUDING_TAX, $excludingTax);
-        $resultElement->offsetSet(self::TAX_AMOUNT, $taxAmount);
-        $resultElement->offsetSet(self::ADJUSTMENT, $adjustment);
+        $resultElement->offsetSet(self::INCLUDING_TAX, (string)$includingTax);
+        $resultElement->offsetSet(self::EXCLUDING_TAX, (string)$excludingTax);
+        $resultElement->offsetSet(self::TAX_AMOUNT, (string)$taxAmount);
+        $resultElement->offsetSet(self::ADJUSTMENT, (string)$adjustment);
 
         return $resultElement;
     }
 
     /**
-     * @param mixed $includingTax
-     * @param mixed $excludingTax
-     * @param mixed $taxAmount
-     * @param mixed $adjustment
-     *
-     * @return ResultElement
-     */
-    public static function createFromRaw($includingTax, $excludingTax, $taxAmount = null, $adjustment = null)
-    {
-        $resultElement = new static;
-
-        $resultElement->offsetSet(self::INCLUDING_TAX, BigNumber::of($includingTax));
-        $resultElement->offsetSet(self::EXCLUDING_TAX, BigNumber::of($excludingTax));
-        $resultElement->offsetSet(self::TAX_AMOUNT, BigNumber::of($taxAmount));
-        $resultElement->offsetSet(self::ADJUSTMENT, BigNumber::of($adjustment));
-
-        return $resultElement;
-    }
-
-    /**
-     * @return BigNumber
+     * @return string
      */
     public function getIncludingTax()
     {
@@ -64,7 +42,7 @@ final class ResultElement extends AbstractResult
     }
 
     /**
-     * @return BigNumber
+     * @return string
      */
     public function getExcludingTax()
     {
@@ -72,7 +50,7 @@ final class ResultElement extends AbstractResult
     }
 
     /**
-     * @return BigNumber
+     * @return string
      */
     public function getTaxAmount()
     {
@@ -80,7 +58,7 @@ final class ResultElement extends AbstractResult
     }
 
     /**
-     * @return BigNumber
+     * @return string
      */
     public function getAdjustment()
     {

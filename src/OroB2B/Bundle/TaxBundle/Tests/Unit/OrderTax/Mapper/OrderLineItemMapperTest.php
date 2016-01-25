@@ -76,9 +76,12 @@ class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
         /** @var OrderLineItem $lineItem */
         $lineItem = $this->getEntity('OroB2B\Bundle\OrderBundle\Entity\OrderLineItem', ['id' => $id]);
         $lineItem
-            ->setPrice($priceValue ? Price::create($priceValue, 'USD') : new Price())
             ->setQuantity($quantity)
             ->setOrder(new Order());
+
+        if ($priceValue) {
+            $lineItem->setPrice(Price::create($priceValue, 'USD'));
+        }
 
         return $lineItem;
     }
