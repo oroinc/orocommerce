@@ -41,8 +41,9 @@ class LoadProductVisibilityDemoData extends AbstractFixture implements
     {
         return [
             'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData',
-            __NAMESPACE__ . '\LoadAccountDemoData',
             'OroB2B\Bundle\WebsiteBundle\Migrations\Data\Demo\ORM\LoadWebsiteDemoData',
+            __NAMESPACE__ . '\LoadAccountDemoData',
+            __NAMESPACE__ . '\LoadCategoryVisibilityDemoData',
         ];
     }
 
