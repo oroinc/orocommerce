@@ -22,7 +22,7 @@ layout:
                 styles:
                     blockType: style
                     options:
-                        src: { @value: $data.theme.data.assets.styles.output }
+                        src: { @asset: $data.theme.data.assets.styles.output }
                 body:
                     blockType: body
                 wrapper:
