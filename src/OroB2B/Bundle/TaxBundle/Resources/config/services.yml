@@ -252,6 +252,7 @@ services:
             - @orob2b_tax.manager.tax_value_manager
         calls:
             - [addTransformer, [%orob2b_order.entity.order.class%, @orob2b_tax.transformer.tax_value]]
+            - [addTransformer, [%orob2b_order.entity.order_line_item.class%, @orob2b_tax.transformer.tax_value]]
 
     orob2b_tax.manager.tax_value_manager:
         class: %orob2b_tax.manager.tax_value_manager.class%

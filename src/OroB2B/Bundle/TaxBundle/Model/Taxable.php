@@ -166,9 +166,9 @@ class Taxable
      * @param Price $price
      * @return $this
      */
-    public function setRawPrice(Price $price)
+    public function setRawPrice(Price $price = null)
     {
-        $this->price = BigDecimal::of($price->getValue());
+        $this->price = $price ? BigDecimal::of($price->getValue()) : BigDecimal::zero();
 
         return $this;
     }

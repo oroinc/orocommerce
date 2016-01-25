@@ -9,6 +9,7 @@ parameters:
     orob2b_shopping_list.processor.quick_add.class:  OroB2B\Bundle\ShoppingListBundle\Processor\QuickAddProcessor
     orob2b_shopping_list.service.message_generator.class: OroB2B\Bundle\ShoppingListBundle\Generator\MessageGenerator
     orob2b_shopping_list.service.product_data_storage.class: OroB2B\Bundle\ShoppingListBundle\Storage\ProductDataStorage
+    orob2b_shopping_list.action.datagrid.mass_action_provider.class: OroB2B\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction\AddLineItemMassActionProvider
 
 services:
     orob2b_shopping_list.validator.line_item:
@@ -85,3 +86,11 @@ services:
             - [setBackendSystemConfigurationPath, ['oro_b2b_shopping_list.backend_product_visibility']]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
+
+    orob2b_shopping_list.action.datagrid.mass_action_provider:
+        class: %orob2b_shopping_list.action.datagrid.mass_action_provider.class%
+        arguments:
+            - @orob2b_shopping_list.shopping_list.manager
+            - @translator
+        tags:
+            - { name: oro_action.datagrid.mass_action_provider, alias: orob2b_shopping_list_add_products }
