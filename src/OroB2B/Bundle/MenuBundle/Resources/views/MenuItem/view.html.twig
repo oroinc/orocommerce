@@ -4,7 +4,7 @@
 {% set entityId = entity.id %}
 
 {% oro_title_set({params : {
-    "%title%": entity.defaultTitle|default('N/A'|trans)
+    "%title%": entity.defaultTitle.string|default('N/A'|trans)
 } }) %}
 
 {% block navButtons %}

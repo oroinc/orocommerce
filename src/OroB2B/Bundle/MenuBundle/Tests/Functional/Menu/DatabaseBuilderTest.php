@@ -6,8 +6,8 @@ use Knp\Menu\Util\MenuManipulator;
 
 use Oro\Component\Testing\WebTestCase;
 
+use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
 use OroB2B\Bundle\MenuBundle\Menu\DatabaseBuilder;
-use OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
 
 /**
  * @dbIsolation
@@ -38,7 +38,7 @@ class DatabaseBuilderTest extends WebTestCase
     {
         $options = [];
         if ($locale) {
-            $options['extras'][DatabaseMenuProvider::LOCALE_OPTION] = $this->getReference($locale);
+            $options['extras'][MenuItem::LOCALE_OPTION] = $this->getReference($locale);
         }
         $menuItem = $this->builder->build($alias, $options);
         $actualData = (new MenuManipulator())->toArray($menuItem);
