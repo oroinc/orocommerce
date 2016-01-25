@@ -6,6 +6,7 @@ use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use Oro\Component\Testing\Unit\EntityTrait;
+
 use OroB2B\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository;
 use OroB2B\Bundle\TaxBundle\EventListener\Config\DigitalProductEventListener;
 
