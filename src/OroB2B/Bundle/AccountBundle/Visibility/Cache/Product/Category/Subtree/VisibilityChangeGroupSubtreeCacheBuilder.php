@@ -2,12 +2,15 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree;
 
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAwareSubtreeCacheBuilder
@@ -18,13 +21,13 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
     /**
      * @param Category $category
      * @param AccountGroup $accountGroup
+     * @param int $visibility
      */
-    public function resolveVisibilitySettings(Category $category, AccountGroup $accountGroup)
+    public function resolveVisibilitySettings(Category $category, AccountGroup $accountGroup, $visibility)
     {
-        $visibility = $this->categoryVisibilityResolver->isCategoryVisibleForAccountGroup($category, $accountGroup);
-        $visibility = $this->convertVisibility($visibility);
-
         $childCategoryIds = $this->getChildCategoryIdsForUpdate($category, $accountGroup);
+        $this->updateGroupCategoryVisibility($childCategoryIds, $visibility, $accountGroup);
+
         $categoryIds = $this->getCategoryIdsForUpdate($category, $childCategoryIds);
         $this->updateProductVisibilityByCategory($categoryIds, $visibility, $accountGroup);
 
@@ -33,6 +36,29 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
         $this->updateProductVisibilitiesForCategoryRelatedEntities($category, $visibility);
 
         $this->clearChangedEntities();
+    }
+
+    /**
+     * @param array $categoryIds
+     * @param int $visibility
+     * @param AccountGroup $accountGroup
+     */
+    protected function updateGroupCategoryVisibility(array $categoryIds, $visibility, AccountGroup $accountGroup)
+    {
+        if (!$categoryIds) {
+            return;
+        }
+
+        /** @var QueryBuilder $qb */
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->update('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved', 'agcvr')
+            ->set('agcvr.visibility', $visibility)
+            ->where($qb->expr()->eq('agcvr.accountGroup', ':accountGroup'))
+            ->andWhere($qb->expr()->in('IDENTITY(agcvr.category)', ':categoryIds'))
+            ->setParameters(['accountGroup' => $accountGroup, 'categoryIds' => $categoryIds]);
+
+        $qb->getQuery()->execute();
     }
 
     /**
@@ -49,7 +75,7 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
     protected function updateAccountsFirstLevel(Category $category, $visibility)
     {
         $accountIdsForUpdate = $this->getAccountIdsWithFallbackToCurrentGroup($category, $this->accountGroup);
-        $this->updateAccountsProductVisibility($category, $accountIdsForUpdate, $visibility);
+        $this->updateAccountsProductVisibilityResolved($category, $accountIdsForUpdate, $visibility);
 
         return $accountIdsForUpdate;
     }
@@ -158,5 +184,23 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
             )
         )
             ->setParameter('accountGroup', $target);
+    }
+
+    /**
+     * @return EntityManager
+     */
+    protected function getEntityManager()
+    {
+        return $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved');
+    }
+
+    /**
+     * @return AccountGroupCategoryRepository
+     */
+    protected function getRepository()
+    {
+        return $this->getEntityManager()
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved');
     }
 }

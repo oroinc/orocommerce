@@ -137,7 +137,8 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
             $this->accountIdsWithChangedVisibility[$levelCategory->getId()] = $accountIdsForUpdate;
 
             if (!empty($accountIdsForUpdate)) {
-                $this->updateAccountsProductVisibility($levelCategory, $accountIdsForUpdate, $visibility);
+                $this->updateAccountsProductVisibilityResolved($levelCategory, $accountIdsForUpdate, $visibility);
+                $this->updateAccountsCategoryVisibilityResolved($levelCategory, $accountIdsForUpdate, $visibility);
             }
         }
     }
@@ -286,7 +287,7 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
      * @param array $accountIds
      * @param $visibility
      */
-    protected function updateAccountsProductVisibility(Category $category, array $accountIds, $visibility)
+    protected function updateAccountsProductVisibilityResolved(Category $category, array $accountIds, $visibility)
     {
         if (!$accountIds) {
             return;
@@ -301,6 +302,34 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
             ->set('apvr.visibility', $visibility)
             ->where($qb->expr()->eq('apvr.category', ':category'))
             ->andWhere($qb->expr()->in('apvr.account', ':accountIds'))
+            ->setParameters([
+                'accountIds' => $accountIds,
+                'category' => $category
+            ]);
+
+        $qb->getQuery()->execute();
+    }
+
+    /**
+     * @param Category $category
+     * @param array $accountIds
+     * @param $visibility
+     */
+    protected function updateAccountsCategoryVisibilityResolved(Category $category, array $accountIds, $visibility)
+    {
+        if (!$accountIds) {
+            return;
+        }
+
+        /** @var QueryBuilder $qb */
+        $qb = $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->createQueryBuilder();
+
+        $qb->update('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved', 'acvr')
+            ->set('acvr.visibility', $visibility)
+            ->where($qb->expr()->eq('acvr.category', ':category'))
+            ->andWhere($qb->expr()->in('acvr.account', ':accountIds'))
             ->setParameters([
                 'accountIds' => $accountIds,
                 'category' => $category
