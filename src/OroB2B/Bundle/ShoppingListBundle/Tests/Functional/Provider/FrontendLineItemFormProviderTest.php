@@ -7,14 +7,14 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
-use OroB2B\Bundle\ShoppingListBundle\Provider\FrontendLineItemForm;
+use OroB2B\Bundle\ShoppingListBundle\Provider\FrontendLineItemFormProvider;
 
-class FrontendLineItemFormTest extends WebTestCase
+class FrontendLineItemFormProviderTest extends WebTestCase
 {
     /** @var LayoutContext */
     protected $context;
 
-    /** @var FrontendLineItemForm */
+    /** @var FrontendLineItemFormProvider */
     protected $dataProvider;
 
     protected function setUp()

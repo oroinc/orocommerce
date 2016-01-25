@@ -14,7 +14,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
 
-class FrontendLineItemForm implements DataProviderInterface
+class FrontendLineItemFormProvider implements DataProviderInterface
 {
     /**
      * @var FormAccessor[]

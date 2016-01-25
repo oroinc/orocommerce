@@ -7,14 +7,14 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
-use OroB2B\Bundle\ShoppingListBundle\Provider\ShoppingListForm;
+use OroB2B\Bundle\ShoppingListBundle\Provider\ShoppingListFormProvider;
 
-class ShoppingListFormTest extends WebTestCase
+class ShoppingListFormProviderTest extends WebTestCase
 {
     /** @var LayoutContext */
     protected $context;
 
-    /** @var ShoppingListForm */
+    /** @var ShoppingListFormProvider */
     protected $dataProvider;
 
     protected function setUp()

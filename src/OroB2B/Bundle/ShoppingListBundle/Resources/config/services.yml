@@ -9,9 +9,9 @@ parameters:
     orob2b_shopping_list.processor.quick_add.class:  OroB2B\Bundle\ShoppingListBundle\Processor\QuickAddProcessor
     orob2b_shopping_list.service.message_generator.class: OroB2B\Bundle\ShoppingListBundle\Generator\MessageGenerator
     orob2b_shopping_list.service.product_data_storage.class: OroB2B\Bundle\ShoppingListBundle\Storage\ProductDataStorage
-    orob2b_shopping_list.provider.account_user_shopping_lists.class: OroB2B\Bundle\ShoppingListBundle\Provider\AccountUserShoppingLists
-    orob2b_shopping_list.provider.frontend_line_item_form.class: OroB2B\Bundle\ShoppingListBundle\Provider\FrontendLineItemForm
-    orob2b_shopping_list.provider.shopping_list_form.class: OroB2B\Bundle\ShoppingListBundle\Provider\ShoppingListForm
+    orob2b_shopping_list.provider.account_user_shopping_lists.class: OroB2B\Bundle\ShoppingListBundle\Provider\AccountUserShoppingListsProvider
+    orob2b_shopping_list.provider.frontend_line_item_form.class: OroB2B\Bundle\ShoppingListBundle\Provider\FrontendLineItemFormProvider
+    orob2b_shopping_list.provider.shopping_list_form.class: OroB2B\Bundle\ShoppingListBundle\Provider\ShoppingListFormProvider
 
 services:
     orob2b_shopping_list.validator.line_item:

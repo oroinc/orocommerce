@@ -10,7 +10,7 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 
-class AccountUserShoppingLists implements DataProviderInterface
+class AccountUserShoppingListsProvider implements DataProviderInterface
 {
     /**
      * @var FormAccessor

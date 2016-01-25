@@ -13,7 +13,7 @@ use Oro\Bundle\LayoutBundle\Layout\Form\FormAction;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 
-class ShoppingListForm implements DataProviderInterface
+class ShoppingListFormProvider implements DataProviderInterface
 {
     /**
      * @var FormAccessor[]

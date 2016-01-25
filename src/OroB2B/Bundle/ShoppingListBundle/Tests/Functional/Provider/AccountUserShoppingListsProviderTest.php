@@ -6,12 +6,12 @@ use Oro\Component\Layout\LayoutContext;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\ShoppingListBundle\Provider\AccountUserShoppingLists;
+use OroB2B\Bundle\ShoppingListBundle\Provider\AccountUserShoppingListsProvider;
 
 /**
  * @dbIsolation
  */
-class AccountUserShoppingListsTest extends WebTestCase
+class AccountUserShoppingListsProviderTest extends WebTestCase
 {
     /**
      * @var LayoutContext
@@ -19,7 +19,7 @@ class AccountUserShoppingListsTest extends WebTestCase
     protected $context;
 
     /**
-     * @var AccountUserShoppingLists
+     * @var AccountUserShoppingListsProvider
      */
     protected $dataProvider;
 
