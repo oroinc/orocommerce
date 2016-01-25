@@ -50,22 +50,55 @@ class TaxBaseExclusionTransformerTest extends \PHPUnit_Framework_TestCase
             [[], []],
             ['string', []],
             ['string', []],
-            [[new TaxBaseExclusion()], [['country' => null, 'region' => null, 'option' => null]]],
+            [
+                [new TaxBaseExclusion()],
+                [
+                    [
+                        TaxBaseExclusion::COUNTRY => null,
+                        TaxBaseExclusion::REGION => null,
+                        TaxBaseExclusion::OPTION => null
+                    ]
+                ]
+            ],
             [
                 [(new TaxBaseExclusion())->setCountry($country)],
-                [['country' => 'ISO_CODE', 'region' => null, 'option' => null]],
+                [
+                    [
+                        TaxBaseExclusion::COUNTRY => 'ISO_CODE',
+                        TaxBaseExclusion::REGION => null,
+                        TaxBaseExclusion::OPTION => null
+                    ]
+                ],
             ],
             [
                 [(new TaxBaseExclusion())->setCountry($country)->setRegion($region)],
-                [['country' => 'ISO_CODE', 'region' => 'REG_ISO_CODE', 'option' => null]],
+                [
+                    [
+                        TaxBaseExclusion::COUNTRY => 'ISO_CODE',
+                        TaxBaseExclusion::REGION => 'REG_ISO_CODE',
+                        TaxBaseExclusion::OPTION => null
+                    ]
+                ],
             ],
             [
                 [(new TaxBaseExclusion())->setCountry($country)->setOption('destination')],
-                [['country' => 'ISO_CODE', 'region' => null, 'option' => 'destination']],
+                [
+                    [
+                        TaxBaseExclusion::COUNTRY => 'ISO_CODE',
+                        TaxBaseExclusion::REGION => null,
+                        TaxBaseExclusion::OPTION => 'destination'
+                    ]
+                ],
             ],
             [
                 [(new TaxBaseExclusion())->setCountry($country)->setRegion($region)->setOption('destination')],
-                [['country' => 'ISO_CODE', 'region' => 'REG_ISO_CODE', 'option' => 'destination']],
+                [
+                    [
+                        TaxBaseExclusion::COUNTRY => 'ISO_CODE',
+                        TaxBaseExclusion::REGION => 'REG_ISO_CODE',
+                        TaxBaseExclusion::OPTION => 'destination'
+                    ]
+                ],
             ],
         ];
     }
@@ -108,21 +141,54 @@ class TaxBaseExclusionTransformerTest extends \PHPUnit_Framework_TestCase
             [[], []],
             ['string', []],
             ['string', []],
-            [[['country' => null, 'region' => null, 'option' => null]], [new TaxBaseExclusion()]],
             [
-                [['country' => 'ISO_CODE', 'region' => null, 'option' => null]],
+                [
+                    [
+                        TaxBaseExclusion::COUNTRY => null,
+                        TaxBaseExclusion::REGION => null,
+                        TaxBaseExclusion::OPTION => null
+                    ]
+                ],
+                [new TaxBaseExclusion()]
+            ],
+            [
+                [
+                    [
+                        TaxBaseExclusion::COUNTRY => 'ISO_CODE',
+                        TaxBaseExclusion::REGION => null,
+                        TaxBaseExclusion::OPTION => null
+                    ]
+                ],
                 [(new TaxBaseExclusion())->setCountry($country)],
             ],
             [
-                [['country' => 'ISO_CODE', 'region' => 'REG_ISO_CODE', 'option' => null]],
+                [
+                    [
+                        TaxBaseExclusion::COUNTRY => 'ISO_CODE',
+                        TaxBaseExclusion::REGION => 'REG_ISO_CODE',
+                        TaxBaseExclusion::OPTION => null
+                    ]
+                ],
                 [(new TaxBaseExclusion())->setCountry($country)->setRegion($region)],
             ],
             [
-                [['country' => 'ISO_CODE', 'region' => null, 'option' => 'destination']],
+                [
+                    [
+                        TaxBaseExclusion::COUNTRY => 'ISO_CODE',
+                        TaxBaseExclusion::REGION => null,
+                        TaxBaseExclusion::OPTION => 'destination'
+                    ]
+                ],
                 [(new TaxBaseExclusion())->setCountry($country)->setOption('destination')],
             ],
             [
-                [['country' => 'ISO_CODE', 'region' => 'REG_ISO_CODE', 'option' => 'destination']],
+                [
+                    [
+                        TaxBaseExclusion::COUNTRY => 'ISO_CODE',
+                        TaxBaseExclusion::REGION => 'REG_ISO_CODE',
+                        TaxBaseExclusion::OPTION => 'destination'
+                    ]
+                ],
                 [(new TaxBaseExclusion())->setCountry($country)->setRegion($region)->setOption('destination')],
             ],
         ];
