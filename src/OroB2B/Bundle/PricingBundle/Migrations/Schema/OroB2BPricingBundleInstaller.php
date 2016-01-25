@@ -58,6 +58,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $this->createOrob2BCmbPriceListToAccGrTable($schema);
         $this->createOrob2BCmbPriceListToWsTable($schema);
         $this->createOrob2BCmbPlToPlTable($schema);
+        $this->createOrob2BPriceListCollChangedTable($schema);
 
         /** Foreign keys generation **/
         $this->addOrob2BPriceListCurrencyForeignKeys($schema);
@@ -74,6 +75,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $this->addOrob2BCmbPriceListToWsForeignKeys($schema);
         $this->addOrob2BCmbPriceListToAccForeignKeys($schema);
         $this->addOrob2BCmbPlToPlForeignKeys($schema);
+        $this->addOrob2BPriceListCollChangedForeignKeys($schema);
     }
 
     /**
@@ -340,6 +342,21 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('merge_allowed', 'boolean', []);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['combined_price_list_id', 'sort_order'], 'b2b_cmb_pl_to_pl_cmb_prod_sort_idx', []);
+    }
+
+    /**
+     * Create orob2b_price_list_coll_changed table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BPriceListCollChangedTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_price_list_coll_changed');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('account_group_id', 'integer', ['notnull' => false]);
+        $table->addColumn('website_id', 'integer', ['notnull' => false]);
+        $table->addColumn('account_id', 'integer', ['notnull' => false]);
+        $table->setPrimaryKey(['id']);
     }
 
     /**
@@ -663,6 +680,34 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_price_list_combined'),
             ['combined_price_list_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * Add orob2b_price_list_coll_changed foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BPriceListCollChangedForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_price_list_coll_changed');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account_group'),
+            ['account_group_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_website'),
+            ['website_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account'),
+            ['account_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );

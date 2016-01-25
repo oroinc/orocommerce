@@ -1,0 +1,113 @@
+<?php
+
+namespace OroB2B\Bundle\PricingBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+
+/**
+ * @ORM\Table(name="orob2b_price_list_coll_changed")
+ * @ORM\Entity()
+ */
+class ChangedPriceListCollection
+{
+    /**
+     * @var integer $id
+     *
+     * @ORM\Id
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+
+    /**
+     * @var Account
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
+     */
+    protected $account;
+
+    /** @var Website
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
+     */
+    protected $website;
+
+    /**
+     * @var AccountGroup
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountGroup")
+     * @ORM\JoinColumn(name="account_group_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
+     */
+    protected $accountGroup;
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return Account
+     */
+    public function getAccount()
+    {
+        return $this->account;
+    }
+
+    /**
+     * @param Account $account
+     * @return $this
+     */
+    public function setAccount(Account $account)
+    {
+        $this->account = $account;
+
+        return $this;
+    }
+
+    /**
+     * @return Website
+     */
+    public function getWebsite()
+    {
+        return $this->website;
+    }
+
+    /**
+     * @param Website $website
+     * @return $this
+     */
+    public function setWebsite(Website $website)
+    {
+        $this->website = $website;
+
+        return $this;
+    }
+
+    /**
+     * @return AccountGroup
+     */
+    public function getAccountGroup()
+    {
+        return $this->accountGroup;
+    }
+
+    /**
+     * @param AccountGroup $accountGroup
+     * @return $this
+     */
+    public function setAccountGroup(AccountGroup $accountGroup)
+    {
+        $this->accountGroup = $accountGroup;
+
+        return $this;
+    }
+}
