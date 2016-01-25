@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\MenuBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-use OroB2B\Bundle\MenuBundle\DependencyInjection\Compiler\FactoryExtensionsCompilerPass;
 use OroB2B\Bundle\MenuBundle\DependencyInjection\Compiler\ConditionExpressionLanguageProvidersCompilerPass;
 use OroB2B\Bundle\MenuBundle\DependencyInjection\OroB2BMenuExtension;
 
@@ -29,7 +28,6 @@ class OroB2BMenuBundle extends Bundle
     public function build(ContainerBuilder $container)
     {
         parent::build($container);
-        $container->addCompilerPass(new FactoryExtensionsCompilerPass());
         $container->addCompilerPass(new ConditionExpressionLanguageProvidersCompilerPass());
     }
 }

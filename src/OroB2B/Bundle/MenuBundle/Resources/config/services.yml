@@ -130,3 +130,11 @@ services:
             - @orob2b_menu.menu_provider.link
         tags:
             - { name: doctrine.orm.entity_listener } #todo: add entity and event keys https://magecore.atlassian.net/browse/BB-1289
+
+    orob2b_menu_acl_extension:
+        class: %oro_menu.factory.acl_extension.class%
+        arguments:
+            - @router
+            - @oro_security.security_facade
+        calls:
+            - [ setCache, [ @oro_menu.cache ] ]
