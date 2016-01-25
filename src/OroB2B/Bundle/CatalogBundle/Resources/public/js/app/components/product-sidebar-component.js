@@ -5,13 +5,13 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
-    var BasicTreeComponent = require('orob2bcatalog/js/app/components/basic-tree-component');
+    var BasicTreeComponent = require('oroui/js/app/components/basic-tree-component');
 
     /**
      * Options:
      * - defaultCategoryId - default selected category id
      *
-     * @export orob2bcatalog/js/app/components/tree-manage-component
+     * @export orob2bcatalog/js/app/components/product-sidebar-component
      * @extends orob2bcatalog.app.components.BasicTreeComponent
      * @class orob2bcatalog.app.components.ProductSidebarComponent
      */

@@ -36,7 +36,6 @@ class OroB2BShoppingListExtensionTest extends ExtensionTestCase
             'orob2b_shopping_list.form.type.frontend_line_item.class',
 
             // Event listeners
-            'orob2b_shopping_list.event_listener.datagrid.class',
             'orob2b_shopping_list.event_listener.shopping_list_listener.class',
 
             // Placeholders
@@ -53,7 +52,6 @@ class OroB2BShoppingListExtensionTest extends ExtensionTestCase
             'orob2b_shopping_list.placeholder.filter',
 
             // Listeners
-            'orob2b_shopping_list.event_listener.datagrid',
             'orob2b_shopping_list.event_listener.shopping_list_listener',
 
             // Forms
