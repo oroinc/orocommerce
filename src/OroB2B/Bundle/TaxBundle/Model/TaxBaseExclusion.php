@@ -4,17 +4,22 @@ namespace OroB2B\Bundle\TaxBundle\Model;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
+
 use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class TaxBaseExclusion extends AbstractResult
 {
+    const COUNTRY = 'country';
+    const REGION = 'region';
+    const OPTION = 'option';
+
     /**
      * @param Country $country
      * @return TaxBaseExclusion
      */
     public function setCountry($country)
     {
-        $this->offsetSet('country', $country);
+        $this->offsetSet(self::COUNTRY, $country);
 
         return $this;
     }
@@ -26,7 +31,7 @@ class TaxBaseExclusion extends AbstractResult
      */
     public function getCountry()
     {
-        return $this->getOffset('country');
+        return $this->getOffset(self::COUNTRY);
     }
 
     /**
@@ -37,7 +42,7 @@ class TaxBaseExclusion extends AbstractResult
      */
     public function setRegion($region)
     {
-        $this->offsetSet('region', $region);
+        $this->offsetSet(self::REGION, $region);
 
         return $this;
     }
@@ -49,7 +54,7 @@ class TaxBaseExclusion extends AbstractResult
      */
     public function getRegion()
     {
-        return $this->getOffset('region');
+        return $this->getOffset(self::REGION);
     }
 
     /**
@@ -71,7 +76,7 @@ class TaxBaseExclusion extends AbstractResult
             );
         }
 
-        $this->offsetSet('option', $option);
+        $this->offsetSet(self::OPTION, $option);
 
         return $this;
     }
@@ -83,7 +88,7 @@ class TaxBaseExclusion extends AbstractResult
      */
     public function getOption()
     {
-        return $this->getOffset('option');
+        return $this->getOffset(self::OPTION);
     }
 
     /**

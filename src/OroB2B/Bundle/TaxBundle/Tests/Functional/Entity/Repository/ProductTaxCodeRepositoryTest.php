@@ -42,6 +42,14 @@ class ProductTaxCodeRepositoryTest extends WebTestCase
         $this->assertEmpty($this->getRepository()->findOneByProduct(new Product()));
     }
 
+    public function testFindByCodes()
+    {
+        /** @var ProductTaxCode $taxCode1 */
+        $taxCode = $this->getReference(TaxFixture::REFERENCE_PREFIX . '.' . TaxFixture::TAX_1);
+
+        $this->assertEquals($taxCode, $this->getRepository()->findByCodes([TaxFixture::TAX_1]));
+    }
+
     /**
      * @return ProductTaxCodeRepository
      */
