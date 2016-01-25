@@ -65,7 +65,8 @@ class ConditionExtension implements ExtensionInterface
      */
     protected function alreadyProcessed(array $options)
     {
-        return array_key_exists(BuilderInterface::IS_ALLOWED_OPTION_KEY, $options['extras']) &&
+        return array_key_exists('extras', $options) &&
+        array_key_exists(BuilderInterface::IS_ALLOWED_OPTION_KEY, $options['extras']) &&
         ($options['extras'][BuilderInterface::IS_ALLOWED_OPTION_KEY] !== self::DEFAULT_IS_ALLOWED_POLICY);
     }
 }
