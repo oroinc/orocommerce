@@ -57,6 +57,18 @@ class ConditionExtensionTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    public function testBuildOptionsAlreadyProcessed()
+    {
+        $options = [
+            'extras' => [
+                BuilderInterface::IS_ALLOWED_OPTION_KEY => !ConditionExtension::DEFAULT_IS_ALLOWED_POLICY,
+            ],
+        ];
+        $processedOptions = $this->conditionExtension->buildOptions($options);
+
+        $this->assertEquals($options, $processedOptions);
+    }
+
     public function testAddProvider()
     {
         /** @var ExpressionFunctionProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider */

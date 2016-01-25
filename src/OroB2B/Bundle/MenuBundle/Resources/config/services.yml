@@ -27,6 +27,7 @@ parameters:
     orob2b_menu.menu.condition.condition_extension.class: OroB2B\Bundle\MenuBundle\Menu\Condition\ConditionExtension
     orob2b_menu.menu.condition.config_value_expression_language_provider.class: OroB2B\Bundle\MenuBundle\Menu\Condition\ConfigValueExpressionLanguageProvider
     orob2b_menu.menu.condition.logged_in_expression_language_provider.class: OroB2B\Bundle\MenuBundle\Menu\Condition\LoggedInExpressionLanguageProvider
+    orob2b_menu.menu.acl_extension.class: Oro\Bundle\NavigationBundle\Menu\AclAwareMenuFactoryExtension
 
 services:
     orob2b_menu.cache:
@@ -81,6 +82,7 @@ services:
     orob2b_menu.factory:
         class: %orob2b_menu.factory.class%
         calls:
+            - [ addExtension, [ @orob2b_menu.menu.acl_extension ] ]
             - [ addExtension, [ @orob2b_menu.menu.condition.condition_extension ] ]
 
     orob2b_menu.menu_manipulator:
@@ -103,6 +105,10 @@ services:
             - [setEntityClass, [%orob2b_menu.entity.menu_item.class%]]
             - [setCache, [@orob2b_menu.cache]]
 
+    orob2b_menu.menu_provider.link:
+        tags:
+            - { name: oro_service_link,  service: orob2b_menu.menu_provider }
+
     orob2b_menu.menu.condition.condition_extension:
         class: %orob2b_menu.menu.condition.condition_extension.class%
 
@@ -119,6 +125,21 @@ services:
             - @oro_security.security_facade
         tags:
             - { name: orob2b_menu.condition.expression_language_provider, alias: is_logged_in }
+
+    orob2b_menu.event_listener.orm.menu_item_cache_listener:
+        class: OroB2B\Bundle\MenuBundle\Entity\Listener\MenuItemListener
+        arguments:
+            - @orob2b_menu.menu_provider.link
+        tags:
+            - { name: doctrine.orm.entity_listener } #todo: add entity and event keys https://magecore.atlassian.net/browse/BB-1289
+
+    orob2b_menu.menu.acl_extension:
+        class: %orob2b_menu.menu.acl_extension.class%
+        arguments:
+            - @router
+            - @oro_security.security_facade
+        calls:
+            - [ setCache, [ @oro_menu.cache ] ]
 
     orob2b_menu.layout.block_type.menu:
         class: OroB2B\Bundle\MenuBundle\Layout\Block\Type\MenuType

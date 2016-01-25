@@ -14,6 +14,7 @@ use OroB2B\Bundle\MenuBundle\Menu\BuilderInterface;
 class ConditionExtension implements ExtensionInterface
 {
     const CONDITION_KEY = 'condition';
+    const DEFAULT_IS_ALLOWED_POLICY = true;
 
     /**
      * @var TokenStorageInterface
@@ -40,13 +41,14 @@ class ConditionExtension implements ExtensionInterface
      */
     public function buildOptions(array $options)
     {
-        if (isset($options['extras']) && isset($options['extras'][self::CONDITION_KEY])) {
+        if (!$this->alreadyProcessed($options) && array_key_exists(self::CONDITION_KEY, $options['extras'])) {
             $language = new ExpressionLanguage(null, $this->providers);
             $result = (bool)$language->evaluate($options['extras'][self::CONDITION_KEY]);
             if (!$result) {
                 $options['extras'][BuilderInterface::IS_ALLOWED_OPTION_KEY] = false;
             }
         }
+
         return $options;
     }
 
@@ -55,6 +57,16 @@ class ConditionExtension implements ExtensionInterface
      */
     public function buildItem(ItemInterface $item, array $options)
     {
+    }
 
+    /**
+     * @param array $options
+     * @return bool
+     */
+    protected function alreadyProcessed(array $options)
+    {
+        return array_key_exists('extras', $options) &&
+        array_key_exists(BuilderInterface::IS_ALLOWED_OPTION_KEY, $options['extras']) &&
+        ($options['extras'][BuilderInterface::IS_ALLOWED_OPTION_KEY] !== self::DEFAULT_IS_ALLOWED_POLICY);
     }
 }
