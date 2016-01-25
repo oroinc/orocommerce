@@ -50,7 +50,6 @@ parameters:
 
     # Menu
     orob2b_account.account_user_menu.builder.class: OroB2B\Bundle\AccountBundle\Menu\AccountUserMenuBuilder
-    orob2b_account.menu.acl_factory_extension.class: OroB2B\Bundle\AccountBundle\Menu\AclExtension
 
     #Listeners
     orob2b_account.event_listener.category_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryListener
@@ -878,11 +877,3 @@ services:
             - @security.csrf.token_manager
         tags:
             - { name: layout.data_provider, alias: orob2b_account_sign_in }
-
-    orob2b_account.menu.acl_factory_extension:
-        class: %orob2b_account.menu.acl_factory_extension.class%
-        arguments:
-            - @router
-            - @orob2b_account.security.account_user_provider
-        tags:
-            - { name: orob2b_menu.factory_extension, alias: acl_extension }
