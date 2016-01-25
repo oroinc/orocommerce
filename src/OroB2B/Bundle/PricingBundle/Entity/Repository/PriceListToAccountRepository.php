@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
@@ -11,6 +12,7 @@ use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
+use OroB2B\Bundle\PricingBundle\Entity\DTO\AccountWebsiteDTO;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -91,7 +93,7 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
     /**
      * @param integer[] $accountGroupIds
      * @param integer[] $websiteIds
-     * @return array
+     * @return AccountWebsiteDTO[]|ArrayCollection
      */
     public function getAccountWebsitePairsByAccountGroupIds($accountGroupIds, $websiteIds)
     {
@@ -110,19 +112,21 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
             ->getQuery()
             ->getResult();
         $em = $this->getEntityManager();
-        $result = [];
+        $entityPair = new ArrayCollection();
         foreach ($pairs as $pair) {
-            $entityPair['account'] = $em->getReference('OroB2BAccountBundle:Account', $pair['account_id']);
-            $entityPair['website'] = $em->getReference('OroB2BWebsiteBundle:Website', $pair['website_id']);
-            $result[] = $entityPair;
+            /** @var Account $account */
+            $account = $em->getReference('OroB2BAccountBundle:Account', $pair['account_id']);
+            /** @var Website $website */
+            $website = $em->getReference('OroB2BWebsiteBundle:Website', $pair['website_id']);
+            $entityPair->add(new AccountWebsiteDTO($account, $website));
         }
 
-        return $result;
+        return $entityPair;
     }
 
     /**
      * @param integer[] $accountIds
-     * @return Website[]
+     * @return AccountWebsiteDTO[]|ArrayCollection
      */
     public function getAccountWebsitePairsByAccountIds($accountIds)
     {
@@ -139,13 +143,15 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
             ->getResult();
 
         $em = $this->getEntityManager();
-        $result = [];
+        $entityPair = new ArrayCollection();
         foreach ($pairs as $pair) {
-            $entityPair['account'] = $em->getReference('OroB2BAccountBundle:Account', $pair['account_id']);
-            $entityPair['website'] = $em->getReference('OroB2BWebsiteBundle:Website', $pair['website_id']);
-            $result[] = $entityPair;
+            /** @var Account $account */
+            $account = $em->getReference('OroB2BAccountBundle:Account', $pair['account_id']);
+            /** @var Website $website */
+            $website = $em->getReference('OroB2BWebsiteBundle:Website', $pair['website_id']);
+            $entityPair->add(new AccountWebsiteDTO($account, $website));
         }
 
-        return $result;
+        return $entityPair;
     }
 }
