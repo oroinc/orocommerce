@@ -65,9 +65,8 @@ datagrid:
                 params: [ id ]
 
     warehouse-grid:
+        acl_resource: orob2b_warehouse_view
         extends: base-warehouse-grid
-        source:
-            acl_resource: orob2b_warehouse_view
         properties:
             view_link:
                 route: orob2b_warehouse_view
@@ -97,9 +96,9 @@ datagrid:
                 acl_resource:  orob2b_warehouse_delete
 
     warehouse-inventory-level-grid:
+        acl_resource: orob2b_product_warehouse_inventory_update
         source:
             type:         orm
-            acl_resource: orob2b_product_warehouse_inventory_update
             query:
                 select:
                     - CONCAT(warehouse.id, '_', precision.id) as combinedId

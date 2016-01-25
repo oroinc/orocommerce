@@ -53,7 +53,9 @@ final class Result extends AbstractResult
     /** {@inheritdoc} */
     public function serialize()
     {
-        $this->offsetUnset(self::TAXES);
+        if ($this->offsetExists(self::TAXES)) {
+            $this->offsetUnset(self::TAXES);
+        }
 
         return parent::serialize();
     }

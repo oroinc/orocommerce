@@ -1,10 +1,10 @@
 datagrid:
     cms-login-page-grid:
+        acl_resource: orob2b_cms_loginpage_view
         options:
             entity_pagination: true
             entityHint:        login page
         source:
-            acl_resource: orob2b_cms_loginpage_view
             type:         orm
             query:
                 select:

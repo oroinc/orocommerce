@@ -76,11 +76,11 @@ datagrid:
                 icon:          trash
 
     tax-product-tax-codes-grid:
+        acl_resource: orob2b_tax_product_tax_code_view
         extends: tax-base-tax-codes-grid
         options:
             entityHint: product tax code
         source:
-            acl_resource: orob2b_tax_product_tax_code_view
             query:
                 from:
                     - { table: %orob2b_tax.entity.product_tax_code.class%, alias: tax_code }
@@ -105,11 +105,11 @@ datagrid:
                 acl_resource:  orob2b_tax_product_tax_code_delete
 
     tax-account-tax-codes-grid:
+        acl_resource: orob2b_tax_account_tax_code_view
         extends: tax-base-tax-codes-grid
         options:
             entityHint: account tax code
         source:
-            acl_resource: orob2b_tax_account_tax_code_view
             query:
                 from:
                     - { table: %orob2b_tax.entity.account_tax_code.class%, alias: tax_code }
@@ -144,10 +144,10 @@ datagrid:
         actions: ~
 
     tax-taxes-grid:
+        acl_resource: orob2b_tax_view
         options:
             entityHint: tax
         source:
-            acl_resource: orob2b_tax_view
             type:         orm
             query:
                 select:
@@ -245,10 +245,10 @@ datagrid:
         actions: ~
 
     tax-taxe-rules-grid:
+        acl_resource: orob2b_tax_rule_view
         options:
             entityHint: tax
         source:
-            acl_resource: orob2b_tax_rule_view
             type:         orm
             query:
                 select:
@@ -362,8 +362,8 @@ datagrid:
                 acl_resource:  orob2b_tax_rule_delete
 
     tax-jurisdiction-grid:
+        acl_resource: orob2b_tax_jurisdiction_view
         source:
-            acl_resource: orob2b_tax_jurisdiction_view
             type: orm
             query:
                 select:

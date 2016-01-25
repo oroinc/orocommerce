@@ -1,3 +1,5 @@
-"orob2b.cms.move_page_error": "You can not move node {{ nodeText }} here."
-"orob2b.cms.slugify_error": "Impossible slug generation for {{ string }}"
-"orob2b.cms.move_root_page_warning": "You can not change order of root nodes"
+orob2b:
+    cms:
+        slugify_error: "Impossible slug generation for {{ string }}"
+        jstree:
+            move_root_page_warning: "You can not change order of root nodes"

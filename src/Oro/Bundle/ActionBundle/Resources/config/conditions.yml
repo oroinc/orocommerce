@@ -92,6 +92,16 @@ services:
         tags:
             - { name: oro_action.condition, alias: has_value }
 
+    oro_action.expression.in:
+        class: Oro\Component\ConfigExpression\Condition\In
+        tags:
+            - { name: oro_action.condition, alias: in }
+
+    oro_action.expression.not_in:
+        class: Oro\Component\ConfigExpression\Condition\NotIn
+        tags:
+            - { name: oro_action.condition, alias: not_in }
+
     oro_action.expression.not_has_value:
         class: Oro\Component\ConfigExpression\Condition\NotHasValue
         tags:

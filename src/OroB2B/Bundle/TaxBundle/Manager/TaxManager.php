@@ -96,11 +96,16 @@ class TaxManager
 
     /**
      * @param object $object
-     * @return Result
+     * @return Result|bool
      */
     public function saveTax($object)
     {
         $taxable = $this->taxFactory->create($object);
+
+        if (!$taxable->getIdentifier()) {
+            return false;
+        }
+
         $transformer = $this->getTaxTransformer($taxable->getClassName());
 
         $result = $this->getTax($object);
@@ -109,6 +114,7 @@ class TaxManager
 
         $taxValue->setEntityClass($taxable->getClassName());
         $taxValue->setEntityId($taxable->getIdentifier());
+        $taxValue->setAddress((string)$taxable->getDestination());
 
         $this->taxValueManager->saveTaxValue($taxValue);
 
