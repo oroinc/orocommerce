@@ -2,10 +2,10 @@
 
 namespace OroB2B\Bundle\MenuBundle\EventListener;
 
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
 use OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
+use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 class LocaleListener
 {
@@ -68,6 +68,6 @@ class LocaleListener
      */
     protected function isLocaleEntity($entity)
     {
-        return ClassUtils::getClass($entity) === 'OroB2B\Bundle\WebsiteBundle\Entity\Locale';
+        return $entity instanceof Locale;
     }
 }
