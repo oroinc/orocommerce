@@ -1,50 +1,64 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 <div class="row-fluid form-horizontal">
-    <p>{{ 'orob2b.pricing.fallback.label'|trans }}: <strong>{{ fallback|trans }}</strong></p>
-</div>
-<div class="row-fluid form-horizontal">
     <div class="responsive-block">
         {% if priceListsByWebsites %}
             <div class="oro-tabs">
                 <ul class="nav nav-tabs">
-                    {% for websiteId, priceListsByWebsite in priceListsByWebsites %}
-                        <li {% if websiteId == priceListsByWebsites|first.website.id %} class="active" {% endif %}>
+                    {% for website in websites %}
+                        {% set websiteId = website.id %}
+                        <li {% if websiteId == websites|first.id %} class="active" {% endif %}>
                             <a href="#website{{ websiteId }}" data-toggle="tab">
-                                {{ priceListsByWebsite.website.name }}
+                                {{ website.name }}
                             </a>
                         </li>
                     {% endfor %}
                 </ul>
                 <div class="tab-content">
-                    {% for websiteId, priceListsByWebsite in priceListsByWebsites %}
-                        <div class="tab-pane{% if websiteId == priceListsByWebsites|first.website.id %} active{% endif %} price-list-by-account-grid"
+                    {% for website in websites %}
+                        {% set websiteId = website.id %}
+                        <div class="tab-pane{% if websiteId == websites|first.id %} active{% endif %} price-list-by-account-grid"
                              id="website{{ websiteId }}"><br>
-                            <table class="grid table-hover table table-bordered">
-                                <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>{{ 'orob2b.pricing.pricelist.entity_label'|trans }}</th>
-                                    <th>{{ 'orob2b.pricing.pricelist.priority.label'|trans }}</th>
-                                    <th>{{ 'orob2b.pricing.pricelist.merge_allowed.label'|trans }}</th>
-                                </tr>
-                                </thead>
 
-                                <tbody>
-                                {% for priceListToAccount in priceListsByWebsite.priceLists %}
-                                    {% set priceList = priceListToAccount.priceList %}
+                            <p>{{ 'orob2b.pricing.fallback.label'|trans }}:
+                                <strong>
+                                    {% if fallbackByWebsites[websiteId] is defined %}
+                                        {{ choices[fallbackByWebsites[websiteId]]|trans }}
+                                    {% else %}
+                                        {{ choices[0]|trans }}
+                                    {% endif %}
+                                </strong>
+                            </p>
+                            {% if  priceListsByWebsites[websiteId] is defined %}
+                                <table class="grid table-hover table table-bordered">
+                                    <thead>
                                     <tr>
-                                        <td>{{ loop.index }}</td>
-                                        <td>
-                                            <a href="{{ path('orob2b_pricing_price_list_view', {'id': priceList.id}) }}">
-                                                {{ priceList.name }}
-                                            </a>
-                                        </td>
-                                        <td>{{ priceListToAccount.priority }}</td>
-                                        <td>{{ priceListToAccount.mergeAllowed ? 'orob2b.pricing.pricelist.merge_allowed.yes.label'|trans : 'orob2b.pricing.pricelist.merge_allowed.no.label'|trans }}</td>
+                                        <th>#</th>
+                                        <th>{{ 'orob2b.pricing.pricelist.entity_label'|trans }}</th>
+                                        <th>{{ 'orob2b.pricing.pricelist.priority.label'|trans }}</th>
+                                        <th>{{ 'orob2b.pricing.pricelist.merge_allowed.label'|trans }}</th>
                                     </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                    {% for priceListToAccount in priceListsByWebsites[websiteId] %}
+                                        {% set priceList = priceListToAccount.priceList %}
+                                        <tr class="price_list{{ priceList.id }}">
+                                            <td>{{ loop.index }}</td>
+                                            <td>
+                                                <a href="{{ path('orob2b_pricing_price_list_view', {'id': priceList.id}) }}"
+                                                   class="price_list_link">
+                                                    {{ priceList.name }}
+                                                </a>
+                                            </td>
+                                            <td class="price_list_priority">{{ priceListToAccount.priority }}</td>
+                                            <td class="price_list_merge_allowed">
+                                                {{ priceListToAccount.mergeAllowed
+                                                ? 'orob2b.pricing.pricelist.merge_allowed.yes.label'|trans
+                                                : 'orob2b.pricing.pricelist.merge_allowed.no.label'|trans }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% endif %}
                         </div>
                     {% endfor %}
                 </div>

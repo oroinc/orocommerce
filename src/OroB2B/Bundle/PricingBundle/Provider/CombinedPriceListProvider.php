@@ -87,7 +87,6 @@ class CombinedPriceListProvider
         return $combinedPriceList;
     }
 
-
     /**
      * @param PriceListSequenceMember[] $priceListsRelations
      * @return string
@@ -138,6 +137,7 @@ class CombinedPriceListProvider
     {
         $combinedPriceList = new CombinedPriceList();
         $combinedPriceList->setName($identifier);
+        $combinedPriceList->setEnabled(true);
 
         $manager = $this->getManager();
         $manager->persist($combinedPriceList);

@@ -36,8 +36,11 @@ class FrontendProductListModifier
      * @param string|null $currency
      * @param PriceList|null $priceList
      */
-    public function applyPriceListLimitations(QueryBuilder $queryBuilder, $currency = null, PriceList $priceList = null)
-    {
+    public function applyPriceListLimitations(
+        QueryBuilder $queryBuilder,
+        $currency = null,
+        PriceList $priceList = null
+    ) {
         $token = $this->tokenStorage->getToken();
         /** @var AccountUser $user */
         if ($token && ($user = $token->getUser()) instanceof AccountUser) {

@@ -34,18 +34,16 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
     }
 
     /**
-     * @param Account $account
-     * @param Website $website
-     * @return PriceListToAccount[]
+     * {@inheritdoc}
      */
-    public function getPriceLists($account, Website $website)
+    public function getPriceLists($account, Website $website, $order = Criteria::DESC)
     {
         return $this->createQueryBuilder('PriceListToAccount')
             ->innerJoin('PriceListToAccount.priceList', 'priceList')
             ->innerJoin('PriceListToAccount.account', 'account')
             ->where('account = :account')
             ->andWhere('PriceListToAccount.website = :website')
-            ->orderBy('PriceListToAccount.priority', Criteria::DESC)
+            ->orderBy('PriceListToAccount.priority', $order)
             ->setParameters(['account' => $account, 'website' => $website])
             ->getQuery()
             ->getResult();

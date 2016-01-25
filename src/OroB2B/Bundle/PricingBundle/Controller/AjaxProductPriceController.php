@@ -14,9 +14,10 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\CurrencyBundle\Model\Price;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListProductPriceType;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {
@@ -60,13 +61,17 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
      */
     public function getProductUnitsByCurrencyAction(Request $request)
     {
-        /** @var PriceList $priceList */
+        /** @var BasePriceList $priceList */
         $priceList = $this->getEntityReference(
             $this->getParameter('orob2b_pricing.entity.price_list.class'),
             $request->get('price_list_id')
         );
 
-        return $this->getProductUnitsByCurrency($priceList, $request);
+        return $this->getProductUnitsByCurrency(
+            $priceList,
+            $request,
+            $this->getParameter('orob2b_pricing.entity.product_price.class')
+        );
     }
 
     /**
@@ -108,5 +113,21 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
 
         return $this->get('oro_form.model.update_handler')
             ->handleUpdate($productPrice, $form, null, null, null);
+    }
+
+    /**
+     * @return PriceListRequestHandler
+     */
+    protected function getRequestHandler()
+    {
+        return $this->get('orob2b_pricing.model.price_list_request_handler');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getProductPriceProvider()
+    {
+        return $this->get('orob2b_pricing.provider.product_price');
     }
 }

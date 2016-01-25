@@ -63,9 +63,9 @@ class CombinedPriceListRepositoryTest extends WebTestCase
 
         $this->assertEquals(
             $priceList->getId(),
-            $this->getRepository()->getCombinedPriceListByAccount($account, $websiteUs)->getId()
+            $this->getRepository()->getPriceListByAccount($account, $websiteUs)->getId()
         );
-        $this->assertNull($this->getRepository()->getCombinedPriceListByAccount($account, $websiteCa));
+        $this->assertNull($this->getRepository()->getPriceListByAccount($account, $websiteCa));
     }
 
     public function testAccountGroupPriceList()
@@ -84,9 +84,9 @@ class CombinedPriceListRepositoryTest extends WebTestCase
 
         $this->assertEquals(
             $priceList->getId(),
-            $this->getRepository()->getCombinedPriceListByAccountGroup($accountGroup, $websiteUs)->getId()
+            $this->getRepository()->getPriceListByAccountGroup($accountGroup, $websiteUs)->getId()
         );
-        $this->assertNull($this->getRepository()->getCombinedPriceListByAccountGroup($accountGroup, $websiteCa));
+        $this->assertNull($this->getRepository()->getPriceListByAccountGroup($accountGroup, $websiteCa));
     }
 
     public function testWebsitePriceList()
@@ -102,9 +102,9 @@ class CombinedPriceListRepositoryTest extends WebTestCase
 
         $this->assertEquals(
             $priceList->getId(),
-            $this->getRepository()->getCombinedPriceListByWebsite($websiteUs)->getId()
+            $this->getRepository()->getPriceListByWebsite($websiteUs)->getId()
         );
-        $this->assertNull($this->getRepository()->getCombinedPriceListByWebsite($websiteCa));
+        $this->assertNull($this->getRepository()->getPriceListByWebsite($websiteCa));
     }
 
 

@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Oro\Bundle\CurrencyBundle\Model\Price;
 
 use OroB2B\Bundle\PricingBundle\Controller\AbstractAjaxProductPriceController;
+use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {
@@ -38,7 +40,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
         $productsPriceCriteria = $this->prepareProductsPriceCriteria($lineItems);
 
         /** @var Price[] $matchedPrice */
-        $matchedPrice = $this->get('orob2b_pricing.provider.product_price')
+        $matchedPrice = $this->get('orob2b_pricing.provider.combined_product_price')
             ->getMatchedPrices($productsPriceCriteria);
 
         return new JsonResponse($this->formatMatchedPrices($matchedPrice));
@@ -54,7 +56,24 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     {
         return $this->getProductUnitsByCurrency(
             $this->get('orob2b_pricing.model.frontend.price_list_request_handler')->getPriceList(),
-            $request
+            $request,
+            $this->getParameter('orob2b_pricing.entity.combined_product_price.class')
         );
+    }
+
+    /**
+     * @return FrontendPriceListRequestHandler
+     */
+    protected function getRequestHandler()
+    {
+        return $this->get('orob2b_pricing.model.frontend.price_list_request_handler');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getProductPriceProvider()
+    {
+        return $this->get('orob2b_pricing.provider.combined_product_price');
     }
 }
