@@ -2,10 +2,10 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
+use Doctrine\ORM\Event\PreFlushEventArgs;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
@@ -25,11 +25,11 @@ class AccountGroupChangesListener
     /** @var  EventDispatcherInterface */
     protected $eventDispatcher;
 
-    /** @var  integer[] */
-    protected $accountGroupIds;
+    /** @var  array */
+    protected $accountWebsitePairsByRemoveGroup;
 
-    /** @var  integer[] */
-    protected $accountIds;
+    /** @var  array */
+    protected $accountWebsitePairsByUpdateGroupInAccount;
 
     /** @var   PriceListToAccountRepository */
     protected $priceListToAccountRepository;
@@ -42,6 +42,8 @@ class AccountGroupChangesListener
     {
         $this->registry = $registry;
         $this->eventDispatcher = $eventDispatcher;
+        $this->accountWebsitePairsByUpdateGroupInAccount = [];
+        $this->accountGroupIds = [];
     }
 
     /**
@@ -49,18 +51,16 @@ class AccountGroupChangesListener
      */
     public function postFlush(PostFlushEventArgs $args)
     {
-        if ($this->accountGroupIds) {
-            if ($this->recalculateByGroupIds($this->accountGroupIds)) {
-                $this->accountGroupIds = null;
-                $args->getEntityManager()->flush();
-            };
-        }
-        if ($this->accountIds) {
-            if ($this->recalculateByAccount($this->accountIds)) {
-                $this->accountIds = null;
-                $args->getEntityManager()->flush();
-            }
-        }
+        if ($this->accountWebsitePairsByRemoveGroup) {
+            $this->dispatchAccountWebsitePairs($this->accountWebsitePairsByRemoveGroup);
+            $this->accountWebsitePairsByRemoveGroup = [];
+            $args->getEntityManager()->flush();
+        };
+        if ($this->accountWebsitePairsByUpdateGroupInAccount) {
+            $this->dispatchAccountWebsitePairs($this->accountWebsitePairsByUpdateGroupInAccount);
+            $this->accountWebsitePairsByUpdateGroupInAccount = [];
+            $args->getEntityManager()->flush();
+        };
     }
 
     /**
@@ -69,62 +69,46 @@ class AccountGroupChangesListener
     public function preUpdate(PreUpdateEventArgs $event)
     {
         $unitOfWork = $event->getEntityManager()->getUnitOfWork();
-
+        $accountIds = [];
         foreach ($unitOfWork->getScheduledEntityUpdates() as $entity) {
             if ($entity instanceof Account) {
                 $changeSet = $unitOfWork->getEntityChangeSet($entity);
-                if (isset($changeSet['group']) && !in_array($entity->getId(), $this->accountIds)) {
-                    $this->accountIds[] = $entity->getId();
+                if (isset($changeSet['group']) && !in_array($entity->getId(), $accountIds)) {
+                    $accountIds[] = $entity->getId();
                 }
             }
         }
+        if ($accountIds) {
+            $this->accountWebsitePairsByUpdateGroupInAccount = $this->getPriceListToAccountRepository()
+                ->getAccountWebsitePairsByAccountIds($accountIds);
+        }
     }
 
     /**
-     * @param LifecycleEventArgs $event
+     * @param PreFlushEventArgs $event
+     * @return bool
      */
-    public function preRemove(LifecycleEventArgs $event)
+    public function preFlush(PreFlushEventArgs $event)
     {
         $unitOfWork = $event->getEntityManager()->getUnitOfWork();
+        $accountGroupIds = [];
         foreach ($unitOfWork->getScheduledEntityDeletions() as $entity) {
-            if ($entity instanceof AccountGroup && !in_array($entity->getId(), $this->accountGroupIds)) {
-                $this->accountGroupIds[] = $entity->getId();
+            if ($entity instanceof AccountGroup && !in_array($entity->getId(), $accountGroupIds)) {
+                $accountGroupIds[] = $entity->getId();
             }
         }
-    }
+        if ($accountGroupIds) {
+            /** @var integer[] $websiteIds */
+            $websiteIds = $this->registry
+                ->getManagerForClass('OroB2BPricingBundle:PriceListToAccountGroup')
+                ->getRepository('OroB2BPricingBundle:PriceListToAccountGroup')
+                ->getWebsiteIdsByAccountGroups($accountGroupIds);
 
-    /**
-     * @param integer[] $accountGroupIds
-     * @return bool
-     */
-    protected function recalculateByGroupIds($accountGroupIds)
-    {
-        /** @var integer[] $websiteIds */
-        $websiteIds = $this->registry
-            ->getManagerForClass('OroB2BPricingBundle:PriceListToAccountGroup')
-            ->getRepository('OroB2BPricingBundle:PriceListToAccountGroup')
-            ->getWebsiteIdsByAccountGroups($accountGroupIds);
-
-        if ($websiteIds) {
-            $accountWebsitePairs = $this->getPriceListToAccountRepository()
-                ->getAccountWebsitePairsByAccountGroupIds($accountGroupIds, $websiteIds);
-
-            return $this->dispatchAccountWebsitePairs($accountWebsitePairs);
+            if ($websiteIds) {
+                $this->accountWebsitePairsByRemoveGroup = $this->getPriceListToAccountRepository()
+                    ->getAccountWebsitePairsByAccountGroupIds($accountGroupIds, $websiteIds);
+            }
         }
-
-        return false;
-    }
-
-    /**
-     * @param integer[] $accountIds
-     * @return bool
-     */
-    protected function recalculateByAccount($accountIds)
-    {
-        $accountWebsitePairs = $this->getPriceListToAccountRepository()
-            ->getAccountWebsitePairsByAccountIds($accountIds);
-
-        return $this->dispatchAccountWebsitePairs($accountWebsitePairs);
     }
 
     /**
@@ -143,11 +127,9 @@ class AccountGroupChangesListener
 
     /**
      * @param $accountWebsitePairs
-     * @return bool
      */
     protected function dispatchAccountWebsitePairs($accountWebsitePairs)
     {
-        $dispatched = false;
         foreach ($accountWebsitePairs as $accountWebsitePair) {
             /** @var Account $account */
             $account = $accountWebsitePair['account'];
@@ -157,9 +139,6 @@ class AccountGroupChangesListener
                 PriceListCollectionChange::BEFORE_CHANGE,
                 new PriceListCollectionChange($account, $website)
             );
-            $dispatched = true;
         }
-
-        return $dispatched;
     }
 }

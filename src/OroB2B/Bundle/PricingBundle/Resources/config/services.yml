@@ -248,9 +248,9 @@ services:
             - @doctrine
             - @event_dispatcher
         tags:
-            - { name: doctrine.event_listener, event: postFlush }
+            - { name: doctrine.event_listener, event: preFlush }
             - { name: doctrine.event_listener, event: preUpdate }
-            - { name: doctrine.event_listener, event: preRemove }
+            - { name: doctrine.event_listener, event: postFlush }
 
     orob2b_pricing.event_listener.price_list_collection:
         class: %orob2b_pricing.event_listener.price_list_collection.class%
