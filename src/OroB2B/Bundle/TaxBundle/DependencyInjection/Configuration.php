@@ -8,6 +8,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 
 use OroB2B\Bundle\TaxBundle\Provider\BuiltInTaxProvider;
+use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class Configuration implements ConfigurationInterface
 {
@@ -23,15 +24,42 @@ class Configuration implements ConfigurationInterface
         SettingsBuilder::append(
             $rootNode,
             [
-                'tax_enable' => ['value' => true],
-                'tax_provider' => ['value' => BuiltInTaxProvider::NAME],
-                'start_calculation_with' => ['value' => 'unit_price'],
-                'product_prices_include_tax' => ['value' => false],
-                'shipping_origin_as_base' => ['value' => []],
-                'destination_as_base' => ['value' => []],
-                'destination' => ['value' => 'billing_address'],
-                'digital_products_us' => ['type' => 'array', 'value' => []],
-                'digital_products_eu' => ['type' => 'array', 'value' => []],
+                'tax_enable' => [
+                    'type' => 'boolean',
+                    'value' => true
+                ],
+                'tax_provider' => [
+                    'type' => 'text',
+                    'value' => BuiltInTaxProvider::NAME
+                ],
+                'start_calculation_with' => [
+                    'type' => 'text',
+                    'value' => TaxationSettingsProvider::START_CALCULATION_UNIT_PRICE
+                ],
+                'product_prices_include_tax' => [
+                    'type' => 'boolean',
+                    'value' => false
+                ],
+                'use_as_base_by_default' => [
+                    'type' => 'text',
+                    'value' => TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN
+                ],
+                'use_as_base_exclusions' => [
+                    'type' => 'array',
+                    'value' => []
+                ],
+                'destination' => [
+                    'value' => TaxationSettingsProvider::DESTINATION_SHIPPING_ADDRESS
+                ],
+                'digital_products_us' => [
+                    'type' => 'array',
+                    'value' => []
+                ],
+                'digital_products_eu' => [
+                    'type' => 'array',
+                    'value' => []
+                ],
+                'origin_address' => ['type' => 'array', 'value' => []],
             ]
         );
 
