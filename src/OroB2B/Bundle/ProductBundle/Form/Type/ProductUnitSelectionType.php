@@ -178,16 +178,6 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         $choices = $this->getProductUnits($product);
         $view->vars['choices'] = [];
 
-        $productUnit = $productUnitHolder->getProductUnit();
-
-        if (!$productUnit || ($product && !in_array($productUnit, $choices, true))) {
-            $emptyValueTitle = $this->translator->trans(
-                $options['empty_label'],
-                ['{title}' => $productUnitHolder->getProductUnitCode()]
-            );
-            $view->vars['choices'][] = new ChoiceView(null, null, $emptyValueTitle, ['selected' => true]);
-        }
-
         $this->setChoicesViews($view, $choices, $options);
     }
 
