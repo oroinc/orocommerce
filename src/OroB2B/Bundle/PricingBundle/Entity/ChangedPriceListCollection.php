@@ -66,7 +66,7 @@ class ChangedPriceListCollection
      * @param Account $account
      * @return $this
      */
-    public function setAccount($account)
+    public function setAccount(Account $account)
     {
         $this->account = $account;
 
@@ -85,7 +85,7 @@ class ChangedPriceListCollection
      * @param Website $website
      * @return $this
      */
-    public function setWebsite($website)
+    public function setWebsite(Website $website)
     {
         $this->website = $website;
 
@@ -104,7 +104,7 @@ class ChangedPriceListCollection
      * @param AccountGroup $accountGroup
      * @return $this
      */
-    public function setAccountGroup($accountGroup)
+    public function setAccountGroup(AccountGroup $accountGroup)
     {
         $this->accountGroup = $accountGroup;
 
