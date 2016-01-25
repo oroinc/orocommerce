@@ -65,6 +65,13 @@ class AccountType extends AbstractType
                     'required' => false
                 ]
             )
+            ->add(
+                'salesRepresentatives',
+                SalesRepresentativesCollectionType::NAME,
+                [
+                    'label' => 'orob2b.account.sales_representatives.label',
+                ]
+            )
         ;
     }
 
