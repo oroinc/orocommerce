@@ -28,6 +28,8 @@ class Configuration implements ConfigurationInterface
 
         $rootNode = $treeBuilder->root(OroB2BPricingExtension::ALIAS);
 
+        // TODO ADD CONSTANT in CombinedPriceListQueueConsumer
+
         SettingsBuilder::append(
             $rootNode,
             [
@@ -35,7 +37,7 @@ class Configuration implements ConfigurationInterface
                 self::DEFAULT_PRICE_LISTS => ['type' => 'array', 'value' => []],
                 'rounding_type' => ['value' => PriceRoundingService::HALF_UP],
                 'precision' => ['value' => PriceRoundingService::FALLBACK_PRECISION],
-                'price_lists_update_strategy' => ['value' => 'scheduled'],
+                'price_lists_update_mode' => ['value' => 'scheduled'],
             ]
         );
 

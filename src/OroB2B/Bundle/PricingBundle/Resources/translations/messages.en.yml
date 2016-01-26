@@ -94,7 +94,7 @@ orob2b.pricing:
             default_price_lists.title: Default Price Lists
             price_rounding.title: Pricing Rounding
             pricing.title: Pricing
-            price_lists_update_strategy.title: Price Lists Updating
+            price_lists_update_mode.title: Price Lists Updating
         fields:
             price_lists.title: Price Lists
             rounding_type:
@@ -105,9 +105,9 @@ orob2b.pricing:
                     half_down.label: Half Down
                     ceil.label: Ceil
                     floor.label: Floor
-            price_lists_update_strategy:
-                label: Strategy Price Lists Updating
-                tooltip: Use scheduled strategy to process big data.
+            price_lists_update_mode:
+                label: mode Price Lists Updating
+                tooltip: Use scheduled mode to process big data.
                 choices:
                     scheduled.label: Scheduled
                     realtime.label: Real Time
