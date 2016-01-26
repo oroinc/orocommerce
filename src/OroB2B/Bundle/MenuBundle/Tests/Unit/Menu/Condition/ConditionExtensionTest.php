@@ -27,7 +27,9 @@ class ConditionExtensionTest extends \PHPUnit_Framework_TestCase
     public function testBuildOptions($condition, $isAllowed)
     {
         $options = [
+            'extras' => [
                 ConditionExtension::CONDITION_KEY => $condition,
+            ],
         ];
         $options = $this->conditionExtension->buildOptions($options);
             $this->assertArrayHasKey(BuilderInterface::IS_ALLOWED_OPTION_KEY, $options['extras']);
@@ -58,7 +60,9 @@ class ConditionExtensionTest extends \PHPUnit_Framework_TestCase
     public function testBuildOptionsAlreadyProcessed()
     {
         $options = [
+            'extras' => [
                 BuilderInterface::IS_ALLOWED_OPTION_KEY => !ConditionExtension::DEFAULT_IS_ALLOWED_POLICY,
+            ],
         ];
         $processedOptions = $this->conditionExtension->buildOptions($options);
 
@@ -70,7 +74,9 @@ class ConditionExtensionTest extends \PHPUnit_Framework_TestCase
         /** @var ExpressionFunctionProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider */
         $provider = $this->getMock('Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface');
         $options = [
+            'extras' => [
                 ConditionExtension::CONDITION_KEY => '1 > 0',
+            ],
         ];
         $provider->expects($this->once())
             ->method('getFunctions')

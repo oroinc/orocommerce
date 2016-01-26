@@ -98,7 +98,6 @@ class DatabaseBuilder implements BuilderInterface
             'childrenAttributes' => $getData('childrenAttributes'),
             'labelAttributes' => $getData('labelAttributes'),
             'extras' => $getData('extras'),
-            'condition' => $item->getCondition(),
             'display' => $item->getDisplay(),
             'displayChildren' => $item->getDisplayChildren(),
         ]);

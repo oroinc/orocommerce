@@ -41,9 +41,9 @@ class ConditionExtension implements ExtensionInterface
      */
     public function buildOptions(array $options)
     {
-        if (!$this->alreadyDenied($options) && !empty($options[self::CONDITION_KEY])) {
+        if (!$this->alreadyDenied($options) && array_key_exists(self::CONDITION_KEY, $options['extras'])) {
             $language = new ExpressionLanguage(null, $this->providers);
-            $result = (bool)$language->evaluate($options[self::CONDITION_KEY]);
+            $result = (bool)$language->evaluate($options['extras'][self::CONDITION_KEY]);
             $options['extras'][BuilderInterface::IS_ALLOWED_OPTION_KEY] = $result;
         }
 
