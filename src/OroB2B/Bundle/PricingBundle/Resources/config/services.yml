@@ -32,6 +32,8 @@ parameters:
     orob2b_pricing.builder.account_group_combined_price_list_builder.class: OroB2B\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder
     orob2b_pricing.builder.account_combined_price_list_builder.class: OroB2B\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder
 
+    orob2b_pricing.builder.queue_consumer.class: OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer
+
     orob2b_pricing.builder.combined_price_list_garbage_collector.class: OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector
 
     orob2b_pricing.validator.unique_product_prices.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\UniqueProductPricesValidator
@@ -199,6 +201,15 @@ services:
             - @orob2b_pricing.builder.combined_price_list_garbage_collector
         calls:
             - [setWebsiteCombinedPriceListBuilder, [@orob2b_pricing.builder.website_combined_price_list_builder]]
+
+    orob2b_pricing.builder.queue_consumer:
+        class: %orob2b_pricing.builder.queue_consumer.class%
+        arguments:
+            - @doctrine
+            - @orob2b_pricing.builder.combined_price_list_builder
+            - @orob2b_pricing.builder.website_combined_price_list_builder
+            - @orob2b_pricing.builder.account_group_combined_price_list_builder
+            - @orob2b_pricing.builder.account_combined_price_list_builder
 
     orob2b_pricing.validator.unique_product_prices:
         class: %orob2b_pricing.validator.unique_product_prices.class%
