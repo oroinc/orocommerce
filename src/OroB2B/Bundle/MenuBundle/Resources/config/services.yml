@@ -27,6 +27,7 @@ parameters:
     orob2b_menu.menu.condition.condition_extension.class: OroB2B\Bundle\MenuBundle\Menu\Condition\ConditionExtension
     orob2b_menu.menu.condition.config_value_expression_language_provider.class: OroB2B\Bundle\MenuBundle\Menu\Condition\ConfigValueExpressionLanguageProvider
     orob2b_menu.menu.condition.logged_in_expression_language_provider.class: OroB2B\Bundle\MenuBundle\Menu\Condition\LoggedInExpressionLanguageProvider
+    orob2b_menu.menu.acl_extension.class: Oro\Bundle\NavigationBundle\Menu\AclAwareMenuFactoryExtension
 
 services:
     orob2b_menu.cache:
@@ -81,6 +82,7 @@ services:
     orob2b_menu.factory:
         class: %orob2b_menu.factory.class%
         calls:
+            - [ addExtension, [ @orob2b_menu.menu.acl_extension ] ]
             - [ addExtension, [ @orob2b_menu.menu.condition.condition_extension ] ]
 
     orob2b_menu.menu_manipulator:
@@ -139,3 +141,11 @@ services:
             - { name: doctrine.event_listener, event: postPersist }
             - { name: doctrine.event_listener, event: postUpdate }
             - { name: doctrine.event_listener, event: postRemove }
+
+    orob2b_menu.menu.acl_extension:
+        class: %orob2b_menu.menu.acl_extension.class%
+        arguments:
+            - @router
+            - @oro_security.security_facade
+        calls:
+            - [ setCache, [ @oro_menu.cache ] ]
