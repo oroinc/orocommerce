@@ -35,18 +35,25 @@ class TaxationAddressProvider
             if ($orderAddress->getCountry() === $exclusion->getCountry() &&
                 ($exclusion->getRegion() === null || $exclusion->getRegion() === $orderAddress->getRegion())
             ) {
-                $orderAddress = $this->getDestinationAddressByType($order, $exclusion->getOption());
+                if ($exclusion->getOption() === TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN) {
+                    $orderAddress = $this->getOriginAddress();
+                }
+
+                $exclusionUsed = true;
+                break;
             }
         }
 
         if (!$exclusionUsed && $this->settingsProvider->isOriginBaseByDefaultAddressType()) {
-            return $this->settingsProvider->getOrigin();
+            return $this->getOriginAddress();
         }
 
         return $orderAddress;
     }
 
     /**
+     * Get address by config setting (shipping or billing)
+     *
      * @param Order $order
      * @return OrderAddress|null
      */

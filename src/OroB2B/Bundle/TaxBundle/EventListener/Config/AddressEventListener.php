@@ -4,11 +4,9 @@ namespace OroB2B\Bundle\TaxBundle\EventListener\Config;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\AddressBundle\Entity\Region;
 
 use OroB2B\Bundle\TaxBundle\DependencyInjection\OroB2BTaxExtension;
+use OroB2B\Bundle\TaxBundle\Factory\AddressModelFactory;
 use OroB2B\Bundle\TaxBundle\Model\Address;
 
 class AddressEventListener
@@ -16,16 +14,11 @@ class AddressEventListener
     const KEY = 'origin_address';
 
     /**
-     * @var DoctrineHelper
+     * @param AddressModelFactory $addressModelFactory
      */
-    protected $doctrineHelper;
-
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
-    public function __construct(DoctrineHelper $doctrineHelper)
+    public function __construct(AddressModelFactory $addressModelFactory)
     {
-        $this->doctrineHelper = $doctrineHelper;
+        $this->addressModelFactory = $addressModelFactory;
     }
 
     /**
@@ -40,23 +33,7 @@ class AddressEventListener
             return;
         }
 
-        $values = $settings[$key]['value'];
-        $entity = new Address($values);
-
-        if (!empty($values['country'])) {
-            /** @var Country $country */
-            $country = $this->doctrineHelper->getEntityReference('OroAddressBundle:Country', $values['country']);
-            $entity->setCountry($country);
-        }
-
-        if (!empty($values['region'])) {
-            /** @var Region $region */
-            $region = $this->doctrineHelper->getEntityReference('OroAddressBundle:Region', $values['region']);
-            $entity->setRegion($region);
-        }
-
-        $settings[$key]['value'] = $entity;
-
+        $settings[$key]['value'] = $this->addressModelFactory->create($settings[$key]['value']);
         $event->setSettings($settings);
     }
 

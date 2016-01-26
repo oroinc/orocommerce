@@ -58,6 +58,7 @@ class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
      * @param AbstractAddress|null $expectedResult
      * @param string $destination
      * @param Address $origin
+     * @param bool $originByDefault
      * @param OrderAddress $billingAddress
      * @param OrderAddress $shippingAddress
      * @param array $exclusions
@@ -65,13 +66,14 @@ class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetAddressForTaxation(
         $expectedResult,
         $destination,
-        Address $origin,
-        OrderAddress $billingAddress,
-        OrderAddress $shippingAddress,
+        $origin,
+        $originByDefault,
+        $billingAddress,
+        $shippingAddress,
         $exclusions
     ) {
         $this->settingsProvider
-            ->expects($origin ? $this->once() : $this->never())
+            ->expects($origin !== null ? $this->once() : $this->never())
             ->method('getOrigin')
             ->willReturn($origin);
 
@@ -81,15 +83,18 @@ class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($exclusions);
 
         $this->settingsProvider
-            ->expects($destination ? $this->once() : $this->never())
+            ->expects($this->once())
             ->method('getDestination')
             ->willReturn($destination);
+
+        $this->settingsProvider
+            ->expects($originByDefault !== null ? $this->once() : $this->never())
+            ->method('isOriginBaseByDefaultAddressType')
+            ->willReturn($originByDefault);
 
         $order = new Order();
         $order->setBillingAddress($billingAddress);
         $order->setShippingAddress($shippingAddress);
-
-        // TODO: Add exception rules logic
 
         $this->assertSame($expectedResult, $this->addressProvider->getAddressForTaxation($order));
     }
@@ -99,14 +104,19 @@ class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function getAddressForTaxationProvider()
     {
-        $originAddress = new Address();
-        $billingAddress = new OrderAddress();
-        $shippingAddress = new OrderAddress();
-
         $countryUS = new Country('US');
         $countryCA = new Country('CA');
 
         $regionUSLA = new Region('US-LA');
+
+        $originAddress = new Address();
+
+        $billingAddress = new OrderAddress();
+        $billingAddress->setCountry($countryUS);
+        $billingAddress->setRegion($regionUSLA);
+
+        $shippingAddress = new OrderAddress();
+        $shippingAddress->setCountry($countryCA);
 
         $exclusions = [
             new TaxBaseExclusion(
@@ -120,37 +130,66 @@ class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
                 [
                     'country' => $countryCA,
                     'region' => null,
-                    'option' => TaxationSettingsProvider::USE_AS_BASE_DESTINATION,
+                    'option' => TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN,
                 ]
             ),
         ];
 
         return [
-            'destination billing address' => [
+            'billing address' => [
                 $billingAddress,
                 TaxationSettingsProvider::DESTINATION_BILLING_ADDRESS,
+                null,
+                false,
+                $billingAddress,
+                $shippingAddress,
+                []
+            ],
+            'shipping address' =>[
+                $shippingAddress,
+                TaxationSettingsProvider::DESTINATION_SHIPPING_ADDRESS,
+                null,
+                false,
+                $billingAddress,
+                $shippingAddress,
+                []
+            ],
+            'null address' =>[
+                null,
+                null,
+                null,
+                null,
+                $billingAddress,
+                $shippingAddress,
+                null
+            ],
+            'origin address by default' => [
                 $originAddress,
+                TaxationSettingsProvider::DESTINATION_SHIPPING_ADDRESS,
+                $originAddress,
+                true,
+                $billingAddress,
+                $shippingAddress,
+                []
+            ],
+            'billing address with exclusion (use destination as base)' => [
+                $billingAddress,
+                TaxationSettingsProvider::DESTINATION_BILLING_ADDRESS,
+                null,
+                null,
                 $billingAddress,
                 $shippingAddress,
                 $exclusions
             ],
-            'destination shipping address' =>[
-                $shippingAddress,
+            'shipping address with exclusion (use origin as base)' => [
+                $originAddress,
                 TaxationSettingsProvider::DESTINATION_SHIPPING_ADDRESS,
                 $originAddress,
+                null,
                 $billingAddress,
                 $shippingAddress,
                 $exclusions
-            ]
-            ,
-            'destination null address' =>[
-                null,
-                null,
-                $originAddress,
-                $billingAddress,
-                $shippingAddress,
-                $exclusions
-            ]
+            ],
         ];
     }
 }

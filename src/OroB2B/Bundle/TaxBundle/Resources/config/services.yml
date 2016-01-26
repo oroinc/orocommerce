@@ -33,6 +33,8 @@ parameters:
     orob2b_tax.manager.tax_value_manager.class: OroB2B\Bundle\TaxBundle\Manager\TaxValueManager
     orob2b_tax.transformer.tax_value.class: OroB2B\Bundle\TaxBundle\Transformer\TaxValueToResultTransformer
     orob2b_tax.factory.tax.class: OroB2B\Bundle\TaxBundle\Factory\TaxFactory
+    orob2b_tax.factory.tax_base_exclusion.class: OroB2B\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory
+    orob2b_tax.factory.address_model_factory.class: OroB2B\Bundle\TaxBundle\Factory\AddressModelFactory
     orob2b_tax.order_tax.mapper.order_mapper.class: OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderMapper
     orob2b_tax.order_tax.mapper.order_line_item_mapper.class: OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper
 
@@ -210,7 +212,7 @@ services:
     orob2b_tax.event_listener.config.address:
         class: %orob2b_tax.event_listener.config.address.class%
         arguments:
-            - @oro_entity.doctrine_helper
+            - @orob2b_tax.factory.address_model_factory
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
@@ -268,6 +270,16 @@ services:
     orob2b_tax.factory.tax:
         class: %orob2b_tax.factory.tax.class%
 
+    orob2b_tax.factory.tax_base_exclusion:
+        class: %orob2b_tax.factory.tax_base_exclusion.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+
+    orob2b_tax.factory.address_model_factory:
+        class: %orob2b_tax.factory.address_model_factory.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+
     orob2b_tax.order_tax.mapper.order_mapper:
         class: %orob2b_tax.order_tax.mapper.order_mapper.class%
         arguments:
@@ -288,6 +300,8 @@ services:
         class: %orob2b_tax.provider.taxation_settings_provider.class%
         arguments:
             - @oro_config.manager
+            - @orob2b_tax.factory.tax_base_exclusion
+            - @orob2b_tax.factory.address_model_factory
 
     orob2b_tax.provider.taxation_address_provider:
         class: %orob2b_tax.provider.taxation_address_provider.class%
@@ -297,7 +311,7 @@ services:
     orob2b_tax.form.data_transformer.tax_base_exclusion_transformer:
         class: %orob2b_tax.form.data_transformer.tax_base_exclusion_transformer.class%
         arguments:
-            - @oro_entity.doctrine_helper
+            - @orob2b_tax.factory.tax_base_exclusion
 
     orob2b_tax.abstract.matcher:
         abstract: true
