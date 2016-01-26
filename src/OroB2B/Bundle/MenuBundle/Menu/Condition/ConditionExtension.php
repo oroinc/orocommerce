@@ -41,12 +41,10 @@ class ConditionExtension implements ExtensionInterface
      */
     public function buildOptions(array $options)
     {
-        if (!$this->alreadyProcessed($options) && array_key_exists(self::CONDITION_KEY, $options['extras'])) {
+        if (!$this->alreadyDenied($options) && array_key_exists(self::CONDITION_KEY, $options['extras'])) {
             $language = new ExpressionLanguage(null, $this->providers);
             $result = (bool)$language->evaluate($options['extras'][self::CONDITION_KEY]);
-            if (!$result) {
-                $options['extras'][BuilderInterface::IS_ALLOWED_OPTION_KEY] = false;
-            }
+            $options['extras'][BuilderInterface::IS_ALLOWED_OPTION_KEY] = $result;
         }
 
         return $options;
@@ -63,10 +61,10 @@ class ConditionExtension implements ExtensionInterface
      * @param array $options
      * @return bool
      */
-    protected function alreadyProcessed(array $options)
+    protected function alreadyDenied(array $options)
     {
         return array_key_exists('extras', $options) &&
         array_key_exists(BuilderInterface::IS_ALLOWED_OPTION_KEY, $options['extras']) &&
-        ($options['extras'][BuilderInterface::IS_ALLOWED_OPTION_KEY] !== self::DEFAULT_IS_ALLOWED_POLICY);
+        ($options['extras'][BuilderInterface::IS_ALLOWED_OPTION_KEY] === false);
     }
 }

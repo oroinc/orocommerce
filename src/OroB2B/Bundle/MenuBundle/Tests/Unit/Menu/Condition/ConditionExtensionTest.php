@@ -32,10 +32,10 @@ class ConditionExtensionTest extends \PHPUnit_Framework_TestCase
             ],
         ];
         $options = $this->conditionExtension->buildOptions($options);
-        if ($isAllowed) {
-            $this->assertArrayNotHasKey(BuilderInterface::IS_ALLOWED_OPTION_KEY, $options['extras']);
-        } else {
             $this->assertArrayHasKey(BuilderInterface::IS_ALLOWED_OPTION_KEY, $options['extras']);
+        if ($isAllowed) {
+            $this->assertTrue($options['extras'][BuilderInterface::IS_ALLOWED_OPTION_KEY]);
+        } else {
             $this->assertFalse($options['extras'][BuilderInterface::IS_ALLOWED_OPTION_KEY]);
         }
     }
