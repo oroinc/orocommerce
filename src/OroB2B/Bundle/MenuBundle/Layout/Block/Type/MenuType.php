@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\MenuBundle\Layout\Block\Type;
 
 use Knp\Menu\Matcher\MatcherInterface;
 use Knp\Menu\Provider\MenuProviderInterface;
+
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Component\Layout\BlockInterface;

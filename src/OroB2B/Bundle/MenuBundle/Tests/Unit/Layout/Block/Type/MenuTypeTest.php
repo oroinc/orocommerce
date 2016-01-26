@@ -6,6 +6,7 @@ use Oro\Bundle\LayoutBundle\Layout\Form\GroupingFormLayoutBuilder;
 use Oro\Component\Layout\BlockView;
 use Oro\Component\Layout\LayoutFactoryBuilderInterface;
 use Oro\Component\Layout\Tests\Unit\BaseBlockTypeTestCase;
+
 use OroB2B\Bundle\MenuBundle\Layout\Block\Type\MenuType;
 
 class MenuTypeTest extends BaseBlockTypeTestCase
