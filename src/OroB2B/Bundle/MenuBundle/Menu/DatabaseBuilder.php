@@ -67,14 +67,14 @@ class DatabaseBuilder implements BuilderInterface
 
     /**
      * @param ItemInterface $item
-     * @param MenuItem $root
+     * @param MenuItem $entity
      * @param array $options
      */
-    protected function createFromMenuItem(ItemInterface $item, MenuItem $root, array $options)
+    protected function createFromMenuItem(ItemInterface $item, MenuItem $entity, array $options)
     {
-        foreach ($root->getChildren() as $child) {
-            $item->addChild($child->getTitle(), $this->menuItemEntityToArray($child, $options));
-            $this->createFromMenuItem($item, $child, $options);
+        foreach ($entity->getChildren() as $childEntity) {
+            $child = $item->addChild($childEntity->getTitle(), $this->menuItemEntityToArray($childEntity, $options));
+            $this->createFromMenuItem($child, $childEntity, $options);
         }
     }
 

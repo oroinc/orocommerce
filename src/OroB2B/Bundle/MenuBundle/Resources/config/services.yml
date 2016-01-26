@@ -149,3 +149,11 @@ services:
             - @oro_security.security_facade
         calls:
             - [ setCache, [ @oro_menu.cache ] ]
+
+    orob2b_menu.layout.block_type.menu:
+        class: OroB2B\Bundle\MenuBundle\Layout\Block\Type\MenuType
+        arguments:
+            - @orob2b_menu.menu_provider
+            - @knp_menu.matcher
+        tags:
+             - { name: layout.block_type, alias: menu }
