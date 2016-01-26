@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Factory;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+
 use OroB2B\Bundle\TaxBundle\Factory\AddressModelFactory;
 use OroB2B\Bundle\TaxBundle\Model\Address;
 
