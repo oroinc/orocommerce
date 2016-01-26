@@ -221,7 +221,7 @@ class DatabaseMenuProvider implements MenuProviderInterface
         /** @var Locale $locale */
         $locale = $options['extras'][MenuItem::LOCALE_OPTION];
 
-        return sprintf("%s:%s", $alias, $locale->getCode());
+        return sprintf("%s:%s", $alias, $locale->getId());
     }
 
     /**
