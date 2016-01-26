@@ -28,7 +28,7 @@ class TaxRule
     /**
      * @var string
      *
-     * @ORM\Column(type="text", length=255, nullable=true)
+     * @ORM\Column(name="description", type="text", nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
