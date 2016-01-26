@@ -133,6 +133,15 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener } #todo: add entity and event keys https://magecore.atlassian.net/browse/BB-1289
 
+    orob2b_menu.event_listener.locale_listener:
+        class: OroB2B\Bundle\MenuBundle\EventListener\LocaleListener
+        arguments:
+            - @orob2b_menu.menu_provider
+        tags:
+            - { name: doctrine.event_listener, event: postPersist }
+            - { name: doctrine.event_listener, event: postUpdate }
+            - { name: doctrine.event_listener, event: postRemove }
+
     orob2b_menu.menu.acl_extension:
         class: %orob2b_menu.menu.acl_extension.class%
         arguments:
