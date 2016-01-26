@@ -3,6 +3,12 @@
 namespace OroB2B\Bundle\SaleBundle\Controller\Frontend;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Translation\TranslatorInterface;
+
+use Doctrine\Common\Persistence\ObjectManager;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -12,6 +18,7 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\LayoutBundle\Annotation\Layout;
 
 class QuoteController extends Controller
 {
@@ -39,7 +46,7 @@ class QuoteController extends Controller
 
     /**
      * @Route("/", name="orob2b_sale_quote_frontend_index")
-     * @Template("OroB2BSaleBundle:Quote/Frontend:index.html.twig")
+     * @Layout(vars={"entity_class"})
      * @Acl(
      *      id="orob2b_sale_quote_frontend_index",
      *      type="entity",
