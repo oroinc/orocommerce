@@ -47,6 +47,7 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
     protected function updatePriceListsOnCurrentLevel(Website $website, Account $account, $force)
     {
         $collection = $this->priceListCollectionProvider->getPriceListsByAccount($account, $website);
+        //TODO: remove relation if level doesn't has own settings
         $combinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection, $force);
 
         $this->getCombinedPriceListRepository()
