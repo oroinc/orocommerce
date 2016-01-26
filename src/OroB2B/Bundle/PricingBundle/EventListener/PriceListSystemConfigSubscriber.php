@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -29,17 +31,25 @@ class PriceListSystemConfigSubscriber implements EventSubscriberInterface
     /**
      * @var  boolean
      */
-    protected $applicable;
+    protected $isApplicable;
+
+    /** @var  ManagerRegistry */
+    protected $registry;
 
     /**
      * PriceListSystemConfigSubscriber constructor.
      * @param PriceListConfigConverter $converter
      * @param EventDispatcherInterface $eventDispatcher
+     * @param ManagerRegistry $registry
      */
-    public function __construct(PriceListConfigConverter $converter, EventDispatcherInterface $eventDispatcher)
-    {
+    public function __construct(
+        PriceListConfigConverter $converter,
+        EventDispatcherInterface $eventDispatcher,
+        ManagerRegistry $registry
+    ) {
         $this->converter = $converter;
         $this->eventDispatcher = $eventDispatcher;
+        $this->registry = $registry;
     }
 
     /**
@@ -70,15 +80,15 @@ class PriceListSystemConfigSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param mixed $settings
+     * @param array $settings
      * @param string $settingsKey
      * @return bool
      */
-    protected function isSettingsApplicable($settings, $settingsKey)
+    protected function isSettingsApplicable(array $settings, $settingsKey)
     {
-        $this->applicable = is_array($settings) && array_key_exists($settingsKey, $settings);
+        $this->isApplicable = is_array($settings) && array_key_exists($settingsKey, $settings);
 
-        return $this->applicable;
+        return $this->isApplicable;
     }
 
     /**
@@ -86,11 +96,12 @@ class PriceListSystemConfigSubscriber implements EventSubscriberInterface
      */
     public function updateAfter(ConfigUpdateEvent $event)
     {
-        if ($this->applicable && $event->getChangeSet()) {
+        if ($this->isApplicable && $event->getChangeSet()) {
             $this->eventDispatcher->dispatch(
                 PriceListCollectionChange::BEFORE_CHANGE,
                 new PriceListCollectionChange()
             );
+            $this->registry->getManager()->flush();
         }
     }
 
