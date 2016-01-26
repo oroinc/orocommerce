@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\MenuBundle\Tests\Unit\Layout\Block\Type;
 
-use Oro\Bundle\LayoutBundle\Layout\Form\GroupingFormLayoutBuilder;
 use Oro\Component\Layout\BlockView;
 use Oro\Component\Layout\LayoutFactoryBuilderInterface;
 use Oro\Component\Layout\Tests\Unit\BaseBlockTypeTestCase;
@@ -11,9 +10,6 @@ use OroB2B\Bundle\MenuBundle\Layout\Block\Type\MenuType;
 
 class MenuTypeTest extends BaseBlockTypeTestCase
 {
-    /** @var GroupingFormLayoutBuilder */
-    protected $formLayoutBuilder;
-
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Knp\Menu\Provider\MenuProviderInterface
      */
@@ -30,8 +26,6 @@ class MenuTypeTest extends BaseBlockTypeTestCase
     protected function initializeLayoutFactoryBuilder(LayoutFactoryBuilderInterface $layoutFactoryBuilder)
     {
         parent::initializeLayoutFactoryBuilder($layoutFactoryBuilder);
-
-        $this->formLayoutBuilder = new GroupingFormLayoutBuilder();
 
         $this->provider = $this->getMock('Knp\Menu\Provider\MenuProviderInterface');
         $this->matcher = $this->getMock('Knp\Menu\Matcher\MatcherInterface');
