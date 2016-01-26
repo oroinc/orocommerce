@@ -84,7 +84,6 @@ class OroB2BInvoiceBundleInstaller implements Installation
         );
         $table->addColumn('price_currency', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('price_type', 'smallint', ['notnull' => false, 'unsigned' => true]);
-        $table->addColumn('created_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
     }
 

@@ -162,7 +162,7 @@ class Invoice extends ExtendInvoice implements
      *     targetEntity="OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem",
      *     mappedBy="invoice", cascade={"ALL"}, orphanRemoval=true
      * )
-     * @ORM\OrderBy({"createdAt" = "ASC"})
+     * todo "@ORM\OrderBy({"index" = "ASC"})"
      */
     protected $lineItems;
 

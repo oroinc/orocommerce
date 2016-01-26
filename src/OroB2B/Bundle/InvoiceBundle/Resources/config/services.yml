@@ -55,3 +55,8 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener }
 
+    orob2b_invoice.event_listener.invoice_form_listener:
+        class: OroB2B\Bundle\InvoiceBundle\EventListener\InvoiceFormListener
+        tags:
+            - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush.orob2b_invoice_type, method: afterFlush}
+
