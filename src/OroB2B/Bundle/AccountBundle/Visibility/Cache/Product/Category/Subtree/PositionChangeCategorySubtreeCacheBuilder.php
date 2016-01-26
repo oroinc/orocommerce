@@ -114,7 +114,7 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
             }
         }
 
-        $this->updateAccountsProductVisibilityResolved($category, $accountForUpdate, $visibility);
+        $this->updateAccountsProductVisibility($category, $accountForUpdate, $visibility);
 
         $this->accountIdsWithChangedVisibility[$category->getId()] = $accountForUpdate;
         $this->accountIdsWithInverseVisibility = $accountIdsWithInverseVisibility;
@@ -134,7 +134,7 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
             $invertedVisibility
         );
 
-        $this->updateAccountsProductVisibilityResolved(
+        $this->updateAccountsProductVisibility(
             $category,
             $this->accountIdsWithInverseVisibility,
             $invertedVisibility

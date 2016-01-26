@@ -37,9 +37,11 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
         $accountGroup = $visibilitySettings->getAccountGroup();
 
         $selectedVisibility = $visibilitySettings->getVisibility();
+        $visibilitySettings = $this->refreshEntity($visibilitySettings);
 
         $insert = false;
         $delete = false;
+        $update = [];
         $where = ['accountGroup' => $accountGroup, 'category' => $category];
 
         $repository = $this->getRepository();
@@ -47,7 +49,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
         $hasAccountGroupCategoryVisibilityResolved = $repository->hasEntity($where);
 
         if (!$hasAccountGroupCategoryVisibilityResolved
-            && $selectedVisibility !== AccountGroupCategoryVisibility::PARENT_CATEGORY
+            && $selectedVisibility !== AccountGroupCategoryVisibility::CATEGORY
         ) {
             $insert = true;
         }
@@ -65,28 +67,23 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
                 'sourceCategoryVisibility' => $visibilitySettings,
                 'source' => AccountGroupCategoryVisibilityResolved::SOURCE_STATIC,
             ];
-        } elseif ($selectedVisibility == AccountGroupCategoryVisibility::CATEGORY) {
+        } elseif ($selectedVisibility === AccountGroupCategoryVisibility::CATEGORY) {
+            // fallback to category is default for account group and should be removed if exists
+            if ($hasAccountGroupCategoryVisibilityResolved) {
+                $delete = true;
+            }
+
             $visibility = $this->registry
                 ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
                 ->getRepository('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
                 ->getFallbackToAllVisibility($category);
+        } elseif ($selectedVisibility === AccountGroupCategoryVisibility::PARENT_CATEGORY) {
+            $visibility = $this->getParentCategoryVisibility($category, $accountGroup);
             $update = [
                 'visibility' => $visibility,
-                'sourceCategoryVisibility' => null,
-                'source' => AccountGroupCategoryVisibilityResolved::SOURCE_STATIC,
+                'sourceCategoryVisibility' => $visibilitySettings,
+                'source' => AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
             ];
-        } elseif ($selectedVisibility == AccountGroupCategoryVisibility::PARENT_CATEGORY) {
-            if ($category->getParentCategory()) {
-                $parentCategory = $category->getParentCategory();
-                $visibility = $repository->getFallbackToGroupVisibility($parentCategory, $accountGroup);
-                $update = [
-                    'visibility' => $visibility,
-                    'sourceCategoryVisibility' => $visibilitySettings,
-                    'source' => AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
-                ];
-            } else {
-                throw new \LogicException('Category has not parent category');
-            }
         } else {
             throw new \InvalidArgumentException(sprintf('Unknown visibility %s', $selectedVisibility));
         }

@@ -75,7 +75,7 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
     protected function updateAccountsFirstLevel(Category $category, $visibility)
     {
         $accountIdsForUpdate = $this->getAccountIdsWithFallbackToCurrentGroup($category, $this->accountGroup);
-        $this->updateAccountsProductVisibilityResolved($category, $accountIdsForUpdate, $visibility);
+        $this->updateAccountsProductVisibility($category, $accountIdsForUpdate, $visibility);
 
         return $accountIdsForUpdate;
     }
