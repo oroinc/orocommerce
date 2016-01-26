@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\TaxBundle\Resolver;
 
 use Brick\Math\BigDecimal;
+use Brick\Math\Exception\NumberFormatException;
 
 use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
 use OroB2B\Bundle\TaxBundle\Model\Result;
@@ -27,22 +28,26 @@ class TotalResolver implements ResolverInterface
         foreach ($taxable->getItems() as $taxableItem) {
             $taxableItemResult = $taxableItem->getResult();
             $row = $taxableItemResult->getRow();
-            $inclTax = $inclTax->plus($row->getIncludingTax());
-            $exclTax = $exclTax->plus($row->getExcludingTax());
+            try {
+                $inclTax = $inclTax->plus($row->getIncludingTax());
+                $exclTax = $exclTax->plus($row->getExcludingTax());
+            } catch (NumberFormatException $e) {
+                continue;
+            }
 
             foreach ($taxableItemResult->getTaxes() as $appliedTax) {
-                $taxId = $appliedTax->getTax();
+                $taxCode = (string)$appliedTax->getTax();
                 $appliedTaxAmount = $appliedTax->getTaxAmount();
                 $appliedTaxableAmount = $appliedTax->getTaxableAmount();
-                if (array_key_exists($taxId, $taxResults)) {
-                    $appliedTaxes = $taxResults[$taxId];
+                if (array_key_exists($taxCode, $taxResults)) {
+                    $appliedTaxes = $taxResults[$taxCode];
                     $appliedTaxAmount = BigDecimal::of($appliedTaxes->getTaxAmount())->plus($appliedTaxAmount);
                     $appliedTaxableAmount = BigDecimal::of($appliedTaxes->getTaxableAmount())
                         ->plus($appliedTaxableAmount);
                 }
 
-                $taxResults[$taxId] = TaxResultElement::create(
-                    $taxId,
+                $taxResults[$taxCode] = TaxResultElement::create(
+                    $taxCode,
                     $appliedTax->getRate(),
                     $appliedTaxableAmount,
                     $appliedTaxAmount

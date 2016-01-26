@@ -1,0 +1,70 @@
+loadTax_taxValue_is_missing:
+    method: loadTax
+    reference: my_order
+    expectedResult: []
+    expectedQueries: 3 # select order, line items from fixtures, taxValue once
+loadTax_taxValue_exxists:
+    method: loadTax
+    reference: simple_order
+    expectedResult:
+        total:
+            includingTax: '867.9' # 789 + 78.9
+            excludingTax: '789'
+            taxAmount: '78.9' # 789 * 0.1
+            adjustment: ~
+        taxes:
+            - { tax: 'TAX1', rate: '0.1', taxable_amount: '789', tax_amount: '78.9' }
+    expectedQueries: 5 # select order, line items from fixtures, taxValue + 1 appliedTax and tax
+getTax_taxValue_is_missing:
+    method: getTax
+    reference: my_order
+    expectedResult:
+        shipping: []
+    expectedQueries: 0 # cache from loadTax
+getTax_taxValue_exists:
+    method: getTax
+    reference: simple_order
+    expectedResult:
+        total:
+            includingTax: '124.58' # 113.25 + 11.325
+            excludingTax: '113.25' # LoadOrderItems 15.99 * 5 + 5.55 * 6
+            taxAmount: ~ # 11.325 = 113.25 * 0.1
+            adjustment: ~
+        taxes:
+            - { tax: 'TAX1', rate: '0.1', taxable_amount: '113.25', tax_amount: '11.33' }
+    expectedQueries: 8 # address, taxRule for country, taxRule for country + region, regions, taxRule for zip codes
+                       #          taxRule for country, taxRule for country, taxRule for zip codes
+saveTax_override_existing:
+    method: saveTax
+    reference: my_order
+    expectedResult:
+        shipping: []
+    expectedQueries: 1 # insert TaxValue
+    expectedDatabaseResultBefore:
+        shipping: []
+    expectedDatabaseResultAfter:
+      shipping: []
+saveTax_new_taxValue:
+    method: saveTax
+    reference: simple_order
+    expectedResult:
+        total:
+            includingTax: '124.58' # 113.25 + 11.325
+            excludingTax: '113.25' # LoadOrderItems 15.99 * 5 + 5.55 * 6
+            taxAmount: ~ # 11.325 = 113.25 * 0.1
+            adjustment: ~
+    expectedQueries: 11 # 8 from getTax_taxValue_exists + insert TaxApply, update TaxValue, Delete old TaxApply
+    expectedDatabaseResultBefore:
+        total:
+            includingTax: '124.58' # 113.25 + 11.325
+            excludingTax: '113.25' # LoadOrderItems 15.99 * 5 + 5.55 * 6
+            taxAmount: ~ # 11.325 = 113.25 * 0.1
+            adjustment: ~
+    expectedDatabaseResultAfter:
+        total:
+            includingTax: '124.58' # 113.25 + 11.325
+            excludingTax: '113.25' # LoadOrderItems 15.99 * 5 + 5.55 * 6
+            taxAmount: ~ # 11.325 = 113.25 * 0.1
+            adjustment: ~
+    updateFixtures:
+        - 'OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadUpdateOrderItems'

@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\TaxBundle\Model;
 
-final class ResultElement extends AbstractResult
+final class ResultElement extends AbstractResultElement
 {
     const INCLUDING_TAX = 'includingTax';
     const EXCLUDING_TAX = 'excludingTax';

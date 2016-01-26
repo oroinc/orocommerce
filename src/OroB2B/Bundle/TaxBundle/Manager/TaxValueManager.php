@@ -15,19 +15,22 @@ class TaxValueManager
     /** @var string */
     protected $taxValueClass;
 
+    /** @var string */
+    protected $taxClass;
+
     /** @var TaxValue[] */
     protected $taxValues = [];
 
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param string $taxValueClass
+     * @param string $taxClass
      */
-    public function __construct(
-        DoctrineHelper $doctrineHelper,
-        $taxValueClass
-    ) {
+    public function __construct(DoctrineHelper $doctrineHelper, $taxValueClass, $taxClass)
+    {
         $this->doctrineHelper = $doctrineHelper;
         $this->taxValueClass = (string)$taxValueClass;
+        $this->taxClass = (string)$taxClass;
     }
 
     /**
@@ -47,7 +50,11 @@ class TaxValueManager
             ->findOneBy(['entityClass' => $entityClass, 'entityId' => $entityId]);
 
         if (!$taxValue) {
+            /** @var TaxValue $taxValue */
             $taxValue = new $this->taxValueClass;
+            $taxValue
+                ->setEntityClass($entityClass)
+                ->setEntityId($entityId);
         }
 
         $this->taxValues[$key] = $taxValue;
@@ -66,13 +73,12 @@ class TaxValueManager
     }
 
     /**
-     * @param string $className
-     * @param string $identifier
+     * @param string $taxCode
      * @return Tax
      */
-    public function getTaxReference($className, $identifier)
+    public function getTax($taxCode)
     {
-        return $this->doctrineHelper->getEntityReference($className, $identifier);
+        return $this->doctrineHelper->getEntityRepository($this->taxClass)->findOneBy(['code' => $taxCode]);
     }
 
     /**

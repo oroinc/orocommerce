@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Resolver;
 
-use Brick\Math\BigNumber;
-
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\TaxBundle\Calculator\TaxCalculator;
 use OroB2B\Bundle\TaxBundle\Calculator\TaxCalculatorInterface;
@@ -11,15 +9,17 @@ use OroB2B\Bundle\TaxBundle\Entity\Tax;
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
 use OroB2B\Bundle\TaxBundle\Matcher\MatcherInterface;
-use OroB2B\Bundle\TaxBundle\Model\AbstractResult;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use OroB2B\Bundle\TaxBundle\Resolver\AbstractAddressResolver;
+use OroB2B\Bundle\TaxBundle\Tests\ResultComparatorTrait;
 
 abstract class AbstractAddressResolverTestCase extends \PHPUnit_Framework_TestCase
 {
+    use ResultComparatorTrait;
+
     /**
      * @var TaxationSettingsProvider|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -56,51 +56,6 @@ abstract class AbstractAddressResolverTestCase extends \PHPUnit_Framework_TestCa
     {
         $this->settingsProvider->expects($this->never())->method($this->anything());
         $this->matcher->expects($this->never())->method($this->anything());
-    }
-
-    /**
-     * @param BigNumber[]|AbstractResult $resultElement
-     * @return array
-     */
-    protected function extractScalarValues($resultElement)
-    {
-        $numberCallback = function ($number) {
-            if ($number instanceof BigNumber) {
-                return (string)$number;
-            }
-
-            return $number;
-        };
-
-        if ($resultElement instanceof AbstractResult) {
-            $resultElement = $resultElement->getArrayCopy();
-        } else {
-            return array_map(
-                function (AbstractResult $result) use ($numberCallback) {
-                    return array_map($numberCallback, $result->getArrayCopy());
-                },
-                $resultElement
-            );
-        }
-
-        return array_map($numberCallback, $resultElement);
-    }
-
-    /**
-     * @param Result $expected
-     * @param Result $actual
-     */
-    protected function compareResult(Result $expected, Result $actual)
-    {
-        foreach ($expected as $key => $expectedValue) {
-            $this->assertTrue($actual->offsetExists($key));
-            $actualValue = $actual->offsetGet($key);
-
-            $this->assertEquals(
-                $this->extractScalarValues($expectedValue),
-                $this->extractScalarValues($actualValue)
-            );
-        }
     }
 
     /**

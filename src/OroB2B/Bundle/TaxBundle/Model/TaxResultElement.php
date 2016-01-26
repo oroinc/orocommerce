@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\TaxBundle\Model;
 
-class TaxResultElement extends AbstractResult
+class TaxResultElement extends AbstractResultElement
 {
     const TAX = 'tax';
     const RATE = 'rate';
@@ -10,17 +10,17 @@ class TaxResultElement extends AbstractResult
     const TAX_AMOUNT = 'tax_amount';
 
     /**
-     * @param string $taxId
+     * @param string $taxCode
      * @param string $rate
      * @param string $taxableAmount
      * @param string $taxAmount
      * @return TaxResultElement
      */
-    public static function create($taxId, $rate, $taxableAmount, $taxAmount)
+    public static function create($taxCode, $rate, $taxableAmount, $taxAmount)
     {
         $resultElement = new static;
 
-        $resultElement->offsetSet(self::TAX, (string)$taxId);
+        $resultElement->offsetSet(self::TAX, (string)$taxCode);
         $resultElement->offsetSet(self::RATE, (string)$rate);
         $resultElement->offsetSet(self::TAXABLE_AMOUNT, (string)$taxableAmount);
         $resultElement->offsetSet(self::TAX_AMOUNT, (string)$taxAmount);

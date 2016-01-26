@@ -48,19 +48,21 @@ class LoadOrderItems extends AbstractFixture implements DependentFixtureInterfac
     {
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
-        $billingAddress = new OrderAddress();
-        $billingAddress->setCountry(
+        $address = new OrderAddress();
+        $address->setCountry(
             $manager->getRepository('OroAddressBundle:Country')->find(LoadTaxJurisdictions::COUNTRY_US)
         );
-        $billingAddress->setRegion(
+        $address->setRegion(
             $manager->getRepository('OroAddressBundle:Region')->find(LoadTaxJurisdictions::STATE_US_NY)
         );
-        $order->setBillingAddress($billingAddress);
+        $order
+            ->setBillingAddress($address)
+            ->setShippingAddress($address);
 
         foreach ($this->orderLineItems as $name => $orderLineItem) {
             $this->setReference(
                 $name,
-                $this->createOrderLineItem($manager, $order, $orderLineItem)
+                $this->createOrderLineItem($manager, $order, $orderLineItem, $name)
             );
         }
 
@@ -71,12 +73,14 @@ class LoadOrderItems extends AbstractFixture implements DependentFixtureInterfac
      * @param ObjectManager $manager
      * @param Order $order
      * @param array $orderLineItemData
+     * @param string $name
      * @return OrderLineItem
      */
-    protected function createOrderLineItem(ObjectManager $manager, Order $order, array $orderLineItemData)
+    protected function createOrderLineItem(ObjectManager $manager, Order $order, array $orderLineItemData, $name)
     {
         $orderLineItem = new OrderLineItem();
         $orderLineItem
+            ->setProductSku($name)
             ->setQuantity($orderLineItemData['quantity'])
             ->setPrice(Price::create($orderLineItemData['price'], 'USD'));
         $order->addLineItem($orderLineItem);

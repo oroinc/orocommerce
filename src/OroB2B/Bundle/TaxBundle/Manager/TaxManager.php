@@ -111,10 +111,6 @@ class TaxManager
 
         $taxValue = $transformer->reverseTransform($result, $taxable);
 
-        $taxValue->setEntityClass($taxable->getClassName());
-        $taxValue->setEntityId($taxable->getIdentifier());
-        $taxValue->setAddress((string)$taxable->getDestination());
-
         $this->taxValueManager->saveTaxValue($taxValue);
 
         return $result;

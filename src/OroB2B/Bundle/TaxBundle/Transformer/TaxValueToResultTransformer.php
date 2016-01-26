@@ -35,14 +35,16 @@ class TaxValueToResultTransformer implements TaxTransformerInterface
         $taxResultElements = [];
         foreach ($taxValue->getAppliedTaxes() as $taxApply) {
             $taxResultElements[] = TaxResultElement::create(
-                $taxApply->getTax() ? $taxApply->getTax()->getId() : null,
+                (string)$taxApply->getTax(),
                 $taxApply->getRate(),
                 $taxApply->getTaxableAmount(),
                 $taxApply->getTaxAmount()
             );
         }
 
-        $result->offsetSet(Result::TAXES, $taxResultElements);
+        if ($taxResultElements) {
+            $result->offsetSet(Result::TAXES, $taxResultElements);
+        }
 
         return $result;
     }
@@ -51,14 +53,15 @@ class TaxValueToResultTransformer implements TaxTransformerInterface
     public function reverseTransform(Result $result, Taxable $taxable)
     {
         $taxValue = $this->taxValueManager->getTaxValue($taxable->getClassName(), $taxable->getIdentifier());
+        $taxValue->setAddress((string)$taxable->getDestination());
 
         $taxValue->getAppliedTaxes()->clear();
 
         foreach ($result->getTaxes() as $taxResultElement) {
             $taxApply = new TaxApply();
 
-            $taxId = $taxResultElement->offsetGet(TaxResultElement::TAX);
-            $taxApply->setTax($this->taxValueManager->getTaxReference($this->taxClass, $taxId));
+            $taxCode = $taxResultElement->offsetGet(TaxResultElement::TAX);
+            $taxApply->setTax($this->taxValueManager->getTax($taxCode));
             $taxApply->setRate($taxResultElement->offsetGet(TaxResultElement::RATE));
             $taxApply->setTaxableAmount($taxResultElement->offsetGet(TaxResultElement::TAXABLE_AMOUNT));
             $taxApply->setTaxAmount($taxResultElement->offsetGet(TaxResultElement::TAX_AMOUNT));
@@ -67,7 +70,7 @@ class TaxValueToResultTransformer implements TaxTransformerInterface
             $taxValue->addAppliedTax($taxApply);
         }
 
-        $result->offsetUnset(Result::TAXES);
+        $result->unsetOffset(Result::TAXES);
         $taxValue->setResult($result);
 
         return $taxValue;
