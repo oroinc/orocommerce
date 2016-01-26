@@ -82,6 +82,7 @@ class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareI
                 ->setLastName($row['lastName'])
                 ->setPlainPassword($row['email'])
                 ->setAccount($account)
+                ->setOwner($account->getOwner())
                 ->setEnabled(true)
                 ->setOrganization($organization)
                 ->addOrganization($organization)
