@@ -27,19 +27,6 @@ class CustomerAddressItemResolverTest extends AbstractAddressResolverTestCase
         return new Taxable();
     }
 
-    public function testItemNotApplicable()
-    {
-        $taxable = new Taxable();
-        $taxable->addItem(new Taxable());
-        $event = new ResolveTaxEvent($taxable, new Result());
-
-        $this->assertNothing();
-
-        $this->resolver->resolve($event);
-
-        $this->assertEmptyResult($event);
-    }
-
     public function testEmptyRules()
     {
         $taxable = $this->getTaxable();
@@ -72,6 +59,18 @@ class CustomerAddressItemResolverTest extends AbstractAddressResolverTestCase
         $this->assertEquals([], $event->getResult()->getTaxes());
     }
 
+    public function testItemNotApplicable()
+    {
+        $taxable = new Taxable();
+        $taxable->addItem(new Taxable());
+        $event = new ResolveTaxEvent($taxable, new Result());
+
+        $this->assertNothing();
+
+        $this->resolver->resolve($event);
+
+        $this->assertEmptyResult($event);
+    }
 
     /** {@inheritdoc} */
     public function rulesDataProvider()

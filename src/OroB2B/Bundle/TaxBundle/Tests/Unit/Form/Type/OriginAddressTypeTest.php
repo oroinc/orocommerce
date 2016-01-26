@@ -6,10 +6,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 
 use OroB2B\Bundle\TaxBundle\Form\Type\OriginAddressType;
 use OroB2B\Bundle\TaxBundle\Model\Address;
-use OroB2B\Bundle\TaxBundle\Tests\Unit\Stub\AddressCountryAndRegionSubscriberStub;
 
 class OriginAddressTypeTest extends AbstractAddressTestCase
 {
@@ -37,36 +37,6 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
 
         $this->assertArrayHasKey('data_class', $options);
         $this->assertEquals('OroB2B\Bundle\TaxBundle\Model\Address', $options['data_class']);
-    }
-
-    /**
-     * @dataProvider submitDataProvider
-     * @param bool $isValid
-     * @param mixed $defaultData
-     * @param mixed $viewData
-     * @param array $submittedData
-     * @param array $expectedData
-     */
-    public function testSubmit(
-        $isValid,
-        $defaultData,
-        $viewData,
-        array $submittedData,
-        $expectedData
-    ) {
-        $form = $this->factory->create($this->formType, $defaultData);
-
-        $this->assertEquals($defaultData, $form->getData());
-        $this->assertEquals($viewData, $form->getViewData());
-
-        $form->submit($submittedData);
-        $this->assertEquals($isValid, $form->isValid());
-
-        foreach ($expectedData as $field => $data) {
-            $this->assertTrue($form->has($field));
-            $fieldForm = $form->get($field);
-            $this->assertEquals($data, $fieldForm->getData());
-        }
     }
 
     /**
@@ -146,5 +116,13 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
                 ],
             ],
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getFormType()
+    {
+        return $this->formType;
     }
 }
