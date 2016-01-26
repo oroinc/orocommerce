@@ -35,7 +35,7 @@ layout:
                 visible: { @not_empty: $data.orob2b_cms_login_page.bottomContent }
                 text: { @value: $data.orob2b_cms_login_page.bottomContent }
                 escape: false
-        - @appendOption:
+        - @setOption:
             id: login_page
             optionName: vars.loginPage
             optionValue: { @value: $data.orob2b_cms_login_page }

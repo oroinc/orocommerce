@@ -6,7 +6,7 @@ use Doctrine\ORM\Query\AST\IdentificationVariableDeclaration;
 use Doctrine\ORM\Query\AST\SelectStatement;
 use Doctrine\ORM\Query\AST\Subselect;
 
-use Oro\Bundle\DataGridBundle\Datagrid\Builder;
+use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\OrmResultBefore;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\MetadataProviderInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
@@ -65,7 +65,7 @@ class OrmDatasourceAclListener
         }
 
         if ($skipAclCheck) {
-            $config->offsetSetByPath(Builder::DATASOURCE_SKIP_ACL_CHECK, true);
+            $config->offsetSetByPath(DatagridConfiguration::DATASOURCE_SKIP_ACL_APPLY_PATH, true);
         }
     }
 }

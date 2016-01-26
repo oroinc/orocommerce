@@ -39,7 +39,7 @@ class AccountUserRoleController extends Controller
      * @Route("/view/{id}", name="orob2b_account_frontend_account_user_role_view", requirements={"id"="\d+"})
      * @Template("OroB2BAccountBundle:AccountUserRole/Frontend:view.html.twig")
      * @Acl(
-     *      id="orob2b_account_frontend_account_user_role_view_action",
+     *      id="orob2b_account_frontend_account_user_role_view",
      *      type="entity",
      *      class="OroB2BAccountBundle:AccountUserRole",
      *      permission="FRONTEND_ACCOUNT_ROLE_VIEW",
