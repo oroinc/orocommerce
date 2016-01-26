@@ -4,10 +4,6 @@ parameters:
     orob2b_menu.entity.menu_item.class: OroB2B\Bundle\MenuBundle\Entity\MenuItem
     orob2b_menu.entity.menu_item_manager.class: OroB2B\Bundle\MenuBundle\Entity\Manager\MenuItemManager
 
-    # Menu
-    orob2b_menu.menu.database_builder.class: OroB2B\Bundle\MenuBundle\Menu\DatabaseBuilder
-    orob2b_menu.menu.factory.class: Knp\Menu\MenuFactory
-
     # Tree
     orob2b_menu.tree.menu_item_tree_handler.class: OroB2B\Bundle\MenuBundle\JsTree\MenuItemTreeHandler
 
@@ -21,7 +17,8 @@ parameters:
     orob2b_menu.menu_item.manager.api.class:                Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
     # Menu services
-    orob2b_menu.factory.class: Knp\Menu\MenuFactory
+    orob2b_menu.menu.factory.class: Knp\Menu\MenuFactory
+    orob2b_menu.menu.database_builder.class: OroB2B\Bundle\MenuBundle\Menu\DatabaseBuilder
     orob2b_menu.menu_serializer.class: OroB2B\Bundle\MenuBundle\Menu\MenuSerializer
     orob2b_menu.menu_provider.class: OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider
     orob2b_menu.menu.condition.condition_extension.class: OroB2B\Bundle\MenuBundle\Menu\Condition\ConditionExtension
@@ -53,6 +50,9 @@ services:
 
     orob2b_menu.menu.factory:
         class: %orob2b_menu.menu.factory.class%
+        calls:
+            - [ addExtension, [ @orob2b_menu.menu.acl_extension ] ]
+            - [ addExtension, [ @orob2b_menu.menu.condition.condition_extension ] ]
 
     orob2b_menu.menu.database_builder:
         class: %orob2b_menu.menu.database_builder.class%
@@ -77,13 +77,7 @@ services:
     orob2b_menu.menu_array_loader:
         class: Knp\Menu\Loader\ArrayLoader
         arguments:
-            - @oro_menu.factory
-
-    orob2b_menu.factory:
-        class: %orob2b_menu.factory.class%
-        calls:
-            - [ addExtension, [ @orob2b_menu.menu.acl_extension ] ]
-            - [ addExtension, [ @orob2b_menu.menu.condition.condition_extension ] ]
+            - @orob2b_menu.menu.factory
 
     orob2b_menu.menu_manipulator:
         class: Knp\Menu\Util\MenuManipulator
