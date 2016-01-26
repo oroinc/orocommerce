@@ -15,6 +15,7 @@ use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 class PriceType extends AbstractType
 {
     const NAME = 'oro_currency_price';
+    const OPTIONAL_VALIDATION_GROUP = 'Optional';
 
     /**
      * @var string
@@ -68,12 +69,16 @@ class PriceType extends AbstractType
         }
 
         $builder
-            ->add('value', 'number', [
-                'required' => $isRequiredPrice,
-                'scale' => $this->roundingService->getPrecision(),
-                'rounding_mode' => $this->roundingService->getRoundType(),
-                'attr' => ['data-scale' => $this->roundingService->getPrecision()]
-            ])
+            ->add(
+                'value',
+                'number',
+                [
+                    'required' => $isRequiredPrice,
+                    'scale' => $this->roundingService->getPrecision(),
+                    'rounding_mode' => $this->roundingService->getRoundType(),
+                    'attr' => ['data-scale' => $this->roundingService->getPrecision()]
+                ]
+            )
             ->add('currency', $currencyType, $currencyOptions);
 
         $builder->addViewTransformer(new PriceTransformer());
@@ -118,13 +123,8 @@ class PriceType extends AbstractType
      */
     protected function resolvePriceIsRequired(array $options)
     {
-        if (array_key_exists('validation_groups', $options)
-            && is_array($options['validation_groups'])
-            && in_array('Optional', $options['validation_groups'])
-        ) {
-            return false;
-        }
-
-        return true;
+        return !array_key_exists('validation_groups', $options)
+            && !is_array($options['validation_groups'])
+            && !in_array(self::OPTIONAL_VALIDATION_GROUP, $options['validation_groups']);
     }
 }

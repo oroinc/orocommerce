@@ -7,7 +7,7 @@ use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
-class PriceTypeGenerator extends \PHPUnit_Framework_TestCase
+class PriceTypeGenerator
 {
     /**
      * @return PriceType

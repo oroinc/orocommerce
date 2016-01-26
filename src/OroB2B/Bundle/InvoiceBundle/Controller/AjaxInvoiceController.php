@@ -2,14 +2,15 @@
 
 namespace OroB2B\Bundle\InvoiceBundle\Controller;
 
-use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
-use OroB2B\Bundle\InvoiceBundle\Form\Type\InvoiceType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+
+use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
+use OroB2B\Bundle\InvoiceBundle\Form\Type\InvoiceType;
 
 class AjaxInvoiceController extends Controller
 {
@@ -34,7 +35,7 @@ class AjaxInvoiceController extends Controller
 
         if (null !== $request->get(InvoiceType::NAME)) {
             $form = $this->createForm(InvoiceType::NAME, $invoice);
-            $form->submit($this->get('request'));
+            $form->submit($request);
         }
 
         $subtotal = $this->get('orob2b_pricing.provider.line_items_subtotal')->getSubtotal($invoice);

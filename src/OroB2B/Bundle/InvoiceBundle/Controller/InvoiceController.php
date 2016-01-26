@@ -92,9 +92,7 @@ class InvoiceController extends Controller
         $invoice = new Invoice();
         $invoice->setCurrency($this->get('oro_locale.settings')->getCurrency());
 
-        $response = $this->update($invoice);
-
-        return $response;
+        return $this->update($invoice);
     }
 
     /**

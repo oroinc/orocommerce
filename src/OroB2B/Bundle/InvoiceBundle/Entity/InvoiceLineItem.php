@@ -6,6 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
@@ -99,14 +101,14 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
     /**
      * @var Price|null
      *
-     * @ORM\Embedded(class="Oro\Bundle\CurrencyBundle\Entity\Price", columnPrefix=false)
+     * @ORM\Embedded(class="Oro\Bundle\CurrencyBundle\Entity\Price", columnPrefix="price_")
      */
     protected $price;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="price_type", type="string")
+     * @ORM\Column(name="price_type", type="integer")
      */
     protected $priceType = PriceTypeAwareInterface::PRICE_TYPE_UNIT;
 
@@ -298,7 +300,7 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
      */
     public function getPriceType()
     {
-        return (int) $this->priceType;
+        return $this->priceType;
     }
 
     /**
@@ -307,7 +309,7 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
      */
     public function setPriceType($priceType)
     {
-        $this->priceType = (int) $priceType;
+        $this->priceType = (int)$priceType;
 
         return $this;
     }

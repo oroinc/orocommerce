@@ -10,6 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -52,8 +54,11 @@ use OroB2B\Bundle\PricingBundle\Model\LineItemsAwareInterface;
 class Invoice extends ExtendInvoice implements
     OrganizationAwareInterface,
     CurrencyAwareInterface,
-    LineItemsAwareInterface
+    LineItemsAwareInterface,
+    DatesAwareInterface
 {
+    use DatesAwareTrait;
+
     /**
      * @var integer
      *
@@ -62,35 +67,6 @@ class Invoice extends ExtendInvoice implements
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-
-    //TODO: Proper trait will be used after BB-1349
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $createdAt;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="updated_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $updatedAt;
 
     /**
      * @var string
@@ -182,9 +158,11 @@ class Invoice extends ExtendInvoice implements
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem",
-     *      mappedBy="invoice", cascade={"ALL"}, orphanRemoval=true
+     * @ORM\OneToMany(
+     *     targetEntity="OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem",
+     *     mappedBy="invoice", cascade={"ALL"}, orphanRemoval=true
      * )
+     * @ORM\OrderBy({"createdAt" = "ASC"})
      */
     protected $lineItems;
 
@@ -221,45 +199,6 @@ class Invoice extends ExtendInvoice implements
     {
         return $this->id;
     }
-
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @param \DateTime $createdAt
-     * @return $this
-     */
-    public function setCreatedAt(\DateTime $createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @param \DateTime $updatedAt
-     * @return $this
-     */
-    public function setUpdatedAt(\DateTime $updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
 
     /**
      * @return string
