@@ -118,7 +118,7 @@ class OroB2BAccountBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_3';
+        return 'v1_4';
     }
 
     /**
@@ -194,10 +194,6 @@ class OroB2BAccountBundleInstaller implements
         $this->addOroB2BAccountUserSdbarWdgForeignKeys($schema);
         $this->addOroB2BAccNavigationPagestateForeignKeys($schema);
 
-        $this->addOroB2BCategoryVisibilityForeignKeys($schema);
-        $this->addOroB2BAccountCategoryVisibilityForeignKeys($schema);
-        $this->addOroB2BAccountGroupCategoryVisibilityForeignKeys($schema);
-
         $this->addOroB2BProductVisibilityForeignKeys($schema);
         $this->addOroB2BAccountProductVisibilityForeignKeys($schema);
         $this->addOroB2BAccountGroupProductVisibilityForeignKeys($schema);
@@ -206,6 +202,17 @@ class OroB2BAccountBundleInstaller implements
         $this->addOroB2BProductVisibilityResolvedForeignKeys($schema);
         $this->addOroB2BAccountGroupProductVisibilityResolvedForeignKeys($schema);
         $this->addOroB2BAccountProductVisibilityResolvedForeignKeys($schema);
+
+        $this->addOroB2BAccountSalesRepresentativesForeignKeys($schema);
+        $this->addOroB2BAccountUserSalesRepresentativesForeignKeys($schema);
+
+        $this->addOroB2BCategoryVisibilityForeignKeys($schema);
+        $this->addOroB2BAccountCategoryVisibilityForeignKeys($schema);
+        $this->addOroB2BAccountGroupCategoryVisibilityForeignKeys($schema);
+
+        $this->addOroB2BCategoryVisibilityResolvedForeignKeys($schema);
+        $this->addOroB2BAccountGroupCategoryVisibilityResolvedForeignKeys($schema);
+        $this->addOroB2BAccountCategoryVisibilityResolvedForeignKeys($schema);
     }
 
     /**
