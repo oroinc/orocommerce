@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
@@ -16,6 +17,8 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class CombinedPriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
 {
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager */
+    protected $manager;
     /** @var \PHPUnit_Framework_MockObject_MockObject|ChangedPriceListCollectionRepository */
     protected $collectionChangesRepository;
     /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
@@ -36,7 +39,6 @@ class CombinedPriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
 
         $cplBuilderClass = 'OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder';
@@ -60,14 +62,15 @@ class CombinedPriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $collectionChangesClass = 'OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListCollection';
-        $collectionChangesRepositoryClass = 'OroB2B\Bundle\PricingBundle\Entity\Repository\ChangedPriceListCollectionRepository';
+        $plChangeRepositoryClass = 'OroB2B\Bundle\PricingBundle\Entity\Repository\ChangedPriceListCollectionRepository';
 
-        $this->collectionChangesRepository = $this->getMockBuilder($collectionChangesRepositoryClass)
+        $this->collectionChangesRepository = $this->getMockBuilder($plChangeRepositoryClass)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $combinedPriceListEm = $this->getMock('\Doctrine\Common\Persistence\ObjectManager');
-        $combinedPriceListEm->expects($this->any())
+        $this->manager = $this->getMock('\Doctrine\Common\Persistence\ObjectManager');
+
+        $this->manager->expects($this->any())
             ->method('getRepository')
             ->with($collectionChangesClass)
             ->will($this->returnValue($this->collectionChangesRepository));
@@ -77,7 +80,7 @@ class CombinedPriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
             ->will(
                 $this->returnValueMap(
                     [
-                        [$collectionChangesClass, $combinedPriceListEm],
+                        [$collectionChangesClass, $this->manager],
                     ]
                 )
             );
@@ -95,11 +98,13 @@ class CombinedPriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider processDataProvider
      * @param $assertBuilders
+     * @param $assertManager
      * @param $repositoryData
      */
-    public function testProcess($assertBuilders, $repositoryData)
+    public function testProcess($assertBuilders, $assertManager, $repositoryData)
     {
         $this->assertRebuild($assertBuilders, $repositoryData);
+        $this->assertManager($assertManager);
         $this->consumer->process();
     }
 
@@ -124,6 +129,10 @@ class CombinedPriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
                     'cplWebsiteBuilder' => $this->once(),
                     'cplAccountGroupBuilder' => $this->once(),
                     'cplAccountBuilder' => $this->once(),
+                ],
+                'assertManager' => [
+                    'remove' => 4,
+                    'flush' => 1
                 ],
                 'repositoryData' => [
                     [
@@ -191,6 +200,10 @@ class CombinedPriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
                     'cplAccountGroupBuilder' => $this->never(),
                     'cplAccountBuilder' => $this->never(),
                 ],
+                'assertManager' => [
+                    'remove' => 0,
+                    'flush' => 1
+                ],
                 'repositoryData' => [],
             ],
         ];
@@ -237,5 +250,16 @@ class CombinedPriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
         }
 
         return $changes;
+    }
+
+    /**
+     * @param array $asserts
+     */
+    protected function assertManager(array $asserts)
+    {
+        $this->manager->expects($this->exactly($asserts['remove']))
+            ->method('remove');
+        $this->manager->expects($this->exactly($asserts['flush']))
+            ->method('flush');
     }
 }

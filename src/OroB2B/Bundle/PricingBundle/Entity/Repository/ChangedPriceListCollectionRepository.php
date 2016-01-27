@@ -16,9 +16,6 @@ class ChangedPriceListCollectionRepository extends EntityRepository
     public function getCollectionChangesIterator()
     {
         $qb = $this->createQueryBuilder('changes');
-        $qb->addOrderBy('changes.website')
-            ->addOrderBy('changes.accountGroup')
-            ->addOrderBy('changes.account');
 
         return new BufferedQueryResultIterator($qb->getQuery());
     }
