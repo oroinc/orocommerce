@@ -368,28 +368,27 @@ services:
     orob2b_tax.resolver.total:
         class: %orob2b_tax.resolver.total.class%
         tags:
-            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve_after, alias: total }
+            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve_after }
 
     orob2b_tax.resolver.shipping:
         class: %orob2b_tax.resolver.shipping.class%
         tags:
-            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve_after, alias: shipping }
+            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve_after }
 
     orob2b_tax.resolver.rounding:
         class: %orob2b_tax.resolver.rounding.class%
         tags:
-            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve_after, alias: rounding }
+            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve_after }
 
     orob2b_tax.resolver.customer_address.item:
         class: %orob2b_tax.resolver.customer_address.item.class%
         parent: orob2b_tax.resolver.abstract_address
         tags:
-            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve, alias: customer_address_item }
+            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve }
 
     orob2b_tax.resolver.customer_address:
         class: %orob2b_tax.resolver.customer_address.class%
         arguments:
             - @orob2b_tax.resolver.customer_address.item
         tags:
-            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve, alias: customer_address }
-
+            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve }

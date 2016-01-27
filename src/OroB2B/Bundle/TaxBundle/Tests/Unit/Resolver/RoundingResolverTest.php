@@ -48,7 +48,7 @@ class RoundingResolverTest extends \PHPUnit_Framework_TestCase
                         Result::TAXES => [
                             TaxResultElement::create('1', '0.08', '19.99', '1.5812'),
                             TaxResultElement::create('2', '0.07', '19.99', '1.3813'),
-                            TaxResultElement::create('3', '0.06', '19.99', '1.1814'),
+                            TaxResultElement::create('3', '0.066', '19.99', '1.1814'),
                         ],
                     ],
                 ]
@@ -83,7 +83,7 @@ class RoundingResolverTest extends \PHPUnit_Framework_TestCase
                         Result::TAXES => [
                             TaxResultElement::create('1', '0.08', '19.99', '1.59'),
                             TaxResultElement::create('2', '0.07', '19.99', '1.39'),
-                            TaxResultElement::create('3', '0.06', '19.99', '1.19'),
+                            TaxResultElement::create('3', '0.066', '19.99', '1.19'),
                         ],
                     ],
                 ]

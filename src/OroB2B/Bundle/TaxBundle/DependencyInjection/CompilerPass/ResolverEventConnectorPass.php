@@ -19,14 +19,35 @@ class ResolverEventConnectorPass implements CompilerPassInterface
         $taggedServices = $container->findTaggedServiceIds(self::TAG_NAME);
 
         foreach ($taggedServices as $id => $tags) {
-            $tag = reset($tags);
-            if (empty($tag['alias']) || empty($tag['event'])) {
-                throw new \InvalidArgumentException(sprintf('Wrong tags configuration "%s"', json_encode($tags)));
+            if (!$tags) {
+                continue;
             }
 
+            $alias = $this->getAlias($id);
             $definition = new Definition($container->getParameter(self::CONNECTOR_CLASS), [new Reference($id)]);
-            $definition->addTag('kernel.event_listener', ['event' => $tag['event'], 'method' => 'onResolve']);
-            $container->setDefinition(sprintf('%s.%s', self::CONNECTOR_SERVICE_NAME, $tag['alias']), $definition);
+            foreach ($tags as $tag) {
+                if (empty($tag['event'])) {
+                    throw new \InvalidArgumentException(sprintf('Wrong tags configuration "%s"', json_encode($tags)));
+                }
+
+                $attributes = ['event' => $tag['event'], 'method' => 'onResolve'];
+                if (!empty($tag['priority'])) {
+                    $attributes['priority'] = $tag['priority'];
+                }
+                $definition->addTag('kernel.event_listener', $attributes);
+            }
+            $container->setDefinition(sprintf('%s.%s', self::CONNECTOR_SERVICE_NAME, $alias), $definition);
         }
+    }
+
+    /**
+     * @param string $id
+     * @return string
+     */
+    protected function getAlias($id)
+    {
+        $parts = explode('.', (string)$id);
+
+        return (string)end($parts);
     }
 }
