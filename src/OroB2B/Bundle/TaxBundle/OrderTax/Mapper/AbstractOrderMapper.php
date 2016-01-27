@@ -6,21 +6,21 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\TaxBundle\Mapper\TaxMapperInterface;
-use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use OroB2B\Bundle\TaxBundle\Provider\TaxationAddressProvider;
 
 abstract class AbstractOrderMapper implements TaxMapperInterface
 {
     /**
-     * @var TaxationSettingsProvider
+     * @var TaxationAddressProvider
      */
-    protected $settingsProvider;
+    protected $addressProvider;
 
     /**
-     * @param TaxationSettingsProvider $settingsProvider
+     * @param TaxationAddressProvider $addressProvider
      */
-    public function __construct(TaxationSettingsProvider $settingsProvider)
+    public function __construct(TaxationAddressProvider $addressProvider)
     {
-        $this->settingsProvider = $settingsProvider;
+        $this->addressProvider = $addressProvider;
     }
 
     /**
@@ -29,7 +29,6 @@ abstract class AbstractOrderMapper implements TaxMapperInterface
      */
     public function getOrderAddress(Order $order)
     {
-        return $this->settingsProvider->isBillingAddressDestination() ?
-            $order->getBillingAddress() : $order->getShippingAddress();
+        return $this->addressProvider->getAddressForTaxation($order);
     }
 }
