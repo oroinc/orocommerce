@@ -59,8 +59,8 @@ class RequestHelperTest extends WebTestCase
                     LoadRequestData::REQUEST_WITHOUT_QUOTE_OLD
                 ],
             ],
-            '5 days' => [
-                'days' => 5,
+            '6 days' => [
+                'days' => 6,
                 'expected' => [
                 ],
             ],

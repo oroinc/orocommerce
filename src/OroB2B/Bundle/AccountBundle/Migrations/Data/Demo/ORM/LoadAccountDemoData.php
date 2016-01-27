@@ -28,11 +28,14 @@ class LoadAccountDemoData extends AbstractFixture implements DependentFixtureInt
             ],
         ],
         'Wholesaler B' => [
-            'group' => 'Wholesale Accounts'
+            'group' => 'Wholesale Accounts',
         ],
         'Partner C' => [
-            'group' => 'Partners'
-        ]
+            'group' => 'Partners',
+        ],
+        'Account G' => [
+            'group' => 'All Customers',
+        ],
     ];
 
     /**
