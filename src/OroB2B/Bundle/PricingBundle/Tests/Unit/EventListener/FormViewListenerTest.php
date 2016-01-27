@@ -17,7 +17,7 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\EventListener\FormViewListener;
 use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -95,9 +95,8 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $fallbackEntity->setFallback(PriceListAccountFallback::CURRENT_ACCOUNT_ONLY);
 
         $request = new Request(['id' => $accountId]);
-        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
-        $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
+        $requestStack = $this->getRequestStack($request);
+
 
         /** @var FormViewListener $listener */
         $listener = $this->getListener($requestStack);
@@ -166,9 +165,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $fallbackEntity->setFallback(PriceListAccountFallback::CURRENT_ACCOUNT_ONLY);
         $request = new Request(['id' => $accountGroupId]);
 
-        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
-        $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
+        $requestStack = $this->getRequestStack($request);
 
         /** @var FormViewListener $listener */
         $listener = $this->getListener($requestStack);
@@ -247,9 +244,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $templateHtml = 'template_html';
 
         $request = new Request(['id' => $productId]);
-        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
-        $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
+        $requestStack = $this->getRequestStack($request);
 
         /** @var FormViewListener $listener */
         $listener = $this->getListener($requestStack);
@@ -281,19 +276,17 @@ class FormViewListenerTest extends FormViewListenerTestCase
         /** @var Product $product */
         $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 11);
 
-        /** @var PriceList $priceList */
-        $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 42);
+        /** @var CombinedPriceList $priceList */
+        $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList', 42);
 
         $request = new Request(['id' => $product->getId()]);
-        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
-        $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
+        $requestStack = $this->getRequestStack($request);
 
         /** @var FormViewListener $listener */
         $listener = $this->getListener($requestStack);
 
         $productPriceRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $productPriceRepository->expects($this->once())
@@ -303,7 +296,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
-            ->with('OroB2BPricingBundle:ProductPrice')
+            ->with('OroB2BPricingBundle:CombinedProductPrice')
             ->willReturn($productPriceRepository);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
@@ -534,5 +527,18 @@ class FormViewListenerTest extends FormViewListenerTestCase
                     ]
                 )
             );
+    }
+
+    /**
+     * @param $request
+     * @return \PHPUnit_Framework_MockObject_MockObject|RequestStack
+     */
+    protected function getRequestStack($request)
+    {
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
+
+        return $requestStack;
     }
 }

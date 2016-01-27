@@ -39,7 +39,11 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'precision' => [
                     'value' => 4,
                     'scope' => 'app'
-                ]
+                ],
+                'price_lists_update_mode' => [
+                    'value' => 'scheduled',
+                    'scope' => 'app'
+                ],
             ]
         ];
 
