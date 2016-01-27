@@ -35,12 +35,11 @@ class ProductPriceEntityListenerTest extends AbstractChangedProductPriceTest
         ]);
         $this->testProduct = $this->getProduct();
         $this->testPriceList = $this->getPriceList();
+        $this->clearTable();
     }
 
     public function testOnCreate()
     {
-        $this->clearTable();
-
         $productUnit = $this->getProductUnit();
 
         $price1 = Price::create(10, 'USD');
@@ -89,8 +88,6 @@ class ProductPriceEntityListenerTest extends AbstractChangedProductPriceTest
      */
     public function testOnUpdate()
     {
-        $this->clearTable();
-
         /** @var ProductPrice[] $productPrices */
         $productPrices = $this->getProductPriceRepository()->findBy([
             'product' => $this->testProduct,
@@ -118,8 +115,6 @@ class ProductPriceEntityListenerTest extends AbstractChangedProductPriceTest
      */
     public function testOnDelete()
     {
-        $this->clearTable();
-
         $productPrices = $this->getProductPriceRepository()->findBy([
             'product' => $this->testProduct,
             'priceList' => $this->testPriceList,

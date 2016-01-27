@@ -70,7 +70,8 @@ class ProductPriceEntityListener
         $changedProductPrice = $this->createChangedProductPrice($productPrice);
 
         $em = $event->getEntityManager();
-        if ($this->extraActionsStorage->isScheduledForInsert($changedProductPrice)
+        if (null === $changedProductPrice
+            || $this->extraActionsStorage->isScheduledForInsert($changedProductPrice)
             || $this->getRepository($em)->isCreated($changedProductPrice)
         ) {
             return;
@@ -81,13 +82,17 @@ class ProductPriceEntityListener
 
     /**
      * @param ProductPrice $productPrice
-     * @return ChangedProductPrice
+     * @return ChangedProductPrice|null
      */
     protected function createChangedProductPrice(ProductPrice $productPrice)
     {
         /** @var PriceList $priceList */
         $priceList = $productPrice->getPriceList();
         $product = $productPrice->getProduct();
+
+        if (!$priceList || !$product || !$priceList->getId() || !$product->getId()) {
+            return null;
+        }
 
         return new ChangedProductPrice($priceList, $product);
     }

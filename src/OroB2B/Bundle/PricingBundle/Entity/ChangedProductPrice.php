@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Entity;
 
+use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\B2BEntityBundle\Storage\ObjectIdentifierAwareInterface;
@@ -63,6 +64,10 @@ class ChangedProductPrice implements ObjectIdentifierAwareInterface
      */
     public function getObjectIdentifier()
     {
-        return get_class($this) . '_' . $this->product->getId() . '_' . $this->priceList->getId();
+        if (!$this->product->getId() || !$this->priceList->getId()) {
+            throw new \InvalidArgumentException('Product id and priceList id, required for identifier generation');
+        }
+
+        return ClassUtils::getClass($this) . '_' . $this->product->getId() . '_' . $this->priceList->getId();
     }
 }

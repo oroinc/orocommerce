@@ -21,7 +21,7 @@ class ChangedProductPriceRepository extends EntityRepository
         }
 
         return (bool)$this->createQueryBuilder('cpp')
-            ->select()
+            ->select('1')
             ->where('cpp.priceList = :priceList')
             ->setParameter('priceList', $changedProductPrice->getPriceList())
             ->andWhere('cpp.product = :product')
