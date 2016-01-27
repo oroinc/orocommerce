@@ -18,5 +18,11 @@ class LoadCategoryDemoData extends AbstractCategoryFixture
                 'Counter Coats' => [],
             ],
         ],
+        'Identification' => [
+            'Medical Identification Tags' => [],
+        ],
+        'Patient Transport Equipment' => [
+            'Hospital Wheelchairs' => [],
+        ],
     ];
 }

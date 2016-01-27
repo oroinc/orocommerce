@@ -3,6 +3,7 @@ config:
         'orob2bvalidation/js/app/modules/validator-constraints-module': 'bundles/orob2bvalidation/js/app/modules/validator-constraints-module.js'
         'orob2bvalidation/js/validator/letters': 'bundles/orob2bvalidation/js/validator/letters.js'
         'orob2bvalidation/js/validator/alphanumeric': 'bundles/orob2bvalidation/js/validator/alphanumeric.js'
+        'orob2bvalidation/js/validator/alphanumeric-dash-underscore': 'bundles/orob2bvalidation/js/validator/alphanumeric-dash-underscore.js'
         'orob2bvalidation/js/validator/url-safe': 'bundles/orob2bvalidation/js/validator/url-safe.js'
         'orob2bvalidation/js/validator/decimal': 'bundles/orob2bvalidation/js/validator/decimal.js'
         'orob2bvalidation/js/validator/integer': 'bundles/orob2bvalidation/js/validator/integer.js'

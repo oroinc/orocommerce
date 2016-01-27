@@ -3,7 +3,7 @@ OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code
     properties:
         code:
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Alphanumeric: ~
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDashUnderscore: ~
             - NotBlank: ~
             - Length:
                 min: 1
@@ -18,7 +18,7 @@ OroB2B\Bundle\TaxBundle\Entity\Tax:
             - Length:
                 min: 1
                 max: 255
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Alphanumeric: ~
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDashUnderscore: ~
         rate:
             - NotBlank: ~
             - Range:
@@ -43,7 +43,7 @@ OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction:
             - Length:
                 min: 1
                 max: 255
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Alphanumeric: ~
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDashUnderscore: ~
         zipCodes:
             - Valid: ~
         country:
