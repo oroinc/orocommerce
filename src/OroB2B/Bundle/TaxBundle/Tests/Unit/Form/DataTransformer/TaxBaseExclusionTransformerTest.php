@@ -4,8 +4,8 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\DataTransformer;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+use OroB2B\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
 use OroB2B\Bundle\TaxBundle\Form\DataTransformer\TaxBaseExclusionTransformer;
 use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
 
@@ -14,20 +14,21 @@ class TaxBaseExclusionTransformerTest extends \PHPUnit_Framework_TestCase
     /** @var TaxBaseExclusionTransformer */
     protected $transformer;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
-    protected $doctrineHelper;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|TaxBaseExclusionFactory */
+    protected $taxBaseExclusionFactory;
 
     protected function setUp()
     {
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
+        $this->taxBaseExclusionFactory = $this
+            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->transformer = new TaxBaseExclusionTransformer($this->doctrineHelper);
+        $this->transformer = new TaxBaseExclusionTransformer($this->taxBaseExclusionFactory);
     }
 
     /**
-     * @param mixed $value
+     * @param TaxBaseExclusion[] $value
      * @param array $expected
      *
      * @dataProvider reverseTransformDataProvider
@@ -104,24 +105,32 @@ class TaxBaseExclusionTransformerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param mixed $value
-     * @param array $expected
+     * @param array $value
+     * @param TaxBaseExclusion[] $expected
      *
      * @dataProvider transformDataProvider
      */
     public function testTransform($value, $expected)
     {
-        $this->doctrineHelper->expects($this->any())->method('getEntityReference')
+        $this->taxBaseExclusionFactory
+            ->expects($this->any())
+            ->method('create')
             ->willReturnCallback(
-                function ($classAlias, $id) {
-                    if (strpos($classAlias, 'Country')) {
-                        return new Country($id);
-                    }
-                    if (strpos($classAlias, 'Region')) {
-                        return new Region($id);
+                function ($value) {
+                    $exclusion = new TaxBaseExclusion();
+                    if (!empty($value[TaxBaseExclusion::COUNTRY])) {
+                        $exclusion->setCountry(new Country($value[TaxBaseExclusion::COUNTRY]));
                     }
 
-                    return null;
+                    if (!empty($value[TaxBaseExclusion::REGION])) {
+                        $exclusion->setRegion(new Region($value[TaxBaseExclusion::REGION]));
+                    }
+
+                    if (!empty($value[TaxBaseExclusion::OPTION])) {
+                        $exclusion->setOption($value[TaxBaseExclusion::OPTION]);
+                    }
+
+                    return $exclusion;
                 }
             );
 
