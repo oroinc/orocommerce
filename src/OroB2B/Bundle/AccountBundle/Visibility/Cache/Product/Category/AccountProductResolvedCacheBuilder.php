@@ -37,6 +37,7 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
         $account = $visibilitySettings->getAccount();
 
         $selectedVisibility = $visibilitySettings->getVisibility();
+        $visibilitySettings = $this->refreshEntity($visibilitySettings);
 
         $insert = false;
         $delete = false;

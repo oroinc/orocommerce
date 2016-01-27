@@ -106,8 +106,14 @@ abstract class AbstractPostSubmitVisibilityListener extends AbstractVisibilityLi
         VisibilityInterface $visibilityEntity,
         $visibility
     ) {
+        // manual handling of visibility entities must be performed here to avoid triggering of extra processes
+        $em = $this->getEntityManager($targetEntity);
         $visibilityEntity->setVisibility($visibility);
-        $this->getEntityManager($targetEntity)->persist($visibilityEntity);
+        if ($visibility !== $visibilityEntity->getDefault($targetEntity)) {
+            $em->persist($visibilityEntity);
+        } elseif ($visibilityEntity->getVisibility()) {
+            $em->remove($visibilityEntity);
+        }
     }
 
     /**
