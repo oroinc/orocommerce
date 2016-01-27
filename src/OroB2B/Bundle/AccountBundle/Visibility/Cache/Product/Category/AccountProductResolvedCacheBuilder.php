@@ -6,10 +6,8 @@ use Doctrine\ORM\EntityManager;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeAccountSubtreeCacheBuilder;
@@ -39,6 +37,7 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
         $account = $visibilitySettings->getAccount();
 
         $selectedVisibility = $visibilitySettings->getVisibility();
+        $visibilitySettings = $this->refreshEntity($visibilitySettings);
 
         $insert = false;
         $delete = false;

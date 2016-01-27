@@ -134,7 +134,11 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
             $invertedVisibility
         );
 
-        $this->updateAccountsProductVisibility($category, $this->accountIdsWithInverseVisibility, $invertedVisibility);
+        $this->updateAccountsProductVisibility(
+            $category,
+            $this->accountIdsWithInverseVisibility,
+            $invertedVisibility
+        );
 
         $this->updateProductVisibilitiesForCategoryRelatedEntities(
             $category,

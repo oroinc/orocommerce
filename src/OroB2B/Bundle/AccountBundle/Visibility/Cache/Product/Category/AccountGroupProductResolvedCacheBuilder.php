@@ -2,14 +2,16 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category;
 
+use Doctrine\ORM\EntityManager;
+
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository\AccountGroupCategoryVisibilityRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\CategoryRepository;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeGroupSubtreeCacheBuilder;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
@@ -34,7 +36,94 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
         $category = $visibilitySettings->getCategory();
         $accountGroup = $visibilitySettings->getAccountGroup();
 
-        $this->visibilityChangeAccountGroupSubtreeCacheBuilder->resolveVisibilitySettings($category, $accountGroup);
+        $selectedVisibility = $visibilitySettings->getVisibility();
+        $visibilitySettings = $this->refreshEntity($visibilitySettings);
+
+        $insert = false;
+        $delete = false;
+        $update = [];
+        $where = ['accountGroup' => $accountGroup, 'category' => $category];
+
+        $repository = $this->getRepository();
+
+        $hasAccountGroupCategoryVisibilityResolved = $repository->hasEntity($where);
+
+        if (!$hasAccountGroupCategoryVisibilityResolved
+            && $selectedVisibility !== AccountGroupCategoryVisibility::CATEGORY
+        ) {
+            $insert = true;
+        }
+
+        if (in_array(
+            $selectedVisibility,
+            [
+                AccountGroupCategoryVisibility::HIDDEN,
+                AccountGroupCategoryVisibility::VISIBLE
+            ]
+        )) {
+            $visibility = $this->convertStaticVisibility($selectedVisibility);
+            $update = [
+                'visibility' => $visibility,
+                'sourceCategoryVisibility' => $visibilitySettings,
+                'source' => AccountGroupCategoryVisibilityResolved::SOURCE_STATIC,
+            ];
+        } elseif ($selectedVisibility === AccountGroupCategoryVisibility::CATEGORY) {
+            // fallback to category is default for account group and should be removed if exists
+            if ($hasAccountGroupCategoryVisibilityResolved) {
+                $delete = true;
+            }
+
+            $visibility = $this->registry
+                ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+                ->getRepository('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+                ->getFallbackToAllVisibility($category);
+        } elseif ($selectedVisibility === AccountGroupCategoryVisibility::PARENT_CATEGORY) {
+            $visibility = $this->getParentCategoryVisibility($category, $accountGroup);
+            $update = [
+                'visibility' => $visibility,
+                'sourceCategoryVisibility' => $visibilitySettings,
+                'source' => AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+            ];
+        } else {
+            throw new \InvalidArgumentException(sprintf('Unknown visibility %s', $selectedVisibility));
+        }
+        $this->executeDbQuery($repository, $insert, $delete, $update, $where);
+
+        $this->visibilityChangeAccountGroupSubtreeCacheBuilder
+            ->resolveVisibilitySettings($category, $accountGroup, $visibility);
+    }
+
+    /**
+     * @param Category $category
+     * @param AccountGroup $accountGroup
+     * @return int
+     */
+    protected function getParentCategoryVisibility(Category $category, AccountGroup $accountGroup)
+    {
+        $parentCategory = $category->getParentCategory();
+        if ($parentCategory) {
+            return $this->getRepository()->getFallbackToGroupVisibility($parentCategory, $accountGroup);
+        } else {
+            return AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
+        }
+    }
+
+    /**
+     * @return EntityManager
+     */
+    protected function getEntityManager()
+    {
+        return $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved');
+    }
+
+    /**
+     * @return AccountGroupCategoryRepository
+     */
+    protected function getRepository()
+    {
+        return $this->getEntityManager()
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved');
     }
 
     /**
