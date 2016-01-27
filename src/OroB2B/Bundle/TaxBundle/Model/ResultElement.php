@@ -20,8 +20,8 @@ final class ResultElement extends AbstractResult
     public static function create(
         $includingTax,
         $excludingTax,
-        $taxAmount = null,
-        $adjustment = null
+        $taxAmount,
+        $adjustment
     ) {
         $resultElement = new static;
 
