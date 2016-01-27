@@ -2,9 +2,7 @@
 
 namespace OroB2B\Bundle\TaxBundle\Model;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
-use Oro\Bundle\CurrencyBundle\Model\Price;
 
 class Taxable
 {
@@ -31,26 +29,26 @@ class Taxable
     /**
      * @var int
      */
-    protected $quantity;
+    protected $quantity = 1;
 
     /**
-     * @var Price
+     * @var string
      */
-    protected $price;
+    protected $price = 0;
 
     /**
-     * @var float
+     * @var string
      */
-    protected $amount;
+    protected $amount = 0;
 
     /**
-     * @var ArrayCollection
+     * @var \SplObjectStorage
      */
     protected $items;
 
     public function __construct()
     {
-        $this->items = new ArrayCollection();
+        $this->items = new \SplObjectStorage();
     }
 
     /**
@@ -130,7 +128,7 @@ class Taxable
     }
 
     /**
-     * @return Price
+     * @return string
      */
     public function getPrice()
     {
@@ -138,18 +136,18 @@ class Taxable
     }
 
     /**
-     * @param Price|null $price
+     * @param string $price
      * @return $this
      */
-    public function setPrice(Price $price = null)
+    public function setPrice($price)
     {
-        $this->price = $price;
+        $this->price = (string)$price;
 
         return $this;
     }
 
     /**
-     * @return float
+     * @return string
      */
     public function getAmount()
     {
@@ -157,18 +155,18 @@ class Taxable
     }
 
     /**
-     * @param float $amount
+     * @param string $amount
      * @return $this
      */
     public function setAmount($amount)
     {
-        $this->amount = $amount;
+        $this->amount = (string)$amount;
 
         return $this;
     }
 
     /**
-     * @return ArrayCollection
+     * @return \SplObjectStorage
      */
     public function getItems()
     {
@@ -176,10 +174,10 @@ class Taxable
     }
 
     /**
-     * @param ArrayCollection $items
+     * @param \SplObjectStorage $items
      * @return $this
      */
-    public function setItems(ArrayCollection $items)
+    public function setItems(\SplObjectStorage $items)
     {
         $this->items = $items;
 
@@ -193,7 +191,7 @@ class Taxable
     public function addItem($item)
     {
         if (!$this->items->contains($item)) {
-            $this->items->add($item);
+            $this->items->attach($item);
         }
 
         return $this;
@@ -206,7 +204,7 @@ class Taxable
     public function removeItem($item)
     {
         if ($this->items->contains($item)) {
-            $this->items->removeElement($item);
+            $this->items->detach($item);
         }
 
         return $this;

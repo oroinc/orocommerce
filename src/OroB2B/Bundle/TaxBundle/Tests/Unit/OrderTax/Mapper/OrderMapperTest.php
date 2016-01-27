@@ -79,8 +79,9 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
         $taxable = $this->mapper->map($order);
 
         $this->assertTaxable($taxable, self::ORDER_ID, self::ORDER_SUBTOTAL, $this->getTaxableAddress($order));
-        $this->assertNotEmpty($taxable->getItems());
-        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Taxable', $taxable->getItems()->first());
+        $this->assertCount(1, $taxable->getItems());
+        $taxable->getItems()->rewind();
+        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Taxable', $taxable->getItems()->current());
     }
 
     /**
@@ -117,7 +118,7 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Taxable', $taxable);
         $this->assertEquals($id, $taxable->getIdentifier());
-        $this->assertEquals(0, $taxable->getQuantity());
+        $this->assertEquals(1, $taxable->getQuantity());
         $this->assertEquals(0, $taxable->getPrice());
         $this->assertEquals($subtotal, $taxable->getAmount());
         $this->assertEquals($destination, $taxable->getDestination());

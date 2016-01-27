@@ -10,27 +10,31 @@ final class ResultElement extends AbstractResult
     const ADJUSTMENT = 'adjustment';
 
     /**
-     * @param float $includingTax
-     * @param float $excludingTax
-     * @param float $taxAmount
-     * @param float $adjustment
+     * @param string $includingTax
+     * @param string $excludingTax
+     * @param string $taxAmount
+     * @param string $adjustment
      *
      * @return ResultElement
      */
-    public static function create($includingTax, $excludingTax, $taxAmount = 0.00, $adjustment = 0.00)
-    {
+    public static function create(
+        $includingTax,
+        $excludingTax,
+        $taxAmount,
+        $adjustment
+    ) {
         $resultElement = new static;
 
-        $resultElement->offsetSet(self::INCLUDING_TAX, $includingTax);
-        $resultElement->offsetSet(self::EXCLUDING_TAX, $excludingTax);
-        $resultElement->offsetSet(self::TAX_AMOUNT, $taxAmount);
-        $resultElement->offsetSet(self::ADJUSTMENT, $adjustment);
+        $resultElement->offsetSet(self::INCLUDING_TAX, (string)$includingTax);
+        $resultElement->offsetSet(self::EXCLUDING_TAX, (string)$excludingTax);
+        $resultElement->offsetSet(self::TAX_AMOUNT, (string)$taxAmount);
+        $resultElement->offsetSet(self::ADJUSTMENT, (string)$adjustment);
 
         return $resultElement;
     }
 
     /**
-     * @return float
+     * @return string
      */
     public function getIncludingTax()
     {
@@ -38,7 +42,7 @@ final class ResultElement extends AbstractResult
     }
 
     /**
-     * @return float
+     * @return string
      */
     public function getExcludingTax()
     {
@@ -46,7 +50,7 @@ final class ResultElement extends AbstractResult
     }
 
     /**
-     * @return float
+     * @return string
      */
     public function getTaxAmount()
     {
@@ -54,7 +58,7 @@ final class ResultElement extends AbstractResult
     }
 
     /**
-     * @return float
+     * @return string
      */
     public function getAdjustment()
     {

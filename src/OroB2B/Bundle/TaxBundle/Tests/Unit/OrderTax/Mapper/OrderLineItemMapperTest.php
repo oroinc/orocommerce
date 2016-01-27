@@ -78,9 +78,12 @@ class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
         /** @var OrderLineItem $lineItem */
         $lineItem = $this->getEntity('OroB2B\Bundle\OrderBundle\Entity\OrderLineItem', ['id' => $id]);
         $lineItem
-            ->setPrice($priceValue ? Price::create($priceValue, 'USD') : new Price())
             ->setQuantity($quantity)
             ->setOrder(new Order());
+
+        if ($priceValue) {
+            $lineItem->setPrice(Price::create($priceValue, 'USD'));
+        }
 
         return $lineItem;
     }
@@ -96,7 +99,7 @@ class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Taxable', $taxable);
         $this->assertEquals($id, $taxable->getIdentifier());
         $this->assertEquals($quantity, $taxable->getQuantity());
-        $this->assertEquals($priceValue, $taxable->getPrice()->getValue());
+        $this->assertEquals($priceValue, $taxable->getPrice());
         $this->assertEquals(0, $taxable->getAmount());
         $this->assertEmpty($taxable->getItems());
     }

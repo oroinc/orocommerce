@@ -19,8 +19,11 @@ class OrderLineItemMapper extends AbstractOrderMapper
             ->setIdentifier($lineItem->getId())
             ->setClassName($this->getProcessingClassName())
             ->setQuantity($lineItem->getQuantity())
-            ->setDestination($this->getOrderAddress($lineItem->getOrder()))
-            ->setPrice($lineItem->getPrice());
+            ->setDestination($this->getOrderAddress($lineItem->getOrder()));
+
+        if ($lineItem->getPrice()) {
+            $taxable->setPrice($lineItem->getPrice()->getValue());
+        }
 
         return $taxable;
     }

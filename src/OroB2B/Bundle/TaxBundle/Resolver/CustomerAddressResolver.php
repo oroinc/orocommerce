@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\TaxBundle\Resolver;
 
+use Brick\Math\BigDecimal;
+
 use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
@@ -13,11 +15,11 @@ class CustomerAddressResolver extends AbstractAddressResolver
     public function resolve(ResolveTaxEvent $event)
     {
         $taxable = $event->getTaxable();
-        if ($taxable->getItems()->isEmpty()) {
+        if (0 === $taxable->getItems()->count()) {
             return;
         }
 
-        if (null === $taxable->getAmount()) {
+        if (!$taxable->getAmount()) {
             return;
         }
 
@@ -28,32 +30,25 @@ class CustomerAddressResolver extends AbstractAddressResolver
 
         $taxRules = $this->matcher->match($address);
         $taxableAmount = $taxable->getAmount();
-        $roundedTaxableAmount = $this->roundingService->round($taxableAmount);
 
-        $taxAmount = 0;
         $taxResults = [];
+        $taxRate = BigDecimal::zero();
 
         foreach ($taxRules as $taxRule) {
-            $taxRate = $taxRule->getTax()->getRate();
-            $resultElement = $this->calculator->calculate($taxableAmount, $taxRate);
-            $taxAmount += $resultElement->getTaxAmount();
+            $currentTaxRate = $taxRule->getTax()->getRate();
+            $resultElement = $this->calculator->calculate($taxableAmount, $currentTaxRate);
+            $taxRate = $taxRate->plus($currentTaxRate);
 
             $taxResults[] = TaxResultElement::create(
                 $taxRule->getTax() ? $taxRule->getTax()->getId() : null,
-                $taxRate,
-                $roundedTaxableAmount,
+                $currentTaxRate,
+                $resultElement->getExcludingTax(),
                 $resultElement->getTaxAmount()
             );
         }
 
         $result = $event->getResult();
-        $result->offsetSet(
-            Result::TOTAL,
-            ResultElement::create(
-                $roundedTaxableAmount,
-                $this->roundingService->round($taxableAmount - $taxAmount)
-            )
-        );
+        $result->offsetSet(Result::TOTAL, $this->calculator->calculate($taxableAmount, $taxRate));
         $result->offsetSet(Result::SHIPPING, new ResultElement());
         $result->offsetSet(Result::TAXES, $taxResults);
     }
