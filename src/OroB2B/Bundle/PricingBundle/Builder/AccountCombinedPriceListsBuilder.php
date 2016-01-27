@@ -46,6 +46,15 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
      */
     protected function updatePriceListsOnCurrentLevel(Website $website, Account $account, $force)
     {
+        $priceListsToAccount = $this->getPriceListToEntityRepository()
+            ->findOneBy(['website' => $website, 'account' => $account]);
+        if (!$priceListsToAccount) {
+            /** @var PriceListToAccountRepository $repo */
+            $repo = $this->getCombinedPriceListToEntityRepository();
+            $repo->delete($account, $website);
+
+            return;
+        }
         $collection = $this->priceListCollectionProvider->getPriceListsByAccount($account, $website);
         $combinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection, $force);
 

@@ -62,17 +62,31 @@ class PriceListToWebsiteRepository extends EntityRepository
                 $qb->expr()->eq('plToWebsite.website', 'website')
             )
         )
-        ->innerJoin(
-            'OroB2BPricingBundle:PriceListWebsiteFallback',
-            'priceListFallBack',
-            Join::WITH,
-            $qb->expr()->andX(
-                $qb->expr()->eq('priceListFallBack.website', 'website'),
-                $qb->expr()->eq('priceListFallBack.fallback', ':websiteFallback')
+            ->innerJoin(
+                'OroB2BPricingBundle:PriceListWebsiteFallback',
+                'priceListFallBack',
+                Join::WITH,
+                $qb->expr()->andX(
+                    $qb->expr()->eq('priceListFallBack.website', 'website'),
+                    $qb->expr()->eq('priceListFallBack.fallback', ':websiteFallback')
+                )
             )
-        )
-        ->setParameter('websiteFallback', $fallback);
+            ->setParameter('websiteFallback', $fallback);
 
         return new BufferedQueryResultIterator($qb->getQuery());
+    }
+
+    /**
+     * @param Website $website
+     * @return mixed
+     */
+    public function delete(Website $website)
+    {
+        return $this->createQueryBuilder('PriceListToWebsite')
+            ->delete()
+            ->andWhere('PriceListToWebsite.website = :website')
+            ->setParameter('website', $website)
+            ->getQuery()
+            ->execute();
     }
 }
