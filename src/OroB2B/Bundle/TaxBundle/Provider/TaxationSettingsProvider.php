@@ -2,7 +2,12 @@
 
 namespace OroB2B\Bundle\TaxBundle\Provider;
 
+use Oro\Bundle\AddressBundle\Entity\Address;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+
+use OroB2B\Bundle\TaxBundle\Factory\AddressModelFactory;
+use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
+use OroB2B\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
 
 class TaxationSettingsProvider
 {
@@ -21,11 +26,23 @@ class TaxationSettingsProvider
     protected $configManager;
 
     /**
-     * @param ConfigManager $configManager
+     * @var TaxBaseExclusionFactory
      */
-    public function __construct(ConfigManager $configManager)
-    {
+    protected $taxBaseExclusionFactory;
+
+    /**
+     * @param ConfigManager $configManager
+     * @param TaxBaseExclusionFactory $taxBaseExclusionFactory
+     * @param AddressModelFactory $addressModelFactory
+     */
+    public function __construct(
+        ConfigManager $configManager,
+        TaxBaseExclusionFactory $taxBaseExclusionFactory,
+        AddressModelFactory $addressModelFactory
+    ) {
         $this->configManager = $configManager;
+        $this->taxBaseExclusionFactory = $taxBaseExclusionFactory;
+        $this->addressModelFactory = $addressModelFactory;
     }
 
     /**
@@ -37,7 +54,7 @@ class TaxationSettingsProvider
     }
 
     /**
-     * @return string
+     * @return bool
      */
     public function isStartCalculationWithUnitPrice()
     {
@@ -45,7 +62,7 @@ class TaxationSettingsProvider
     }
 
     /**
-     * @return string
+     * @return bool
      */
     public function isStartCalculationWithRowTotal()
     {
@@ -53,27 +70,11 @@ class TaxationSettingsProvider
     }
 
     /**
-     * @return array
+     * @return bool
      */
     public function isProductPricesIncludeTax()
     {
         return $this->configManager->get('orob2b_tax.product_prices_include_tax');
-    }
-
-    /**
-     * @return array
-     */
-    public function getShippingOriginAsBase()
-    {
-        return $this->configManager->get('orob2b_tax.shipping_origin_as_base');
-    }
-
-    /**
-     * @return bool
-     */
-    public function getDestinationAsBase()
-    {
-        return $this->configManager->get('orob2b_tax.destination_as_base');
     }
 
     /**
@@ -89,7 +90,7 @@ class TaxationSettingsProvider
      */
     public function getDigitalProductsTaxCodesUs()
     {
-        return (array)$this->configManager->get('orob2b_tax.digital_products_us');
+        return $this->configManager->get('orob2b_tax.digital_products_us');
     }
 
     /**
@@ -97,11 +98,11 @@ class TaxationSettingsProvider
      */
     public function getDigitalProductsTaxCodesEu()
     {
-        return (array)$this->configManager->get('orob2b_tax.digital_products_eu');
+        return $this->configManager->get('orob2b_tax.digital_products_eu');
     }
 
     /**
-     * @return string
+     * @return bool
      */
     public function isBillingAddressDestination()
     {
@@ -109,7 +110,7 @@ class TaxationSettingsProvider
     }
 
     /**
-     * @return string
+     * @return bool
      */
     public function isShippingAddressDestination()
     {
@@ -117,10 +118,51 @@ class TaxationSettingsProvider
     }
 
     /**
-     * @return \Oro\Bundle\AddressBundle\Entity\AbstractAddress
+     * @return string
+     */
+    public function getBaseByDefaultAddressType()
+    {
+        return $this->configManager->get('orob2b_tax.use_as_base_by_default');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOriginBaseByDefaultAddressType()
+    {
+        return $this->getBaseByDefaultAddressType() === self::USE_AS_BASE_SHIPPING_ORIGIN;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDestinationBaseByDefaultAddressType()
+    {
+        return $this->getBaseByDefaultAddressType() === self::USE_AS_BASE_DESTINATION;
+    }
+
+    /**
+     * @return TaxBaseExclusion[]
+     */
+    public function getBaseAddressExclusions()
+    {
+        $exclusionsData = $this->configManager->get('orob2b_tax.use_as_base_exclusions');
+
+        $exclusions = [];
+        foreach ($exclusionsData as $exclusionData) {
+            $exclusions[] = $this->taxBaseExclusionFactory->create($exclusionData);
+        }
+
+        return $exclusions;
+    }
+
+    /**
+     * @return Address
      */
     public function getOrigin()
     {
-        /** @todo: add address form to config */
+        $originAddressValues = $this->configManager->get('orob2b_tax.origin_address');
+
+        return $this->addressModelFactory->create($originAddressValues);
     }
 }

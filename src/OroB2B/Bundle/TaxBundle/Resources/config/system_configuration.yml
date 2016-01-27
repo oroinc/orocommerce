@@ -15,7 +15,6 @@ oro_system_configuration:
             title: orob2b.tax.system_configuration.groups.tax_matcher.title
         origin_address:
             title: orob2b.tax.system_configuration.groups.origin_address.title
-
         tax_digital_products:
             title: orob2b.tax.system_configuration.groups.tax_digital_products.title
         us_sales_tax:

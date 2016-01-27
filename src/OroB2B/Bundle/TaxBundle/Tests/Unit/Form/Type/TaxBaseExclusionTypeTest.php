@@ -6,10 +6,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 
 use OroB2B\Bundle\TaxBundle\Form\Type\TaxBaseExclusionType;
 use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
-use OroB2B\Bundle\TaxBundle\Tests\Unit\Stub\AddressCountryAndRegionSubscriberStub;
 
 class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
 {
@@ -44,36 +44,6 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
 
         $this->assertArrayHasKey('data_class', $options);
         $this->assertEquals('\ArrayObject', $options['data_class']);
-    }
-
-    /**
-     * @dataProvider submitDataProvider
-     * @param bool $isValid
-     * @param mixed $defaultData
-     * @param mixed $viewData
-     * @param array $submittedData
-     * @param array $expectedData
-     */
-    public function testSubmit(
-        $isValid,
-        $defaultData,
-        $viewData,
-        array $submittedData,
-        $expectedData
-    ) {
-        $form = $this->factory->create($this->formType, $defaultData);
-
-        $this->assertEquals($defaultData, $form->getData());
-        $this->assertEquals($viewData, $form->getViewData());
-
-        $form->submit($submittedData);
-        $this->assertEquals($isValid, $form->isValid());
-
-        foreach ($expectedData as $field => $data) {
-            $this->assertTrue($form->has($field));
-            $fieldForm = $form->get($field);
-            $this->assertEquals($data, $fieldForm->getData());
-        }
     }
 
     /**
@@ -149,5 +119,21 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
                 ],
             ],
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getFormType()
+    {
+        return $this->formType;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
+    {
+        return array_merge([$this->getValidatorExtension(true)], parent::getExtensions());
     }
 }
