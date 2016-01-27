@@ -4,25 +4,22 @@ namespace OroB2B\Bundle\TaxBundle\Form\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\AddressBundle\Entity\Region;
-
 use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
+use OroB2B\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
 
 class TaxBaseExclusionTransformer implements DataTransformerInterface
 {
     /**
-     * @var DoctrineHelper
+     * @var TaxBaseExclusionFactory
      */
-    protected $doctrineHelper;
+    protected $taxBaseExclusionFactory;
 
     /**
-     * @param DoctrineHelper $doctrineHelper
+     * @param TaxBaseExclusionFactory $taxBaseExclusionFactory
      */
-    public function __construct(DoctrineHelper $doctrineHelper)
+    public function __construct(TaxBaseExclusionFactory $taxBaseExclusionFactory)
     {
-        $this->doctrineHelper = $doctrineHelper;
+        $this->taxBaseExclusionFactory = $taxBaseExclusionFactory;
     }
 
     /**
@@ -37,25 +34,7 @@ class TaxBaseExclusionTransformer implements DataTransformerInterface
 
         $entities = [];
         foreach ($values as $value) {
-            $entity = new TaxBaseExclusion();
-
-            if (!empty($value['country'])) {
-                /** @var Country $country */
-                $country = $this->doctrineHelper->getEntityReference('OroAddressBundle:Country', $value['country']);
-                $entity->setCountry($country);
-            }
-
-            if (!empty($value['region'])) {
-                /** @var Region $region */
-                $region = $this->doctrineHelper->getEntityReference('OroAddressBundle:Region', $value['region']);
-                $entity->setRegion($region);
-            }
-
-            if (!empty($value['option'])) {
-                $entity->setOption($value['option']);
-            }
-
-            $entities[] = $entity;
+            $entities[] = $this->taxBaseExclusionFactory->create($value);
         }
 
         return $entities;
@@ -72,6 +51,7 @@ class TaxBaseExclusionTransformer implements DataTransformerInterface
         }
 
         $values = [];
+        /** @var TaxBaseExclusion $entity */
         foreach ($entities as $entity) {
             $values[] = [
                 'country' => $entity->getCountry() ? $entity->getCountry()->getIso2Code() : null,

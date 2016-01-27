@@ -20,33 +20,33 @@ class Address extends AbstractAddress
     /** {@inheritdoc} */
     public function setRegion($region)
     {
-        parent::setRegion($region);
-
         $this->data->offsetSet('region', $region);
+
+        return parent::setRegion($region);
     }
 
     /** {@inheritdoc} */
     public function setRegionText($regionText)
     {
-        parent::setRegionText($regionText);
-
         $this->data->offsetSet('region_text', $regionText);
+
+        return parent::setRegionText($regionText);
     }
 
     /** {@inheritdoc} */
     public function setPostalCode($postalCode)
     {
-        parent::setPostalCode($postalCode);
-
         $this->data->offsetSet('postal_code', $postalCode);
+
+        return parent::setPostalCode($postalCode);
     }
 
     /** {@inheritdoc} */
     public function setCountry($country)
     {
-        parent::setCountry($country);
-
         $this->data->offsetSet('country', $country);
+
+        return parent::setCountry($country);
     }
 
     /** {@inheritdoc} */
