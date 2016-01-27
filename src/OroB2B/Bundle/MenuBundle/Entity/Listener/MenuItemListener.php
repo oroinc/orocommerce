@@ -30,7 +30,9 @@ class MenuItemListener
      */
     public function postUpdate(MenuItem $menuItem, LifecycleEventArgs $event)
     {
-        $this->rebuildCache($menuItem, $event);
+        if ($menuItem->getParent()) {
+            $this->rebuildCache($menuItem, $event);
+        }
     }
 
     /**
@@ -39,7 +41,9 @@ class MenuItemListener
      */
     public function postPersist(MenuItem $menuItem, LifecycleEventArgs $event)
     {
-        $this->rebuildCache($menuItem, $event);
+        if ($menuItem->getParent()) {
+            $this->rebuildCache($menuItem, $event);
+        }
     }
 
     /**
@@ -65,7 +69,8 @@ class MenuItemListener
      */
     protected function rebuildCache(MenuItem $menuItem, LifecycleEventArgs $event)
     {
-        $rootId = $menuItem->getRoot();
+        // always get root from parent, because it doesn't exist in the entity on persist
+        $rootId = $menuItem->getParent()->getRoot();
         if (!$rootId) {
             return;
         }
@@ -74,7 +79,6 @@ class MenuItemListener
         if (!$root) {
             return;
         }
-
         $alias = $root->getDefaultTitle()->getString();
         $this->getProvider()->rebuildCacheByAlias($alias);
     }

@@ -68,6 +68,14 @@ class MenuItemType extends AbstractType
                                 'label' => 'orob2b.menu.menuitem.condition.label',
                                 'tooltip'=> 'orob2b.menu.form.tooltip.menu_item_condition'
                             ]
+                        )
+                        ->add(
+                            'image',
+                            'oro_image',
+                            [
+                                'label' => 'orob2b.menu.menuitem.image.label',
+                                'required' => false
+                            ]
                         );
                 }
             }

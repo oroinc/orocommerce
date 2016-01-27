@@ -15,6 +15,7 @@ orob2b:
             display.label: 'Display'
             display_children.label: 'Display children'
             condition.label: 'Condition'
+            image.label: 'Image'
             parent.label: 'Parent Menu Item'
             children.label: 'Children'
             data.label: 'Data'

@@ -136,6 +136,13 @@ services:
             - { name: doctrine.event_listener, event: postUpdate }
             - { name: doctrine.event_listener, event: postRemove }
 
+    orob2b_menu.event_listener.localized_fallback_value_listener:
+        class: OroB2B\Bundle\MenuBundle\EventListener\LocalizedFallbackValueListener
+        arguments:
+            - @orob2b_menu.menu_provider
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+
     orob2b_menu.menu.acl_extension:
         class: %orob2b_menu.menu.acl_extension.class%
         arguments:
@@ -143,6 +150,7 @@ services:
             - @oro_security.security_facade
         calls:
             - [ setCache, [ @oro_menu.cache ] ]
+            - [ setHideAllForNotLoggedInUsers, [ false ] ]
 
     orob2b_menu.layout.block_type.menu:
         class: OroB2B\Bundle\MenuBundle\Layout\Block\Type\MenuType

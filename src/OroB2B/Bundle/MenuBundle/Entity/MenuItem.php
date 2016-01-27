@@ -106,13 +106,6 @@ class MenuItem extends ExtendMenuItem
     protected $displayChildren = true;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="mi_condition", type="text", nullable=true)
-     */
-    protected $condition;
-
-    /**
      * @var array
      *
      * @ORM\Column(name="data", type="array")
@@ -285,11 +278,32 @@ class MenuItem extends ExtendMenuItem
     }
 
     /**
+     * @return array
+     */
+    public function getExtras()
+    {
+        return array_key_exists('extras', $this->data) ? $this->data['extras'] : [];
+    }
+
+    /**
+     * @param array $extras
+     * @return $this
+     */
+    public function setExtras(array $extras)
+    {
+        $this->data['extras'] = $extras;
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getCondition()
     {
-        return $this->condition;
+        $extras = $this->getExtras();
+
+        return array_key_exists('condition', $extras) ? $extras['condition'] : null;
     }
 
     /**
@@ -298,7 +312,9 @@ class MenuItem extends ExtendMenuItem
      */
     public function setCondition($condition)
     {
-        $this->condition = $condition;
+        $extras = $this->getExtras();
+        $extras['condition'] = $condition;
+        $this->setExtras($extras);
 
         return $this;
     }
@@ -318,6 +334,7 @@ class MenuItem extends ExtendMenuItem
     public function setData($data)
     {
         $this->data = $data;
+
         return $this;
     }
 
@@ -339,6 +356,7 @@ class MenuItem extends ExtendMenuItem
             $item->setParent($this);
             $this->children->add($item);
         }
+
         return $this;
     }
 }
