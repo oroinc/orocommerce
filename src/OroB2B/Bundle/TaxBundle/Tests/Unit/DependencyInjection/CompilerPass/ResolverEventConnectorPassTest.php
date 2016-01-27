@@ -1,0 +1,127 @@
+<?php
+
+namespace OroB2B\Bundle\TaxBundle\Tests\Unit\DependencyInjection\CompilerPass;
+
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
+
+use OroB2B\Bundle\TaxBundle\DependencyInjection\CompilerPass\ResolverEventConnectorPass;
+use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
+
+class ResolverEventConnectorPassTest extends \PHPUnit_Framework_TestCase
+{
+    /**
+     * @var ResolverEventConnectorPass
+     */
+    protected $compilerPass;
+
+    /**
+     * @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $containerBuilder;
+
+    public function setUp()
+    {
+        $this->containerBuilder = $this
+            ->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
+            ->getMock();
+
+        $this->compilerPass = new ResolverEventConnectorPass();
+    }
+
+    public function testNoTaggedServices()
+    {
+        $this->containerBuilder
+            ->expects($this->once())
+            ->method('findTaggedServiceIds')
+            ->willReturn([]);
+
+        $this->containerBuilder
+            ->expects($this->never())
+            ->method('setDefinition');
+
+        $this->compilerPass->process($this->containerBuilder);
+    }
+
+    /**
+     * @dataProvider emptyTagsDataProvider
+     * @param array $tags
+     * @param array $exception
+     */
+    public function testEmptyTags(array $tags, array $exception)
+    {
+        list ($exception, $message) = $exception;
+        $this->setExpectedException($exception, $message);
+
+        $this->containerBuilder
+            ->expects($this->once())
+            ->method('findTaggedServiceIds')
+            ->willReturn(['orob2b_tax.resolver.total' => $tags]);
+
+        $this->containerBuilder
+            ->expects($this->never())
+            ->method('setDefinition');
+
+        $this->compilerPass->process($this->containerBuilder);
+    }
+
+    /**
+     * @return array
+     */
+    public function emptyTagsDataProvider()
+    {
+        return [
+            'empty tag' => [[], ['\InvalidArgumentException', 'Wrong tags configuration "[]"']],
+            'empty alias' => [
+                [['event' => 'test']],
+                ['\InvalidArgumentException', 'Wrong tags configuration "[{"event":"test"}]"'],
+            ],
+            'empty event' => [
+                [['alias' => 'test']],
+                ['\InvalidArgumentException', 'Wrong tags configuration "[{"alias":"test"}]"'],
+            ],
+        ];
+    }
+
+    public function testTag()
+    {
+        $id = 'orob2b_tax.resolver.total';
+        $class = 'OroB2B\Bundle\TaxBundle\Event\ResolverEventConnector';
+
+        $this->containerBuilder
+            ->expects($this->once())
+            ->method('findTaggedServiceIds')
+            ->willReturn([$id => [['event' => ResolveTaxEvent::RESOLVE, 'alias' => 'total']]]);
+
+        $this->containerBuilder
+            ->expects($this->once())
+            ->method('getParameter')
+            ->with(ResolverEventConnectorPass::CONNECTOR_CLASS)
+            ->willReturn($class);
+
+        $this->containerBuilder
+            ->expects($this->once())
+            ->method('setDefinition')
+            ->with(
+                ResolverEventConnectorPass::CONNECTOR_SERVICE_NAME . '.total',
+                $this->callback(
+                    function (Definition $definition) use ($class, $id) {
+                        $this->assertEquals($class, $definition->getClass());
+                        $this->assertEquals([new Reference($id)], $definition->getArguments());
+                        $this->assertTrue($definition->hasTag('kernel.event_listener'));
+                        $this->assertEquals(
+                            [['event' => ResolveTaxEvent::RESOLVE, 'method' => 'onResolve']],
+                            $definition->getTag('kernel.event_listener')
+                        );
+
+                        $this->assertTrue(method_exists($class, 'onResolve'));
+
+                        return true;
+                    }
+                )
+            );
+
+        $this->compilerPass->process($this->containerBuilder);
+    }
+}

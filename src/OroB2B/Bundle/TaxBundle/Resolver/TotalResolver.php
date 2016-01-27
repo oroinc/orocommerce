@@ -5,17 +5,16 @@ namespace OroB2B\Bundle\TaxBundle\Resolver;
 use Brick\Math\BigDecimal;
 use Brick\Math\Exception\NumberFormatException;
 
-use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
+use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use OroB2B\Bundle\TaxBundle\Model\TaxResultElement;
 
 class TotalResolver implements ResolverInterface
 {
     /** {@inheritdoc} */
-    public function resolve(ResolveTaxEvent $event)
+    public function resolve(Taxable $taxable)
     {
-        $taxable = $event->getTaxable();
         if (!$taxable->getItems()->count()) {
             return;
         }

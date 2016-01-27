@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Entity\DependencyInjection\CompilerPass;
+namespace OroB2B\Bundle\TaxBundle\Tests\Unit\DependencyInjection\CompilerPass;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;

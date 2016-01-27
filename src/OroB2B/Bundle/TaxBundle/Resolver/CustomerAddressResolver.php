@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\TaxBundle\Resolver;
 
-use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
+use OroB2B\Bundle\TaxBundle\Model\Taxable;
 
 class CustomerAddressResolver implements ResolverInterface
 {
@@ -18,16 +18,14 @@ class CustomerAddressResolver implements ResolverInterface
     }
 
     /** {@inheritdoc} */
-    public function resolve(ResolveTaxEvent $event)
+    public function resolve(Taxable $taxable)
     {
-        $taxable = $event->getTaxable();
         if (!$taxable->getItems()->count()) {
             return;
         }
 
         foreach ($taxable->getItems() as $taxableItem) {
-            /** @todo: get rid of event in interface */
-            $this->itemResolver->resolve(new ResolveTaxEvent($taxableItem));
+            $this->itemResolver->resolve($taxableItem);
         }
     }
 }

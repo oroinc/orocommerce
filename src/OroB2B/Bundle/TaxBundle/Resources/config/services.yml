@@ -52,6 +52,7 @@ parameters:
     orob2b_tax.resolver.rounding.class: OroB2B\Bundle\TaxBundle\Resolver\RoundingResolver
 
     orob2b_tax.event.tax_event_dispatcher.class: OroB2B\Bundle\TaxBundle\Event\TaxEventDispatcher
+    orob2b_tax.event.resolver_event_connector.class: OroB2B\Bundle\TaxBundle\Event\ResolverEventConnector
 
 services:
     orob2b_tax.manager.product_tax_code.api:
@@ -346,27 +347,28 @@ services:
     orob2b_tax.resolver.total:
         class: %orob2b_tax.resolver.total.class%
         tags:
-            - { name: kernel.event_listener, event: orob2b_tax.resolve_after, method: resolve }
+            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve_after, alias: total }
 
     orob2b_tax.resolver.shipping:
         class: %orob2b_tax.resolver.shipping.class%
         tags:
-            - { name: kernel.event_listener, event: orob2b_tax.resolve_after, method: resolve }
+            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve_after, alias: shipping }
 
     orob2b_tax.resolver.rounding:
         class: %orob2b_tax.resolver.rounding.class%
         tags:
-            - { name: kernel.event_listener, event: orob2b_tax.resolve_after, method: resolve }
+            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve_after, alias: rounding }
 
     orob2b_tax.resolver.customer_address.item:
         class: %orob2b_tax.resolver.customer_address.item.class%
         parent: orob2b_tax.resolver.abstract_address
         tags:
-            - { name: kernel.event_listener, event: orob2b_tax.resolve, method: resolve }
+            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve, alias: customer_address_item }
 
     orob2b_tax.resolver.customer_address:
         class: %orob2b_tax.resolver.customer_address.class%
         arguments:
             - @orob2b_tax.resolver.customer_address.item
         tags:
-            - { name: kernel.event_listener, event: orob2b_tax.resolve, method: resolve }
+            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve, alias: customer_address }
+

@@ -7,17 +7,15 @@ use Brick\Math\Exception\NumberFormatException;
 use Brick\Math\RoundingMode;
 
 use OroB2B\Bundle\TaxBundle\Calculator\TaxCalculatorInterface;
-use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
 use OroB2B\Bundle\TaxBundle\Model\AbstractResult;
 use OroB2B\Bundle\TaxBundle\Model\AbstractResultElement;
+use OroB2B\Bundle\TaxBundle\Model\Taxable;
 
 class RoundingResolver implements ResolverInterface
 {
     /** {@inheritdoc} */
-    public function resolve(ResolveTaxEvent $event)
+    public function resolve(Taxable $taxable)
     {
-        $taxable = $event->getTaxable();
-
         $this->walk($taxable->getResult());
 
         foreach ($taxable->getItems() as $taxableItem) {

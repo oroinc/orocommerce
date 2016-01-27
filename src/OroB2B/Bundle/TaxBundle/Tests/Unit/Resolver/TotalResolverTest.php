@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Resolver;
 
-use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
@@ -22,9 +21,8 @@ class TotalResolverTest extends \PHPUnit_Framework_TestCase
     public function testResolveEmptyItems()
     {
         $taxable = new Taxable();
-        $event = new ResolveTaxEvent($taxable);
 
-        $this->resolver->resolve($event);
+        $this->resolver->resolve($taxable);
 
         $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Result', $taxable->getResult());
         $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\ResultElement', $taxable->getResult()->getTotal());
@@ -46,9 +44,7 @@ class TotalResolverTest extends \PHPUnit_Framework_TestCase
             $taxable->addItem($itemTaxable);
         }
 
-        $event = new ResolveTaxEvent($taxable);
-
-        $this->resolver->resolve($event);
+        $this->resolver->resolve($taxable);
 
         $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Result', $taxable->getResult());
         $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\ResultElement', $taxable->getResult()->getTotal());

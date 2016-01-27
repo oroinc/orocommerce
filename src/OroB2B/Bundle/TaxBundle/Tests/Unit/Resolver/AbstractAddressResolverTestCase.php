@@ -7,7 +7,6 @@ use OroB2B\Bundle\TaxBundle\Calculator\TaxCalculator;
 use OroB2B\Bundle\TaxBundle\Calculator\TaxCalculatorInterface;
 use OroB2B\Bundle\TaxBundle\Entity\Tax;
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
-use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
 use OroB2B\Bundle\TaxBundle\Matcher\MatcherInterface;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
@@ -81,9 +80,9 @@ abstract class AbstractAddressResolverTestCase extends \PHPUnit_Framework_TestCa
     abstract protected function getTaxable();
 
     /**
-     * @param ResolveTaxEvent $event
+     * @param Taxable $taxable
      */
-    abstract protected function assertEmptyResult(ResolveTaxEvent $event);
+    abstract protected function assertEmptyResult(Taxable $taxable);
 
     public function testDestinationMissing()
     {
@@ -91,26 +90,22 @@ abstract class AbstractAddressResolverTestCase extends \PHPUnit_Framework_TestCa
         $taxable->setPrice('1');
         $taxable->setAmount('1');
 
-        $event = new ResolveTaxEvent($taxable, new Result());
-
         $this->assertNothing();
 
-        $this->resolver->resolve($event);
+        $this->resolver->resolve($taxable);
 
-        $this->assertEmptyResult($event);
+        $this->assertEmptyResult($taxable);
     }
 
     public function testEmptyAmount()
     {
         $taxable = $this->getTaxable();
 
-        $event = new ResolveTaxEvent($taxable, new Result());
-
         $this->assertNothing();
 
-        $this->resolver->resolve($event);
+        $this->resolver->resolve($taxable);
 
-        $this->assertEmptyResult($event);
+        $this->assertEmptyResult($taxable);
     }
 
     public function testEmptyRules()
@@ -119,10 +114,9 @@ abstract class AbstractAddressResolverTestCase extends \PHPUnit_Framework_TestCa
         $taxable->setDestination(new OrderAddress());
         $taxable->setPrice('1');
         $taxable->setAmount('1');
-        $event = new ResolveTaxEvent($taxable, new Result());
 
         $this->matcher->expects($this->once())->method('match')->willReturn([]);
-        $this->resolver->resolve($event);
+        $this->resolver->resolve($taxable);
 
         $this->assertEquals(
             [
@@ -131,7 +125,7 @@ abstract class AbstractAddressResolverTestCase extends \PHPUnit_Framework_TestCa
                 ResultElement::TAX_AMOUNT => '0',
                 ResultElement::ADJUSTMENT => '0',
             ],
-            $this->extractScalarValues($event->getTaxable()->getResult()->getUnit())
+            $this->extractScalarValues($taxable->getResult()->getUnit())
         );
         $this->assertEquals(
             [
@@ -140,9 +134,9 @@ abstract class AbstractAddressResolverTestCase extends \PHPUnit_Framework_TestCa
                 ResultElement::TAX_AMOUNT => '0',
                 ResultElement::ADJUSTMENT => '0',
             ],
-            $this->extractScalarValues($event->getTaxable()->getResult()->getRow())
+            $this->extractScalarValues($taxable->getResult()->getRow())
         );
-        $this->assertEquals([], $event->getTaxable()->getResult()->getTaxes());
+        $this->assertEquals([], $taxable->getResult()->getTaxes());
     }
 
     /**
@@ -159,15 +153,14 @@ abstract class AbstractAddressResolverTestCase extends \PHPUnit_Framework_TestCa
         $taxable->setQuantity(3);
         $taxable->setAmount($taxableAmount);
         $taxable->setDestination(new OrderAddress());
-        $event = new ResolveTaxEvent($taxable, new Result());
 
         $this->matcher->expects($this->once())->method('match')->willReturn($taxRules);
         $this->settingsProvider->expects($this->any())->method('isStartCalculationWithRowTotal')
             ->willReturn($startWithRowTotal);
 
-        $this->resolver->resolve($event);
+        $this->resolver->resolve($taxable);
 
-        $this->compareResult($expectedResult, $event->getTaxable()->getResult());
+        $this->compareResult($expectedResult, $taxable->getResult());
     }
 
     /**

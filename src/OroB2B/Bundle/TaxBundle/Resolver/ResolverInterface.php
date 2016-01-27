@@ -2,12 +2,12 @@
 
 namespace OroB2B\Bundle\TaxBundle\Resolver;
 
-use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
+use OroB2B\Bundle\TaxBundle\Model\Taxable;
 
 interface ResolverInterface
 {
     /**
-     * @param ResolveTaxEvent $event
+     * @param Taxable $taxable
      */
-    public function resolve(ResolveTaxEvent $event);
+    public function resolve(Taxable $taxable);
 }

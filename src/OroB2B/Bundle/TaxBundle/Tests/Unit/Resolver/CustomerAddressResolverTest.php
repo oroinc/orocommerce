@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Resolver;
 
-use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use OroB2B\Bundle\TaxBundle\Resolver\CustomerAddressItemResolver;
 use OroB2B\Bundle\TaxBundle\Resolver\CustomerAddressResolver;
@@ -29,7 +28,7 @@ class CustomerAddressResolverTest extends \PHPUnit_Framework_TestCase
     {
         $this->itemResolver->expects($this->never())->method($this->anything());
 
-        $this->resolver->resolve(new ResolveTaxEvent(new Taxable()));
+        $this->resolver->resolve(new Taxable());
     }
 
     public function testResolveCollection()
@@ -40,14 +39,14 @@ class CustomerAddressResolverTest extends \PHPUnit_Framework_TestCase
 
         $this->itemResolver->expects($this->once())->method('resolve')->with(
             $this->callback(
-                function (ResolveTaxEvent $event) use ($taxableItem) {
-                    $this->assertSame($taxableItem, $event->getTaxable());
+                function ($dispatchedTaxable) use ($taxableItem) {
+                    $this->assertSame($taxableItem, $dispatchedTaxable);
 
                     return true;
                 }
             )
         );
 
-        $this->resolver->resolve(new ResolveTaxEvent($taxable));
+        $this->resolver->resolve($taxable);
     }
 }

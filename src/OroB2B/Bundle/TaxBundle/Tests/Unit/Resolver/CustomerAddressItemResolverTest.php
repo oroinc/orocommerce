@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Resolver;
 
-use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
@@ -30,13 +29,12 @@ class CustomerAddressItemResolverTest extends AbstractAddressResolverTestCase
     {
         $taxable = new Taxable();
         $taxable->addItem(new Taxable());
-        $event = new ResolveTaxEvent($taxable, new Result());
 
         $this->assertNothing();
 
-        $this->resolver->resolve($event);
+        $this->resolver->resolve($taxable);
 
-        $this->assertEmptyResult($event);
+        $this->assertEmptyResult($taxable);
     }
 
     /** {@inheritdoc} */
@@ -116,10 +114,10 @@ class CustomerAddressItemResolverTest extends AbstractAddressResolverTestCase
     }
 
     /** {@inheritdoc} */
-    protected function assertEmptyResult(ResolveTaxEvent $event)
+    protected function assertEmptyResult(Taxable $taxable)
     {
-        $this->assertEquals(new ResultElement(), $event->getTaxable()->getResult()->getUnit());
-        $this->assertEquals(new ResultElement(), $event->getTaxable()->getResult()->getRow());
-        $this->assertEquals([], $event->getTaxable()->getResult()->getTaxes());
+        $this->assertEquals(new ResultElement(), $taxable->getResult()->getUnit());
+        $this->assertEquals(new ResultElement(), $taxable->getResult()->getRow());
+        $this->assertEquals([], $taxable->getResult()->getTaxes());
     }
 }

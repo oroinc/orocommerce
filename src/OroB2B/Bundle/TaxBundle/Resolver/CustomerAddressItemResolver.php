@@ -7,16 +7,15 @@ use Brick\Math\RoundingMode;
 
 use OroB2B\Bundle\TaxBundle\Calculator\TaxCalculatorInterface;
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
-use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
 use OroB2B\Bundle\TaxBundle\Model\Result;
+use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use OroB2B\Bundle\TaxBundle\Model\TaxResultElement;
 
 class CustomerAddressItemResolver extends AbstractAddressResolver
 {
     /** {@inheritdoc} */
-    public function resolve(ResolveTaxEvent $event)
+    public function resolve(Taxable $taxable)
     {
-        $taxable = $event->getTaxable();
         if ($taxable->getItems()->count()) {
             return;
         }
