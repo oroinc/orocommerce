@@ -125,4 +125,12 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
     {
         return $this->formType;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
+    {
+        return array_merge([$this->getValidatorExtension(true)], parent::getExtensions());
+    }
 }

@@ -4,13 +4,10 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 
-use Oro\Component\Testing\Unit\AddressFormExtensionTrait;
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 
-abstract class AbstractAddressTestCase extends FormIntegrationTestCase
+abstract class AbstractAddressTestCase extends AddressFormExtensionTestCase
 {
-    use AddressFormExtensionTrait;
-
     /**
      * @dataProvider submitDataProvider
      * @param bool $isValid

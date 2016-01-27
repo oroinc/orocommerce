@@ -18,7 +18,7 @@ use Oro\Bundle\FormBundle\Form\Extension\RandomIdExtension;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 
-trait AddressFormExtensionTrait
+abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
 {
     /**
      * {@inheritdoc}
@@ -78,8 +78,7 @@ trait AddressFormExtensionTrait
                     'oro_region' => new RegionType(),
                 ],
                 ['form' => [new RandomIdExtension()]]
-            ),
-//            $this->getValidatorExtension(true),
+            )
         ];
     }
 }

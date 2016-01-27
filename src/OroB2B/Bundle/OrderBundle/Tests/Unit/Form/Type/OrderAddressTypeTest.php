@@ -2,18 +2,17 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
-use Oro\Component\Testing\Unit\AddressFormExtensionTrait;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\ConstraintViolation;
 
+use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Oro\Bundle\AddressBundle\Entity\AddressType as AddressTypeEntity;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
@@ -22,10 +21,8 @@ use OroB2B\Bundle\OrderBundle\Form\Type\OrderAddressType;
 use OroB2B\Bundle\OrderBundle\Model\OrderAddressManager;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 
-class OrderAddressTypeTest extends FormIntegrationTestCase
+class OrderAddressTypeTest extends AddressFormExtensionTestCase
 {
-    use AddressFormExtensionTrait;
-
     /** @var OrderAddressType */
     protected $formType;
 
@@ -396,5 +393,13 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
 
         $this->assertFalse($view->offsetGet('accountAddress')->vars['disabled']);
         $this->assertFalse($view->offsetGet('accountAddress')->vars['required']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
+    {
+        return array_merge([$this->getValidatorExtension(true)], parent::getExtensions());
     }
 }
