@@ -1,3 +1,20 @@
+{% block root_widget %}
+    {% if not oro_is_hash_navigation() %}
+        <!DOCTYPE {{ doctype|default('html') }}>
+        <html>
+            {{ block_widget(block) }}
+        </html>
+    {% else %}
+        {% include 'OroNavigationBundle:HashNav:hashNavAjax.html.twig'
+            with {
+                'data': {
+                    'content': block_widget(blocks.content),
+                }
+            }
+        %}
+    {% endif %}
+{% endblock %}
+
 {% block _scripts_before_widget %}
     {% block scripts_before %}
         {% placeholder scripts_before %}
@@ -32,6 +49,7 @@
 {% block _require_modules_widget %}
     <script type="text/javascript">
         require(['oroui/js/app']);
+        require(['oroui/js/init-layout']);
     </script>
 {% endblock %}
 
