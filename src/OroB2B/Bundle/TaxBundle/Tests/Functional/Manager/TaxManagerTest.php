@@ -2,8 +2,10 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Manager;
 
+use Doctrine\ORM\EntityRepository;
 use Gedmo\Tool\Logging\DBAL\QueryAnalyzer;
 
+use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadOrderItems;
 use Symfony\Component\Yaml\Yaml;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -40,6 +42,11 @@ class TaxManagerTest extends WebTestCase
 
     protected function tearDown()
     {
+        /** @var EntityRepository $objectRepository */
+        $registry = $this->getContainer()->get('doctrine');
+        $objectRepository = $registry->getRepository('OroB2BTaxBundle:TaxValue');
+        $objectRepository->clear();
+
         $this->configManager->reset('orob2b_tax.product_prices_include_tax');
         $this->configManager->flush();
 
@@ -52,24 +59,26 @@ class TaxManagerTest extends WebTestCase
      * @param string $reference
      * @param array $expectedResult
      * @param int $expectedQueries
+     * @param bool $priceIncludeTax
      * @param array $expectedDatabaseResultBefore
      * @param array $expectedDatabaseResultAfter
-     * @param array $updateFixtures
      */
     public function testMethods(
         $method,
         $reference,
         array $expectedResult,
         $expectedQueries,
+        $priceIncludeTax = false,
         array $expectedDatabaseResultBefore = [],
-        array $expectedDatabaseResultAfter = [],
-        array $updateFixtures = []
+        array $expectedDatabaseResultAfter = []
     ) {
+        $this->configManager->set('orob2b_tax.product_prices_include_tax', $priceIncludeTax);
+
         $object = $this->getReference($reference);
 
         $callable = [$this, sprintf('on%sBefore', $method)];
         if (is_callable($callable)) {
-            call_user_func($callable, $object, $expectedDatabaseResultBefore, $updateFixtures);
+            call_user_func($callable, $object, $expectedDatabaseResultBefore);
         }
 
         $this->executeMethod($method, $object, $expectedResult, $expectedQueries);
@@ -126,26 +135,21 @@ class TaxManagerTest extends WebTestCase
     }
 
     /**
-     * @param object $object
+     * @param Order|OrderLineItem $object
      * @param array $expectedDatabaseResult
-     * @param array $updateFixtures
      */
-    public function onSaveTaxBefore($object, array $expectedDatabaseResult, array $updateFixtures)
+    public function onSaveTaxBefore($object, array $expectedDatabaseResult)
     {
         $this->compareResult(
             $expectedDatabaseResult,
             $this->getContainer()->get('orob2b_tax.manager.tax_manager')->loadTax($object)
         );
 
-//        if ($object instanceof Order) {
-//            $item = $object->getLineItems()->first();
-//        } elseif () {
-//
-//        }
+        $this->setQuantity($object, 7);
     }
 
     /**
-     * @param object $object
+     * @param Order|OrderLineItem $object
      * @param array $expectedDatabaseResult
      */
     public function onSaveTaxAfter($object, array $expectedDatabaseResult)
@@ -154,5 +158,27 @@ class TaxManagerTest extends WebTestCase
             $expectedDatabaseResult,
             $this->getContainer()->get('orob2b_tax.manager.tax_manager')->loadTax($object)
         );
+
+        $this->setQuantity($object, 6);
+    }
+
+    /**
+     * @param Order|OrderLineItem $object
+     * @param int $quantity
+     */
+    protected function setQuantity($object, $quantity)
+    {
+        if ($object instanceof Order && $object->getLineItems()->count()) {
+            $object->getLineItems()
+                ->filter(
+                    function (OrderLineItem $lineItem) {
+                        return $lineItem->getProductSku() === LoadOrderItems::ORDER_ITEM_2;
+                    }
+                )
+                ->first()
+                ->setQuantity($quantity);
+        } elseif ($object instanceof OrderLineItem) {
+            $object->setQuantity($quantity);
+        }
     }
 }

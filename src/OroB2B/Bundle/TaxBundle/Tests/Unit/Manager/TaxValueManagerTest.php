@@ -21,7 +21,11 @@ class TaxValueManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->manager = new TaxValueManager($this->doctrineHelper, 'OroB2B\Bundle\TaxBundle\Entity\TaxValue');
+        $this->manager = new TaxValueManager(
+            $this->doctrineHelper,
+            'OroB2B\Bundle\TaxBundle\Entity\TaxValue',
+            'OroB2B\Bundle\TaxBundle\Entity\Tax'
+        );
     }
 
     public function testGetTaxValue()
@@ -86,12 +90,14 @@ class TaxValueManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testProxyGetReference()
     {
-        $class = 'OroB2B\Bundle\TaxBundle\Entity\Tax';
-        $id = '1';
+        $code = 'code';
 
-        $this->doctrineHelper->expects($this->once())->method('getEntityReference')
-            ->with($class, $id);
+        $repo = $this->getMockBuilder('Doctrine\ORM\EntityRepository')->disableOriginalConstructor()->getMock();
+        $repo->expects($this->once())->method('findOneBy')->with(['code' => 'code']);
 
-        $this->manager->getTaxReference($class, $id);
+        $this->doctrineHelper->expects($this->once())->method('getEntityRepository')
+            ->with('OroB2B\Bundle\TaxBundle\Entity\Tax')->willReturn($repo);
+
+        $this->manager->getTax($code);
     }
 }

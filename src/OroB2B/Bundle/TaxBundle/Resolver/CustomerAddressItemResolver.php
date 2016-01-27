@@ -17,24 +17,26 @@ class CustomerAddressItemResolver extends AbstractAddressResolver
     public function resolve(ResolveTaxEvent $event)
     {
         $taxable = $event->getTaxable();
-        foreach ($taxable->getItems() as $taxableItem) {
-            if (!$taxableItem->getPrice()) {
-                continue;
-            }
-
-            $address = $taxableItem->getDestination();
-            if (!$address) {
-                continue;
-            }
-
-            $taxRules = $this->matcher->match($address);
-            $taxableUnitPrice = BigDecimal::of($taxableItem->getPrice());
-            $taxableAmount = $taxableUnitPrice->multipliedBy($taxableItem->getQuantity());
-
-            $result = $taxableItem->getResult();
-            $this->resolveUnitPrice($result, $taxRules, $taxableUnitPrice);
-            $this->resolveRowTotal($result, $taxRules, $taxableAmount);
+        if ($taxable->getItems()->count()) {
+            return;
         }
+
+        if (!$taxable->getPrice()) {
+            return;
+        }
+
+        $address = $taxable->getDestination();
+        if (!$address) {
+            return;
+        }
+
+        $taxRules = $this->matcher->match($address);
+        $taxableUnitPrice = BigDecimal::of($taxable->getPrice());
+        $taxableAmount = $taxableUnitPrice->multipliedBy($taxable->getQuantity());
+
+        $result = $taxable->getResult();
+        $this->resolveUnitPrice($result, $taxRules, $taxableUnitPrice);
+        $this->resolveRowTotal($result, $taxRules, $taxableAmount);
     }
 
     /**

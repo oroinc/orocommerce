@@ -19,6 +19,10 @@ class RoundingResolver implements ResolverInterface
         $taxable = $event->getTaxable();
 
         $this->walk($taxable->getResult());
+
+        foreach ($taxable->getItems() as $taxableItem) {
+            $this->walk($taxableItem->getResult());
+        }
     }
 
     /**

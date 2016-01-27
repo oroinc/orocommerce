@@ -48,6 +48,7 @@ parameters:
     orob2b_tax.resolver.total.class: OroB2B\Bundle\TaxBundle\Resolver\TotalResolver
     orob2b_tax.resolver.shipping.class: OroB2B\Bundle\TaxBundle\Resolver\ShippingResolver
     orob2b_tax.resolver.customer_address.item.class: OroB2B\Bundle\TaxBundle\Resolver\CustomerAddressItemResolver
+    orob2b_tax.resolver.customer_address.class: OroB2B\Bundle\TaxBundle\Resolver\CustomerAddressResolver
     orob2b_tax.resolver.rounding.class: OroB2B\Bundle\TaxBundle\Resolver\RoundingResolver
 
     orob2b_tax.event.tax_event_dispatcher.class: OroB2B\Bundle\TaxBundle\Event\TaxEventDispatcher
@@ -360,5 +361,12 @@ services:
     orob2b_tax.resolver.customer_address.item:
         class: %orob2b_tax.resolver.customer_address.item.class%
         parent: orob2b_tax.resolver.abstract_address
+        tags:
+            - { name: kernel.event_listener, event: orob2b_tax.resolve, method: resolve }
+
+    orob2b_tax.resolver.customer_address:
+        class: %orob2b_tax.resolver.customer_address.class%
+        arguments:
+            - @orob2b_tax.resolver.customer_address.item
         tags:
             - { name: kernel.event_listener, event: orob2b_tax.resolve, method: resolve }

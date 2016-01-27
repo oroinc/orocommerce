@@ -136,6 +136,16 @@ class TotalResolverTest extends \PHPUnit_Framework_TestCase
                     TaxResultElement::create('4', '0.09', '23.99', '2.1591'),
                 ],
             ],
+            'failed' => [
+                'items' => [
+                    [
+                        Result::ROW => ResultElement::create('', ''),
+                        Result::TAXES => [],
+                    ],
+                ],
+                'expectedTotalResult' => ResultElement::create('0', '0'),
+                'expectedTaxes' => [],
+            ],
         ];
     }
 }

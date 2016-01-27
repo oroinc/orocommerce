@@ -1,9 +1,10 @@
+# orders
 loadTax_taxValue_is_missing:
     method: loadTax
     reference: my_order
     expectedResult: []
     expectedQueries: 3 # select order, line items from fixtures, taxValue once
-loadTax_taxValue_exxists:
+loadTax_taxValue_exists:
     method: loadTax
     reference: simple_order
     expectedResult:
@@ -40,6 +41,7 @@ saveTax_override_existing:
     expectedResult:
         shipping: []
     expectedQueries: 1 # insert TaxValue
+    priceIncludeTax: false
     expectedDatabaseResultBefore:
         shipping: []
     expectedDatabaseResultAfter:
@@ -49,11 +51,12 @@ saveTax_new_taxValue:
     reference: simple_order
     expectedResult:
         total:
-            includingTax: '124.58' # 113.25 + 11.325
-            excludingTax: '113.25' # LoadOrderItems 15.99 * 5 + 5.55 * 6
-            taxAmount: ~ # 11.325 = 113.25 * 0.1
+            includingTax: '130.68' # 118.8 + 11.88
+            excludingTax: '118.8' # LoadOrderItems 15.99 * 5 + 5.55 * 6
+            taxAmount: ~ # 11.88 = 118.8 * 0.1
             adjustment: ~
     expectedQueries: 11 # 8 from getTax_taxValue_exists + insert TaxApply, update TaxValue, Delete old TaxApply
+    priceIncludeTax: false
     expectedDatabaseResultBefore:
         total:
             includingTax: '124.58' # 113.25 + 11.325
@@ -62,9 +65,187 @@ saveTax_new_taxValue:
             adjustment: ~
     expectedDatabaseResultAfter:
         total:
-            includingTax: '124.58' # 113.25 + 11.325
-            excludingTax: '113.25' # LoadOrderItems 15.99 * 5 + 5.55 * 6
-            taxAmount: ~ # 11.325 = 113.25 * 0.1
+            includingTax: '130.68' # 118.8 + 11.88
+            excludingTax: '118.8' # LoadOrderItems 15.99 * 5 + 5.55 * 6
+            taxAmount: ~ # 11.88 = 118.8 * 0.1
             adjustment: ~
-    updateFixtures:
-        - 'OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadUpdateOrderItems'
+
+# order line items
+item_loadTax_taxValue_is_missing:
+    method: loadTax
+    reference: simple_order_item_1
+    expectedResult: []
+    expectedQueries: 3 # select order, line items from fixtures, taxValue once
+item_loadTax_taxValue_exists:
+    method: loadTax
+    reference: simple_order_item_2
+    expectedResult: # loaded from fixtures, values from simple_order_item_1 used to check database overrid
+        row:
+            includingTax: '105.54' # 95.94 + 9.594
+            excludingTax: '95.94' # 15.99 * 6
+            taxAmount: '9.6' # 95.94 * 0.1
+            adjustment: '0.001'
+        unit:
+            includingTax: '17.59' # 15.99 + 1.599
+            excludingTax: '15.99'
+            taxAmount: '1.6' # 15.99 * 0.1
+            adjustment: '0.001'
+        taxes:
+            - { tax: 'TAX1', rate: '0.1', taxable_amount: '95.94', tax_amount: '9.6' }
+    expectedQueries: 2 # select taxValue and taxApply
+item_getTax_taxValue_is_missing:
+    method: getTax
+    reference: simple_order_item_1
+    expectedResult:
+        shipping: []
+    expectedQueries: 3 # country, region, zip mathchers
+item_getTax_taxValue_exists:
+    method: getTax
+    reference: simple_order_item_2
+    expectedResult:
+        row:
+            includingTax: '36.63' # 33.3 + 3.33
+            excludingTax: '33.3' # 5.55 * 6
+            taxAmount: '3.33' # 33.3 * 0.1
+            adjustment: '0'
+        unit:
+            includingTax: '6.11' # 5.55 + 0.555
+            excludingTax: '5.55'
+            taxAmount: '0.56' # 5.55 * 0.1
+            adjustment: '0.01'
+        taxes:
+            - { tax: 'TAX1', rate: '0.1', taxable_amount: '33.3', tax_amount: '3.33' }
+    expectedQueries: 8 # address, taxRule for country, taxRule for country + region, regions, taxRule for zip codes
+                   #          taxRule for country, taxRule for country, taxRule for zip codes
+item_saveTax_override_existing:
+    method: saveTax
+    reference: simple_order_item_1
+    expectedResult:
+        shipping: []
+    expectedQueries: 1 # insert TaxValue
+    priceIncludeTax: false
+    expectedDatabaseResultBefore:
+        shipping: []
+    expectedDatabaseResultAfter:
+      shipping: []
+item_saveTax_new_taxValue:
+    method: saveTax
+    reference: simple_order_item_2
+    expectedResult:
+        row:
+            includingTax: '42.74' # 38.85 + 3.885
+            excludingTax: '38.85' # 5.55 * 7
+            taxAmount: '3.89' # 33.3 * 0.1
+            adjustment: '0.01'
+        unit:
+            includingTax: '6.11' # 5.55 + 0.555
+            excludingTax: '5.55'
+            taxAmount: '0.56' # 5.55 * 0.1
+            adjustment: '0.01'
+    expectedQueries: 11 # 8 from getTax_taxValue_exists + insert TaxApply, update TaxValue, Delete old TaxApply
+    priceIncludeTax: false
+    expectedDatabaseResultBefore:
+        row:
+            includingTax: '36.63' # 33.3 + 3.33
+            excludingTax: '33.3' # 5.55 * 6
+            taxAmount: '3.33' # 33.3 * 0.1
+            adjustment: '0'
+        unit:
+            includingTax: '6.11' # 5.55 + 0.555
+            excludingTax: '5.55'
+            taxAmount: '0.56' # 5.55 * 0.1
+            adjustment: '0.01'
+        taxes:
+            - { tax: 'TAX1', rate: '0.1', taxable_amount: '95.94', tax_amount: '9.6' }
+    expectedDatabaseResultAfter:
+        row:
+            includingTax: '42.74' # 38.85 + 3.885
+            excludingTax: '38.85' # 5.55 * 7
+            taxAmount: '3.89' # 33.3 * 0.1
+            adjustment: '0.01'
+        unit:
+            includingTax: '6.11' # 5.55 + 0.555
+            excludingTax: '5.55'
+            taxAmount: '0.56' # 5.55 * 0.1
+            adjustment: '0.01'
+        taxes:
+            - { tax: 'TAX1', rate: '0.1', taxable_amount: '38.85', tax_amount: '3.89' }
+
+# cases with inc tax
+saveTax_new_taxValue_tax_incl:
+    method: saveTax
+    reference: simple_order
+    expectedResult:
+        total:
+            includingTax: '134.79' # LoadOrderItems 15.99 * 6 + 5.55 * 7
+            excludingTax: '122.54' # 134.79 - 12.2536
+            taxAmount: ~ # 134.79 * 0.1 / 1.1
+            adjustment: ~
+    expectedQueries: 11 # 8 from getTax_taxValue_exists + insert TaxApply, update TaxValue, Delete old TaxApply
+    priceIncludeTax: true
+    expectedDatabaseResultBefore:
+        total:
+            includingTax: '130.68' # 118.8 + 11.88
+            excludingTax: '118.8' # LoadOrderItems 15.99 * 5 + 5.55 * 6
+            taxAmount: ~ # 11.88 = 118.8 * 0.1
+            adjustment: ~
+    expectedDatabaseResultAfter:
+        total:
+            includingTax: '134.79' # LoadOrderItems 15.99 * 6 + 5.55 * 7
+            excludingTax: '122.54' # 134.79 - 12.2536
+            taxAmount: ~ # 134.79 * 0.1 / 1.1
+            adjustment: ~
+item_saveTax_new_taxValue_tax_incl:
+    method: saveTax
+    reference: simple_order_item_2
+    expectedResult:
+        row:
+            includingTax: '38.85' # 5.55 * 7
+            excludingTax: '35.32' # 38.85 - 3.53
+            taxAmount: '3.54' # 38.85 * 0.1 / 1.1
+            adjustment: '0.01'
+        unit:
+            includingTax: '5.55'
+            excludingTax: '5.05' # 5.55 - 0.5045
+            taxAmount: '0.51' # 5.55 * 0.1 / 1.1
+            adjustment: '0.01'
+    expectedQueries: 11 # 8 from getTax_taxValue_exists + insert TaxApply, update TaxValue, Delete old TaxApply
+    priceIncludeTax: true
+    expectedDatabaseResultBefore:
+        row:
+            includingTax: '42.74' # 38.85 + 3.885
+            excludingTax: '38.85' # 5.55 * 7
+            taxAmount: '3.89' # 33.3 * 0.1
+            adjustment: '0.01'
+        unit:
+            includingTax: '6.11' # 5.55 + 0.555
+            excludingTax: '5.55'
+            taxAmount: '0.56' # 5.55 * 0.1
+            adjustment: '0.01'
+        taxes:
+            - { tax: 'TAX1', rate: '0.1', taxable_amount: '38.85', tax_amount: '3.89' }
+    expectedDatabaseResultAfter:
+        row:
+            includingTax: '38.85' # 5.55 * 7
+            excludingTax: '35.32' # 38.85 - 3.53
+            taxAmount: '3.54' # 38.85 * 0.1 / 1.1
+            adjustment: '0.01'
+        unit:
+            includingTax: '5.55'
+            excludingTax: '5.05' # 5.55 - 0.5045
+            taxAmount: '0.51' # 5.55 * 0.1 / 1.1
+            adjustment: '0.01'
+        taxes:
+            - { tax: 'TAX1', rate: '0.1', taxable_amount: '35.32', tax_amount: '3.54' }
+
+# cases with empty values
+item_saveTax_new_taxValue_empty_values:
+    method: saveTax
+    reference: simple_order_item_3
+    expectedResult:
+        shipping: []
+    expectedQueries: 11 # 8 from getTax_taxValue_exists + insert TaxApply, update TaxValue, Delete old TaxApply
+    priceIncludeTax: true
+    expectedDatabaseResultBefore: []
+    expectedDatabaseResultAfter:
+        shipping: []
