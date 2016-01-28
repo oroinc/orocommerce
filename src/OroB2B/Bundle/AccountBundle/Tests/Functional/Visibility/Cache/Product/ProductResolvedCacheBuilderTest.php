@@ -90,7 +90,10 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
         );
         $this->assertEquals($resolvedVisibility->getSource(), BaseProductVisibilityResolved::SOURCE_CATEGORY);
         $this->assertNull($resolvedVisibility->getSourceProductVisibility());
-        $this->assertEquals($resolvedVisibility->getVisibility(), BaseProductVisibilityResolved::VISIBILITY_VISIBLE);
+        $this->assertEquals(
+            $resolvedVisibility->getVisibility(),
+            BaseProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG
+        );
         $this->assertProductIdentifyEntitiesAccessory($resolvedVisibility);
     }
 

@@ -139,22 +139,18 @@ class ProductRepository extends EntityRepository
     /**
      * @param InsertFromSelectQueryExecutor $executor
      * @param Product $product
+     * @param int $visibility
      * @param Category $category
-     * @param boolean|null $isCategoryVisible
      */
     public function insertByProduct(
         InsertFromSelectQueryExecutor $executor,
         Product $product,
-        Category $category = null,
-        $isCategoryVisible = null
+        $visibility,
+        Category $category = null
     ) {
         $this->insertFromBaseTable($executor, null, $product);
 
         if ($category) {
-            $visibility = $isCategoryVisible
-                ? BaseProductVisibilityResolved::VISIBILITY_VISIBLE
-                : BaseProductVisibilityResolved::VISIBILITY_HIDDEN;
-
             $qb = $this->getVisibilitiesByCategoryQb($visibility, [$category->getId()]);
 
             $qb->andWhere('product = :product')

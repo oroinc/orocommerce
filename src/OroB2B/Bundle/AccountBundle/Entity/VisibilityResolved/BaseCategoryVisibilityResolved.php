@@ -15,8 +15,6 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
  */
 abstract class BaseCategoryVisibilityResolved extends BaseVisibilityResolved
 {
-    const VISIBILITY_FALLBACK_TO_CONFIG = 0;
-
     const SOURCE_STATIC = 1;
     const SOURCE_PARENT_CATEGORY = 2;
 
