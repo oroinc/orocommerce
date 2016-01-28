@@ -56,7 +56,6 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
             return;
         }
         $collection = $this->priceListCollectionProvider->getPriceListsByAccount($account, $website);
-        //TODO: remove relation if level doesn't has own settings
         $combinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection, $force);
 
         $this->getCombinedPriceListRepository()

@@ -55,12 +55,6 @@ class CombinedPriceListQueueConsumer
         $this->websitePriceListsBuilder = $websitePriceListsBuilder;
         $this->accountGroupPriceListsBuilder = $accountGroupPriceListsBuilder;
         $this->accountPriceListsBuilder = $accountPriceListsBuilder;
-
-        $this->manager = $this->registry
-            ->getManagerForClass('OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListCollection');
-
-        $this->queueRepository = $this->manager
-            ->getRepository('OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListCollection');
     }
 
     public function process()
@@ -98,5 +92,25 @@ class CombinedPriceListQueueConsumer
             default:
                 $this->commonPriceListsBuilder->build();
         }
+    }
+
+    protected function getManager()
+    {
+        if (!$this->manager) {
+            $this->manager = $this->registry
+                ->getManagerForClass('OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListCollection');
+        }
+
+        return $this->manager;
+    }
+
+    protected function getRepository()
+    {
+        if (!$this->queueRepository) {
+            $this->queueRepository = $this->getManager()
+                ->getRepository('OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListCollection');
+        }
+
+        return $this->queueRepository;
     }
 }

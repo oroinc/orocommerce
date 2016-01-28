@@ -75,7 +75,6 @@ class LoadChangedPriceListCollection extends AbstractFixture implements Dependen
         return [
             'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
             'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
         ];
     }
 }
