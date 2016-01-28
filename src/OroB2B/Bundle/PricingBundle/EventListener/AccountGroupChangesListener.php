@@ -89,7 +89,6 @@ class AccountGroupChangesListener
     protected function dispatchAccountWebsitePairs($accountWebsitePairs)
     {
         foreach ($accountWebsitePairs as $accountWebsitePair) {
-
             $this->eventDispatcher->dispatch(
                 PriceListCollectionChange::BEFORE_CHANGE,
                 new PriceListCollectionChange($accountWebsitePair->getAccount(), $accountWebsitePair->getWebsite())
