@@ -110,7 +110,7 @@ orob2b.pricing:
                 tooltip: Use scheduled mode to process big data.
                 choices:
                     scheduled.label: Scheduled
-                    realtime.label: Real Time
+                    real_time.label: Real Time
 
 oro:
     importexport:
