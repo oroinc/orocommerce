@@ -82,8 +82,8 @@ class PriceListToWebsiteRepository extends EntityRepository
      */
     public function delete(Website $website)
     {
-        return $this->createQueryBuilder('PriceListToWebsite')
-            ->delete()
+        return $this->getEntityManager()->createQueryBuilder()
+            ->delete($this->getEntityName(), 'PriceListToWebsite')
             ->andWhere('PriceListToWebsite.website = :website')
             ->setParameter('website', $website)
             ->getQuery()

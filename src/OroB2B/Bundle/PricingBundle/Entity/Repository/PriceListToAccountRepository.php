@@ -95,8 +95,8 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
      */
     public function delete(Account $account, Website $website)
     {
-        return $this->createQueryBuilder('PriceListToAccount')
-            ->delete()
+        return $this->getEntityManager()->createQueryBuilder()
+            ->delete($this->getEntityName(), 'PriceListToAccount')
             ->where('PriceListToAccount.account = :account')
             ->andWhere('PriceListToAccount.website = :website')
             ->setParameter('account', $account)
