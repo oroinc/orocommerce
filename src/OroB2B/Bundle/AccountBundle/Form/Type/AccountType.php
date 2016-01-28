@@ -2,12 +2,16 @@
 
 namespace OroB2B\Bundle\AccountBundle\Form\Type;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Form\Type\AddressCollectionType;
 
+use OroB2B\Bundle\AccountBundle\Event\AccountEvent;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 
 class AccountType extends AbstractType
@@ -16,6 +20,17 @@ class AccountType extends AbstractType
 
     /** @var string */
     protected $addressClass;
+
+    /** @var   EventDispatcherInterface */
+    protected $eventDispatcher;
+
+    /**
+     * @param EventDispatcherInterface $eventDispatcher
+     */
+    public function __construct(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
 
     /**
      * {@inheritdoc}
@@ -44,11 +59,11 @@ class AccountType extends AbstractType
                 'addresses',
                 AddressCollectionType::NAME,
                 [
-                    'label'    => 'orob2b.account.addresses.label',
-                    'type'     => AccountTypedAddressType::NAME,
+                    'label' => 'orob2b.account.addresses.label',
+                    'type' => AccountTypedAddressType::NAME,
                     'required' => true,
-                    'options'  => [
-                        'data_class'  => $this->addressClass,
+                    'options' => [
+                        'data_class' => $this->addressClass,
                         'single_form' => false
                     ]
                 ]
@@ -57,7 +72,7 @@ class AccountType extends AbstractType
                 'internal_rating',
                 'oro_enum_select',
                 [
-                    'label'     => 'orob2b.account.internal_rating.label',
+                    'label' => 'orob2b.account.internal_rating.label',
                     'enum_code' => Account::INTERNAL_RATING_CODE,
                     'configs' => [
                         'allowClear' => false,
@@ -72,7 +87,23 @@ class AccountType extends AbstractType
                     'label' => 'orob2b.account.sales_representatives.label',
                 ]
             )
-        ;
+            ->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmit']);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function preSubmit(FormEvent $event)
+    {
+        $newGroupId = (int)$event->getData()['group'];
+        /** @var Account $account */
+        $account = $event->getForm()->getData();
+        if ($newGroupId !== $account->getGroup()->getId()) {
+            $this->eventDispatcher->dispatch(
+                AccountEvent::ON_ACCOUNT_GROUP_CHANGE,
+                new AccountEvent($account)
+            );
+        }
     }
 
     /**
@@ -80,10 +111,12 @@ class AccountType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'cascade_validation' => true,
-            'intention'          => 'account',
-        ]);
+        $resolver->setDefaults(
+            [
+                'cascade_validation' => true,
+                'intention' => 'account',
+            ]
+        );
     }
 
     /**

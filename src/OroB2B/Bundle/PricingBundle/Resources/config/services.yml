@@ -241,16 +241,14 @@ services:
 #            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-grid, method: onBuildBeforeAccounts }
 #            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-groups-grid, method: onBuildBeforeAccountGroups }
 
-
     orob2b_pricing.event_listener.account_group:
         class: %orob2b_pricing.event_listener.account_group_changes.class%
         arguments:
             - @doctrine
             - @event_dispatcher
         tags:
-            - { name: doctrine.event_listener, event: preFlush }
-            - { name: doctrine.event_listener, event: preUpdate }
-            - { name: doctrine.event_listener, event: postFlush }
+            - { name: kernel.event_listener, event: orob2b_account.account_group.pre_remove, method: onGroupRemove }
+            - { name: kernel.event_listener, event: orob2b_account.account.on_account_group_change, method: onChangeGroupInAccount }
 
     orob2b_pricing.event_listener.price_list_collection:
         class: %orob2b_pricing.event_listener.price_list_collection.class%

@@ -50,6 +50,8 @@ parameters:
 services:
     orob2b_account.form.type.account:
         class: %orob2b_account.form.type.account.class%
+        arguments:
+          - @event_dispatcher
         calls:
             - [setAddressClass, [%orob2b_account.entity.account_address.class%]]
         tags:

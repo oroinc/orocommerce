@@ -91,11 +91,11 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
     }
 
     /**
-     * @param integer[] $accountGroupIds
+     * @param AccountGroup $accountGroup
      * @param integer[] $websiteIds
      * @return AccountWebsiteDTO[]|ArrayCollection
      */
-    public function getAccountWebsitePairsByAccountGroupIds($accountGroupIds, $websiteIds)
+    public function getAccountWebsitePairsByAccountGroup(AccountGroup $accountGroup, $websiteIds)
     {
         $qb = $this->createQueryBuilder('PriceListToAccount');
 
@@ -104,10 +104,10 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
             'IDENTITY(PriceListToAccount.website) as website_id'
         )
             ->innerJoin('PriceListToAccount.account', 'account')
-            ->andWhere($qb->expr()->in('account.group', ':accountGroupIds'))
+            ->andWhere($qb->expr()->eq('account.group', ':accountGroup'))
             ->andWhere($qb->expr()->in('PriceListToAccount.website', ':websiteIds'))
             ->groupBy('PriceListToAccount.account', 'PriceListToAccount.website')
-            ->setParameter('accountGroupIds', $accountGroupIds)
+            ->setParameter('accountGroup', $accountGroup)
             ->setParameter('websiteIds', $websiteIds)
             ->getQuery()
             ->getResult();
@@ -125,10 +125,10 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
     }
 
     /**
-     * @param integer[] $accountIds
+     * @param Account $account
      * @return AccountWebsiteDTO[]|ArrayCollection
      */
-    public function getAccountWebsitePairsByAccountIds($accountIds)
+    public function getAccountWebsitePairsByAccount(Account $account)
     {
         $qb = $this->createQueryBuilder('PriceListToAccount');
 
@@ -136,9 +136,9 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
             'IDENTITY(PriceListToAccount.account) as account_id',
             'IDENTITY(PriceListToAccount.website) as website_id'
         )
-            ->andWhere($qb->expr()->in('PriceListToAccount.account', ':accountIds'))
+            ->andWhere($qb->expr()->eq('PriceListToAccount.account', ':account'))
             ->groupBy('PriceListToAccount.account', 'PriceListToAccount.website')
-            ->setParameter('accountIds', $accountIds)
+            ->setParameter('account', $account)
             ->getQuery()
             ->getResult();
 

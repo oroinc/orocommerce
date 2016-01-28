@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\EventListener;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListCollection;
@@ -13,9 +14,12 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  */
 class AccountGroupChangesListenerTest extends WebTestCase
 {
-    public function setUp()
+    /**
+     * @param bool $api
+     */
+    protected function load($api = true)
     {
-        $this->initClient([], $this->generateBasicAuthHeader(), true);
+        $this->initClient([], $api ? $this->generateWsseAuthHeader() : $this->generateBasicAuthHeader(), true);
 
         $this->loadFixtures(
             [
@@ -34,15 +38,25 @@ class AccountGroupChangesListenerTest extends WebTestCase
      */
     public function testUpdateAccount($accountGroupReference, $accountReference, array $expectedChanges)
     {
+        $this->load(false);
         $em = $this->getContainer()->get('doctrine')->getManager();
         $actualChanges = $em->getRepository('OroB2BPricingBundle:ChangedPriceListCollection')->findAll();
         $this->assertCount(0, $actualChanges);
-        /** @var AccountGroup $group */
-        $group = $this->getReference($accountGroupReference);
         /** @var Account $account */
         $account = $this->getReference($accountReference);
-        $account->setGroup($group);
-        $em->flush();
+        /** @var AccountGroup $group */
+        $group = $this->getReference($accountGroupReference);
+        $this->client->followRedirects();
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_account_update', ['id' => $account->getId()])
+        );
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $form = $crawler->selectButton('Save')->form();
+        $form->setValues(['orob2b_account_type[group]' => $group->getId()]);
+        $this->client->submit($form);
+
         $changes = $em->getRepository('OroB2BPricingBundle:ChangedPriceListCollection')->findAll();
         $this->assertEquals(count($expectedChanges), count($changes));
         $this->checkChanges($expectedChanges, $changes);
@@ -99,13 +113,20 @@ class AccountGroupChangesListenerTest extends WebTestCase
      */
     public function testDeleteGroup($deletedGroupReference, array $expectedChanges)
     {
+        $this->load();
         $em = $this->getContainer()->get('doctrine')->getManager();
         /** @var AccountGroup $group */
         $group = $this->getReference($deletedGroupReference);
+
         $actualChanges = $em->getRepository('OroB2BPricingBundle:ChangedPriceListCollection')->findAll();
         $this->assertCount(0, $actualChanges);
-        $em->remove($group);
-        $em->flush();
+        $this->client->request(
+            'DELETE',
+            $this->getUrl('orob2b_api_account_delete_account_group', ['id' => $group->getId()])
+        );
+        $result = $this->client->getResponse();
+
+        $this->assertEmptyResponseStatusCodeEquals($result, 204);
         $changes = $em->getRepository('OroB2BPricingBundle:ChangedPriceListCollection')->findAll();
         $this->assertEquals(count($expectedChanges), count($changes));
         $this->checkChanges($expectedChanges, $changes);

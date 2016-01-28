@@ -6,6 +6,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\PricingBundle\Entity\DTO\AccountWebsiteDTO;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
@@ -154,27 +155,27 @@ class PriceListToAccountRepositoryTest extends WebTestCase
         $account = $this->getReference('account.level_1.3');
         /** @var Website $website */
         $website = $this->getReference('US');
-        $result = $this->getRepository()->getAccountWebsitePairsByAccountGroupIds(
-            [$accountGroup->getId()],
+        $result = $this->getRepository()->getAccountWebsitePairsByAccountGroup(
+            $accountGroup,
             [$website->getId()]
         );
         $this->assertCount(1, $result);
-        $this->assertEquals($result[0]['account'], $account);
-        $this->assertEquals($result[0]['website'], $website);
+        $result = $result[0];
+        $this->assertEquals($result->getAccount()->getId(), $account->getId());
+        $this->assertEquals($result->getWebsite()->getId(), $website->getId());
     }
 
     public function testGetAccountWebsitePairsByAccountIds()
     {
         /** @var Account $account1 */
         $account1 = $this->getReference('account.level_1_1');
-        /** @var Account $account2 */
-        $account2 = $this->getReference('account.level_1.3');
         /** @var Website $website */
         $website = $this->getReference('US');
-        $result = $this->getRepository()->getAccountWebsitePairsByAccountIds([$account1->getId(), $account2->getId()]);
-        $this->assertCount(2, $result);
-        $this->assertContains(['account' => $account1, 'website' => $website], $result);
-        $this->assertContains(['account' => $account2, 'website' => $website], $result);
+        /** @var AccountWebsiteDTO[] $result */
+        $result = $this->getRepository()->getAccountWebsitePairsByAccount($account1);
+        $this->assertCount(1, $result);
+        $this->assertEquals($result[0]->getAccount()->getId(), $account1->getId());
+        $this->assertEquals($result[0]->getWebsite()->getId(), $website->getId());
     }
 
     /**

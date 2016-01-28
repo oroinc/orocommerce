@@ -172,7 +172,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
             ->findBy([$this->getTargetFieldName() => $targetEntity]);
         foreach ($priceListsByWebsites->all() as $priceListsByWebsite) {
             $website = $priceListsByWebsite->getConfig()->getOption('website');
-            $submittedFallback = $priceListsByWebsite->get('fallback')->getData();
+            $submittedFallback = (int)$priceListsByWebsite->get('fallback')->getData();
             $actualFallback = $this->getFallbackByWebsite($fallbacks, $website);
             $hasFallbackChanges = $this->hasFallbackChanges($actualFallback, $submittedFallback);
             $actualPriceListsToTargetEntity = $this->getActualPriceListsToTargetEntity($targetEntity, $website);
@@ -242,7 +242,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         if (in_array($priceList->getId(), array_keys($actualPriceListsToTargetEntity), true)) {
             /** @var BasePriceListRelation $priceListToTargetEntity */
             $priceListToTargetEntity = $actualPriceListsToTargetEntity[$priceList->getId()];
-            $hasChanges = $priceListToTargetEntity->getPriority() !== $priceListWithPriorityData['priority']
+            $hasChanges = $priceListToTargetEntity->getPriority() !== (int)$priceListWithPriorityData['priority']
                 || $priceListToTargetEntity->isMergeAllowed() !== $priceListWithPriorityData['mergeAllowed'];
         } else {
             $priceListToTargetEntity = $this->createPriceListToTargetEntity($targetEntity);

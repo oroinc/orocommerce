@@ -9,6 +9,7 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Symfony\Component\HttpFoundation\Response;
 
+use OroB2B\Bundle\AccountBundle\Event\AccountGroupEvent;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 
@@ -34,6 +35,15 @@ class AccountGroupController extends RestController implements ClassResourceInte
      */
     public function deleteAction($id)
     {
+        $accountGroup = $this->get('doctrine')
+            ->getManagerForClass('OroB2BAccountBundle:AccountGroup')
+            ->getRepository('OroB2BAccountBundle:AccountGroup')
+            ->find($id);
+        if ($accountGroup) {
+            $this->get('event_dispatcher')
+                ->dispatch(AccountGroupEvent::PRE_REMOVE, new AccountGroupEvent($accountGroup));
+        }
+
         return $this->handleDeleteRequest($id);
     }
 

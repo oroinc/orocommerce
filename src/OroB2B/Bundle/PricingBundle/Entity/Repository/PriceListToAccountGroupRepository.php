@@ -86,16 +86,16 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
     }
 
     /**
-     * @param integer[] $accountGroupIds
+     * @param AccountGroup $accountGroup
      * @return array
      */
-    public function getWebsiteIdsByAccountGroups($accountGroupIds)
+    public function getWebsiteIdsByAccountGroup(AccountGroup $accountGroup)
     {
         $qb = $this->createQueryBuilder('PriceListToAccountGroup');
 
         $result = $qb->select('distinct(PriceListToAccountGroup.website)')
-            ->andWhere($qb->expr()->in('PriceListToAccountGroup.accountGroup', ':accountGroupIds'))
-            ->setParameter('accountGroupIds', $accountGroupIds)
+            ->andWhere($qb->expr()->eq('PriceListToAccountGroup.accountGroup', ':accountGroup'))
+            ->setParameter('accountGroup', $accountGroup)
             ->getQuery()
             ->getResult();
 
