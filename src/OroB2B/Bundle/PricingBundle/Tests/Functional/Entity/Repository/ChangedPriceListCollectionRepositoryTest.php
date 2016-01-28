@@ -22,7 +22,9 @@ class ChangedPriceListCollectionRepositoryTest extends WebTestCase
     public function testGetCollectionChangesIterator()
     {
         $iterator = $this->getRepository()->getCollectionChangesIterator();
-        $this->assertSame($iterator->count(), 5);
+        $allChanges = $this->getRepository()->findAll();
+        $this->assertInstanceOf('Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator', $iterator);
+        $this->assertSame($iterator->count(), count($allChanges));
     }
 
     /**
