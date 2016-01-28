@@ -119,7 +119,7 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
 
             if (!empty($updatedAccountGroupIds)) {
                 $this->updateAccountGroupsProductVisibility($levelCategory, $updatedAccountGroupIds, $visibility);
-                $this->updateAccountGroupsCategoryVisibilityResolved(
+                $this->updateAccountGroupsCategoryVisibility(
                     $levelCategory,
                     $updatedAccountGroupIds,
                     $visibility
@@ -348,7 +348,7 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
      * @param array $accountGroupIds
      * @param $visibility
      */
-    protected function updateAccountGroupsCategoryVisibilityResolved(
+    protected function updateAccountGroupsCategoryVisibility(
         Category $category,
         array $accountGroupIds,
         $visibility
