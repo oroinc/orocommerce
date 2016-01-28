@@ -17,21 +17,37 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class CombinedPriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager
+     */
     protected $manager;
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ChangedPriceListCollectionRepository */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ChangedPriceListCollectionRepository
+     */
     protected $collectionChangesRepository;
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
+     */
     protected $registry;
-    /** @var \PHPUnit_Framework_MockObject_MockObject|CombinedPriceListsBuilder */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|CombinedPriceListsBuilder
+     */
     protected $cplBuilder;
-    /** @var \PHPUnit_Framework_MockObject_MockObject|WebsiteCombinedPriceListsBuilder */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|WebsiteCombinedPriceListsBuilder
+     */
     protected $cplWebsiteBuilder;
-    /** @var \PHPUnit_Framework_MockObject_MockObject|AccountGroupCombinedPriceListsBuilder */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|AccountGroupCombinedPriceListsBuilder
+     */
     protected $cplAccountGroupBuilder;
-    /** @var \PHPUnit_Framework_MockObject_MockObject|AccountCombinedPriceListsBuilder */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|AccountCombinedPriceListsBuilder
+     */
     protected $cplAccountBuilder;
-    /** @var CombinedPriceListQueueConsumer */
+    /**
+     * @var CombinedPriceListQueueConsumer
+     */
     protected $consumer;
 
     /**

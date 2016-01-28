@@ -178,6 +178,7 @@ services:
         parent: orob2b_pricing.builder.abstract_combined_price_list_builder
         calls:
             - [setPriceListToEntityClassName, [%orob2b_pricing.entity.price_list_to_account.class%]]
+            - [setCombinedPriceListToEntityClassName, [%orob2b_pricing.entity.combined_price_list_to_account.class%]]
 
     orob2b_pricing.builder.account_group_combined_price_list_builder:
         class: %orob2b_pricing.builder.account_group_combined_price_list_builder.class%
@@ -185,6 +186,7 @@ services:
         calls:
             - [setAccountCombinedPriceListsBuilder, [@orob2b_pricing.builder.account_combined_price_list_builder]]
             - [setPriceListToEntityClassName, [%orob2b_pricing.entity.price_list_to_account_group.class%]]
+            - [setCombinedPriceListToEntityClassName, [%orob2b_pricing.entity.combined_price_list_to_account_group.class%]]
 
     orob2b_pricing.builder.website_combined_price_list_builder:
         class: %orob2b_pricing.builder.website_combined_price_list_builder.class%
@@ -192,6 +194,7 @@ services:
         calls:
             - [setAccountGroupCombinedPriceListsBuilder, [@orob2b_pricing.builder.account_group_combined_price_list_builder]]
             - [setPriceListToEntityClassName, [%orob2b_pricing.entity.price_list_to_website.class%]]
+            - [setCombinedPriceListToEntityClassName, [%orob2b_pricing.entity.combined_price_list_to_website.class%]]
 
     orob2b_pricing.builder.combined_price_list_builder:
         class: %orob2b_pricing.builder.combined_price_list_builder.class%

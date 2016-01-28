@@ -55,21 +55,15 @@ class CombinedPriceListQueueConsumer
         $this->websitePriceListsBuilder = $websitePriceListsBuilder;
         $this->accountGroupPriceListsBuilder = $accountGroupPriceListsBuilder;
         $this->accountPriceListsBuilder = $accountPriceListsBuilder;
-
-        $this->manager = $this->registry
-            ->getManagerForClass('OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListCollection');
-
-        $this->queueRepository = $this->manager
-            ->getRepository('OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListCollection');
     }
 
     public function process()
     {
         foreach ($this->getUniqueChangesIterator() as $changes) {
             $this->handleCollectionsJob($changes);
-            $this->manager->remove($changes);
+            $this->getManager()->remove($changes);
         }
-        $this->manager->flush();
+        $this->getManager()->flush();
     }
 
     /**
@@ -77,7 +71,7 @@ class CombinedPriceListQueueConsumer
      */
     protected function getUniqueChangesIterator()
     {
-        return $this->queueRepository->getCollectionChangesIterator();
+        return $this->getRepository()->getCollectionChangesIterator();
     }
 
     /**
@@ -98,5 +92,31 @@ class CombinedPriceListQueueConsumer
             default:
                 $this->commonPriceListsBuilder->build();
         }
+    }
+
+    /**
+     * @return ObjectManager
+     */
+    protected function getManager()
+    {
+        if (!$this->manager) {
+            $this->manager = $this->registry
+                ->getManagerForClass('OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListCollection');
+        }
+
+        return $this->manager;
+    }
+
+    /**
+     * @return ChangedPriceListCollectionRepository
+     */
+    protected function getRepository()
+    {
+        if (!$this->queueRepository) {
+            $this->queueRepository = $this->getManager()
+                ->getRepository('OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListCollection');
+        }
+
+        return $this->queueRepository;
     }
 }

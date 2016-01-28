@@ -7,12 +7,14 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 
+use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
 use OroB2B\Bundle\PricingBundle\Rounding\PriceRoundingService;
 
 class Configuration implements ConfigurationInterface
 {
     const DEFAULT_PRICE_LISTS = 'default_price_lists';
     const COMBINED_PRICE_LIST = 'combined_price_list';
+    const PRICE_LISTS_UPDATE_MODE = 'price_lists_update_mode';
 
     /**
      * @var
@@ -37,7 +39,7 @@ class Configuration implements ConfigurationInterface
                 self::DEFAULT_PRICE_LISTS => ['type' => 'array', 'value' => []],
                 'rounding_type' => ['value' => PriceRoundingService::HALF_UP],
                 'precision' => ['value' => PriceRoundingService::FALLBACK_PRECISION],
-                'price_lists_update_mode' => ['value' => 'scheduled'],
+                self::PRICE_LISTS_UPDATE_MODE => ['value' => CombinedPriceListQueueConsumer::MODE_SCHEDULED],
             ]
         );
 
@@ -50,12 +52,19 @@ class Configuration implements ConfigurationInterface
     public static function getConfigKeyToPriceList()
     {
         if (!self::$configKeyToPriceList) {
-            self::$configKeyToPriceList = implode(
-                '.',
-                [OroB2BPricingExtension::ALIAS, Configuration::COMBINED_PRICE_LIST]
-            );
+            self::$configKeyToPriceList = self::getConfigKeyByName(Configuration::COMBINED_PRICE_LIST);
         }
 
         return self::$configKeyToPriceList;
+    }
+
+
+    /**
+     * @param string $key
+     * @return string
+     */
+    public static function getConfigKeyByName($key)
+    {
+        return implode('.', [OroB2BPricingExtension::ALIAS, $key]);
     }
 }
