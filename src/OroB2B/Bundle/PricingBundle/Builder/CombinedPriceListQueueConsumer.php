@@ -61,9 +61,9 @@ class CombinedPriceListQueueConsumer
     {
         foreach ($this->getUniqueChangesIterator() as $changes) {
             $this->handleCollectionsJob($changes);
-            $this->manager->remove($changes);
+            $this->getManager()->remove($changes);
         }
-        $this->manager->flush();
+        $this->getManager()->flush();
     }
 
     /**
@@ -71,7 +71,7 @@ class CombinedPriceListQueueConsumer
      */
     protected function getUniqueChangesIterator()
     {
-        return $this->queueRepository->getCollectionChangesIterator();
+        return $this->getRepository()->getCollectionChangesIterator();
     }
 
     /**
@@ -94,6 +94,9 @@ class CombinedPriceListQueueConsumer
         }
     }
 
+    /**
+     * @return ObjectManager
+     */
     protected function getManager()
     {
         if (!$this->manager) {
@@ -104,6 +107,9 @@ class CombinedPriceListQueueConsumer
         return $this->manager;
     }
 
+    /**
+     * @return ChangedPriceListCollectionRepository
+     */
     protected function getRepository()
     {
         if (!$this->queueRepository) {
