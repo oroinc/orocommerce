@@ -36,7 +36,9 @@ abstract class AbstractTaxCode
     protected $code;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @var string
+     *
+     * @ORM\Column(name="description", type="text", nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -44,8 +46,6 @@ abstract class AbstractTaxCode
      *          }
      *      }
      * )
-     *
-     * @var string
      */
     protected $description;
 

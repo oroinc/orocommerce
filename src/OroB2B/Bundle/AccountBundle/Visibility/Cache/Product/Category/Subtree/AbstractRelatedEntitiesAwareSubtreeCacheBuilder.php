@@ -142,8 +142,8 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
             $this->accountIdsWithChangedVisibility[$levelCategory->getId()] = $accountIdsForUpdate;
 
             if (!empty($accountIdsForUpdate)) {
-                $this->updateAccountsProductVisibilityResolved($levelCategory, $accountIdsForUpdate, $visibility);
-                $this->updateAccountsCategoryVisibilityResolved($levelCategory, $accountIdsForUpdate, $visibility);
+                $this->updateAccountsCategoryVisibility($levelCategory, $accountIdsForUpdate, $visibility);
+                $this->updateAccountsProductVisibility($levelCategory, $accountIdsForUpdate, $visibility);
             }
         }
     }
@@ -292,7 +292,7 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
      * @param array $accountIds
      * @param $visibility
      */
-    protected function updateAccountsProductVisibilityResolved(Category $category, array $accountIds, $visibility)
+    protected function updateAccountsProductVisibility(Category $category, array $accountIds, $visibility)
     {
         if (!$accountIds) {
             return;
@@ -320,7 +320,7 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
      * @param array $accountIds
      * @param $visibility
      */
-    protected function updateAccountsCategoryVisibilityResolved(Category $category, array $accountIds, $visibility)
+    protected function updateAccountsCategoryVisibility(Category $category, array $accountIds, $visibility)
     {
         if (!$accountIds) {
             return;
