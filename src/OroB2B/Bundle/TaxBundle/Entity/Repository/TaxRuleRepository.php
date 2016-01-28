@@ -48,13 +48,16 @@ class TaxRuleRepository extends EntityRepository
             ->where($qb->expr()->eq('tax_jurisdiction.country', ':country'))
             ->andWhere($qb->expr()->isNull('zip_codes.id'))
             ->setParameter('country', $country);
+
         if ($region) {
             $qb->andWhere($qb->expr()->eq('tax_jurisdiction.region', ':region'))
                 ->setParameter('region', $region);
 
-        } else {
+        } elseif ($regionText) {
             $qb->andWhere($qb->expr()->eq('tax_jurisdiction.regionText', ':region_text'))
                 ->setParameter('region_text', $regionText);
+        } else {
+            throw new \InvalidArgumentException('Region or Region Text arguments missed');
         }
 
         return $qb->getQuery()->getResult();

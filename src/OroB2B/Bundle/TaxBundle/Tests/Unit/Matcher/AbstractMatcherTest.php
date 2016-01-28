@@ -43,7 +43,7 @@ abstract class AbstractMatcherTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->doctrineHelper
-            ->expects($this->once())
+            ->expects($this->any())
             ->method('getEntityRepositoryForClass')
             ->with(self::TAX_RULE_CLASS)
             ->willReturn($this->taxRuleRepository);

@@ -16,11 +16,19 @@ class RegionMatcher extends AbstractMatcher
      */
     public function match(AbstractAddress $address)
     {
+        $country = $address->getCountry();
+        $region = $address->getRegion();
+        $regionText = $address->getRegionText();
+
+        if (null === $country || (null === $region && empty($regionText))) {
+            return [];
+        }
+
         $countryTaxRules = $this->countryMatcher->match($address);
         $regionTaxRules = $this->getTaxRuleRepository()->findByCountryAndRegion(
-            $address->getCountry(),
-            $address->getRegion(),
-            $address->getRegionText()
+            $country,
+            $region,
+            $regionText
         );
 
         return $this->mergeResult($countryTaxRules, $regionTaxRules);
