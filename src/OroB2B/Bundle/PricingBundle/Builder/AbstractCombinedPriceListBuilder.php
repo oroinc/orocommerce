@@ -47,9 +47,19 @@ abstract class AbstractCombinedPriceListBuilder
     protected $combinedPriceListRepository;
 
     /**
+     * @var EntityRepository
+     */
+    protected $combinedPriceListToEntityRepository;
+
+    /**
      * @var string
      */
     protected $combinedPriceListClassName;
+
+    /**
+     * @var string
+     */
+    protected $combinedPriceListToEntityClassName;
 
     /**
      * @param ManagerRegistry $registry
@@ -106,6 +116,20 @@ abstract class AbstractCombinedPriceListBuilder
     }
 
     /**
+     * @return EntityRepository
+     */
+    protected function getCombinedPriceListToEntityRepository()
+    {
+        if (!$this->combinedPriceListToEntityRepository) {
+            $this->combinedPriceListToEntityRepository = $this->registry
+                ->getManagerForClass($this->combinedPriceListToEntityClassName)
+                ->getRepository($this->combinedPriceListToEntityClassName);
+        }
+
+        return $this->combinedPriceListToEntityRepository;
+    }
+
+    /**
      * @return CombinedPriceListRepository
      */
     protected function getCombinedPriceListRepository()
@@ -117,5 +141,21 @@ abstract class AbstractCombinedPriceListBuilder
         }
 
         return $this->combinedPriceListRepository;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCombinedPriceListToEntityClassName()
+    {
+        return $this->combinedPriceListToEntityClassName;
+    }
+
+    /**
+     * @param string $combinedPriceListToEntityClassName
+     */
+    public function setCombinedPriceListToEntityClassName($combinedPriceListToEntityClassName)
+    {
+        $this->combinedPriceListToEntityClassName = $combinedPriceListToEntityClassName;
     }
 }

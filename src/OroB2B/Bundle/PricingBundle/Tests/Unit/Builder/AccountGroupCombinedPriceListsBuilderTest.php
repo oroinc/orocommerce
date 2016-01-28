@@ -7,6 +7,7 @@ use OroB2B\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
 use OroB2B\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBuilderTest
@@ -50,17 +51,22 @@ class AccountGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLis
         $this->builder->setPriceListToEntityClassName($this->priceListToEntityClass);
         $this->builder->setCombinedPriceListClassName($this->combinedPriceListClass);
         $this->builder->setAccountCombinedPriceListsBuilder($this->accountBuilder);
+        $this->builder->setCombinedPriceListToEntityClassName($this->combinedPriceListToEntityClass);
     }
 
     /**
-     * @dataProvider trueFalseDataProvider
-     * @param bool $force
+     * @dataProvider testBuildDataProvider
+     * @param boolean $force
+     * @param PriceListToAccountGroup $priceListByAccountGroup
      */
-    public function testBuildForAll($force)
+    public function testBuildForAll($force, $priceListByAccountGroup)
     {
         $website = new Website();
         $accountGroup = new AccountGroup();
-
+        $this->priceListToEntityRepository
+            ->expects($this->any())
+            ->method('findOneBy')
+            ->willReturn($priceListByAccountGroup);
         $this->priceListToEntityRepository->expects($this->once())
             ->method('getAccountGroupIteratorByFallback')
             ->with($website, PriceListAccountGroupFallback::WEBSITE)
@@ -68,26 +74,65 @@ class AccountGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLis
         $this->garbageCollector->expects($this->never())
             ->method($this->anything());
 
-        $this->assertRebuild($force, $website, $accountGroup);
+        if (!$priceListByAccountGroup) {
+            $this->combinedPriceListToEntityRepository
+                ->expects($this->once())
+                ->method('delete')
+                ->with($accountGroup, $website);
+        } else {
+            $this->combinedPriceListToEntityRepository
+                ->expects($this->never())
+                ->method('delete');
+
+            $this->assertRebuild($force, $website, $accountGroup);
+        }
 
         $this->builder->build($website, null, $force);
     }
 
     /**
-     * @dataProvider trueFalseDataProvider
-     * @param bool $force
+     * @return array
      */
-    public function testBuildForAccountGroup($force)
+    public function testBuildDataProvider()
+    {
+        return [
+            ['force' => true, 'priceListByAccountGroup' => null],
+            ['force' => false, 'priceListByAccountGroup' => null],
+            ['force' => true, 'priceListByAccountGroup' => new PriceListToAccountGroup()],
+            ['force' => false, 'priceListByAccountGroup' => new PriceListToAccountGroup()]
+        ];
+    }
+
+    /**
+     * @dataProvider testBuildDataProvider
+     * @param boolean $force
+     * @param PriceListToAccountGroup $priceListByAccountGroup
+     */
+    public function testBuildForAccountGroup($force, $priceListByAccountGroup)
     {
         $website = new Website();
         $accountGroup = new AccountGroup();
-
+        $this->priceListToEntityRepository
+            ->expects($this->any())
+            ->method('findOneBy')
+            ->willReturn($priceListByAccountGroup);
         $this->priceListToEntityRepository->expects($this->never())
             ->method('getAccountGroupIteratorByFallback');
         $this->garbageCollector->expects($this->once())
             ->method('cleanCombinedPriceLists');
 
-        $this->assertRebuild($force, $website, $accountGroup);
+        if (!$priceListByAccountGroup) {
+            $this->combinedPriceListToEntityRepository
+                ->expects($this->once())
+                ->method('delete')
+                ->with($accountGroup, $website);
+        } else {
+            $this->combinedPriceListToEntityRepository
+                ->expects($this->never())
+                ->method('delete');
+
+            $this->assertRebuild($force, $website, $accountGroup);
+        }
 
         $this->builder->build($website, $accountGroup, $force);
     }
