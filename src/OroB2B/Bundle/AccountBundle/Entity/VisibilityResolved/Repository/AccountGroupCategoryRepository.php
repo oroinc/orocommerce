@@ -210,31 +210,6 @@ class AccountGroupCategoryRepository extends EntityRepository
         $qb = $this->getEntityManager()->createQueryBuilder();
 
         $configFallback = AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
-//        $qb->select(
-//            'IDENTITY(agcvr.accountGroup) as accountGroupId',
-//            'COALESCE(agcvr.visibility, cvr.visibility, '. $qb->expr()->literal($configFallback).') as visibility'
-//        )
-//        ->from('OroB2BCatalogBundle:Category', 'category')
-//        ->leftJoin(
-//            'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
-//            'cvr',
-//            Join::WITH,
-//            $qb->expr()->eq('cvr.category', 'category')
-//        )
-//        ->leftJoin(
-//            'OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
-//            'agcvr',
-//            Join::WITH,
-//            $qb->expr()->andX(
-//                $qb->expr()->eq('agcvr.category', 'category'),
-//                $qb->expr()->in('agcvr.accountGroup', ':accountGroups')
-//            )
-//        )
-//        ->where($qb->expr()->eq('category', ':category'))
-//        ->setParameters([
-//            'category' => $category,
-//            'accountGroups' => $accountGroups
-//        ]);
 
         $qb->select(
             'accountGroup.id as accountGroupId',
