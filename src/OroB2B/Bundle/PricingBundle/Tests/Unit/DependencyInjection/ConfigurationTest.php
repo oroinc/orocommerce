@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\DependencyInjection;
 
+use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
 use Symfony\Component\Config\Definition\Processor;
 
 use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
@@ -48,5 +49,13 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this->assertEquals($expected, $processor->processConfiguration($configuration, []));
+    }
+    public function testGetConfigKeyByName()
+    {
+        $configKey = Configuration::getConfigKeyToPriceList();
+        $this->assertSame(
+            OroB2BPricingExtension::ALIAS . '.' .Configuration::COMBINED_PRICE_LIST,
+            $configKey
+        );
     }
 }
