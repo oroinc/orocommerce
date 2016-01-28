@@ -87,6 +87,16 @@ class QuickAddHandler
         }
 
         $processor = $this->getProcessor($this->getComponentName($request));
+
+        $options = [];
+        $options['products'] = $this->getProducts($request);
+        if ($processor) {
+            $options['validation_required'] = $processor->isValidationRequired();
+        }
+
+        $form = $this->quickAddFormProvider->getForm($options);
+        $form->submit($request);
+
         if (!$processor || !$processor->isAllowed()) {
             /** @var Session $session */
             $session = $request->getSession();
@@ -94,24 +104,15 @@ class QuickAddHandler
                 'error',
                 $this->translator->trans('orob2b.product.frontend.component_not_accessible.message')
             );
-        } else {
-            $options = [];
-            $options['products'] = $this->getProducts($request);
-            $options['validation_required'] = $processor->isValidationRequired();
-
-            $form = $this->quickAddFormProvider->getForm($options);
-            $form->submit($request);
-
-            if ($form->isValid()) {
-                $products = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
-                $products = is_array($products) ? $products : [];
-                $response = $processor->process(
-                    [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products],
-                    $request
-                );
-                if (!$response) {
-                    $response = new RedirectResponse($this->router->generate($successDefaultRoute));
-                }
+        } elseif ($form->isValid()) {
+            $products = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
+            $products = is_array($products) ? $products : [];
+            $response = $processor->process(
+                [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products],
+                $request
+            );
+            if (!$response) {
+                $response = new RedirectResponse($this->router->generate($successDefaultRoute));
             }
         }
 
