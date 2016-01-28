@@ -131,6 +131,9 @@ class BaseProductPrice implements ProductUnitHolderInterface, ProductHolderInter
     protected $currency;
 
     /**
+     * Changes to this value object wont affect entity change set
+     * To change persisted price value you should create and set new Price
+     *
      * @var Price
      */
     protected $price;
