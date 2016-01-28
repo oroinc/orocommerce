@@ -20,11 +20,12 @@ class RegionMatcher extends AbstractMatcher
         $region = $address->getRegion();
         $regionText = $address->getRegionText();
 
+        $countryTaxRules = $this->countryMatcher->match($address);
+
         if (null === $country || (null === $region && empty($regionText))) {
-            return [];
+            return $countryTaxRules;
         }
 
-        $countryTaxRules = $this->countryMatcher->match($address);
         $regionTaxRules = $this->getTaxRuleRepository()->findByCountryAndRegion(
             $country,
             $region,

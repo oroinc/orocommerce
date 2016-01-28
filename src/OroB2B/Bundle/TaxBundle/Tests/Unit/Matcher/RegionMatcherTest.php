@@ -6,6 +6,7 @@ use Oro\Bundle\AddressBundle\Entity\Address;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 
+use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 use OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher;
 use OroB2B\Bundle\TaxBundle\Matcher\RegionMatcher;
 
@@ -40,17 +41,16 @@ class RegionMatcherTest extends AbstractMatcherTest
      * @param Country $country
      * @param Region $region
      * @param string $regionText
+     * @param TaxRule[] $countryMatcherTaxRules
+     * @param TaxRule[] $regionTaxRules
+     * @param TaxRule[] $expected
      */
-    public function testMatch($country, $region, $regionText)
+    public function testMatch($country, $region, $regionText, $countryMatcherTaxRules, $regionTaxRules, $expected)
     {
         $address = (new Address())
             ->setCountry($country)
             ->setRegion($region)
             ->setRegionText($regionText);
-
-        $countryMatcherTaxRules = [
-            $this->getTaxRule(1)
-        ];
 
         $this->countryMatcher
             ->expects($this->once())
@@ -58,18 +58,13 @@ class RegionMatcherTest extends AbstractMatcherTest
             ->with($address)
             ->willReturn($countryMatcherTaxRules);
 
-        $regionTaxRules = [
-            $this->getTaxRule(1),
-            $this->getTaxRule(2)
-        ];
-
         $this->taxRuleRepository
-            ->expects($this->once())
+            ->expects(empty($regionTaxRules) ? $this->never() : $this->once())
             ->method('findByCountryAndRegion')
-            ->with($address->getCountry(), $address->getRegion(), $address->getRegionText())
+            ->with($country, $region, $regionText)
             ->willReturn($regionTaxRules);
 
-        $this->assertEquals($regionTaxRules, $this->matcher->match($address));
+        $this->assertEquals($expected, $this->matcher->match($address));
     }
 
     /**
@@ -80,59 +75,48 @@ class RegionMatcherTest extends AbstractMatcherTest
         $country = new Country('US');
         $region = new Region('US-AL');
         $regionText = 'Alaska';
+
+        $countryMatcherTaxRules = [
+            $this->getTaxRule(1),
+        ];
+
+        $regionTaxRules = [
+            $this->getTaxRule(1),
+            $this->getTaxRule(2),
+        ];
+
         return [
-            [
+            'with country and region' => [
                 'country' => $country,
                 'region' => $region,
                 'regionText' => '',
+                'countryMatcherTaxRules' => $countryMatcherTaxRules,
+                'regionTaxRules' => $regionTaxRules,
+                'expected' => $regionTaxRules,
             ],
-            [
+            'with country and regionText' => [
                 'country' => $country,
                 'region' => null,
                 'regionText' => $regionText,
+                'countryMatcherTaxRules' => $countryMatcherTaxRules,
+                'regionTaxRules' => $regionTaxRules,
+                'expected' => $regionTaxRules,
             ],
-        ];
-    }
-
-    /**
-     * @dataProvider matchWithoutNeededDataProvider
-     * @param Country $country
-     * @param Region $region
-     * @param string $regionText
-     */
-    public function testMatchWithoutNeededData($country, $region, $regionText)
-    {
-        $address = (new Address())
-            ->setCountry($country)
-            ->setRegion($region)
-            ->setRegionText($regionText);
-
-        $this->countryMatcher
-            ->expects($this->never())
-            ->method('match');
-
-        $this->assertEquals([], $this->matcher->match($address));
-    }
-
-    /**
-     * @return array
-     */
-    public function matchWithoutNeededDataProvider()
-    {
-        $country = new Country('US');
-        $region = new Region('US-AL');
-        $regionText = 'Alaska';
-
-        return [
-            'Without country' => [
+            'without country' => [
                 'country' => null,
                 'region' => $region,
-                'regionText' => $regionText
+                'regionText' => $regionText,
+                'countryMatcherTaxRules' => $countryMatcherTaxRules,
+                'regionTaxRules' => [],
+                'expected' => $countryMatcherTaxRules,
             ],
-            'Without region and region text' => [
+            'without region and region text' => [
                 'country' => $country,
                 'region' => null,
-                'regionText' => ''
+                'regionText' => '',
+                'countryMatcherTaxRules' => $countryMatcherTaxRules,
+                'regionTaxRules' => [],
+                'expected' => $countryMatcherTaxRules,
             ],
         ];
     }

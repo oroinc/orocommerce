@@ -29,7 +29,7 @@ class CountryMatcherTest extends AbstractMatcherTest
             ->setCountry($country);
 
         $this->taxRuleRepository
-            ->expects(empty($expected) ? $this->never() : $this->once())
+            ->expects(empty($taxRules) ? $this->never() : $this->once())
             ->method('findByCountry')
             ->with($country)
             ->willReturn($taxRules);
@@ -56,7 +56,7 @@ class CountryMatcherTest extends AbstractMatcherTest
             'address without country' => [
                 'expected' => [],
                 'country' => null,
-                'taxRules' => $taxRules
+                'taxRules' => []
             ]
         ];
     }
