@@ -27,14 +27,12 @@ class RoundingResolverTest extends \PHPUnit_Framework_TestCase
         $taxable->setResult(
             new Result(
                 [
-                    [
                         Result::TOTAL => ResultElement::create('24.1879', '19.9912'),
                         Result::TAXES => [
                             TaxResultElement::create('1', '0.08', '19.99', '1.5992'),
                             TaxResultElement::create('2', '0.07', '19.99', '1.3993'),
                             TaxResultElement::create('3', '0.06', '19.99', '1.1994'),
                         ],
-                    ],
                 ]
             )
         );
@@ -42,7 +40,6 @@ class RoundingResolverTest extends \PHPUnit_Framework_TestCase
         $itemTaxable->setResult(
             new Result(
                 [
-                    [
                         Result::UNIT => ResultElement::create('24.1879', '19.9912', '5.1312', '0.0000001'),
                         Result::ROW => ResultElement::create('24.1879', '19.8912', '5.5356', '00001'),
                         Result::TAXES => [
@@ -50,7 +47,6 @@ class RoundingResolverTest extends \PHPUnit_Framework_TestCase
                             TaxResultElement::create('2', '0.07', '19.99', '1.3813'),
                             TaxResultElement::create('3', '0.06', '19.99', '1.1814'),
                         ],
-                    ],
                 ]
             )
         );
@@ -61,14 +57,12 @@ class RoundingResolverTest extends \PHPUnit_Framework_TestCase
         $this->compareResult(
             new Result(
                 [
-                    [
                         Result::TOTAL => ResultElement::create('24.19', '20'),
                         Result::TAXES => [
                             TaxResultElement::create('1', '0.08', '19.99', '1.6'),
                             TaxResultElement::create('2', '0.07', '19.99', '1.4'),
                             TaxResultElement::create('3', '0.06', '19.99', '1.2'),
                         ],
-                    ],
                 ]
             ),
             $taxable->getResult()
@@ -77,7 +71,6 @@ class RoundingResolverTest extends \PHPUnit_Framework_TestCase
         $this->compareResult(
             new Result(
                 [
-                    [
                         Result::UNIT => ResultElement::create('24.19', '20', '5.14', '0.01'),
                         Result::ROW => ResultElement::create('24.19', '19.9', '5.54', '001'),
                         Result::TAXES => [
@@ -85,7 +78,6 @@ class RoundingResolverTest extends \PHPUnit_Framework_TestCase
                             TaxResultElement::create('2', '0.07', '19.99', '1.39'),
                             TaxResultElement::create('3', '0.06', '19.99', '1.19'),
                         ],
-                    ],
                 ]
             ),
             $itemTaxable->getResult()

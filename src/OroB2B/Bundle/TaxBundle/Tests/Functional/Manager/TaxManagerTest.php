@@ -2,10 +2,10 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Manager;
 
-use Doctrine\ORM\EntityRepository;
 use Gedmo\Tool\Logging\DBAL\QueryAnalyzer;
 
-use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadOrderItems;
+use Doctrine\ORM\EntityRepository;
+
 use Symfony\Component\Yaml\Yaml;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -14,6 +14,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\TaxBundle\Tests\ResultComparatorTrait;
+use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadOrderItems;
 
 /**
  * @dbIsolation

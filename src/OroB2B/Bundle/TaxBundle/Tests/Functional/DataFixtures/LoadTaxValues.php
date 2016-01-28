@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures;
 
 use Brick\Math\BigDecimal;
+
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
