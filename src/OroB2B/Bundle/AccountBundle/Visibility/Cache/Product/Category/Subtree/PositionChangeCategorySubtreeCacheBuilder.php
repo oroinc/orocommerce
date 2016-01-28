@@ -68,12 +68,10 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
 
         $accountGroupIdsWithInverseVisibility = [];
 
-        foreach ($accountGroupIdsWithFallbackToParent as $accountGroupId) {
-            $accountGroupEm = $this->registry->getManagerForClass('OroB2BAccountBundle:AccountGroup');
-            $accountGroup = $accountGroupEm->getReference('OroB2BAccountBundle:AccountGroup', $accountGroupId);
-            $accountGroupVisibility = $this->convertVisibility(
-                $this->categoryVisibilityResolver->isCategoryVisibleForAccountGroup($category, $accountGroup)
-            );
+        $accountGroupsVisibilities = $this->categoryVisibilityResolver
+            ->getCategoryVisibilitiesForAccountGroups($category, $accountGroupIdsWithFallbackToParent);
+
+        foreach ($accountGroupsVisibilities as $accountGroupId => $accountGroupVisibility) {
             if ($accountGroupVisibility === $visibility) {
                 $accountGroupIdsForUpdate[] = $accountGroupId;
             } else {
@@ -97,26 +95,25 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
      */
     protected function updateAccountsAppropriateVisibility(Category $category, $visibility)
     {
-        $accountForUpdate = $this->getAccountIdsFirstLevel($category);
+        $accountIdsForUpdate = $this->getAccountIdsFirstLevel($category);
         $accountIdsWithFallbackToParent = $this->getAccountIdsWithFallbackToParent($category);
 
         $accountIdsWithInverseVisibility = [];
-        foreach ($accountIdsWithFallbackToParent as $accountId) {
-            $accountEm = $this->registry->getManagerForClass('OroB2BAccountBundle:Account');
-            $account = $accountEm->getReference('OroB2BAccountBundle:Account', $accountId);
-            $accountVisibility = $this->convertVisibility(
-                $this->categoryVisibilityResolver->isCategoryVisibleForAccount($category, $account)
-            );
+
+        $accountsVisibilities = $this->categoryVisibilityResolver
+            ->getCategoryVisibilitiesForAccounts($category, $accountIdsWithFallbackToParent);
+
+        foreach ($accountsVisibilities as $accountId => $accountVisibility) {
             if ($accountVisibility === $visibility) {
-                $accountForUpdate[] = $account;
+                $accountIdsForUpdate[] = $accountId;
             } else {
-                $accountIdsWithInverseVisibility[] = $account;
+                $accountIdsWithInverseVisibility[] = $accountId;
             }
         }
 
-        $this->updateAccountsProductVisibility($category, $accountForUpdate, $visibility);
+        $this->updateAccountsProductVisibility($category, $accountIdsForUpdate, $visibility);
 
-        $this->accountIdsWithChangedVisibility[$category->getId()] = $accountForUpdate;
+        $this->accountIdsWithChangedVisibility[$category->getId()] = $accountIdsForUpdate;
         $this->accountIdsWithInverseVisibility = $accountIdsWithInverseVisibility;
     }
 

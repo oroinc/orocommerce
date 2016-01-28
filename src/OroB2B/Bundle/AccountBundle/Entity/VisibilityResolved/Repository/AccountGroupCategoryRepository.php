@@ -40,6 +40,25 @@ class AccountGroupCategoryRepository extends EntityRepository
     }
 
     /**
+     * @param Category $category
+     * @param array $accountGroups
+     * @param $configValue
+     * @return array
+     */
+    public function getCategoryVisibilitiesForAccountGroups(Category $category, array $accountGroups, $configValue)
+    {
+        $visibilities = $this->getFallbackToGroupsVisibilities($category, $accountGroups);
+
+        foreach ($visibilities as $accountGroup => $visibility) {
+            if ($visibility === AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG) {
+                $visibilities[$accountGroup] = $configValue;
+            }
+        }
+
+        return $visibilities;
+    }
+
+    /**
      * @param int $visibility
      * @param AccountGroup $accountGroup
      * @param int $configValue
@@ -179,6 +198,76 @@ class AccountGroupCategoryRepository extends EntityRepository
             ]);
 
         return (int)$qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @param Category $category
+     * @param array $accountGroups
+     * @return array
+     */
+    public function getFallbackToGroupsVisibilities(Category $category, array $accountGroups)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $configFallback = AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
+//        $qb->select(
+//            'IDENTITY(agcvr.accountGroup) as accountGroupId',
+//            'COALESCE(agcvr.visibility, cvr.visibility, '. $qb->expr()->literal($configFallback).') as visibility'
+//        )
+//        ->from('OroB2BCatalogBundle:Category', 'category')
+//        ->leftJoin(
+//            'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+//            'cvr',
+//            Join::WITH,
+//            $qb->expr()->eq('cvr.category', 'category')
+//        )
+//        ->leftJoin(
+//            'OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
+//            'agcvr',
+//            Join::WITH,
+//            $qb->expr()->andX(
+//                $qb->expr()->eq('agcvr.category', 'category'),
+//                $qb->expr()->in('agcvr.accountGroup', ':accountGroups')
+//            )
+//        )
+//        ->where($qb->expr()->eq('category', ':category'))
+//        ->setParameters([
+//            'category' => $category,
+//            'accountGroups' => $accountGroups
+//        ]);
+
+        $qb->select(
+            'accountGroup.id as accountGroupId',
+            'COALESCE(agcvr.visibility, cvr.visibility, '. $qb->expr()->literal($configFallback).') as visibility'
+        )
+        ->from('OroB2BAccountBundle:AccountGroup', 'accountGroup')
+        ->leftJoin(
+            'OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
+            'agcvr',
+            Join::WITH,
+            $qb->expr()->andX(
+                $qb->expr()->eq('agcvr.category', ':category'),
+                $qb->expr()->eq('agcvr.accountGroup', 'accountGroup')
+            )
+        )
+        ->leftJoin(
+            'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+            'cvr',
+            Join::WITH,
+            $qb->expr()->eq('cvr.category', ':category')
+        )
+        ->where($qb->expr()->in('accountGroup.id', ':accountGroups'))
+        ->setParameters([
+            'category' => $category,
+            'accountGroups' => $accountGroups
+        ]);
+
+        $fallBackToGroupVisibilities = [];
+        foreach ($qb->getQuery()->getArrayResult() as $resultItem) {
+            $fallBackToGroupVisibilities[(int)$resultItem['accountGroupId']] = (int)$resultItem['visibility'];
+        }
+
+        return $fallBackToGroupVisibilities;
     }
 
     /**

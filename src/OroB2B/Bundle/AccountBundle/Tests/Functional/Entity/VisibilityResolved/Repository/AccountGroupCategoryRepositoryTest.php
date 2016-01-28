@@ -6,6 +6,7 @@ use Oro\Component\Testing\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository;
@@ -25,6 +26,87 @@ class AccountGroupCategoryRepositoryTest extends WebTestCase
         $this->loadFixtures(['OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData']);
         // TODO: remove cache generation in scope of BB-1803
         $this->getContainer()->get('orob2b_account.visibility.cache.product.category.cache_builder')->buildCache();
+    }
+
+    /**
+     * @dataProvider getCategoryVisibilitiesForAccountGroupsDataProvider
+     * @param string $categoryName
+     * @param array $accountGroups
+     * @param int $configValue
+     * @param array $visibilities
+     */
+    public function testGetCategoryVisibilitiesForAccountGroups(
+        $categoryName,
+        $accountGroups,
+        $configValue,
+        $visibilities
+    ) {
+        /** @var Category $category */
+        $category = $this->getReference($categoryName);
+
+        $accountGroups = array_map(
+            function ($accountGroupName) {
+                return $this->getReference($accountGroupName);
+            },
+            $accountGroups
+        );
+
+        $actualVisibility = $this->getRepository()
+            ->getCategoryVisibilitiesForAccountGroups($category, $accountGroups, $configValue);
+
+        $expectedVisibilities = [];
+        foreach ($visibilities as $account => $expectedVisibility) {
+            /** @var AccountGroup $account */
+            $accountGroup = $this->getReference($account);
+            $expectedVisibilities[$accountGroup->getId()] = $expectedVisibility;
+        }
+
+        $this->assertEquals($expectedVisibilities, $actualVisibility);
+    }
+
+    /**
+     * @return array
+     */
+    public function getCategoryVisibilitiesForAccountGroupsDataProvider()
+    {
+        return [
+            [
+                'categoryName' => 'category_1',
+                'accounts' => [
+                    'account_group.group1',
+                    'account_group.group3',
+                ],
+                'configValue' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                'visibilities' => [
+                    'account_group.group1' => AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                    'account_group.group3' => AccountGroupCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                ],
+            ],
+            [
+                'categoryName' => 'category_1_2',
+                'accounts' => [
+                    'account_group.group1',
+                    'account_group.group3',
+                ],
+                'configValue' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                'visibilities' => [
+                    'account_group.group1' => AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                    'account_group.group3' => AccountGroupCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                ],
+            ],
+            [
+                'categoryName' => 'category_1_2_3',
+                'accounts' => [
+                    'account_group.group1',
+                    'account_group.group3',
+                ],
+                'configValue' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                'visibilities' => [
+                    'account_group.group1' => AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                    'account_group.group3' => AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                ],
+            ],
+        ];
     }
 
     /**

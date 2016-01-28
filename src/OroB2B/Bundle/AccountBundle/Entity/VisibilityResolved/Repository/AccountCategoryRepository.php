@@ -79,6 +79,66 @@ class AccountCategoryRepository extends EntityRepository
 
     /**
      * @param Category $category
+     * @param Account[] $accounts
+     * @return array
+     */
+    protected function getFallbackToAccountsVisibilities(Category $category, array $accounts)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $configFallback = BaseCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
+
+        $qb->select(
+            'account.id as accountId',
+            'COALESCE(' .
+            'acvr.visibility, agcvr.visibility, cvr.visibility, ' . $qb->expr()->literal($configFallback) .
+            ') as visibility'
+        )
+        ->from('OroB2BAccountBundle:Account', 'account')
+        ->leftJoin(
+            'OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved',
+            'acvr',
+            Join::WITH,
+            $qb->expr()->andX(
+                $qb->expr()->eq('acvr.category', ':category'),
+                $qb->expr()->eq('acvr.account', 'account')
+            )
+        )
+        ->leftJoin(
+            'OroB2BAccountBundle:AccountGroup',
+            'accountGroup',
+            Join::WITH,
+            $qb->expr()->eq('account.group', 'accountGroup')
+        )
+        ->leftJoin(
+            'OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
+            'agcvr',
+            Join::WITH,
+            $qb->expr()->andX(
+                $qb->expr()->eq('agcvr.category', ':category'),
+                $qb->expr()->eq('agcvr.accountGroup', 'accountGroup')
+            )
+        )
+        ->leftJoin(
+            'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+            'cvr',
+            Join::WITH,
+            $qb->expr()->eq('cvr.category', ':category')
+        )
+        ->where($qb->expr()->in('account', ':accounts'))
+        ->setParameter('category', $category)
+        ->setParameter('accounts', $accounts);
+
+        $fallBackToAccountVisibilities = [];
+        foreach ($qb->getQuery()->getArrayResult() as $resultItem) {
+            $fallBackToAccountVisibilities[(int)$resultItem['accountId']] = (int)$resultItem['visibility'];
+        }
+
+        return $fallBackToAccountVisibilities;
+    }
+
+    /**
+     * @param Category $category
      * @param Account $account
      * @param int $configValue
      * @return bool
@@ -91,6 +151,25 @@ class AccountCategoryRepository extends EntityRepository
         }
 
         return $visibility === AccountCategoryVisibilityResolved::VISIBILITY_VISIBLE;
+    }
+
+    /**
+     * @param Category $category
+     * @param Account[] $accounts
+     * @param $configValue
+     * @return int
+     */
+    public function getCategoryVisibilitiesForAccounts(Category $category, array $accounts, $configValue)
+    {
+        $visibilities = $this->getFallbackToAccountsVisibilities($category, $accounts);
+
+        foreach ($visibilities as $accountGroup => $visibility) {
+            if ($visibility === AccountCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG) {
+                $visibilities[$accountGroup] = $configValue;
+            }
+        }
+
+        return $visibilities;
     }
 
     /**

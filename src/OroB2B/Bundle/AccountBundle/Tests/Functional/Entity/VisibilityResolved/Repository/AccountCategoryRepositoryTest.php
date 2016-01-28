@@ -25,6 +25,91 @@ class AccountCategoryRepositoryTest extends WebTestCase
     }
 
     /**
+     * @dataProvider getCategoryVisibilitiesForAccountsDataProvider
+     * @param string $categoryName
+     * @param array $accounts
+     * @param int $configValue
+     * @param array $visibilities
+     */
+    public function testGetCategoryVisibilitiesForAccounts(
+        $categoryName,
+        array $accounts,
+        $configValue,
+        array $visibilities
+    ) {
+        /** @var Category $category */
+        $category = $this->getReference($categoryName);
+
+        $accounts = array_map(
+            function ($accountName) {
+                return $this->getReference($accountName);
+            },
+            $accounts
+        );
+
+        $actualVisibility = $this->getRepository()
+            ->getCategoryVisibilitiesForAccounts($category, $accounts, $configValue);
+
+        $expectedVisibilities = [];
+        foreach ($visibilities as $account => $expectedVisibility) {
+            /** @var Account $account */
+            $account = $this->getReference($account);
+            $expectedVisibilities[$account->getId()] = $expectedVisibility;
+        }
+
+        $this->assertEquals($expectedVisibilities, $actualVisibility);
+    }
+
+    /**
+     * @return array
+     */
+    public function getCategoryVisibilitiesForAccountsDataProvider()
+    {
+        return [
+            [
+                'categoryName' => 'category_1',
+                'accounts' => [
+                    'account.level_1',
+                    'account.level_1.1',
+                    'account.level_1.2',
+                ],
+                'configValue' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                'visibilities' => [
+                    'account.level_1' => AccountCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                    'account.level_1.1' => AccountCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                    'account.level_1.2' => AccountCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                ],
+            ],
+            [
+                'categoryName' => 'category_1_2',
+                'accounts' => [
+                    'account.level_1',
+                    'account.level_1.1',
+                ],
+                'configValue' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                'visibilities' => [
+                    'account.level_1' => AccountCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                    'account.level_1.1' => AccountCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                ],
+            ],
+            [
+                'categoryName' => 'category_1_2_3',
+                'accounts' => [
+                    'account.level_1',
+                    'account.level_1.1',
+                    'account.level_1.2',
+                ],
+                'configValue' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                'visibilities' => [
+                    'account.level_1' => AccountCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                    'account.level_1.1' => AccountCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                    'account.level_1.2' => AccountCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                ],
+            ]
+        ];
+    }
+
+    /**
      * @dataProvider isCategoryVisibleDataProvider
      * @param string $categoryName
      * @param string $accountName
