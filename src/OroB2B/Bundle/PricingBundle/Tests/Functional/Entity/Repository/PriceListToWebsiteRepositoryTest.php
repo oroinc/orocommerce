@@ -18,10 +18,12 @@ class PriceListToWebsiteRepositoryTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->loadFixtures([
-            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
-            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings',
-        ]);
+        $this->loadFixtures(
+            [
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings',
+            ]
+        );
     }
 
     public function testFindByPrimaryKey()
@@ -119,5 +121,16 @@ class PriceListToWebsiteRepositoryTest extends WebTestCase
     protected function getRepository()
     {
         return $this->getContainer()->get('doctrine')->getRepository('OroB2BPricingBundle:PriceListToWebsite');
+    }
+
+    public function testDelete()
+    {
+        /** @var Website $website */
+        $website = $this->getReference('US');
+        $this->assertCount(3, $this->getRepository()->findAll());
+        $this->assertCount(2, $this->getRepository()->findBy(['website' => $website]));
+        $this->getRepository()->delete($website);
+        $this->assertCount(1, $this->getRepository()->findAll());
+        $this->assertCount(0, $this->getRepository()->findBy(['website' => $website]));
     }
 }
