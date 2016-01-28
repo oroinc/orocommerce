@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\CatalogBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Form;
-use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -12,7 +11,6 @@ use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
-use Oro\Bundle\AttachmentBundle\Entity\File;
 
 /**
  * @dbIsolation
@@ -143,7 +141,8 @@ class CategoryControllerTest extends WebTestCase
             $longDescription,
             $newTitle,
             $newShortDescription,
-            $newLongDescription
+            $newLongDescription,
+            'visible'
         );
     }
 
@@ -175,7 +174,8 @@ class CategoryControllerTest extends WebTestCase
             $longDescription,
             $newTitle,
             $newShortDescription,
-            $newLongDescription
+            $newLongDescription,
+            'hidden'
         );
     }
 
@@ -293,8 +293,10 @@ class CategoryControllerTest extends WebTestCase
      * @param string $newTitle
      * @param string $newShortDescription
      * @param string $newLongDescription
+     * @param string $categoryVisibilityToAll
      *
      * @return int
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function assertEdit(
         $id,
@@ -303,7 +305,8 @@ class CategoryControllerTest extends WebTestCase
         $longDescription,
         $newTitle,
         $newShortDescription,
-        $newLongDescription
+        $newLongDescription,
+        $categoryVisibilityToAll
     ) {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_catalog_category_update', ['id' => $id]));
         $form = $crawler->selectButton('Save and Close')->form();
@@ -338,6 +341,8 @@ class CategoryControllerTest extends WebTestCase
         $parameters['orob2b_catalog_category']['shortDescriptions']['values']['default'] = $newShortDescription;
         $parameters['orob2b_catalog_category']['longDescriptions']['values']['default'] = $newLongDescription;
         $parameters['orob2b_catalog_category']['largeImage']['emptyFile'] = true;
+
+        $parameters['orob2b_catalog_category']['visibility']['all'] = $categoryVisibilityToAll;
 
         foreach ($this->locales as $locale) {
             $parameters['orob2b_catalog_category']['titles']['values']['locales'][$locale->getId()]['value']
