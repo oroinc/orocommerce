@@ -2,12 +2,12 @@
 
 namespace OroB2B\Bundle\PricingBundle\DependencyInjection;
 
-use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 
+use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
 use OroB2B\Bundle\PricingBundle\Rounding\PriceRoundingService;
 
 class Configuration implements ConfigurationInterface
@@ -52,12 +52,19 @@ class Configuration implements ConfigurationInterface
     public static function getConfigKeyToPriceList()
     {
         if (!self::$configKeyToPriceList) {
-            self::$configKeyToPriceList = implode(
-                '.',
-                [OroB2BPricingExtension::ALIAS, Configuration::COMBINED_PRICE_LIST]
-            );
+            self::$configKeyToPriceList = self::getConfigKeyByName(Configuration::COMBINED_PRICE_LIST);
         }
 
         return self::$configKeyToPriceList;
+    }
+
+
+    /**
+     * @param string $key
+     * @return string
+     */
+    public static function getConfigKeyByName($key)
+    {
+        return implode('.', [OroB2BPricingExtension::ALIAS, $key]);
     }
 }
