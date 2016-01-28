@@ -81,7 +81,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
             $visibility = $this->getParentCategoryVisibility($category);
             $update = [
                 'visibility' => $visibility,
-                'sourceCategoryVisibility' => $visibilitySettings,
+                'sourceCategoryVisibility' => null,
                 'source' => CategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
             ];
         } else {
