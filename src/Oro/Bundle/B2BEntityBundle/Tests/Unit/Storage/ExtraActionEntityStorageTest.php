@@ -60,6 +60,31 @@ class ExtraActionEntityStorageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider invalidTypeDataProvider
+     * @param mixed $type
+     * @param string $message
+     */
+    public function testInvalidType($type, $message)
+    {
+        $this->setExpectedException('\InvalidArgumentException', $message);
+
+        $this->storage->scheduleForExtraInsert($type);
+    }
+
+    /**
+     * @return array
+     */
+    public function invalidTypeDataProvider()
+    {
+        return [
+            [[], 'Expected type is object, array given'],
+            ['string', 'Expected type is object, string given'],
+            [null, 'Expected type is object, NULL given'],
+            [1, 'Expected type is object, integer given'],
+        ];
+    }
+
+    /**
      * @return ObjectIdentifierAware
      */
     protected function createTestObject()

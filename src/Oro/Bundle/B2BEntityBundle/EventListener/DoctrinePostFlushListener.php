@@ -3,7 +3,6 @@
 namespace Oro\Bundle\B2BEntityBundle\EventListener;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
@@ -27,7 +26,7 @@ class DoctrinePostFlushListener implements OptionalListenerInterface
     protected $storage;
 
     /**
-     * @var \SplObjectStorage|EntityManager[]
+     * @var \SplObjectStorage|ObjectManager[]
      */
     protected $managers;
 

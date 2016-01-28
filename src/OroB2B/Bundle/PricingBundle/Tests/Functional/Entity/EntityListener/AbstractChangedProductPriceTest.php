@@ -8,7 +8,6 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Component\Testing\WebTestCase;
 
-use OroB2B\Bundle\PricingBundle\Entity\ChangedProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ChangedProductPriceRepository;

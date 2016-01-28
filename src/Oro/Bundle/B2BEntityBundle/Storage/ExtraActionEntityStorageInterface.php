@@ -5,10 +5,10 @@ namespace Oro\Bundle\B2BEntityBundle\Storage;
 interface ExtraActionEntityStorageInterface
 {
     /**
-     * @param ObjectIdentifierAwareInterface $entity
+     * @param ObjectIdentifierAwareInterface|object $entity
      * @return void
      */
-    public function scheduleForExtraInsert(ObjectIdentifierAwareInterface $entity);
+    public function scheduleForExtraInsert($entity);
 
     /**
      * @return bool
@@ -26,8 +26,8 @@ interface ExtraActionEntityStorageInterface
     public function getScheduledForInsert();
 
     /**
-     * @param ObjectIdentifierAwareInterface $entity
+     * @param  ObjectIdentifierAwareInterface|object $entity
      * @return bool
      */
-    public function isScheduledForInsert(ObjectIdentifierAwareInterface $entity);
+    public function isScheduledForInsert($entity);
 }

@@ -5,16 +5,16 @@ namespace Oro\Bundle\B2BEntityBundle\Storage;
 class ExtraActionEntityStorage implements ExtraActionEntityStorageInterface
 {
     /**
-     * @var ObjectIdentifierAwareInterface[]
+     * @var ObjectIdentifierAwareInterface|object[]
      */
     protected $entities = [];
 
     /**
      * {@inheritdoc}
      */
-    public function scheduleForExtraInsert(ObjectIdentifierAwareInterface $entity)
+    public function scheduleForExtraInsert($entity)
     {
-        $this->entities[$entity->getObjectIdentifier()] = $entity;
+        $this->entities[$this->getObjectIdentifier($entity)] = $entity;
     }
 
     /**
@@ -44,8 +44,25 @@ class ExtraActionEntityStorage implements ExtraActionEntityStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function isScheduledForInsert(ObjectIdentifierAwareInterface $entity)
+    public function isScheduledForInsert($entity)
     {
-        return array_key_exists($entity->getObjectIdentifier(), $this->entities);
+        return array_key_exists($this->getObjectIdentifier($entity), $this->entities);
+    }
+
+    /**
+     * @param ObjectIdentifierAwareInterface|object $entity
+     * @return string
+     */
+    protected function getObjectIdentifier($entity)
+    {
+        if (!is_object($entity)) {
+            throw new \InvalidArgumentException(sprintf('Expected type is object, %s given', gettype($entity)));
+        }
+
+        if ($entity instanceof ObjectIdentifierAwareInterface) {
+            return $entity->getObjectIdentifier();
+        }
+
+        return spl_object_hash($entity);
     }
 }

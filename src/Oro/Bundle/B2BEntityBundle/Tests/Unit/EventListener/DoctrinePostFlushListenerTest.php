@@ -9,8 +9,8 @@ use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\B2BEntityBundle\EventListener\DoctrinePostFlushListener;
 use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorage;
 use Oro\Bundle\B2BEntityBundle\Tests\Stub\ObjectIdentifierAware;
-use Oro\Bundle\B2BEntityBundle\Tests\Stub\ObjectIdentifierAware2;
-use Oro\Bundle\B2BEntityBundle\Tests\Stub\ObjectIdentifierAware3;
+use Oro\Bundle\B2BEntityBundle\Tests\Stub\Entity1;
+use Oro\Bundle\B2BEntityBundle\Tests\Stub\Entity2;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 class DoctrinePostFlushListenerTest extends \PHPUnit_Framework_TestCase
@@ -19,10 +19,10 @@ class DoctrinePostFlushListenerTest extends \PHPUnit_Framework_TestCase
     {
         $registry = $this->getRegistryMock();
 
-        $testEntity1 = new ObjectIdentifierAware2();
-        $testEntity2 = new ObjectIdentifierAware2();
+        $testEntity1 = new Entity1();
+        $testEntity2 = new Entity1();
         $testEntity3 = new ObjectIdentifierAware(2, 2);
-        $testEntity4 = new ObjectIdentifierAware3();
+        $testEntity4 = new Entity2();
 
         $storage = $this->getStorage();
         $storage->scheduleForExtraInsert($testEntity1);
@@ -79,7 +79,7 @@ class DoctrinePostFlushListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testPostFlushDisabled()
     {
-        $testEntity = new ObjectIdentifierAware2();
+        $testEntity = new Entity1();
         $storage = $this->getStorage();
         $storage->scheduleForExtraInsert($testEntity);
 
