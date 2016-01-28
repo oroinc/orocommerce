@@ -55,6 +55,15 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
      */
     protected function updatePriceListsOnCurrentLevel(Website $website, $force)
     {
+        $priceListsToWebsite = $this->getPriceListToEntityRepository()
+            ->findOneBy(['website' => $website]);
+        if (!$priceListsToWebsite) {
+            /** @var PriceListToWebsiteRepository $repo */
+            $repo = $this->getCombinedPriceListToEntityRepository();
+            $repo->delete($website);
+
+            return;
+        }
         $collection = $this->priceListCollectionProvider->getPriceListsByWebsite($website);
         $actualCombinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection, $force);
 

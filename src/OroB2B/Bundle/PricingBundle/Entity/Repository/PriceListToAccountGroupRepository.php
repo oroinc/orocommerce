@@ -79,9 +79,26 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
                 $qb->expr()->eq('priceListFallBack.fallback', ':fallbackToWebsite')
             )
         )
-        ->setParameter('website', $website)
-        ->setParameter('fallbackToWebsite', $fallback);
+            ->setParameter('website', $website)
+            ->setParameter('fallbackToWebsite', $fallback);
 
         return new BufferedQueryResultIterator($qb->getQuery());
+    }
+
+    /**
+     * @param AccountGroup $accountGroup
+     * @param Website $website
+     * @return mixed
+     */
+    public function delete(AccountGroup $accountGroup, Website $website)
+    {
+        return $this->getEntityManager()->createQueryBuilder()
+            ->delete($this->getEntityName(), 'PriceListToAccountGroup')
+            ->where('PriceListToAccountGroup.accountGroup = :accountGroup')
+            ->andWhere('PriceListToAccountGroup.website = :website')
+            ->setParameter('accountGroup', $accountGroup)
+            ->setParameter('website', $website)
+            ->getQuery()
+            ->execute();
     }
 }

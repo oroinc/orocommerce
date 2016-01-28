@@ -3,6 +3,9 @@
 namespace OroB2B\Bundle\PricingBundle\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
+
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 
 use OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListCollection;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ChangedPriceListCollectionRepository;
@@ -12,26 +15,22 @@ class CombinedPriceListQueueConsumer
     const MODE_REAL_TIME = 'real_time';
     const MODE_SCHEDULED = 'scheduled';
 
-    /**
-     * @var ManagerRegistry
-     */
+    /** @var ObjectManager */
+    protected $manager;
+
+    /** @var ManagerRegistry */
     protected $registry;
 
-    /**
-     * @var CombinedPriceListsBuilder
-     */
+    /** @var CombinedPriceListsBuilder */
     protected $commonPriceListsBuilder;
-    /**
-     * @var WebsiteCombinedPriceListsBuilder
-     */
+
+    /** @var WebsiteCombinedPriceListsBuilder */
     protected $websitePriceListsBuilder;
-    /**
-     * @var AccountGroupCombinedPriceListsBuilder
-     */
+
+    /** @var AccountGroupCombinedPriceListsBuilder */
     protected $accountGroupPriceListsBuilder;
-    /**
-     * @var AccountCombinedPriceListsBuilder
-     */
+
+    /** @var AccountCombinedPriceListsBuilder */
     protected $accountPriceListsBuilder;
 
     /** @var  ChangedPriceListCollectionRepository */
@@ -56,24 +55,28 @@ class CombinedPriceListQueueConsumer
         $this->websitePriceListsBuilder = $websitePriceListsBuilder;
         $this->accountGroupPriceListsBuilder = $accountGroupPriceListsBuilder;
         $this->accountPriceListsBuilder = $accountPriceListsBuilder;
-        $this->queueRepository = $this->registry
-            ->getManagerForClass('OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListCollection')
-            ->getRepository('OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListCollection');
     }
 
     public function process()
     {
-        //TODO: delete duplicate jobs
         foreach ($this->getUniqueChangesIterator() as $changes) {
             $this->handleCollectionsJob($changes);
+            $this->manager->remove($changes);
         }
+        $this->manager->flush();
     }
 
+    /**
+     * @return BufferedQueryResultIterator|ChangedPriceListCollection[]
+     */
     protected function getUniqueChangesIterator()
     {
         return $this->queueRepository->getCollectionChangesIterator();
     }
 
+    /**
+     * @param ChangedPriceListCollection $changes
+     */
     protected function handleCollectionsJob(ChangedPriceListCollection $changes)
     {
         switch (true) {
@@ -89,5 +92,25 @@ class CombinedPriceListQueueConsumer
             default:
                 $this->commonPriceListsBuilder->build();
         }
+    }
+
+    protected function getManager()
+    {
+        if (!$this->manager) {
+            $this->manager = $this->registry
+                ->getManagerForClass('OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListCollection');
+        }
+
+        return $this->manager;
+    }
+
+    protected function getRepository()
+    {
+        if (!$this->queueRepository) {
+            $this->queueRepository = $this->getManager()
+                ->getRepository('OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListCollection');
+        }
+
+        return $this->queueRepository;
     }
 }

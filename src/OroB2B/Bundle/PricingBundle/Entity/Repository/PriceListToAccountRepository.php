@@ -87,4 +87,21 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
 
         return new BufferedQueryResultIterator($qb->getQuery());
     }
+
+    /**
+     * @param Account $account
+     * @param Website $website
+     * @return mixed
+     */
+    public function delete(Account $account, Website $website)
+    {
+        return $this->getEntityManager()->createQueryBuilder()
+            ->delete($this->getEntityName(), 'PriceListToAccount')
+            ->where('PriceListToAccount.account = :account')
+            ->andWhere('PriceListToAccount.website = :website')
+            ->setParameter('account', $account)
+            ->setParameter('website', $website)
+            ->getQuery()
+            ->execute();
+    }
 }
