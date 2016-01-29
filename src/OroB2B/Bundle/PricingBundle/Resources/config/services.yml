@@ -53,6 +53,7 @@ parameters:
     orob2b_pricing.event_listener.product_duplicate.class: OroB2B\Bundle\PricingBundle\EventListener\ProductDuplicateListener
     orob2b_pricing.event_listener.product_select_price_list_aware.class: OroB2B\Bundle\PricingBundle\EventListener\ProductSelectPriceListAwareListener
     orob2b_pricing.event_listener.price_list_collection.class: OroB2B\Bundle\PricingBundle\EventListener\PriceListCollectionListener
+    orob2b_pricing.event_listener.combined_price_list_queue.class: OroB2B\Bundle\PricingBundle\EventListener\CombinedPriceListQueueListener
     orob2b_pricing.event_subscriber.system_config.class: OroB2B\Bundle\PricingBundle\EventListener\PriceListSystemConfigSubscriber
 
     orob2b_pricing.model.price_list_request_handler.abstract.class: OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler
@@ -263,6 +264,15 @@ services:
             - @doctrine
         tags:
             - { name: kernel.event_listener, event: orob2b_pricing.price_list_collection.change_before, method: onChangeCollectionBefore }
+
+    orob2b_pricing.event_listener.combined_price_list_queue:
+        class: %orob2b_pricing.event_listener.combined_price_list_queue.class%
+        arguments:
+            - @orob2b_pricing.builder.queue_consumer
+            - @oro_config.global
+        tags:
+            - { name: kernel.event_listener, event: kernel.terminate, method: onTerminate }
+            - { name: kernel.event_listener, event: orob2b_pricing.price_list_collection.change_before, method: onQueueChanged }
 
     orob2b_pricing.event_listener.product_price_datagrid:
         class: %orob2b_pricing.event_listener.product_price_datagrid.class%

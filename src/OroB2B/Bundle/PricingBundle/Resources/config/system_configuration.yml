@@ -41,7 +41,7 @@ oro_system_configuration:
                 choice_translation_domain: messages
                 choices:
                     scheduled: orob2b.pricing.system_configuration.fields.price_lists_update_mode.choices.scheduled.label
-                    realtime: orob2b.pricing.system_configuration.fields.price_lists_update_mode.choices.realtime.label
+                    real_time: orob2b.pricing.system_configuration.fields.price_lists_update_mode.choices.real_time.label
 
     tree:
         system_configuration:
