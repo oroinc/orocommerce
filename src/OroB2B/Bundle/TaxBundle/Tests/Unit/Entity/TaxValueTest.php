@@ -18,6 +18,7 @@ class TaxValueTest extends \PHPUnit_Framework_TestCase
             ['result', new Result(['test' => 'value']), false],
             ['entityClass', 'OroB2B\Bundle\SomeBundle\Entity\EntityClass'],
             ['entityId', 5],
+            ['id', 5],
             ['address', 'Kiev, SomeStreet str., 55'],
         ];
 

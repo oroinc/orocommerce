@@ -24,4 +24,15 @@ class ShippingResolverTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Result', $taxable->getResult());
         $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\ResultElement', $taxable->getResult()->getShipping());
     }
+
+    public function testResolveItem()
+    {
+        $taxable = new Taxable();
+        $taxable->addItem(new Taxable());
+
+        $this->resolver->resolve($taxable);
+
+        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Result', $taxable->getResult());
+        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\ResultElement', $taxable->getResult()->getShipping());
+    }
 }

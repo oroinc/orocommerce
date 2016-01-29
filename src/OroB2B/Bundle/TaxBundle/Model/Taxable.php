@@ -54,6 +54,7 @@ class Taxable
     public function __construct()
     {
         $this->items = new \SplObjectStorage();
+        $this->result = new Result();
     }
 
     /**
@@ -241,10 +242,6 @@ class Taxable
      */
     public function getResult()
     {
-        if (!$this->result) {
-            $this->result = new Result();
-        }
-
         return $this->result;
     }
 
