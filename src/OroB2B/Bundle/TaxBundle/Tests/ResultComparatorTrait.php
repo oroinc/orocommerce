@@ -56,7 +56,8 @@ trait ResultComparatorTrait
 
             $this->assertEquals(
                 $this->extractScalarValues($expectedValue),
-                $this->extractScalarValues($actualValue)
+                $this->extractScalarValues($actualValue),
+                $key
             );
         }
 

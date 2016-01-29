@@ -2,17 +2,18 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Manager;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+
 use Gedmo\Tool\Logging\DBAL\QueryAnalyzer;
 
-use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadOrderItems;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Yaml\Yaml;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\TaxBundle\Tests\ResultComparatorTrait;
 
 /**
@@ -25,6 +26,12 @@ class TaxManagerTest extends WebTestCase
     /** @var ConfigManager */
     protected $configManager;
 
+    /** @var PropertyAccessor */
+    protected $propertyAccessor;
+
+    /** @var ManagerRegistry */
+    protected $doctrine;
+
     protected function setUp()
     {
         $this->initClient();
@@ -32,12 +39,12 @@ class TaxManagerTest extends WebTestCase
         $this->loadFixtures(
             [
                 'OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules',
-                'OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadOrderItems',
-                'OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxValues',
             ]
         );
 
         $this->configManager = $this->getContainer()->get('oro_config.global');
+        $this->propertyAccessor = $this->getContainer()->get('property_accessor');
+        $this->doctrine = $this->getContainer()->get('doctrine');
     }
 
     protected function tearDown()
@@ -57,36 +64,29 @@ class TaxManagerTest extends WebTestCase
      * @dataProvider methodsDataProvider
      * @param string $method
      * @param string $reference
-     * @param array $expectedResult
      * @param int $expectedQueries
+     * @param array $databaseBefore
+     * @param array $expectedResult
+     * @param array $databaseAfter
      * @param bool $priceIncludeTax
-     * @param array $expectedDatabaseResultBefore
-     * @param array $expectedDatabaseResultAfter
      */
     public function testMethods(
         $method,
         $reference,
-        array $expectedResult,
         $expectedQueries,
-        $priceIncludeTax = false,
-        array $expectedDatabaseResultBefore = [],
-        array $expectedDatabaseResultAfter = []
+        array $databaseBefore = [],
+        array $expectedResult = [],
+        array $databaseAfter = [],
+        $priceIncludeTax = false
     ) {
         $this->configManager->set('orob2b_tax.product_prices_include_tax', $priceIncludeTax);
 
-        $object = $this->getReference($reference);
+        $this->prepareDatabase($databaseBefore);
 
-        $callable = [$this, sprintf('on%sBefore', $method)];
-        if (is_callable($callable)) {
-            call_user_func($callable, $object, $expectedDatabaseResultBefore);
-        }
+        $this->executeMethod($method, $this->getReference($reference), $expectedResult, $expectedQueries);
 
-        $this->executeMethod($method, $object, $expectedResult, $expectedQueries);
-
-        $callable = [$this, sprintf('on%sAfter', $method)];
-        if (is_callable($callable)) {
-            call_user_func($callable, $object, $expectedDatabaseResultAfter);
-        }
+        $this->assertDatabase($databaseAfter);
+        $this->clearDatabase($databaseAfter);
     }
 
     /**
@@ -135,50 +135,119 @@ class TaxManagerTest extends WebTestCase
     }
 
     /**
-     * @param Order|OrderLineItem $object
-     * @param array $expectedDatabaseResult
+     * @param array $databaseBefore
      */
-    public function onSaveTaxBefore($object, array $expectedDatabaseResult)
+    protected function prepareDatabase(array $databaseBefore)
     {
-        $this->compareResult(
-            $expectedDatabaseResult,
-            $this->getContainer()->get('orob2b_tax.manager.tax_manager')->loadTax($object)
-        );
+        foreach ($databaseBefore as $class => $items) {
+            /** @var EntityManager $em */
+            $em = $this->doctrine->getManagerForClass($class);
 
-        $this->setQuantity($object, 7);
+            foreach ($items as $reference => $item) {
+                $object = new $class();
+
+                $this->fillData($object, $item);
+
+                $em->persist($object);
+                $em->flush($object);
+
+                $this->getReferenceRepository()->setReference($reference, $object);
+            }
+
+            $em->clear($class);
+        }
     }
 
     /**
-     * @param Order|OrderLineItem $object
-     * @param array $expectedDatabaseResult
+     * @param object $object
+     * @param array $item
+     * @return object
      */
-    public function onSaveTaxAfter($object, array $expectedDatabaseResult)
+    private function fillData($object, array $item)
     {
-        $this->compareResult(
-            $expectedDatabaseResult,
-            $this->getContainer()->get('orob2b_tax.manager.tax_manager')->loadTax($object)
-        );
+        foreach ($item as $property => $config) {
+            $value = $this->extractValues($config);
+            $isArray = is_array($config);
 
-        $this->setQuantity($object, 6);
+            if ($isArray && array_key_exists('property_value', $config) && is_array($config['property_value'])) {
+                $value = $this->fillData($value, $config['property_value']);
+            }
+
+            if ($isArray && array_key_exists('property', $config)) {
+                $value = $this->propertyAccessor->getValue($value, $config['property']);
+            }
+
+            $propertyPath = $this->getPropertyPath($object, $property);
+            $this->propertyAccessor->setValue($object, $propertyPath, $value);
+        }
+
+        return $object;
     }
 
     /**
-     * @param Order|OrderLineItem $object
-     * @param int $quantity
+     * @param mixed $value
+     * @param string $path
+     * @return string
      */
-    protected function setQuantity($object, $quantity)
+    private function getPropertyPath($value, $path)
     {
-        if ($object instanceof Order && $object->getLineItems()->count()) {
-            $object->getLineItems()
-                ->filter(
-                    function (OrderLineItem $lineItem) {
-                        return $lineItem->getProductSku() === LoadOrderItems::ORDER_ITEM_2;
-                    }
-                )
-                ->first()
-                ->setQuantity($quantity);
-        } elseif ($object instanceof OrderLineItem) {
-            $object->setQuantity($quantity);
+        return is_array($value) || $value instanceof \ArrayAccess ? sprintf('[%s]', $path) : (string)$path;
+    }
+
+    /**
+     * @param array|string $config
+     * @return mixed
+     */
+    private function extractValues($config)
+    {
+        if (!is_array($config)) {
+            return $config;
+        }
+
+        $hasClass = array_key_exists('class', $config);
+        if ($hasClass && array_key_exists('query', $config)) {
+            return $this->doctrine
+                ->getRepository($config['class'])
+                ->findOneBy($config['query']);
+        } elseif ($hasClass) {
+            return new $config['class']();
+        } elseif (array_key_exists('reference', $config)) {
+            return $this->getReference($config['reference']);
+        } elseif (array_key_exists('property_value', $config)) {
+            return $config['property_value'];
+        }
+
+        return $config;
+    }
+
+    /**
+     * @param array $databaseAfter
+     */
+    protected function assertDatabase(array $databaseAfter)
+    {
+        foreach ($databaseAfter as $class => $items) {
+            $repository = $this->doctrine->getRepository($class);
+
+            foreach ($items as $reference => $item) {
+                $this->assertNotEmpty($repository->findBy($item), sprintf('%s %s', $class, json_encode($item)));
+            }
+        }
+    }
+
+    /**
+     * @param array $databaseBefore
+     */
+    protected function clearDatabase(array $databaseBefore)
+    {
+        foreach ($databaseBefore as $class => $items) {
+            /** @var EntityRepository $repository */
+            $repository = $this->doctrine->getRepository($class);
+
+            $repository
+                ->createQueryBuilder('e')
+                ->delete($class, 'e')
+                ->getQuery()
+                ->execute();
         }
     }
 }

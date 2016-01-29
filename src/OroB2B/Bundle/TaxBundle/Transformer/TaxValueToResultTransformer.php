@@ -70,8 +70,9 @@ class TaxValueToResultTransformer implements TaxTransformerInterface
             $taxValue->addAppliedTax($taxApply);
         }
 
-        $result->unsetOffset(Result::TAXES);
-        $taxValue->setResult($result);
+        $taxValueResult = new Result($result->getArrayCopy());
+        $taxValueResult->unsetOffset(Result::TAXES);
+        $taxValue->setResult($taxValueResult);
 
         return $taxValue;
     }
