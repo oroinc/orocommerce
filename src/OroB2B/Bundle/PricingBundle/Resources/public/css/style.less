@@ -46,10 +46,6 @@
 }
 
 .product-container {
-  .show-tier-prices-choice label {
-    float: left;
-  }
-
   .show-tier-prices-choice {
     label {
       float: left;
@@ -60,18 +56,25 @@
     }
   }
 
-  .sidebar-item .control-label {
-    font-weight: bold;
+  .sidebar-item {
+    .control-label {
+      font-weight: 700;
+    }
   }
 
   .grid-container {
     .product-price-unit-with-margin {
       margin-top: 5px !important;
     }
-    .string-cell tbody td {
-      padding: 0 !important;
-      height: 10px !important;
-      border: 0 !important;
+
+    .string-cell {
+      tbody {
+        td {
+          padding: 0 !important;
+          height: 10px !important;
+          border: 0 !important;
+        }
+      }
     }
   }
 }
@@ -81,18 +84,22 @@
     display: inline-block;
     width: auto;
   }
+
   .filter-end {
-    input[type=text] {
+    input[type="text"] {
       border-right-width: 1px !important;
     }
   }
+
   .value-field-frame {
     margin-right: 0 !important;
   }
+
   .product-price-unit-filter {
     display: inline-block;
     margin-bottom: 0;
   }
+
   .filter-update {
     float: right;
     margin-bottom: 4px;
@@ -112,9 +119,13 @@
     vertical-align: top;
   }
 
-  td span.validation-failed {
-    white-space: nowrap;
-    width: 50px;
+  td {
+    span {
+      &.validation-failed {
+        white-space: nowrap;
+        width: 50px;
+      }
+    }
   }
 
   .entity-select-btn {
@@ -122,16 +133,20 @@
     float: none;
   }
 
-  input.priority {
-    width: 50px !important;
+  input {
+    &.priority {
+      width: 50px !important;
+    }
   }
 
   .select2-container.error {
     border-color: red;
   }
 
-  .removeRow:after{
-    text-indent: 6px;
+  .removeRow {
+    &:after{
+      text-indent: 6px;
+    }
   }
 
   .controls {
@@ -144,7 +159,7 @@
 }
 
 .price-list-collection-as-widget {
-  padding: 0 10px 10px 10px;
+  padding: 0 10px 10px;
 }
 
 .tab-content > .tab-pane.price-list-by-account-grid {
