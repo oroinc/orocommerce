@@ -8,9 +8,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Bundle\UserBundle\Form\Type\UserCollectionType;
 
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserCollectionType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 
 class QuoteType extends AbstractType
@@ -83,6 +85,12 @@ class QuoteType extends AbstractType
                     ],
                 ]
             )
+            ->add('assignedUsers', UserCollectionType::NAME, [
+                'label' => 'orob2b.sale.quote.assigned_users.label',
+            ])
+            ->add('assignedAccountUsers', AccountUserCollectionType::NAME, [
+                'label' => 'orob2b.sale.quote.assigned_account_users.label',
+            ])
         ;
     }
 

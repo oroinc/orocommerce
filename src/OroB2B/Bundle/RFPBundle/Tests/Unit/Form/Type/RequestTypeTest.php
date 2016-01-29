@@ -6,8 +6,8 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
 
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
@@ -109,8 +109,9 @@ class RequestTypeTest extends AbstractTest
                                 ],
                             ],
                         ],
-
                     ],
+                    'assignedUsers' => [1],
+                    'assignedAccountUsers' => [11],
                 ],
                 'expectedData'  => $this->getRequest(
                     'FirstName',
@@ -123,7 +124,9 @@ class RequestTypeTest extends AbstractTest
                     $dateObj,
                     '123'
                 )
-                    ->addRequestProduct($requestProduct),
+                    ->addRequestProduct($requestProduct)
+                    ->addAssignedUser($this->getUser(1))
+                    ->addAssignedAccountUser($this->getAccountUser(11)),
                 'defaultData'   => $this->getRequest(
                     'FirstName',
                     'LastName',
@@ -430,9 +433,11 @@ class RequestTypeTest extends AbstractTest
         $priceType                  = $this->preparePriceType();
         $productSelectType          = $this->prepareProductSelectType();
         $optionalPriceType          = $this->prepareOptionalPriceType();
+        $userCollectionType         = $this->prepareUserCollectionType();
         $currencySelectionType      = new CurrencySelectionTypeStub();
         $requestProductItemType     = $this->prepareRequestProductItemType();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
+        $accountUserCollectionType  = $this->prepareAccountUserCollectionType();
 
         $accountSelectType = new StubEntityType(
             [
@@ -472,12 +477,14 @@ class RequestTypeTest extends AbstractTest
                     $productSelectType->getName()           => $productSelectType,
                     $optionalPriceType->getName()           => $optionalPriceType,
                     $accountSelectType->getName()           => $accountSelectType,
+                    $userCollectionType->getName()          => $userCollectionType,
                     $requestProductType->getName()          => $requestProductType,
                     $accountUserSelectType->getName()       => $accountUserSelectType,
                     $currencySelectionType->getName()       => $currencySelectionType,
                     $requestProductItemType->getName()      => $requestProductItemType,
                     $requestStatusSelectType->getName()     => $requestStatusSelectType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
+                    $accountUserCollectionType->getName()   => $accountUserCollectionType,
                     QuantityTypeTrait::$name                => $this->getQuantityType(),
                 ],
                 []

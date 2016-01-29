@@ -1,5 +1,5 @@
-{% import 'OroUIBundle::macros.html.twig' as UI %}
 {% import 'OroEmailBundle::actions.html.twig' as EmailActions %}
+{% import 'OroB2BAccountBundle::macros.html.twig' as UI %}
 
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
@@ -32,32 +32,8 @@
                 {% endif %}
             {% endif %}
 
-            {% if entity.users.count() %}
-                {% set users = [] %}
-                {% for user in entity.users %}
-                    {% set username = user.firstName ~ ' ' ~ user.lastName %}
-                    {% if resource_granted('VIEW', user) %}
-                        {% set userView = UI.renderUrl(path('orob2b_account_account_user_view', {'id': user.id}), username) %}
-                    {% else %}
-                        {% set userView = username|escape %}
-                    {% endif %}
-                    {% set users = users|merge([userView]) %}
-                {% endfor %}
-                {{ UI.renderHtmlProperty('orob2b.account.users.label'|trans, UI.renderList(users)) }}
-            {% endif %}
-
-            {% if entity.salesRepresentatives.count() %}
-                {% set salesReps = [] %}
-                {% for salesRep in entity.salesRepresentatives %}
-                    {% if resource_granted('VIEW', salesRep) %}
-                        {% set salesRepView = UI.renderUrl(path('oro_user_view', {'id': salesRep.id}), salesRep.fullName) %}
-                    {% else %}
-                        {% set salesRepView = salesRep.fullName|escape %}
-                    {% endif %}
-                    {% set salesReps = salesReps|merge([salesRepView]) %}
-                {% endfor %}
-                {{ UI.renderHtmlProperty('orob2b.account.sales_representatives.label'|trans, UI.renderList(salesReps)) }}
-            {% endif %}
+            {{ UI.renderAccountUsersProperty('orob2b.account.users.label'|trans, entity.users) }}
+            {{ UI.renderUsersProperty('orob2b.account.sales_representatives.label'|trans, entity.salesRepresentatives) }}
 
             {% if entity.children.count() %}
                 {% set accountTree %}

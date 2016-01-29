@@ -1,6 +1,6 @@
-{% import 'OroUIBundle::macros.html.twig' as UI %}
 {% import 'OroEmailBundle::actions.html.twig' as EmailActions %}
 {% import 'OroEmailBundle::macros.html.twig' as Email %}
+{% import 'OroB2BAccountBundle::macros.html.twig' as UI %}
 
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
@@ -26,14 +26,7 @@
             {{ UI.renderProperty('orob2b.account.accountuser.birthday.label'|trans, birthday_string) }}
             {{ UI.renderHtmlProperty('orob2b.account.accountuser.email.label'|trans, Email.email_address_simple(entity.email)) }}
 
-            {% if entity.account %}
-                {% if resource_granted('VIEW', entity.account) %}
-                    {% set accountView = UI.renderUrl(path('orob2b_account_view', {'id': entity.account.id}), entity.account.name) %}
-                {% else %}
-                    {% set accountView = entity.account.name|escape %}
-                {% endif %}
-                {{ UI.renderHtmlProperty('orob2b.account.accountuser.account.label'|trans, accountView) }}
-            {% endif %}
+            {{ UI.renderAccountProperty('orob2b.account.accountuser.account.label'|trans, entity.account) }}
 
             {% if resource_granted('orob2b_account_account_user_role_view') %}
                 {% set roles = [] %}
@@ -43,18 +36,7 @@
                 {{ UI.renderHtmlProperty('orob2b.account.accountuser.roles.label'|trans, roles|join('<br />')) }}
             {% endif %}
 
-            {% if entity.salesRepresentatives.count() %}
-                {% set salesReps = [] %}
-                {% for salesRep in entity.salesRepresentatives %}
-                    {% if resource_granted('VIEW', salesRep) %}
-                        {% set salesRepView = UI.renderUrl(path('oro_user_view', {'id': salesRep.id}), salesRep.fullName) %}
-                    {% else %}
-                        {% set salesRepView = salesRep.fullName|escape %}
-                    {% endif %}
-                    {% set salesReps = salesReps|merge([salesRepView]) %}
-                {% endfor %}
-                {{ UI.renderHtmlProperty('orob2b.account.accountuser.sales_representatives.label'|trans, UI.renderList(salesReps)) }}
-            {% endif %}
+            {{ UI.renderUsersProperty('orob2b.account.accountuser.sales_representatives.label'|trans, entity.salesRepresentatives) }}
         </div>
     </div>
 </div>

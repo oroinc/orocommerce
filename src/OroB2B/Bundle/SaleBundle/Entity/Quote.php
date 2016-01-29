@@ -280,6 +280,38 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
     protected $priceList;
 
     /**
+     * @var Collection|User[]
+     *
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\UserBundle\Entity\User")
+     * @ORM\JoinTable(
+     *      name="oro_quote_assigned_users",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="quote_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
+     *      }
+     * )
+     **/
+    protected $assignedUsers;
+
+    /**
+     * @var Collection|AccountUser[]
+     *
+     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
+     * @ORM\JoinTable(
+     *      name="oro_quote_assigned_acc_users",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="quote_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
+     *      }
+     * )
+     **/
+    protected $assignedAccountUsers;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -287,6 +319,8 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
         parent::__construct();
 
         $this->quoteProducts = new ArrayCollection();
+        $this->assignedUsers = new ArrayCollection();
+        $this->assignedAccountUsers = new ArrayCollection();
     }
 
     /**
@@ -696,6 +730,74 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
     public function setPriceList(PriceList $priceList = null)
     {
         $this->priceList = $priceList;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getAssignedUsers()
+    {
+        return $this->assignedUsers;
+    }
+
+    /**
+     * @param User $assignedUser
+     * @return $this
+     */
+    public function addAssignedUser(User $assignedUser)
+    {
+        if (!$this->assignedUsers->contains($assignedUser)) {
+            $this->assignedUsers->add($assignedUser);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param User $assignedUser
+     * @return $this
+     */
+    public function removeAssignedUser(User $assignedUser)
+    {
+        if ($this->assignedUsers->contains($assignedUser)) {
+            $this->assignedUsers->removeElement($assignedUser);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|AccountUser[]
+     */
+    public function getAssignedAccountUsers()
+    {
+        return $this->assignedAccountUsers;
+    }
+
+    /**
+     * @param AccountUser $assignedAccountUser
+     * @return $this
+     */
+    public function addAssignedAccountUser(AccountUser $assignedAccountUser)
+    {
+        if (!$this->assignedAccountUsers->contains($assignedAccountUser)) {
+            $this->assignedAccountUsers->add($assignedAccountUser);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param AccountUser $assignedAccountUser
+     * @return $this
+     */
+    public function removeAssignedAccountUser(AccountUser $assignedAccountUser)
+    {
+        if ($this->assignedAccountUsers->contains($assignedAccountUser)) {
+            $this->assignedAccountUsers->removeElement($assignedAccountUser);
+        }
 
         return $this;
     }

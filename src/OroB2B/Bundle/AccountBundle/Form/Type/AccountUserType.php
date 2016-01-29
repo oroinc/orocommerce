@@ -10,6 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Form\Type\AddressCollectionType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\UserBundle\Form\Type\UserCollectionType;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
@@ -173,7 +174,7 @@ class AccountUserType extends AbstractType
             )
             ->add(
                 'salesRepresentatives',
-                SalesRepresentativesCollectionType::NAME,
+                UserCollectionType::NAME,
                 [
                     'label' => 'orob2b.account.sales_representatives.label',
                 ]

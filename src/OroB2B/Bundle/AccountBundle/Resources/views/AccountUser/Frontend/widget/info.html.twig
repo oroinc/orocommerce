@@ -1,6 +1,6 @@
-{% import 'OroUIBundle::macros.html.twig' as UI %}
 {% import 'OroEmailBundle::actions.html.twig' as EmailActions %}
 {% import 'OroEmailBundle::macros.html.twig' as Email %}
+{% import 'OroB2BFrontendBundle::macros.html.twig' as UI %}
 
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
@@ -17,9 +17,7 @@
             {{ UI.renderProperty('orob2b.account.accountuser.birthday.label'|trans, birthday_string) }}
             {{ UI.renderHtmlProperty('orob2b.account.accountuser.email.label'|trans, Email.email_address_simple(entity.email)) }}
 
-            {% if entity.account %}
-                {{ UI.renderProperty('orob2b.account.accountuser.profile.company_name'|trans, entity.account.name) }}
-            {% endif %}
+            {{ UI.renderAccountProperty('orob2b.account.accountuser.profile.company_name'|trans, entity.account) }}
 
             {% set roles = [] %}
             {% for entityRole in entity.roles %}
@@ -27,13 +25,7 @@
             {% endfor %}
             {{ UI.renderHtmlProperty('orob2b.account.accountuser.roles.label'|trans, roles|join('<br />')) }}
 
-            {% if entity.salesRepresentatives.count() %}
-                {% set salesReps = [] %}
-                {% for salesRep in entity.salesRepresentatives %}
-                    {% set salesReps = salesReps|merge([salesRep.fullName|escape]) %}
-                {% endfor %}
-                {{ UI.renderHtmlProperty('orob2b.account.accountuser.sales_representatives.label'|trans, UI.renderList(salesReps)) }}
-            {% endif %}
+            {{ UI.renderUsersProperty('orob2b.account.accountuser.sales_representatives.label'|trans, entity.salesRepresentatives) }}
         </div>
     </div>
 </div>

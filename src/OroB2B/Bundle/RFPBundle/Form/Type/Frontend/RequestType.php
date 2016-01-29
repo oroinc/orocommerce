@@ -13,6 +13,8 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserCollectionType;
+
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 
@@ -105,6 +107,9 @@ class RequestType extends AbstractType
                 'options' => [
                     'compact_units' => true,
                 ],
+            ])
+            ->add('assignedAccountUsers', AccountUserCollectionType::NAME, [
+                'label' => 'orob2b.frontend.rfp.request.assigned_account_users.label',
             ])
         ;
 

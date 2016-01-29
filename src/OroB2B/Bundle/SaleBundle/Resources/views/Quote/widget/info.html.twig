@@ -1,37 +1,22 @@
-{% import 'OroUIBundle::macros.html.twig' as UI %}
 {% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+{% import 'OroB2BAccountBundle::macros.html.twig' as UI %}
 
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
             {{ UI.renderProperty('orob2b.sale.quote.qid.label'|trans, entity.qid) }}
-            {% if entity.accountUser %}
-                {% if resource_granted('VIEW', entity.accountUser) %}
-                    {% set accountUserView = UI.renderUrl(path('orob2b_account_account_user_view', {'id': entity.accountUser.id}), entity.accountUser.username) %}
-                {% else %}
-                    {% set accountUserView = entity.accountUser|escape %}
-                {% endif %}
-                {{ UI.renderHtmlProperty('orob2b.sale.quote.account_user.label'|trans, accountUserView) }}
-            {% endif %}
-            {% if entity.account %}
-                {% if resource_granted('VIEW', entity.account) %}
-                    {% set accountView = UI.renderUrl(path('orob2b_account_view', {'id': entity.account.id}), entity.account.name) %}
-                {% else %}
-                    {% set accountView = entity.account.name|escape %}
-                {% endif %}
-                {{ UI.renderHtmlProperty('orob2b.sale.quote.account.label'|trans, accountView) }}
-            {% endif %}
+            {{ UI.renderAccountUserProperty('orob2b.sale.quote.account_user.label'|trans, entity.accountUser) }}
+            {{ UI.renderAccountProperty('orob2b.sale.quote.account.label'|trans, entity.account) }}
+
             {{ UI.renderProperty('orob2b.sale.quote.valid_until.label'|trans, entity.validUntil ? entity.validUntil|oro_format_datetime : 'N/A'|trans) }}
             {% if entity.request %}
-                {%  if resource_granted('VIEW', entity.request) %}
-                    {% set request = UI.renderUrl(path('orob2b_rfp_request_view', {id: entity.request.id}), entity.request) %}
-                {% else %}
-                    {% set request = entity.request %}
-                {%  endif %}
-                {{ UI.renderHtmlProperty('orob2b.sale.quote.request.label'|trans, request) }}
+                {{ UI.renderHtmlProperty('orob2b.sale.quote.request.label'|trans, UI.renderViewLink(entity.request, entity.request, 'orob2b_rfp_request_view')) }}
             {% endif %}
             {{ UI.renderProperty('orob2b.sale.quote.po_number.label'|trans, entity.poNumber|default('N/A'|trans)) }}
             {{ UI.renderProperty('orob2b.sale.quote.ship_until.label'|trans, entity.shipUntil|oro_format_date|default('N/A'|trans)) }}
+
+            {{ UI.renderUsersProperty('orob2b.sale.quote.assigned_users.label'|trans, entity.assignedUsers) }}
+            {{ UI.renderAccountUsersProperty('orob2b.sale.quote.assigned_account_users.label'|trans, entity.assignedAccountUsers) }}
         </div>
         <div class="responsive-block">
             {{ entityConfig.renderDynamicFields(entity) }}

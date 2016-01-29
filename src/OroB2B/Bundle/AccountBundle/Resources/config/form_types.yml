@@ -7,6 +7,8 @@ parameters:
     orob2b_account.form.type.account_parent_select.class: OroB2B\Bundle\AccountBundle\Form\Type\ParentAccountSelectType
     orob2b_account.form.type.account_user_select.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType
 
+    orob2b_account.form.type.account_user_collection.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserCollectionType
+
     orob2b_account.form.type.account_user.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType
     orob2b_account.form.type.account_user_role.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType
     orob2b_account.form.type.account_user_role_select.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType
@@ -45,8 +47,6 @@ parameters:
 
     orob2b_account.form.type.entity_visibility_type.class: OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType
 
-    orob2b_account.form.type.sales_representatives_collection_type.class: OroB2B\Bundle\AccountBundle\Form\Type\SalesRepresentativesCollectionType
-
 services:
     orob2b_account.form.type.account:
         class: %orob2b_account.form.type.account.class%
@@ -82,6 +82,13 @@ services:
         class: %orob2b_account.form.type.account_user_select.class%
         tags:
             - { name: form.type, alias: orob2b_account_account_user_select }
+
+    orob2b_account.form.type.account_user_collection_type:
+        class: %orob2b_account.form.type.account_user_collection.class%
+        calls:
+            - [setDataClass, [%orob2b_account.entity.account_user.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_account_account_user_collection }
 
     orob2b_account.form.type.account_user:
         class: %orob2b_account.form.type.account_user.class%
@@ -285,10 +292,3 @@ services:
         calls:
             - [setAccountClass,[%orob2b_account.entity.account.class%]]
             - [setAccountGroupClass,[%orob2b_account.entity.account_group.class%]]
-
-    orob2b_account.form.type.sales_representatives_collection:
-        class: %orob2b_account.form.type.sales_representatives_collection_type.class%
-        calls:
-            - [setDataClass, [%oro_user.entity.class%]]
-        tags:
-            - { name: form.type, alias: orob2b_account_sales_representatives_collection }
