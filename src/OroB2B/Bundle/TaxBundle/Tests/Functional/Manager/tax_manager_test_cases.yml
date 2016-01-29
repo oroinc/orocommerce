@@ -882,6 +882,200 @@ item_getTax_new_taxValue_adjustment_lost:
         taxes:
             - { tax: 'TAX1', rate: '0.1', taxable_amount: '199.89', tax_amount: '19.99' }
 
+item_getTax_new_taxValue_adjustment_lost_price_incl_tax:
+    method: getTax
+    reference: simple_order
+    expectedQueries: 11 # 8 from getTax_taxValue_exists + insert TaxApply, update TaxValue, Delete old TaxApply
+    databaseBefore:
+        'OroB2B\Bundle\OrderBundle\Entity\Order':
+            simple_order:
+                poNumber: { property_value: simple_order }
+                account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+                billingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+                shippingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+        'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
+            order_line_item_1:
+                productSku: { property_value: order_line_item_1 }
+                order: { reference: simple_order }
+                quantity: { property_value: 1 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            order_line_item_2:
+                productSku: { property_value: order_line_item_2 }
+                order: { reference: simple_order }
+                quantity: { property_value: 1 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            order_line_item_3:
+                productSku: { property_value: order_line_item_3 }
+                order: { reference: simple_order }
+                quantity: { property_value: 1 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            order_line_item_4:
+                productSku: { property_value: order_line_item_4 }
+                order: { reference: simple_order }
+                quantity: { property_value: 1 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            order_line_item_5:
+                productSku: { property_value: order_line_item_5 }
+                order: { reference: simple_order }
+                quantity: { property_value: 1 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            order_line_item_6:
+                productSku: { property_value: order_line_item_5 }
+                order: { reference: simple_order }
+                quantity: { property_value: 1 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            order_line_item_7:
+                productSku: { property_value: order_line_item_5 }
+                order: { reference: simple_order }
+                quantity: { property_value: 1 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            order_line_item_8:
+                productSku: { property_value: order_line_item_5 }
+                order: { reference: simple_order }
+                quantity: { property_value: 1 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            order_line_item_9:
+                productSku: { property_value: order_line_item_5 }
+                order: { reference: simple_order }
+                quantity: { property_value: 1 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+    expectedResult:
+        total:
+            includingTax: '199.89'   # 22.21 * 9
+            excludingTax: '181.72'   # 199.89 - 18.1718 = 181.7181       # 181.8 if count by items
+            taxAmount: '18.18'       # 199.89 * 0.1 / 1.1 = 18.1718
+            adjustment: '0.09'
+        items:
+            -
+                row:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                unit:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                taxes:
+                    - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.2', tax_amount: '2.02' }
+            -
+                row:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                unit:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                taxes:
+                    - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.2', tax_amount: '2.02' }
+            -
+                row:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                unit:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                taxes:
+                    - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.2', tax_amount: '2.02' }
+            -
+                row:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                unit:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                taxes:
+                    - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.2', tax_amount: '2.02' }
+            -
+                row:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                unit:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                taxes:
+                    - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.2', tax_amount: '2.02' }
+            -
+                row:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                unit:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                taxes:
+                    - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.2', tax_amount: '2.02' }
+            -
+                row:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                unit:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                taxes:
+                    - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.2', tax_amount: '2.02' }
+            -
+                row:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                unit:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                taxes:
+                    - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.2', tax_amount: '2.02' }
+            -
+                row:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                unit:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                taxes:
+                    - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.2', tax_amount: '2.02' }
+        taxes:
+            - { tax: 'TAX1', rate: '0.1', taxable_amount: '181.72', tax_amount: '18.18' }
+    databaseAfter: []
+    priceIncludeTax: true
+
 getTax_with_empty_address:
     method: getTax
     reference: simple_order

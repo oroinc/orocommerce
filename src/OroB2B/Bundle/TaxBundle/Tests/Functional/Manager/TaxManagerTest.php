@@ -8,7 +8,6 @@ use Doctrine\ORM\EntityRepository;
 
 use Gedmo\Tool\Logging\DBAL\QueryAnalyzer;
 
-use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Yaml\Yaml;
 
@@ -16,6 +15,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\TaxBundle\Tests\ResultComparatorTrait;
+use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 /**
  * @dbIsolation
