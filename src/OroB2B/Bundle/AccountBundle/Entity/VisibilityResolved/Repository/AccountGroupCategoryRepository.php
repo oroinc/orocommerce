@@ -21,6 +21,7 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 class AccountGroupCategoryRepository extends EntityRepository
 {
     use CategoryVisibilityResolvedTermTrait;
+    use BasicOperationRepositoryTrait;
 
     /**
      * @param Category $category

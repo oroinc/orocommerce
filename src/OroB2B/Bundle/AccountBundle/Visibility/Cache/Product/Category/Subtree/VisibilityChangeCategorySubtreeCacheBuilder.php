@@ -70,6 +70,7 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
         $this->accountIdsWithChangedVisibility[$category->getId()] = $accountIdsForUpdate;
 
         $this->updateAccountsProductVisibility($category, $accountIdsForUpdate, $visibility);
+        $this->updateAccountsCategoryVisibility($category, $accountIdsForUpdate, $visibility);
 
         return $accountIdsForUpdate;
     }
