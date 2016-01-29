@@ -147,6 +147,7 @@ class PriceListToAccountRepositoryTest extends WebTestCase
         ];
     }
 
+
     public function testGetAccountWebsitePairsByAccountGroup()
     {
         /** @var AccountGroup $accountGroup */
@@ -176,6 +177,20 @@ class PriceListToAccountRepositoryTest extends WebTestCase
         $this->assertCount(1, $result);
         $this->assertEquals($result[0]->getAccount()->getId(), $account1->getId());
         $this->assertEquals($result[0]->getWebsite()->getId(), $website->getId());
+    }
+
+    public function testDelete()
+    {
+        /** @var Account $account */
+        $account = $this->getReference('account.level_1_1');
+        /** @var Website $website */
+        $website = $this->getReference('US');
+        $this->assertCount(6, $this->getRepository()->findAll());
+        $this->assertCount(2, $this->getRepository()->findBy(['account' => $account, 'website' => $website]));
+        $this->getRepository()->delete($account, $website);
+        $this->assertCount(4, $this->getRepository()->findAll());
+        $this->assertCount(0, $this->getRepository()->findBy(['account' => $account, 'website' => $website]));
+
     }
 
     /**

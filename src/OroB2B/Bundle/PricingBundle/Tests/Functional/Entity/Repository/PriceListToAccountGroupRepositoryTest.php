@@ -157,4 +157,17 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
     {
         return $this->getContainer()->get('doctrine')->getRepository('OroB2BPricingBundle:PriceListToAccountGroup');
     }
+
+    public function testDelete()
+    {
+        /** @var AccountGroup $accountGroup */
+        $accountGroup = $this->getReference('account_group.group1');
+        /** @var Website $website */
+        $website = $this->getReference('US');
+        $this->assertCount(4, $this->getRepository()->findAll());
+        $this->assertCount(2, $this->getRepository()->findBy(['accountGroup' => $accountGroup, 'website' => $website]));
+        $this->getRepository()->delete($accountGroup, $website);
+        $this->assertCount(2, $this->getRepository()->findAll());
+        $this->assertCount(0, $this->getRepository()->findBy(['accountGroup' => $accountGroup, 'website' => $website]));
+    }
 }

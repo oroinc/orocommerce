@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use OroB2B\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
 
@@ -42,9 +43,19 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_
     protected $combinedPriceListClass = 'someOtherClass';
 
     /**
+     * @var string
+     */
+    protected $combinedPriceListToEntityClass = 'someOtherClass1';
+
+    /**
      * @var CombinedPriceListRepository|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $combinedPriceListRepository;
+
+    /**
+     * @var PriceListRepository|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $combinedPriceListToEntityRepository;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -55,6 +66,7 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_
      * @return string
      */
     abstract protected function getPriceListToEntityRepositoryClass();
+
 
     /**
      * @return array
@@ -102,11 +114,21 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_
         $this->priceListToEntityRepository = $this->getMockBuilder($this->getPriceListToEntityRepositoryClass())
             ->disableOriginalConstructor()
             ->getMock();
+
         $priceListToEntityEm = $this->getMock('\Doctrine\Common\Persistence\ObjectManager');
         $priceListToEntityEm->expects($this->any())
             ->method('getRepository')
             ->with($this->priceListToEntityClass)
             ->will($this->returnValue($this->priceListToEntityRepository));
+
+        $this->combinedPriceListToEntityRepository = $this->getMockBuilder($this->getPriceListToEntityRepositoryClass())
+            ->disableOriginalConstructor()
+            ->getMock();
+        $combinedPriceListToEntityEm = $this->getMock('\Doctrine\Common\Persistence\ObjectManager');
+        $combinedPriceListToEntityEm->expects($this->any())
+            ->method('getRepository')
+            ->with($this->combinedPriceListToEntityClass)
+            ->will($this->returnValue($this->combinedPriceListToEntityRepository));
 
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
@@ -115,6 +137,7 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_
                     [
                         [$this->combinedPriceListClass, $combinedPriceListEm],
                         [$this->priceListToEntityClass, $priceListToEntityEm],
+                        [$this->combinedPriceListToEntityClass, $combinedPriceListToEntityEm],
                     ]
                 )
             );

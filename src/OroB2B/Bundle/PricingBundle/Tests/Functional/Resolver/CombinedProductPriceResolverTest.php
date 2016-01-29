@@ -11,6 +11,7 @@ use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -303,6 +304,10 @@ class CombinedProductPriceResolverTest extends WebTestCase
 
         $actualPrices = $this->getCombinedPrices($combinedPriceList);
         $this->assertEquals($expectedPrices, $actualPrices);
+
+        //recreate price for next test
+        $this->getEntityManager()->persist($price);
+        $this->getEntityManager()->flush($price);
     }
 
     /**
@@ -363,6 +368,7 @@ class CombinedProductPriceResolverTest extends WebTestCase
     protected function getCombinedPrices(CombinedPriceList $combinedPriceList)
     {
         $actualPrices = [];
+        /** @var CombinedProductPriceRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroB2BPricingBundle:CombinedProductPrice')
             ->getRepository('OroB2BPricingBundle:CombinedProductPrice');

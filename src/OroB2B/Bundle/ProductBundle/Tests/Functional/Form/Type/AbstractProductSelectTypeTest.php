@@ -37,7 +37,6 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
      */
     public function testSearchRestriction(array $restrictionParams, array $expectedProducts)
     {
-        $this->markTestSkipped('Will complete in scope BB-1852');
         call_user_func_array([$this, 'setUpBeforeRestriction'], $restrictionParams);
 
         $this->client->request(
@@ -65,7 +64,6 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
      */
     public function testDatagridRestriction(array $restrictionParams, array $expectedProducts)
     {
-        $this->markTestSkipped('Will complete in scope BB-1852');
         call_user_func_array([$this, 'setUpBeforeRestriction'], $restrictionParams);
 
         $this->client->request(

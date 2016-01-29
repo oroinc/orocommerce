@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Builder;
 use OroB2B\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder;
 use OroB2B\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -15,9 +16,9 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
      */
     protected $builder;
 
-   /**
-    * @var AccountGroupCombinedPriceListsBuilder|\PHPUnit_Framework_MockObject_MockObject
-    */
+    /**
+     * @var AccountGroupCombinedPriceListsBuilder|\PHPUnit_Framework_MockObject_MockObject
+     */
     protected $accountGroupBuilder;
 
     /**
@@ -49,16 +50,21 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
         $this->builder->setAccountGroupCombinedPriceListsBuilder($this->accountGroupBuilder);
         $this->builder->setPriceListToEntityClassName($this->priceListToEntityClass);
         $this->builder->setCombinedPriceListClassName($this->combinedPriceListClass);
+        $this->builder->setCombinedPriceListToEntityClassName($this->combinedPriceListToEntityClass);
     }
 
     /**
-     * @dataProvider trueFalseDataProvider
+     * @dataProvider buildDataProvider
      * @param bool $force
+     * @param PriceListToWebsite $priceListByWebsite
      */
-    public function testBuildForAll($force)
+    public function testBuildForAll($force, $priceListByWebsite)
     {
         $website = new Website();
-
+        $this->priceListToEntityRepository
+            ->expects($this->any())
+            ->method('findOneBy')
+            ->willReturn($priceListByWebsite);
         $this->priceListToEntityRepository->expects($this->once())
             ->method('getWebsiteIteratorByFallback')
             ->with(PriceListWebsiteFallback::CONFIG)
@@ -66,27 +72,66 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
         $this->garbageCollector->expects($this->never())
             ->method($this->anything());
 
-        $this->assertRebuild($force, $website);
+        if (!$priceListByWebsite) {
+            $this->combinedPriceListToEntityRepository
+                ->expects($this->once())
+                ->method('delete')
+                ->with($website);
+        } else {
+            $this->combinedPriceListToEntityRepository
+                ->expects($this->never())
+                ->method('delete');
+
+            $this->assertRebuild($force, $website);
+        }
 
         $this->builder->build(null, $force);
     }
 
     /**
-     * @dataProvider trueFalseDataProvider
+     * @dataProvider buildDataProvider
      * @param bool $force
+     * @param PriceListToWebsite $priceListByWebsite
      */
-    public function testBuildForWebsite($force)
+    public function testBuildForWebsite($force, $priceListByWebsite)
     {
         $website = new Website();
-
+        $this->priceListToEntityRepository
+            ->expects($this->any())
+            ->method('findOneBy')
+            ->willReturn($priceListByWebsite);
         $this->priceListToEntityRepository->expects($this->never())
             ->method('getWebsiteIteratorByFallback');
         $this->garbageCollector->expects($this->once())
             ->method('cleanCombinedPriceLists');
 
-        $this->assertRebuild($force, $website);
+        if (!$priceListByWebsite) {
+            $this->combinedPriceListToEntityRepository
+                ->expects($this->once())
+                ->method('delete')
+                ->with($website);
+        } else {
+            $this->combinedPriceListToEntityRepository
+                ->expects($this->never())
+                ->method('delete');
+
+            $this->assertRebuild($force, $website);
+        }
 
         $this->builder->build($website, $force);
+    }
+
+    /**
+     * @return array
+     */
+    public function buildDataProvider()
+    {
+        return [
+            ['force' => true, 'priceListByWebsite' => null],
+            ['force' => false, 'priceListByWebsite' => null],
+            ['force' => true, 'priceListByWebsite' => new PriceListToWebsite()],
+            ['force' => false, 'priceListByWebsite' => new PriceListToWebsite()]
+        ];
     }
 
     /**

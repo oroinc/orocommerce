@@ -18,7 +18,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
@@ -190,8 +190,8 @@ class FormViewListener
         $product = $this->doctrineHelper->getEntityReference('OroB2BProductBundle:Product', $productId);
         $priceList = $this->frontendPriceListRequestHandler->getPriceList();
 
-        /** @var ProductPriceRepository $priceRepository */
-        $priceRepository = $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:ProductPrice');
+        /** @var CombinedProductPriceRepository $priceRepository */
+        $priceRepository = $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:CombinedProductPrice');
 
         $prices = $priceRepository->findByPriceListIdAndProductIds($priceList->getId(), [$product->getId()]);
 

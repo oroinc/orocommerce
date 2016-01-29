@@ -101,4 +101,21 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
 
         return array_map('current', $result);
     }
+
+    /**
+     * @param AccountGroup $accountGroup
+     * @param Website $website
+     * @return mixed
+     */
+    public function delete(AccountGroup $accountGroup, Website $website)
+    {
+        return $this->getEntityManager()->createQueryBuilder()
+            ->delete($this->getEntityName(), 'PriceListToAccountGroup')
+            ->where('PriceListToAccountGroup.accountGroup = :accountGroup')
+            ->andWhere('PriceListToAccountGroup.website = :website')
+            ->setParameter('accountGroup', $accountGroup)
+            ->setParameter('website', $website)
+            ->getQuery()
+            ->execute();
+    }
 }

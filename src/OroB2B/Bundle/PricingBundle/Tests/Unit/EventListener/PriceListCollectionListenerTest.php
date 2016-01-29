@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityManager;
 
-use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
@@ -27,7 +27,7 @@ class PriceListCollectionListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry */
-        $registry = $this->getMockBuilder('Symfony\Bridge\Doctrine\ManagerRegistry')
+        $registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
             ->disableOriginalConstructor()
             ->getMock();
         $registry->expects($this->once())

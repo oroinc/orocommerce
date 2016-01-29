@@ -31,7 +31,7 @@ class PriceListSystemConfigSubscriber implements EventSubscriberInterface
     /**
      * @var  boolean
      */
-    protected $applicable;
+    protected $isApplicable;
 
     /** @var  ManagerRegistry */
     protected $registry;
@@ -84,11 +84,11 @@ class PriceListSystemConfigSubscriber implements EventSubscriberInterface
      * @param string $settingsKey
      * @return bool
      */
-    protected function isSettingsApplicable($settings, $settingsKey)
+    protected function isSettingsApplicable(array $settings, $settingsKey)
     {
-        $this->applicable = is_array($settings) && array_key_exists($settingsKey, $settings);
+        $this->isApplicable = is_array($settings) && array_key_exists($settingsKey, $settings);
 
-        return $this->applicable;
+        return $this->isApplicable;
     }
 
     /**
@@ -96,7 +96,7 @@ class PriceListSystemConfigSubscriber implements EventSubscriberInterface
      */
     public function updateAfter(ConfigUpdateEvent $event)
     {
-        if ($this->applicable && $event->getChangeSet()) {
+        if ($this->isApplicable && $event->getChangeSet()) {
             $this->eventDispatcher->dispatch(
                 PriceListCollectionChange::BEFORE_CHANGE,
                 new PriceListCollectionChange()

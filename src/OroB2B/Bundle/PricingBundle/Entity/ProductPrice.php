@@ -18,6 +18,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *      }
  * )
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository")
+ * @ORM\EntityListeners("OroB2B\Bundle\PricingBundle\Entity\EntityListener\ProductPriceEntityListener")
  * @Config(
  *      defaultValues={
  *          "entity"={
