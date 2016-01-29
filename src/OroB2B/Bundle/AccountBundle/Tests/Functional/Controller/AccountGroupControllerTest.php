@@ -67,7 +67,6 @@ class AccountGroupControllerTest extends WebTestCase
      */
     public function testUpdate()
     {
-        $this->markTestSkipped('Fixed in scope BB-1834');
         $id = $this->getGroupId(self::NAME);
         $crawler = $this->client->request(
             'GET',

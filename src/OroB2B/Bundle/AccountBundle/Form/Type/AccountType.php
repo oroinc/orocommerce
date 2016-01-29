@@ -98,7 +98,7 @@ class AccountType extends AbstractType
         $newGroupId = (int)$event->getData()['group'];
         /** @var Account $account */
         $account = $event->getForm()->getData();
-        if ($account instanceof Account && $newGroupId !== $account->getGroup()->getId()) {
+        if ($account instanceof Account && $account->getGroup() && $newGroupId !== $account->getGroup()->getId()) {
             $this->eventDispatcher->dispatch(
                 AccountEvent::ON_ACCOUNT_GROUP_CHANGE,
                 new AccountEvent($account)
