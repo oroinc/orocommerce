@@ -41,8 +41,9 @@ class LoadProductVisibilityDemoData extends AbstractFixture implements
     {
         return [
             'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData',
-            __NAMESPACE__ . '\LoadAccountDemoData',
             'OroB2B\Bundle\WebsiteBundle\Migrations\Data\Demo\ORM\LoadWebsiteDemoData',
+            __NAMESPACE__ . '\LoadAccountDemoData',
+            __NAMESPACE__ . '\LoadCategoryVisibilityDemoData',
         ];
     }
 
@@ -51,6 +52,8 @@ class LoadProductVisibilityDemoData extends AbstractFixture implements
      */
     public function load(ObjectManager $manager)
     {
+        $this->resetVisibilities($manager);
+
         $locator = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroB2BAccountBundle/Migrations/Data/Demo/ORM/data/products-visibility.csv');
         $handler = fopen($filePath, 'r');
@@ -160,5 +163,38 @@ class LoadProductVisibilityDemoData extends AbstractFixture implements
         $visibility->setWebsite($website);
         $visibility->setTargetEntity($product)->setVisibility($visibilityValue);
         $manager->persist($visibility);
+    }
+
+    /**
+     * Set fallback to parent category for all products with categories
+     *
+     * @param ObjectManager $manager
+     */
+    protected function resetVisibilities(ObjectManager $manager)
+    {
+        // products with categories
+        $productIds = $manager->getRepository('OroB2BProductBundle:Product')
+            ->createQueryBuilder('product')
+            ->select('product.id')
+            ->innerJoin('OroB2BCatalogBundle:Category', 'category', 'WITH', 'product MEMBER OF category.products')
+            ->getQuery()
+            ->getArrayResult();
+        $productIds = array_map('current', $productIds);
+        if (!$productIds) {
+            return;
+        }
+
+        /** @var ProductVisibility[] $visibilities */
+        $visibilities = $manager->getRepository('OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility')
+            ->createQueryBuilder('visibility')
+            ->andWhere('IDENTITY(visibility.product) IN (:productIds)')
+            ->setParameter('productIds', $productIds)
+            ->getQuery()
+            ->getResult();
+        foreach ($visibilities as $visibility) {
+            $visibility->setVisibility(ProductVisibility::CATEGORY);
+        }
+
+        $manager->flush();
     }
 }
