@@ -11,6 +11,7 @@ final class Result extends AbstractResult
     const ROW = 'row';
 
     const TAXES = 'taxes';
+    const ITEMS = 'items';
 
     /**
      * @return ResultElement
@@ -52,11 +53,23 @@ final class Result extends AbstractResult
         return $this->getOffset(self::TAXES, []);
     }
 
+    /**
+     * @return Result[]
+     */
+    public function getItems()
+    {
+        return $this->getOffset(self::ITEMS, []);
+    }
+
     /** {@inheritdoc} */
     public function serialize()
     {
         if ($this->offsetExists(self::TAXES)) {
             $this->offsetUnset(self::TAXES);
+        }
+
+        if ($this->offsetExists(self::ITEMS)) {
+            $this->offsetUnset(self::ITEMS);
         }
 
         return parent::serialize();

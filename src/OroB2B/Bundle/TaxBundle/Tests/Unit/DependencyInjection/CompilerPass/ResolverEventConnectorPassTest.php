@@ -49,10 +49,12 @@ class ResolverEventConnectorPassTest extends \PHPUnit_Framework_TestCase
      * @param array $tags
      * @param array $exception
      */
-    public function testEmptyTags(array $tags, array $exception)
+    public function testEmptyTags(array $tags, array $exception = [])
     {
-        list ($exception, $message) = $exception;
-        $this->setExpectedException($exception, $message);
+        if ($exception) {
+            list ($exception, $message) = $exception;
+            $this->setExpectedException($exception, $message);
+        }
 
         $this->containerBuilder
             ->expects($this->once())
@@ -72,14 +74,10 @@ class ResolverEventConnectorPassTest extends \PHPUnit_Framework_TestCase
     public function emptyTagsDataProvider()
     {
         return [
-            'empty tag' => [[], ['\InvalidArgumentException', 'Wrong tags configuration "[]"']],
-            'empty alias' => [
-                [['event' => 'test']],
-                ['\InvalidArgumentException', 'Wrong tags configuration "[{"event":"test"}]"'],
-            ],
+            'empty tag' => [[]],
             'empty event' => [
-                [['alias' => 'test']],
-                ['\InvalidArgumentException', 'Wrong tags configuration "[{"alias":"test"}]"'],
+                [['priority' => -255]],
+                ['\InvalidArgumentException', 'Wrong tags configuration "[{"priority":-255}]"'],
             ],
         ];
     }
@@ -92,7 +90,14 @@ class ResolverEventConnectorPassTest extends \PHPUnit_Framework_TestCase
         $this->containerBuilder
             ->expects($this->once())
             ->method('findTaggedServiceIds')
-            ->willReturn([$id => [['event' => ResolveTaxEvent::RESOLVE, 'alias' => 'total']]]);
+            ->willReturn(
+                [
+                    $id => [
+                        ['event' => ResolveTaxEvent::RESOLVE, 'priority' => -255],
+                        ['event' => ResolveTaxEvent::RESOLVE, 'priority' => 255],
+                    ],
+                ]
+            );
 
         $this->containerBuilder
             ->expects($this->once())
@@ -111,7 +116,10 @@ class ResolverEventConnectorPassTest extends \PHPUnit_Framework_TestCase
                         $this->assertEquals([new Reference($id)], $definition->getArguments());
                         $this->assertTrue($definition->hasTag('kernel.event_listener'));
                         $this->assertEquals(
-                            [['event' => ResolveTaxEvent::RESOLVE, 'method' => 'onResolve']],
+                            [
+                                ['event' => ResolveTaxEvent::RESOLVE, 'method' => 'onResolve', 'priority' => -255],
+                                ['event' => ResolveTaxEvent::RESOLVE, 'method' => 'onResolve', 'priority' => 255],
+                            ],
                             $definition->getTag('kernel.event_listener')
                         );
 

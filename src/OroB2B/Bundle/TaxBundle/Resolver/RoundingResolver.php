@@ -10,6 +10,7 @@ use OroB2B\Bundle\TaxBundle\Calculator\TaxCalculatorInterface;
 use OroB2B\Bundle\TaxBundle\Model\AbstractResult;
 use OroB2B\Bundle\TaxBundle\Model\AbstractResultElement;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
+use OroB2B\Bundle\TaxBundle\Model\TaxResultElement;
 
 class RoundingResolver implements ResolverInterface
 {
@@ -45,6 +46,11 @@ class RoundingResolver implements ResolverInterface
     protected function round(AbstractResultElement $result)
     {
         foreach ($result as $key => $value) {
+            // we should not round rates
+            if ($key === TaxResultElement::RATE) {
+                continue;
+            }
+
             try {
                 $value = (string)BigNumber::of($value)
                     ->toScale(TaxCalculatorInterface::SCALE, RoundingMode::UP)

@@ -209,4 +209,12 @@ class TaxValue implements DatesAwareInterface
     {
         return $this->result;
     }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 }

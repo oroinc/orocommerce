@@ -21,8 +21,10 @@ class TotalResolver implements ResolverInterface
 
         /** @var TaxResultElement[] $taxResults */
         $taxResults = [];
-        $exclTax = BigDecimal::zero();
         $inclTax = BigDecimal::zero();
+        $exclTax = BigDecimal::zero();
+        $taxAmount = BigDecimal::zero();
+        $adjustment = BigDecimal::zero();
 
         foreach ($taxable->getItems() as $taxableItem) {
             $taxableItemResult = $taxableItem->getResult();
@@ -30,6 +32,8 @@ class TotalResolver implements ResolverInterface
             try {
                 $inclTax = $inclTax->plus($row->getIncludingTax());
                 $exclTax = $exclTax->plus($row->getExcludingTax());
+                $taxAmount = $taxAmount->plus($row->getTaxAmount());
+                $adjustment = $adjustment->plus($row->getAdjustment());
             } catch (NumberFormatException $e) {
                 continue;
             }
@@ -55,7 +59,7 @@ class TotalResolver implements ResolverInterface
         }
 
         $result = $taxable->getResult();
-        $result->offsetSet(Result::TOTAL, ResultElement::create($inclTax, $exclTax));
+        $result->offsetSet(Result::TOTAL, ResultElement::create($inclTax, $exclTax, $taxAmount, $adjustment));
         $result->offsetSet(Result::TAXES, array_values($taxResults));
     }
 }

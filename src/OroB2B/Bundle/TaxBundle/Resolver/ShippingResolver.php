@@ -11,6 +11,10 @@ class ShippingResolver implements ResolverInterface
     /** {@inheritdoc} */
     public function resolve(Taxable $taxable)
     {
+        if (!$taxable->getItems()->count()) {
+            return;
+        }
+
         $taxable->getResult()->offsetSet(Result::SHIPPING, new ResultElement());
     }
 }

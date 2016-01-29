@@ -18,30 +18,25 @@ trait ResultComparatorTrait
      */
     protected function extractScalarValues($resultElement)
     {
-        $numberCallback = function ($number) {
-            if ($number instanceof BigNumber) {
-                return (string)$number;
-            }
+        if (is_string($resultElement)) {
+            return $resultElement;
+        }
 
-            return $number;
-        };
+        if ($resultElement instanceof BigNumber) {
+            return (string)$resultElement;
+        }
 
         if ($resultElement instanceof AbstractResult) {
             $resultElement = $resultElement->getArrayCopy();
-        } else {
-            return array_map(
-                function ($result) use ($numberCallback) {
-                    if ($result instanceof AbstractResult) {
-                        return array_map($numberCallback, $result->getArrayCopy());
-                    }
-
-                    return $result;
-                },
-                $resultElement
-            );
         }
 
-        return array_map($numberCallback, $resultElement);
+        if (is_array($resultElement)) {
+            foreach ($resultElement as &$element) {
+                $element = $this->extractScalarValues($element);
+            }
+        }
+
+        return $resultElement;
     }
 
     /**
@@ -56,7 +51,8 @@ trait ResultComparatorTrait
 
             $this->assertEquals(
                 $this->extractScalarValues($expectedValue),
-                $this->extractScalarValues($actualValue)
+                $this->extractScalarValues($actualValue),
+                $key
             );
         }
 
