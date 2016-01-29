@@ -19,6 +19,7 @@ use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\CategoryVisibilityReso
 class CategoryRepository extends EntityRepository
 {
     use CategoryVisibilityResolvedTermTrait;
+    use BasicOperationRepositoryTrait;
 
     const INSERT_BATCH_SIZE = 500;
 
@@ -194,5 +195,24 @@ class CategoryRepository extends EntityRepository
             ->setParameter('category', $category);
 
         return (int)$qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @param array $categoryIds
+     * @param int $visibility
+     */
+    public function updateCategoryVisibilityByCategory(array $categoryIds, $visibility)
+    {
+        if (!$categoryIds) {
+            return;
+        }
+
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->update('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved', 'cvr')
+            ->set('cvr.visibility', $visibility)
+            ->andWhere($qb->expr()->in('IDENTITY(cvr.category)', ':categoryIds'))
+            ->setParameter('categoryIds', $categoryIds);
+
+        $qb->getQuery()->execute();
     }
 }
