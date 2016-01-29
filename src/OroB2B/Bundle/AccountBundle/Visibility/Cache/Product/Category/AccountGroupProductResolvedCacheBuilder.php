@@ -78,11 +78,11 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
                 ->getRepository('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
                 ->getFallbackToAllVisibility($category);
         } elseif ($selectedVisibility === AccountGroupCategoryVisibility::PARENT_CATEGORY) {
-            $visibility = $this->getParentCategoryVisibility($category, $accountGroup);
+            list($visibility, $source) = $this->getParentCategoryVisibilityAndSource($category, $accountGroup);
             $update = [
                 'visibility' => $visibility,
                 'sourceCategoryVisibility' => $visibilitySettings,
-                'source' => AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                'source' => $source,
             ];
         } else {
             throw new \InvalidArgumentException(sprintf('Unknown visibility %s', $selectedVisibility));
@@ -98,13 +98,19 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
      * @param AccountGroup $accountGroup
      * @return int
      */
-    protected function getParentCategoryVisibility(Category $category, AccountGroup $accountGroup)
+    protected function getParentCategoryVisibilityAndSource(Category $category, AccountGroup $accountGroup)
     {
         $parentCategory = $category->getParentCategory();
         if ($parentCategory) {
-            return $this->getRepository()->getFallbackToGroupVisibility($parentCategory, $accountGroup);
+            return [
+                $this->getRepository()->getFallbackToGroupVisibility($parentCategory, $accountGroup),
+                AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY
+            ];
         } else {
-            return AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
+            return [
+                AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+                AccountGroupCategoryVisibilityResolved::SOURCE_STATIC
+            ];
         }
     }
 
