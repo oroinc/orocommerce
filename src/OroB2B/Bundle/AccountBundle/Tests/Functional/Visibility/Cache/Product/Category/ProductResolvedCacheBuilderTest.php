@@ -172,44 +172,44 @@ class ProductResolvedCacheBuilderTest extends WebTestCase
     {
         $expectedVisibilities = [
             [
-            'category' => self::ROOT,
-            'visibility' => CategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
-            'source' => CategoryVisibilityResolved::SOURCE_STATIC,
+                'category' => self::ROOT,
+                'visibility' => CategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+                'source' => CategoryVisibilityResolved::SOURCE_STATIC,
             ],
             [
-            'category' => 'category_1',
-            'visibility' => CategoryVisibilityResolved::VISIBILITY_VISIBLE,
-            'source' => CategoryVisibilityResolved::SOURCE_STATIC,
+                'category' => 'category_1',
+                'visibility' => CategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                'source' => CategoryVisibilityResolved::SOURCE_STATIC,
             ],
             [
-            'category' => 'category_1_2',
-            'visibility' => CategoryVisibilityResolved::VISIBILITY_VISIBLE,
-            'source' => CategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                'category' => 'category_1_2',
+                'visibility' => CategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                'source' => CategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
             ],
             [
-            'category' => 'category_1_2_3',
-            'visibility' => CategoryVisibilityResolved::VISIBILITY_VISIBLE,
-            'source' => CategoryVisibilityResolved::SOURCE_STATIC,
+                'category' => 'category_1_2_3',
+                'visibility' => CategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                'source' => CategoryVisibilityResolved::SOURCE_STATIC,
             ],
             [
-            'category' => 'category_1_2_3_4',
-            'visibility' => CategoryVisibilityResolved::VISIBILITY_VISIBLE,
-            'source' => CategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                'category' => 'category_1_2_3_4',
+                'visibility' => CategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                'source' => CategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
             ],
             [
-            'category' => 'category_1_5',
-            'visibility' => CategoryVisibilityResolved::VISIBILITY_VISIBLE,
-            'source' => CategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                'category' => 'category_1_5',
+                'visibility' => CategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                'source' => CategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
             ],
             [
-            'category' => 'category_1_5_6',
-            'visibility' => CategoryVisibilityResolved::VISIBILITY_HIDDEN,
-            'source' => CategoryVisibilityResolved::SOURCE_STATIC,
+                'category' => 'category_1_5_6',
+                'visibility' => CategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                'source' => CategoryVisibilityResolved::SOURCE_STATIC,
             ],
             [
-            'category' => 'category_1_5_6_7',
-            'visibility' => CategoryVisibilityResolved::VISIBILITY_HIDDEN,
-            'source' => CategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                'category' => 'category_1_5_6_7',
+                'visibility' => CategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                'source' => CategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
             ],
         ];
         $expectedVisibilities = $this->replaceReferencesWithIds($expectedVisibilities);
