@@ -2,12 +2,45 @@
 
 namespace OroB2B\Bundle\MenuBundle\JsTree;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
 use OroB2B\Bundle\MenuBundle\JsTree\Exception\MenuItemRootChangedException;
+use OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
 use OroB2B\Component\Tree\Handler\AbstractTreeHandler;
 
 class MenuItemTreeHandler extends AbstractTreeHandler
 {
+    /**
+     * @var DatabaseMenuProvider
+     */
+    protected $menuProvider;
+
+    /**
+     * {@inheritdoc}
+     * @param DatabaseMenuProvider $menuProvider
+     */
+    public function __construct($entityClass, ManagerRegistry $managerRegistry, DatabaseMenuProvider $menuProvider)
+    {
+        parent::__construct($entityClass, $managerRegistry);
+        $this->menuProvider = $menuProvider;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function moveNode($entityId, $parentId, $position)
+    {
+        $status = parent::moveNode($entityId, $parentId, $position);
+        if ($status['status'] === self::SUCCESS_STATUS) {
+            /** @var MenuItem $menuItem */
+            $menuItem = $this->getEntityRepository()->find($entityId);
+            $this->menuProvider->rebuildCacheByMenuItem($menuItem);
+        }
+
+        return $status;
+    }
+
     /**
      * {@inheritdoc}
      */

@@ -9,6 +9,7 @@ use Knp\Menu\ItemInterface;
 use Knp\Menu\Provider\MenuProviderInterface;
 
 use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
+use OroB2B\Bundle\MenuBundle\Entity\Repository\MenuItemRepository;
 use OroB2B\Bundle\WebsiteBundle\Locale\LocaleHelper;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
@@ -140,6 +141,29 @@ class DatabaseMenuProvider implements MenuProviderInterface
     }
 
     /**
+     * @param MenuItem $menuItem
+     */
+    public function rebuildCacheByMenuItem(MenuItem $menuItem)
+    {
+        if (!$this->cache) {
+            return;
+        }
+
+        // todo: check do we need always get root from parent, because it doesn't exist in the entity on persist
+        $rootId = $menuItem->getRoot();
+        if (!$rootId) {
+            return;
+        }
+        /** @var MenuItem $root */
+        $root = $this->getRepository()->find($rootId);
+        if (!$root) {
+            return;
+        }
+        $alias = $root->getDefaultTitle()->getString();
+        $this->rebuildCacheByAlias($alias);
+    }
+
+    /**
      * @param string $alias
      */
     public function clearCacheByAlias($alias)
@@ -235,13 +259,21 @@ class DatabaseMenuProvider implements MenuProviderInterface
     }
 
     /**
+     * @return MenuItemRepository
+     */
+    protected function getRepository()
+    {
+        return $this->registry
+            ->getManagerForClass($this->entityClass)
+            ->getRepository($this->entityClass);
+    }
+
+    /**
      * @return MenuItem[]
      */
     protected function getRoots()
     {
-        return $this->registry
-            ->getManagerForClass($this->entityClass)
-            ->getRepository($this->entityClass)
+        return $this->getRepository()
             ->findRoots();
     }
 }
