@@ -33,19 +33,22 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
      */
     public function build(Website $currentWebsite = null, $force = false)
     {
-        $websites = [$currentWebsite];
-        if (!$currentWebsite) {
-            $websites = $this->getPriceListToEntityRepository()
-                ->getWebsiteIteratorByFallback(PriceListWebsiteFallback::CONFIG);
-        }
+        $cacheKey = $this->getCacheKey($currentWebsite);
+        if ($force || !$this->getCacheProvider()->contains($cacheKey)) {
+            $websites = [$currentWebsite];
+            if (!$currentWebsite) {
+                $websites = $this->getPriceListToEntityRepository()
+                    ->getWebsiteIteratorByFallback(PriceListWebsiteFallback::CONFIG);
+            }
 
-        foreach ($websites as $website) {
-            $this->updatePriceListsOnCurrentLevel($website, $force);
-            $this->accountGroupCombinedPriceListsBuilder->build($website, null, $force);
-        }
+            foreach ($websites as $website) {
+                $this->updatePriceListsOnCurrentLevel($website, $force);
+                $this->accountGroupCombinedPriceListsBuilder->build($website, null, $force);
+            }
 
-        if ($currentWebsite) {
-            $this->garbageCollector->cleanCombinedPriceLists();
+            if ($currentWebsite) {
+                $this->garbageCollector->cleanCombinedPriceLists();
+            }
         }
     }
 
@@ -69,5 +72,19 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
 
         $this->getCombinedPriceListRepository()
             ->updateCombinedPriceListConnection($actualCombinedPriceList, $website);
+    }
+
+    /**
+     * @param Website|null $currentWebsite
+     * @return string
+     */
+    protected function getCacheKey(Website $currentWebsite = null)
+    {
+        $key = 'config';
+        if ($currentWebsite) {
+            $key = sprintf('website_%d', $currentWebsite->getId());
+        }
+
+        return $key;
     }
 }

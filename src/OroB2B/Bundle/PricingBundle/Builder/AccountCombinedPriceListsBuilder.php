@@ -20,8 +20,12 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
      */
     public function build(Website $website, Account $account, $force = false)
     {
-        $this->updatePriceListsOnCurrentLevel($website, $account, $force);
-        $this->garbageCollector->cleanCombinedPriceLists();
+        $cacheKey = $this->getCacheKey($website, $account);
+        if ($force || !$this->getCacheProvider()->contains($cacheKey)) {
+            $this->updatePriceListsOnCurrentLevel($website, $account, $force);
+            $this->garbageCollector->cleanCombinedPriceLists();
+            $this->getCacheProvider()->save($cacheKey, 1);
+        }
     }
 
     /**
@@ -31,11 +35,13 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
      */
     public function buildByAccountGroup(Website $website, AccountGroup $accountGroup, $force = false)
     {
-        $accounts = $this->getPriceListToEntityRepository()
-            ->getAccountIteratorByFallback($accountGroup, $website, PriceListAccountFallback::ACCOUNT_GROUP);
+        if ($force || !$this->getCacheProvider()->contains($this->getGroupCacheKey($website, $accountGroup))) {
+            $accounts = $this->getPriceListToEntityRepository()
+                ->getAccountIteratorByFallback($accountGroup, $website, PriceListAccountFallback::ACCOUNT_GROUP);
 
-        foreach ($accounts as $account) {
-            $this->updatePriceListsOnCurrentLevel($website, $account, $force);
+            foreach ($accounts as $account) {
+                $this->updatePriceListsOnCurrentLevel($website, $account, $force);
+            }
         }
     }
 
@@ -60,5 +66,25 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
 
         $this->getCombinedPriceListRepository()
             ->updateCombinedPriceListConnection($combinedPriceList, $website, $account);
+    }
+
+    /**
+     * @param Website $website
+     * @param Account $account
+     * @return string
+     */
+    protected function getCacheKey(Website $website, Account $account)
+    {
+        return sprintf('website_%d_account_%d', $website->getId(), $account->getId());
+    }
+
+    /**
+     * @param Website $website
+     * @param AccountGroup $accountGroup
+     * @return string
+     */
+    protected function getGroupCacheKey(Website $website, AccountGroup $accountGroup)
+    {
+        return sprintf('website_%d_group_%d', $website->getId(), $accountGroup->getId());
     }
 }
