@@ -141,8 +141,7 @@ class CategoryControllerTest extends WebTestCase
             $longDescription,
             $newTitle,
             $newShortDescription,
-            $newLongDescription,
-            'visible'
+            $newLongDescription
         );
     }
 
@@ -174,8 +173,7 @@ class CategoryControllerTest extends WebTestCase
             $longDescription,
             $newTitle,
             $newShortDescription,
-            $newLongDescription,
-            'hidden'
+            $newLongDescription
         );
     }
 
@@ -293,7 +291,6 @@ class CategoryControllerTest extends WebTestCase
      * @param string $newTitle
      * @param string $newShortDescription
      * @param string $newLongDescription
-     * @param string $categoryVisibilityToAll
      *
      * @return int
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -305,8 +302,7 @@ class CategoryControllerTest extends WebTestCase
         $longDescription,
         $newTitle,
         $newShortDescription,
-        $newLongDescription,
-        $categoryVisibilityToAll
+        $newLongDescription
     ) {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_catalog_category_update', ['id' => $id]));
         $form = $crawler->selectButton('Save and Close')->form();
@@ -341,8 +337,6 @@ class CategoryControllerTest extends WebTestCase
         $parameters['orob2b_catalog_category']['shortDescriptions']['values']['default'] = $newShortDescription;
         $parameters['orob2b_catalog_category']['longDescriptions']['values']['default'] = $newLongDescription;
         $parameters['orob2b_catalog_category']['largeImage']['emptyFile'] = true;
-
-        $parameters['orob2b_catalog_category']['visibility']['all'] = $categoryVisibilityToAll;
 
         foreach ($this->locales as $locale) {
             $parameters['orob2b_catalog_category']['titles']['values']['locales'][$locale->getId()]['value']

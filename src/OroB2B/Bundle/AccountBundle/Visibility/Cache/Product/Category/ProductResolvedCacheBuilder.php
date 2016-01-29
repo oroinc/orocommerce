@@ -51,15 +51,18 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
 
         $selectedVisibility = $visibilitySettings->getVisibility();
 
+        $visibilitySettings = $this->refreshEntity($visibilitySettings);
+
         $insert = false;
         $delete = false;
+        $update = [];
         $where = ['category' => $category];
 
         $repository = $this->getRepository();
 
-        $hasAccountCategoryVisibilityResolved = $repository->hasEntity($where);
+        $hasCategoryVisibilityResolved = $repository->hasEntity($where);
 
-        if (!$hasAccountCategoryVisibilityResolved && $selectedVisibility !== CategoryVisibility::PARENT_CATEGORY) {
+        if (!$hasCategoryVisibilityResolved && $selectedVisibility !== CategoryVisibility::CONFIG) {
             $insert = true;
         }
 
@@ -71,12 +74,12 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
                 'source' => CategoryVisibilityResolved::SOURCE_STATIC,
             ];
         } elseif ($selectedVisibility == CategoryVisibility::CONFIG) {
+            // fallback to config is default for account group and should be removed if exists
+            if ($hasCategoryVisibilityResolved) {
+                $delete = true;
+            }
+
             $visibility = CategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
-            $update = [
-                'visibility' => $visibility,
-                'sourceCategoryVisibility' => $visibilitySettings,
-                'source' => CategoryVisibilityResolved::SOURCE_STATIC,
-            ];
         } elseif ($selectedVisibility === CategoryVisibility::PARENT_CATEGORY) {
             $visibility = $this->getParentCategoryVisibility($category);
             $update = [
