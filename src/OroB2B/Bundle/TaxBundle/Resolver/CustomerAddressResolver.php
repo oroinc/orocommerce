@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\TaxBundle\Resolver;
 
+use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
 
 class CustomerAddressResolver implements ResolverInterface
@@ -24,8 +25,12 @@ class CustomerAddressResolver implements ResolverInterface
             return;
         }
 
+        $itemsResult = [];
         foreach ($taxable->getItems() as $taxableItem) {
             $this->itemResolver->resolve($taxableItem);
+            $itemsResult[] = $taxableItem->getResult();
         }
+
+        $taxable->getResult()->offsetSet(Result::ITEMS, $itemsResult);
     }
 }
