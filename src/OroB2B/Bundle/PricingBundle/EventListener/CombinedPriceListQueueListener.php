@@ -9,16 +9,23 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
 use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
+use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 
 class CombinedPriceListQueueListener
 {
-    /** @var bool */
+    /**
+     * @var bool
+     */
     protected $hasChanges = false;
 
-    /** @var CombinedPriceListQueueConsumer */
+    /**
+     * @var CombinedPriceListQueueConsumer
+     */
     protected $queueConsumer;
 
-    /** @var ConfigManager */
+    /**
+     * @var ConfigManager
+     */
     protected $configManager;
 
     /**
@@ -39,8 +46,10 @@ class CombinedPriceListQueueListener
         if (!$this->hasChanges) {
             return;
         }
-        $key = OroB2BPricingExtension::ALIAS . '.price_lists_update_mode';
-        $isRealTimeMode = $this->configManager->get($key) == CombinedPriceListQueueConsumer::MODE_REAL_TIME;
+        $key = OroB2BPricingExtension::ALIAS
+            . ConfigManager::SECTION_MODEL_SEPARATOR
+            . Configuration::PRICE_LISTS_UPDATE_MODE;
+        $isRealTimeMode = $this->configManager->get($key) === CombinedPriceListQueueConsumer::MODE_REAL_TIME;
         if ($isRealTimeMode) {
             $this->queueConsumer->process();
         }
