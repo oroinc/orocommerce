@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityRepository;
 
 use Gedmo\Tool\Logging\DBAL\QueryAnalyzer;
 
+use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Yaml\Yaml;
 
@@ -55,6 +56,7 @@ class TaxManagerTest extends WebTestCase
         $objectRepository->clear();
 
         $this->configManager->reset('orob2b_tax.product_prices_include_tax');
+        $this->configManager->reset('orob2b_tax.use_as_base_by_default');
         $this->configManager->flush();
 
         parent::tearDown();
@@ -80,6 +82,10 @@ class TaxManagerTest extends WebTestCase
         $priceIncludeTax = false
     ) {
         $this->configManager->set('orob2b_tax.product_prices_include_tax', $priceIncludeTax);
+        $this->configManager->set(
+            'orob2b_tax.use_as_base_by_default',
+            TaxationSettingsProvider::USE_AS_BASE_DESTINATION
+        );
 
         $this->prepareDatabase($databaseBefore);
 
@@ -154,7 +160,7 @@ class TaxManagerTest extends WebTestCase
                 $this->getReferenceRepository()->setReference($reference, $object);
             }
 
-            $em->clear($class);
+            $em->clear();
         }
     }
 

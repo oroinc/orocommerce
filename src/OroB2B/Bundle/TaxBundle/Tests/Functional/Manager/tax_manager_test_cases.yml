@@ -71,8 +71,16 @@ getTax_taxValue_exists:
             simple_order:
                 poNumber: { property_value: simple_order }
                 account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
-                billingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
-                shippingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
+                billingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+                shippingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
         'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
             order_line_item_1:
                 productSku: { property_value: order_line_item_1 }
@@ -126,8 +134,16 @@ saveTax_override_existing:
             simple_order:
                 poNumber: { property_value: simple_order }
                 account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
-                billingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
-                shippingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
+                billingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+                shippingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
         'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
             order_line_item_1:
                 productSku: { property_value: order_line_item_1 }
@@ -184,8 +200,16 @@ saveTax_new_taxValue:
             simple_order:
                 poNumber: { property_value: simple_order }
                 account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
-                billingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
-                shippingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
+                billingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+                shippingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
         'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
             order_line_item_1:
                 productSku: { property_value: order_line_item_1 }
@@ -308,8 +332,16 @@ item_getTax_taxValue_is_missing:
             simple_order:
                 poNumber: { property_value: simple_order }
                 account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
-                billingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
-                shippingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
+                billingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+                shippingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
         'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
             order_line_item_1:
                 productSku: { property_value: order_line_item_1 }
@@ -345,8 +377,16 @@ item_getTax_taxValue_exists:
             simple_order:
                 poNumber: { property_value: simple_order }
                 account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
-                billingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
-                shippingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
+                billingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+                shippingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
         'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
             order_line_item_1:
                 productSku: { property_value: order_line_item_1 }
@@ -410,8 +450,16 @@ item_saveTax_override_existing:
             simple_order:
                 poNumber: { property_value: simple_order }
                 account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
-                billingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
-                shippingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
+                billingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+                shippingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
         'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
             order_line_item_1:
                 productSku: { property_value: order_line_item_1 }
@@ -476,8 +524,16 @@ item_saveTax_new_taxValue:
             simple_order:
                 poNumber: { property_value: simple_order }
                 account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
-                billingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
-                shippingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
+                billingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+                shippingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
         'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
             order_line_item_1:
                 productSku: { property_value: order_line_item_1 }
@@ -513,8 +569,16 @@ saveTax_new_taxValue_tax_incl:
             simple_order:
                 poNumber: { property_value: simple_order }
                 account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
-                billingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
-                shippingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
+                billingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+                shippingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
         'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
             order_line_item_1:
                 productSku: { property_value: order_line_item_1 }
@@ -545,8 +609,16 @@ item_saveTax_new_taxValue_tax_incl:
             simple_order:
                 poNumber: { property_value: simple_order }
                 account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
-                billingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
-                shippingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
+                billingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+                shippingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
         'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
             order_line_item_1:
                 productSku: { property_value: order_line_item_1 }
@@ -582,8 +654,16 @@ item_saveTax_new_taxValue_empty_price:
             simple_order:
                 poNumber: { property_value: simple_order }
                 account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
-                billingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
-                shippingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
+                billingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+                shippingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
         'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
             order_line_item_1:
                 productSku: { property_value: order_line_item_1 }
@@ -619,8 +699,16 @@ item_getTax_new_taxValue_adjustment_lost:
             simple_order:
                 poNumber: { property_value: simple_order }
                 account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
-                billingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
-                shippingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
+                billingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+                shippingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
         'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
             order_line_item_1:
                 productSku: { property_value: order_line_item_1 }
@@ -793,3 +881,65 @@ item_getTax_new_taxValue_adjustment_lost:
                     - { tax: 'TAX1', rate: '0.1', taxable_amount: '22.21', tax_amount: '2.23' }
         taxes:
             - { tax: 'TAX1', rate: '0.1', taxable_amount: '199.89', tax_amount: '19.99' }
+
+getTax_with_empty_address:
+    method: getTax
+    reference: simple_order
+    expectedQueries: 8 # address, taxRule for country, taxRule for country + region, regions, taxRule for zip codes
+                       #          taxRule for country, taxRule for country, taxRule for zip codes
+    databaseBefore:
+        'OroB2B\Bundle\OrderBundle\Entity\Order':
+            simple_order:
+                poNumber: { property_value: simple_order }
+                account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+                billingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
+                shippingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
+        'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
+            order_line_item_1:
+                productSku: { property_value: order_line_item_1 }
+                order: { reference: simple_order }
+                quantity: { property_value: 5 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '15.99', currency: USD } }
+            order_line_item_2:
+                productSku: { property_value: order_line_item_2 }
+                order: { reference: simple_order }
+                quantity: { property_value: 6 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '5.55', currency: USD } }
+    expectedResult:
+        total:
+            includingTax: '113.25'
+            excludingTax: '113.25'
+            taxAmount: '0'
+            adjustment: '0'
+        taxes: []
+
+getTax_with_without_address:
+    method: getTax
+    reference: simple_order
+    expectedQueries: 8 # address, taxRule for country, taxRule for country + region, regions, taxRule for zip codes
+                       #          taxRule for country, taxRule for country, taxRule for zip codes
+    databaseBefore:
+        'OroB2B\Bundle\OrderBundle\Entity\Order':
+            simple_order:
+                poNumber: { property_value: simple_order }
+                account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+                billingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
+                shippingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
+        'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
+            order_line_item_1:
+                productSku: { property_value: order_line_item_1 }
+                order: { reference: simple_order }
+                quantity: { property_value: 5 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '15.99', currency: USD } }
+            order_line_item_2:
+                productSku: { property_value: order_line_item_2 }
+                order: { reference: simple_order }
+                quantity: { property_value: 6 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '5.55', currency: USD } }
+    expectedResult:
+        total:
+            includingTax: '113.25'
+            excludingTax: '113.25'
+            taxAmount: '0'
+            adjustment: '0'
+        taxes: []
