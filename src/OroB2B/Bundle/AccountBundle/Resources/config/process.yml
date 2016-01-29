@@ -179,6 +179,8 @@ triggers:
 
     category_position_cache_clear:
         -
+            event: create
+        -
             event: update
             field: parentCategory
         -
