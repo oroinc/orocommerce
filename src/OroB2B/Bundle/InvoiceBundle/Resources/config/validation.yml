@@ -1,7 +1,7 @@
 OroB2B\Bundle\InvoiceBundle\Entity\Invoice:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: invoiceNumber
-        - Callback: [validatePaymentDueDate]
+        - OroB2B\Bundle\InvoiceBundle\Validator\Constraints\InvoicePaymentDueDate: ~
     properties:
         owner:
             - NotBlank: ~

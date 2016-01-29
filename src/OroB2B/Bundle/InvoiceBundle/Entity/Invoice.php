@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\InvoiceBundle\Entity;
 
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -231,7 +229,7 @@ class Invoice extends ExtendInvoice implements
      * @param \DateTime $invoiceDate
      * @return $this
      */
-    public function setInvoiceDate($invoiceDate)
+    public function setInvoiceDate(\DateTime $invoiceDate)
     {
         $this->invoiceDate = $invoiceDate;
 
@@ -389,7 +387,7 @@ class Invoice extends ExtendInvoice implements
      * @param \DateTime $paymentDueDate
      * @return $this
      */
-    public function setPaymentDueDate($paymentDueDate)
+    public function setPaymentDueDate(\DateTime $paymentDueDate)
     {
         $this->paymentDueDate = $paymentDueDate;
 
@@ -441,22 +439,5 @@ class Invoice extends ExtendInvoice implements
     public function requireUpdate()
     {
         $this->updatedAt = null;
-    }
-
-    /**
-     * Checks that paymentDueDate greater that invoiceDate
-     *
-     * @param ExecutionContextInterface $context
-     */
-    public function validatePaymentDueDate(ExecutionContextInterface $context)
-    {
-        if ((!$this->getPaymentDueDate() instanceof \DateTime || !$this->getInvoiceDate() instanceof \DateTime) ||
-            ($this->getPaymentDueDate()->getTimestamp() < $this->getInvoiceDate()->getTimestamp())
-        ) {
-            $context
-                ->buildViolation('orob2b.invoice.validation.payment_due_date_error.label')
-                ->atPath('paymentDueDate')
-                ->addViolation();
-        }
     }
 }
