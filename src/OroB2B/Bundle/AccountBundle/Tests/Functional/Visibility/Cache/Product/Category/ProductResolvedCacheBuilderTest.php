@@ -7,7 +7,6 @@ use Doctrine\ORM\AbstractQuery;
 
 use Oro\Component\Testing\WebTestCase;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
@@ -34,9 +33,6 @@ class ProductResolvedCacheBuilderTest extends WebTestCase
     /** @var Category */
     protected $category;
 
-    /** @var Account */
-    protected $account;
-
     protected function setUp()
     {
         $this->initClient();
@@ -47,7 +43,6 @@ class ProductResolvedCacheBuilderTest extends WebTestCase
 
         $this->registry = $this->client->getContainer()->get('doctrine');
         $this->category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
-        $this->account = $this->getReference('account.level_1');
         $this->builder = $this->getContainer()
             ->get('orob2b_account.visibility.cache.product.category.product_resolved_cache_builder');
     }
