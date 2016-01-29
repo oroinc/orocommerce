@@ -73,8 +73,7 @@
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% set buttonOptions = {
         'dataAttributes': options.dataAttributes,
-        'aCss': 'no-hash grid-control',
-        'iCss': 'icon-shopping-cart hide-text',
+        'aCss': 'direct-link',
         'dataId': options.dataId,
         'label' : options.actionLabel|default(options.btnLabel)
     } %}
@@ -96,11 +95,11 @@
         {% endfor %}
         {{ buttons.addToNewShoppingListButton(options.new) }}
     {% endset %}
-
+    {# @TODO: remove options.layout #}
     {{ UI.pinnedDropdownButton({
         'html': buttonsHtml,
         'options': {
             'truncateLength': 15
-        }
+        }|merge(options.layout|default(false) ? {'groupContainer': '<div class="btn btn-block btn_orange btn_has-dropdown btn_has-dropdown_lg"></div>'} : {} )
     }) }}
 {% endmacro %}
