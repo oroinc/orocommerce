@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\MenuBundle\EventListener;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+
 use OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
 
 class MenuItemFormHandlerListener
