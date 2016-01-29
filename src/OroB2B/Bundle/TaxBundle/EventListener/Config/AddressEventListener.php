@@ -45,7 +45,7 @@ class AddressEventListener
         $settings = $event->getSettings();
 
         $key = OroB2BTaxExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . self::KEY;
-        if (!array_key_exists($key, $settings)) {
+        if (empty($settings[$key]['value'])) {
             return;
         }
 
