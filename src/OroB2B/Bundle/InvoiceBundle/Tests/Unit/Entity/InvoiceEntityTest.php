@@ -103,7 +103,6 @@ class InvoiceEntityTest extends \PHPUnit_Framework_TestCase
         return $this->getMockBuilder('Symfony\Component\Validator\Violation\ConstraintViolationBuilder')
             ->disableOriginalConstructor()
             ->setMethods(['addViolation', 'atPath'])
-            ->getMock()
-            ;
+            ->getMock();
     }
 }

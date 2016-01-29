@@ -4,12 +4,12 @@
 
 {% block pageHeader %}
     {% set breadcrumbs = {
-    'entity': entity,
-    'indexPath': path('orob2b_invoice_index'),
-    'indexLabel': 'orob2b.invoice.entity_plural_label'|trans,
-    'entityTitle': 'orob2b.invoice.navigation.view'|trans({
-    '%identifier%': entity.invoiceNumber|default('N/A'|trans)
-    })
+        'entity': entity,
+        'indexPath': path('orob2b_invoice_index'),
+        'indexLabel': 'orob2b.invoice.entity_plural_label'|trans,
+        'entityTitle': 'orob2b.invoice.navigation.view'|trans({
+            '%identifier%': entity.invoiceNumber|default('N/A'|trans)
+        })
     } %}
     {{ parent() }}
 {% endblock pageHeader %}
@@ -45,11 +45,11 @@
     {% set generalSectionBlocks = [{'data' : [invoiceInformationWidget]}] %}
 
     {% set dataBlocks = [
-    {
-    'title': 'orob2b.invoice.navigation.sections.general'|trans,
-    'class': 'active',
-    'subblocks': generalSectionBlocks
-    }
+        {
+            'title': 'orob2b.invoice.navigation.sections.general'|trans,
+            'class': 'active',
+            'subblocks': generalSectionBlocks
+        }
     ] %}
 
     {% if entity.lineItems|length %}
@@ -91,8 +91,8 @@
         {% endset %}
 
         {% set dataBlocks = dataBlocks|merge([{
-        'title': 'orob2b.invoice.navigation.sections.invoice_line_items'|trans,
-        'subblocks': [{'data' : [lineItems]}]
+            'title': 'orob2b.invoice.navigation.sections.invoice_line_items'|trans,
+            'subblocks': [{'data' : [lineItems]}]
         }]) %}
     {% endif %}
 

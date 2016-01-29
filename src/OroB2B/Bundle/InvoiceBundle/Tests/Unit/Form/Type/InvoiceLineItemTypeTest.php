@@ -29,7 +29,6 @@ class InvoiceLineItemTypeTest extends FormIntegrationTestCase
 
     const PRODUCT_UNIT_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\ProductUnit';
 
-
     /**
      * @var InvoiceLineItemType
      */
@@ -45,6 +44,9 @@ class InvoiceLineItemTypeTest extends FormIntegrationTestCase
      */
     protected $productUnitLabelFormatter;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         parent::setUp();
@@ -155,7 +157,6 @@ class InvoiceLineItemTypeTest extends FormIntegrationTestCase
     {
         /** @var Product $product */
         $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 1]);
-        $date = \DateTime::createFromFormat('Y-m-d H:i:s', '2015-02-03 00:00:00', new \DateTimeZone('UTC'));
 
         return [
             'default' => [

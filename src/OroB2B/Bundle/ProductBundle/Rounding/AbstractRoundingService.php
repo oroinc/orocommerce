@@ -23,9 +23,9 @@ abstract class AbstractRoundingService implements RoundingServiceInterface
 
     /**
      * @param float|int $value
-     * @param null $precision
-     * @param null $roundType
-     * @return float|int|number
+     * @param int $precision
+     * @param int $roundType
+     * @return float|int
      * @throws InvalidRoundingTypeException
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
@@ -41,6 +41,7 @@ abstract class AbstractRoundingService implements RoundingServiceInterface
         }
 
         // shift number to maintain the correct scale during rounding
+        /** @var int $roundingCoef */
         $roundingCoef = pow(10, $precision);
         $value *= $roundingCoef;
 

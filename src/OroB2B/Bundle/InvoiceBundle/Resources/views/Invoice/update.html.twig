@@ -127,12 +127,13 @@
     ] %}
 
     {% set dataBlocks = dataBlocks|merge([{
-    'title': 'orob2b.invoice.sections.subtotals'|trans,
-    'class': 'active',
-    'subblocks': [{
-    'data': [subtotals]
-    }]
-    }]) %}
+            'title': 'orob2b.invoice.sections.subtotals'|trans,
+            'class': 'active',
+            'subblocks': [{
+                'data': [subtotals]
+            }]
+        }])
+    %}
 
     {% set additionalData = [
         form_row(form.poNumber),

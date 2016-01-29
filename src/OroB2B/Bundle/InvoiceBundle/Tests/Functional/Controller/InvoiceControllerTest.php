@@ -270,25 +270,26 @@ class InvoiceControllerTest extends WebTestCase
 
         for ($i = 0; $i < $count; $i++) {
             $result[] = [
-                'product' => $crawler->filter('input[name="orob2b_invoice_type[lineItems]['.$i.'][product]"]')
+                'product' => $crawler->filter('input[name="orob2b_invoice_type[lineItems][' . $i . '][product]"]')
                     ->extract('value')[0],
                 'freeFormProduct' => $crawler
-                    ->filter('input[name="orob2b_invoice_type[lineItems]['.$i.'][freeFormProduct]"]')
+                    ->filter('input[name="orob2b_invoice_type[lineItems][' . $i . '][freeFormProduct]"]')
                     ->extract('value')[0],
-                'quantity' => $crawler->filter('input[name="orob2b_invoice_type[lineItems]['.$i.'][quantity]"]')
+                'quantity' => $crawler->filter('input[name="orob2b_invoice_type[lineItems][' . $i . '][quantity]"]')
                     ->extract('value')[0],
                 'productUnit' => $crawler
-                    ->filter('select[name="orob2b_invoice_type[lineItems]['.$i.'][productUnit]"] :selected')
+                    ->filter('select[name="orob2b_invoice_type[lineItems][' . $i . '][productUnit]"] :selected')
                     ->html(),
                 'price' => [
-                    'value' => $crawler->filter('input[name="orob2b_invoice_type[lineItems]['.$i.'][price][value]"]')
+                    'value' => $crawler
+                        ->filter('input[name="orob2b_invoice_type[lineItems][' . $i . '][price][value]"]')
                         ->extract('value')[0],
                     'currency' => $crawler
-                        ->filter('input[name="orob2b_invoice_type[lineItems]['.$i.'][price][currency]"]')
+                        ->filter('input[name="orob2b_invoice_type[lineItems][' . $i . '][price][currency]"]')
                         ->extract('value')[0],
                 ],
                 'priceType' => $crawler
-                    ->filter('select[name="orob2b_invoice_type[lineItems]['.$i.'][priceType]"] :selected')
+                    ->filter('select[name="orob2b_invoice_type[lineItems][' . $i . '][priceType]"] :selected')
                     ->html(),
             ];
         }
