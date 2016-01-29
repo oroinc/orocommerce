@@ -12,8 +12,8 @@ final class ResultElement extends AbstractResultElement
     /**
      * @param string $includingTax
      * @param string $excludingTax
-     * @param string $taxAmount
-     * @param string $adjustment
+     * @param string|null $taxAmount Tax amount value or null if it doesn't calculated
+     * @param string|null $adjustment Adjustment value or null if it doesn't calculated
      *
      * @return ResultElement
      */

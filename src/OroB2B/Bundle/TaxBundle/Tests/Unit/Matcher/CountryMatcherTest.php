@@ -17,22 +17,47 @@ class CountryMatcherTest extends AbstractMatcherTest
         $this->matcher = new CountryMatcher($this->doctrineHelper, self::TAX_RULE_CLASS);
     }
 
-    public function testMatch()
+    /**
+     * @dataProvider matchProvider
+     * @param TaxRule[] $expected
+     * @param Country $country
+     * @param TaxRule[] $taxRules
+     */
+    public function testMatch($expected, $country, $taxRules)
     {
-        $address = new Address();
-        $address->setCountry(new Country('US'));
+        $address = (new Address())
+            ->setCountry($country);
 
+        $this->taxRuleRepository
+            ->expects(empty($taxRules) ? $this->never() : $this->once())
+            ->method('findByCountry')
+            ->with($country)
+            ->willReturn($taxRules);
+
+        $this->assertEquals($expected, $this->matcher->match($address));
+    }
+
+    /**
+     * @return array
+     */
+    public function matchProvider()
+    {
         $taxRules = [
             new TaxRule(),
             new TaxRule(),
         ];
 
-        $this->taxRuleRepository
-            ->expects($this->once())
-            ->method('findByCountry')
-            ->with($address->getCountry())
-            ->willReturn($taxRules);
-
-        $this->assertEquals($taxRules, $this->matcher->match($address));
+        return [
+            'address with country' => [
+                'expected' => $taxRules,
+                'country' => new Country('US'),
+                'taxRules' => $taxRules
+            ],
+            'address without country' => [
+                'expected' => [],
+                'country' => null,
+                'taxRules' => []
+            ]
+        ];
     }
 }
