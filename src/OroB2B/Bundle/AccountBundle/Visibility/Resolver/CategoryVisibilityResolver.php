@@ -92,21 +92,6 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getCategoryVisibilitiesForAccountGroups(Category $category, array $accountGroups)
-    {
-        return $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
-            ->getCategoryVisibilitiesForAccountGroups(
-                $category,
-                $accountGroups,
-                $this->getCategoryVisibilityConfigValue()
-            );
-    }
-
-    /**
      * @param AccountGroup $accountGroup
      * @return array
      */
@@ -149,21 +134,6 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
             ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
             ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
             ->isCategoryVisible($category, $account, $this->getCategoryVisibilityConfigValue());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCategoryVisibilitiesForAccounts(Category $category, array $accounts)
-    {
-        return $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
-            ->getCategoryVisibilitiesForAccounts(
-                $category,
-                $accounts,
-                $this->getCategoryVisibilityConfigValue()
-            );
     }
 
     /**

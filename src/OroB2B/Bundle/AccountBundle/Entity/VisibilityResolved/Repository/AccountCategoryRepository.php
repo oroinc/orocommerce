@@ -79,10 +79,10 @@ class AccountCategoryRepository extends EntityRepository
 
     /**
      * @param Category $category
-     * @param Account[] $accounts
+     * @param array $accountIds
      * @return array
      */
-    protected function getFallbackToAccountsVisibilities(Category $category, array $accounts)
+    protected function getFallbackToAccountsVisibilities(Category $category, array $accountIds)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
@@ -125,9 +125,9 @@ class AccountCategoryRepository extends EntityRepository
             Join::WITH,
             $qb->expr()->eq('cvr.category', ':category')
         )
-        ->where($qb->expr()->in('account', ':accounts'))
+        ->where($qb->expr()->in('account', ':accountIds'))
         ->setParameter('category', $category)
-        ->setParameter('accounts', $accounts);
+        ->setParameter('accountIds', $accountIds);
 
         $fallBackToAccountVisibilities = [];
         foreach ($qb->getQuery()->getArrayResult() as $resultItem) {
@@ -155,13 +155,13 @@ class AccountCategoryRepository extends EntityRepository
 
     /**
      * @param Category $category
-     * @param Account[] $accounts
+     * @param array $accountIds
      * @param $configValue
-     * @return int
+     * @return array
      */
-    public function getCategoryVisibilitiesForAccounts(Category $category, array $accounts, $configValue)
+    public function getCategoryVisibilitiesForAccounts(Category $category, array $accountIds, $configValue)
     {
-        $visibilities = $this->getFallbackToAccountsVisibilities($category, $accounts);
+        $visibilities = $this->getFallbackToAccountsVisibilities($category, $accountIds);
 
         foreach ($visibilities as $accountGroup => $visibility) {
             if ($visibility === AccountCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG) {

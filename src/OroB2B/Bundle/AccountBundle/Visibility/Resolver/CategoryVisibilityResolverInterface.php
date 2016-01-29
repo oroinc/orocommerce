@@ -32,13 +32,6 @@ interface CategoryVisibilityResolverInterface
     public function isCategoryVisibleForAccountGroup(Category $category, AccountGroup $accountGroup);
 
     /**
-     * @param Category $category
-     * @param AccountGroup[] $accountGroups
-     * @return array
-     */
-    public function getCategoryVisibilitiesForAccountGroups(Category $category, array $accountGroups);
-
-    /**
      * @param AccountGroup $accountGroup
      * @return array
      */
@@ -57,12 +50,6 @@ interface CategoryVisibilityResolverInterface
      */
     public function isCategoryVisibleForAccount(Category $category, Account $account);
 
-    /**
-     * @param Category $category
-     * @param Account[] $accounts
-     * @return array
-     */
-    public function getCategoryVisibilitiesForAccounts(Category $category, array $accounts);
 
     /**
      * @param Account $account
