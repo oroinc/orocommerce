@@ -23,6 +23,7 @@ parameters:
     orob2b_product.event_listener.product_select_db_query.class: OroB2B\Bundle\ProductBundle\EventListener\ProductSelectDBQueryEventListener
     orob2b_product.event_listener.scoped_product_select_db_query.class: OroB2B\Bundle\ProductBundle\EventListener\ScopedProductSelectDBQueryEventListener
     orob2b_product.event_listener.restrict_disabled_products.class: OroB2B\Bundle\ProductBundle\EventListener\RestrictDisabledProductsEventListener
+    orob2b_product.model.builder.quick_add_row_collection.class: OroB2B\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder
 
     orob2b_product.validator.unique_variant_links.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator
     orob2b_product.validator.product_variant_field.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantFieldValidator
@@ -173,9 +174,7 @@ services:
             - @translator
             - @form.factory
             - @orob2b_product.component_processor.registry
-            - @doctrine
-        calls:
-            - [setProductClass, [%orob2b_product.product.class%]]
+            - @orob2b_product.model.builder.quick_add_row_collection
 
     orob2b_product.event_listener.product_grid_widget:
         class: %orob2b_product.event_listener.product_grid_widget.class%
@@ -297,9 +296,7 @@ services:
         arguments:
             - %orob2b_product.product.class%
 
-    orob2b_product.validator.quick_add_row_collection:
-        class: %orob2b_product.validator.quick_add_row_collection.class%
+    orob2b_product.model.builder.quick_add_row_collection:
+        class: %orob2b_product.model.builder.quick_add_row_collection.class%
         arguments:
             - @orob2b_product.repository.product
-        tags:
-            - { name: validator.constraint_validator, alias: orob2b_product_quick_add_row_collection }

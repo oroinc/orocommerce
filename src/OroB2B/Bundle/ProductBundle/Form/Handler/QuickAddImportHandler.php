@@ -11,7 +11,6 @@ use Symfony\Component\Translation\TranslatorInterface;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddOrderType;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class QuickAddImportHandler
@@ -84,7 +83,7 @@ class QuickAddImportHandler
      */
     protected function getComponentName(Request $request)
     {
-        $formData = $request->get(QuickAddOrderType::NAME, []);
+        $formData = $request->get(QuickAddType::NAME, []);
 
         $name = null;
         if (array_key_exists(QuickAddType::COMPONENT_FIELD_NAME, $formData)) {
@@ -110,7 +109,7 @@ class QuickAddImportHandler
     private function getProducts(Request $request)
     {
         $products = $request->get(
-            sprintf('%s[%s]', QuickAddOrderType::NAME, QuickAddType::PRODUCTS_FIELD_NAME),
+            sprintf('%s[%s]', QuickAddType::NAME, QuickAddType::PRODUCTS_FIELD_NAME),
             [],
             true
         );
@@ -125,7 +124,7 @@ class QuickAddImportHandler
     private function getShoppingListId(Request $request)
     {
         return (int) $request->get(
-            sprintf('%s[%s]', QuickAddOrderType::NAME, QuickAddType::ADDITIONAL_FIELD_NAME),
+            sprintf('%s[%s]', QuickAddType::NAME, QuickAddType::ADDITIONAL_FIELD_NAME),
             0,
             true
         );

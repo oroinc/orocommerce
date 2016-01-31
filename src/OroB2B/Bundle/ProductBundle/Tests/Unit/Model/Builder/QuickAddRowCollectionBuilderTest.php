@@ -1,0 +1,192 @@
+<?php
+
+namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Model\Builder;
+
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request;
+
+use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
+use OroB2B\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
+use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
+use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+
+class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
+{
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|QuickAddRowCollectionBuilder
+     */
+    private $builder;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ProductRepository
+     */
+    private $productRepository;
+
+    /**
+     * @var array
+     */
+    protected $expectedElements = [
+        'HSSUC' => 1,
+        'HSTUC' => 2.55,
+        'HCCM' => 3,
+        'SKU1' => 10.0112,
+        'SKU2' => 0,
+        'SKU3' => null
+    ];
+
+    /**
+     * @var array
+     */
+    protected $completeElementSkus = ['HSSUC', 'HSTUC', 'HCCM', 'SKU1'];
+
+    /**
+     * @var array
+     */
+    protected $validElementSkus = ['HSSUC', 'HSTUC'];
+
+    /**
+     * @var int
+     */
+    protected $expectedCountAll = 6;
+
+    /**
+     * @var int
+     */
+    protected $expectedCountCompleted = 4;
+
+    /**
+     * @var int
+     */
+    protected $expectedCountValid = 2;
+
+    public function setUp()
+    {
+        $this->productRepository = $this
+            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->productRepository->expects($this->once())
+            ->method('getProductWithNamesBySku')
+            ->with(array_keys($this->expectedElements))
+            ->willReturn([
+                'HSSUC' => $this->prepareProduct('HSSUC'),
+                'HSTUC' => $this->prepareProduct('HSTUC'),
+            ]);
+
+        $this->builder = new QuickAddRowCollectionBuilder($this->productRepository);
+    }
+
+    public function testBuildFromRequest()
+    {
+        $data = [];
+        foreach ($this->expectedElements as $sku => $quantity) {
+            $data[] = [
+                ProductDataStorage::PRODUCT_SKU_KEY => $sku,
+                ProductDataStorage::PRODUCT_QUANTITY_KEY => $quantity,
+            ];
+        }
+
+        $request = new Request();
+        $request->request->set(QuickAddType::NAME , [
+            QuickAddType::PRODUCTS_FIELD_NAME => $data
+        ]);
+
+        $this->assertValidCollection($this->builder->buildFromRequest($request));
+    }
+
+    /**
+     * @dataProvider fileDataProvider
+     *
+     * @param UploadedFile $file
+     */
+    public function testBuildFromFile(UploadedFile $file)
+    {
+        $this->assertValidCollection($this->builder->buildFromFile($file));
+    }
+
+    /**
+     * @dataProvider textDataProvider
+     *
+     * @param string $text
+     */
+    public function testBuildFromCopyPasteText($text)
+    {
+        $this->assertValidCollection($this->builder->buildFromCopyPasteText($text));
+    }
+
+    public function textDataProvider()
+    {
+        $commaSeparated = <<<TEXT
+HSSUC, 1
+HSTUC, 2.55
+HCCM, 3,
+SKU1,10.0112
+SKU2,asd
+SKU3,
+TEXT;
+        $tabsSeparated = <<<TEXT
+HSSUC\t1
+HSTUC\t2.55
+HCCM\t3\t
+SKU1\t10.0112
+SKU2\tasd
+SKU3\t
+TEXT;
+
+        return [
+            'comma separated' => [$commaSeparated],
+            'tabs separated' => [$tabsSeparated]
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function fileDataProvider()
+    {
+        return [
+            'csv' => [new UploadedFile(__DIR__ . '/files/quick-order.csv', 'quick-order.csv')],
+            'ods' => [new UploadedFile(__DIR__ . '/files/quick-order.ods', 'quick-order.ods')],
+            'xlsx' => [new UploadedFile(__DIR__ . '/files/quick-order.xlsx', 'quick-order.xlsx')]
+        ];
+    }
+
+    /**
+     * @param QuickAddRowCollection $collection
+     */
+    protected function assertValidCollection(QuickAddRowCollection $collection)
+    {
+        $this->assertInstanceOf('OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection', $collection);
+        $this->assertCount($this->expectedCountAll, $collection);
+        $this->assertCount($this->expectedCountCompleted, $collection->getCompleteRows());
+        $this->assertCount($this->expectedCountValid, $collection->getValidRows());
+
+        foreach ($collection as $i => $element) {
+            $this->assertEquals($this->expectedElements[$element->getSku()], $element->getQuantity());
+        }
+
+        foreach ($collection->getCompleteRows() as $i => $element) {
+            $this->assertContains($element->getSku(), $this->completeElementSkus);
+        }
+
+        foreach ($collection->getValidRows() as $i => $element) {
+            $this->assertContains($element->getSku(), $this->validElementSkus);
+        }
+    }
+
+    /**
+     * @param string $sku
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function prepareProduct($sku)
+    {
+        $product = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\Product');
+        $product->expects($this->once())
+            ->method('getSku')
+            ->willReturn($sku);
+
+        return $product;
+    }
+}

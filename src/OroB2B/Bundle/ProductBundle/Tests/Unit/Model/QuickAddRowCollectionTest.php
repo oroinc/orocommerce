@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Model;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Model\QuickAddRow;
 use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
 
@@ -70,6 +71,20 @@ class QuickAddRowCollectionTest extends \PHPUnit_Framework_TestCase
         $this->addTwoCompleteRows($collection);
         $this->assertCount(2, $collection->getInvalidRows());
         $this->assertIsSku1Row($collection->getInvalidRows()->first());
+    }
+
+    public function testValidate()
+    {
+        $collection = new QuickAddRowCollection();
+        $this->addTwoCompleteRows($collection);
+
+        $collection->validate();
+        $this->assertCount(0, $collection->getValidRows());
+
+        $collection->setProductsBySku([self::SKU1 => new Product()]);
+        $collection->validate();
+        $this->assertCount(1, $collection->getValidRows());
+        $this->assertEquals(self::SKU1, $collection->getValidRows()->first()->getSku());
     }
 
     /**

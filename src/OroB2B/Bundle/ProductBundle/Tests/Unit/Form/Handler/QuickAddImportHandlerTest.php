@@ -11,7 +11,6 @@ use Symfony\Component\Translation\TranslatorInterface;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 use OroB2B\Bundle\ProductBundle\Form\Handler\QuickAddImportHandler;
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddOrderType;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
@@ -163,14 +162,14 @@ class QuickAddImportHandlerTest extends \PHPUnit_Framework_TestCase
         $request->expects($this->any())
             ->method('get')
             ->willReturnMap([
-                [sprintf('%s[%s]', QuickAddOrderType::NAME, QuickAddType::PRODUCTS_FIELD_NAME), [], true, $products],
+                [sprintf('%s[%s]', QuickAddType::NAME, QuickAddType::PRODUCTS_FIELD_NAME), [], true, $products],
                 [
-                    sprintf('%s[%s]', QuickAddOrderType::NAME, QuickAddType::ADDITIONAL_FIELD_NAME),
+                    sprintf('%s[%s]', QuickAddType::NAME, QuickAddType::ADDITIONAL_FIELD_NAME),
                     0,
                     true,
                     $shoppingListId
                 ],
-                [QuickAddOrderType::NAME, [], false, [QuickAddType::COMPONENT_FIELD_NAME => $componentName]]
+                [QuickAddType::NAME, [], false, [QuickAddType::COMPONENT_FIELD_NAME => $componentName]]
             ]);
 
         return $request;

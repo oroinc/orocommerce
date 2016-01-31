@@ -15,7 +15,7 @@ use OroB2B\Bundle\ProductBundle\Validator\Constraints\QuickAddRowCollection;
 class QuickAddCopyPasteType extends AbstractType
 {
     const NAME = 'orob2b_product_quick_add_copy_paste';
-    const PRODUCTS_FIELD_NAME = 'products';
+    const COPY_PASTE_FIELD_NAME = 'copyPaste';
     const FORMAT_REGEX = '/^[^\s]+[\t\,]\s*?[0-9]+\.?[0-9]*/';
 
     /**
@@ -23,31 +23,17 @@ class QuickAddCopyPasteType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add(
-                $builder->create(
-                    'collection',
-                    'textarea',
-                    [
-                        'constraints' => [
-                            new NotBlank(),
-                            new Regex(['message' => 'Invalid format', 'pattern' => self::FORMAT_REGEX]),
-                            new QuickAddRowCollection()
-                        ],
-                        'label' => false,
-                    ]
-                )->addModelTransformer(new TextareaToRowCollectionTransformer())
-            );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults([
-            'data_class' => 'OroB2B\Bundle\ProductBundle\Model\QuickAddCopyPaste'
-        ]);
+        $builder->add(
+            self::COPY_PASTE_FIELD_NAME,
+            'textarea',
+            [
+                'constraints' => [
+                    new NotBlank(),
+                    new Regex(['message' => 'Invalid format', 'pattern' => self::FORMAT_REGEX]),
+                ],
+                'label' => false,
+            ]
+        );
     }
 
     /**

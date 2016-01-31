@@ -13,6 +13,7 @@ use OroB2B\Bundle\ProductBundle\Validator\Constraints\QuickAddRowCollection;
 class QuickAddImportFromFileType extends AbstractType
 {
     const NAME = 'orob2b_product_quick_add_import_from_file';
+    const FILE_FIELD_NAME = 'file';
 
     /**
      * {@inheritdoc}
@@ -21,28 +22,25 @@ class QuickAddImportFromFileType extends AbstractType
     {
         $builder
             ->add(
-                $builder->create(
-                    QuickAddType::PRODUCTS_FIELD_NAME,
-                    'file',
-                    [
-                        'required' => true,
-                        'constraints' => [
-                            new File(
-                                [
-                                    'mimeTypes' => [
-                                        'text/plain',
-                                        'text/csv',
-                                        'application/vnd.oasis.opendocument.spreadsheet',
-                                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                                    ],
-                                    'mimeTypesMessage' => 'This file type is not allowed.'
-                                ]
-                            ),
-                            new NotBlank(),
-                            new QuickAddRowCollection()
-                        ]
+                self::FILE_FIELD_NAME,
+                'file',
+                [
+                    'required' => true,
+                    'constraints' => [
+                        new File(
+                            [
+                                'mimeTypes' => [
+                                    'text/plain',
+                                    'text/csv',
+                                    'application/vnd.oasis.opendocument.spreadsheet',
+                                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                                ],
+                                'mimeTypesMessage' => 'This file type is not allowed.'
+                            ]
+                        ),
+                        new NotBlank(),
                     ]
-                )->addModelTransformer(new FileToRowCollectionTransformer())
+                ]
             );
 
     }
