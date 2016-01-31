@@ -76,6 +76,7 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
             $this->garbageCollector
         );
         $this->builder->setWebsiteCombinedPriceListBuilder($this->websiteBuilder);
+        $this->builder->setWebsiteCombinedPriceListBuilder($this->websiteBuilder);
     }
 
     /**
@@ -86,6 +87,10 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testBuild($configCPLId, $actualCPLId, $force)
     {
+        $callExpects = 1;
+        if ($force) {
+            $callExpects = 2;
+        }
         $combinedPriceList = $this->getMock('OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList');
         $combinedPriceList->expects($this->any())
             ->method('getId')
@@ -96,10 +101,10 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
                 ->getMock()
         ];
 
-        $this->priceListCollectionProvider->expects($this->once())
+        $this->priceListCollectionProvider->expects($this->exactly($callExpects))
             ->method('getPriceListsByConfig')
             ->will($this->returnValue($priceListsCollection));
-        $this->combinedPriceListProvider->expects($this->once())
+        $this->combinedPriceListProvider->expects($this->exactly($callExpects))
             ->method('getCombinedPriceList')
             ->with($priceListsCollection, $force)
             ->will($this->returnValue($combinedPriceList));
@@ -108,22 +113,23 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
             ConfigManager::SECTION_MODEL_SEPARATOR,
             [OroB2BPricingExtension::ALIAS, Configuration::COMBINED_PRICE_LIST]
         );
-        $this->configManager->expects($this->once())
+        $this->configManager->expects($this->exactly($callExpects))
             ->method('get')
             ->with($key)
             ->willReturn($configCPLId);
 
         if ($actualCPLId !== $configCPLId) {
-            $this->assertUpdateCombinedPriceListConnection($actualCPLId, $key);
+            $this->assertUpdateCombinedPriceListConnection($actualCPLId, $key, $force);
         } else {
             $this->configManager->expects($this->never())
                 ->method('set');
         }
 
-        $this->websiteBuilder->expects($this->once())
+        $this->websiteBuilder->expects($this->exactly($callExpects))
             ->method('build')
             ->with(null, $force);
 
+        $this->builder->build($force);
         $this->builder->build($force);
     }
 
@@ -169,13 +175,18 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
     /**
      * @param int $actualCPLId
      * @param string $key
+     * @param bool $force
      */
-    protected function assertUpdateCombinedPriceListConnection($actualCPLId, $key)
+    protected function assertUpdateCombinedPriceListConnection($actualCPLId, $key, $force)
     {
-        $this->configManager->expects($this->once())
+        $callExpects = 1;
+        if ($force) {
+            $callExpects = 2;
+        }
+        $this->configManager->expects($this->exactly($callExpects))
             ->method('set')
             ->with($key, $actualCPLId);
-        $this->configManager->expects($this->once())
+        $this->configManager->expects($this->exactly($callExpects))
             ->method('flush');
     }
 }

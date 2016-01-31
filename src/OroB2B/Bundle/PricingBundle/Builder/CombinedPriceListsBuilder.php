@@ -82,6 +82,7 @@ class CombinedPriceListsBuilder
             $this->updatePriceListsOnCurrentLevel($force);
             $this->websiteCombinedPriceListBuilder->build(null, $force);
             $this->garbageCollector->cleanCombinedPriceLists();
+            $this->getCacheProvider()->save($cacheKey, 1);
         }
     }
 

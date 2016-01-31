@@ -48,6 +48,7 @@ class AccountGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBui
             if ($currentAccountGroup) {
                 $this->garbageCollector->cleanCombinedPriceLists();
             }
+            $this->getCacheProvider()->save($cacheKey, 1);
         }
     }
 

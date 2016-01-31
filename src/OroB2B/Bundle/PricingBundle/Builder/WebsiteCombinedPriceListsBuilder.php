@@ -49,6 +49,7 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
             if ($currentWebsite) {
                 $this->garbageCollector->cleanCombinedPriceLists();
             }
+            $this->getCacheProvider()->save($cacheKey, 1);
         }
     }
 

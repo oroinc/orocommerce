@@ -35,13 +35,15 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
      */
     public function buildByAccountGroup(Website $website, AccountGroup $accountGroup, $force = false)
     {
-        if ($force || !$this->getCacheProvider()->contains($this->getGroupCacheKey($website, $accountGroup))) {
+        $cacheKey = $this->getGroupCacheKey($website, $accountGroup);
+        if ($force || !$this->getCacheProvider()->contains($cacheKey)) {
             $accounts = $this->getPriceListToEntityRepository()
                 ->getAccountIteratorByFallback($accountGroup, $website, PriceListAccountFallback::ACCOUNT_GROUP);
 
             foreach ($accounts as $account) {
                 $this->updatePriceListsOnCurrentLevel($website, $account, $force);
             }
+            $this->getCacheProvider()->save($cacheKey, 1);
         }
     }
 

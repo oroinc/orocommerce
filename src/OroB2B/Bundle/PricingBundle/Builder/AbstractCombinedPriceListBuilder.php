@@ -86,6 +86,13 @@ abstract class AbstractCombinedPriceListBuilder
         $this->garbageCollector = $garbageCollector;
     }
 
+    public function __destruct()
+    {
+        if ($this->cacheProvider) {
+            $this->cacheProvider->deleteAll();
+        }
+    }
+
     /**
      * @param string $priceListToEntityClassName
      * @return $this
