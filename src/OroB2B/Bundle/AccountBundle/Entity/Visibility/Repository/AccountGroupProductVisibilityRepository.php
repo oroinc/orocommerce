@@ -8,6 +8,7 @@ use Doctrine\ORM\Query\Expr\Join;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class AccountGroupProductVisibilityRepository extends EntityRepository
 {
@@ -73,6 +74,21 @@ class AccountGroupProductVisibilityRepository extends EntityRepository
         while ($accountGroupProductVisibilityIds = $this->getVisibilityIdsForDelete()) {
             $qb->getQuery()->execute(['accountGroupProductVisibilityIds' => $accountGroupProductVisibilityIds]);
         }
+    }
+
+    /**
+     * @param Product $product
+     */
+    public function setToDefaultWithoutCategoryByProduct(Product $product)
+    {
+        $qb = $this->createQueryBuilder('entity');
+        $qb->delete()
+            ->andWhere('entity.product = :product')
+            ->andWhere('entity.visibility = :visibility')
+            ->setParameter('product', $product)
+            ->setParameter('visibility', AccountGroupProductVisibility::CATEGORY)
+            ->getQuery()
+            ->execute();
     }
 
     /**

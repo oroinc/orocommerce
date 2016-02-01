@@ -16,11 +16,11 @@ class ProductVisibilityRepository extends EntityRepository
      * Update to 'config' ProductVisibility for products without category with fallback to 'category'.
      *
      * @param InsertFromSelectQueryExecutor $executor
+     * @param Product|null $product
      */
-    public function setToDefaultWithoutCategory(InsertFromSelectQueryExecutor $executor)
+    public function setToDefaultWithoutCategory(InsertFromSelectQueryExecutor $executor, Product $product = null)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
-
         $qb
             ->select(
                 [
@@ -54,34 +54,10 @@ class ProductVisibilityRepository extends EntityRepository
             ->where($qb->expr()->isNull('productVisibility.id'))
             ->andWhere($qb->expr()->isNull('category.id'));
 
-        $executor->execute(
-            'OroB2BAccountBundle:Visibility\ProductVisibility',
-            ['product', 'website', 'visibility'],
-            $qb
-        );
-    }
-
-    /**
-     * @param InsertFromSelectQueryExecutor $executor
-     * @param Product|null $product
-     */
-    public function setToDefaultWithoutCategoryByProduct(InsertFromSelectQueryExecutor $executor, Product $product)
-    {
-        // drop all old data
-        $this->createQueryBuilder('entity')
-            ->delete($this->getEntityName(), 'entity')
-            ->andWhere('entity.product = :product')
-            ->setParameter('product', $product)
-            ->getQuery()
-            ->execute();
-
-        // insert new data
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select(['product.id', 'website.id', (string)$qb->expr()->literal(ProductVisibility::CONFIG)])
-            ->from('OroB2BProductBundle:Product', 'product')
-            ->innerJoin('OroB2BWebsiteBundle:Website', 'website', Join::WITH, '1 = 1')
-            ->andWhere('product.id = :productId')
-            ->setParameter('productId', $product);
+        if ($product) {
+            $qb->andWhere('product = :product')
+                ->setParameter('product', $product);
+        }
 
         $executor->execute(
             'OroB2BAccountBundle:Visibility\ProductVisibility',

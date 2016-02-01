@@ -51,11 +51,15 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
                 ->getRepository('OroB2BCatalogBundle:Category')
                 ->findOneByProduct($product);
             if ($category) {
+                $visibility = $this->registry
+                    ->getManagerForClass(
+                        'OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved'
+                    )
+                    ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+                    ->getFallbackToGroupVisibility($category, $accountGroup);
                 $update = [
                     'sourceProductVisibility' => $visibilitySettings,
-                    'visibility' => $this->convertVisibility(
-                        $this->categoryVisibilityResolver->isCategoryVisibleForAccountGroup($category, $accountGroup)
-                    ),
+                    'visibility' => $visibility,
                     'source' => BaseProductVisibilityResolved::SOURCE_CATEGORY,
                     'category' => $category
                 ];
@@ -93,15 +97,17 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
             ->getManagerForClass('OroB2BCatalogBundle:Category')
             ->getRepository('OroB2BCatalogBundle:Category')
             ->findOneByProduct($product);
-        $isCategoryVisible = null;
-        if ($category) {
-            $isCategoryVisible = $this->categoryVisibilityResolver->isCategoryVisible($category);
+        if (!$category) {
+            $this->registry
+                ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
+                ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
+                ->setToDefaultWithoutCategoryByProduct($product);
         }
+
         $this->getRepository()->deleteByProduct($product);
         $this->getRepository()->insertByProduct(
             $product,
             $this->insertFromSelectQueryExecutor,
-            $isCategoryVisible,
             $category
         );
     }

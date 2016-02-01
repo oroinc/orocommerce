@@ -93,7 +93,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
         } else {
             $this->registry->getManagerForClass('OroB2BAccountBundle:Visibility\ProductVisibility')
                 ->getRepository('OroB2BAccountBundle:Visibility\ProductVisibility')
-                ->setToDefaultWithoutCategoryByProduct($this->insertFromSelectQueryExecutor, $product);
+                ->setToDefaultWithoutCategory($this->insertFromSelectQueryExecutor, $product);
             $visibility = ProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
         }
 
