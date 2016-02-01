@@ -236,6 +236,8 @@ class QuoteTypeTest extends AbstractTest
 
     /**
      * {@inheritdoc}
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function getExtensions()
     {
