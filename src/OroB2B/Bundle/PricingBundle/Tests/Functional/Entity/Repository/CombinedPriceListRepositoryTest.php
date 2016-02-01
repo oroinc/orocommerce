@@ -10,6 +10,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
@@ -23,7 +24,11 @@ class CombinedPriceListRepositoryTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists']);
+        $this->loadFixtures(
+            [
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
+            ]
+        );
     }
 
     public function testGetPriceListRelations()
@@ -281,6 +286,41 @@ class CombinedPriceListRepositoryTest extends WebTestCase
                 '1t_2t_3t',
                 LoadWebsiteData::WEBSITE2,
                 $getWebsiteConnection
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider cplByPriceListProductDataProvider
+     * @param string $priceList
+     * @param int $result
+     */
+    public function testGetCombinedPriceListsByPriceListProduct($priceList, $result)
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference($priceList);
+
+        $cPriceLists = $this->getRepository()->getCombinedPriceListsByPriceListProduct($priceList);
+        $this->assertCount($result, $cPriceLists);
+    }
+
+    /**
+     * @return array
+     */
+    public function cplByPriceListProductDataProvider()
+    {
+        return [
+            [
+                'priceList' => 'price_list_1',
+                'result' => 4,
+            ],
+            [
+                'priceList' => 'price_list_3',
+                'result' => 3,
+            ],
+            [
+                'priceList' => 'price_list_4',
+                'result' => 0,
             ],
         ];
     }

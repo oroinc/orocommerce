@@ -4,6 +4,9 @@ namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityRepository;
+
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+
 use OroB2B\Bundle\PricingBundle\Entity\ChangedProductPrice;
 
 class ChangedProductPriceRepository extends EntityRepository
@@ -28,5 +31,15 @@ class ChangedProductPriceRepository extends EntityRepository
             ->setParameter('product', $changedProductPrice->getProduct())
             ->getQuery()
             ->getOneOrNullResult(AbstractQuery::HYDRATE_SCALAR);
+    }
+
+    /**
+     * @return BufferedQueryResultIterator|ChangedProductPrice[]
+     */
+    public function getCollectionChangesIterator()
+    {
+        $qb = $this->createQueryBuilder('productPriceChanges');
+
+        return new BufferedQueryResultIterator($qb->getQuery());
     }
 }

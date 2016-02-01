@@ -13,6 +13,7 @@ use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccount;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class CombinedPriceListRepository extends EntityRepository
@@ -246,5 +247,26 @@ class CombinedPriceListRepository extends EntityRepository
             $relation->setPriceList($combinedPriceList);
             $em->flush($relation);
         }
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @return BufferedQueryResultIterator
+     */
+    public function getCombinedPriceListsByPriceListProduct(PriceList $priceList)
+    {
+        $qb = $this->createQueryBuilder('cpl');
+
+        $qb->select('cpl')
+            ->innerJoin(
+                'OroB2BPricingBundle:CombinedPriceListToPriceList',
+                'priceListRelations',
+                Join::WITH,
+                $qb->expr()->eq('cpl', 'priceListRelations.combinedPriceList')
+            )
+            ->where($qb->expr()->eq('priceListRelations.priceList', ':priceList'))
+            ->setParameter('priceList', $priceList);
+
+        return new BufferedQueryResultIterator($qb->getQuery());
     }
 }
