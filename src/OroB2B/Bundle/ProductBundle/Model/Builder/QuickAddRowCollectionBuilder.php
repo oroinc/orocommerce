@@ -53,7 +53,8 @@ class QuickAddRowCollectionBuilder
                 !array_key_exists(
                     ProductDataStorage::PRODUCT_QUANTITY_KEY,
                     $data[QuickAddType::PRODUCTS_FIELD_NAME][$i]
-            )) {
+                )
+            ) {
                 continue;
             }
 
