@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
+use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
@@ -76,6 +77,7 @@ class ShoppingListController extends Controller
      *
      * @Route("/create", name="orob2b_shopping_list_frontend_create")
      * @Template("OroB2BShoppingListBundle:ShoppingList/Frontend:update.html.twig")
+     * @Layout
      * @Acl(
      *      id="orob2b_shopping_list_frontend_create",
      *      type="entity",
@@ -97,7 +99,14 @@ class ShoppingListController extends Controller
             ->setOrganization($accountUser->getOrganization())
             ->setAccount($accountUser->getAccount())
             ->setAccountUser($accountUser);
-
+        if ($this->get('request')->get('_theme')) {
+            //TODO: remove "_theme" check after @Template removal
+            return [
+                'data' => [
+                    'shoppingList' => $shoppingList,
+                ],
+            ];
+        }
         return $this->update($request, $shoppingList);
     }
 
