@@ -30,8 +30,6 @@ class CategoryRepositoryTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
 
         $this->loadFixtures(['OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData']);
-        // TODO: remove cache generation in scope of BB-1803
-        $this->getContainer()->get('orob2b_account.visibility.cache.product.category.cache_builder')->buildCache();
 
         $this->repository = $this->getRepository();
     }

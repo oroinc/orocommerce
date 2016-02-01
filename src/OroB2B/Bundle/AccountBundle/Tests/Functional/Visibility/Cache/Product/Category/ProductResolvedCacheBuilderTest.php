@@ -111,10 +111,7 @@ class ProductResolvedCacheBuilderTest extends WebTestCase
         $this->assertNull($visibilityResolved['sourceCategoryVisibility']['visibility']);
         $this->assertEquals(BaseCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY, $visibilityResolved['source']);
         $this->assertEquals($this->category->getId(), $visibilityResolved['category_id']);
-        $this->assertEquals(
-            BaseCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
-            $visibilityResolved['visibility']
-        );
+        $this->assertEquals(BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE, $visibilityResolved['visibility']);
     }
 
     /**
@@ -131,7 +128,7 @@ class ProductResolvedCacheBuilderTest extends WebTestCase
                 $qb->expr()->eq('CategoryVisibilityResolved.category', ':category')
             )
             ->setParameters([
-            'category' => $this->category,
+                'category' => $this->category,
             ])
             ->getQuery()
             ->getOneOrNullResult(AbstractQuery::HYDRATE_ARRAY);

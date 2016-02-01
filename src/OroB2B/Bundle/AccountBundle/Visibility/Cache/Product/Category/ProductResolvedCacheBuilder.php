@@ -80,11 +80,11 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
 
             $visibility = CategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
         } elseif ($selectedVisibility === CategoryVisibility::PARENT_CATEGORY) {
-            $visibility = $this->getParentCategoryVisibility($category);
+            list($visibility, $source) = $this->getParentCategoryVisibilityAndSource($category);
             $update = [
                 'visibility' => $visibility,
                 'sourceCategoryVisibility' => $visibilitySettings,
-                'source' => CategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                'source' => $source,
             ];
         } else {
             throw new \InvalidArgumentException(sprintf('Unknown visibility %s', $selectedVisibility));
@@ -210,15 +210,21 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
 
     /**
      * @param Category $category
-     * @return int
+     * @return array
      */
-    protected function getParentCategoryVisibility(Category $category)
+    protected function getParentCategoryVisibilityAndSource(Category $category)
     {
         $parentCategory = $category->getParentCategory();
         if ($parentCategory) {
-            return $this->getRepository()->getFallbackToAllVisibility($category);
+            return [
+                $this->getRepository()->getFallbackToAllVisibility($parentCategory),
+                CategoryVisibilityResolved::SOURCE_PARENT_CATEGORY
+            ];
         } else {
-            return CategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
+            return [
+                CategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+                CategoryVisibilityResolved::SOURCE_STATIC
+            ];
         }
     }
 }
