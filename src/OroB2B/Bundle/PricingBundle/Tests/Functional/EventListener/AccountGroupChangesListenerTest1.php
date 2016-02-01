@@ -56,7 +56,6 @@ class AccountGroupChangesListenerTest extends WebTestCase
         $form = $crawler->selectButton('Save')->form();
         $form->setValues(['orob2b_account_type[group]' => $group->getId()]);
         $this->client->submit($form);
-
         $changes = $em->getRepository('OroB2BPricingBundle:ChangedPriceListCollection')->findAll();
         $this->assertEquals(count($expectedChanges), count($changes));
         $this->checkChanges($expectedChanges, $changes);

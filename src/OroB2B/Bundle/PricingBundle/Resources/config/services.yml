@@ -263,6 +263,7 @@ services:
         arguments:
             - @doctrine
             - @event_dispatcher
+            - @oro_entity.orm.insert_from_select_query_executor
         tags:
             - { name: kernel.event_listener, event: orob2b_account.account_group.pre_remove, method: onGroupRemove }
             - { name: kernel.event_listener, event: orob2b_account.account.on_account_group_change, method: onChangeGroupInAccount }

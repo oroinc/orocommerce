@@ -35,8 +35,8 @@ class AccountGroupController extends RestController implements ClassResourceInte
      */
     public function deleteAction($id)
     {
-        $accountGroup = $this->get('doctrine')
-            ->getManagerForClass('OroB2BAccountBundle:AccountGroup')
+        $accountGroup = $this->get('oro_api.doctrine_helper')
+            ->getEntityManager('OroB2BAccountBundle:AccountGroup')
             ->getRepository('OroB2BAccountBundle:AccountGroup')
             ->find($id);
         if ($accountGroup) {

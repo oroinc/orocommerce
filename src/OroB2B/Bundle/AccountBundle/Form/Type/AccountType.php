@@ -24,6 +24,9 @@ class AccountType extends AbstractType
     /** @var   EventDispatcherInterface */
     protected $eventDispatcher;
 
+    /** @var  Account|null */
+    protected $account;
+
     /**
      * @param EventDispatcherInterface $eventDispatcher
      */
@@ -87,7 +90,8 @@ class AccountType extends AbstractType
                     'label' => 'orob2b.account.sales_representatives.label',
                 ]
             )
-            ->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmit']);
+            ->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmit'])
+            ->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'postSubmit']);
     }
 
     /**
@@ -99,10 +103,21 @@ class AccountType extends AbstractType
         /** @var Account $account */
         $account = $event->getForm()->getData();
         if ($account instanceof Account && $account->getGroup() && $newGroupId !== $account->getGroup()->getId()) {
+            $this->account = $account;
+        }
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function postSubmit(FormEvent $event)
+    {
+        if ($this->account) {
             $this->eventDispatcher->dispatch(
                 AccountEvent::ON_ACCOUNT_GROUP_CHANGE,
-                new AccountEvent($account)
+                new AccountEvent($this->account)
             );
+            $this->account = null;
         }
     }
 
