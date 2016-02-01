@@ -102,7 +102,7 @@ class QuickAddRowCollection extends ArrayCollection
     public function validate()
     {
         foreach ($this->getCompleteRows() as $row) {
-            if (array_key_exists($row->getSku(), $this->productsBySku)) {
+            if (array_key_exists(strtoupper($row->getSku()), $this->productsBySku)) {
                 $row->setValid(true);
             }
         }

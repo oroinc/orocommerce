@@ -139,7 +139,7 @@ class QuickAddRowCollectionBuilder
         $products = $this->productRepository->getProductWithNamesBySku($skus);
         $productsBySku = [];
         foreach ($products as $product) {
-            $productsBySku[$product->getSku()] = $product;
+            $productsBySku[strtoupper($product->getSku())] = $product;
         }
 
         return $productsBySku;
