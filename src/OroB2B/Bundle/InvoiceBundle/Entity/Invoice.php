@@ -160,6 +160,7 @@ class Invoice extends ExtendInvoice implements
      *     targetEntity="OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem",
      *     mappedBy="invoice", cascade={"ALL"}, orphanRemoval=true
      * )
+     *
      * todo "@ORM\OrderBy({"index" = "ASC"})"
      */
     protected $lineItems;
@@ -332,7 +333,7 @@ class Invoice extends ExtendInvoice implements
     }
 
     /**
-     * @return ArrayCollection
+     * @return InvoiceLineItem[]|ArrayCollection
      */
     public function getLineItems()
     {
@@ -430,14 +431,5 @@ class Invoice extends ExtendInvoice implements
         $this->subtotal = $subtotal;
 
         return $this;
-    }
-
-    /**
-     * This method SHOULD be called from related entities
-     * to ensure invoice update in db
-     */
-    public function requireUpdate()
-    {
-        $this->updatedAt = null;
     }
 }

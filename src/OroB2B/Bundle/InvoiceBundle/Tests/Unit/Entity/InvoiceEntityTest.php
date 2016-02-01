@@ -38,13 +38,4 @@ class InvoiceEntityTest extends \PHPUnit_Framework_TestCase
         $this->assertPropertyAccessors($invoice, $properties);
         $this->assertPropertyCollection($invoice, 'lineItems', new InvoiceLineItem());
     }
-
-    public function testRequireUpdate()
-    {
-        $invoice = new Invoice();
-        $invoice->setUpdatedAt(new \DateTime());
-
-        $invoice->requireUpdate();
-        $this->assertNull($invoice->getUpdatedAt());
-    }
 }

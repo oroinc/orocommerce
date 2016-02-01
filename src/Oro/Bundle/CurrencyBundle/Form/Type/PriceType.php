@@ -123,8 +123,8 @@ class PriceType extends AbstractType
      */
     protected function resolvePriceIsRequired(array $options)
     {
-        return !array_key_exists('validation_groups', $options)
-            && !is_array($options['validation_groups'])
-            && !in_array(self::OPTIONAL_VALIDATION_GROUP, $options['validation_groups']);
+        return array_key_exists('validation_groups', $options)
+            && is_array($options['validation_groups'])
+            && !in_array(self::OPTIONAL_VALIDATION_GROUP, $options['validation_groups'], true);
     }
 }

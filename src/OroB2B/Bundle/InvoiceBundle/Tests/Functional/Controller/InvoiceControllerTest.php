@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\InvoiceBundle\Tests\Functional\Controller;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
@@ -12,6 +11,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
+use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
 
 /**
  * @dbIsolation
@@ -100,12 +101,6 @@ class InvoiceControllerTest extends WebTestCase
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-
-        $this->assertEquals(
-            self::PO_NUMBER,
-            $crawler->filter('input[name="orob2b_invoice_type[poNumber]"]')->extract('value')[0]
-        );
-
         $actualLineItems = $this->getActualLineItems($crawler, count($lineItems));
 
         $expectedLineItems = [
@@ -134,7 +129,12 @@ class InvoiceControllerTest extends WebTestCase
         $result = $this->getJsonResponseContent($response, 200);
         $result = reset($result['data']);
 
-        return $result['id'];
+        $invoice = $this->fetchInvoice((int)$result['id']);
+
+        $this->assertSame(1000.0, $invoice->getSubtotal());
+        $this->assertSame(self::PO_NUMBER, $invoice->getPoNumber());
+
+        return $invoice->getId();
     }
 
     /**
@@ -229,7 +229,10 @@ class InvoiceControllerTest extends WebTestCase
             ],
         ];
 
+        $invoice = $this->fetchInvoice($id);
         $this->assertEquals($expectedLineItems, $actualLineItems);
+        $this->assertNotEquals($invoice->getCreatedAt(), $invoice->getUpdatedAt());
+        $this->assertSame(210.0, $invoice->getSubtotal());
     }
 
     /**
@@ -257,6 +260,18 @@ class InvoiceControllerTest extends WebTestCase
     protected function getCurrentUser()
     {
         return $this->getContainer()->get('oro_security.security_facade')->getLoggedUser();
+    }
+
+    /**
+     * @param int $id
+     * @return Invoice
+     */
+    protected function fetchInvoice($id)
+    {
+        return $this->client->getContainer()
+            ->get('oro_entity.doctrine_helper')
+            ->getEntityRepository('OroB2B\Bundle\InvoiceBundle\Entity\Invoice')
+            ->find($id);
     }
 
     /**

@@ -33,7 +33,6 @@ use OroB2B\Bundle\InvoiceBundle\Model\ExtendInvoiceLineItem;
  *          }
  *      }
  * )
- * @ORM\EntityListeners({"OroB2B\Bundle\InvoiceBundle\EventListener\ORM\InvoiceListItemEventListener" })
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class InvoiceLineItem extends ExtendInvoiceLineItem implements

@@ -8,8 +8,6 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use OroB2B\Bundle\InvoiceBundle\Doctrine\ORM\SimpleInvoiceNumberGenerator;
 use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
 use OroB2B\Bundle\InvoiceBundle\EventListener\ORM\InvoiceEventListener;
-use OroB2B\Bundle\PricingBundle\Model\LineItemsSubtotal;
-use OroB2B\Bundle\PricingBundle\Provider\LineItemsSubtotalProvider;
 
 class InvoiceEventListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,6 +16,9 @@ class InvoiceEventListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected $invoiceEventListener;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->invoiceEventListener = new InvoiceEventListener();
@@ -25,32 +26,22 @@ class InvoiceEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testPrePersist()
     {
-        $subtotal = new LineItemsSubtotal();
-        $subtotal->setAmount(100);
-        $this->invoiceEventListener->setLineItemsSubtotalProvider($this->getSubtotalProvider($subtotal));
         $invoice = new Invoice();
 
         $this->invoiceEventListener->prePersist($invoice);
-        $this->assertSame($subtotal->getAmount(), $invoice->getSubtotal());
         $this->assertInstanceOf('\DateTime', $invoice->getUpdatedAt());
         $this->assertInstanceOf('\DateTime', $invoice->getCreatedAt());
     }
 
     public function testPreUpdate()
     {
-        $subtotal = new LineItemsSubtotal();
-        $subtotal->setAmount(150);
-        $this->invoiceEventListener->setLineItemsSubtotalProvider($this->getSubtotalProvider($subtotal));
-
         $invoice = new Invoice();
         $previousUpdated = new \DateTime('-1 day');
-        $invoice->setUpdatedAt($previousUpdated)
-            ->setSubtotal(100);
+        $invoice->setUpdatedAt($previousUpdated);
 
         $this->invoiceEventListener->preUpdate($invoice);
 
         $this->assertTrue($invoice->getUpdatedAt() > $previousUpdated);
-        $this->assertSame(150, $invoice->getSubtotal());
     }
 
     public function testPostPersist()
@@ -79,23 +70,6 @@ class InvoiceEventListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->invoiceEventListener->setInvoiceNumberGenerator($generator);
         $this->invoiceEventListener->postPersist($invoice, $event);
-    }
-
-    /**
-     * @param LineItemsSubtotal $subtotal
-     * @return LineItemsSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getSubtotalProvider(LineItemsSubtotal $subtotal)
-    {
-        $provider = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Provider\LineItemsSubtotalProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $provider->expects($this->any())
-            ->method('getSubtotal')
-            ->willReturn($subtotal);
-
-        return $provider;
     }
 
     /**

@@ -46,17 +46,12 @@ services:
         class: %orob2b_invoice.event_listener.orm.invoice_event_listener.class%
         calls:
             - [setInvoiceNumberGenerator, [@orob2b_invoice.doctrine.orm.invoice_number_generator]]
-            - [setLineItemsSubtotalProvider, [@orob2b_pricing.provider.line_items_subtotal]]
-        tags:
-            - { name: doctrine.orm.entity_listener }
-
-    orob2b_invoice.event_listener.orm.invoice_line_item_event_listener:
-        class: OroB2B\Bundle\InvoiceBundle\EventListener\ORM\InvoiceListItemEventListener
         tags:
             - { name: doctrine.orm.entity_listener }
 
     orob2b_invoice.event_listener.invoice_form_listener:
         class: OroB2B\Bundle\InvoiceBundle\EventListener\InvoiceFormListener
+        arguments:
+            - @orob2b_pricing.provider.line_items_subtotal
         tags:
-            - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush.orob2b_invoice_type, method: afterFlush}
-
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.orob2b_invoice_type, method: beforeFlush}
