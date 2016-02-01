@@ -302,6 +302,9 @@ services:
         class: %orob2b_tax.order_tax.mapper.order_line_item_mapper.class%
         arguments:
             - @orob2b_tax.provider.taxation_address_provider
+        calls:
+            - [setDoctrineHelper, [@oro_entity.doctrine_helper]]
+            - [setProductTaxCodeClass, [%orob2b_tax.entity.product_tax_code.class%]]
         tags:
             - { name: orob2b_tax.tax_mapper }
 

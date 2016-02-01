@@ -6,6 +6,7 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
+use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
 
 class TaxationAddressProvider
 {
@@ -88,5 +89,15 @@ class TaxationAddressProvider
     public function getOriginAddress()
     {
         return $this->settingsProvider->getOrigin();
+    }
+
+    /**
+     * @param ProductTaxCode|null $taxCode
+     * @return bool
+     */
+    public function isDigitalProductTaxCode($taxCode)
+    {
+        return in_array($taxCode, $this->settingsProvider->getDigitalProductsTaxCodesEu()) ||
+        in_array($taxCode, $this->settingsProvider->getDigitalProductsTaxCodesUs());
     }
 }
