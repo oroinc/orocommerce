@@ -3,6 +3,7 @@ loadTax_taxValue_is_missing:
     method: loadTax
     reference: empty_order
     expectedQueries: 3 # select order, line items from fixtures, taxValue once
+    configuration: { use_as_base_by_default: destination }
     databaseBefore:
         'OroB2B\Bundle\OrderBundle\Entity\Order':
             empty_order:
@@ -14,6 +15,7 @@ loadTax_taxValue_exists:
     method: loadTax
     reference: simple_order
     expectedQueries: 5 # select order, line items from fixtures, taxValue + 1 appliedTax and tax
+    configuration: {}
     databaseBefore:
         'OroB2B\Bundle\OrderBundle\Entity\Order':
             simple_order:
@@ -54,6 +56,7 @@ getTax_taxValue_is_missing:
     method: getTax
     reference: empty_order
     expectedQueries: 0 # cache from loadTax
+    configuration: {}
     databaseBefore:
         'OroB2B\Bundle\OrderBundle\Entity\Order':
             empty_order:
@@ -66,6 +69,7 @@ getTax_taxValue_exists:
     reference: simple_order
     expectedQueries: 8 # address, taxRule for country, taxRule for country + region, regions, taxRule for zip codes
                        #          taxRule for country, taxRule for country, taxRule for zip codes
+    configuration: { use_as_base_by_default: destination }
     databaseBefore:
         'OroB2B\Bundle\OrderBundle\Entity\Order':
             simple_order:
@@ -129,6 +133,7 @@ saveTax_override_existing:
     method: saveTax
     reference: simple_order
     expectedQueries: 1 # update TaxValue
+    configuration: { use_as_base_by_default: destination }
     databaseBefore:
         'OroB2B\Bundle\OrderBundle\Entity\Order':
             simple_order:
@@ -195,6 +200,7 @@ saveTax_new_taxValue:
     method: saveTax
     reference: simple_order
     expectedQueries: 11 # 8 from getTax_taxValue_exists + insert TaxApply, update TaxValue, Delete old TaxApply
+    configuration: { use_as_base_by_default: destination }
     databaseBefore:
         'OroB2B\Bundle\OrderBundle\Entity\Order':
             simple_order:
@@ -238,6 +244,7 @@ item_loadTax_taxValue_is_missing:
     method: loadTax
     reference: order_line_item_1
     expectedQueries: 3 # select order, line items from fixtures, taxValue once
+    configuration: {}
     databaseBefore:
         'OroB2B\Bundle\OrderBundle\Entity\Order':
             simple_order:
@@ -262,6 +269,7 @@ item_loadTax_taxValue_exists:
     method: loadTax
     reference: order_line_item_1
     expectedQueries: 2 # select taxValue and taxApply
+    configuration: {}
     databaseBefore:
         'OroB2B\Bundle\OrderBundle\Entity\Order':
             simple_order:
@@ -327,6 +335,7 @@ item_getTax_taxValue_is_missing:
     method: getTax
     reference: order_line_item_1
     expectedQueries: 3 # country, region, zip mathchers
+    configuration: { use_as_base_by_default: destination }
     databaseBefore:
         'OroB2B\Bundle\OrderBundle\Entity\Order':
             simple_order:
@@ -372,6 +381,7 @@ item_getTax_taxValue_exists:
     reference: order_line_item_2
     expectedQueries: 8 # address, taxRule for country, taxRule for country + region, regions, taxRule for zip codes
                    #          taxRule for country, taxRule for country, taxRule for zip codes
+    configuration: { use_as_base_by_default: destination }
     databaseBefore:
         'OroB2B\Bundle\OrderBundle\Entity\Order':
             simple_order:
@@ -445,6 +455,7 @@ item_saveTax_override_existing:
     method: saveTax
     reference: order_line_item_2
     expectedQueries: 1 # insert TaxValue
+    configuration: { use_as_base_by_default: destination }
     databaseBefore:
         'OroB2B\Bundle\OrderBundle\Entity\Order':
             simple_order:
@@ -519,6 +530,7 @@ item_saveTax_new_taxValue:
     method: saveTax
     reference: order_line_item_2
     expectedQueries: 11 # 8 from getTax_taxValue_exists + insert TaxApply, update TaxValue, Delete old TaxApply
+    configuration: { use_as_base_by_default: destination }
     databaseBefore:
         'OroB2B\Bundle\OrderBundle\Entity\Order':
             simple_order:
@@ -564,6 +576,7 @@ saveTax_new_taxValue_tax_incl:
     method: saveTax
     reference: simple_order
     expectedQueries: 11 # 8 from getTax_taxValue_exists + insert TaxApply, update TaxValue, Delete old TaxApply
+    configuration: { product_prices_include_tax: true, use_as_base_by_default: destination }
     databaseBefore:
         'OroB2B\Bundle\OrderBundle\Entity\Order':
             simple_order:
@@ -597,13 +610,12 @@ saveTax_new_taxValue_tax_incl:
             taxAmount: '12.26' # 134.79 * 0.1 / 1.1
             adjustment: '0.01'
     databaseAfter: []
-    priceIncludeTax: true
-
 
 item_saveTax_new_taxValue_tax_incl:
     method: saveTax
     reference: order_line_item_2
     expectedQueries: 11 # 8 from getTax_taxValue_exists + insert TaxApply, update TaxValue, Delete old TaxApply
+    configuration: { product_prices_include_tax: true, use_as_base_by_default: destination }
     databaseBefore:
         'OroB2B\Bundle\OrderBundle\Entity\Order':
             simple_order:
@@ -642,13 +654,13 @@ item_saveTax_new_taxValue_tax_incl:
             taxAmount: '0.51' # 5.55 * 0.1 / 1.1
             adjustment: '0.01'
     databaseAfter: []
-    priceIncludeTax: true
 
 # cases with empty values
 item_saveTax_new_taxValue_empty_price:
     method: saveTax
     reference: order_line_item_2
     expectedQueries: 11 # 8 from getTax_taxValue_exists + insert TaxApply, update TaxValue, Delete old TaxApply
+    configuration: { product_prices_include_tax: true, use_as_base_by_default: destination }
     databaseBefore:
         'OroB2B\Bundle\OrderBundle\Entity\Order':
             simple_order:
@@ -687,13 +699,13 @@ item_saveTax_new_taxValue_empty_price:
             taxAmount: '0.51' # 5.55 * 0.1 / 1.1
             adjustment: '0.01'
     databaseAfter: []
-    priceIncludeTax: true
 
 # adjustment lost
 item_getTax_new_taxValue_adjustment_lost:
     method: getTax
     reference: simple_order
     expectedQueries: 11 # 8 from getTax_taxValue_exists + insert TaxApply, update TaxValue, Delete old TaxApply
+    configuration: { use_as_base_by_default: destination }
     databaseBefore:
         'OroB2B\Bundle\OrderBundle\Entity\Order':
             simple_order:
@@ -886,6 +898,7 @@ item_getTax_new_taxValue_adjustment_lost_price_incl_tax:
     method: getTax
     reference: simple_order
     expectedQueries: 11 # 8 from getTax_taxValue_exists + insert TaxApply, update TaxValue, Delete old TaxApply
+    configuration: { product_prices_include_tax: true, use_as_base_by_default: destination }
     databaseBefore:
         'OroB2B\Bundle\OrderBundle\Entity\Order':
             simple_order:
@@ -1074,13 +1087,13 @@ item_getTax_new_taxValue_adjustment_lost_price_incl_tax:
         taxes:
             - { tax: 'TAX1', rate: '0.1', taxable_amount: '181.72', tax_amount: '18.18' }
     databaseAfter: []
-    priceIncludeTax: true
 
 getTax_with_empty_address:
     method: getTax
     reference: simple_order
     expectedQueries: 8 # address, taxRule for country, taxRule for country + region, regions, taxRule for zip codes
                        #          taxRule for country, taxRule for country, taxRule for zip codes
+    configuration: {}
     databaseBefore:
         'OroB2B\Bundle\OrderBundle\Entity\Order':
             simple_order:
@@ -1112,6 +1125,7 @@ getTax_with_without_address:
     reference: simple_order
     expectedQueries: 8 # address, taxRule for country, taxRule for country + region, regions, taxRule for zip codes
                        #          taxRule for country, taxRule for country, taxRule for zip codes
+    configuration: {}
     databaseBefore:
         'OroB2B\Bundle\OrderBundle\Entity\Order':
             simple_order:

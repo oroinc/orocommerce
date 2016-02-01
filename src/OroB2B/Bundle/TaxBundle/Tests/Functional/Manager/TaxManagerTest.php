@@ -15,7 +15,6 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\TaxBundle\Tests\ResultComparatorTrait;
-use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 /**
  * @dbIsolation
@@ -67,25 +66,23 @@ class TaxManagerTest extends WebTestCase
      * @param string $method
      * @param string $reference
      * @param int $expectedQueries
+     * @param array $configuration
      * @param array $databaseBefore
      * @param array $expectedResult
      * @param array $databaseAfter
-     * @param bool $priceIncludeTax
      */
     public function testMethods(
         $method,
         $reference,
         $expectedQueries,
+        array $configuration,
         array $databaseBefore = [],
         array $expectedResult = [],
-        array $databaseAfter = [],
-        $priceIncludeTax = false
+        array $databaseAfter = []
     ) {
-        $this->configManager->set('orob2b_tax.product_prices_include_tax', $priceIncludeTax);
-        $this->configManager->set(
-            'orob2b_tax.use_as_base_by_default',
-            TaxationSettingsProvider::USE_AS_BASE_DESTINATION
-        );
+        foreach ($configuration as $key => $value) {
+            $this->configManager->set(sprintf('orob2b_tax.%s', $key), $value);
+        }
 
         $this->prepareDatabase($databaseBefore);
 

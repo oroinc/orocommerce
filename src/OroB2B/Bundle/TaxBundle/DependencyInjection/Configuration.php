@@ -36,6 +36,10 @@ class Configuration implements ConfigurationInterface
                     'type' => 'text',
                     'value' => TaxationSettingsProvider::START_CALCULATION_UNIT_PRICE
                 ],
+                'start_calculation_on' => [
+                    'type' => 'text',
+                    'value' => TaxationSettingsProvider::START_CALCULATION_ON_INVOICE
+                ],
                 'product_prices_include_tax' => [
                     'type' => 'boolean',
                     'value' => false
