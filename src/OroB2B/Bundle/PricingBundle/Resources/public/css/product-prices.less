@@ -5,13 +5,17 @@
   table {
     min-width: 100px;
 
-    tr{
-      &:hover > td {
-        background-color: #fff;
+    tr {
+      &:hover {
+        > td {
+          background-color: #fff;
+        }
       }
 
-      &.matched-tier-price > td {
-        font-weight: bold;
+      &.matched-tier-price {
+        > td {
+          font-weight: 700;
+        }
       }
     }
 
@@ -28,7 +32,7 @@
 
     &.disabled {
       cursor: default;
-      opacity: 0.4;
+      opacity: .4;
     }
 
     &:before {
@@ -39,8 +43,8 @@
 
 .product-price-overridden {
   position: absolute;
-  top: 0px;
-  left: 0px;
+  top: 0;
+  left: 0;
 
   i {
     cursor: pointer;
@@ -51,8 +55,10 @@
   }
 }
 
-input.matched-price {
-  background-color: #eee;
+input {
+  &.matched-price {
+    background-color: #eee;
+  }
 }
 
 .product-price-column-table {
