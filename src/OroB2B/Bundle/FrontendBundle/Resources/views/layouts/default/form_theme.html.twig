@@ -7,6 +7,14 @@
     {{ parent() }}
 {% endblock %}
 
+{% block choice_widget_collapsed %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " no-uniform",
+        'data-chosen-selectbox': true
+    }) %}
+    {{ parent() }}
+{% endblock %}
+
 {%- block form_row -%}
     {{- form_label(form) -}}
     {{- form_widget(form) -}}

@@ -34,7 +34,7 @@ define(function(require) {
 
             mediator.on(this.options.mediatorPrefix + ':add-widget-requested-response', this.showForm, this);
 
-            this.options._sourceElement.on('click', '.grid-control', _.bind(this.onClick, this));
+            this.options._sourceElement.on('click', '.direct-link', _.bind(this.onClick, this));
         },
 
         /**
