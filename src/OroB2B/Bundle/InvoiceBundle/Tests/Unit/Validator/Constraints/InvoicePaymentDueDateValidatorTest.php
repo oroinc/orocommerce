@@ -2,8 +2,10 @@
 
 namespace OroB2B\Bundle\InvoiceBundle\Tests\Unit\Validator\Constraints;
 
+use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
 use OroB2B\Bundle\InvoiceBundle\Validator\Constraints\InvoicePaymentDueDate;
 use OroB2B\Bundle\InvoiceBundle\Validator\Constraints\InvoicePaymentDueDateValidator;
+
 use Symfony\Component\Validator\Context\ExecutionContext;
 
 class InvoicePaymentDueDateValidatorTest extends \PHPUnit_Framework_TestCase
@@ -18,6 +20,9 @@ class InvoicePaymentDueDateValidatorTest extends \PHPUnit_Framework_TestCase
      */
     protected $validator;
 
+    /**
+     * {@inheritdoc}
+     */
     public function setUp()
     {
         parent::setUp();
@@ -27,61 +32,37 @@ class InvoicePaymentDueDateValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testValidationOnValid()
     {
-//        $this->validator->initialize($this->getContextMock());
-//        $this->validator->validate($this->createConfigs(2), $this->constraint);
+        $invoice = new Invoice();
+        $invoice->setPaymentDueDate(new \DateTime('+1 days'))
+            ->setInvoiceDate(new \DateTime());
+        $this->validator->initialize($this->getContextMock());
+        $this->validator->validate($invoice, $this->constraint);
     }
 
     public function testValidationOnInvalid()
     {
-//        $builder = $this->getBuilderMock();
-//
-//        $builder->expects($this->once())
-//            ->method('atPath')
-//            ->with('[2].priceList')
-//            ->willReturn($builder)
-//        ;
-//
-//        $context = $this->getContextMock();
-//        $context->expects($this->once())
-//            ->method('buildViolation')
-//            ->with($this->equalTo($this->constraint->message), [])
-//            ->will($this->returnValue($builder))
-//        ;
-//
-//        $this->validator->initialize($context);
-//
-//        $value = array_merge($this->createConfigs(2), $this->createConfigs(1));
-//        $this->validator->validate($value, $this->constraint);
-    }
+        $builder = $this->getBuilderMock();
 
-    public function testValidationOnInvalidArrayValue()
-    {
-//        $builder = $this->getBuilderMock();
-//
-//        $builder->expects($this->once())
-//            ->method('atPath')
-//            ->with('[2][priceList]')
-//            ->willReturn($builder)
-//        ;
-//
-//        $context = $this->getContextMock();
-//        $context->expects($this->once())
-//            ->method('buildViolation')
-//            ->with($this->equalTo($this->constraint->message), [])
-//            ->will($this->returnValue($builder))
-//        ;
-//
-//        $this->validator->initialize($context);
-//
-//        $value = array_map(function ($item) {
-//            /** @var PriceListConfig $item */
-//            return ['priceList' => $item->getPriceList(), 'priority' => $item->getPriority()];
-//        }, array_merge($this->createConfigs(2), $this->createConfigs(1)));
-//        $this->validator->validate($value, $this->constraint);
+        $builder->expects($this->once())
+            ->method('atPath')
+            ->with(InvoicePaymentDueDateValidator::VIOLATION_PATH)
+            ->willReturn($builder);
+
+        $context = $this->getContextMock();
+        $context->expects($this->once())
+            ->method('buildViolation')
+            ->with($this->equalTo($this->constraint->message), [])
+            ->will($this->returnValue($builder));
+
+        $this->validator->initialize($context);
+        $invoice = new Invoice();
+        $invoice->setPaymentDueDate(new \DateTime('yesterday'))
+            ->setInvoiceDate(new \DateTime());
+        $this->validator->validate($invoice, $this->constraint);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ExecutionContext $context
+     * @return \PHPUnit_Framework_MockObject_MockObject|ExecutionContext
      */
     protected function getContextMock()
     {
@@ -99,8 +80,6 @@ class InvoicePaymentDueDateValidatorTest extends \PHPUnit_Framework_TestCase
         return $this->getMockBuilder('Symfony\Component\Validator\Violation\ConstraintViolationBuilder')
             ->disableOriginalConstructor()
             ->setMethods(['addViolation', 'atPath'])
-            ->getMock()
-            ;
+            ->getMock();
     }
-
 }

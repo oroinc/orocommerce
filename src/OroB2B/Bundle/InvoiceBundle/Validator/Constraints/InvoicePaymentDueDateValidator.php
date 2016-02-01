@@ -10,6 +10,8 @@ use Symfony\Component\Validator\Context\ExecutionContext;
 
 class InvoicePaymentDueDateValidator extends ConstraintValidator
 {
+    const VIOLATION_PATH = 'paymentDueDate';
+
     /**
      * {@inheritdoc}
      * @param Invoice $value
@@ -25,7 +27,7 @@ class InvoicePaymentDueDateValidator extends ConstraintValidator
             $context = $this->context;
 
             $context->buildViolation($constraint->message, [])
-                ->atPath('paymentDueDate')
+                ->atPath(self::VIOLATION_PATH)
                 ->addViolation();
         }
     }
