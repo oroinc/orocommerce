@@ -48,11 +48,12 @@ class QuickAddRowCollectionBuilder
         }
 
         for ($i = 0; $i < count($data[QuickAddType::PRODUCTS_FIELD_NAME]); $i++) {
-            if (
-                !array_key_exists($i, $data[QuickAddType::PRODUCTS_FIELD_NAME]) ||
+            if (!array_key_exists($i, $data[QuickAddType::PRODUCTS_FIELD_NAME]) ||
                 !array_key_exists(ProductDataStorage::PRODUCT_SKU_KEY, $data[QuickAddType::PRODUCTS_FIELD_NAME][$i]) ||
-                !array_key_exists(ProductDataStorage::PRODUCT_QUANTITY_KEY, $data[QuickAddType::PRODUCTS_FIELD_NAME][$i])
-            ) {
+                !array_key_exists(
+                    ProductDataStorage::PRODUCT_QUANTITY_KEY,
+                    $data[QuickAddType::PRODUCTS_FIELD_NAME][$i]
+            )) {
                 continue;
             }
 

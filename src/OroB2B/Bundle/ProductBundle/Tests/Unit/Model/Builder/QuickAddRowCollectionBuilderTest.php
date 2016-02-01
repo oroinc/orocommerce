@@ -89,7 +89,7 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
         }
 
         $request = new Request();
-        $request->request->set(QuickAddType::NAME , [
+        $request->request->set(QuickAddType::NAME, [
             QuickAddType::PRODUCTS_FIELD_NAME => $data
         ]);
 
