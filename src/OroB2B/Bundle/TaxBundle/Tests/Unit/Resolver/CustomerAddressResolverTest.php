@@ -2,133 +2,51 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Resolver;
 
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
-use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
-use OroB2B\Bundle\TaxBundle\Model\Result;
-use OroB2B\Bundle\TaxBundle\Model\ResultElement;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
-use OroB2B\Bundle\TaxBundle\Model\TaxResultElement;
+use OroB2B\Bundle\TaxBundle\Resolver\CustomerAddressItemResolver;
 use OroB2B\Bundle\TaxBundle\Resolver\CustomerAddressResolver;
 
-class CustomerAddressResolverTest extends AbstractAddressResolverTestCase
+class CustomerAddressResolverTest extends \PHPUnit_Framework_TestCase
 {
     /** @var CustomerAddressResolver */
     protected $resolver;
 
-    /** {@inheritdoc} */
-    protected function createResolver()
-    {
-        return new CustomerAddressResolver($this->settingsProvider, $this->matcher, $this->calculator);
-    }
+    /** @var CustomerAddressItemResolver|\PHPUnit_Framework_MockObject_MockObject */
+    protected $itemResolver;
 
     /** {@inheritdoc} */
-    protected function getTaxable()
+    protected function setUp()
+    {
+        $this->itemResolver = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Resolver\CustomerAddressItemResolver')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->resolver = new CustomerAddressResolver($this->itemResolver);
+    }
+
+    public function testEmptyCollection()
+    {
+        $this->itemResolver->expects($this->never())->method($this->anything());
+
+        $this->resolver->resolve(new Taxable());
+    }
+
+    public function testResolveCollection()
     {
         $taxable = new Taxable();
-        $taxable->addItem(new Taxable());
+        $taxableItem = new Taxable();
+        $taxable->addItem($taxableItem);
 
-        return $taxable;
-    }
+        $this->itemResolver->expects($this->once())->method('resolve')->with(
+            $this->callback(
+                function ($dispatchedTaxable) use ($taxableItem) {
+                    $this->assertSame($taxableItem, $dispatchedTaxable);
 
-    public function testItemNotApplicable()
-    {
-        $event = new ResolveTaxEvent(new Taxable(), new Result());
-
-        $this->assertNothing();
-
-        $this->resolver->resolve($event);
-
-        $this->assertEmptyResult($event);
-    }
-
-    public function testEmptyRules()
-    {
-        $taxable = $this->getTaxable();
-        $taxable->setDestination(new OrderAddress());
-        $taxable->setAmount('1');
-
-        $event = new ResolveTaxEvent($taxable, new Result());
-
-        $this->matcher->expects($this->once())->method('match')->willReturn([]);
-        $this->resolver->resolve($event);
-
-        $this->assertEquals(
-            [
-                ResultElement::INCLUDING_TAX => '1',
-                ResultElement::EXCLUDING_TAX => '1',
-                ResultElement::TAX_AMOUNT => '0',
-                ResultElement::ADJUSTMENT => '0',
-            ],
-            $this->extractScalarValues($event->getResult()->getTotal())
+                    return true;
+                }
+            )
         );
-        $this->assertEquals([], $this->extractScalarValues($event->getResult()->getShipping()));
-        $this->assertEquals([], $event->getResult()->getTaxes());
-    }
 
-
-    /** {@inheritdoc} */
-    public function rulesDataProvider()
-    {
-        return [
-            [
-                '19.99',
-                [$this->getTaxRule('city', '0.08')],
-                new Result(
-                    [
-                        Result::TOTAL => ResultElement::create('21.5892', '19.99', '1.5992', '0.0008'),
-                        Result::SHIPPING => new ResultElement(),
-                        Result::TAXES => [
-                            TaxResultElement::create(null, '0.08', '19.99', '1.5992'),
-                        ],
-                    ]
-                ),
-            ],
-            [
-                '19.99',
-                [
-                    $this->getTaxRule('city', '0.08'),
-                    $this->getTaxRule('region', '0.07'),
-                ],
-                new Result(
-                    [
-                        Result::TOTAL => ResultElement::create('22.9885', '19.99', '2.9985', '0.0015'),
-                        Result::SHIPPING => new ResultElement(),
-                        Result::TAXES => [
-                            TaxResultElement::create(null, '0.08', '19.99', '1.5992'),
-                            TaxResultElement::create(null, '0.07', '19.99', '1.3993'),
-                        ],
-                    ]
-                ),
-            ],
-            [
-                '19.99',
-                [
-                    $this->getTaxRule('city', '0.08'),
-                    $this->getTaxRule('region', '0.07'),
-                    $this->getTaxRule('country', '0.06'),
-                ],
-                new Result(
-                    [
-                        Result::TOTAL => ResultElement::create('24.1879', '19.99', '4.1979', '0.0021'),
-                        Result::SHIPPING => new ResultElement(),
-                        Result::TAXES => [
-                            TaxResultElement::create(null, '0.08', '19.99', '1.5992'),
-                            TaxResultElement::create(null, '0.07', '19.99', '1.3993'),
-                            TaxResultElement::create(null, '0.06', '19.99', '1.1994'),
-                        ],
-                    ]
-                ),
-            ],
-        ];
-    }
-
-    /**
-     * @param ResolveTaxEvent $event
-     */
-    protected function assertEmptyResult(ResolveTaxEvent $event)
-    {
-        $this->assertEquals(new ResultElement(), $event->getResult()->getTotal());
-        $this->assertEquals(new ResultElement(), $event->getResult()->getShipping());
-        $this->assertEquals([], $event->getResult()->getTaxes());
+        $this->resolver->resolve($taxable);
     }
 }

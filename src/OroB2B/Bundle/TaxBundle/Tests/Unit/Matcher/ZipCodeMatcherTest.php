@@ -6,15 +6,12 @@ use Oro\Bundle\AddressBundle\Entity\Address;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 
+use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 use OroB2B\Bundle\TaxBundle\Matcher\RegionMatcher;
 use OroB2B\Bundle\TaxBundle\Matcher\ZipCodeMatcher;
 
 class ZipCodeMatcherTest extends AbstractMatcherTest
 {
-    const REGION_AS_OBJECT = 'region_as_object';
-    const REGION_AS_TEXT = 'region_as_text';
-
-    const REGION_TEXT = 'Alaska';
     const POSTAL_CODE = '02097';
 
     /**
@@ -43,51 +40,39 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
 
     /**
      * @dataProvider matchProvider
-     * @param string|false $regionPresent
+     * @param Country $country
+     * @param Region $region
+     * @param string $regionText
+     * @param TaxRule[] $regionMatcherRules
+     * @param TaxRule[] $zipCodeMatcherTaxRules
+     * @param TaxRule[] $expected
      */
-    public function testMatch($regionPresent)
+    public function testMatch($country, $region, $regionText, $regionMatcherRules, $zipCodeMatcherTaxRules, $expected)
     {
-        $country = new Country('US');
-        $region = new Region('US-NY');
-        $region->setCountry($country);
-
-        $address = new Address();
-        $address->setPostalCode(self::POSTAL_CODE);
-
-        if ($regionPresent === self::REGION_AS_OBJECT) {
-            $address->setRegion($region);
-        } elseif ($regionPresent === self::REGION_AS_TEXT) {
-            $address->setCountry($country);
-            $address->setRegionText(self::REGION_TEXT);
-        }
-
-        $regionMatcherTaxRules = [
-            $this->getTaxRule(1)
-        ];
+        $address = (new Address())
+            ->setPostalCode(self::POSTAL_CODE)
+            ->setCountry($country)
+            ->setRegion($region)
+            ->setRegionText($regionText);
 
         $this->regionMatcher
             ->expects($this->once())
             ->method('match')
             ->with($address)
-            ->willReturn($regionMatcherTaxRules);
-
-        $zipCodeMatcherTaxRules = [
-            $this->getTaxRule(1),
-            $this->getTaxRule(2)
-        ];
+            ->willReturn($regionMatcherRules);
 
         $this->taxRuleRepository
-            ->expects($this->once())
+            ->expects(empty($zipCodeMatcherTaxRules) ? $this->never() : $this->once())
             ->method('findByZipCode')
             ->with(
                 self::POSTAL_CODE,
-                $address->getRegion(),
-                $regionPresent === self::REGION_AS_TEXT ? $address->getRegionText() : null,
-                $regionPresent === self::REGION_AS_TEXT ? $address->getCountry() : null
+                $country,
+                $region,
+                $regionText
             )
             ->willReturn($zipCodeMatcherTaxRules);
 
-        $this->assertEquals($zipCodeMatcherTaxRules, $this->matcher->match($address));
+        $this->assertEquals($expected, $this->matcher->match($address));
     }
 
     /**
@@ -95,12 +80,51 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
      */
     public function matchProvider()
     {
+        $country = new Country('US');
+        $region = new Region('US-NY');
+        $regionText = 'Alaska';
+
+        $regionMatcherTaxRules = [
+            $this->getTaxRule(1),
+        ];
+
+        $zipCodeMatcherTaxRules = [
+            $this->getTaxRule(1),
+            $this->getTaxRule(2),
+        ];
+
         return [
-            'with region as object' => [
-                'regionPresent' => self::REGION_AS_OBJECT,
+            'with region' => [
+                'country' => $country,
+                'region' => $region,
+                'regionText' => '',
+                'regionMatcherRules' => $regionMatcherTaxRules,
+                'zipCodeMatcherRules' => $zipCodeMatcherTaxRules,
+                'expected' => $zipCodeMatcherTaxRules,
             ],
-            'with region as text' => [
-                'regionPresent' => self::REGION_AS_TEXT,
+            'with regionText' => [
+                'country' => $country,
+                'region' => null,
+                'regionText' => $regionText,
+                'regionMatcherRules' => $regionMatcherTaxRules,
+                'zipCodeMatcherRules' => $zipCodeMatcherTaxRules,
+                'expected' => $zipCodeMatcherTaxRules,
+            ],
+            'without country' => [
+                'country' => null,
+                'region' => $region,
+                'regionText' => $regionText,
+                'regionMatcherRules' => $regionMatcherTaxRules,
+                'zipCodeMatcherRules' => [],
+                'expected' => $regionMatcherTaxRules,
+            ],
+            'without region and regionText' => [
+                'country' => $country,
+                'region' => null,
+                'regionText' => '',
+                'regionMatcherRules' => $regionMatcherTaxRules,
+                'zipCodeMatcherRules' => [],
+                'expected' => $regionMatcherTaxRules,
             ],
         ];
     }

@@ -2,54 +2,35 @@
 
 namespace OroB2B\Bundle\TaxBundle\Resolver;
 
-use Brick\Math\BigDecimal;
-
-use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
 use OroB2B\Bundle\TaxBundle\Model\Result;
-use OroB2B\Bundle\TaxBundle\Model\ResultElement;
-use OroB2B\Bundle\TaxBundle\Model\TaxResultElement;
+use OroB2B\Bundle\TaxBundle\Model\Taxable;
 
-class CustomerAddressResolver extends AbstractAddressResolver
+class CustomerAddressResolver implements ResolverInterface
 {
-    /** {@inheritdoc} */
-    public function resolve(ResolveTaxEvent $event)
+    /** @var CustomerAddressItemResolver */
+    protected $itemResolver;
+
+    /**
+     * @param CustomerAddressItemResolver $itemResolver
+     */
+    public function __construct(CustomerAddressItemResolver $itemResolver)
     {
-        $taxable = $event->getTaxable();
-        if (0 === $taxable->getItems()->count()) {
+        $this->itemResolver = $itemResolver;
+    }
+
+    /** {@inheritdoc} */
+    public function resolve(Taxable $taxable)
+    {
+        if (!$taxable->getItems()->count()) {
             return;
         }
 
-        if (!$taxable->getAmount()) {
-            return;
+        $itemsResult = [];
+        foreach ($taxable->getItems() as $taxableItem) {
+            $this->itemResolver->resolve($taxableItem);
+            $itemsResult[] = $taxableItem->getResult();
         }
 
-        $address = $taxable->getDestination();
-        if (!$address) {
-            return;
-        }
-
-        $taxRules = $this->matcher->match($address);
-        $taxableAmount = $taxable->getAmount();
-
-        $taxResults = [];
-        $taxRate = BigDecimal::zero();
-
-        foreach ($taxRules as $taxRule) {
-            $currentTaxRate = $taxRule->getTax()->getRate();
-            $resultElement = $this->calculator->calculate($taxableAmount, $currentTaxRate);
-            $taxRate = $taxRate->plus($currentTaxRate);
-
-            $taxResults[] = TaxResultElement::create(
-                $taxRule->getTax() ? $taxRule->getTax()->getId() : null,
-                $currentTaxRate,
-                $resultElement->getExcludingTax(),
-                $resultElement->getTaxAmount()
-            );
-        }
-
-        $result = $event->getResult();
-        $result->offsetSet(Result::TOTAL, $this->calculator->calculate($taxableAmount, $taxRate));
-        $result->offsetSet(Result::SHIPPING, new ResultElement());
-        $result->offsetSet(Result::TAXES, $taxResults);
+        $taxable->getResult()->offsetSet(Result::ITEMS, $itemsResult);
     }
 }

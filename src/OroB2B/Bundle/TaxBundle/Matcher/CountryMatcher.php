@@ -11,6 +11,12 @@ class CountryMatcher extends AbstractMatcher
      */
     public function match(AbstractAddress $address)
     {
-        return $this->getTaxRuleRepository()->findByCountry($address->getCountry());
+        $country = $address->getCountry();
+
+        if (null === $country) {
+            return [];
+        }
+
+        return $this->getTaxRuleRepository()->findByCountry($country);
     }
 }

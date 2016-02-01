@@ -7,17 +7,16 @@ use Brick\Math\RoundingMode;
 
 use OroB2B\Bundle\TaxBundle\Calculator\TaxCalculatorInterface;
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
-use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
 use OroB2B\Bundle\TaxBundle\Model\Result;
+use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use OroB2B\Bundle\TaxBundle\Model\TaxResultElement;
 
 class CustomerAddressItemResolver extends AbstractAddressResolver
 {
     /** {@inheritdoc} */
-    public function resolve(ResolveTaxEvent $event)
+    public function resolve(Taxable $taxable)
     {
-        $taxable = $event->getTaxable();
-        if (0 !== $taxable->getItems()->count()) {
+        if ($taxable->getItems()->count()) {
             return;
         }
 
@@ -34,7 +33,7 @@ class CustomerAddressItemResolver extends AbstractAddressResolver
         $taxableUnitPrice = BigDecimal::of($taxable->getPrice());
         $taxableAmount = $taxableUnitPrice->multipliedBy($taxable->getQuantity());
 
-        $result = $event->getResult();
+        $result = $taxable->getResult();
         $this->resolveUnitPrice($result, $taxRules, $taxableUnitPrice);
         $this->resolveRowTotal($result, $taxRules, $taxableAmount);
     }
@@ -76,7 +75,7 @@ class CustomerAddressItemResolver extends AbstractAddressResolver
             $taxRate = $taxRate->plus($currentTaxRate);
 
             $taxResults[] = TaxResultElement::create(
-                $taxRule->getTax() ? $taxRule->getTax()->getId() : null,
+                (string)$taxRule->getTax(),
                 $currentTaxRate,
                 $resultElement->getExcludingTax(),
                 $resultElement->getTaxAmount()

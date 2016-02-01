@@ -2,9 +2,7 @@
 
 namespace OroB2B\Bundle\TaxBundle\Manager;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
-use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
+use OroB2B\Bundle\TaxBundle\Event\TaxEventDispatcher;
 use OroB2B\Bundle\TaxBundle\Factory\TaxFactory;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Transformer\TaxTransformerInterface;
@@ -17,7 +15,7 @@ class TaxManager
     /** @var TaxFactory */
     protected $taxFactory;
 
-    /** @var EventDispatcherInterface */
+    /** @var TaxEventDispatcher */
     protected $eventDispatcher;
 
     /** @var TaxValueManager */
@@ -25,12 +23,12 @@ class TaxManager
 
     /**
      * @param TaxFactory $taxFactory
-     * @param EventDispatcherInterface $eventDispatcher
+     * @param TaxEventDispatcher $eventDispatcher
      * @param TaxValueManager $taxValueManager
      */
     public function __construct(
         TaxFactory $taxFactory,
-        EventDispatcherInterface $eventDispatcher,
+        TaxEventDispatcher $eventDispatcher,
         TaxValueManager $taxValueManager
     ) {
         $this->taxFactory = $taxFactory;
@@ -88,8 +86,9 @@ class TaxManager
         }
 
         $taxable = $this->taxFactory->create($object);
+        $taxable->setResult($taxResult);
 
-        $this->eventDispatcher->dispatch(ResolveTaxEvent::NAME, new ResolveTaxEvent($taxable, $taxResult));
+        $this->eventDispatcher->dispatch($taxable);
 
         return $taxResult;
     }
@@ -111,10 +110,6 @@ class TaxManager
         $result = $this->getTax($object);
 
         $taxValue = $transformer->reverseTransform($result, $taxable);
-
-        $taxValue->setEntityClass($taxable->getClassName());
-        $taxValue->setEntityId($taxable->getIdentifier());
-        $taxValue->setAddress((string)$taxable->getDestination());
 
         $this->taxValueManager->saveTaxValue($taxValue);
 

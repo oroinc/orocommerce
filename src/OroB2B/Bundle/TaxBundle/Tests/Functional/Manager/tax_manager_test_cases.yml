@@ -1,0 +1,1139 @@
+# orders
+loadTax_taxValue_is_missing:
+    method: loadTax
+    reference: empty_order
+    expectedQueries: 3 # select order, line items from fixtures, taxValue once
+    databaseBefore:
+        'OroB2B\Bundle\OrderBundle\Entity\Order':
+            empty_order:
+                poNumber: { property_value: empty_order }
+                account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+    expectedResult: []
+
+loadTax_taxValue_exists:
+    method: loadTax
+    reference: simple_order
+    expectedQueries: 5 # select order, line items from fixtures, taxValue + 1 appliedTax and tax
+    databaseBefore:
+        'OroB2B\Bundle\OrderBundle\Entity\Order':
+            simple_order:
+                poNumber: { property_value: simple_order }
+                account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+        'OroB2B\Bundle\TaxBundle\Entity\TaxValue':
+            simple_order_tax_value:
+                entityClass: { property_value: 'OroB2B\Bundle\OrderBundle\Entity\Order' }
+                entityId: { reference: simple_order, property: id }
+                address: { property_value: address }
+                result:
+                    class: 'OroB2B\Bundle\TaxBundle\Model\Result'
+                    property_value:
+                        total:
+                            class: 'OroB2B\Bundle\TaxBundle\Model\ResultElement'
+                            property_value:
+                                includingTax: '867.9' # 789 + 78.9
+                                excludingTax: '789'
+                                taxAmount: '78.9' # 789 * 0.1
+                                adjustment: ~
+        'OroB2B\Bundle\TaxBundle\Entity\TaxApply':
+            simple_order_tax_value_applied_tax:
+                tax: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
+                rate: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' }, property: rate }
+                taxableAmount: { property_value: '789' }
+                taxAmount: { property_value: '78.9' }
+                taxValue: { reference: simple_order_tax_value }
+    expectedResult:
+        total:
+            includingTax: '867.9' # 789 + 78.9
+            excludingTax: '789'
+            taxAmount: '78.9' # 789 * 0.1
+            adjustment: ~
+        taxes:
+            - { tax: 'TAX1', rate: '0.1', taxable_amount: '789', tax_amount: '78.9' }
+
+getTax_taxValue_is_missing:
+    method: getTax
+    reference: empty_order
+    expectedQueries: 0 # cache from loadTax
+    databaseBefore:
+        'OroB2B\Bundle\OrderBundle\Entity\Order':
+            empty_order:
+                poNumber: { property_value: empty_order }
+                account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+    expectedResult: []
+
+getTax_taxValue_exists:
+    method: getTax
+    reference: simple_order
+    expectedQueries: 8 # address, taxRule for country, taxRule for country + region, regions, taxRule for zip codes
+                       #          taxRule for country, taxRule for country, taxRule for zip codes
+    databaseBefore:
+        'OroB2B\Bundle\OrderBundle\Entity\Order':
+            simple_order:
+                poNumber: { property_value: simple_order }
+                account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+                billingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+                shippingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+        'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
+            order_line_item_1:
+                productSku: { property_value: order_line_item_1 }
+                order: { reference: simple_order }
+                quantity: { property_value: 5 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '15.99', currency: USD } }
+            order_line_item_2:
+                productSku: { property_value: order_line_item_2 }
+                order: { reference: simple_order }
+                quantity: { property_value: 6 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '5.55', currency: USD } }
+        'OroB2B\Bundle\TaxBundle\Entity\TaxApply':
+            simple_order_tax_value_applied_tax:
+                tax: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
+                rate: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' }, property: rate }
+                taxableAmount: { property_value: '113.25' }
+                taxAmount: { property_value: '11.325' }
+        'OroB2B\Bundle\TaxBundle\Entity\TaxValue':
+            simple_order_tax_value:
+                entityClass: { property_value: 'OroB2B\Bundle\OrderBundle\Entity\Order' }
+                entityId: { reference: simple_order, property: id }
+                address: { property_value: address }
+                result:
+                    class: 'OroB2B\Bundle\TaxBundle\Model\Result'
+                    property_value:
+                        total:
+                            class: 'OroB2B\Bundle\TaxBundle\Model\ResultElement'
+                            property_value:
+                                includingTax: '123'
+                                excludingTax: '123'
+                                taxAmount: '0'
+                                adjustment: '0'
+                appliedTaxes:
+                    property_value:
+                        - { reference: simple_order_tax_value_applied_tax }
+    expectedResult:
+        total:
+            includingTax: '124.58' # 113.25 + 11.325
+            excludingTax: '113.25' # 15.99 * 5 + 5.55 * 6
+            taxAmount: '11.33' # 11.325 = 113.25 * 0.1
+            adjustment: '0.01' # 11.3 - 11.325
+        taxes:
+            - { tax: 'TAX1', rate: '0.1', taxable_amount: '113.25', tax_amount: '11.33' }
+
+saveTax_override_existing:
+    method: saveTax
+    reference: simple_order
+    expectedQueries: 1 # update TaxValue
+    databaseBefore:
+        'OroB2B\Bundle\OrderBundle\Entity\Order':
+            simple_order:
+                poNumber: { property_value: simple_order }
+                account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+                billingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+                shippingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+        'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
+            order_line_item_1:
+                productSku: { property_value: order_line_item_1 }
+                order: { reference: simple_order }
+                quantity: { property_value: 5 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '15.99', currency: USD } }
+            order_line_item_2:
+                productSku: { property_value: order_line_item_2 }
+                order: { reference: simple_order }
+                quantity: { property_value: 6 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '5.55', currency: USD } }
+        'OroB2B\Bundle\TaxBundle\Entity\TaxApply':
+            simple_order_tax_value_applied_tax:
+                tax: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
+                rate: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' }, property: rate }
+                taxableAmount: { property_value: '113.25' }
+                taxAmount: { property_value: '11.325' }
+        'OroB2B\Bundle\TaxBundle\Entity\TaxValue':
+            simple_order_tax_value:
+                entityClass: { property_value: 'OroB2B\Bundle\OrderBundle\Entity\Order' }
+                entityId: { reference: simple_order, property: id }
+                address: { property_value: address }
+                result:
+                    class: 'OroB2B\Bundle\TaxBundle\Model\Result'
+                    property_value:
+                        total:
+                            class: 'OroB2B\Bundle\TaxBundle\Model\ResultElement'
+                            property_value:
+                                includingTax: '123'
+                                excludingTax: '123'
+                                taxAmount: '0'
+                                adjustment: '0'
+                appliedTaxes:
+                    property_value:
+                        - { reference: simple_order_tax_value_applied_tax }
+    expectedResult:
+        total:
+            includingTax: '124.58' # 113.25 + 11.325
+            excludingTax: '113.25' # 15.99 * 5 + 5.55 * 6
+            taxAmount: '11.33' # 11.325 = 113.25 * 0.1
+            adjustment: '0.01' # 11.3 - 11.325
+        taxes:
+            - { tax: 'TAX1', rate: '0.1', taxable_amount: '113.25', tax_amount: '11.33' }
+    databaseAfter:
+        'OroB2B\Bundle\TaxBundle\Entity\TaxApply':
+            simple_order_tax_value_applied_tax: { taxableAmount: '113.25', taxAmount: '11.33' }
+
+saveTax_new_taxValue:
+    method: saveTax
+    reference: simple_order
+    expectedQueries: 11 # 8 from getTax_taxValue_exists + insert TaxApply, update TaxValue, Delete old TaxApply
+    databaseBefore:
+        'OroB2B\Bundle\OrderBundle\Entity\Order':
+            simple_order:
+                poNumber: { property_value: simple_order }
+                account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+                billingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+                shippingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+        'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
+            order_line_item_1:
+                productSku: { property_value: order_line_item_1 }
+                order: { reference: simple_order }
+                quantity: { property_value: 5 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '15.99', currency: USD } }
+            order_line_item_2:
+                productSku: { property_value: order_line_item_2 }
+                order: { reference: simple_order }
+                quantity: { property_value: 6 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '5.55', currency: USD } }
+    expectedResult:
+        total:
+            includingTax: '124.58' # 113.25 + 11.325
+            excludingTax: '113.25' # 15.99 * 5 + 5.55 * 6
+            taxAmount: '11.33' # 11.325 = 113.25 * 0.1
+            adjustment: '0.01' # 11.3 - 11.325
+        taxes:
+            - { tax: 'TAX1', rate: '0.1', taxable_amount: '113.25', tax_amount: '11.33' }
+    databaseAfter:
+        'OroB2B\Bundle\TaxBundle\Entity\TaxApply':
+            simple_order_tax_value_applied_tax: { taxableAmount: '113.25', taxAmount: '11.33' }
+
+# order line items
+item_loadTax_taxValue_is_missing:
+    method: loadTax
+    reference: order_line_item_1
+    expectedQueries: 3 # select order, line items from fixtures, taxValue once
+    databaseBefore:
+        'OroB2B\Bundle\OrderBundle\Entity\Order':
+            simple_order:
+                poNumber: { property_value: simple_order }
+                account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+                billingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
+                shippingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
+        'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
+            order_line_item_1:
+                productSku: { property_value: order_line_item_1 }
+                order: { reference: simple_order }
+                quantity: { property_value: 5 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '15.99', currency: USD } }
+            order_line_item_2:
+                productSku: { property_value: order_line_item_2 }
+                order: { reference: simple_order }
+                quantity: { property_value: 6 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '5.55', currency: USD } }
+    expectedResult: []
+
+item_loadTax_taxValue_exists:
+    method: loadTax
+    reference: order_line_item_1
+    expectedQueries: 2 # select taxValue and taxApply
+    databaseBefore:
+        'OroB2B\Bundle\OrderBundle\Entity\Order':
+            simple_order:
+                poNumber: { property_value: simple_order }
+                account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+                billingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
+                shippingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
+        'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
+            order_line_item_1:
+                productSku: { property_value: order_line_item_1 }
+                order: { reference: simple_order }
+                quantity: { property_value: 5 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '15.99', currency: USD } }
+            order_line_item_2:
+                productSku: { property_value: order_line_item_2 }
+                order: { reference: simple_order }
+                quantity: { property_value: 6 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '5.55', currency: USD } }
+        'OroB2B\Bundle\TaxBundle\Entity\TaxValue':
+            simple_order_tax_value:
+                entityClass: { property_value: 'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem' }
+                entityId: { reference: order_line_item_1, property: id }
+                address: { property_value: address }
+                result:
+                    class: 'OroB2B\Bundle\TaxBundle\Model\Result'
+                    property_value:
+                        row:
+                            class: 'OroB2B\Bundle\TaxBundle\Model\ResultElement'
+                            property_value:
+                                includingTax: '105.54' # 95.94 + 9.594
+                                excludingTax: '95.94' # 15.99 * 6
+                                taxAmount: '9.6' # 95.94 * 0.1
+                                adjustment: '0.001'
+                        unit:
+                            class: 'OroB2B\Bundle\TaxBundle\Model\ResultElement'
+                            property_value:
+                                includingTax: '17.59' # 15.99 + 1.599
+                                excludingTax: '15.99'
+                                taxAmount: '1.6' # 15.99 * 0.1
+                                adjustment: '0.001'
+        'OroB2B\Bundle\TaxBundle\Entity\TaxApply':
+            simple_order_tax_value_applied_tax:
+                tax: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
+                rate: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' }, property: rate }
+                taxableAmount: { property_value: '9.6' }
+                taxAmount: { property_value: '1.6' }
+                taxValue: { reference: simple_order_tax_value }
+    expectedResult: # loaded from fixtures, values from simple_order_item_1 used to check database overrid
+        row:
+            includingTax: '105.54' # 95.94 + 9.594
+            excludingTax: '95.94' # 15.99 * 6
+            taxAmount: '9.6' # 95.94 * 0.1
+            adjustment: '0.001'
+        unit:
+            includingTax: '17.59' # 15.99 + 1.599
+            excludingTax: '15.99'
+            taxAmount: '1.6' # 15.99 * 0.1
+            adjustment: '0.001'
+        taxes:
+            - { tax: 'TAX1', rate: '0.1', taxable_amount: '9.6', tax_amount: '1.6' }
+
+item_getTax_taxValue_is_missing:
+    method: getTax
+    reference: order_line_item_1
+    expectedQueries: 3 # country, region, zip mathchers
+    databaseBefore:
+        'OroB2B\Bundle\OrderBundle\Entity\Order':
+            simple_order:
+                poNumber: { property_value: simple_order }
+                account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+                billingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+                shippingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+        'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
+            order_line_item_1:
+                productSku: { property_value: order_line_item_1 }
+                order: { reference: simple_order }
+                quantity: { property_value: 6 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '15.99', currency: USD } }
+            order_line_item_2:
+                productSku: { property_value: order_line_item_2 }
+                order: { reference: simple_order }
+                quantity: { property_value: 6 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '5.55', currency: USD } }
+    expectedResult: # loaded from fixtures, values from simple_order_item_1 used to check database overrid
+        row:
+            includingTax: '105.54' # 95.94 + 9.594
+            excludingTax: '95.94' # 15.99 * 6
+            taxAmount: '9.6' # 95.94 * 0.1
+            adjustment: '0.01'
+        unit:
+            includingTax: '17.59' # 15.99 + 1.599
+            excludingTax: '15.99'
+            taxAmount: '1.6' # 15.99 * 0.1
+            adjustment: '0.01'
+        taxes:
+            - { tax: 'TAX1', rate: '0.1', taxable_amount: '95.94', tax_amount: '9.6' }
+
+item_getTax_taxValue_exists:
+    method: getTax
+    reference: order_line_item_2
+    expectedQueries: 8 # address, taxRule for country, taxRule for country + region, regions, taxRule for zip codes
+                   #          taxRule for country, taxRule for country, taxRule for zip codes
+    databaseBefore:
+        'OroB2B\Bundle\OrderBundle\Entity\Order':
+            simple_order:
+                poNumber: { property_value: simple_order }
+                account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+                billingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+                shippingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+        'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
+            order_line_item_1:
+                productSku: { property_value: order_line_item_1 }
+                order: { reference: simple_order }
+                quantity: { property_value: 6 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '15.99', currency: USD } }
+            order_line_item_2:
+                productSku: { property_value: order_line_item_2 }
+                order: { reference: simple_order }
+                quantity: { property_value: 6 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '5.55', currency: USD } }
+        'OroB2B\Bundle\TaxBundle\Entity\TaxValue':
+            simple_order_tax_value:
+                entityClass: { property_value: 'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem' }
+                entityId: { reference: order_line_item_1, property: id }
+                address: { property_value: address }
+                result:
+                    class: 'OroB2B\Bundle\TaxBundle\Model\Result'
+                    property_value:
+                        row:
+                            class: 'OroB2B\Bundle\TaxBundle\Model\ResultElement'
+                            property_value:
+                                includingTax: '105.54' # 95.94 + 9.594
+                                excludingTax: '95.94' # 15.99 * 6
+                                taxAmount: '9.6' # 95.94 * 0.1
+                                adjustment: '0.001'
+                        unit:
+                            class: 'OroB2B\Bundle\TaxBundle\Model\ResultElement'
+                            property_value:
+                                includingTax: '17.59' # 15.99 + 1.599
+                                excludingTax: '15.99'
+                                taxAmount: '1.6' # 15.99 * 0.1
+                                adjustment: '0.001'
+        'OroB2B\Bundle\TaxBundle\Entity\TaxApply':
+            simple_order_tax_value_applied_tax:
+                tax: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
+                rate: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' }, property: rate }
+                taxableAmount: { property_value: '9.6' }
+                taxAmount: { property_value: '1.6' }
+                taxValue: { reference: simple_order_tax_value }
+    expectedResult: # values from simple_order_item_1 used to check database override
+        row:
+            includingTax: '36.63' # 33.3 + 3.33
+            excludingTax: '33.3' # 5.55 * 6
+            taxAmount: '3.33' # 33.3 * 0.1
+            adjustment: '0'
+        unit:
+            includingTax: '6.11' # 5.55 + 0.555
+            excludingTax: '5.55'
+            taxAmount: '0.56' # 5.55 * 0.1
+            adjustment: '0.01'
+        taxes:
+            - { tax: 'TAX1', rate: '0.1', taxable_amount: '33.3', tax_amount: '3.33' }
+
+item_saveTax_override_existing:
+    method: saveTax
+    reference: order_line_item_2
+    expectedQueries: 1 # insert TaxValue
+    databaseBefore:
+        'OroB2B\Bundle\OrderBundle\Entity\Order':
+            simple_order:
+                poNumber: { property_value: simple_order }
+                account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+                billingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+                shippingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+        'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
+            order_line_item_1:
+                productSku: { property_value: order_line_item_1 }
+                order: { reference: simple_order }
+                quantity: { property_value: 6 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '15.99', currency: USD } }
+            order_line_item_2:
+                productSku: { property_value: order_line_item_2 }
+                order: { reference: simple_order }
+                quantity: { property_value: 6 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '5.55', currency: USD } }
+        'OroB2B\Bundle\TaxBundle\Entity\TaxValue':
+            simple_order_tax_value:
+                entityClass: { property_value: 'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem' }
+                entityId: { reference: order_line_item_1, property: id }
+                address: { property_value: address }
+                result:
+                    class: 'OroB2B\Bundle\TaxBundle\Model\Result'
+                    property_value:
+                        row:
+                            class: 'OroB2B\Bundle\TaxBundle\Model\ResultElement'
+                            property_value:
+                                includingTax: '105.54' # 95.94 + 9.594
+                                excludingTax: '95.94' # 15.99 * 6
+                                taxAmount: '9.6' # 95.94 * 0.1
+                                adjustment: '0.001'
+                        unit:
+                            class: 'OroB2B\Bundle\TaxBundle\Model\ResultElement'
+                            property_value:
+                                includingTax: '17.59' # 15.99 + 1.599
+                                excludingTax: '15.99'
+                                taxAmount: '1.6' # 15.99 * 0.1
+                                adjustment: '0.001'
+        'OroB2B\Bundle\TaxBundle\Entity\TaxApply':
+            simple_order_tax_value_applied_tax:
+                tax: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
+                rate: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' }, property: rate }
+                taxableAmount: { property_value: '9.6' }
+                taxAmount: { property_value: '1.6' }
+                taxValue: { reference: simple_order_tax_value }
+    expectedResult: # values from simple_order_item_1 used to check database override
+        row:
+            includingTax: '36.63' # 33.3 + 3.33
+            excludingTax: '33.3' # 5.55 * 6
+            taxAmount: '3.33' # 33.3 * 0.1
+            adjustment: '0'
+        unit:
+            includingTax: '6.11' # 5.55 + 0.555
+            excludingTax: '5.55'
+            taxAmount: '0.56' # 5.55 * 0.1
+            adjustment: '0.01'
+        taxes:
+            - { tax: 'TAX1', rate: '0.1', taxable_amount: '33.3', tax_amount: '3.33' }
+
+
+item_saveTax_new_taxValue:
+    method: saveTax
+    reference: order_line_item_2
+    expectedQueries: 11 # 8 from getTax_taxValue_exists + insert TaxApply, update TaxValue, Delete old TaxApply
+    databaseBefore:
+        'OroB2B\Bundle\OrderBundle\Entity\Order':
+            simple_order:
+                poNumber: { property_value: simple_order }
+                account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+                billingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+                shippingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+        'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
+            order_line_item_1:
+                productSku: { property_value: order_line_item_1 }
+                order: { reference: simple_order }
+                quantity: { property_value: 6 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '15.99', currency: USD } }
+            order_line_item_2:
+                productSku: { property_value: order_line_item_2 }
+                order: { reference: simple_order }
+                quantity: { property_value: 6 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '5.55', currency: USD } }
+    expectedResult: # values from simple_order_item_1 used to check database override
+        row:
+            includingTax: '36.63' # 33.3 + 3.33
+            excludingTax: '33.3' # 5.55 * 6
+            taxAmount: '3.33' # 33.3 * 0.1
+            adjustment: '0'
+        unit:
+            includingTax: '6.11' # 5.55 + 0.555
+            excludingTax: '5.55'
+            taxAmount: '0.56' # 5.55 * 0.1
+            adjustment: '0.01'
+        taxes:
+            - { tax: 'TAX1', rate: '0.1', taxable_amount: '33.3', tax_amount: '3.33' }
+
+# cases with inc tax
+saveTax_new_taxValue_tax_incl:
+    method: saveTax
+    reference: simple_order
+    expectedQueries: 11 # 8 from getTax_taxValue_exists + insert TaxApply, update TaxValue, Delete old TaxApply
+    databaseBefore:
+        'OroB2B\Bundle\OrderBundle\Entity\Order':
+            simple_order:
+                poNumber: { property_value: simple_order }
+                account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+                billingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+                shippingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+        'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
+            order_line_item_1:
+                productSku: { property_value: order_line_item_1 }
+                order: { reference: simple_order }
+                quantity: { property_value: 6 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '15.99', currency: USD } }
+            order_line_item_2:
+                productSku: { property_value: order_line_item_2 }
+                order: { reference: simple_order }
+                quantity: { property_value: 7 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '5.55', currency: USD } }
+    expectedResult:
+        total:
+            includingTax: '134.79' # 15.99 * 6 + 5.55 * 7
+            excludingTax: '122.54' # 134.79 - 12.2536
+            taxAmount: '12.26' # 134.79 * 0.1 / 1.1
+            adjustment: '0.01'
+    databaseAfter: []
+    priceIncludeTax: true
+
+
+item_saveTax_new_taxValue_tax_incl:
+    method: saveTax
+    reference: order_line_item_2
+    expectedQueries: 11 # 8 from getTax_taxValue_exists + insert TaxApply, update TaxValue, Delete old TaxApply
+    databaseBefore:
+        'OroB2B\Bundle\OrderBundle\Entity\Order':
+            simple_order:
+                poNumber: { property_value: simple_order }
+                account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+                billingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+                shippingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+        'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
+            order_line_item_1:
+                productSku: { property_value: order_line_item_1 }
+                order: { reference: simple_order }
+                quantity: { property_value: 6 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '15.99', currency: USD } }
+            order_line_item_2:
+                productSku: { property_value: order_line_item_2 }
+                order: { reference: simple_order }
+                quantity: { property_value: 7 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '5.55', currency: USD } }
+    expectedResult:
+        row:
+            includingTax: '38.85' # 5.55 * 7
+            excludingTax: '35.32' # 38.85 - 3.53
+            taxAmount: '3.54' # 38.85 * 0.1 / 1.1
+            adjustment: '0.01'
+        unit:
+            includingTax: '5.55'
+            excludingTax: '5.05' # 5.55 - 0.5045
+            taxAmount: '0.51' # 5.55 * 0.1 / 1.1
+            adjustment: '0.01'
+    databaseAfter: []
+    priceIncludeTax: true
+
+# cases with empty values
+item_saveTax_new_taxValue_empty_price:
+    method: saveTax
+    reference: order_line_item_2
+    expectedQueries: 11 # 8 from getTax_taxValue_exists + insert TaxApply, update TaxValue, Delete old TaxApply
+    databaseBefore:
+        'OroB2B\Bundle\OrderBundle\Entity\Order':
+            simple_order:
+                poNumber: { property_value: simple_order }
+                account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+                billingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+                shippingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+        'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
+            order_line_item_1:
+                productSku: { property_value: order_line_item_1 }
+                order: { reference: simple_order }
+                quantity: { property_value: 6 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '0', currency: USD } }
+            order_line_item_2:
+                productSku: { property_value: order_line_item_2 }
+                order: { reference: simple_order }
+                quantity: { property_value: 0 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '5.55', currency: USD } }
+    expectedResult:
+        row:
+            includingTax: '0'
+            excludingTax: '0'
+            taxAmount: '0'
+            adjustment: '0'
+        unit:
+            includingTax: '5.55'
+            excludingTax: '5.05' # 5.55 - 0.5045
+            taxAmount: '0.51' # 5.55 * 0.1 / 1.1
+            adjustment: '0.01'
+    databaseAfter: []
+    priceIncludeTax: true
+
+# adjustment lost
+item_getTax_new_taxValue_adjustment_lost:
+    method: getTax
+    reference: simple_order
+    expectedQueries: 11 # 8 from getTax_taxValue_exists + insert TaxApply, update TaxValue, Delete old TaxApply
+    databaseBefore:
+        'OroB2B\Bundle\OrderBundle\Entity\Order':
+            simple_order:
+                poNumber: { property_value: simple_order }
+                account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+                billingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+                shippingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+        'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
+            order_line_item_1:
+                productSku: { property_value: order_line_item_1 }
+                order: { reference: simple_order }
+                quantity: { property_value: 1 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            order_line_item_2:
+                productSku: { property_value: order_line_item_2 }
+                order: { reference: simple_order }
+                quantity: { property_value: 1 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            order_line_item_3:
+                productSku: { property_value: order_line_item_3 }
+                order: { reference: simple_order }
+                quantity: { property_value: 1 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            order_line_item_4:
+                productSku: { property_value: order_line_item_4 }
+                order: { reference: simple_order }
+                quantity: { property_value: 1 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            order_line_item_5:
+                productSku: { property_value: order_line_item_5 }
+                order: { reference: simple_order }
+                quantity: { property_value: 1 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            order_line_item_6:
+                productSku: { property_value: order_line_item_5 }
+                order: { reference: simple_order }
+                quantity: { property_value: 1 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            order_line_item_7:
+                productSku: { property_value: order_line_item_5 }
+                order: { reference: simple_order }
+                quantity: { property_value: 1 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            order_line_item_8:
+                productSku: { property_value: order_line_item_5 }
+                order: { reference: simple_order }
+                quantity: { property_value: 1 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            order_line_item_9:
+                productSku: { property_value: order_line_item_5 }
+                order: { reference: simple_order }
+                quantity: { property_value: 1 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+    expectedResult:
+        total:
+            includingTax: '219.88' # 219.96 if count by rounded items
+            excludingTax: '199.89' # 22.21 * 9
+            taxAmount: '19.99' # 22.21 * 9 * 0.1 = 19.99
+            adjustment: '0.09'
+        items:
+            -
+                row:
+                    includingTax: '24.44'
+                    excludingTax: '22.21'
+                    taxAmount: '2.23'
+                    adjustment: '0.01'
+                unit:
+                    includingTax: '24.44'
+                    excludingTax: '22.21'
+                    taxAmount: '2.23'
+                    adjustment: '0.01'
+                taxes:
+                    - { tax: 'TAX1', rate: '0.1', taxable_amount: '22.21', tax_amount: '2.23' }
+            -
+                row:
+                    includingTax: '24.44'
+                    excludingTax: '22.21'
+                    taxAmount: '2.23'
+                    adjustment: '0.01'
+                unit:
+                    includingTax: '24.44'
+                    excludingTax: '22.21'
+                    taxAmount: '2.23'
+                    adjustment: '0.01'
+                taxes:
+                    - { tax: 'TAX1', rate: '0.1', taxable_amount: '22.21', tax_amount: '2.23' }
+            -
+                row:
+                    includingTax: '24.44'
+                    excludingTax: '22.21'
+                    taxAmount: '2.23'
+                    adjustment: '0.01'
+                unit:
+                    includingTax: '24.44'
+                    excludingTax: '22.21'
+                    taxAmount: '2.23'
+                    adjustment: '0.01'
+                taxes:
+                    - { tax: 'TAX1', rate: '0.1', taxable_amount: '22.21', tax_amount: '2.23' }
+            -
+                row:
+                    includingTax: '24.44'
+                    excludingTax: '22.21'
+                    taxAmount: '2.23'
+                    adjustment: '0.01'
+                unit:
+                    includingTax: '24.44'
+                    excludingTax: '22.21'
+                    taxAmount: '2.23'
+                    adjustment: '0.01'
+                taxes:
+                    - { tax: 'TAX1', rate: '0.1', taxable_amount: '22.21', tax_amount: '2.23' }
+            -
+                row:
+                    includingTax: '24.44'
+                    excludingTax: '22.21'
+                    taxAmount: '2.23'
+                    adjustment: '0.01'
+                unit:
+                    includingTax: '24.44'
+                    excludingTax: '22.21'
+                    taxAmount: '2.23'
+                    adjustment: '0.01'
+                taxes:
+                    - { tax: 'TAX1', rate: '0.1', taxable_amount: '22.21', tax_amount: '2.23' }
+            -
+                row:
+                    includingTax: '24.44'
+                    excludingTax: '22.21'
+                    taxAmount: '2.23'
+                    adjustment: '0.01'
+                unit:
+                    includingTax: '24.44'
+                    excludingTax: '22.21'
+                    taxAmount: '2.23'
+                    adjustment: '0.01'
+                taxes:
+                    - { tax: 'TAX1', rate: '0.1', taxable_amount: '22.21', tax_amount: '2.23' }
+            -
+                row:
+                    includingTax: '24.44'
+                    excludingTax: '22.21'
+                    taxAmount: '2.23'
+                    adjustment: '0.01'
+                unit:
+                    includingTax: '24.44'
+                    excludingTax: '22.21'
+                    taxAmount: '2.23'
+                    adjustment: '0.01'
+                taxes:
+                    - { tax: 'TAX1', rate: '0.1', taxable_amount: '22.21', tax_amount: '2.23' }
+            -
+                row:
+                    includingTax: '24.44'
+                    excludingTax: '22.21'
+                    taxAmount: '2.23'
+                    adjustment: '0.01'
+                unit:
+                    includingTax: '24.44'
+                    excludingTax: '22.21'
+                    taxAmount: '2.23'
+                    adjustment: '0.01'
+                taxes:
+                    - { tax: 'TAX1', rate: '0.1', taxable_amount: '22.21', tax_amount: '2.23' }
+            -
+                row:
+                    includingTax: '24.44'
+                    excludingTax: '22.21'
+                    taxAmount: '2.23'
+                    adjustment: '0.01'
+                unit:
+                    includingTax: '24.44'
+                    excludingTax: '22.21'
+                    taxAmount: '2.23'
+                    adjustment: '0.01'
+                taxes:
+                    - { tax: 'TAX1', rate: '0.1', taxable_amount: '22.21', tax_amount: '2.23' }
+        taxes:
+            - { tax: 'TAX1', rate: '0.1', taxable_amount: '199.89', tax_amount: '19.99' }
+
+item_getTax_new_taxValue_adjustment_lost_price_incl_tax:
+    method: getTax
+    reference: simple_order
+    expectedQueries: 11 # 8 from getTax_taxValue_exists + insert TaxApply, update TaxValue, Delete old TaxApply
+    databaseBefore:
+        'OroB2B\Bundle\OrderBundle\Entity\Order':
+            simple_order:
+                poNumber: { property_value: simple_order }
+                account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+                billingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+                shippingAddress:
+                    class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                    property_value:
+                        country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                        region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+        'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
+            order_line_item_1:
+                productSku: { property_value: order_line_item_1 }
+                order: { reference: simple_order }
+                quantity: { property_value: 1 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            order_line_item_2:
+                productSku: { property_value: order_line_item_2 }
+                order: { reference: simple_order }
+                quantity: { property_value: 1 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            order_line_item_3:
+                productSku: { property_value: order_line_item_3 }
+                order: { reference: simple_order }
+                quantity: { property_value: 1 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            order_line_item_4:
+                productSku: { property_value: order_line_item_4 }
+                order: { reference: simple_order }
+                quantity: { property_value: 1 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            order_line_item_5:
+                productSku: { property_value: order_line_item_5 }
+                order: { reference: simple_order }
+                quantity: { property_value: 1 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            order_line_item_6:
+                productSku: { property_value: order_line_item_5 }
+                order: { reference: simple_order }
+                quantity: { property_value: 1 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            order_line_item_7:
+                productSku: { property_value: order_line_item_5 }
+                order: { reference: simple_order }
+                quantity: { property_value: 1 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            order_line_item_8:
+                productSku: { property_value: order_line_item_5 }
+                order: { reference: simple_order }
+                quantity: { property_value: 1 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            order_line_item_9:
+                productSku: { property_value: order_line_item_5 }
+                order: { reference: simple_order }
+                quantity: { property_value: 1 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+    expectedResult:
+        total:
+            includingTax: '199.89'   # 22.21 * 9
+            excludingTax: '181.72'   # 199.89 - 18.1718 = 181.7181       # 181.8 if count by items
+            taxAmount: '18.18'       # 199.89 * 0.1 / 1.1 = 18.1718
+            adjustment: '0.09'
+        items:
+            -
+                row:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                unit:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                taxes:
+                    - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.2', tax_amount: '2.02' }
+            -
+                row:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                unit:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                taxes:
+                    - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.2', tax_amount: '2.02' }
+            -
+                row:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                unit:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                taxes:
+                    - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.2', tax_amount: '2.02' }
+            -
+                row:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                unit:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                taxes:
+                    - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.2', tax_amount: '2.02' }
+            -
+                row:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                unit:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                taxes:
+                    - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.2', tax_amount: '2.02' }
+            -
+                row:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                unit:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                taxes:
+                    - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.2', tax_amount: '2.02' }
+            -
+                row:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                unit:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                taxes:
+                    - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.2', tax_amount: '2.02' }
+            -
+                row:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                unit:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                taxes:
+                    - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.2', tax_amount: '2.02' }
+            -
+                row:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                unit:
+                    includingTax: '22.21'
+                    excludingTax: '20.2'    # 22.21 - 2.019 = 20.191
+                    taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.019
+                    adjustment: '0.01'
+                taxes:
+                    - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.2', tax_amount: '2.02' }
+        taxes:
+            - { tax: 'TAX1', rate: '0.1', taxable_amount: '181.72', tax_amount: '18.18' }
+    databaseAfter: []
+    priceIncludeTax: true
+
+getTax_with_empty_address:
+    method: getTax
+    reference: simple_order
+    expectedQueries: 8 # address, taxRule for country, taxRule for country + region, regions, taxRule for zip codes
+                       #          taxRule for country, taxRule for country, taxRule for zip codes
+    databaseBefore:
+        'OroB2B\Bundle\OrderBundle\Entity\Order':
+            simple_order:
+                poNumber: { property_value: simple_order }
+                account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+                billingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
+                shippingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
+        'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
+            order_line_item_1:
+                productSku: { property_value: order_line_item_1 }
+                order: { reference: simple_order }
+                quantity: { property_value: 5 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '15.99', currency: USD } }
+            order_line_item_2:
+                productSku: { property_value: order_line_item_2 }
+                order: { reference: simple_order }
+                quantity: { property_value: 6 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '5.55', currency: USD } }
+    expectedResult:
+        total:
+            includingTax: '113.25'
+            excludingTax: '113.25'
+            taxAmount: '0'
+            adjustment: '0'
+        taxes: []
+
+getTax_with_without_address:
+    method: getTax
+    reference: simple_order
+    expectedQueries: 8 # address, taxRule for country, taxRule for country + region, regions, taxRule for zip codes
+                       #          taxRule for country, taxRule for country, taxRule for zip codes
+    databaseBefore:
+        'OroB2B\Bundle\OrderBundle\Entity\Order':
+            simple_order:
+                poNumber: { property_value: simple_order }
+                account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+                billingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
+                shippingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
+        'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
+            order_line_item_1:
+                productSku: { property_value: order_line_item_1 }
+                order: { reference: simple_order }
+                quantity: { property_value: 5 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '15.99', currency: USD } }
+            order_line_item_2:
+                productSku: { property_value: order_line_item_2 }
+                order: { reference: simple_order }
+                quantity: { property_value: 6 }
+                price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '5.55', currency: USD } }
+    expectedResult:
+        total:
+            includingTax: '113.25'
+            excludingTax: '113.25'
+            taxAmount: '0'
+            adjustment: '0'
+        taxes: []

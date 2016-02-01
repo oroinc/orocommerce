@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
 
@@ -15,17 +13,20 @@ class ResultTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\ResultElement', $result->getTotal());
         $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\ResultElement', $result->getShipping());
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $result->getTaxes());
+        $this->assertInternalType('array', $result->getTaxes());
+        $this->assertInternalType('array', $result->getItems());
 
         $this->assertEquals($this->createTotal(), $result->getTotal());
         $this->assertEquals($this->createShipping(), $result->getShipping());
         $this->assertEquals($this->createTaxes(), $result->getTaxes());
+        $this->assertEquals($this->createItemsResult(), $result->getItems());
 
-        $this->assertCount(3, $result);
+        $this->assertCount(4, $result);
         $expected = [
             'total' => $this->createTotal(),
             'shipping' => $this->createShipping(),
             'taxes' => $this->createTaxes(),
+            'items' => $this->createItemsResult(),
         ];
 
         foreach ($result as $key => $value) {
@@ -44,8 +45,17 @@ class ResultTest extends \PHPUnit_Framework_TestCase
                 Result::TOTAL => $this->createTotal(),
                 Result::SHIPPING => $this->createShipping(),
                 Result::TAXES => $this->createTaxes(),
+                Result::ITEMS => $this->createItemsResult(),
             ]
         );
+    }
+
+    /**
+     * @return array
+     */
+    protected function createItemsResult()
+    {
+        return [new Result()];
     }
 
     /**
@@ -65,11 +75,11 @@ class ResultTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return ArrayCollection
+     * @return array
      */
     protected function createTaxes()
     {
-        return new ArrayCollection(['test tax']);
+        return ['test tax'];
     }
 
     public function testConstruct()
@@ -88,6 +98,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
                     ),
                     Result::SHIPPING => $this->createShipping(),
                     Result::TAXES => $this->createTaxes(),
+                    Result::ITEMS => $this->createItemsResult(),
                 ]
             )
         );
