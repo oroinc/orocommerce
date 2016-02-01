@@ -143,7 +143,7 @@ class DatabaseBuilderTest extends WebTestCase
             'labelAttributes' => [],
             'linkAttributes' => [],
             'childrenAttributes' => [],
-            'extras' => [],
+            'extras' => ['isAllowed' => true],
             'display' => true,
             'displayChildren' => true,
             'current' => null,

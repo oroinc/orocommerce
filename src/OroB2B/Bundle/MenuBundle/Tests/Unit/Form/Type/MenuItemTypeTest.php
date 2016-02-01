@@ -7,12 +7,15 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Form\PreloadedExtension;
 
+use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Component\Testing\Unit\Form\Extension\Stub\FormTypeValidatorExtensionStub;
 
+use OroB2B\Bundle\MenuBundle\Tests\Unit\Form\Extension\Stub\TooltipFormExtensionStub;
+use OroB2B\Bundle\MenuBundle\Tests\Unit\Form\Extension\Stub\ImageTypeStub;
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
-use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
+use OroB2B\Bundle\MenuBundle\Tests\Unit\Entity\Stub\MenuItemStub;
 use OroB2B\Bundle\MenuBundle\Form\Type\MenuItemType;
 
 class MenuItemTypeTest extends FormIntegrationTestCase
@@ -32,9 +35,10 @@ class MenuItemTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub()
+                    LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
+                    ImageType::NAME => new ImageTypeStub()
                 ],
-                ['form' => [new FormTypeValidatorExtensionStub()]]
+                ['form' => [new FormTypeValidatorExtensionStub(), new TooltipFormExtensionStub()]]
             )
         ];
     }
@@ -75,8 +79,8 @@ class MenuItemTypeTest extends FormIntegrationTestCase
 
     public function testBuildFormForRegularMenuItem()
     {
-        $menuItem = new MenuItem();
-        $menuItem->setParent(new MenuItem());
+        $menuItem = new MenuItemStub();
+        $menuItem->setParent(new MenuItemStub());
         $form = $this->factory->create($this->formType, $menuItem);
 
         $this->assertTrue($form->has('titles'));
@@ -122,8 +126,8 @@ class MenuItemTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
-        $root = new MenuItem();
-        $menuItem = new MenuItem();
+        $root = new MenuItemStub();
+        $menuItem = new MenuItemStub();
         $menuItem->setDefaultTitle('menu_item_title');
         $menuItem->setUri('uri');
         $menuItem->setCondition('1 > 2');

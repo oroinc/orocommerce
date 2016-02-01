@@ -34,7 +34,7 @@ abstract class AbstractTreeHandler
     }
 
     /**
-     * @param mixed|null $root
+     * @param object|null $root
      * @param bool $includeRoot
      * @return array
      */
@@ -88,7 +88,7 @@ abstract class AbstractTreeHandler
     }
 
     /**
-     * @param mixed $root
+     * @param object $root
      * @return bool|\Doctrine\Common\Proxy\Proxy|null|object
      * @throws \Doctrine\ORM\ORMException
      */

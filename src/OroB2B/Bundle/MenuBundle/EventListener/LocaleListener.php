@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\MenuBundle\EventListener;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
 use Oro\Component\DependencyInjection\ServiceLink;
+
 use OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 

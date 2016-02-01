@@ -84,16 +84,13 @@ class MenuItemTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($defaultTitle, $menuItem->getDefaultTitle());
     }
 
-
     /**
-     * @param array $titles
-     * @dataProvider getDefaultTitleExceptionDataProvider
-     *
      * @expectedException \LogicException
      * @expectedExceptionMessage There must be only one default title
      */
-    public function testGetDefaultTitleException(array $titles)
+    public function testGetDefaultTitleException()
     {
+        $titles = [$this->createLocalizedValue(true), $this->createLocalizedValue(true)];
         $menuItem = $this->entity;
 
         foreach ($titles as $title) {
@@ -101,16 +98,6 @@ class MenuItemTest extends \PHPUnit_Framework_TestCase
         }
 
         $menuItem->getDefaultTitle();
-    }
-
-    /**
-     * @return array
-     */
-    public function getDefaultTitleExceptionDataProvider()
-    {
-        return [
-            'several default localized' => [[$this->createLocalizedValue(true), $this->createLocalizedValue(true)]],
-        ];
     }
 
     public function testSetDefaultTitle()
