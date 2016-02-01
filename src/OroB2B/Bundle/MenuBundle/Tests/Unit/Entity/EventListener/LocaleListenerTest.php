@@ -33,7 +33,17 @@ class LocaleListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new LocaleListener($this->menuProvider);
+        $menuProviderLink = $this
+            ->getMockBuilder('Oro\Component\DependencyInjection\ServiceLink')
+            ->setMethods(['getService'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $menuProviderLink->expects($this->any())
+            ->method('getService')
+            ->will($this->returnValue($this->menuProvider));
+
+        $this->listener = new LocaleListener($menuProviderLink);
 
         $this->objectManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()

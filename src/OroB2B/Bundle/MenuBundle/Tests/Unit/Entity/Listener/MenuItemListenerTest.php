@@ -71,32 +71,6 @@ class MenuItemListenerTest extends \PHPUnit_Framework_TestCase
         $this->event = $this->getEventMock($this->entity);
     }
 
-    public function testPostUpdate()
-    {
-        $this->assertCacheRebuild();
-        $this->listener->postUpdate($this->entity, $this->event);
-    }
-
-    public function testPostUpdateWithoutRootId()
-    {
-        $this->objectManager->expects($this->never())
-            ->method('find');
-        $this->listener->postUpdate($this->entity, $this->event);
-    }
-
-    public function testPostPersist()
-    {
-        $this->assertCacheRebuild();
-        $this->listener->postPersist($this->entity, $this->event);
-    }
-
-    public function testPostPersistWithoutRootId()
-    {
-        $this->objectManager->expects($this->never())
-            ->method('find');
-        $this->listener->postUpdate($this->entity, $this->event);
-    }
-
     public function testPostRemoveWithRegularMenuItem()
     {
         $this->entity = new MenuItem();
@@ -138,13 +112,8 @@ class MenuItemListenerTest extends \PHPUnit_Framework_TestCase
         $root = $this->getEntity('OroB2B\Bundle\MenuBundle\Entity\MenuItem', ['id' => self::ROOT_ID]);
         $root->addTitle((new LocalizedFallbackValue)->setString(self::ROOT_TITLE));
 
-        $this->objectManager->expects($this->once())
-            ->method('find')
-            ->with('OroB2BMenuBundle:MenuItem', self::ROOT_ID)
-            ->willReturn($root);
-
         $this->menuProvider->expects($this->once())
-            ->method('rebuildCacheByAlias')
-            ->with(self::ROOT_TITLE);
+            ->method('rebuildCacheByMenuItem')
+            ->with($this->entity);
     }
 }

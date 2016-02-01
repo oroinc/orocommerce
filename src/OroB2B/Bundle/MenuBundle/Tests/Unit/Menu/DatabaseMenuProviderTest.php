@@ -284,6 +284,64 @@ class DatabaseMenuProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider->rebuildCacheByAlias($alias);
     }
 
+    public function testRebuildCacheByMenuItem()
+    {
+        $this->provider->setCache($this->cache);
+
+        $alias = 'test_menu';
+        $rootId = 12;
+        $root = $this->createRootMenuItem($alias);
+        $menuItem = new MenuItem();
+        $menuItem->setRoot($rootId);
+
+        $repo = $this->getMockBuilder('OroB2B\Bundle\MenuBundle\Entity\Repository\MenuItemRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repo->expects($this->once())
+            ->method('find')
+            ->with($rootId)
+            ->willReturn($root);
+        $om = $this->getMockBuilder('\Doctrine\Common\Persistence\ObjectManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $om->expects($this->once())
+            ->method('getRepository')
+            ->with(self::MENU_ITEM_ENTITY_CLASS)
+            ->willReturn($repo);
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(self::MENU_ITEM_ENTITY_CLASS)
+            ->willReturn($om);
+
+        $menuEn = $this->getMock('Knp\Menu\ItemInterface');
+        $serializedMenuEn = ['menuItem1en', 'menuItem2kz'];
+        $enLocale = $this->getEntity(self::LOCALE_ENTITY_CLASS, ['id' => self::LOCALE_ID_EN]);
+        $this->localeHelper->expects($this->once())
+            ->method('getAll')
+            ->willReturn([$enLocale]);
+        $this->builder->expects($this->once())
+            ->method('build')
+            ->with($alias, ['extras' => [MenuItem::LOCALE_OPTION => $enLocale]])
+            ->willReturn($menuEn);
+        $this->serializer->expects($this->once())
+            ->method('serialize')
+            ->with($menuEn)
+            ->willReturn($serializedMenuEn);
+        $this->cache->expects($this->once())
+            ->method('save')
+            ->with('test_menu:1')
+            ->willReturn($serializedMenuEn);
+
+        $this->provider->rebuildCacheByMenuItem($menuItem);
+    }
+
+    public function testRebuildcacheByMenuItemWithoutCache()
+    {
+        $this->registry->expects($this->never())
+            ->method('getManagerForClass');
+        $this->provider->rebuildCacheByMenuItem(new MenuItem());
+    }
+
     public function testClearCacheByAliasWithoutCache()
     {
         $this->localeHelper->expects($this->never())

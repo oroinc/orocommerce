@@ -28,28 +28,10 @@ class MenuItemListener
      * @param MenuItem $menuItem
      * @param LifecycleEventArgs $event
      */
-    public function postUpdate(MenuItem $menuItem, LifecycleEventArgs $event)
-    {
-        $this->rebuildCache($menuItem, $event);
-    }
-
-    /**
-     * @param MenuItem $menuItem
-     * @param LifecycleEventArgs $event
-     */
-    public function postPersist(MenuItem $menuItem, LifecycleEventArgs $event)
-    {
-        $this->rebuildCache($menuItem, $event);
-    }
-
-    /**
-     * @param MenuItem $menuItem
-     * @param LifecycleEventArgs $event
-     */
     public function postRemove(MenuItem $menuItem, LifecycleEventArgs $event)
     {
         if ($menuItem->getParent()) {
-            $this->rebuildCache($menuItem, $event);
+            $this->getProvider()->rebuildCacheByMenuItem($menuItem);
         } else {
             if (!$menuItem->getDefaultTitle()) {
                 return;
@@ -57,26 +39,6 @@ class MenuItemListener
             $alias = $menuItem->getDefaultTitle()->getString();
             $this->getProvider()->clearCacheByAlias($alias);
         }
-    }
-
-    /**
-     * @param MenuItem $menuItem
-     * @param LifecycleEventArgs $event
-     */
-    protected function rebuildCache(MenuItem $menuItem, LifecycleEventArgs $event)
-    {
-        $rootId = $menuItem->getRoot();
-        if (!$rootId) {
-            return;
-        }
-        /** @var MenuItem $root */
-        $root = $event->getEntityManager()->find('OroB2BMenuBundle:MenuItem', $rootId);
-        if (!$root) {
-            return;
-        }
-
-        $alias = $root->getDefaultTitle()->getString();
-        $this->getProvider()->rebuildCacheByAlias($alias);
     }
 
     /**

@@ -14,6 +14,9 @@ class MenuItemManager
      */
     public function createFromItem(ItemInterface $item)
     {
+        $extras = $item->getExtras();
+        // isAllowed should be unset because in should be recalculated each time and not gone from the database
+        unset($extras['isAllowed']);
         $entity = new MenuItem();
         $entity->setDefaultTitle($item->getName())
             ->setUri($item->getUri())
@@ -24,7 +27,7 @@ class MenuItemManager
                 'linkAttributes' => $item->getLinkAttributes(),
                 'childrenAttributes' => $item->getChildrenAttributes(),
                 'labelAttributes' => $item->getLabelAttributes(),
-                'extras' => $item->getExtras(),
+                'extras' => $extras,
             ]);
         foreach ($item->getChildren() as $child) {
             $entity->addChild($this->createFromItem($child));
