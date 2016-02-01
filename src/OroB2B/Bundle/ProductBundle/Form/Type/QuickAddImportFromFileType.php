@@ -7,7 +7,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-use OroB2B\Bundle\ProductBundle\Form\DataTransformer\FileToRowCollectionTransformer;
 use OroB2B\Bundle\ProductBundle\Validator\Constraints\QuickAddRowCollection;
 
 class QuickAddImportFromFileType extends AbstractType
@@ -29,20 +28,14 @@ class QuickAddImportFromFileType extends AbstractType
                     'constraints' => [
                         new File(
                             [
-                                'mimeTypes' => [
-                                    'text/plain',
-                                    'text/csv',
-                                    'application/vnd.oasis.opendocument.spreadsheet',
-                                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                                ],
-                                'mimeTypesMessage' => 'This file type is not allowed.'
+                                'mimeTypes' => ['text/plain', 'application/zip'],
+                                'mimeTypesMessage' => 'orob2b.product.quick_add.invalid_file_type'
                             ]
                         ),
                         new NotBlank(),
                     ]
                 ]
             );
-
     }
 
     /**

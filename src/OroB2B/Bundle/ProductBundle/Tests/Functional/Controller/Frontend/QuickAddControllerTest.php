@@ -69,7 +69,7 @@ class QuickAddControllerTest extends WebTestCase
         $this->assertContains(htmlentities('Copy & Paste'), $crawler->html());
 
         $form = $crawler->selectButton('Continue')->form();
-        $form['orob2b_product_quick_add_copy_paste[collection]'] = implode(PHP_EOL, $example);
+        $form['orob2b_product_quick_add_copy_paste[copyPaste]'] = implode(PHP_EOL, $example);
 
         $crawler = $this->client->submit($form);
 
@@ -78,7 +78,7 @@ class QuickAddControllerTest extends WebTestCase
 
         //test result form actions (create rfp, create order, add to shopping list)
         $resultForm = $crawler->selectButton('Cancel')->form();
-        $resultForm['orob2b_product_quick_add_order[component]'] = $processorName;
+        $resultForm['orob2b_product_quick_add[component]'] = $processorName;
         $this->client->submit($resultForm);
         $response = $this->client->getResponse();
         $targetUrl = $this->parseTargetUrl($response->getContent());
@@ -118,7 +118,7 @@ class QuickAddControllerTest extends WebTestCase
         $form = $crawler->selectButton('Upload')->form();
 
         if (file_exists($file)) {
-            $form['orob2b_product_quick_add_import_from_file[products]']->upload($file);
+            $form['orob2b_product_quick_add_import_from_file[file]']->upload($file);
         }
 
         $crawler = $this->client->submit($form);
@@ -203,12 +203,13 @@ class QuickAddControllerTest extends WebTestCase
             ],
             'empty CSV' => [
                 'file' => $emptyCSV,
-                'expectedValidationResult' => $expectedValidationEmptyResult
+                'expectedValidationResult' => null,
+                'formErrorMessage' => 'An empty file is not allowed.'
             ],
             'invalid EXE' => [
                 'file' => $invalidEXE,
                 'expectedValidationResult' => null,
-                'formErrorMessage' => 'This value is not valid'
+                'formErrorMessage' => 'This file type is not allowed'
             ],
             'without file' => [
                 'file' => null,

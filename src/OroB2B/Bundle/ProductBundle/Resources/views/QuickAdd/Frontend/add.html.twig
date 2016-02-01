@@ -34,7 +34,21 @@
 
                             <fieldset class="form-horizontal">
                                 {{ form_errors(form) }}
-                                {{ form_widget(form.products) }}
+
+                                <div class="row-oro add-products">
+                                    {{ form_widget(form.products) }}
+                                    {% if form.products.vars.allow_add %}
+                                        <div class="btn-group pull-left">
+                                            <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);">
+                                                <i class="icon-plus"></i>{{ form.products.vars.add_label|default('oro.form.collection.add')|trans }}
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                    <div class="btn-group pull-right add-buttons">
+                                        {% placeholder orob2b_product_quick_add_buttons %}
+                                    </div>
+                                </div>
+
                                 {{ form_row(form.component) }}
                                 {{ form_row(form.additional) }}
                                 {{ form_rest(form) }}

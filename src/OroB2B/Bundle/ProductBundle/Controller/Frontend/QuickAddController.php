@@ -58,7 +58,11 @@ class QuickAddController extends Controller
                 $collection = $this->getQuickAddRowCollectionBuilder()->buildFromFile($file);
             } catch (UnsupportedTypeException $e) {
                 $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->addError(new FormError(
-                    $this->get('translator')->trans('orob2b.product.form.errors.invalid_file_type')
+                    $this->get('translator')->trans(
+                        'orob2b.product.quick_add.invalid_file_type',
+                        [],
+                        'validators'
+                    )
                 ));
 
                 return [

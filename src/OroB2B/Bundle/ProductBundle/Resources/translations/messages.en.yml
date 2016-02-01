@@ -32,8 +32,6 @@ orob2b:
         form:
             choose: Choose Product...
             product_required: Please select a product first...
-            errors:
-                invalid_file_type: This file type is not allowed
         form.add_row: Add rows
 
         productunit:
