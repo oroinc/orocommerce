@@ -32,6 +32,8 @@ class CategoryPositionChangeTest extends CategoryCacheTestCase
      */
     public function testPositionChange($categoryReference, $newParentCategoryReference, array $expectedData)
     {
+        $this->markTestSkipped('Should be fixed in scope of BB-1801');
+
         /** @var Category $category */
         $category = $this->getReference($categoryReference);
 

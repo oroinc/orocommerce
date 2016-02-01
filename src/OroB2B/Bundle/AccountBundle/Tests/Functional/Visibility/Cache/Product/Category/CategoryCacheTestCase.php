@@ -13,8 +13,6 @@ abstract class CategoryCacheTestCase extends WebTestCase
 {
     public function setUp()
     {
-        $this->markTestSkipped('will be done in BB-1650 scope');
-
         $this->initClient();
 
         $this->loadFixtures([

@@ -92,11 +92,11 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
                     ->getFallbackToAllVisibility($category);
             }
         } elseif ($selectedVisibility === AccountCategoryVisibility::PARENT_CATEGORY) {
-            $visibility = $this->getParentCategoryVisibility($category, $account);
+            list($visibility, $source) = $this->getParentCategoryVisibilityAndSource($category, $account);
             $update = [
                 'visibility' => $visibility,
                 'sourceCategoryVisibility' => $visibilitySettings,
-                'source' => AccountCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                'source' => $source,
             ];
         } else {
             throw new \InvalidArgumentException(sprintf('Unknown visibility %s', $selectedVisibility));
@@ -226,15 +226,21 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
     /**
      * @param Category $category
      * @param Account $account
-     * @return int
+     * @return array
      */
-    protected function getParentCategoryVisibility(Category $category, Account $account)
+    protected function getParentCategoryVisibilityAndSource(Category $category, Account $account)
     {
         $parentCategory = $category->getParentCategory();
         if ($parentCategory) {
-            return $this->getRepository()->getFallbackToAccountVisibility($parentCategory, $account);
+            return [
+                $this->getRepository()->getFallbackToAccountVisibility($parentCategory, $account),
+                AccountCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY
+            ];
         } else {
-            return AccountCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
+            return [
+                AccountCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+                AccountCategoryVisibilityResolved::SOURCE_STATIC
+            ];
         }
     }
 }
