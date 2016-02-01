@@ -153,7 +153,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->with([])
             ->willReturn($form);
 
-        $this->assertEquals(['form' => $form, 'response' => null], $this->handler->process($request));
+        $this->assertEquals(['form' => $form, 'response' => null], $this->handler->process($request, 'reload'));
     }
 
     public function testProcessNoProcessor()
@@ -171,7 +171,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(['products' => []])
             ->willReturn($form);
 
-        $this->assertEquals(['form' => $form, 'response' => null], $this->handler->process($request));
+        $this->assertEquals(['form' => $form, 'response' => null], $this->handler->process($request, 'reload'));
     }
 
     public function testProcessNotAllowedProcessor()
@@ -194,7 +194,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $processor->expects($this->never())
             ->method('process');
 
-        $this->assertEquals(['form' => $form, 'response' => null], $this->handler->process($request));
+        $this->assertEquals(['form' => $form, 'response' => null], $this->handler->process($request, 'reload'));
     }
 
     public function testProcessInvalidForm()
@@ -236,7 +236,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $processor->expects($this->never())
             ->method('process');
 
-        $this->assertEquals(['form' => $form, 'response' => null], $this->handler->process($request));
+        $this->assertEquals(['form' => $form, 'response' => null], $this->handler->process($request, 'reload'));
     }
 
     public function testProcessValidDataWithoutResponse()
@@ -320,7 +320,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->with([ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products], $request)
             ->willReturn($response);
 
-        $this->assertEquals(['form' => $form, 'response' => $response], $this->handler->process($request));
+        $this->assertEquals(['form' => $form, 'response' => $response], $this->handler->process($request, 'reload'));
     }
 
     /**
