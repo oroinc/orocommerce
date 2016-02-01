@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\CatalogBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Form;
-use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -12,7 +11,6 @@ use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
-use Oro\Bundle\AttachmentBundle\Entity\File;
 
 /**
  * @dbIsolation
@@ -295,6 +293,7 @@ class CategoryControllerTest extends WebTestCase
      * @param string $newLongDescription
      *
      * @return int
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function assertEdit(
         $id,

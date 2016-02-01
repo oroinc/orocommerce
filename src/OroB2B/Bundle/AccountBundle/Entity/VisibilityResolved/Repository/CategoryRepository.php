@@ -19,6 +19,7 @@ use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\CategoryVisibilityReso
 class CategoryRepository extends EntityRepository
 {
     use CategoryVisibilityResolvedTermTrait;
+    use BasicOperationRepositoryTrait;
 
     const INSERT_BATCH_SIZE = 500;
 
@@ -142,11 +143,17 @@ class CategoryRepository extends EntityRepository
             return;
         }
 
+        $sourceCondition = sprintf(
+            'CASE WHEN c.parentCategory IS NOT NULL THEN %s ELSE %s END',
+            CategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+            CategoryVisibilityResolved::SOURCE_STATIC
+        );
+
         $queryBuilder = $this->getEntityManager()->createQueryBuilder()
             ->select(
                 'c.id',
                 (string)$visibility,
-                (string)CategoryVisibilityResolved::SOURCE_PARENT_CATEGORY
+                $sourceCondition
             )
             ->from('OroB2BCatalogBundle:Category', 'c')
             ->leftJoin('OroB2BAccountBundle:Visibility\CategoryVisibility', 'cv', 'WITH', 'cv.category = c')
@@ -164,7 +171,16 @@ class CategoryRepository extends EntityRepository
     }
 
     /**
-     * @return array [['category_id' => <int>, 'parent_category_id' => <int>, 'resolved_visibility' => <int|null>], ...]
+     * [
+     *      [
+     *          'category_id' => <int>,
+     *          'parent_category_id' => <int|null>,
+     *          'resolved_visibility' => <int|null>
+     *      ],
+     *      ...
+     * ]
+     *
+     * @return array
      */
     public function getCategoriesWithResolvedVisibilities()
     {
@@ -206,5 +222,24 @@ class CategoryRepository extends EntityRepository
             ->setParameter('category', $category);
 
         return (int)$qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @param array $categoryIds
+     * @param int $visibility
+     */
+    public function updateCategoryVisibilityByCategory(array $categoryIds, $visibility)
+    {
+        if (!$categoryIds) {
+            return;
+        }
+
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->update('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved', 'cvr')
+            ->set('cvr.visibility', $visibility)
+            ->andWhere($qb->expr()->in('IDENTITY(cvr.category)', ':categoryIds'))
+            ->setParameter('categoryIds', $categoryIds);
+
+        $qb->getQuery()->execute();
     }
 }

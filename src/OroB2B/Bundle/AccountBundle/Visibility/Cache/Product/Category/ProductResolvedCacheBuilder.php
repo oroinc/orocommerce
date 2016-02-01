@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category;
 
+use Doctrine\ORM\EntityManager;
+
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository\CategoryVisibilityRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
@@ -47,7 +49,50 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
     {
         $category = $visibilitySettings->getCategory();
 
-        $this->visibilityChangeCategorySubtreeCacheBuilder->resolveVisibilitySettings($category);
+        $selectedVisibility = $visibilitySettings->getVisibility();
+        $visibilitySettings = $this->refreshEntity($visibilitySettings);
+
+        $insert = false;
+        $delete = false;
+        $update = [];
+        $where = ['category' => $category];
+
+        $repository = $this->getRepository();
+
+        $hasCategoryVisibilityResolved = $repository->hasEntity($where);
+
+        if (!$hasCategoryVisibilityResolved && $selectedVisibility !== CategoryVisibility::CONFIG) {
+            $insert = true;
+        }
+
+        if (in_array($selectedVisibility, [CategoryVisibility::HIDDEN, CategoryVisibility::VISIBLE])) {
+            $visibility = $this->convertStaticVisibility($selectedVisibility);
+            $update = [
+                'visibility' => $visibility,
+                'sourceCategoryVisibility' => $visibilitySettings,
+                'source' => CategoryVisibilityResolved::SOURCE_STATIC,
+            ];
+        } elseif ($selectedVisibility === CategoryVisibility::CONFIG) {
+            // fallback to config is default for account group and should be removed if exists
+            if ($hasCategoryVisibilityResolved) {
+                $delete = true;
+            }
+
+            $visibility = CategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
+        } elseif ($selectedVisibility === CategoryVisibility::PARENT_CATEGORY) {
+            list($visibility, $source) = $this->getParentCategoryVisibilityAndSource($category);
+            $update = [
+                'visibility' => $visibility,
+                'sourceCategoryVisibility' => $visibilitySettings,
+                'source' => $source,
+            ];
+        } else {
+            throw new \InvalidArgumentException(sprintf('Unknown visibility %s', $selectedVisibility));
+        }
+
+        $this->executeDbQuery($repository, $insert, $delete, $update, $where);
+
+        $this->visibilityChangeCategorySubtreeCacheBuilder->resolveVisibilitySettings($category, $visibility);
     }
 
     /**
@@ -143,5 +188,43 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
         $categoryVisibilities[$categoryId]['resolved_visibility'] = $resolvedVisibility;
 
         return $resolvedVisibility;
+    }
+
+    /**
+     * @return EntityManager
+     */
+    protected function getEntityManager()
+    {
+        return $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved');
+    }
+
+    /**
+     * @return CategoryRepository
+     */
+    protected function getRepository()
+    {
+        return $this->getEntityManager()
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved');
+    }
+
+    /**
+     * @param Category $category
+     * @return array
+     */
+    protected function getParentCategoryVisibilityAndSource(Category $category)
+    {
+        $parentCategory = $category->getParentCategory();
+        if ($parentCategory) {
+            return [
+                $this->getRepository()->getFallbackToAllVisibility($parentCategory),
+                CategoryVisibilityResolved::SOURCE_PARENT_CATEGORY
+            ];
+        } else {
+            return [
+                CategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+                CategoryVisibilityResolved::SOURCE_STATIC
+            ];
+        }
     }
 }

@@ -1,0 +1,64 @@
+.btn {
+  &.frontend-favorite-button {
+    background: none;
+    padding: 1px 0;
+    border: 0;
+    box-shadow: none;
+    height: 26px;
+    width: 26px;
+
+    &.gold-icon {
+      i {
+        &:before {
+          color: #ffd631;
+        }
+      }
+
+      &:hover {
+        i {
+          &:before {
+            color: #ffd631;
+          }
+        }
+      }
+    }
+
+    .icon-star {
+      &:before {
+        color: #e7e7e7;
+        font-size: 19px;
+      }
+    }
+
+    &:hover {
+      background: #eee;
+
+      .icon-star {
+        &:before {
+          color: #d7d7d7;
+        }
+      }
+
+      .icon-pushpin {
+        &:before {
+          color: #d7d7d7;
+        }
+      }
+    }
+  }
+}
+
+.widget-subtitle {
+  border: 1px solid #e5e5e5;
+  margin-top: 0 !important;
+  background: #fafafa;
+  padding: 6px 20px;
+  color: #777;
+  font-size: 13px;
+  line-height: 13px;
+  font-weight: normal;
+
+  &.indented {
+    margin-top: 50px !important;
+  }
+}
