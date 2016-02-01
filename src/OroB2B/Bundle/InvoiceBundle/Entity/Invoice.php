@@ -161,7 +161,7 @@ class Invoice extends ExtendInvoice implements
      *     mappedBy="invoice", cascade={"ALL"}, orphanRemoval=true
      * )
      *
-     * todo "@ORM\OrderBy({"index" = "ASC"})"
+     * @ORM\OrderBy({"sortOrder" = "ASC"})
      */
     protected $lineItems;
 

@@ -123,6 +123,13 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
     protected $totalPrice;
 
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="sort_order", type="integer")
+     */
+    protected $sortOrder;
+
+    /**
      * InvoiceLineItem constructor.
      */
     public function __construct()
@@ -352,5 +359,21 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
         if ($this->getProductUnit()) {
             $this->productUnitCode = $this->getProductUnit()->getCode();
         }
+    }
+
+    /**
+     * @return int
+     */
+    public function getSortOrder()
+    {
+        return $this->sortOrder;
+    }
+
+    /**
+     * @param int $sortOrder
+     */
+    public function setSort($sortOrder)
+    {
+        $this->sortOrder = $sortOrder;
     }
 }

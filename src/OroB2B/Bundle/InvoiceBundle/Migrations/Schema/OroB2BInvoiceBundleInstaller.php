@@ -54,7 +54,7 @@ class OroB2BInvoiceBundleInstaller implements Installation
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
-        $table->addColumn('subtotal', 'float');
+        $table->addColumn('subtotal', 'money', []);
         $table->addColumn('payment_due_date', 'date');
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['invoice_number'], 'UNIQ_1CB885202DA68207');
@@ -77,6 +77,7 @@ class OroB2BInvoiceBundleInstaller implements Installation
         $table->addColumn('free_form_product', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('quantity', 'float', ['notnull' => false]);
         $table->addColumn('product_unit_code', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('sort_order', 'integer', []);
         $table->addColumn(
             'price_value',
             'money',
