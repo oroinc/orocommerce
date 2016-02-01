@@ -96,7 +96,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
     /**
      * @param Category $category
      * @param AccountGroup $accountGroup
-     * @return int
+     * @return array
      */
     protected function getParentCategoryVisibilityAndSource(Category $category, AccountGroup $accountGroup)
     {

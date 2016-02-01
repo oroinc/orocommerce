@@ -128,7 +128,7 @@ class ProductResolvedCacheBuilderTest extends WebTestCase
                 $qb->expr()->eq('CategoryVisibilityResolved.category', ':category')
             )
             ->setParameters([
-            'category' => $this->category,
+                'category' => $this->category,
             ])
             ->getQuery()
             ->getOneOrNullResult(AbstractQuery::HYDRATE_ARRAY);
