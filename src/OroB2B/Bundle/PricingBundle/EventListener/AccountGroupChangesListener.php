@@ -11,7 +11,7 @@ use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
 use OroB2B\Bundle\Accountbundle\Event\AccountEvent;
 use OroB2B\Bundle\Accountbundle\Event\AccountGroupEvent;
-use OroB2B\Bundle\PricingBundle\Entity\DTO\AccountWebsiteDTO;
+use OroB2B\Bundle\PricingBundle\Model\DTO\AccountWebsiteDTO;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;

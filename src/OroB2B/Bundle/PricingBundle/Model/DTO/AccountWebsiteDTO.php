@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity\DTO;
+namespace OroB2B\Bundle\PricingBundle\Model\DTO;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -15,9 +15,9 @@ class AccountWebsiteDTO
 
     /**
      * @param Account $account
-     * @param $website
+     * @param Website $website
      */
-    public function __construct(Account $account, $website)
+    public function __construct(Account $account, Website $website)
     {
         $this->account = $account;
         $this->website = $website;
