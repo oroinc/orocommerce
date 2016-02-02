@@ -82,9 +82,9 @@ class AccountGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBui
      */
     protected function getCacheKey(Website $website, AccountGroup $currentAccountGroup = null)
     {
-        $key = sprintf('website_%', $website->getId());
+        $key = sprintf('website_%d', $website->getId());
         if ($currentAccountGroup) {
-            $key = sprintf('website_%_group_%d', $website->getId(), $currentAccountGroup->getId());
+            $key = sprintf('website_%d_group_%d', $website->getId(), $currentAccountGroup->getId());
         }
 
         return $key;

@@ -10,18 +10,30 @@ use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
 use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
+use OroB2B\Bundle\PricingBundle\Event\ProductPriceChange;
+use OroB2B\Bundle\PricingBundle\Builder\CombinedProductPriceQueueConsumer;
 
 class CombinedPriceListQueueListener
 {
     /**
      * @var bool
      */
-    protected $hasChanges = false;
+    protected $hasCollectionChanges = false;
+
+    /**
+     * @var bool
+     */
+    protected $hasProductPriceChanges = false;
 
     /**
      * @var CombinedPriceListQueueConsumer
      */
-    protected $queueConsumer;
+    protected $priceListQueueConsumer;
+
+    /**
+     * @var CombinedProductPriceQueueConsumer
+     */
+    protected $productPriceQueueConsumer;
 
     /**
      * @var ConfigManager
@@ -29,12 +41,22 @@ class CombinedPriceListQueueListener
     protected $configManager;
 
     /**
-     * @param CombinedPriceListQueueConsumer $consumer
+     * @var bool|null
+     */
+    protected $isRealTimeMode;
+
+    /**
+     * @param CombinedPriceListQueueConsumer $priceListQueueConsumer
+     * @param CombinedProductPriceQueueConsumer $productPriceQueueConsumer
      * @param ConfigManager $configManager
      */
-    public function __construct(CombinedPriceListQueueConsumer $consumer, ConfigManager $configManager)
-    {
-        $this->queueConsumer = $consumer;
+    public function __construct(
+        CombinedPriceListQueueConsumer $priceListQueueConsumer,
+        CombinedProductPriceQueueConsumer $productPriceQueueConsumer,
+        ConfigManager $configManager
+    ) {
+        $this->priceListQueueConsumer = $priceListQueueConsumer;
+        $this->productPriceQueueConsumer = $productPriceQueueConsumer;
         $this->configManager = $configManager;
     }
 
@@ -43,15 +65,15 @@ class CombinedPriceListQueueListener
      */
     public function onTerminate(PostResponseEvent $event)
     {
-        if (!$this->hasChanges) {
-            return;
+        if ($this->hasCollectionChanges) {
+            if ($this->isRealTimeMode()) {
+                $this->priceListQueueConsumer->process();
+            }
         }
-        $key = OroB2BPricingExtension::ALIAS
-            . ConfigManager::SECTION_MODEL_SEPARATOR
-            . Configuration::PRICE_LISTS_UPDATE_MODE;
-        $isRealTimeMode = $this->configManager->get($key) === CombinedPriceListQueueConsumer::MODE_REAL_TIME;
-        if ($isRealTimeMode) {
-            $this->queueConsumer->process();
+        if (true || $this->hasProductPriceChanges) {
+            if ($this->isRealTimeMode()) {
+                $this->productPriceQueueConsumer->process();
+            }
         }
     }
 
@@ -60,6 +82,29 @@ class CombinedPriceListQueueListener
      */
     public function onQueueChanged(PriceListCollectionChange $event)
     {
-        $this->hasChanges = true;
+        $this->hasCollectionChanges = true;
+    }
+
+    /**
+     * @param ProductPriceChange $event
+     */
+    public function onProductPriceChanged(ProductPriceChange $event)
+    {
+        $this->hasProductPriceChanges = true;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isRealTimeMode()
+    {
+        if ($this->isRealTimeMode === null) {
+            $key = OroB2BPricingExtension::ALIAS
+                . ConfigManager::SECTION_MODEL_SEPARATOR
+                . Configuration::PRICE_LISTS_UPDATE_MODE;
+            $this->isRealTimeMode = $this->configManager->get($key) === CombinedPriceListQueueConsumer::MODE_REAL_TIME;
+        }
+
+        return $this->isRealTimeMode;
     }
 }

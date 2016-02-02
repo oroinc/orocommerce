@@ -36,7 +36,7 @@ class CombinedProductPriceQueueConsumer
     /**
      * @var CombinedPriceListRepository
      */
-    protected $combinedPriceList;
+    protected $combinedPriceListRepository;
 
     /**
      * @param ManagerRegistry $registry
@@ -102,12 +102,12 @@ class CombinedProductPriceQueueConsumer
      */
     protected function getCombinedPriceListRepository()
     {
-        if (!$this->combinedPriceList) {
-            $this->combinedPriceList = $this->registry
+        if (!$this->combinedPriceListRepository) {
+            $this->combinedPriceListRepository = $this->registry
                 ->getManagerForClass('OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList')
                 ->getRepository('OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList');
         }
 
-        return $this->combinedPriceList;
+        return $this->combinedPriceListRepository;
     }
 }

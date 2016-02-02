@@ -10,15 +10,31 @@ use Oro\Bundle\B2BEntityBundle\Storage\ObjectIdentifierAwareInterface;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
- * @ORM\Table(name="orob2b_changed_product_price")
+ * @ORM\Table(
+ *      name="orob2b_changed_product_price",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(name="orob2b_changed_product_price_list_unq", columns={
+ *              "product_id",
+ *              "price_list_id"
+ *          })
+ *      }
+ * )
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\ChangedProductPriceRepository")
  */
 class ChangedProductPrice implements ObjectIdentifierAwareInterface
 {
     /**
-     * @var PriceList
+     * @var integer $id
      *
      * @ORM\Id
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+
+    /**
+     * @var PriceList
+     *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList")
      * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="CASCADE")
      */
@@ -27,7 +43,6 @@ class ChangedProductPrice implements ObjectIdentifierAwareInterface
     /**
      * @var Product
      *
-     * @ORM\Id
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\Product")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
      */
