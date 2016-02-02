@@ -60,7 +60,10 @@ orob2b:
             id.label: ID
             notes.label: Notes
             product_sku.label: Product SKU
-            quantity.label: Quantity
+            quantity:
+                label: Quantity
+                enter: Enter a QTY
+                placeholder: 'QTY #'
             product.label: Product
             shopping_list.label: Shopping List
             unit.label: Unit

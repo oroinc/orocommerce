@@ -36,7 +36,7 @@ class CategoryRepositoryTest extends AbstractCategoryRepositoryTest
         /** @var Category $category */
         $category = $this->getReference($categoryName);
 
-        $actualVisibility = $this->repository->isCategoryVisible($category, $configValue);
+        $actualVisibility = $this->getRepository()->isCategoryVisible($category, $configValue);
 
         $this->assertEquals($expectedVisibility, $actualVisibility);
     }
@@ -124,7 +124,7 @@ class CategoryRepositoryTest extends AbstractCategoryRepositoryTest
             [
                 'category_id' => self::ROOT_CATEGORY,
                 'parent_category_id' => null,
-                'resolved_visibility' => null,
+                'resolved_visibility' => CategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
             ],
             [
                 'category_id' => 'category_1',

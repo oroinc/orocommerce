@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class AccountGroupCategoryVisibilityRepository extends EntityRepository
 {
@@ -47,49 +47,26 @@ class AccountGroupCategoryVisibilityRepository extends EntityRepository
     }
 
     /**
-     * [
-     *      [
-     *          'visibility_id' => <int>,
-     *          'parent_visibility_id' => <int|null>,
-     *          'parent_visibility' => <string|null>,
-     *          'category_id' => <int>,
-     *          'parent_category_id' => <int|null>,
-     *      ],
-     *      ...
-     * ]
-     *
-     * @return array
+     * @param AccountGroup $accountGroup
+     * @param Category $category
+     * @return string|null
      */
-    public function getParentCategoryVisibilities()
+    public function getAccountGroupCategoryVisibility(AccountGroup $accountGroup, Category $category)
     {
-        $qb = $this->createQueryBuilder('agcv');
+        $result = $this->createQueryBuilder('accountGroupCategoryVisibility')
+            ->select('accountGroupCategoryVisibility.visibility')
+            ->andWhere('accountGroupCategoryVisibility.accountGroup = :accountGroup')
+            ->andWhere('accountGroupCategoryVisibility.category = :category')
+            ->setParameter('accountGroup', $accountGroup)
+            ->setParameter('category', $category)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
 
-        return $qb->select(
-            'agcv.id as visibility_id',
-            'agcv_parent.id as parent_visibility_id',
-            'agcv_parent.visibility as parent_visibility',
-            'c.id as category_id',
-            'IDENTITY(c.parentCategory) as parent_category_id'
-        )
-        // join to category that includes only parent category entities
-        ->innerJoin(
-            'agcv.category',
-            'c',
-            'WITH',
-            'agcv.visibility = ' . $qb->expr()->literal(AccountGroupCategoryVisibility::PARENT_CATEGORY)
-        )
-        // join to parent category visibility
-        ->leftJoin(
-            $this->getEntityName(),
-            'agcv_parent',
-            'WITH',
-            'IDENTITY(agcv_parent.accountGroup) = IDENTITY(agcv.accountGroup) AND ' .
-            'IDENTITY(agcv_parent.category) = IDENTITY(c.parentCategory)'
-        )
-        // order is important to make sure that higher level categories will be processed first
-        ->addOrderBy('c.level', 'ASC')
-        ->addOrderBy('c.left', 'ASC')
-        ->getQuery()
-        ->getScalarResult();
+        if ($result) {
+            return $result['visibility'];
+        } else {
+            return null;
+        }
     }
 }
