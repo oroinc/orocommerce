@@ -82,7 +82,7 @@ class AccountCategoryRepository extends EntityRepository
      * @param array $accountIds
      * @return array
      */
-    protected function getFallbackToAccountsVisibilities(Category $category, array $accountIds)
+    public function getVisibilitiesForAccounts(Category $category, array $accountIds)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
@@ -151,25 +151,6 @@ class AccountCategoryRepository extends EntityRepository
         }
 
         return $visibility === AccountCategoryVisibilityResolved::VISIBILITY_VISIBLE;
-    }
-
-    /**
-     * @param Category $category
-     * @param array $accountIds
-     * @param $configValue
-     * @return array
-     */
-    public function getCategoryVisibilitiesForAccounts(Category $category, array $accountIds, $configValue)
-    {
-        $visibilities = $this->getFallbackToAccountsVisibilities($category, $accountIds);
-
-        foreach ($visibilities as $accountGroup => $visibility) {
-            if ($visibility === AccountCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG) {
-                $visibilities[$accountGroup] = $configValue;
-            }
-        }
-
-        return $visibilities;
     }
 
     /**

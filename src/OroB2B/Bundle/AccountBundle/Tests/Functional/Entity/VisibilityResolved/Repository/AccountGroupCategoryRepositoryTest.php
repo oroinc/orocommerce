@@ -27,16 +27,14 @@ class AccountGroupCategoryRepositoryTest extends WebTestCase
     }
 
     /**
-     * @dataProvider getCategoryVisibilitiesForAccountGroupsDataProvider
+     * @dataProvider getVisibilitiesForAccountGroupsDataProvider
      * @param string $categoryName
      * @param array $accountGroups
-     * @param int $configValue
      * @param array $visibilities
      */
-    public function testGetCategoryVisibilitiesForAccountGroups(
+    public function testGetVisibilitiesForAccountGroups(
         $categoryName,
         $accountGroups,
-        $configValue,
         $visibilities
     ) {
         /** @var Category $category */
@@ -50,7 +48,7 @@ class AccountGroupCategoryRepositoryTest extends WebTestCase
         );
 
         $actualVisibility = $this->getRepository()
-            ->getCategoryVisibilitiesForAccountGroups($category, $accountGroups, $configValue);
+            ->getVisibilitiesForAccountGroups($category, $accountGroups);
 
         $expectedVisibilities = [];
         foreach ($visibilities as $account => $expectedVisibility) {
@@ -65,7 +63,7 @@ class AccountGroupCategoryRepositoryTest extends WebTestCase
     /**
      * @return array
      */
-    public function getCategoryVisibilitiesForAccountGroupsDataProvider()
+    public function getVisibilitiesForAccountGroupsDataProvider()
     {
         return [
             [
@@ -74,10 +72,9 @@ class AccountGroupCategoryRepositoryTest extends WebTestCase
                     'account_group.group1',
                     'account_group.group3',
                 ],
-                'configValue' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 'visibilities' => [
                     'account_group.group1' => AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
-                    'account_group.group3' => AccountGroupCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                    'account_group.group3' => AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
                 ],
             ],
             [
@@ -86,7 +83,6 @@ class AccountGroupCategoryRepositoryTest extends WebTestCase
                     'account_group.group1',
                     'account_group.group3',
                 ],
-                'configValue' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 'visibilities' => [
                     'account_group.group1' => AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
                     'account_group.group3' => AccountGroupCategoryVisibilityResolved::VISIBILITY_VISIBLE,
@@ -98,7 +94,6 @@ class AccountGroupCategoryRepositoryTest extends WebTestCase
                     'account_group.group1',
                     'account_group.group3',
                 ],
-                'configValue' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 'visibilities' => [
                     'account_group.group1' => AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
                     'account_group.group3' => AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
