@@ -46,8 +46,8 @@ class CustomerAddressItemResolverTest extends AbstractAddressResolverTestCase
                 [$this->getTaxRule('city', '0.08')],
                 new Result(
                     [
-                        Result::ROW => ResultElement::create('64.7676', '59.97', '4.7976', '0.0024'),
-                        Result::UNIT => ResultElement::create('21.5892', '19.99', '1.5992', '0.0008'),
+                        Result::ROW => ResultElement::create('64.7676', '59.97', '4.7976', '-0.0024'),
+                        Result::UNIT => ResultElement::create('21.5892', '19.99', '1.5992', '-0.0008'),
                         Result::TAXES => [
                             TaxResultElement::create('city', '0.08', '59.97', '4.7976'),
                         ],
@@ -62,8 +62,8 @@ class CustomerAddressItemResolverTest extends AbstractAddressResolverTestCase
                 ],
                 new Result(
                     [
-                        Result::ROW => ResultElement::create('68.9655', '59.97', '8.9955', '0.0045'),
-                        Result::UNIT => ResultElement::create('22.9885', '19.99', '2.9985', '0.0015'),
+                        Result::ROW => ResultElement::create('68.9655', '59.97', '8.9955', '-0.0045'),
+                        Result::UNIT => ResultElement::create('22.9885', '19.99', '2.9985', '-0.0015'),
                         Result::TAXES => [
                             TaxResultElement::create('city', '0.08', '59.97', '4.7976'),
                             TaxResultElement::create('region', '0.07', '59.97', '4.1979'),
@@ -80,8 +80,8 @@ class CustomerAddressItemResolverTest extends AbstractAddressResolverTestCase
                 ],
                 new Result(
                     [
-                        Result::ROW => ResultElement::create('72.5637', '59.97', '12.5937', '0.0063'),
-                        Result::UNIT => ResultElement::create('24.1879', '19.99', '4.1979', '0.0021'),
+                        Result::ROW => ResultElement::create('72.5637', '59.97', '12.5937', '0.0037'),
+                        Result::UNIT => ResultElement::create('24.1879', '19.99', '4.1979', '-0.0021'),
                         Result::TAXES => [
                             TaxResultElement::create('city', '0.08', '59.97', '4.7976'),
                             TaxResultElement::create('region', '0.07', '59.97', '4.1979'),
@@ -99,8 +99,8 @@ class CustomerAddressItemResolverTest extends AbstractAddressResolverTestCase
                 ],
                 new Result(
                     [
-                        Result::ROW => ResultElement::create('72.5637', '59.97', '12.5937', '0.0063'),
-                        Result::UNIT => ResultElement::create('24.18669', '19.989', '4.19769', '0.00231'),
+                        Result::ROW => ResultElement::create('72.5637', '59.97', '12.5937', '0.0037'),
+                        Result::UNIT => ResultElement::create('24.18669', '19.989', '4.19769', '-0.00231'),
                         Result::TAXES => [
                             TaxResultElement::create('city', '0.08', '59.97', '4.7976'),
                             TaxResultElement::create('region', '0.07', '59.97', '4.1979'),

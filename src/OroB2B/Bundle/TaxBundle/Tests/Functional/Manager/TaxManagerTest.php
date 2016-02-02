@@ -8,6 +8,8 @@ use Doctrine\ORM\EntityRepository;
 
 use Gedmo\Tool\Logging\DBAL\QueryAnalyzer;
 
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Yaml\Yaml;
 
@@ -97,7 +99,21 @@ class TaxManagerTest extends WebTestCase
      */
     public function methodsDataProvider()
     {
-        return Yaml::parse(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'tax_manager_test_cases.yml'));
+        $finder = new Finder();
+
+        $finder
+            ->files()
+            ->in(__DIR__)
+            ->name('*.yml');
+
+        $cases = [];
+
+        /** @var SplFileInfo $file */
+        foreach ($finder as $file) {
+            $cases[$file->getRelativePathname()] = Yaml::parse($file);
+        }
+
+        return $cases;
     }
 
     /**

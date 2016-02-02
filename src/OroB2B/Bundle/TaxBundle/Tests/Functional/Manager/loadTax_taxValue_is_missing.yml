@@ -1,0 +1,10 @@
+method: loadTax
+reference: empty_order
+expectedQueries: 3 # select order, line items from fixtures, taxValue once
+configuration: { use_as_base_by_default: destination }
+databaseBefore:
+    'OroB2B\Bundle\OrderBundle\Entity\Order':
+        empty_order:
+            poNumber: { property_value: empty_order }
+            account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+expectedResult: []

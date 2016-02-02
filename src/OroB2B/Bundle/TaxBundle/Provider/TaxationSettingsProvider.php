@@ -23,6 +23,8 @@ class TaxationSettingsProvider
     const USE_AS_BASE_SHIPPING_ORIGIN = 'shipping_origin';
     const USE_AS_BASE_DESTINATION = 'destination';
 
+    const SCALE = 2;
+
     /**
      * @var ConfigManager
      */
