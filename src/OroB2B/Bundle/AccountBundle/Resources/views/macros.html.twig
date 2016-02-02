@@ -21,7 +21,5 @@
 
 {%- macro renderUsersProperty(label, entities, labelProperty, route) -%}
     {% import 'OroUserBundle::macros.html.twig' as U %}
-    {% if entities | length %}
-        {{ U.renderUsersProperty(label, entities, labelProperty, route) }}
-    {% endif %}
+    {{ U.renderUsersProperty(label, entities, labelProperty, route) }}
 {%- endmacro -%}

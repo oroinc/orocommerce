@@ -1,7 +1,7 @@
 {%- macro renderAccountProperty(label, entity, labelProperty, route) -%}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import 'OroB2BAccountBundle::macros.html.twig' as A %}
     {% if entity %}
-        {{ UI.renderProperty(label, entity, labelProperty, 'none') }}
+        {{ A.renderAccountProperty(label, entity, labelProperty, 'none') }}
     {% endif %}
 {%- endmacro -%}
 
@@ -20,8 +20,6 @@
 {%- endmacro -%}
 
 {%- macro renderUsersProperty(label, entities, labelProperty, route) -%}
-    {% import 'OroUserBundle::macros.html.twig' as U %}
-    {% if entities | length %}
-        {{ U.renderUsersProperty(label, entities, labelProperty, 'none') }}
-    {% endif %}
+    {% import 'OroB2BAccountBundle::macros.html.twig' as A %}
+    {{ A.renderUsersProperty(label, entities, labelProperty, 'none') }}
 {%- endmacro -%}
