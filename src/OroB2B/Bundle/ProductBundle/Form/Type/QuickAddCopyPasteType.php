@@ -26,7 +26,7 @@ class QuickAddCopyPasteType extends AbstractType
             [
                 'constraints' => [
                     new NotBlank(),
-                    new Regex(['message' => 'Invalid format', 'pattern' => self::FORMAT_REGEX]),
+                    new Regex(['message' => 'orob2b.product.frontend.quick_add.invalid_format', 'pattern' => self::FORMAT_REGEX]),
                 ],
                 'label' => false,
             ]

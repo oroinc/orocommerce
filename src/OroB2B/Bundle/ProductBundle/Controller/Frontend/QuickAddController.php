@@ -59,7 +59,7 @@ class QuickAddController extends Controller
             } catch (UnsupportedTypeException $e) {
                 $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->addError(new FormError(
                     $this->get('translator')->trans(
-                        'orob2b.product.quick_add.invalid_file_type',
+                        'orob2b.product.frontend.quick_add.invalid_file_type',
                         [],
                         'validators'
                     )

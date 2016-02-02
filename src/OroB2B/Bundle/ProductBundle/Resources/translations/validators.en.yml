@@ -15,5 +15,7 @@ orob2b:
         productunit:
             invalid: 'Please enter valid unit of measurement'
 
-        quick_add:
-            invalid_file_type: This file type is not allowed
+        frontend:
+            quick_add:
+                invalid_file_type: This file type is not allowed
+                invalid_format: Invalid format

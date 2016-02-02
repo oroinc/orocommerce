@@ -106,7 +106,7 @@ class QuickAddHandler
                 $session = $request->getSession();
                 $session->getFlashBag()->add(
                     'error',
-                    $this->translator->trans('orob2b.product.frontend.messages.component_not_accessible')
+                    $this->translator->trans('orob2b.product.frontend.quick_add.messages.component_not_accessible')
                 );
             }
         }

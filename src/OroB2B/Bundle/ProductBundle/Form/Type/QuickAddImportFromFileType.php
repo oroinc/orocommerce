@@ -29,7 +29,7 @@ class QuickAddImportFromFileType extends AbstractType
                         new File(
                             [
                                 'mimeTypes' => ['text/plain', 'application/zip'],
-                                'mimeTypesMessage' => 'orob2b.product.quick_add.invalid_file_type'
+                                'mimeTypesMessage' => 'orob2b.product.frontend.quick_add.invalid_file_type'
                             ]
                         ),
                         new NotBlank(),
