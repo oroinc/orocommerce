@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Form;
 
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -12,7 +14,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 /**
  * @dbIsolation
  */
-class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerTest
+class AjaxProductPriceControllerTest extends WebTestCase
 {
     /** @var string */
     protected $pricesByPriceListActionUrl = 'orob2b_pricing_price_by_pricelist';
@@ -90,12 +92,14 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $form = $crawler->selectButton('Save')->form([
-            'orob2b_pricing_price_list_product_price[quantity]' => $productPrice->getQuantity(),
-            'orob2b_pricing_price_list_product_price[unit]' => $productPrice->getUnit()->getCode(),
-            'orob2b_pricing_price_list_product_price[price][value]' => $productPrice->getPrice()->getValue(),
-            'orob2b_pricing_price_list_product_price[price][currency]' => $productPrice->getPrice()->getCurrency(),
-        ]);
+        $form = $crawler->selectButton('Save')->form(
+            [
+                'orob2b_pricing_price_list_product_price[quantity]' => $productPrice->getQuantity(),
+                'orob2b_pricing_price_list_product_price[unit]' => $productPrice->getUnit()->getCode(),
+                'orob2b_pricing_price_list_product_price[price][value]' => $productPrice->getPrice()->getValue(),
+                'orob2b_pricing_price_list_product_price[price][currency]' => $productPrice->getPrice()->getCurrency(),
+            ]
+        );
 
         $this->assertSubmitError($form, 'orob2b.pricing.validators.product_price.unique_entity.message');
     }
@@ -165,108 +169,6 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
     }
 
     /**
-     * @dataProvider getMatchingPriceActionDataProvider
-     * @param string $product
-     * @param string $priceList
-     * @param float|int $qty
-     * @param string $unit
-     * @param string $currency
-     * @param array $expected
-     */
-    public function testGetMatchingPriceAction($product, $priceList, $qty, $unit, $currency, array $expected)
-    {
-        /** @var Product $product */
-        $product = $this->getReference($product);
-
-        /** @var PriceList $priceList */
-        $priceList = $this->getReference($priceList);
-
-        $params = [
-            'items' => [
-                ['qty' => $qty, 'product' => $product->getId(), 'unit' => $unit, 'currency' => $currency]
-            ],
-            'pricelist' => $priceList->getId()
-        ];
-
-        $this->client->request('GET', $this->getUrl('orob2b_pricing_matching_price', $params));
-
-        $result = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($result, 200);
-
-        $data = json_decode($result->getContent(), true);
-
-        $expectedData = [];
-        if (!empty($expected)) {
-            $expectedData = [
-                $product->getId() . '-' . $unit . '-' . $qty . '-' . $currency => $expected
-            ];
-        }
-
-        $this->assertEquals($expectedData, $data);
-    }
-
-    /**
-     * @return array
-     */
-    public function getMatchingPriceActionDataProvider()
-    {
-        return [
-            [
-                'product' => 'product.1',
-                'priceList' => 'price_list_1',
-                'qty' => 0.1,
-                'unit' => 'liter',
-                'currency' => 'USD',
-                'expected' => []
-            ],
-            [
-                'product' => 'product.1',
-                'priceList' => 'price_list_1',
-                'qty' => 1,
-                'unit' => 'liter',
-                'currency' => 'USD',
-                'expected' => [
-                    'value' => 10,
-                    'currency' => 'USD'
-                ]
-            ],
-            [
-                'product' => 'product.1',
-                'priceList' => 'price_list_1',
-                'qty' => 10,
-                'unit' => 'liter',
-                'currency' => 'USD',
-                'expected' => [
-                    'value' => 12.2,
-                    'currency' => 'USD'
-                ]
-            ],
-            [
-                'product' => 'product.2',
-                'priceList' => 'price_list_2',
-                'qty' => 14,
-                'unit' => 'bottle',
-                'currency' => 'USD',
-                'expected' => [
-                    'value' => 12.2,
-                    'currency' => 'USD'
-                ]
-            ],
-            [
-                'product' => 'product.2',
-                'priceList' => 'price_list_2',
-                'qty' => 20,
-                'unit' => 'bottle',
-                'currency' => 'USD',
-                'expected' => [
-                    'value' => 12.2,
-                    'currency' => 'USD'
-                ]
-            ]
-        ];
-    }
-
-    /**
      * @dataProvider unitDataProvider
      * @param string $priceList
      * @param string $product
@@ -294,5 +196,26 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         $data = json_decode($result->getContent(), true);
         $this->assertArrayHasKey('units', $data);
         $this->assertEquals($expected, array_keys($data['units']));
+    }
+
+    /**
+     * @return array
+     */
+    public function unitDataProvider()
+    {
+        return [
+            [
+                'price_list_1',
+                'product.1',
+                null,
+                ['bottle', 'liter']
+            ],
+            [
+                'price_list_1',
+                'product.1',
+                'EUR',
+                ['bottle']
+            ]
+        ];
     }
 }
