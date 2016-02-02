@@ -40,6 +40,7 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
 
     /**
      * @dataProvider matchProvider
+     * @param string $productTaxCode
      * @param Country $country
      * @param Region $region
      * @param string $regionText
@@ -47,8 +48,15 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
      * @param TaxRule[] $zipCodeMatcherTaxRules
      * @param TaxRule[] $expected
      */
-    public function testMatch($country, $region, $regionText, $regionMatcherRules, $zipCodeMatcherTaxRules, $expected)
-    {
+    public function testMatch(
+        $productTaxCode,
+        $country,
+        $region,
+        $regionText,
+        $regionMatcherRules,
+        $zipCodeMatcherTaxRules,
+        $expected
+    ) {
         $address = (new Address())
             ->setPostalCode(self::POSTAL_CODE)
             ->setCountry($country)
@@ -62,9 +70,10 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
             ->willReturn($regionMatcherRules);
 
         $this->taxRuleRepository
-            ->expects(empty($zipCodeMatcherTaxRules) ? $this->never() : $this->once())
-            ->method('findByZipCode')
+            ->expects(empty($zipCodeMatcherTaxRules) || empty($productTaxCode) ? $this->never() : $this->once())
+            ->method('findByZipCodeAndProductTaxCode')
             ->with(
+                $productTaxCode,
                 self::POSTAL_CODE,
                 $country,
                 $region,
@@ -72,7 +81,7 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
             )
             ->willReturn($zipCodeMatcherTaxRules);
 
-        $this->assertEquals($expected, $this->matcher->match($address));
+        $this->assertEquals($expected, $this->matcher->match($address, $productTaxCode));
     }
 
     /**
@@ -95,6 +104,7 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
 
         return [
             'with region' => [
+                'productTaxCode' => 'PRODUCT_TAX_CODE',
                 'country' => $country,
                 'region' => $region,
                 'regionText' => '',
@@ -103,6 +113,7 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
                 'expected' => $zipCodeMatcherTaxRules,
             ],
             'with regionText' => [
+                'productTaxCode' => 'PRODUCT_TAX_CODE',
                 'country' => $country,
                 'region' => null,
                 'regionText' => $regionText,
@@ -111,6 +122,7 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
                 'expected' => $zipCodeMatcherTaxRules,
             ],
             'without country' => [
+                'productTaxCode' => 'PRODUCT_TAX_CODE',
                 'country' => null,
                 'region' => $region,
                 'regionText' => $regionText,
@@ -118,7 +130,17 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
                 'zipCodeMatcherRules' => [],
                 'expected' => $regionMatcherTaxRules,
             ],
+            'without product tax code' => [
+                'productTaxCode' => null,
+                'country' => $country,
+                'region' => $region,
+                'regionText' => $regionText,
+                'regionMatcherRules' => $regionMatcherTaxRules,
+                'zipCodeMatcherRules' => [],
+                'expected' => $regionMatcherTaxRules,
+            ],
             'without region and regionText' => [
+                'productTaxCode' => 'PRODUCT_TAX_CODE',
                 'country' => $country,
                 'region' => null,
                 'regionText' => '',
