@@ -2,15 +2,15 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\OrderTax\Mapper;
 
-use OroB2B\Bundle\TaxBundle\Event\ContextEvent;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
+use OroB2B\Bundle\OrderBundle\Entity\Order;
+use OroB2B\Bundle\TaxBundle\Event\ContextEvent;
+use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper;
 use OroB2B\Bundle\TaxBundle\Provider\TaxationAddressProvider;
 
