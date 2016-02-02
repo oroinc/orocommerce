@@ -19,7 +19,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 class LoadInvoiceLineItemDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
     use ContainerAwareTrait;
-    
+
     /**
      * {@inheritdoc}
      */
@@ -62,18 +62,19 @@ class LoadInvoiceLineItemDemoData extends AbstractFixture implements ContainerAw
             }
             foreach ($invoiceData as $invoiceLineItemData) {
                 $lineItem = new InvoiceLineItem();
-                $lineItem->setInvoice($invoice);
-                $lineItem->setQuantity($invoiceLineItemData['quantity']);
-                $lineItem->setPrice(
-                    Price::create((float)$invoiceLineItemData['price'], $invoice->getCurrency())
-                );
-                $lineItem->setProductUnit(
-                    $manager->getReference('OroB2BProductBundle:ProductUnit', $invoiceLineItemData['productUnit'])
-                );
+                $lineItem->setInvoice($invoice)
+                    ->setQuantity($invoiceLineItemData['quantity'])
+                    ->setSortOrder($invoiceLineItemData['sortOrder'])
+                    ->setPrice(
+                        Price::create((float)$invoiceLineItemData['price'], $invoice->getCurrency())
+                    )
+                    ->setProductUnit(
+                        $manager->getReference('OroB2BProductBundle:ProductUnit', $invoiceLineItemData['productUnit'])
+                    );
 
                 if (!empty($invoiceLineItemData['freeFormProduct'])) {
-                    $lineItem->setFreeFormProduct($invoiceLineItemData['freeFormProduct']);
-                    $lineItem->setProductSku($invoiceLineItemData['productSku']);
+                    $lineItem->setFreeFormProduct($invoiceLineItemData['freeFormProduct'])
+                        ->setProductSku($invoiceLineItemData['productSku']);
                 } else {
                     /** @var Product $product */
                     $product = $manager
@@ -82,6 +83,11 @@ class LoadInvoiceLineItemDemoData extends AbstractFixture implements ContainerAw
                     $lineItem->setProduct($product);
                     $lineItem->setProductSku($product->getSku());
                 }
+                $subtotal = $this->container
+                    ->get('orob2b_pricing.provider.line_items_subtotal')
+                    ->getSubtotal($invoice)
+                    ->getAmount();
+                $invoice->setSubtotal($subtotal);
                 $manager->persist($lineItem);
             }
         }

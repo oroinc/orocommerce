@@ -20,6 +20,7 @@ use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceTypeSelectorType;
+use OroB2B\Bundle\PricingBundle\Rounding\PriceRoundingService;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -59,15 +60,23 @@ class InvoiceLineItemType extends AbstractType
     protected $productUnitClass;
 
     /**
+     * @var PriceRoundingService
+     */
+    protected $priceRounding;
+
+    /**
      * @param Registry $registry
      * @param ProductUnitLabelFormatter $labelFormatter
+     * @param PriceRoundingService $priceRoundingService
      */
     public function __construct(
         Registry $registry,
-        ProductUnitLabelFormatter $labelFormatter
+        ProductUnitLabelFormatter $labelFormatter,
+        PriceRoundingService $priceRoundingService
     ) {
         $this->registry = $registry;
         $this->labelFormatter = $labelFormatter;
+        $this->priceRounding = $priceRoundingService;
     }
 
     /**
@@ -157,6 +166,7 @@ class InvoiceLineItemType extends AbstractType
                     'default_currency' => $options['currency'],
                 ]
             )
+            ->add('sortOrder', 'hidden')
             ->add(
                 'priceType',
                 PriceTypeSelectorType::NAME
@@ -175,8 +185,9 @@ class InvoiceLineItemType extends AbstractType
                 'intention' => 'invoice_line_item',
                 'page_component' => 'oroui/js/app/components/view-component',
                 'page_component_options' => [
-                    'view' => 'orob2binvoice/js/app/views/line-item-view',
+                    'view' => 'orob2binvoice/js/app/views/invoice-line-item-view',
                     'freeFormUnits' => $this->getFreeFormUnits(),
+                    'precision' => $this->priceRounding->getPrecision()
                 ],
                 'currency' => null,
             ]

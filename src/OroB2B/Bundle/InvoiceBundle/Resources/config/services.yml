@@ -33,6 +33,7 @@ services:
         arguments:
             - @doctrine
             - @orob2b_product.formatter.product_unit_label
+            - @orob2b_pricing.rounding.price_rounding_service
         calls:
             - [setDataClass, [%orob2b_invoice.entity.invoice_line_item.class%]]
             - [setProductUnitClass, [%orob2b_product.product_unit.class%]]

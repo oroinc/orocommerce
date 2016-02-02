@@ -27,7 +27,8 @@ define(function(require) {
             $currency: null,
             bundledPriceTypeValue: '20',
             disabled: false,
-            isNew: false
+            isNew: false,
+            precision: 4
         },
 
         /**
@@ -87,7 +88,7 @@ define(function(require) {
                 mediator.trigger('pricing:get:products-tier-prices', _.bind(this.setTierPrices, this));
                 mediator.trigger('pricing:get:line-items-matched-prices', _.bind(this.setMatchedPrices, this));
             }
-            mediator.on('pricing:update-currency', this.setCurrency, this);
+            mediator.on('update:currency', this.setCurrency, this);
         },
 
         initTierPrices: function() {
@@ -346,7 +347,7 @@ define(function(require) {
                 quantity = parseFloat(this.options.$quantity.val());
             }
 
-            return +(price * quantity).toFixed(4);
+            return +(price * quantity).toFixed(this.options.precision);
         },
 
         onPriceValueChange: function() {
@@ -420,7 +421,7 @@ define(function(require) {
          * @param {String} value
          */
         setCurrency: function(value) {
-            this.options.$currency = value;
+            this.options.$currency.val(value);
             this.updateTierPrices();
             mediator.trigger('pricing:reload:products-tier-prices');
             this.trigger('currency:changed');
@@ -435,7 +436,7 @@ define(function(require) {
             }
 
             mediator.off('pricing:refresh:products-tier-prices', this.setTierPrices, this);
-            mediator.off('pricing:update-currency', this.setCurrency, this);
+            mediator.off('update:currency', this.setCurrency, this);
             mediator.off('pricing:refresh:line-items-matched-prices', this.setMatchedPrices, this);
 
             ProductPricesComponent.__super__.dispose.call(this);

@@ -113,7 +113,7 @@ define(function(require) {
          * @param {jQuery|Array} $fields
          */
         subtotalFields: function($fields) {
-            SubtotalsListener.listen('order:changing', $fields);
+            SubtotalsListener.listen($fields);
         },
 
         removeRow: function() {

@@ -335,6 +335,25 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
     }
 
     /**
+     * @return int
+     */
+    public function getSortOrder()
+    {
+        return $this->sortOrder;
+    }
+
+    /**
+     * @param int $sortOrder
+     * @return $this
+     */
+    public function setSortOrder($sortOrder)
+    {
+        $this->sortOrder = $sortOrder;
+
+        return $this;
+    }
+
+    /**
      * @return Price
      */
     public function getTotalPrice()
@@ -343,7 +362,7 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
             $this->totalPrice = new Price();
         }
 
-        $value = round($this->getPrice()->getValue() * $this->getQuantity(), 2);
+        $value = $this->getPrice()->getValue() * $this->getQuantity();
         $this->totalPrice->setValue($value)
             ->setCurrency($this->getPrice()->getCurrency());
 
@@ -359,21 +378,5 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
         if ($this->getProductUnit()) {
             $this->productUnitCode = $this->getProductUnit()->getCode();
         }
-    }
-
-    /**
-     * @return int
-     */
-    public function getSortOrder()
-    {
-        return $this->sortOrder;
-    }
-
-    /**
-     * @param int $sortOrder
-     */
-    public function setSort($sortOrder)
-    {
-        $this->sortOrder = $sortOrder;
     }
 }

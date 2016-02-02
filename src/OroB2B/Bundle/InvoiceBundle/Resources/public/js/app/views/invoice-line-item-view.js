@@ -1,5 +1,5 @@
 define(function (require) {
-    'use strict';
+    //'use strict';
 
     var LineItemView;
     var $ = require('jquery');
@@ -17,65 +17,51 @@ define(function (require) {
      * @class orob2invoice.app.views.LineItemView
      */
     LineItemView = BaseView.extend({
-        priceTypes: {
-            'BUNDLE': 20,
-            'UNIT': 10
+        /**
+         * @property {jQuery.Element}
+         */
+        $currency: null,
+
+        options: {
+            priceTypes: {
+                'BUNDLE': 20,
+                'UNIT': 10
+            },
+            selectors: {
+                productSelector: '.invoice-line-item-type-product input.select2',
+                quantitySelector: '.invoice-line-item-quantity input',
+                unitSelector: '.invoice-line-item-quantity select',
+                productSku: '.invoice-line-item-sku .invoice-line-item-type-product',
+                productType: '.invoice-line-item-type-product',
+                freeFormType: '.invoice-line-item-type-free-form',
+                totalPrice: '.invoice-line-item-total-price'
+            },
+            currency: 'USD',
+            precision: 4
         },
 
-        pricesComponent: {},
+        pricesComponent: null,
 
         /**
          * @inheritDoc
          */
         initialize: function (options) {
-            this.options = $.extend(true, {
-                selectors: {
-                    productSelector: '.invoice-line-item-type-product input.select2',
-                    quantitySelector: '.invoice-line-item-quantity input',
-                    unitSelector: '.invoice-line-item-quantity select',
-                    productSku: '.invoice-line-item-sku .invoice-line-item-type-product',
-                    productType: '.invoice-line-item-type-product',
-                    freeFormType: '.invoice-line-item-type-free-form'
-                },
-                currency: 'USD'
-            }, this.options);
-            this.options = $.extend(true, {}, this.options, options || {});
+            this.options = _.defaults(options || {}, this.options);
+            this.$el.on('click', '.removeLineItem', _.bind(this._removeRow, this));
+            mediator.on('update:currency', _.bind(this._updateCurrency, this));
+
             this.initLayout().done(_.bind(this.handleLayoutInit, this));
-            this.$el.on('click', '.removeLineItem', _.bind(this.removeRow, this));
-        },
-
-        updateCurrency: function () {
-            this.setTotalPrice();
-            this.options.currency = this.pricesComponent.getCurrency();
-            this.$el.find('[name="orob2b_invoice_type[lineItems][0][price][currency]"]')
-                .val(this.pricesComponent.getCurrency());
-        },
-
-        setTotalPrice: function () {
-            var totalPrice;
-            if (!this.fieldsByName.priceValue) {
-                return;
-            }
-
-            totalPrice = +this.fieldsByName.priceValue.val();
-            if (+this.fieldsByName.priceType.val() === this.priceTypes.UNIT) {
-                totalPrice *= +this.fieldsByName.quantity.val();
-            }
-
-            this.$el.find('.invoice-line-item-total-price')
-                .text(NumberFormatter.formatCurrency(totalPrice, this.pricesComponent.getCurrency()));
         },
 
         /**
          * @inheritDoc
          */
         handleLayoutInit: function () {
-            this.$form = this.$el.closest('form');
             this.$fields = this.$el.find(':input[name]');
 
             this.fieldsByName = {};
             this.$fields.each(_.bind(function (i, field) {
-                this.fieldsByName[this.formFieldName(field)] = $(field);
+                this.fieldsByName[this._formFieldName(field)] = $(field);
             }, this));
 
             this.initSubtotalListener();
@@ -83,40 +69,19 @@ define(function (require) {
             this.initTypeSwitcher();
             this.initPrices();
             this.initProduct();
-            this.initTotalPriceListener();
-        },
-
-        initTotalPriceListener: function () {
-            var self = this;
-            this.setTotalPrice();
-            this.pricesComponent.on('currency:changed', _.bind(this.updateCurrency, this));
-
-            setTimeout(function () {
-                _.each([
-                        self.fieldsByName.quantity,
-                        self.fieldsByName.productUnit,
-                        self.fieldsByName.priceValue,
-                        self.fieldsByName.priceType
-                    ], function (field) {
-                        field.on('change', _.bind(self.setTotalPrice, self));
-                    }
-                );
-            }, 100);
+            this.initItemTotal();
+            mediator.trigger('invoice-line-item:created', this.$el);
         },
 
         initSubtotalListener: function () {
-            this.fieldsByName.currency = this.$form
-                .find(':input[data-ftid="' + this.$form.attr('name') + '_currency"]');
-
-            SubtotalsListener.listen('invoice:changing', [
+            SubtotalsListener.listen([
                 this.fieldsByName.product,
                 this.fieldsByName.quantity,
                 this.fieldsByName.productUnit,
                 this.fieldsByName.priceValue,
-                this.fieldsByName.priceType
+                this.fieldsByName.priceType,
+                this.fieldsByName.priceCurrency
             ]);
-
-
         },
 
         initUnitLoader: function (options) {
@@ -134,17 +99,16 @@ define(function (require) {
         },
 
         initPrices: function () {
-            this.pricesComponent = new ProductPricesComponent({
+            this.subview('productPricesComponents', new ProductPricesComponent({
                 _sourceElement: this.$el,
                 $product: this.fieldsByName.product,
                 $priceValue: this.fieldsByName.priceValue,
                 $priceType: this.fieldsByName.priceType,
                 $productUnit: this.fieldsByName.productUnit,
                 $quantity: this.fieldsByName.quantity,
-                $currency: this.fieldsByName.currency.val()
-            });
-
-            this.subview('productPricesComponents', this.pricesComponent);
+                $currency: this.fieldsByName.priceCurrency,
+                precision: this.options.precision
+            }));
         },
 
         initTypeSwitcher: function () {
@@ -177,11 +141,34 @@ define(function (require) {
                 showProductType();
             }
         },
+
+        initProduct: function () {
+            if (this.fieldsByName.product) {
+                this.fieldsByName.product.change(_.bind(function () {
+                    this._resetData();
+
+                    var data = this.fieldsByName.product.select2('data') || {};
+                    this.$el.find(this.options.selectors.productSku).html(data.sku || null);
+                }, this));
+            }
+        },
+
+        initItemTotal: function () {
+            this._setTotalPrice();
+
+            this.fieldsByName.priceValue
+                .add(this.fieldsByName.priceType)
+                .add(this.fieldsByName.productUnit)
+                .add(this.fieldsByName.quantity)
+                .add(this.fieldsByName.priceCurrency)
+                .on('change', _.bind(this._setTotalPrice, this));
+        },
+
         /**
          * @param {Object} field
          * @returns {String}
          */
-        formFieldName: function (field) {
+        _formFieldName: function (field) {
             var name = '';
             var nameParts = field.name.replace(/.*\[[0-9]+\]/, '').replace(/[\[\]]/g, '_').split('_');
             var namePart;
@@ -200,26 +187,35 @@ define(function (require) {
             return name;
         },
 
-        resetData: function () {
+        _resetData: function () {
             if (this.fieldsByName.hasOwnProperty('quantity')) {
                 this.fieldsByName.quantity.val(1);
             }
         },
 
-        initProduct: function () {
-            if (this.fieldsByName.product) {
-                this.fieldsByName.product.change(_.bind(function () {
-                    this.resetData();
-
-                    var data = this.fieldsByName.product.select2('data') || {};
-                    this.$el.find(this.options.selectors.productSku).html(data.sku || null);
-                }, this));
-            }
+        _updateCurrency: function (val) {
+            this.options.currency = val;
+            this.fieldsByName.priceCurrency.val(val);
+            this.fieldsByName.priceCurrency.trigger('change');
         },
 
-        removeRow: function () {
+        _setTotalPrice: function () {
+            var totalPrice;
+            if (!this.fieldsByName.priceValue) {
+                return;
+            }
+
+            totalPrice = +this.fieldsByName.priceValue.val();
+            if (+this.fieldsByName.priceType.val() === this.options.priceTypes.UNIT) {
+                totalPrice *= +this.fieldsByName.quantity.val();
+            }
+
+            this.$el.find(this.options.selectors.totalPrice)
+                .text(NumberFormatter.formatCurrency(totalPrice, this.options.currency));
+        },
+
+        _removeRow: function () {
             this.$el.trigger('content:remove');
-            mediator.trigger('line-items-subtotals:update');
             this.remove();
         },
 
@@ -231,8 +227,8 @@ define(function (require) {
                 return;
             }
 
-            mediator.off('line-items-subtotals:update', this.setTotalPrice, this);
-
+            this.$el.off('click', '.removeLineItem', _.bind(this._removeRow, this));
+            mediator.off('update:currency', _.bind(this._updateCurrency, this));
             LineItemView.__super__.dispose.call(this);
         }
     });

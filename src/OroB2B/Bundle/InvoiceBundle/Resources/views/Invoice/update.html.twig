@@ -52,7 +52,6 @@
         options: {
             url: path('orob2b_invoice_subtotal', {id: entity.id}),
             selectors: {form: '#' ~ form.vars.id},
-            eventName: 'invoice:changing'
         }
         } only %}
     {% endset %}
@@ -67,14 +66,14 @@
     {% endset %}
 
     {% set lineItems %}
-        <div class="invoice-lineitems"
+        <div class="invoice-line-items"
              data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
                  tierPricesRoute: 'orob2b_pricing_price_by_pricelist',
                  matchedPricesRoute: 'orob2b_pricing_matching_price',
                  tierPrices: tierPrices|default({}),
                  matchedPrices: matchedPrices|default({}),
-                 view: 'orob2binvoice/js/app/views/line-items-view',
+                 view: 'orob2binvoice/js/app/views/invoice-line-items-view',
                  currency: entity.currency
              }|json_encode }}"
              data-layout="separate">
@@ -87,7 +86,7 @@
         <div
             data-page-component-module="oroui/js/app/components/view-component"
             data-page-component-options="{{ {
-                'view': 'orob2binvoice/js/app/views/invoice-general-view'
+                'view': 'orob2binvoice/js/app/views/invoice-view'
             }|json_encode }}">
             <div>
                 {{ form_row(form.invoiceDate) }}

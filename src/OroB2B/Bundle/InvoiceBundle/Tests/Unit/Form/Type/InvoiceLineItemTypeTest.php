@@ -22,6 +22,7 @@ use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectEntityTypeStub;
+use OroB2B\Bundle\PricingBundle\Rounding\PriceRoundingService;
 
 class InvoiceLineItemTypeTest extends FormIntegrationTestCase
 {
@@ -80,7 +81,12 @@ class InvoiceLineItemTypeTest extends FormIntegrationTestCase
             ->with(self::PRODUCT_UNIT_CLASS)
             ->will($this->returnValue($repository));
 
-        $this->formType = new InvoiceLineItemType($this->registry, $this->productUnitLabelFormatter);
+        /** @var PriceRoundingService $roundingService */
+        $roundingService = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Rounding\PriceRoundingService')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->formType = new InvoiceLineItemType($this->registry, $this->productUnitLabelFormatter, $roundingService);
         $this->formType->setDataClass('OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem');
         $this->formType->setProductUnitClass(self::PRODUCT_UNIT_CLASS);
     }

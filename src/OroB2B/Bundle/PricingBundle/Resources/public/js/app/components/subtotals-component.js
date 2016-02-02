@@ -12,7 +12,7 @@ define(function(require) {
     /**
      * @export orob2border/js/app/components/subtotals-component
      * @extends oroui.app.components.base.Component
-     * @class orob2border.app.components.SubtotalsComponent
+     * @class orob2bpricing.app.components.SubtotalsComponent
      */
     SubtotalsComponent = BaseComponent.extend({
         /**
@@ -77,7 +77,7 @@ define(function(require) {
             this.$subtotals = this.$el.find(this.options.selectors.subtotals);
             this.template = _.template(this.$el.find(this.options.selectors.template).text());
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
-            this.eventName = options.eventName;
+            this.eventName = 'subtotal-target:changing';
 
             this.updateSubtotals();
 

@@ -69,7 +69,7 @@ class InvoiceLineItemEntityTest extends \PHPUnit_Framework_TestCase
         $invoiceLineItem->setQuantity(5)
             ->setPrice(Price::create(1.1111, 'USD'));
 
-        $this->assertSame(5.56, $invoiceLineItem->getTotalPrice()->getValue());
-        $this->assertSame('USD', $invoiceLineItem->getTotalPrice()->getCurrency());
+        $this->assertEquals(5.5555, $invoiceLineItem->getTotalPrice()->getValue());
+        $this->assertEquals('USD', $invoiceLineItem->getTotalPrice()->getCurrency());
     }
 }

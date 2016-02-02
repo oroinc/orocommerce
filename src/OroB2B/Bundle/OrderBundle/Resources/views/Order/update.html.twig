@@ -52,8 +52,7 @@
         {% include 'OroB2BPricingBundle:Subtotals:subtotals.html.twig' with {
             options: {
                 url: path('orob2b_order_subtotals', {id: entity.id}),
-                selectors: {form: '#' ~ form.vars.id},
-                eventName: 'order:changing'
+                selectors: {form: '#' ~ form.vars.id}
             }
         } only %}
     {% endset %}
