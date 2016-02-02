@@ -1,48 +1,27 @@
-{%- macro renderAccountProperty(label, entity, property, route) -%}
+{%- macro renderAccountProperty(label, entity, labelProperty, route) -%}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% if entity %}
-        {{ UI.renderHtmlProperty(label, _self.renderViewLink(entity, attribute(entity, property|default('name')), route|default('orob2b_account_view'))) }}
+        {{ UI.renderHtmlProperty(label, UI.entityViewLink(entity, attribute(entity, labelProperty|default('name')), route|default('orob2b_account_view'))) }}
     {% endif %}
 {%- endmacro -%}
 
-{%- macro renderAccountUserProperty(label, entity, property, route) -%}
+{%- macro renderAccountUserProperty(label, entity, labelProperty, route) -%}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% if entity %}
-        {{ UI.renderHtmlProperty(label, _self.renderViewLink(entity, attribute(entity, property|default('fullName')), route|default('orob2b_account_account_user_view'))) }}
+        {{ UI.renderHtmlProperty(label, UI.entityViewLink(entity, attribute(entity, labelProperty|default('fullName')), route|default('orob2b_account_account_user_view'))) }}
     {% endif %}
 {%- endmacro -%}
 
-{%- macro renderUsersProperty(label, entities, property, route) -%}
+{%- macro renderAccountUsersProperty(label, entities, labelProperty, route) -%}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% if entities | length %}
-        {{ UI.renderHtmlProperty(label, UI.renderUserViewLinks(entities, property, route)) }}
+        {{ UI.renderHtmlProperty(label, UI.entityViewLinks(entities, labelProperty|default('fullName'), route|default('orob2b_account_account_user_view'))) }}
     {% endif %}
 {%- endmacro -%}
 
-{%- macro renderAccountUsersProperty(label, entities, property, route) -%}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+{%- macro renderUsersProperty(label, entities, labelProperty, route) -%}
+    {% import 'OroUserBundle::macros.html.twig' as U %}
     {% if entities | length %}
-        {{ UI.renderHtmlProperty(label, UI.renderViewLinks(entities, property|default('fullName'), route|default('orob2b_account_account_user_view'))) }}
+        {{ U.renderUsersProperty(label, entities, labelProperty, route) }}
     {% endif %}
-{%- endmacro -%}
-
-{# inherited macros #}
-{%- macro renderProperty(title, data) -%}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {{ UI.renderProperty(title, data) }}
-{%- endmacro -%}
-
-{%- macro renderHtmlProperty(title, data) -%}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {{ UI.renderHtmlProperty(title, data) }}
-{%- endmacro -%}
-
-{%- macro renderUrl(url, title, class) -%}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {{ UI.renderUrl(url, title, class) }}
-{%- endmacro -%}
-
-{%- macro renderViewLink(entity, label, route, permission) -%}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {{ UI.renderViewLink(entity, label, route, permission) }}
 {%- endmacro -%}

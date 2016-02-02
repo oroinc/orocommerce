@@ -1,5 +1,6 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
 {% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
-{% import 'OroB2BFrontendBundle::macros.html.twig' as UI %}
+{% import 'OroB2BFrontendBundle::macros.html.twig' as Frontend %}
 
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
@@ -8,7 +9,7 @@
             {{ UI.renderProperty('orob2b.frontend.sale.quote.valid_until.label'|trans, entity.validUntil ? entity.validUntil|oro_format_datetime : 'N/A'|trans) }}
             {{ UI.renderProperty('orob2b.frontend.sale.quote.po_number.label'|trans, entity.poNumber|default('N/A'|trans)) }}
             {{ UI.renderProperty('orob2b.frontend.sale.quote.ship_until.label'|trans, entity.shipUntil|oro_format_date|default('N/A'|trans)) }}
-            {{ UI.renderAccountUsersProperty('orob2b.frontend.sale.quote.assigned_account_users.label'|trans, entity.assignedAccountUsers) }}
+            {{ Frontend.renderAccountUsersProperty('orob2b.frontend.sale.quote.assigned_account_users.label'|trans, entity.assignedAccountUsers) }}
         </div>
         <div class="responsive-block">
             {{ entityConfig.renderDynamicFields(entity) }}

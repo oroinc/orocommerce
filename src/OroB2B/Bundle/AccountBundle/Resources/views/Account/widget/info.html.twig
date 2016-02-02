@@ -1,5 +1,6 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
 {% import 'OroEmailBundle::actions.html.twig' as EmailActions %}
-{% import 'OroB2BAccountBundle::macros.html.twig' as UI %}
+{% import 'OroB2BAccountBundle::macros.html.twig' as Account %}
 
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
@@ -32,8 +33,8 @@
                 {% endif %}
             {% endif %}
 
-            {{ UI.renderAccountUsersProperty('orob2b.account.users.label'|trans, entity.users) }}
-            {{ UI.renderUsersProperty('orob2b.account.sales_representatives.label'|trans, entity.salesRepresentatives) }}
+            {{ Account.renderAccountUsersProperty('orob2b.account.users.label'|trans, entity.users) }}
+            {{ Account.renderUsersProperty('orob2b.account.sales_representatives.label'|trans, entity.salesRepresentatives) }}
 
             {% if entity.children.count() %}
                 {% set accountTree %}

@@ -1,43 +1,27 @@
-{%- macro renderAccountProperty(label, entity, property, route) -%}
-    {% import 'OroB2BAccountBundle::macros.html.twig' as UI %}
+{%- macro renderAccountProperty(label, entity, labelProperty, route) -%}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% if entity %}
-        {{ UI.renderProperty(label, entity, property, 'none') }}
+        {{ UI.renderProperty(label, entity, labelProperty, 'none') }}
     {% endif %}
 {%- endmacro -%}
 
-{%- macro renderAccountUserProperty(label, entity, property, route) -%}
-    {% import 'OroB2BAccountBundle::macros.html.twig' as UI %}
+{%- macro renderAccountUserProperty(label, entity, labelProperty, route) -%}
+    {% import 'OroB2BAccountBundle::macros.html.twig' as A %}
     {% if entity and is_granted_view_account_user(entity) %}
-        {{ UI.renderAccountUserProperty(label, entity, property, route|default('orob2b_account_frontend_account_user_view')) }}
+        {{ A.renderAccountUserProperty(label, entity, labelProperty, route|default('orob2b_account_frontend_account_user_view')) }}
     {% endif %}
 {%- endmacro -%}
 
-{%- macro renderAccountUsersProperty(label, entities, property, route) -%}
-    {% import 'OroB2BAccountBundle::macros.html.twig' as UI %}
+{%- macro renderAccountUsersProperty(label, entities, labelProperty, route) -%}
+    {% import 'OroB2BAccountBundle::macros.html.twig' as A %}
     {% if entities | length %}
-        {{ UI.renderAccountUsersProperty(label, entities, property, route|default('orob2b_account_frontend_account_user_view')) }}
+        {{ A.renderAccountUsersProperty(label, entities, labelProperty, route|default('orob2b_account_frontend_account_user_view')) }}
     {% endif %}
 {%- endmacro -%}
 
-{%- macro renderUsersProperty(label, entities, property, route) -%}
-    {% import 'OroB2BAccountBundle::macros.html.twig' as UI %}
+{%- macro renderUsersProperty(label, entities, labelProperty, route) -%}
+    {% import 'OroUserBundle::macros.html.twig' as U %}
     {% if entities | length %}
-        {{ UI.renderUsersProperty(label, entities, property, 'none') }}
+        {{ U.renderUsersProperty(label, entities, labelProperty, 'none') }}
     {% endif %}
-{%- endmacro -%}
-
-{# inherited macros #}
-{%- macro renderProperty(title, data) -%}
-    {% import 'OroB2BAccountBundle::macros.html.twig' as UI %}
-    {{ UI.renderProperty(title, data) }}
-{%- endmacro -%}
-
-{%- macro renderHtmlProperty(title, data) -%}
-    {% import 'OroB2BAccountBundle::macros.html.twig' as UI %}
-    {{ UI.renderHtmlProperty(title, data) }}
-{%- endmacro -%}
-
-{%- macro renderViewLink(entity, label, route, permission) -%}
-    {% import 'OroB2BAccountBundle::macros.html.twig' as UI %}
-    {{ UI.renderViewLink(entity, label, route, permission) }}
 {%- endmacro -%}
