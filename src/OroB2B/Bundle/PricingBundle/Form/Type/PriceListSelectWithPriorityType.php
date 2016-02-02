@@ -36,7 +36,7 @@ class PriceListSelectWithPriorityType extends AbstractType
             )
             ->add(
                 self::PRIORITY_FIELD,
-                'text',
+                'number',
                 [
                     'empty_data' => null,
                     'required' => true,
