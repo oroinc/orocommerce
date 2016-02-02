@@ -21,7 +21,10 @@ class QuickAddController extends Controller
      */
     public function addAction(Request $request)
     {
-        $result = $this->get('orob2b_product.form_handler.quick_add')->process($request);
+        $result = $this->get('orob2b_product.form_handler.quick_add')->process(
+            $request,
+            'orob2b_product_frontend_quick_add'
+        );
 
         /** @var FormInterface $form */
         $form = $result['form'];

@@ -4,10 +4,10 @@ namespace OroB2B\Bundle\ProductBundle\Form\Handler;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -15,19 +15,15 @@ use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
+use OroB2B\Bundle\ProductBundle\Provider\QuickAddFormProvider;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class QuickAddHandler
 {
     /**
-     * @var TranslatorInterface
+     * @var QuickAddFormProvider
      */
-    protected $translator;
-
-    /**
-     * @var FormFactoryInterface
-     */
-    protected $formFactory;
+    protected $quickAddFormProvider;
 
     /**
      * @var ComponentProcessorRegistry
@@ -37,25 +33,36 @@ class QuickAddHandler
     /** @var  ManagerRegistry */
     protected $registry;
 
+    /** @var UrlGeneratorInterface */
+    protected $router;
+
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
     /** @var string */
     protected $productClass;
 
     /**
-     * @param TranslatorInterface $translator
-     * @param FormFactoryInterface $formFactory
+     * @param QuickAddFormProvider $quickAddFormProvider
      * @param ComponentProcessorRegistry $componentRegistry
      * @param ManagerRegistry $registry
+     * @param UrlGeneratorInterface $router
+     * @param TranslatorInterface $translator
      */
     public function __construct(
-        TranslatorInterface $translator,
-        FormFactoryInterface $formFactory,
+        QuickAddFormProvider $quickAddFormProvider,
         ComponentProcessorRegistry $componentRegistry,
-        ManagerRegistry $registry
+        ManagerRegistry $registry,
+        UrlGeneratorInterface $router,
+        TranslatorInterface $translator
     ) {
-        $this->translator = $translator;
-        $this->formFactory = $formFactory;
+        $this->quickAddFormProvider = $quickAddFormProvider;
         $this->componentRegistry = $componentRegistry;
         $this->registry = $registry;
+        $this->router = $router;
+        $this->translator = $translator;
     }
 
     /**
@@ -68,58 +75,67 @@ class QuickAddHandler
 
     /**
      * @param Request $request
-     * @return array ['form' => FormInterface, 'response' => Response|null]
+     * @param string $successDefaultRoute
+     * @return array
      */
-    public function process(Request $request)
+    public function process(Request $request, $successDefaultRoute)
     {
-        $response = null;
-        $formOptions = [];
-
-        $processor = $this->getProcessor($this->getComponentName($request));
-        if ($processor) {
-            $formOptions['validation_required'] = $processor->isValidationRequired();
-        }
-
         if ($request->isMethod(Request::METHOD_POST)) {
-            $formOptions['products'] = $this->getProducts($request);
+            return $this->submitRequest($request, $successDefaultRoute);
+        } else {
+            $form = $this->quickAddFormProvider->getForm();
         }
 
-        $form = $this->createQuickAddForm($formOptions);
-        if ($request->isMethod(Request::METHOD_POST)) {
-            $form->submit($request);
-            if ($processor && $processor->isAllowed()) {
-                if ($form->isValid()) {
-                    $products = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
-                    $products = is_array($products) ? $products : [];
-                    $response = $processor->process(
-                        [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products],
-                        $request
-                    );
-                    if (!$response) {
-                        // reset form
-                        $form = $this->createQuickAddForm($formOptions);
-                    }
-                }
-            } else {
-                /** @var Session $session */
-                $session = $request->getSession();
-                $session->getFlashBag()->add(
-                    'error',
-                    $this->translator->trans('orob2b.product.frontend.component_not_accessible.message')
-                );
-            }
-        }
-
-        return ['form' => $form, 'response' => $response];
+        return [
+            'form' => $form,
+            'response' => null,
+        ];
     }
 
     /**
-     * @param array $options
-     * @return FormInterface
+     * @param Request $request
+     * @param string $successDefaultRoute
+     * @return array
      */
-    protected function createQuickAddForm(array $options = [])
+    protected function submitRequest(Request $request, $successDefaultRoute)
     {
-        return $this->formFactory->create(QuickAddType::NAME, null, $options);
+        $response = null;
+
+        $options = [];
+        $options['products'] = $this->getProducts($request);
+
+        $processor = $this->getProcessor($this->getComponentName($request));
+        if ($processor) {
+            $options['validation_required'] = $processor->isValidationRequired();
+        }
+
+        $form = $this->quickAddFormProvider->getForm($options);
+        $form->submit($request);
+
+        if ($processor && $processor->isAllowed()) {
+            if ($form->isValid()) {
+                $products = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
+                $response = $processor->process(
+                    [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products],
+                    $request
+                );
+                if (!$response) {
+                    $response = new RedirectResponse($this->router->generate($successDefaultRoute));
+                }
+            }
+        } else {
+            /** @var Session $session */
+            $session = $request->getSession();
+            $session->getFlashBag()->add(
+                'error',
+                $this->translator->trans('orob2b.product.frontend.component_not_accessible.message')
+            );
+        }
+
+        return [
+            'form' => $form,
+            'response' => $response,
+        ];
     }
 
     /**
