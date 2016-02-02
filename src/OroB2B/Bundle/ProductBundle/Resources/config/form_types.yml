@@ -137,13 +137,3 @@ services:
         tags:
             - { name: form.type, alias: 'orob2b_product_quick_add_import_from_file' }
 
-    orob2b_product.form.type.quick_add_collection:
-        class: %orob2b_product.form.type.quick_add_collection.class%
-        tags:
-            - { name: form.type, alias: 'orob2b_product_quick_add_collection' }
-
-    orob2b_product.form.type.quick_add_product_row:
-        class: %orob2b_product.form.type.quick_add_product_row.class%
-        tags:
-            - { name: form.type, alias: 'orob2b_product_quick_add_product_row' }
-
