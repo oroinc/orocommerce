@@ -24,6 +24,7 @@ class OroB2BPricingExtension extends Extension
         $loader->load('services.yml');
         $loader->load('form_types.yml');
         $loader->load('importexport.yml');
+        $loader->load('layout.yml');
 
         $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
     }
