@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Model;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -11,6 +10,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\AbstractUser;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountRepository;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
@@ -68,16 +68,16 @@ class FrontendPriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
         $repo = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Repository\AccountRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $repo->expects($this->once())->method('find')->willReturn(new Account());
+        $repo->expects($this->any())->method('find')->willReturn(new Account());
         $manager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $manager->expects($this->once())->method('getRepository')->willReturn($repo);
+        $manager->expects($this->any())->method('getRepository')->willReturn($repo);
         /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry */
         $registry = $this->getMockBuilder('Symfony\Bridge\Doctrine\ManagerRegistry')
             ->disableOriginalConstructor()
             ->getMock();
-        $registry->expects($this->once())
+        $registry->expects($this->any())
             ->method('getManagerForClass')
             ->with('OroB2BAccountBundle:Account')
             ->willReturn($manager);
@@ -111,7 +111,7 @@ class FrontendPriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->priceListTreeHandler->expects($this->once())
             ->method('getPriceList')
-            ->with($expectedUser)
+            ->with($expectedUser ? $expectedUser->getAccount() : null)
             ->willReturn($priceList);
 
         $this->assertSame($priceList, $this->handler->getPriceList());
