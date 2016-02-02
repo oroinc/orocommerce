@@ -12,7 +12,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class VisibilityCacheBuildCommand extends ContainerAwareCommand
 {
-    const NAME = 'orob2b:account:visibility:cache:build';
+    const NAME = 'product:visibility:cache:build';
 
     /**
      * {@inheritdoc}
