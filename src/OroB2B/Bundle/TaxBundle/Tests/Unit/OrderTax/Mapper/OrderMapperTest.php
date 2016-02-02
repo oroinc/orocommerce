@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\OrderTax\Mapper;
 
+use OroB2B\Bundle\TaxBundle\Event\ContextEvent;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
@@ -21,6 +22,9 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
 
     const ORDER_ID = 123;
     const ORDER_SUBTOTAL = 234.34;
+
+    const CONTEXT_KEY = 'context_key';
+    const CONTEXT_VALUE = 'context_value';
 
     /**
      * @var OrderMapper
@@ -64,6 +68,14 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcher')
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->eventDispatcher
+            ->expects($this->any())
+            ->method('dispatch')
+            ->with(ContextEvent::NAME)
+            ->willReturnCallback(function ($eventName, ContextEvent $event) {
+                $event->getContext()->offsetSet(self::CONTEXT_KEY, self::CONTEXT_VALUE);
+            });
 
         $this->mapper = new OrderMapper($this->eventDispatcher, $this->addressProvider);
         $this->mapper->setOrderLineItemMapper($this->orderLineItemMapper);
@@ -133,6 +145,7 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(0, $taxable->getPrice());
         $this->assertEquals($subtotal, $taxable->getAmount());
         $this->assertEquals($destination, $taxable->getDestination());
+        $this->assertEquals(self::CONTEXT_VALUE, $taxable->getContextValue(self::CONTEXT_KEY));
         $this->assertNotEmpty($taxable->getItems());
     }
 

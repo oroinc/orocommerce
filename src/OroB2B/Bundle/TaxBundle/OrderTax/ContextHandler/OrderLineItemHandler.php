@@ -75,7 +75,7 @@ class OrderLineItemHandler
         $productTaxCode = $this->getProductTaxCode($lineItem);
 
         if (null === $productTaxCode) {
-            return null;
+            return false;
         }
 
         $address = $this->addressProvider->getAddressForTaxation($lineItem->getOrder());

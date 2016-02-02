@@ -331,6 +331,7 @@ services:
         class: %orob2b_tax.provider.taxation_address_provider.class%
         arguments:
             - @orob2b_tax.provider.taxation_settings_provider
+            - @orob2b_tax.matcher.country_matcher
 
     orob2b_tax.form.data_transformer.tax_base_exclusion_transformer:
         class: %orob2b_tax.form.data_transformer.tax_base_exclusion_transformer.class%

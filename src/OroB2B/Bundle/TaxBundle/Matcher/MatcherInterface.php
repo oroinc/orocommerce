@@ -12,7 +12,7 @@ interface MatcherInterface
      * Find TaxRules by address
      *
      * @param AbstractAddress $address
-     * @param string          $productTaxCode
+     * @param string $productTaxCode
      * @return TaxRule[]
      */
     public function match(AbstractAddress $address, $productTaxCode);

@@ -6,16 +6,23 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
-use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
+use OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher;
 
 class TaxationAddressProvider
 {
     /**
-     * @param TaxationSettingsProvider $settingsProvider
+     * @var CountryMatcher
      */
-    public function __construct(TaxationSettingsProvider $settingsProvider)
+    protected $countryMatcher;
+
+    /**
+     * @param TaxationSettingsProvider $settingsProvider
+     * @param CountryMatcher $countryMatcher
+     */
+    public function __construct(TaxationSettingsProvider $settingsProvider, CountryMatcher $countryMatcher)
     {
         $this->settingsProvider = $settingsProvider;
+        $this->countryMatcher = $countryMatcher;
     }
 
     /**
@@ -100,11 +107,14 @@ class TaxationAddressProvider
      */
     public function isDigitalProductTaxCode($countryCode, $taxCode)
     {
-        $methodName = 'getDigitalProductsTaxCodes' . $countryCode;
-        if (!method_exists($this->settingsProvider, 'getDigitalProductsTaxCodes' . $countryCode)) {
+        if ($this->countryMatcher->isEuropeanUnionCountry($countryCode)) {
+            $digitalProductTaxCodes = $this->settingsProvider->getDigitalProductsTaxCodesEU();
+        } elseif ($countryCode === 'US') {
+            $digitalProductTaxCodes = $this->settingsProvider->getDigitalProductsTaxCodesUS();
+        } else {
             return false;
         }
 
-        return in_array($taxCode, $this->settingsProvider->{$methodName}, true);
+        return in_array($taxCode, $digitalProductTaxCodes, true);
     }
 }

@@ -32,7 +32,6 @@ class TaxRuleRepositoryTest extends WebTestCase
             $taxRule->getProductTaxCode()->getCode()
         );
 
-        $this->assertCount(1, $result);
         $this->assertEquals($taxRule->getId(), reset($result)->getId());
     }
 
