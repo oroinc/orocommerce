@@ -53,6 +53,7 @@ orob2b:
             value.label: 'Price Value'
             price.value.label: 'Price Value'
             currency.label: 'Price Currency'
+            sort_order.label: 'Sort Order'
             price.currency.label: 'Price Currency'
             add_label: 'Add line item'
 

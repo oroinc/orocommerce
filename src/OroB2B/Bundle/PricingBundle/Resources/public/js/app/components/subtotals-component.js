@@ -10,7 +10,7 @@ define(function(require) {
     var BaseComponent = require('oroui/js/app/components/base/component');
 
     /**
-     * @export orob2border/js/app/components/subtotals-component
+     * @export orob2bpricing/js/app/components/subtotals-component
      * @extends oroui.app.components.base.Component
      * @class orob2bpricing.app.components.SubtotalsComponent
      */

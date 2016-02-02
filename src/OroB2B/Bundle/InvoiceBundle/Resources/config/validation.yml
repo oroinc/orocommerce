@@ -42,6 +42,8 @@ OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem:
                 message: 'orob2b.product.productunit.invalid'
         productUnitCode:
             - NotBlank:
+        sortOrder:
+            - NotBlank: ~
         price:
             - NotBlank: ~
             - Valid: ~

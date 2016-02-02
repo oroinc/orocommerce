@@ -78,6 +78,7 @@ class InvoiceControllerTest extends WebTestCase
                     'currency' => 'USD',
                 ],
                 'priceType' => PriceTypeAwareInterface::PRICE_TYPE_UNIT,
+                'sortOrder' => 1
             ],
         ];
         $submittedData = [
@@ -114,6 +115,7 @@ class InvoiceControllerTest extends WebTestCase
                     'currency' => 'USD',
                 ],
                 'priceType' => $this->getContainer()->get('translator')->trans('orob2b.pricing.price_type.unit'),
+                'sortOrder' => 1
             ],
         ];
 
@@ -167,6 +169,7 @@ class InvoiceControllerTest extends WebTestCase
                     'currency' => 'USD',
                 ],
                 'priceType' => PriceTypeAwareInterface::PRICE_TYPE_UNIT,
+                'sortOrder' => 1
             ],
             [
                 'freeFormProduct' => 'Free form product',
@@ -177,6 +180,7 @@ class InvoiceControllerTest extends WebTestCase
                     'currency' => 'USD',
                 ],
                 'priceType' => PriceTypeAwareInterface::PRICE_TYPE_BUNDLED,
+                'sortOrder' => 2
             ],
         ];
         $submittedData = [
@@ -215,6 +219,7 @@ class InvoiceControllerTest extends WebTestCase
                     'currency' => 'USD',
                 ],
                 'priceType' => $this->getContainer()->get('translator')->trans('orob2b.pricing.price_type.unit'),
+                'sortOrder' => 1
             ],
             [
                 'product' => '',
@@ -226,6 +231,7 @@ class InvoiceControllerTest extends WebTestCase
                     'currency' => 'USD',
                 ],
                 'priceType' => $this->getContainer()->get('translator')->trans('orob2b.pricing.price_type.bundled'),
+                'sortOrder' => 2
             ],
         ];
 
@@ -305,6 +311,9 @@ class InvoiceControllerTest extends WebTestCase
                 ],
                 'priceType' => $crawler
                     ->filter('select[name="orob2b_invoice_type[lineItems][' . $i . '][priceType]"] :selected')
+                    ->html(),
+                'sortOrder' => $crawler
+                    ->filter('input[name="orob2b_invoice_type[lineItems][' . $i . '][sortOrder]"]')
                     ->html(),
             ];
         }

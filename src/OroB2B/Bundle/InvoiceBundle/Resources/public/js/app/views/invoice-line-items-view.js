@@ -34,8 +34,11 @@ define(function (require) {
             this.options = $.extend(true, {}, this.options, options || {});
 
             this.subview('productsPricesComponent', new ProductsPricesComponent({
+                _sourceElement: this.$el,
                 tierPrices: this.options.tierPrices,
                 matchedPrices: this.options.matchedPrices,
+                $currency: this.options.currency,
+                priceList: this.options.priceList,
                 tierPricesRoute: this.options.tierPricesRoute,
                 matchedPricesRoute: this.options.matchedPricesRoute
             }));
@@ -46,11 +49,11 @@ define(function (require) {
             mediator.on('invoice-line-item:created', _.bind(this._setNextSortOrder, this));
             mediator.on('update:currency', _.bind(this._setPrototypeCurrency, this));
             this.initLayout();
-            this.options.lastSortOrder = this._fetchLastSortOrder();
+            this.options.nextSortOrder = this._fetchLastSortOrder() + 1;
         },
 
         _fetchLastSortOrder: function () {
-            return this.$el.find(this.options.selectors.lineItem).last().find(this.options.selectors.sortOrder).val();
+            return +this.$el.find(this.options.selectors.lineItem).last().find(this.options.selectors.sortOrder).val();
         },
 
         _reindexLineItems: function (e) {
@@ -68,11 +71,15 @@ define(function (require) {
         },
 
         _setNextSortOrder: function ($lineItem) {
-            $lineItem.find(this.options.selectors.sortOrder).val(this.options.nextSortOrder);
-            this.options.nextSortOrder++;
+            var $sortOrder = $lineItem.find(this.options.selectors.sortOrder);
+            if(!$sortOrder.val()){
+                $sortOrder.val(this.options.nextSortOrder);
+                this.options.nextSortOrder++;
+            }
         },
 
         _setPrototypeCurrency: function (val) {
+            this.options.currency = val;
             var prototype = $(this.options.selectors.prototypeHolder).attr('data-prototype');
             var $prototype = $('<div></div>').html(prototype);
             $prototype.find(this.options.selectors.prototypeCurrency).val(val);

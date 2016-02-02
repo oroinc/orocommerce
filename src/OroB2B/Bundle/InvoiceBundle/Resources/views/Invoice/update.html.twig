@@ -66,14 +66,16 @@
     {% endset %}
 
     {% set lineItems %}
+        {#todo  fix priceListId after BB-1561 #}
         <div class="invoice-line-items"
              data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
-                 tierPricesRoute: 'orob2b_pricing_price_by_pricelist',
-                 matchedPricesRoute: 'orob2b_pricing_matching_price',
+                 view: 'orob2binvoice/js/app/views/invoice-line-items-view',
                  tierPrices: tierPrices|default({}),
                  matchedPrices: matchedPrices|default({}),
-                 view: 'orob2binvoice/js/app/views/invoice-line-items-view',
+                 tierPricesRoute: 'orob2b_pricing_price_by_pricelist',
+                 matchedPricesRoute: 'orob2b_pricing_matching_price',
+                 priceList: 1,
                  currency: entity.currency
              }|json_encode }}"
              data-layout="separate">

@@ -362,7 +362,10 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
             $this->totalPrice = new Price();
         }
 
-        $value = $this->getPrice()->getValue() * $this->getQuantity();
+        $value = $this->getPriceType() === PriceTypeAwareInterface::PRICE_TYPE_UNIT
+            ? $this->getPrice()->getValue() * $this->getQuantity()
+            : $this->getPrice()->getValue();
+
         $this->totalPrice->setValue($value)
             ->setCurrency($this->getPrice()->getCurrency());
 
