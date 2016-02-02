@@ -298,7 +298,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $flashBag = $this->getMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBag');
         $flashBag->expects($this->once())
             ->method('add')
-            ->with('error', 'orob2b.product.frontend.messages.component_not_accessible.trans');
+            ->with('error', 'orob2b.product.frontend.quick_add.messages.component_not_accessible.trans');
 
         $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
             ->disableOriginalConstructor()
