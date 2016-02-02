@@ -9,7 +9,7 @@ class CountryMatcher extends AbstractMatcher
     /**
      * @var array
      */
-    protected $europeanUnionCountryCodes = [
+    protected static $europeanUnionCountryCodes = [
         'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK',
         'EE', 'FI', 'FR', 'DE', 'EL', 'HU', 'IE',
         'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL',
@@ -36,6 +36,6 @@ class CountryMatcher extends AbstractMatcher
      */
     public function isEuropeanUnionCountry($countryCode)
     {
-        return in_array($countryCode, $this->europeanUnionCountryCodes);
+        return in_array($countryCode, self::$europeanUnionCountryCodes, true);
     }
 }

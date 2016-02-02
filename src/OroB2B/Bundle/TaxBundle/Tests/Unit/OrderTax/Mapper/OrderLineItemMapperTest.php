@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\OrderTax\Mapper;
 
+use Symfony\Component\EventDispatcher\EventDispatcher;
+
 use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -29,6 +31,11 @@ class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
      */
     protected $addressProvider;
 
+    /**
+     * @var EventDispatcher
+     */
+    protected $eventDispatcher;
+
     protected function setUp()
     {
         $this->addressProvider = $this
@@ -36,7 +43,12 @@ class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->mapper = new OrderLineItemMapper($this->addressProvider);
+        $this->eventDispatcher = $this
+            ->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcher')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->mapper = new OrderLineItemMapper($this->eventDispatcher, $this->addressProvider);
     }
 
     protected function tearDown()

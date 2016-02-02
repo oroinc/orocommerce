@@ -31,7 +31,8 @@ class OrderMapper extends AbstractOrderMapper
             ->setClassName(ClassUtils::getClass($order))
             ->setItems($this->mapLineItems($order->getLineItems()))
             ->setDestination($this->getOrderAddress($order))
-            ->setOrigin($this->addressProvider->getOriginAddress());
+            ->setOrigin($this->addressProvider->getOriginAddress())
+            ->setContext($this->getContext($order));
 
         return $taxable;
     }

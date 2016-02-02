@@ -5,7 +5,9 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Matcher;
 use Oro\Bundle\AddressBundle\Entity\Address;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
+use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
 use OroB2B\Bundle\TaxBundle\Tests\Functional\Matcher\DataFixtures\LoadTaxJurisdictions;
 use OroB2B\Bundle\TaxBundle\Tests\Functional\Matcher\DataFixtures\LoadTaxRules;
 
@@ -50,15 +52,26 @@ class ZipCodeMatcherTest extends WebTestCase
             $address->setRegionText($regionText);
         }
 
-        $zipCodeMatcher = $this->getContainer()->get('orob2b_tax.matcher.zip_code_matcher');
-        $rules = $zipCodeMatcher->match($address);
+        /** @var ProductTaxCode $productTaxCode */
+        $productTaxCode = $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX . '.' . LoadProductTaxCodes::TAX_1);
 
-        $expectedRules = [];
-        foreach ($expectedRuleReferences as $reference) {
-            $expectedRules[] = $this->getTaxRuleByReference($reference);
+        $zipCodeMatcher = $this->getContainer()->get('orob2b_tax.matcher.zip_code_matcher');
+        /** @var TaxRule[] $rules */
+        $rules = $zipCodeMatcher->match($address, $productTaxCode->getCode());
+
+        $actualRules = [];
+        foreach ($rules as $rule) {
+            $actualRules[$rule->getId()] = $rule;
         }
 
-        $this->assertEquals($this->valueToArray($expectedRules), $this->valueToArray($rules));
+        foreach ($expectedRuleReferences as $reference) {
+            $expectedRule = $this->getTaxRuleByReference($reference);
+            $this->assertTrue(
+                array_key_exists($expectedRule->getId(), $actualRules),
+                sprintf('Can\'t find expected reference with id "%s" in actual rules', $expectedRule->getId())
+            );
+            $this->assertEquals($expectedRule, $actualRules[$expectedRule->getId()]);
+        }
     }
 
     /**

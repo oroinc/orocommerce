@@ -29,7 +29,9 @@ class CustomerAddressItemResolver extends AbstractAddressResolver
             return;
         }
 
-        $taxRules = $this->matcher->match($address);
+        $productTaxCode = $taxable->getContextValue(Taxable::PRODUCT_TAX_CODE);
+
+        $taxRules = $this->matcher->match($address, $productTaxCode);
         $taxableUnitPrice = BigDecimal::of($taxable->getPrice());
         $taxableAmount = $taxableUnitPrice->multipliedBy($taxable->getQuantity());
 

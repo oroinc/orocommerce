@@ -102,7 +102,7 @@ class LoadTaxRules extends BaseLoadTaxRules implements DependentFixtureInterface
         /** @var AccountTaxCode $accountTaxCode */
         $accountTaxCode = $this->getReference(LoadAccountTaxCodes::REFERENCE_PREFIX . '.' . LoadAccountTaxCodes::TAX_1);
 
-        /** @var productTaxCode $productTaxCode */
+        /** @var ProductTaxCode $productTaxCode */
         $productTaxCode = $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX . '.' . LoadProductTaxCodes::TAX_1);
 
         /** @var Tax $tax */

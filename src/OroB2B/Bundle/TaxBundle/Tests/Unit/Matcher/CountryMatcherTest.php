@@ -25,16 +25,17 @@ class CountryMatcherTest extends AbstractMatcherTest
      */
     public function testMatch($expected, $country, $taxRules)
     {
+        $productTaxCode = 'TAX_CODE';
         $address = (new Address())
             ->setCountry($country);
 
         $this->taxRuleRepository
             ->expects(empty($taxRules) ? $this->never() : $this->once())
-            ->method('findByCountry')
-            ->with($country)
+            ->method('findByCountryAndProductTaxCode')
+            ->with($country, $productTaxCode)
             ->willReturn($taxRules);
 
-        $this->assertEquals($expected, $this->matcher->match($address));
+        $this->assertEquals($expected, $this->matcher->match($address, $productTaxCode));
     }
 
     /**

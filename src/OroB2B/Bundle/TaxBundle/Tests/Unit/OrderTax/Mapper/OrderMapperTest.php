@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\OrderTax\Mapper;
 
+use Symfony\Component\EventDispatcher\EventDispatcher;
+
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -35,6 +37,11 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
      */
     protected $addressProvider;
 
+    /**
+     * @var EventDispatcher
+     */
+    protected $eventDispatcher;
+
     protected function setUp()
     {
         $this->orderLineItemMapper = $this
@@ -53,7 +60,12 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
                 return $this->getTaxableAddress($order);
             });
 
-        $this->mapper = new OrderMapper($this->addressProvider);
+        $this->eventDispatcher = $this
+            ->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcher')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->mapper = new OrderMapper($this->eventDispatcher, $this->addressProvider);
         $this->mapper->setOrderLineItemMapper($this->orderLineItemMapper);
     }
 

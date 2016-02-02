@@ -47,6 +47,7 @@ class RegionMatcherTest extends AbstractMatcherTest
      */
     public function testMatch($country, $region, $regionText, $countryMatcherTaxRules, $regionTaxRules, $expected)
     {
+        $productTaxCode = 'TAX_CODE';
         $address = (new Address())
             ->setCountry($country)
             ->setRegion($region)
@@ -60,11 +61,11 @@ class RegionMatcherTest extends AbstractMatcherTest
 
         $this->taxRuleRepository
             ->expects(empty($regionTaxRules) ? $this->never() : $this->once())
-            ->method('findByCountryAndRegion')
-            ->with($country, $region, $regionText)
+            ->method('findByCountryAndRegionAndProductTaxCode')
+            ->with($productTaxCode, $country, $region, $regionText)
             ->willReturn($regionTaxRules);
 
-        $this->assertEquals($expected, $this->matcher->match($address));
+        $this->assertEquals($expected, $this->matcher->match($address, $productTaxCode));
     }
 
     /**

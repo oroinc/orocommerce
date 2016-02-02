@@ -4,22 +4,15 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
-use OroB2B\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository;
-use OroB2B\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository;
-use OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction;
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
-use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes as TaxFixture;
-use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
-use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions;
+use OroB2B\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository;
 use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules;
+use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions;
 
 /**
  * @dbIsolation
  */
-class ProductTaxCodeRepositoryTest extends WebTestCase
+class TaxRuleRepositoryTest extends WebTestCase
 {
     protected function setUp()
     {
@@ -39,6 +32,7 @@ class ProductTaxCodeRepositoryTest extends WebTestCase
             $taxRule->getProductTaxCode()->getCode()
         );
 
+        $this->assertCount(1, $result);
         $this->assertEquals($taxRule->getId(), reset($result)->getId());
     }
 
@@ -49,8 +43,8 @@ class ProductTaxCodeRepositoryTest extends WebTestCase
 
         /** @var TaxRule[] $result */
         $result = $this->getRepository()->findByCountryAndRegionAndProductTaxCode(
-            $taxRule->getTaxJurisdiction()->getCountry(),
             $taxRule->getProductTaxCode()->getCode(),
+            $taxRule->getTaxJurisdiction()->getCountry(),
             $taxRule->getTaxJurisdiction()->getRegion()
         );
 
@@ -64,12 +58,13 @@ class ProductTaxCodeRepositoryTest extends WebTestCase
 
         /** @var TaxRule[] $result */
         $result = $this->getRepository()->findByZipCodeAndProductTaxCode(
+            $taxRule->getProductTaxCode()->getCode(),
             LoadTaxJurisdictions::ZIP_CODE,
             $taxRule->getTaxJurisdiction()->getCountry(),
-            $taxRule->getProductTaxCode()->getCode(),
             $taxRule->getTaxJurisdiction()->getRegion()
         );
 
+        $this->assertCount(1, $result);
         $this->assertEquals($taxRule->getId(), reset($result)->getId());
     }
 

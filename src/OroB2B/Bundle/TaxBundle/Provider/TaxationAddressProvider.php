@@ -92,12 +92,19 @@ class TaxationAddressProvider
     }
 
     /**
-     * @param ProductTaxCode|null $taxCode
+     * Check is tax code is digital in specified country
+     *
+     * @param string $countryCode
+     * @param string $taxCode
      * @return bool
      */
-    public function isDigitalProductTaxCode($taxCode)
+    public function isDigitalProductTaxCode($countryCode, $taxCode)
     {
-        return in_array($taxCode, $this->settingsProvider->getDigitalProductsTaxCodesEu()) ||
-        in_array($taxCode, $this->settingsProvider->getDigitalProductsTaxCodesUs());
+        $methodName = 'getDigitalProductsTaxCodes' . $countryCode;
+        if (!method_exists($this->settingsProvider, 'getDigitalProductsTaxCodes' . $countryCode)) {
+            return false;
+        }
+
+        return in_array($taxCode, $this->settingsProvider->{$methodName}, true);
     }
 }
