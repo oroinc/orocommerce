@@ -9,7 +9,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
-use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
@@ -35,15 +34,18 @@ abstract class AbstractAjaxProductPriceController extends Controller
     {
         $priceListId = null;
         if (!$priceListId) {
-            $priceListId = $this->getRequestHandler()->getPriceList()->getId();
+            $priceListId = $this->get('orob2b_pricing.model.frontend.price_list_request_handler')
+                ->getPriceList()
+                ->getId();
         }
 
         return new JsonResponse(
-            $this->getProductPriceProvider()->getPriceByPriceListIdAndProductIds(
-                $priceListId,
-                $request->get('product_ids', []),
-                $request->get('currency')
-            )
+            $this->get('orob2b_pricing.provider.combined_product_price')
+                ->getPriceByPriceListIdAndProductIds(
+                    $priceListId,
+                    $request->get('product_ids', []),
+                    $request->get('currency')
+                )
         );
     }
 

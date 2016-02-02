@@ -45,6 +45,17 @@ define(function(require) {
                     });
                 }, this));
             }
+            if (this.options.$account) {
+                this.options.$account.change(_.bind(function() {
+                    this.loadProductsTierPrices(this.getProductsId(), function(response) {
+                        mediator.trigger('pricing:refresh:products-tier-prices', response);
+                    });
+
+                    this.loadLineItemsMatchedPrices(this.getLineItems(), function(response) {
+                        mediator.trigger('pricing:refresh:line-items-matched-prices', response);
+                    });
+                }, this));
+            }
         },
 
         /**
@@ -65,9 +76,9 @@ define(function(require) {
                     currency: this._getCurrency()
                 };
 
-                var priceList = this._getPriceList();
-                if (priceList.length !== 0) {
-                    params = _.extend(params, {price_list_id: priceList});
+                var account = this._getAccount();
+                if (account.length !== 0) {
+                    params = _.extend(params, {account_id: account});
                 }
 
                 $.get(routing.generate(this.options.tierPricesRoute, params), callback);
@@ -128,9 +139,9 @@ define(function(require) {
                     items: items
                 };
 
-                var priceList = this._getPriceList();
-                if (priceList.length !== 0) {
-                    params = _.extend(params, {pricelist: priceList});
+                var account = this._getAccount();
+                if (account.length !== 0) {
+                    params = _.extend(params, {account_id: account});
                 }
 
                 $.ajax({
@@ -171,6 +182,14 @@ define(function(require) {
          */
         _getPriceList: function() {
             return this.options.$priceList && this.options.$priceList.length !== 0 ? this.options.$priceList.val() : '';
+        },
+
+        /**
+         * @returns {String}
+         * @private
+         */
+        _getAccount: function() {
+            return this.options.$account && this.options.$account.length !== 0 ? this.options.$account.val() : '';
         },
 
         /**

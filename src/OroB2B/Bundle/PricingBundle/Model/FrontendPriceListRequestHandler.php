@@ -139,7 +139,7 @@ class FrontendPriceListRequestHandler extends AbstractPriceListRequestHandler
             return $user->getAccount();
         } elseif ($user instanceof User) {
             $request = $this->requestStack->getCurrentRequest();
-            if ($request) {
+            if ($request && $request->get(self::ACCOUNT_ID)) {
                 return $this->registry
                     ->getManagerForClass('OroB2BAccountBundle:Account')
                     ->getRepository('OroB2BAccountBundle:Account')

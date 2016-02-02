@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Controller;
 
+use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -84,12 +85,18 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     public function getMatchingPriceAction(Request $request)
     {
         $lineItems = $request->get('items', []);
-        $priceListId = $request->get('pricelist');
-
+        $priceListId = null;
+        /** @var CombinedPriceList|null $priceList */
         $priceList = null;
+        if (!$priceListId) {
+            $priceListId = $this->get('orob2b_pricing.model.frontend.price_list_request_handler')
+                ->getPriceList()
+                ->getId();
+        }
+
         if ($priceListId) {
             $priceList = $this->getEntityReference(
-                $this->getParameter('orob2b_pricing.entity.price_list.class'),
+                $this->getParameter('orob2b_pricing.entity.combined_price_list.class'),
                 $priceListId
             );
         }
@@ -97,7 +104,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
         $productsPriceCriteria = $this->prepareProductsPriceCriteria($lineItems);
 
         /** @var Price[] $matchedPrice */
-        $matchedPrice = $this->get('orob2b_pricing.provider.product_price')
+        $matchedPrice = $this->get('orob2b_pricing.provider.combined_product_price')
             ->getMatchedPrices($productsPriceCriteria, $priceList);
 
         return new JsonResponse($this->formatMatchedPrices($matchedPrice));

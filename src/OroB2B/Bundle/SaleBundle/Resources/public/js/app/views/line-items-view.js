@@ -34,6 +34,11 @@ define(function(require) {
         $priceList: null,
 
         /**
+         * @property {jQuery}
+         */
+        $account: null,
+
+        /**
          * @inheritDoc
          */
         initialize: function(options) {
@@ -41,9 +46,11 @@ define(function(require) {
 
             this.$form = this.$el.closest('form');
             this.$priceList = this.$form.find(':input[name$="[priceList]"]');
+            this.$account = this.$form.find(':input[name$="[account]"]');
 
             this.subview('productsPricesComponent', new ProductsPricesComponent({
                 $priceList: this.$priceList,
+                $account: this.$account,
                 tierPrices: this.options.tierPrices,
                 matchedPrices: this.options.matchedPrices,
                 tierPricesRoute: this.options.tierPricesRoute,
