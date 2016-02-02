@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository;
 
-use Doctrine\ORM\Query\Expr\Join;
-
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
@@ -25,7 +23,8 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
     use BasicOperationRepositoryTrait;
 
     /**
-     * {@inheritdoc}
+     * @param InsertFromSelectQueryExecutor $insertFromSelect
+     * @param Website|null $website
      */
     public function insertByCategory(InsertFromSelectQueryExecutor $insertFromSelect, Website $website = null)
     {
@@ -79,7 +78,8 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
     }
 
     /**
-     * {@inheritdoc}
+     * @param InsertFromSelectQueryExecutor $insertFromSelect
+     * @param Website|null $website
      */
     public function insertStatic(InsertFromSelectQueryExecutor $insertFromSelect, Website $website = null)
     {
@@ -148,12 +148,10 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
             AccountGroupProductVisibility::HIDDEN => [
                 'visibility' => AccountGroupProductVisibilityResolved::VISIBILITY_HIDDEN,
                 'source' => AccountGroupProductVisibilityResolved::SOURCE_STATIC,
-                'category' => null,
             ],
             AccountGroupProductVisibility::VISIBLE => [
                 'visibility' => AccountGroupProductVisibilityResolved::VISIBILITY_VISIBLE,
                 'source' => AccountGroupProductVisibilityResolved::SOURCE_STATIC,
-                'category' => null,
             ],
         ];
 
