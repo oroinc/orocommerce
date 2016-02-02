@@ -153,7 +153,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->with([])
             ->willReturn($form);
 
-        $this->assertEquals(null, $this->handler->process($request));
+        $this->assertEquals(null, $this->handler->process($request, 'reload'));
     }
 
     public function testProcessNoProcessor()
@@ -171,7 +171,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(['products' => []])
             ->willReturn($form);
 
-        $this->assertEquals(null, $this->handler->process($request));
+        $this->assertEquals(null, $this->handler->process($request, 'reload'));
     }
 
     public function testProcessNotAllowedProcessor()
@@ -194,7 +194,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $processor->expects($this->never())
             ->method('process');
 
-        $this->assertEquals(null, $this->handler->process($request));
+        $this->assertEquals(null, $this->handler->process($request, 'reload'));
     }
 
     public function testProcessInvalidForm()
@@ -236,7 +236,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $processor->expects($this->never())
             ->method('process');
 
-        $this->assertEquals(null, $this->handler->process($request));
+        $this->assertEquals(null, $this->handler->process($request, 'reload', 'reload'));
     }
 
     public function testProcessValidDataWithoutResponse()
@@ -314,7 +314,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->with([ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products], $request)
             ->willReturn($response);
 
-        $this->assertEquals($response, $this->handler->process($request));
+        $this->assertEquals($response, $this->handler->process($request, 'reload'));
     }
 
     /**

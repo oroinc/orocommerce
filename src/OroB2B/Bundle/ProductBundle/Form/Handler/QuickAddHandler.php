@@ -76,10 +76,10 @@ class QuickAddHandler
 
     /**
      * @param Request $request
-     * @param string|null $successDefaultRoute
+     * @param string $successDefaultRoute
      * @return Response|null
      */
-    public function process(Request $request, $successDefaultRoute = null)
+    public function process(Request $request, $successDefaultRoute)
     {
         $response = null;
         if (!$request->isMethod(Request::METHOD_POST)) {
@@ -106,7 +106,6 @@ class QuickAddHandler
             );
         } elseif ($form->isValid()) {
             $products = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
-            $products = is_array($products) ? $products : [];
             $response = $processor->process(
                 [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products],
                 $request

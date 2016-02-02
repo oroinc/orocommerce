@@ -32,9 +32,8 @@ class QuickAddFormProvider implements DataProviderInterface
     /**
      * @param FormFactoryInterface $formFactory
      */
-    public function __construct(
-        FormFactoryInterface $formFactory
-    ) {
+    public function __construct(FormFactoryInterface $formFactory)
+    {
         $this->formFactory = $formFactory;
     }
 
