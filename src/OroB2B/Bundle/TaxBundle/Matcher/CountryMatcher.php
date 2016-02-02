@@ -6,6 +6,8 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
 class CountryMatcher extends AbstractMatcher
 {
+    const COUNTRY_CODE_USA = 'US';
+
     /**
      * {@inheritdoc}
      */

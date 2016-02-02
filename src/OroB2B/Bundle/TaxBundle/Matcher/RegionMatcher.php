@@ -7,6 +7,15 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 class RegionMatcher extends AbstractMatcher
 {
     /**
+     * @var array
+     */
+    protected static $unitedStatesWithNonTaxableDigitalCodes = [
+        'CA', 'DC', 'FL', 'GA', 'IA', 'IL', 'KS',
+        'MD', 'MA', 'MI', 'MN', 'NY', 'NV', 'ND',
+        'OH', 'OK', 'PA', 'RI', 'SC', 'VA', 'WV'
+    ];
+
+    /**
      * @var MatcherInterface
      */
     protected $countryMatcher;
@@ -41,5 +50,15 @@ class RegionMatcher extends AbstractMatcher
     public function setCountryMatcher(MatcherInterface $countryMatcher)
     {
         $this->countryMatcher = $countryMatcher;
+    }
+
+    /**
+     * @param AbstractAddress $address
+     * @return bool
+     */
+    public function isStateWithNonTaxableDigitals(AbstractAddress $address)
+    {
+        return (CountryMatcher::COUNTRY_CODE_USA == $address->getCountry()->getIso2Code()) &&
+            (in_array($address->getRegion()->getCode(), self::$unitedStatesWithNonTaxableDigitalCodes, true));
     }
 }
