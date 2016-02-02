@@ -44,7 +44,7 @@ class FrontendProductListModifier
         $token = $this->tokenStorage->getToken();
         /** @var AccountUser $user */
         if ($token && ($user = $token->getUser()) instanceof AccountUser) {
-            $priceList = $priceList ? $priceList : $this->priceListTreeHandler->getPriceList($user);
+            $priceList = $priceList ? $priceList : $this->priceListTreeHandler->getPriceList($user->getAccount());
 
             if ($priceList) {
                 list($rootAlias) = $queryBuilder->getRootAliases();

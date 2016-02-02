@@ -2,17 +2,21 @@
 
 namespace OroB2B\Bundle\PricingBundle\Model;
 
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\UserBundle\Entity\User;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 class FrontendPriceListRequestHandler extends AbstractPriceListRequestHandler
 {
     const PRICE_LIST_CURRENCY_KEY = 'priceCurrency';
     const SAVE_STATE_KEY = 'saveState';
+    const ACCOUNT_ID = 'account_id';
 
     /**
      * @var SessionInterface
@@ -30,21 +34,29 @@ class FrontendPriceListRequestHandler extends AbstractPriceListRequestHandler
     protected $priceListTreeHandler;
 
     /**
+     * @var ManagerRegistry
+     */
+    protected $registry;
+
+    /**
      * @param RequestStack $requestStack
      * @param SessionInterface $session
      * @param SecurityFacade $securityFacade
      * @param PriceListTreeHandler $priceListTreeHandler
+     * @param ManagerRegistry $registry
      */
     public function __construct(
         RequestStack $requestStack,
         SessionInterface $session,
         SecurityFacade $securityFacade,
-        PriceListTreeHandler $priceListTreeHandler
+        PriceListTreeHandler $priceListTreeHandler,
+        ManagerRegistry $registry
     ) {
         parent::__construct($requestStack);
         $this->session = $session;
         $this->securityFacade = $securityFacade;
         $this->priceListTreeHandler = $priceListTreeHandler;
+        $this->registry = $registry;
     }
 
     /**
@@ -52,7 +64,7 @@ class FrontendPriceListRequestHandler extends AbstractPriceListRequestHandler
      */
     public function getPriceList()
     {
-        $priceList = $this->priceListTreeHandler->getPriceList($this->getAccountUser());
+        $priceList = $this->priceListTreeHandler->getPriceList($this->getAccount());
 
         if (!$priceList) {
             throw new \RuntimeException('PriceList not found');
@@ -118,12 +130,23 @@ class FrontendPriceListRequestHandler extends AbstractPriceListRequestHandler
     }
 
     /**
-     * @return null|AccountUser
+     * @return null|Account
      */
-    protected function getAccountUser()
+    protected function getAccount()
     {
-        $accountUser = $this->securityFacade->getLoggedUser();
+        $user = $this->securityFacade->getLoggedUser();
+        if ($user instanceof AccountUser) {
+            return $user->getAccount();
+        } elseif ($user instanceof User) {
+            $request = $this->requestStack->getCurrentRequest();
+            if ($request) {
+                return $this->registry
+                    ->getManagerForClass('OroB2BAccountBundle:Account')
+                    ->getRepository('OroB2BAccountBundle:Account')
+                    ->find($request->get(self::ACCOUNT_ID));
+            }
+        }
 
-        return $accountUser instanceof AccountUser ? $accountUser : null;
+        return null;
     }
 }

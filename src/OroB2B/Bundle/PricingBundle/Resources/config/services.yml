@@ -336,6 +336,7 @@ services:
             - @session
             - @oro_security.security_facade
             - @orob2b_pricing.model.price_list_tree_handler
+            - @doctrine
 
     orob2b_pricing.model.price_list_tree_handler:
         class: %orob2b_pricing.model.price_list_tree_handler.class%

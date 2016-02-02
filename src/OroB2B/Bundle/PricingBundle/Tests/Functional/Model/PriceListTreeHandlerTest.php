@@ -71,7 +71,7 @@ class PriceListTreeHandlerTest extends WebTestCase
 
         $this->assertEquals(
             $this->getReference($expectedPriceListReference)->getName(),
-            $this->handler->getPriceList($accountUser)->getName()
+            $this->handler->getPriceList($accountUser->getAccount())->getName()
         );
     }
 
@@ -100,7 +100,7 @@ class PriceListTreeHandlerTest extends WebTestCase
 
         $this->assertEquals(
             $this->getReference($expectedPriceListReference)->getName(),
-            $this->handler->getPriceList($accountUser)->getName()
+            $this->handler->getPriceList($accountUser->getAccount())->getName()
         );
     }
 
@@ -116,6 +116,7 @@ class PriceListTreeHandlerTest extends WebTestCase
             'get PriceList from config' => ['account.level_1.2.1', '1t_2t_3t'],
         ];
     }
+
     /**
      * @return array
      */

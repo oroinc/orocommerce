@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Model;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -9,6 +11,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\AbstractUser;
 
+use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountRepository;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
@@ -61,11 +64,30 @@ class FrontendPriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
         $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
 
+        /** @var AccountRepository|\PHPUnit_Framework_MockObject_MockObject $repo */
+        $repo = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Repository\AccountRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repo->expects($this->once())->method('find')->willReturn(new Account());
+        $manager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $manager->expects($this->once())->method('getRepository')->willReturn($repo);
+        /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry */
+        $registry = $this->getMockBuilder('Symfony\Bridge\Doctrine\ManagerRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with('OroB2BAccountBundle:Account')
+            ->willReturn($manager);
+
         $this->handler = new FrontendPriceListRequestHandler(
             $requestStack,
             $this->session,
             $this->securityFacade,
-            $this->priceListTreeHandler
+            $this->priceListTreeHandler,
+            $registry
         );
     }
 

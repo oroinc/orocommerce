@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
@@ -47,31 +48,28 @@ class PriceListTreeHandler
     }
 
     /**
-     * @param AccountUser|null $accountUser
+     * @param Account|null $account
      * @return BasePriceList
      */
-    public function getPriceList(AccountUser $accountUser = null)
+    public function getPriceList(Account $account = null)
     {
         $website = $this->websiteManager->getCurrentWebsite();
-        if ($accountUser) {
-            $account = $accountUser->getAccount();
 
-            if ($account) {
-                $priceList = $this->getPriceListRepository()->getPriceListByAccount($account, $website);
+        if ($account) {
+            $priceList = $this->getPriceListRepository()->getPriceListByAccount($account, $website);
+            if ($priceList) {
+                return $priceList;
+            }
+            if ($account->getGroup()) {
+                $priceList = $this->getPriceListRepository()
+                    ->getPriceListByAccountGroup($account->getGroup(), $website);
                 if ($priceList) {
                     return $priceList;
-                }
-                if ($account->getGroup()) {
-                    $priceList = $this->getPriceListRepository()
-                        ->getPriceListByAccountGroup($account->getGroup(), $website);
-                    if ($priceList) {
-                        return $priceList;
-                    }
                 }
             }
         }
 
-        $priceList =  $priceList = $this->getPriceListRepository()->getPriceListByWebsite($website);
+        $priceList = $priceList = $this->getPriceListRepository()->getPriceListByWebsite($website);
         if (!$priceList) {
             $priceList = $this->getPriceListFromConfig();
         }

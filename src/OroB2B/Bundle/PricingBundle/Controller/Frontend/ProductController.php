@@ -40,7 +40,7 @@ class ProductController extends Controller
         }
 
         $priceList = $this->get('orob2b_pricing.model.price_list_tree_handler')
-            ->getPriceList($accountUser);
+            ->getPriceList($accountUser->getAccount());
 
         $currenciesList = null;
         if ($priceList) {

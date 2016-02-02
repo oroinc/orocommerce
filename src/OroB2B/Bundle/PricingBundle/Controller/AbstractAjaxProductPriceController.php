@@ -34,9 +34,6 @@ abstract class AbstractAjaxProductPriceController extends Controller
     public function getProductPricesByPriceListAction(Request $request)
     {
         $priceListId = null;
-        if ($this->getUser() instanceof User) {
-            $priceListId = $request->get('price_list_id');
-        }
         if (!$priceListId) {
             $priceListId = $this->getRequestHandler()->getPriceList()->getId();
         }
