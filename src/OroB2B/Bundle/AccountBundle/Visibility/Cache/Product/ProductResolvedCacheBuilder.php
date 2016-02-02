@@ -113,27 +113,12 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
     public function buildCache(Website $website = null)
     {
         $manager = $this->getManager();
-        $repository = $this->getRepository();
-
         $manager->beginTransaction();
         try {
+            $repository = $this->getRepository();
             $repository->clearTable($website);
-            $repository->insertFromBaseTable($this->insertFromSelectQueryExecutor, $website);
-
-            $visibilities = [
-                BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
-                BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
-                BaseProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
-            ];
-            foreach ($visibilities as $visibility) {
-                $repository->insertByCategory(
-                    $this->insertFromSelectQueryExecutor,
-                    $visibility,
-                    $this->getCategoryIdsByVisibility($visibility),
-                    $website
-                );
-            }
-
+            $repository->insertStatic($this->insertFromSelectQueryExecutor, $website);
+            $repository->insertByCategory($this->insertFromSelectQueryExecutor, $website);
             $manager->commit();
         } catch (\Exception $exception) {
             $manager->rollback();

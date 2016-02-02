@@ -15,54 +15,6 @@ class AccountGroupProductVisibilityRepository extends EntityRepository
     const BATCH_SIZE = 1000;
 
     /**
-     * Return categories list of categories of products which has "category" fallback in AccountGroupProductVisibility
-     *
-     * @return integer[]
-     */
-    public function getCategoryIdsByAccountGroupProductVisibility()
-    {
-        $result = $this->getEntityManager()
-            ->getRepository('OroB2BCatalogBundle:Category')
-            ->createQueryBuilder('category')
-            ->select('category.id')
-            ->distinct()
-            ->innerJoin('category.products', 'product')
-            ->innerJoin(
-                'OroB2BAccountBundle:Visibility\AccountGroupProductVisibility',
-                'agpv',
-                Join::WITH,
-                'agpv.product = product AND agpv.visibility = :category'
-            )
-            ->setParameter('category', AccountGroupProductVisibility::CATEGORY)
-            ->getQuery()
-            ->getScalarResult();
-
-        return array_map('current', $result);
-    }
-
-    /**
-     * @return AccountGroup[]
-     */
-    public function getAccountGroupsWithCategoryVisibiliy()
-    {
-        return $this->getEntityManager()
-            ->getRepository('OroB2BAccountBundle:AccountGroup')
-            ->createQueryBuilder('accountGroup')
-            ->select('partial accountGroup.{id}')
-            ->distinct()
-            ->innerJoin(
-                'OroB2BAccountBundle:Visibility\AccountGroupProductVisibility',
-                'agpv',
-                Join::WITH,
-                'agpv.accountGroup = accountGroup AND agpv.visibility = :category'
-            )
-            ->where('agpv.visibility = :category')
-            ->setParameter('category', AccountGroupProductVisibility::CATEGORY)
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
      * Delete from AccountGroupProductVisibility visibilities with fallback to 'category' when category is absent
      */
     public function setToDefaultWithoutCategory()

@@ -86,7 +86,7 @@ class ProductRepositoryTest extends WebTestCase
      */
     public function testInsertFromBaseTable()
     {
-        $this->repository->insertFromBaseTable($this->getInsertFromSelectExecutor());
+        $this->repository->insertStatic($this->getInsertFromSelectExecutor());
         $actual = $this->getActualArray();
 
         $this->assertCount(3, $actual);
@@ -127,7 +127,7 @@ class ProductRepositoryTest extends WebTestCase
      */
     public function testInsertFromBaseTableByWebsite()
     {
-        $this->repository->insertFromBaseTable($this->getInsertFromSelectExecutor(), $this->website);
+        $this->repository->insertStatic($this->getInsertFromSelectExecutor(), $this->website);
         $actual = $this->getActualArray();
 
         $this->assertCount(16, $actual);
