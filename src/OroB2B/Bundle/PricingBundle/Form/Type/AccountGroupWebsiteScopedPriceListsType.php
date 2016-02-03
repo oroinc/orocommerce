@@ -71,7 +71,6 @@ class AccountGroupWebsiteScopedPriceListsType extends AbstractWebsiteScopedPrice
     /**
      * {@inheritDoc}
      */
-
     protected function getDefaultFallback()
     {
         return PriceListAccountGroupFallback::WEBSITE;

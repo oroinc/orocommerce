@@ -17,15 +17,22 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 class AccountType extends AbstractType
 {
     const NAME = 'orob2b_account_type';
+    const GROUP_FIELD = 'group';
 
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $addressClass;
 
-    /** @var   EventDispatcherInterface */
+    /**
+     * @var EventDispatcherInterface
+     */
     protected $eventDispatcher;
 
-    /** @var  Account|null */
-    protected $account;
+    /**
+     * @var array
+     */
+    protected $modelChangeSet = [];
 
     /**
      * @param EventDispatcherInterface $eventDispatcher
@@ -43,7 +50,7 @@ class AccountType extends AbstractType
         $builder
             ->add('name', 'text', ['label' => 'orob2b.account.name.label'])
             ->add(
-                'group',
+                self::GROUP_FIELD,
                 AccountGroupSelectType::NAME,
                 [
                     'label' => 'orob2b.account.group.label',
@@ -91,7 +98,7 @@ class AccountType extends AbstractType
                 ]
             )
             ->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmit'])
-            ->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'postSubmit']);
+            ->addEventListener(FormEvents::POST_SUBMIT, [$this, 'postSubmit']);
     }
 
     /**
@@ -99,12 +106,25 @@ class AccountType extends AbstractType
      */
     public function preSubmit(FormEvent $event)
     {
-        $newGroupId = (int)$event->getData()['group'];
+        $this->modelChangeSet = [];
+
         /** @var Account $account */
         $account = $event->getForm()->getData();
-        if ($account instanceof Account && $account->getGroup() && $newGroupId !== $account->getGroup()->getId()) {
-            $this->account = $account;
+        if ($account instanceof Account
+            && $this->isAccountGroupChanged($account, (int)$event->getData()[self::GROUP_FIELD])
+        ) {
+            $this->modelChangeSet[] = self::GROUP_FIELD;
         }
+    }
+
+    /**
+     * @param Account $account
+     * @param int $newGroupId
+     * @return bool
+     */
+    private function isAccountGroupChanged(Account $account, $newGroupId)
+    {
+        return $account->getGroup() && $newGroupId !== $account->getGroup()->getId();
     }
 
     /**
@@ -112,12 +132,16 @@ class AccountType extends AbstractType
      */
     public function postSubmit(FormEvent $event)
     {
-        if ($this->account) {
+        /** @var Account $account */
+        $account = $event->getForm()->getData();
+        if ($account instanceof Account
+            && in_array(self::GROUP_FIELD, $this->modelChangeSet, true)
+            && $event->getForm()->isValid()
+        ) {
             $this->eventDispatcher->dispatch(
                 AccountEvent::ON_ACCOUNT_GROUP_CHANGE,
-                new AccountEvent($this->account)
+                new AccountEvent($account)
             );
-            $this->account = null;
         }
     }
 

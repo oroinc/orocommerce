@@ -87,7 +87,7 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
 
     /**
      * @param AccountGroup $accountGroup
-     * @return array
+     * @return int[]
      */
     public function getWebsiteIdsByAccountGroup(AccountGroup $accountGroup)
     {

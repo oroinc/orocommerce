@@ -29,7 +29,7 @@ class ChangedPriceListCollectionRepository extends EntityRepository
      */
     public function insertAccountWebsitePairsByAccountGroup(
         AccountGroup $accountGroup,
-        $websiteIds,
+        array $websiteIds,
         InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
     ) {
         $queryBuilder = $this->getEntityManager()

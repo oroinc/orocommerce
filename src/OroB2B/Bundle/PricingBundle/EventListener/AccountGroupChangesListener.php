@@ -19,16 +19,24 @@ use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange;
 
 class AccountGroupChangesListener
 {
-    /** @var ManagerRegistry */
+    /**
+     * @var ManagerRegistry
+     */
     protected $registry;
 
-    /** @var  EventDispatcherInterface */
+    /**
+     * @var  EventDispatcherInterface
+     */
     protected $eventDispatcher;
 
-    /** @var   PriceListToAccountRepository */
+    /**
+     * @var   PriceListToAccountRepository
+     */
     protected $priceListToAccountRepository;
 
-    /** @var  InsertFromSelectQueryExecutor $executor */
+    /**
+     * @var  InsertFromSelectQueryExecutor $executor
+     */
     protected $insertFromSelectQueryExecutor;
 
     /**
@@ -64,7 +72,6 @@ class AccountGroupChangesListener
     public function onGroupRemove(AccountGroupEvent $event)
     {
         $accountGroup = $event->getAccountGroup();
-        /** @var integer[] $websiteIds */
         $websiteIds = $this->registry
             ->getManagerForClass('OroB2BPricingBundle:PriceListToAccountGroup')
             ->getRepository('OroB2BPricingBundle:PriceListToAccountGroup')

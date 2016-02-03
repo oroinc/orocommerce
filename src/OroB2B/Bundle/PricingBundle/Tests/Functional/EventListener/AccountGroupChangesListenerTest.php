@@ -40,8 +40,7 @@ class AccountGroupChangesListenerTest extends WebTestCase
     {
         $this->load(false);
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $actualChanges = $em->getRepository('OroB2BPricingBundle:ChangedPriceListCollection')->findAll();
-        $this->assertCount(0, $actualChanges);
+        $previousChanges = $em->getRepository('OroB2BPricingBundle:ChangedPriceListCollection')->findAll();
         /** @var Account $account */
         $account = $this->getReference($accountReference);
         /** @var AccountGroup $group */
@@ -51,13 +50,13 @@ class AccountGroupChangesListenerTest extends WebTestCase
             'GET',
             $this->getUrl('orob2b_account_update', ['id' => $account->getId()])
         );
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
         $form = $crawler->selectButton('Save')->form();
         $form->setValues(['orob2b_account_type[group]' => $group->getId()]);
         $this->client->submit($form);
         $changes = $em->getRepository('OroB2BPricingBundle:ChangedPriceListCollection')->findAll();
-        $this->assertEquals(count($expectedChanges), count($changes));
+        $expectedCount = count($expectedChanges) + count($previousChanges);
+        $this->assertCount($expectedCount, $changes);
         $this->checkChanges($expectedChanges, $changes);
     }
 
@@ -117,8 +116,7 @@ class AccountGroupChangesListenerTest extends WebTestCase
         /** @var AccountGroup $group */
         $group = $this->getReference($deletedGroupReference);
 
-        $actualChanges = $em->getRepository('OroB2BPricingBundle:ChangedPriceListCollection')->findAll();
-        $this->assertCount(0, $actualChanges);
+        $previousChanges = $em->getRepository('OroB2BPricingBundle:ChangedPriceListCollection')->findAll();
         $this->client->request(
             'DELETE',
             $this->getUrl('orob2b_api_account_delete_account_group', ['id' => $group->getId()])
@@ -127,7 +125,8 @@ class AccountGroupChangesListenerTest extends WebTestCase
 
         $this->assertEmptyResponseStatusCodeEquals($result, 204);
         $changes = $em->getRepository('OroB2BPricingBundle:ChangedPriceListCollection')->findAll();
-        $this->assertEquals(count($expectedChanges), count($changes));
+        $expectedChangesCount = count($expectedChanges) + count($previousChanges);
+        $this->assertCount($expectedChangesCount, $changes);
         $this->checkChanges($expectedChanges, $changes);
     }
 
@@ -176,8 +175,8 @@ class AccountGroupChangesListenerTest extends WebTestCase
             $exist = false;
             foreach ($actual as $actualChanges) {
                 $this->assertNull($actualChanges->getAccountGroup());
-                if ($actualChanges->getAccount()->getId() == $account->getId()
-                    && $actualChanges->getWebsite()->getId() == $website->getId()
+                if ($actualChanges->getAccount() && $actualChanges->getAccount()->getId() === $account->getId()
+                    && $actualChanges->getWebsite()->getId() === $website->getId()
                 ) {
                     $exist = true;
                     break;

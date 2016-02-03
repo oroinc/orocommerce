@@ -22,19 +22,29 @@ use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeS
 
 class AccountTypeTest extends FormIntegrationTestCase
 {
-    /** @var AccountType */
+    /**
+     * @var AccountType
+     */
     protected $formType;
 
-    /** @var EntityManager */
+    /**
+     * @var EntityManager
+     */
     protected $entityManager;
 
-    /** @var AccountAddress[] */
+    /**
+     * @var AccountAddress[]
+     */
     protected static $addresses;
 
-    /** @var User[] */
+    /**
+     * @var User[]
+     */
     protected static $users;
 
-    /** @var  EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var  EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
     protected $eventDispatcher;
 
 

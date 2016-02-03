@@ -7,10 +7,14 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountWebsiteDTO
 {
-    /** @var  Account */
+    /**
+     * @var  Account
+     */
     protected $account;
 
-    /** @var  Website */
+    /**
+     * @var  Website
+     */
     protected $website;
 
     /**
