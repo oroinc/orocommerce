@@ -1,7 +1,6 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 {% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
 {% import 'OroEmailBundle::actions.html.twig' as EmailActions %}
-{% import 'OroB2BFrontendBundle::macros.html.twig' as Frontend %}
 
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
@@ -14,9 +13,13 @@
             {{ UI.renderProperty('orob2b.frontend.rfp.request.role.label'|trans, entity.role|default('N/A'|trans)) }}
             {{ UI.renderProperty('orob2b.frontend.rfp.request.po_number.label'|trans, entity.poNumber|default('N/A'|trans)) }}
             {{ UI.renderProperty('orob2b.frontend.rfp.request.ship_until.label'|trans, entity.shipUntil|oro_format_date|default('N/A'|trans)) }}
-            {{ Frontend.renderAccountUserProperty('orob2b.frontend.rfp.request.account_user.label'|trans, entity.accountUser) }}
+            {% if is_granted_view_account_user(entity) and entity.accountUser %}
+                {{ UI.renderHtmlProperty('orob2b.frontend.rfp.request.account_user.label'|trans, UI.entityViewLink(entity.accountUser, entity.accountUser.fullName, 'orob2b_account_frontend_account_user_view')) }}
+            {% endif %}
             {{ UI.renderProperty('orob2b.frontend.rfp.request.status.label'|trans, entity.status.label) }}
-            {{ Frontend.renderAccountUsersProperty('orob2b.frontend.rfp.request.assigned_account_users.label'|trans, entity.assignedAccountUsers) }}
+            {% if entity.assignedAccountUsers | length %}
+                {{ UI.renderHtmlProperty('orob2b.frontend.rfp.request.assigned_account_users.label'|trans, UI.entityViewLinks(entity.assignedAccountUsers, 'fullName', 'orob2b_account_frontend_account_user_view')) }}
+            {% endif %}
         </div>
         <div class="responsive-block">
             {{ entityConfig.renderDynamicFields(entity) }}
