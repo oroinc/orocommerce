@@ -32,7 +32,6 @@ parameters:
     orob2b_product.component_processor.registry.class: OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry
     orob2b_product.component_processor.data_storage_aware.processor.class: OroB2B\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor
     orob2b_product.form_handler.quick_add.class: OroB2B\Bundle\ProductBundle\Form\Handler\QuickAddHandler
-    orob2b_product.form_handler.quick_add_import.class: OroB2B\Bundle\ProductBundle\Form\Handler\QuickAddImportHandler
     orob2b_product.product.manager.class: OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager
 
     orob2b_product.event_listener.product_grid_widget.class: OroB2B\Bundle\ProductBundle\EventListener\ProductGridWidgetRenderEventListener
@@ -41,8 +40,6 @@ parameters:
     orob2b_product.menu.frontend.quick_add.class: OroB2B\Bundle\ProductBundle\Menu\Frontend\QuickAddMenuBuilder
 
     orob2b_product.autocomplete.product_visibility_limited.search_handler.class: OroB2B\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler
-
-    orob2b_product.validator.quick_add_row_collection.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\QuickAddRowCollectionValidator
 
 services:
     orob2b_product.product.manager.api:
@@ -239,13 +236,6 @@ services:
             - @oro_entity_config.config_model_manager
         tags:
             - { name: kernel.event_listener, event: console.command, name: onConsoleCommand }
-
-    orob2b_product.form_handler.quick_add_import:
-        class: %orob2b_product.form_handler.quick_add_import.class%
-        arguments:
-            - @translator
-            - @router
-            - @orob2b_product.component_processor.registry
 
     orob2b_product.model.product_visibility_query_builder_modifier:
         class: %orob2b_product.model.product_visibility_query_builder_modifier.class%
