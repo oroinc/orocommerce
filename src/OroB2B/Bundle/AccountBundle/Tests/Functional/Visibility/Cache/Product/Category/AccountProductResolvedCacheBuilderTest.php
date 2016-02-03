@@ -13,6 +13,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\AccountProductResolvedCacheBuilder;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
@@ -21,6 +22,8 @@ use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
  */
 class AccountProductResolvedCacheBuilderTest extends WebTestCase
 {
+    const ROOT = 'root';
+
     /** @var Registry */
     protected $registry;
     
@@ -30,18 +33,23 @@ class AccountProductResolvedCacheBuilderTest extends WebTestCase
     /** @var Account */
     protected $account;
 
+    /** @var AccountProductResolvedCacheBuilder */
+    protected $builder;
+
     protected function setUp()
     {
         $this->initClient();
 
         $this->loadFixtures([
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-            'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
+            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
         ]);
 
         $this->registry = $this->client->getContainer()->get('doctrine');
         $this->category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
         $this->account = $this->getReference('account.level_1');
+
+        $this->builder = $this->getContainer()
+            ->get('orob2b_account.visibility.cache.product.category.account_product_resolved_cache_builder');
     }
     
     public function tearDown()
@@ -99,7 +107,7 @@ class AccountProductResolvedCacheBuilderTest extends WebTestCase
         $this->assertEquals(BaseCategoryVisibilityResolved::SOURCE_STATIC, $visibilityResolved['source']);
         $this->assertEquals($this->category->getId(), $visibilityResolved['category_id']);
         $this->assertEquals(
-            BaseCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+            BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
             $visibilityResolved['visibility']
         );
     }
@@ -142,6 +150,316 @@ class AccountProductResolvedCacheBuilderTest extends WebTestCase
         $em->flush();
 
         $this->assertNull($this->getVisibilityResolved());
+    }
+
+    /**
+     * @dataProvider buildCacheDataProvider
+     * @param array $expectedVisibilities
+     */
+    public function testBuildCache(array $expectedVisibilities)
+    {
+        $expectedVisibilities = $this->replaceReferencesWithIds($expectedVisibilities);
+        usort($expectedVisibilities, [$this, 'sortByCategoryAndAccount']);
+
+        $this->builder->buildCache();
+
+        $actualVisibilities = $this->getResolvedVisibilities();
+        usort($actualVisibilities, [$this, 'sortByCategoryAndAccount']);
+
+        $this->assertEquals($expectedVisibilities, $actualVisibilities);
+    }
+
+    /**
+     * @return array
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    public function buildCacheDataProvider()
+    {
+        return [
+            [
+                'expectedVisibilities' => [
+                    [
+                        'category' => 'category_1',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'account' => 'account.level_1'
+                    ],
+                    [
+                        'category' => 'category_1_5_6',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_STATIC,
+                        'account' => 'account.level_1'
+                    ],
+                    [
+                        'category' => 'category_1_5_6_7',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_STATIC,
+                        'account' => 'account.level_1'
+                    ],
+                    [
+                        'category' => 'category_1',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_STATIC,
+                        'account' => 'account.level_1.1'
+                    ],
+                    [
+                        'category' => 'category_1_2',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'account' => 'account.level_1.1'
+                    ],
+                    [
+                        'category' => 'category_1_2_3',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'account' => 'account.level_1.1'
+                    ],
+                    [
+                        'category' => 'category_1_2_3_4',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'account' => 'account.level_1.1'
+                    ],
+                    [
+                        'category' => 'category_1_5',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_STATIC,
+                        'account' => 'account.level_1.1'
+                    ],
+                    [
+                        'category' => 'category_1_5_6',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_STATIC,
+                        'account' => 'account.level_1.1'
+                    ],
+                    [
+                        'category' => 'category_1_5_6_7',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_STATIC,
+                        'account' => 'account.level_1.1'
+                    ],
+                    [
+                        'category' => 'category_1',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'account' => 'account.level_1.2'
+                    ],
+                    [
+                        'category' => 'category_1_2',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'account' => 'account.level_1.2'
+                    ],
+                    [
+                        'category' => 'category_1_5',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_STATIC,
+                        'account' => 'account.level_1.2'
+                    ],
+                    [
+                        'category' => 'category_1',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_STATIC,
+                        'account' => 'account.level_1.2.1'
+                    ],
+                    [
+                        'category' => 'category_1_2',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'account' => 'account.level_1.2.1'
+                    ],
+                    [
+                        'category' => 'category_1_2_3',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'account' => 'account.level_1.2.1'
+                    ],
+                    [
+                        'category' => 'category_1_2_3_4',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'account' => 'account.level_1.2.1'
+                    ],
+                    [
+                        'category' => 'category_1_5_6_7',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_STATIC,
+                        'account' => 'account.level_1.2.1'
+                    ],
+                    [
+                        'category' => 'category_1_5',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'account' => 'account.level_1.2.1.1'
+                    ],
+                    [
+                        'category' => 'category_1_5_6',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'account' => 'account.level_1.2.1.1'
+                    ],
+                    [
+                        'category' => 'category_1_5_6_7',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'account' => 'account.level_1.2.1.1'
+                    ],
+                    [
+                        'category' => 'category_1_2',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_STATIC,
+                        'account' => 'account.level_1.3.1'
+                    ],
+                    [
+                        'category' => 'category_1_5_6',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_STATIC,
+                        'account' => 'account.level_1.3.1'
+                    ],
+                    [
+                        'category' => 'category_1_5_6_7',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_STATIC,
+                        'account' => 'account.level_1.3.1'
+                    ],
+                    [
+                        'category' => 'category_1',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_STATIC,
+                        'account' => 'account.level_1.3.1.1'
+                    ],
+                    [
+                        'category' => 'category_1_2',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_STATIC,
+                        'account' => 'account.level_1.3.1.1'
+                    ],
+                    [
+                        'category' => 'category_1_2_3',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'account' => 'account.level_1.3.1.1'
+                    ],
+                    [
+                        'category' => 'category_1_2_3_4',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'account' => 'account.level_1.3.1.1'
+                    ],
+                    [
+                        'category' => 'category_1_5',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'account' => 'account.level_1.3.1.1'
+                    ],
+                    [
+                        'category' => 'category_1_5_6',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'account' => 'account.level_1.3.1.1'
+                    ],
+                    [
+                        'category' => 'category_1',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_STATIC,
+                        'account' => 'account.level_1.4'
+                    ],
+                    [
+                        'category' => 'category_1_2',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_STATIC,
+                        'account' => 'account.level_1.4'
+                    ],
+                    [
+                        'category' => 'category_1_2_3_4',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_STATIC,
+                        'account' => 'account.level_1.4'
+                    ],
+                    [
+                        'category' => 'category_1_5',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_STATIC,
+                        'account' => 'account.level_1.4'
+                    ],
+                    [
+                        'category' => 'category_1_5_6_7',
+                        'visibility' => AccountCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                        'source' => AccountCategoryVisibilityResolved::SOURCE_STATIC,
+                        'account' => 'account.level_1.4'
+                    ],
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * @param array $a
+     * @param array $b
+     * @return int
+     */
+    protected function sortByCategoryAndAccount(array $a, array $b)
+    {
+        if ($a['category'] == $b['category']) {
+            return $a['account'] > $b['account'] ? 1 : -1;
+        }
+
+        return $a['category'] > $b['category'] ? 1 : -1;
+    }
+
+    /**
+     * @param array $visibilities
+     * @return array
+     */
+    protected function replaceReferencesWithIds(array $visibilities)
+    {
+        $rootCategory = $this->getRootCategory();
+        foreach ($visibilities as $key => $row) {
+            $category = $row['category'];
+            /** @var Category $category */
+            if ($category === self::ROOT) {
+                $category = $rootCategory;
+            } else {
+                $category = $this->getReference($category);
+            }
+
+            $visibilities[$key]['category'] = $category->getId();
+
+            /** @var Account $category */
+            $account = $this->getReference($row['account']);
+            $visibilities[$key]['account'] = $account->getId();
+        }
+        return $visibilities;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getResolvedVisibilities()
+    {
+        return $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->createQueryBuilder('entity')
+            ->select(
+                'IDENTITY(entity.category) as category',
+                'IDENTITY(entity.account) as account',
+                'entity.visibility',
+                'entity.source'
+            )
+            ->getQuery()
+            ->getArrayResult();
+    }
+
+    /**
+     * @return Category
+     */
+    protected function getRootCategory()
+    {
+        return $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BCatalogBundle:Category')
+            ->getRepository('OroB2BCatalogBundle:Category')
+            ->getMasterCatalogRoot();
     }
 
     /**

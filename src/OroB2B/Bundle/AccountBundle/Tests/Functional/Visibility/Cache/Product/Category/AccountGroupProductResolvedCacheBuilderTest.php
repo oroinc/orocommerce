@@ -34,9 +34,7 @@ class AccountGroupProductResolvedCacheBuilderTest extends WebTestCase
     /** @var AccountGroup */
     protected $accountGroup;
 
-    /**
-     * @var AccountGroupProductResolvedCacheBuilder
-     */
+    /** @var AccountGroupProductResolvedCacheBuilder */
     protected $builder;
 
     protected function setUp()
@@ -52,7 +50,7 @@ class AccountGroupProductResolvedCacheBuilderTest extends WebTestCase
         $this->accountGroup = $this->getReference('account_group.group3');
 
         $this->builder = $this->getContainer()
-                ->get('orob2b_account.visibility.cache.product.category.account_group_product_resolved_cache_builder');
+            ->get('orob2b_account.visibility.cache.product.category.account_group_product_resolved_cache_builder');
     }
     
     public function tearDown()
