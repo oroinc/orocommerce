@@ -45,11 +45,9 @@ define(function(require) {
             this.options = $.extend(true, {}, this.options, options || {});
 
             this.$form = this.$el.closest('form');
-            this.$priceList = this.$form.find(':input[name$="[priceList]"]');
             this.$account = this.$form.find(':input[name$="[account]"]');
 
             this.subview('productsPricesComponent', new ProductsPricesComponent({
-                $priceList: this.$priceList,
                 $account: this.$account,
                 tierPrices: this.options.tierPrices,
                 matchedPrices: this.options.matchedPrices,

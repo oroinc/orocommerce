@@ -49,14 +49,6 @@ class QuoteType extends AbstractType
                 'label'     => 'orob2b.sale.quote.account.label',
                 'required'  => false,
             ])
-            ->add(
-                'priceList',
-                PriceListSelectType::NAME,
-                [
-                    'required' => false,
-                    'label' => 'orob2b.sale.quote.price_list.label',
-                ]
-            )
             ->add('validUntil', OroDateTimeType::NAME, [
                 'label'     => 'orob2b.sale.quote.valid_until.label',
                 'required'  => false,

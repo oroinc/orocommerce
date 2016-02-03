@@ -79,14 +79,6 @@ class OrderType extends AbstractType
             ->add('shipUntil', OroDateType::NAME, ['required' => false, 'label' => 'orob2b.order.ship_until.label'])
             ->add('customerNotes', 'textarea', ['required' => false, 'label' => 'orob2b.order.customer_notes.label'])
             ->add(
-                'priceList',
-                PriceListSelectType::NAME,
-                [
-                    'required' => false,
-                    'label' => 'orob2b.order.price_list.label',
-                ]
-            )
-            ->add(
                 'currency',
                 'hidden'
             )
