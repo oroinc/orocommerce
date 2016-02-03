@@ -120,40 +120,6 @@ class AjaxProductPriceControllerTest extends WebTestCase
     }
 
     /**
-     * @return array
-     */
-    public function getProductPricesByPriceListActionDataProvider()
-    {
-        return [
-            'without currency' => [
-                'product' => 'product.1',
-                'priceList' => 'price_list_1',
-                'expected' => [
-                    'bottle' => [
-                        ['price' => 12.2, 'currency' => 'EUR', 'qty' => 1],
-                        ['price' => 12.2, 'currency' => 'EUR', 'qty' => 11],
-                    ],
-                    'liter' => [
-                        ['price' => 10, 'currency' => 'USD', 'qty' => 1],
-                        ['price' => 12.2, 'currency' => 'USD', 'qty' => 10],
-                    ]
-                ],
-            ],
-            'with currency' => [
-                'product' => 'product.1',
-                'priceList' => 'price_list_1',
-                'expected' => [
-                    'liter' => [
-                        ['price' => 10.0000, 'currency' => 'USD', 'qty' => 1],
-                        ['price' => 12.2000, 'currency' => 'USD', 'qty' => 10],
-                    ]
-                ],
-                'currency' => 'USD'
-            ]
-        ];
-    }
-
-    /**
      * @param Form $form
      */
     protected function assertSaved(Form $form)
