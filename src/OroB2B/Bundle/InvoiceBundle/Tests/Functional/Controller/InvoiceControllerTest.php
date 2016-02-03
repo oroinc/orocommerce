@@ -169,7 +169,7 @@ class InvoiceControllerTest extends WebTestCase
                     'currency' => 'USD',
                 ],
                 'priceType' => PriceTypeAwareInterface::PRICE_TYPE_UNIT,
-                'sortOrder' => 1
+                'sortOrder' => '1'
             ],
             [
                 'freeFormProduct' => 'Free form product',
@@ -180,7 +180,7 @@ class InvoiceControllerTest extends WebTestCase
                     'currency' => 'USD',
                 ],
                 'priceType' => PriceTypeAwareInterface::PRICE_TYPE_BUNDLED,
-                'sortOrder' => 2
+                'sortOrder' => '2'
             ],
         ];
         $submittedData = [
@@ -314,7 +314,7 @@ class InvoiceControllerTest extends WebTestCase
                     ->html(),
                 'sortOrder' => $crawler
                     ->filter('input[name="orob2b_invoice_type[lineItems][' . $i . '][sortOrder]"]')
-                    ->html(),
+                    ->extract('value')[0]
             ];
         }
 

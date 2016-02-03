@@ -50,6 +50,7 @@ define(function (require) {
             mediator.on('update:currency', _.bind(this._setPrototypeCurrency, this));
             this.initLayout();
             this.options.nextSortOrder = this._fetchLastSortOrder() + 1;
+            this._reindexLineItems();
         },
 
         _fetchLastSortOrder: function () {
@@ -60,7 +61,7 @@ define(function (require) {
             var i = 1;
             this.$el.find(this.options.selectors.lineItem).each(_.bind(function (index, element) {
                 $(element).find(this.options.selectors.lineItemIndex).text(i);
-                if (!(e.type == 'content:remove' && element === e.target)) {
+                if (!e || !(e.type == 'content:remove' && element === e.target)) {
                     i++;
                 }
             }, this))
