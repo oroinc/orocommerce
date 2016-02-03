@@ -13,7 +13,7 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            $priceList: null,
+            $account: null,
             $currency: null,
             tierPrices: null,
             tierPricesRoute: '',
@@ -34,17 +34,6 @@ define(function(require) {
             mediator.on('pricing:get:line-items-matched-prices', this.getLineItemsMatchedPrices, this);
             mediator.on('pricing:load:line-items-matched-prices', this.loadLineItemsMatchedPrices, this);
 
-            if (this.options.$priceList) {
-                this.options.$priceList.change(_.bind(function() {
-                    this.loadProductsTierPrices(this.getProductsId(), function(response) {
-                        mediator.trigger('pricing:refresh:products-tier-prices', response);
-                    });
-
-                    this.loadLineItemsMatchedPrices(this.getLineItems(), function(response) {
-                        mediator.trigger('pricing:refresh:line-items-matched-prices', response);
-                    });
-                }, this));
-            }
             if (this.options.$account) {
                 this.options.$account.change(_.bind(function() {
                     this.loadProductsTierPrices(this.getProductsId(), function(response) {

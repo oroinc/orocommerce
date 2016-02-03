@@ -35,21 +35,6 @@ class AjaxCombinedProductPriceControllerTest extends AbstractAjaxProductPriceCon
         );
     }
 
-    protected function assertSubmitError($form, $message)
-    {
-        $this->client->followRedirects(true);
-        $crawler = $this->client->submit($form);
-
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $html = $crawler->html();
-
-        $this->assertRegExp('/"savedId":\s*null/i', $html);
-        $error = $this->getContainer()->get('translator')
-            ->trans($message, [], 'validators');
-        $this->assertContains($error, $html);
-    }
-
     /**
      * @return array
      */
