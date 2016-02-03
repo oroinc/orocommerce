@@ -680,7 +680,8 @@ services:
             - @security.token_storage
             - @orob2b_website.manager
         calls:
-            - [setVisibilitySystemConfigurationPath, ['oro_b2b_account.product_visibility']]
+            - [setProductVisibilitySystemConfigurationPath, ['oro_b2b_account.product_visibility']]
+            - [setCategoryVisibilitySystemConfigurationPath, ['oro_b2b_account.category_visibility']]
 
     orob2b_account.visibility.cache.product.cache_builder.abstract:
         class: %orob2b_account.visibility.cache.product.cache_builder.abstract.class%
