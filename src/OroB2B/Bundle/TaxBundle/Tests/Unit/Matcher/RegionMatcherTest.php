@@ -53,7 +53,7 @@ class RegionMatcherTest extends AbstractMatcherTest
             ->setRegionText($regionText);
 
         $this->countryMatcher
-            ->expects($this->once())
+            ->expects($this->atLeastOnce())
             ->method('match')
             ->with($address)
             ->willReturn($countryMatcherTaxRules);
@@ -64,6 +64,9 @@ class RegionMatcherTest extends AbstractMatcherTest
             ->with($country, $region, $regionText)
             ->willReturn($regionTaxRules);
 
+        $this->assertEquals($expected, $this->matcher->match($address));
+
+        // cache
         $this->assertEquals($expected, $this->matcher->match($address));
     }
 

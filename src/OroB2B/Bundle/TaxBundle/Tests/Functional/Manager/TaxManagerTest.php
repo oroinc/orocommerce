@@ -6,8 +6,6 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
-use Gedmo\Tool\Logging\DBAL\QueryAnalyzer;
-
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -60,7 +58,6 @@ class TaxManagerTest extends WebTestCase
      * @dataProvider methodsDataProvider
      * @param string $method
      * @param string $reference
-     * @param int $expectedQueries
      * @param array $configuration
      * @param array $databaseBefore
      * @param array $expectedResult
@@ -69,7 +66,6 @@ class TaxManagerTest extends WebTestCase
     public function testMethods(
         $method,
         $reference,
-        $expectedQueries,
         array $configuration,
         array $databaseBefore = [],
         array $expectedResult = [],
@@ -81,7 +77,7 @@ class TaxManagerTest extends WebTestCase
 
         $this->prepareDatabase($databaseBefore);
 
-        $this->executeMethod($method, $this->getReference($reference), $expectedResult, $expectedQueries);
+        $this->executeMethod($method, $this->getReference($reference), $expectedResult);
 
         $this->assertDatabase($databaseAfter);
         $this->clearDatabase($databaseAfter);
@@ -113,37 +109,15 @@ class TaxManagerTest extends WebTestCase
      * @param string $method
      * @param object $object
      * @param array $expectedResult
-     * @param int $expectedQueries
      */
-    protected function executeMethod($method, $object, $expectedResult, $expectedQueries)
+    protected function executeMethod($method, $object, $expectedResult)
     {
         $manager = $this->getContainer()->get('orob2b_tax.manager.tax_manager');
 
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BTaxBundle:TaxValue');
-
-        $queryAnalyzer = new QueryAnalyzer($em->getConnection()->getDatabasePlatform());
-
-        $prevLogger = $em->getConnection()->getConfiguration()->getSQLLogger();
-        $em->getConnection()->getConfiguration()->setSQLLogger($queryAnalyzer);
-
         $this->compareResult($expectedResult, $manager->{$method}($object));
-
-//        $this->assertCount(
-//            $expectedQueries,
-//            $queryAnalyzer->getExecutedQueries(),
-//            implode(PHP_EOL, $queryAnalyzer->getExecutedQueries())
-//        );
 
         // cache trigger
         $this->compareResult($expectedResult, $manager->{$method}($object));
-
-//        $this->assertCount(
-//            $expectedQueries,
-//            $queryAnalyzer->getExecutedQueries(),
-//            implode(PHP_EOL, $queryAnalyzer->getExecutedQueries())
-//        );
-
-        $em->getConnection()->getConfiguration()->setSQLLogger($prevLogger);
     }
 
     /**

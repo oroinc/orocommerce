@@ -1,7 +1,5 @@
 method: getTax
 reference: simple_order
-expectedQueries: 8 # address, taxRule for country, taxRule for country + region, regions, taxRule for zip codes
-                   #          taxRule for country, taxRule for country, taxRule for zip codes
 configuration: { use_as_base_by_default: destination }
 databaseBefore:
     'OroB2B\Bundle\OrderBundle\Entity\Order':

@@ -1,6 +1,5 @@
 method: getTax
 reference: empty_order
-expectedQueries: 0 # cache from loadTax
 configuration: {}
 databaseBefore:
     'OroB2B\Bundle\OrderBundle\Entity\Order':

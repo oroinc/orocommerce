@@ -3,13 +3,12 @@
 namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Matcher\DataFixtures;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
 use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions as BaseLoadTaxJurisdictions;
 
-class LoadTaxJurisdictions extends BaseLoadTaxJurisdictions implements DependentFixtureInterface
+class LoadTaxJurisdictions extends BaseLoadTaxJurisdictions
 {
     const REFERENCE_PREFIX = 'tax_jurisdiction_matcher';
 

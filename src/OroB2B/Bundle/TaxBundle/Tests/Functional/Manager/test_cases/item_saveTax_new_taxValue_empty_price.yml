@@ -1,6 +1,5 @@
 method: saveTax
 reference: order_line_item_2
-expectedQueries: 11 # 8 from getTax_taxValue_exists + insert TaxApply, update TaxValue, Delete old TaxApply
 configuration: { product_prices_include_tax: true, use_as_base_by_default: destination }
 databaseBefore:
     'OroB2B\Bundle\OrderBundle\Entity\Order':

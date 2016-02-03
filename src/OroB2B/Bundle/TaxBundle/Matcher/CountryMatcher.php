@@ -17,6 +17,13 @@ class CountryMatcher extends AbstractMatcher
             return [];
         }
 
-        return $this->getTaxRuleRepository()->findByCountry($country);
+        $cacheKey = $this->getCacheKey($country);
+        if (array_key_exists($cacheKey, $this->taxRulesCache)) {
+            return $this->taxRulesCache[$cacheKey];
+        }
+
+        $this->taxRulesCache[$cacheKey] = $this->getTaxRuleRepository()->findByCountry($country);
+
+        return $this->taxRulesCache[$cacheKey];
     }
 }

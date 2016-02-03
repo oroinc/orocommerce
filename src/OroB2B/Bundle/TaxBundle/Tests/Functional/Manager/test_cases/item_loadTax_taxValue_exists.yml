@@ -1,6 +1,5 @@
 method: loadTax
 reference: order_line_item_1
-expectedQueries: 2 # select taxValue and taxApply
 configuration: {}
 databaseBefore:
     'OroB2B\Bundle\OrderBundle\Entity\Order':

@@ -1,6 +1,5 @@
 method: loadTax
 reference: order_line_item_1
-expectedQueries: 3 # select order, line items from fixtures, taxValue once
 configuration: {}
 databaseBefore:
     'OroB2B\Bundle\OrderBundle\Entity\Order':

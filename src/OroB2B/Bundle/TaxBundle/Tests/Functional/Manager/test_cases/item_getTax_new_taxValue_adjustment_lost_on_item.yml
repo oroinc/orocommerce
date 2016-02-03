@@ -1,6 +1,5 @@
 method: getTax
 reference: simple_order
-expectedQueries: 11 # 8 from getTax_taxValue_exists + insert TaxApply, update TaxValue, Delete old TaxApply
 configuration: { use_as_base_by_default: destination, start_calculation_on: item }
 databaseBefore:
     'OroB2B\Bundle\OrderBundle\Entity\Order':

@@ -16,7 +16,6 @@ class LoadOrderItems extends AbstractFixture implements DependentFixtureInterfac
 {
     const ORDER_ITEM_1 = 'simple_order_item_1';
     const ORDER_ITEM_2 = 'simple_order_item_2';
-    const ORDER_ITEM_3 = 'simple_order_item_3';
 
     /**
      * @var array
@@ -29,10 +28,6 @@ class LoadOrderItems extends AbstractFixture implements DependentFixtureInterfac
         self::ORDER_ITEM_2 => [
             'quantity' => 6,
             'price' => '5.55',
-        ],
-        self::ORDER_ITEM_3 => [
-            'quantity' => null,
-            'price' => null,
         ],
     ];
 

@@ -1,6 +1,5 @@
 method: saveTax
 reference: simple_order
-expectedQueries: 1 # update TaxValue
 configuration: { use_as_base_by_default: destination }
 databaseBefore:
     'OroB2B\Bundle\OrderBundle\Entity\Order':
