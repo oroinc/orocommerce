@@ -13,7 +13,7 @@ use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 
 class CombinedPriceListRecalculateCommand extends ContainerAwareCommand implements CronCommandInterface
 {
-    const NAME = 'oro:cron:orob2b:pricing:cpl_recalculate';
+    const NAME = 'oro:cron:price-lists:recalculate';
 
     /**
      * {@inheritdoc}
@@ -22,6 +22,7 @@ class CombinedPriceListRecalculateCommand extends ContainerAwareCommand implemen
     {
         $this
             ->setName(self::NAME)
+            ->addOption('force')
             ->setDescription('Recalculate combined price list and combined product prices');
     }
 
@@ -30,6 +31,10 @@ class CombinedPriceListRecalculateCommand extends ContainerAwareCommand implemen
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $force = false;
+        if ($input->getOption('force')) {
+            $force = true;
+        }
         $container = $this->getContainer();
         /** @var CombinedPriceListQueueConsumer $consumer */
         $consumer = $container->get('orob2b_pricing.builder.queue_consumer');
@@ -37,7 +42,7 @@ class CombinedPriceListRecalculateCommand extends ContainerAwareCommand implemen
         $mode = $container->get('oro_config.manager')->get($key);
         if ($mode === CombinedPriceListQueueConsumer::MODE_SCHEDULED) {
             $output->writeln('<info>Start the process recalculation</info>');
-            $consumer->process();
+            $consumer->process($force);
             $output->writeln('<info>The cache is updated successfully</info>');
         } else {
             $output->writeln('<info>Recalculation is not required, another mode is active</info>');

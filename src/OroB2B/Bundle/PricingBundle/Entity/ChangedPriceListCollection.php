@@ -63,10 +63,10 @@ class ChangedPriceListCollection
     }
 
     /**
-     * @param Account $account
+     * @param Account|null $account
      * @return $this
      */
-    public function setAccount(Account $account)
+    public function setAccount(Account $account = null)
     {
         $this->account = $account;
 
@@ -82,10 +82,10 @@ class ChangedPriceListCollection
     }
 
     /**
-     * @param Website $website
+     * @param Website|null $website
      * @return $this
      */
-    public function setWebsite(Website $website)
+    public function setWebsite(Website $website = null)
     {
         $this->website = $website;
 
@@ -101,10 +101,10 @@ class ChangedPriceListCollection
     }
 
     /**
-     * @param AccountGroup $accountGroup
+     * @param AccountGroup|null $accountGroup
      * @return $this
      */
-    public function setAccountGroup(AccountGroup $accountGroup)
+    public function setAccountGroup(AccountGroup $accountGroup = null)
     {
         $this->accountGroup = $accountGroup;
 

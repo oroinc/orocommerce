@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Builder;
 
-use Doctrine\Common\Cache\ArrayCache;
-use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
@@ -39,9 +37,9 @@ class CombinedPriceListsBuilder
     protected $garbageCollector;
 
     /**
-     * @var CacheProvider
+     * @var array
      */
-    protected $cacheProvider;
+    protected $isBuilt = false;
 
     /**
      * @param ConfigManager $configManager
@@ -77,12 +75,11 @@ class CombinedPriceListsBuilder
      */
     public function build($force = false)
     {
-        $cacheKey = $this->getCacheKey();
-        if ($force || !$this->getCacheProvider()->contains($cacheKey)) {
+        if ($force || !$this->isBuilt) {
             $this->updatePriceListsOnCurrentLevel($force);
             $this->websiteCombinedPriceListBuilder->build(null, $force);
             $this->garbageCollector->cleanCombinedPriceLists();
-            $this->getCacheProvider()->save($cacheKey, 1);
+            $this->isBuilt = true;
         }
     }
 
@@ -106,33 +103,5 @@ class CombinedPriceListsBuilder
             $this->configManager->set($configKey, $priceList->getId());
             $this->configManager->flush();
         }
-    }
-
-    /**
-     * @return string
-     */
-    protected function getCacheKey()
-    {
-        return 'config';
-    }
-
-    /**
-     * @return CacheProvider
-     */
-    protected function getCacheProvider()
-    {
-        if (!$this->cacheProvider) {
-            $this->cacheProvider = new ArrayCache();
-        }
-
-        return $this->cacheProvider;
-    }
-
-    /**
-     * @param CacheProvider $cacheProvider
-     */
-    public function setCacheProvider(CacheProvider $cacheProvider)
-    {
-        $this->cacheProvider = $cacheProvider;
     }
 }

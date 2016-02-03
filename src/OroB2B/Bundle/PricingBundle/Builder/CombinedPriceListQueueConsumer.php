@@ -57,13 +57,21 @@ class CombinedPriceListQueueConsumer
         $this->accountPriceListsBuilder = $accountPriceListsBuilder;
     }
 
-    public function process()
+    /**
+     * @param bool|false $force
+     */
+    public function process($force = false)
     {
-        foreach ($this->getUniqueChangesIterator() as $changes) {
-            $this->handleCollectionsJob($changes);
-            $this->getManager()->remove($changes);
+        $manager = $this->getManager();
+        $i = 0;
+        foreach ($this->getUniqueChangesIterator() as $changeItem) {
+            $this->handleCollectionsJob($changeItem, $force);
+            $manager->remove($changeItem);
+            if ($i++ % 100) {
+                $manager->flush();
+            }
         }
-        $this->getManager()->flush();
+        $manager->flush();
     }
 
     /**
@@ -75,22 +83,27 @@ class CombinedPriceListQueueConsumer
     }
 
     /**
-     * @param ChangedPriceListCollection $changes
+     * @param ChangedPriceListCollection $changeItem
+     * @param bool $force
      */
-    protected function handleCollectionsJob(ChangedPriceListCollection $changes)
+    protected function handleCollectionsJob(ChangedPriceListCollection $changeItem, $force)
     {
         switch (true) {
-            case !is_null($changes->getAccount()):
-                $this->accountPriceListsBuilder->build($changes->getWebsite(), $changes->getAccount());
+            case !is_null($changeItem->getAccount()):
+                $this->accountPriceListsBuilder->build($changeItem->getWebsite(), $changeItem->getAccount(), $force);
                 break;
-            case !is_null($changes->getAccountGroup()):
-                $this->accountGroupPriceListsBuilder->build($changes->getWebsite(), $changes->getAccountGroup());
+            case !is_null($changeItem->getAccountGroup()):
+                $this->accountGroupPriceListsBuilder->build(
+                    $changeItem->getWebsite(),
+                    $changeItem->getAccountGroup(),
+                    $force
+                );
                 break;
-            case !is_null($changes->getWebsite()):
-                $this->websitePriceListsBuilder->build($changes->getWebsite());
+            case !is_null($changeItem->getWebsite()):
+                $this->websitePriceListsBuilder->build($changeItem->getWebsite(), $force);
                 break;
             default:
-                $this->commonPriceListsBuilder->build();
+                $this->commonPriceListsBuilder->build($force);
         }
     }
 

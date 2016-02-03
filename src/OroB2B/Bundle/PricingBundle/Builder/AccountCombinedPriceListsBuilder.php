@@ -20,11 +20,10 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
      */
     public function build(Website $website, Account $account, $force = false)
     {
-        $cacheKey = $this->getCacheKey($website, $account);
-        if ($force || !$this->getCacheProvider()->contains($cacheKey)) {
+        if ($force || !$this->isBuiltForAccount($website, $account)) {
             $this->updatePriceListsOnCurrentLevel($website, $account, $force);
             $this->garbageCollector->cleanCombinedPriceLists();
-            $this->getCacheProvider()->save($cacheKey, 1);
+            $this->setBuiltForAccount($website, $account);
         }
     }
 
@@ -35,15 +34,14 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
      */
     public function buildByAccountGroup(Website $website, AccountGroup $accountGroup, $force = false)
     {
-        $cacheKey = $this->getGroupCacheKey($website, $accountGroup);
-        if ($force || !$this->getCacheProvider()->contains($cacheKey)) {
+        if ($force || !$this->isBuiltForAccountGroup($website, $accountGroup)) {
             $accounts = $this->getPriceListToEntityRepository()
                 ->getAccountIteratorByFallback($accountGroup, $website, PriceListAccountFallback::ACCOUNT_GROUP);
 
             foreach ($accounts as $account) {
                 $this->updatePriceListsOnCurrentLevel($website, $account, $force);
             }
-            $this->getCacheProvider()->save($cacheKey, 1);
+            $this->setBuiltForAccountGroup($website, $accountGroup);
         }
     }
 
@@ -73,20 +71,36 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
     /**
      * @param Website $website
      * @param Account $account
-     * @return string
+     * @return bool
      */
-    protected function getCacheKey(Website $website, Account $account)
+    protected function isBuiltForAccount(Website $website, Account $account)
     {
-        return sprintf('website_%d_account_%d', $website->getId(), $account->getId());
+        return !empty($this->builtList['account'][$website->getId()][$account->getId()]);
+    }
+    /**
+     * @param Website $website
+     * @param Account $account
+     */
+    protected function setBuiltForAccount(Website $website, Account $account)
+    {
+        $this->builtList['account'][$website->getId()][$account->getId()] = true;
     }
 
     /**
      * @param Website $website
      * @param AccountGroup $accountGroup
-     * @return string
+     * @return bool
      */
-    protected function getGroupCacheKey(Website $website, AccountGroup $accountGroup)
+    protected function isBuiltForAccountGroup(Website $website, AccountGroup $accountGroup)
     {
-        return sprintf('website_%d_group_%d', $website->getId(), $accountGroup->getId());
+        return !empty($this->builtList['group'][$website->getId()][$accountGroup->getId()]);
+    }
+    /**
+     * @param Website $website
+     * @param AccountGroup $accountGroup
+     */
+    protected function setBuiltForAccountGroup(Website $website, AccountGroup $accountGroup)
+    {
+        $this->builtList['group'][$website->getId()][$accountGroup->getId()] = true;
     }
 }

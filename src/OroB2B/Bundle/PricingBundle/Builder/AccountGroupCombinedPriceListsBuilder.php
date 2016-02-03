@@ -32,8 +32,7 @@ class AccountGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBui
      */
     public function build(Website $website, AccountGroup $currentAccountGroup = null, $force = false)
     {
-        $cacheKey = $this->getCacheKey($website, $currentAccountGroup);
-        if ($force || !$this->getCacheProvider()->contains($cacheKey)) {
+        if ($force || !$this->isBuiltForAccountGroup($website, $currentAccountGroup)) {
             $accountGroups = [$currentAccountGroup];
             if (!$currentAccountGroup) {
                 $accountGroups = $this->getPriceListToEntityRepository()
@@ -48,7 +47,7 @@ class AccountGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBui
             if ($currentAccountGroup) {
                 $this->garbageCollector->cleanCombinedPriceLists();
             }
-            $this->getCacheProvider()->save($cacheKey, 1);
+            $this->setBuiltForAccountGroup($website, $currentAccountGroup);
         }
     }
 
@@ -77,16 +76,29 @@ class AccountGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBui
 
     /**
      * @param Website $website
-     * @param AccountGroup|null $currentAccountGroup
-     * @return string
+     * @param AccountGroup|null $accountGroup
+     * @return bool
      */
-    protected function getCacheKey(Website $website, AccountGroup $currentAccountGroup = null)
+    protected function isBuiltForAccountGroup(Website $website, AccountGroup $accountGroup = null)
     {
-        $key = sprintf('website_%', $website->getId());
-        if ($currentAccountGroup) {
-            $key = sprintf('website_%_group_%d', $website->getId(), $currentAccountGroup->getId());
+        $accountGroupId = 0;
+        if ($accountGroup) {
+            $accountGroupId  = $accountGroup->getId();
+        }
+        return !empty($this->builtList[$website->getId()][$accountGroupId]);
+    }
+
+    /**
+     * @param Website $website
+     * @param AccountGroup|null $accountGroup
+     */
+    protected function setBuiltForAccountGroup(Website $website, AccountGroup $accountGroup = null)
+    {
+        $accountGroupId = 0;
+        if ($accountGroup) {
+            $accountGroupId  = $accountGroup->getId();
         }
 
-        return $key;
+        $this->builtList[$website->getId()][$accountGroupId] = true;
     }
 }
