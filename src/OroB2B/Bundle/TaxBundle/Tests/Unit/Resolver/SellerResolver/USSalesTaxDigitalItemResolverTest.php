@@ -106,6 +106,12 @@ class USSalesTaxDigitalItemResolverTest extends AbstractAddressResolverTestCase
                 true,
                 new Result(
                     [
+                        Result::ROW => ResultElement::create('68.3658', '59.97', '8.3958', '0.0042'),
+                        Result::UNIT => ResultElement::create('22.78746', '19.989', '2.79846', '0.00154'),
+                        Result::TAXES => [
+                            TaxResultElement::create('city', '0.08', '59.97', '4.7976'),
+                            TaxResultElement::create('country', '0.06', '59.97', '3.5982'),
+                        ],
                     ]
                 ),
                 true,
@@ -120,5 +126,4 @@ class USSalesTaxDigitalItemResolverTest extends AbstractAddressResolverTestCase
         $this->assertEquals(new ResultElement(), $taxable->getResult()->getRow());
         $this->assertEquals([], $taxable->getResult()->getTaxes());
     }
-
 }
