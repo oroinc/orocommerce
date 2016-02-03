@@ -51,14 +51,7 @@ class TaxManagerTest extends WebTestCase
 
     protected function tearDown()
     {
-        /** @var EntityRepository $objectRepository */
-        $registry = $this->getContainer()->get('doctrine');
-        $objectRepository = $registry->getRepository('OroB2BTaxBundle:TaxValue');
-        $objectRepository->clear();
-
-        $this->configManager->reset('orob2b_tax.product_prices_include_tax');
-        $this->configManager->reset('orob2b_tax.use_as_base_by_default');
-        $this->configManager->flush();
+        $this->configManager->reload();
 
         parent::tearDown();
     }

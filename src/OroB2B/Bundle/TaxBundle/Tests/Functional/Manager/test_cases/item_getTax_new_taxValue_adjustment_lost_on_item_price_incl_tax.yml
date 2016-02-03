@@ -1,7 +1,7 @@
 method: getTax
 reference: simple_order
 expectedQueries: 11 # 8 from getTax_taxValue_exists + insert TaxApply, update TaxValue, Delete old TaxApply
-configuration: { product_prices_include_tax: true, use_as_base_by_default: destination }
+configuration: { product_prices_include_tax: true, use_as_base_by_default: destination, start_calculation_on: item }
 databaseBefore:
     'OroB2B\Bundle\OrderBundle\Entity\Order':
         simple_order:
@@ -66,9 +66,9 @@ databaseBefore:
 expectedResult:
     total:
         includingTax: '199.89'   # 22.21 * 9
-        excludingTax: '181.72'   # 20.1909 * 9 = 181.7181 (181.71 if count by items)
-        taxAmount: '18.17'       # 2.0191 * 9 = 18.1719
-        adjustment: '0.0081'    # -0.0009 * 9
+        excludingTax: '181.71'   # 20.19 * 9 = 181.71 (181.71 if count by items)
+        taxAmount: '18.18'       # 2.02 * 9 = 18.18
+        adjustment: '0.0081'     # -0.0009 * 9
     items:
         -
             row:
