@@ -6,6 +6,7 @@ use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use OroB2B\Bundle\TaxBundle\Resolver\ResolverInterface;
 use OroB2B\Bundle\TaxBundle\Matcher\RegionMatcher;
+use OroB2B\Bundle\TaxBundle\Resolver\StopPropagationException;
 
 class USSalesTaxDigitalResolver implements ResolverInterface
 {
@@ -45,5 +46,7 @@ class USSalesTaxDigitalResolver implements ResolverInterface
         }
 
         $taxable->getResult()->offsetSet(Result::ITEMS, $itemsResult);
+
+        throw new StopPropagationException();
     }
 }
