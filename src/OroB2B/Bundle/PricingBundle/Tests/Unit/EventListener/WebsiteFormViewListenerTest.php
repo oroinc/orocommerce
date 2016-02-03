@@ -8,7 +8,6 @@ use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 use OroB2B\Bundle\PricingBundle\EventListener\WebsiteFormViewListener;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsiteFormViewListenerTest extends FormViewListenerTestCase
 {

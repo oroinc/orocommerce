@@ -77,7 +77,7 @@ abstract class AbstractOrderController extends Controller
         );
 
         if ($productsPriceCriteria) {
-            $matchedPrices = $this->get('orob2b_pricing.provider.product_price')->getMatchedPrices(
+            $matchedPrices = $this->getProductPriceProvider()->getMatchedPrices(
                 $productsPriceCriteria->toArray(),
                 $this->getPriceList($order)
             );

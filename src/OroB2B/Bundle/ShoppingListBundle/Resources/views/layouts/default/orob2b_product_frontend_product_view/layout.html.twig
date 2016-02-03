@@ -1,0 +1,21 @@
+{% block _add_to_shopping_list_form_button_widget %}
+    {% import 'OroB2BShoppingListBundle:ShoppingList/Frontend:buttons.html.twig' as buttons %}
+    {% set commonOptions = {
+        dataUrl: 'orob2b_shopping_list_frontend_add_product',
+        dataUrlOptions: {
+            productId: product.id
+        },
+        dataAttributes: {}
+    } %}
+    <div class="pull-left"
+         data-page-component-module="orob2bshoppinglist/js/app/components/add-product-from-view-component">
+        {{ buttons.createAddToShoppingListButton({
+            layout: true,
+            new: commonOptions,
+            current: commonOptions,
+            existing: commonOptions,
+            shoppingLists: shoppingLists,
+            currentShoppingList: currentShoppingList
+        }) }}
+    </div>
+{% endblock %}

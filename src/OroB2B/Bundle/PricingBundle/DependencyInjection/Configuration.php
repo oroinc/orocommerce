@@ -30,8 +30,6 @@ class Configuration implements ConfigurationInterface
 
         $rootNode = $treeBuilder->root(OroB2BPricingExtension::ALIAS);
 
-        // TODO ADD CONSTANT in CombinedPriceListQueueConsumer
-
         SettingsBuilder::append(
             $rootNode,
             [

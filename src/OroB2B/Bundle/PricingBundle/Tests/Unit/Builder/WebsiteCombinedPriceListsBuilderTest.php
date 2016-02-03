@@ -60,12 +60,16 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
      */
     public function testBuildForAll($force, $priceListByWebsite)
     {
+        $callExpects = 1;
+        if ($force) {
+            $callExpects = 2;
+        }
         $website = new Website();
         $this->priceListToEntityRepository
             ->expects($this->any())
             ->method('findOneBy')
             ->willReturn($priceListByWebsite);
-        $this->priceListToEntityRepository->expects($this->once())
+        $this->priceListToEntityRepository->expects($this->exactly($callExpects))
             ->method('getWebsiteIteratorByFallback')
             ->with(PriceListWebsiteFallback::CONFIG)
             ->will($this->returnValue([$website]));
@@ -74,7 +78,7 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
 
         if (!$priceListByWebsite) {
             $this->combinedPriceListToEntityRepository
-                ->expects($this->once())
+                ->expects($this->exactly($callExpects))
                 ->method('delete')
                 ->with($website);
         } else {
@@ -86,6 +90,7 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
         }
 
         $this->builder->build(null, $force);
+        $this->builder->build(null, $force);
     }
 
     /**
@@ -95,6 +100,10 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
      */
     public function testBuildForWebsite($force, $priceListByWebsite)
     {
+        $callExpects = 1;
+        if ($force) {
+            $callExpects = 2;
+        }
         $website = new Website();
         $this->priceListToEntityRepository
             ->expects($this->any())
@@ -102,12 +111,12 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
             ->willReturn($priceListByWebsite);
         $this->priceListToEntityRepository->expects($this->never())
             ->method('getWebsiteIteratorByFallback');
-        $this->garbageCollector->expects($this->once())
+        $this->garbageCollector->expects($this->exactly($callExpects))
             ->method('cleanCombinedPriceLists');
 
         if (!$priceListByWebsite) {
             $this->combinedPriceListToEntityRepository
-                ->expects($this->once())
+                ->expects($this->exactly($callExpects))
                 ->method('delete')
                 ->with($website);
         } else {
@@ -118,6 +127,7 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
             $this->assertRebuild($force, $website);
         }
 
+        $this->builder->build($website, $force);
         $this->builder->build($website, $force);
     }
 
@@ -140,24 +150,28 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
      */
     protected function assertRebuild($force, Website $website)
     {
+        $callExpects = 1;
+        if ($force) {
+            $callExpects = 2;
+        }
         $priceListCollection = [$this->getPriceListSequenceMember()];
         $combinedPriceList = new CombinedPriceList();
 
-        $this->priceListCollectionProvider->expects($this->once())
+        $this->priceListCollectionProvider->expects($this->exactly($callExpects))
             ->method('getPriceListsByWebsite')
             ->with($website)
             ->willReturn($priceListCollection);
 
-        $this->combinedPriceListProvider->expects($this->once())
+        $this->combinedPriceListProvider->expects($this->exactly($callExpects))
             ->method('getCombinedPriceList')
             ->with($priceListCollection, $force)
             ->will($this->returnValue($combinedPriceList));
 
-        $this->combinedPriceListRepository->expects($this->once())
+        $this->combinedPriceListRepository->expects($this->exactly($callExpects))
             ->method('updateCombinedPriceListConnection')
             ->with($combinedPriceList, $website);
 
-        $this->accountGroupBuilder->expects($this->once())
+        $this->accountGroupBuilder->expects($this->exactly($callExpects))
             ->method('build')
             ->with($website, null, $force);
     }

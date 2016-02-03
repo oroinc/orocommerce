@@ -19,7 +19,6 @@ use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
 use OroB2B\Bundle\OrderBundle\Model\OrderRequestHandler;
 use OroB2B\Bundle\OrderBundle\Form\Handler\OrderHandler;
-use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 
 class OrderController extends AbstractOrderController
 {

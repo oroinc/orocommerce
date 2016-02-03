@@ -32,19 +32,23 @@ class AccountGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBui
      */
     public function build(Website $website, AccountGroup $currentAccountGroup = null, $force = false)
     {
-        $accountGroups = [$currentAccountGroup];
-        if (!$currentAccountGroup) {
-            $accountGroups = $this->getPriceListToEntityRepository()
-                ->getAccountGroupIteratorByFallback($website, PriceListAccountGroupFallback::WEBSITE);
-        }
+        $cacheKey = $this->getCacheKey($website, $currentAccountGroup);
+        if ($force || !$this->getCacheProvider()->contains($cacheKey)) {
+            $accountGroups = [$currentAccountGroup];
+            if (!$currentAccountGroup) {
+                $accountGroups = $this->getPriceListToEntityRepository()
+                    ->getAccountGroupIteratorByFallback($website, PriceListAccountGroupFallback::WEBSITE);
+            }
 
-        foreach ($accountGroups as $accountGroup) {
-            $this->updatePriceListsOnCurrentLevel($website, $accountGroup, $force);
-            $this->accountCombinedPriceListsBuilder->buildByAccountGroup($website, $accountGroup, $force);
-        }
+            foreach ($accountGroups as $accountGroup) {
+                $this->updatePriceListsOnCurrentLevel($website, $accountGroup, $force);
+                $this->accountCombinedPriceListsBuilder->buildByAccountGroup($website, $accountGroup, $force);
+            }
 
-        if ($currentAccountGroup) {
-            $this->garbageCollector->cleanCombinedPriceLists();
+            if ($currentAccountGroup) {
+                $this->garbageCollector->cleanCombinedPriceLists();
+            }
+            $this->getCacheProvider()->save($cacheKey, 1);
         }
     }
 
@@ -69,5 +73,20 @@ class AccountGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBui
 
         $this->getCombinedPriceListRepository()
             ->updateCombinedPriceListConnection($combinedPriceList, $website, $accountGroup);
+    }
+
+    /**
+     * @param Website $website
+     * @param AccountGroup|null $currentAccountGroup
+     * @return string
+     */
+    protected function getCacheKey(Website $website, AccountGroup $currentAccountGroup = null)
+    {
+        $key = sprintf('website_%', $website->getId());
+        if ($currentAccountGroup) {
+            $key = sprintf('website_%_group_%d', $website->getId(), $currentAccountGroup->getId());
+        }
+
+        return $key;
     }
 }

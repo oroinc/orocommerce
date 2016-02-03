@@ -57,11 +57,15 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
             ->expects($this->any())
             ->method('findOneBy')
             ->willReturn($priceListByAccount);
-        $this->garbageCollector->expects($this->once())
+        $callExpects = 1;
+        if ($force) {
+            $callExpects = 2;
+        }
+        $this->garbageCollector->expects($this->exactly($callExpects))
             ->method('cleanCombinedPriceLists');
         if (!$priceListByAccount) {
             $this->combinedPriceListToEntityRepository
-                ->expects($this->once())
+                ->expects($this->exactly($callExpects))
                 ->method('delete')
                 ->with($account, $website);
         } else {
@@ -71,6 +75,7 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
 
             $this->assertRebuild($force, $website, $account);
         }
+        $this->builder->build($website, $account, $force);
         $this->builder->build($website, $account, $force);
     }
 
@@ -94,6 +99,10 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
      */
     public function testBuildByAccountGroup($force, $priceListByAccountGroup)
     {
+        $callExpects = 1;
+        if ($force) {
+            $callExpects = 2;
+        }
         $website = new Website();
         $accountGroup = new AccountGroup();
         $account = new Account();
@@ -101,7 +110,7 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
             ->expects($this->any())
             ->method('findOneBy')
             ->willReturn($priceListByAccountGroup);
-        $this->priceListToEntityRepository->expects($this->once())
+        $this->priceListToEntityRepository->expects($this->exactly($callExpects))
             ->method('getAccountIteratorByFallback')
             ->with($accountGroup, $website, PriceListAccountFallback::ACCOUNT_GROUP)
             ->will($this->returnValue([$account]));
@@ -110,7 +119,7 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
 
         if (!$priceListByAccountGroup) {
             $this->combinedPriceListToEntityRepository
-                ->expects($this->once())
+                ->expects($this->exactly($callExpects))
                 ->method('delete')
                 ->with($account, $website);
         } else {
@@ -121,6 +130,7 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
             $this->assertRebuild($force, $website, $account);
         }
 
+        $this->builder->buildByAccountGroup($website, $accountGroup, $force);
         $this->builder->buildByAccountGroup($website, $accountGroup, $force);
     }
 
@@ -147,17 +157,21 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
         $priceListCollection = [$this->getPriceListSequenceMember()];
         $combinedPriceList = new CombinedPriceList();
 
-        $this->priceListCollectionProvider->expects($this->once())
+        $callExpects = 1;
+        if ($force) {
+            $callExpects = 2;
+        }
+        $this->priceListCollectionProvider->expects($this->exactly($callExpects))
             ->method('getPriceListsByAccount')
             ->with($account, $website)
             ->willReturn($priceListCollection);
 
-        $this->combinedPriceListProvider->expects($this->once())
+        $this->combinedPriceListProvider->expects($this->exactly($callExpects))
             ->method('getCombinedPriceList')
             ->with($priceListCollection, $force)
             ->will($this->returnValue($combinedPriceList));
 
-        $this->combinedPriceListRepository->expects($this->once())
+        $this->combinedPriceListRepository->expects($this->exactly($callExpects))
             ->method('updateCombinedPriceListConnection')
             ->with($combinedPriceList, $website, $account);
     }

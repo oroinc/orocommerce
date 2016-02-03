@@ -54,6 +54,7 @@ parameters:
     orob2b_pricing.event_listener.product_duplicate.class: OroB2B\Bundle\PricingBundle\EventListener\ProductDuplicateListener
     orob2b_pricing.event_listener.product_select_price_list_aware.class: OroB2B\Bundle\PricingBundle\EventListener\ProductSelectPriceListAwareListener
     orob2b_pricing.event_listener.price_list_collection.class: OroB2B\Bundle\PricingBundle\EventListener\PriceListCollectionListener
+    orob2b_pricing.event_listener.combined_price_list_queue.class: OroB2B\Bundle\PricingBundle\EventListener\CombinedPriceListQueueListener
     orob2b_pricing.event_subscriber.system_config.class: OroB2B\Bundle\PricingBundle\EventListener\PriceListSystemConfigSubscriber
 
     orob2b_pricing.model.price_list_request_handler.abstract.class: OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler
@@ -173,6 +174,7 @@ services:
             - @orob2b_pricing.provider.price_list_collection
             - @orob2b_pricing.provider.combined_price_list
             - @orob2b_pricing.builder.combined_price_list_garbage_collector
+            - @orob2b_account.storage.category_visibility_storage.cache
         calls:
             - [setCombinedPriceListClassName, [%orob2b_pricing.entity.combined_price_list.class%]]
 
@@ -236,7 +238,6 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-view, method: onAccountGroupView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-edit, method: onEntityEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.frontend-product-view, method: onFrontendProductView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
 
     orob2b_pricing.event_listener.web_site_form_view:
@@ -274,6 +275,15 @@ services:
             - @doctrine
         tags:
             - { name: kernel.event_listener, event: orob2b_pricing.price_list_collection.change_before, method: onChangeCollectionBefore }
+
+    orob2b_pricing.event_listener.combined_price_list_queue:
+        class: %orob2b_pricing.event_listener.combined_price_list_queue.class%
+        arguments:
+            - @orob2b_pricing.builder.queue_consumer
+            - @oro_config.global
+        tags:
+            - { name: kernel.event_listener, event: kernel.terminate, method: onTerminate }
+            - { name: kernel.event_listener, event: orob2b_pricing.price_list_collection.change_before, method: onQueueChanged }
 
     orob2b_pricing.event_listener.product_price_datagrid:
         class: %orob2b_pricing.event_listener.product_price_datagrid.class%
