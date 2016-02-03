@@ -34,8 +34,8 @@ class ProductRepository extends AbstractVisibilityRepository
 
         $websiteJoinCondition = '1 = 1';
         if ($website) {
-            $websiteJoinCondition = 'website.id = :websiteId';
-            $qb->setParameter('websiteId', $website->getId());
+            $websiteJoinCondition = 'website = :website';
+            $qb->setParameter('website', $website);
         }
 
         $configValue = ProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;

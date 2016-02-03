@@ -98,14 +98,7 @@ class ProductRepositoryTest extends WebTestCase
      */
     public function testInsertByCategory()
     {
-        $this->repository->insertByCategory(
-            $this->getInsertFromSelectExecutor(),
-            BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
-            array_map(function ($category) {
-                /** @var Category $category */
-                return $category->getId();
-            }, $this->getCategories())
-        );
+        $this->repository->insertByCategory($this->getInsertFromSelectExecutor());
 
         $actual = $this->getActualArray();
 
@@ -127,10 +120,12 @@ class ProductRepositoryTest extends WebTestCase
      */
     public function testInsertFromBaseTableByWebsite()
     {
+        $this->repository->clearTable();
+
         $this->repository->insertStatic($this->getInsertFromSelectExecutor(), $this->website);
         $actual = $this->getActualArray();
 
-        $this->assertCount(16, $actual);
+        $this->assertCount(3, $actual);
         $this->assertInsertedFromBaseTable($actual);
     }
 
@@ -139,25 +134,23 @@ class ProductRepositoryTest extends WebTestCase
      */
     public function testInsertByCategoryForWebsite()
     {
-        $categories = $this->getCategories();
+        $this->repository->clearTable();
 
         $this->repository->insertByCategory(
             $this->getInsertFromSelectExecutor(),
-            BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
-            array_map(function ($category) {
-                /** @var \OroB2B\Bundle\CatalogBundle\Entity\Category $category */
-                return $category->getId();
-            }, $categories),
             $this->website
         );
 
         $actual = $this->getActualArray();
-        $this->assertCount(19, $actual);
-        $this->assertInsertedByCategory($actual, $this->website);
+        $this->assertCount(0, $actual);
     }
 
     public function testInsertUpdateDeleteAndHasEntity()
     {
+        $this->repository->clearTable();
+        $this->repository->insertStatic($this->getInsertFromSelectExecutor());
+        $this->repository->insertByCategory($this->getInsertFromSelectExecutor());
+
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
 
@@ -221,7 +214,7 @@ class ProductRepositoryTest extends WebTestCase
                     'website' => $website->getId(),
                     'product' => $product->getId(),
                     'sourceProductVisibility' => null,
-                    'visibility' => BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
+                    'visibility' => BaseProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
                     'source' => ProductVisibilityResolved::SOURCE_CATEGORY,
                     'category' => $this->getCategoryRepository()->findOneByProduct($product)->getId()
                 ];

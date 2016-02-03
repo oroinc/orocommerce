@@ -110,12 +110,12 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
             ],
             'with_website1' => [
                 'expectedStaticCount' => 0,
-                'expectedCategoryCount' => 5,
+                'expectedCategoryCount' => 0,
                 'websiteReference' => LoadWebsiteData::WEBSITE1,
             ],
             'with_website2' => [
                 'expectedStaticCount' => 0,
-                'expectedCategoryCount' => 8,
+                'expectedCategoryCount' => 0,
                 'websiteReference' => LoadWebsiteData::WEBSITE2,
             ],
         ];

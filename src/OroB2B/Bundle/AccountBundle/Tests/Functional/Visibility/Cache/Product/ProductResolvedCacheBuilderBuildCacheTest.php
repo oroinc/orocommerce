@@ -68,7 +68,7 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
         ]);
         $this->assertNotNull($firstProductCustomWebsite);
         $this->assertEquals(
-            BaseProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+            BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
             $firstProductCustomWebsite->getVisibility()
         );
         $this->assertEquals(
