@@ -413,7 +413,78 @@ class AccountGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
 
     public function testInsertParentCategoryValues()
     {
+        /** @var AccountGroup $accountGroup */
+        $accountGroup = $this->getReference('account_group.group3');
 
+        $parentCategoryFallbackCategories = ['category_1_5','category_1_5_6', 'category_1_5_6_7'];
+        $parentCategoryFallbackCategoryIds = [];
+        foreach ($parentCategoryFallbackCategories as $categoryReference) {
+            /** @var Category $category */
+            $category = $this->getReference($categoryReference);
+            $parentCategoryFallbackCategoryIds[] = $category->getId();
+        }
+
+        $parentCategoryVisibilities = $this->getCategoryVisibilities($parentCategoryFallbackCategoryIds);
+
+        /** @var Category $staticCategory */
+        $staticCategory = $this->getReference('category_1_2_3');
+        $staticCategoryId = $staticCategory->getId();
+
+        $staticCategoryVisibilities = $this->getCategoryVisibilities([$staticCategoryId]);
+
+        $visibility = CategoryVisibilityResolved::VISIBILITY_VISIBLE;
+        $this->repository->clearTable();
+        $this->repository->insertParentCategoryValues(
+            $this->getInsertExecutor(),
+            array_merge($parentCategoryVisibilities, $staticCategoryVisibilities),
+            $visibility
+        );
+
+        $resolvedVisibilities = $this->getResolvedVisibilities();
+        $resolvedVisibilities = $this->filterVisibilitiesByAccountGroup($resolvedVisibilities, $accountGroup->getId());
+
+        // static visibilities should not be inserted
+        $this->assertSameSize($parentCategoryFallbackCategoryIds, $resolvedVisibilities);
+        foreach ($resolvedVisibilities as $resolvedVisibility) {
+            $this->assertContains($resolvedVisibility['category'], $parentCategoryFallbackCategoryIds);
+            $this->assertEquals(CategoryVisibilityResolved::SOURCE_PARENT_CATEGORY, $resolvedVisibility['source']);
+            $this->assertEquals($visibility, $resolvedVisibility['visibility']);
+        }
+    }
+
+    /**
+     * @param array $categoryIds
+     * @return array
+     */
+    protected function getCategoryVisibilities(array $categoryIds)
+    {
+        $groupVisibilities = $this->repository->getParentCategoryVisibilities();
+
+        $visibilities = [];
+        foreach ($groupVisibilities as $groupVisibility) {
+            if (in_array($groupVisibility['category_id'], $categoryIds)) {
+                $visibilities[] = $groupVisibility['visibility_id'];
+            }
+        }
+
+        return $visibilities;
+    }
+
+    /**
+     * @param array $visibilities
+     * @param $accountGroupId
+     * @return array
+     */
+    protected function filterVisibilitiesByAccountGroup(array $visibilities, $accountGroupId)
+    {
+        $currentAccountGroupVisibilities = [];
+        foreach ($visibilities as $visibility) {
+            if ($visibility['accountGroup'] == $accountGroupId) {
+                $currentAccountGroupVisibilities[] = $visibility;
+            }
+        }
+
+        return $currentAccountGroupVisibilities;
     }
 
     /**
