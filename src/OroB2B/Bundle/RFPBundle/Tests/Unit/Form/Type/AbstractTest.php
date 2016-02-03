@@ -11,10 +11,10 @@ use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Form\Type\OptionalPriceType;
 use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\UserBundle\Form\Type\UserCollectionType;
+use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserCollectionType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -167,14 +167,14 @@ abstract class AbstractTest extends FormIntegrationTestCase
     /**
      * @return EntityType
      */
-    protected function prepareUserCollectionType()
+    protected function prepareUserMultiSelectType()
     {
         return new EntityType(
             [
                 1 => $this->getUser(1),
                 2 => $this->getUser(2),
             ],
-            UserCollectionType::NAME,
+            UserMultiSelectType::NAME,
             [
                 'multiple' => true
             ]
@@ -184,14 +184,14 @@ abstract class AbstractTest extends FormIntegrationTestCase
     /**
      * @return EntityType
      */
-    protected function prepareAccountUserCollectionType()
+    protected function prepareAccountUserMultiSelectType()
     {
         return new EntityType(
             [
                 10 => $this->getAccountUser(10),
                 11 => $this->getAccountuser(11),
             ],
-            AccountUserCollectionType::NAME,
+            AccountUserMultiSelectType::NAME,
             [
                 'multiple' => true
             ]

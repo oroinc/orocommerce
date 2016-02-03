@@ -8,7 +8,7 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\UserBundle\Form\Type\UserCollectionType;
+use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EnumSelectType;
@@ -82,9 +82,9 @@ class AccountTypeTest extends FormIntegrationTestCase
             ]
         );
 
-        $userCollectionType = new EntityType(
+        $userMultiSelectType = new EntityType(
             $this->getUsers(),
-            UserCollectionType::NAME,
+            UserMultiSelectType::NAME,
             [
                 'class' => 'Oro\Bundle\UserBundle\Entity\User',
                 'multiple' => true
@@ -99,7 +99,7 @@ class AccountTypeTest extends FormIntegrationTestCase
                     'oro_address_collection'  => new AddressCollectionTypeStub(),
                     $addressEntityType->getName()  => $addressEntityType,
                     EnumSelectType::NAME => $internalRatingEnumSelect,
-                    UserCollectionType::NAME => $userCollectionType,
+                    $userMultiSelectType->getName() => $userMultiSelectType,
                 ],
                 []
             )

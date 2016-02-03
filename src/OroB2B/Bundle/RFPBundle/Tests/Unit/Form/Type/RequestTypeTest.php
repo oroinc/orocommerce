@@ -433,11 +433,11 @@ class RequestTypeTest extends AbstractTest
         $priceType                  = $this->preparePriceType();
         $productSelectType          = $this->prepareProductSelectType();
         $optionalPriceType          = $this->prepareOptionalPriceType();
-        $userCollectionType         = $this->prepareUserCollectionType();
+        $userMultiSelectType        = $this->prepareUserMultiSelectType();
         $currencySelectionType      = new CurrencySelectionTypeStub();
         $requestProductItemType     = $this->prepareRequestProductItemType();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
-        $accountUserCollectionType  = $this->prepareAccountUserCollectionType();
+        $accountMultiSelectType     = $this->prepareAccountUserMultiSelectType();
 
         $accountSelectType = new StubEntityType(
             [
@@ -477,14 +477,14 @@ class RequestTypeTest extends AbstractTest
                     $productSelectType->getName()           => $productSelectType,
                     $optionalPriceType->getName()           => $optionalPriceType,
                     $accountSelectType->getName()           => $accountSelectType,
-                    $userCollectionType->getName()          => $userCollectionType,
                     $requestProductType->getName()          => $requestProductType,
+                    $userMultiSelectType->getName()         => $userMultiSelectType,
                     $accountUserSelectType->getName()       => $accountUserSelectType,
                     $currencySelectionType->getName()       => $currencySelectionType,
                     $requestProductItemType->getName()      => $requestProductItemType,
                     $requestStatusSelectType->getName()     => $requestStatusSelectType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
-                    $accountUserCollectionType->getName()   => $accountUserCollectionType,
+                    $accountMultiSelectType->getName()      => $accountMultiSelectType,
                     QuantityTypeTrait::$name                => $this->getQuantityType(),
                 ],
                 []

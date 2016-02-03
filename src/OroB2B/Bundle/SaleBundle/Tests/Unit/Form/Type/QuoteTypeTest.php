@@ -292,12 +292,12 @@ class QuoteTypeTest extends AbstractTest
         $priceType                  = $this->preparePriceType();
         $entityType                 = $this->prepareProductEntityType();
         $productSelectType          = new ProductSelectTypeStub();
-        $userCollectionType         = $this->prepareUserCollectionType();
+        $userMultiSelectType        = $this->prepareUserMultiSelectType();
         $currencySelectionType      = new CurrencySelectionTypeStub();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
         $quoteProductOfferType      = $this->prepareQuoteProductOfferType();
         $quoteProductRequestType    = $this->prepareQuoteProductRequestType();
-        $accountUserCollectionType  = $this->prepareAccountUserCollectionType();
+        $accountUserMultiSelectType  = $this->prepareAccountUserMultiSelectType();
 
         $quoteProductType = new QuoteProductType(
             $translator,
@@ -325,12 +325,12 @@ class QuoteTypeTest extends AbstractTest
                     $userSelectType->getName()                  => $userSelectType,
                     $quoteProductType->getName()                => $quoteProductType,
                     $productSelectType->getName()               => $productSelectType,
-                    $userCollectionType->getName()              => $userCollectionType,
+                    $userMultiSelectType->getName()             => $userMultiSelectType,
                     $currencySelectionType->getName()           => $currencySelectionType,
                     $quoteProductOfferType->getName()           => $quoteProductOfferType,
                     $quoteProductRequestType->getName()         => $quoteProductRequestType,
                     $productUnitSelectionType->getName()        => $productUnitSelectionType,
-                    $accountUserCollectionType->getName()       => $accountUserCollectionType,
+                    $accountUserMultiSelectType->getName()      => $accountUserMultiSelectType,
                     $accountSelectType->getName()               => $accountSelectType,
                     $accountUserSelectType->getName()           => $accountUserSelectType,
                     $priceListSelectType->getName()             => $priceListSelectType,

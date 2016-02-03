@@ -293,7 +293,7 @@ class RequestTypeTest extends AbstractTest
         $currencySelectionType      = new CurrencySelectionTypeStub();
         $requestProductItemType     = $this->prepareRequestProductItemType();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
-        $accountUserCollectionType  = $this->prepareAccountUserCollectionType();
+        $accountUserMultiSelectType = $this->prepareAccountUserMultiSelectType();
         $requestProductType         = new RequestProductType($productUnitLabelFormatter);
         $requestProductType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
         $frontendRequestProductType = new FrontendRequestProductType();
@@ -315,7 +315,7 @@ class RequestTypeTest extends AbstractTest
                     $currencySelectionType->getName()       => $currencySelectionType,
                     $requestProductItemType->getName()      => $requestProductItemType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
-                    $accountUserCollectionType->getName()   => $accountUserCollectionType,
+                    $accountUserMultiSelectType->getName()  => $accountUserMultiSelectType,
                     $frontendRequestProductType->getName()  => $frontendRequestProductType,
                     QuantityTypeTrait::$name                => $this->getQuantityType(),
                 ],

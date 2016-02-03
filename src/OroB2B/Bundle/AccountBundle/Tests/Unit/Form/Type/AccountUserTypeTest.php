@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Validation;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\UserBundle\Form\Type\UserCollectionType;
+use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
@@ -78,12 +78,12 @@ class AccountUserTypeTest extends FormIntegrationTestCase
         $addressEntityType = new EntityType($this->getAddresses(), 'test_address_entity');
         $accountSelectType = new EntityType($this->getAccounts(), AccountSelectType::NAME);
 
-        $userCollectionType = new EntityType(
+        $userMultiSelectType = new EntityType(
             [
                 1 => $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 1),
                 2 => $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 2),
             ],
-            UserCollectionType::NAME,
+            UserMultiSelectType::NAME,
             [
                 'multiple' => true,
             ]
@@ -97,7 +97,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
                     $accountSelectType->getName() => $accountSelectType,
                     AddressCollectionTypeStub::NAME => new AddressCollectionTypeStub(),
                     $addressEntityType->getName() => $addressEntityType,
-                    UserCollectionType::NAME => $userCollectionType,
+                    $userMultiSelectType->getName() => $userMultiSelectType,
                 ],
                 []
             ),
