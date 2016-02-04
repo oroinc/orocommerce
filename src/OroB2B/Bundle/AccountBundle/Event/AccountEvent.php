@@ -2,8 +2,9 @@
 
 namespace OroB2B\Bundle\AccountBundle\Event;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
 use Symfony\Component\EventDispatcher\Event;
+
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 
 class AccountEvent extends Event
 {
