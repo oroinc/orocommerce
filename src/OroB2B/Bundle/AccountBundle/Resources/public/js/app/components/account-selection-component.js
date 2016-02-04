@@ -68,15 +68,13 @@ define(function(require) {
 
         /**
          * Handle Account change
-         *
-         * @param {jQuery.Event} e
          */
-        onAccountChanged: function(e) {
+        onAccountChanged: function() {
             this.$accountUserSelect.select2('val', '');
             this.$accountUserMultiSelect.select2('val', '');
 
             this.updateAccountUserSelectData({'account_id': this.$accountSelect.val()});
-            this.triggerChangeEvent();
+            this.triggerChangeAccountUserEvent();
         },
 
         /**
@@ -89,7 +87,7 @@ define(function(require) {
             var accountUserId = _.first($(e.target).val());
 
             if (accountId || !accountUserId) {
-                this.triggerChangeEvent();
+                this.triggerChangeAccountUserEvent();
 
                 return;
             }
@@ -105,7 +103,7 @@ define(function(require) {
                     self.$accountSelect.select2('val', response.accountId || '');
 
                     self.updateAccountUserSelectData({'account_id': response.accountId});
-                    self.triggerChangeEvent();
+                    self.triggerChangeAccountUserEvent();
                 },
                 complete: function() {
                     self.loadingMask.hide();
@@ -120,18 +118,15 @@ define(function(require) {
         /**
          * @param {Object} data
          */
-        updateAccountUserSelectData: function(data)
-        {
+        updateAccountUserSelectData: function(data) {
             this.$accountUserSelect.data('select2_query_additional_params', data);
             this.$accountUserMultiSelect.data('select2_query_additional_params', data);
         },
 
-        triggerChangeEvent: function()
-        {
+        triggerChangeAccountUserEvent: function() {
             mediator.trigger('account-account-user:change', {
                 accountId: this.$accountSelect.val(),
-                accountUserId: this.$accountUserSelect.val(),
-                accountUsersIds: this.$accountUserMultiSelect.select2('val')
+                accountUserId: this.$accountUserSelect.val()
             });
         },
 

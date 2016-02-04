@@ -30,6 +30,11 @@ class AccountUserType extends AbstractType
     protected $addressClass;
 
     /**
+     * @var SecurityFacade
+     */
+    protected $securityFacade;
+
+    /**
      * @param SecurityFacade $securityFacade
      */
     public function __construct(SecurityFacade $securityFacade)
