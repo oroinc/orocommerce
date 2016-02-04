@@ -15,7 +15,8 @@ use OroB2B\Bundle\PricingBundle\Model\DTO\AccountWebsiteDTO;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
-use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange;
+use OroB2B\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
+use OroB2B\Bundle\PricingBundle\Event\PriceListQueueMultiChangeEvent;
 
 class AccountGroupChangesListener
 {
@@ -85,6 +86,10 @@ class AccountGroupChangesListener
                     $websiteIds,
                     $this->insertFromSelectQueryExecutor
                 );
+            $this->eventDispatcher->dispatch(
+                PriceListQueueMultiChangeEvent::NAME,
+                new PriceListQueueMultiChangeEvent()
+            );
         }
     }
 
@@ -109,8 +114,8 @@ class AccountGroupChangesListener
     {
         foreach ($accountWebsitePairs as $accountWebsitePair) {
             $this->eventDispatcher->dispatch(
-                PriceListCollectionChange::BEFORE_CHANGE,
-                new PriceListCollectionChange($accountWebsitePair->getAccount(), $accountWebsitePair->getWebsite())
+                PriceListQueueChangeEvent::BEFORE_CHANGE,
+                new PriceListQueueChangeEvent($accountWebsitePair->getAccount(), $accountWebsitePair->getWebsite())
             );
         }
     }

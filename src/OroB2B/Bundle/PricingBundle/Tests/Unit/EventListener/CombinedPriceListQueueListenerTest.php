@@ -7,7 +7,7 @@ use Symfony\Component\HttpKernel\Event\PostResponseEvent;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
-use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange;
+use OroB2B\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
 use OroB2B\Bundle\PricingBundle\EventListener\CombinedPriceListQueueListener;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
 
@@ -44,7 +44,7 @@ class CombinedPriceListQueueListenerTest extends \PHPUnit_Framework_TestCase
         $listener = new CombinedPriceListQueueListener($consumer, $configManager);
 
         if ($changes) {
-            /** @var \PHPUnit_Framework_MockObject_MockObject|PriceListCollectionChange $changeEvent */
+            /** @var \PHPUnit_Framework_MockObject_MockObject|PriceListQueueChangeEvent $changeEvent */
             $changeEvent = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange')
                 ->disableOriginalConstructor()
                 ->getMock();

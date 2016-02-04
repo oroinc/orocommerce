@@ -284,6 +284,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.terminate, method: onTerminate }
             - { name: kernel.event_listener, event: orob2b_pricing.price_list_collection.change_before, method: onQueueChanged }
+            - { name: kernel.event_listener, event: orob2b_pricing.price_list_collection.multi_change, method: onQueueChanged }
 
     orob2b_pricing.event_listener.product_price_datagrid:
         class: %orob2b_pricing.event_listener.product_price_datagrid.class%
