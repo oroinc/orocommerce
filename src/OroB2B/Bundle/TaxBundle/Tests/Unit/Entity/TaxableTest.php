@@ -20,6 +20,7 @@ class TaxableTest extends \PHPUnit_Framework_TestCase
             ['price', '10'],
             ['amount', '100'],
             ['items', new \SplObjectStorage(), false],
+            ['context', new \ArrayObject(), false],
             ['className', '\stdClass'],
         ];
 
@@ -49,6 +50,26 @@ class TaxableTest extends \PHPUnit_Framework_TestCase
         $taxable->removeItem($item);
         $this->assertSame($item2, $items->current());
         $this->assertSame($item2, $taxable->getItems()->current());
+    }
+
+    public function testAddContext()
+    {
+        $data = 'test data';
+        $key = 'KEY';
+        $taxable = $this->createTaxable();
+        $taxable->addContext($key, $data);
+        $this->assertSame($data, $taxable->getContext()->offsetGet($key));
+    }
+
+    public function testGetContextValue()
+    {
+        $data = 'test data';
+        $key = 'KEY';
+
+        $taxable = $this->createTaxable();
+        $taxable->addContext($key, $data);
+
+        $this->assertSame($data, $taxable->getContextValue($key));
     }
 
     /**

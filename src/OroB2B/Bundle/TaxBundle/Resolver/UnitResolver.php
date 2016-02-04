@@ -1,0 +1,40 @@
+<?php
+
+namespace OroB2B\Bundle\TaxBundle\Resolver;
+
+use Brick\Math\BigDecimal;
+
+use OroB2B\Bundle\TaxBundle\Calculator\TaxCalculatorInterface;
+use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
+use OroB2B\Bundle\TaxBundle\Model\Result;
+
+class UnitResolver
+{
+    /**
+     * @var TaxCalculatorInterface
+     */
+    protected $calculator;
+
+    /**
+     * @param TaxCalculatorInterface $calculator
+     */
+    public function __construct(TaxCalculatorInterface $calculator)
+    {
+        $this->calculator = $calculator;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resolveUnitPrice(Result $result, array $taxRules, BigDecimal $taxableAmount)
+    {
+        $taxRate = BigDecimal::zero();
+
+        /** @var TaxRule $taxRule */
+        foreach ($taxRules as $taxRule) {
+            $taxRate = $taxRate->plus($taxRule->getTax()->getRate());
+        }
+
+        $result->offsetSet(Result::UNIT, $this->calculator->calculate($taxableAmount, $taxRate));
+    }
+}

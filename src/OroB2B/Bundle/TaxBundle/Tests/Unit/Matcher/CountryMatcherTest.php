@@ -60,4 +60,13 @@ class CountryMatcherTest extends AbstractMatcherTest
             ]
         ];
     }
+
+    public function testIsEuropeanUnionCountry()
+    {
+        $result = $this->matcher->isEuropeanUnionCountry('PL');
+        $this->assertTrue($result);
+
+        $result = $this->matcher->isEuropeanUnionCountry('UA');
+        $this->assertFalse($result);
+    }
 }
