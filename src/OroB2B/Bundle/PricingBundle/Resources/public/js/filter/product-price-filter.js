@@ -164,7 +164,7 @@ define([
         _appendUnitFilter: function($filter) {
             var value = _.extend({}, this.emptyValue, this.value);
             var selectedChoiceLabel = '';
-            var $updateBtn;
+            var $filterValue;
             var $unitFilter;
 
             if (!_.isEmpty(this.unitChoices)) {
@@ -179,10 +179,11 @@ define([
                 selectedChoiceLabel: selectedChoiceLabel
             }));
 
-            $updateBtn = $filter.find('.filter-update');
-            $unitFilter.prepend($filter).append($updateBtn);
+            $filterValue = $filter.find('.filter-value');
+            $filterValue.append($unitFilter);
 
-            this._appendUnitFilter._appendFilter.call(this, $unitFilter);
+
+            this._appendUnitFilter._appendFilter.call(this, $filter);
         }
     });
 
