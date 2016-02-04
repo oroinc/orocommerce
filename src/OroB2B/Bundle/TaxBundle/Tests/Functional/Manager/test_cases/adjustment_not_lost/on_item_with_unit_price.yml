@@ -1,16 +1,16 @@
 method: getTax
 reference: simple_order
-configuration: { use_as_base_by_default: destination, start_calculation_on: item }
+configuration:
+    use_as_base_by_default: destination
+    destination: shipping_address
+    start_calculation_on: item
+    start_calculation_with: unit_price
+    product_prices_include_tax: false
 databaseBefore:
     'OroB2B\Bundle\OrderBundle\Entity\Order':
         simple_order:
             poNumber: { property_value: simple_order }
             account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
-            billingAddress:
-                class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
-                property_value:
-                    country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
-                    region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
             shippingAddress:
                 class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
                 property_value:
