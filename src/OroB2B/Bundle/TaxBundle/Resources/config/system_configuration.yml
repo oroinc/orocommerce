@@ -43,10 +43,21 @@ oro_system_configuration:
                 required: true
                 constraints:
                     - NotBlank: ~
-                choice_translation_domain: messages
                 choices:
                     unit_price: orob2b.tax.system_configuration.fields.start_calculation_with.unit_price.label
                     row_total: orob2b.tax.system_configuration.fields.start_calculation_with.row_total.label
+
+        orob2b_tax.start_calculation_on:
+            data_type: string
+            type: choice
+            options:
+                label: orob2b.tax.system_configuration.fields.start_calculation_on.label
+                required: true
+                constraints:
+                    - NotBlank: ~
+                choices:
+                    invoice: orob2b.tax.system_configuration.fields.start_calculation_on.invoice.label
+                    item: orob2b.tax.system_configuration.fields.start_calculation_on.item.label
 
         orob2b_tax.product_prices_include_tax:
             data_type: boolean
@@ -127,6 +138,7 @@ oro_system_configuration:
                                         priority: 80
                                         children:
                                             - orob2b_tax.start_calculation_with
+                                            - orob2b_tax.start_calculation_on
                                             - orob2b_tax.product_prices_include_tax
                                     tax_matcher:
                                         priority: 70

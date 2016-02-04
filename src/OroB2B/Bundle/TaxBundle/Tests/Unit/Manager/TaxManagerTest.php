@@ -221,4 +221,18 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->manager->saveTax($entity);
     }
+
+    public function testSaveNewEntity()
+    {
+        $entity = new \stdClass();
+        $taxValue = new TaxValue();
+        $taxable = new Taxable();
+        $taxable->setClassName('stdClass');
+        $this->factory->expects($this->once())->method('create')->willReturn($taxable);
+
+        $this->taxValueManager->expects($this->never())->method('getTaxValue');
+        $this->taxValueManager->expects($this->never())->method('saveTaxValue')->with($taxValue);
+
+        $this->manager->saveTax($entity);
+    }
 }

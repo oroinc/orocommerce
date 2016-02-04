@@ -41,7 +41,7 @@ class RoundingResolverTest extends \PHPUnit_Framework_TestCase
             new Result(
                 [
                         Result::UNIT => ResultElement::create('24.1879', '19.9912', '5.1312', '0.0000001'),
-                        Result::ROW => ResultElement::create('24.1879', '19.8912', '5.5356', '00001'),
+                        Result::ROW => ResultElement::create('24.1879', '19.8912', '5.5356', '0.0001'),
                         Result::TAXES => [
                             TaxResultElement::create('1', '0.08', '19.99', '1.5812'),
                             TaxResultElement::create('2', '0.07', '19.99', '1.3813'),
@@ -57,7 +57,7 @@ class RoundingResolverTest extends \PHPUnit_Framework_TestCase
         $this->compareResult(
             new Result(
                 [
-                        Result::TOTAL => ResultElement::create('24.19', '20'),
+                        Result::TOTAL => ResultElement::create('24.19', '19.99'),
                         Result::TAXES => [
                             TaxResultElement::create('1', '0.08', '19.99', '1.6'),
                             TaxResultElement::create('2', '0.07', '19.99', '1.4'),
@@ -71,12 +71,12 @@ class RoundingResolverTest extends \PHPUnit_Framework_TestCase
         $this->compareResult(
             new Result(
                 [
-                        Result::UNIT => ResultElement::create('24.19', '20', '5.14', '0.01'),
-                        Result::ROW => ResultElement::create('24.19', '19.9', '5.54', '001'),
+                        Result::UNIT => ResultElement::create('24.19', '19.99', '5.13', '0.0000001'),
+                        Result::ROW => ResultElement::create('24.19', '19.89', '5.54', '0.0001'),
                         Result::TAXES => [
-                            TaxResultElement::create('1', '0.08', '19.99', '1.59'),
-                            TaxResultElement::create('2', '0.07', '19.99', '1.39'),
-                            TaxResultElement::create('3', '0.066', '19.99', '1.19'),
+                            TaxResultElement::create('1', '0.08', '19.99', '1.58'),
+                            TaxResultElement::create('2', '0.07', '19.99', '1.38'),
+                            TaxResultElement::create('3', '0.066', '19.99', '1.18'),
                         ],
                 ]
             ),

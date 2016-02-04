@@ -111,6 +111,53 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    public function testGetStartCalculationOn()
+    {
+        $this->configManager
+            ->expects($this->once())
+            ->method('get')
+            ->with('orob2b_tax.start_calculation_on')
+            ->willReturn(TaxationSettingsProvider::START_CALCULATION_ON_INVOICE);
+
+        $this->assertEquals(
+            TaxationSettingsProvider::START_CALCULATION_ON_INVOICE,
+            $this->provider->getStartCalculationOn()
+        );
+    }
+
+    /**
+     * @dataProvider isStartCalculationOnUnitPriceProvider
+     * @param string $configValue
+     * @param bool $expected
+     */
+    public function testIsStartCalculationOnUnitPrice($configValue, $expected)
+    {
+        $this->configManager
+            ->expects($this->exactly(2))
+            ->method('get')
+            ->with('orob2b_tax.start_calculation_on')
+            ->willReturn($configValue);
+
+        $this->assertEquals($expected, $this->provider->isStartCalculationOnInvoice());
+        $this->assertEquals(!$expected, $this->provider->isStartCalculationOnItem());
+    }
+
+    /**
+     * @return array
+     */
+    public function isStartCalculationOnUnitPriceProvider()
+    {
+        return [
+            [
+                'configValue' => TaxationSettingsProvider::START_CALCULATION_ON_INVOICE,
+                'expected' => true,
+            ],
+            [
+                'configValue' => TaxationSettingsProvider::START_CALCULATION_ON_ITEM,
+                'expected' => false,
+            ],
+        ];
+    }
 
     /**
      * @dataProvider isStartCalculationWithRowTotalProvider

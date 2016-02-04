@@ -9,9 +9,26 @@ use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use OroB2B\Bundle\TaxBundle\Model\TaxResultElement;
+use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class TotalResolver implements ResolverInterface
 {
+    /** @var TaxationSettingsProvider */
+    protected $settingsProvider;
+
+    /**  @var RoundingResolver */
+    protected $roundingResolver;
+
+    /**
+     * @param TaxationSettingsProvider $settingsProvider
+     * @param RoundingResolver $roundingResolver
+     */
+    public function __construct(TaxationSettingsProvider $settingsProvider, RoundingResolver $roundingResolver)
+    {
+        $this->settingsProvider = $settingsProvider;
+        $this->roundingResolver = $roundingResolver;
+    }
+
     /** {@inheritdoc} */
     public function resolve(Taxable $taxable)
     {
@@ -19,47 +36,112 @@ class TotalResolver implements ResolverInterface
             return;
         }
 
-        /** @var TaxResultElement[] $taxResults */
         $taxResults = [];
-        $inclTax = BigDecimal::zero();
-        $exclTax = BigDecimal::zero();
-        $taxAmount = BigDecimal::zero();
-        $adjustment = BigDecimal::zero();
+        $data = ResultElement::create(BigDecimal::zero(), BigDecimal::zero(), BigDecimal::zero(), BigDecimal::zero());
 
         foreach ($taxable->getItems() as $taxableItem) {
             $taxableItemResult = $taxableItem->getResult();
             $row = $taxableItemResult->getRow();
+
+            if ($this->settingsProvider->isStartCalculationOnItem()) {
+                $this->roundingResolver->round($row);
+            }
+
             try {
-                $inclTax = $inclTax->plus($row->getIncludingTax());
-                $exclTax = $exclTax->plus($row->getExcludingTax());
-                $taxAmount = $taxAmount->plus($row->getTaxAmount());
-                $adjustment = $adjustment->plus($row->getAdjustment());
+                $mergedData = $this->mergeData($data, $row);
+                $mergedTaxResults = $this->mergeTaxResultElements($taxResults, $taxableItemResult);
             } catch (NumberFormatException $e) {
                 continue;
             }
 
-            foreach ($taxableItemResult->getTaxes() as $appliedTax) {
-                $taxCode = (string)$appliedTax->getTax();
-                $appliedTaxAmount = $appliedTax->getTaxAmount();
-                $appliedTaxableAmount = $appliedTax->getTaxableAmount();
-                if (array_key_exists($taxCode, $taxResults)) {
-                    $appliedTaxes = $taxResults[$taxCode];
-                    $appliedTaxAmount = BigDecimal::of($appliedTaxes->getTaxAmount())->plus($appliedTaxAmount);
-                    $appliedTaxableAmount = BigDecimal::of($appliedTaxes->getTaxableAmount())
-                        ->plus($appliedTaxableAmount);
-                }
+            $data = $mergedData;
+            $taxResults = $mergedTaxResults;
+        }
 
-                $taxResults[$taxCode] = TaxResultElement::create(
-                    $taxCode,
-                    $appliedTax->getRate(),
-                    $appliedTaxableAmount,
-                    $appliedTaxAmount
-                );
+        if ($this->settingsProvider->isStartCalculationOnInvoice()) {
+            try {
+                $adjustedAmounts = $this->adjustAmounts($data);
+            } catch (NumberFormatException $e) {
+                return;
             }
+
+            $data = $adjustedAmounts;
         }
 
         $result = $taxable->getResult();
-        $result->offsetSet(Result::TOTAL, ResultElement::create($inclTax, $exclTax, $taxAmount, $adjustment));
+        $result->offsetSet(Result::TOTAL, new ResultElement($data));
         $result->offsetSet(Result::TAXES, array_values($taxResults));
+    }
+
+    /**
+     * @param ResultElement $data
+     * @return ResultElement
+     */
+    protected function adjustAmounts(ResultElement $data)
+    {
+        $currentData = new ResultElement($data->getArrayCopy());
+
+        if (!array_key_exists(ResultElement::ADJUSTMENT, $data)) {
+            return $currentData;
+        }
+
+        $adjustment = BigDecimal::of($currentData[ResultElement::ADJUSTMENT]);
+
+        foreach ([ResultElement::INCLUDING_TAX, ResultElement::EXCLUDING_TAX] as $key) {
+            if (array_key_exists($key, $currentData)) {
+                $amount = BigDecimal::of($currentData[$key]);
+                $amount->plus($adjustment);
+                $currentData[$key] = (string)$amount;
+            }
+        }
+
+        return $currentData;
+    }
+
+    /**
+     * @param TaxResultElement[] $taxResults
+     * @param Result $taxableItemResult
+     * @return TaxResultElement[]
+     */
+    protected function mergeTaxResultElements(array $taxResults, Result $taxableItemResult)
+    {
+        foreach ($taxableItemResult->getTaxes() as $appliedTax) {
+            $taxCode = (string)$appliedTax->getTax();
+            $appliedTaxAmount = $appliedTax->getTaxAmount();
+            $appliedTaxableAmount = $appliedTax->getTaxableAmount();
+            if (array_key_exists($taxCode, $taxResults)) {
+                $appliedTaxes = $taxResults[$taxCode];
+                $appliedTaxAmount = BigDecimal::of($appliedTaxes->getTaxAmount())->plus($appliedTaxAmount);
+                $appliedTaxableAmount = BigDecimal::of($appliedTaxes->getTaxableAmount())
+                    ->plus($appliedTaxableAmount);
+            }
+
+            $taxResults[$taxCode] = TaxResultElement::create(
+                $taxCode,
+                $appliedTax->getRate(),
+                $appliedTaxableAmount,
+                $appliedTaxAmount
+            );
+        }
+
+        return $taxResults;
+    }
+
+    /**
+     * @param ResultElement $target
+     * @param ResultElement $source
+     * @return ResultElement
+     */
+    protected function mergeData(ResultElement $target, ResultElement $source)
+    {
+        $currentData = new ResultElement($target->getArrayCopy());
+
+        foreach ($source as $key => $value) {
+            $currentValue = BigDecimal::of($currentData->offsetGet($key));
+            $currentValue = $currentValue->plus($value);
+            $currentData->offsetSet($key, (string)$currentValue);
+        }
+
+        return $currentData;
     }
 }

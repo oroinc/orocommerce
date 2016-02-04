@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Matcher;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use Oro\Bundle\AddressBundle\Entity\Address;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -38,7 +40,8 @@ class ZipCodeMatcherTest extends WebTestCase
      */
     public function testMatch($expectedRuleReferences, $postalCode, $country = null, $region = null, $regionText = null)
     {
-        $em = $this->getContainer()->get('doctrine.orm.default_entity_manager');
+        /** @var EntityManagerInterface $em */
+        $em = $this->getContainer()->get('doctrine')->getManager();
 
         $address = (new Address())
             ->setPostalCode($postalCode)

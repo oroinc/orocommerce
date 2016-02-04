@@ -2,15 +2,16 @@
 
 namespace OroB2B\Bundle\TaxBundle\Resolver;
 
-use Brick\Math\BigNumber;
+use Brick\Math\BigDecimal;
 use Brick\Math\Exception\NumberFormatException;
 use Brick\Math\RoundingMode;
 
-use OroB2B\Bundle\TaxBundle\Calculator\TaxCalculatorInterface;
 use OroB2B\Bundle\TaxBundle\Model\AbstractResult;
 use OroB2B\Bundle\TaxBundle\Model\AbstractResultElement;
+use OroB2B\Bundle\TaxBundle\Model\ResultElement;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use OroB2B\Bundle\TaxBundle\Model\TaxResultElement;
+use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class RoundingResolver implements ResolverInterface
 {
@@ -43,22 +44,31 @@ class RoundingResolver implements ResolverInterface
     /**
      * @param AbstractResultElement $result
      */
-    protected function round(AbstractResultElement $result)
+    public function round(AbstractResultElement $result)
     {
         foreach ($result as $key => $value) {
-            // we should not round rates
-            if ($key === TaxResultElement::RATE) {
+            try {
+                $value = BigDecimal::of($value);
+            } catch (NumberFormatException $e) {
                 continue;
             }
 
-            try {
-                $value = (string)BigNumber::of($value)
-                    ->toScale(TaxCalculatorInterface::SCALE, RoundingMode::UP)
-                    ->stripTrailingZeros();
-            } catch (NumberFormatException $e) {
+            if (!in_array($key, (array)$this->getExcludedKeys(), true)) {
+                $value = $value->toScale(TaxationSettingsProvider::SCALE, RoundingMode::HALF_UP);
             }
 
-            $result->offsetSet($key, $value);
+            $result->offsetSet($key, $value->stripTrailingZeros());
         }
+    }
+
+    /**
+     * @return array
+     */
+    protected function getExcludedKeys()
+    {
+        return [
+            TaxResultElement::RATE, // we should not round rates
+            ResultElement::ADJUSTMENT, // we should not round adjustments
+        ];
     }
 }

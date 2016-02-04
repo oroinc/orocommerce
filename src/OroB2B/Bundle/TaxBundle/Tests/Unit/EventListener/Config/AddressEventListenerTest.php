@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\EventListener\Config;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\TaxBundle\EventListener\Config\AddressEventListener;
 use OroB2B\Bundle\TaxBundle\Factory\AddressModelFactory;
@@ -164,6 +163,24 @@ class AddressEventListenerTest extends \PHPUnit_Framework_TestCase
                 }
             )
         );
+
+        $this->listener->beforeSave($event);
+    }
+
+    public function testBeforeSaveNoAddress()
+    {
+        /** @var ConfigSettingsUpdateEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent')
+            ->disableOriginalConstructor()->getMock();
+
+        $address ='some_value';
+
+        $event->expects($this->once())->method('getSettings')
+            ->willReturn(['orob2b_tax.origin_address' => ['value' => $address]]);
+
+        $this->addressModelFactory->expects($this->never())->method($this->anything());
+
+        $event->expects($this->never())->method('setSettings');
 
         $this->listener->beforeSave($event);
     }

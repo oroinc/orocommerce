@@ -1,0 +1,40 @@
+method: saveTax
+reference: order_line_item_2
+configuration: { product_prices_include_tax: true, use_as_base_by_default: destination }
+databaseBefore:
+    'OroB2B\Bundle\OrderBundle\Entity\Order':
+        simple_order:
+            poNumber: { property_value: simple_order }
+            account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+            billingAddress:
+                class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                property_value:
+                    country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                    region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+            shippingAddress:
+                class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                property_value:
+                    country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                    region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+    'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
+        order_line_item_1:
+            productSku: { property_value: order_line_item_1 }
+            order: { reference: simple_order }
+            quantity: { property_value: 6 }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '15.99', currency: USD } }
+        order_line_item_2:
+            productSku: { property_value: order_line_item_2 }
+            order: { reference: simple_order }
+            quantity: { property_value: 7 }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '5.55', currency: USD } }
+expectedResult:
+    row:
+        includingTax: '38.85' # 5.55 * 7
+        excludingTax: '35.32' # 5.0455 * 7 = 35.3185
+        taxAmount: '3.53'     # 0.5045 * 7 = 3.5315
+        adjustment: '-0.0018' # 35.32 - 35.3185
+    unit:
+        includingTax: '5.55'
+        excludingTax: '5.05'  # 5.55 - 0.5045 = 5.0455
+        taxAmount: '0.5'      # 5.55 * 0.1 / 1.1 = 0.5045
+        adjustment: '-0.0045' # 5.05 - 5.0455

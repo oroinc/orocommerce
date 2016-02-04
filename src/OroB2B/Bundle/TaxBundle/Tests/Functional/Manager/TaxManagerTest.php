@@ -6,8 +6,8 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
-use Gedmo\Tool\Logging\DBAL\QueryAnalyzer;
-
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Yaml\Yaml;
 
@@ -15,7 +15,6 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\TaxBundle\Tests\ResultComparatorTrait;
-use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 /**
  * @dbIsolation
@@ -50,14 +49,7 @@ class TaxManagerTest extends WebTestCase
 
     protected function tearDown()
     {
-        /** @var EntityRepository $objectRepository */
-        $registry = $this->getContainer()->get('doctrine');
-        $objectRepository = $registry->getRepository('OroB2BTaxBundle:TaxValue');
-        $objectRepository->clear();
-
-        $this->configManager->reset('orob2b_tax.product_prices_include_tax');
-        $this->configManager->reset('orob2b_tax.use_as_base_by_default');
-        $this->configManager->flush();
+        $this->configManager->reload();
 
         parent::tearDown();
     }
@@ -66,30 +58,26 @@ class TaxManagerTest extends WebTestCase
      * @dataProvider methodsDataProvider
      * @param string $method
      * @param string $reference
-     * @param int $expectedQueries
+     * @param array $configuration
      * @param array $databaseBefore
      * @param array $expectedResult
      * @param array $databaseAfter
-     * @param bool $priceIncludeTax
      */
     public function testMethods(
         $method,
         $reference,
-        $expectedQueries,
+        array $configuration,
         array $databaseBefore = [],
         array $expectedResult = [],
-        array $databaseAfter = [],
-        $priceIncludeTax = false
+        array $databaseAfter = []
     ) {
-        $this->configManager->set('orob2b_tax.product_prices_include_tax', $priceIncludeTax);
-        $this->configManager->set(
-            'orob2b_tax.use_as_base_by_default',
-            TaxationSettingsProvider::USE_AS_BASE_DESTINATION
-        );
+        foreach ($configuration as $key => $value) {
+            $this->configManager->set(sprintf('orob2b_tax.%s', $key), $value);
+        }
 
         $this->prepareDatabase($databaseBefore);
 
-        $this->executeMethod($method, $this->getReference($reference), $expectedResult, $expectedQueries);
+        $this->executeMethod($method, $this->getReference($reference), $expectedResult);
 
         $this->assertDatabase($databaseAfter);
         $this->clearDatabase($databaseAfter);
@@ -100,44 +88,36 @@ class TaxManagerTest extends WebTestCase
      */
     public function methodsDataProvider()
     {
-        return Yaml::parse(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'tax_manager_test_cases.yml'));
+        $finder = new Finder();
+
+        $finder
+            ->files()
+            ->in(__DIR__)
+            ->name('*.yml');
+
+        $cases = [];
+
+        /** @var SplFileInfo $file */
+        foreach ($finder as $file) {
+            $cases[$file->getRelativePathname()] = Yaml::parse($file);
+        }
+
+        return $cases;
     }
 
     /**
      * @param string $method
      * @param object $object
      * @param array $expectedResult
-     * @param int $expectedQueries
      */
-    protected function executeMethod($method, $object, $expectedResult, $expectedQueries)
+    protected function executeMethod($method, $object, $expectedResult)
     {
         $manager = $this->getContainer()->get('orob2b_tax.manager.tax_manager');
 
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BTaxBundle:TaxValue');
-
-        $queryAnalyzer = new QueryAnalyzer($em->getConnection()->getDatabasePlatform());
-
-        $prevLogger = $em->getConnection()->getConfiguration()->getSQLLogger();
-        $em->getConnection()->getConfiguration()->setSQLLogger($queryAnalyzer);
-
         $this->compareResult($expectedResult, $manager->{$method}($object));
-
-//        $this->assertCount(
-//            $expectedQueries,
-//            $queryAnalyzer->getExecutedQueries(),
-//            implode(PHP_EOL, $queryAnalyzer->getExecutedQueries())
-//        );
 
         // cache trigger
         $this->compareResult($expectedResult, $manager->{$method}($object));
-
-//        $this->assertCount(
-//            $expectedQueries,
-//            $queryAnalyzer->getExecutedQueries(),
-//            implode(PHP_EOL, $queryAnalyzer->getExecutedQueries())
-//        );
-
-        $em->getConnection()->getConfiguration()->setSQLLogger($prevLogger);
     }
 
     /**

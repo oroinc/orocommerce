@@ -5,11 +5,11 @@ namespace OroB2B\Bundle\TaxBundle\Resolver;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
 
-use OroB2B\Bundle\TaxBundle\Calculator\TaxCalculatorInterface;
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use OroB2B\Bundle\TaxBundle\Model\TaxResultElement;
+use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class CustomerAddressItemResolver extends AbstractAddressResolver
 {
@@ -66,7 +66,7 @@ class CustomerAddressItemResolver extends AbstractAddressResolver
         $taxResults = [];
 
         if ($this->settingsProvider->isStartCalculationWithRowTotal()) {
-            $taxableAmount = $taxableAmount->toScale(TaxCalculatorInterface::SCALE, RoundingMode::UP);
+            $taxableAmount = $taxableAmount->toScale(TaxationSettingsProvider::SCALE, RoundingMode::HALF_UP);
         }
 
         foreach ($taxRules as $taxRule) {
