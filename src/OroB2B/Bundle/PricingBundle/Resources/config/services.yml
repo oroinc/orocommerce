@@ -36,6 +36,7 @@ parameters:
     orob2b_pricing.builder.account_combined_price_list_builder.class: OroB2B\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder
 
     orob2b_pricing.builder.queue_consumer.class: OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer
+    orob2b_pricing.builder.combined_product_price_queue_consumer.class: OroB2B\Bundle\PricingBundle\Builder\CombinedProductPriceQueueConsumer
 
     orob2b_pricing.builder.combined_price_list_garbage_collector.class: OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector
 
@@ -219,6 +220,15 @@ services:
             - @orob2b_pricing.builder.account_group_combined_price_list_builder
             - @orob2b_pricing.builder.account_combined_price_list_builder
 
+    orob2b_pricing.builder.combined_product_price_queue_consumer:
+        class: %orob2b_pricing.builder.combined_product_price_queue_consumer.class%
+        calls:
+            - [setChangedProductPriceClass, [%orob2b_pricing.entity.changed_product_price.class%]]
+            - [setCombinedPriceListClass, [%orob2b_pricing.entity.combined_price_list.class%]]
+        arguments:
+            - @doctrine
+            - @orob2b_pricing.resolver.combined_product_price_resolver
+
     orob2b_pricing.validator.unique_product_prices:
         class: %orob2b_pricing.validator.unique_product_prices.class%
         tags:
@@ -269,10 +279,12 @@ services:
         class: %orob2b_pricing.event_listener.combined_price_list_queue.class%
         arguments:
             - @orob2b_pricing.builder.queue_consumer
+            - @orob2b_pricing.builder.combined_product_price_queue_consumer
             - @oro_config.global
         tags:
             - { name: kernel.event_listener, event: kernel.terminate, method: onTerminate }
             - { name: kernel.event_listener, event: orob2b_pricing.price_list_collection.change_before, method: onQueueChanged }
+            - { name: kernel.event_listener, event: orob2b_pricing.product_price.change, method: onProductPriceChanged }
 
     orob2b_pricing.event_listener.product_price_datagrid:
         class: %orob2b_pricing.event_listener.product_price_datagrid.class%
@@ -416,5 +428,6 @@ services:
         class: %orob2b_pricing.entity_listener.product_price.class%
         arguments:
             - @oro_b2bentity.extra_insert_entity_storage
+            - @event_dispatcher
         tags:
             - { name: doctrine.orm.entity_listener }

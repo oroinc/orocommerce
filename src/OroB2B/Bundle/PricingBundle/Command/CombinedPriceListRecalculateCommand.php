@@ -32,12 +32,14 @@ class CombinedPriceListRecalculateCommand extends ContainerAwareCommand implemen
     {
         $container = $this->getContainer();
         /** @var CombinedPriceListQueueConsumer $consumer */
-        $consumer = $container->get('orob2b_pricing.builder.queue_consumer');
+        $priceListCollectionConsumer = $container->get('orob2b_pricing.builder.queue_consumer');
+        $productPriceConsumer = $container->get('orob2b_pricing.builder.combined_product_price_queue_consumer');
         $key = Configuration::getConfigKeyByName(Configuration::PRICE_LISTS_UPDATE_MODE);
         $mode = $container->get('oro_config.manager')->get($key);
         if ($mode === CombinedPriceListQueueConsumer::MODE_SCHEDULED) {
             $output->writeln('<info>Start the process recalculation</info>');
-            $consumer->process();
+            $priceListCollectionConsumer->process();
+            $productPriceConsumer->process();
             $output->writeln('<info>The cache is updated successfully</info>');
         } else {
             $output->writeln('<info>Recalculation is not required, another mode is active</info>');
