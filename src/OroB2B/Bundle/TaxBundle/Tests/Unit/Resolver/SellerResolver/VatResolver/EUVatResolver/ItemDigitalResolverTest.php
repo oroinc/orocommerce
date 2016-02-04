@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Resolver\SellerResolver\VatResolver
 
 use Brick\Math\BigDecimal;
 
+use JMS\Serializer\Tests\Fixtures\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\TaxBundle\Entity\Tax;
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
@@ -118,11 +119,20 @@ class ItemDigitalResolverTest extends \PHPUnit_Framework_TestCase
     public function testResolveWithEmptyAddress()
     {
         $taxable = new Taxable();
-        $taxable->setPrice('20');
         $taxable->setQuantity(3);
         $taxable->setAmount('20');
 
         $this->assertNothing();
+        $this->resolver->resolve($taxable);
+
+        $taxable->addItem(new Taxable());
+        $this->resolver->resolve($taxable);
+
+        $taxable->removeItem(new Taxable());
+        $taxable->setPrice('20');
+        $this->resolver->resolve($taxable);
+
+        $taxable->setOrigin(new OrderAddress());
         $this->resolver->resolve($taxable);
     }
 

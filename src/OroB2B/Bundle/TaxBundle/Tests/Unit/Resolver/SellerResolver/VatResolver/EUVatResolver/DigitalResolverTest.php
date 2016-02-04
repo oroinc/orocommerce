@@ -62,7 +62,7 @@ class DigitalResolverTest extends \PHPUnit_Framework_TestCase
         $this->resolver->resolve($taxable);
     }
 
-    public function testResolveForEuropeSeller()
+    public function testEmptyParameters()
     {
         $taxableItem = new Taxable();
         $taxable = $this->getTaxable($taxableItem);
@@ -73,6 +73,17 @@ class DigitalResolverTest extends \PHPUnit_Framework_TestCase
 
         $this->itemResolver->expects($this->never())->method('resolve');
 
+        $this->resolver->resolve($taxable);
+
+        $taxable->removeItem($taxableItem);
+        $this->resolver->resolve($taxable);
+
+        $taxable->addItem($taxableItem);
+        $taxable->setDestination(null);
+        $this->resolver->resolve($taxable);
+
+        $taxable->setDestination(new OrderAddress());
+        $taxable->setOrigin(null);
         $this->resolver->resolve($taxable);
     }
 
