@@ -17,6 +17,7 @@ use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class CombinedPriceListRepositoryTest extends WebTestCase
 {
@@ -300,7 +301,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         /** @var PriceList $priceList */
         $priceList = $this->getReference($priceList);
 
-        $cPriceLists = $this->getRepository()->getCombinedPriceListsByPriceListProduct($priceList);
+        $cPriceLists = $this->getRepository()->getCombinedPriceListsByPriceList($priceList);
         $this->assertCount($result, $cPriceLists);
     }
 

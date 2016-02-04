@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\PricingBundle\Builder;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ChangedProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
@@ -39,6 +38,16 @@ class CombinedProductPriceQueueConsumer
     protected $combinedPriceListRepository;
 
     /**
+     * @var string
+     */
+    protected $changedProductPriceClass = 'OroB2B\Bundle\PricingBundle\Entity\ChangedProductPrice';
+
+    /**
+     * @var string
+     */
+    protected $combinedPriceListClass = 'OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList';
+
+    /**
      * @param ManagerRegistry $registry
      * @param CombinedProductPriceResolver $resolver
      */
@@ -58,12 +67,28 @@ class CombinedProductPriceQueueConsumer
     }
 
     /**
+     * @param string $changedProductPriceClass
+     */
+    public function setChangedProductPriceClass($changedProductPriceClass)
+    {
+        $this->changedProductPriceClass = $changedProductPriceClass;
+    }
+
+    /**
+     * @param string $combinedPriceListClass
+     */
+    public function setCombinedPriceListClass($combinedPriceListClass)
+    {
+        $this->combinedPriceListClass = $combinedPriceListClass;
+    }
+
+    /**
      * @param ChangedProductPrice $changes
      */
     protected function handleProductPriceJob(ChangedProductPrice $changes)
     {
         $repository = $this->getCombinedPriceListRepository();
-        $iterator = $repository->getCombinedPriceListsByPriceListProduct(
+        $iterator = $repository->getCombinedPriceListsByPriceList(
             $changes->getPriceList()
         );
         foreach ($iterator as $combinedPriceList) {
@@ -77,8 +102,7 @@ class CombinedProductPriceQueueConsumer
     protected function getManager()
     {
         if (!$this->manager) {
-            $class = 'OroB2B\Bundle\PricingBundle\Entity\ChangedProductPrice';
-            $this->manager = $this->registry->getManagerForClass($class);
+            $this->manager = $this->registry->getManagerForClass($this->changedProductPriceClass);
         }
 
         return $this->manager;
@@ -90,8 +114,7 @@ class CombinedProductPriceQueueConsumer
     protected function getQueueRepository()
     {
         if (!$this->queueRepository) {
-            $class = 'OroB2B\Bundle\PricingBundle\Entity\ChangedProductPrice';
-            $this->queueRepository = $this->getManager()->getRepository($class);
+            $this->queueRepository = $this->getManager()->getRepository($this->changedProductPriceClass);
         }
 
         return $this->queueRepository;
@@ -104,8 +127,8 @@ class CombinedProductPriceQueueConsumer
     {
         if (!$this->combinedPriceListRepository) {
             $this->combinedPriceListRepository = $this->registry
-                ->getManagerForClass('OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList')
-                ->getRepository('OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList');
+                ->getManagerForClass($this->combinedPriceListClass)
+                ->getRepository($this->combinedPriceListClass);
         }
 
         return $this->combinedPriceListRepository;

@@ -134,8 +134,7 @@ class CombinedProductPriceQueueConsumerTest extends WebTestCase
         $combinedPrice = $this->combinedProductPriceRepository->findOneBy($priceData);
 
         if ($combinedPrice) {
-
-            return $combinedPrice->getPrice()->getCurrency() == $newPrice->getCurrency()
+            return $combinedPrice->getPrice()->getCurrency() === $newPrice->getCurrency()
                 && $combinedPrice->getPrice()->getValue() == $newPrice->getValue();
         }
 

@@ -80,7 +80,6 @@ class ProductPriceEntityListener
     protected function handleChanges(ProductPrice $productPrice, LifecycleEventArgs $event)
     {
         $changedProductPrice = $this->createChangedProductPrice($productPrice);
-        $this->eventDispatcher->dispatch(ProductPriceChange::NAME, new ProductPriceChange());
 
         $em = $event->getEntityManager();
         if (null === $changedProductPrice
@@ -90,6 +89,7 @@ class ProductPriceEntityListener
             return;
         }
 
+        $this->eventDispatcher->dispatch(ProductPriceChange::NAME, new ProductPriceChange());
         $this->extraActionsStorage->scheduleForExtraInsert($changedProductPrice);
     }
 

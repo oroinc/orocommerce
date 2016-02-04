@@ -19,35 +19,45 @@ class CombinedProductPriceQueueConsumerTest extends \PHPUnit_Framework_TestCase
      * @var string
      */
     protected $changedProductPriceClass = 'OroB2B\Bundle\PricingBundle\Entity\ChangedProductPrice';
+
     /**
      * @var string
      */
     protected $combinedPriceListClass = 'OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList';
+
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager
      */
     protected $manager;
+
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
      */
     protected $registry;
+
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|CombinedProductPriceResolver
      */
     protected $resolver;
+
     /**
      * @var CombinedProductPriceQueueConsumer
      */
     protected $consumer;
+
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ChangedProductPriceRepository
      */
     protected $changedProductPriceRepo;
+
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|CombinedPriceListRepository
      */
     protected $combinedPriceListRepo;
 
+    /**
+     * {@inheritdoc}
+     */
     public function setUp()
     {
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
@@ -139,7 +149,7 @@ class CombinedProductPriceQueueConsumerTest extends \PHPUnit_Framework_TestCase
         $this->combinedPriceListRepo = $this->getMockBuilder($class)->disableOriginalConstructor()->getMock();
 
         $this->combinedPriceListRepo->expects($this->any())
-            ->method('getCombinedPriceListsByPriceListProduct')
+            ->method('getCombinedPriceListsByPriceList')
             ->willReturn($data['combinedPriceLists']);
 
         $this->manager->expects($this->any())

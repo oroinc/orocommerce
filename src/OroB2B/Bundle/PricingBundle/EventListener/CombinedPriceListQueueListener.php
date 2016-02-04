@@ -70,7 +70,7 @@ class CombinedPriceListQueueListener
                 $this->priceListQueueConsumer->process();
             }
         }
-        if (true || $this->hasProductPriceChanges) {
+        if ($this->hasProductPriceChanges) {
             if ($this->isRealTimeMode()) {
                 $this->productPriceQueueConsumer->process();
             }

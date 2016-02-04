@@ -222,6 +222,9 @@ services:
 
     orob2b_pricing.builder.combined_product_price_queue_consumer:
         class: %orob2b_pricing.builder.combined_product_price_queue_consumer.class%
+        calls:
+            - [setChangedProductPriceClass, [%orob2b_pricing.entity.changed_product_price.class%]]
+            - [setCombinedPriceListClass, [%orob2b_pricing.entity.combined_price_list.class%]]
         arguments:
             - @doctrine
             - @orob2b_pricing.resolver.combined_product_price_resolver
@@ -244,7 +247,6 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-view, method: onAccountGroupView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-edit, method: onEntityEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.frontend-product-view, method: onFrontendProductView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
 
     orob2b_pricing.event_listener.web_site_form_view:

@@ -36,7 +36,7 @@ class ChangedProductPrice implements ObjectIdentifierAwareInterface
      * @var PriceList
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList")
-     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
     protected $priceList;
 
@@ -44,7 +44,7 @@ class ChangedProductPrice implements ObjectIdentifierAwareInterface
      * @var Product
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
     protected $product;
 

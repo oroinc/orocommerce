@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -253,7 +254,7 @@ class CombinedPriceListRepository extends EntityRepository
      * @param PriceList $priceList
      * @return BufferedQueryResultIterator
      */
-    public function getCombinedPriceListsByPriceListProduct(PriceList $priceList)
+    public function getCombinedPriceListsByPriceList(PriceList $priceList)
     {
         $qb = $this->createQueryBuilder('cpl');
 
