@@ -32,10 +32,12 @@ class AddPriceListsFallback implements Migration
     {
         $table = $schema->createTable('orob2b_price_list_acc_fb');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('account_id', 'integer', []);
         $table->addColumn('website_id', 'integer', []);
+        $table->addColumn('account_id', 'integer', []);
         $table->addColumn('fallback', 'integer', []);
         $table->setPrimaryKey(['id']);
+        $table->addIndex(['website_id'], 'idx_2582e3518f45c82', []);
+        $table->addUniqueIndex(['account_id'], 'uniq_2582e359b6b5fba');
     }
 
     /**
@@ -47,10 +49,12 @@ class AddPriceListsFallback implements Migration
     {
         $table = $schema->createTable('orob2b_price_list_acc_gr_fb');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('account_group_id', 'integer', []);
         $table->addColumn('website_id', 'integer', []);
+        $table->addColumn('account_group_id', 'integer', []);
         $table->addColumn('fallback', 'integer', []);
+        $table->addIndex(['website_id'], 'idx_29d4f57618f45c82', []);
         $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['account_group_id'], 'uniq_29d4f576869a3bf1');
     }
 
     /**
