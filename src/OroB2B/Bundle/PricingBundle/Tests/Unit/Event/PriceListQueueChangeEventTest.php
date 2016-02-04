@@ -6,7 +6,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class PriceListCollectionChangeTest extends \PHPUnit_Framework_TestCase
+class PriceListQueueChangeEventTest extends \PHPUnit_Framework_TestCase
 {
     public function testEvent()
     {
