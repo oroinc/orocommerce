@@ -58,7 +58,7 @@ class TotalResolver implements ResolverInterface
             $taxResults = $mergedTaxResults;
         }
 
-        if ($this->settingsProvider->isStartCalculationOnInvoice()) {
+        if ($this->settingsProvider->isStartCalculationOnTotal()) {
             try {
                 $adjustedAmounts = $this->adjustAmounts($data);
             } catch (NumberFormatException $e) {

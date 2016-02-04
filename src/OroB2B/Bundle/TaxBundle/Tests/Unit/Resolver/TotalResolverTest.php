@@ -46,19 +46,19 @@ class TotalResolverTest extends \PHPUnit_Framework_TestCase
      * @param array $items
      * @param ResultElement $expectedTotalResult
      * @param array $expectedTaxes
-     * @param bool $startOnInvoice
+     * @param bool $startOnTotal
      * @dataProvider resolveDataProvider
      */
     public function testResolve(
         array $items,
         ResultElement $expectedTotalResult,
         array $expectedTaxes,
-        $startOnInvoice = true
+        $startOnTotal = true
     ) {
         $this->settingsProvider->expects($this->any())->method('isStartCalculationOnItem')
-            ->willReturn(!$startOnInvoice);
-        $this->settingsProvider->expects($this->any())->method('isStartCalculationOnInvoice')
-            ->willReturn($startOnInvoice);
+            ->willReturn(!$startOnTotal);
+        $this->settingsProvider->expects($this->any())->method('isStartCalculationOnTotal')
+            ->willReturn($startOnTotal);
 
         $taxable = new Taxable();
         foreach ($items as $item) {
@@ -125,7 +125,7 @@ class TotalResolverTest extends \PHPUnit_Framework_TestCase
                 'expectedTotalResult' => ResultElement::create('71.2476', '65.97', '5.2776', '0.0024'),
                 'expectedTaxes' => [TaxResultElement::create('1', '0.08', '65.97', '5.2776')],
             ],
-            'tax excluded, start from invoice' => [
+            'tax excluded, start from total' => [
                 'items' => [
                     [
                         Result::ROW => ResultElement::create('22.035', '19.50', '2.535', '0.0013'),
@@ -198,9 +198,9 @@ class TotalResolverTest extends \PHPUnit_Framework_TestCase
                     TaxResultElement::create('3', '0.06', '21.99', '1.3194'),
                     TaxResultElement::create('4', '0.09', '23.97', '2.1573'),
                 ],
-                'startOnInvoice' => false,
+                'startOnTotal' => false,
             ],
-            'tax included, start from invoice' => [
+            'tax included, start from total' => [
                 'items' => [
                     [
                         Result::ROW => ResultElement::create('19.50', '19.2497', '0.2503', '0.0003'),
@@ -273,7 +273,7 @@ class TotalResolverTest extends \PHPUnit_Framework_TestCase
                     TaxResultElement::create('3', '0.06', '21.6863', '1.3012'),
                     TaxResultElement::create('4', '0.09', '22.7630', '2.049'),
                 ],
-                'startOnInvoice' => false,
+                'startOnTotal' => false,
             ],
             'failed' => [
                 'items' => [

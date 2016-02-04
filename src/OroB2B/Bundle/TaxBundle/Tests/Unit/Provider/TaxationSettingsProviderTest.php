@@ -117,10 +117,10 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('get')
             ->with('orob2b_tax.start_calculation_on')
-            ->willReturn(TaxationSettingsProvider::START_CALCULATION_ON_INVOICE);
+            ->willReturn(TaxationSettingsProvider::START_CALCULATION_ON_TOTAL);
 
         $this->assertEquals(
-            TaxationSettingsProvider::START_CALCULATION_ON_INVOICE,
+            TaxationSettingsProvider::START_CALCULATION_ON_TOTAL,
             $this->provider->getStartCalculationOn()
         );
     }
@@ -138,7 +138,7 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
             ->with('orob2b_tax.start_calculation_on')
             ->willReturn($configValue);
 
-        $this->assertEquals($expected, $this->provider->isStartCalculationOnInvoice());
+        $this->assertEquals($expected, $this->provider->isStartCalculationOnTotal());
         $this->assertEquals(!$expected, $this->provider->isStartCalculationOnItem());
     }
 
@@ -149,7 +149,7 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                'configValue' => TaxationSettingsProvider::START_CALCULATION_ON_INVOICE,
+                'configValue' => TaxationSettingsProvider::START_CALCULATION_ON_TOTAL,
                 'expected' => true,
             ],
             [
