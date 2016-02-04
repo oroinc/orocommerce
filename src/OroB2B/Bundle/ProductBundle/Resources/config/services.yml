@@ -281,3 +281,16 @@ services:
             - [setFrontendSystemConfigurationPath, ['orob2b_product.general_frontend_product_visibility']]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
+
+    orob2b_product.event_listener.datagrid_views:
+        class: OroB2B\Bundle\ProductBundle\EventListener\ProductDatagridViewsListener
+        arguments:
+            - @request_stack
+            - @oro_datagrid.configuration.provider
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-products-grid, method: onBuildBefore }
+    orob2b_product.datagrid.extension.row_template:
+        class: OroB2B\Bundle\ProductBundle\DataGrid\Extension\RowTemplateExtension
+        tags:
+            - { name: oro_datagrid.extension }
+

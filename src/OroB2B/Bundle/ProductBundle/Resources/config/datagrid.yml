@@ -201,6 +201,29 @@ datagrid:
                 icon:          eye-open
                 rowAction:     true
 
+    frontend-products-grid-view-grid-mixin:
+    frontend-products-grid-view-list-mixin:
+        source:
+            type: orm
+            query:
+                select:
+                    - __root_entity__.image
+                    - productDescriptions.string as description
+                join:
+                    inner:
+                        -
+                            join: __root_entity__.descriptions
+                            alias: productDescriptions
+                            conditionType: WITH
+                            condition: productDescriptions.locale IS NULL
+
+    frontend-products-grid-view-tiles-mixin:
+        source:
+            type: orm
+            query:
+                select:
+                    - __root_entity__.image
+
     orob2b_product-product_variants:
         acl_resource: orob2b_product_view
         options:
