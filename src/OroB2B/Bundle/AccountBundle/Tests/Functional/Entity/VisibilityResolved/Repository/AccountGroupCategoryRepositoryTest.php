@@ -15,8 +15,6 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
  */
 class AccountGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
 {
-    const ROOT_CATEGORY = 'root';
-
     /**
      * @var AccountGroupCategoryRepository
      */
@@ -188,7 +186,6 @@ class AccountGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         ];
     }
 
-
     /**
      * @param array $expectedVisibilities
      * @dataProvider getParentCategoryVisibilitiesDataProvider
@@ -196,7 +193,7 @@ class AccountGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
     public function testGetParentCategoryVisibilities(array $expectedVisibilities)
     {
         $expectedVisibilities = $this->convertReferences($expectedVisibilities);
-        $actualVisibilities = $this->getRepository()->getParentCategoryVisibilities();
+        $actualVisibilities = $this->repository->getParentCategoryVisibilities();
 
         $this->assertSameSize($expectedVisibilities, $actualVisibilities);
         foreach ($actualVisibilities as $actualVisibility) {

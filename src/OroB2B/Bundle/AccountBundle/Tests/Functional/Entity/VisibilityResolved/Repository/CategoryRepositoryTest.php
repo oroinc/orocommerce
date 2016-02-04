@@ -13,8 +13,6 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
  */
 class CategoryRepositoryTest extends AbstractCategoryRepositoryTest
 {
-    const ROOT_CATEGORY = 'root';
-
     /**
      * @var CategoryRepository
      */

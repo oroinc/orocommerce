@@ -2,11 +2,8 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product\Category;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
-
-use Oro\Component\Testing\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
@@ -21,13 +18,8 @@ use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 /**
  * @dbIsolation
  */
-class AccountGroupProductResolvedCacheBuilderTest extends WebTestCase
+class AccountGroupProductResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuilderTest
 {
-    const ROOT = 'root';
-
-    /** @var Registry */
-    protected $registry;
-    
     /** @var Category */
     protected $category;
 
@@ -39,24 +31,12 @@ class AccountGroupProductResolvedCacheBuilderTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient();
-
-        $this->loadFixtures([
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
-        ]);
-
-        $this->registry = $this->client->getContainer()->get('doctrine');
+        parent::setUp();
         $this->category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
         $this->accountGroup = $this->getReference('account_group.group3');
 
         $this->builder = $this->getContainer()
             ->get('orob2b_account.visibility.cache.product.category.account_group_product_resolved_cache_builder');
-    }
-    
-    public function tearDown()
-    {
-        $this->getContainer()->get('doctrine')->getManager()->clear();
-        parent::tearDown();
     }
 
     public function testChangeAccountGroupCategoryVisibilityToHidden()
@@ -360,16 +340,5 @@ class AccountGroupProductResolvedCacheBuilderTest extends WebTestCase
             )
             ->getQuery()
             ->getArrayResult();
-    }
-
-    /**
-     * @return Category
-     */
-    protected function getRootCategory()
-    {
-        return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BCatalogBundle:Category')
-            ->getRepository('OroB2BCatalogBundle:Category')
-            ->getMasterCatalogRoot();
     }
 }
