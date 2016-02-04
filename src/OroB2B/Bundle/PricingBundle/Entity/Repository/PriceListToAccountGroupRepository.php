@@ -53,7 +53,7 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
      * @param int $fallback
      * @return BufferedQueryResultIterator|AccountGroup[]
      */
-    public function getAccountGroupIteratorByFallback(Website $website, $fallback)
+    public function getAccountGroupIteratorByDefaultFallback(Website $website, $fallback)
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('distinct accountGroup')
@@ -69,18 +69,23 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
             )
         );
 
-        $qb->innerJoin(
+        $qb->leftJoin(
             'OroB2BPricingBundle:PriceListAccountGroupFallback',
             'priceListFallBack',
             Join::WITH,
             $qb->expr()->andX(
                 $qb->expr()->eq('priceListFallBack.accountGroup', 'accountGroup'),
-                $qb->expr()->eq('priceListFallBack.website', ':website'),
-                $qb->expr()->eq('priceListFallBack.fallback', ':fallbackToWebsite')
+                $qb->expr()->eq('priceListFallBack.website', ':website')
             )
         )
-            ->setParameter('website', $website)
-            ->setParameter('fallbackToWebsite', $fallback);
+        ->where(
+            $qb->expr()->orX(
+                $qb->expr()->eq('priceListFallBack.fallback', ':fallbackToWebsite'),
+                $qb->expr()->isNull('priceListFallBack.fallback')
+            )
+        )
+        ->setParameter('website', $website)
+        ->setParameter('fallbackToWebsite', $fallback);
 
         return new BufferedQueryResultIterator($qb->getQuery());
     }

@@ -67,7 +67,7 @@ class CombinedPriceListQueueConsumer
         foreach ($this->getUniqueChangesIterator() as $changeItem) {
             $this->handleCollectionsJob($changeItem, $force);
             $manager->remove($changeItem);
-            if ($i++ % 100) {
+            if (++$i % 100 === 0) {
                 $manager->flush();
             }
         }

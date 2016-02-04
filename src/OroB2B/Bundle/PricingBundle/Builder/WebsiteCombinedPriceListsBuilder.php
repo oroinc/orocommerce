@@ -37,7 +37,7 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
             $websites = [$currentWebsite];
             if (!$currentWebsite) {
                 $websites = $this->getPriceListToEntityRepository()
-                    ->getWebsiteIteratorByFallback(PriceListWebsiteFallback::CONFIG);
+                    ->getWebsiteIteratorByDefaultFallback(PriceListWebsiteFallback::CONFIG);
             }
 
             foreach ($websites as $website) {

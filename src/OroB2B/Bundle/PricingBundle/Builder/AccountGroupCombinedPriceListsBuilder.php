@@ -36,7 +36,7 @@ class AccountGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBui
             $accountGroups = [$currentAccountGroup];
             if (!$currentAccountGroup) {
                 $accountGroups = $this->getPriceListToEntityRepository()
-                    ->getAccountGroupIteratorByFallback($website, PriceListAccountGroupFallback::WEBSITE);
+                    ->getAccountGroupIteratorByDefaultFallback($website, PriceListAccountGroupFallback::WEBSITE);
             }
 
             foreach ($accountGroups as $accountGroup) {

@@ -72,7 +72,7 @@ class AccountGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLis
             ->method('findOneBy')
             ->willReturn($priceListByAccountGroup);
         $this->priceListToEntityRepository->expects($this->exactly($callExpects))
-            ->method('getAccountGroupIteratorByFallback')
+            ->method('getAccountGroupIteratorByDefaultFallback')
             ->with($website, PriceListAccountGroupFallback::WEBSITE)
             ->will($this->returnValue([$accountGroup]));
         $this->garbageCollector->expects($this->never())
@@ -126,7 +126,7 @@ class AccountGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLis
             ->method('findOneBy')
             ->willReturn($priceListByAccountGroup);
         $this->priceListToEntityRepository->expects($this->never())
-            ->method('getAccountGroupIteratorByFallback');
+            ->method('getAccountGroupIteratorByDefaultFallback');
         $this->garbageCollector->expects($this->exactly($callExpects))
             ->method('cleanCombinedPriceLists');
 
