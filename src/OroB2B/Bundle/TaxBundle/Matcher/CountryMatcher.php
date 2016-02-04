@@ -9,7 +9,7 @@ class CountryMatcher extends AbstractMatcher
     /**
      * @var array
      */
-    protected $europeanUnionCountryCodes = [
+    protected static $europeanUnionCountryCodes = [
         'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK',
         'EE', 'FI', 'FR', 'DE', 'EL', 'HU', 'IE',
         'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL',
@@ -19,15 +19,15 @@ class CountryMatcher extends AbstractMatcher
     /**
      * {@inheritdoc}
      */
-    public function match(AbstractAddress $address)
+    public function match(AbstractAddress $address, $productTaxCode)
     {
         $country = $address->getCountry();
 
-        if (null === $country) {
+        if (null === $country || $productTaxCode === null) {
             return [];
         }
 
-        return $this->getTaxRuleRepository()->findByCountry($country);
+        return $this->getTaxRuleRepository()->findByCountryAndProductTaxCode($country, $productTaxCode);
     }
 
     /**
@@ -36,6 +36,6 @@ class CountryMatcher extends AbstractMatcher
      */
     public function isEuropeanUnionCountry($countryCode)
     {
-        return in_array($countryCode, $this->europeanUnionCountryCodes);
+        return in_array($countryCode, self::$europeanUnionCountryCodes, true);
     }
 }

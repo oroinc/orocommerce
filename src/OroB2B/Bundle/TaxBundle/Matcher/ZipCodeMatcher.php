@@ -14,19 +14,20 @@ class ZipCodeMatcher extends AbstractMatcher
     /**
      * {@inheritdoc}
      */
-    public function match(AbstractAddress $address)
+    public function match(AbstractAddress $address, $productTaxCode)
     {
         $region = $address->getRegion();
         $regionText = $address->getRegionText();
         $country = $address->getCountry();
 
-        $regionTaxRules = $this->regionMatcher->match($address);
+        $regionTaxRules = $this->regionMatcher->match($address, $productTaxCode);
 
-        if (null === $country || (null === $region && empty($regionText))) {
+        if (null === $productTaxCode || null === $country || (null === $region && empty($regionText))) {
             return $regionTaxRules;
         }
 
-        $zipCodeTaxRules = $this->getTaxRuleRepository()->findByZipCode(
+        $zipCodeTaxRules = $this->getTaxRuleRepository()->findByZipCodeAndProductTaxCode(
+            $productTaxCode,
             $address->getPostalCode(),
             $country,
             $region,

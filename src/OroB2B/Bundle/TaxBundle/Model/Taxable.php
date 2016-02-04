@@ -299,6 +299,10 @@ class Taxable
      */
     public function getContextValue($keyName)
     {
-        return $this->context->offsetGet($keyName);
+        if ($this->context->offsetExists($keyName)) {
+            return $this->context->offsetGet($keyName);
+        }
+
+        return null;
     }
 }
