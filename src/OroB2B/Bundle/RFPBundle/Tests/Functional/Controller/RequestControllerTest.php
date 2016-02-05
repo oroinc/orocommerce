@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
+use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
  * @dbIsolation
@@ -131,6 +132,12 @@ class RequestControllerTest extends WebTestCase
         $form['orob2b_rfp_request[email]'] = $updatedEmail;
         $form['orob2b_rfp_request[poNumber]'] = $updatedPoNumber;
 
+        $form['orob2b_rfp_request[assignedUsers]'] = $this->getReference(LoadUserData::USER1)->getId();
+        $form['orob2b_rfp_request[assignedAccountUsers]'] = join(',', [
+            $this->getReference(LoadUserData::ACCOUNT1_USER1)->getId(),
+            $this->getReference(LoadUserData::ACCOUNT1_USER2)->getId()
+        ]);
+
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
 
@@ -146,6 +153,10 @@ class RequestControllerTest extends WebTestCase
             $this->getFormatDate('M j, Y'),
             $result->getContent()
         );
+
+        $this->assertContains($this->getReference(LoadUserData::USER1)->getFullName(), $result->getContent());
+        $this->assertContains($this->getReference(LoadUserData::ACCOUNT1_USER1)->getFullName(), $result->getContent());
+        $this->assertContains($this->getReference(LoadUserData::ACCOUNT1_USER2)->getFullName(), $result->getContent());
     }
 
     /**
