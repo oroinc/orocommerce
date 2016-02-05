@@ -67,7 +67,10 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
             $this->getReference(LoadCategoryData::FIRST_LEVEL)->getId(),
             $visibilityResolved->getCategory()->getId()
         );
-        $this->assertEquals(BaseProductVisibilityResolved::VISIBILITY_VISIBLE, $visibilityResolved->getVisibility());
+        $this->assertEquals(
+            BaseProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+            $visibilityResolved->getVisibility()
+        );
         $this->assertProductIdentifyEntitiesAccessory($visibilityResolved);
     }
 

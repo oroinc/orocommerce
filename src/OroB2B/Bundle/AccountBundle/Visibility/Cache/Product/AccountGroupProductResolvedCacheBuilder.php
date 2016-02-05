@@ -51,11 +51,15 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
                 ->getRepository('OroB2BCatalogBundle:Category')
                 ->findOneByProduct($product);
             if ($category) {
+                $visibility = $this->registry
+                    ->getManagerForClass(
+                        'OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved'
+                    )
+                    ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+                    ->getFallbackToGroupVisibility($category, $accountGroup);
                 $update = [
                     'sourceProductVisibility' => $visibilitySettings,
-                    'visibility' => $this->convertVisibility(
-                        $this->categoryVisibilityResolver->isCategoryVisibleForAccountGroup($category, $accountGroup)
-                    ),
+                    'visibility' => $visibility,
                     'source' => BaseProductVisibilityResolved::SOURCE_CATEGORY,
                     'category' => $category
                 ];
@@ -93,17 +97,15 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
             ->getManagerForClass('OroB2BCatalogBundle:Category')
             ->getRepository('OroB2BCatalogBundle:Category')
             ->findOneByProduct($product);
-        $isCategoryVisible = null;
-        if ($category) {
-            $isCategoryVisible = $this->categoryVisibilityResolver->isCategoryVisible($category);
+        if (!$category) {
+            $this->registry
+                ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
+                ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
+                ->setToDefaultWithoutCategoryByProduct($product);
         }
+
         $this->getRepository()->deleteByProduct($product);
-        $this->getRepository()->insertByProduct(
-            $product,
-            $this->insertFromSelectQueryExecutor,
-            $isCategoryVisible,
-            $category
-        );
+        $this->getRepository()->insertByProduct($product, $this->insertFromSelectQueryExecutor, $category);
     }
 
     /**
@@ -113,27 +115,10 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
     {
         $this->getManager()->beginTransaction();
         try {
-            $this->getRepository()->clearTable($website);
-            $websiteId = $website ? $website->getId() : null;
-
-            $categoriesGrouped = $this->getCategories();
-            foreach ($categoriesGrouped as $accountGroupId => $categoriesGroupedByAccountGroup) {
-                $this->getRepository()->insertByCategory(
-                    $this->insertFromSelectQueryExecutor,
-                    BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
-                    $categoriesGroupedByAccountGroup[VisibilityInterface::VISIBLE],
-                    $accountGroupId,
-                    $websiteId
-                );
-                $this->getRepository()->insertByCategory(
-                    $this->insertFromSelectQueryExecutor,
-                    BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
-                    $categoriesGroupedByAccountGroup[VisibilityInterface::HIDDEN],
-                    $accountGroupId,
-                    $websiteId
-                );
-            }
-            $this->getRepository()->insertStatic($this->insertFromSelectQueryExecutor, $websiteId);
+            $repository = $this->getRepository();
+            $repository->clearTable($website);
+            $repository->insertStatic($this->insertFromSelectQueryExecutor, $website);
+            $repository->insertByCategory($this->insertFromSelectQueryExecutor, $website);
             $this->getManager()->commit();
         } catch (\Exception $exception) {
             $this->getManager()->rollback();
@@ -158,36 +143,5 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
     {
         return $this->registry
             ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved');
-    }
-
-    /**
-     * @return array
-     */
-    protected function getCategories()
-    {
-        $repo = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
-            ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility');
-
-        $categories = $repo->getCategoryIdsByAccountGroupProductVisibility();
-        $accountGroups = $repo->getAccountGroupsWithCategoryVisibiliy();
-
-        $categoriesGrouped = [];
-
-        foreach ($accountGroups as $accountGroup) {
-            $categoriesGrouped[$accountGroup->getId()] = [
-                VisibilityInterface::VISIBLE => array_intersect(
-                    $this->categoryVisibilityResolver->getVisibleCategoryIdsForAccountGroup($accountGroup),
-                    $categories
-                ),
-                VisibilityInterface::HIDDEN => array_intersect(
-                    $this->categoryVisibilityResolver->getHiddenCategoryIdsForAccountGroup($accountGroup),
-                    $categories
-                ),
-            ];
-
-        }
-
-        return $categoriesGrouped;
     }
 }

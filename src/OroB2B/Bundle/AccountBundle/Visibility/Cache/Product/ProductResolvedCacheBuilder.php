@@ -49,9 +49,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
             if ($category) {
                 $update = [
                     'sourceProductVisibility' => null,
-                    'visibility' => $this->convertVisibility(
-                        $this->categoryVisibilityResolver->isCategoryVisible($category)
-                    ),
+                    'visibility' => $this->getCategoryVisibility($category),
                     'source' => BaseProductVisibilityResolved::SOURCE_CATEGORY,
                     'category' => $category
                 ];
@@ -75,7 +73,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
     /**
      * {@inheritdoc}
      */
-    public function isVisibilitySettingsSupported(VisibilityInterface$visibilitySettings)
+    public function isVisibilitySettingsSupported(VisibilityInterface $visibilitySettings)
     {
         return $visibilitySettings instanceof ProductVisibility;
     }
@@ -90,13 +88,13 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
             ->getRepository('OroB2BCatalogBundle:Category')
             ->findOneByProduct($product);
 
-        $isCategoryVisible = null;
         if ($category) {
-            $isCategoryVisible = $this->categoryVisibilityResolver->isCategoryVisible($category);
+            $visibility = $this->getCategoryVisibility($category);
         } else {
             $this->registry->getManagerForClass('OroB2BAccountBundle:Visibility\ProductVisibility')
                 ->getRepository('OroB2BAccountBundle:Visibility\ProductVisibility')
-                ->setToDefaultWithoutCategoryByProduct($this->insertFromSelectQueryExecutor, $product);
+                ->setToDefaultWithoutCategory($this->insertFromSelectQueryExecutor, $product);
+            $visibility = ProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
         }
 
         $repository = $this->getRepository();
@@ -104,8 +102,8 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
         $repository->insertByProduct(
             $this->insertFromSelectQueryExecutor,
             $product,
-            $category,
-            $isCategoryVisible
+            $visibility,
+            $category
         );
     }
 
@@ -115,29 +113,41 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
     public function buildCache(Website $website = null)
     {
         $manager = $this->getManager();
-        $repository = $this->getRepository();
-
         $manager->beginTransaction();
         try {
+            $repository = $this->getRepository();
             $repository->clearTable($website);
-            $repository->insertFromBaseTable($this->insertFromSelectQueryExecutor, $website);
-            $repository->insertByCategory(
-                $this->insertFromSelectQueryExecutor,
-                BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
-                $this->categoryVisibilityResolver->getVisibleCategoryIds(),
-                $website
-            );
-            $repository->insertByCategory(
-                $this->insertFromSelectQueryExecutor,
-                BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
-                $this->categoryVisibilityResolver->getHiddenCategoryIds(),
-                $website
-            );
+            $repository->insertStatic($this->insertFromSelectQueryExecutor, $website);
+            $repository->insertByCategory($this->insertFromSelectQueryExecutor, $website);
             $manager->commit();
         } catch (\Exception $exception) {
             $manager->rollback();
             throw $exception;
         }
+    }
+
+    /**
+     * @param int $visibility visible|hidden|config
+     * @return array
+     */
+    protected function getCategoryIdsByVisibility($visibility)
+    {
+        return $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getCategoryIdsByNotResolvedVisibility($visibility);
+    }
+
+    /**
+     * @param Category $category
+     * @return int visible|hidden|config
+     */
+    protected function getCategoryVisibility(Category $category)
+    {
+        return $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getFallbackToAllVisibility($category);
     }
 
     /**
