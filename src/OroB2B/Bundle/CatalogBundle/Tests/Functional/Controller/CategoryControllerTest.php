@@ -338,6 +338,9 @@ class CategoryControllerTest extends WebTestCase
         $parameters['orob2b_catalog_category']['longDescriptions']['values']['default'] = $newLongDescription;
         $parameters['orob2b_catalog_category']['largeImage']['emptyFile'] = true;
 
+        $parentCategory = $crawler->filter('[name = "orob2b_catalog_category[parentCategory]"]')->attr('value');
+        $parameters['orob2b_catalog_category']['parentCategory'] = $parentCategory;
+
         foreach ($this->locales as $locale) {
             $parameters['orob2b_catalog_category']['titles']['values']['locales'][$locale->getId()]['value']
                 = $locale->getCode() . $newTitle;
