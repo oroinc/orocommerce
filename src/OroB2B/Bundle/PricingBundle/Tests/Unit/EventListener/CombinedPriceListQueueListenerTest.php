@@ -69,7 +69,7 @@ class CombinedPriceListQueueListenerTest extends \PHPUnit_Framework_TestCase
             $productPriceChange = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Event\ProductPriceChange')
                 ->disableOriginalConstructor()
                 ->getMock();
-            $listener->onQueueChanged($priceListChangeEvent);
+            $listener->onQueueChanged($changeEvent);
             $listener->onProductPriceChanged($productPriceChange);
         }
         $listener->onTerminate($terminateEvent);
