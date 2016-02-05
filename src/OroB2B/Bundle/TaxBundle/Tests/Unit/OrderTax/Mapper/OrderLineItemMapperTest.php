@@ -2,6 +2,9 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\OrderTax\Mapper;
 
+use OroB2B\Bundle\TaxBundle\Event\ContextEvent;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+
 use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -19,6 +22,9 @@ class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
     const ITEM_PRICE_VALUE = 12.34;
     const ITEM_QUANTITY = 12;
 
+    const CONTEXT_KEY = 'context_key';
+    const CONTEXT_VALUE = 'context_value';
+
     /**
      * @var OrderLineItemMapper
      */
@@ -29,6 +35,11 @@ class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
      */
     protected $addressProvider;
 
+    /**
+     * @var EventDispatcher
+     */
+    protected $eventDispatcher;
+
     protected function setUp()
     {
         $this->addressProvider = $this
@@ -36,7 +47,20 @@ class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->mapper = new OrderLineItemMapper($this->addressProvider);
+        $this->eventDispatcher = $this
+            ->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcher')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->eventDispatcher
+            ->expects($this->any())
+            ->method('dispatch')
+            ->with(ContextEvent::NAME)
+            ->willReturnCallback(function ($eventName, ContextEvent $event) {
+                $event->getContext()->offsetSet(self::CONTEXT_KEY, self::CONTEXT_VALUE);
+            });
+
+        $this->mapper = new OrderLineItemMapper($this->eventDispatcher, $this->addressProvider);
     }
 
     protected function tearDown()
@@ -101,6 +125,7 @@ class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($quantity, $taxable->getQuantity());
         $this->assertEquals($priceValue, $taxable->getPrice());
         $this->assertEquals(0, $taxable->getAmount());
+        $this->assertEquals(self::CONTEXT_VALUE, $taxable->getContextValue(self::CONTEXT_KEY));
         $this->assertEmpty($taxable->getItems());
     }
 }

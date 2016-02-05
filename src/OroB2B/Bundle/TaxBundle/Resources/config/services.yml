@@ -35,8 +35,11 @@ parameters:
     orob2b_tax.factory.tax.class: OroB2B\Bundle\TaxBundle\Factory\TaxFactory
     orob2b_tax.factory.tax_base_exclusion.class: OroB2B\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory
     orob2b_tax.factory.address_model_factory.class: OroB2B\Bundle\TaxBundle\Factory\AddressModelFactory
+
     orob2b_tax.order_tax.mapper.order_mapper.class: OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderMapper
     orob2b_tax.order_tax.mapper.order_line_item_mapper.class: OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper
+
+    orob2b_tax.order_tax.context_handler.order_line_item_handler.class: OroB2B\Bundle\TaxBundle\OrderTax\ContextHandler\OrderLineItemHandler
 
     orob2b_tax.form.data_transformer.tax_base_exclusion_transformer.class: OroB2B\Bundle\TaxBundle\Form\DataTransformer\TaxBaseExclusionTransformer
 
@@ -292,6 +295,7 @@ services:
     orob2b_tax.order_tax.mapper.order_mapper:
         class: %orob2b_tax.order_tax.mapper.order_mapper.class%
         arguments:
+            - @event_dispatcher
             - @orob2b_tax.provider.taxation_address_provider
         calls:
             - [setOrderLineItemMapper, [@orob2b_tax.order_tax.mapper.order_line_item_mapper]]
@@ -301,9 +305,20 @@ services:
     orob2b_tax.order_tax.mapper.order_line_item_mapper:
         class: %orob2b_tax.order_tax.mapper.order_line_item_mapper.class%
         arguments:
+            - @event_dispatcher
             - @orob2b_tax.provider.taxation_address_provider
         tags:
             - { name: orob2b_tax.tax_mapper }
+
+    orob2b_tax.order_tax.context_handler.order_line_item_handler:
+        class: %orob2b_tax.order_tax.context_handler.order_line_item_handler.class%
+        arguments:
+            - @orob2b_tax.provider.taxation_address_provider
+            - @oro_entity.doctrine_helper
+            - %orob2b_tax.entity.product_tax_code.class%
+            - %orob2b_order.entity.order_line_item.class%
+        tags:
+            - { name: kernel.event_listener, event: orob2b_tax.mapper.context, method: onContextEvent }
 
     orob2b_tax.provider.taxation_settings_provider:
         class: %orob2b_tax.provider.taxation_settings_provider.class%
@@ -316,6 +331,7 @@ services:
         class: %orob2b_tax.provider.taxation_address_provider.class%
         arguments:
             - @orob2b_tax.provider.taxation_settings_provider
+            - @orob2b_tax.matcher.country_matcher
 
     orob2b_tax.form.data_transformer.tax_base_exclusion_transformer:
         class: %orob2b_tax.form.data_transformer.tax_base_exclusion_transformer.class%

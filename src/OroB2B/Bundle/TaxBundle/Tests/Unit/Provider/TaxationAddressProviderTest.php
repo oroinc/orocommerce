@@ -8,6 +8,7 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
+use OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher;
 use OroB2B\Bundle\TaxBundle\Model\Address;
 use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
 use OroB2B\Bundle\TaxBundle\Provider\TaxationAddressProvider;
@@ -15,10 +16,20 @@ use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
 {
+    const EU = 'EU';
+    const US = 'US';
+
+    const DIGITAL_TAX_CODE = 'DIGITAL_TAX_CODE';
+
     /**
      * @var TaxationSettingsProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $settingsProvider;
+
+    /**
+     * @var CountryMatcher|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $countryMatcher;
 
     /**
      * @var TaxationAddressProvider
@@ -32,7 +43,12 @@ class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->addressProvider = new TaxationAddressProvider($this->settingsProvider);
+        $this->countryMatcher = $this
+            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->addressProvider = new TaxationAddressProvider($this->settingsProvider, $this->countryMatcher);
     }
 
     protected function tearDown()
@@ -190,6 +206,67 @@ class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
                 $shippingAddress,
                 $exclusions
             ],
+        ];
+    }
+
+    /**
+     * @dataProvider isDigitalProductTaxCodeProvider
+     * @param string $country
+     * @param string $taxCode
+     * @param bool $expected
+     */
+    public function testIsDigitalProductTaxCode($country, $taxCode, $expected)
+    {
+        $this->countryMatcher
+            ->expects($this->once())
+            ->method('isEuropeanUnionCountry')
+            ->with($country)
+            ->willReturn($country === self::EU);
+
+        $this->settingsProvider
+            ->expects($country === self::EU ? $this->once() : $this->never())
+            ->method('getDigitalProductsTaxCodesEU')
+            ->willReturn([self::DIGITAL_TAX_CODE]);
+
+        $this->settingsProvider
+            ->expects($country === self::US ? $this->once() : $this->never())
+            ->method('getDigitalProductsTaxCodesUS')
+            ->willReturn([self::DIGITAL_TAX_CODE]);
+
+        $this->assertEquals($expected, $this->addressProvider->isDigitalProductTaxCode($country, $taxCode));
+    }
+
+    /**
+     * @return array
+     */
+    public function isDigitalProductTaxCodeProvider()
+    {
+        return [
+            'EU not digital' => [
+                'country' => self::EU,
+                'taxCode' => 'TAX_CODE',
+                'expected' => false,
+            ],
+            'EU digital' => [
+                'country' => self::EU,
+                'taxCode' => self::DIGITAL_TAX_CODE,
+                'expected' => true,
+            ],
+            'US not digital' => [
+                'country' => self::US,
+                'taxCode' => 'TAX_CODE',
+                'expected' => false,
+            ],
+            'US digital' => [
+                'country' => self::US,
+                'taxCode' => self::DIGITAL_TAX_CODE,
+                'expected' => true,
+            ],
+            'ANOTHER_COUNTRY not digital' => [
+                'country' => 'ANOTHER_COUNTRY',
+                'taxCode' => self::DIGITAL_TAX_CODE,
+                'expected' => false,
+            ]
         ];
     }
 }

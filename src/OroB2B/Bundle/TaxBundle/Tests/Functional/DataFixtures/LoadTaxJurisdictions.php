@@ -12,17 +12,22 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 
 use OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction;
 use OroB2B\Bundle\TaxBundle\Entity\ZipCode;
+use OroB2B\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
 
 class LoadTaxJurisdictions extends AbstractFixture implements DependentFixtureInterface
 {
     const TAX_1 = 'TAX1';
     const TAX_2 = 'TAX2';
+    const TAX_3 = 'TAX3';
+    const TAX_4 = 'TAX4';
 
     const DESCRIPTION_1 = 'Tax description 1';
     const DESCRIPTION_2 = 'Tax description 2';
 
     const COUNTRY_US = 'US';
     const STATE_US_NY = 'US-NY';
+    const STATE_US_AL = 'US-AL';
+    const ZIP_CODE = '012345';
 
     const REFERENCE_PREFIX = 'tax_jurisdiction';
 
@@ -45,6 +50,23 @@ class LoadTaxJurisdictions extends AbstractFixture implements DependentFixtureIn
             self::DESCRIPTION_2,
             $this->getCountryByCode($manager, self::COUNTRY_US),
             $this->getRegionByCode($manager, self::STATE_US_NY)
+        );
+
+        $this->createTaxJurisdiction(
+            $manager,
+            self::TAX_3,
+            self::DESCRIPTION_1,
+            $this->getCountryByCode($manager, self::COUNTRY_US)
+        );
+
+        $this->createTaxJurisdiction(
+            $manager,
+            self::TAX_4,
+            self::DESCRIPTION_1,
+            $this->getCountryByCode($manager, self::COUNTRY_US),
+            $this->getRegionByCode($manager, self::STATE_US_AL),
+            null,
+            ZipCodeTestHelper::getSingleValueZipCode(self::ZIP_CODE)
         );
 
         $manager->flush();
