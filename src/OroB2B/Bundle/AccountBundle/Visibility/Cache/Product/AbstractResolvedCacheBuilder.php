@@ -8,7 +8,6 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\UnitOfWork;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
@@ -16,8 +15,6 @@ use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityR
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\BasicOperationRepositoryTrait;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
-use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolver;
-use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
 
 abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
 {
@@ -25,11 +22,6 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
      * @var ManagerRegistry
      */
     protected $registry;
-
-    /**
-     * @var CategoryVisibilityResolverInterface
-     */
-    protected $categoryVisibilityResolver;
 
     /**
      * @var InsertFromSelectQueryExecutor
@@ -48,16 +40,13 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
 
     /**
      * @param ManagerRegistry $registry
-     * @param CategoryVisibilityResolver $categoryVisibilityResolver
      * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
      */
     public function __construct(
         ManagerRegistry $registry,
-        CategoryVisibilityResolver $categoryVisibilityResolver,
         InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
     ) {
         $this->registry = $registry;
-        $this->categoryVisibilityResolver = $categoryVisibilityResolver;
         $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
     }
 

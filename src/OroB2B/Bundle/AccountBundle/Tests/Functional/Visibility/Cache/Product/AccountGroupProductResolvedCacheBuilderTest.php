@@ -77,7 +77,10 @@ class AccountGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTe
 
         $this->assertEquals(BaseProductVisibilityResolved::SOURCE_CATEGORY, $visibilityResolved->getSource());
         $this->assertEquals($visibility, $visibilityResolved->getSourceProductVisibility());
-        $this->assertEquals(BaseProductVisibilityResolved::VISIBILITY_VISIBLE, $visibilityResolved->getVisibility());
+        $this->assertEquals(
+            BaseProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+            $visibilityResolved->getVisibility()
+        );
         $this->assertProductIdentifyEntitiesAccessory($visibilityResolved);
     }
 

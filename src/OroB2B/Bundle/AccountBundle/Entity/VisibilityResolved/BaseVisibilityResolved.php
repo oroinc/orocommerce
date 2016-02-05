@@ -11,6 +11,7 @@ abstract class BaseVisibilityResolved
 {
     const VISIBILITY_HIDDEN = -1;
     const VISIBILITY_VISIBLE = 1;
+    const VISIBILITY_FALLBACK_TO_CONFIG = 0; // fallback to category config value
 
     /**
      * @var int
