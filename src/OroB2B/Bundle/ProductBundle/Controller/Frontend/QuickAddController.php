@@ -54,7 +54,7 @@ class QuickAddController extends Controller
         $form = $this->createForm(QuickAddImportFromFileType::NAME)->handleRequest($request);
 
         if ($form->isValid()) {
-            $file = $form->getData()[QuickAddImportFromFileType::FILE_FIELD_NAME];
+            $file = $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->getData();
             try {
                 $collection = $this->getQuickAddRowCollectionBuilder()->buildFromFile($file);
             } catch (UnsupportedTypeException $e) {
