@@ -10,6 +10,7 @@ use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 /**
  * @coversDefaultClass OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class QuickAddRowCollectionTest extends \PHPUnit_Framework_TestCase
 {
