@@ -18,7 +18,6 @@ use Oro\Bundle\CurrencyBundle\Model\Price;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListProductPriceType;
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {
@@ -48,9 +47,9 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
      *
      * {@inheritdoc}
      */
-    public function getProductPricesByPriceListAction(Request $request)
+    public function getProductPricesByAccount(Request $request)
     {
-        return parent::getProductPricesByPriceListAction($request);
+        return parent::getProductPricesByAccount($request);
     }
 
     /**
@@ -85,14 +84,11 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     public function getMatchingPriceAction(Request $request)
     {
         $lineItems = $request->get('items', []);
-        $priceListId = null;
         /** @var CombinedPriceList|null $priceList */
         $priceList = null;
-        if (!$priceListId) {
-            $priceListId = $this->get('orob2b_pricing.model.frontend.price_list_request_handler')
-                ->getPriceList()
-                ->getId();
-        }
+        $priceListId = $this->get('orob2b_pricing.model.frontend.price_list_request_handler')
+            ->getPriceList()
+            ->getId();
 
         if ($priceListId) {
             $priceList = $this->getEntityReference(
@@ -120,21 +116,5 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
 
         return $this->get('oro_form.model.update_handler')
             ->handleUpdate($productPrice, $form, null, null, null);
-    }
-
-    /**
-     * @return PriceListRequestHandler
-     */
-    protected function getRequestHandler()
-    {
-        return $this->get('orob2b_pricing.model.price_list_request_handler');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getProductPriceProvider()
-    {
-        return $this->get('orob2b_pricing.provider.product_price');
     }
 }

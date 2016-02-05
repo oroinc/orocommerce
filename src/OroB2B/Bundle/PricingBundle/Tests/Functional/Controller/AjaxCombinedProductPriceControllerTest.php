@@ -12,9 +12,14 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
  */
 class AjaxCombinedProductPriceControllerTest extends AbstractAjaxProductPriceControllerTest
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $pricesByPriceListActionUrl = 'orob2b_pricing_price_by_pricelist';
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->initClient(
@@ -116,7 +121,7 @@ class AjaxCombinedProductPriceControllerTest extends AbstractAjaxProductPriceCon
         $data = json_decode($result->getContent(), true);
 
         $expectedData = [];
-        if (!empty($expected)) {
+        if (0 === count($expected)) {
             $expectedData = [
                 $product->getId() . '-' . $unit . '-' . $qty . '-' . $currency => $expected
             ];

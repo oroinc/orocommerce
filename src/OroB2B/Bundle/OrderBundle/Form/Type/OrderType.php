@@ -17,25 +17,34 @@ use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 
 class OrderType extends AbstractType
 {
     const NAME = 'orob2b_order_type';
 
-    /** @var  string */
+    /**
+     * @var  string
+     */
     protected $dataClass;
 
-    /** @var OrderAddressSecurityProvider */
+    /**
+     * @var OrderAddressSecurityProvider
+     */
     protected $orderAddressSecurityProvider;
 
-    /** @var PaymentTermProvider */
+    /**
+     * @var PaymentTermProvider
+     */
     protected $paymentTermProvider;
 
-    /** @var SecurityFacade */
+    /**
+     * @var SecurityFacade
+     */
     protected $securityFacade;
 
-    /** @var OrderCurrencyHandler */
+    /**
+     * @var OrderCurrencyHandler
+     */
     protected $orderCurrencyHandler;
 
     /**

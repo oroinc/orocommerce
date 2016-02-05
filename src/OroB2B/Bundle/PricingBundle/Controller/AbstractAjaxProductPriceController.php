@@ -16,12 +16,12 @@ use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler;
-use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 
 abstract class AbstractAjaxProductPriceController extends Controller
 {
-    /** @var EntityManager[] */
+    /**
+     * @var EntityManager[]
+     */
     protected $managers = [];
 
     /**
@@ -30,14 +30,11 @@ abstract class AbstractAjaxProductPriceController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function getProductPricesByPriceListAction(Request $request)
+    public function getProductPricesByAccount(Request $request)
     {
-        $priceListId = null;
-        if (!$priceListId) {
-            $priceListId = $this->get('orob2b_pricing.model.frontend.price_list_request_handler')
-                ->getPriceList()
-                ->getId();
-        }
+        $priceListId = $this->get('orob2b_pricing.model.frontend.price_list_request_handler')
+            ->getPriceList()
+            ->getId();
 
         return new JsonResponse(
             $this->get('orob2b_pricing.provider.combined_product_price')
@@ -169,14 +166,4 @@ abstract class AbstractAjaxProductPriceController extends Controller
 
         return new JsonResponse(['units' => $this->getProductUnitFormatter()->formatChoices($units)]);
     }
-
-    /**
-     * @return AbstractPriceListRequestHandler
-     */
-    abstract protected function getRequestHandler();
-
-    /**
-     * @return ProductPriceProvider
-     */
-    abstract protected function getProductPriceProvider();
 }
