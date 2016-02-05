@@ -8,28 +8,15 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\VisibilityTrait;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\CacheBuilder;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 /**
  * @dbIsolation
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
 class CategoryVisibilityChangeTest extends CategoryCacheTestCase
 {
     use VisibilityTrait;
-
-    /**
-     * @var CacheBuilder
-     */
-    protected $cacheBuilder;
-
-    /**
-     * @return string
-     */
-    protected function getCacheBuilderContainerId()
-    {
-        return 'orob2b_account.visibility.cache.product.category.cache_builder';
-    }
 
     /**
      * @dataProvider visibilityChangeDataProvider
@@ -98,6 +85,48 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                     'visibility' => CategoryVisibility::PARENT_CATEGORY,
                 ],
                 'expectedData' => [
+                    'hiddenCategories' => [
+                        'category_1_5_6',
+                        'category_1_5_6_7',
+                    ],
+                    'hiddenCategoriesByAccountGroups' => [
+                        'account_group.group1' => [
+                            'category_1',
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ],
+                        'account_group.group3' => [
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ],
+                    ],
+                    'hiddenCategoriesByAccounts' => [
+                        'account.level_1' => [
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.1' => [
+                            'category_1',
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.2.1' => [
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.3.1' => [
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.3.1.1' => [
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ]
+                    ],
                     'hiddenProducts' => [
                         'product.4',
                         'product.7',
@@ -156,6 +185,48 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                     'visibility' => CategoryVisibility::CONFIG,
                 ],
                 'expectedData' => [
+                    'hiddenCategories' => [
+                        'category_1_5_6',
+                        'category_1_5_6_7',
+                    ],
+                    'hiddenCategoriesByAccountGroups' => [
+                        'account_group.group1' => [
+                            'category_1',
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ],
+                        'account_group.group3' => [
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ],
+                    ],
+                    'hiddenCategoriesByAccounts' => [
+                        'account.level_1' => [
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.1' => [
+                            'category_1',
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.2.1' => [
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.3.1' => [
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.3.1.1' => [
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ],
+                    ],
                     'hiddenProducts' => [
                         'product.4',
                         'product.7',
@@ -214,6 +285,69 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                     'visibility' => CategoryVisibility::HIDDEN,
                 ],
                 'expectedData' => [
+                    'hiddenCategories' => [
+                        'category_1',
+                        'category_1_2',
+                        'category_1_5',
+                        'category_1_5_6',
+                        'category_1_5_6_7',
+                    ],
+                    'hiddenCategoriesByAccountGroups' => [
+                        'account_group.group1' => [
+                            'category_1',
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ],
+                        'account_group.group3' => [
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ],
+                    ],
+                    'hiddenCategoriesByAccounts' => [
+                        'account.level_1' => [
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.1' => [
+                            'category_1',
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                            'category_1_5',
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.2.1' => [
+                            'category_1',
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.3.1' => [
+                            'category_1_2',
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.3.1.1' => [
+                            'category_1',
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                            'category_1_5',
+                            'category_1_5_6',
+                        ],
+                        'account.level_1.2.1.1' => [
+                            'category_1_5',
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.4' => [
+                            'category_1_2',
+                            'category_1_5',
+                        ],
+                    ],
                     'hiddenProducts' => [
                         'product.1',
                         'product.2',
@@ -300,6 +434,52 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                     'visibility' => AccountGroupCategoryVisibility::HIDDEN,
                 ],
                 'expectedData' => [
+                    'hiddenCategories' => [
+                        'category_1_5_6',
+                        'category_1_5_6_7',
+                    ],
+                    'hiddenCategoriesByAccountGroups' => [
+                        'account_group.group1' => [
+                            'category_1',
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ],
+                        'account_group.group3' => [
+                            'category_1',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                            'category_1_5',
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                    ],
+                    'hiddenCategoriesByAccounts' => [
+                        'account.level_1' => [
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.1' => [
+                            'category_1',
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.2.1' => [
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.3.1' => [
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.3.1.1' => [
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ]
+                    ],
                     'hiddenProducts' => [
                         'product.4',
                         'product.7',
@@ -369,6 +549,48 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                     'visibility' => AccountGroupCategoryVisibility::PARENT_CATEGORY,
                 ],
                 'expectedData' => [
+                    'hiddenCategories' => [
+                        'category_1_5_6',
+                        'category_1_5_6_7',
+                    ],
+                    'hiddenCategoriesByAccountGroups' => [
+                        'account_group.group1' => [
+                            'category_1',
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ],
+                        'account_group.group3' => [
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ],
+                    ],
+                    'hiddenCategoriesByAccounts' => [
+                        'account.level_1' => [
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.1' => [
+                            'category_1',
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.2.1' => [
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.3.1' => [
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.3.1.1' => [
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ]
+                    ],
                     'hiddenProducts' => [
                         'product.4',
                         'product.7',
@@ -428,6 +650,48 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                     'visibility' => AccountGroupCategoryVisibility::CATEGORY,
                 ],
                 'expectedData' => [
+                    'hiddenCategories' => [
+                        'category_1_5_6',
+                        'category_1_5_6_7',
+                    ],
+                    'hiddenCategoriesByAccountGroups' => [
+                        'account_group.group1' => [
+                            'category_1',
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ],
+                        'account_group.group3' => [
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ],
+                    ],
+                    'hiddenCategoriesByAccounts' => [
+                        'account.level_1' => [
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.1' => [
+                            'category_1',
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.2.1' => [
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.3.1' => [
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.3.1.1' => [
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ]
+                    ],
                     'hiddenProducts' => [
                         'product.4',
                         'product.7',
@@ -487,6 +751,48 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                     'visibility' => AccountGroupCategoryVisibility::VISIBLE,
                 ],
                 'expectedData' => [
+                    'hiddenCategories' => [
+                        'category_1_5_6',
+                        'category_1_5_6_7',
+                    ],
+                    'hiddenCategoriesByAccountGroups' => [
+                        'account_group.group1' => [
+                            'category_1',
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ],
+                        'account_group.group3' => [
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ],
+                    ],
+                    'hiddenCategoriesByAccounts' => [
+                        'account.level_1' => [
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.1' => [
+                            'category_1',
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.2.1' => [
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.3.1' => [
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.3.1.1' => [
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ]
+                    ],
                     'hiddenProducts' => [
                         'product.4',
                         'product.7',
@@ -546,6 +852,48 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                     'visibility' => AccountCategoryVisibility::PARENT_CATEGORY,
                 ],
                 'expectedData' => [
+                    'hiddenCategories' => [
+                        'category_1_5_6',
+                        'category_1_5_6_7',
+                    ],
+                    'hiddenCategoriesByAccountGroups' => [
+                        'account_group.group1' => [
+                            'category_1',
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ],
+                        'account_group.group3' => [
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ],
+                    ],
+                    'hiddenCategoriesByAccounts' => [
+                        'account.level_1' => [
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.1' => [
+                            'category_1',
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.2.1' => [
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.3.1' => [
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.3.1.1' => [
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ]
+                    ],
                     'hiddenProducts' => [
                         'product.4',
                         'product.7',
@@ -605,6 +953,54 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                     'visibility' => AccountCategoryVisibility::HIDDEN,
                 ],
                 'expectedData' => [
+                    'hiddenCategories' => [
+                        'category_1_5_6',
+                        'category_1_5_6_7',
+                    ],
+                    'hiddenCategoriesByAccountGroups' => [
+                        'account_group.group1' => [
+                            'category_1',
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ],
+                        'account_group.group3' => [
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ],
+                    ],
+                    'hiddenCategoriesByAccounts' => [
+                        'account.level_1' => [
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.1' => [
+                            'category_1',
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.2.1' => [
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.2.1.1' => [
+                            'category_1',
+                            'category_1_5',
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.3.1' => [
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.3.1.1' => [
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ],
+                    ],
                     'hiddenProducts' => [
                         'product.4',
                         'product.7',
@@ -671,6 +1067,46 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                     'visibility' => AccountCategoryVisibility::VISIBLE,
                 ],
                 'expectedData' => [
+                    'hiddenCategories' => [
+                        'category_1_5_6',
+                        'category_1_5_6_7',
+                    ],
+                    'hiddenCategoriesByAccountGroups' => [
+                        'account_group.group1' => [
+                            'category_1',
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ],
+                        'account_group.group3' => [
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ],
+                    ],
+                    'hiddenCategoriesByAccounts' => [
+                        'account.level_1' => [
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.1' => [
+                            'category_1',
+                            'category_1_2',
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.2.1' => [
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.3.1' => [
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.3.1.1' => [
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ]
+                    ],
                     'hiddenProducts' => [
                         'product.4',
                         'product.7',
@@ -728,6 +1164,52 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                     'visibility' => AccountCategoryVisibility::CATEGORY,
                 ],
                 'expectedData' => [
+                    'hiddenCategories' => [
+                        'category_1_5_6',
+                        'category_1_5_6_7',
+                    ],
+                    'hiddenCategoriesByAccountGroups' => [
+                        'account_group.group1' => [
+                            'category_1',
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ],
+                        'account_group.group3' => [
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ],
+                    ],
+                    'hiddenCategoriesByAccounts' => [
+                        'account.level_1' => [
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.1' => [
+                            'category_1',
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.2.1' => [
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.2.1.1' => [
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.3.1' => [
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.3.1.1' => [
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ]
+                    ],
                     'hiddenProducts' => [
                         'product.4',
                         'product.7',
@@ -792,6 +1274,47 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                     'visibility' => AccountCategoryVisibility::ACCOUNT_GROUP,
                 ],
                 'expectedData' => [
+                    'hiddenCategories' => [
+                        'category_1_5_6',
+                        'category_1_5_6_7',
+                    ],
+                    'hiddenCategoriesByAccountGroups' => [
+                        'account_group.group1' => [
+                            'category_1',
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ],
+                        'account_group.group3' => [
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ],
+                    ],
+                    'hiddenCategoriesByAccounts' => [
+                        'account.level_1' => [
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.1' => [
+                            'category_1',
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.2.1' => [
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.3.1' => [
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.3.1.1' => [
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ]
+                    ],
                     'hiddenProducts' => [
                         'product.4',
                         'product.7',

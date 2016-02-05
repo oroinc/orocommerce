@@ -50,7 +50,6 @@ interface CategoryVisibilityResolverInterface
      */
     public function isCategoryVisibleForAccount(Category $category, Account $account);
 
-
     /**
      * @param Account $account
      * @return array

@@ -48,6 +48,7 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
         parent::clearChangedEntities();
 
         $this->accountGroupIdsWithInverseVisibility = [];
+        $this->accountGroupIdsWithConfigVisibility = [];
         $this->accountIdsWithInverseVisibility = [];
         $this->accountIdsWithConfigVisibility = [];
     }

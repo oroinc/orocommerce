@@ -11,19 +11,6 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 class CategoryPositionChangeTest extends CategoryCacheTestCase
 {
     /**
-     * @var ProductResolvedCacheBuilder
-     */
-    protected $cacheBuilder;
-
-    /**
-     * @return string
-     */
-    protected function getCacheBuilderContainerId()
-    {
-        return 'orob2b_account.visibility.cache.product.category.product_resolved_cache_builder';
-    }
-
-    /**
      * @dataProvider positionChangeDataProvider
      *
      * @param string $categoryReference
@@ -32,8 +19,6 @@ class CategoryPositionChangeTest extends CategoryCacheTestCase
      */
     public function testPositionChange($categoryReference, $newParentCategoryReference, array $expectedData)
     {
-        $this->markTestSkipped('Should be fixed in scope of BB-1801');
-
         /** @var Category $category */
         $category = $this->getReference($categoryReference);
 
@@ -50,6 +35,7 @@ class CategoryPositionChangeTest extends CategoryCacheTestCase
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     public function positionChangeDataProvider()
@@ -59,6 +45,51 @@ class CategoryPositionChangeTest extends CategoryCacheTestCase
                 'categoryReference' => 'category_1_2',
                 'newParentCategoryReference' => 'category_1_5_6',
                 'expectedData' => [
+                    'hiddenCategories' => [
+                        'category_1_2',
+                        'category_1_5_6',
+                        'category_1_5_6_7',
+                    ],
+                    'hiddenCategoriesByAccountGroups' => [
+                        'account_group.group1' => [
+                            'category_1',
+                        ],
+                        'account_group.group3' => [
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ],
+                    ],
+                    'hiddenCategoriesByAccounts' => [
+                        'account.level_1' => [
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.1' => [
+                            'category_1',
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.2.1' => [
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.3.1' => [
+                            'category_1_2',
+                            'category_1_5_6',
+                            'category_1_5_6_7',
+                        ],
+                        'account.level_1.3.1.1' => [
+                            'category_1_2',
+                            'category_1_2_3',
+                            'category_1_2_3_4',
+                        ],
+                        'account.level_1.4' => [
+                            'category_1_2',
+
+                        ]
+                    ],
                     'hiddenProducts' => [
                         'product.2',
                         'product.4',
