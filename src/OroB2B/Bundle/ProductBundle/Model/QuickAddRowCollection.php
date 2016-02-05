@@ -11,11 +11,6 @@ use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 class QuickAddRowCollection extends ArrayCollection
 {
     /**
-     * @var Product[]
-     */
-    private $productsBySku = [];
-
-    /**
      * @return string
      */
     public function __toString()
@@ -23,24 +18,6 @@ class QuickAddRowCollection extends ArrayCollection
         return implode(PHP_EOL, $this->map(function (QuickAddRow $row) {
             return sprintf('%s, %s', $row->getSku(), $row->getQuantity());
         })->toArray());
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasCompleteRows()
-    {
-        return $this->getCompleteRows()->count() > 0;
-    }
-
-    /**
-     * @return $this|QuickAddRow[]
-     */
-    public function getCompleteRows()
-    {
-        return $this->filter(function (QuickAddRow $row) {
-            return $row->isComplete();
-        });
     }
 
     /**
@@ -81,28 +58,49 @@ class QuickAddRowCollection extends ArrayCollection
     }
 
     /**
-     * @return Product[]
-     */
-    public function getProductsBySku()
-    {
-        return $this->productsBySku;
-    }
-
-    /**
-     * @param Product[] $productsBySku
+     * @param Product[] $products
      * @return $this
      */
-    public function setProductsBySku(array $productsBySku)
+    public function mapProducts(array $products)
     {
-        $this->productsBySku = $productsBySku;
+        /** @var QuickAddRow $row */
+        foreach ($this->getIterator() as $row) {
+            $sku = strtoupper($row->getSku());
+
+            if (array_key_exists($sku, $products)) {
+                $row->setProduct($products[$sku]);
+            }
+        }
 
         return $this;
     }
 
+    /**
+     * @return Product[]
+     */
+    public function getProducts()
+    {
+        $products = [];
+
+        /** @var QuickAddRow $row */
+        foreach ($this->getIterator() as $row) {
+            if ($product = $row->getProduct()) {
+                $products[strtoupper($product->getSku())] = $product;
+            }
+        }
+
+        return $products;
+    }
+
     public function validate()
     {
-        foreach ($this->getCompleteRows() as $row) {
-            if (array_key_exists(strtoupper($row->getSku()), $this->productsBySku)) {
+        /** @var QuickAddRow $row */
+        foreach ($this->getIterator() as $row) {
+            if ($row->isComplete() &&
+                $row->getProduct() &&
+                is_numeric($row->getQuantity()) &&
+                $row->getQuantity() > 0
+            ) {
                 $row->setValid(true);
             }
         }

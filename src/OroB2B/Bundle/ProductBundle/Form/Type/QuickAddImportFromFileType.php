@@ -7,8 +7,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-use OroB2B\Bundle\ProductBundle\Validator\Constraints\QuickAddRowCollection;
-
 class QuickAddImportFromFileType extends AbstractType
 {
     const NAME = 'orob2b_product_quick_add_import_from_file';

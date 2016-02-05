@@ -1,5 +1,5 @@
 /*global define*/
-define(function(require) {
+define(function (require) {
     'use strict';
 
     var RedirectComponent;
@@ -10,7 +10,7 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        initialize: function(options) {
+        initialize: function (options) {
             var targetUrl = options.targetUrl || null;
             this.redirectTo(targetUrl);
         },

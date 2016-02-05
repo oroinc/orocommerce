@@ -14,8 +14,6 @@ class ProductDataStorage extends AbstractSessionDataStorage
     const PRODUCT_SKU_KEY = 'productSku';
     const PRODUCT_QUANTITY_KEY = 'productQuantity';
 
-    const SHOPPING_LIST_ID_KEY = 'shoppingListId';
-
     /** {@inheritdoc} */
     protected function getKey()
     {

@@ -1,12 +1,12 @@
 /*global define*/
-define(function(require) {
+define(function (require) {
     'use strict';
 
-    var QuickAddImportValidationComponent;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var widgetManager = require('oroui/js/widget-manager');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    var QuickAddImportValidationComponent,
+        _ = require('underscore'),
+        $ = require('jquery'),
+        widgetManager = require('oroui/js/widget-manager'),
+        BaseComponent = require('oroui/js/app/components/base/component');
 
     QuickAddImportValidationComponent = BaseComponent.extend({
         /**
@@ -39,8 +39,8 @@ define(function(require) {
         },
 
         toggleErrors: function (e) {
-                e.preventDefault();
-                this.$container.toggleClass(this.options.errorVisibleClass);
+            e.preventDefault();
+            this.$container.toggleClass(this.options.errorVisibleClass);
         },
 
         backAction: function (e) {
@@ -57,7 +57,7 @@ define(function(require) {
             widgetManager.getWidgetInstance(this.options._wid, _.bind(this.closeWidget));
         },
 
-        closeWidget: function(widget) {
+        closeWidget: function (widget) {
             widget.dispose();
         }
     });

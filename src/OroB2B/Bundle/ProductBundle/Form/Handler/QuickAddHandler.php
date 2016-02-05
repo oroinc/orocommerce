@@ -70,7 +70,7 @@ class QuickAddHandler
 
         if ($request->isMethod(Request::METHOD_POST)) {
             $collection = $this->collectionBuilder->buildFromRequest($request);
-            $formOptions['products'] = $collection->getProductsBySku();
+            $formOptions['products'] = $collection->getProducts();
         }
 
         $form = $this->createQuickAddForm($formOptions);
@@ -81,18 +81,16 @@ class QuickAddHandler
                     $products = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
                     $products = is_array($products) ? $products : [];
 
-                    $shoppingListId = (int) $request->get(
-                        sprintf('%s[%s]', QuickAddType::NAME, QuickAddType::ADDITIONAL_FIELD_NAME),
-                        0,
+                    $additionalData = $request->get(
+                        QuickAddType::NAME . '[' . QuickAddType::ADDITIONAL_FIELD_NAME . ']',
+                        null,
                         true
                     );
 
                     $response = $processor->process(
                         [
                             ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
-                            ProductDataStorage::ADDITIONAL_DATA_KEY => [
-                                ProductDataStorage::SHOPPING_LIST_ID_KEY => $shoppingListId
-                            ]
+                            ProductDataStorage::ADDITIONAL_DATA_KEY => $additionalData
                         ],
                         $request
                     );

@@ -230,9 +230,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(
                 [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
-                    ProductDataStorage::ADDITIONAL_DATA_KEY => [
-                        ProductDataStorage::SHOPPING_LIST_ID_KEY => 0
-                    ]
+                    ProductDataStorage::ADDITIONAL_DATA_KEY => null
                 ],
                 $request
             );
@@ -279,9 +277,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(
                 [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
-                    ProductDataStorage::ADDITIONAL_DATA_KEY => [
-                        ProductDataStorage::SHOPPING_LIST_ID_KEY => 0
-                    ]
+                    ProductDataStorage::ADDITIONAL_DATA_KEY => null
                 ],
                 $request
             )
@@ -354,7 +350,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         if (!$this->quickAddRowCollection) {
             $this->quickAddRowCollection = $this->getMock('OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection');
             $this->quickAddRowCollection->expects($this->once())
-                ->method('getProductsBySku')
+                ->method('getProducts')
                 ->withAnyParameters()
                 ->willReturn($products);
         }

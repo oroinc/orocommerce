@@ -7,13 +7,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Regex;
 
-use OroB2B\Bundle\ProductBundle\Validator\Constraints\QuickAddRowCollection;
-
 class QuickAddCopyPasteType extends AbstractType
 {
     const NAME = 'orob2b_product_quick_add_copy_paste';
     const COPY_PASTE_FIELD_NAME = 'copyPaste';
-    const FORMAT_REGEX = '/^[^\s]+[\t\,]\s*?[0-9]+\.?[0-9]*/';
+    const FORMAT_REGEX = '/[^\s]+[\t\,]\s*?[0-9]+\.?[0-9]*/';
 
     /**
      * {@inheritdoc}

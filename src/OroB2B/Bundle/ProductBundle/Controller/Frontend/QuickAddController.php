@@ -117,7 +117,7 @@ class QuickAddController extends Controller
     public function copyPasteAction(Request $request)
     {
         $copyPasteForm = $this->createForm(QuickAddCopyPasteType::NAME)->handleRequest($request);
-        $copyPasteText = $copyPasteForm->getData()[QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME];
+        $copyPasteText = $copyPasteForm->get(QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME)->getData();
 
         $collection = $this->getQuickAddRowCollectionBuilder()->buildFromCopyPasteText($copyPasteText);
 

@@ -160,15 +160,10 @@ TEXT;
     {
         $this->assertInstanceOf('OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection', $collection);
         $this->assertCount($this->expectedCountAll, $collection);
-        $this->assertCount($this->expectedCountCompleted, $collection->getCompleteRows());
         $this->assertCount($this->expectedCountValid, $collection->getValidRows());
 
         foreach ($collection as $i => $element) {
             $this->assertEquals($this->expectedElements[$element->getSku()], $element->getQuantity());
-        }
-
-        foreach ($collection->getCompleteRows() as $i => $element) {
-            $this->assertContains($element->getSku(), $this->completeElementSkus);
         }
 
         foreach ($collection->getValidRows() as $i => $element) {

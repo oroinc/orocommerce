@@ -3,9 +3,14 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Model;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
 use OroB2B\Bundle\ProductBundle\Model\QuickAddRow;
 use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
+use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
+/**
+ * @coversDefaultClass OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection
+ */
 class QuickAddRowCollectionTest extends \PHPUnit_Framework_TestCase
 {
     const SKU1 = 'SKU1';
@@ -25,31 +30,6 @@ class QuickAddRowCollectionTest extends \PHPUnit_Framework_TestCase
 
         $this->addIncompleteRow($collection);
         $this->assertEquals("SKU1, 1\nSKU2, 2.5\nSKU3, ", (string) $collection);
-    }
-
-    public function testGetCompletedRows()
-    {
-        $collection = new QuickAddRowCollection();
-        $this->assertCount(0, $collection->getCompleteRows());
-
-        $this->addIncompleteRow($collection);
-        $this->assertCount(0, $collection->getCompleteRows());
-
-        $this->addTwoCompleteRows($collection);
-        $this->assertCount(2, $collection->getCompleteRows());
-        $this->assertIsSku1Row($collection->getCompleteRows()->first());
-    }
-
-    public function testHasCompletedRows()
-    {
-        $collection = new QuickAddRowCollection();
-        $this->assertFalse($collection->hasCompleteRows());
-
-        $this->addIncompleteRow($collection);
-        $this->assertFalse($collection->hasCompleteRows());
-
-        $this->addTwoCompleteRows($collection);
-        $this->assertTrue($collection->hasCompleteRows());
     }
 
     public function testGetValidRows()
@@ -81,10 +61,65 @@ class QuickAddRowCollectionTest extends \PHPUnit_Framework_TestCase
         $collection->validate();
         $this->assertCount(0, $collection->getValidRows());
 
-        $collection->setProductsBySku([self::SKU1 => new Product()]);
+        $products = [self::SKU1 =>  (new Product())->setSku(self::SKU1)];
+
+        $collection->mapProducts($products);
         $collection->validate();
+
         $this->assertCount(1, $collection->getValidRows());
-        $this->assertEquals(self::SKU1, $collection->getValidRows()->first()->getSku());
+        $firstRow = $collection->getValidRows()->first();
+        $this->assertEquals(self::SKU1, $firstRow->getSku());
+        $this->assertEquals(self::SKU1, $firstRow->getProduct()->getSku());
+    }
+
+    /**
+     * @covers ::mapProducts
+     * @covers ::getProducts
+     */
+    public function testMapAndGetProducts()
+    {
+        $collection = new QuickAddRowCollection();
+        $this->addTwoCompleteRows($collection);
+
+        $this->assertCount(0, $collection->getProducts());
+
+        $validProduct = [self::SKU1 =>  (new Product())->setSku(self::SKU1)];
+        $invalidProduct = [self::SKU3 =>  (new Product())->setSku(self::SKU3)];
+
+        $collection->mapProducts(array_merge($validProduct, $invalidProduct));
+
+        $this->assertEquals($validProduct, $collection->getProducts());
+    }
+
+    public function testGetSkus()
+    {
+        $collection = new QuickAddRowCollection();
+        $this->addTwoCompleteRows($collection);
+
+        $this->assertEquals([self::SKU1, self::SKU2], $collection->getSkus());
+    }
+
+    public function testGetFormData()
+    {
+        $emptyFormData = [QuickAddType::PRODUCTS_FIELD_NAME => []];
+
+        $expectedFormData = [
+            QuickAddType::PRODUCTS_FIELD_NAME => [[
+                ProductDataStorage::PRODUCT_SKU_KEY => self::SKU1,
+                ProductDataStorage::PRODUCT_QUANTITY_KEY => self::QUANTITY1
+            ]]
+        ];
+
+        $products = [self::SKU1 =>  (new Product())->setSku(self::SKU1)];
+
+        $collection = new QuickAddRowCollection();
+        $this->addTwoCompleteRows($collection);
+
+        $collection->mapProducts([])->validate();
+        $this->assertEquals($emptyFormData, $collection->getFormData());
+
+        $collection->mapProducts($products)->validate();
+        $this->assertEquals($expectedFormData, $collection->getFormData());
     }
 
     /**
@@ -103,6 +138,7 @@ class QuickAddRowCollectionTest extends \PHPUnit_Framework_TestCase
     {
         $row1 = new QuickAddRow(1, self::SKU1, self::QUANTITY1);
         $row1->setValid(true);
+
         $row2 = new QuickAddRow(2, self::SKU2, self::QUANTITY2);
         $row2->setValid(true);
 

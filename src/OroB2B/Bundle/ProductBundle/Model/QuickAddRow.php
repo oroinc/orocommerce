@@ -2,12 +2,14 @@
 
 namespace OroB2B\Bundle\ProductBundle\Model;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+
 class QuickAddRow
 {
     /**
      * @var int
      */
-    protected $id;
+    protected $index;
 
     /**
      * @var string
@@ -20,6 +22,11 @@ class QuickAddRow
     protected $quantity;
 
     /**
+     * @var Product
+     */
+    protected $product;
+
+    /**
      * @var bool
      */
     protected $valid = false;
@@ -30,13 +37,13 @@ class QuickAddRow
     protected $complete = false;
 
     /**
-     * @param int $id
+     * @param int $index
      * @param string $sku
      * @param float $quantity
      */
-    public function __construct($id, $sku, $quantity)
+    public function __construct($index, $sku, $quantity)
     {
-        $this->id = $id;
+        $this->index = $index;
         $this->sku = $sku;
         $this->quantity = $quantity;
 
@@ -48,17 +55,9 @@ class QuickAddRow
     /**
      * @return int
      */
-    public function getId()
+    public function getIndex()
     {
-        return $this->id;
-    }
-
-    /**
-     * @param int $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
+        return $this->index;
     }
 
     /**
@@ -75,6 +74,22 @@ class QuickAddRow
     public function getQuantity()
     {
         return $this->quantity;
+    }
+
+    /**
+     * @return Product
+     */
+    public function getProduct()
+    {
+        return $this->product;
+    }
+
+    /**
+     * @param Product $product
+     */
+    public function setProduct($product)
+    {
+        $this->product = $product;
     }
 
     /**

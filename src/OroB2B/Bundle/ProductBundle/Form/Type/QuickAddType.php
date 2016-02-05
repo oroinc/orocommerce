@@ -14,7 +14,6 @@ class QuickAddType extends AbstractType
     const PRODUCTS_FIELD_NAME = 'products';
     const COMPONENT_FIELD_NAME = 'component';
     const ADDITIONAL_FIELD_NAME = 'additional';
-    const BULK_PRODUCTS_FIELD_NAME = 'bulk_products';
 
     /**
      * {@inheritdoc}

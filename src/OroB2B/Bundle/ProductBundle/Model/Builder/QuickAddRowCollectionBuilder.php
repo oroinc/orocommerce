@@ -41,30 +41,30 @@ class QuickAddRowCollectionBuilder
     public function buildFromRequest(Request $request)
     {
         $collection = new QuickAddRowCollection();
+        $products = $request->request->get(
+            QuickAddType::NAME . '[' . QuickAddType::PRODUCTS_FIELD_NAME . ']',
+            [],
+            true
+        );
 
-        $data = $request->request->get(QuickAddType::NAME);
-        if (!isset($data[QuickAddType::PRODUCTS_FIELD_NAME])) {
+        if (!is_array($products)) {
             return $collection;
         }
 
-        for ($i = 0; $i < count($data[QuickAddType::PRODUCTS_FIELD_NAME]); $i++) {
-            if (!array_key_exists($i, $data[QuickAddType::PRODUCTS_FIELD_NAME]) ||
-                !array_key_exists(ProductDataStorage::PRODUCT_SKU_KEY, $data[QuickAddType::PRODUCTS_FIELD_NAME][$i]) ||
-                !array_key_exists(
-                    ProductDataStorage::PRODUCT_QUANTITY_KEY,
-                    $data[QuickAddType::PRODUCTS_FIELD_NAME][$i]
-                )
+        foreach ($products as $index => $product) {
+            if (!array_key_exists(ProductDataStorage::PRODUCT_SKU_KEY, $product) ||
+                !array_key_exists(ProductDataStorage::PRODUCT_QUANTITY_KEY, $product)
             ) {
                 continue;
             }
 
-            $sku = $data[QuickAddType::PRODUCTS_FIELD_NAME][$i][ProductDataStorage::PRODUCT_SKU_KEY];
-            $quantity = $data[QuickAddType::PRODUCTS_FIELD_NAME][$i][ProductDataStorage::PRODUCT_QUANTITY_KEY];
+            $sku = $product[ProductDataStorage::PRODUCT_SKU_KEY];
+            $quantity = $product[ProductDataStorage::PRODUCT_QUANTITY_KEY];
 
-            $collection->add(new QuickAddRow($i, $sku, $quantity));
+            $collection->add(new QuickAddRow($index, $sku, $quantity));
         }
 
-        $this->setProductsAndValidate($collection);
+        $this->mapProductsAndValidate($collection);
 
         return $collection;
     }
@@ -97,7 +97,7 @@ class QuickAddRowCollectionBuilder
             }
         }
 
-        $this->setProductsAndValidate($collection);
+        $this->mapProductsAndValidate($collection);
 
         return $collection;
     }
@@ -124,7 +124,7 @@ class QuickAddRowCollectionBuilder
             }
         }
 
-        $this->setProductsAndValidate($collection);
+        $this->mapProductsAndValidate($collection);
 
         return $collection;
     }
@@ -167,10 +167,9 @@ class QuickAddRowCollectionBuilder
     /**
      * @param QuickAddRowCollection $collection
      */
-    private function setProductsAndValidate(QuickAddRowCollection $collection)
+    private function mapProductsAndValidate(QuickAddRowCollection $collection)
     {
-        $collection
-            ->setProductsBySku($this->getProductsBySkus($collection->getSkus()))
-            ->validate();
+        $products = $this->getProductsBySkus($collection->getSkus());
+        $collection->mapProducts($products)->validate();
     }
 }

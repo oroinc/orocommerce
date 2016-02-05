@@ -17,8 +17,6 @@ parameters:
     orob2b_product.form.type.product_status.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductStatusType
     orob2b_product.form.type.quick_add_copy_paste.class: OroB2B\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType
     orob2b_product.form.type.quick_add_import_from_file.class: OroB2B\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType
-    orob2b_product.form.type.quick_add_collection.class: OroB2B\Bundle\ProductBundle\Form\Type\QuickAddCollectionType
-    orob2b_product.form.type.quick_add_product_row.class: OroB2B\Bundle\ProductBundle\Form\Type\QuickAddProductRowType
 
 services:
     # Product form types

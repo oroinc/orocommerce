@@ -131,7 +131,7 @@ orob2b:
                     number_of_items: Number of items
                     validator:
                         not_found: 'Item number %sku% does not found.'
-                        invalid_format: 'Row #%id% has invalid format.'
+                        invalid_format: 'Row #%index% has invalid format.'
 
 
                 continue.label: Continue

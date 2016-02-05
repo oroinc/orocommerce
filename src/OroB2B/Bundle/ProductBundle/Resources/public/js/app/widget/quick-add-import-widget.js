@@ -1,15 +1,16 @@
-/*jslint nomen:true*/
 /*global define*/
-define(function(require) {
+define(function (require) {
     'use strict';
 
     var QuickAddImportWidget;
     var DialogWidget = require('oro/dialog-widget');
+    var __ = require('orotranslation/js/translator');
 
     QuickAddImportWidget = DialogWidget.extend({
-        initialize: function(options) {
+        initialize: function (options) {
             this.options.stateEnabled = false;
             this.options.incrementalPosition = false;
+            this.options.title = __('orob2b.product.frontend.quick_add.import_validation.title');
 
             options.dialogOptions = {
                 'modal': true,

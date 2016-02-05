@@ -75,7 +75,7 @@
                         <li>
                             {% if not invalidRow.isComplete %}
                                 {{ 'orob2b.product.frontend.quick_add.import_validation.validator.invalid_format'
-                                    |trans({'%id%' : invalidRow.id}) }}
+                                    |trans({'%index%' : invalidRow.index}) }}
                             {% else %}
                                 {{ 'orob2b.product.frontend.quick_add.import_validation.validator.not_found'
                                     |trans({'%sku%' : invalidRow.sku}) }}
