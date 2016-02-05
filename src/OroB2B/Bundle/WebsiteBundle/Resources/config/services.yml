@@ -26,3 +26,10 @@ services:
         arguments:
             - %orob2b_website.website.class%
             - @doctrine.orm.entity_manager
+
+    orob2b_website.locale_helper:
+        class: OroB2B\Bundle\WebsiteBundle\Locale\LocaleHelper
+        arguments:
+            - @doctrine
+        calls:
+            - [setEntityClass, [%orob2b_website.locale.class%]]
