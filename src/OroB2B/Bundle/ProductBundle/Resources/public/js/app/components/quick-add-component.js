@@ -1,11 +1,11 @@
-define(function (require) {
+define(function(require) {
     'use strict';
 
-    var QuickAddComponent,
-        _ = require('underscore'),
-        $ = require('jquery'),
-        mediator = require('oroui/js/mediator'),
-        BaseComponent = require('oroui/js/app/components/base/component');
+    var QuickAddComponent;
+    var _ = require('underscore');
+    var $ = require('jquery');
+    var mediator = require('oroui/js/mediator');
+    var BaseComponent = require('oroui/js/app/components/base/component');
 
     QuickAddComponent = BaseComponent.extend({
         /**
@@ -26,7 +26,7 @@ define(function (require) {
         /**
          * @inheritDoc
          */
-        initialize: function (options) {
+        initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
             this.$form = this.options._sourceElement;
@@ -36,7 +36,7 @@ define(function (require) {
             mediator.on(this.options.componentPrefix + ':submit', this.submit, this);
         },
 
-        fillComponentData: function (e) {
+        fillComponentData: function(e) {
             var $element = $(e.target);
             this.submit($element.data('component-name'), $element.data('component-additional'));
         },
@@ -45,7 +45,7 @@ define(function (require) {
          * @param {String} component
          * @param {String} additional
          */
-        submit: function (component, additional) {
+        submit: function(component, additional) {
             this.$form.find(this.options.componentSelector).val(component);
             this.$form.find(this.options.additionalSelector).val(additional);
             this.$form.submit();
@@ -54,7 +54,7 @@ define(function (require) {
         /**
          * @inheritDoc
          */
-        dispose: function () {
+        dispose: function() {
             if (this.disposed) {
                 return;
             }

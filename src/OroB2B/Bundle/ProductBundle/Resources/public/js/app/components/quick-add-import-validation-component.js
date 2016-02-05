@@ -1,11 +1,11 @@
-define(function (require) {
+define(function(require) {
     'use strict';
 
-    var QuickAddImportValidationComponent,
-        _ = require('underscore'),
-        $ = require('jquery'),
-        widgetManager = require('oroui/js/widget-manager'),
-        BaseComponent = require('oroui/js/app/components/base/component');
+    var QuickAddImportValidationComponent;
+    var _ = require('underscore');
+    var $ = require('jquery');
+    var widgetManager = require('oroui/js/widget-manager');
+    var BaseComponent = require('oroui/js/app/components/base/component');
 
     QuickAddImportValidationComponent = BaseComponent.extend({
         /**
@@ -28,7 +28,7 @@ define(function (require) {
         /**
          * @inheritDoc
          */
-        initialize: function (options) {
+        initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
             this.$container = $(this.options.containerSelector);
 
@@ -37,26 +37,26 @@ define(function (require) {
             this.$container.find(this.options.cancelButtonSelector).on('click', _.bind(this.cancelAction, this));
         },
 
-        toggleErrors: function (e) {
+        toggleErrors: function(e) {
             e.preventDefault();
             this.$container.toggleClass(this.options.errorVisibleClass);
         },
 
-        backAction: function (e) {
+        backAction: function(e) {
             var url = $(e.target).attr('data-url');
             widgetManager.getWidgetInstance(this.options._wid, _.bind(this.loadUrl, url));
         },
 
-        loadUrl: function (widget) {
+        loadUrl: function(widget) {
             widget.setUrl(this);
             widget.loadContent();
         },
 
-        cancelAction: function () {
+        cancelAction: function() {
             widgetManager.getWidgetInstance(this.options._wid, _.bind(this.closeWidget));
         },
 
-        closeWidget: function (widget) {
+        closeWidget: function(widget) {
             widget.dispose();
         }
     });

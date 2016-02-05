@@ -1,4 +1,4 @@
-define(function (require) {
+define(function(require) {
     'use strict';
 
     var RedirectComponent;
@@ -7,14 +7,21 @@ define(function (require) {
 
     RedirectComponent = BaseComponent.extend({
         /**
+         * @property {Object}
+         */
+        options: {
+            targetUrl: null
+        },
+
+        /**
          * @inheritDoc
          */
-        initialize: function (options) {
+        initialize: function(options) {
             var targetUrl = options.targetUrl || null;
             this.redirectTo(targetUrl);
         },
 
-        redirectTo: function (targetUrl) {
+        redirectTo: function(targetUrl) {
             if (targetUrl) {
                 mediator.execute('redirectTo', {url: targetUrl}, {redirect: true});
             }
