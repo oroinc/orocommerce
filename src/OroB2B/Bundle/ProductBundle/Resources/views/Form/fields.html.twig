@@ -104,6 +104,13 @@
             </tbody>
         </table>
     </div>
+    {% if allow_add %}
+        <div class="btn-group pull-left">
+            <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);">
+                <i class="icon-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}
+            </a>
+        </div>
+    {% endif %}
 {% endspaceless %}
 {% endblock %}
 
