@@ -7,7 +7,15 @@ use Doctrine\ORM\Mapping as ORM;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 
 /**
- * @ORM\Table(name="orob2b_price_list_acc_gr_fb")
+ * @ORM\Table(
+ *  name="orob2b_price_list_acc_gr_fb",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(name="orob2b_price_list_acc_gr_fb_unq", columns={
+ *              "account_group_id",
+ *              "website_id"
+ *          })
+ *      }
+ * )
  * @ORM\Entity()
  */
 class PriceListAccountGroupFallback extends PriceListFallback
@@ -17,7 +25,7 @@ class PriceListAccountGroupFallback extends PriceListFallback
 
     /** @var AccountGroup
      *
-     * @ORM\OneToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountGroup")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountGroup")
      * @ORM\JoinColumn(name="account_group_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     protected $accountGroup;
