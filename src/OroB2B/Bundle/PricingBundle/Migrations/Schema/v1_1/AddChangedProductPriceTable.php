@@ -27,9 +27,11 @@ class AddChangedProductPriceTable implements Migration
     protected function createOroB2BChangedProductPriceTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_changed_product_price');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('price_list_id', 'integer', []);
         $table->addColumn('product_id', 'integer', []);
-        $table->setPrimaryKey(['price_list_id', 'product_id']);
+        $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['product_id', 'price_list_id'], 'orob2b_changed_product_price_list_unq');
     }
 
     /**

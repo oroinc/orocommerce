@@ -76,7 +76,6 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
             $this->garbageCollector
         );
         $this->builder->setWebsiteCombinedPriceListBuilder($this->websiteBuilder);
-        $this->builder->setWebsiteCombinedPriceListBuilder($this->websiteBuilder);
     }
 
     /**

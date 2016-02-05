@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\Entity\EntityListener;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Event\LifecycleEventArgs;
@@ -13,6 +15,7 @@ use OroB2B\Bundle\PricingBundle\Entity\ChangedProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ChangedProductPriceRepository;
+use OroB2B\Bundle\PricingBundle\Event\ProductPriceChange;
 
 class ProductPriceEntityListener
 {
@@ -27,11 +30,20 @@ class ProductPriceEntityListener
     protected $extraActionsStorage;
 
     /**
-     * @param ExtraActionEntityStorageInterface $extraActionsStorage
+     * @var  EventDispatcherInterface
      */
-    public function __construct(ExtraActionEntityStorageInterface $extraActionsStorage)
-    {
+    protected $eventDispatcher;
+
+    /**
+     * @param ExtraActionEntityStorageInterface $extraActionsStorage
+     * @param EventDispatcherInterface $eventDispatcher
+     */
+    public function __construct(
+        ExtraActionEntityStorageInterface $extraActionsStorage,
+        EventDispatcherInterface $eventDispatcher
+    ) {
         $this->extraActionsStorage = $extraActionsStorage;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -77,6 +89,7 @@ class ProductPriceEntityListener
             return;
         }
 
+        $this->eventDispatcher->dispatch(ProductPriceChange::NAME, new ProductPriceChange());
         $this->extraActionsStorage->scheduleForExtraInsert($changedProductPrice);
     }
 
