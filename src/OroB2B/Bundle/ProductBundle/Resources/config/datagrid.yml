@@ -202,12 +202,18 @@ datagrid:
                 rowAction:     true
 
     frontend-products-grid-view-grid-mixin:
+        options:
+            templates:
+                row: frontend-products-grid-view-grid-row-template
     frontend-products-grid-view-list-mixin:
+        options:
+            templates:
+                row: frontend-products-grid-view-list-row-template
         source:
             type: orm
             query:
                 select:
-                    - __root_entity__.image
+                    - __root_entity__.id as identity
                     - productDescriptions.string as description
                 join:
                     inner:
@@ -216,8 +222,14 @@ datagrid:
                             alias: productDescriptions
                             conditionType: WITH
                             condition: productDescriptions.locale IS NULL
+        columns:
+            identity:
+                label: orob2b.product.identity.label
 
     frontend-products-grid-view-tiles-mixin:
+        options:
+            templates:
+                row: frontend-products-grid-view-tiles-row-template
         source:
             type: orm
             query:

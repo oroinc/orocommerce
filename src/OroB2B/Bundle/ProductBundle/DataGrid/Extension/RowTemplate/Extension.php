@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\DataGrid\Extension;
+namespace OroB2B\Bundle\ProductBundle\DataGrid\Extension\RowTemplate;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
 
-class RowTemplateExtension extends AbstractExtension
+class Extension extends AbstractExtension
 {
     /**
      * {@inheritDoc}
@@ -21,8 +21,8 @@ class RowTemplateExtension extends AbstractExtension
     public function processConfigs(DatagridConfiguration $config)
     {
         $this->validateConfiguration(
-            new RowTemplateConfiguration(),
-            ['templates' => $config->offsetGetByPath(RowTemplateConfiguration::TEMPLATES_PATH)]
+            new Configuration(),
+            ['templates' => $config->offsetGetByPath(Configuration::TEMPLATES_PATH)]
         );
     }
 }

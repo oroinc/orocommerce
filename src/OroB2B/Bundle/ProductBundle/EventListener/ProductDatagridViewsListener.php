@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\EventListener\MixinListener;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Oro\Bundle\DataGridBundle\Provider\ConfigurationProviderInterface;
@@ -33,15 +34,15 @@ class ProductDatagridViewsListener
     }
 
     /**
-     * @param BuildBefore $event
+     * @param PreBuild $event
      */
-    public function onBuildBefore(BuildBefore $event)
+    public function onPreBuild(PreBuild $event)
     {
-        $gridName = $event->getDatagrid()->getName();
         $config = $event->getConfig();
+        $gridName = $config->getName();
         $mixinName = $this->getMixinName($gridName);
         if ($mixinName) {
-            $config->offsetAddToArray(MixinListener::MIXINS, $mixinName);
+            $config->offsetAddToArrayByPath(MixinListener::MIXINS, [$mixinName]);
         }
     }
 
@@ -56,7 +57,9 @@ class ProductDatagridViewsListener
         if (!$request) {
             return null;
         }
-        $viewName = $request->query->get(sprintf('%s[%s]', $gridName, self::GRID_TEMPLATE_PATH));
+        $gridParams = $request->query->get($gridName, [self::GRID_TEMPLATE_PATH => null]);
+        $viewName = $gridParams[self::GRID_TEMPLATE_PATH];
+
         if (!$viewName) {
             return null;
         }
