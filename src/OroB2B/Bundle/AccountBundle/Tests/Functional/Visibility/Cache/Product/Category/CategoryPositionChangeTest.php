@@ -2,7 +2,8 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product\Category;
 
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\ProductResolvedCacheBuilder;
+use Symfony\Component\Yaml\Yaml;
+
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 /**
@@ -35,116 +36,12 @@ class CategoryPositionChangeTest extends CategoryCacheTestCase
     }
 
     /**
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     public function positionChangeDataProvider()
     {
-        return [
-            [
-                'categoryReference' => 'category_1_2',
-                'newParentCategoryReference' => 'category_1_5_6',
-                'expectedData' => [
-                    'hiddenCategories' => [
-                        'category_1_2',
-                        'category_1_5_6',
-                        'category_1_5_6_7',
-                    ],
-                    'hiddenCategoriesByAccountGroups' => [
-                        'account_group.group1' => [
-                            'category_1',
-                        ],
-                        'account_group.group3' => [
-                            'category_1_2_3',
-                            'category_1_2_3_4',
-                        ],
-                    ],
-                    'hiddenCategoriesByAccounts' => [
-                        'account.level_1' => [
-                            'category_1_5_6',
-                            'category_1_5_6_7',
-                        ],
-                        'account.level_1.1' => [
-                            'category_1',
-                            'category_1_2',
-                            'category_1_2_3',
-                            'category_1_2_3_4',
-                            'category_1_5_6',
-                            'category_1_5_6_7',
-                        ],
-                        'account.level_1.2.1' => [
-                            'category_1_5_6_7',
-                        ],
-                        'account.level_1.3.1' => [
-                            'category_1_2',
-                            'category_1_5_6',
-                            'category_1_5_6_7',
-                        ],
-                        'account.level_1.3.1.1' => [
-                            'category_1_2',
-                            'category_1_2_3',
-                            'category_1_2_3_4',
-                        ],
-                        'account.level_1.4' => [
-                            'category_1_2',
+        $file = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'expected_position_change.yml';
 
-                        ]
-                    ],
-                    'hiddenProducts' => [
-                        'product.2',
-                        'product.4',
-                        'product.7',
-                        'product.8',
-                    ],
-                    'hiddenProductsByAccountGroups' => [
-                        'account_group.group2' => [
-                            'product.7',
-                            'product.8',
-                        ],
-                        'account_group.group3' => [
-                            'product.2',
-                            'product.3',
-                            'product.6',
-                        ],
-                    ],
-                    'hiddenProductsByAccounts' => [
-                        'account.level_1.1' => [
-                            'product.1',
-                            'product.2',
-                            'product.3',
-                            'product.6',
-                            'product.4',
-                            'product.7',
-                            'product.8',
-                        ],
-                        'account.level_1.2' => [
-                            'product.7',
-                            'product.8',
-                        ],
-                        'account.level_1.2.1' => [
-                            'product.7',
-                            'product.8',
-                        ],
-                        'account.level_1.3.1' => [
-                            'product.2',
-                            'product.3',
-                            'product.6',
-                            'product.4',
-                            'product.7',
-                            'product.8',
-                        ],
-                        'account.level_1.3.1.1' => [
-                            'product.2',
-                            'product.3',
-                            'product.6',
-                        ],
-                        'account.level_1.4' => [
-                            'product.2',
-                            'product.3',
-                        ],
-                    ],
-                ]
-            ],
-        ];
+        return Yaml::parse(file_get_contents($file));
     }
 }
