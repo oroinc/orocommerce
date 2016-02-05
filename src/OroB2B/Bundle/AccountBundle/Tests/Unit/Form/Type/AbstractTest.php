@@ -4,12 +4,15 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Validator\ConstraintValidatorInterface;
 
+use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 abstract class AbstractTest extends FormIntegrationTestCase
 {
+    use EntityTrait;
+
     /**
      * @var ConstraintValidatorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -59,43 +62,14 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function getAccountUser($id)
     {
-        /* @var $accountUser AccountUser */
-        $accountUser = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $id);
-
-        $accountUser
-            ->setFirstName('FirstName')
-            ->setLastName('LastName')
-            ->setEmail('test@example.com')
-            ->setAccount($this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', $id))
-            ->setOrganization($this->getEntity('Oro\Bundle\OrganizationBundle\Entity\Organization', $id))
-            ->addRole($this->getMock('Symfony\Component\Security\Core\Role\Role', null, ['ROLE1']))
-        ;
-
-        return $accountUser;
-    }
-
-    /**
-     * @param string $className
-     * @param int $id
-     * @param string $primaryKey
-     * @return object
-     */
-    protected function getEntity($className, $id, $primaryKey = 'id')
-    {
-        static $entities = [];
-
-        if (!isset($entities[$className])) {
-            $entities[$className] = [];
-        }
-
-        if (!isset($entities[$className][$id])) {
-            $entities[$className][$id] = new $className();
-            $reflectionClass = new \ReflectionClass($className);
-            $method = $reflectionClass->getProperty($primaryKey);
-            $method->setAccessible(true);
-            $method->setValue($entities[$className][$id], $id);
-        }
-
-        return $entities[$className][$id];
+        return $this->getUniqueEntity($id, 'OroB2B\Bundle\AccountBundle\Entity\AccountUser', [
+            'id' => $id,
+            'firstName' => 'FirstName',
+            'lastName' => 'LastName',
+            'email' => 'test@example.com',
+            'account' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => $id]),
+            'organization' => $this->getEntity('Oro\Bundle\OrganizationBundle\Entity\Organization', ['id' => $id]),
+            'roles' => [$this->getEntity('Symfony\Component\Security\Core\Role\Role')],
+        ]);
     }
 }

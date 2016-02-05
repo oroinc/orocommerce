@@ -45,6 +45,25 @@ trait EntityTrait
     }
 
     /**
+     * @param sring $ident unique ident of an entity
+     * @param string $className
+     * @param array $properties Like ['id' => 1]
+     * @param array $constructorArgs Like ['id' => 1]
+     *
+     * @return object
+     */
+    protected function getUniqueEntity($ident, $className, array $properties = [], array $constructorArgs = null)
+    {
+        static $entities = [];
+
+        if (!isset($entities[$className][$ident])) {
+            $entities[$className][$ident] = $this->getEntity($className, $properties, $constructorArgs);
+        }
+
+        return $entities[$className][$ident];
+    }
+
+    /**
      * @return PropertyAccessor
      */
     public function getPropertyAccessor()
