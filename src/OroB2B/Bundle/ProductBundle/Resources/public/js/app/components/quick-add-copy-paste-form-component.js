@@ -33,7 +33,7 @@ define(function(require) {
 
                 var widget = new QuickAddImportWidget({});
 
-                widget.render();
+                widget.firstRun = false;
                 widget.loadContent(form.serialize(), form.attr('method'), form.attr('action'));
             });
         }
