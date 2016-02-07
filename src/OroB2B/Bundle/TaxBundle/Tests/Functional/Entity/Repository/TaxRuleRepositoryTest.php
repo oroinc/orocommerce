@@ -21,28 +21,30 @@ class TaxRuleRepositoryTest extends WebTestCase
         $this->loadFixtures(['OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules']);
     }
 
-    public function testFindByCountryAndProductTaxCode()
+    public function testFindByCountryAndProductTaxCodeAndAccountTaxCode()
     {
         /** @var TaxRule $taxRule */
         $taxRule = $this->getReference(LoadTaxRules::REFERENCE_PREFIX . '.' . LoadTaxRules::TAX_RULE_3);
 
         /** @var TaxRule[] $result */
-        $result = $this->getRepository()->findByCountryAndProductTaxCode(
+        $result = $this->getRepository()->findByCountryAndProductTaxCodeAndAccountTaxCode(
             $taxRule->getTaxJurisdiction()->getCountry(),
-            $taxRule->getProductTaxCode()->getCode()
+            $taxRule->getProductTaxCode()->getCode(),
+            $taxRule->getAccountTaxCode()->getCode()
         );
 
         $this->assertEquals($taxRule->getId(), reset($result)->getId());
     }
 
-    public function testFindByCountryAndRegionAndProductTaxCode()
+    public function testFindByCountryAndRegionAndProductTaxCodeAndAccountTaxCode()
     {
         /** @var TaxRule $taxRule */
         $taxRule = $this->getReference(LoadTaxRules::REFERENCE_PREFIX . '.' . LoadTaxRules::TAX_RULE_1);
 
         /** @var TaxRule[] $result */
-        $result = $this->getRepository()->findByCountryAndRegionAndProductTaxCode(
+        $result = $this->getRepository()->findByCountryAndRegionAndProductTaxCodeAndAccountTaxCode(
             $taxRule->getProductTaxCode()->getCode(),
+            $taxRule->getAccountTaxCode()->getCode(),
             $taxRule->getTaxJurisdiction()->getCountry(),
             $taxRule->getTaxJurisdiction()->getRegion()
         );
@@ -50,14 +52,15 @@ class TaxRuleRepositoryTest extends WebTestCase
         $this->assertEquals($taxRule->getId(), reset($result)->getId());
     }
 
-    public function testFindByZipCodeAndProductTaxCode()
+    public function testFindByZipCodeAndProductTaxCodeAndAccountTaxCode()
     {
         /** @var TaxRule $taxRule */
         $taxRule = $this->getReference(LoadTaxRules::REFERENCE_PREFIX . '.' . LoadTaxRules::TAX_RULE_4);
 
         /** @var TaxRule[] $result */
-        $result = $this->getRepository()->findByZipCodeAndProductTaxCode(
+        $result = $this->getRepository()->findByZipCodeAndProductTaxCodeAndAccountTaxCode(
             $taxRule->getProductTaxCode()->getCode(),
+            $taxRule->getAccountTaxCode()->getCode(),
             LoadTaxJurisdictions::ZIP_CODE,
             $taxRule->getTaxJurisdiction()->getCountry(),
             $taxRule->getTaxJurisdiction()->getRegion()

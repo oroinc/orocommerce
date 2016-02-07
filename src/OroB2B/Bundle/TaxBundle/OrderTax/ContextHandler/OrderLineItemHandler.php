@@ -9,6 +9,7 @@ use OroB2B\Bundle\TaxBundle\Event\ContextEvent;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\TaxBundle\Provider\TaxationAddressProvider;
 use OroB2B\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository;
+use OroB2B\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository;
 
 class OrderLineItemHandler
 {
@@ -30,23 +31,31 @@ class OrderLineItemHandler
     /**
      * @var string
      */
+    protected $accountTaxCodeClass;
+
+    /**
+     * @var string
+     */
     protected $orderLineItemClass;
 
     /**
      * @param TaxationAddressProvider $addressProvider
      * @param DoctrineHelper $doctrineHelper
      * @param string $productTaxCodeClass
+     * @param string $accountTaxCodeClass
      * @param string $orderLineItemClass
      */
     public function __construct(
         TaxationAddressProvider $addressProvider,
         DoctrineHelper $doctrineHelper,
         $productTaxCodeClass,
+        $accountTaxCodeClass,
         $orderLineItemClass
     ) {
         $this->addressProvider = $addressProvider;
         $this->doctrineHelper = $doctrineHelper;
         $this->productTaxCodeClass = $productTaxCodeClass;
+        $this->accountTaxCodeClass = $accountTaxCodeClass;
         $this->orderLineItemClass = $orderLineItemClass;
     }
     /**
@@ -64,6 +73,7 @@ class OrderLineItemHandler
 
         $context->offsetSet(Taxable::DIGITAL_PRODUCT, $this->isDigitProduct($lineItem));
         $context->offsetSet(Taxable::PRODUCT_TAX_CODE, $this->getProductTaxCode($lineItem));
+        $context->offsetSet(Taxable::ACCOUNT_TAX_CODE, $this->getAccountTaxCode($lineItem));
     }
 
     /**
@@ -98,5 +108,24 @@ class OrderLineItemHandler
         $productTaxCode = $productTaxCodeRepository->findOneByProduct($lineItem->getProduct());
 
         return $productTaxCode->getCode();
+    }
+
+    /**
+     * @param OrderLineItem $lineItem
+     * @return null|string
+     */
+    protected function getAccountTaxCode(OrderLineItem $lineItem)
+    {
+        if ($lineItem->getOrder() === null
+            || $lineItem->getOrder()->getAccount() === null
+        ) {
+            return null;
+        }
+
+        /** @var AccountTaxCodeRepository $accountTaxCodeRepository */
+        $accountTaxCodeRepository = $this->doctrineHelper->getEntityRepositoryForClass($this->accountTaxCodeClass);
+        $accountTaxCode = $accountTaxCodeRepository->findOneByAccount($lineItem->getOrder()->getAccount());
+
+        return $accountTaxCode->getCode();
     }
 }

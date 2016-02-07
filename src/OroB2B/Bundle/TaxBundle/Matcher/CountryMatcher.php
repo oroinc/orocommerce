@@ -19,15 +19,19 @@ class CountryMatcher extends AbstractMatcher
     /**
      * {@inheritdoc}
      */
-    public function match(AbstractAddress $address, $productTaxCode)
+    public function match(AbstractAddress $address, $productTaxCode, $accountTaxCode)
     {
         $country = $address->getCountry();
 
-        if (null === $country || $productTaxCode === null) {
+        if (null === $country || $productTaxCode === null || $accountTaxCode === null) {
             return [];
         }
 
-        return $this->getTaxRuleRepository()->findByCountryAndProductTaxCode($country, $productTaxCode);
+        return $this->getTaxRuleRepository()->findByCountryAndProductTaxCodeAndAccountTaxCode(
+            $country,
+            $productTaxCode,
+            $accountTaxCode
+        );
     }
 
     /**

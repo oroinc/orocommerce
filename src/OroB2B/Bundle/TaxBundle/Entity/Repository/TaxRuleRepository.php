@@ -16,9 +16,10 @@ class TaxRuleRepository extends EntityRepository
      *
      * @param Country $country
      * @param string  $productTaxCode
+     * @param string  $accountTaxCode
      * @return TaxRule[]
      */
-    public function findByCountryAndProductTaxCode(Country $country, $productTaxCode)
+    public function findByCountryAndProductTaxCodeAndAccountTaxCode(Country $country, $productTaxCode, $accountTaxCode)
     {
         $qb = $this->createQueryBuilder('taxRule');
         $qb
@@ -27,12 +28,14 @@ class TaxRuleRepository extends EntityRepository
             ->leftJoin('taxJurisdiction.zipCodes', 'zipCodes')
             ->where($qb->expr()->eq('taxJurisdiction.country', ':country'))
             ->andWhere($qb->expr()->eq('productTaxCode.code', ':productTaxCode'))
+            ->andWhere($qb->expr()->eq('accountTaxCode.code', ':accountTaxCode'))
             ->andWhere($qb->expr()->isNull('taxJurisdiction.region'))
             ->andWhere($qb->expr()->isNull('taxJurisdiction.regionText'))
             ->andWhere($qb->expr()->isNull('zipCodes.id'))
             ->setParameters([
                 'country' => $country,
-                'productTaxCode' => $productTaxCode
+                'productTaxCode' => $productTaxCode,
+                'accountTaxCode' => $accountTaxCode
             ]);
 
         return $qb->getQuery()->getResult();
@@ -42,13 +45,15 @@ class TaxRuleRepository extends EntityRepository
      * Find TaxRules by Country
      *
      * @param string      $productTaxCode
+     * @param string      $accountTaxCode
      * @param Country     $country
      * @param Region|null $region
      * @param null        $regionText
      * @return TaxRule[]
      */
-    public function findByCountryAndRegionAndProductTaxCode(
+    public function findByCountryAndRegionAndProductTaxCodeAndAccountTaxCode(
         $productTaxCode,
+        $accountTaxCode,
         Country $country,
         Region $region = null,
         $regionText = null
@@ -60,10 +65,12 @@ class TaxRuleRepository extends EntityRepository
             ->leftJoin('taxJurisdiction.zipCodes', 'zipCodes')
             ->where($qb->expr()->eq('taxJurisdiction.country', ':country'))
             ->andWhere($qb->expr()->eq('productTaxCode.code', ':productTaxCode'))
+            ->andWhere($qb->expr()->eq('accountTaxCode.code', ':accountTaxCode'))
             ->andWhere($qb->expr()->isNull('zipCodes.id'))
             ->setParameters([
                 'country' => $country,
-                'productTaxCode' => $productTaxCode
+                'productTaxCode' => $productTaxCode,
+                'accountTaxCode' => $accountTaxCode
             ]);
 
         if ($region) {
@@ -84,15 +91,16 @@ class TaxRuleRepository extends EntityRepository
      * Find TaxRules by ZipCode (with Region/Country check)
      *
      * @param string  $productTaxCode
+     * @param string  $accountTaxCode
      * @param string  $zipCode
      * @param Country $country
-
      * @param Region  $region
      * @param string  $regionText
      * @return TaxRule[]
      */
-    public function findByZipCodeAndProductTaxCode(
+    public function findByZipCodeAndProductTaxCodeAndAccountTaxCode(
         $productTaxCode,
+        $accountTaxCode,
         $zipCode,
         Country $country,
         Region $region = null,
@@ -105,6 +113,7 @@ class TaxRuleRepository extends EntityRepository
             ->leftJoin('taxJurisdiction.zipCodes', 'zipCodes')
             ->where($qb->expr()->eq('taxJurisdiction.country', ':country'))
             ->andWhere($qb->expr()->eq('productTaxCode.code', ':productTaxCode'))
+            ->andWhere($qb->expr()->eq('accountTaxCode.code', ':accountTaxCode'))
             ->andWhere(
                 $qb->expr()->orX(
                     $qb->expr()->andX(
@@ -118,7 +127,8 @@ class TaxRuleRepository extends EntityRepository
                 'country' => $country,
                 'zipCode' => $zipCode,
                 'zipCodeForRange' => (int)$zipCode,
-                'productTaxCode' => $productTaxCode
+                'productTaxCode' => $productTaxCode,
+                'accountTaxCode' => $accountTaxCode
             ]);
 
         if ($region) {

@@ -30,8 +30,9 @@ class CustomerAddressItemResolver extends AbstractAddressResolver
         }
 
         $productTaxCode = $taxable->getContextValue(Taxable::PRODUCT_TAX_CODE);
+        $accountTaxCode = $taxable->getContextValue(Taxable::ACCOUNT_TAX_CODE);
 
-        $taxRules = $this->matcher->match($address, $productTaxCode);
+        $taxRules = $this->matcher->match($address, $productTaxCode, $accountTaxCode);
         $taxableUnitPrice = BigDecimal::of($taxable->getPrice());
         $taxableAmount = $taxableUnitPrice->multipliedBy($taxable->getQuantity());
 

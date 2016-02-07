@@ -316,6 +316,7 @@ services:
             - @orob2b_tax.provider.taxation_address_provider
             - @oro_entity.doctrine_helper
             - %orob2b_tax.entity.product_tax_code.class%
+            - %orob2b_tax.entity.account_tax_code.class%
             - %orob2b_order.entity.order_line_item.class%
         tags:
             - { name: kernel.event_listener, event: orob2b_tax.mapper.context, method: onContextEvent }
