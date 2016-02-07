@@ -36,7 +36,7 @@ class ShoppingListController extends Controller
 
     /**
      * @Route("/view/{id}", name="orob2b_shopping_list_frontend_view", requirements={"id"="\d+"})
-     * @Layout(vars={"shoppingList"})
+     * @Layout()
      * @Acl(
      *      id="orob2b_shopping_list_frontend_view",
      *      type="entity",
@@ -51,7 +51,7 @@ class ShoppingListController extends Controller
      */
     public function viewAction(ShoppingList $shoppingList)
     {
-        return ['shoppingList' => $shoppingList];
+        return [];
     }
 
 
