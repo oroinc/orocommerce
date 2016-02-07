@@ -102,8 +102,6 @@ class TaxManagerTest extends WebTestCase
             $cases[$file->getRelativePathname()] = Yaml::parse($file);
         }
 
-        return array_intersect_key($cases, ['test_cases/adjustment_not_lost/on_total_with_row_total.yml' => []]);
-
         return $cases;
     }
 

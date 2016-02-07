@@ -32,9 +32,9 @@ expectedResult:
         includingTax: '38.85' # 5.55 * 7
         excludingTax: '35.32' # 5.0455 * 7 = 35.3185
         taxAmount: '3.53'     # 0.5045 * 7 = 3.5315
-        adjustment: '-0.0018' # 35.32 - 35.3185
+        adjustment: '0.0315'  # 0.0045 * 7
     unit:
         includingTax: '5.55'
         excludingTax: '5.05'  # 5.55 - 0.5045 = 5.0455
         taxAmount: '0.5'      # 5.55 * 0.1 / 1.1 = 0.5045
-        adjustment: '-0.0045' # 5.05 - 5.0455
+        adjustment: '0.0045'  # 0.5045 - 0.5

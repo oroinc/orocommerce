@@ -37,4 +37,4 @@ expectedResult:
         includingTax: '5.55'
         excludingTax: '5.05' # 5.55 - 0.5045 = 5.0455
         taxAmount: '0.5'     # 5.55 * 0.1 / 1.1 = 0.5045
-        adjustment: '-0.0045' # 5.0455 - 5.05
+        adjustment: '0.0045' # 0.5045 - 0.5

@@ -26,6 +26,11 @@ class TaxationSettingsProvider
     const SCALE = 2;
 
     /**
+     * For scale = 2 we use 3rd number to scale and fourth position to divide
+     */
+    const CALCULATION_SCALE = 4;
+
+    /**
      * @var ConfigManager
      */
     protected $configManager;

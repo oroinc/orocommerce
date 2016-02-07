@@ -32,19 +32,19 @@ expectedResult:
         includingTax: '134.79' # 15.99 * 6 + 5.55 * 7 = 134.79
         excludingTax: '122.54' # 134.79 - 12.2536 = 122.5364
         taxAmount: '12.25'     # 134.79 * 0.1 / 1.1 = 12.2536
-        adjustment: '-0.0036'   # 122.54 - 122.5364
+        adjustment: '0.0531'   #
     items:
         -
             row:
                 includingTax: '95.94'   # 15.99 * 6
                 excludingTax: '87.22'   # 95.94 - 8.7218 = 87.2182
                 taxAmount: '8.72'       # 95.94 * 0.1 / 1.1 = 8.7218
-                adjustment: '-0.0018'   # 87.22 - 87.2182
+                adjustment: '0.0216'    # 0.0036 * 6
             unit:
                 includingTax: '15.99'
                 excludingTax: '14.54'   # 15.99 - 1.4536 = 14.5364
                 taxAmount: '1.45'       # 15.99 * 0.1 / 1.1 = 1.4536
-                adjustment: '-0.0036'   # 14.54 - 14.5364
+                adjustment: '0.0036'    # 1.4536 - 1.45
             taxes:
                 - { tax: 'TAX1', rate: '0.1', taxable_amount: '87.22', tax_amount: '8.72' }
         -
@@ -52,11 +52,11 @@ expectedResult:
                 includingTax: '38.85' # 5.55 * 7
                 excludingTax: '35.32' # 38.85 - 3.5318 = 35.3182
                 taxAmount: '3.53'     # 38.85 * 0.1 / 1.1 = 3.5318
-                adjustment: '-0.0018'  # 35.32 - 35.3182
+                adjustment: '0.0315'  # 0.0045 * 7
             unit:
                 includingTax: '5.55'
                 excludingTax: '5.05' # 5.55 - 0.5045 = 5.0455
                 taxAmount: '0.5'     # 5.55 * 0.1 / 1.1 = 0.5045
-                adjustment: '-0.0045' # 5.05 - 5.0455
+                adjustment: '0.0045' # 5.05 - 5.0455
             taxes:
                 - { tax: 'TAX1', rate: '0.1', taxable_amount: '35.32', tax_amount: '3.53' }
