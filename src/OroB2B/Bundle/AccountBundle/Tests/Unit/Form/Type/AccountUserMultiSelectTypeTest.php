@@ -6,12 +6,17 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
 
-class AccountUserMultiSelectTypeTest extends AbstractTest
+class AccountUserMultiSelectTypeTest extends FormIntegrationTestCase
 {
+    use EntityTrait;
+
     /** @var AccountUserMultiSelectType */
     protected $formType;
 
@@ -61,35 +66,46 @@ class AccountUserMultiSelectTypeTest extends AbstractTest
     }
 
     /**
+     * @dataProvider submitProvider
+     *
+     * @param array $defaultData
+     * @param array $submittedData
+     * @param bool $isValid
+     * @param array|null $expectedData
+     */
+    public function testSubmit(array $defaultData, array $submittedData, $isValid = false, $expectedData = null)
+    {
+        $form = $this->factory->create($this->formType, $defaultData, []);
+
+        $this->assertEquals($defaultData, $form->getData());
+
+        $form->submit($submittedData);
+
+        $this->assertEquals($isValid, $form->isValid());
+        $this->assertEquals($expectedData, $form->getData());
+    }
+
+    /**
      * @return array
      */
     public function submitProvider()
     {
         return [
             'empty data' => [
-                'isValid'       => true,
+                'defaultData' => [],
                 'submittedData' => [],
-                'expectedData'  => [],
-                'defaultData'   => [],
+                'isValid' => true,
+                'expectedData' => []
             ],
             'valid data' => [
-                'isValid'       => true,
+                'defaultData' => [$this->getAccountUser(1)],
                 'submittedData' => [2, 3],
-                'expectedData'  => [
-                    $this->getAccountUser(2),
-                    $this->getAccountUser(3),
-                ],
-                'defaultData'   => [
-                    $this->getAccountUser(1),
-                ],
+                'isValid' => true,
+                'expectedData' => [$this->getAccountUser(2), $this->getAccountUser(3)]
             ],
             'invalid data' => [
-                'isValid'       => false,
-                'submittedData' => [5],
-                'expectedData'  => null,
-                'defaultData'   => [
-                    $this->getAccountUser(1),
-                ],
+                'defaultData' => [$this->getAccountUser(1)],
+                'submittedData' => [5]
             ],
         ];
     }
@@ -117,7 +133,16 @@ class AccountUserMultiSelectTypeTest extends AbstractTest
                 ],
                 []
             ),
-            $this->getValidatorExtension(true),
+            $this->getValidatorExtension(false),
         ];
+    }
+
+    /**
+     * @param int $id
+     * @return AccountUser
+     */
+    protected function getAccountUser($id)
+    {
+        return $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', ['id' => $id, 'salt' => $id]);
     }
 }

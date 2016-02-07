@@ -155,7 +155,7 @@ class QuoteControllerTest extends WebTestCase
         $form['orob2b_sale_quote[shipUntil]']  = self::$shipUntilUpdated;
 
         $form['orob2b_sale_quote[assignedUsers]'] = $this->getReference(LoadUserData::USER1)->getId();
-        $form['orob2b_sale_quote[assignedAccountUsers]'] = join(',', [
+        $form['orob2b_sale_quote[assignedAccountUsers]'] = implode(',', [
             $this->getReference(LoadUserData::ACCOUNT1_USER1)->getId(),
             $this->getReference(LoadUserData::ACCOUNT1_USER2)->getId()
         ]);

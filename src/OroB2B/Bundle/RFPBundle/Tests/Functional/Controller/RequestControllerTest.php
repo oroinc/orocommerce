@@ -133,7 +133,7 @@ class RequestControllerTest extends WebTestCase
         $form['orob2b_rfp_request[poNumber]'] = $updatedPoNumber;
 
         $form['orob2b_rfp_request[assignedUsers]'] = $this->getReference(LoadUserData::USER1)->getId();
-        $form['orob2b_rfp_request[assignedAccountUsers]'] = join(',', [
+        $form['orob2b_rfp_request[assignedAccountUsers]'] = implode(',', [
             $this->getReference(LoadUserData::ACCOUNT1_USER1)->getId(),
             $this->getReference(LoadUserData::ACCOUNT1_USER2)->getId()
         ]);
