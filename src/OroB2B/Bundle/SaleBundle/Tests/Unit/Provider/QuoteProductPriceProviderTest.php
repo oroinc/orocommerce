@@ -45,7 +45,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
         $this->priceListRequestHandler->expects($this->any())
-            ->method('getPriceList')->willReturn($this->setEntityId(new PriceList(), self::DEFAULT_PRICE_LIST_ID));
+            ->method('getPriceListByAccount')->willReturn($this->setEntityId(new PriceList(), self::DEFAULT_PRICE_LIST_ID));
 
         $this->quoteProductPriceProvider = new QuoteProductPriceProvider(
             $this->productPriceProvider,

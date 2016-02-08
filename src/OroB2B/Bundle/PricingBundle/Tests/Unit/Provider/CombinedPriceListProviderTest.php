@@ -177,7 +177,7 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->getMock();
             $priceListRelation->expects($this->any())
-                ->method('getPriceList')
+                ->method('getPriceListByAccount')
                 ->willReturn($priceList);
             $priceListRelation->expects($this->any())
                 ->method('isMergeAllowed')

@@ -52,7 +52,7 @@ class FrontendProductPricesDataProvicer implements DataProviderInterface
         $productId = $product->getId();
 
         if (!$this->data[$productId]) {
-            $priceList = $this->frontendPriceListRequestHandler->getPriceList();
+            $priceList = $this->frontendPriceListRequestHandler->getPriceListByAccount();
 
             /** @var ProductPriceRepository $priceRepository */
             $priceRepository = $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:ProductPrice');

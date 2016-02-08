@@ -70,7 +70,7 @@ class ProductPriceProvider
     public function getMatchedPrices(array $productsPriceCriteria, BasePriceList $priceList = null)
     {
         if (!$priceList) {
-            $priceList = $this->requestHandler->getPriceList();
+            $priceList = $this->requestHandler->getPriceListByAccount();
         }
 
         $productIds = [];

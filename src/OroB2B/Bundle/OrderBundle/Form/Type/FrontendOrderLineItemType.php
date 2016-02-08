@@ -182,7 +182,7 @@ class FrontendOrderLineItemType extends AbstractOrderLineItemType
             ->getManagerForClass($this->priceClass)
             ->getRepository($this->priceClass);
 
-        $priceList = $this->priceListRequestHandler->getPriceList();
+        $priceList = $this->priceListRequestHandler->getPriceListByAccount();
         $choices = $repository->getProductUnitsByPriceList(
             $priceList,
             $item->getProduct(),

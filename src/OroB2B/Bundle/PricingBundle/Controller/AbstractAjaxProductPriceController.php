@@ -33,7 +33,7 @@ abstract class AbstractAjaxProductPriceController extends Controller
     public function getProductPricesByAccount(Request $request)
     {
         $priceListId = $this->get('orob2b_pricing.model.frontend.price_list_request_handler')
-            ->getPriceList()
+            ->getPriceListByAccount()
             ->getId();
 
         return new JsonResponse(

@@ -15,7 +15,7 @@ use OroB2B\Bundle\PricingBundle\Controller\AbstractAjaxProductPriceController;
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {
     /**
-     * @Route("/get-product-prices-by-pricelist", name="orob2b_pricing_frontend_price_by_pricelist")
+     * @Route("/get-product-prices-by-account", name="orob2b_pricing_frontend_price_by_account")
      * @Method({"GET"})
      *
      * {@inheritdoc}
@@ -53,7 +53,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     public function getProductUnitsByCurrencyAction(Request $request)
     {
         return $this->getProductUnitsByCurrency(
-            $this->get('orob2b_pricing.model.frontend.price_list_request_handler')->getPriceList(),
+            $this->get('orob2b_pricing.model.frontend.price_list_request_handler')->getPriceListByAccount(),
             $request,
             $this->getParameter('orob2b_pricing.entity.combined_product_price.class')
         );

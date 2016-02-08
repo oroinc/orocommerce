@@ -130,7 +130,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
         if ($priceListId && $priceCurrencies) {
             $this->priceListRequestHandler
                 ->expects($this->any())
-                ->method('getPriceList')
+                ->method('getPriceListByAccount')
                 ->willReturn($this->getPriceList($priceListId));
 
             $this->priceListRequestHandler
@@ -326,7 +326,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
         if ($priceListId && $priceCurrencies) {
             $this->priceListRequestHandler
                 ->expects($this->any())
-                ->method('getPriceList')
+                ->method('getPriceListByAccount')
                 ->willReturn($this->getPriceList($priceListId));
 
             $this->priceListRequestHandler

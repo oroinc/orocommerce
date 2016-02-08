@@ -79,7 +79,7 @@ class FrontendProductPricesDataProvicerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($repo);
 
         $this->frontendPriceListRequestHandler->expects($this->once())
-            ->method('getPriceList')
+            ->method('getPriceListByAccount')
             ->willReturn($priceList);
 
         $actual = $this->provider->getData($context);

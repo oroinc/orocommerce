@@ -107,7 +107,7 @@ abstract class AbstractOrderController extends Controller
             $priceList = $order->getPriceList();
         }
         if (!$priceList) {
-            $priceList = $this->get('orob2b_pricing.model.frontend.price_list_request_handler')->getPriceList();
+            $priceList = $this->get('orob2b_pricing.model.frontend.price_list_request_handler')->getPriceListByAccount();
         }
 
         return $priceList;

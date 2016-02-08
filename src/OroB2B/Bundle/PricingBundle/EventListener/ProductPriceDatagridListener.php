@@ -32,6 +32,7 @@ class ProductPriceDatagridListener
 
     /**
      * @var AbstractPriceListRequestHandler
+    //todo resolve handler dependency
      */
     protected $priceListRequestHandler;
 
@@ -195,7 +196,7 @@ class ProductPriceDatagridListener
      */
     protected function getCurrencies()
     {
-        return $this->priceListRequestHandler->getPriceListSelectedCurrencies();
+        return $this->priceListRequestHandler->getPriceListSelectedCurrencies($this->getPriceList());
     }
 
     /**

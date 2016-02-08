@@ -110,11 +110,11 @@ class FrontendPriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($user);
 
         $this->priceListTreeHandler->expects($this->once())
-            ->method('getPriceList')
+            ->method('getPriceListByAccount')
             ->with($expectedUser ? $expectedUser->getAccount() : null)
             ->willReturn($priceList);
 
-        $this->assertSame($priceList, $this->handler->getPriceList());
+        $this->assertSame($priceList, $this->handler->getPriceListByAccount());
     }
 
     /**
@@ -154,10 +154,10 @@ class FrontendPriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
     public function testGetPriceListException()
     {
         $this->priceListTreeHandler->expects($this->once())
-            ->method('getPriceList')
+            ->method('getPriceListByAccount')
             ->willReturn(null);
 
-        $this->handler->getPriceList();
+        $this->handler->getPriceListByAccount();
     }
 
     public function testGetPriceListCurrenciesWithoutRequestAndSessionParam()
@@ -165,7 +165,7 @@ class FrontendPriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
         $priceList = $this->getPriceList(42, ['USD', 'GBP', 'EUR']);
 
         $this->priceListTreeHandler->expects($this->once())
-            ->method('getPriceList')
+            ->method('getPriceListByAccount')
             ->willReturn($priceList);
 
         $this->assertSame(['EUR'], $this->handler->getPriceListSelectedCurrencies());
@@ -190,7 +190,7 @@ class FrontendPriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
             );
 
         $this->priceListTreeHandler->expects($this->once())
-            ->method('getPriceList')
+            ->method('getPriceListByAccount')
             ->willReturn($this->getPriceList(42, $currencies));
 
         $this->assertEquals($expected, $this->handler->getPriceListSelectedCurrencies());
@@ -216,7 +216,7 @@ class FrontendPriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($paramVal);
 
         $this->priceListTreeHandler->expects($this->once())
-            ->method('getPriceList')
+            ->method('getPriceListByAccount')
             ->willReturn($this->getPriceList(42, $currencies));
 
         $this->assertEquals($expected, $this->handler->getPriceListSelectedCurrencies());
@@ -246,7 +246,7 @@ class FrontendPriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
             );
 
         $this->priceListTreeHandler->expects($this->once())
-            ->method('getPriceList')
+            ->method('getPriceListByAccount')
             ->willReturn($this->getPriceList(42, ['EUR', 'USD']));
 
         $this->session->expects($this->once())

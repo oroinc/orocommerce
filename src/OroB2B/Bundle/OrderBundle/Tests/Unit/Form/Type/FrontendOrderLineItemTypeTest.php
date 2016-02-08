@@ -73,7 +73,7 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
         $priceList = new PriceList();
 
         $this->priceListRequestHandler->expects($this->any())
-            ->method('getPriceList')
+            ->method('getPriceListByAccount')
             ->willReturn($priceList);
 
         $this->formType->setDataClass('OroB2B\Bundle\OrderBundle\Entity\OrderLineItem');

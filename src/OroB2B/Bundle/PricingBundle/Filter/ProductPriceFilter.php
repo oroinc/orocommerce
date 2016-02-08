@@ -91,6 +91,7 @@ class ProductPriceFilter extends NumberRangeFilter
     /**
      * @param OrmFilterDatasourceAdapter $ds
      * @param string $unit
+     * todo check if bug
      */
     protected function qbPrepare(OrmFilterDatasourceAdapter $ds, $unit)
     {
