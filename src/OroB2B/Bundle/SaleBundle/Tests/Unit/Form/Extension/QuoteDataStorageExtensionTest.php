@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
