@@ -9,6 +9,8 @@ use Symfony\Component\DependencyInjection\Loader;
 
 class OroB2BInvoiceExtension extends Extension
 {
+    const ALIAS = 'oro_b2b_invoice';
+
     /**
      * {@inheritDoc}
      */
@@ -16,5 +18,14 @@ class OroB2BInvoiceExtension extends Extension
     {
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getAlias()
+    {
+        return self::ALIAS;
     }
 }

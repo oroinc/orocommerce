@@ -1,7 +1,7 @@
 OroB2B\Bundle\InvoiceBundle\Entity\Invoice:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: invoiceNumber
-        - Callback: [validatePaymentDueDate]
+        - OroB2B\Bundle\InvoiceBundle\Validator\Constraints\InvoicePaymentDueDate: ~
     properties:
         owner:
             - NotBlank: ~
@@ -42,6 +42,8 @@ OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem:
                 message: 'orob2b.product.productunit.invalid'
         productUnitCode:
             - NotBlank:
+        sortOrder:
+            - NotBlank: ~
         price:
             - NotBlank: ~
             - Valid: ~

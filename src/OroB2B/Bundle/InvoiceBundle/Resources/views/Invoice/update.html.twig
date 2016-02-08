@@ -47,7 +47,14 @@
 {% block content_data %}
     {% set id = 'invoice-edit' %}
 
-
+    {% set subtotals %}
+        {% include 'OroB2BPricingBundle:Subtotals:subtotals.html.twig' with {
+        options: {
+            url: path('orob2b_invoice_subtotal', {id: entity.id}),
+            selectors: {form: '#' ~ form.vars.id},
+        }
+        } only %}
+    {% endset %}
 
     {% set ownerSelectors %}
         <div>
@@ -59,14 +66,16 @@
     {% endset %}
 
     {% set lineItems %}
-        <div class="invoice-lineitems"
+        {#todo  fix priceListId after BB-1561 #}
+        <div class="invoice-line-items"
              data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
-                 tierPricesRoute: 'orob2b_pricing_price_by_pricelist',
-                 matchedPricesRoute: 'orob2b_pricing_matching_price',
+                 view: 'orob2binvoice/js/app/views/invoice-line-items-view',
                  tierPrices: tierPrices|default({}),
                  matchedPrices: matchedPrices|default({}),
-                 view: 'orob2binvoice/js/app/views/line-items-view',
+                 tierPricesRoute: 'orob2b_pricing_price_by_pricelist',
+                 matchedPricesRoute: 'orob2b_pricing_matching_price',
+                 priceList: 1,
                  currency: entity.currency
              }|json_encode }}"
              data-layout="separate">
@@ -76,15 +85,23 @@
     {% endset %}
 
     {% set invoiceFieldsWidgets %}
-        <div>
-            {{ form_row(form.invoiceDate) }}
-        </div>
-        <div>
-            {{ form_row(form.paymentDueDate) }}
-
-        </div><div>
-            {{ form_row(form.poNumber) }}
-
+        <div
+            data-page-component-module="oroui/js/app/components/view-component"
+            data-page-component-options="{{ {
+                'view': 'orob2binvoice/js/app/views/invoice-view'
+            }|json_encode }}">
+            <div>
+                {{ form_row(form.invoiceDate) }}
+            </div>
+            <div>
+                {{ form_row(form.paymentDueDate) }}
+            </div>
+            <div>
+                {{ form_row(form.poNumber) }}
+            </div>
+            <div class="invoice-currency">
+                {{ form_row(form.currency) }}
+            </div>
         </div>
     {% endset %}
 
@@ -95,8 +112,7 @@
             'subblocks': [{
                 'data': [
                     ownerSelectors,
-                    invoiceFieldsWidgets,
-                    UI.renderProperty('orob2b.invoice.currency.label'|trans, entity.currency)
+                    invoiceFieldsWidgets
                 ]
             }]
         },
@@ -110,6 +126,15 @@
             }]
         }
     ] %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+            'title': 'orob2b.invoice.sections.subtotals'|trans,
+            'class': 'active',
+            'subblocks': [{
+                'data': [subtotals]
+            }]
+        }])
+    %}
 
     {% set additionalData = [
         form_row(form.poNumber),

@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Model;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;

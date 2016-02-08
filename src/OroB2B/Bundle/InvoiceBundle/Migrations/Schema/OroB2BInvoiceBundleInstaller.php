@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\InvoiceBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
+
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -53,7 +54,8 @@ class OroB2BInvoiceBundleInstaller implements Installation
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
-        $table->addColumn('payment_due_date', 'date', []);
+        $table->addColumn('subtotal', 'money', []);
+        $table->addColumn('payment_due_date', 'date');
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['invoice_number'], 'UNIQ_1CB885202DA68207');
         $table->addIndex(['created_at'], 'orob2b_invoice_created_at_index', []);
@@ -75,13 +77,14 @@ class OroB2BInvoiceBundleInstaller implements Installation
         $table->addColumn('free_form_product', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('quantity', 'float', ['notnull' => false]);
         $table->addColumn('product_unit_code', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('sort_order', 'integer', []);
         $table->addColumn(
-            'value',
+            'price_value',
             'money',
             ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
-        $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('price_type', 'integer', ['notnull' => false]);
+        $table->addColumn('price_currency', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('price_type', 'smallint', ['notnull' => false, 'unsigned' => true]);
         $table->setPrimaryKey(['id']);
     }
 

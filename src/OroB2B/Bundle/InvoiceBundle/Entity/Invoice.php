@@ -2,13 +2,14 @@
 
 namespace OroB2B\Bundle\InvoiceBundle\Entity;
 
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -16,6 +17,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\InvoiceBundle\Model\ExtendInvoice;
+use OroB2B\Bundle\PricingBundle\Model\LineItemsAwareInterface;
 
 /**
  * @ORM\Table(
@@ -47,8 +49,14 @@ use OroB2B\Bundle\InvoiceBundle\Model\ExtendInvoice;
  * @ORM\EntityListeners({ "OroB2B\Bundle\InvoiceBundle\EventListener\ORM\InvoiceEventListener" })
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class Invoice extends ExtendInvoice implements OrganizationAwareInterface
+class Invoice extends ExtendInvoice implements
+    OrganizationAwareInterface,
+    CurrencyAwareInterface,
+    LineItemsAwareInterface,
+    DatesAwareInterface
 {
+    use DatesAwareTrait;
+
     /**
      * @var integer
      *
@@ -57,35 +65,6 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-
-    //TODO: Proper trait will be used after BB-1349
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $createdAt;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="updated_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $updatedAt;
 
     /**
      * @var string
@@ -177,11 +156,28 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem",
-     *      mappedBy="invoice", cascade={"ALL"}, orphanRemoval=true
+     * @ORM\OneToMany(
+     *     targetEntity="OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem",
+     *     mappedBy="invoice", cascade={"ALL"}, orphanRemoval=true
      * )
+     *
+     * @ORM\OrderBy({"sortOrder" = "ASC"})
      */
     protected $lineItems;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="subtotal", type="float", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $subtotal;
 
     /**
      * {@inheritdoc}
@@ -202,45 +198,6 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
     {
         return $this->id;
     }
-
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @param \DateTime $createdAt
-     * @return $this
-     */
-    public function setCreatedAt(\DateTime $createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @param \DateTime $updatedAt
-     * @return $this
-     */
-    public function setUpdatedAt(\DateTime $updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
 
     /**
      * @return string
@@ -273,7 +230,7 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
      * @param \DateTime $invoiceDate
      * @return $this
      */
-    public function setInvoiceDate($invoiceDate)
+    public function setInvoiceDate(\DateTime $invoiceDate)
     {
         $this->invoiceDate = $invoiceDate;
 
@@ -376,7 +333,7 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
     }
 
     /**
-     * @return ArrayCollection
+     * @return InvoiceLineItem[]|ArrayCollection
      */
     public function getLineItems()
     {
@@ -431,7 +388,7 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
      * @param \DateTime $paymentDueDate
      * @return $this
      */
-    public function setPaymentDueDate($paymentDueDate)
+    public function setPaymentDueDate(\DateTime $paymentDueDate)
     {
         $this->paymentDueDate = $paymentDueDate;
 
@@ -458,19 +415,21 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
     }
 
     /**
-     * Checks that paymentDueDate greater that invoiceDate
-     *
-     * @param ExecutionContextInterface $context
+     * @return float
      */
-    public function validatePaymentDueDate(ExecutionContextInterface $context)
+    public function getSubtotal()
     {
-        if ((!$this->getPaymentDueDate() instanceof \DateTime || !$this->getInvoiceDate() instanceof \DateTime) ||
-            ($this->getPaymentDueDate()->getTimestamp() < $this->getInvoiceDate()->getTimestamp())
-        ) {
-            $context
-                ->buildViolation('orob2b.invoice.validation.payment_due_date_error.label')
-                ->atPath('paymentDueDate')
-                ->addViolation();
-        }
+        return $this->subtotal;
+    }
+
+    /**
+     * @param float $subtotal
+     * @return $this
+     */
+    public function setSubtotal($subtotal)
+    {
+        $this->subtotal = $subtotal;
+
+        return $this;
     }
 }

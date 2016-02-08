@@ -1,10 +1,10 @@
 <?php
 
-namespace Oro\Bundle\CurrencyBundle\Tests\Unit\Model;
+namespace Oro\Bundle\CurrencyBundle\Tests\Unit\Entity;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 class PriceTest extends \PHPUnit_Framework_TestCase
 {
@@ -39,7 +39,7 @@ class PriceTest extends \PHPUnit_Framework_TestCase
     public function testCreate()
     {
         $price = Price::create(self::VALUE, self::CURRENCY);
-        $this->assertInstanceOf('Oro\Bundle\CurrencyBundle\Model\Price', $price);
+        $this->assertInstanceOf('Oro\Bundle\CurrencyBundle\Entity\Price', $price);
         $this->assertEquals(self::VALUE, $price->getValue());
         $this->assertEquals(self::CURRENCY, $price->getCurrency());
     }

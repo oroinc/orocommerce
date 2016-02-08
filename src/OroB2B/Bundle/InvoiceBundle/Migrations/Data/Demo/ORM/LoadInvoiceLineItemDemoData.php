@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\InvoiceBundle\Migrations\Data\Demo\ORM;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -13,13 +12,14 @@ use Doctrine\ORM\EntityManager;
 
 use OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 class LoadInvoiceLineItemDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
     use ContainerAwareTrait;
-    
+
     /**
      * {@inheritdoc}
      */
@@ -43,7 +43,7 @@ class LoadInvoiceLineItemDemoData extends AbstractFixture implements ContainerAw
             $filePath = current($filePath);
         }
 
-        $invoicesData = array();
+        $invoicesData = [];
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler);
 
@@ -53,6 +53,7 @@ class LoadInvoiceLineItemDemoData extends AbstractFixture implements ContainerAw
         }
 
         foreach ($invoicesData as $invoiceNumber => $invoiceData) {
+            /** @var Invoice $invoice */
             $invoice = $manager
                 ->getRepository('OroB2BInvoiceBundle:Invoice')
                 ->findOneBy(['invoiceNumber' => $invoiceNumber]);
@@ -61,18 +62,19 @@ class LoadInvoiceLineItemDemoData extends AbstractFixture implements ContainerAw
             }
             foreach ($invoiceData as $invoiceLineItemData) {
                 $lineItem = new InvoiceLineItem();
-                $lineItem->setInvoice($invoice);
-                $lineItem->setQuantity($invoiceLineItemData['quantity']);
-                $lineItem->setPrice(
-                    Price::create((float)$invoiceLineItemData['price'], $invoice->getCurrency())
-                );
-                $lineItem->setProductUnit(
-                    $manager->getReference('OroB2BProductBundle:ProductUnit', $invoiceLineItemData['productUnit'])
-                );
+                $lineItem->setInvoice($invoice)
+                    ->setQuantity($invoiceLineItemData['quantity'])
+                    ->setSortOrder($invoiceLineItemData['sortOrder'])
+                    ->setPrice(
+                        Price::create((float)$invoiceLineItemData['price'], $invoice->getCurrency())
+                    )
+                    ->setProductUnit(
+                        $manager->getReference('OroB2BProductBundle:ProductUnit', $invoiceLineItemData['productUnit'])
+                    );
 
                 if (!empty($invoiceLineItemData['freeFormProduct'])) {
-                    $lineItem->setFreeFormProduct($invoiceLineItemData['freeFormProduct']);
-                    $lineItem->setProductSku($invoiceLineItemData['productSku']);
+                    $lineItem->setFreeFormProduct($invoiceLineItemData['freeFormProduct'])
+                        ->setProductSku($invoiceLineItemData['productSku']);
                 } else {
                     /** @var Product $product */
                     $product = $manager
@@ -81,6 +83,11 @@ class LoadInvoiceLineItemDemoData extends AbstractFixture implements ContainerAw
                     $lineItem->setProduct($product);
                     $lineItem->setProductSku($product->getSku());
                 }
+                $subtotal = $this->container
+                    ->get('orob2b_pricing.provider.line_items_subtotal')
+                    ->getSubtotal($invoice)
+                    ->getAmount();
+                $invoice->setSubtotal($subtotal);
                 $manager->persist($lineItem);
             }
         }

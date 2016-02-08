@@ -1,4 +1,4 @@
-{% macro orob2b_invoice_line_items_collection_item_prototype(widget) %}
+{% macro orob2b_invoice_line_items_collection_item_prototype(widget, index) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
@@ -24,6 +24,7 @@
         data-page-component-module="{{ form.vars.page_component }}"
         data-page-component-options="{{ page_component_options|json_encode }}"
         data-layout="separate">
+        <td class="invoice-line-item-index">{{ index }}</td>
         {{ form_widget(form) }}
 
         {% if allow_delete %}
@@ -49,10 +50,12 @@
                 <table class="grid table-hover table table-bordered table-condensed">
                     <thead>
                     <tr>
-                        <th><span>{{ 'orob2b.product.sku.label'|trans }}</span></th>
+                        <th><span>#</span></th>
+                        <th><span>{{ 'orob2b.invoice.invoicelineitem.code.label'|trans }}</span></th>
                         <th><span>{{ 'orob2b.product.entity_label'|trans }}</span></th>
                         <th><span>{{ 'orob2b.invoice.invoicelineitem.quantity.label'|trans }}</span></th>
                         <th><span>{{ 'orob2b.invoice.invoicelineitem.price.label'|trans }}</span></th>
+                        <th><span>{{ 'orob2b.invoice.invoicelineitem.price_total.label'|trans }}</span></th>
                         {% if form.vars.allow_delete %}
                             <th class="invoice-line-item-actions"></th>
                         {% endif %}
@@ -61,7 +64,7 @@
                     <tbody data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
                     {% if form.children|length %}
                         {% for child in form.children %}
-                            {{ _self.orob2b_invoice_line_items_collection_item_prototype(child) }}
+                            {{ _self.orob2b_invoice_line_items_collection_item_prototype(child, loop.index) }}
                         {% endfor %}
                     {% elseif show_form_when_empty and prototype_html is defined %}
                         {{ prototype_html|replace({(prototype_name): '0'})|raw }}
@@ -118,4 +121,6 @@
         {{ form_errors(form.price) }}
         {{ form_errors(form.priceType) }}
     </td>
+    <td class="invoice-line-item-total-price"></td>
+    {{ form_widget(form.sortOrder) }}
 {% endblock %}

@@ -1,4 +1,5 @@
 <?php
+
 namespace OroB2B\Bundle\InvoiceBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -30,6 +31,7 @@ class InvoiceEntityTest extends \PHPUnit_Framework_TestCase
             ['poNumber', 'po-test'],
             ['account', new Account()],
             ['accountUser', new AccountUser()],
+            ['subtotal', 12.55]
         ];
 
         $invoice = new Invoice();

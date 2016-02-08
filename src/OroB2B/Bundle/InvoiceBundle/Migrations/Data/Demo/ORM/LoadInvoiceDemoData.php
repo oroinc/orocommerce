@@ -67,7 +67,8 @@ class LoadInvoiceDemoData extends AbstractFixture implements ContainerAwareInter
                 ->setCreatedAt($row['invoiceDate'])
                 ->setUpdatedAt($row['invoiceDate'])
                 ->setCurrency($row['currency'])
-                ->setPoNumber($row['poNumber']);
+                ->setPoNumber($row['poNumber'])
+                ->setSubtotal(0);
 
             $manager->persist($invoice);
         }

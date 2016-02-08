@@ -17,7 +17,7 @@ use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 class InvoiceController extends Controller
 {
@@ -91,6 +91,7 @@ class InvoiceController extends Controller
     {
         $invoice = new Invoice();
         $invoice->setCurrency($this->get('oro_locale.settings')->getCurrency());
+
         return $this->update($invoice);
     }
 
@@ -182,7 +183,7 @@ class InvoiceController extends Controller
 
     /**
      * @param Invoice $invoice
-     * @return array|\Oro\Bundle\CurrencyBundle\Model\Price[]
+     * @return array|Price[]
      */
     protected function getMatchedPrices(Invoice $invoice)
     {

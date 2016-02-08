@@ -10,9 +10,9 @@ define(function(require) {
     var BaseComponent = require('oroui/js/app/components/base/component');
 
     /**
-     * @export orob2border/js/app/components/subtotals-component
+     * @export orob2bpricing/js/app/components/subtotals-component
      * @extends oroui.app.components.base.Component
-     * @class orob2border.app.components.SubtotalsComponent
+     * @class orob2bpricing.app.components.SubtotalsComponent
      */
     SubtotalsComponent = BaseComponent.extend({
         /**
@@ -53,6 +53,11 @@ define(function(require) {
         formData: '',
 
         /**
+         * @property {String}
+         */
+        eventName: '',
+
+        /**
          * @property {LoadingMaskView}
          */
         loadingMaskView: null,
@@ -72,10 +77,11 @@ define(function(require) {
             this.$subtotals = this.$el.find(this.options.selectors.subtotals);
             this.template = _.template(this.$el.find(this.options.selectors.template).text());
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
+            this.eventName = 'subtotal-target:changing';
 
             this.updateSubtotals();
 
-            mediator.on('order-subtotals:update', this.updateSubtotals, this);
+            mediator.on('line-items-subtotals:update', this.updateSubtotals, this);
         },
 
         /**
@@ -92,7 +98,7 @@ define(function(require) {
                 this.getSubtotals.timeoutId = null;
 
                 var promises = [];
-                mediator.trigger('order:changing', promises);
+                mediator.trigger(this.eventName, promises);
 
                 if (promises.length) {
                     $.when.apply($, promises).done(_.bind(this.updateSubtotals, this, e));
@@ -157,7 +163,7 @@ define(function(require) {
                 return;
             }
 
-            mediator.off('order-subtotals:update', this.updateSubtotals, this);
+            mediator.off('line-items-subtotals:update', this.updateSubtotals, this);
 
             SubtotalsComponent.__super__.dispose.call(this);
         }
