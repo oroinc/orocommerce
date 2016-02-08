@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Provider;
 
+use Symfony\Component\HttpFoundation\RequestStack;
+
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\DataProviderInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -12,6 +14,13 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 
 class AccountUserShoppingListsProvider implements DataProviderInterface
 {
+    const DATA_FORMAT_VAR_NAME = 'shopping_lists_format';
+
+    const DATA_FORMAT_SINGLE_COLLECTION = 'collection';
+    const DATA_FORMAT_CURRENT_LIST_SEPARATED = 'current_list_separated';
+
+    const DATA_SORT_BY_UPDATED = 'updated';
+
     /**
      * @var FormAccessor
      */
@@ -28,6 +37,11 @@ class AccountUserShoppingListsProvider implements DataProviderInterface
     protected $securityFacade;
 
     /**
+     * @var RequestStack
+     */
+    protected $requestStack;
+
+    /**
      * @var string
      */
     protected $shoppingListClass;
@@ -35,13 +49,16 @@ class AccountUserShoppingListsProvider implements DataProviderInterface
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param SecurityFacade $securityFacade
+     * @param RequestStack $requestStack
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        SecurityFacade $securityFacade
+        SecurityFacade $securityFacade,
+        RequestStack $requestStack
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->securityFacade = $securityFacade;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -65,16 +82,23 @@ class AccountUserShoppingListsProvider implements DataProviderInterface
      */
     public function getData(ContextInterface $context)
     {
-        if (!$this->data) {
-            $this->data = $this->getAccountUserShoppingLists();
+        $format = self::DATA_FORMAT_CURRENT_LIST_SEPARATED;
+        if ($context->has(self::DATA_FORMAT_VAR_NAME)) {
+            $format = $context->get(self::DATA_FORMAT_VAR_NAME);
         }
+        if (!$this->data) {
+            $this->data = $this->getAccountUserShoppingLists($format);
+        }
+
         return $this->data;
     }
 
     /**
+     * @param string $format
      * @return array|null
+     * @throws \InvalidArgumentException
      */
-    protected function getAccountUserShoppingLists()
+    protected function getAccountUserShoppingLists($format)
     {
         $accountUser = $this->securityFacade->getLoggedUser();
         if (!$accountUser) {
@@ -84,9 +108,38 @@ class AccountUserShoppingListsProvider implements DataProviderInterface
         /** @var ShoppingListRepository $shoppingListRepository */
         $shoppingListRepository = $this->doctrineHelper->getEntityRepositoryForClass($this->shoppingListClass);
 
-        return [
-            'shoppingLists' => $shoppingListRepository->findAllExceptCurrentForAccountUser($accountUser),
-            'currentShoppingList' => $shoppingListRepository->findCurrentForAccountUser($accountUser),
-        ];
+        switch ($format) {
+            case self::DATA_FORMAT_SINGLE_COLLECTION:
+                $data = $shoppingListRepository->findByUser($accountUser, $this->getSortOrder());
+                break;
+            case self::DATA_FORMAT_CURRENT_LIST_SEPARATED:
+                $data = [
+                    'shoppingLists' => $shoppingListRepository->findAllExceptCurrentForAccountUser($accountUser),
+                    'currentShoppingList' => $shoppingListRepository->findCurrentForAccountUser($accountUser),
+                ];
+                break;
+            default:
+                throw new \InvalidArgumentException('Unknown data format');
+        }
+
+        return $data;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getSortOrder()
+    {
+        $sortOrder = [];
+        $sort = $this->requestStack->getCurrentRequest()->get('sort');
+        switch ($sort) {
+            case self::DATA_SORT_BY_UPDATED:
+                $sortOrder['list.updatedAt'] = 'desc';
+                break;
+            default:
+                $sortOrder['list.updatedAt'] = 'desc';
+        }
+
+        return $sortOrder;
     }
 }

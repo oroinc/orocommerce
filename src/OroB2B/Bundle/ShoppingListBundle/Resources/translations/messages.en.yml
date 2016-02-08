@@ -12,6 +12,7 @@ orob2b:
         line_items.label: Line Items
         current.label: Current
         default.label: Default
+        items.label: 'Item|Items'
 
         btn:
             create_order: 'Create Order'

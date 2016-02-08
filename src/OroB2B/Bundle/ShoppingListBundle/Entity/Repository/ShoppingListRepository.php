@@ -48,15 +48,26 @@ class ShoppingListRepository extends EntityRepository
     /**
      * @param AccountUser $accountUser
      *
+     * @param array $sortSpecification
      * @return array
      */
-    public function findByUser(AccountUser $accountUser)
+    public function findByUser(AccountUser $accountUser, array $sortSpecification = [])
     {
-        return $this->createQueryBuilder('list')
+        $qb = $this->createQueryBuilder('list')
             ->select('list')
             ->where('list.accountUser = :accountUser')
-            ->setParameter('accountUser', $accountUser)
-            ->getQuery()
+            ->setParameter('accountUser', $accountUser);
+
+        foreach ($sortSpecification as $field => $sortOrder) {
+            if ($sortOrder === 'asc') {
+                $qb->addOrderBy($qb->expr()->asc($field));
+            }
+            if ($sortOrder === 'desc') {
+                $qb->addOrderBy($qb->expr()->desc($field));
+            }
+        }
+
+        return $qb->getQuery()
             ->getResult();
     }
 

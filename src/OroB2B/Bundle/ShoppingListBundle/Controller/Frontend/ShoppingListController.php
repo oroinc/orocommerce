@@ -14,6 +14,7 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use OroB2B\Bundle\ShoppingListBundle\Provider\AccountUserShoppingListsProvider;
 
 class ShoppingListController extends Controller
 {
@@ -24,7 +25,7 @@ class ShoppingListController extends Controller
      *     class="OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList",
      *     isOptional="true",
      *     options={"id" = "id"})
-     * @Layout()
+     * @Layout(vars={"shopping_lists_format"})
      * @Acl(
      *      id="orob2b_shopping_list_frontend_view",
      *      type="entity",
@@ -39,9 +40,12 @@ class ShoppingListController extends Controller
      */
     public function viewAction(ShoppingList $shoppingList = null)
     {
+        $dataFormat = AccountUserShoppingListsProvider::DATA_FORMAT_SINGLE_COLLECTION;
+
         return [
+            AccountUserShoppingListsProvider::DATA_FORMAT_VAR_NAME => $dataFormat,
             'data' => [
-                'shoppingList' => $shoppingList
+                'shoppingList' => $shoppingList,
             ]
         ];
     }
