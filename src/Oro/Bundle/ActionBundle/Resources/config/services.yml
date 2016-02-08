@@ -114,3 +114,14 @@ services:
 
     oro_action.datagrid.mass_action_provider.registry:
         class: %oro_action.datagrid.mass_action_provider.registry.class%
+
+    oro_action.block_type.action_line_buttons:
+        class: Oro\Bundle\ActionBundle\Layout\Block\Type\ActionLineButtonsType
+        arguments:
+            - @oro_action.manager
+            - @oro_action.helper.context
+            - @oro_action.helper.applications
+            - @request_stack
+            - @oro_action.twig.extension.action
+        tags:
+             - { name: layout.block_type, alias: action_line_buttons }

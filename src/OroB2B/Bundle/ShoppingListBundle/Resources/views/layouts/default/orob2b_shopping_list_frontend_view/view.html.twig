@@ -33,9 +33,19 @@
     class: attr.class|default('') ~ "oq__options__right"
     }) %}
     <div{{ block('block_attributes') }}>
-        ACTIONS
+         {#{% set params = oro_action_widget_parameters() %}#}
+
+        {#{% if has_actions(params) %}#}
+            {#<div class="pull-left">#}
+                {#{{ oro_widget_render({#}
+                    {#'widgetType': 'block',#}
+                    {#'url': path(oro_action_widget_route(), params),#}
+                    {#'alias': 'action_buttons_widget',#}
+                {#}) }}#}
+            {#</div>#}
+        {#{% endif %}  </div>#}
+
         {{ block_widget(block) }}
-    </div>
 {% endblock %}
 
 {% block _shopping_list_order_options_widget %}

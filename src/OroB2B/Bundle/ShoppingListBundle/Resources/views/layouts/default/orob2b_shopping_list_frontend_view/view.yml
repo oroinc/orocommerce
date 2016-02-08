@@ -11,7 +11,7 @@ layout:
                 shopping_list_shopping_list_title:
                     blockType: block
                 shopping_list_top_actions:
-                    blockType: block
+                    blockType: action_line_buttons
                 shopping_list_order_options:
                     blockType: block
                 shopping_list_line_items:
