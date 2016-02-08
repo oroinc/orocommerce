@@ -31,7 +31,7 @@ define(function (require) {
          * @inheritDoc
          */
         initialize: function (options) {
-            this.options = $.extend(true, {}, this.options, options || {});
+            this.options = _.defaults(options || {}, this.options);
 
             this.subview('productsPricesComponent', new ProductsPricesComponent({
                 _sourceElement: this.$el,

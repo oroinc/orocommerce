@@ -2,11 +2,11 @@
 
 namespace OroB2B\Bundle\InvoiceBundle\Validator\Constraints;
 
-use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
-
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Symfony\Component\Validator\Context\ExecutionContext;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+
+use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
 
 class InvoicePaymentDueDateValidator extends ConstraintValidator
 {
@@ -23,7 +23,7 @@ class InvoicePaymentDueDateValidator extends ConstraintValidator
         }
 
         if ($value->getPaymentDueDate() < $value->getInvoiceDate()) {
-            /** @var ExecutionContext $context */
+            /** @var ExecutionContextInterface $context */
             $context = $this->context;
 
             $context->buildViolation($constraint->message, [])

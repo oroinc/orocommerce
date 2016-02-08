@@ -24,26 +24,6 @@ class InvoiceEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->invoiceEventListener = new InvoiceEventListener();
     }
 
-    public function testPrePersist()
-    {
-        $invoice = new Invoice();
-
-        $this->invoiceEventListener->prePersist($invoice);
-        $this->assertInstanceOf('\DateTime', $invoice->getUpdatedAt());
-        $this->assertInstanceOf('\DateTime', $invoice->getCreatedAt());
-    }
-
-    public function testPreUpdate()
-    {
-        $invoice = new Invoice();
-        $previousUpdated = new \DateTime('-1 day');
-        $invoice->setUpdatedAt($previousUpdated);
-
-        $this->invoiceEventListener->preUpdate($invoice);
-
-        $this->assertTrue($invoice->getUpdatedAt() > $previousUpdated);
-    }
-
     public function testPostPersist()
     {
         $invoice = new Invoice();
