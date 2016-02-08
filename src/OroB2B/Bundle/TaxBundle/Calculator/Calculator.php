@@ -41,4 +41,14 @@ class Calculator implements TaxCalculatorInterface
 
         return $this->taxCalculator->calculate($amount, $taxRate);
     }
+
+    /** {@inheritdoc} */
+    public function getAmountKey()
+    {
+        if ($this->settingsProvider->isProductPricesIncludeTax()) {
+            return $this->includedTaxCalculator->getAmountKey();
+        }
+
+        return $this->taxCalculator->getAmountKey();
+    }
 }

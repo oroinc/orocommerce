@@ -118,25 +118,24 @@ abstract class AbstractAddressResolverTestCase extends \PHPUnit_Framework_TestCa
         $this->matcher->expects($this->once())->method('match')->willReturn([]);
         $this->resolver->resolve($taxable);
 
-        $this->assertEquals(
-            [
-                ResultElement::INCLUDING_TAX => '1',
-                ResultElement::EXCLUDING_TAX => '1',
-                ResultElement::TAX_AMOUNT => '0',
-                ResultElement::ADJUSTMENT => '0',
-            ],
-            $this->extractScalarValues($taxable->getResult()->getUnit())
+        $this->compareResult(
+            $taxable->getResult(),
+            new Result(
+                [
+                    Result::ROW => [
+                        ResultElement::INCLUDING_TAX => '1',
+                        ResultElement::EXCLUDING_TAX => '1',
+                        ResultElement::TAX_AMOUNT => '0',
+                    ],
+                    Result::UNIT => [
+                        ResultElement::INCLUDING_TAX => '1',
+                        ResultElement::EXCLUDING_TAX => '1',
+                        ResultElement::TAX_AMOUNT => '0',
+                    ],
+                    Result::TAXES => [],
+                ]
+            )
         );
-        $this->assertEquals(
-            [
-                ResultElement::INCLUDING_TAX => '1',
-                ResultElement::EXCLUDING_TAX => '1',
-                ResultElement::TAX_AMOUNT => '0',
-                ResultElement::ADJUSTMENT => '0',
-            ],
-            $this->extractScalarValues($taxable->getResult()->getRow())
-        );
-        $this->assertEquals([], $taxable->getResult()->getTaxes());
     }
 
     /**
@@ -157,6 +156,8 @@ abstract class AbstractAddressResolverTestCase extends \PHPUnit_Framework_TestCa
         $this->matcher->expects($this->once())->method('match')->willReturn($taxRules);
         $this->settingsProvider->expects($this->any())->method('isStartCalculationWithRowTotal')
             ->willReturn($startWithRowTotal);
+        $this->settingsProvider->expects($this->any())->method('isStartCalculationWithUnitPrice')
+            ->willReturn(!$startWithRowTotal);
 
         $this->resolver->resolve($taxable);
 

@@ -65,7 +65,9 @@ class CustomerAddressItemResolver extends AbstractAddressResolver
         $taxAmount = BigDecimal::of($resultElement->getTaxAmount());
         $taxAmountRounded = $taxAmount->toScale(TaxationSettingsProvider::SCALE, RoundingMode::HALF_UP);
         $adjustment = $taxAmount->minus($taxAmountRounded);
-        $resultElement->setAdjustment($adjustment);
+        if (!$adjustment->isEqualTo(BigDecimal::zero())) {
+            $resultElement->setAdjustment($adjustment);
+        }
     }
 
     /**
@@ -81,7 +83,7 @@ class CustomerAddressItemResolver extends AbstractAddressResolver
         $taxResults = [];
 
         foreach ($taxRules as $taxRule) {
-            $currentTaxRate = $taxRule->getTax()->getRate();
+            $currentTaxRate = BigDecimal::of($taxRule->getTax()->getRate());
             $taxRate = $taxRate->plus($currentTaxRate);
 
             $resultElement = $this->getRowTotalResult($taxableAmount, $currentTaxRate, $quantity);
@@ -101,31 +103,26 @@ class CustomerAddressItemResolver extends AbstractAddressResolver
 
     /**
      * @param BigDecimal $taxableAmount
-     * @param $taxRate
+     * @param BigDecimal $taxRate
      * @param int $quantity
-     * @return array|ResultElement
+     * @return ResultElement
      */
-    protected function getRowTotalResult(BigDecimal $taxableAmount, $taxRate, $quantity = 1)
+    protected function getRowTotalResult(BigDecimal $taxableAmount, BigDecimal $taxRate, $quantity = 1)
     {
-        $resultElementStartWith = new ResultElement();
+        $resultElementStartWith = $this->calculator->calculate($taxableAmount, BigDecimal::zero());
+
         if ($this->settingsProvider->isStartCalculationWithUnitPrice()) {
             $resultElement = $this->calculator->calculate($taxableAmount, $taxRate);
-            $inclTax = BigDecimal::of($resultElement->getIncludingTax());
-            $exclTax = BigDecimal::of($resultElement->getExcludingTax());
-            $taxAmount = BigDecimal::of($resultElement->getTaxAmount());
+            $amount = BigDecimal::of($resultElement->getOffset($this->calculator->getAmountKey()));
+            $amountRounded = $amount->toScale(TaxationSettingsProvider::SCALE, RoundingMode::HALF_UP);
 
-            $inclTaxRounded = $inclTax->toScale(TaxationSettingsProvider::SCALE, RoundingMode::HALF_UP);
-            $exclTaxRounded = $exclTax->toScale(TaxationSettingsProvider::SCALE, RoundingMode::HALF_UP);
-            $taxAmountRounded = $taxAmount->toScale(TaxationSettingsProvider::SCALE, RoundingMode::HALF_UP);
+            $resultElement = $this->calculator->calculate($amount, $taxRate);
+            $this->calculateAdjustment($resultElement);
 
-            $adjustment = $taxAmount->minus($taxAmountRounded);
-            $resultElementStartWith = ResultElement::create(
-                $inclTaxRounded->multipliedBy($quantity),
-                $exclTaxRounded->multipliedBy($quantity),
-                $taxAmountRounded->multipliedBy($quantity),
-                $adjustment->multipliedBy($quantity)
+            $resultElementStartWith = $this->calculator->calculate($amountRounded->multipliedBy($quantity), $taxRate);
+            $resultElementStartWith->setAdjustment(
+                BigDecimal::of($resultElement->getAdjustment())->multipliedBy($quantity)
             );
-            $resultElementStartWith = $this->adjustAmounts($resultElementStartWith);
         } elseif ($this->settingsProvider->isStartCalculationWithRowTotal()) {
             $resultElementStartWith = $this->calculator->calculate(
                 $taxableAmount->multipliedBy($quantity)->toScale(
@@ -138,34 +135,5 @@ class CustomerAddressItemResolver extends AbstractAddressResolver
         }
 
         return $resultElementStartWith;
-    }
-
-    /**
-     * @param ResultElement $data
-     * @return ResultElement
-     */
-    protected function adjustAmounts(ResultElement $data)
-    {
-        $currentData = new ResultElement($data->getArrayCopy());
-
-        if (!array_key_exists(ResultElement::ADJUSTMENT, $data)) {
-            return $currentData;
-        }
-
-        $adjustment = BigDecimal::of($currentData[ResultElement::ADJUSTMENT]);
-        $adjustmentAmounts = [ResultElement::TAX_AMOUNT => $adjustment];
-
-        if ($this->settingsProvider->isProductPricesIncludeTax()) {
-            $adjustmentAmounts[ResultElement::EXCLUDING_TAX] = $adjustment->negated();
-        } else {
-            $adjustmentAmounts[ResultElement::INCLUDING_TAX] = $adjustment;
-        }
-
-        foreach ($adjustmentAmounts as $key => $adjustment) {
-            $amount = BigDecimal::of($currentData[$key])->plus($adjustment);
-            $currentData[$key] = (string)$amount;
-        }
-
-        return $currentData;
     }
 }

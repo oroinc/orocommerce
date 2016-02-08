@@ -27,4 +27,10 @@ class IncludedTaxCalculator implements TaxCalculatorInterface
 
         return ResultElement::create($inclTax, $exclTax, $taxAmount);
     }
+
+    /** {@inheritdoc} */
+    public function getAmountKey()
+    {
+        return ResultElement::INCLUDING_TAX;
+    }
 }
