@@ -2,9 +2,14 @@
 
 namespace Oro\Component\Testing\Unit\Form\Type\Stub;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceList;
 use Symfony\Component\Form\Extension\Core\View\ChoiceView;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EntityType extends AbstractType
@@ -68,6 +73,22 @@ class EntityType extends AbstractType
         }
 
         $resolver->setDefaults($defaultOptions);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function (FormEvent $event) use ($options) {
+                $data = $event->getData();
+                if (!empty($options['multiple']) && $data instanceof ArrayCollection) {
+                    $event->setData($data->toArray());
+                }
+            }
+        );
     }
 
     /**
