@@ -8,7 +8,7 @@
     </div>
 {% endblock %}
 
-{% block _shopping_list_shopping_list_widget %}
+{% block _shopping_list_view_container_widget %}
     {% set attr = attr|merge({
     class: attr.class|default('') ~ " container-fluid"
     }) %}
@@ -17,7 +17,7 @@
     </div>
 {% endblock %}
 
-{% block _shopping_list_shopping_list_title_widget %}
+{% block _shopping_list_title_widget %}
     {% set attr = attr|merge({
     class: attr.class|default('') ~ " cart__order-title nmmt4-md"
     }) %}
@@ -38,7 +38,7 @@
     </div>
 {% endblock %}
 
-{% block _shopping_list_order_options_widget %}
+{% block _shopping_list_options_widget %}
     {% set attr = attr|merge({
     class: attr.class|default('') ~ " oq__options oq__options_bb"
     }) %}
