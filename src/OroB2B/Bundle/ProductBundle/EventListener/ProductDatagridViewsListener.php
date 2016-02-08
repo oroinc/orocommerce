@@ -2,9 +2,11 @@
 
 namespace OroB2B\Bundle\ProductBundle\EventListener;
 
-use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Symfony\Component\HttpFoundation\RequestStack;
+
+use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
+
 use OroB2B\Bundle\ProductBundle\DataGrid\Extension\RowTemplate\Configuration as RowTemplateConfiguration;
 
 class ProductDatagridViewsListener
