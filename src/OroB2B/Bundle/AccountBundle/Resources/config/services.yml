@@ -837,7 +837,7 @@ services:
         parent: orob2b_account.model.action.abstract_visibility_registry_aware_action
         class: %orob2b_account.model.action.build_website_cache.class%
         calls:
-            - [setCacheBuilder, [@orob2b_account.visibility.cache.product.product_resolved_cache_builder]]
+            - [setCacheBuilder, [@orob2b_account.visibility.cache.product.cache_builder]]
         tags:
             - { name: oro_workflow.action, alias: build_website_cache }
 

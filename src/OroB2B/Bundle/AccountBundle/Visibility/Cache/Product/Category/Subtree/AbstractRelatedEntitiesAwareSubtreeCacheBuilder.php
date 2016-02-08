@@ -9,6 +9,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractSubtreeCacheBuilder
@@ -118,10 +119,12 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
             $this->accountGroupIdsWithChangedVisibility[$levelCategory->getId()] = $updatedAccountGroupIds;
 
             if (!empty($updatedAccountGroupIds)) {
+                $updatedAccountGroupIdsWithoutConfigFallback = $this
+                    ->removeIdsWithConfigFallback($levelCategory, $updatedAccountGroupIds);
                 $this->updateAccountGroupsProductVisibility($levelCategory, $updatedAccountGroupIds, $visibility);
                 $this->updateAccountGroupsCategoryVisibility(
                     $levelCategory,
-                    $updatedAccountGroupIds,
+                    $updatedAccountGroupIdsWithoutConfigFallback,
                     $visibility
                 );
             }
@@ -146,6 +149,28 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
                 $this->updateAccountsProductVisibility($levelCategory, $accountIdsForUpdate, $visibility);
             }
         }
+    }
+
+    /**
+     * @param Category $category
+     * @param array $accountGroupIds
+     * @return array
+     */
+    protected function removeIdsWithConfigFallback(Category $category, array $accountGroupIds)
+    {
+        $accountGroupsCategoryVisibilities = $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->getVisibilitiesForAccountGroups($category, $accountGroupIds);
+
+        $accountGroupsWithConfigCallbackIds = [];
+        foreach ($accountGroupsCategoryVisibilities as $accountGroupId => $visibility) {
+            if ($visibility == BaseCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG) {
+                $accountGroupsWithConfigCallbackIds[] = $accountGroupId;
+            }
+        }
+
+        return array_diff($accountGroupIds, $accountGroupsWithConfigCallbackIds);
     }
 
     /**
