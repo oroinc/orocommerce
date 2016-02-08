@@ -9,7 +9,7 @@ As product visibility category visibility has same 3 levels.
 
 ####Visibility to all:
 * **Parent Category** - `Default value`. Value is taken from the parent category
-* **Config** - The value is taken from the system configuration
+* **Config** - The value is taken from the system configuration parameter "Category Visibility to Accounts"
 * **Hidden** - Specific static value
 * **Visible** - Specific static value
 
@@ -26,16 +26,16 @@ As product visibility category visibility has same 3 levels.
 * **Hidden** - Specific static value
 * **Visible** - Specific static value
 
-As well as for the product visibility there is entities in database for each listed levels:
+As well as for the product visibility there are entities in database for each listed level:
 `CategoryVisibility`, `AccountGroupCategoryVisibility`, `AccountCategoryVisibility` each of which implements 
 `VisibilityInterface` interface.
 
-Category visibilities settings does not depend on websites and are the same for all websites.
+Category visibilities settings do not depend on websites - they are the same for all websites.
 
 ####Addition information:
 
 * If default value is selected then the entity is not written to the database.
-* If category doesn't have parent category, then " Parent Category" option is not available for all levels. 
+* If category doesn't have parent category then "Parent Category" option is not available for all levels. 
 
 ### Category Visibility Cache
 
@@ -46,16 +46,16 @@ There are resolved entities in database for each level:
 `CategoryVisibilityResolved`, `AccountGroupCategoryVisibilityResolved`, `AccountCategoryVisibilityResolved`
 each of which extend `BaseCategoryVisibilityResolved` abstract class.
 
-For `AccountCategoryVisibilityResolved`, `AccountGroupCategoryVisibilityResolved` in case if in source tables 
-record is not exist (it was selected default visibility setting), then entity is not written to resolved tables.
-For `CategoryVisibilityResolved`, entity is not written to resolved table is case then in source table 
-(CategoryVisibility) exist record with "Config" value.
+For `AccountCategoryVisibilityResolved`, `AccountGroupCategoryVisibilityResolved` in case if source tables does not
+contain a record (default visibility setting was selected), then entity is not written to resolved tables.
+For `CategoryVisibilityResolved` entity is not written to resolved table is case then source table 
+(CategoryVisibility) contains record with "Config" value.
 
 Each create/update/delete operation in source visibility entities automatically performs 
-corresponding change in the resolve tables.
+corresponding change to the resolved tables.
 
 For forced visibility cache building on all 3 levels developer can run command: 
-`product:visibility:cache:build`. This command also rebuild product visibility cache.
+`product:visibility:cache:build`. This command also rebuilds product visibility cache.
 
 Also each row in cache tables stores one on the data sources:
 * SOURCE_STATIC - value is calculated based on selected option and fallback
@@ -98,7 +98,7 @@ There are following constant options to store this information:
 * VISIBILITY_FALLBACK_TO_CONFIG = 0
 * null
 
-If fallback value is config through an intermediate visibility settings used `VISIBILITY_FALLBACK_TO_CONFIG`.
+`VISIBILITY_FALLBACK_TO_CONFIG` is used if value referred to Category Visibility from System Configuration.    
 For example:
 ```
 Parent category:
@@ -109,7 +109,7 @@ Child category:
     Category Visibility to All: Config
     Category Visibility to Account Group 1: Parent Category
 ```
-In this case `AccountGroupCategoryVisibility` will be:
+In this case `AccountGroupCategoryVisibility` for child category should be:
 
 |------------------------------------------|------------------------------------------------------------------|
 | **Id (PK)**                              |             AccountGroupCategoryVisibilityId                     |
@@ -117,7 +117,7 @@ In this case `AccountGroupCategoryVisibility` will be:
 | **account (FK)  (PK)**                   |                       AccountGroup1Id                            |
 | **visibility**                           |                      ::PARENT_CATEGORY                           |
 
-And `AccountGroupCategoryVisibilityResolved` will be:
+And `AccountGroupCategoryVisibilityResolved` for child category should be:
 
 |------------------------------------------|------------------------------------------------------------------|
 | **accountGroup (FK) (PK)**               |                       AccountGroup1Id                            |
@@ -128,5 +128,5 @@ And `AccountGroupCategoryVisibilityResolved` will be:
 
     
 ####Cache builders
-For build category visibility cache using the same cache builders as for [product](./product-visibility.md#cache-builders).
-To update the cache for all visibility levels developer can run command `product:visibility:cache:build`.
+To build category visibility cache there are cache builders similar to [product cache builders](./product-visibility.md#cache-builders).
+To update the cache for all visibility levels developer should run command `product:visibility:cache:build`.
