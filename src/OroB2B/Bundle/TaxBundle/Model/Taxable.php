@@ -6,6 +6,9 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
 class Taxable
 {
+    const DIGITAL_PRODUCT = 'digital_product';
+    const PRODUCT_TAX_CODE = 'product_tax_code';
+
     /**
      * @var int
      */
@@ -51,10 +54,16 @@ class Taxable
      */
     protected $result;
 
+    /**
+     * @var \ArrayObject
+     */
+    protected $context;
+
     public function __construct()
     {
         $this->items = new \SplObjectStorage();
         $this->result = new Result();
+        $this->context = new \ArrayObject();
     }
 
     /**
@@ -251,5 +260,49 @@ class Taxable
     public function setResult(Result $result)
     {
         $this->result = $result;
+    }
+
+    /**
+     * @param \ArrayObject $arrayObject
+     * @return $this
+     */
+    public function setContext(\ArrayObject $arrayObject)
+    {
+        $this->context = $arrayObject;
+
+        return $this;
+    }
+
+    /**
+     * @param string $keyName
+     * @param mixed  $value
+     * @return $this
+     */
+    public function addContext($keyName, $value)
+    {
+        $this->context->offsetSet($keyName, $value);
+
+        return $this;
+    }
+
+    /**
+     * @return \ArrayObject
+     */
+    public function getContext()
+    {
+        return $this->context;
+    }
+
+    /**
+     * @param string $keyName
+     * @return mixed
+     */
+    public function getContextValue($keyName)
+    {
+        if ($this->context->offsetExists($keyName)) {
+            return $this->context->offsetGet($keyName);
+        }
+
+        return null;
     }
 }

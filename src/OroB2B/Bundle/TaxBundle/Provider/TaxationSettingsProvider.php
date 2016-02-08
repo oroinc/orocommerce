@@ -117,7 +117,7 @@ class TaxationSettingsProvider
     /**
      * @return array
      */
-    public function getDigitalProductsTaxCodesUs()
+    public function getDigitalProductsTaxCodesUS()
     {
         return $this->configManager->get('orob2b_tax.digital_products_us');
     }
@@ -125,7 +125,7 @@ class TaxationSettingsProvider
     /**
      * @return array
      */
-    public function getDigitalProductsTaxCodesEu()
+    public function getDigitalProductsTaxCodesEU()
     {
         return $this->configManager->get('orob2b_tax.digital_products_eu');
     }

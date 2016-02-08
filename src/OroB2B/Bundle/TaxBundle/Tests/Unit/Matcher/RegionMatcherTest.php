@@ -38,6 +38,7 @@ class RegionMatcherTest extends AbstractMatcherTest
 
     /**
      * @dataProvider matchProvider
+     * @param string $productTaxCode
      * @param Country $country
      * @param Region $region
      * @param string $regionText
@@ -45,8 +46,15 @@ class RegionMatcherTest extends AbstractMatcherTest
      * @param TaxRule[] $regionTaxRules
      * @param TaxRule[] $expected
      */
-    public function testMatch($country, $region, $regionText, $countryMatcherTaxRules, $regionTaxRules, $expected)
-    {
+    public function testMatch(
+        $productTaxCode,
+        $country,
+        $region,
+        $regionText,
+        $countryMatcherTaxRules,
+        $regionTaxRules,
+        $expected
+    ) {
         $address = (new Address())
             ->setCountry($country)
             ->setRegion($region)
@@ -59,15 +67,15 @@ class RegionMatcherTest extends AbstractMatcherTest
             ->willReturn($countryMatcherTaxRules);
 
         $this->taxRuleRepository
-            ->expects(empty($regionTaxRules) ? $this->never() : $this->once())
-            ->method('findByCountryAndRegion')
-            ->with($country, $region, $regionText)
+            ->expects(empty($regionTaxRules) || empty($productTaxCode) ? $this->never() : $this->once())
+            ->method('findByCountryAndRegionAndProductTaxCode')
+            ->with($productTaxCode, $country, $region, $regionText)
             ->willReturn($regionTaxRules);
 
-        $this->assertEquals($expected, $this->matcher->match($address));
+        $this->assertEquals($expected, $this->matcher->match($address, $productTaxCode));
 
         // cache
-        $this->assertEquals($expected, $this->matcher->match($address));
+        $this->assertEquals($expected, $this->matcher->match($address, $productTaxCode));
     }
 
     /**
@@ -90,6 +98,7 @@ class RegionMatcherTest extends AbstractMatcherTest
 
         return [
             'with country and region' => [
+                'productTaxCode' => 'PRODUCT_TAX_CODE',
                 'country' => $country,
                 'region' => $region,
                 'regionText' => '',
@@ -98,6 +107,7 @@ class RegionMatcherTest extends AbstractMatcherTest
                 'expected' => $regionTaxRules,
             ],
             'with country and regionText' => [
+                'productTaxCode' => 'PRODUCT_TAX_CODE',
                 'country' => $country,
                 'region' => null,
                 'regionText' => $regionText,
@@ -105,7 +115,17 @@ class RegionMatcherTest extends AbstractMatcherTest
                 'regionTaxRules' => $regionTaxRules,
                 'expected' => $regionTaxRules,
             ],
+            'without product tax code' => [
+                'productTaxCode' => null,
+                'country' => $country,
+                'region' => $region,
+                'regionText' => $regionText,
+                'countryMatcherTaxRules' => $countryMatcherTaxRules,
+                'regionTaxRules' => [],
+                'expected' => $countryMatcherTaxRules,
+            ],
             'without country' => [
+                'productTaxCode' => 'PRODUCT_TAX_CODE',
                 'country' => null,
                 'region' => $region,
                 'regionText' => $regionText,
@@ -114,6 +134,7 @@ class RegionMatcherTest extends AbstractMatcherTest
                 'expected' => $countryMatcherTaxRules,
             ],
             'without region and region text' => [
+                'productTaxCode' => 'PRODUCT_TAX_CODE',
                 'country' => $country,
                 'region' => null,
                 'regionText' => '',

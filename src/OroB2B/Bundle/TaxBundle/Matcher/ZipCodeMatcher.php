@@ -14,7 +14,7 @@ class ZipCodeMatcher extends AbstractMatcher
     /**
      * {@inheritdoc}
      */
-    public function match(AbstractAddress $address)
+    public function match(AbstractAddress $address, $productTaxCode)
     {
         $country = $address->getCountry();
         $region = $address->getRegion();
@@ -26,14 +26,15 @@ class ZipCodeMatcher extends AbstractMatcher
             return $this->taxRulesCache[$cacheKey];
         }
 
-        $regionTaxRules = $this->regionMatcher->match($address);
+        $regionTaxRules = $this->regionMatcher->match($address, $productTaxCode);
 
-        if (null === $country || (null === $region && empty($regionText))) {
+        if (null === $productTaxCode || null === $country || (null === $region && empty($regionText))) {
             return $regionTaxRules;
         }
 
-        $zipCodeTaxRules = $this->getTaxRuleRepository()->findByZipCode(
-            $zipCode,
+        $zipCodeTaxRules = $this->getTaxRuleRepository()->findByZipCodeAndProductTaxCode(
+            $productTaxCode,
+            $address->getPostalCode(),
             $country,
             $region,
             $regionText
