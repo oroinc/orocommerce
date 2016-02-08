@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Controller\Frontend;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,22 +22,13 @@ use OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 class ShoppingListController extends Controller
 {
     /**
-     * @Route("/", name="orob2b_shopping_list_frontend_index")
-     * @Template("OroB2BShoppingListBundle:ShoppingList/Frontend:index.html.twig")
-     * @AclAncestor("orob2b_shopping_list_frontend_view")
-     *
-     * @return array
-     */
-    public function indexAction()
-    {
-        return [
-            'entity_class' => $this->container->getParameter('orob2b_shopping_list.entity.shopping_list.class'),
-        ];
-    }
-
-    /**
-     * @Route("/view/{id}", name="orob2b_shopping_list_frontend_view", requirements={"id"="\d+"})
-     * @Template("OroB2BShoppingListBundle:ShoppingList/Frontend:view.html.twig")
+     * @Route("/{id}", name="orob2b_shopping_list_frontend_view", defaults={"id" = null})
+     * @ParamConverter(
+     *     "shoppingList",
+     *     class="OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList",
+     *     isOptional="true",
+     *     options={"id" = "id"})
+     * @Layout()
      * @Acl(
      *      id="orob2b_shopping_list_frontend_view",
      *      type="entity",
@@ -49,12 +41,11 @@ class ShoppingListController extends Controller
      *
      * @return array
      */
-    public function viewAction(ShoppingList $shoppingList)
+    public function viewAction(ShoppingList $shoppingList = null)
     {
-        return [
-            'entity' => $shoppingList,
-        ];
+        return [];
     }
+
 
     /**
      * @Route("/info/{id}", name="orob2b_shopping_list_frontend_info", requirements={"id"="\d+"})
@@ -107,6 +98,7 @@ class ShoppingListController extends Controller
                 ],
             ];
         }
+
         return $this->update($request, $shoppingList);
     }
 

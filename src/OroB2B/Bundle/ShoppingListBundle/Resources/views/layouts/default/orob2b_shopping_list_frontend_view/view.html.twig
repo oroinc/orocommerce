@@ -1,0 +1,78 @@
+{% block _shopping_list_list_of_shopping_lists_widget %}
+    {% set attr = attr|merge({
+    class: attr.class|default('') ~ " orders-sidebar mt3-md"
+    }) %}
+    <div{{ block('block_attributes') }}>
+        SHOPPING LISTS
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _shopping_list_shopping_list_widget %}
+    {% set attr = attr|merge({
+    class: attr.class|default('') ~ " container-fluid"
+    }) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _shopping_list_shopping_list_title_widget %}
+    {% set attr = attr|merge({
+    class: attr.class|default('') ~ " cart__order-title nmmt4-md"
+    }) %}
+
+    <div{{ block('block_attributes') }}>
+        SHOPPING LIST TITLES<br>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _shopping_list_top_actions_widget %}
+    {% set attr = attr|merge({
+    class: attr.class|default('') ~ "oq__options__right"
+    }) %}
+    <div{{ block('block_attributes') }}>
+        ACTIONS
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _shopping_list_order_options_widget %}
+    {% set attr = attr|merge({
+    class: attr.class|default('') ~ " oq__options oq__options_bb"
+    }) %}
+    <div{{ block('block_attributes') }}>
+        <a href="#" data-more-info-expand>View Options for this Order</a>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _shopping_list_line_items_widget %}
+    {% set attr = attr|merge({
+    class: attr.class|default('') ~ " cart-table cart-table_b-bordered cart-table__verticalp-enlarged mt1-md"
+    }) %}
+    <div{{ block('block_attributes') }}>
+        LINE ITEMS <br>
+        LINE ITEMS <br>
+        LINE ITEMS <br>
+        LINE ITEMS <br>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _shopping_list_combined_button_widget %}
+    {% set attr = attr|merge({
+    class: attr.class|default('') ~ " btn btn_orange btn_has-dropdown btn_has-dropdown_xlg"
+    }) %}
+    <div{{ block('block_attributes') }}>
+        <a href="#" class="direct-link">Combined button</a>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><i class="material-icons">arrow_drop_down</i></a>
+        <ul class="dropdown-menu">
+            <li><a href="#">Option 1</a></li>
+            <li><a href="#">Option 2</a></li>
+            <li><a href="#">Option 3</a></li>
+        </ul>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
