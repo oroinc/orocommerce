@@ -12,6 +12,7 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 /**
  * @dbIsolation
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
 {
