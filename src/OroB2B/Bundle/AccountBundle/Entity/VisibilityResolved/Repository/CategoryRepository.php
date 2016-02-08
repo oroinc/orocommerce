@@ -39,7 +39,7 @@ class CategoryRepository extends EntityRepository
     }
 
     /**
-     * @param int $visibility
+     * @param int $visibility visible|hidden
      * @param int $configValue
      * @return array
      */
@@ -61,6 +61,33 @@ class CategoryRepository extends EntityRepository
         $categoryVisibilityResolved = $qb->getQuery()->getArrayResult();
 
         return array_map('current', $categoryVisibilityResolved);
+    }
+
+    /**
+     * @param int $visibility visible|hidden|config
+     * @return array
+     */
+    public function getCategoryIdsByNotResolvedVisibility($visibility)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('category.id')
+            ->from('OroB2BCatalogBundle:Category', 'category')
+            ->leftJoin(
+                'OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\CategoryVisibilityResolved',
+                'cvr',
+                Join::WITH,
+                $qb->expr()->eq($this->getRootAlias($qb), 'cvr.category')
+            )
+            ->orderBy('category.id');
+
+        if ($visibility === CategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG) {
+            $condition = sprintf('cvr.visibility IS NULL OR cvr.visibility = %s', $visibility);
+        } else {
+            $condition = sprintf('cvr.visibility = %s', $visibility);
+        }
+        $qb->andWhere($condition);
+
+        return array_map('current', $qb->getQuery()->getArrayResult());
     }
 
     public function clearTable()

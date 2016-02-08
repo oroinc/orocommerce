@@ -21,6 +21,82 @@ class AccountGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
     protected $repository;
 
     /**
+     * @dataProvider getVisibilitiesForAccountGroupsDataProvider
+     * @param string $categoryName
+     * @param array $accountGroups
+     * @param array $visibilities
+     */
+    public function testGetVisibilitiesForAccountGroups(
+        $categoryName,
+        $accountGroups,
+        $visibilities
+    ) {
+        /** @var Category $category */
+        $category = $this->getReference($categoryName);
+
+        $accountGroups = array_map(
+            function ($accountGroupName) {
+                return $this->getReference($accountGroupName);
+            },
+            $accountGroups
+        );
+
+        $actualVisibility = $this->getRepository()
+            ->getVisibilitiesForAccountGroups($category, $accountGroups);
+
+        $expectedVisibilities = [];
+        foreach ($visibilities as $account => $expectedVisibility) {
+            /** @var AccountGroup $account */
+            $accountGroup = $this->getReference($account);
+            $expectedVisibilities[$accountGroup->getId()] = $expectedVisibility;
+        }
+
+        $this->assertEquals($expectedVisibilities, $actualVisibility);
+    }
+
+    /**
+     * @return array
+     */
+    public function getVisibilitiesForAccountGroupsDataProvider()
+    {
+        return [
+            [
+                'categoryName' => 'category_1',
+                'accounts' => [
+                    'account_group.group1',
+                    'account_group.group3',
+                ],
+                'visibilities' => [
+                    'account_group.group1' => AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                    'account_group.group3' => AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+                ],
+            ],
+            [
+                'categoryName' => 'category_1_2',
+                'accounts' => [
+                    'account_group.group1',
+                    'account_group.group3',
+                ],
+                'visibilities' => [
+                    'account_group.group1' => AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                    'account_group.group3' => AccountGroupCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                ],
+            ],
+            [
+                'categoryName' => 'category_1_2_3',
+                'accounts' => [
+                    'account_group.group1',
+                    'account_group.group3',
+                ],
+                'visibilities' => [
+                    'account_group.group1' => AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                    'account_group.group3' => AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                ],
+            ],
+        ];
+    }
+
+    /**
      * @dataProvider isCategoryVisibleDataProvider
      * @param string $categoryName
      * @param string $accountGroupName

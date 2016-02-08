@@ -17,7 +17,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  */
 class AccountProductVisibilityResolved extends BaseProductVisibilityResolved
 {
-    const VISIBILITY_FALLBACK_TO_ALL = 0;
+    const VISIBILITY_FALLBACK_TO_ALL = 2;
 
     /**
      * @var Account
