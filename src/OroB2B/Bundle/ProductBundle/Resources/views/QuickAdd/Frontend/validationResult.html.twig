@@ -73,12 +73,12 @@
                 <ol>
                     {% for invalidRow in result.invalidRows %}
                         <li>
-                            {% if not invalidRow.isComplete %}
-                                {{ 'orob2b.product.frontend.quick_add.import_validation.validator.invalid_format'
-                                    |trans({'%index%' : invalidRow.index}) }}
-                            {% else %}
+                            {% if invalidRow.product is empty %}
                                 {{ 'orob2b.product.frontend.quick_add.import_validation.validator.not_found'
-                                    |trans({'%sku%' : invalidRow.sku}) }}
+                                |trans({'%sku%' : invalidRow.sku}) }}
+                            {% else %}
+                                {{ 'orob2b.product.frontend.quick_add.import_validation.validator.invalid_format'
+                                |trans({'%index%' : invalidRow.index}) }}
                             {% endif %}
                         </li>
                     {% endfor %}
