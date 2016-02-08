@@ -47,7 +47,7 @@ class ShoppingListControllerTest extends WebTestCase
     public function testCreate()
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_shopping_list_frontend_create'));
-        $result  = $this->client->getResponse();
+        $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $this->assertShoppingListSave($crawler, self::TEST_LABEL1);
@@ -67,7 +67,7 @@ class ShoppingListControllerTest extends WebTestCase
             'GET',
             $this->getUrl('orob2b_shopping_list_frontend_update', ['id' => $result['id']])
         );
-        $result  = $this->client->getResponse();
+        $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $this->assertShoppingListSave($crawler, self::TEST_LABEL2);
@@ -75,6 +75,7 @@ class ShoppingListControllerTest extends WebTestCase
 
     public function testView()
     {
+        $this->markTestSkipped('Will be fixed in scope BB-2065');
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
 
         $crawler = $this->client->request(
@@ -111,7 +112,7 @@ class ShoppingListControllerTest extends WebTestCase
 
     /**
      * @param Crawler $crawler
-     * @param string  $label
+     * @param string $label
      */
     protected function assertShoppingListSave(Crawler $crawler, $label)
     {
