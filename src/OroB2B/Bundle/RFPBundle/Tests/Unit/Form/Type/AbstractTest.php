@@ -4,16 +4,24 @@ namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormTypeInterface;
 
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
+use Oro\Bundle\CurrencyBundle\Form\Type\OptionalPriceType;
+use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
+use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectEntityTypeStub;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
@@ -22,6 +30,9 @@ use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemType;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 abstract class AbstractTest extends FormIntegrationTestCase
 {
     /**
@@ -144,6 +155,40 @@ abstract class AbstractTest extends FormIntegrationTestCase
     }
 
     /**
+     * @return EntityType
+     */
+    protected function prepareUserMultiSelectType()
+    {
+        return new EntityType(
+            [
+                1 => $this->getUser(1),
+                2 => $this->getUser(2),
+            ],
+            UserMultiSelectType::NAME,
+            [
+                'multiple' => true
+            ]
+        );
+    }
+
+    /**
+     * @return EntityType
+     */
+    protected function prepareAccountUserMultiSelectType()
+    {
+        return new EntityType(
+            [
+                10 => $this->getAccountUser(10),
+                11 => $this->getAccountuser(11),
+            ],
+            AccountUserMultiSelectType::NAME,
+            [
+                'multiple' => true
+            ]
+        );
+    }
+
+    /**
      * @param float $value
      * @param string $currency
      * @return Price
@@ -227,6 +272,24 @@ abstract class AbstractTest extends FormIntegrationTestCase
         }
 
         return $entities[$className][$id];
+    }
+
+    /**
+     * @param int $id
+     * @return User
+     */
+    protected function getUser($id)
+    {
+        return $this->getEntity('Oro\Bundle\UserBundle\Entity\User', $id);
+    }
+
+    /**
+     * @param int $id
+     * @return AccountUser
+     */
+    protected function getAccountUser($id)
+    {
+        return $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $id);
     }
 
     /**

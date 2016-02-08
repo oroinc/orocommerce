@@ -7,8 +7,10 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 
 class RequestType extends AbstractType
@@ -83,6 +85,12 @@ class RequestType extends AbstractType
                 'options' => [
                     'compact_units' => true,
                 ],
+            ])
+            ->add('assignedUsers', UserMultiSelectType::NAME, [
+                'label' => 'orob2b.rfp.request.assigned_users.label',
+            ])
+            ->add('assignedAccountUsers', AccountUserMultiSelectType::NAME, [
+                'label' => 'orob2b.rfp.request.assigned_account_users.label',
             ])
         ;
     }

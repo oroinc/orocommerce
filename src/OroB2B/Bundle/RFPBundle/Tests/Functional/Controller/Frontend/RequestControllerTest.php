@@ -358,6 +358,10 @@ class RequestControllerTest extends WebTestCase
         $form['orob2b_rfp_frontend_request[lastName]'] = LoadRequestData::LAST_NAME . '_UPDATE';
         $form['orob2b_rfp_frontend_request[email]'] = LoadRequestData::EMAIL . '_UPDATE';
         $form['orob2b_rfp_frontend_request[poNumber]'] = LoadRequestData::PO_NUMBER . '_UPDATE';
+        $form['orob2b_rfp_frontend_request[assignedAccountUsers]'] = implode(',', [
+            $this->getReference(LoadUserData::ACCOUNT1_USER1)->getId(),
+            $this->getReference(LoadUserData::ACCOUNT1_USER2)->getId()
+        ]);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -372,7 +376,9 @@ class RequestControllerTest extends WebTestCase
                 LoadRequestData::FIRST_NAME . '_UPDATE',
                 LoadRequestData::LAST_NAME . '_UPDATE',
                 LoadRequestData::EMAIL . '_UPDATE',
-                LoadRequestData::PO_NUMBER . '_UPDATE'
+                LoadRequestData::PO_NUMBER . '_UPDATE',
+                $this->getReference(LoadUserData::ACCOUNT1_USER1)->getFullName(),
+                $this->getReference(LoadUserData::ACCOUNT1_USER2)->getFullName()
             ]
         );
     }
@@ -393,7 +399,6 @@ class RequestControllerTest extends WebTestCase
                     'company' => static::COMPANY,
                     'note' => static::REQUEST,
                     'poNumber' => static::PO_NUMBER,
-
                 ],
                 'expected' => [
                     'firstName' => LoadRequestData::FIRST_NAME,
