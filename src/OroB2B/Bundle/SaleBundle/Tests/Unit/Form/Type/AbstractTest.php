@@ -12,6 +12,12 @@ use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Form\Type\OptionalPriceType;
 
+use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
+
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
+
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
@@ -180,6 +186,40 @@ abstract class AbstractTest extends FormIntegrationTestCase
     }
 
     /**
+     * @return EntityType
+     */
+    protected function prepareUserMultiSelectType()
+    {
+        return new EntityType(
+            [
+                1 => $this->getUser(1),
+                2 => $this->getUser(2),
+            ],
+            UserMultiSelectType::NAME,
+            [
+                'multiple' => true
+            ]
+        );
+    }
+
+    /**
+     * @return EntityType
+     */
+    protected function prepareAccountUserMultiSelectType()
+    {
+        return new EntityType(
+            [
+                10 => $this->getAccountUser(10),
+                11 => $this->getAccountuser(11),
+            ],
+            AccountUserMultiSelectType::NAME,
+            [
+                'multiple' => true
+            ]
+        );
+    }
+
+    /**
      * @param array $codes
      * @return ProductUnit[]
      */
@@ -263,6 +303,24 @@ abstract class AbstractTest extends FormIntegrationTestCase
         }
 
         return $mock;
+    }
+
+    /**
+     * @param int $id
+     * @return User
+     */
+    protected function getUser($id)
+    {
+        return $this->getEntity('Oro\Bundle\UserBundle\Entity\User', $id);
+    }
+
+    /**
+     * @param int $id
+     * @return AccountUser
+     */
+    protected function getAccountUser($id)
+    {
+        return $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $id);
     }
 
     /**

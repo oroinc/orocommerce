@@ -32,31 +32,12 @@
                 {% endif %}
             {% endif %}
 
-            {% if entity.users.count() %}
-                {% set users = [] %}
-                {% for user in entity.users %}
-                    {% set username = user.firstName ~ ' ' ~ user.lastName %}
-                    {% if resource_granted('VIEW', user) %}
-                        {% set userView = UI.renderUrl(path('orob2b_account_account_user_view', {'id': user.id}), username) %}
-                    {% else %}
-                        {% set userView = username|escape %}
-                    {% endif %}
-                    {% set users = users|merge([userView]) %}
-                {% endfor %}
-                {{ UI.renderHtmlProperty('orob2b.account.users.label'|trans, UI.renderList(users)) }}
+            {% if entity.users | length %}
+                {{ UI.renderHtmlProperty('orob2b.account.users.label'|trans, UI.entityViewLinks(entity.users, 'fullName', 'orob2b_account_account_user_view')) }}
             {% endif %}
 
-            {% if entity.salesRepresentatives.count() %}
-                {% set salesReps = [] %}
-                {% for salesRep in entity.salesRepresentatives %}
-                    {% if resource_granted('VIEW', salesRep) %}
-                        {% set salesRepView = UI.renderUrl(path('oro_user_view', {'id': salesRep.id}), salesRep.fullName) %}
-                    {% else %}
-                        {% set salesRepView = salesRep.fullName|escape %}
-                    {% endif %}
-                    {% set salesReps = salesReps|merge([salesRepView]) %}
-                {% endfor %}
-                {{ UI.renderHtmlProperty('orob2b.account.sales_representatives.label'|trans, UI.renderList(salesReps)) }}
+            {% if entity.salesRepresentatives | length %}
+                {{ UI.renderHtmlProperty('orob2b.account.sales_representatives.label'|trans, UI.entityViewLinks(entity.salesRepresentatives, 'fullName', 'oro_user_view')) }}
             {% endif %}
 
             {% if entity.children.count() %}
