@@ -19,7 +19,7 @@ class Configuration implements ConfigurationInterface
 
         $builder->root('templates')
             ->children()
-            ->scalarNode('row')->end()
+                ->scalarNode('row')->end()
             ->end();
 
         return $builder;

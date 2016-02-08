@@ -288,7 +288,8 @@ services:
             - @request_stack
             - @oro_datagrid.configuration.provider
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-products-grid, method: onPreBuild, priority: 300  }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-products-grid, method: onPreBuild }
+
     orob2b_product.datagrid.extension.row_template:
         class: OroB2B\Bundle\ProductBundle\DataGrid\Extension\RowTemplate\Extension
         tags:
