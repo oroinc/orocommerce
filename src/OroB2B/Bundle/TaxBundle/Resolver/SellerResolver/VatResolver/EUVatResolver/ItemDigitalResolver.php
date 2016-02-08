@@ -29,20 +29,14 @@ class ItemDigitalResolver extends AbstractItemResolver
             return;
         }
 
-        $sellerAddress = $taxable->getOrigin();
-        if (!$sellerAddress) {
-            return;
-        }
-
         $buyerAddress = $taxable->getDestination();
         if (!$buyerAddress) {
             return;
         }
 
-        $isSellerFromEU = $this->countryMatcher->isEuropeanUnionCountry($taxable->getOrigin()->getCountryIso2());
         $isBuyerFromEU = $this->countryMatcher->isEuropeanUnionCountry($taxable->getDestination()->getCountryIso2());
 
-        if (!$isSellerFromEU && $isBuyerFromEU && $taxable->getContextValue(Taxable::DIGITAL_PRODUCT)) {
+        if ($isBuyerFromEU && $taxable->getContextValue(Taxable::DIGITAL_PRODUCT)) {
             if ($taxable->getResult()->getTotal()->count() === 0) {
                 $taxRules = $this->countryMatcher->match(
                     $buyerAddress,

@@ -37,20 +37,14 @@ class DigitalResolver implements ResolverInterface
             return;
         }
 
-        $sellerAddress = $taxable->getOrigin();
-        if (!$sellerAddress) {
-            return;
-        }
-
         $buyerAddress = $taxable->getDestination();
         if (!$buyerAddress) {
             return;
         }
 
-        $isSellerFromEU = $this->countryMatcher->isEuropeanUnionCountry($taxable->getOrigin()->getCountryIso2());
         $isBuyerFromEU = $this->countryMatcher->isEuropeanUnionCountry($taxable->getDestination()->getCountryIso2());
 
-        if (!$isSellerFromEU && $isBuyerFromEU) {
+        if ($isBuyerFromEU) {
             foreach ($taxable->getItems() as $item) {
                 if ($item->getResult()->getTotal()->count() === 0) {
                     $this->resolver->resolve($item);

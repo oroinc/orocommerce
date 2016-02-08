@@ -65,12 +65,11 @@ class ItemDigitalResolverTest extends \PHPUnit_Framework_TestCase
         $taxable->setQuantity(3);
         $taxable->setAmount($taxableAmount);
         $taxable->setDestination(new OrderAddress());
-        $taxable->setOrigin(new OrderAddress());
         $taxable->getContext()->offsetSet(Taxable::DIGITAL_PRODUCT, true);
 
-        $this->matcher->expects($this->exactly(2))
+        $this->matcher->expects($this->once())
             ->method('isEuropeanUnionCountry')
-            ->willReturnOnConsecutiveCalls(false, true);
+            ->willReturn(true);
 
         $this->matcher->expects($this->once())->method('match')->willReturn($taxRules);
 

@@ -46,9 +46,9 @@ class DigitalResolverTest extends \PHPUnit_Framework_TestCase
         $taxableItem = new Taxable();
         $taxable = $this->getTaxable($taxableItem);
 
-        $this->countryMatcher->expects($this->exactly(2))
+        $this->countryMatcher->expects($this->once())
             ->method('isEuropeanUnionCountry')
-            ->willReturnOnConsecutiveCalls(false, true);
+            ->willReturn(true);
 
         $this->itemResolver->expects($this->once())->method('resolve')->with(
             $this->callback(
@@ -67,9 +67,9 @@ class DigitalResolverTest extends \PHPUnit_Framework_TestCase
         $taxableItem = new Taxable();
         $taxable = $this->getTaxable($taxableItem);
 
-        $this->countryMatcher->expects($this->exactly(2))
+        $this->countryMatcher->expects($this->once())
             ->method('isEuropeanUnionCountry')
-            ->willReturnOnConsecutiveCalls(true, true);
+            ->willReturn(false);
 
         $this->itemResolver->expects($this->never())->method('resolve');
 
@@ -80,10 +80,6 @@ class DigitalResolverTest extends \PHPUnit_Framework_TestCase
 
         $taxable->addItem($taxableItem);
         $taxable->setDestination(null);
-        $this->resolver->resolve($taxable);
-
-        $taxable->setDestination(new OrderAddress());
-        $taxable->setOrigin(null);
         $this->resolver->resolve($taxable);
     }
 
