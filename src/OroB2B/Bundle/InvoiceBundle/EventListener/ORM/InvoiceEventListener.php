@@ -27,24 +27,6 @@ class InvoiceEventListener
 
     /**
      * @param Invoice $invoice
-     */
-    public function prePersist(Invoice $invoice)
-    {
-        $now = new \DateTime('now', new \DateTimeZone('UTC'));
-        $invoice->setCreatedAt($now);
-        $invoice->setUpdatedAt($now);
-    }
-
-    /**
-     * @param Invoice $invoice
-     */
-    public function preUpdate(Invoice $invoice)
-    {
-        $invoice->setUpdatedAt(new \DateTime('now', new \DateTimeZone('UTC')));
-    }
-
-    /**
-     * @param Invoice $invoice
      * @param LifecycleEventArgs $event
      *
      * Persist invoiceNumber based on entity id
