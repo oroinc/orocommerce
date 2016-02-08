@@ -386,7 +386,7 @@ class RequestTypeTest extends AbstractTest
      * @param string $company
      * @param string $role
      * @param string $poNumber
-     * @param string $shipUntil
+     * @param \DateTime $shipUntil
      * @param string $phone
      * @return Request
      */
@@ -432,7 +432,6 @@ class RequestTypeTest extends AbstractTest
 
         $priceType                  = $this->preparePriceType();
         $productSelectType          = $this->prepareProductSelectType();
-        $optionalPriceType          = $this->prepareOptionalPriceType();
         $userMultiSelectType        = $this->prepareUserMultiSelectType();
         $currencySelectionType      = new CurrencySelectionTypeStub();
         $requestProductItemType     = $this->prepareRequestProductItemType();

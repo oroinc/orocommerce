@@ -4,15 +4,12 @@ namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormTypeInterface;
 
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
-use Oro\Bundle\CurrencyBundle\Form\Type\OptionalPriceType;
-use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 
@@ -21,7 +18,6 @@ use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectEntityTypeStub;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
@@ -179,7 +175,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
         return new EntityType(
             [
                 10 => $this->getAccountUser(10),
-                11 => $this->getAccountuser(11),
+                11 => $this->getAccountUser(11),
             ],
             AccountUserMultiSelectType::NAME,
             [

@@ -195,7 +195,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
         return new EntityType(
             [
                 10 => $this->getAccountUser(10),
-                11 => $this->getAccountuser(11),
+                11 => $this->getAccountUser(11),
             ],
             AccountUserMultiSelectType::NAME,
             [
