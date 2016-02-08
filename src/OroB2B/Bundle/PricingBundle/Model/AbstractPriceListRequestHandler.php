@@ -17,11 +17,11 @@ use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 
 abstract class AbstractPriceListRequestHandler
 {
-    const TIER_PRICES_KEY           = 'showTierPrices';
-    const PRICE_LIST_CURRENCY_KEY   = 'priceCurrencies';
-    const SAVE_STATE_KEY            = 'saveState';
-    const PRICE_LIST_KEY            = 'priceListId';
-    const ACCOUNT_ID                = 'account_id';
+    const TIER_PRICES_KEY = 'showTierPrices';
+    const PRICE_LIST_CURRENCY_KEY = 'priceCurrencies';
+    const SAVE_STATE_KEY = 'saveState';
+    const PRICE_LIST_KEY = 'priceListId';
+    const ACCOUNT_ID = 'account_id';
 
     /**
      * @var RequestStack
@@ -118,6 +118,7 @@ abstract class AbstractPriceListRequestHandler
 
             return $priceList;
         }
+
         return $this->getDefaultPriceList();
     }
 
@@ -135,8 +136,12 @@ abstract class AbstractPriceListRequestHandler
             return $priceListCurrencies;
         }
 
-        $currencies = (array)$request->get(self::PRICE_LIST_CURRENCY_KEY);
-        $currencies = array_intersect($priceListCurrencies, $currencies);
+        $currencies = $request->get(self::PRICE_LIST_CURRENCY_KEY);
+        if (null === $currencies) {
+            return $priceListCurrencies;
+        }
+
+        $currencies = array_intersect($priceListCurrencies, (array)$currencies);
 
         if ($currencies && $request->get(self::SAVE_STATE_KEY)) {
             $this->session->set(self::PRICE_LIST_CURRENCY_KEY, $currencies);
