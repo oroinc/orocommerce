@@ -233,4 +233,14 @@ class AccountUserTest extends AbstractUserTest
         $this->assertFalse($user->isConfirmed());
         $this->assertFalse($user->isAccountNonLocked());
     }
+
+    public function testGetFullName()
+    {
+        $user = $this->getUser();
+        $user
+            ->setFirstName('FirstName')
+            ->setLastName('LastName');
+
+        $this->assertSame('FirstName LastName', $user->getFullName());
+    }
 }

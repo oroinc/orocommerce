@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Form\Type\AddressCollectionType;
+use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 
@@ -67,7 +68,7 @@ class AccountType extends AbstractType
             )
             ->add(
                 'salesRepresentatives',
-                SalesRepresentativesCollectionType::NAME,
+                UserMultiSelectType::NAME,
                 [
                     'label' => 'orob2b.account.sales_representatives.label',
                 ]
