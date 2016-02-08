@@ -73,7 +73,7 @@
                 <ol>
                     {% for invalidRow in result.invalidRows %}
                         <li>
-                            {% if invalidRow.product is empty %}
+                            {% if invalidRow.isComplete and invalidRow.product is empty %}
                                 {{ 'orob2b.product.frontend.quick_add.import_validation.validator.not_found'
                                 |trans({'%sku%' : invalidRow.sku}) }}
                             {% else %}
