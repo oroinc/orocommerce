@@ -47,7 +47,7 @@ class QuickAddRowCollectionBuilder
             true
         );
 
-        if (!is_array($products)) {
+        if (!is_array($products) || empty($products)) {
             return $collection;
         }
 
@@ -118,7 +118,7 @@ class QuickAddRowCollectionBuilder
                     new QuickAddRow(
                         $lineNumber++,
                         trim($data[0]),
-                        array_key_exists(1, $data) ? (float)trim($data[1]) : null
+                        isset($data[1]) ? (float) trim($data[1]) : null
                     )
                 );
             }
