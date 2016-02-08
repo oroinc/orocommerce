@@ -111,6 +111,7 @@ Child category:
 ```
 In this case `AccountGroupCategoryVisibility` for child category should be:
 
+| **Field**                                | **Value**                                                        |
 |------------------------------------------|------------------------------------------------------------------|
 | **Id (PK)**                              |             AccountGroupCategoryVisibilityId                     |
 | **category (FK) (PK)**                   |                       ChildCategoryId                            |
@@ -119,6 +120,7 @@ In this case `AccountGroupCategoryVisibility` for child category should be:
 
 And `AccountGroupCategoryVisibilityResolved` for child category should be:
 
+| **Field**                                | **Value**                                                        |
 |------------------------------------------|------------------------------------------------------------------|
 | **accountGroup (FK) (PK)**               |                       AccountGroup1Id                            |
 | **category (FK) (PK)**                   |                       ChildCategoryId                            |
