@@ -1,4 +1,4 @@
-{% block _shopping_lists_widget %}
+{% block _shopping_list_list_of_shopping_lists_widget %}
     {% set attr = attr|merge({
     class: attr.class|default('') ~ " orders-sidebar mt3-md"
     }) %}
@@ -8,7 +8,7 @@
     </div>
 {% endblock %}
 
-{% block _shopping_list_widget %}
+{% block _shopping_list_shopping_list_widget %}
     {% set attr = attr|merge({
     class: attr.class|default('') ~ " container-fluid"
     }) %}
@@ -17,7 +17,7 @@
     </div>
 {% endblock %}
 
-{% block _shopping_list_title_widget %}
+{% block _shopping_list_shopping_list_title_widget %}
     {% set attr = attr|merge({
     class: attr.class|default('') ~ " cart__order-title nmmt4-md"
     }) %}
@@ -28,7 +28,7 @@
     </div>
 {% endblock %}
 
-{% block _top_actions_widget %}
+{% block _shopping_list_top_actions_widget %}
     {% set attr = attr|merge({
     class: attr.class|default('') ~ "oq__options__right"
     }) %}
@@ -38,7 +38,7 @@
     </div>
 {% endblock %}
 
-{% block _order_options_widget %}
+{% block _shopping_list_order_options_widget %}
     {% set attr = attr|merge({
     class: attr.class|default('') ~ " oq__options oq__options_bb"
     }) %}
@@ -48,7 +48,7 @@
     </div>
 {% endblock %}
 
-{% block _line_items_widget %}
+{% block _shopping_list_line_items_widget %}
     {% set attr = attr|merge({
     class: attr.class|default('') ~ " cart-table cart-table_b-bordered cart-table__verticalp-enlarged mt1-md"
     }) %}
@@ -61,7 +61,7 @@
     </div>
 {% endblock %}
 
-{% block _combined_button_widget %}
+{% block _shopping_list_combined_button_widget %}
     {% set attr = attr|merge({
     class: attr.class|default('') ~ " btn btn_orange btn_has-dropdown btn_has-dropdown_xlg"
     }) %}

@@ -4,28 +4,26 @@ layout:
             themes: 'OroB2BShoppingListBundle:layouts:default/orob2b_shopping_list_frontend_view/view.html.twig'
         - @addTree:
             items:
-                main_content:
+                shopping_list_list_of_shopping_lists:
+                    blockType: block
+                shopping_list_shopping_list:
                     blockType: container
-                shopping_lists:
+                shopping_list_shopping_list_title:
                     blockType: block
-                shopping_list:
-                    blockType: container
-                shopping_list_title:
+                shopping_list_top_actions:
                     blockType: block
-                top_actions:
+                shopping_list_order_options:
                     blockType: block
-                order_options:
+                shopping_list_line_items:
                     blockType: block
-                line_items:
-                    blockType: block
-                combined_button:
+                shopping_list_combined_button:
                     blockType: block
             tree:
                 root:
-                    shopping_lists: ~
-                    shopping_list:
-                        shopping_list_title: ~
-                        top_actions: ~
-                        order_options: ~
-                        line_items: ~
-                        combined_button: ~
+                    shopping_list_list_of_shopping_lists: ~
+                    shopping_list_shopping_list:
+                        shopping_list_shopping_list_title: ~
+                        shopping_list_top_actions: ~
+                        shopping_list_order_options: ~
+                        shopping_list_line_items: ~
+                        shopping_list_combined_button: ~
