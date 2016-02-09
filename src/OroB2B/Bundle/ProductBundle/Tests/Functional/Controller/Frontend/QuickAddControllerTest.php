@@ -9,10 +9,7 @@ use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
-/**
- * @dbIsolation
- */
-class QuickAddControllerTest extends WebTestCase
+abstract class QuickAddControllerTest extends WebTestCase
 {
     const VALIDATION_TOTAL_ROWS = 'Total number of records';
     const VALIDATION_VALID_ROWS = 'Valid items';
@@ -135,29 +132,7 @@ class QuickAddControllerTest extends WebTestCase
     /**
      * @return array
      */
-    public function validationResultProvider()
-    {
-        return [
-            'rfp create' => [
-                'processorName' => 'orob2b_rfp_quick_add_processor',
-                'routerName' => 'orob2b_rfp_frontend_request_create',
-                'routerParams' => ['storage' => 1],
-                'expectedMessage' => null
-            ],
-            'create order' => [
-                'processorName' => 'orob2b_order_quick_add_processor',
-                'routerName' => 'orob2b_order_frontend_create',
-                'routerParams' => ['storage' => 1],
-                'expectedMessage' => null
-            ],
-            'add to shopping list' => [
-                'processorName' => 'orob2b_shopping_list_quick_add_processor',
-                'routerName' => 'orob2b_product_frontend_quick_add',
-                'routerParams' => [],
-                'expectedMessage' => '3 products were added'
-            ],
-        ];
-    }
+    abstract public function validationResultProvider();
 
     /**
      * @return array
@@ -180,12 +155,6 @@ class QuickAddControllerTest extends WebTestCase
                 sprintf(self::VALIDATION_ERROR_MALFORMED, 5),
                 sprintf(self::VALIDATION_ERROR_MALFORMED, 6)
             ]
-        ];
-
-        $expectedValidationEmptyResult = [
-            self::VALIDATION_TOTAL_ROWS => 0,
-            self::VALIDATION_VALID_ROWS => 0,
-            self::VALIDATION_ERROR_ROWS => 0
         ];
 
         return [
