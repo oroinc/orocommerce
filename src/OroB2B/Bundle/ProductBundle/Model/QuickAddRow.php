@@ -87,7 +87,7 @@ class QuickAddRow
     /**
      * @param Product $product
      */
-    public function setProduct($product)
+    public function setProduct(Product $product)
     {
         $this->product = $product;
     }

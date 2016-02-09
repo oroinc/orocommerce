@@ -67,14 +67,6 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->productRepository->expects($this->once())
-            ->method('getProductWithNamesBySku')
-            ->with(array_keys($this->expectedElements))
-            ->willReturn([
-                'HSSUC' => $this->prepareProduct('HSSUC'),
-                'HSTUC' => $this->prepareProduct('HSTUC'),
-            ]);
-
         $this->builder = new QuickAddRowCollectionBuilder($this->productRepository);
     }
 
@@ -93,6 +85,7 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
             QuickAddType::PRODUCTS_FIELD_NAME => $data
         ]);
 
+        $this->prepareProductRepository();
         $this->assertValidCollection($this->builder->buildFromRequest($request));
     }
 
@@ -103,7 +96,15 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testBuildFromFile(UploadedFile $file)
     {
+        $this->prepareProductRepository();
         $this->assertValidCollection($this->builder->buildFromFile($file));
+    }
+
+    public function testBuildFromFileWithInvalidFormat()
+    {
+        $this->setExpectedException('Box\Spout\Common\Exception\UnsupportedTypeException');
+
+        $this->builder->buildFromFile(new UploadedFile(__DIR__ . '/files/quick-order.txt', 'quick-order.txt'));
     }
 
     /**
@@ -113,6 +114,7 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testBuildFromCopyPasteText($text)
     {
+        $this->prepareProductRepository();
         $this->assertValidCollection($this->builder->buildFromCopyPasteText($text));
     }
 
@@ -183,5 +185,18 @@ TEXT;
             ->willReturn($sku);
 
         return $product;
+    }
+
+    private function prepareProductRepository()
+    {
+        $this->productRepository->expects($this->once())
+            ->method('getProductWithNamesBySku')
+            ->with(array_keys($this->expectedElements))
+            ->willReturn(
+                [
+                    'HSSUC' => $this->prepareProduct('HSSUC'),
+                    'HSTUC' => $this->prepareProduct('HSTUC'),
+                ]
+            );
     }
 }
