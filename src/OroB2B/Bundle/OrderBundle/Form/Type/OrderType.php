@@ -84,13 +84,18 @@ class OrderType extends AbstractType
                     'required' => false,
                 ]
             )
+            ->add(
+                'website',
+                'entity',
+                [
+                    'class' => 'OroB2B\Bundle\WebsiteBundle\Entity\Website',
+                    'label' => 'orob2b.order.website.label'
+                ]
+            )
             ->add('poNumber', 'text', ['required' => false, 'label' => 'orob2b.order.po_number.label'])
             ->add('shipUntil', OroDateType::NAME, ['required' => false, 'label' => 'orob2b.order.ship_until.label'])
             ->add('customerNotes', 'textarea', ['required' => false, 'label' => 'orob2b.order.customer_notes.label'])
-            ->add(
-                'currency',
-                'hidden'
-            )
+            ->add('currency', 'hidden')
             ->add(
                 'lineItems',
                 OrderLineItemsCollectionType::NAME,

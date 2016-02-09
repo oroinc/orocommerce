@@ -18,6 +18,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Table(name="orob2b_order",indexes={@ORM\Index(name="orob2b_order_created_at_index", columns={"created_at"})})
@@ -50,6 +51,7 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceList;
  * )
  * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHolderInterface
 {
@@ -264,6 +266,21 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
     protected $account;
 
     /**
+     * @var Website
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $website;
+
+    /**
      * @var AccountUser
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
@@ -306,6 +323,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
      *          }
      *      }
      * )
+     * todo remove
      **/
     protected $priceList;
 
@@ -760,5 +778,21 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
         }
 
         return '';
+    }
+
+    /**
+     * @param Website $website
+     */
+    public function setWebsite($website)
+    {
+        $this->website = $website;
+    }
+
+    /**
+     * @return Website
+     */
+    public function getWebsite()
+    {
+        return $this->website;
     }
 }

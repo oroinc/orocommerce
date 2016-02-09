@@ -18,6 +18,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Table(name="orob2b_sale_quote")
@@ -136,6 +137,21 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      * )
      */
     protected $organization;
+
+    /**
+     * @var Website
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $website;
 
     /**
      * @var Request
@@ -698,5 +714,21 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
         $this->priceList = $priceList;
 
         return $this;
+    }
+
+    /**
+     * @return Website
+     */
+    public function getWebsite()
+    {
+        return $this->website;
+    }
+
+    /**
+     * @param Website $website
+     */
+    public function setWebsite($website)
+    {
+        $this->website = $website;
     }
 }

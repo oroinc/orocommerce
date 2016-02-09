@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\SaleBundle\Provider;
 use Oro\Bundle\CurrencyBundle\Model\Price;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
@@ -20,17 +20,17 @@ class QuoteProductPriceProvider
     protected $productPriceProvider;
 
     /**
-     * @var AbstractPriceListRequestHandler
+     * @var PriceListRequestHandler
      */
     protected $priceListRequestHandler;
 
     /**
      * @param ProductPriceProvider $productPriceProvider
-     * @param AbstractPriceListRequestHandler $priceListRequestHandler
+     * @param PriceListRequestHandler $priceListRequestHandler
      */
     public function __construct(
         ProductPriceProvider $productPriceProvider,
-        AbstractPriceListRequestHandler $priceListRequestHandler
+        PriceListRequestHandler $priceListRequestHandler
     ) {
         $this->productPriceProvider = $productPriceProvider;
         $this->priceListRequestHandler = $priceListRequestHandler;

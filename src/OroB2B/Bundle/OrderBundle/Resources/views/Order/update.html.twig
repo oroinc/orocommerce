@@ -64,6 +64,7 @@
                 {{ form_row(form.account) }}
                 {{ form_row(form.accountUser) }}
             </div>
+            {{ form_row(form.website) }}
         </div>
     {% endset %}
 
@@ -74,7 +75,7 @@
                  view: 'orob2border/js/app/views/line-items-view',
                  tierPrices: tierPrices|default({}),
                  matchedPrices: matchedPrices|default({}),
-                 tierPricesRoute: 'orob2b_pricing_price_by_pricelist',
+                 tierPricesRoute: 'orob2b_pricing_price_by_account',
                  matchedPricesRoute: 'orob2b_pricing_matching_price'
              }|json_encode }}"
              data-layout="separate">

@@ -12,7 +12,7 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
-use OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
@@ -31,8 +31,7 @@ class ProductPriceDatagridListener
     protected $doctrineHelper;
 
     /**
-     * @var AbstractPriceListRequestHandler
-    //todo resolve handler dependency
+     * @var PriceListRequestHandler
      */
     protected $priceListRequestHandler;
 
@@ -47,14 +46,19 @@ class ProductPriceDatagridListener
     protected $productUnitClass;
 
     /**
+     * @var bool
+     */
+    protected $useCombinedPriceList = false;
+
+    /**
      * @param TranslatorInterface $translator
      * @param DoctrineHelper $doctrineHelper
-     * @param AbstractPriceListRequestHandler $priceListRequestHandler
+     * @param PriceListRequestHandler $priceListRequestHandler
      */
     public function __construct(
         TranslatorInterface $translator,
         DoctrineHelper $doctrineHelper,
-        AbstractPriceListRequestHandler $priceListRequestHandler
+        PriceListRequestHandler $priceListRequestHandler
     ) {
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
@@ -163,6 +167,14 @@ class ProductPriceDatagridListener
     }
 
     /**
+     * @param boolean $useCombinedPriceList
+     */
+    public function setUseCombinedPriceList($useCombinedPriceList)
+    {
+        $this->useCombinedPriceList = (bool)$useCombinedPriceList;
+    }
+
+    /**
      * @param string $currencyIsoCode
      * @param string $unitCode
      * @return string
@@ -188,7 +200,9 @@ class ProductPriceDatagridListener
      */
     protected function getPriceList()
     {
-        return $this->priceListRequestHandler->getPriceList();
+        return $this->useCombinedPriceList
+            ? $this->priceListRequestHandler->getPriceListByAccount()
+            : $this->priceListRequestHandler->getPriceList();
     }
 
     /**

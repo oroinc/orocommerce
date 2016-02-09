@@ -11,6 +11,7 @@ use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 
@@ -48,11 +49,12 @@ class PriceListTreeHandler
 
     /**
      * @param Account|null $account
+     * @param Website|null $website
      * @return BasePriceList
      */
-    public function getPriceList(Account $account = null)
+    public function getPriceList(Account $account = null, Website $website = null)
     {
-        $website = $this->websiteManager->getCurrentWebsite();
+        $website = $website ?: $this->websiteManager->getCurrentWebsite();
 
         if ($account) {
             $priceList = $this->getPriceListRepository()->getPriceListByAccount($account, $website);

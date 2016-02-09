@@ -21,6 +21,17 @@ use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {
     /**
+     * @Route("/get-product-prices-by-account", name="orob2b_pricing_price_by_account")
+     * @Method({"GET"})
+     *
+     * {@inheritdoc}
+     */
+    public function getProductPricesByAccount(Request $request)
+    {
+        return parent::getProductPricesByAccount($request);
+    }
+
+    /**
      * Edit product form
      *
      * @Route("/update/{id}", name="orob2b_product_price_update_widget", requirements={"id"="\d+"})
@@ -54,7 +65,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
         $lineItems = $request->get('items', []);
         /** @var CombinedPriceList|null $priceList */
         $priceList = null;
-        $priceListId = $this->get('orob2b_pricing.model.frontend.price_list_request_handler')
+        $priceListId = $this->get('orob2b_pricing.model.price_list_request_handler')
             ->getPriceListByAccount()
             ->getId();
 

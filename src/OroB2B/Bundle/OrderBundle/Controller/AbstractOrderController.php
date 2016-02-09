@@ -102,15 +102,8 @@ abstract class AbstractOrderController extends Controller
      */
     protected function getPriceList(Order $order)
     {
-        $priceList = null;
-        if ($this->getUser() instanceof User) {
-            $priceList = $order->getPriceList();
-        }
-        if (!$priceList) {
-            $priceList = $this->get('orob2b_pricing.model.frontend.price_list_request_handler')->getPriceListByAccount();
-        }
-
-        return $priceList;
+        return $this->get('orob2b_pricing.model.price_list_request_handler')
+            ->getPriceListByAccount($order->getAccount(), $order->getWebsite());
     }
 
     /**

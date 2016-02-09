@@ -6,11 +6,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Model\Stub\PriceListRequestHandlerStub as PriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface;
 
 class AbstractPriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var PriceListRequestHandler
+     * @var PriceListRequestHandlerInterface
      */
     protected $handler;
 
