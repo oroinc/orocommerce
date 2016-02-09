@@ -9,7 +9,6 @@ use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 /**
- * @coversDefaultClass OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class QuickAddRowCollectionTest extends \PHPUnit_Framework_TestCase
@@ -73,10 +72,6 @@ class QuickAddRowCollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(self::SKU1, $firstRow->getProduct()->getSku());
     }
 
-    /**
-     * @covers ::mapProducts
-     * @covers ::getProducts
-     */
     public function testMapAndGetProducts()
     {
         $collection = new QuickAddRowCollection();
