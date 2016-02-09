@@ -620,12 +620,6 @@ services:
         arguments:
             - @orob2b_account.form.handler.update_account_user_role_frontend=
 
-    orob2b_account.storage.category_visibility_storage.cache:
-        public: false
-        parent: oro.cache.abstract
-        calls:
-            - [ setNamespace, [ "orob2b_account.storage.category_visibility_storage.cache" ] ]
-
     orob2b_account.visibility.resolver.category_visibility_resolver:
         class: %orob2b_account.visibility.resolver.category_visibility_resolver.class%
         arguments:
