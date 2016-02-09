@@ -2,6 +2,13 @@ layout:
     actions:
         - @setBlockTheme:
             themes: 'OroB2BProductBundle:layouts:default/orob2b_product_frontend_product_view/layout.html.twig'
+        - @setOption:
+            id: page_title
+            optionName: text
+            optionValue: {@value: $data.product.defaultName}
+        - @move:
+            id: page_title
+            parentId: product_title_container
         - @addTree:
             items:
                 product_view_page:
@@ -21,10 +28,6 @@ layout:
                     blockType: container
                 product_title_container:
                     blockType: container
-                product_title:
-                    blockType: text
-                    options:
-                        text: {@value: $data.product.defaultName}
                 product_rating:
                     blockType: block
                 product_specification_container:
@@ -61,7 +64,6 @@ layout:
                             product_image: ~
                             product_description_container:
                                 product_title_container:
-                                    product_title: ~
                                     product_rating: ~
                                 product_specification_container:
                                     product_specification: ~

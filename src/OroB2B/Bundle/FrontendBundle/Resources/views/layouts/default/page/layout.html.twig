@@ -98,11 +98,9 @@
 
 {% block _page_title_widget %}
     {% if text %}
-        {% if class_prefix %}
-            {% set attr = attr|merge({
-                class: attr.class|default('') ~ " {{ class_prefix }}-page-title"
-            }) %}
-        {% endif %}
+        {% set attr = attr|merge({
+            class: attr.class|default('') ~ " page-title " ~ (class_prefix ? " {{ class_prefix }}-page-title")
+        }) %}
         <h1{{ block('block_attributes') }}>{{ block_widget(block) }}</h1>
     {% endif %}
 {% endblock %}
