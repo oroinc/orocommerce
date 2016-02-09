@@ -66,48 +66,6 @@ definitions:
         actions_configuration:
             - @change_product_category: ~
 
-    # Category visibility cache clear
-
-    category_position_cache_clear:
-        label: 'Clear category visibility cache on changing category position in tree'
-        enabled: true
-        order: 10
-        entity: OroB2B\Bundle\CatalogBundle\Entity\Category
-        actions_configuration:
-            - @category_visibility_cache_clear: ~
-
-    account_group_changed_cache_clear:
-        label: 'Clear category visibility cache on changing account group of account'
-        enabled: true
-        order: 10
-        entity: OroB2B\Bundle\AccountBundle\Entity\Account
-        actions_configuration:
-            - @category_visibility_cache_clear: ~
-
-    category_visibility_cache_clear:
-        label: 'Clear category visibility cache on changing category visibility for all'
-        enabled: true
-        order: 11
-        entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility
-        actions_configuration:
-            - @category_visibility_cache_clear: ~
-
-    account_group_category_visibility_cache_clear:
-        label: 'Clear category visibility cache on changing category visibility for account group'
-        enabled: true
-        order: 12
-        entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility
-        actions_configuration:
-            - @category_visibility_cache_clear: ~
-
-    account_category_visibility_cache_clear:
-        label: 'Clear category visibility cache on changing category visibility for account'
-        enabled: true
-        order: 13
-        entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility
-        actions_configuration:
-            - @category_visibility_cache_clear: ~
-
     product_visibility_category_create:
         enabled: true
         label: 'Update product visibility after category created'
@@ -193,44 +151,6 @@ triggers:
             event: create
         -
             event: update
-
-    category_position_cache_clear:
-        -
-            event: create
-        -
-            event: update
-            field: parentCategory
-        -
-            event: delete
-
-    account_group_changed_cache_clear:
-        -
-            event: update
-            field: group
-
-    category_visibility_cache_clear:
-        -
-            event: create
-        -
-            event: update
-        -
-            event: delete
-
-    account_group_category_visibility_cache_clear:
-        -
-            event: create
-        -
-            event: update
-        -
-            event: delete
-
-    account_category_visibility_cache_clear:
-        -
-            event: create
-        -
-            event: update
-        -
-            event: delete
 
     product_visibility_product_create:
         -

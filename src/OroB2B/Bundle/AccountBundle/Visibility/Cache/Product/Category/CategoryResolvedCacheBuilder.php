@@ -16,7 +16,7 @@ use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\Positi
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeCategorySubtreeCacheBuilder;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder;
 
-class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements CategoryCaseCacheBuilderInterface
+class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements CategoryCaseCacheBuilderInterface
 {
     /** @var VisibilityChangeCategorySubtreeCacheBuilder */
     protected $visibilityChangeCategorySubtreeCacheBuilder;

@@ -37,9 +37,6 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
      */
     public function testExecute(array $params, array $expectedMessages, array $expectedRecordsCount)
     {
-        // Clear category cache. It should be actual in all test cases
-        $this->getContainer()->get('orob2b_account.storage.category_visibility_storage')->flush();
-
         // Clear all resolved tables and check that all of them are empty
         $this->clearAllResolvedTables();
 

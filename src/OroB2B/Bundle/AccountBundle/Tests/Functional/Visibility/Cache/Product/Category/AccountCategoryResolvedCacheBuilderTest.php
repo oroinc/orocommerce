@@ -10,14 +10,14 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\AccountProductResolvedCacheBuilder;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\AccountCategoryResolvedCacheBuilder;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
 /**
  * @dbIsolation
  */
-class AccountProductResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuilderTest
+class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuilderTest
 {
     /** @var Category */
     protected $category;
@@ -25,7 +25,7 @@ class AccountProductResolvedCacheBuilderTest extends AbstractProductResolvedCach
     /** @var Account */
     protected $account;
 
-    /** @var AccountProductResolvedCacheBuilder */
+    /** @var AccountCategoryResolvedCacheBuilder */
     protected $builder;
 
     protected function setUp()
@@ -36,7 +36,7 @@ class AccountProductResolvedCacheBuilderTest extends AbstractProductResolvedCach
         $this->account = $this->getReference('account.level_1');
 
         $this->builder = $this->getContainer()
-            ->get('orob2b_account.visibility.cache.product.category.account_product_resolved_cache_builder');
+            ->get('orob2b_account.visibility.cache.product.category.account_category_resolved_cache_builder');
     }
 
     public function testChangeAccountCategoryVisibilityToHidden()

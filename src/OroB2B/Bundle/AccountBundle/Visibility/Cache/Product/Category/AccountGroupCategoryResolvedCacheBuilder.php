@@ -14,7 +14,7 @@ use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\Visibi
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
+class AccountGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 {
     /** @var VisibilityChangeGroupSubtreeCacheBuilder */
     protected $visibilityChangeAccountGroupSubtreeCacheBuilder;

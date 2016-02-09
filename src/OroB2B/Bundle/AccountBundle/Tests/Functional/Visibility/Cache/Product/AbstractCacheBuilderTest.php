@@ -44,7 +44,6 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
             'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
         ]);
 
-        $this->getContainer()->get('orob2b_account.storage.category_visibility_storage')->flush();
         $this->registry = $this->client->getContainer()->get('doctrine');
         $this->website = $this->getReference(LoadWebsiteData::WEBSITE1);
         $this->product = $this->getReference(LoadProductData::PRODUCT_1);
@@ -141,11 +140,6 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
      * @return CacheBuilderInterface
      */
     abstract protected function getCacheBuilder();
-
-    protected function clearCategoryCache()
-    {
-        $this->getContainer()->get('orob2b_account.storage.category_visibility_storage')->flush();
-    }
 
     /**
      * @param string $websiteReference

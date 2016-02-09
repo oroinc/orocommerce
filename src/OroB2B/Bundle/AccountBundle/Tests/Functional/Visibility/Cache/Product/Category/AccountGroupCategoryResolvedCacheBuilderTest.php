@@ -11,14 +11,14 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\AccountGroupProductResolvedCacheBuilder;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\AccountGroupCategoryResolvedCacheBuilder;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
 /**
  * @dbIsolation
  */
-class AccountGroupProductResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuilderTest
+class AccountGroupCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuilderTest
 {
     /** @var Category */
     protected $category;
@@ -26,7 +26,7 @@ class AccountGroupProductResolvedCacheBuilderTest extends AbstractProductResolve
     /** @var AccountGroup */
     protected $accountGroup;
 
-    /** @var AccountGroupProductResolvedCacheBuilder */
+    /** @var AccountGroupCategoryResolvedCacheBuilder */
     protected $builder;
 
     protected function setUp()
@@ -36,7 +36,7 @@ class AccountGroupProductResolvedCacheBuilderTest extends AbstractProductResolve
         $this->accountGroup = $this->getReference('account_group.group3');
 
         $this->builder = $this->getContainer()
-            ->get('orob2b_account.visibility.cache.product.category.account_group_product_resolved_cache_builder');
+            ->get('orob2b_account.visibility.cache.product.category.account_group_category_resolved_cache_builder');
     }
 
     public function testChangeAccountGroupCategoryVisibilityToHidden()

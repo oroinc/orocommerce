@@ -55,8 +55,6 @@ class AccountGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTe
      */
     public function testChangeAccountGroupProductVisibilityToCategory()
     {
-        $this->clearCategoryCache();
-
         $visibility = $this->getVisibility();
         $visibility->setVisibility(AccountGroupProductVisibility::CATEGORY);
 
