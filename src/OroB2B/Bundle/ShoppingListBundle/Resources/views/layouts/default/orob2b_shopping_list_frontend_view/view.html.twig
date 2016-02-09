@@ -70,10 +70,65 @@
 {% block _shopping_list_line_items_widget %}
     {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-table cart-table_b-bordered cart-table__verticalp-enlarged mt1-md"}) %}
     <div{{ block('block_attributes') }}>
-        LINE ITEMS <br>
-        LINE ITEMS <br>
-        LINE ITEMS <br>
-        LINE ITEMS <br>
+        <table class="oro-grid-table oro-grid-table_b-bordered oro-grid-table__verticalp-enlarged mt1-md">
+            <thead>
+            <tr>
+                <th><small>Item</small></th>
+                <th><small>Availability</small></th>
+                <th><small>Quantity</small></th>
+                <th class="text-right"><small>Price</small></th>
+                <th class="w70"><small>&nbsp;</small></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for lineItem in shoppingList.lineItems %}
+            <tr>
+                <td class="va-t_md">
+                    <div class="product-item product-item_in-cart">
+                        <div class="product-item__image-holder product-item__image-holder_in-cart">
+                            <a href="{{ path('orob2b_product_frontend_product_view', {'id': lineItem.product.id}) }}">{{ oro_image_view(lineItem.product, lineItem.product.image, null, 'image') }}</a>
+                        </div>
+                        <div class="product-item__desctiption product-item__desctiption_in-cart">
+                            <h3 class="product-item__title product-item__title_in-cart mb1-md">
+                                <a href="{{ path('orob2b_product_frontend_product_view', {'id': lineItem.product.id}) }}">{{ lineItem.product }}</a>
+                            </h3>
+                            <div>SKU #: <span class="red">{{ lineItem.product.sku }}</span></div>
+                        </div>
+                    </div>
+                </td>
+                <td class="va-t_md">
+                    <div class="green3">{{ lineItem.product.InventoryStatus }}</div>
+                </td>
+                <td class="va-t_md">
+                    <div class="product__qty-input product__qty-input_inline product__qty-input_more-info">
+                        <div class="product__qty-input__count-option">
+                            <button class="count-minus" data-count-minus>-</button>
+                            <input type="number" value="{{ lineItem.quantity }}" name="product_qty" placeholder="QTY #" class="input input_sm input_block text-center" data-count-input />
+                            <button class="count-plus" data-count-plus>+</button>
+                        </div>
+                    </div>
+                </td>
+                <td class="va-t_md">
+                    <table class="table borderless paddingless mb0-md">
+                        <tbody>
+                        <tr>
+                            <td>Price per item:</td>
+                            <td class="text-right">$13.39</td>
+                        </tr>
+                        <tr>
+                            <td>Your Price:</td>
+                            <td class="text-right"><span class="fs16 blue">$66.95</span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </td>
+                <td class="va-t_md text-right">
+                    <button class="button-icon gray fs20"><i class="icon-trash"></i></button>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
         {{ block_widget(block) }}
     </div>
 {% endblock %}

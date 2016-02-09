@@ -22,6 +22,10 @@ layout:
                                 @value: $data.shoppingList
                 shopping_list_line_items:
                     blockType: block
+                    options:
+                        vars:
+                            shoppingList:
+                                @value: $data.shoppingList
                 shopping_list_combined_button:
                     blockType: block
             tree:
