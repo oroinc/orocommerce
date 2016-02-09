@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Form\Handler;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -76,35 +77,19 @@ class QuickAddHandler
     /**
      * @param Request $request
      * @param string $successDefaultRoute
-     * @return array
+     * @return Response|null
      */
     public function process(Request $request, $successDefaultRoute)
     {
-        if ($request->isMethod(Request::METHOD_POST)) {
-            return $this->submitRequest($request, $successDefaultRoute);
-        } else {
-            $form = $this->quickAddFormProvider->getForm();
+        $response = null;
+        if (!$request->isMethod(Request::METHOD_POST)) {
+            return $response;
         }
 
-        return [
-            'form' => $form,
-            'response' => null,
-        ];
-    }
-
-    /**
-     * @param Request $request
-     * @param string $successDefaultRoute
-     * @return array
-     */
-    protected function submitRequest(Request $request, $successDefaultRoute)
-    {
-        $response = null;
+        $processor = $this->getProcessor($this->getComponentName($request));
 
         $options = [];
         $options['products'] = $this->getProducts($request);
-
-        $processor = $this->getProcessor($this->getComponentName($request));
         if ($processor) {
             $options['validation_required'] = $processor->isValidationRequired();
         }
@@ -112,30 +97,25 @@ class QuickAddHandler
         $form = $this->quickAddFormProvider->getForm($options);
         $form->submit($request);
 
-        if ($processor && $processor->isAllowed()) {
-            if ($form->isValid()) {
-                $products = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
-                $response = $processor->process(
-                    [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products],
-                    $request
-                );
-                if (!$response) {
-                    $response = new RedirectResponse($this->router->generate($successDefaultRoute));
-                }
-            }
-        } else {
+        if (!$processor || !$processor->isAllowed()) {
             /** @var Session $session */
             $session = $request->getSession();
             $session->getFlashBag()->add(
                 'error',
                 $this->translator->trans('orob2b.product.frontend.component_not_accessible.message')
             );
+        } elseif ($form->isValid()) {
+            $products = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
+            $response = $processor->process(
+                [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products],
+                $request
+            );
+            if (!$response) {
+                $response = new RedirectResponse($this->router->generate($successDefaultRoute));
+            }
         }
 
-        return [
-            'form' => $form,
-            'response' => $response,
-        ];
+        return $response;
     }
 
     /**

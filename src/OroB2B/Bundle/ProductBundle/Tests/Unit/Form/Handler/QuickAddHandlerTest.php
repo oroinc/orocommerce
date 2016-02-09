@@ -148,12 +148,12 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
 
-        $this->formProvider->expects($this->once())
+        $this->formProvider->expects($this->never())
             ->method('getForm')
             ->with([])
             ->willReturn($form);
 
-        $this->assertEquals(['form' => $form, 'response' => null], $this->handler->process($request, 'reload'));
+        $this->assertEquals(null, $this->handler->process($request, 'reload'));
     }
 
     public function testProcessNoProcessor()
@@ -171,7 +171,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(['products' => []])
             ->willReturn($form);
 
-        $this->assertEquals(['form' => $form, 'response' => null], $this->handler->process($request, 'reload'));
+        $this->assertEquals(null, $this->handler->process($request, 'reload'));
     }
 
     public function testProcessNotAllowedProcessor()
@@ -194,7 +194,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $processor->expects($this->never())
             ->method('process');
 
-        $this->assertEquals(['form' => $form, 'response' => null], $this->handler->process($request, 'reload'));
+        $this->assertEquals(null, $this->handler->process($request, 'reload'));
     }
 
     public function testProcessInvalidForm()
@@ -236,7 +236,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $processor->expects($this->never())
             ->method('process');
 
-        $this->assertEquals(['form' => $form, 'response' => null], $this->handler->process($request, 'reload'));
+        $this->assertEquals(null, $this->handler->process($request, 'reload', 'reload'));
     }
 
     public function testProcessValidDataWithoutResponse()
@@ -274,13 +274,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->with([ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products], $request);
 
         $this->router->expects($this->once())->method('generate')->with('reload')->willReturn('/reload');
-        $this->assertEquals(
-            [
-                'form' => $mainForm,
-                'response' => new RedirectResponse('/reload')
-            ],
-            $this->handler->process($request, 'reload')
-        );
+        $this->assertEquals(new RedirectResponse('/reload'), $this->handler->process($request, 'reload'));
     }
 
     public function testProcessValidDataWithResponse()
@@ -320,7 +314,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->with([ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products], $request)
             ->willReturn($response);
 
-        $this->assertEquals(['form' => $form, 'response' => $response], $this->handler->process($request, 'reload'));
+        $this->assertEquals($response, $this->handler->process($request, 'reload'));
     }
 
     /**
