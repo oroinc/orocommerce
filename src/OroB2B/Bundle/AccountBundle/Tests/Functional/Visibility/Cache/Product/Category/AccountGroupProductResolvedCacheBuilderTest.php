@@ -2,10 +2,8 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product\Category;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\AbstractQuery;
-
-use Oro\Component\Testing\WebTestCase;
+use Doctrine\ORM\EntityManager;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
@@ -13,40 +11,32 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\AccountGroupProductResolvedCacheBuilder;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
 /**
  * @dbIsolation
  */
-class AccountGroupProductResolvedCacheBuilderTest extends WebTestCase
+class AccountGroupProductResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuilderTest
 {
-    /** @var Registry */
-    protected $registry;
-    
     /** @var Category */
     protected $category;
 
     /** @var AccountGroup */
     protected $accountGroup;
 
+    /** @var AccountGroupProductResolvedCacheBuilder */
+    protected $builder;
+
     protected function setUp()
     {
-        $this->initClient();
-
-        $this->loadFixtures([
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
-        ]);
-
-        $this->registry = $this->client->getContainer()->get('doctrine');
+        parent::setUp();
         $this->category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
         $this->accountGroup = $this->getReference('account_group.group3');
-    }
-    
-    public function tearDown()
-    {
-        $this->getContainer()->get('doctrine')->getManager()->clear();
-        parent::tearDown();
+
+        $this->builder = $this->getContainer()
+            ->get('orob2b_account.visibility.cache.product.category.account_group_product_resolved_cache_builder');
     }
 
     public function testChangeAccountGroupCategoryVisibilityToHidden()
@@ -123,6 +113,7 @@ class AccountGroupProductResolvedCacheBuilderTest extends WebTestCase
      */
     protected function getVisibilityResolved()
     {
+        /** @var EntityManager $em */
         $em = $this->registry
             ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved');
         $qb = $em->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
@@ -177,5 +168,177 @@ class AccountGroupProductResolvedCacheBuilderTest extends WebTestCase
             $categoryVisibilityResolved['sourceCategoryVisibility']['visibility']
         );
         $this->assertEquals($expectedVisibility, $categoryVisibilityResolved['visibility']);
+    }
+
+    /**
+     * @dataProvider buildCacheDataProvider
+     * @param array $expectedVisibilities
+     */
+    public function testBuildCache(array $expectedVisibilities)
+    {
+        $expectedVisibilities = $this->replaceReferencesWithIds($expectedVisibilities);
+        usort($expectedVisibilities, [$this, 'sortByCategoryAndAccountGroup']);
+
+        $this->builder->buildCache();
+
+        $actualVisibilities = $this->getResolvedVisibilities();
+        usort($actualVisibilities, [$this, 'sortByCategoryAndAccountGroup']);
+
+        $this->assertEquals($expectedVisibilities, $actualVisibilities);
+    }
+
+    /**
+     * @return array
+     */
+    public function buildCacheDataProvider()
+    {
+        return [
+            [
+                'expectedVisibilities' => [
+                    [
+                        'category' => 'category_1',
+                        'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                        'source' => AccountGroupCategoryVisibilityResolved::SOURCE_STATIC,
+                        'accountGroup' => 'account_group.group1'
+                    ],
+                    [
+                        'category' => 'category_1_2',
+                        'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                        'source' => AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'accountGroup' => 'account_group.group1'
+                    ],
+                    [
+                        'category' => 'category_1_2_3',
+                        'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                        'source' => AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'accountGroup' => 'account_group.group1'
+                    ],
+                    [
+                        'category' => 'category_1_2_3_4',
+                        'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                        'source' => AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'accountGroup' => 'account_group.group1'
+                    ],
+                    [
+                        'category' => 'category_1_5_6',
+                        'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                        'source' => AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'accountGroup' => 'account_group.group1'
+                    ],
+                    [
+                        'category' => 'category_1_5_6_7',
+                        'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                        'source' => AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'accountGroup' => 'account_group.group1'
+                    ],
+                    [
+                        'category' => 'category_1_2',
+                        'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                        'source' => AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'accountGroup' => 'account_group.group2'
+                    ],
+                    [
+                        'category' => 'category_1_5_6',
+                        'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                        'source' => AccountGroupCategoryVisibilityResolved::SOURCE_STATIC,
+                        'accountGroup' => 'account_group.group2'
+                    ],
+                    [
+                        'category' => 'category_1',
+                        'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+                        'source' => AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'accountGroup' => 'account_group.group3'
+                    ],
+                    [
+                        'category' => 'category_1_2_3',
+                        'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                        'source' => AccountGroupCategoryVisibilityResolved::SOURCE_STATIC,
+                        'accountGroup' => 'account_group.group3'
+                    ],
+                    [
+                        'category' => 'category_1_2_3_4',
+                        'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                        'source' => AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'accountGroup' => 'account_group.group3'
+                    ],
+                    [
+                        'category' => 'category_1_5',
+                        'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+                        'source' => AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'accountGroup' => 'account_group.group3'
+                    ],
+                    [
+                        'category' => 'category_1_5_6',
+                        'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+                        'source' => AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'accountGroup' => 'account_group.group3'
+                    ],
+                    [
+                        'category' => 'category_1_5_6_7',
+                        'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+                        'source' => AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'accountGroup' => 'account_group.group3'
+                    ]
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * @param array $a
+     * @param array $b
+     * @return int
+     */
+    protected function sortByCategoryAndAccountGroup(array $a, array $b)
+    {
+        if ($a['category'] == $b['category']) {
+            return $a['accountGroup'] > $b['accountGroup'] ? 1 : -1;
+        }
+
+        return $a['category'] > $b['category'] ? 1 : -1;
+    }
+
+    /**
+     * @param array $visibilities
+     * @return array
+     */
+    protected function replaceReferencesWithIds(array $visibilities)
+    {
+        $rootCategory = $this->getRootCategory();
+        foreach ($visibilities as $key => $row) {
+            $category = $row['category'];
+            /** @var Category $category */
+            if ($category === self::ROOT) {
+                $category = $rootCategory;
+            } else {
+                $category = $this->getReference($category);
+            }
+
+            $visibilities[$key]['category'] = $category->getId();
+
+            /** @var AccountGroup $category */
+            $accountGroup = $this->getReference($row['accountGroup']);
+            $visibilities[$key]['accountGroup'] = $accountGroup->getId();
+        }
+        return $visibilities;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getResolvedVisibilities()
+    {
+        return $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->createQueryBuilder('entity')
+            ->select(
+                'IDENTITY(entity.category) as category',
+                'IDENTITY(entity.accountGroup) as accountGroup',
+                'entity.visibility',
+                'entity.source'
+            )
+            ->getQuery()
+            ->getArrayResult();
     }
 }

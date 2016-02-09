@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
 
-use Oro\Component\Testing\WebTestCase;
-
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
@@ -15,16 +13,12 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 /**
  * @dbIsolation
  */
-class AccountGroupCategoryRepositoryTest extends WebTestCase
+class AccountGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
 {
-    const ROOT_CATEGORY = 'root';
-
-    protected function setUp()
-    {
-        $this->initClient([], $this->generateBasicAuthHeader());
-
-        $this->loadFixtures(['OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData']);
-    }
+    /**
+     * @var AccountGroupCategoryRepository
+     */
+    protected $repository;
 
     /**
      * @dataProvider getVisibilitiesForAccountGroupsDataProvider
@@ -117,7 +111,7 @@ class AccountGroupCategoryRepositoryTest extends WebTestCase
         /** @var AccountGroup $accountGroup */
         $accountGroup = $this->getReference($accountGroupName);
 
-        $actualVisibility = $this->getRepository()->isCategoryVisible($category, $accountGroup, $configValue);
+        $actualVisibility = $this->repository->isCategoryVisible($category, $accountGroup, $configValue);
 
         $this->assertEquals($expectedVisibility, $actualVisibility);
     }
@@ -179,7 +173,7 @@ class AccountGroupCategoryRepositoryTest extends WebTestCase
         /** @var AccountGroup $accountGroup */
         $accountGroup = $this->getReference($accountGroupName);
 
-        $categoryIds = $this->getRepository()->getCategoryIdsByVisibility($visibility, $accountGroup, $configValue);
+        $categoryIds = $this->repository->getCategoryIdsByVisibility($visibility, $accountGroup, $configValue);
 
         $expectedCategoryIds = [];
         foreach ($expected as $categoryName) {
@@ -268,7 +262,6 @@ class AccountGroupCategoryRepositoryTest extends WebTestCase
         ];
     }
 
-
     /**
      * @param array $expectedVisibilities
      * @dataProvider getParentCategoryVisibilitiesDataProvider
@@ -276,7 +269,7 @@ class AccountGroupCategoryRepositoryTest extends WebTestCase
     public function testGetParentCategoryVisibilities(array $expectedVisibilities)
     {
         $expectedVisibilities = $this->convertReferences($expectedVisibilities);
-        $actualVisibilities = $this->getRepository()->getParentCategoryVisibilities();
+        $actualVisibilities = $this->repository->getParentCategoryVisibilities();
 
         $this->assertSameSize($expectedVisibilities, $actualVisibilities);
         foreach ($actualVisibilities as $actualVisibility) {
@@ -434,6 +427,139 @@ class AccountGroupCategoryRepositoryTest extends WebTestCase
         return $reference ? $this->getReference($reference)->getId() : null;
     }
 
+    public function testClearTable()
+    {
+        $this->assertGreaterThan(0, $this->getEntitiesCount());
+        $this->repository->clearTable();
+        $this->assertEquals(0, $this->getEntitiesCount());
+    }
+
+    public function testInsertStaticValues()
+    {
+        /** @var AccountGroupCategoryVisibility[] $visibilities */
+        $visibilities = $this->getManagerRegistry()
+            ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility')
+            ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility')
+            ->createQueryBuilder('entity')
+            ->andWhere('entity.visibility IN (:scalarVisibilities)')
+            ->setParameter(
+                'scalarVisibilities',
+                [AccountGroupCategoryVisibility::VISIBLE, AccountGroupCategoryVisibility::HIDDEN]
+            )
+            ->getQuery()
+            ->getResult();
+        $this->assertNotEmpty($visibilities);
+
+        /** @var AccountGroupCategoryVisibility[] $indexedVisibilities */
+        $indexedVisibilities = [];
+        foreach ($visibilities as $visibility) {
+            $indexedVisibilities[$visibility->getId()] = $visibility;
+        }
+
+        $this->repository->clearTable();
+        $this->repository->insertStaticValues($this->getInsertExecutor());
+
+        $resolvedVisibilities = $this->getResolvedVisibilities();
+
+        $this->assertSameSize($indexedVisibilities, $resolvedVisibilities);
+        foreach ($resolvedVisibilities as $resolvedVisibility) {
+            $id = $resolvedVisibility['sourceCategoryVisibility'];
+            $this->assertArrayHasKey($id, $indexedVisibilities);
+            $visibility = $indexedVisibilities[$id];
+
+            $this->assertEquals($visibility->getCategory()->getId(), $resolvedVisibility['category']);
+            $this->assertEquals($visibility->getAccountGroup()->getId(), $resolvedVisibility['accountGroup']);
+            $this->assertEquals(AccountGroupCategoryVisibilityResolved::SOURCE_STATIC, $resolvedVisibility['source']);
+            if ($visibility->getVisibility() === AccountGroupCategoryVisibility::VISIBLE) {
+                $this->assertEquals(
+                    AccountGroupCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                    $resolvedVisibility['visibility']
+                );
+            } else {
+                $this->assertEquals(
+                    AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                    $resolvedVisibility['visibility']
+                );
+            }
+        }
+    }
+
+    public function testInsertParentCategoryValues()
+    {
+        /** @var AccountGroup $accountGroup */
+        $accountGroup = $this->getReference('account_group.group3');
+
+        $parentCategoryFallbackCategories = ['category_1_5','category_1_5_6', 'category_1_5_6_7'];
+        $parentCategoryFallbackCategoryIds = [];
+        foreach ($parentCategoryFallbackCategories as $categoryReference) {
+            /** @var Category $category */
+            $category = $this->getReference($categoryReference);
+            $parentCategoryFallbackCategoryIds[] = $category->getId();
+        }
+
+        $parentCategoryVisibilities = $this->getCategoryVisibilities($parentCategoryFallbackCategoryIds);
+
+        /** @var Category $staticCategory */
+        $staticCategory = $this->getReference('category_1_2_3');
+        $staticCategoryId = $staticCategory->getId();
+
+        $staticCategoryVisibilities = $this->getCategoryVisibilities([$staticCategoryId]);
+
+        $visibility = CategoryVisibilityResolved::VISIBILITY_VISIBLE;
+        $this->repository->clearTable();
+        $this->repository->insertParentCategoryValues(
+            $this->getInsertExecutor(),
+            array_merge($parentCategoryVisibilities, $staticCategoryVisibilities),
+            $visibility
+        );
+
+        $resolvedVisibilities = $this->getResolvedVisibilities();
+        $resolvedVisibilities = $this->filterVisibilitiesByAccountGroup($resolvedVisibilities, $accountGroup->getId());
+
+        // static visibilities should not be inserted
+        $this->assertSameSize($parentCategoryFallbackCategoryIds, $resolvedVisibilities);
+        foreach ($resolvedVisibilities as $resolvedVisibility) {
+            $this->assertContains($resolvedVisibility['category'], $parentCategoryFallbackCategoryIds);
+            $this->assertEquals(CategoryVisibilityResolved::SOURCE_PARENT_CATEGORY, $resolvedVisibility['source']);
+            $this->assertEquals($visibility, $resolvedVisibility['visibility']);
+        }
+    }
+
+    /**
+     * @param array $categoryIds
+     * @return array
+     */
+    protected function getCategoryVisibilities(array $categoryIds)
+    {
+        $groupVisibilities = $this->repository->getParentCategoryVisibilities();
+
+        $visibilities = [];
+        foreach ($groupVisibilities as $groupVisibility) {
+            if (in_array($groupVisibility['category_id'], $categoryIds)) {
+                $visibilities[] = $groupVisibility['visibility_id'];
+            }
+        }
+
+        return $visibilities;
+    }
+
+    /**
+     * @param array $visibilities
+     * @param $accountGroupId
+     * @return array
+     */
+    protected function filterVisibilitiesByAccountGroup(array $visibilities, $accountGroupId)
+    {
+        $currentAccountGroupVisibilities = [];
+        foreach ($visibilities as $visibility) {
+            if ($visibility['accountGroup'] == $accountGroupId) {
+                $currentAccountGroupVisibilities[] = $visibility;
+            }
+        }
+
+        return $currentAccountGroupVisibilities;
+    }
+
     /**
      * @return AccountGroupCategoryRepository
      */
@@ -445,12 +571,19 @@ class AccountGroupCategoryRepositoryTest extends WebTestCase
     }
 
     /**
-     * @return Category
+     * @return array
      */
-    protected function getMasterCatalog()
+    protected function getResolvedVisibilities()
     {
-        return $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BCatalogBundle:Category')
-            ->getRepository('OroB2BCatalogBundle:Category')
-            ->getMasterCatalogRoot();
+        return $this->repository->createQueryBuilder('entity')
+            ->select(
+                'IDENTITY(entity.sourceCategoryVisibility) as sourceCategoryVisibility',
+                'IDENTITY(entity.category) as category',
+                'IDENTITY(entity.accountGroup) as accountGroup',
+                'entity.visibility',
+                'entity.source'
+            )
+            ->getQuery()
+            ->getArrayResult();
     }
 }

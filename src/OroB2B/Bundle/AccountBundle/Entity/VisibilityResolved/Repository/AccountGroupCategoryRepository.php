@@ -123,15 +123,22 @@ class AccountGroupCategoryRepository extends EntityRepository
             return;
         }
 
+        $sourceCondition = sprintf(
+            'CASE WHEN c.parentCategory IS NOT NULL THEN %s ELSE %s END',
+            AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+            AccountGroupCategoryVisibilityResolved::SOURCE_STATIC
+        );
+
         $queryBuilder = $this->getEntityManager()->createQueryBuilder()
             ->select(
                 'agcv.id',
                 'IDENTITY(agcv.category)',
                 'IDENTITY(agcv.accountGroup)',
                 (string)$visibility,
-                (string)AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY
+                $sourceCondition
             )
             ->from('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility', 'agcv')
+            ->leftJoin('agcv.category', 'c')
             ->andWhere('agcv.visibility = :parentCategory') // parent category fallback
             ->andWhere('agcv.id IN (:visibilityIds)')       // specific visibility entity IDs
             ->setParameter('parentCategory', AccountGroupCategoryVisibility::PARENT_CATEGORY);

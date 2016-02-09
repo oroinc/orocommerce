@@ -2,10 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product\Category;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\AbstractQuery;
-
-use Oro\Component\Testing\WebTestCase;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
@@ -18,39 +15,21 @@ use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\ProductResolve
 /**
  * @dbIsolation
  */
-class ProductResolvedCacheBuilderTest extends WebTestCase
+class ProductResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuilderTest
 {
-    const ROOT = 'root';
-
-    /**
-     * @var ProductResolvedCacheBuilder
-     */
+    /** @var ProductResolvedCacheBuilder */
     protected $builder;
-
-    /** @var Registry */
-    protected $registry;
 
     /** @var Category */
     protected $category;
 
     protected function setUp()
     {
-        $this->initClient();
+        parent::setUp();
 
-        $this->loadFixtures([
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
-        ]);
-
-        $this->registry = $this->client->getContainer()->get('doctrine');
         $this->category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
         $this->builder = $this->getContainer()
             ->get('orob2b_account.visibility.cache.product.category.product_resolved_cache_builder');
-    }
-
-    public function tearDown()
-    {
-        $this->getContainer()->get('doctrine')->getManager()->clear();
-        parent::tearDown();
     }
 
     public function testChangeCategoryVisibilityToHidden()
@@ -268,16 +247,5 @@ class ProductResolvedCacheBuilderTest extends WebTestCase
             )
             ->getQuery()
             ->getArrayResult();
-    }
-
-    /**
-     * @return Category
-     */
-    protected function getRootCategory()
-    {
-        return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BCatalogBundle:Category')
-            ->getRepository('OroB2BCatalogBundle:Category')
-            ->getMasterCatalogRoot();
     }
 }
