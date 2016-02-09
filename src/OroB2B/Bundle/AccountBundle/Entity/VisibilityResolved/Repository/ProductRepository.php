@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository;
 
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
@@ -19,27 +18,54 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *  - website
  *  - product
  */
-class ProductRepository extends EntityRepository
+class ProductRepository extends AbstractVisibilityRepository
 {
     use BasicOperationRepositoryTrait;
 
     /**
      * @param InsertFromSelectQueryExecutor $executor
-     * @param int $visibility
-     * @param Website $website
-     * @param array $categoryIds
+     * @param Website|null $website
      */
-    public function insertByCategory(
-        InsertFromSelectQueryExecutor $executor,
-        $visibility,
-        array $categoryIds,
-        Website $website = null
-    ) {
-        if (!$categoryIds) {
-            return;
+    public function insertByCategory(InsertFromSelectQueryExecutor $executor, Website $website = null)
+    {
+        $qb = $this->getEntityManager()
+            ->getRepository('OroB2BCatalogBundle:Category')
+            ->createQueryBuilder('category');
+
+        $websiteJoinCondition = '1 = 1';
+        if ($website) {
+            $websiteJoinCondition = 'website = :website';
+            $qb->setParameter('website', $website);
         }
 
-        $qb = $this->getVisibilitiesByCategoryQb($visibility, $categoryIds, $website);
+        $configValue = ProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
+        $qb->select([
+            'website.id',
+            'product.id',
+            'COALESCE(cvr.visibility, ' . $qb->expr()->literal($configValue) . ')',
+            (string)ProductVisibilityResolved::SOURCE_CATEGORY,
+            'category.id',
+        ])
+        ->innerJoin('category.products', 'product')
+        ->innerJoin('OroB2BWebsiteBundle:Website', 'website', Join::WITH, $websiteJoinCondition)
+        ->leftJoin(
+            'OroB2BAccountBundle:Visibility\ProductVisibility',
+            'pv',
+            'WITH',
+            'IDENTITY(pv.product) = product.id AND IDENTITY(pv.website) = website.id'
+        )
+        ->leftJoin(
+            'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+            'cvr',
+            'WITH',
+            'cvr.category = category'
+        )
+        ->where('pv.id is null');
+
+        if ($website) {
+            $qb->andWhere('pv.website = :website')
+                ->setParameter('website', $website);
+        }
 
         $executor->execute(
             $this->getClassName(),
@@ -53,7 +79,7 @@ class ProductRepository extends EntityRepository
      * @param Website|null $website
      * @param Product|null $product
      */
-    public function insertFromBaseTable(
+    public function insertStatic(
         InsertFromSelectQueryExecutor $executor,
         Website $website = null,
         $product = null
@@ -95,25 +121,6 @@ class ProductRepository extends EntityRepository
     }
 
     /**
-     * @param Website $website
-     * @return int
-     */
-    public function clearTable(Website $website = null)
-    {
-        // TRUNCATE can't be used because it can't be rolled back in case of DB error
-        $qb = $this->createQueryBuilder('pvr')
-            ->delete();
-
-        if ($website) {
-            $qb->andWhere('pvr.website = :website')
-                ->setParameter('website', $website);
-        }
-
-        return $qb->getQuery()
-            ->execute();
-    }
-
-    /**
      * @param Product $product
      * @param Website $website
      * @return null|ProductVisibilityResolved
@@ -139,22 +146,18 @@ class ProductRepository extends EntityRepository
     /**
      * @param InsertFromSelectQueryExecutor $executor
      * @param Product $product
+     * @param int $visibility
      * @param Category $category
-     * @param boolean|null $isCategoryVisible
      */
     public function insertByProduct(
         InsertFromSelectQueryExecutor $executor,
         Product $product,
-        Category $category = null,
-        $isCategoryVisible = null
+        $visibility,
+        Category $category = null
     ) {
-        $this->insertFromBaseTable($executor, null, $product);
+        $this->insertStatic($executor, null, $product);
 
         if ($category) {
-            $visibility = $isCategoryVisible
-                ? BaseProductVisibilityResolved::VISIBILITY_VISIBLE
-                : BaseProductVisibilityResolved::VISIBILITY_HIDDEN;
-
             $qb = $this->getVisibilitiesByCategoryQb($visibility, [$category->getId()]);
 
             $qb->andWhere('product = :product')

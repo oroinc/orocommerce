@@ -14,14 +14,18 @@ class VisibilityChangeAccountSubtreeCacheBuilder extends AbstractSubtreeCacheBui
     /**
      * @param Category $category
      * @param Account $account
+     * @param int $categoryVisibility visible|hidden|config
      */
-    public function resolveVisibilitySettings(Category $category, Account $account)
+    public function resolveVisibilitySettings(Category $category, Account $account, $categoryVisibility)
     {
-        $visibility = $this->categoryVisibilityResolver->isCategoryVisibleForAccount($category, $account);
-        $visibility = $this->convertVisibility($visibility);
+        $childCategoryIds = $this->getChildCategoryIdsForUpdate($category, $account);
 
-        $categoryIds = $this->getCategoryIdsForUpdate($category, $account);
-        $this->updateProductVisibilityByCategory($categoryIds, $visibility, $account);
+        $this->registry->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->updateAccountCategoryVisibilityByCategory($account, $childCategoryIds, $categoryVisibility);
+
+        $categoryIds = $this->getCategoryIdsForUpdate($category, $childCategoryIds);
+        $this->updateAccountProductVisibilityByCategory($categoryIds, $categoryVisibility, $account);
     }
 
     /**
@@ -49,7 +53,7 @@ class VisibilityChangeAccountSubtreeCacheBuilder extends AbstractSubtreeCacheBui
      * @param int $visibility
      * @param Account $account
      */
-    protected function updateProductVisibilityByCategory(array $categoryIds, $visibility, Account $account)
+    protected function updateAccountProductVisibilityByCategory(array $categoryIds, $visibility, Account $account)
     {
         if (!$categoryIds) {
             return;
