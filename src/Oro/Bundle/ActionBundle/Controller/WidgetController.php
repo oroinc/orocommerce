@@ -28,8 +28,6 @@ class WidgetController extends Controller
      */
     public function buttonsAction(Request $request)
     {
-        $d = $this->getActionManager()->getActions();
-
         return [
             'actions' => $this->getActionManager()->getActions(),
             'context' => $this->getContextHelper()->getContext(),

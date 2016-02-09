@@ -122,6 +122,11 @@ services:
             - @oro_action.helper.context
             - @oro_action.helper.applications
             - @request_stack
-            - @oro_action.twig.extension.action
+            - @router
         tags:
              - { name: layout.block_type, alias: action_line_buttons }
+
+    oro_action.block_type.action_button:
+        class: Oro\Bundle\ActionBundle\Layout\Block\Type\ActionButtonType
+        tags:
+             - { name: layout.block_type, alias: action_button }
