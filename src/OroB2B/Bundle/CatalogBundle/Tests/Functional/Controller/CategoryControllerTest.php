@@ -250,7 +250,7 @@ class CategoryControllerTest extends WebTestCase
         $largeImage = new UploadedFile($largeImageFile, $largeImageName);
 
         /** @var Form $form */
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Save')->form();
         $form['orob2b_catalog_category[titles][values][default]'] = $title;
         $form['orob2b_catalog_category[shortDescriptions][values][default]'] = $shortDescription;
         $form['orob2b_catalog_category[longDescriptions][values][default]'] = $longDescription;
@@ -305,7 +305,7 @@ class CategoryControllerTest extends WebTestCase
         $newLongDescription
     ) {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_catalog_category_update', ['id' => $id]));
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Save')->form();
         $formValues = $form->getValues();
         $html = $crawler->html();
         //Verified that actual values correspond with the ones that were set during Category creation
@@ -356,7 +356,7 @@ class CategoryControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('Category has been saved', $html);
 
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Save')->form();
         $formValues = $form->getValues();
         //Verified that values correspond with the new ones that has been set after submit
         $this->assertFormDefaultLocalized($formValues, $newTitle, $newShortDescription, $newLongDescription);
@@ -411,7 +411,7 @@ class CategoryControllerTest extends WebTestCase
         $longDescription = self::DEFAULT_CATEGORY_LONG_DESCRIPTION
     ) {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_catalog_category_update', ['id' => $id]));
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Save')->form();
         $formValues = $form->getValues();
 
         $this->assertEquals($title, $formValues['orob2b_catalog_category[titles][values][default]']);
