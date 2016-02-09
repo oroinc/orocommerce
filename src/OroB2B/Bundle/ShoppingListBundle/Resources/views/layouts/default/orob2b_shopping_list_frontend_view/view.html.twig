@@ -45,7 +45,24 @@
 {% block _shopping_list_options_widget %}
     {% set attr = attr|merge({ class: attr.class|default('') ~ " oq__options oq__options_bb" }) %}
     <div{{ block('block_attributes') }}>
-        <a href="#" data-more-info-expand>View Options for this Order</a>
+        <div class="oro-more-info-toggler">
+            <i class="icon-play"></i>
+            {% set notes = shoppingList.notes %}
+            <a href="#" data-more-info-expand tabindex="0">View Options for this Shopping List</a>
+            <div class="oro-more-info-toggler__container" {% if notes is not empty %} data-more-info style="display: block;" {% endif %}>
+                <div class="ml1-md mmt5-md">
+                    <label for="addANote" class="checkbox_custom checkbox_custom_blue mml5-md {% if notes is not empty %} checked {% endif %}" data-checkbox>
+                        <input type="checkbox" name="addANote" id="addANote">
+                        <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
+                        <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
+                        <span class="checkbox_custom__text fs13">Add a Note to This Shopping List</span>
+                    </label>
+                    <div class="form-input">
+                        <textarea placeholder="Enter your note" rows="3" cols="30" name="copy_paste_order" class="input input_sm input_block">{{ notes }}</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
