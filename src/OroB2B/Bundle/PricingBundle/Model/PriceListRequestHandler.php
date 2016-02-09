@@ -19,7 +19,7 @@ use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 class PriceListRequestHandler implements PriceListRequestHandlerInterface
 {
     const TIER_PRICES_KEY = 'showTierPrices';
-    const WEBSITE_KEY = 'website';
+    const WEBSITE_KEY = 'websiteId';
     const PRICE_LIST_CURRENCY_KEY = 'priceCurrencies';
     const SAVE_STATE_KEY = 'saveState';
     const PRICE_LIST_KEY = 'priceListId';

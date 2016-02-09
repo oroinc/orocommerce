@@ -15,6 +15,7 @@ define(function(require) {
         options: {
             $account: null,
             $currency: null,
+            $website: null,
             tierPrices: null,
             tierPricesRoute: '',
             matchedPrices: {},
@@ -36,6 +37,18 @@ define(function(require) {
 
             if (this.options.$account) {
                 this.options.$account.change(_.bind(function() {
+                    this.loadProductsTierPrices(this.getProductsId(), function(response) {
+                        mediator.trigger('pricing:refresh:products-tier-prices', response);
+                    });
+
+                    this.loadLineItemsMatchedPrices(this.getLineItems(), function(response) {
+                        mediator.trigger('pricing:refresh:line-items-matched-prices', response);
+                    });
+                }, this));
+            }
+
+            if (this.options.$website) {
+                this.options.$website.change(_.bind(function() {
                     this.loadProductsTierPrices(this.getProductsId(), function(response) {
                         mediator.trigger('pricing:refresh:products-tier-prices', response);
                     });
@@ -68,6 +81,11 @@ define(function(require) {
                 var account = this._getAccount();
                 if (account.length !== 0) {
                     params = _.extend(params, {account_id: account});
+                }
+
+                var website = this._getWebsite();
+                if (website.length !== 0) {
+                    params = _.extend(params, {websiteId: parseInt(website)});
                 }
 
                 $.get(routing.generate(this.options.tierPricesRoute, params), callback);
@@ -179,6 +197,14 @@ define(function(require) {
          */
         _getAccount: function() {
             return this.options.$account && this.options.$account.length !== 0 ? this.options.$account.val() : '';
+        },
+
+        /**
+         * @returns {String}
+         * @private
+         */
+        _getWebsite: function() {
+            return this.options.$website && this.options.$website.length !== 0 ? this.options.$website.val() : '';
         },
 
         /**

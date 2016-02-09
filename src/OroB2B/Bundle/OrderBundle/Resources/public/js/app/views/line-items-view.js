@@ -53,6 +53,7 @@ define(function(require) {
         handleLayoutInit: function() {
             this.$form = this.$el.closest('form');
             this.$account = this.$form.find(':input[name$="[account]"]');
+            this.$website = this.$form.find(':input[name$="[website]"]');
             this.$currency = this.$form.find(':input[data-ftid="' + this.$form.attr('name') + '_currency"]');
 
             this.$el.find('.add-list-item').mousedown(function(e) {
@@ -65,6 +66,7 @@ define(function(require) {
                 matchedPrices: this.options.matchedPrices,
                 $currency: this.$currency.length ? this.$currency : this.options.currency,
                 $account: this.$account,
+                $website: this.$website,
                 tierPricesRoute: this.options.tierPricesRoute,
                 matchedPricesRoute: this.options.matchedPricesRoute
             }));

@@ -46,9 +46,11 @@ define(function(require) {
 
             this.$form = this.$el.closest('form');
             this.$account = this.$form.find(':input[name$="[account]"]');
+            this.$website = this.$form.find(':input[name$="[website]"]');
 
             this.subview('productsPricesComponent', new ProductsPricesComponent({
                 $account: this.$account,
+                $website: this.$website,
                 tierPrices: this.options.tierPrices,
                 matchedPrices: this.options.matchedPrices,
                 tierPricesRoute: this.options.tierPricesRoute,
