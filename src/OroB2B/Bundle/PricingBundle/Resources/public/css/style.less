@@ -79,10 +79,10 @@
   }
 }
 
-.product-price-filter {
-  .choice-filter {
-    display: inline-block;
-    width: auto;
+.product-price-filter-criteria {
+  margin-bottom: 7px;
+  .btn-group {
+    margin-bottom: 0;
   }
 
   .filter-end {
@@ -91,18 +91,22 @@
     }
   }
 
-  .value-field-frame {
-    margin-right: 0 !important;
-  }
-
-  .product-price-unit-filter {
-    display: inline-block;
-    margin-bottom: 0;
+  .product-price-filter {
+    display: inline;
+    .product-price-unit-filter {
+      float: none !important;
+      .dropdown-toggle {
+        border-radius: 3px !important;
+      }
+    }
   }
 
   .filter-update {
+    left: auto !important;
+    position: relative !important;
     float: right;
-    margin-bottom: 4px;
+    margin: 8px 0;
+    border-radius: 3px !important;
   }
 }
 
