@@ -1,6 +1,4 @@
 orob2b_frontend:
-    filter:
-        by: Filter By
     widget_form_component:
         save_flash_success: Saved successfully
     form:
