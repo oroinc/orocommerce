@@ -1,0 +1,12 @@
+{% block _quick_add_form_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " {{ class_prefix }}"
+    }) %}
+    <div class="{{ class_prefix ? class_prefix ~ "__container" }}">
+        <div class="{{ class_prefix ? class_prefix ~ "__col " ~ class_prefix ~ "__col_two-thirds" }}">
+            <div {{ block('block_attributes') }}>
+                {{ block_widget(block) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

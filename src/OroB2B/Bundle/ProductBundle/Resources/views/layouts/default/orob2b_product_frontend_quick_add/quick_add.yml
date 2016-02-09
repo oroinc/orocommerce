@@ -1,9 +1,15 @@
 layout:
     actions:
+        - @setBlockTheme:
+            themes: 'OroB2BProductBundle:layouts:default/orob2b_product_frontend_quick_add/quick_add.html.twig'
         - @setOption:
             id: page_title
             optionName: text
             optionValue: 'orob2b.product.frontend.quick_add.title'
+        - @setOption:
+            id: quick_add_form_fields_products
+            optionName: label
+            optionValue: false
         - @addTree:
             items:
                 quick_add_form:
