@@ -33,6 +33,8 @@ class OroB2BAccountBundle implements Migration
         $this->addOroB2BAccountGroupCategoryVisibilityResolvedForeignKeys($schema);
         $this->addOroB2BAccountCategoryVisibilityResolvedForeignKeys($schema);
         $this->addOrob2BWindowsStateForeignKeys($schema);
+
+        $this->clearUnusedProcessDefinitions($queries);
     }
 
     /**
@@ -191,5 +193,22 @@ class OroB2BAccountBundle implements Migration
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
+    }
+
+    /**
+     * @param QueryBag $queries
+     */
+    protected function clearUnusedProcessDefinitions(QueryBag $queries)
+    {
+        $removedProcessDefinitions = [
+            'category_position_cache_clear',
+            'account_group_changed_cache_clear',
+            'category_visibility_cache_clear',
+            'account_group_category_visibility_cache_clear',
+            'account_category_visibility_cache_clear'
+        ];
+        foreach ($removedProcessDefinitions as $definition) {
+            $queries->addQuery(sprintf("DELETE FROM oro_process_definition WHERE name='%s'", $definition));
+        }
     }
 }

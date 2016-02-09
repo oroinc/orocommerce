@@ -111,59 +111,6 @@ class CategoryRepositoryTest extends AbstractCategoryRepositoryTest
         ];
     }
 
-    public function testGetCategoriesWithResolvedVisibilities()
-    {
-        $expectedVisibilities = [
-            [
-                'category_id' => self::ROOT_CATEGORY,
-                'parent_category_id' => null,
-                'resolved_visibility' => CategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
-            ],
-            [
-                'category_id' => 'category_1',
-                'parent_category_id' => self::ROOT_CATEGORY,
-                'resolved_visibility' => CategoryVisibilityResolved::VISIBILITY_VISIBLE,
-            ],
-            [
-                'category_id' => 'category_1_2',
-                'parent_category_id' => 'category_1',
-                'resolved_visibility' => CategoryVisibilityResolved::VISIBILITY_VISIBLE,
-            ],
-            [
-                'category_id' => 'category_1_2_3',
-                'parent_category_id' => 'category_1_2',
-                'resolved_visibility' => CategoryVisibilityResolved::VISIBILITY_VISIBLE,
-            ],
-            [
-                'category_id' => 'category_1_2_3_4',
-                'parent_category_id' => 'category_1_2_3',
-                'resolved_visibility' => CategoryVisibilityResolved::VISIBILITY_VISIBLE,
-            ],
-            [
-                'category_id' => 'category_1_5',
-                'parent_category_id' => 'category_1',
-                'resolved_visibility' => CategoryVisibilityResolved::VISIBILITY_VISIBLE,
-            ],
-            [
-                'category_id' => 'category_1_5_6',
-                'parent_category_id' => 'category_1_5',
-                'resolved_visibility' => CategoryVisibilityResolved::VISIBILITY_HIDDEN,
-            ],
-            [
-                'category_id' => 'category_1_5_6_7',
-                'parent_category_id' => 'category_1_5_6',
-                'resolved_visibility' => CategoryVisibilityResolved::VISIBILITY_HIDDEN,
-            ],
-        ];
-        $expectedVisibilities = $this->replaceReferencesWithIds($expectedVisibilities);
-        usort($expectedVisibilities, [$this, 'sortByCategoryId']);
-
-        $actualVisibilities = $this->repository->getCategoriesWithResolvedVisibilities();
-        usort($actualVisibilities, [$this, 'sortByCategoryId']);
-
-        $this->assertEquals($expectedVisibilities, $actualVisibilities);
-    }
-
     public function testClearTable()
     {
         $this->assertGreaterThan(0, $this->getEntitiesCount());
