@@ -1,0 +1,109 @@
+method: getTax
+reference: simple_order
+configuration:
+    use_as_base_by_default: destination
+    destination: shipping_address
+    start_calculation_on: total
+    start_calculation_with: row_total
+    product_prices_include_tax: true
+databaseBefore:
+    'OroB2B\Bundle\OrderBundle\Entity\Order':
+        simple_order:
+            poNumber: { property_value: simple_order }
+            account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+            shippingAddress:
+                class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
+                property_value:
+                    country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                    region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-CA' } }
+    'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
+        order_line_item_1:
+            productSku: { property_value: order_line_item_1 }
+            order: { reference: simple_order }
+            quantity: { property_value: 41 }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '3.42', currency: USD } }
+        order_line_item_2:
+            productSku: { property_value: order_line_item_2 }
+            order: { reference: simple_order }
+            quantity: { property_value: 15 }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '8.55', currency: USD } }
+        order_line_item_3:
+            productSku: { property_value: order_line_item_3 }
+            order: { reference: simple_order }
+            quantity: { property_value: 13 }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '18.05', currency: USD } }
+        order_line_item_4:
+            productSku: { property_value: order_line_item_4 }
+            order: { reference: simple_order }
+            quantity: { property_value: 35 }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '24.80', currency: USD } }
+    'OroB2B\Bundle\TaxBundle\Entity\TaxRule':
+        tax_rule:
+            tax: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX3' } }
+            taxJurisdiction: { class: 'OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction', query: { code: 'TAX3' } }
+expectedResult:
+    total:
+        includingTax: '1371.12'
+        excludingTax: '1166.91'
+        taxAmount: '204.21'
+        adjustment: '0.1058'
+    taxes:
+        - { tax: 'TAX1', rate: '0.1', taxable_amount: '1166.91', tax_amount: '116.69' }
+        - { tax: 'TAX3', rate: '0.075', taxable_amount: '1166.91', tax_amount: '87.52' }
+    items:
+        -
+            row:
+                includingTax: '140.22'
+                excludingTax: '119.34'
+                taxAmount: '20.88'
+                adjustment: '-0.0615'
+            unit:
+                includingTax: '3.42'
+                excludingTax: '2.91'
+                taxAmount: '0.51'
+                adjustment: '-0.0006'
+            taxes:
+                - { tax: 'TAX1', rate: '0.1', taxable_amount: '119.34', tax_amount: '11.93' }
+                - { tax: 'TAX3', rate: '0.075', taxable_amount: '119.34', tax_amount: '8.95' }
+        -
+            row:
+                includingTax: '128.25'
+                excludingTax: '109.15'
+                taxAmount: '19.1'
+                adjustment: '0.051'
+            unit:
+                includingTax: '8.55'
+                excludingTax: '7.28'
+                taxAmount: '1.27'
+                adjustment: '0.0034'
+            taxes:
+                - { tax: 'TAX1', rate: '0.1', taxable_amount: '109.15', tax_amount: '10.92' }
+                - { tax: 'TAX3', rate: '0.075', taxable_amount: '109.15', tax_amount: '8.19' }
+        -
+            row:
+                includingTax: '234.65'
+                excludingTax: '199.7'
+                taxAmount: '34.95'
+                adjustment: '-0.0221'
+            unit:
+                includingTax: '18.05'
+                excludingTax: '15.36'
+                taxAmount: '2.69'
+                adjustment: '-0.0017'
+            taxes:
+                - { tax: 'TAX1', rate: '0.1', taxable_amount: '199.7', tax_amount: '19.97' }
+                - { tax: 'TAX3', rate: '0.075', taxable_amount: '199.7', tax_amount: '14.98' }
+        -
+            row:
+                includingTax: '868'
+                excludingTax: '738.72'
+                taxAmount: '129.28'
+                adjustment: '0.1015'
+            unit:
+                includingTax: '24.8'
+                excludingTax: '21.1'
+                taxAmount: '3.69'
+                adjustment: '0.0029'
+            taxes:
+                - { tax: 'TAX1', rate: '0.1', taxable_amount: '738.72', tax_amount: '73.87' }
+                - { tax: 'TAX3', rate: '0.075', taxable_amount: '738.72', tax_amount: '55.40' }

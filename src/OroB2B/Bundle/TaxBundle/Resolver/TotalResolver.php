@@ -58,9 +58,47 @@ class TotalResolver implements ResolverInterface
             $taxResults = $mergedTaxResults;
         }
 
+        if ($this->settingsProvider->isStartCalculationOnTotal()) {
+            try {
+                $adjustedAmounts = $this->adjustAmounts($data);
+            } catch (NumberFormatException $e) {
+                return;
+            }
+            $data = $adjustedAmounts;
+        }
+
         $result = $taxable->getResult();
         $result->offsetSet(Result::TOTAL, $data);
         $result->offsetSet(Result::TAXES, array_values($taxResults));
+    }
+
+    /**
+     * @param ResultElement $data
+     * @return ResultElement
+     */
+    protected function adjustAmounts(ResultElement $data)
+    {
+        $currentData = new ResultElement($data->getArrayCopy());
+        if (!array_key_exists(ResultElement::ADJUSTMENT, $data)) {
+            return $currentData;
+        }
+        $adjustment = BigDecimal::of($currentData[ResultElement::ADJUSTMENT]);
+        $keysToAdjust = [ResultElement::TAX_AMOUNT => $adjustment];
+
+        if ($this->settingsProvider->isProductPricesIncludeTax()) {
+            $keysToAdjust[ResultElement::EXCLUDING_TAX] = $adjustment->negated();
+        } else {
+            $keysToAdjust[ResultElement::INCLUDING_TAX] = $adjustment;
+        }
+
+        foreach ($keysToAdjust as $key => $adjustment) {
+            if (array_key_exists($key, $currentData)) {
+                $amount = BigDecimal::of($currentData[$key]);
+                $amount->plus($adjustment);
+                $currentData[$key] = (string)$amount;
+            }
+        }
+        return $currentData;
     }
 
     /**

@@ -83,19 +83,27 @@ class CustomerAddressItemResolver extends AbstractAddressResolver
         $taxResults = [];
 
         foreach ($taxRules as $taxRule) {
-            $currentTaxRate = BigDecimal::of($taxRule->getTax()->getRate());
-            $taxRate = $taxRate->plus($currentTaxRate);
-
-            $resultElement = $this->getRowTotalResult($taxableAmount, $currentTaxRate, $quantity);
-            $taxResults[] = TaxResultElement::create(
-                (string)$taxRule->getTax(),
-                $currentTaxRate,
-                $resultElement->getExcludingTax(),
-                $resultElement->getTaxAmount()
-            );
+            $taxRate = $taxRate->plus($taxRule->getTax()->getRate());
         }
 
         $resultElementStartWith = $this->getRowTotalResult($taxableAmount, $taxRate, $quantity);
+
+        foreach ($taxRules as $taxRule) {
+            $currentTaxRate = BigDecimal::of($taxRule->getTax()->getRate());
+            $taxResults[] = TaxResultElement::create(
+                $taxRule->getTax(),
+                $currentTaxRate,
+                $resultElementStartWith->getExcludingTax(),
+                BigDecimal::of($resultElementStartWith->getTaxAmount())
+                    ->multipliedBy(
+                        $currentTaxRate->dividedBy(
+                            $taxRate,
+                            TaxationSettingsProvider::CALCULATION_SCALE,
+                            RoundingMode::HALF_UP
+                        )
+                    )
+            );
+        }
 
         $result->offsetSet(Result::ROW, $resultElementStartWith);
         $result->offsetSet(Result::TAXES, $taxResults);
