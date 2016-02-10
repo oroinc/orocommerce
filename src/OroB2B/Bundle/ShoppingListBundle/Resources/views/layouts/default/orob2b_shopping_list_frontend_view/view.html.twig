@@ -67,22 +67,23 @@
             <a href="#" data-more-info-expand tabindex="0">{{ 'orob2b.frontend.shoppinglist.view.view_options.label'|trans }}</a>
             <div class="oro-more-info-toggler__container"
                 data-more-info {% if notes is not empty %}style="display: block;" {% endif %}>
+
                 <div class="ml1-md mmt5-md">
                     <label for="addANote" class="checkbox_custom checkbox_custom_blue mml5-md
                             {% if notes is not empty %} checked {% endif %}" data-checkbox>
-                        <input type="checkbox" name="addANote" id="addANote">
+                        <input type="checkbox" name="addANote" id="addANote" data-role="start-editing">
                         <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
                         <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
                         <span class="checkbox_custom__text fs13">{{ 'orob2b.frontend.shoppinglist.view.add_note.label'|trans }}</span>
                     </label>
-                    <div class="form-input">
+                    <div class="form-input" data-role="editor">
                         <textarea placeholder="{{ 'orob2b.frontend.shoppinglist.view.note.placeholder'|trans }}"
                                   rows="3" cols="30" name="copy_paste_order"
                                   class="input input_sm input_block">{{ notes }}</textarea>
                     </div>
-
-                    {{ block_widget(block) }}
                 </div>
+
+                {{ block_widget(block) }}
             </div>
         </div>
     </div>
