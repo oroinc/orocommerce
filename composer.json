@@ -16,7 +16,8 @@
         }
     ],
     "require": {
-        "oro/platform": "self.version"
+        "oro/platform": "self.version",
+        "box/spout": "2.3.*"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
