@@ -18,19 +18,16 @@
 {% block _shopping_list_title_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
 
-    {# resource_granted('orob2b_shopping_list_frontend_update'), #}
     <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
         module: 'oroform/js/app/components/inline-editable-view-component',
         options: {
             frontend_type: 'title',
             value: shoppingList.label,
             fieldName: 'label',
-            overlay: {
-                enable: false
-            },
+            insertEditorMethod: 'after',
             metadata: {
                 inline_editing: {
-                    enable: true,
+                    enable: resource_granted('orob2b_shopping_list_frontend_update'),
                     save_api_accessor: {
                         route: 'orob2b_api_frontend_patch_entity_data',
                         http_method: 'PATCH',
