@@ -11,24 +11,15 @@
     ],
     "repositories": [
         {
-            "type": "vcs",
-            "url": "https://github.com/orocrm/platform.git"
-        },
-        {
             "type": "composer",
             "url": "http://packagist.orocrm.com"
         }
     ],
     "require": {
-        "oro/platform": "1.x-dev"
+        "oro/platform": "self.version"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
-    "extra": {
-        "branch-alias": {
-            "dev-master": "0.x-dev"
-        }
-    },
     "autoload": {
         "psr-0": {
             "Oro\\Component": "src/",
