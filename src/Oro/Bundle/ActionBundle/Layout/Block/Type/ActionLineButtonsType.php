@@ -80,10 +80,7 @@ class ActionLineButtonsType extends AbstractContainerType
         /** @var Action[] $actions */
         $actions = $options['actions'];
         $options['context']['entity'] = $options['entity'];
-        $options['context'] = array_merge(
-            $this->actionExtension->getWidgetParameters($options['context']),
-            $options['context']
-        );
+        $options['context'] = $this->actionExtension->getWidgetParameters($options['context']);
         if (array_key_exists('group', $options)) {
             $groups = $options['group'] === null ? null : (array)$options['group'];
             $actions = $this->restrictActions($actions, $groups);
@@ -169,18 +166,5 @@ class ActionLineButtonsType extends AbstractContainerType
         );
         $resolver->setOptional(['group']);
         $resolver->setRequired(['entity']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function buildView(BlockView $view, BlockInterface $block, array $options)
-    {
-        $view->vars['actions'] = $options['actions'];
-        $view->vars['context'] = $options['context'];
-        $view->vars['actionData'] = $options['actionData'];
-        $view->vars['dialogRoute'] = $options['dialogRoute'];
-        $view->vars['executionRoute'] = $options['executionRoute'];
-        $view->vars['fromUrl'] = $options['fromUrl'];
     }
 }
