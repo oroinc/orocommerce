@@ -143,7 +143,7 @@ abstract class QuickAddControllerTest extends WebTestCase
         $correctCSV = $dir . 'quick-order.csv';
         $correctXLSX = $dir . 'quick-order.xlsx';
         $correctODS = $dir . 'quick-order.ods';
-        $invalidEXE = $dir . 'quick-order.exe';
+        $invalidDOC = $dir . 'quick-order.doc';
         $emptyCSV = $dir . 'quick-order-empty.csv';
 
         $expectedValidationResult = [
@@ -175,8 +175,8 @@ abstract class QuickAddControllerTest extends WebTestCase
                 'expectedValidationResult' => null,
                 'formErrorMessage' => 'An empty file is not allowed.'
             ],
-            'invalid EXE' => [
-                'file' => $invalidEXE,
+            'invalid DOC' => [
+                'file' => $invalidDOC,
                 'expectedValidationResult' => null,
                 'formErrorMessage' => 'This file type is not allowed'
             ],

@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
@@ -59,8 +59,8 @@ class QuickAddImportFromFileTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
-        $invalidFile = new File(__DIR__ . '/files/ff.jpg', 'ff.jpg');
-        $validFile = new File(__DIR__ . '/files/quick-order.csv', 'quick-order.csv');
+        $invalidFile = $this->createUploadedFile('quick-order.doc');
+        $validFile = $this->createUploadedFile('quick-order.csv');
 
         return [
             'null' => [
@@ -96,5 +96,14 @@ class QuickAddImportFromFileTypeTest extends FormIntegrationTestCase
     protected function tearDown()
     {
         unset($this->formType);
+    }
+
+    /**
+     * @param string $fileName
+     * @return UploadedFile
+     */
+    private function createUploadedFile($fileName)
+    {
+        return new UploadedFile(__DIR__ . '/files/' . $fileName, $fileName, null, null, null, true);
     }
 }
