@@ -95,13 +95,8 @@ class CustomerAddressItemResolver extends AbstractAddressResolver
                 $currentTaxRate,
                 $resultElementStartWith->getExcludingTax(),
                 BigDecimal::of($resultElementStartWith->getTaxAmount())
-                    ->multipliedBy(
-                        $currentTaxRate->dividedBy(
-                            $taxRate,
-                            TaxationSettingsProvider::CALCULATION_SCALE,
-                            RoundingMode::HALF_UP
-                        )
-                    )
+                    ->multipliedBy($currentTaxRate->toScale(TaxationSettingsProvider::CALCULATION_SCALE))
+                    ->dividedBy($taxRate->toScale(TaxationSettingsProvider::CALCULATION_SCALE), TaxationSettingsProvider::CALCULATION_SCALE, RoundingMode::HALF_UP)
             );
         }
 
