@@ -100,24 +100,27 @@
                     <div class="green3">{{ lineItem.product.InventoryStatus }}</div>
                 </td>
                 <td class="va-t_md">
-                    <div class="product__qty-input product__qty-input_inline product__qty-input_more-info">
+                    <div class="product__qty-input product__qty-input_inline product__qty-input_more-info va-m_md">
                         <div class="product__qty-input__count-option">
                             <button class="count-minus" data-count-minus>-</button>
                             <input type="number" value="{{ lineItem.quantity }}" name="product_qty" placeholder="QTY #" class="input input_sm input_block text-center" data-count-input />
                             <button class="count-plus" data-count-plus>+</button>
                         </div>
                     </div>
+                    <div class="product__select inline va-m_md">
+                        {% for unit in productsUnits[lineItem.product.id] %}
+                        <select data-chosen-selectbox class="input input_block input_sm">
+                            <option value="{{ unit }}">{{ unit|orob2b_format_product_unit_label}}</option>
+                        </select>
+                        {% endfor %}
+                    </div>
                 </td>
                 <td class="va-t_md">
                     <table class="table borderless paddingless mb0-md">
                         <tbody>
                         <tr>
-                            <td>Price per item:</td>
-                            <td class="text-right">$13.39</td>
-                        </tr>
-                        <tr>
                             <td>Your Price:</td>
-                            <td class="text-right"><span class="fs16 blue">$66.95</span></td>
+                            <td class="text-right">{{ productsPrices[lineItem.product.id].value|oro_format_currency({'currency': productsPrices[lineItem.product.id].currency}) }}</td>
                         </tr>
                         </tbody>
                     </table>

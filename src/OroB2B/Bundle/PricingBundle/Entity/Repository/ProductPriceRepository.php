@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -241,5 +242,39 @@ class ProductPriceRepository extends EntityRepository
         }
 
         return $qb;
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param Collection $products
+     * @param string $currency
+     *
+     * @return ProductUnit[]
+     */
+    public function getProductsUnitsByPriceList(PriceList $priceList, Collection $products, $currency = null)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('IDENTITY(price.product) AS productId, GROUP_CONCAT(DISTINCT unit.code) AS codes')
+            ->from('OroB2BProductBundle:ProductUnit', 'unit')
+            ->join($this->_entityName, 'price', Join::WITH, 'price.unit = unit')
+            ->where($qb->expr()->in('price.product', ':products'))
+            ->andWhere($qb->expr()->eq('price.priceList', ':priceList'))
+            ->andWhere($qb->expr()->eq('price.currency', ':currency'))
+            ->addOrderBy('unit.code')
+            ->groupBy('price.product')
+            ->setParameters([
+                'products' => $products,
+                'priceList' => $priceList,
+                'currency' => $currency,
+            ]);
+
+        $productsUnits = $qb->getQuery()->getResult();
+
+        $result = [];
+        foreach ($productsUnits as $unit) {
+            $result[$unit['productId']] = explode(',', $unit['codes']);
+        }
+
+        return $result;
     }
 }

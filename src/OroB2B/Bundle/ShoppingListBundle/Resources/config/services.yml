@@ -10,6 +10,8 @@ parameters:
     orob2b_shopping_list.service.message_generator.class: OroB2B\Bundle\ShoppingListBundle\Generator\MessageGenerator
     orob2b_shopping_list.service.product_data_storage.class: OroB2B\Bundle\ShoppingListBundle\Storage\ProductDataStorage
     orob2b_shopping_list.provider.account_user_shopping_lists.class: OroB2B\Bundle\ShoppingListBundle\Provider\AccountUserShoppingListsProvider
+    orob2b_shopping_list.provider.frontend_shopping_list_products_prices.class: OroB2B\Bundle\ShoppingListBundle\Provider\FrontendShoppingListProductsPricesDataProvider
+    orob2b_shopping_list.provider.frontend_shopping_list_products_units.class: OroB2B\Bundle\ShoppingListBundle\Provider\FrontendShoppingListProductsUnitsDataProvider
     orob2b_shopping_list.provider.frontend_line_item_form.class: OroB2B\Bundle\ShoppingListBundle\Provider\FrontendLineItemFormProvider
     orob2b_shopping_list.provider.shopping_list_form.class: OroB2B\Bundle\ShoppingListBundle\Provider\ShoppingListFormProvider
     orob2b_shopping_list.action.datagrid.mass_action_provider.class: OroB2B\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction\AddLineItemMassActionProvider
@@ -114,6 +116,22 @@ services:
             - [setShoppingListClass, [%orob2b_shopping_list.entity.shopping_list.class%]]
         tags:
             - { name: layout.data_provider, alias: orob2b_shopping_list_account_user_shopping_lists }
+
+    orob2b_shopping_list.provider.frontend_shopping_list_products_prices:
+        class: %orob2b_shopping_list.provider.frontend_shopping_list_products_prices.class%
+        arguments:
+            - @orob2b_pricing.provider.product_price
+            - @oro_security.security_facade
+        tags:
+            - { name: layout.data_provider, alias: orob2b_shopping_list_products_prices }
+
+    orob2b_shopping_list.provider.frontend_shopping_list_products_units:
+        class: %orob2b_shopping_list.provider.frontend_shopping_list_products_units.class%
+        arguments:
+            - @doctrine
+            - @orob2b_pricing.model.frontend.price_list_request_handler
+        tags:
+            - { name: layout.data_provider, alias: orob2b_shopping_list_products_units }
 
     orob2b_shopping_list.action.datagrid.mass_action_provider:
         class: %orob2b_shopping_list.action.datagrid.mass_action_provider.class%
