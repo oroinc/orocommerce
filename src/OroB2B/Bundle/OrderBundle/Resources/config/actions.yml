@@ -4,6 +4,8 @@ actions:
         applications: [frontend]
         routes:
             - orob2b_product_frontend_quick_add
+            - orob2b_product_frontend_quick_add_copy_paste
+            - orob2b_product_frontend_quick_add_import
         acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\OrderBundle\Entity\Order]
         order: 20
         button_options:

@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\SaleBundle\Model;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
