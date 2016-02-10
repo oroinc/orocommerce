@@ -81,9 +81,9 @@ class ActionLineButtonsType extends AbstractContainerType
         $actions = $options['actions'];
         $options['context']['entity'] = $options['entity'];
         $options['context'] = $this->actionExtension->getWidgetParameters($options['context']);
+
         if (array_key_exists('group', $options)) {
-            $groups = $options['group'] === null ? null : (array)$options['group'];
-            $actions = $this->restrictActions($actions, $groups);
+            $actions = $this->restrictActions($actions, $options['group']);
         }
 
         foreach ($actions as $actionName => $action) {
@@ -127,11 +127,12 @@ class ActionLineButtonsType extends AbstractContainerType
 
     /**
      * @param Action[] $actions
-     * @param array|null $groups
+     * @param array|null|string $groups
      * @return Action[]
      */
     protected function restrictActions($actions, $groups)
     {
+        $groups = $groups === null ? null : (array)$groups;
         $restrictedActions = [];
         foreach ($actions as $key => $action) {
             $buttonOptions = $action->getDefinition()->getButtonOptions();
@@ -164,7 +165,17 @@ class ActionLineButtonsType extends AbstractContainerType
                 'fromUrl' => $this->requestStack->getCurrentRequest()->get('fromUrl')
             ]
         );
-        $resolver->setOptional(['group']);
+        $resolver->setOptional(['group', 'ul_class']);
         $resolver->setRequired(['entity']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildView(BlockView $view, BlockInterface $block, array $options)
+    {
+        if (array_key_exists('ul_class', $options)) {
+            $view->vars['ul_class'] = $options['ul_class'];
+        }
     }
 }

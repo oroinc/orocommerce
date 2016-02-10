@@ -18,6 +18,7 @@ layout:
                         group: null
                         entity:
                             @value: $data.shoppingList
+                        ul_class: cart__order__controls-list
                 shopping_list_options:
                     blockType: block
                 shopping_list_line_items:
