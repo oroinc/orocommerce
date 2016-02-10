@@ -90,7 +90,7 @@ class ActionLineButtonsType extends AbstractContainerType
             $definition = $action->getDefinition();
             $path = $this->router->generate(
                 $options['executionRoute'] ?: 'oro_api_action_execute_actions',
-                array_merge($options['context'], ['actionName' => $action->getName()])
+                array_merge($options['context'], ['actionName' => $actionName])
             );
             $actionUrl = null;
             if ($action->hasForm()) {
@@ -98,7 +98,7 @@ class ActionLineButtonsType extends AbstractContainerType
                     $options['dialogRoute'] ?: 'oro_action_widget_form',
                     array_merge(
                         $options['context'],
-                        ['actionName' => $action->getName(), 'fromUrl' => $options['fromUrl']]
+                        ['actionName' => $actionName, 'fromUrl' => $options['fromUrl']]
                     )
                 );
             }
@@ -139,7 +139,7 @@ class ActionLineButtonsType extends AbstractContainerType
                 'actionData' => $this->contextHelper->getActionData(),
                 'dialogRoute' => $this->applicationsHelper->getDialogRoute(),
                 'executionRoute' => $this->applicationsHelper->getExecutionRoute(),
-                'fromUrl' => $this->requestStack->getCurrentRequest()->get('fromUrl')
+                'fromUrl' => $request->get('fromUrl')
             ]
         );
         $resolver->setOptional(['group', 'ul_class']);
