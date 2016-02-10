@@ -10,7 +10,6 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Oro\Component\PhpUtils\ArrayUtil;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
@@ -57,18 +56,21 @@ class QuickAddProcessor implements ComponentProcessorInterface
             return;
         }
 
+        $shoppingListId = null;
+        if (!empty($data[ProductDataStorage::ADDITIONAL_DATA_KEY])) {
+            $shoppingListId = (int) $data[ProductDataStorage::ADDITIONAL_DATA_KEY] ? : null;
+        }
+
         $data = $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY];
 
-        $shoppingListId = (int)$request->get(
-            sprintf('%s[%s]', QuickAddType::NAME, QuickAddType::ADDITIONAL_FIELD_NAME),
-            null,
-            true
-        );
         $shoppingList = $this->shoppingListLineItemHandler->getShoppingList($shoppingListId);
 
-        $productSkus = ArrayUtil::arrayColumn($data, 'productSku');
+        $productSkus = ArrayUtil::arrayColumn($data, ProductDataStorage::PRODUCT_SKU_KEY);
         $productIds = $this->getProductRepository()->getProductsIdsBySku($productSkus);
-        $productSkuQuantities = array_combine($productSkus, ArrayUtil::arrayColumn($data, 'productQuantity'));
+        $productSkuQuantities = array_combine(
+            $productSkus,
+            ArrayUtil::arrayColumn($data, ProductDataStorage::PRODUCT_QUANTITY_KEY)
+        );
         $productIdsQuantities = array_combine($productIds, $productSkuQuantities);
 
         /** @var Session $session */
@@ -82,7 +84,10 @@ class QuickAddProcessor implements ComponentProcessorInterface
                 $productIdsQuantities
             );
 
-            $flashBag->add('success', $this->messageGenerator->getSuccessMessage($shoppingListId, $entitiesCount));
+            $flashBag->add(
+                'success',
+                $this->messageGenerator->getSuccessMessage($shoppingList->getId(), $entitiesCount)
+            );
         } catch (AccessDeniedException $e) {
             $flashBag->add('error', $this->messageGenerator->getFailedMessage());
         }
