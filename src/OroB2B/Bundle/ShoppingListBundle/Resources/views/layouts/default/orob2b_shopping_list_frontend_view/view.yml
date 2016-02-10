@@ -13,10 +13,12 @@ layout:
                             shoppingList:
                                 @value: $data.shoppingList
                 shopping_list_top_actions:
-                    blockType: block #action_line_buttons
-#                    options:
-#                      group: null
-                shopping_list_order_options:
+                    blockType: action_line_buttons
+                    options:
+                        group: null
+                        entity:
+                            @value: $data.shoppingList
+                shopping_list_options:
                     blockType: block
                 shopping_list_line_items:
                     blockType: block

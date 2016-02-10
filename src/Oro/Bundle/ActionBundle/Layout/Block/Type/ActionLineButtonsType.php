@@ -45,19 +45,22 @@ class ActionLineButtonsType extends AbstractContainerType
      * @param ActionApplicationsHelper $applicationsHelper
      * @param RequestStack $requestStack
      * @param UrlGeneratorInterface $router
+     * @param ActionExtension $actionExtension
      */
     public function __construct(
         ActionManager $actionManager,
         ContextHelper $contextHelper,
         ActionApplicationsHelper $applicationsHelper,
         RequestStack $requestStack,
-        UrlGeneratorInterface $router
+        UrlGeneratorInterface $router,
+        ActionExtension $actionExtension
     ) {
         $this->actionManager = $actionManager;
         $this->contextHelper = $contextHelper;
         $this->applicationsHelper = $applicationsHelper;
         $this->requestStack = $requestStack;
         $this->router = $router;
+        $this->actionExtension = $actionExtension;
     }
 
     /**
@@ -76,7 +79,11 @@ class ActionLineButtonsType extends AbstractContainerType
     {
         /** @var Action[] $actions */
         $actions = $options['actions'];
-
+        $options['context']['entity'] = $options['entity'];
+        $options['context'] = array_merge(
+            $this->actionExtension->getWidgetParameters($options['context']),
+            $options['context']
+        );
         if (array_key_exists('group', $options)) {
             $groups = $options['group'] === null ? null : (array)$options['group'];
             $actions = $this->restrictActions($actions, $groups);
@@ -161,6 +168,7 @@ class ActionLineButtonsType extends AbstractContainerType
             ]
         );
         $resolver->setOptional(['group']);
+        $resolver->setRequired(['entity']);
     }
 
     /**
@@ -168,11 +176,11 @@ class ActionLineButtonsType extends AbstractContainerType
      */
     public function buildView(BlockView $view, BlockInterface $block, array $options)
     {
-//        $view->vars['actions'] = $options['actions'];
-//        $view->vars['context'] = $options['context'];
-//        $view->vars['actionData'] = $options['actionData'];
-//        $view->vars['dialogRoute'] = $options['dialogRoute'];
-//        $view->vars['executionRoute'] = $options['executionRoute'];
-//        $view->vars['fromUrl'] = $options['fromUrl'];
+        $view->vars['actions'] = $options['actions'];
+        $view->vars['context'] = $options['context'];
+        $view->vars['actionData'] = $options['actionData'];
+        $view->vars['dialogRoute'] = $options['dialogRoute'];
+        $view->vars['executionRoute'] = $options['executionRoute'];
+        $view->vars['fromUrl'] = $options['fromUrl'];
     }
 }

@@ -3,10 +3,10 @@
     <div{{ block('block_attributes') }}>
         <div class="widget-content">
             <div data-page-component-module="oroaction/js/app/components/buttons-component">
-                Buttons
+                {{ block_widget(block) }}
             </div>
         </div>
-        {{ block_widget(block) }}
+
     </div>
 {% endblock %}
 

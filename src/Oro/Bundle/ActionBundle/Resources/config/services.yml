@@ -123,6 +123,7 @@ services:
             - @oro_action.helper.applications
             - @request_stack
             - @router
+            - @oro_action.twig.extension.action
         tags:
              - { name: layout.block_type, alias: action_line_buttons }
 
