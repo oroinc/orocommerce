@@ -41,3 +41,8 @@ layout:
             id: require_js_config
             parentId: require_js
             blockType: block
+        - @replaceOption:
+            id: head
+            optionName: title
+            oldOptionValue: OroPlatform
+            newOptionValue: OroCommerce
