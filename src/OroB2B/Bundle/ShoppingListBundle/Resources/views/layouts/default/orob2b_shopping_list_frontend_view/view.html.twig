@@ -1,14 +1,12 @@
 {% block _shopping_list_list_of_shopping_lists_widget %}
-    {% set attr = attr|merge({
-    class: attr.class|default('') ~ " orders-sidebar mt3-md"
-    }) %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " orders-sidebar mt3-md" }) %}
     <div{{ block('block_attributes') }}>
         SHOPPING LISTS
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
-{% block _shopping_list_shopping_list_widget %}
+{% block _shopping_list_view_container_widget %}
     {% set attr = attr|merge({
     class: attr.class|default('') ~ " container-fluid"
     }) %}
@@ -17,21 +15,27 @@
     </div>
 {% endblock %}
 
-{% block _shopping_list_shopping_list_title_widget %}
-    {% set attr = attr|merge({
-    class: attr.class|default('') ~ " cart__order-title nmmt4-md"
-    }) %}
+{% block _shopping_list_title_widget %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " hidden-sm hidden-xs" }) %}
 
     <div{{ block('block_attributes') }}>
-        SHOPPING LIST TITLES<br>
+        <h1 class="cart__order-title nmmt4-md">
+            <span>{{ shoppingList.label }}</span>
+            <button class="button-icon fs18 gray">
+                <span class="ttip__wrap">
+                  <i class="icon-pencil ttip__toggle"></i>
+                  <span class="ttip">
+                    <span class="ttip__content ttip__content_dark">{{ 'orob2b.shoppinglist.label.edit.tooltip'|trans }}</span>
+                  </span>
+                </span>
+            </button>
+        </h1>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block _shopping_list_top_actions_widget %}
-    {% set attr = attr|merge({
-    class: attr.class|default('') ~ "oq__options__right"
-    }) %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ "oq__options__right" }) %}
     <div{{ block('block_attributes') }}>
         {% set entity='sdfsdf' %}
         {% set params = oro_action_widget_parameters() %}
@@ -49,10 +53,8 @@
     {{ block_widget(block) }}
 {% endblock %}
 
-{% block _shopping_list_order_options_widget %}
-    {% set attr = attr|merge({
-    class: attr.class|default('') ~ " oq__options oq__options_bb"
-    }) %}
+{% block _shopping_list_options_widget %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " oq__options oq__options_bb" }) %}
     <div{{ block('block_attributes') }}>
         <a href="#" data-more-info-expand>View Options for this Order</a>
         {{ block_widget(block) }}
@@ -60,9 +62,7 @@
 {% endblock %}
 
 {% block _shopping_list_line_items_widget %}
-    {% set attr = attr|merge({
-    class: attr.class|default('') ~ " cart-table cart-table_b-bordered cart-table__verticalp-enlarged mt1-md"
-    }) %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-table cart-table_b-bordered cart-table__verticalp-enlarged mt1-md"}) %}
     <div{{ block('block_attributes') }}>
         LINE ITEMS <br>
         LINE ITEMS <br>
@@ -73,9 +73,8 @@
 {% endblock %}
 
 {% block _shopping_list_combined_button_widget %}
-    {% set attr = attr|merge({
-    class: attr.class|default('') ~ " btn btn_orange btn_has-dropdown btn_has-dropdown_xlg"
-    }) %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " btn btn_orange btn_has-dropdown btn_has-dropdown_xlg" }) %}
+
     <div{{ block('block_attributes') }}>
         <a href="#" class="direct-link">Combined button</a>
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><i
