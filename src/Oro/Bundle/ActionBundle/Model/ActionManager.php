@@ -132,20 +132,14 @@ class ActionManager
         $actions = $this->findActions($this->contextHelper->getContext($context));
         $actionData = $this->contextHelper->getActionData($context);
         if ($onlyAvailable) {
-            $actions = array_filter(
-                $actions,
-                function (Action $action) use ($actionData) {
-                    return $action->isAvailable($actionData);
-                }
-            );
+            $actions = array_filter($actions, function (Action $action) use ($actionData) {
+                return $action->isAvailable($actionData);
+            });
         }
 
-        uasort(
-            $actions,
-            function (Action $action1, Action $action2) {
-                return $action1->getDefinition()->getOrder() - $action2->getDefinition()->getOrder();
-            }
-        );
+        uasort($actions, function (Action $action1, Action $action2) {
+            return $action1->getDefinition()->getOrder() - $action2->getDefinition()->getOrder();
+        });
 
         return $actions;
     }

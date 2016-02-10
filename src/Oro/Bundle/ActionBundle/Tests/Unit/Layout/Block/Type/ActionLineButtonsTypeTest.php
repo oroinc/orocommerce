@@ -10,7 +10,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Oro\Bundle\ActionBundle\Layout\Block\Type\ActionButtonType;
 use Oro\Bundle\ActionBundle\Model\Action;
 use Oro\Bundle\ActionBundle\Model\ActionDefinition;
-
 use Oro\Component\Layout\LayoutManipulatorInterface;
 use Oro\Component\Layout\BlockBuilderInterface;
 use Oro\Bundle\ActionBundle\Model\ActionData;
