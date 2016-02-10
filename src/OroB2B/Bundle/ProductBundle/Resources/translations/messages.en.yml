@@ -72,10 +72,13 @@ orob2b:
 
         rounding:
             type:
-                half_up.label: Half Up
-                half_down.label: Half Down
                 ceil.label: Ceil
                 floor.label: Floor
+                down.label: Down
+                up.label: Up
+                half_even.label: Half Even
+                half_down.label: Half Down
+                half_up.label: Half Up
 
         sections:
             general: General

@@ -41,6 +41,11 @@ abstract class AbstractPostSubmitVisibilityListener extends AbstractVisibilityLi
     {
         $targetEntity = $form->getData();
         $visibility = $form->get('all')->getData();
+
+        if (!$visibility) {
+            return;
+        }
+
         $visibilityEntity = $this->findFormFieldData($form, 'all');
 
         if (!$visibilityEntity) {
@@ -78,6 +83,11 @@ abstract class AbstractPostSubmitVisibilityListener extends AbstractVisibilityLi
 
         foreach ($visibilitiesData as $visibilityData) {
             $visibility = $visibilityData['data']['visibility'];
+
+            if (!$visibility) {
+                continue;
+            }
+
             /** @var AccountGroup|Account $visibilityToEntity */
             $visibilityToEntity = $visibilityData['entity'];
 
@@ -106,8 +116,14 @@ abstract class AbstractPostSubmitVisibilityListener extends AbstractVisibilityLi
         VisibilityInterface $visibilityEntity,
         $visibility
     ) {
+        // manual handling of visibility entities must be performed here to avoid triggering of extra processes
+        $em = $this->getEntityManager($targetEntity);
         $visibilityEntity->setVisibility($visibility);
-        $this->getEntityManager($targetEntity)->persist($visibilityEntity);
+        if ($visibility !== $visibilityEntity->getDefault($targetEntity)) {
+            $em->persist($visibilityEntity);
+        } elseif ($visibilityEntity->getVisibility()) {
+            $em->remove($visibilityEntity);
+        }
     }
 
     /**
