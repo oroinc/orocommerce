@@ -60,17 +60,13 @@ class ActionLineButtonsTypeTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->actionManager = $this->getMockWithoutConstructor('Oro\Bundle\ActionBundle\Model\ActionManager');
-
         $this->contextHelper = $this->getMockWithoutConstructor('Oro\Bundle\ActionBundle\Helper\ContextHelper');
-
         $this->actionApplicationsHelper = $this
             ->getMockWithoutConstructor('OroB2B\Bundle\FrontendBundle\Helper\ActionApplicationsHelper');
-
         $this->requestStack = $this->getMockWithoutConstructor('Symfony\Component\HttpFoundation\RequestStack');
-
         $this->router = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
-
         $this->actionExtension = $this->getMockWithoutConstructor('Oro\Bundle\ActionBundle\Twig\ActionExtension');
+
         $this->blockType = new ActionLineButtonsType(
             $this->actionManager,
             $this->contextHelper,

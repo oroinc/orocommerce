@@ -36,7 +36,9 @@
 
 {% block _shopping_list_top_actions_widget %}
     {% set attr = attr|merge({ class: attr.class|default('') ~ "oq__options__right" }) %}
-    {{ block_widget(block) }}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
 {% endblock %}
 
 {% block _shopping_list_options_widget %}
