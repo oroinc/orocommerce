@@ -1,0 +1,24 @@
+permissions:
+    VIEW:
+        label: VIEW
+        group_names: ['default', 'commerce']
+
+    CREATE:
+        label: CREATE
+        group_names: ['default', 'commerce']
+
+    EDIT:
+        label: EDIT
+        group_names: ['default', 'commerce']
+
+    DELETE:
+        label: DELETE
+        group_names: ['default', 'commerce']
+
+    ASSIGN:
+        label: ASSIGN
+        group_names: ['default', 'commerce']
+
+    SHARE:
+        label: SHARE
+        group_names: ['default', 'commerce']
