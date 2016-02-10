@@ -5,7 +5,7 @@ namespace Oro\Bundle\CurrencyBundle\Validator\Constraints;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-use Oro\Bundle\CurrencyBundle\Model\OptionalPrice as Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Validator\Constraints;
 
 class OptionalPriceValidator extends ConstraintValidator
