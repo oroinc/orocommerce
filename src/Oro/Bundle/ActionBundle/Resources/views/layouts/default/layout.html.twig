@@ -22,7 +22,7 @@
                 {% block link %}
                     <a {% if (params.id is defined) %}id="{{ params.id }}"{% endif %}
                        href="{{ params.path|default('javascript:void(0);') }}"
-                       class=""
+                       class="back icons-holder-text action-button{% if link_class is defined %} ~ ' '~{{ link_class }} {% endif %}"
                        title="{{ linkTitle }}"
                        data-from-url="{{ fromUrl }}"
                             {% if params.frontendOptions.show_dialog is defined and not params.frontendOptions.show_dialog %}

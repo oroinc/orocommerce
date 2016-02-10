@@ -5,6 +5,7 @@ namespace Oro\Bundle\ActionBundle\Layout\Block\Type;
 use Oro\Component\Layout\Block\Type\AbstractType;
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\BlockView;
+
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class ActionButtonType extends AbstractType
@@ -25,6 +26,7 @@ class ActionButtonType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setRequired(['params', 'fromUrl', 'actionData', 'context']);
+        $resolver->setOptional(['link_class']);
     }
 
     /**
@@ -36,5 +38,8 @@ class ActionButtonType extends AbstractType
         $view->vars['fromUrl'] = $options['fromUrl'];
         $view->vars['actionData'] = $options['actionData'];
         $view->vars['context'] = $options['context'];
+        if (array_key_exists('link_class', $options)) {
+            $view->vars['link_class'] = $options['link_class'];
+        }
     }
 }

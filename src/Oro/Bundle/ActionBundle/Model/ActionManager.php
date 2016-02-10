@@ -132,14 +132,20 @@ class ActionManager
         $actions = $this->findActions($this->contextHelper->getContext($context));
         $actionData = $this->contextHelper->getActionData($context);
         if ($onlyAvailable) {
-            $actions = array_filter($actions, function (Action $action) use ($actionData) {
-                return $action->isAvailable($actionData);
-            });
+            $actions = array_filter(
+                $actions,
+                function (Action $action) use ($actionData) {
+                    return $action->isAvailable($actionData);
+                }
+            );
         }
 
-        uasort($actions, function (Action $action1, Action $action2) {
-            return $action1->getDefinition()->getOrder() - $action2->getDefinition()->getOrder();
-        });
+        uasort(
+            $actions,
+            function (Action $action1, Action $action2) {
+                return $action1->getDefinition()->getOrder() - $action2->getDefinition()->getOrder();
+            }
+        );
 
         return $actions;
     }
@@ -183,6 +189,29 @@ class ActionManager
         }
 
         return $template;
+    }
+
+    /**
+     * @param Action[] $actions
+     * @param array|null|string $groups
+     * @return Action[]
+     */
+    public function restrictActionsByGroup($actions, $groups)
+    {
+        $groups = $groups === null ? null : (array)$groups;
+        $restrictedActions = [];
+        foreach ($actions as $key => $action) {
+            $buttonOptions = $action->getDefinition()->getButtonOptions();
+            if (array_key_exists('group', $buttonOptions)) {
+                if ($groups !== null && in_array($buttonOptions['group'], $groups)) {
+                    $restrictedActions[$key] = $action;
+                }
+            } elseif ($groups === null) {
+                $restrictedActions[$key] = $action;
+            }
+        }
+
+        return $restrictedActions;
     }
 
     /**

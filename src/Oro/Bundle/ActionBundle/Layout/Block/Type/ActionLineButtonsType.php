@@ -2,6 +2,10 @@
 
 namespace Oro\Bundle\ActionBundle\Layout\Block\Type;
 
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
 use Oro\Bundle\ActionBundle\Model\Action;
 use Oro\Bundle\ActionBundle\Twig\ActionExtension;
 use Oro\Component\Layout\Block\Type\AbstractContainerType;
@@ -12,10 +16,6 @@ use Oro\Bundle\ActionBundle\Helper\ContextHelper;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 
 use OroB2B\Bundle\FrontendBundle\Helper\ActionApplicationsHelper;
-
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ActionLineButtonsType extends AbstractContainerType
 {
@@ -83,7 +83,7 @@ class ActionLineButtonsType extends AbstractContainerType
         $options['context'] = $this->actionExtension->getWidgetParameters($options['context']);
 
         if (array_key_exists('group', $options)) {
-            $actions = $this->restrictActions($actions, $options['group']);
+            $actions = $this->actionManager->restrictActionsByGroup($actions, $options['group']);
         }
 
         foreach ($actions as $actionName => $action) {
@@ -123,29 +123,6 @@ class ActionLineButtonsType extends AbstractContainerType
                 ]
             );
         }
-    }
-
-    /**
-     * @param Action[] $actions
-     * @param array|null|string $groups
-     * @return Action[]
-     */
-    protected function restrictActions($actions, $groups)
-    {
-        $groups = $groups === null ? null : (array)$groups;
-        $restrictedActions = [];
-        foreach ($actions as $key => $action) {
-            $buttonOptions = $action->getDefinition()->getButtonOptions();
-            if (array_key_exists('group', $buttonOptions)) {
-                if ($groups !== null && in_array($buttonOptions['group'], $groups)) {
-                    $restrictedActions[$key] = $action;
-                }
-            } elseif ($groups === null) {
-                $restrictedActions[$key] = $action;
-            }
-        }
-
-        return $restrictedActions;
     }
 
     /**
