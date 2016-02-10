@@ -9,6 +9,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractSubtreeCacheBuilder
@@ -118,7 +119,14 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
             $this->accountGroupIdsWithChangedVisibility[$levelCategory->getId()] = $updatedAccountGroupIds;
 
             if (!empty($updatedAccountGroupIds)) {
+                $updatedAccountGroupIdsWithoutConfigFallback = $this
+                    ->removeIdsWithConfigFallback($levelCategory, $updatedAccountGroupIds);
                 $this->updateAccountGroupsProductVisibility($levelCategory, $updatedAccountGroupIds, $visibility);
+                $this->updateAccountGroupsCategoryVisibility(
+                    $levelCategory,
+                    $updatedAccountGroupIdsWithoutConfigFallback,
+                    $visibility
+                );
             }
 
             $parentAccounts = $this->accountIdsWithChangedVisibility[$levelCategory->getParentCategory()->getId()];
@@ -137,9 +145,32 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
             $this->accountIdsWithChangedVisibility[$levelCategory->getId()] = $accountIdsForUpdate;
 
             if (!empty($accountIdsForUpdate)) {
+                $this->updateAccountsCategoryVisibility($levelCategory, $accountIdsForUpdate, $visibility);
                 $this->updateAccountsProductVisibility($levelCategory, $accountIdsForUpdate, $visibility);
             }
         }
+    }
+
+    /**
+     * @param Category $category
+     * @param array $accountGroupIds
+     * @return array
+     */
+    protected function removeIdsWithConfigFallback(Category $category, array $accountGroupIds)
+    {
+        $accountGroupsCategoryVisibilities = $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->getVisibilitiesForAccountGroups($category, $accountGroupIds);
+
+        $accountGroupsWithConfigCallbackIds = [];
+        foreach ($accountGroupsCategoryVisibilities as $accountGroupId => $visibility) {
+            if ($visibility == BaseCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG) {
+                $accountGroupsWithConfigCallbackIds[] = $accountGroupId;
+            }
+        }
+
+        return array_diff($accountGroupIds, $accountGroupsWithConfigCallbackIds);
     }
 
     /**
@@ -303,6 +334,65 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
             ->andWhere($qb->expr()->in('apvr.account', ':accountIds'))
             ->setParameters([
                 'accountIds' => $accountIds,
+                'category' => $category
+            ]);
+
+        $qb->getQuery()->execute();
+    }
+
+    /**
+     * @param Category $category
+     * @param array $accountIds
+     * @param $visibility
+     */
+    protected function updateAccountsCategoryVisibility(Category $category, array $accountIds, $visibility)
+    {
+        if (!$accountIds) {
+            return;
+        }
+
+        /** @var QueryBuilder $qb */
+        $qb = $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->createQueryBuilder();
+
+        $qb->update('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved', 'acvr')
+            ->set('acvr.visibility', $visibility)
+            ->where($qb->expr()->eq('acvr.category', ':category'))
+            ->andWhere($qb->expr()->in('acvr.account', ':accountIds'))
+            ->setParameters([
+                'accountIds' => $accountIds,
+                'category' => $category
+            ]);
+
+        $qb->getQuery()->execute();
+    }
+
+    /**
+     * @param Category $category
+     * @param array $accountGroupIds
+     * @param $visibility
+     */
+    protected function updateAccountGroupsCategoryVisibility(
+        Category $category,
+        array $accountGroupIds,
+        $visibility
+    ) {
+        if (!$accountGroupIds) {
+            return;
+        }
+
+        /** @var QueryBuilder $qb */
+        $qb = $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->createQueryBuilder();
+
+        $qb->update('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved', 'agcvr')
+            ->set('agcvr.visibility', $visibility)
+            ->where($qb->expr()->eq('agcvr.category', ':category'))
+            ->andWhere($qb->expr()->in('agcvr.accountGroup', ':accountGroupIds'))
+            ->setParameters([
+                'accountGroupIds' => $accountGroupIds,
                 'category' => $category
             ]);
 

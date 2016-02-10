@@ -117,9 +117,31 @@ orob2b:
             quick_add:
                 title: Quick Order Form
                 description: Quick add products to order, RFQ or shopping cart
+                copy_paste:
+                    title: 'Copy & Paste'
+                    description: 'Format: Item # [TAB or COMMA] Quantity'
+                    placeholder: 'Formatting Example: SKU-AAA,3'
+                    continue:
+                        label: Continue
+                import_from_file:
+                    title: Import From File
+                    description: 'Import From File description'
+                import_validation:
+                    title: Import validation results
+                    total_items: Total number of records
+                    valid_items: Valid items
+                    invalid_items: Records with errors
+                    number_of_items: Number of items
+                    validator:
+                        not_found: 'Item number %sku% does not found.'
+                        invalid_format: 'Row #%index% has invalid format.'
+
+
+                continue.label: Continue
                 messages:
                     not_added_products: '{1} Product %sku% can’t be added.|]1,Inf]Products %sku% can’t be added.'
-            component_not_accessible.message: Can't process request, component not accessible
+                    component_not_accessible: Can't process request, component not accessible
+                    invalid_request: Invalid request submitted
 
     product_unit.each:
         label:
