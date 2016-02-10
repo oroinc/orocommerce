@@ -4,7 +4,7 @@ namespace Oro\Bundle\CurrencyBundle\Form\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 class PriceTransformer implements DataTransformerInterface
 {
