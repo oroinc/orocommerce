@@ -9,6 +9,7 @@ use Oro\Component\Layout\DataProviderInterface;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
 
 use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
@@ -29,21 +30,30 @@ class FrontendShoppingListProductsUnitsDataProvider implements DataProviderInter
      */
     protected $shoppingListClass;
 
-
     /**
      * @var FrontendPriceListRequestHandler
      */
     protected $requestHandler;
 
     /**
+     * @var UserCurrencyProvider
+     */
+    protected $userCurrencyProvider;
+
+    /**
      * @param Registry $registry
      * @param FrontendPriceListRequestHandler $requestHandler
+     * @param UserCurrencyProvider $userCurrencyProvider
      * @internal param Registry $productPriceProvider
      */
-    public function __construct(Registry $registry, FrontendPriceListRequestHandler $requestHandler)
-    {
+    public function __construct(
+        Registry $registry,
+        FrontendPriceListRequestHandler $requestHandler,
+        UserCurrencyProvider $userCurrencyProvider
+    ) {
         $this->registry = $registry;
         $this->requestHandler = $requestHandler;
+        $this->userCurrencyProvider = $userCurrencyProvider;
     }
 
     /**
@@ -83,6 +93,6 @@ class FrontendShoppingListProductsUnitsDataProvider implements DataProviderInter
 
         return $this->registry->getManagerForClass('OroB2BPricingBundle:ProductPrice')
             ->getRepository('OroB2BPricingBundle:ProductPrice')
-            ->getProductsUnitsByPriceList($priceList, $products, 'USD');
+            ->getProductsUnitsByPriceList($priceList, $products, $this->userCurrencyProvider->getUserCurrency());
     }
 }

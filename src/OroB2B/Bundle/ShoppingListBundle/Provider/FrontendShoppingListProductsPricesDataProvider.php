@@ -11,6 +11,8 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
+use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class FrontendShoppingListProductsPricesDataProvider implements DataProviderInterface
@@ -36,13 +38,23 @@ class FrontendShoppingListProductsPricesDataProvider implements DataProviderInte
     protected $shoppingListClass;
 
     /**
+     * @var UserCurrencyProvider
+     */
+    protected $userCurrencyProvider;
+
+    /**
      * @param ProductPriceProvider $productPriceProvider
      * @param SecurityFacade $securityFacade
+     * @param UserCurrencyProvider $userCurrencyProvider
      */
-    public function __construct(ProductPriceProvider $productPriceProvider, SecurityFacade $securityFacade)
-    {
+    public function __construct(
+        ProductPriceProvider $productPriceProvider,
+        SecurityFacade $securityFacade,
+        UserCurrencyProvider $userCurrencyProvider
+    ) {
         $this->productPriceProvider = $productPriceProvider;
         $this->securityFacade = $securityFacade;
+        $this->userCurrencyProvider = $userCurrencyProvider;
     }
 
     /**
@@ -93,7 +105,7 @@ class FrontendShoppingListProductsPricesDataProvider implements DataProviderInte
     }
 
     /**
-     * @param Collection $lineItems
+     * @param Collection|LineItem[] $lineItems
      * @return array
      */
     protected function getProductsPricesCriteria(Collection $lineItems)
@@ -104,7 +116,7 @@ class FrontendShoppingListProductsPricesDataProvider implements DataProviderInte
                 $lineItem->getProduct(),
                 $lineItem->getProductUnit(),
                 $lineItem->getQuantity(),
-                'USD'
+                $this->userCurrencyProvider->getUserCurrency()
             );
         }
 
