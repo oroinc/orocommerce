@@ -3,11 +3,19 @@ orob2b:
         product_variant_links:
             unique_variants_combination.message: 'Cannot save product variants. Variant field value combinations should be unique.'
             sku.message: 'Invalid SKU in variant link'
+
         product_variant_field:
             message: 'Cannot save product variant field. Field "{{ field }}" does not exist in product.'
 
         product_by_sku:
             not_found: SKU not found
+
         at_least_one_item: Please add at least one item
+
         productunit:
             invalid: 'Please enter valid unit of measurement'
+
+        frontend:
+            quick_add:
+                invalid_file_type: This file type is not allowed
+                invalid_format: Invalid format

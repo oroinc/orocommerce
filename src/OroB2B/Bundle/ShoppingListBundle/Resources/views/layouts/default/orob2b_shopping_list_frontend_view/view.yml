@@ -21,6 +21,10 @@ layout:
                         ul_class: cart__order__controls-list
                 shopping_list_options:
                     blockType: block
+                    options:
+                        vars:
+                            shoppingList:
+                                @value: $data.shoppingList
                 shopping_list_line_items:
                     blockType: block
                 shopping_list_combined_button:

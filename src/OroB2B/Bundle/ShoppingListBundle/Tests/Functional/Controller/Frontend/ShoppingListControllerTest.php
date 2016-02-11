@@ -8,6 +8,7 @@ use Oro\Component\Testing\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
@@ -134,38 +135,26 @@ class ShoppingListControllerTest extends WebTestCase
 
     public function testQuickAdd()
     {
-        $response = $this->requestFrontendGrid('frontend-shopping-list-grid');
-        $result = $this->getJsonResponseContent($response, 200);
-        $shoppingListsCount = count($result['data']);
-
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_frontend_quick_add'));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         /** @var Product $product */
-        $product = $this->getReference('product.3');
+        $product = $this->getReference(LoadProductData::PRODUCT_3);
         $products = [[
             'productSku' => $product->getSku(),
             'productQuantity' => 15
         ]];
 
-        $this->assertQuickAddFormSubmitted($crawler, $products);
+        /** @var ShoppingList $currentShoppingList */
+        $currentShoppingList = $this->getContainer()
+            ->get('orob2b_shopping_list.shopping_list.manager')
+            ->getForCurrentUser();
 
-        $response = $this->requestFrontendGrid([
-            'gridName' => 'frontend-shopping-list-grid',
-            'frontend-shopping-list-grid[_sort_by][createdAt]' => 'DESC',
-        ]);
+        $shoppingListId = $currentShoppingList->getId();
 
-        $result = $this->getJsonResponseContent($response, 200);
-        $this->assertCount($shoppingListsCount + 1, $result['data']);
-
-        // Get last added shopping list
-        $data = reset($result['data']);
-        $shoppingListId = $data['id'];
-
+        $this->assertQuickAddFormSubmitted($crawler, $products);//add to current
         $this->assertShoppingListItemSaved($shoppingListId, $product->getSku(), 15);
-
-        $this->assertQuickAddFormSubmitted($crawler, $products, $shoppingListId);
-
+        $this->assertQuickAddFormSubmitted($crawler, $products, $shoppingListId);//add to specific
         $this->assertShoppingListItemSaved($shoppingListId, $product->getSku(), 30);
     }
 
@@ -198,7 +187,12 @@ class ShoppingListControllerTest extends WebTestCase
             ]
         );
 
+        $expectedMessage = $this->getContainer()
+            ->get('translator')
+            ->transChoice('orob2b.shoppinglist.actions.add_success_message', count($products));
+
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $this->assertContains($expectedMessage, $crawler->html());
 
         return $crawler;
     }

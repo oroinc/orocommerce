@@ -6,17 +6,36 @@ use OroB2B\Bundle\ProductBundle\Exception\InvalidRoundingTypeException;
 
 interface RoundingServiceInterface
 {
-    const HALF_UP = 'half_up';
-    const HALF_DOWN = 'half_down';
-    const CEIL = 'ceil';
-    const FLOOR = 'floor';
+    const ROUND_CEILING = \NumberFormatter::ROUND_CEILING;
+    const ROUND_FLOOR = \NumberFormatter::ROUND_FLOOR;
+    const ROUND_DOWN = \NumberFormatter::ROUND_DOWN;
+    const ROUND_UP = \NumberFormatter::ROUND_UP;
+    const ROUND_HALF_EVEN = \NumberFormatter::ROUND_HALFEVEN;
+    const ROUND_HALF_DOWN = \NumberFormatter::ROUND_HALFDOWN;
+    const ROUND_HALF_UP = \NumberFormatter::ROUND_HALFUP;
+
 
     /**
      * @param float|integer $value
      * @param integer $precision
-     * @param string $roundType
+     * @param integer $roundType
      * @return float|int
      * @throws InvalidRoundingTypeException
      */
     public function round($value, $precision = null, $roundType = null);
+
+    /**
+     * Returns default precision configured for service
+     *
+     * @return int
+     */
+    public function getPrecision();
+
+    /**
+     * Returns default rounding type configured for service
+     * Should be compatible with Intl default mods
+     *
+     * @return int
+     */
+    public function getRoundType();
 }

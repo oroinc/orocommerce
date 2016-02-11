@@ -6,7 +6,7 @@ define(function(require) {
     var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    var SubtotalsListener = require('orob2border/js/app/listener/subtotals-listener');
+    var SubtotalsListener = require('orob2bpricing/js/app/listener/subtotals-listener');
     var BaseView = require('oroui/js/app/views/base/view');
 
     /**
