@@ -296,20 +296,20 @@ datagrid:
 
         columns:
             id:
-                label:         orob2b.rfp.request.id.label
+                label:         orob2b.frontend.rfp.request.id.label
             isDraft:
                 label:         orob2b.frontend.rfp.request.is_draft.label
                 frontend_type: boolean
             poNumber:
-                label:         orob2b.rfp.request.po_number.label
+                label:         orob2b.frontend.rfp.request.po_number.label
             shipUntil:
-                label:         orob2b.rfp.request.ship_until.label
+                label:         orob2b.frontend.rfp.request.ship_until.label
                 frontend_type: date
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
             accountUserName:
-                label:         orob2b.frontend.rfp.request.submitted_to.label
+                label:         orob2b.frontend.rfp.request.account_user.label
         properties:
             id: ~
             view_link:

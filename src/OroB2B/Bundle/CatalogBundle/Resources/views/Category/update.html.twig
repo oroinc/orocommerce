@@ -38,10 +38,7 @@
     {% endif %}
 
     {{ UI.cancelButton(path('orob2b_catalog_category_index')) }}
-    {% set html = UI.saveAndCloseButton() %}
-    {% if entityId or resource_granted('orob2b_catalog_category_update') %}
-        {% set html = html ~ UI.saveAndStayButton() %}
-    {% endif %}
+    {% set html = UI.saveAndStayButton() %}
     {{ UI.dropdownSaveButton({'html': html}) }}
 {% endblock navButtons %}
 
