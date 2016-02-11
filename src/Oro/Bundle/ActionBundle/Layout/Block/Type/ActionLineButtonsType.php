@@ -53,7 +53,6 @@ class ActionLineButtonsType extends AbstractContainerType
         RequestStack $requestStack,
         UrlGeneratorInterface $router,
         RestrictHelper $restrictHelper
-
     ) {
         $this->actionManager = $actionManager;
         $this->contextHelper = $contextHelper;
