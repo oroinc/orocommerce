@@ -77,7 +77,7 @@ abstract class AbstractButtonsType extends AbstractContainerType
 
     /**
      * @param array $options
-     * @return \Oro\Bundle\ActionBundle\Model\Action[]
+     * @return Action[]
      */
     protected function getActions(array $options)
     {
