@@ -12,8 +12,8 @@ final class ResultElement extends AbstractResultElement
     /**
      * @param string $includingTax
      * @param string $excludingTax
-     * @param string|null $taxAmount Tax amount value or null if it doesn't calculated
-     * @param string|null $adjustment Adjustment value or null if it doesn't calculated
+     * @param string|int $taxAmount Tax amount value or null if it doesn't calculated
+     * @param string|int $adjustment Adjustment value or null if it doesn't calculated
      *
      * @return ResultElement
      */
@@ -25,10 +25,14 @@ final class ResultElement extends AbstractResultElement
     ) {
         $resultElement = new static;
 
-        $resultElement->offsetSet(self::INCLUDING_TAX, (string)$includingTax);
-        $resultElement->offsetSet(self::EXCLUDING_TAX, (string)$excludingTax);
-        $resultElement->offsetSet(self::TAX_AMOUNT, (string)$taxAmount);
-        $resultElement->offsetSet(self::ADJUSTMENT, (string)$adjustment);
+        $resultElement->offsetSet(self::INCLUDING_TAX, $includingTax);
+        $resultElement->offsetSet(self::EXCLUDING_TAX, $excludingTax);
+        if (null !== $taxAmount) {
+            $resultElement->offsetSet(self::TAX_AMOUNT, $taxAmount);
+        }
+        if (null !== $adjustment) {
+            $resultElement->offsetSet(self::ADJUSTMENT, $adjustment);
+        }
 
         return $resultElement;
     }
@@ -54,7 +58,7 @@ final class ResultElement extends AbstractResultElement
      */
     public function getTaxAmount()
     {
-        return $this->getOffset(self::TAX_AMOUNT);
+        return $this->getOffset(self::TAX_AMOUNT, 0);
     }
 
     /**
@@ -63,5 +67,14 @@ final class ResultElement extends AbstractResultElement
     public function getAdjustment()
     {
         return $this->getOffset(self::ADJUSTMENT, 0);
+    }
+
+    /**
+     * @param string $adjustment
+     * @return string
+     */
+    public function setAdjustment($adjustment)
+    {
+        $this->offsetSet(self::ADJUSTMENT, $adjustment);
     }
 }

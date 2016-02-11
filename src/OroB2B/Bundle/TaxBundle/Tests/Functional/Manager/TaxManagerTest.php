@@ -214,7 +214,7 @@ class TaxManagerTest extends WebTestCase
         foreach ($databaseAfter as $class => $items) {
             $repository = $this->doctrine->getRepository($class);
 
-            foreach ($items as $reference => $item) {
+            foreach ($items as $item) {
                 $this->assertNotEmpty($repository->findBy($item), sprintf('%s %s', $class, json_encode($item)));
             }
         }

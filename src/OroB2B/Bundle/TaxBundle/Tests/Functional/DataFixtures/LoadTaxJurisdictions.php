@@ -16,14 +16,12 @@ use OroB2B\Bundle\TaxBundle\Entity\ZipCode;
 
 class LoadTaxJurisdictions extends AbstractFixture implements DependentFixtureInterface
 {
-    const TAX_1 = 'TAX1';
-    const TAX_2 = 'TAX2';
-
     const DESCRIPTION_1 = 'Tax description 1';
     const DESCRIPTION_2 = 'Tax description 2';
 
     const COUNTRY_US = 'US';
     const STATE_US_NY = 'US-NY';
+    const STATE_US_CA = 'US-CA';
 
     const REFERENCE_PREFIX = 'tax_jurisdiction';
 
@@ -35,17 +33,25 @@ class LoadTaxJurisdictions extends AbstractFixture implements DependentFixtureIn
     {
         $this->createTaxJurisdiction(
             $manager,
-            self::TAX_1,
+            LoadTaxes::TAX_1,
             self::DESCRIPTION_1,
             $this->getCountryByCode($manager, self::COUNTRY_US)
         );
 
         $this->createTaxJurisdiction(
             $manager,
-            self::TAX_2,
+            LoadTaxes::TAX_2,
             self::DESCRIPTION_2,
             $this->getCountryByCode($manager, self::COUNTRY_US),
             $this->getRegionByCode($manager, self::STATE_US_NY)
+        );
+
+        $this->createTaxJurisdiction(
+            $manager,
+            LoadTaxes::TAX_3,
+            self::DESCRIPTION_2,
+            $this->getCountryByCode($manager, self::COUNTRY_US),
+            $this->getRegionByCode($manager, self::STATE_US_CA)
         );
 
         $manager->flush();

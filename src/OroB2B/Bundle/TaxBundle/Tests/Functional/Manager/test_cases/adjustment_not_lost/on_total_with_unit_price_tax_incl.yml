@@ -1,16 +1,16 @@
 method: getTax
 reference: simple_order
-configuration: { product_prices_include_tax: true, use_as_base_by_default: destination, start_calculation_on: item }
+configuration:
+    use_as_base_by_default: destination
+    destination: shipping_address
+    start_calculation_on: total
+    start_calculation_with: unit_price
+    product_prices_include_tax: true
 databaseBefore:
     'OroB2B\Bundle\OrderBundle\Entity\Order':
         simple_order:
             poNumber: { property_value: simple_order }
             account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
-            billingAddress:
-                class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
-                property_value:
-                    country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
-                    region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
             shippingAddress:
                 class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
                 property_value:
@@ -65,21 +65,21 @@ databaseBefore:
 expectedResult:
     total:
         includingTax: '199.89'   # 22.21 * 9
-        excludingTax: '181.71'   # 20.19 * 9 = 181.71 (181.71 if count by items)
-        taxAmount: '18.18'       # 2.02 * 9 = 18.18
-        adjustment: '0.0081'     # -0.0009 * 9
+        excludingTax: '181.73'   # 20.191 * 9 + 0.0081 = 181.7271 (181.71 if count by items)
+        taxAmount: '18.16'       # 2.0191 * 9 + -0.0081 = 18.1638
+        adjustment: '-0.0081'     # -0.0009 * 9
     items:
         -
             row:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
-                adjustment: '0.0009'    # 20.19 - 20.1909
+                adjustment: '-0.0009'   # 20.19 - 20.1909
             unit:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
-                adjustment: '0.0009'    # 20.19 - 20.1909
+                adjustment: '-0.0009'   # 20.19 - 20.1909
             taxes:
                 - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.19', tax_amount: '2.02' }
         -
@@ -87,12 +87,12 @@ expectedResult:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
-                adjustment: '0.0009'    # 20.19 - 20.1909
+                adjustment: '-0.0009'   # 20.19 - 20.1909
             unit:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
-                adjustment: '0.0009'    # 20.19 - 20.1909
+                adjustment: '-0.0009'   # 20.19 - 20.1909
             taxes:
                 - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.19', tax_amount: '2.02' }
         -
@@ -100,12 +100,12 @@ expectedResult:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
-                adjustment: '0.0009'    # 20.19 - 20.1909
+                adjustment: '-0.0009'   # 20.19 - 20.1909
             unit:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
-                adjustment: '0.0009'    # 20.19 - 20.1909
+                adjustment: '-0.0009'   # 20.19 - 20.1909
             taxes:
                 - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.19', tax_amount: '2.02' }
         -
@@ -113,12 +113,12 @@ expectedResult:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
-                adjustment: '0.0009'    # 20.19 - 20.1909
+                adjustment: '-0.0009'   # 20.19 - 20.1909
             unit:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
-                adjustment: '0.0009'    # 20.19 - 20.1909
+                adjustment: '-0.0009'   # 20.19 - 20.1909
             taxes:
                 - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.19', tax_amount: '2.02' }
         -
@@ -126,12 +126,12 @@ expectedResult:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
-                adjustment: '0.0009'    # 20.19 - 20.1909
+                adjustment: '-0.0009'   # 20.19 - 20.1909
             unit:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
-                adjustment: '0.0009'    # 20.19 - 20.1909
+                adjustment: '-0.0009'   # 20.19 - 20.1909
             taxes:
                 - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.19', tax_amount: '2.02' }
         -
@@ -139,12 +139,12 @@ expectedResult:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
-                adjustment: '0.0009'    # 20.19 - 20.1909
+                adjustment: '-0.0009'   # 20.19 - 20.1909
             unit:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
-                adjustment: '0.0009'    # 20.19 - 20.1909
+                adjustment: '-0.0009'   # 20.19 - 20.1909
             taxes:
                 - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.19', tax_amount: '2.02' }
         -
@@ -152,12 +152,12 @@ expectedResult:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
-                adjustment: '0.0009'    # 20.19 - 20.1909
+                adjustment: '-0.0009'   # 20.19 - 20.1909
             unit:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
-                adjustment: '0.0009'    # 20.19 - 20.1909
+                adjustment: '-0.0009'   # 20.19 - 20.1909
             taxes:
                 - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.19', tax_amount: '2.02' }
         -
@@ -165,12 +165,12 @@ expectedResult:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
-                adjustment: '0.0009'    # 20.19 - 20.1909
+                adjustment: '-0.0009'   # 20.19 - 20.1909
             unit:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
-                adjustment: '0.0009'    # 20.19 - 20.1909
+                adjustment: '-0.0009'   # 20.19 - 20.1909
             taxes:
                 - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.19', tax_amount: '2.02' }
         -
@@ -178,12 +178,12 @@ expectedResult:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
-                adjustment: '0.0009'    # 20.19 - 20.1909
+                adjustment: '-0.0009'   # 20.19 - 20.1909
             unit:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
-                adjustment: '0.0009'    # 20.19 - 20.1909
+                adjustment: '-0.0009'   # 20.19 - 20.1909
             taxes:
                 - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.19', tax_amount: '2.02' }
     taxes:

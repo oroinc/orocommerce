@@ -1,16 +1,16 @@
 method: getTax
 reference: simple_order
-configuration: { use_as_base_by_default: destination }
+configuration:
+    use_as_base_by_default: destination
+    destination: shipping_address
+    start_calculation_on: total
+    start_calculation_with: unit_price
+    product_prices_include_tax: false
 databaseBefore:
     'OroB2B\Bundle\OrderBundle\Entity\Order':
         simple_order:
             poNumber: { property_value: simple_order }
             account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
-            billingAddress:
-                class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
-                property_value:
-                    country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
-                    region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
             shippingAddress:
                 class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
                 property_value:
@@ -64,9 +64,9 @@ databaseBefore:
             price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
 expectedResult:
     total:
-        includingTax: '219.88' # 24.431 * 9 = 219.879 (219.87 if count by rounded items)
+        includingTax: '219.89' # 24.431 * 9 + 0.009 = 219.888 (219.87 if count by rounded items)
         excludingTax: '199.89' # 22.21 * 9
-        taxAmount: '19.99'     # 2.221 * 9 = 19.989
+        taxAmount: '20'        # 2.221 * 9 + 0.009 = 19.998
         adjustment: '0.009'    # 0.001 * 9 = 0.009
     items:
         -

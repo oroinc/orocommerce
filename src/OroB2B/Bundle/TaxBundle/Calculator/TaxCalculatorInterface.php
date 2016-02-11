@@ -16,4 +16,9 @@ interface TaxCalculatorInterface
      *      adjustment   - adjustment, negative value when taxAmount rounded up, positive value if rounded down
      */
     public function calculate($amount, $taxRate);
+
+    /**
+     * @return string
+     */
+    public function getAmountKey();
 }

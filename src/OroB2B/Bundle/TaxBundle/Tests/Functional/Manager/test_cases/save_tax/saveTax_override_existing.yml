@@ -1,4 +1,4 @@
-method: getTax
+method: saveTax
 reference: simple_order
 configuration: { use_as_base_by_default: destination }
 databaseBefore:
@@ -53,9 +53,39 @@ databaseBefore:
                     - { reference: simple_order_tax_value_applied_tax }
 expectedResult:
     total:
-        includingTax: '124.58' # 113.25 + 11.325
+        includingTax: '124.57' # 113.25 + 11.325 + -0.005
         excludingTax: '113.25' # 15.99 * 5 + 5.55 * 6
-        taxAmount: '11.33'     # 11.325 = 113.25 * 0.1
+        taxAmount: '11.32'     # 113.25 * 0.1 + -0.005
         adjustment: '-0.005'   # 11.325 - 11.33
+    items:
+        -
+            row:
+                includingTax: '87.95' # 17.59 * 5
+                excludingTax: '79.95' # 15.99 * 5
+                taxAmount: '8'        # 1.6 * 5
+                adjustment: '-0.005'
+            unit:
+                includingTax: '17.59' # 15.99 + 1.6
+                excludingTax: '15.99'
+                taxAmount: '1.6'      # 15.99 * 0.1
+                adjustment: '-0.001'
+            taxes:
+                - { tax: 'TAX1', rate: '0.1', taxable_amount: '79.95', tax_amount: '8' }
+        -
+            row:
+                includingTax: '36.63' # 6.11 * 6
+                excludingTax: '33.3'  # 5.55 * 6
+                taxAmount: '3.33'     # 0.56 * 6
+                adjustment: '0'
+            unit:
+                includingTax: '6.11'  # 5.55 + 0.56
+                excludingTax: '5.55'
+                taxAmount: '0.56'     # 5.55 * 0.1
+                adjustment: '-0.005'
+            taxes:
+                - { tax: 'TAX1', rate: '0.1', taxable_amount: '33.3', tax_amount: '3.33' }
     taxes:
         - { tax: 'TAX1', rate: '0.1', taxable_amount: '113.25', tax_amount: '11.33' }
+databaseAfter:
+    'OroB2B\Bundle\TaxBundle\Entity\TaxApply':
+        simple_order_tax_value_applied_tax: { taxableAmount: '113.25', taxAmount: '11.33' }

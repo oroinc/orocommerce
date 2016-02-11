@@ -1,6 +1,6 @@
 method: saveTax
 reference: order_line_item_2
-configuration: { use_as_base_by_default: destination }
+configuration: { product_prices_include_tax: true, use_as_base_by_default: destination }
 databaseBefore:
     'OroB2B\Bundle\OrderBundle\Entity\Order':
         simple_order:
@@ -21,22 +21,20 @@ databaseBefore:
             productSku: { property_value: order_line_item_1 }
             order: { reference: simple_order }
             quantity: { property_value: 6 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '15.99', currency: USD } }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '0', currency: USD } }
         order_line_item_2:
             productSku: { property_value: order_line_item_2 }
             order: { reference: simple_order }
-            quantity: { property_value: 6 }
+            quantity: { property_value: 0 }
             price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '5.55', currency: USD } }
-expectedResult: # values from simple_order_item_1 used to check database override
+expectedResult:
     row:
-        includingTax: '36.63' # 33.3 + 3.33
-        excludingTax: '33.3'  # 5.55 * 6
-        taxAmount: '3.33'     # 33.3 * 0.1
+        includingTax: '0'
+        excludingTax: '0'
+        taxAmount: '0'
         adjustment: '0'
     unit:
-        includingTax: '6.11' # 5.55 + 0.555
-        excludingTax: '5.55'
-        taxAmount: '0.56'    # 5.55 * 0.1
-        adjustment: '-0.005' # 5.555 - 5.6
-    taxes:
-        - { tax: 'TAX1', rate: '0.1', taxable_amount: '33.3', tax_amount: '3.33' }
+        includingTax: '5.55'
+        excludingTax: '5.05' # 5.55 - 0.5045 = 5.0455
+        taxAmount: '0.5'     # 5.55 * 0.1 / 1.1 = 0.5045
+        adjustment: '0.0045' # 0.5045 - 0.5

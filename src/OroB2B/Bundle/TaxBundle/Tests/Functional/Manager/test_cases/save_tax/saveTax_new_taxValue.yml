@@ -1,6 +1,6 @@
 method: saveTax
 reference: simple_order
-configuration: { product_prices_include_tax: true, use_as_base_by_default: destination }
+configuration: { use_as_base_by_default: destination }
 databaseBefore:
     'OroB2B\Bundle\OrderBundle\Entity\Order':
         simple_order:
@@ -20,43 +20,48 @@ databaseBefore:
         order_line_item_1:
             productSku: { property_value: order_line_item_1 }
             order: { reference: simple_order }
-            quantity: { property_value: 6 }
+            quantity: { property_value: 5 }
             price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '15.99', currency: USD } }
         order_line_item_2:
             productSku: { property_value: order_line_item_2 }
             order: { reference: simple_order }
-            quantity: { property_value: 7 }
+            quantity: { property_value: 6 }
             price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '5.55', currency: USD } }
 expectedResult:
     total:
-        includingTax: '134.79' # 15.99 * 6 + 5.55 * 7 = 134.79
-        excludingTax: '122.54' # 134.79 - 12.2536 = 122.5364
-        taxAmount: '12.25'     # 134.79 * 0.1 / 1.1 = 12.2536
-        adjustment: '-0.0036'   # 122.54 - 122.5364
+        includingTax: '124.57' # 113.25 + 11.325 + -0.005
+        excludingTax: '113.25' # 15.99 * 5 + 5.55 * 6
+        taxAmount: '11.32'     # 113.25 * 0.1 + -0.005 = 11.32
+        adjustment: '-0.005'   # -0.005
     items:
         -
             row:
-                includingTax: '38.85' # 5.55 * 7
-                excludingTax: '35.32' # 38.85 - 3.5318 = 35.3182
-                taxAmount: '3.53'     # 38.85 * 0.1 / 1.1 = 3.5318
-                adjustment: '-0.0018'  # 35.32 - 35.3182
+                includingTax: '87.95' # 17.59 * 5
+                excludingTax: '79.95' # 15.99 * 5
+                taxAmount: '8'        # 1.6 * 5
+                adjustment: '-0.005'
             unit:
-                includingTax: '5.55'
-                excludingTax: '5.05' # 5.55 - 0.5045 = 5.0455
-                taxAmount: '0.5'     # 5.55 * 0.1 / 1.1 = 0.5045
-                adjustment: '-0.0045' # 5.05 - 5.0455
+                includingTax: '17.59' # 15.99 + 1.6
+                excludingTax: '15.99'
+                taxAmount: '1.6'      # 15.99 * 0.1
+                adjustment: '-0.001'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '35.32', tax_amount: '3.53' }
+                - { tax: 'TAX1', rate: '0.1', taxable_amount: '79.95', tax_amount: '8' }
         -
             row:
-                includingTax: '95.94'   # 15.99 * 6
-                excludingTax: '87.22'   # 95.94 - 8.7218 = 87.2182
-                taxAmount: '8.72'       # 95.94 * 0.1 / 1.1 = 8.7218
-                adjustment: '-0.0018'   # 87.22 - 87.2182
+                includingTax: '36.63' # 6.11 * 6
+                excludingTax: '33.3'  # 5.55 * 6
+                taxAmount: '3.33'     # 0.56 * 6
+                adjustment: '0'
             unit:
-                includingTax: '15.99'
-                excludingTax: '14.54'   # 15.99 - 1.4536 = 14.5364
-                taxAmount: '1.45'       # 15.99 * 0.1 / 1.1 = 1.4536
-                adjustment: '-0.0036'   # 14.54 - 14.5364
+                includingTax: '6.11'  # 5.55 + 0.56
+                excludingTax: '5.55'
+                taxAmount: '0.56'     # 5.55 * 0.1
+                adjustment: '-0.005'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '87.22', tax_amount: '8.72' }
+                - { tax: 'TAX1', rate: '0.1', taxable_amount: '33.3', tax_amount: '3.33' }
+    taxes:
+        - { tax: 'TAX1', rate: '0.1', taxable_amount: '113.25', tax_amount: '11.33' }
+databaseAfter:
+    'OroB2B\Bundle\TaxBundle\Entity\TaxApply':
+        simple_order_tax_value_applied_tax: { taxableAmount: '113.25', taxAmount: '11.33' }

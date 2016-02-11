@@ -17,13 +17,18 @@ class TaxationSettingsProvider
     const START_CALCULATION_UNIT_PRICE = 'unit_price';
     const START_CALCULATION_ROW_TOTAL = 'row_total';
 
-    const START_CALCULATION_ON_INVOICE = 'invoice';
+    const START_CALCULATION_ON_TOTAL = 'total';
     const START_CALCULATION_ON_ITEM = 'item';
 
     const USE_AS_BASE_SHIPPING_ORIGIN = 'shipping_origin';
     const USE_AS_BASE_DESTINATION = 'destination';
 
     const SCALE = 2;
+
+    /**
+     * For scale = 2 we use 3rd number to scale and fourth position to divide
+     */
+    const CALCULATION_SCALE = 4;
 
     /**
      * @var ConfigManager
@@ -85,9 +90,9 @@ class TaxationSettingsProvider
     /**
      * @return bool
      */
-    public function isStartCalculationOnInvoice()
+    public function isStartCalculationOnTotal()
     {
-        return $this->getStartCalculationOn() === self::START_CALCULATION_ON_INVOICE;
+        return $this->getStartCalculationOn() === self::START_CALCULATION_ON_TOTAL;
     }
 
     /**

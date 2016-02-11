@@ -4,8 +4,9 @@ namespace OroB2B\Bundle\TaxBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
 
@@ -50,41 +51,56 @@ class OriginAddressType extends AbstractType
                 'country',
                 'oro_country',
                 [
-                    'required' => true,
+                    'required' => false,
                     'label' => 'oro.address.country.label',
                     'configs' => ['allowClear' => false, 'placeholder' => 'oro.address.form.choose_country'],
-                    'constraints' => [new NotBlank()],
                 ]
             )
             ->add(
                 'region',
                 'oro_region',
                 [
-                    'required' => true,
+                    'required' => false,
                     'label' => 'oro.address.region.label',
                     'configs' => ['allowClear' => false, 'placeholder' => 'oro.address.form.choose_region'],
-                    'constraints' => [new NotBlank()],
                 ]
             )
             ->add(
                 'postal_code',
                 'text',
                 [
-                    'required' => true,
+                    'required' => false,
                     'label' => 'oro.address.postal_code.label',
                     'attr' => ['placeholder' => 'oro.address.postal_code.label'],
-                    'constraints' => [new NotBlank()],
                 ]
             )
             ->add(
                 'region_text',
                 'hidden',
                 [
-                    'required' => true,
+                    'required' => false,
                     'label' => 'oro.address.region_text.label',
                     'attr' => ['placeholder' => 'oro.address.region_text.label'],
                 ]
             );
+    }
+
+    /** {@inheritdoc} */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        $parent = $form->getParent();
+        if (!$parent) {
+            return;
+        }
+
+        if (!$parent->has('use_parent_scope_value')) {
+            return;
+        }
+
+        $useParentScopeValue = $parent->get('use_parent_scope_value')->getData();
+        foreach ($view->children as $child) {
+            $child->vars['use_parent_scope_value'] = $useParentScopeValue;
+        }
     }
 
     /**

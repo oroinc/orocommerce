@@ -56,7 +56,7 @@ oro_system_configuration:
                 constraints:
                     - NotBlank: ~
                 choices:
-                    invoice: orob2b.tax.system_configuration.fields.start_calculation_on.invoice.label
+                    total: orob2b.tax.system_configuration.fields.start_calculation_on.total.label
                     item: orob2b.tax.system_configuration.fields.start_calculation_on.item.label
 
         orob2b_tax.product_prices_include_tax:

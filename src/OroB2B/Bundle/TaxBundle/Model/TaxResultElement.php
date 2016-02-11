@@ -20,10 +20,10 @@ class TaxResultElement extends AbstractResultElement
     {
         $resultElement = new static;
 
-        $resultElement->offsetSet(self::TAX, (string)$taxCode);
-        $resultElement->offsetSet(self::RATE, (string)$rate);
-        $resultElement->offsetSet(self::TAXABLE_AMOUNT, (string)$taxableAmount);
-        $resultElement->offsetSet(self::TAX_AMOUNT, (string)$taxAmount);
+        $resultElement->offsetSet(self::TAX, $taxCode);
+        $resultElement->offsetSet(self::RATE, $rate);
+        $resultElement->offsetSet(self::TAXABLE_AMOUNT, $taxableAmount);
+        $resultElement->offsetSet(self::TAX_AMOUNT, $taxAmount);
 
         return $resultElement;
     }

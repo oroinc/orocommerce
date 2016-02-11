@@ -21,20 +21,20 @@ databaseBefore:
             productSku: { property_value: order_line_item_1 }
             order: { reference: simple_order }
             quantity: { property_value: 6 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '0', currency: USD } }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '15.99', currency: USD } }
         order_line_item_2:
             productSku: { property_value: order_line_item_2 }
             order: { reference: simple_order }
-            quantity: { property_value: 0 }
+            quantity: { property_value: 7 }
             price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '5.55', currency: USD } }
 expectedResult:
     row:
-        includingTax: '0'
-        excludingTax: '0'
-        taxAmount: '0'
-        adjustment: '0'
+        includingTax: '38.85' # 5.55 * 7
+        excludingTax: '35.32' # 5.04545 * 7 = 35.31815
+        taxAmount: '3.53'     # 0.504545 * 7 = 3.531815
+        adjustment: '0.0018'  # 3.531815 - 3.53
     unit:
         includingTax: '5.55'
-        excludingTax: '5.05' # 5.55 - 0.5045 = 5.0455
-        taxAmount: '0.5'     # 5.55 * 0.1 / 1.1 = 0.5045
-        adjustment: '-0.0045' # 5.0455 - 5.05
+        excludingTax: '5.05'  # 5.55 - 0.50455 = 5.04545
+        taxAmount: '0.5'      # 5.55 * 0.1 / 1.1 = 0.50455
+        adjustment: '0.0045'  # 0.5045 - 0.5
