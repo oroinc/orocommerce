@@ -127,6 +127,7 @@ services:
             - @oro_action.helper.applications
             - @request_stack
             - @router
+            - @oro_action.helper.restrict
         tags:
              - { name: layout.block_type, alias: action_line_buttons }
 
