@@ -96,25 +96,10 @@
         }]) %}
 
         {# @todo: https://magecore.atlassian.net/browse/BB-1752 #}
-        {% set taxes %}
-            <div class="accordion" id="taxes">
-                <div class="accordion-group">
-                    <div class="accordion-heading">
-                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
-                            Taxes
-                        </a>
-                    </div>
-                    <div id="collapseOne" class="accordion-body collapse">
-                        <div class="accordion-inner">
-                            {{ dump(taxes) }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        {% endset %}
+        {% import 'OroB2BTaxBundle::macros.html.twig' as TAX %}
         {% set dataBlocks = dataBlocks|merge([{
             'title': 'Taxes'|trans,
-            'subblocks': [{'data' : [taxes]}]
+            'subblocks': [{'data' : [TAX.renderResult(taxes)]}]
         }]) %}
     {% endif %}
 
