@@ -1,0 +1,7 @@
+{% block _product_grid_widget %}
+    <script id="template-grid-row" type="text/template">
+        <b><%= sku %></b>
+        <p><%= name %></p>
+    </script>
+    {{ block_widget(block) }}
+{% endblock %}
