@@ -21,47 +21,47 @@ databaseBefore:
             productSku: { property_value: order_line_item_1 }
             order: { reference: simple_order }
             quantity: { property_value: 1 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '22.21', currency: USD } }
         order_line_item_2:
             productSku: { property_value: order_line_item_2 }
             order: { reference: simple_order }
             quantity: { property_value: 1 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '22.21', currency: USD } }
         order_line_item_3:
             productSku: { property_value: order_line_item_3 }
             order: { reference: simple_order }
             quantity: { property_value: 1 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '22.21', currency: USD } }
         order_line_item_4:
             productSku: { property_value: order_line_item_4 }
             order: { reference: simple_order }
             quantity: { property_value: 1 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '22.21', currency: USD } }
         order_line_item_5:
             productSku: { property_value: order_line_item_5 }
             order: { reference: simple_order }
             quantity: { property_value: 1 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '22.21', currency: USD } }
         order_line_item_6:
             productSku: { property_value: order_line_item_5 }
             order: { reference: simple_order }
             quantity: { property_value: 1 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '22.21', currency: USD } }
         order_line_item_7:
             productSku: { property_value: order_line_item_5 }
             order: { reference: simple_order }
             quantity: { property_value: 1 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '22.21', currency: USD } }
         order_line_item_8:
             productSku: { property_value: order_line_item_5 }
             order: { reference: simple_order }
             quantity: { property_value: 1 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '22.21', currency: USD } }
         order_line_item_9:
             productSku: { property_value: order_line_item_5 }
             order: { reference: simple_order }
             quantity: { property_value: 1 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.21', currency: USD } }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '22.21', currency: USD } }
 expectedResult:
     total:
         includingTax: '219.87' # 24.43 * 9 = 219.87 (219.87 if count by rounded items)

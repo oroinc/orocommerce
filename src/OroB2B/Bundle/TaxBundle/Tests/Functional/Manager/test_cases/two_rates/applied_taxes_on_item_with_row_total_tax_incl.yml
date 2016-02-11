@@ -21,22 +21,22 @@ databaseBefore:
             productSku: { property_value: order_line_item_1 }
             order: { reference: simple_order }
             quantity: { property_value: 41 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '3.42', currency: USD } }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '3.42', currency: USD } }
         order_line_item_2:
             productSku: { property_value: order_line_item_2 }
             order: { reference: simple_order }
             quantity: { property_value: 15 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '8.55', currency: USD } }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '8.55', currency: USD } }
         order_line_item_3:
             productSku: { property_value: order_line_item_3 }
             order: { reference: simple_order }
             quantity: { property_value: 13 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '18.05', currency: USD } }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '18.05', currency: USD } }
         order_line_item_4:
             productSku: { property_value: order_line_item_4 }
             order: { reference: simple_order }
             quantity: { property_value: 35 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '24.80', currency: USD } }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '24.80', currency: USD } }
     'OroB2B\Bundle\TaxBundle\Entity\TaxRule':
         tax_rule:
             tax: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX3' } }

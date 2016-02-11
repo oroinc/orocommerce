@@ -21,7 +21,7 @@ databaseBefore:
             productSku: { property_value: order_line_item_1 }
             order: { reference: simple_order }
             quantity: { property_value: 2 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Model\Price', property_value: { value: '22.226', currency: USD } }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '22.226', currency: USD } }
 expectedResult:
     total:
         includingTax: '48.89'  # 44.452 + 4.4452 + -0.005 = 48.8922
