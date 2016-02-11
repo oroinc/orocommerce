@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\ActionBundle\Layout\Block\Type;
 
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
 use Oro\Component\Layout\Block\Type\AbstractType;
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\BlockView;
-
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class ActionButtonType extends AbstractType
 {
