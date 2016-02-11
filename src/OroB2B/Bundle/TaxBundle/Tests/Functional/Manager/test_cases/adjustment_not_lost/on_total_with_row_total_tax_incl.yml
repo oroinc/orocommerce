@@ -65,21 +65,21 @@ databaseBefore:
 expectedResult:
     total:
         includingTax: '199.89'   # 22.21 * 9
-        excludingTax: '181.72'   # 20.19 * 9 = 181.7181 (181.71 if count by items)
-        taxAmount: '18.17'       # 2.0191 * 9 = 18.1719
-        adjustment: '-0.0081'     # -0.0009 * 9
+        excludingTax: '181.73'   # 20.1909 * 9 + 0.0081 = 181.7262 (181.71 if count by items)
+        taxAmount: '18.16'       # 2.01909 * 9 + -0.0081 = 18.16371
+        adjustment: '-0.0081'    # -0.0009 * 9
     items:
         -
             row:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
-                adjustment: '-0.0009'   # 20.19 - 20.1909
+                adjustment: '-0.0009'   # 2.0191 - 2.02
             unit:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
-                adjustment: '-0.0009'   # 20.19 - 20.1909
+                adjustment: '-0.0009'   # 2.0191 - 2.02
             taxes:
                 - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.19', tax_amount: '2.02' }
         -

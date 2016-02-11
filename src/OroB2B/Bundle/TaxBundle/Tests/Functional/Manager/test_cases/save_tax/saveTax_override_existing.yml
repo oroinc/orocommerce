@@ -53,10 +53,10 @@ databaseBefore:
                     - { reference: simple_order_tax_value_applied_tax }
 expectedResult:
     total:
-        includingTax: '124.58' # 113.25 + 11.325
+        includingTax: '124.57' # 113.25 + 11.325 + -0.005
         excludingTax: '113.25' # 15.99 * 5 + 5.55 * 6
-        taxAmount: '11.33'     # 11.325 = 113.25 * 0.1
-        adjustment: '-0.035'   # -0.03 + -0.005
+        taxAmount: '11.32'     # 113.25 * 0.1 + -0.005
+        adjustment: '-0.005'   # 11.325 - 11.33
     items:
         -
             row:
@@ -76,7 +76,7 @@ expectedResult:
                 includingTax: '36.63' # 6.11 * 6
                 excludingTax: '33.3'  # 5.55 * 6
                 taxAmount: '3.33'     # 0.56 * 6
-                adjustment: '-0.03'   # -0.005 * 6
+                adjustment: '0'
             unit:
                 includingTax: '6.11'  # 5.55 + 0.56
                 excludingTax: '5.55'

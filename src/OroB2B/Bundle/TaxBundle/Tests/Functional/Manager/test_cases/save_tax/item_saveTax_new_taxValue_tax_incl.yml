@@ -30,11 +30,11 @@ databaseBefore:
 expectedResult:
     row:
         includingTax: '38.85' # 5.55 * 7
-        excludingTax: '35.32' # 5.0455 * 7 = 35.3185
-        taxAmount: '3.53'     # 0.5045 * 7 = 3.5315
-        adjustment: '0.0315'  # 0.0045 * 7
+        excludingTax: '35.32' # 5.04545 * 7 = 35.31815
+        taxAmount: '3.53'     # 0.504545 * 7 = 3.531815
+        adjustment: '0.0018'  # 3.531815 - 3.53
     unit:
         includingTax: '5.55'
-        excludingTax: '5.05'  # 5.55 - 0.5045 = 5.0455
-        taxAmount: '0.5'      # 5.55 * 0.1 / 1.1 = 0.5045
+        excludingTax: '5.05'  # 5.55 - 0.50455 = 5.04545
+        taxAmount: '0.5'      # 5.55 * 0.1 / 1.1 = 0.50455
         adjustment: '0.0045'  # 0.5045 - 0.5

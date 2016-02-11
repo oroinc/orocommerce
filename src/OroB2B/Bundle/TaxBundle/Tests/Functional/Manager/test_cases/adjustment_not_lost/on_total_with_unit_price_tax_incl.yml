@@ -65,8 +65,8 @@ databaseBefore:
 expectedResult:
     total:
         includingTax: '199.89'   # 22.21 * 9
-        excludingTax: '181.72'   # 20.19 * 9 = 181.7181 (181.71 if count by items)
-        taxAmount: '18.17'       # 2.0191 * 9 = 18.1719
+        excludingTax: '181.73'   # 20.191 * 9 + 0.0081 = 181.7271 (181.71 if count by items)
+        taxAmount: '18.16'       # 2.0191 * 9 + -0.0081 = 18.1638
         adjustment: '-0.0081'     # -0.0009 * 9
     items:
         -

@@ -61,7 +61,7 @@ expectedResult: # values from simple_order_item_1 used to check database overrid
         includingTax: '36.63' # 33.3 + 3.33
         excludingTax: '33.3'  # 5.55 * 6
         taxAmount: '3.33'     # 33.3 * 0.1
-        adjustment: '-0.03'   # -0.005 * 6
+        adjustment: '0'
     unit:
         includingTax: '6.11'  # 5.55 + 0.555
         excludingTax: '5.55'

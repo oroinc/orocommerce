@@ -98,10 +98,12 @@ expectedResult:
                 includingTax: '1019.9'  # 29.14 * 35
                 excludingTax: '868'     # 24.8 * 35
                 taxAmount: '151.9'      # 4.34 * 35
+                adjustment: '0'
             unit:
                 includingTax: '29.14'   # 24.8 + 4.34
                 excludingTax: '24.8'
                 taxAmount: '4.34'       # 24.8 * 0.175
+                adjustment: '0'
             taxes:
                 - { tax: 'TAX1', rate: '0.1', taxable_amount: '868', tax_amount: '86.8' }      # 868 * 0.1
                 - { tax: 'TAX3', rate: '0.075', taxable_amount: '868', tax_amount: '65.1' }    # 868 * 0.075

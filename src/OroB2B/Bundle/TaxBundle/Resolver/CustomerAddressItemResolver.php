@@ -65,9 +65,7 @@ class CustomerAddressItemResolver extends AbstractAddressResolver
         $taxAmount = BigDecimal::of($resultElement->getTaxAmount());
         $taxAmountRounded = $taxAmount->toScale(TaxationSettingsProvider::SCALE, RoundingMode::HALF_UP);
         $adjustment = $taxAmount->minus($taxAmountRounded);
-        if (!$adjustment->isEqualTo(BigDecimal::zero())) {
-            $resultElement->setAdjustment($adjustment);
-        }
+        $resultElement->setAdjustment($adjustment);
     }
 
     /**
@@ -96,7 +94,11 @@ class CustomerAddressItemResolver extends AbstractAddressResolver
                 $resultElementStartWith->getExcludingTax(),
                 BigDecimal::of($resultElementStartWith->getTaxAmount())
                     ->multipliedBy($currentTaxRate->toScale(TaxationSettingsProvider::CALCULATION_SCALE))
-                    ->dividedBy($taxRate->toScale(TaxationSettingsProvider::CALCULATION_SCALE), TaxationSettingsProvider::CALCULATION_SCALE, RoundingMode::HALF_UP)
+                    ->dividedBy(
+                        $taxRate->toScale(TaxationSettingsProvider::CALCULATION_SCALE),
+                        TaxationSettingsProvider::CALCULATION_SCALE,
+                        RoundingMode::HALF_UP
+                    )
             );
         }
 
@@ -112,30 +114,19 @@ class CustomerAddressItemResolver extends AbstractAddressResolver
      */
     protected function getRowTotalResult(BigDecimal $taxableAmount, BigDecimal $taxRate, $quantity = 1)
     {
-        $resultElementStartWith = $this->calculator->calculate($taxableAmount, BigDecimal::zero());
-
         if ($this->settingsProvider->isStartCalculationWithUnitPrice()) {
             $resultElement = $this->calculator->calculate($taxableAmount, $taxRate);
-            $amount = BigDecimal::of($resultElement->getOffset($this->calculator->getAmountKey()));
-            $amountRounded = $amount->toScale(TaxationSettingsProvider::SCALE, RoundingMode::HALF_UP);
-
-            $resultElement = $this->calculator->calculate($amount, $taxRate);
-            $this->calculateAdjustment($resultElement);
-
-            $resultElementStartWith = $this->calculator->calculate($amountRounded->multipliedBy($quantity), $taxRate);
-            $resultElementStartWith->setAdjustment(
-                BigDecimal::of($resultElement->getAdjustment())->multipliedBy($quantity)
-            );
+            $taxableAmount = BigDecimal::of($resultElement->getOffset($this->calculator->getAmountKey()))
+                ->toScale(TaxationSettingsProvider::SCALE, RoundingMode::HALF_UP)
+                ->multipliedBy($quantity);
         } elseif ($this->settingsProvider->isStartCalculationWithRowTotal()) {
-            $resultElementStartWith = $this->calculator->calculate(
-                $taxableAmount->multipliedBy($quantity)->toScale(
-                    TaxationSettingsProvider::SCALE,
-                    RoundingMode::HALF_UP
-                ),
-                $taxRate
-            );
-            $this->calculateAdjustment($resultElementStartWith);
+            $taxableAmount = $taxableAmount
+                ->multipliedBy($quantity)
+                ->toScale(TaxationSettingsProvider::SCALE, RoundingMode::HALF_UP);
         }
+
+        $resultElementStartWith = $this->calculator->calculate($taxableAmount, $taxRate);
+        $this->calculateAdjustment($resultElementStartWith);
 
         return $resultElementStartWith;
     }

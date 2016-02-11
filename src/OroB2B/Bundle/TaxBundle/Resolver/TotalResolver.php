@@ -92,12 +92,11 @@ class TotalResolver implements ResolverInterface
         }
 
         foreach ($keysToAdjust as $key => $adjustment) {
-            if (array_key_exists($key, $currentData)) {
-                $amount = BigDecimal::of($currentData[$key]);
-                $amount->plus($adjustment);
-                $currentData[$key] = (string)$amount;
+            if ($currentData->offsetExists($key)) {
+                $currentData->offsetSet($key, BigDecimal::of($currentData->getOffset($key))->plus($adjustment));
             }
         }
+
         return $currentData;
     }
 

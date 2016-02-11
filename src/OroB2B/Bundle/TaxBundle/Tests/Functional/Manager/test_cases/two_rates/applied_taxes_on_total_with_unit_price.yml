@@ -46,7 +46,7 @@ expectedResult:
         includingTax: '1611.07' # 164.7585 + 150.69375 + 275.71375 + 1019.9 = 1611.066
         excludingTax: '1371.12' # 140.22 + 128.25 + 234.65 + 868
         taxAmount: '239.95'     # 24.5385 + 22.44375 + 41.06375 + 151.9 = 239.946
-        adjustment: '-0.134'    # -0.01625 + -0.05625 + -0.0615
+        adjustment: '0.006'     # 0.00375 + 0.00375 + -0.0015
     taxes:
         - { tax: 'TAX1', rate: '0.1', taxable_amount: '1371.12', tax_amount: '137.11' }       # 1371.12 * 0.1
         - { tax: 'TAX3', rate: '0.075', taxable_amount: '1371.12', tax_amount: '102.83' }     # 1371.12 * 0.075
@@ -56,7 +56,7 @@ expectedResult:
                 includingTax: '164.76'  # 4.0185 * 41 = 164.7585
                 excludingTax: '140.22'  # 3.42 * 41
                 taxAmount: '24.54'      # 0.5985 * 41 = 24.5385
-                adjustment: '-0.0615'   # -0.0015 * 41
+                adjustment: '-0.0015'   # 24.5385 - 24.54
             unit:
                 includingTax: '4.02'    # 3.42 + 0.5985 = 4.0185
                 excludingTax: '3.42'
@@ -70,7 +70,7 @@ expectedResult:
                 includingTax: '150.69'  # 10.04625 * 15 = 150.69375
                 excludingTax: '128.25'  # 8.55 * 15
                 taxAmount: '22.44'      # 1.49625 * 15 = 22.44375
-                adjustment: '-0.05625'  # -0.00375 * 15
+                adjustment: '0.00375'  # 22.44375 - 22.44
             unit:
                 includingTax: '10.05'   # 8.55 + 1.49625 = 10.04625
                 excludingTax: '8.55'
@@ -84,7 +84,7 @@ expectedResult:
                 includingTax: '275.71'  # 21.20875 * 13 = 275.71375
                 excludingTax: '234.65'  # 18.05 * 13
                 taxAmount: '41.06'      # 3.15875 * 13 = 41.06375
-                adjustment: '-0.01625'  # -0.00125 * 13
+                adjustment: '0.00375'   # 41.06375 - 41.06
             unit:
                 includingTax: '21.21'   # 18.05 + 3.15875 = 21.20875
                 excludingTax: '18.05'
@@ -103,6 +103,7 @@ expectedResult:
                 includingTax: '29.14'   # 24.8 + 4.34
                 excludingTax: '24.8'
                 taxAmount: '4.34'       # 24.8 * 0.175
+                adjustment: '0'
             taxes:
                 - { tax: 'TAX1', rate: '0.1', taxable_amount: '868', tax_amount: '86.8' }      # 868 * 0.1
                 - { tax: 'TAX3', rate: '0.075', taxable_amount: '868', tax_amount: '65.1' }    # 868 * 0.075

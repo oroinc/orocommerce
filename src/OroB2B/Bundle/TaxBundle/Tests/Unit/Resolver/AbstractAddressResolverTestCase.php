@@ -119,22 +119,24 @@ abstract class AbstractAddressResolverTestCase extends \PHPUnit_Framework_TestCa
         $this->resolver->resolve($taxable);
 
         $this->compareResult(
-            $taxable->getResult(),
             new Result(
                 [
                     Result::ROW => [
                         ResultElement::INCLUDING_TAX => '1',
                         ResultElement::EXCLUDING_TAX => '1',
                         ResultElement::TAX_AMOUNT => '0',
+                        ResultElement::ADJUSTMENT => '0',
                     ],
                     Result::UNIT => [
                         ResultElement::INCLUDING_TAX => '1',
                         ResultElement::EXCLUDING_TAX => '1',
                         ResultElement::TAX_AMOUNT => '0',
+                        ResultElement::ADJUSTMENT => '0',
                     ],
                     Result::TAXES => [],
                 ]
-            )
+            ),
+            $taxable->getResult()
         );
     }
 

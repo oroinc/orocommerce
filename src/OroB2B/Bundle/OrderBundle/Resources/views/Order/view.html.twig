@@ -94,6 +94,28 @@
             'title': 'orob2b.order.sections.order_line_items'|trans,
             'subblocks': [{'data' : [lineItems]}]
         }]) %}
+
+        {# @todo: https://magecore.atlassian.net/browse/BB-1752 #}
+        {% set taxes %}
+            <div class="accordion" id="taxes">
+                <div class="accordion-group">
+                    <div class="accordion-heading">
+                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+                            Taxes
+                        </a>
+                    </div>
+                    <div id="collapseOne" class="accordion-body collapse">
+                        <div class="accordion-inner">
+                            {{ dump(taxes) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endset %}
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': 'Taxes'|trans,
+            'subblocks': [{'data' : [taxes]}]
+        }]) %}
     {% endif %}
 
     {% set id = 'order-view' %}

@@ -80,7 +80,7 @@ class CustomerAddressItemResolverTest extends AbstractAddressResolverTestCase
                 ],
                 new Result(
                     [
-                        Result::ROW => ResultElement::create('72.5637', '59.97', '12.5937', '-0.0063'),
+                        Result::ROW => ResultElement::create('72.5637', '59.97', '12.5937', '0.0037'),
                         Result::UNIT => ResultElement::create('24.1879', '19.99', '4.1979', '-0.0021'),
                         Result::TAXES => [
                             TaxResultElement::create('city', '0.08', '59.97', '4.7976'),
