@@ -94,6 +94,7 @@ class ActionLineButtonsTypeTest extends \PHPUnit_Framework_TestCase
         $action->expects($this->once())->method('hasForm')->willReturn($actionHasForm);
         $action->expects($this->once())->method('getDefinition')->willReturn(new ActionDefinition());
         $actionName = 'action1';
+        $action->expects($this->once())->method('getName')->willReturn($actionName);
         $path = 'route_url';
         $entity = new \stdClass();
         $actions[$actionName] = $action;

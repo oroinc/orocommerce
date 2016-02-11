@@ -119,8 +119,8 @@ services:
     oro_action.datagrid.mass_action_provider.registry:
         class: %oro_action.datagrid.mass_action_provider.registry.class%
 
-    oro_action.block_type.action_line_buttons:
-        class: Oro\Bundle\ActionBundle\Layout\Block\Type\ActionLineButtonsType
+    oro_action.block_type.action_buttons:
+        abstract: true
         arguments:
             - @oro_action.manager
             - @oro_action.helper.context
@@ -128,6 +128,10 @@ services:
             - @request_stack
             - @router
             - @oro_action.helper.restrict
+
+    oro_action.block_type.action_line_buttons:
+        class: Oro\Bundle\ActionBundle\Layout\Block\Type\ActionLineButtonsType
+        parent: oro_action.block_type.action_buttons
         tags:
              - { name: layout.block_type, alias: action_line_buttons }
 
