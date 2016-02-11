@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ActionBundle\Twig;
 
+use Oro\Bundle\ActionBundle\Helper\ContextHelper;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
@@ -24,22 +25,28 @@ class ActionExtension extends \Twig_Extension
     /** @var RequestStack */
     protected $requestStack;
 
+    /** @var  ContextHelper */
+    protected $contextHelper;
+
     /**
      * @param ActionManager $manager
      * @param ApplicationsHelper $appsHelper
      * @param DoctrineHelper $doctrineHelper
      * @param RequestStack $requestStack
+     * @param ContextHelper $contextHelper
      */
     public function __construct(
         ActionManager $manager,
         ApplicationsHelper $appsHelper,
         DoctrineHelper $doctrineHelper,
-        RequestStack $requestStack
+        RequestStack $requestStack,
+        ContextHelper $contextHelper
     ) {
         $this->manager = $manager;
         $this->appsHelper = $appsHelper;
         $this->doctrineHelper = $doctrineHelper;
         $this->requestStack = $requestStack;
+        $this->contextHelper = $contextHelper;
     }
 
     /**
@@ -58,37 +65,12 @@ class ActionExtension extends \Twig_Extension
         return array(
             new \Twig_SimpleFunction(
                 'oro_action_widget_parameters',
-                [$this, 'getWidgetParameters'],
+                [$this->contextHelper, 'getActionParameters'],
                 ['needs_context' => true]
             ),
             new \Twig_SimpleFunction('oro_action_widget_route', [$this, 'getWidgetRoute']),
             new \Twig_SimpleFunction('has_actions', [$this, 'hasActions']),
         );
-    }
-
-    /**
-     * @param array $context
-     * @return array
-     */
-    public function getWidgetParameters(array $context)
-    {
-        $request = $this->requestStack->getMasterRequest();
-
-        $params = [
-            'route' => $request->get('_route'),
-            'fromUrl' => $request->getRequestUri()
-        ];
-
-        if (array_key_exists('entity', $context) && is_object($context['entity']) &&
-            !$this->doctrineHelper->isNewEntity($context['entity'])
-        ) {
-            $params['entityId'] = $this->doctrineHelper->getEntityIdentifier($context['entity']);
-            $params['entityClass'] = get_class($context['entity']);
-        } elseif (isset($context['entity_class'])) {
-            $params['entityClass'] = $context['entity_class'];
-        }
-
-        return $params;
     }
 
     /**
