@@ -11,6 +11,8 @@ parameters:
     oro_action.datagrid.action_extension.class: Oro\Bundle\ActionBundle\Datagrid\Extension\ActionExtension
     oro_action.datagrid.action.action_widget_action.class: Oro\Bundle\ActionBundle\Datagrid\Action\ActionWidgetAction
     oro_action.datagrid.mass_action_provider.registry.class: Oro\Bundle\ActionBundle\Datagrid\Provider\MassActionProviderRegistry
+    oro_action.block_type.action_line_buttons.class: Oro\Bundle\ActionBundle\Layout\Block\Type\ActionLineButtonsType
+    oro_action.block_type.action_button.class: Oro\Bundle\ActionBundle\Layout\Block\Type\ActionButtonType
 
 services:
     oro_action.helper.context:
@@ -130,12 +132,12 @@ services:
             - @oro_action.helper.restrict
 
     oro_action.block_type.action_line_buttons:
-        class: Oro\Bundle\ActionBundle\Layout\Block\Type\ActionLineButtonsType
+        class: %oro_action.block_type.action_line_buttons.class%
         parent: oro_action.block_type.action_buttons
         tags:
              - { name: layout.block_type, alias: action_line_buttons }
 
     oro_action.block_type.action_button:
-        class: Oro\Bundle\ActionBundle\Layout\Block\Type\ActionButtonType
+        class: %oro_action.block_type.action_button.class%
         tags:
              - { name: layout.block_type, alias: action_button }
