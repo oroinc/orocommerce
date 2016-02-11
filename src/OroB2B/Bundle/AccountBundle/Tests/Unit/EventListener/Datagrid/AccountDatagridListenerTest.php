@@ -261,7 +261,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
         }
 
         if (null !== $accountId) {
-            $config['options']['skip_acl_check'] = true;
+            $config['source']['skip_acl_apply'] = true;
             $config['source']['query']['where'] = [
                 'and' => [
                     sprintf('(tableAlias.account = %d OR tableAlias.accountUser = %d)', $accountId, $accountUserId),

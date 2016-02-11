@@ -1,69 +1,136 @@
-.oro-item-collection input[type="text"].precision {
-    width: 180px;
+.oro-item-collection {
+  input[type="text"] {
+    &.precision {
+      width: 180px;
+    }
+  }
 }
 
 .unit-precisions-collection {
-    &> div {
-        margin: 0 0 8px !important;
-    }
+  > div {
+    margin: 0 0 8px !important;
+  }
 
-    .selector {
-        margin-left: 0 !important;
-    }
+  .selector {
+    margin-left: 0 !important;
+  }
 
-    .collection-fields-list td {
-        padding-left: 0;
+  .collection-fields-list {
+    td {
+      padding-left: 0;
     }
+  }
 
-    select.hidden-unit {
-        display: none;
-        visibility: hidden;
+  select {
+    &.hidden-unit {
+      display: none;
+      visibility: hidden;
     }
+  }
 }
 
 .product-container {
-    div.box-type1 div.title {
-        padding: 0 !important;
+  div.box-type1 {
+    div.title {
+      padding: 0 !important;
     }
+  }
 
-    .grid-sidebar.grid-sidebar-maximized {
-        width: 313px;
+  .grid-sidebar {
+    &.grid-sidebar-maximized {
+      width: 313px;
     }
+  }
 }
 
 .product-index-content {
-    &.grid-sidebar-maximized {
-        margin-left: 320px;
-    }
+  &.grid-sidebar-maximized {
+    margin-left: 320px;
+  }
 
-    &.grid-sidebar-minimized {
-        margin-left: 40px;
-    }
+  &.grid-sidebar-minimized {
+    margin-left: 40px;
+  }
 }
 
-.row-oro.add-products {
+.row-oro {
+  &.add-products {
     float: left;
     width: auto;
 
     .add-list-item,
-    .add-buttons
-    {
-        margin-top: 10px;
+    .add-buttons {
+      margin-top: 10px;
     }
+
     .add-products-sku {
-        width: 310px;
-        padding-right: 0;
+      width: 310px;
+      padding-right: 0;
     }
+
     .add-products-quantity {
-        padding-left: 2px;
+      padding-left: 2px;
     }
+
     .product-autocomplete-success {
-        display: none;
-        float: right;
+      display: none;
+      float: right;
     }
+
     .icon-ok-circle {
-        font-size: 20px;
-        color: #2f8206;
-        line-height: 30px;
+      font-size: 20px;
+      color: #2f8206;
+      line-height: 30px;
+    }
+  }
+}
+
+.quick-add {
+    .import-errors {
+        display: none;
+
+        ol {
+            height: 180px;
+            overflow: auto;
+            padding-left: 25px;
+      }
+    }
+
+    .errors-visible .validation-info {
+        display: none;
+    }
+
+    .errors-visible .import-errors {
+        display: block;
+    }
+
+    .errors-visible .error-toggle-head {
+        display: block;
+        padding: 2px;
+        width: 100%;
+        margin: 0 0 5px 0;
+        background-color: #fafafa;
+        border-bottom: 1px solid #e5e5e5;
+    }
+
+    .import-link {
+        display: block;
+        padding-top: 5px;
+        font-weight: bold;
+    }
+
+    .copy-paste {
+        textarea {
+            width: 300px;
+            height: 165px;
+            margin-bottom: 5px;
+        }
+    }
+
+    .hidden-form {
+        .oro-item-collection,
+        .add-list-item {
+            display: none;
+        }
     }
 }

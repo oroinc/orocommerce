@@ -22,7 +22,7 @@ abstract class AbstractCacheBuilderTest extends \PHPUnit_Framework_TestCase
     /**
      * @var string
      */
-    protected $cacheBuilderInterface;
+    protected $cacheBuilderInterface = 'OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface';
 
     protected function setUp()
     {
@@ -31,6 +31,18 @@ abstract class AbstractCacheBuilderTest extends \PHPUnit_Framework_TestCase
             $this->getMock($this->cacheBuilderInterface),
             $this->getMock($this->cacheBuilderInterface)
         ];
+    }
+
+    public function testAddBuilder()
+    {
+        foreach ($this->builders as $builder) {
+            $this->cacheBuilder->addBuilder($builder);
+        }
+
+        $this->assertCallAllBuilders(
+            'buildCache',
+            $this->getMock('OroB2B\Bundle\WebsiteBundle\Entity\Website')
+        );
     }
 
     public function testResolveVisibilitySettings()

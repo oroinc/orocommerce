@@ -23,6 +23,8 @@ orob2b:
             ship_until.label: 'Do Not Ship Later Than'
             price_list.label: 'Price List'
             expired.label: 'Expired'
+            assigned_users.label: 'Assigned To'
+            assigned_account_users.label: 'Assigned Customers'
 
             sections:
                 general: 'General'
@@ -31,9 +33,6 @@ orob2b:
 
             widgets:
                 quote_information: 'Quote Information'
-
-            column:
-                assigned_to: 'Assigned to'
 
             notify_customer:
                 label: 'Notify Customer'
@@ -59,6 +58,7 @@ orob2b:
 
             actions:
                 quote_expire: 'Expire Quote'
+                send_no_quote_alert: 'Send no Quote alert for the Request'
 
             message:
                 quote.expire.success: 'Quote #%id% was successfully expired'
@@ -162,10 +162,11 @@ orob2b:
             quote:
                 entity_plural_label: Quotes
                 qid.label: 'Quote #'
-                account_user.label: 'Assigned To'
+                account_user.label: 'Owner'
                 valid_until.label: 'Valid Until'
                 po_number.label: 'PO Number'
                 ship_until.label: 'Do Not Ship Later Than'
+                assigned_account_users.label: 'Assigned To'
                 sections:
                     general: 'General'
                     quote_products: 'Line Items'
