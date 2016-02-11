@@ -113,11 +113,11 @@
                         </div>
                     </div>
                     <div class="product__select inline va-m_md">
-                        {% for unit in productsUnits[lineItem.product.id] %}
                         <select data-chosen-selectbox class="input input_block input_sm">
+                            {% for unit in productsUnits[lineItem.product.id] %}
                             <option value="{{ unit }}">{{ unit|orob2b_format_product_unit_label}}</option>
+                            {% endfor %}
                         </select>
-                        {% endfor %}
                     </div>
                 </td>
                 <td class="va-t_md">

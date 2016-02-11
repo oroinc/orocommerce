@@ -10,6 +10,8 @@ use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
 
 class UserCurrencyProvider
 {
+    const DEFAULT_CURRENCY = 'USD';
+
     /**
      * @var Session
      */
@@ -37,7 +39,7 @@ class UserCurrencyProvider
 
         //@TODO return correct currency. Now we have not default currency value.
         if (!$currency) {
-            $currency = 'USD';
+            $currency = self::DEFAULT_CURRENCY;
         }
 
         return $currency;

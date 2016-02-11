@@ -23,16 +23,24 @@ class FrontendShoppingListProductsPricesDataProviderTest extends \PHPUnit_Framew
 
     const TEST_CURRENCY = 'USD';
 
-    /** @var FrontendShoppingListProductsPricesDataProvider */
+    /**
+     * @var FrontendShoppingListProductsPricesDataProvider
+     */
     protected $provider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ProductPriceProvider */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ProductPriceProvider
+     */
     protected $productPriceProvider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade
+     */
     protected $securityFacade;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|UserCurrencyProvider */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|UserCurrencyProvider
+     */
     protected $userCurrencyProvider;
 
     public function setUp()

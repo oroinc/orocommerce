@@ -26,11 +26,6 @@ class FrontendShoppingListProductsUnitsDataProvider implements DataProviderInter
     protected $registry;
 
     /**
-     * @var string
-     */
-    protected $shoppingListClass;
-
-    /**
      * @var FrontendPriceListRequestHandler
      */
     protected $requestHandler;
@@ -44,7 +39,6 @@ class FrontendShoppingListProductsUnitsDataProvider implements DataProviderInter
      * @param Registry $registry
      * @param FrontendPriceListRequestHandler $requestHandler
      * @param UserCurrencyProvider $userCurrencyProvider
-     * @internal param Registry $productPriceProvider
      */
     public function __construct(
         Registry $registry,
