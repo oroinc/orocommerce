@@ -1,5 +1,4 @@
 {% block action_line_buttons_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
     <div{{ block('block_attributes') }}>
         <div class="widget-content">
             <div data-page-component-module="oroaction/js/app/components/buttons-component">
@@ -9,8 +8,20 @@
             </div>
 
         </div>
-
     </div>
+{% endblock %}
+
+{% block action_combined_buttons_widget %}
+    <div{{ block('block_attributes') }} {% if (div_class is defined) %}class="{{ div_class }}"{% endif %} >
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block action_dropdown_toggle_widget %}
+    <a href="#" class="dropdown-toggle{% if (class is defined) %} ~' '{{ class }}{% endif %}"
+       data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        <i class="material-icons">arrow_drop_down</i>
+    </a>
 {% endblock %}
 
 {% block action_button_widget %}
@@ -21,7 +32,7 @@
         {% block link %}
             <a {% if (params.id is defined) %}id="{{ params.id }}"{% endif %}
                href="{{ params.path|default('javascript:void(0);') }}"
-               class="back icons-holder-text action-button{% if link_class is defined %} ~ ' '~{{ link_class }} {% endif %}"
+               class="back icons-holder-text action-button{% if link_class is defined %} {{ link_class }} {% endif %}"
                title="{{ linkTitle }}"
                data-from-url="{{ fromUrl }}"
                     {% if params.frontendOptions.show_dialog is defined and not params.frontendOptions.show_dialog %}
@@ -43,7 +54,9 @@
                         {% endfor %}
                     {% endif %}
             >
-                <i class="{{ params.buttonOptions.icon|default('') }} {{ params.buttonOptions.iCss|default('') }} hide-text">{{ linkLabel }}</i>
+                {% if hide_icon is not defined %}
+                    <i class="{{ params.buttonOptions.icon|default('') }} {{ params.buttonOptions.iCss|default('') }} hide-text">{{ linkLabel }}</i>
+                {% endif %}
                 {{ linkLabel|trim }}
             </a>
         {% endblock %}

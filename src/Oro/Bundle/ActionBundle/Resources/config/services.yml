@@ -12,7 +12,9 @@ parameters:
     oro_action.datagrid.action.action_widget_action.class: Oro\Bundle\ActionBundle\Datagrid\Action\ActionWidgetAction
     oro_action.datagrid.mass_action_provider.registry.class: Oro\Bundle\ActionBundle\Datagrid\Provider\MassActionProviderRegistry
     oro_action.block_type.action_line_buttons.class: Oro\Bundle\ActionBundle\Layout\Block\Type\ActionLineButtonsType
+    oro_action.block_type.action_combined_buttons.class: Oro\Bundle\ActionBundle\Layout\Block\Type\ActionCombinedButtonsType
     oro_action.block_type.action_button.class: Oro\Bundle\ActionBundle\Layout\Block\Type\ActionButtonType
+    oro_action.block_type.action_dropdown_toggle.class: Oro\Bundle\ActionBundle\Layout\Block\Type\DropdownToggleType
 
 services:
     oro_action.helper.context:
@@ -137,7 +139,18 @@ services:
         tags:
              - { name: layout.block_type, alias: action_line_buttons }
 
+    oro_action.block_type.action_combined_buttons:
+        class: %oro_action.block_type.action_combined_buttons.class%
+        parent: oro_action.block_type.action_buttons
+        tags:
+             - { name: layout.block_type, alias: action_combined_buttons }
+
     oro_action.block_type.action_button:
         class: %oro_action.block_type.action_button.class%
         tags:
              - { name: layout.block_type, alias: action_button }
+
+    oro_action.block_type.dropdown_toggle:
+        class: %oro_action.block_type.action_dropdown_toggle.class%
+        tags:
+             - { name: layout.block_type, alias: action_dropdown_toggle }

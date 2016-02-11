@@ -141,7 +141,6 @@ abstract class AbstractButtonsType extends AbstractContainerType
                 'fromUrl' => $request->get('fromUrl')
             ]
         );
-        $resolver->setOptional(['group', 'ul_class']);
         $resolver->setRequired(['entity']);
     }
 }

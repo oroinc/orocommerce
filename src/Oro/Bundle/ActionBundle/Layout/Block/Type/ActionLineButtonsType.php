@@ -5,6 +5,7 @@ namespace Oro\Bundle\ActionBundle\Layout\Block\Type;
 use Oro\Component\Layout\BlockBuilderInterface;
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\BlockView;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class ActionLineButtonsType extends AbstractButtonsType
 {
@@ -27,17 +28,23 @@ class ActionLineButtonsType extends AbstractButtonsType
         $actions = $this->getActions($options);
 
         foreach ($actions as $actionName => $action) {
+            if (isset($options['exclude_action']) && $options['exclude_action'] === $actionName) {
+                continue;
+            }
             $params = $this->getParams($options, $action);
-
+            $buttonId = $actionName . '_button';
+            if (array_key_exists('suffix', $options)) {
+                $buttonId .= '_' . $options['suffix'];
+            }
             $builder->getLayoutManipulator()->add(
-                $actionName . '_button',
+                $buttonId,
                 $builder->getId(),
                 ActionButtonType::NAME,
                 [
                     'params' => $params,
                     'context' => $options['context'],
                     'fromUrl' => $options['fromUrl'],
-                    'actionData' => $options['actionData']
+                    'actionData' => $options['actionData'],
                 ]
             );
         }
@@ -51,5 +58,15 @@ class ActionLineButtonsType extends AbstractButtonsType
         if (array_key_exists('ul_class', $options)) {
             $view->vars['ul_class'] = $options['ul_class'];
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        parent::setDefaultOptions($resolver);
+        $resolver->setOptional(['group', 'ul_class', 'exclude_action', 'suffix']);
+        $resolver->setRequired(['entity']);
     }
 }

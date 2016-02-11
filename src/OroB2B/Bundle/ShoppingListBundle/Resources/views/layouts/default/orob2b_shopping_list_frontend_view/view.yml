@@ -28,7 +28,13 @@ layout:
                 shopping_list_line_items:
                     blockType: block
                 shopping_list_combined_button:
-                    blockType: block
+                    blockType: action_combined_buttons
+                    options:
+                        entity:
+                            @value: $data.shoppingList
+                        primary_action_name: orob2b_shoppinglist_frontend_action_createorder
+                        div_class: btn btn_orange btn_has-dropdown btn_has-dropdown_xlg
+                        primary_link_class: direct-link
             tree:
                 content:
                     shopping_list_view_container:
