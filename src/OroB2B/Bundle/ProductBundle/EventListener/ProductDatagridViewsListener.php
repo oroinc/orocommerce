@@ -47,8 +47,8 @@ class ProductDatagridViewsListener
 
     /**
      * @param DatagridConfiguration $config
-     * @param $gridName
-     * @param $viewName
+     * @param string $gridName
+     * @param string $viewName
      */
     protected function addRowTemplate(DatagridConfiguration $config, $gridName, $viewName)
     {
