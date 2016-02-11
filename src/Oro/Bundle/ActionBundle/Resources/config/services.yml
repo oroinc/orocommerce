@@ -1,6 +1,7 @@
 parameters:
     oro_action.helper.context.class: Oro\Bundle\ActionBundle\Helper\ContextHelper
     oro_action.helper.applications.class: Oro\Bundle\ActionBundle\Helper\ApplicationsHelper
+    oro_action.helper.restrict.class: Oro\Bundle\ActionBundle\Helper\RestrictHelper
     oro_action.manager.class: Oro\Bundle\ActionBundle\Model\ActionManager
     oro_action.assembler.class: Oro\Bundle\ActionBundle\Model\ActionAssembler
     oro_action.attribute_assembler.class: Oro\Bundle\ActionBundle\Model\AttributeAssembler
@@ -22,6 +23,9 @@ services:
             class: %oro_action.helper.applications.class%
             arguments:
                 - @security.token_storage
+
+    oro_action.helper.restrict:
+            class: %oro_action.helper.restrict.class%
 
     oro_action.manager:
         class: %oro_action.manager.class%

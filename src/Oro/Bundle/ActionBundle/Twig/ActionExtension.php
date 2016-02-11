@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ActionBundle\Twig;
 
 use Oro\Bundle\ActionBundle\Helper\ContextHelper;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
@@ -22,9 +21,6 @@ class ActionExtension extends \Twig_Extension
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
-    /** @var RequestStack */
-    protected $requestStack;
-
     /** @var  ContextHelper */
     protected $contextHelper;
 
@@ -32,20 +28,17 @@ class ActionExtension extends \Twig_Extension
      * @param ActionManager $manager
      * @param ApplicationsHelper $appsHelper
      * @param DoctrineHelper $doctrineHelper
-     * @param RequestStack $requestStack
      * @param ContextHelper $contextHelper
      */
     public function __construct(
         ActionManager $manager,
         ApplicationsHelper $appsHelper,
         DoctrineHelper $doctrineHelper,
-        RequestStack $requestStack,
         ContextHelper $contextHelper
     ) {
         $this->manager = $manager;
         $this->appsHelper = $appsHelper;
         $this->doctrineHelper = $doctrineHelper;
-        $this->requestStack = $requestStack;
         $this->contextHelper = $contextHelper;
     }
 

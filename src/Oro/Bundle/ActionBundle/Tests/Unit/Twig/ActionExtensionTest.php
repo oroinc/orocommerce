@@ -2,8 +2,7 @@
 
 namespace Oro\Bundle\ActionBundle\Tests\Unit\Twig;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Oro\Bundle\ActionBundle\Helper\ContextHelper;
 
 use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
@@ -24,11 +23,11 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
     protected $doctrineHelper;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|RequestStack */
-    protected $requestStack;
-
     /** @var ActionExtension */
     protected $extension;
+
+    /** @var  ContextHelper */
+    protected $contextHelper;
 
     protected function setUp()
     {
@@ -44,7 +43,7 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->requestStack = $this->getMockBuilder('Symfony\Component\HttpFoundation\RequestStack')
+        $this->contextHelper = $this->getMockBuilder('Oro\Bundle\ActionBundle\Helper\ContextHelper')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -52,7 +51,7 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
             $this->actionManager,
             $this->appsHelper,
             $this->doctrineHelper,
-            $this->requestStack
+            $this->contextHelper
         );
     }
 

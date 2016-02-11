@@ -7,6 +7,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
+use Oro\Bundle\ActionBundle\Helper\RestrictHelper;
 use Oro\Bundle\ActionBundle\Layout\Block\Type\ActionButtonType;
 use Oro\Bundle\ActionBundle\Model\Action;
 use Oro\Bundle\ActionBundle\Model\ActionDefinition;
@@ -16,9 +18,6 @@ use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Helper\ContextHelper;
 use Oro\Bundle\ActionBundle\Layout\Block\Type\ActionLineButtonsType;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
-use Oro\Bundle\ActionBundle\Twig\ActionExtension;
-
-use OroB2B\Bundle\FrontendBundle\Helper\ActionApplicationsHelper;
 
 class ActionLineButtonsTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -31,11 +30,6 @@ class ActionLineButtonsTypeTest extends \PHPUnit_Framework_TestCase
      * @var ActionManager|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $actionManager;
-
-    /**
-     * @var ActionExtension|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $actionExtension;
 
     /**
      * @var UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -53,19 +47,22 @@ class ActionLineButtonsTypeTest extends \PHPUnit_Framework_TestCase
     protected $requestStack;
 
     /**
-     * @var ActionApplicationsHelper|\PHPUnit_Framework_MockObject_MockObject $actionApplicationsHelper
+     * @var ApplicationsHelper|\PHPUnit_Framework_MockObject_MockObject $actionApplicationsHelper
      */
     protected $actionApplicationsHelper;
+
+    /** @var  RestrictHelper|\PHPUnit_Framework_MockObject_MockObject */
+    protected $restrictHelper;
 
     public function setUp()
     {
         $this->actionManager = $this->getMockWithoutConstructor('Oro\Bundle\ActionBundle\Model\ActionManager');
         $this->contextHelper = $this->getMockWithoutConstructor('Oro\Bundle\ActionBundle\Helper\ContextHelper');
         $this->actionApplicationsHelper = $this
-            ->getMockWithoutConstructor('OroB2B\Bundle\FrontendBundle\Helper\ActionApplicationsHelper');
+            ->getMockWithoutConstructor('Oro\Bundle\ActionBundle\Helper\ApplicationsHelper');
         $this->requestStack = $this->getMockWithoutConstructor('Symfony\Component\HttpFoundation\RequestStack');
         $this->router = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
-        $this->actionExtension = $this->getMockWithoutConstructor('Oro\Bundle\ActionBundle\Twig\ActionExtension');
+        $this->restrictHelper = $this->getMock('Oro\Bundle\ActionBundle\Helper\RestrictHelper');
 
         $this->blockType = new ActionLineButtonsType(
             $this->actionManager,
@@ -73,7 +70,7 @@ class ActionLineButtonsTypeTest extends \PHPUnit_Framework_TestCase
             $this->actionApplicationsHelper,
             $this->requestStack,
             $this->router,
-            $this->actionExtension
+            $this->restrictHelper
         );
         parent::setUp();
     }
@@ -108,14 +105,14 @@ class ActionLineButtonsTypeTest extends \PHPUnit_Framework_TestCase
         $options['fromUrl'] = 'fromUrl';
         $options['actionData'] = 'actual_data';
         $expectedContext = array_merge($options['context'], ['entity' => $entity]);
-        $this->actionExtension
+        $this->contextHelper
             ->expects($this->once())
-            ->method('getWidgetParameters')
+            ->method('getActionParameters')
             ->with($expectedContext)
             ->willReturn($expectedContext);
         if ($groupValue) {
             $options['group'] = $groupValue;
-            $this->actionManager
+            $this->restrictHelper
                 ->expects($this->once())
                 ->method('restrictActionsByGroup')
                 ->with($actions, $groupValue)
@@ -129,7 +126,7 @@ class ActionLineButtonsTypeTest extends \PHPUnit_Framework_TestCase
             ->expects($this->at(0))
             ->method('generate')
             ->with(
-                $options['executionRoute'] ?: 'oro_api_action_execute_actions',
+                $options['executionRoute'],
                 array_merge($options['context'], ['actionName' => $actionName, 'entity' => $entity])
             )
             ->willReturn($path);
@@ -138,7 +135,7 @@ class ActionLineButtonsTypeTest extends \PHPUnit_Framework_TestCase
                 ->expects($this->at(1))
                 ->method('generate')
                 ->with(
-                    $options['dialogRoute'] ?: 'oro_action_widget_form',
+                    $options['dialogRoute'],
                     array_merge(
                         $options['context'],
                         ['actionName' => $actionName, 'fromUrl' => $options['fromUrl'], 'entity' => $entity]

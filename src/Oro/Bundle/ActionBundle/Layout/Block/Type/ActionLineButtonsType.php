@@ -2,12 +2,9 @@
 
 namespace Oro\Bundle\ActionBundle\Layout\Block\Type;
 
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
+use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
+use Oro\Bundle\ActionBundle\Helper\RestrictHelper;
 use Oro\Bundle\ActionBundle\Model\Action;
-use Oro\Bundle\ActionBundle\Twig\ActionExtension;
 use Oro\Component\Layout\Block\Type\AbstractContainerType;
 use Oro\Component\Layout\BlockBuilderInterface;
 use Oro\Component\Layout\BlockInterface;
@@ -15,7 +12,9 @@ use Oro\Component\Layout\BlockView;
 use Oro\Bundle\ActionBundle\Helper\ContextHelper;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 
-use OroB2B\Bundle\FrontendBundle\Helper\ActionApplicationsHelper;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ActionLineButtonsType extends AbstractContainerType
 {
@@ -27,40 +26,41 @@ class ActionLineButtonsType extends AbstractContainerType
     /** @var  ContextHelper */
     protected $contextHelper;
 
-    /** @var  ActionApplicationsHelper */
+    /** @var  ApplicationsHelper */
     protected $applicationsHelper;
 
     /** @var  RequestStack */
     protected $requestStack;
 
-    /** @var  ActionExtension */
-    protected $actionExtension;
-
     /** @var  UrlGeneratorInterface */
     protected $router;
+
+    /** @var  RestrictHelper */
+    protected $restrictHelper;
 
     /**
      * @param ActionManager $actionManager
      * @param ContextHelper $contextHelper
-     * @param ActionApplicationsHelper $applicationsHelper
+     * @param ApplicationsHelper $applicationsHelper
      * @param RequestStack $requestStack
      * @param UrlGeneratorInterface $router
-     * @param ActionExtension $actionExtension
+     * @param RestrictHelper $restrictHelper
      */
     public function __construct(
         ActionManager $actionManager,
         ContextHelper $contextHelper,
-        ActionApplicationsHelper $applicationsHelper,
+        ApplicationsHelper $applicationsHelper,
         RequestStack $requestStack,
         UrlGeneratorInterface $router,
-        ActionExtension $actionExtension
+        RestrictHelper $restrictHelper
+
     ) {
         $this->actionManager = $actionManager;
         $this->contextHelper = $contextHelper;
         $this->applicationsHelper = $applicationsHelper;
         $this->requestStack = $requestStack;
         $this->router = $router;
-        $this->actionExtension = $actionExtension;
+        $this->restrictHelper = $restrictHelper;
     }
 
     /**
@@ -80,22 +80,22 @@ class ActionLineButtonsType extends AbstractContainerType
         /** @var Action[] $actions */
         $actions = $options['actions'];
         $options['context']['entity'] = $options['entity'];
-        $options['context'] = $this->actionExtension->getWidgetParameters($options['context']);
+        $options['context'] = $this->contextHelper->getActionParameters($options['context']);
 
         if (array_key_exists('group', $options)) {
-            $actions = $this->actionManager->restrictActionsByGroup($actions, $options['group']);
+            $actions = $this->restrictHelper->restrictActionsByGroup($actions, $options['group']);
         }
 
         foreach ($actions as $actionName => $action) {
             $definition = $action->getDefinition();
             $path = $this->router->generate(
-                $options['executionRoute'] ?: 'oro_api_action_execute_actions',
+                $options['executionRoute'],
                 array_merge($options['context'], ['actionName' => $actionName])
             );
             $actionUrl = null;
             if ($action->hasForm()) {
                 $actionUrl = $this->router->generate(
-                    $options['dialogRoute'] ?: 'oro_action_widget_form',
+                    $options['dialogRoute'],
                     array_merge(
                         $options['context'],
                         ['actionName' => $actionName, 'fromUrl' => $options['fromUrl']]
