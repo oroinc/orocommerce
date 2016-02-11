@@ -51,6 +51,9 @@ orob2b.pricing:
             save: Save
             cancel: Cancel
         save.success: Product Price has been added
+    price_type:
+        bundled: 'bundle'
+        unit: 'per unit'
 
     menu:
         price_lists_tab.label: Price lists management
@@ -85,14 +88,21 @@ orob2b.pricing:
             pricing.title: Pricing
         fields:
             price_lists.title: Price Lists
+            precision.label: Pricing Precision
             rounding_type:
                 label: Pricing Rounding Type
                 tooltip: Select the rounding type that can be used for product prices.
                 choices:
-                    half_up.label: Half Up
-                    half_down.label: Half Down
                     ceil.label: Ceil
                     floor.label: Floor
+                    down.label: Down
+                    up.label: Up
+                    half_even.label: Half Even
+                    half_down.label: Half Down
+                    half_up.label: Half Up
+
+    lineitem:
+        subtotal.label: 'Line items subtotal'
 
 oro:
     importexport:
