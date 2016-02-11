@@ -57,6 +57,31 @@ class ContextHelper
     }
 
     /**
+     * @param array $context
+     * @return array
+     */
+    public function getActionParameters(array $context)
+    {
+        $request = $this->requestStack->getMasterRequest();
+
+        $params = [
+            'route' => $request->get('_route'),
+            'fromUrl' => $request->getRequestUri()
+        ];
+
+        if (array_key_exists('entity', $context) && is_object($context['entity']) &&
+            !$this->doctrineHelper->isNewEntity($context['entity'])
+        ) {
+            $params['entityId'] = $this->doctrineHelper->getEntityIdentifier($context['entity']);
+            $params['entityClass'] = get_class($context['entity']);
+        } elseif (isset($context['entity_class'])) {
+            $params['entityClass'] = $context['entity_class'];
+        }
+
+        return $params;
+    }
+
+    /**
      * @param array|null $context
      * @return ActionData
      */

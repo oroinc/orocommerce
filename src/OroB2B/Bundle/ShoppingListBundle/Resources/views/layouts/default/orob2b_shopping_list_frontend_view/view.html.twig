@@ -37,7 +37,6 @@
 {% block _shopping_list_top_actions_widget %}
     {% set attr = attr|merge({ class: attr.class|default('') ~ "oq__options__right" }) %}
     <div{{ block('block_attributes') }}>
-        ACTIONS
         {{ block_widget(block) }}
     </div>
 {% endblock %}
@@ -88,7 +87,8 @@
 
     <div{{ block('block_attributes') }}>
         <a href="#" class="direct-link">Combined button</a>
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><i class="material-icons">arrow_drop_down</i></a>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><i
+                    class="material-icons">arrow_drop_down</i></a>
         <ul class="dropdown-menu">
             <li><a href="#">Option 1</a></li>
             <li><a href="#">Option 2</a></li>
