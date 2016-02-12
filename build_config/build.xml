@@ -569,12 +569,14 @@
             <arg line="--exclude=RFPBundle/Migrations/Schema"/>
             <arg line="--exclude=SaleBundle/Migrations/Schema"/>
             <arg line="--exclude=OrderBundle/Migrations/Schema"/>
+            <arg line="--exclude=InvoiceBundle/Migrations/Schema"/>
             <arg line="--exclude=ShoppingListBundle/Migrations/Schema"/>
             <arg line="--exclude=WebsiteBundle/Migrations/Schema"/>
             <arg line="--exclude=CatalogBundle/Migrations/Schema"/>
             <arg line="--exclude=CMSBundle/Migrations/Schema"/>
             <arg line="--exclude=WarehouseBundle/Migrations/Schema"/>
             <arg line="--exclude=TaxBundle/Migrations/Schema"/>
+            <arg line="--exclude=MenuBundle/Migrations/Schema"/>
             <arg line="${srcdir}"/>
         </exec>
     </target>

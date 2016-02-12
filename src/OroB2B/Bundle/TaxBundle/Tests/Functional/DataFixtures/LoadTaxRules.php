@@ -52,7 +52,7 @@ class LoadTaxRules extends AbstractFixture implements DependentFixtureInterface
 
         /** @var TaxJurisdiction $taxJurisdiction */
         $taxJurisdiction = $this->getReference(
-            LoadTaxJurisdictions::REFERENCE_PREFIX . '.' . LoadTaxJurisdictions::TAX_1
+            LoadTaxJurisdictions::REFERENCE_PREFIX . '.' . LoadTaxes::TAX_1
         );
 
         /** @var TaxJurisdiction $taxJurisdiction2 */

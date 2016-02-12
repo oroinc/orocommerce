@@ -40,6 +40,8 @@ class OrderController extends AbstractOrderController
     {
         return [
             'entity' => $order,
+            /** @todo: https://magecore.atlassian.net/browse/BB-1752 */
+            'taxes' => $this->get('orob2b_tax.manager.tax_manager')->getTax($order)
         ];
     }
 

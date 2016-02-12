@@ -5,8 +5,8 @@ namespace OroB2B\Bundle\TaxBundle\Model;
 abstract class AbstractResultElement extends AbstractResult
 {
     /**
-     * @param mixed $index
-     * @param mixed $value
+     * @param string $index
+     * @param string $value
      */
     public function offsetSet($index, $value)
     {

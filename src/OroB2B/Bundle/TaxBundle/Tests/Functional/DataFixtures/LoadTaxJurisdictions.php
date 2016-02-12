@@ -29,6 +29,7 @@ class LoadTaxJurisdictions extends AbstractFixture implements DependentFixtureIn
     const STATE_US_NY = 'US-NY';
     const STATE_US_AL = 'US-AL';
     const ZIP_CODE = '012345';
+    const STATE_US_CA = 'US-CA';
 
     const REFERENCE_PREFIX = 'tax_jurisdiction';
 
@@ -40,17 +41,25 @@ class LoadTaxJurisdictions extends AbstractFixture implements DependentFixtureIn
     {
         $this->createTaxJurisdiction(
             $manager,
-            self::TAX_1,
+            LoadTaxes::TAX_1,
             self::DESCRIPTION_1,
             $this->getCountryByCode($manager, self::COUNTRY_US)
         );
 
         $this->createTaxJurisdiction(
             $manager,
-            self::TAX_2,
+            LoadTaxes::TAX_2,
             self::DESCRIPTION_2,
             $this->getCountryByCode($manager, self::COUNTRY_US),
             $this->getRegionByCode($manager, self::STATE_US_NY)
+        );
+
+        $this->createTaxJurisdiction(
+            $manager,
+            LoadTaxes::TAX_3,
+            self::DESCRIPTION_2,
+            $this->getCountryByCode($manager, self::COUNTRY_US),
+            $this->getRegionByCode($manager, self::STATE_US_CA)
         );
 
         $this->createTaxJurisdiction(

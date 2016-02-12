@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Component\Testing\WebTestCase;
@@ -44,7 +45,7 @@ class CategoryControllerTest extends WebTestCase
         );
 
         $this->category = $this->getReference(LoadCategoryData::THIRD_LEVEL1);
-        $this->account = $this->getReference(LoadAccounts::DEFAULT_ACCOUNT_NAME);
+        $this->account = $this->getReference('account.level_1');
         $this->group = $this->getReference(LoadGroups::GROUP1);
     }
 
@@ -121,9 +122,9 @@ class CategoryControllerTest extends WebTestCase
             'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility'
         );
 
-        $this->assertNotCount(0, $categoryVisibilityRepo->findAll());
-        $this->assertNotCount(0, $accountCategoryVisibilityRepo->findAll());
-        $this->assertNotCount(0, $accountGroupCategoryVisibilityRepo->findAll());
+        $this->assertNotEquals(0, $this->getEntitiesCount($categoryVisibilityRepo));
+        $this->assertNotEquals(0, $this->getEntitiesCount($accountCategoryVisibilityRepo));
+        $this->assertNotEquals(0, $this->getEntitiesCount($accountGroupCategoryVisibilityRepo));
 
         $this->submitForm(
             CategoryVisibility::getDefault($this->category),
@@ -135,9 +136,21 @@ class CategoryControllerTest extends WebTestCase
             )
         );
 
-        $this->assertCount(0, $categoryVisibilityRepo->findAll());
-        $this->assertCount(0, $accountCategoryVisibilityRepo->findAll());
-        $this->assertCount(0, $accountGroupCategoryVisibilityRepo->findAll());
+        $this->assertEquals(0, $this->getEntitiesCount($categoryVisibilityRepo));
+        $this->assertEquals(0, $this->getEntitiesCount($accountCategoryVisibilityRepo));
+        $this->assertEquals(0, $this->getEntitiesCount($accountGroupCategoryVisibilityRepo));
+    }
+
+    /**
+     * @param EntityRepository $repository
+     * @return int
+     */
+    protected function getEntitiesCount(EntityRepository $repository)
+    {
+        return (int)$repository->createQueryBuilder('entity')
+            ->select('COUNT(entity.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     /**
@@ -155,7 +168,7 @@ class CategoryControllerTest extends WebTestCase
         );
         $response = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($response, 200);
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Save')->form();
         $parameters = $this->explodeArrayPaths($form->getValues());
         $token = $crawler->filterXPath('//input[@name="orob2b_catalog_category[_token]"]/@value')->text();
 

@@ -38,7 +38,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 'start_calculation_on' => [
                     'type' => 'text',
-                    'value' => TaxationSettingsProvider::START_CALCULATION_ON_INVOICE
+                    'value' => TaxationSettingsProvider::START_CALCULATION_ON_TOTAL
                 ],
                 'product_prices_include_tax' => [
                     'type' => 'boolean',

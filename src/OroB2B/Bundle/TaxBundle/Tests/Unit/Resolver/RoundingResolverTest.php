@@ -83,4 +83,37 @@ class RoundingResolverTest extends \PHPUnit_Framework_TestCase
             $itemTaxable->getResult()
         );
     }
+
+    public function testCatchException()
+    {
+        $taxable = new Taxable();
+        $taxable->setResult(
+            new Result(
+                [
+                    Result::TOTAL => ResultElement::create('', '19.9912'),
+                    Result::TAXES => [
+                        TaxResultElement::create('1', '0.08', '19.99', '1.5992'),
+                        TaxResultElement::create('2', '0.07', '19.99', '1.3993'),
+                        TaxResultElement::create('3', '0.06', '19.99', '1.1994'),
+                    ],
+                ]
+            )
+        );
+
+        $this->resolver->resolve($taxable);
+
+        $this->compareResult(
+            new Result(
+                [
+                    Result::TOTAL => ResultElement::create('', '19.99'),
+                    Result::TAXES => [
+                        TaxResultElement::create('1', '0.08', '19.99', '1.6'),
+                        TaxResultElement::create('2', '0.07', '19.99', '1.4'),
+                        TaxResultElement::create('3', '0.06', '19.99', '1.2'),
+                    ],
+                ]
+            ),
+            $taxable->getResult()
+        );
+    }
 }

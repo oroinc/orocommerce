@@ -6,7 +6,6 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher;
 use OroB2B\Bundle\TaxBundle\Model\Address;
@@ -88,10 +87,7 @@ class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
         $shippingAddress,
         $exclusions
     ) {
-        $this->settingsProvider
-            ->expects($origin !== null ? $this->once() : $this->never())
-            ->method('getOrigin')
-            ->willReturn($origin);
+        $this->settingsProvider->expects($this->any())->method('getOrigin')->willReturn($origin);
 
         $this->settingsProvider
             ->expects($exclusions !== null ? $this->once() : $this->never())
@@ -104,19 +100,20 @@ class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($destination);
 
         $this->settingsProvider
-            ->expects($originByDefault !== null ? $this->once() : $this->never())
+            ->expects($this->once())
             ->method('isOriginBaseByDefaultAddressType')
             ->willReturn($originByDefault);
 
-        $order = new Order();
-        $order->setBillingAddress($billingAddress);
-        $order->setShippingAddress($shippingAddress);
-
-        $this->assertSame($expectedResult, $this->addressProvider->getAddressForTaxation($order));
+        $this->assertEquals(
+            $expectedResult,
+            $this->addressProvider->getAddressForTaxation($billingAddress, $shippingAddress)
+        );
     }
 
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function getAddressForTaxationProvider()
     {
@@ -150,6 +147,9 @@ class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
                 ]
             ),
         ];
+
+        $usRegionTextAddress = (new OrderAddress())->setCountry($countryUS)->setRegionText('US LA');
+        $usAlRegionAddress = (new OrderAddress())->setCountry($countryUS)->setRegion(new Region('AL'));
 
         return [
             'billing address' => [
@@ -205,6 +205,63 @@ class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
                 $billingAddress,
                 $shippingAddress,
                 $exclusions
+            ],
+            'shipping by default return origin if no billing and shipping' => [
+                $originAddress,
+                TaxationSettingsProvider::DESTINATION_SHIPPING_ADDRESS,
+                $originAddress,
+                true,
+                null,
+                null,
+                null,
+            ],
+            'shipping address with exclusion (use origin as base) region text do not match' => [
+                $usRegionTextAddress,
+                TaxationSettingsProvider::DESTINATION_SHIPPING_ADDRESS,
+                $originAddress,
+                null,
+                $billingAddress,
+                $usRegionTextAddress,
+                [
+                    new TaxBaseExclusion(
+                        [
+                            'country' => $countryUS,
+                            'region' => $regionUSLA,
+                            'option' => TaxationSettingsProvider::USE_AS_BASE_DESTINATION,
+                        ]
+                    ),
+                    new TaxBaseExclusion(
+                        [
+                            'country' => $countryCA,
+                            'region' => null,
+                            'option' => TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN,
+                        ]
+                    ),
+                ]
+            ],
+            'shipping address with exclusion (use origin as base) region do not match' => [
+                $usAlRegionAddress,
+                TaxationSettingsProvider::DESTINATION_SHIPPING_ADDRESS,
+                $originAddress,
+                null,
+                $billingAddress,
+                $usAlRegionAddress,
+                [
+                    new TaxBaseExclusion(
+                        [
+                            'country' => $countryUS,
+                            'region' => $regionUSLA,
+                            'option' => TaxationSettingsProvider::USE_AS_BASE_DESTINATION,
+                        ]
+                    ),
+                    new TaxBaseExclusion(
+                        [
+                            'country' => $countryCA,
+                            'region' => null,
+                            'option' => TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN,
+                        ]
+                    ),
+                ]
             ],
         ];
     }
