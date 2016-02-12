@@ -15,6 +15,7 @@ layout:
                         grid_parameters:
                             viewOptions:
                                 tableView: false
+                                headerHide: true
                                 rowTemplateSelector: "#template-grid-row"
             tree:
                 content:
