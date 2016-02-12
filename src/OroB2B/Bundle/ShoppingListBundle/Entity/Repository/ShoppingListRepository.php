@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ShoppingListBundle\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\Common\Collections\Criteria;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -48,27 +49,25 @@ class ShoppingListRepository extends EntityRepository
     /**
      * @param AccountUser $accountUser
      *
-     * @param array $sortSpecification
+     * @param array $sortCriteria
      * @return array
      */
-    public function findByUser(AccountUser $accountUser, array $sortSpecification = [])
+    public function findByUser(AccountUser $accountUser, array $sortCriteria = [])
     {
         $qb = $this->createQueryBuilder('list')
             ->select('list')
             ->where('list.accountUser = :accountUser')
             ->setParameter('accountUser', $accountUser);
 
-        foreach ($sortSpecification as $field => $sortOrder) {
-            if ($sortOrder === 'asc') {
+        foreach ($sortCriteria as $field => $sortOrder) {
+            if ($sortOrder === Criteria::ASC) {
                 $qb->addOrderBy($qb->expr()->asc($field));
-            }
-            if ($sortOrder === 'desc') {
+            } elseif ($sortOrder === Criteria::DESC) {
                 $qb->addOrderBy($qb->expr()->desc($field));
             }
         }
 
-        return $qb->getQuery()
-            ->getResult();
+        return $qb->getQuery()->getResult();
     }
 
     /**

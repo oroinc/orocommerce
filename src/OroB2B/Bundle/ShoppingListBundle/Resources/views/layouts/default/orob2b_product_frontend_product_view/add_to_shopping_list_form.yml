@@ -24,7 +24,7 @@ layout:
                     options:
                         vars:
                             product: { @value: $data.product }
-                            shoppingLists: { @value: $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists }
+                            shoppingLists: { @value: $data.orob2b_shopping_list_account_user_shopping_lists.shoppingListsExceptedCurrent }
                             currentShoppingList: { @value: $data.orob2b_shopping_list_account_user_shopping_lists.currentShoppingList }
             tree:
                 product_specification_container:

@@ -25,9 +25,11 @@ layout:
                         shopping_list_line_items: ~
                         shopping_list_combined_button: ~
         - @add:
-            id: shopping_list_list_of_shopping_lists
+            id: shopping_list_selector
             parentId: sidebar_left
-            blockType: block
+            blockType: shopping_list_selector
             options:
-                vars:
-                    shoppingListsData: {@value: $data.orob2b_shopping_list_account_user_shopping_lists}
+                shoppingLists:
+                    @value: $data.orob2b_shopping_list_account_user_shopping_lists.allShoppingLists
+                selectedShoppingList:
+                    @value: $data.orob2b_shopping_list_account_user_shopping_lists.currentShoppingList

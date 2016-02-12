@@ -13,6 +13,7 @@ parameters:
     orob2b_shopping_list.provider.frontend_line_item_form.class: OroB2B\Bundle\ShoppingListBundle\Provider\FrontendLineItemFormProvider
     orob2b_shopping_list.provider.shopping_list_form.class: OroB2B\Bundle\ShoppingListBundle\Provider\ShoppingListFormProvider
     orob2b_shopping_list.action.datagrid.mass_action_provider.class: OroB2B\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction\AddLineItemMassActionProvider
+    orob2b_shopping_list.layout.block.type.shopping_list_selector.class: OroB2B\Bundle\ShoppingListBundle\Layout\Block\Type\ShoppingListSelectorType
 
 services:
     orob2b_shopping_list.validator.line_item:
@@ -123,3 +124,8 @@ services:
             - @translator
         tags:
             - { name: oro_action.datagrid.mass_action_provider, alias: orob2b_shopping_list_add_products }
+
+    orob2b_shopping_list.layout.block.type.shopping_list_selector:
+        class: %orob2b_shopping_list.layout.block.type.shopping_list_selector.class%
+        tags:
+             - { name: layout.block_type, alias: shopping_list_selector }
