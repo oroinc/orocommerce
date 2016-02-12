@@ -16,21 +16,37 @@
 {% endblock %}
 
 {% block _shopping_list_title_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " hidden-sm hidden-xs" }) %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
 
-    <div{{ block('block_attributes') }}>
+    <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
+        module: 'oroform/js/app/components/inline-editable-view-component',
+        options: {
+            frontend_type: 'title',
+            value: shoppingList.label,
+            fieldName: 'label',
+            insertEditorMethod: 'after',
+            metadata: {
+                inline_editing: {
+                    enable: resource_granted('orob2b_shopping_list_frontend_update'),
+                    save_api_accessor: {
+                        route: 'orob2b_api_frontend_patch_entity_data',
+                        http_method: 'PATCH',
+                        default_route_parameters: {
+                            className: oro_class_name(shoppingList, true),
+                            id: shoppingList.id
+                        }
+                    }
+                },
+                view_options: {
+                    tooltip: 'orob2b.shoppinglist.label.edit.tooltip'|trans,
+                    additionalClass: 'cart__order-title'
+                }
+            }
+        }
+    }) }}>
         <h1 class="cart__order-title nmmt4-md">
             <span>{{ shoppingList.label }}</span>
-            <button class="button-icon fs18 gray">
-                <span class="ttip__wrap">
-                  <i class="icon-pencil ttip__toggle"></i>
-                  <span class="ttip">
-                    <span class="ttip__content ttip__content_dark">{{ 'orob2b.shoppinglist.label.edit.tooltip'|trans }}</span>
-                  </span>
-                </span>
-            </button>
         </h1>
-        {{ block_widget(block) }}
     </div>
 {% endblock %}
 
