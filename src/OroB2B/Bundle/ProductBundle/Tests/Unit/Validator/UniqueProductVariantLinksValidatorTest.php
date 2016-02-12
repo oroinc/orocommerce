@@ -122,8 +122,8 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->context->expects($this->once())
-            ->method('addViolation')
-            ->with((new UniqueProductVariantLinks())->variantFieldRequiredMessage);
+            ->method('addViolationAt')
+            ->with($this->isType('string'), (new UniqueProductVariantLinks())->variantFieldRequiredMessage);
 
         $this->service->validate($product, new UniqueProductVariantLinks());
     }
