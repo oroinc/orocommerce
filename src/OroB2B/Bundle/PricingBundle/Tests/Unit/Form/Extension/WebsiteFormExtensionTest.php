@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\Test\FormInterface;
 
-use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange;
+use OroB2B\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 use OroB2B\Bundle\PricingBundle\Form\Extension\WebsiteFormExtension;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
@@ -255,7 +255,7 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
             $this->eventDispatcher
                 ->expects($this->once())
                 ->method('dispatch')
-                ->with(PriceListCollectionChange::BEFORE_CHANGE, new PriceListCollectionChange($website));
+                ->with(PriceListQueueChangeEvent::BEFORE_CHANGE, new PriceListQueueChangeEvent($website));
         } else {
             $this->eventDispatcher
                 ->expects($this->never())

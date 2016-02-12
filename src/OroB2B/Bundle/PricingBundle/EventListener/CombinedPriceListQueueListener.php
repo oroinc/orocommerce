@@ -7,7 +7,7 @@ use Symfony\Component\HttpKernel\Event\PostResponseEvent;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
-use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange;
+use OroB2B\Bundle\PricingBundle\Event\AbstractPriceListQueueChangeEvent;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PricingBundle\Event\ProductPriceChange;
@@ -78,9 +78,9 @@ class CombinedPriceListQueueListener
     }
 
     /**
-     * @param PriceListCollectionChange $event
+     * @param AbstractPriceListQueueChangeEvent $event
      */
-    public function onQueueChanged(PriceListCollectionChange $event)
+    public function onQueueChanged(AbstractPriceListQueueChangeEvent $event)
     {
         $this->hasCollectionChanges = true;
     }

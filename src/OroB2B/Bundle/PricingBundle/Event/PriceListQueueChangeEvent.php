@@ -2,11 +2,9 @@
 
 namespace OroB2B\Bundle\PricingBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
-
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class PriceListCollectionChange extends Event
+class PriceListQueueChangeEvent extends AbstractPriceListQueueChangeEvent
 {
     const BEFORE_CHANGE = 'orob2b_pricing.price_list_collection.change_before';
 

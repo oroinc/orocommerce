@@ -11,7 +11,7 @@ use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 
-use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange;
+use OroB2B\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
@@ -98,8 +98,8 @@ class PriceListSystemConfigSubscriber implements EventSubscriberInterface
     {
         if ($this->isApplicable && $event->getChangeSet()) {
             $this->eventDispatcher->dispatch(
-                PriceListCollectionChange::BEFORE_CHANGE,
-                new PriceListCollectionChange()
+                PriceListQueueChangeEvent::BEFORE_CHANGE,
+                new PriceListQueueChangeEvent()
             );
             $this->registry->getManager()->flush();
         }

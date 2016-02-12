@@ -14,7 +14,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
-use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange;
+use OroB2B\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
@@ -578,8 +578,8 @@ class AccountWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
                 ->expects($this->once())
                 ->method('dispatch')
                 ->with(
-                    PriceListCollectionChange::BEFORE_CHANGE,
-                    new PriceListCollectionChange($this->targetEntity, $this->website)
+                    PriceListQueueChangeEvent::BEFORE_CHANGE,
+                    new PriceListQueueChangeEvent($this->targetEntity, $this->website)
                 );
         } else {
             $this->eventDispatcher
