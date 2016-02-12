@@ -78,10 +78,16 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                     'functions' => [],
                     'attributes' => [],
                     'frontend_options' => [
-                        'dialog_options' => [],
+                        'options' => [],
+                        'show_dialog' => true
+                    ],
+                    'button_options' => [
                         'page_component_options' => [],
                         'data' => []
                     ],
+                    'datagrid_options' => [
+                        'mass_action' => []
+                    ]
                 ],
             ],
             'full valid configuration' => [
@@ -96,21 +102,29 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'order' => 15,
                         'enabled' => false,
                         'frontend_options' => [
+                            'template' => 'template',
+                            'title' => 'dialog title',
+                            'options' => ['width' => 400],
+                            'confirmation' => 'Confirmation message',
+                            'show_dialog' => false
+                        ],
+                        'button_options' => [
                             'icon' => 'icon',
                             'class' => 'class',
                             'group' => 'group label',
                             'template' => 'template',
-                            'dialog_template' => 'template',
-                            'dialog_title' => 'dialog title',
-                            'dialog_options' => ['width' => 400],
                             'page_component_module' => 'testbundle/app/component',
                             'page_component_options' => [
                                 'param' => 'value'
                             ],
                             'data' => [
                                 'attribute' => 'attrValue'
-                            ],
-                            'confirmation' => 'Confirmation message'
+                            ]
+                        ],
+                        'datagrid_options' => [
+                            'mass_action' => [
+                                'icon' => 'test'
+                            ]
                         ],
                         'form_options' => [
                             'attribute_fields' => [
@@ -176,21 +190,24 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         ]
                     ],
                     'frontend_options' => [
+                        'template' => 'template',
+                        'title' => 'dialog title',
+                        'options' => ['width' => 400],
+                        'confirmation' => 'Confirmation message',
+                        'show_dialog' => false
+                    ],
+                    'button_options' => [
                         'icon' => 'icon',
                         'class' => 'class',
                         'group' => 'group label',
                         'template' => 'template',
-                        'dialog_template' => 'template',
-                        'dialog_title' => 'dialog title',
-                        'dialog_options' => ['width' => 400],
                         'page_component_module' => 'testbundle/app/component',
                         'page_component_options' => [
                             'param' => 'value'
                         ],
                         'data' => [
                             'attribute' => 'attrValue'
-                        ],
-                        'confirmation' => 'Confirmation message'
+                        ]
                     ],
                     'form_options' => [
                         'attribute_fields' => [
@@ -205,6 +222,11 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                             'attribute_1' => 'value 1',
                         ]
                     ],
+                    'datagrid_options' => [
+                        'mass_action' => [
+                            'icon' => 'test'
+                        ]
+                    ]
                 ],
             ],
         ];
@@ -219,7 +241,8 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
             $this->invalidConfigurationProvider(),
             $this->invalidAttributeProvider(),
             $this->invalidFormOptionsProvider(),
-            $this->invalidAttributesProvider()
+            $this->invalidAttributesProvider(),
+            $this->invalidDatagridOptionsProvider()
         );
     }
 
@@ -594,6 +617,39 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                 'message' =>
                     'Invalid configuration for path "action.attributes.attribute9": ' .
                     'Option "class" cannot be used for "bool" type'
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function invaliddatagridOptionsProvider()
+    {
+        return [
+            'incorrect action[datagrid_options]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'datagrid_options' => '',
+                    ],
+                ],
+                'message' => 'Invalid type for path "action.datagrid_options". Expected array, but got string'
+            ],
+            'specified both options of action[datagrid_options]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'datagrid_options' => [
+                            'mass_action_provider' => 'test',
+                            'mass_action' => [
+                                'data' => 'value'
+                            ]
+                        ],
+                    ],
+                ],
+                'message' => 'Invalid configuration for path "action.datagrid_options": ' .
+                    'Must be specified only one parameter "mass_action_provider" or "mass_action"'
             ],
         ];
     }

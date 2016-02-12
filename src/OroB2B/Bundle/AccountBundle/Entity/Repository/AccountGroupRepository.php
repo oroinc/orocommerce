@@ -5,10 +5,21 @@ namespace OroB2B\Bundle\AccountBundle\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class AccountGroupRepository extends EntityRepository
 {
+    /**
+     * @param string $name
+     *
+     * @return null|AccountGroup
+     */
+    public function findOneByName($name)
+    {
+        return $this->findOneBy(['name' => $name]);
+    }
+
     /**
      * @param Category $category
      * @param string $visibility

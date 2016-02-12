@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
+use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
@@ -39,7 +40,7 @@ class QuoteController extends Controller
 
     /**
      * @Route("/", name="orob2b_sale_quote_frontend_index")
-     * @Template("OroB2BSaleBundle:Quote/Frontend:index.html.twig")
+     * @Layout(vars={"entity_class"})
      * @Acl(
      *      id="orob2b_sale_quote_frontend_index",
      *      type="entity",

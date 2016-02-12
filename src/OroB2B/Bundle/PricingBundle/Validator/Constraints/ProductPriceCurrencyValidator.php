@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\Validator\Constraints;
 
+use Doctrine\Common\Util\ClassUtils;
+
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -22,7 +24,7 @@ class ProductPriceCurrencyValidator extends ConstraintValidator
                 sprintf(
                     'Value must be instance of "%s", "%s" given',
                     'OroB2B\Bundle\PricingBundle\Entity\ProductPrice',
-                    is_object($value) ? get_class($value) : gettype($value)
+                    is_object($value) ? ClassUtils::getClass($value) : gettype($value)
                 )
             );
         }

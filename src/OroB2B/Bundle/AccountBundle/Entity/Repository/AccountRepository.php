@@ -7,10 +7,21 @@ use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class AccountRepository extends EntityRepository
 {
+    /**
+     * @param string $name
+     *
+     * @return null|Account
+     */
+    public function findOneByName($name)
+    {
+        return $this->findOneBy(['name' => $name]);
+    }
+
     /**
      * @param AclHelper $aclHelper
      * @param int $accountId

@@ -1,23 +1,7 @@
 parameters:
-    orob2b_shopping_list.event_listener.datagrid.class: OroB2B\Bundle\ShoppingListBundle\EventListener\DatagridListener
-    orob2b_shopping_list.event_listener.form_view.class: OroB2B\Bundle\ShoppingListBundle\EventListener\FormViewListener
     orob2b_shopping_list.event_listener.shopping_list_listener.class: OroB2B\Bundle\ShoppingListBundle\EventListener\ShoppingListListener
 
 services:
-    orob2b_shopping_list.event_listener.datagrid:
-        class: %orob2b_shopping_list.event_listener.datagrid.class%
-        tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-products-grid, method: onBuildBeforeFrontendProducts }
-
-    orob2b_shopping_list.event_listener.form_view:
-        class: %orob2b_shopping_list.event_listener.form_view.class%
-        arguments:
-            - @request_stack
-            - @translator
-            - @oro_entity.doctrine_helper
-        tags:
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.frontend-product-view, method: onFrontendProductView }
-
     orob2b_shopping_list.event_listener.shopping_list_listener:
         class: %orob2b_shopping_list.event_listener.shopping_list_listener.class%
         tags:

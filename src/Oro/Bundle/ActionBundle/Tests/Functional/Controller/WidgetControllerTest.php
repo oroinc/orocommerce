@@ -384,6 +384,22 @@ class WidgetControllerTest extends WebTestCase
                 'entityId' => null,
                 'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
                 'expected' => $label
+            ],
+            'non modal action' => [
+                'config' => array_merge_recursive(
+                    $config,
+                    ['oro_action_test_action' =>
+                        [
+                            'entities' => ['Oro\Bundle\TestFrameworkBundle\Entity\TestActivity'],
+                            'routes' => ['oro_action_test_route'],
+                            'frontend_options' => ['show_dialog' => false],
+                        ]
+                    ]
+                ),
+                'route' => 'oro_action_test_route',
+                'entityId' => null,
+                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
+                'expected' => 'data-page-url="'
             ]
         ];
     }
@@ -400,7 +416,7 @@ class WidgetControllerTest extends WebTestCase
                 'order' => 10,
                 'entities' => ['Oro\Bundle\TestFrameworkBundle\Entity\TestActivity'],
                 'routes' => [],
-                'frontend_options' => [],
+                'frontend_options' => ['show_dialog' => true],
                 'attributes' => [
                     'message_attr' => ['label' => 'Message', 'type' => 'string'],
                     'descr_attr' => ['property_path' => 'data.description']

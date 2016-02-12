@@ -8,7 +8,7 @@ actions:
             - products-grid
         acl_resource: orob2b_product_create
         order: 10
-        frontend_options:
+        button_options:
             icon: icon-copy
         functions:
             - @call_service_method:

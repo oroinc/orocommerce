@@ -488,11 +488,14 @@
 
         &.direct-link {
           width: calc(~'100% - 48px');
+          padding: 0;
+          font-size: 1.7rem;
         }
 
         &.dropdown-toggle {
           width: 4.8rem;
           border-left: .1rem solid rgba(255, 255, 255, 0.3);
+          padding: 0;
         } 
       }
     }
@@ -649,6 +652,11 @@
   &.badge_x-circled-corners {
     .radiused (.5rem);
   }    
+
+  &.badge_transparent {
+    background: transparent;
+    color: @base-font-color-lighter;
+  }
 
   &.badge_dark {
     background: @theme-dark-gray-color;

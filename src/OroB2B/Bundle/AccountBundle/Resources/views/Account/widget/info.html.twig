@@ -32,24 +32,18 @@
                 {% endif %}
             {% endif %}
 
-            {% if entity.users.count() %}
-                {% set users = [] %}
-                {% for user in entity.users %}
-                    {% set username = user.firstName ~ ' ' ~ user.lastName %}
-                    {% if resource_granted('VIEW', user) %}
-                        {% set userView = UI.renderUrl(path('orob2b_account_account_user_view', {'id': user.id}), username) %}
-                    {% else %}
-                        {% set userView = username|escape %}
-                    {% endif %}
-                    {% set users = users|merge([userView]) %}
-                {% endfor %}
-                {{ UI.renderHtmlProperty('orob2b.account.users.label'|trans, UI.renderList(users)) }}
+            {% if entity.users | length %}
+                {{ UI.renderHtmlProperty('orob2b.account.users.label'|trans, UI.entityViewLinks(entity.users, 'fullName', 'orob2b_account_account_user_view')) }}
+            {% endif %}
+
+            {% if entity.salesRepresentatives | length %}
+                {{ UI.renderHtmlProperty('orob2b.account.sales_representatives.label'|trans, UI.entityViewLinks(entity.salesRepresentatives, 'fullName', 'oro_user_view')) }}
             {% endif %}
 
             {% if entity.children.count() %}
                 {% set accountTree %}
-                    <div class="b2b-tree">
-                        <div data-page-component-module="orob2baccount/js/app/components/account-tree-component"
+                    <div class="account-children">
+                        <div data-page-component-module="oroui/js/app/components/basic-tree-component"
                              data-page-component-options="{{ {'data' : treeData}|json_encode }}"></div>
                     </div>
                 {% endset %}

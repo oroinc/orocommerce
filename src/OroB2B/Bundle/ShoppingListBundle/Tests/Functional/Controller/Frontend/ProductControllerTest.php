@@ -37,7 +37,7 @@ class ProductControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_shopping_list_product_shopping_list_form', ['productId' => $product->getId()])
+            $this->getUrl('orob2b_product_frontend_product_view', ['id' => $product->getId()])
         );
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
@@ -57,21 +57,37 @@ class ProductControllerTest extends WebTestCase
 
         $this->assertCount(0, $shoppingList->getLineItems());
 
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl(
-                'orob2b_shopping_list_line_item_frontend_add_widget',
-                ['productId' => $product->getId(), '_wid' => 1]
-            )
-        );
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $form = $crawler->selectButton('Save')->form();
+        $tokenManager = $this->getContainer()->get('security.csrf.token_manager');
 
-        $form['orob2b_shopping_list_frontend_line_item_widget[quantity]'] = 5;
-        $form['orob2b_shopping_list_frontend_line_item_widget[unit]'] = 'liter';
-        $form['orob2b_shopping_list_frontend_line_item_widget[shoppingList]'] = $shoppingList->getId();
-        $this->client->submit($form);
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $this->client->request(
+            'POST',
+            $this->getUrl(
+                'orob2b_shopping_list_frontend_add_product',
+                [
+                    'productId' => $product->getId(),
+                    'shoppingListId' => $shoppingList->getId()
+                ]
+            ),
+            [
+                'orob2b_shopping_list_frontend_line_item' => [
+                    'quantity' => 5,
+                    'unit' => 'liter',
+                    '_token' => $tokenManager->getToken('orob2b_shopping_list_frontend_line_item')->getValue()
+                ]
+            ]
+        );
+
+        $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
+
+        $this->assertArrayHasKey('successful', $result);
+        $this->assertTrue($result['successful']);
+        $this->assertArrayHasKey('message', $result);
+        $this->assertEquals(
+            'Product has been added (<a href=\'' .
+            $this->getUrl('orob2b_shopping_list_frontend_view', ['id' => $shoppingList->getId()]) .
+            '\'>view shopping list</a>).',
+            $result['message']
+        );
 
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getContainer()->get('doctrine')->getManagerForClass($shoppingListClass)
