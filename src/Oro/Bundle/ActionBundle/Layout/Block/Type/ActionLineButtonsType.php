@@ -48,8 +48,6 @@ class ActionLineButtonsType extends AbstractButtonsType
      */
     public function buildView(BlockView $view, BlockInterface $block, array $options)
     {
-        if (array_key_exists('ul_class', $options)) {
-            $view->vars['ul_class'] = $options['ul_class'];
-        }
+        $view->vars['attr'] = ['data-page-component-module' => 'oroaction/js/app/components/buttons-component'];
     }
 }
