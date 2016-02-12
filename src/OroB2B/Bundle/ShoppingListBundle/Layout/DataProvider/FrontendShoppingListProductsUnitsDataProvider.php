@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Provider;
+namespace OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
@@ -63,10 +63,8 @@ class FrontendShoppingListProductsUnitsDataProvider implements DataProviderInter
      */
     public function getData(ContextInterface $context)
     {
-        $shoppingList = $context->data()->get('shoppingList');
-
         if (!$this->data) {
-            $this->data = $this->getProductsUnits($shoppingList);
+            $this->data = $this->getProductsUnits($context->data()->get('shoppingList'));
         }
         return $this->data;
     }

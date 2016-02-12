@@ -249,19 +249,18 @@ class ProductPriceRepository extends EntityRepository
      * @param Collection $products
      * @param string $currency
      *
-     * @return ProductUnit[]
+     * @return array
      */
-    public function getProductsUnitsByPriceList(PriceList $priceList, Collection $products, $currency = null)
+    public function getProductsUnitsByPriceList(PriceList $priceList, Collection $products, $currency)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('IDENTITY(price.product) AS productId, GROUP_CONCAT(DISTINCT unit.code) AS codes')
+        $qb->select('DISTINCT IDENTITY(price.product) AS productId, unit.code AS code')
             ->from('OroB2BProductBundle:ProductUnit', 'unit')
             ->join($this->_entityName, 'price', Join::WITH, 'price.unit = unit')
             ->where($qb->expr()->in('price.product', ':products'))
             ->andWhere($qb->expr()->eq('price.priceList', ':priceList'))
             ->andWhere($qb->expr()->eq('price.currency', ':currency'))
             ->addOrderBy('unit.code')
-            ->groupBy('price.product')
             ->setParameters([
                 'products' => $products,
                 'priceList' => $priceList,
@@ -272,7 +271,7 @@ class ProductPriceRepository extends EntityRepository
 
         $result = [];
         foreach ($productsUnits as $unit) {
-            $result[$unit['productId']] = explode(',', $unit['codes']);
+            $result[$unit['productId']][] = $unit['code'];
         }
 
         return $result;

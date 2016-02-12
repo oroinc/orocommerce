@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Provider;
 
-use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
 use Symfony\Component\HttpFoundation\Session\Session;
 
+use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 
 class UserCurrencyProviderTest extends \PHPUnit_Framework_TestCase
