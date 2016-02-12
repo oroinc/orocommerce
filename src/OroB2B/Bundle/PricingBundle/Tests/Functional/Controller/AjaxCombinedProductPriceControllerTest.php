@@ -15,7 +15,7 @@ class AjaxCombinedProductPriceControllerTest extends AbstractAjaxProductPriceCon
     /**
      * @var string
      */
-    protected $pricesByPriceListActionUrl = 'orob2b_pricing_price_by_pricelist';
+    protected $pricesByPriceListActionUrl = 'orob2b_pricing_price_by_account';
 
     /**
      * {@inheritdoc}
@@ -121,7 +121,7 @@ class AjaxCombinedProductPriceControllerTest extends AbstractAjaxProductPriceCon
         $data = json_decode($result->getContent(), true);
 
         $expectedData = [];
-        if (0 === count($expected)) {
+        if (0 !== count($expected)) {
             $expectedData = [
                 $product->getId() . '-' . $unit . '-' . $qty . '-' . $currency => $expected
             ];

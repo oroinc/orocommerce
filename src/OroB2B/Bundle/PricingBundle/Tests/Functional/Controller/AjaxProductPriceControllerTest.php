@@ -17,7 +17,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 class AjaxProductPriceControllerTest extends WebTestCase
 {
     /** @var string */
-    protected $pricesByPriceListActionUrl = 'orob2b_pricing_price_by_pricelist';
+    protected $pricesByPriceListActionUrl = 'orob2b_pricing_price_by_account';
 
     protected function setUp()
     {

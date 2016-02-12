@@ -69,7 +69,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
     /**
      * @return array
      */
-    public function getProductPricesByPriceListActionDataProvider()
+    public function getProductPricesByAccountActionDataProvider()
     {
         return [
             'without currency' => [

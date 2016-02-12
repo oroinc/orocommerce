@@ -48,7 +48,7 @@ abstract class AbstractAjaxProductPriceController extends Controller
 
     /**
      * @param array $lineItems
-     * @return array
+     * @return ProductPriceCriteria[]
      */
     protected function prepareProductsPriceCriteria(array $lineItems)
     {
