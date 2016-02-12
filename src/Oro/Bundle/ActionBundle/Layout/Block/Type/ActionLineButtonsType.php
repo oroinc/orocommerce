@@ -36,16 +36,20 @@ class ActionLineButtonsType extends AbstractButtonsType
             if (array_key_exists('suffix', $options)) {
                 $buttonId .= '_' . $options['suffix'];
             }
+            $buttonParameters = [
+                'params' => $params,
+                'context' => $options['context'],
+                'fromUrl' => $options['fromUrl'],
+                'actionData' => $options['actionData'],
+            ];
+            if (array_key_exists('hide_icons', $options)) {
+                $buttonParameters['hide_icon'] = $options['hide_icons'];
+            }
             $builder->getLayoutManipulator()->add(
                 $buttonId,
                 $builder->getId(),
                 ActionButtonType::NAME,
-                [
-                    'params' => $params,
-                    'context' => $options['context'],
-                    'fromUrl' => $options['fromUrl'],
-                    'actionData' => $options['actionData'],
-                ]
+                $buttonParameters
             );
         }
     }
@@ -66,7 +70,7 @@ class ActionLineButtonsType extends AbstractButtonsType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         parent::setDefaultOptions($resolver);
-        $resolver->setOptional(['group', 'ul_class', 'exclude_action', 'suffix']);
+        $resolver->setOptional(['group', 'exclude_action', 'suffix', 'hide_icons']);
         $resolver->setRequired(['entity']);
     }
 }

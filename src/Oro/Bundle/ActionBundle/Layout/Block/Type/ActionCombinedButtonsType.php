@@ -55,15 +55,25 @@ class ActionCombinedButtonsType extends AbstractButtonsType
         );
 
         $builder->getLayoutManipulator()->add(
-            'dropdown',
+            'dropdown_link',
             $builder->getId(),
             DropdownToggleType::NAME
         );
+
+        $lineButtonsOptions=[
+            'entity' => $options['entity'],
+            'suffix' => 'combined',
+            'hide_icons' => true,
+            'exclude_action' => $primaryActionName
+        ];
+        if (array_key_exists('ul_class', $options)) {
+            $lineButtonsOptions['ul_class'] = $options['ul_class'];
+        }
         $builder->getLayoutManipulator()->add(
-            'pizdec',
+            'dropdown_menu',
             $builder->getId(),
             ActionLineButtonsType::NAME,
-            ['entity' => $options['entity'], 'suffix' => 'combined']
+            $lineButtonsOptions
         );
     }
 
@@ -87,6 +97,6 @@ class ActionCombinedButtonsType extends AbstractButtonsType
     {
         parent::setDefaultOptions($resolver);
         $resolver->setOptional(['group', 'primary_link_class']);
-        $resolver->setRequired(['primary_action_name', 'div_class']);
+        $resolver->setRequired(['primary_action_name']);
     }
 }

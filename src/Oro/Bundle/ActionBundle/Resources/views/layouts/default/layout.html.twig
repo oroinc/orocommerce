@@ -1,14 +1,9 @@
 {% block action_line_buttons_widget %}
-    <div{{ block('block_attributes') }}>
-        <div class="widget-content">
-            <div data-page-component-module="oroaction/js/app/components/buttons-component">
-                <ul {% if (ul_class is defined) %}class="{{ ul_class }}"{% endif %}>
-                    {{ block_widget(block) }}
-                </ul>
-            </div>
-
-        </div>
-    </div>
+    <ul {% if (ul_class is defined) %}class="{{ ul_class }}"{% endif %}
+        data-page-component-module="oroaction/js/app/components/buttons-component"
+            {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </ul>
 {% endblock %}
 
 {% block action_combined_buttons_widget %}
