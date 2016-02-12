@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;

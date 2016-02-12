@@ -102,7 +102,7 @@ class ProductRepositoryTest extends WebTestCase
 
         $actual = $this->getActualArray();
 
-        $this->assertCount(19, $actual);
+        $this->assertCount(27, $actual);
         $this->assertInsertedByCategory($actual);
     }
 
@@ -384,7 +384,7 @@ class ProductRepositoryTest extends WebTestCase
             $category
         );
         $visibilities = $this->repository->findBy(['product' => $product]);
-        $this->assertSame(2, count($visibilities), 'Not expected count of resolved visibilities');
+        $this->assertCount(3, $visibilities, 'Not expected count of resolved visibilities');
         $resolvedVisibility = $this->repository->findOneBy(
             [
                 'product' => $product,
@@ -404,7 +404,7 @@ class ProductRepositoryTest extends WebTestCase
             $category
         );
         $visibilities = $this->repository->findBy(['product' => $product]);
-        $this->assertSame(3, count($visibilities), 'Not expected count of resolved visibilities');
+        $this->assertCount(4, $visibilities, 'Not expected count of resolved visibilities');
     }
 
     /**

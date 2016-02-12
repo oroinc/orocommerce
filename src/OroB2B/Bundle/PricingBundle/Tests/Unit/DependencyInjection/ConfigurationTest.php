@@ -2,12 +2,13 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\DependencyInjection;
 
-use Oro\DBAL\Types\MoneyType;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
-use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
 use Symfony\Component\Config\Definition\Processor;
 
+use Oro\DBAL\Types\MoneyType;
+
 use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
+use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
