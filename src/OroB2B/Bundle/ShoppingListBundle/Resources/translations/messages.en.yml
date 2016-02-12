@@ -97,6 +97,10 @@ orob2b:
 
     frontend:
         shoppinglist:
+            selector:
+                sort_by.label: 'Sort By:'
+                last_updated.label: 'Last Updated'
+                show_more.label: 'Show More'
             view:
                 view_options.label: View Options for this Shopping List
                 add_note.label: Add a Note to This Shopping List

@@ -26,6 +26,7 @@ class ShoppingListSelectorType extends AbstractType
     public function buildView(BlockView $view, BlockInterface $block, array $options)
     {
         $selectedShoppingListId = null;
+
         if ($block->getContext()->data()->has('shoppingList')
             && $shoppingList = $block->getContext()->data()->get('shoppingList')
         ) {
