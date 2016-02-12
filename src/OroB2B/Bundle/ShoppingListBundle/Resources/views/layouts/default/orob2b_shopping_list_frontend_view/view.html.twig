@@ -70,13 +70,14 @@
                 <div class="ml1-md mmt5-md">
                     <label for="addANote" class="checkbox_custom checkbox_custom_blue mml5-md
                             {% if notes is not empty %} checked {% endif %}" data-checkbox>
-                        <input type="checkbox" name="addANote" id="addANote">
+                        <input type="checkbox" name="addANote" id="addANote"
+                            {% if notes is not empty %} checked = "checked" {% endif %}">
                         <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
                         <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
                         <span class="checkbox_custom__text fs13">{{ 'orob2b.frontend.shoppinglist.view.add_note.label'|trans }}</span>
                     </label>
                     <div class="form-input">
-                        <textarea placeholder="{{ 'orob2b.frontend.shoppinglist.view.note.placeholder'|trans }}"
+                        <textarea placeholder="{{ 'orob2b.frontend.shoppinglist.view.add_note.placeholder'|trans }}"
                                   rows="3" cols="30" name="copy_paste_order"
                                   class="input input_sm input_block">{{ notes }}</textarea>
                     </div>
@@ -148,6 +149,25 @@
                 </td>
                 <td class="va-t_md text-right">
                     <button class="button-icon gray fs20"><i class="icon-trash"></i></button>
+                </td>
+            </tr>
+            <tr class="borderless t_paddingless">
+                {% set notes = shoppingList.notes %}
+                <td colspan="5">
+                    <div class="checkbox_custom-wrapper">
+                        <label for="{{ 'lineItem'~lineItem.id }}" class="checkbox_custom checkbox_custom_blue
+                            {% if notes is not empty %} checked {% endif %}" data-checkbox>
+                            <input type="checkbox" name="{{ 'lineItem'~lineItem.id }}" id="{{ 'lineItem'~lineItem.id }}"
+                                {% if notes is not empty %} checked = "checked" {% endif %}">
+                            <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
+                            <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
+                            <span class="checkbox_custom__text fs13">{{ 'orob2b.frontend.shoppinglist.view.add_item_note.label'|trans }}</span>
+                        </label>
+
+                        <div class="form-input form-input_textarea">
+                            <textarea class="input input_sm input_block" name="copy_paste_order" cols="30" rows="3" placeholder="{{ 'orob2b.frontend.shoppinglist.view.add_item_note.placeholder'|trans }}">{{ lineItem.notes }}</textarea>
+                        </div>
+                    </div>
                 </td>
             </tr>
             {% endfor %}
