@@ -86,7 +86,7 @@ class ProductRepositoryTest extends WebTestCase
      */
     public function testInsertFromBaseTable()
     {
-        $this->repository->insertFromBaseTable($this->getInsertFromSelectExecutor());
+        $this->repository->insertStatic($this->getInsertFromSelectExecutor());
         $actual = $this->getActualArray();
 
         $this->assertCount(3, $actual);
@@ -98,18 +98,11 @@ class ProductRepositoryTest extends WebTestCase
      */
     public function testInsertByCategory()
     {
-        $this->repository->insertByCategory(
-            $this->getInsertFromSelectExecutor(),
-            BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
-            array_map(function ($category) {
-                /** @var Category $category */
-                return $category->getId();
-            }, $this->getCategories())
-        );
+        $this->repository->insertByCategory($this->getInsertFromSelectExecutor());
 
         $actual = $this->getActualArray();
 
-        $this->assertCount(27, $actual);
+        $this->assertCount(19, $actual);
         $this->assertInsertedByCategory($actual);
     }
 
@@ -127,10 +120,12 @@ class ProductRepositoryTest extends WebTestCase
      */
     public function testInsertFromBaseTableByWebsite()
     {
-        $this->repository->insertFromBaseTable($this->getInsertFromSelectExecutor(), $this->website);
+        $this->repository->clearTable();
+
+        $this->repository->insertStatic($this->getInsertFromSelectExecutor(), $this->website);
         $actual = $this->getActualArray();
 
-        $this->assertCount(24, $actual);
+        $this->assertCount(3, $actual);
         $this->assertInsertedFromBaseTable($actual);
     }
 
@@ -139,25 +134,23 @@ class ProductRepositoryTest extends WebTestCase
      */
     public function testInsertByCategoryForWebsite()
     {
-        $categories = $this->getCategories();
+        $this->repository->clearTable();
 
         $this->repository->insertByCategory(
             $this->getInsertFromSelectExecutor(),
-            BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
-            array_map(function ($category) {
-                /** @var \OroB2B\Bundle\CatalogBundle\Entity\Category $category */
-                return $category->getId();
-            }, $categories),
             $this->website
         );
 
         $actual = $this->getActualArray();
-        $this->assertCount(27, $actual);
-        $this->assertInsertedByCategory($actual, $this->website);
+        $this->assertCount(0, $actual);
     }
 
     public function testInsertUpdateDeleteAndHasEntity()
     {
+        $this->repository->clearTable();
+        $this->repository->insertStatic($this->getInsertFromSelectExecutor());
+        $this->repository->insertByCategory($this->getInsertFromSelectExecutor());
+
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
 
@@ -221,7 +214,7 @@ class ProductRepositoryTest extends WebTestCase
                     'website' => $website->getId(),
                     'product' => $product->getId(),
                     'sourceProductVisibility' => null,
-                    'visibility' => BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
+                    'visibility' => BaseProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
                     'source' => ProductVisibilityResolved::SOURCE_CATEGORY,
                     'category' => $this->getCategoryRepository()->findOneByProduct($product)->getId()
                 ];
@@ -367,8 +360,12 @@ class ProductRepositoryTest extends WebTestCase
         /** @var $product Product */
         $category = $this->getCategoryByProduct($product);
         $this->repository->deleteByProduct($product);
-
-        $this->repository->insertByProduct($this->getInsertFromSelectExecutor(), $product, $category, false);
+        $this->repository->insertByProduct(
+            $this->getInsertFromSelectExecutor(),
+            $product,
+            ProductVisibilityResolved::VISIBILITY_HIDDEN,
+            $category
+        );
         $this->repository->deleteByProduct($product);
         $visibilities = $this->repository->findBy(['product' => $product]);
         $this->assertEmpty($visibilities, 'Deleting has failed');
@@ -380,9 +377,14 @@ class ProductRepositoryTest extends WebTestCase
         /** @var $product Product */
         $category = $this->getCategoryByProduct($product);
         $this->repository->deleteByProduct($product);
-        $this->repository->insertByProduct($this->getInsertFromSelectExecutor(), $product, $category, true);
+        $this->repository->insertByProduct(
+            $this->getInsertFromSelectExecutor(),
+            $product,
+            ProductVisibilityResolved::VISIBILITY_VISIBLE,
+            $category
+        );
         $visibilities = $this->repository->findBy(['product' => $product]);
-        $this->assertSame(3, count($visibilities), 'Not expected count of resolved visibilities');
+        $this->assertSame(2, count($visibilities), 'Not expected count of resolved visibilities');
         $resolvedVisibility = $this->repository->findOneBy(
             [
                 'product' => $product,
@@ -395,9 +397,14 @@ class ProductRepositoryTest extends WebTestCase
         $product = $this->getReference(LoadProductData::PRODUCT_4);
         $category = $this->getCategoryByProduct($product);
         $this->repository->deleteByProduct($product);
-        $this->repository->insertByProduct($this->getInsertFromSelectExecutor(), $product, $category, false);
+        $this->repository->insertByProduct(
+            $this->getInsertFromSelectExecutor(),
+            $product,
+            ProductVisibilityResolved::VISIBILITY_HIDDEN,
+            $category
+        );
         $visibilities = $this->repository->findBy(['product' => $product]);
-        $this->assertSame(4, count($visibilities), 'Not expected count of resolved visibilities');
+        $this->assertSame(3, count($visibilities), 'Not expected count of resolved visibilities');
     }
 
     /**

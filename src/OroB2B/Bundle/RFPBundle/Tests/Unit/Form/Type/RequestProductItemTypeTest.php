@@ -249,7 +249,6 @@ class RequestProductItemTypeTest extends AbstractTest
     protected function getExtensions()
     {
         $priceType                  = $this->preparePriceType();
-        $optionalPriceType          = $this->prepareOptionalPriceType();
         $currencySelectionType      = new CurrencySelectionTypeStub();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
 
@@ -258,7 +257,6 @@ class RequestProductItemTypeTest extends AbstractTest
                 [
                     ProductUnitSelectionType::NAME          => new ProductUnitSelectionTypeStub(),
                     $priceType->getName()                   => $priceType,
-                    $optionalPriceType->getName()           => $optionalPriceType,
                     $currencySelectionType->getName()       => $currencySelectionType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
                     QuantityTypeTrait::$name                => $this->getQuantityType(),

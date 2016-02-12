@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Entity;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
@@ -55,7 +55,7 @@ class BaseProductPriceTest extends \PHPUnit_Framework_TestCase
         $productPrice->loadPrice();
 
         $price = $productPrice->getPrice();
-        $this->assertInstanceOf('Oro\Bundle\CurrencyBundle\Model\Price', $price);
+        $this->assertInstanceOf('Oro\Bundle\CurrencyBundle\Entity\Price', $price);
         $this->assertEquals($value, $price->getValue());
         $this->assertEquals($currency, $price->getCurrency());
 

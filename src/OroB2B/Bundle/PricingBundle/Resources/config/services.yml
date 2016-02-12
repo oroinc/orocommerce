@@ -24,6 +24,7 @@ parameters:
 
     orob2b_pricing.provider.currency.class: OroB2B\Bundle\PricingBundle\Provider\CurrencyProvider
     orob2b_pricing.provider.product_price.class: OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider
+    orob2b_pricing.provider.line_items_subtotal.class: OroB2B\Bundle\PricingBundle\Provider\LineItemsSubtotalProvider
     orob2b_pricing.provider.combined_price_list.class: OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider
     orob2b_pricing.provider.price_list_collection.class: OroB2B\Bundle\PricingBundle\Provider\PriceListCollectionProvider
 
@@ -434,6 +435,12 @@ services:
         class: %orob2b_pricing.validator.unique_price_list.class%
         tags:
             - { name: validator.constraint_validator, alias: orob2b_pricing_unique_price_list_validator }
+
+    orob2b_pricing.provider.line_items_subtotal:
+        class: %orob2b_pricing.provider.line_items_subtotal.class%
+        arguments:
+            - @translator
+            - @orob2b_pricing.rounding.price_rounding_service
 
     #TODO: refactor after BB-1289
     orob2b_pricing.entity_listener.product_price:

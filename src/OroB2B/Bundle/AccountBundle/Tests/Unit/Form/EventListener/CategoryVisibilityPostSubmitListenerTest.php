@@ -68,9 +68,9 @@ class CategoryPostSubmitVisibilityListenerTest extends AbstractVisibilityListene
     /**
      * @param Category $category
      * @param string $visibility
-     * @dataProvider onPostSubmitPersistDefaultDataProvider
+     * @dataProvider onPostSubmitRemoveDefaultDataProvider
      */
-    public function testOnPostSubmitPersistDefault(Category $category, $visibility)
+    public function testOnPostSubmitRemoveDefault(Category $category, $visibility)
     {
         $this->accountCategoryVisibilityRepository->expects($this->any())->method('findBy')->willReturn([]);
         $this->accountGroupCategoryVisibilityRepository->expects($this->any())->method('findBy')->willReturn([]);
@@ -93,7 +93,7 @@ class CategoryPostSubmitVisibilityListenerTest extends AbstractVisibilityListene
 
         $this->prepareCategoryVisibilityRepository($category, $visibility);
 
-        $this->em->expects($this->once())->method('persist');
+        $this->em->expects($this->once())->method('remove');
         $this->em->expects($this->once())->method('flush');
 
         $this->listener->onPostSubmit($event);
@@ -102,7 +102,7 @@ class CategoryPostSubmitVisibilityListenerTest extends AbstractVisibilityListene
     /**
      * @return array
      */
-    public function onPostSubmitPersistDefaultDataProvider()
+    public function onPostSubmitRemoveDefaultDataProvider()
     {
         /** @var Category $rootCategory */
         $rootCategory = $this->getEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', self::CATEGORY_ID);

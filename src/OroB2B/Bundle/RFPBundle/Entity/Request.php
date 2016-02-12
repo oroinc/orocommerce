@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -285,6 +286,38 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
     protected $organization;
 
     /**
+     * @var Collection|User[]
+     *
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\UserBundle\Entity\User")
+     * @ORM\JoinTable(
+     *      name="oro_rfp_assigned_users",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="quote_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
+     *      }
+     * )
+     **/
+    protected $assignedUsers;
+
+    /**
+     * @var Collection|AccountUser[]
+     *
+     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
+     * @ORM\JoinTable(
+     *      name="oro_rfp_assigned_acc_users",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="quote_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
+     *      }
+     * )
+     **/
+    protected $assignedAccountUsers;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -295,6 +328,8 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
         $this->updatedAt  = new \DateTime('now', new \DateTimeZone('UTC'));
 
         $this->requestProducts = new ArrayCollection();
+        $this->assignedUsers = new ArrayCollection();
+        $this->assignedAccountUsers = new ArrayCollection();
     }
 
     /**
@@ -697,5 +732,73 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
     public function getShipUntil()
     {
         return $this->shipUntil;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getAssignedUsers()
+    {
+        return $this->assignedUsers;
+    }
+
+    /**
+     * @param User $assignedUser
+     * @return $this
+     */
+    public function addAssignedUser(User $assignedUser)
+    {
+        if (!$this->assignedUsers->contains($assignedUser)) {
+            $this->assignedUsers->add($assignedUser);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param User $assignedUser
+     * @return $this
+     */
+    public function removeAssignedUser(User $assignedUser)
+    {
+        if ($this->assignedUsers->contains($assignedUser)) {
+            $this->assignedUsers->removeElement($assignedUser);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|AccountUser[]
+     */
+    public function getAssignedAccountUsers()
+    {
+        return $this->assignedAccountUsers;
+    }
+
+    /**
+     * @param AccountUser $assignedAccountUser
+     * @return $this
+     */
+    public function addAssignedAccountUser(AccountUser $assignedAccountUser)
+    {
+        if (!$this->assignedAccountUsers->contains($assignedAccountUser)) {
+            $this->assignedAccountUsers->add($assignedAccountUser);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param AccountUser $assignedAccountUser
+     * @return $this
+     */
+    public function removeAssignedAccountUser(AccountUser $assignedAccountUser)
+    {
+        if ($this->assignedAccountUsers->contains($assignedAccountUser)) {
+            $this->assignedAccountUsers->removeElement($assignedAccountUser);
+        }
+
+        return $this;
     }
 }

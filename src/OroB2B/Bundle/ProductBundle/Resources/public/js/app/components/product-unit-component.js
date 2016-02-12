@@ -172,7 +172,7 @@ define(function(require) {
                     }
                 });
                 self.unitSelector.find('option[value=""]').hide();
-                self.unitSelector.val(value !== null ? value : _.keys(units)[0]);
+                self.unitSelector.val((value !== null && units[value]) ? value : _.keys(units)[0]);
             } else {
                 self.unitSelector.find('option[value=""]').show();
                 self.unitSelector.val('');
