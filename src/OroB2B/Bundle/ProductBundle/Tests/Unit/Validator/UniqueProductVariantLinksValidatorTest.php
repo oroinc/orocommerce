@@ -25,15 +25,28 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
      */
     protected $context;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp()
     {
         $this->context = $this->getMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
 
         $this->service = new UniqueProductVariantLinksValidator();
         $this->service->initialize($this->context);
+    }
+
+    protected function tearDown()
+    {
+        unset($this->service, $this->context);
+    }
+
+    //@codingStandardsIgnoreStart
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Entity must be instance of "OroB2B\Bundle\ProductBundle\Entity\Product", "stdClass" given
+     */
+    //@codingStandardsIgnoreEnd
+    public function testNotProductValidate()
+    {
+        $this->service->validate(new \stdClass(), new UniqueProductVariantLinks());
     }
 
     public function testDoesNothingIfProductDoesNotHaveVariants()
@@ -48,16 +61,22 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testDoesNotAddViolationIfAllVariantFieldCombinationsAreUnique()
     {
-        $product = $this->prepareProduct([
+        $product = $this->prepareProduct(
             [
-                self::VARIANT_FIELD_KEY_SIZE => 'L',
-                self::VARIANT_FIELD_KEY_COLOR => 'Blue',
+                self::VARIANT_FIELD_KEY_SIZE,
+                self::VARIANT_FIELD_KEY_COLOR,
             ],
             [
-                self::VARIANT_FIELD_KEY_SIZE => 'M',
-                self::VARIANT_FIELD_KEY_COLOR => 'Blue',
-            ],
-        ]);
+                [
+                    self::VARIANT_FIELD_KEY_SIZE => 'L',
+                    self::VARIANT_FIELD_KEY_COLOR => 'Blue',
+                ],
+                [
+                    self::VARIANT_FIELD_KEY_SIZE => 'M',
+                    self::VARIANT_FIELD_KEY_COLOR => 'Blue',
+                ],
+            ]
+        );
 
         $this->context->expects($this->never())->method('addViolation');
 
@@ -66,20 +85,45 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testAddsViolationIfVariantFieldCombinationsAreNotUnique()
     {
-        $product = $this->prepareProduct([
+        $product = $this->prepareProduct(
             [
-                self::VARIANT_FIELD_KEY_SIZE => 'L',
-                self::VARIANT_FIELD_KEY_COLOR => 'Blue',
+                self::VARIANT_FIELD_KEY_SIZE,
+                self::VARIANT_FIELD_KEY_COLOR,
             ],
             [
-                self::VARIANT_FIELD_KEY_SIZE => 'L',
-                self::VARIANT_FIELD_KEY_COLOR => 'Blue',
-            ],
-        ]);
+                [
+                    self::VARIANT_FIELD_KEY_SIZE => 'L',
+                    self::VARIANT_FIELD_KEY_COLOR => 'Blue',
+                ],
+                [
+                    self::VARIANT_FIELD_KEY_SIZE => 'L',
+                    self::VARIANT_FIELD_KEY_COLOR => 'Blue',
+                ],
+            ]
+        );
 
         $this->context->expects($this->once())
             ->method('addViolation')
-            ->with((new UniqueProductVariantLinks())->message);
+            ->with((new UniqueProductVariantLinks())->uniqueRequiredMessage);
+
+        $this->service->validate($product, new UniqueProductVariantLinks());
+    }
+
+    public function testAddViolationWhenVariantFieldsEmptyAndLinkPresent()
+    {
+        $product = $this->prepareProduct(
+            [],
+            [
+                [
+                    self::VARIANT_FIELD_KEY_SIZE => 'L',
+                    self::VARIANT_FIELD_KEY_COLOR => 'Blue',
+                ]
+            ]
+        );
+
+        $this->context->expects($this->once())
+            ->method('addViolationAt')
+            ->with($this->isType('string'), (new UniqueProductVariantLinks())->variantFieldRequiredMessage);
 
         $this->service->validate($product, new UniqueProductVariantLinks());
     }
@@ -94,27 +138,34 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
 
         $this->context->expects($this->never())
             ->method('addViolation')
-            ->with((new UniqueProductVariantLinks())->message);
+            ->with((new UniqueProductVariantLinks())->uniqueRequiredMessage);
 
         $this->service->validate($product, new UniqueProductVariantLinks());
     }
 
     /**
+     * @param array $variantFields
      * @param array $variantLinkFields
      * @return StubProduct
      */
-    private function prepareProduct(array $variantLinkFields)
+    private function prepareProduct(array $variantFields, array $variantLinkFields)
     {
         $product = new StubProduct();
         $product->setHasVariants(true);
-        $product->setVariantFields(array_keys($variantLinkFields[0]));
+        $product->setVariantFields($variantFields);
 
         foreach ($variantLinkFields as $fields) {
             $variantProduct = new StubProduct();
-            $variantProduct->setSize($fields[self::VARIANT_FIELD_KEY_SIZE]);
-            $variantProduct->setColor($fields[self::VARIANT_FIELD_KEY_COLOR]);
 
-            $variantLink =  new ProductVariantLink($product, $variantProduct);
+            if (array_key_exists(self::VARIANT_FIELD_KEY_SIZE, $fields)) {
+                $variantProduct->setSize($fields[self::VARIANT_FIELD_KEY_SIZE]);
+            }
+
+            if (array_key_exists(self::VARIANT_FIELD_KEY_COLOR, $fields)) {
+                $variantProduct->setColor($fields[self::VARIANT_FIELD_KEY_COLOR]);
+            }
+
+            $variantLink = new ProductVariantLink($product, $variantProduct);
             $product->addVariantLink($variantLink);
         }
 
