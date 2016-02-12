@@ -37,9 +37,6 @@ class LoadQuoteDemoData extends AbstractFixture implements
      */
     protected $container;
 
-    /** @var array */
-    protected $priceLists = [];
-
     /**
      * {@inheritdoc}
      */
@@ -72,24 +69,27 @@ class LoadQuoteDemoData extends AbstractFixture implements
         $requests = $this->getRequests($manager);
         $organization = $user->getOrganization();
         $accounts = $this->getAccounts($manager);
+        $website = $this->container->get('doctrine')
+            ->getRepository('OroB2BWebsiteBundle:Website')
+            ->findOneBy(['name' => 'Default']);
 
         for ($i = 0; $i < 20; $i++) {
             /* @var $account Account */
-            $account = $accounts[rand(0, count($accounts) - 1)];
+            $account = $accounts[mt_rand(0, count($accounts) - 1)];
 
             if (!$account) {
                 $accountUser = null;
             } else {
                 $accountUsers = array_merge([null], $account->getUsers()->getValues());
                 /* @var $accountUser AccountUser */
-                $accountUser = $accountUsers[rand(0, count($accountUsers) - 1)];
+                $accountUser = $accountUsers[mt_rand(0, count($accountUsers) - 1)];
             }
 
             // set date in future
             $validUntil = new \DateTime('now');
-            $addDays = sprintf('+%s days', rand(10, 100));
+            $addDays = sprintf('+%s days', mt_rand(10, 100));
             $validUntil->modify($addDays);
-            $poNumber = 'CA' . rand(1000, 9999) . 'USD';
+            $poNumber = 'CA' . mt_rand(1000, 9999) . 'USD';
             $quote = new Quote();
             $quote
                 ->setOwner($user)
@@ -97,13 +97,13 @@ class LoadQuoteDemoData extends AbstractFixture implements
                 ->setValidUntil($validUntil)
                 ->setAccountUser($accountUser)
                 ->setAccount($account)
-                ->setLocked(rand(0, 1))
+                ->setLocked(mt_rand(0, 1))
                 ->setShipUntil(new \DateTime('+10 day'))
                 ->setPoNumber($poNumber)
-                ->setPriceList($this->getPriceList($manager, 'Default Price List'));
+                ->setWebsite($website);
 
-            if (1 === rand(1, 3)) {
-                $quote->setRequest($requests[rand(1, count($requests) - 1)]);
+            if (1 === mt_rand(1, 3)) {
+                $quote->setRequest($requests[mt_rand(1, count($requests) - 1)]);
             }
 
             $this->processQuoteProducts($quote, $manager);
@@ -162,7 +162,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
 
         if ($quote->getRequest()) {
             foreach ($quote->getRequest()->getRequestProducts() as $requestProduct) {
-                $type = $types[rand(0, count($types) - 1)];
+                $type = $types[mt_rand(0, count($types) - 1)];
 
                 $quoteProduct = $this->createQuoteProduct($requestProduct->getProduct(), $type);
 
@@ -171,45 +171,45 @@ class LoadQuoteDemoData extends AbstractFixture implements
                 $quote->addQuoteProduct($quoteProduct);
             }
         } else {
-            $numProducts = rand(1, 3);
+            $numProducts = mt_rand(1, 3);
             for ($i = 0; $i < $numProducts; $i++) {
-                $product = $products[rand(1, count($products) - 1)];
+                $product = $products[mt_rand(1, count($products) - 1)];
                 $quote->addQuoteProduct($this->createQuoteProduct($product, QuoteProduct::TYPE_OFFER));
             }
         }
 
         foreach ($quote->getQuoteProducts() as $quoteProduct) {
             $units = $this->getProductUnits($manager, $quoteProduct->getProduct());
-            $numProductOffers = rand(1, 3);
+            $numProductOffers = mt_rand(1, 3);
             for ($j = 0; $j < $numProductOffers; $j++) {
                 if (!count($units)) {
                     continue;
                 }
 
-                $productUnit = $units[rand(0, count($units) - 1)];
+                $productUnit = $units[mt_rand(0, count($units) - 1)];
 
-                $currency = $currencies[rand(0, count($currencies) - 1)];
-                $priceType = $priceTypes[rand(0, count($priceTypes) - 1)];
+                $currency = $currencies[mt_rand(0, count($currencies) - 1)];
+                $priceType = $priceTypes[mt_rand(0, count($priceTypes) - 1)];
 
                 $quoteProductOffer = new QuoteProductOffer();
                 $quoteProductOffer
-                    ->setPrice(Price::create(rand(1, 100), $currency))
-                    ->setQuantity(rand(1, 100))
+                    ->setPrice(Price::create(mt_rand(1, 100), $currency))
+                    ->setQuantity(mt_rand(1, 100))
                     ->setProductUnit($productUnit)
                     ->setPriceType($priceType)
-                    ->setAllowIncrements((bool)rand(0, 1));
+                    ->setAllowIncrements((bool)mt_rand(0, 1));
 
                 if ($quoteProduct->isTypeNotAvailable()) {
-                    $productReplacement = $products[rand(1, count($products) - 1)];
+                    $productReplacement = $products[mt_rand(1, count($products) - 1)];
                     $quoteProduct->setProductReplacement($productReplacement);
 
-                    $isFreeFormProductReplacement = rand(0, 1);
+                    $isFreeFormProductReplacement = mt_rand(0, 1);
                     if ($isFreeFormProductReplacement) {
                         $quoteProduct->setProductReplacement(null);
                     }
 
                     $unitsRepl = $this->getProductUnits($manager, $quoteProduct->getProductReplacement());
-                    $productUnitRepl = $unitsRepl[rand(0, count($unitsRepl) - 1)];
+                    $productUnitRepl = $unitsRepl[mt_rand(0, count($unitsRepl) - 1)];
                     $quoteProductOffer->setProductUnit($productUnitRepl);
                 }
 
@@ -236,7 +236,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
             ->setComment(sprintf('Seller Notes %s', $index + 1))
             ->setCommentAccount(sprintf('Account Notes %s', $index + 1));
 
-        $isFreeFormProduct = rand(0, 1);
+        $isFreeFormProduct = mt_rand(0, 1);
         if ($isFreeFormProduct) {
             $quoteProduct->setProduct(null);
         }
@@ -312,21 +312,6 @@ class LoadQuoteDemoData extends AbstractFixture implements
         }
 
         return $user;
-    }
-
-    /**
-     * @param ObjectManager $manager
-     * @param string $name
-     * @return PriceList
-     */
-    protected function getPriceList(ObjectManager $manager, $name)
-    {
-        if (!array_key_exists($name, $this->priceLists)) {
-            $this->priceLists[$name] = $manager->getRepository('OroB2BPricingBundle:PriceList')
-                ->findOneBy(['name' => $name]);
-        }
-
-        return $this->priceLists[$name];
     }
 
     /**

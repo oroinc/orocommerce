@@ -7,22 +7,42 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use OroB2B\Bundle\OrderBundle\Doctrine\ORM\Id\EntityAwareGeneratorInterface;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\EventListener\OrderListener;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class OrderListenerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|EntityAwareGeneratorInterface */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|EntityAwareGeneratorInterface
+     */
     protected $generator;
 
-    /** @var OrderListener */
+    /**
+     * @var OrderListener
+     */
     protected $listener;
 
+    /**
+     * @var WebsiteManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $websiteManager;
+
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->generator = $this->getMock('OroB2B\Bundle\OrderBundle\Doctrine\ORM\Id\EntityAwareGeneratorInterface');
+        $this->websiteManager = $this->getMockBuilder('OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager')
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->listener = new OrderListener($this->generator);
+        $this->listener = new OrderListener($this->generator, $this->websiteManager);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function tearDown()
     {
         unset($this->generator, $this->listener);
@@ -51,6 +71,17 @@ class OrderListenerTest extends \PHPUnit_Framework_TestCase
         $orderMock->expects($this->once())->method('getIdentifier')->willReturn(125);
 
         $this->listener->postPersist($this->getLifecycleEventArgs($orderMock));
+    }
+
+    public function testPrePersist()
+    {
+        $website = new Website();
+        $order = new Order();
+        $this->websiteManager->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+        $this->listener->prePersist($this->getLifecycleEventArgs($order));
+        $this->assertSame($website, $order->getWebsite());
     }
 
     /**

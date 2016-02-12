@@ -2,7 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\Model;
 
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use Doctrine\ORM\EntityRepository;
+
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -15,16 +16,10 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class PriceListRequestHandler implements PriceListRequestHandlerInterface
 {
-    const TIER_PRICES_KEY = 'showTierPrices';
-    const WEBSITE_KEY = 'websiteId';
-    const PRICE_LIST_CURRENCY_KEY = 'priceCurrencies';
-    const SAVE_STATE_KEY = 'saveState';
-    const PRICE_LIST_KEY = 'priceListId';
-    const ACCOUNT_ID = 'account_id';
-
     /**
      * @var RequestStack
      */
@@ -66,6 +61,11 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
     protected $priceLists = [];
 
     /**
+     * @var EntityRepository
+     */
+    protected $priceListRepository;
+
+    /**
      * @param RequestStack $requestStack
      * @param SessionInterface $session
      * @param SecurityFacade $securityFacade
@@ -89,10 +89,10 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function getPriceListByAccount(Account $account = null, Website $website = null)
+    public function getPriceListByAccount()
     {
-        $account = $account ?: $this->getAccount();
-        $website = $website ?: $this->getWebsite();
+        $website = $this->getWebsite();
+        $account = $this->getAccount();
         $priceList = $this->priceListTreeHandler->getPriceList($account, $website);
 
         if (!$priceList) {
@@ -140,19 +140,16 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
         }
 
         $currencies = $request->get(self::PRICE_LIST_CURRENCY_KEY);
-        if (null === $currencies) {
+
+        if (null === $currencies && $this->session->has(self::PRICE_LIST_CURRENCY_KEY)) {
+            $currencies = (array)$this->session->get(self::PRICE_LIST_CURRENCY_KEY);
+        }
+
+        if (null === $currencies || filter_var($currencies, FILTER_VALIDATE_BOOLEAN)) {
             return $priceListCurrencies;
         }
 
         $currencies = array_intersect($priceListCurrencies, (array)$currencies);
-
-        if ($currencies && $request->get(self::SAVE_STATE_KEY)) {
-            $this->session->set(self::PRICE_LIST_CURRENCY_KEY, $currencies);
-        }
-
-        if (!$currencies && $this->session->has(self::PRICE_LIST_CURRENCY_KEY)) {
-            $currencies = $this->session->get(self::PRICE_LIST_CURRENCY_KEY);
-        }
 
         sort($currencies);
         return $currencies;
@@ -167,21 +164,17 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
         if (!$request) {
             return false;
         }
-        $showTierPrices = $request->get(self::TIER_PRICES_KEY);
 
-        $showTierPrices = null !== $showTierPrices ? filter_var($showTierPrices, FILTER_VALIDATE_BOOLEAN) : null;
-
-        if ($request->get(self::SAVE_STATE_KEY)) {
-            $this->session->set(self::TIER_PRICES_KEY, $showTierPrices);
-        }
-
-        if (null === $showTierPrices && $this->session->has(self::TIER_PRICES_KEY)) {
-            $showTierPrices = $this->session->get(self::TIER_PRICES_KEY);
-        }
-
-        return $showTierPrices;
+        return filter_var($request->get(self::TIER_PRICES_KEY), FILTER_VALIDATE_BOOLEAN);
     }
 
+    /**
+     * @param string $priceListClass
+     */
+    public function setPriceListClass($priceListClass)
+    {
+        $this->priceListClass = $priceListClass;
+    }
 
     /**
      * @return null|Account
@@ -194,11 +187,11 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
             return $user->getAccount();
         } elseif ($user instanceof User) {
             $request = $this->getRequest();
-            if ($request && $request->get(self::ACCOUNT_ID)) {
+            if ($request && $accountId = $request->get(self::ACCOUNT_ID_KEY)) {
                 return $this->registry
-                    ->getManagerForClass('OroB2BAccountBundle:Account')
-                    ->getRepository('OroB2BAccountBundle:Account')
-                    ->find($request->get(self::ACCOUNT_ID));
+                    ->getManagerForClass('OroB2B\Bundle\AccountBundle\Entity\Account')
+                    ->getRepository('OroB2B\Bundle\AccountBundle\Entity\Account')
+                    ->find($accountId);
             }
         }
 
@@ -250,7 +243,12 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
      */
     protected function getPriceListRepository()
     {
-        return $this->registry->getManagerForClass($this->priceListClass)->getRepository($this->priceListClass);
+        if (!$this->priceListRepository) {
+            $this->priceListRepository = $this->registry
+                ->getManagerForClass($this->priceListClass)
+                ->getRepository($this->priceListClass);
+        }
+        return $this->priceListRepository;
     }
 
     /**
@@ -259,21 +257,13 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
     protected function getWebsite()
     {
         $website = null;
-        $id = $this->getRequest()->get(self::WEBSITE_KEY);
-        if ($id) {
-            $website = $this->registry->getManagerForClass('OroB2BWebsiteBundle:Website')
-                ->getRepository('OroB2BWebsiteBundle:Website')
+        $request = $this->getRequest();
+        if ($request && $id = $this->getRequest()->get(self::WEBSITE_KEY)) {
+            $website = $this->registry->getManagerForClass('OroB2B\Bundle\WebsiteBundle\Entity\Website')
+                ->getRepository('OroB2B\Bundle\WebsiteBundle\Entity\Website')
                 ->find($id);
         }
         return $website;
-    }
-
-    /**
-     * @param string $priceListClass
-     */
-    public function setPriceListClass($priceListClass)
-    {
-        $this->priceListClass = $priceListClass;
     }
 
     /**

@@ -7,36 +7,36 @@ use Oro\Component\Testing\Unit\EntityTrait;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
-use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
-use OroB2B\Bundle\PricingBundle\Layout\Extension\Provider\FrontendProductPricesDataProvicer;
+use OroB2B\Bundle\PricingBundle\Layout\Extension\Provider\FrontendProductPricesDataProvider;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 
-class FrontendProductPricesDataProvicerTest extends \PHPUnit_Framework_TestCase
+class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
-    /** @var FrontendProductPricesDataProvicer */
+    /** @var FrontendProductPricesDataProvider */
     protected $provider;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
     protected $doctrineHelper;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|FrontendPriceListRequestHandler */
-    protected $frontendPriceListRequestHandler;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|PriceListRequestHandler */
+    protected $priceListRequestHandler;
 
     public function setUp()
     {
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->frontendPriceListRequestHandler = $this->getMockBuilder(
-            'OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler'
+        $this->priceListRequestHandler = $this->getMockBuilder(
+            'OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler'
         )
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->provider = new FrontendProductPricesDataProvicer(
+        $this->provider = new FrontendProductPricesDataProvider(
             $this->doctrineHelper,
-            $this->frontendPriceListRequestHandler
+            $this->priceListRequestHandler
         );
     }
 
@@ -78,7 +78,7 @@ class FrontendProductPricesDataProvicerTest extends \PHPUnit_Framework_TestCase
             ->with('OroB2BPricingBundle:ProductPrice')
             ->willReturn($repo);
 
-        $this->frontendPriceListRequestHandler->expects($this->once())
+        $this->priceListRequestHandler->expects($this->once())
             ->method('getPriceListByAccount')
             ->willReturn($priceList);
 

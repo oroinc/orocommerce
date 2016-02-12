@@ -12,13 +12,14 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 
-use OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
 
 class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -38,9 +39,14 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
     protected $doctrineHelper;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|AbstractPriceListRequestHandler
+     * @var \PHPUnit_Framework_MockObject_MockObject|PriceListRequestHandler
      */
     protected $priceListRequestHandler;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|FrontendHelper
+     */
+    protected $frontendHelper;
 
     /**
      * {@inheritdoc}
@@ -64,15 +70,19 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->priceListRequestHandler = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler')
-            ->setMethods(['getShowTierPrices'])
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler')
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
+
+        $this->frontendHelper = $this->getMockBuilder('OroB2B\Bundle\FrontendBundle\Request\FrontendHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->listener = new ProductPriceDatagridListener(
             $this->translator,
             $this->doctrineHelper,
-            $this->priceListRequestHandler
+            $this->priceListRequestHandler,
+            $this->frontendHelper
         );
 
         $this->listener->setProductPriceClass('OroB2BPricingBundle:ProductPrice');
@@ -92,7 +102,8 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $listener = new ProductPriceDatagridListener(
             $this->translator,
             $this->doctrineHelper,
-            $this->priceListRequestHandler
+            $this->priceListRequestHandler,
+            $this->frontendHelper
         );
         $this->assertNull($this->getProperty($listener, 'productPriceClass'));
         $listener->setProductPriceClass('OroB2BPricingBundle:ProductPrice');
@@ -107,7 +118,8 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $listener = new ProductPriceDatagridListener(
             $this->translator,
             $this->doctrineHelper,
-            $this->priceListRequestHandler
+            $this->priceListRequestHandler,
+            $this->frontendHelper
         );
         $this->assertNull($this->getProperty($listener, 'productUnitClass'));
         $listener->setProductUnitClass('OroB2BProductBundle:ProductUnit');
@@ -125,25 +137,27 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testOnBuildBefore($priceListId = null, array $priceCurrencies = [], array $expectedConfig = [])
     {
+        $this->frontendHelper->expects($this->once())
+            ->method('isFrontendRequest')
+            ->willReturn(false);
+
         $this->getRepository();
 
-        if ($priceListId && $priceCurrencies) {
-            $this->priceListRequestHandler
-                ->expects($this->any())
-                ->method('getPriceListByAccount')
-                ->willReturn($this->getPriceList($priceListId));
+        $this->priceListRequestHandler
+            ->expects($this->any())
+            ->method('getPriceList')
+            ->willReturn($this->getPriceList($priceListId));
 
-            $this->priceListRequestHandler
-                ->expects($this->any())
-                ->method('getPriceListSelectedCurrencies')
-                ->will(
-                    $this->returnCallback(
-                        function () use ($priceCurrencies) {
-                            return array_intersect(['USD', 'EUR'], $priceCurrencies);
-                        }
-                    )
-                );
-        }
+        $this->priceListRequestHandler
+            ->expects($this->any())
+            ->method('getPriceListSelectedCurrencies')
+            ->will(
+                $this->returnCallback(
+                    function () use ($priceCurrencies) {
+                        return array_intersect(['USD', 'EUR'], $priceCurrencies);
+                    }
+                )
+            );
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
@@ -323,12 +337,16 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
             $productIds[] = $sourceResult['id'];
         }
 
-        if ($priceListId && $priceCurrencies) {
-            $this->priceListRequestHandler
-                ->expects($this->any())
-                ->method('getPriceListByAccount')
-                ->willReturn($this->getPriceList($priceListId));
+        $this->frontendHelper->expects($this->once())
+            ->method('isFrontendRequest')
+            ->willReturn(false);
 
+        $this->priceListRequestHandler
+            ->expects($this->once())
+            ->method('getPriceList')
+            ->willReturn($this->getPriceList($priceListId));
+
+        if ($priceListId && $priceCurrencies) {
             $this->priceListRequestHandler
                 ->expects($this->any())
                 ->method('getPriceListSelectedCurrencies')
@@ -458,6 +476,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
      * @param int $productId
      * @param float $value
      * @param string $currency
+     * @param ProductUnit|null $unit
      * @return ProductPrice
      */
     protected function createPrice($productId, $value, $currency, $unit = null)

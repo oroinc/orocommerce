@@ -17,7 +17,6 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -310,22 +309,6 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
      * )
      */
     protected $lineItems;
-
-    /**
-     * @var PriceList
-     *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList")
-     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     * todo remove
-     **/
-    protected $priceList;
 
     /**
      * Constructor
@@ -750,25 +733,6 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
     }
 
     /**
-     * @return PriceList
-     */
-    public function getPriceList()
-    {
-        return $this->priceList;
-    }
-
-    /**
-     * @param PriceList $priceList
-     * @return Order
-     */
-    public function setPriceList(PriceList $priceList = null)
-    {
-        $this->priceList = $priceList;
-
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getEmail()
@@ -782,10 +746,13 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
 
     /**
      * @param Website $website
+     * @return $this
      */
-    public function setWebsite($website)
+    public function setWebsite(Website $website)
     {
         $this->website = $website;
+
+        return $this;
     }
 
     /**

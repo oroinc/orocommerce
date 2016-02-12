@@ -4,8 +4,8 @@ namespace OroB2B\Bundle\SaleBundle\Provider;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
+use OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
@@ -20,20 +20,20 @@ class QuoteProductPriceProvider
     protected $productPriceProvider;
 
     /**
-     * @var PriceListRequestHandler
+     * @var PriceListTreeHandler
      */
-    protected $priceListRequestHandler;
+    protected $treeHandler;
 
     /**
      * @param ProductPriceProvider $productPriceProvider
-     * @param PriceListRequestHandler $priceListRequestHandler
+     * @param PriceListTreeHandler $treeHandler
      */
     public function __construct(
         ProductPriceProvider $productPriceProvider,
-        PriceListRequestHandler $priceListRequestHandler
+        PriceListTreeHandler $treeHandler
     ) {
         $this->productPriceProvider = $productPriceProvider;
-        $this->priceListRequestHandler = $priceListRequestHandler;
+        $this->treeHandler = $treeHandler;
     }
 
     /**
@@ -55,8 +55,12 @@ class QuoteProductPriceProvider
         );
 
         if ($productIds) {
+            $priceList = $this->getPriceList($quote);
+            if (!$priceList) {
+                return [];
+            }
             $tierPrices = $this->productPriceProvider->getPriceByPriceListIdAndProductIds(
-                $this->getPriceList($quote)->getId(),
+                $priceList->getId(),
                 $productIds->toArray()
             );
             if (!$tierPrices) {
@@ -74,12 +78,16 @@ class QuoteProductPriceProvider
     public function getMatchedPrices(Quote $quote)
     {
         $matchedPrices = [];
+        $priceList = $this->getPriceList($quote);
+        if (!$priceList) {
+            return [];
+        }
         $productsPriceCriteria = $this->getProductsPriceCriteria($quote);
 
         if ($productsPriceCriteria) {
             $matchedPrices = $this->productPriceProvider->getMatchedPrices(
                 $productsPriceCriteria,
-                $this->getPriceList($quote)
+                $priceList
             );
         }
 
@@ -135,14 +143,10 @@ class QuoteProductPriceProvider
 
     /**
      * @param Quote $quote
-     * @return PriceList
+     * @return BasePriceList
      */
     protected function getPriceList(Quote $quote)
     {
-        $priceList = $quote->getPriceList();
-        if (!$priceList) {
-            $priceList = $this->priceListRequestHandler->getPriceList();
-        }
-        return $priceList;
+        return $this->treeHandler->getPriceList($quote->getAccount(), $quote->getWebsite());
     }
 }

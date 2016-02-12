@@ -80,6 +80,7 @@ class OrderControllerTest extends WebTestCase
 
         /** @var Account $orderAccount */
         $orderAccount = $this->getReference('account.level_1');
+        $website = $this->client->getContainer()->get('orob2b_website.manager')->getCurrentWebsite();
         /** @var Product $product */
         $product = $this->getReference('product.1');
 
@@ -104,6 +105,7 @@ class OrderControllerTest extends WebTestCase
                 'owner' => $this->getCurrentUser()->getId(),
                 'account' => $orderAccount->getId(),
                 'poNumber' => self::ORDER_PO_NUMBER,
+                'website' => $website->getId(),
                 'lineItems' => $lineItems
             ]
         ];
@@ -171,6 +173,7 @@ class OrderControllerTest extends WebTestCase
         $orderAccount = $this->getReference('account.level_1');
         /** @var Product $product */
         $product = $this->getReference('product.1');
+        $website = $this->client->getContainer()->get('orob2b_website.manager')->getCurrentWebsite();
 
         $date = (new \DateTime('now'))->format('Y-m-d');
         $lineItems = [
@@ -205,6 +208,7 @@ class OrderControllerTest extends WebTestCase
                 'account' => $orderAccount->getId(),
                 'poNumber' => self::ORDER_PO_NUMBER_UPDATED,
                 'lineItems' => $lineItems,
+                'website' => $website->getId()
             ]
         ];
 

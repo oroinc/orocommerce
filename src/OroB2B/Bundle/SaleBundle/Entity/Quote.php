@@ -281,21 +281,6 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
     protected $expired = false;
 
     /**
-     * @var PriceList
-     *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList")
-     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     **/
-    protected $priceList;
-
-    /**
      * Constructor
      */
     public function __construct()
@@ -698,25 +683,6 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
     }
 
     /**
-     * @return PriceList|null
-     */
-    public function getPriceList()
-    {
-        return $this->priceList;
-    }
-
-    /**
-     * @param PriceList|null $priceList
-     * @return Quote
-     */
-    public function setPriceList(PriceList $priceList = null)
-    {
-        $this->priceList = $priceList;
-
-        return $this;
-    }
-
-    /**
      * @return Website
      */
     public function getWebsite()
@@ -726,9 +692,12 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
 
     /**
      * @param Website $website
+     * @return $this
      */
-    public function setWebsite($website)
+    public function setWebsite(Website $website)
     {
         $this->website = $website;
+
+        return $this;
     }
 }

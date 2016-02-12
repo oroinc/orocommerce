@@ -54,7 +54,7 @@ class QuoteType extends AbstractType
                 'entity',
                 [
                     'class' => 'OroB2B\Bundle\WebsiteBundle\Entity\Website',
-                    'label' => 'orob2b.order.website.label'//todo trans
+                    'label' => 'orob2b.sale.quote.website.label'
                 ]
             )
             ->add('validUntil', OroDateTimeType::NAME, [

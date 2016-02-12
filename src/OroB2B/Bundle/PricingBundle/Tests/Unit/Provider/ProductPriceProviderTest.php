@@ -7,7 +7,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CurrencyBundle\Model\Price;
 
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -23,7 +23,7 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
     protected $provider;
 
     /**
-     * @var  \PHPUnit_Framework_MockObject_MockObject|FrontendPriceListRequestHandler
+     * @var  \PHPUnit_Framework_MockObject_MockObject|PriceListRequestHandler
      */
     protected $requestHandler;
 
@@ -37,7 +37,7 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
 
         $this->requestHandler = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler')
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 

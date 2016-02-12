@@ -11,7 +11,7 @@ use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class FrontendProductPricesDataProvicer implements DataProviderInterface
+class FrontendProductPricesDataProvider implements DataProviderInterface
 {
     /** @var array */
     protected $data;
@@ -20,18 +20,18 @@ class FrontendProductPricesDataProvicer implements DataProviderInterface
     protected $doctrineHelper;
 
     /** @var PriceListRequestHandler */
-    protected $PriceListRequestHandler;
+    protected $priceListRequestHandler;
 
     /**
      * @param DoctrineHelper $doctrineHelper
-     * @param PriceListRequestHandler $PriceListRequestHandler
+     * @param PriceListRequestHandler $priceListRequestHandler
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        PriceListRequestHandler $PriceListRequestHandler
+        PriceListRequestHandler $priceListRequestHandler
     ) {
         $this->doctrineHelper = $doctrineHelper;
-        $this->PriceListRequestHandler = $PriceListRequestHandler;
+        $this->priceListRequestHandler = $priceListRequestHandler;
     }
 
     /**
@@ -52,7 +52,7 @@ class FrontendProductPricesDataProvicer implements DataProviderInterface
         $productId = $product->getId();
 
         if (!$this->data[$productId]) {
-            $priceList = $this->PriceListRequestHandler->getPriceListByAccount();
+            $priceList = $this->priceListRequestHandler->getPriceListByAccount();
 
             /** @var ProductPriceRepository $priceRepository */
             $priceRepository = $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:ProductPrice');

@@ -63,7 +63,7 @@ class ProductPriceProvider
     }
 
     /**
-     * @param array $productsPriceCriteria
+     * @param ProductPriceCriteria[] $productsPriceCriteria
      * @param BasePriceList|null $priceList
      * @return array|Price[]
      */
@@ -76,7 +76,6 @@ class ProductPriceProvider
         $productIds = [];
         $productUnitCodes = [];
 
-        /** @var ProductPriceCriteria[] $productsPriceCriteria */
         foreach ($productsPriceCriteria as $productPriceCriteria) {
             $productIds[] = $productPriceCriteria->getProduct()->getId();
             $productUnitCodes[] = $productPriceCriteria->getProductUnit()->getCode();

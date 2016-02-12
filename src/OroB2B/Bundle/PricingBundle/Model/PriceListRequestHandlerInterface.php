@@ -2,22 +2,24 @@
 
 namespace OroB2B\Bundle\PricingBundle\Model;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 interface PriceListRequestHandlerInterface
 {
+    const TIER_PRICES_KEY = 'showTierPrices';
+    const WEBSITE_KEY = 'websiteId';
+    const PRICE_LIST_CURRENCY_KEY = 'priceCurrencies';
+    const PRICE_LIST_KEY = 'priceListId';
+    const ACCOUNT_ID_KEY = 'account_id';
+
     /**
      * On frontend returns PriceList for logged in user
      * On backend returns PriceList for account specified in request
      *
-     * @param Account $account
-     * @param Website $website
      * @return BasePriceList
      */
-    public function getPriceListByAccount(Account $account = null, Website $website = null);
+    public function getPriceListByAccount();
 
     /**
      * Return PriceLists by data from request or default

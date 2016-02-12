@@ -32,6 +32,9 @@ class PriceListTreeHandler
     /** @var ConfigManager */
     protected $configManager;
 
+    /** @var BasePriceList[] */
+    protected $priceLists = [];
+
     /**
      * @param ManagerRegistry $registry
      * @param WebsiteManager $websiteManager
@@ -56,15 +59,22 @@ class PriceListTreeHandler
     {
         $website = $website ?: $this->websiteManager->getCurrentWebsite();
 
+        $key = $this->getUniqueKey($account, $website);
+        if (array_key_exists($key, $this->priceLists)) {
+            return $this->priceLists[$key];
+        }
+
         if ($account) {
             $priceList = $this->getPriceListRepository()->getPriceListByAccount($account, $website);
             if ($priceList) {
+                $this->priceLists[$key] = $priceList;
                 return $priceList;
             }
             if ($account->getGroup()) {
                 $priceList = $this->getPriceListRepository()
                     ->getPriceListByAccountGroup($account->getGroup(), $website);
                 if ($priceList) {
+                    $this->priceLists[$key] = $priceList;
                     return $priceList;
                 }
             }
@@ -75,7 +85,25 @@ class PriceListTreeHandler
             $priceList = $this->getPriceListFromConfig();
         }
 
+        $this->priceLists[$key] = $priceList;
         return $priceList;
+    }
+
+    /**
+     * @param Account|null $account
+     * @param Website|null $website
+     * @return string
+     */
+    protected function getUniqueKey(Account $account = null, Website $website = null)
+    {
+        $key = '';
+        if ($account) {
+            $key .= spl_object_hash($account);
+        }
+        if ($website) {
+            $key .= spl_object_hash($website);
+        }
+        return $key;
     }
 
     /**
