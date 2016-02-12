@@ -13,6 +13,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShoppingListController extends Controller
@@ -39,6 +40,15 @@ class ShoppingListController extends Controller
      */
     public function viewAction(ShoppingList $shoppingList = null)
     {
+        if (!$shoppingList) {
+            /** @var ShoppingListRepository $repo */
+            $repo = $this->getDoctrine()->getRepository('OroB2BShoppingListBundle:ShoppingList');
+            $user = $this->getUser();
+            if ($user instanceof AccountUser) {
+                $shoppingList = $repo->findCurrentForAccountUser($user);
+            }
+        }
+
         return [
             'data' => [
                 'shoppingList' => $shoppingList,

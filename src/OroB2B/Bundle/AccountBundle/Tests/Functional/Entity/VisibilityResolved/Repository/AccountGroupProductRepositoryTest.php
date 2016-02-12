@@ -55,7 +55,7 @@ class AccountGroupProductRepositoryTest extends VisibilityResolvedRepositoryTest
             'withoutWebsite' => [
                 'websiteReference' => null,
                 'accountGroupReference' => LoadGroups::GROUP1,
-                'visibility' => BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
+                'visibility' => BaseProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
                 'expectedData' => [
                     [
                         'product' => LoadProductData::PRODUCT_7,
@@ -70,7 +70,7 @@ class AccountGroupProductRepositoryTest extends VisibilityResolvedRepositoryTest
             'withWebsite1' => [
                 'websiteReference' => LoadWebsiteData::WEBSITE1,
                 'accountGroupReference' => LoadGroups::GROUP1,
-                'visibility' => BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
+                'visibility' => BaseProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
                 'expectedData' => [
                     [
                         'product' => LoadProductData::PRODUCT_7,

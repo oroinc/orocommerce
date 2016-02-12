@@ -1,3 +1,11 @@
+{% block _shopping_list_list_of_shopping_lists_widget %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " orders-sidebar mt3-md" }) %}
+    <div{{ block('block_attributes') }}>
+        SHOPPING LISTS
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _shopping_list_view_container_widget %}
     {% set attr = attr|merge({
     class: attr.class|default('') ~ " container-fluid"
@@ -8,20 +16,42 @@
 {% endblock %}
 
 {% block _shopping_list_title_widget %}
-    {% set attr = attr|merge({
-    class: attr.class|default('') ~ " cart__order-title nmmt4-md"
-    }) %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
 
-    <div{{ block('block_attributes') }}>
-        SHOPPING LIST TITLES<br>
-        {{ block_widget(block) }}
+    <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
+        module: 'oroform/js/app/components/inline-editable-view-component',
+        options: {
+            frontend_type: 'title',
+            value: shoppingList.label,
+            fieldName: 'label',
+            insertEditorMethod: 'after',
+            metadata: {
+                inline_editing: {
+                    enable: resource_granted('orob2b_shopping_list_frontend_update'),
+                    save_api_accessor: {
+                        route: 'orob2b_api_frontend_patch_entity_data',
+                        http_method: 'PATCH',
+                        default_route_parameters: {
+                            className: oro_class_name(shoppingList, true),
+                            id: shoppingList.id
+                        }
+                    }
+                },
+                view_options: {
+                    tooltip: 'orob2b.shoppinglist.label.edit.tooltip'|trans,
+                    additionalClass: 'cart__order-title'
+                }
+            }
+        }
+    }) }}>
+        <h1 class="cart__order-title nmmt4-md">
+            <span>{{ shoppingList.label }}</span>
+        </h1>
     </div>
 {% endblock %}
 
 {% block _shopping_list_top_actions_widget %}
-    {% set attr = attr|merge({
-    class: attr.class|default('') ~ "oq__options__right"
-    }) %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ "oq__options__right" }) %}
     <div{{ block('block_attributes') }}>
         ACTIONS
         {{ block_widget(block) }}
@@ -29,19 +59,37 @@
 {% endblock %}
 
 {% block _shopping_list_options_widget %}
-    {% set attr = attr|merge({
-    class: attr.class|default('') ~ " oq__options oq__options_bb"
-    }) %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " oq__options oq__options_bb" }) %}
     <div{{ block('block_attributes') }}>
-        <a href="#" data-more-info-expand>View Options for this Order</a>
-        {{ block_widget(block) }}
+        <div class="oro-more-info-toggler">
+            <i class="icon-play"></i>
+            {% set notes = shoppingList.notes %}
+            <a href="#" data-more-info-expand tabindex="0">{{ 'orob2b.frontend.shoppinglist.view.view_options.label'|trans }}</a>
+            <div class="oro-more-info-toggler__container"
+                data-more-info {% if notes is not empty %}style="display: block;" {% endif %}>
+                <div class="ml1-md mmt5-md">
+                    <label for="addANote" class="checkbox_custom checkbox_custom_blue mml5-md
+                            {% if notes is not empty %} checked {% endif %}" data-checkbox>
+                        <input type="checkbox" name="addANote" id="addANote">
+                        <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
+                        <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
+                        <span class="checkbox_custom__text fs13">{{ 'orob2b.frontend.shoppinglist.view.add_note.label'|trans }}</span>
+                    </label>
+                    <div class="form-input">
+                        <textarea placeholder="{{ 'orob2b.frontend.shoppinglist.view.note.placeholder'|trans }}"
+                                  rows="3" cols="30" name="copy_paste_order"
+                                  class="input input_sm input_block">{{ notes }}</textarea>
+                    </div>
+
+                    {{ block_widget(block) }}
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
 
 {% block _shopping_list_line_items_widget %}
-    {% set attr = attr|merge({
-    class: attr.class|default('') ~ " cart-table cart-table_b-bordered cart-table__verticalp-enlarged mt1-md"
-    }) %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-table cart-table_b-bordered cart-table__verticalp-enlarged mt1-md"}) %}
     <div{{ block('block_attributes') }}>
         LINE ITEMS <br>
         LINE ITEMS <br>
@@ -52,9 +100,8 @@
 {% endblock %}
 
 {% block _shopping_list_combined_button_widget %}
-    {% set attr = attr|merge({
-    class: attr.class|default('') ~ " btn btn_orange btn_has-dropdown btn_has-dropdown_xlg"
-    }) %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " btn btn_orange btn_has-dropdown btn_has-dropdown_xlg" }) %}
+
     <div{{ block('block_attributes') }}>
         <a href="#" class="direct-link">Combined button</a>
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><i class="material-icons">arrow_drop_down</i></a>

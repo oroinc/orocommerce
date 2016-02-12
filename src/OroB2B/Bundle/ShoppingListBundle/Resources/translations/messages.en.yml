@@ -4,7 +4,9 @@ orob2b:
         entity_plural_label: Shopping Lists
         entity_description: Shows content of shopping lists of the account users.
         id.label: ID
-        label.label: Label
+        label:
+            label: Label
+            edit.tooltip: Edit Shoppping List Label
         notes.label: Notes
         account.label: Account
         account_user.label: Account User
@@ -95,6 +97,10 @@ orob2b:
 
     frontend:
         shoppinglist:
+            view:
+                view_options.label: View Options for this Shopping List
+                add_note.label: Add a Note to This Shopping List
+                note.placeholder: Enter your note
             btn:
                 request_quote_create_rfp: 'Request a Quote'
                 create_order: 'Create Order'
