@@ -41,5 +41,9 @@ class ZipCodeFieldsValidator extends ConstraintValidator
         if ($entity->getZipRangeStart() && !$entity->getZipRangeEnd()) {
             $this->context->addViolationAt('zipRangeEnd', $constraint->rangeShouldHaveBothFieldMessage);
         }
+
+        if (!$entity->getZipCode() && !$entity->getZipRangeStart() && !$entity->getZipRangeEnd()) {
+            $this->context->addViolationAt('zipRangeStart', $constraint->zipCodeCanNotBeEmpty);
+        }
     }
 }
