@@ -4,12 +4,12 @@ namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormTypeInterface;
 
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use Oro\Bundle\CurrencyBundle\Form\Type\OptionalPriceType;
-use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 
@@ -18,9 +18,9 @@ use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectEntityTypeStub;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
@@ -78,21 +78,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function preparePriceType()
     {
-        $price = new PriceType();
-        $price->setDataClass('Oro\Bundle\CurrencyBundle\Model\Price');
-
-        return $price;
-    }
-
-    /**
-     * @return OptionalPriceType
-     */
-    protected function prepareOptionalPriceType()
-    {
-        $price = new OptionalPriceType();
-        $price->setDataClass('Oro\Bundle\CurrencyBundle\Model\OptionalPrice');
-
-        return $price;
+        return PriceTypeGenerator::createPriceType();
     }
 
     /**
@@ -189,7 +175,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
         return new EntityType(
             [
                 10 => $this->getAccountUser(10),
-                11 => $this->getAccountuser(11),
+                11 => $this->getAccountUser(11),
             ],
             AccountUserMultiSelectType::NAME,
             [
@@ -201,11 +187,11 @@ abstract class AbstractTest extends FormIntegrationTestCase
     /**
      * @param float $value
      * @param string $currency
-     * @return OptionalPrice
+     * @return Price
      */
     protected function createPrice($value, $currency)
     {
-        return OptionalPrice::create($value, $currency);
+        return Price::create($value, $currency);
     }
 
     /**
@@ -339,14 +325,14 @@ abstract class AbstractTest extends FormIntegrationTestCase
      * @param int $productId
      * @param int $quantity
      * @param string $unitCode
-     * @param OptionalPrice $price
+     * @param Price $price
      * @return RequestProductItem
      */
     protected function getRequestProductItem(
         $productId,
         $quantity = null,
         $unitCode = null,
-        OptionalPrice $price = null
+        Price $price = null
     ) {
         $requestProductItem = new RequestProductItem();
         $requestProductItem->setRequestProduct($this->getRequestProduct($productId));

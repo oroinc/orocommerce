@@ -13,18 +13,7 @@ define(function(require) {
 
     TitleEditorView = TextEditorView.extend(/** @exports TitleEditorView.prototype */{
         template: require('tpl!../../../../templates/editor/title-editor.html'),
-        className: 'form-input form-input_edit-mode cart__order-title_rename-mode',
-
-        /**
-         * Handles focusout event
-         *
-         * @param {jQuery.Event} e
-         */
-        onFocusout: function(e) {
-            if (!this.$el.has(e.relatedTarget).length) {
-                this.trigger('cancelAction');
-            }
-        }
+        className: 'form-input form-input_edit-mode cart__order-title_rename-mode'
     });
 
     return TitleEditorView;

@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler;

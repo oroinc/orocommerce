@@ -32,3 +32,10 @@ orob2b:
             label:
                 full: set
                 short: set
+
+        frontend:
+            quick_add:
+                import_from_file:
+                    title: Import From File
+                import_validation:
+                    title: Import Validation

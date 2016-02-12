@@ -1,7 +1,5 @@
 <input type="<%= inputType %>" value="<%= value %>" name="value"
        class="input input_xs va-m_md" placeholder="<%= placeholder %>" autocomplete="off" />
-<div class="mmt5-md">
-    <input type="submit" class="btn btn_xs btn_orange"
-           title="<%= _.__('oro.form.inlineEditing.action.save') %>"
-           value="<%= _.__('oro.form.inlineEditing.action.save') %>">
-</div>
+
+<button type="submit" class="btn btn_x-md btn_orange btn_apply-rename"><%= _.__('orob2b_frontend.form.inlineEditing.action.save') %></button>
+<button class="btn_jeject-rename" data-action="cancel"><%= _.__('orob2b_frontend.form.inlineEditing.action.cancel') %></button>

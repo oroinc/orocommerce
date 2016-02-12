@@ -9,7 +9,6 @@ define(function(require) {
         template: require('tpl!../../../templates/editor/inline-editable-wrapper-view.html'),
 
         events: {
-            'dblclick': 'onInlineEditingStart',
             'click [data-role="start-editing"]': 'onInlineEditingStart'
         },
 
