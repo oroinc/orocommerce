@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;

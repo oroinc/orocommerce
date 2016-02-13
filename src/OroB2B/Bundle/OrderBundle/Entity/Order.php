@@ -409,7 +409,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
      *
      * @return Order
      */
-    public function setOwner(User $owningUser)
+    public function setOwner(User $owningUser = null)
     {
         $this->owner = $owningUser;
 

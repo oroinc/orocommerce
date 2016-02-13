@@ -9,6 +9,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
  * @dbIsolation
@@ -26,7 +27,8 @@ class AccountControllerTest extends WebTestCase
             [
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadInternalRating'
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadInternalRating',
+                'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData'
             ]
         );
     }
@@ -58,7 +60,6 @@ class AccountControllerTest extends WebTestCase
      */
     public function testUpdate()
     {
-        $this->markTestSkipped('Fixed in scope BB-1834');
         $response = $this->client->requestGrid(
             'account-accounts-grid',
             ['account-accounts-grid[_filter][name][value]' => self::ACCOUNT_NAME]
@@ -133,6 +134,10 @@ class AccountControllerTest extends WebTestCase
                 'orob2b_account_type[parent]' => $parent->getId(),
                 'orob2b_account_type[group]' => $group->getId(),
                 'orob2b_account_type[internal_rating]' => $internalRating->getId(),
+                'orob2b_account_type[salesRepresentatives]' => implode(',', [
+                    $this->getReference(LoadUserData::USER1)->getId(),
+                    $this->getReference(LoadUserData::USER2)->getId()
+                ])
             ]
         );
 
@@ -145,6 +150,8 @@ class AccountControllerTest extends WebTestCase
 
         $this->assertContains('Account has been saved', $html);
         $this->assertViewPage($html, $name, $parent, $group, $internalRating);
+        $this->assertContains($this->getReference(LoadUserData::USER1)->getFullName(), $result->getContent());
+        $this->assertContains($this->getReference(LoadUserData::USER2)->getFullName(), $result->getContent());
     }
 
     /**

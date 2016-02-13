@@ -7,9 +7,11 @@ use Symfony\Component\HttpKernel\Event\PostResponseEvent;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
-use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange;
+use OroB2B\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
 use OroB2B\Bundle\PricingBundle\EventListener\CombinedPriceListQueueListener;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
+use OroB2B\Bundle\PricingBundle\Builder\CombinedProductPriceQueueConsumer;
+use OroB2B\Bundle\PricingBundle\Event\ProductPriceChange;
 
 class CombinedPriceListQueueListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,11 +23,22 @@ class CombinedPriceListQueueListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testOnTerminate($changes, array $expects, $queueConsumerMode)
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|CombinedPriceListQueueConsumer $consumer */
-        $consumer = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer')
+        /** @var \PHPUnit_Framework_MockObject_MockObject|CombinedPriceListQueueConsumer $priceListQueueConsumer */
+        $priceListQueueConsumer = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer')
             ->disableOriginalConstructor()
             ->getMock();
-        $consumer->expects($this->exactly($expects['process']))->method('process');
+        $priceListQueueConsumer->expects($this->exactly($expects['process']))->method('process');
+
+        /**
+         * @var \PHPUnit_Framework_MockObject_MockObject|CombinedProductPriceQueueConsumer $productPriceQueueConsumer
+         */
+        $productPriceQueueConsumer = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Builder\CombinedProductPriceQueueConsumer')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $productPriceQueueConsumer->expects($this->exactly($expects['process']))->method('process');
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|PostResponseEvent $terminateEvent */
         $terminateEvent = $this->getMockBuilder('Symfony\Component\HttpKernel\Event\PostResponseEvent')
@@ -41,14 +54,23 @@ class CombinedPriceListQueueListenerTest extends \PHPUnit_Framework_TestCase
             ->with(OroB2BPricingExtension::ALIAS . '.price_lists_update_mode')
             ->willReturn($queueConsumerMode);
 
-        $listener = new CombinedPriceListQueueListener($consumer, $configManager);
+        $listener = new CombinedPriceListQueueListener(
+            $priceListQueueConsumer,
+            $productPriceQueueConsumer,
+            $configManager
+        );
 
         if ($changes) {
-            /** @var \PHPUnit_Framework_MockObject_MockObject|PriceListCollectionChange $changeEvent */
-            $changeEvent = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange')
+            /** @var \PHPUnit_Framework_MockObject_MockObject|PriceListQueueChangeEvent $changeEvent */
+            $changeEvent = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Event\PriceListQueueChangeEvent')
+                ->disableOriginalConstructor()
+                ->getMock();
+            /** @var \PHPUnit_Framework_MockObject_MockObject|ProductPriceChange $productPriceChange */
+            $productPriceChange = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Event\ProductPriceChange')
                 ->disableOriginalConstructor()
                 ->getMock();
             $listener->onQueueChanged($changeEvent);
+            $listener->onProductPriceChanged($productPriceChange);
         }
         $listener->onTerminate($terminateEvent);
     }

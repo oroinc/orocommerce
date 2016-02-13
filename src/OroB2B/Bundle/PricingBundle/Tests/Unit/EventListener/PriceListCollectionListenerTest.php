@@ -8,7 +8,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListCollection;
-use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange;
+use OroB2B\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
 use OroB2B\Bundle\PricingBundle\EventListener\PriceListCollectionListener;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -39,11 +39,11 @@ class PriceListCollectionListenerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider onChangeCollectionBeforeDataProvider
-     * @param PriceListCollectionChange $event
+     * @param PriceListQueueChangeEvent $event
      * @param ChangedPriceListCollection $changedPriceListCollection
      */
     public function testOnChangeCollectionBefore(
-        PriceListCollectionChange $event,
+        PriceListQueueChangeEvent $event,
         ChangedPriceListCollection $changedPriceListCollection
     ) {
         $this->manager->expects($this->once())->method('persist')->with($changedPriceListCollection);
@@ -68,19 +68,19 @@ class PriceListCollectionListenerTest extends \PHPUnit_Framework_TestCase
 
         return [
             'website' => [
-                'event' => new PriceListCollectionChange($website),
+                'event' => new PriceListQueueChangeEvent($website),
                 'collectionEntity' => $changedPriceListCollectionWithWebsite
             ],
             'config' => [
-                'event' => new PriceListCollectionChange(),
+                'event' => new PriceListQueueChangeEvent(),
                 'collectionEntity' => $changedPriceListCollectionWithConfig
             ],
             'account' => [
-                'event' => new PriceListCollectionChange($account, $website),
+                'event' => new PriceListQueueChangeEvent($account, $website),
                 'collectionEntity' => $changedPriceListCollectionWithAccount
             ],
             'accountGroup' => [
-                'event' => new PriceListCollectionChange($accountGroup, $website),
+                'event' => new PriceListQueueChangeEvent($accountGroup, $website),
                 'collectionEntity' => $changedPriceListCollectionWithAccountGroup
             ]
         ];

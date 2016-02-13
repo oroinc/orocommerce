@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\OrderBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;

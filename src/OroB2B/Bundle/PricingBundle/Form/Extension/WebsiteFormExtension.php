@@ -11,7 +11,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange;
+use OroB2B\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
@@ -162,8 +162,8 @@ class WebsiteFormExtension extends AbstractTypeExtension
 
         if ($hasChanges) {
             $this->eventDispatcher->dispatch(
-                PriceListCollectionChange::BEFORE_CHANGE,
-                new PriceListCollectionChange($website)
+                PriceListQueueChangeEvent::BEFORE_CHANGE,
+                new PriceListQueueChangeEvent($website)
             );
         }
         $fallback->setFallback($form->get(self::PRICE_LISTS_FALLBACK_FIELD)->getData());

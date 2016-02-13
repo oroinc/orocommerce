@@ -35,28 +35,10 @@ define(function(require) {
             mediator.on('pricing:get:line-items-matched-prices', this.getLineItemsMatchedPrices, this);
             mediator.on('pricing:load:line-items-matched-prices', this.loadLineItemsMatchedPrices, this);
 
-            if (this.options.$account) {
-                this.options.$account.change(_.bind(function() {
-                    this.loadProductsTierPrices(this.getProductsId(), function(response) {
-                        mediator.trigger('pricing:refresh:products-tier-prices', response);
-                    });
+            mediator.on('update:currency', this.handleCurrencyChange, this);
 
-                    this.loadLineItemsMatchedPrices(this.getLineItems(), function(response) {
-                        mediator.trigger('pricing:refresh:line-items-matched-prices', response);
-                    });
-                }, this));
-            }
-
-            if (this.options.$website) {
-                this.options.$website.change(_.bind(function() {
-                    this.loadProductsTierPrices(this.getProductsId(), function(response) {
-                        mediator.trigger('pricing:refresh:products-tier-prices', response);
-                    });
-
-                    this.loadLineItemsMatchedPrices(this.getLineItems(), function(response) {
-                        mediator.trigger('pricing:refresh:line-items-matched-prices', response);
-                    });
-                }, this));
+            if (this.options.$priceList) {
+                this.options.$priceList.change(_.bind(this.reloadPrices, this));
             }
         },
 
@@ -65,6 +47,21 @@ define(function(require) {
          */
         getProductsTierPrices: function(callback) {
             callback(this.options.tierPrices);
+        },
+
+        reloadPrices: function() {
+            this.loadProductsTierPrices(this.getProductsId(), function(response) {
+                mediator.trigger('pricing:refresh:products-tier-prices', response);
+            });
+
+            this.loadLineItemsMatchedPrices(this.getLineItems(), function(response) {
+                mediator.trigger('pricing:refresh:line-items-matched-prices', response);
+            });
+        },
+
+        handleCurrencyChange: function (val) {
+            this._setCurrency(val);
+            this.reloadPrices();
         },
 
         /**
@@ -183,11 +180,19 @@ define(function(require) {
             }
         },
 
+        _setCurrency: function(val) {
+            this.options.$currency = val;
+        },
+
         /**
          * @returns {String}
          * @private
          */
         _getPriceList: function() {
+            if (this.options.priceList) {
+                return this.options.priceList;
+            }
+
             return this.options.$priceList && this.options.$priceList.length !== 0 ? this.options.$priceList.val() : '';
         },
 
@@ -220,6 +225,8 @@ define(function(require) {
 
             mediator.off('pricing:get:line-items-matched-prices', this.getLineItemsMatchedPrices, this);
             mediator.off('pricing:load:line-items-matched-prices', this.loadLineItemsMatchedPrices, this);
+
+            mediator.off('update:currency', this.handleCurrencyChange, this);
 
             ProductsPricesComponent.__super__.dispose.call(this);
         }

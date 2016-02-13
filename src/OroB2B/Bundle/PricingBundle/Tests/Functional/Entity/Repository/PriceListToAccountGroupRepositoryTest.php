@@ -139,6 +139,17 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
         ];
     }
 
+    public function testGetWebsiteIdsByAccountGroup()
+    {
+        /** @var AccountGroup $group */
+        $group = $this->getReference('account_group.group1');
+        /** @var Website $website */
+        $website = $this->getReference('US');
+        $ids = $this->getRepository()->getWebsiteIdsByAccountGroup($group);
+        $this->assertCount(1, $ids);
+        $this->assertEquals($website->getId(), $ids[0]);
+    }
+
     /**
      * @return PriceListToAccountGroupRepository
      */

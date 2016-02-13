@@ -16,7 +16,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceListFallback;
-use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange;
+use OroB2B\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepositoryInterface;
@@ -172,7 +172,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
             ->findBy([$this->getTargetFieldName() => $targetEntity]);
         foreach ($priceListsByWebsites->all() as $priceListsByWebsite) {
             $website = $priceListsByWebsite->getConfig()->getOption('website');
-            $submittedFallback = $priceListsByWebsite->get('fallback')->getData();
+            $submittedFallback = (int)$priceListsByWebsite->get('fallback')->getData();
             $actualFallback = $this->getFallbackByWebsite($fallbacks, $website);
             $hasFallbackChanges = $this->hasFallbackChanges($actualFallback, $submittedFallback);
             $actualPriceListsToTargetEntity = $this->getActualPriceListsToTargetEntity($targetEntity, $website);
@@ -197,8 +197,8 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
             );
             if ($hasRemoveChanges || $hasUpdateChanges || $hasFallbackChanges) {
                 $this->eventDispatcher->dispatch(
-                    PriceListCollectionChange::BEFORE_CHANGE,
-                    new PriceListCollectionChange($targetEntity, $website)
+                    PriceListQueueChangeEvent::BEFORE_CHANGE,
+                    new PriceListQueueChangeEvent($targetEntity, $website)
                 );
             }
         }

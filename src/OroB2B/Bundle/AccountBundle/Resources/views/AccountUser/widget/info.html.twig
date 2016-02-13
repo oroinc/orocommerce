@@ -27,12 +27,7 @@
             {{ UI.renderHtmlProperty('orob2b.account.accountuser.email.label'|trans, Email.email_address_simple(entity.email)) }}
 
             {% if entity.account %}
-                {% if resource_granted('VIEW', entity.account) %}
-                    {% set accountView = UI.renderUrl(path('orob2b_account_view', {'id': entity.account.id}), entity.account.name) %}
-                {% else %}
-                    {% set accountView = entity.account.name|escape %}
-                {% endif %}
-                {{ UI.renderHtmlProperty('orob2b.account.accountuser.account.label'|trans, accountView) }}
+                {{ UI.renderHtmlProperty('orob2b.account.accountuser.account.label'|trans, UI.entityViewLink(entity.account, entity.account.name, 'orob2b_account_view')) }}
             {% endif %}
 
             {% if resource_granted('orob2b_account_account_user_role_view') %}
@@ -43,17 +38,8 @@
                 {{ UI.renderHtmlProperty('orob2b.account.accountuser.roles.label'|trans, roles|join('<br />')) }}
             {% endif %}
 
-            {% if entity.salesRepresentatives.count() %}
-                {% set salesReps = [] %}
-                {% for salesRep in entity.salesRepresentatives %}
-                    {% if resource_granted('VIEW', salesRep) %}
-                        {% set salesRepView = UI.renderUrl(path('oro_user_view', {'id': salesRep.id}), salesRep.fullName) %}
-                    {% else %}
-                        {% set salesRepView = salesRep.fullName|escape %}
-                    {% endif %}
-                    {% set salesReps = salesReps|merge([salesRepView]) %}
-                {% endfor %}
-                {{ UI.renderHtmlProperty('orob2b.account.accountuser.sales_representatives.label'|trans, UI.renderList(salesReps)) }}
+            {% if entity.salesRepresentatives | length %}
+                {{ UI.renderHtmlProperty('orob2b.account.accountuser.sales_representatives.label'|trans, UI.entityViewLinks(entity.salesRepresentatives, 'fullName', 'oro_user_view')) }}
             {% endif %}
         </div>
     </div>

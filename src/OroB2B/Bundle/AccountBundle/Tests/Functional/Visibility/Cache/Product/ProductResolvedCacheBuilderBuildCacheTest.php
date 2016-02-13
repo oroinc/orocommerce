@@ -35,7 +35,6 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
         ]);
 
         $container = $this->client->getContainer();
-        $container->get('orob2b_account.storage.category_visibility_storage')->flush();
         $this->cacheBuilder = $container
             ->get('orob2b_account.visibility.cache.product.product_resolved_cache_builder');
     }

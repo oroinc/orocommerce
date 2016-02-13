@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\SystemConfig;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig;
 use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
 
