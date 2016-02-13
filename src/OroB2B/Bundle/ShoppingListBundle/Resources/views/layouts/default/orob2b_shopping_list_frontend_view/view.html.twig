@@ -47,9 +47,10 @@
         <div class="oro-more-info-toggler">
             <i class="icon-play"></i>
             {% set notes = shoppingList.notes %}
-            <a href="#" data-more-info-expand tabindex="0">{{ 'orob2b.frontend.shoppinglist.view.view_options.label'|trans }}</a>
+            <a href="#" data-more-info-expand
+               tabindex="0">{{ 'orob2b.frontend.shoppinglist.view.view_options.label'|trans }}</a>
             <div class="oro-more-info-toggler__container"
-                data-more-info {% if notes is not empty %}style="display: block;" {% endif %}>
+                 data-more-info {% if notes is not empty %}style="display: block;" {% endif %}>
                 <div class="ml1-md mmt5-md">
                     <label for="addANote" class="checkbox_custom checkbox_custom_blue mml5-md
                             {% if notes is not empty %} checked {% endif %}" data-checkbox>
@@ -83,7 +84,16 @@
 {% endblock %}
 
 {% block _shopping_list_combined_button_widget %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " btn btn_orange btn_has-dropdown btn_has-dropdown_xlg"}) %}
     <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
+        {% set primary_button = block.orob2b_shoppinglist_frontend_action_createorder_button_combined_primary %}
+        {{ block_widget(primary_button,
+        {attr:primary_button.vars.attr|merge({ class: primary_button.vars.attr.class|default('') ~ " direct-link"})}) }}
+
+        {{ block_widget(block.action_dropdown_link) }}
+
+        {{ block_widget(block.action_dropdown_menu,
+        {attr:block.action_dropdown_menu.vars.attr|merge({ class: block.action_dropdown_menu.vars.attr.class|default('') ~ " dropdown-menu"})}) }}
     </div>
 {% endblock %}
+

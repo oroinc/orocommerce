@@ -4,16 +4,12 @@
     </ul>
 {% endblock %}
 
-
 {% block action_combined_buttons_widget %}
-    <div{{ block('block_attributes') }} {% if (div_class is defined) %}class="{{ div_class }}"{% endif %} >
-        {{ block_widget(block) }}
-    </div>
+    {{ block_widget(block) }}
 {% endblock %}
 
 {% block action_dropdown_toggle_widget %}
-    <a href="#" class="dropdown-toggle{% if (class is defined) %} ~' '{{ class }}{% endif %}"
-       data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
         <i class="material-icons">arrow_drop_down</i>
     </a>
 {% endblock %}

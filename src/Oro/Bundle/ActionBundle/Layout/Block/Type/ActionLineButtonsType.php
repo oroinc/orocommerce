@@ -68,7 +68,7 @@ class ActionLineButtonsType extends AbstractButtonsType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         parent::setDefaultOptions($resolver);
-        $resolver->setOptional(['group', 'exclude_action', 'suffix', 'hide_icons']);
+        $resolver->setOptional(['exclude_action', 'suffix', 'hide_icons']);
         $resolver->setRequired(['entity']);
     }
 }
