@@ -147,6 +147,8 @@ services:
 
     oro_action.block_type.action_button:
         class: %oro_action.block_type.action_button.class%
+        arguments:
+              - @translator
         tags:
              - { name: layout.block_type, alias: action_button }
 

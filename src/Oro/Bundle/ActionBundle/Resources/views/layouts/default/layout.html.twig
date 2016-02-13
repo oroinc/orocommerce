@@ -1,10 +1,9 @@
 {% block action_line_buttons_widget %}
-    <ul {% if (ul_class is defined) %}class="{{ ul_class }}"{% endif %}
-        data-page-component-module="oroaction/js/app/components/buttons-component"
-            {{ block('block_attributes') }}>
+    <ul {{ block('block_attributes') }} >
         {{ block_widget(block) }}
     </ul>
 {% endblock %}
+
 
 {% block action_combined_buttons_widget %}
     <div{{ block('block_attributes') }} {% if (div_class is defined) %}class="{{ div_class }}"{% endif %} >
@@ -20,37 +19,12 @@
 {% endblock %}
 
 {% block action_button_widget %}
-    {% set linkTitle = params.frontendOption.title|default(params.label)|trans %}
-    {% set linkLabel = params.label|trans %}
     {% block button %}
         {% if only_link is not defined %}<li>{% endif %}
         {% block link %}
-            <a {% if (params.id is defined) %}id="{{ params.id }}"{% endif %}
-               href="{{ params.path|default('javascript:void(0);') }}"
-               class="back icons-holder-text action-button{% if link_class is defined %} {{ link_class }} {% endif %}"
-               title="{{ linkTitle }}"
-               data-from-url="{{ fromUrl }}"
-                    {% if params.frontendOptions.show_dialog is defined and not params.frontendOptions.show_dialog %}
-                        data-page-url="{{ params.actionUrl }}"
-                    {% else %}
-                        {% set dialogOptions = {
-                        'title': params.frontendOptions.title is defined ? params.frontendOptions.title|trans : linkTitle,
-                        'dialogOptions': params.frontendOptions.options|default({}),
-                        } %}
-                        data-dialog-url="{{ params.actionUrl }}"
-                        data-dialog-options="{{ dialogOptions|json_encode }}"
-                    {% endif %}
-               data-confirmation="{{ params.frontendOptions.confirmation|default('') }}"
-               {% if params.buttonOptions.page_component_module is defined %}data-page-component-module={{ params.buttonOptions.page_component_module }}{% endif %}
-               {% if params.buttonOptions.page_component_options is defined %}data-page-component-options={{ params.buttonOptions.page_component_options|json_encode }}{% endif %}
-                    {% if params.buttonOptions.data is defined %}
-                        {% for dataName,dataValue in params.buttonOptions.data %}
-                            data-{{ dataName }}="{{ dataValue|e('html_attr')|raw }}" {{ dataName }}
-                        {% endfor %}
-                    {% endif %}
-            >
+            <a {{ block('block_attributes') }}>
                 {% if hide_icon is not defined %}
-                    <i class="{{ params.buttonOptions.icon|default('') }} {{ params.buttonOptions.iCss|default('') }} hide-text">{{ linkLabel }}</i>
+                    <i class="{{ buttonOptions.icon|default('') }} {{ buttonOptions.iCss|default('') }} hide-text">{{ linkLabel }}</i>
                 {% endif %}
                 {{ linkLabel|trim }}
             </a>

@@ -236,7 +236,7 @@ class ActionLineButtonsTypeTest extends \PHPUnit_Framework_TestCase
                 'fromUrl' => $formUrl
             ]
         );
-        $resolver->expects($this->once())->method('setOptional')->with(['group', 'ul_class']);
+        $resolver->expects($this->once())->method('setOptional')->with(['group']);
         $resolver->expects($this->once())->method('setRequired')->with(['entity']);
 
         $this->blockType->setDefaultOptions($resolver);
