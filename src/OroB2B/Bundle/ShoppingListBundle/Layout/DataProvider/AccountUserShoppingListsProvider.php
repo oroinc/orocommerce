@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Provider;
+namespace OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider;
 
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\DataProviderInterface;
