@@ -5,9 +5,10 @@ define(function(require) {
     var SwitchableEditableViewComponent;
     var InlineEditableViewComponent = require('oroform/js/app/components/inline-editable-view-component');
     var BaseModel = require('oroui/js/app/models/base/model');
+    var BaseView = require('oroui/js/app/views/base/view');
     var $ = require('jquery');
     var tools = require('oroui/js/tools');
-    var frontendTypeMap = require('../../tools/frontend-type-map');
+    var frontendTypeMap = require('oroform/js/tools/frontend-type-map');
     var _ = require('underscore');
 
     SwitchableEditableViewComponent = InlineEditableViewComponent.extend(/** @exports SwitchableEditableViewComponent.prototype */{
@@ -18,13 +19,15 @@ define(function(require) {
         initialize: function(options) {
             options = $.extend(true, {}, this.options, options);
 
+            this.$el = options._sourceElement;
+            this.wrapper = new BaseView({el: this.$el.find('[data-role="editor"]')});
+
             this.messages = options.messages;
             this.metadata = options.metadata;
             this.fieldName = options.fieldName;
-            this.insertEditorMethod = options.insertEditorMethod;
             this.inlineEditingOptions = options.metadata.inline_editing;
             // frontend type mapped to viewer/editor/reader
-            var frontendType = options.hasOwnProperty('frontend_type') ? options.frontend_type : 'attached';
+            var frontendType = options.hasOwnProperty('frontend_type') ? options.frontend_type : 'text';
             this.classes = frontendTypeMap[frontendType];
 
             this.model = new BaseModel();
@@ -43,14 +46,18 @@ define(function(require) {
             ));
 
             this.deferredInit = $.when.apply($, waitors);
+
+            var viewInstance = this.createEditorViewInstance();
+            this.initializeEditorListeners(viewInstance);
+
             this.onSwitcherChange();
         },
 
         onSwitcherChange: function() {
             if (this.switcher.is(':checked')) {
-                this.enterEditMode();
+                this.showEditor();
             } else {
-                this.exitEditMode();
+                this.hideEditor();
             }
         },
 
@@ -59,22 +66,72 @@ define(function(require) {
         },
 
         enterEditMode: function() {
-            if (!this.view.disposed && this.view.$el) {
-                this.view.$el.removeClass('save-fail');
-            }
+            return this.editorView;
+        },
 
-            var viewInstance = this.createEditorViewInstance();
-            this.initializeEditorListeners(viewInstance);
+        exitEditMode: function() {
+        },
 
-            return viewInstance;
+        hideEditor: function() {
+            this.editorView.$el.val('');
+            this.saveCurrentCell();
+
+            this.wrapper.$el.hide();
+        },
+
+        showEditor: function() {
+            this.wrapper.$el.show();
         },
 
         createEditorViewInstance: function() {
-            var View = this.classes.editor;
+            var BaseEditor = this.classes.editor;
+            var View = BaseEditor.extend({
+                render: function() {
+                    this.validator = this.$el.validate({
+                        submitHandler: _.bind(function(form, e) {
+                            if (e && e.preventDefault) {
+                                e.preventDefault();
+                            }
+                            this.trigger('saveAction');
+                        }, this),
+                        errorPlacement: function(error, element) {
+                            error.appendTo(this.$el);
+                        },
+                        rules: {
+                            value: this.getValidationRules()
+                        }
+                    });
+                    if (this.options.value) {
+                        this.setFormState(this.options.value);
+                    }
+                    this.onChange();
+                },
+
+                getValue: function() {
+                    return this.$el.val();
+                },
+
+                onFocusout: function(e) {
+                    if (this.isChanged() && this.validator.form()) {
+                        this.trigger('saveAction');
+                    }
+
+                    View.__super__.onFocusout.apply(this, arguments);
+                }
+            });
 
             this.editorView = new View(this.getEditorOptions());
 
             return this.editorView;
+        },
+
+        getEditorOptions: function() {
+            return {
+                el: this.wrapper.$(':input:visible:first'),
+                autoRender: true,
+                model: this.model,
+                fieldName: this.fieldName
+            };
         }
     });
 

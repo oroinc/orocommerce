@@ -8,4 +8,9 @@ define(function(require) {
         viewerWrapper: require('orob2bfrontend/js/app/views/inline-editable-wrapper-view'),
         editor: require('orob2bfrontend/js/app/views/editor/title-editor-view')
     };
+    frontendTypeMap.multilineText = {
+        viewer: require('orob2bfrontend/js/app/views/viewer/text-view'),
+        viewerWrapper: require('orob2bfrontend/js/app/views/inline-editable-wrapper-view'),
+        editor: require('orob2bfrontend/js/app/views/editor/multiline-text-editor-view')
+    };
 });
