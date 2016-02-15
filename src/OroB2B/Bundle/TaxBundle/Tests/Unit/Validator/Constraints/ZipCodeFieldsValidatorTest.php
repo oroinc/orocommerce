@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
+use OroB2B\Bundle\TaxBundle\Entity\ZipCode;
 use OroB2B\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
 use OroB2B\Bundle\TaxBundle\Validator\Constraints\ZipCodeFields;
 use OroB2B\Bundle\TaxBundle\Validator\Constraints\ZipCodeFieldsValidator;
@@ -72,5 +73,23 @@ class ZipCodeFieldsValidatorTest extends \PHPUnit_Framework_TestCase
         $zipCode = ZipCodeTestHelper::getRangeZipCode(null, '0100');
 
         $this->validator->validate($zipCode, $this->constraint);
+    }
+
+    public function testValidateWithZipEmpty()
+    {
+        $this->context->expects($this->once())
+            ->method('addViolationAt')
+            ->with('zipRangeStart', $this->constraint->zipCodeCanNotBeEmpty);
+
+        $this->validator->validate(new ZipCode(), $this->constraint);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Entity must be instance of "OroB2B\Bundle\TaxBundle\Entity\ZipCode", "stdClass" given
+     */
+    public function testValidateWrongEntity()
+    {
+        $this->validator->validate(new \stdClass(), $this->constraint);
     }
 }

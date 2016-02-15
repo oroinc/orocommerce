@@ -57,7 +57,7 @@ class TaxRulesControllerTest extends WebTestCase
             $this->getAccountTaxCode(LoadAccountTaxCodes::TAX_1),
             $this->getProductTaxCode(LoadProductTaxCodes::TAX_1),
             $this->getTax(LoadTaxes::TAX_1),
-            $this->getTaxJurisdiction(LoadTaxJurisdictions::TAX_1),
+            $this->getTaxJurisdiction(LoadTaxes::TAX_1),
             self::TAX_DESCRIPTION
         );
     }
@@ -124,7 +124,7 @@ class TaxRulesControllerTest extends WebTestCase
             $this->getAccountTaxCode(LoadAccountTaxCodes::TAX_2),
             $this->getProductTaxCode(LoadProductTaxCodes::TAX_2),
             $this->getTax(LoadTaxes::TAX_2),
-            $this->getTaxJurisdiction(LoadTaxJurisdictions::TAX_2),
+            $this->getTaxJurisdiction(LoadTaxes::TAX_2),
             self::TAX_DESCRIPTION_UPDATED
         );
 
@@ -153,7 +153,7 @@ class TaxRulesControllerTest extends WebTestCase
             $this->getAccountTaxCode(LoadAccountTaxCodes::TAX_2),
             $this->getProductTaxCode(LoadProductTaxCodes::TAX_2),
             $this->getTax(LoadTaxes::TAX_2),
-            $this->getTaxJurisdiction(LoadTaxJurisdictions::TAX_2),
+            $this->getTaxJurisdiction(LoadTaxes::TAX_2),
             self::TAX_DESCRIPTION_UPDATED
         );
     }

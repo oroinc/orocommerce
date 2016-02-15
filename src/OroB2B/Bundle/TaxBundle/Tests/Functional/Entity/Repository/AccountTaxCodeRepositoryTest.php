@@ -38,6 +38,14 @@ class AccountTaxCodeRepositoryTest extends WebTestCase
         $this->assertEmpty($this->getRepository()->findOneByAccount(new Account()));
     }
 
+    public function testFindByCodes()
+    {
+        /** @var AccountTaxCode $taxCode1 */
+        $taxCode = $this->getReference(TaxFixture::REFERENCE_PREFIX . '.' . TaxFixture::TAX_1);
+
+        $this->assertEquals([$taxCode], $this->getRepository()->findByCodes([TaxFixture::TAX_1]));
+    }
+
     /**
      * @return AccountTaxCodeRepository
      */

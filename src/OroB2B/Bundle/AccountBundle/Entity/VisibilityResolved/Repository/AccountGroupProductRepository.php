@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository;
 
-use Doctrine\ORM\Query\Expr\Join;
-
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
@@ -25,45 +23,45 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
     use BasicOperationRepositoryTrait;
 
     /**
-     * {@inheritdoc}
+     * @param InsertFromSelectQueryExecutor $insertFromSelect
+     * @param Website|null $website
      */
-    public function insertByCategory(
-        InsertFromSelectQueryExecutor $insertFromSelect,
-        $cacheVisibility,
-        $categories,
-        $accountGroupId,
-        $websiteId = null
-    ) {
-        $queryBuilder = $this->getEntityManager()
-            ->getRepository('OroB2BCatalogBundle:Category')
-            ->createQueryBuilder('category')
-            ->select(
-                'agpv.id',
-                'IDENTITY(agpv.website)',
-                'product.id',
-                (string)$accountGroupId,
-                (string)$cacheVisibility,
-                (string)BaseProductVisibilityResolved::SOURCE_CATEGORY,
-                'category.id'
-            )
-            ->innerJoin('category.products', 'product')
-            ->innerJoin(
-                'OroB2BAccountBundle:Visibility\AccountGroupProductVisibility',
-                'agpv',
-                Join::WITH,
-                'agpv.product = product AND agpv.visibility = :category AND IDENTITY(agpv.accountGroup) = :accGroupId'
-            )
-            ->where('category.id in (:ids)');
+    public function insertByCategory(InsertFromSelectQueryExecutor $insertFromSelect, Website $website = null)
+    {
+        $configValue = AccountGroupProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
+        $qb = $this->getEntityManager()
+            ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
+            ->createQueryBuilder('agpv');
+        $qb->select(
+            'agpv.id',
+            'IDENTITY(agpv.website)',
+            'IDENTITY(agpv.product)',
+            'IDENTITY(agpv.accountGroup)',
+            'COALESCE(agcvr.visibility, cvr.visibility, ' . $qb->expr()->literal($configValue) . ')',
+            (string)AccountGroupProductVisibilityResolved::SOURCE_CATEGORY,
+            'category.id'
+        )
+        ->innerJoin('OroB2BCatalogBundle:Category', 'category', 'WITH', 'agpv.product MEMBER OF category.products')
+        ->leftJoin(
+            'OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
+            'agcvr',
+            'WITH',
+            'agcvr.accountGroup = agpv.accountGroup AND agcvr.category = category'
+        )
+        ->leftJoin(
+            'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+            'cvr',
+            'WITH',
+            'cvr.category = category'
+        )
+        ->andWhere('agpv.visibility = :categoryVisibility')
+        ->setParameter('categoryVisibility', AccountGroupProductVisibility::CATEGORY);
 
-        $queryBuilder
-            ->setParameter('ids', $categories)
-            ->setParameter('accGroupId', $accountGroupId)
-            ->setParameter('category', AccountGroupProductVisibility::CATEGORY);
-
-        if ($websiteId) {
-            $queryBuilder->andWhere('IDENTITY(agpv.website) = :website')
-                ->setParameter('website', $websiteId);
+        if ($website) {
+            $qb->andWhere('agpv.website = :website')
+                ->setParameter('website', $website);
         }
+
         $insertFromSelect->execute(
             $this->getClassName(),
             [
@@ -75,14 +73,15 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
                 'source',
                 'category',
             ],
-            $queryBuilder
+            $qb
         );
     }
 
     /**
-     * {@inheritdoc}
+     * @param InsertFromSelectQueryExecutor $insertFromSelect
+     * @param Website|null $website
      */
-    public function insertStatic(InsertFromSelectQueryExecutor $insertFromSelect, $websiteId = null)
+    public function insertStatic(InsertFromSelectQueryExecutor $insertFromSelect, Website $website = null)
     {
         $queryBuilder = $this->getEntityManager()
             ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
@@ -103,9 +102,9 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
             ->setParameter('cacheVisible', BaseProductVisibilityResolved::VISIBILITY_VISIBLE)
             ->setParameter('cacheHidden', BaseProductVisibilityResolved::VISIBILITY_HIDDEN);
 
-        if ($websiteId) {
-            $queryBuilder->andWhere('IDENTITY(agpv.website) = :website')
-                ->setParameter('website', $websiteId);
+        if ($website) {
+            $queryBuilder->andWhere('agpv.website = :website')
+                ->setParameter('website', $website);
         }
 
         $insertFromSelect->execute(
@@ -138,36 +137,25 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
     /**
      * @param Product $product
      * @param InsertFromSelectQueryExecutor $insertFromSelect
-     * @param boolean $isCategoryVisible
      * @param Category|null $category
      */
     public function insertByProduct(
         Product $product,
         InsertFromSelectQueryExecutor $insertFromSelect,
-        $isCategoryVisible,
         Category $category = null
     ) {
         $visibilityMap = [
             AccountGroupProductVisibility::HIDDEN => [
                 'visibility' => AccountGroupProductVisibilityResolved::VISIBILITY_HIDDEN,
                 'source' => AccountGroupProductVisibilityResolved::SOURCE_STATIC,
-                'category' => null,
             ],
             AccountGroupProductVisibility::VISIBLE => [
                 'visibility' => AccountGroupProductVisibilityResolved::VISIBILITY_VISIBLE,
                 'source' => AccountGroupProductVisibilityResolved::SOURCE_STATIC,
-                'category' => null,
             ],
         ];
-        if ($category) {
-            $categoryVisibility = $isCategoryVisible ? AccountGroupProductVisibilityResolved::VISIBILITY_VISIBLE :
-                AccountGroupProductVisibilityResolved::VISIBILITY_HIDDEN;
-            $visibilityMap[AccountGroupProductVisibility::CATEGORY] = [
-                'visibility' => $categoryVisibility,
-                'source' => AccountGroupProductVisibilityResolved::SOURCE_CATEGORY,
-                'category' => $category->getId()
-            ];
-        }
+
+        $fields = ['sourceProductVisibility', 'product', 'website', 'accountGroup', 'visibility', 'source'];
 
         foreach ($visibilityMap as $visibility => $productVisibility) {
             $qb = $this->getEntityManager()
@@ -181,22 +169,48 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
                 (string)$productVisibility['visibility'],
                 (string)$productVisibility['source'],
             ])
-                ->where('productVisibility.product = :product')
-                ->andWhere('productVisibility.visibility = :visibility')
-                ->setParameter('product', $product)
-                ->setParameter('visibility', $visibility);
+            ->where('productVisibility.product = :product')
+            ->andWhere('productVisibility.visibility = :visibility')
+            ->setParameter('product', $product)
+            ->setParameter('visibility', $visibility);
 
-            $fields = ['sourceProductVisibility', 'product', 'website', 'accountGroup', 'visibility', 'source'];
-            if ($productVisibility['category']) {
-                $qb->addSelect((string)$productVisibility['category']);
-                $fields[] = 'category';
-            }
+            $insertFromSelect->execute($this->getEntityName(), $fields, $qb);
+        }
 
-            $insertFromSelect->execute(
-                $this->getEntityName(),
-                $fields,
-                $qb
-            );
+        if ($category) {
+            $configValue = AccountGroupProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
+            $qb = $this->getEntityManager()
+                ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
+                ->createQueryBuilder('productVisibility');
+            $qb->select([
+                'productVisibility.id',
+                'IDENTITY(productVisibility.product)',
+                'IDENTITY(productVisibility.website)',
+                'IDENTITY(productVisibility.accountGroup)',
+                'COALESCE(agcvr.visibility, cvr.visibility, ' . $qb->expr()->literal($configValue) . ')',
+                (string)AccountGroupProductVisibilityResolved::SOURCE_CATEGORY,
+                (string)$category->getId()
+            ])
+            ->leftJoin(
+                'OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
+                'agcvr',
+                'WITH',
+                'agcvr.accountGroup = productVisibility.accountGroup AND agcvr.category = :category'
+            )
+            ->leftJoin(
+                'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+                'cvr',
+                'WITH',
+                'cvr.category = :category'
+            )
+            ->andWhere('productVisibility.product = :product')
+            ->andWhere('productVisibility.visibility = :visibility')
+            ->setParameter('category', $category)
+            ->setParameter('product', $product)
+            ->setParameter('visibility', AccountGroupProductVisibility::CATEGORY);
+
+            $fields[] = 'category';
+            $insertFromSelect->execute($this->getEntityName(), $fields, $qb);
         }
     }
 

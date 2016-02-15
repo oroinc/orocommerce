@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
@@ -58,6 +59,8 @@ class RequestTest extends \PHPUnit_Framework_TestCase
             $propertyRequest,
             [
                 ['requestProducts', new RequestProduct()],
+                ['assignedUsers', new User()],
+                ['assignedAccountUsers', new AccountUser()],
             ]
         );
     }
