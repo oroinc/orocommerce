@@ -764,7 +764,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
 
         if (false === $this->hasVariants) {
-            $this->variantLinks->clear();
+            // Clear variantLinks in OroB2B\Bundle\ProductBundle\EventListener\ProductHandlerListener
             $this->variantFields = [];
         }
     }
