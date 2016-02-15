@@ -49,6 +49,10 @@ class ZipCodeFieldsValidator extends ConstraintValidator
         ) {
             $this->context->addViolationAt('zipRangeStart', $constraint->onlyNumericRangesSupported);
         }
+
+        if (!$entity->getZipCode() && !$entity->getZipRangeStart() && !$entity->getZipRangeEnd()) {
+            $this->context->addViolationAt('zipRangeStart', $constraint->zipCodeCanNotBeEmpty);
+        }
     }
 
     /**
@@ -79,6 +83,5 @@ class ZipCodeFieldsValidator extends ConstraintValidator
         return !intl_is_failure($formatter->getErrorCode())
         && strpos($value, $decimalSeparator) === false
         && $position === strlen($value);
-
     }
 }

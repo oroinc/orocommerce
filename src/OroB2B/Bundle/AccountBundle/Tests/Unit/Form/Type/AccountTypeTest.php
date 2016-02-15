@@ -8,6 +8,7 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EnumSelectType;
@@ -16,7 +17,6 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountGroupSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountType;
 use OroB2B\Bundle\AccountBundle\Form\Type\ParentAccountSelectType;
-use OroB2B\Bundle\AccountBundle\Form\Type\SalesRepresentativesCollectionType;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
 
 class AccountTypeTest extends FormIntegrationTestCase
@@ -82,9 +82,9 @@ class AccountTypeTest extends FormIntegrationTestCase
             ]
         );
 
-        $salesRepsCollectionType = new EntityType(
+        $userMultiSelectType = new EntityType(
             $this->getUsers(),
-            SalesRepresentativesCollectionType::NAME,
+            UserMultiSelectType::NAME,
             [
                 'class' => 'Oro\Bundle\UserBundle\Entity\User',
                 'multiple' => true
@@ -99,7 +99,7 @@ class AccountTypeTest extends FormIntegrationTestCase
                     'oro_address_collection'  => new AddressCollectionTypeStub(),
                     $addressEntityType->getName()  => $addressEntityType,
                     EnumSelectType::NAME => $internalRatingEnumSelect,
-                    SalesRepresentativesCollectionType::NAME => $salesRepsCollectionType,
+                    $userMultiSelectType->getName() => $userMultiSelectType,
                 ],
                 []
             )

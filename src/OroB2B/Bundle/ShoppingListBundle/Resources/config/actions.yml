@@ -37,13 +37,11 @@ actions:
                     route: orob2b_order_frontend_create
                     route_parameters: {'storage': true}
 
-    orob2b_shoppinglist_frontend_products_add_to_shoppinglist:
+    orob2b_shoppinglist_frontend_products_add_to_shoppinglist_base:
         label: orob2b.shoppinglist.product.add_to_shopping_list.label
         applications: [frontend]
         acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
         order: 30
-        routes:
-            - orob2b_product_frontend_quick_add
         button_options:
             template: OroB2BShoppingListBundle:Action:buttons.html.twig
             page_component_module: orob2bshoppinglist/js/app/components/quick-add-button-component
@@ -58,6 +56,23 @@ actions:
                 attribute: $.isAllowed
         preconditions:
             @equal: [true, $.isAllowed]
+
+    orob2b_shoppinglist_frontend_products_add_to_shoppinglist:
+        extends: orob2b_shoppinglist_frontend_products_add_to_shoppinglist_base
+        routes:
+            - orob2b_product_frontend_quick_add
+        button_options:
+            page_component_options:
+                quickAddComponentPrefix: 'quick-add'
+
+    orob2b_shoppinglist_frontend_quick_add_import_to_shoppinglist:
+        extends: orob2b_shoppinglist_frontend_products_add_to_shoppinglist_base
+        routes:
+            - orob2b_product_frontend_quick_add_import
+            - orob2b_product_frontend_quick_add_copy_paste
+        button_options:
+            page_component_options:
+                quickAddComponentPrefix: 'quick-add-import'
 
     orob2b_shoppinglist_frontend_addlineitem:
         extends: orob2b_shoppinglist_lineitem_base

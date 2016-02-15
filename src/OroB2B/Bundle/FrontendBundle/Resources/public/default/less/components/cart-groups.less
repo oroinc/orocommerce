@@ -1,5 +1,5 @@
 //Cart Groups
-.cart-table__ungroup-items {
+.oro-grid-table__ungroup-items {
 
   .group-check-checkbox-container {
     padding-left: 1.2rem !important; 
@@ -40,7 +40,7 @@
   }
 }
 
-.cart-table__group-items {
+.oro-grid-table__group-items {
 
   .group-check-checkbox-container {
 
@@ -49,9 +49,9 @@
     }
   }
 
-  &.cart-table__group-items_edit-mode {
+  &.oro-grid-table__group-items_edit-mode {
 
-    .cart-table__group__head {
+    .oro-grid-table__group__head {
       ~ tr {
         > .group-check-checkbox-container {
           padding-left: 1.2rem !important;  
@@ -64,7 +64,7 @@
     }
   }
 
-  .cart-table__group__head {
+  .oro-grid-table__group__head {
     > td {
       padding: 0 .6rem 0 1.2rem!important;
       background: @base-cart-group-head-color;
@@ -121,11 +121,11 @@
   }
 }
 
-.cart-table__group__control-container {
+.oro-grid-table__group__control-container {
   position: relative;
 }
 
-.cart-table__group__control {
+.oro-grid-table__group__control {
   display: inline-block;
   width: 3.6rem;
   height: 3rem;
@@ -139,13 +139,13 @@
   &.active {
     box-shadow: inset .1rem .1rem .2rem 0 rgba(0,0,0,.2);
 
-    + .cart-table__group__control-popup {
+    + .oro-grid-table__group__control-popup {
       display: block;
     }
   }
 }
 
-.cart-table__group__control-popup {
+.oro-grid-table__group__control-popup {
   display: none;
   z-index: 10;
   border-radius: .3rem;
@@ -178,7 +178,7 @@
   }
 }
 
-.cart-table__group__edit-controls {
+.oro-grid-table__group__edit-controls {
   display: none;
 
   > td {
@@ -226,19 +226,18 @@
     }
   }
 
-  &.cart-table__group__edit-controls_edit-mode {
+  &.oro-grid-table__group__edit-controls_edit-mode {
     display: table-row;
   }
 }
 
 .cart__group-title_rename-mode {
-  fon-size: 0;
+  font-size: 0;
 
   input[type="text"].input_group-rename {
     .input();
     vertical-align: middle;
     padding: .1rem .9rem !important;
-    margin-right: .5rem;
     border-radius: .3rem;
     width: calc(~'100% - 95px'); //95 is a sum of icon width, save button width, input right margin
 
@@ -250,6 +249,7 @@
   }
 
   .btn_group-rename {
+    margin-left: .5rem;
     padding: .3rem 1.2rem .4rem !important;
   }
 }
@@ -348,7 +348,7 @@
   }
 }
 
-.cart-table__group__control-container {
+.oro-grid-table__group__control-container {
   float: right;
   width: 3.6rem;
 }

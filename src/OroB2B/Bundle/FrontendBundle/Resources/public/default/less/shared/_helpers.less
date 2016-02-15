@@ -105,77 +105,153 @@
   width: 50% !important;
 }
 
-//Margins
-.mt3 {
-	margin-top: 3rem !important;
+.w30_p {
+  width: 30% !important;
 }
 
-.generate-margin-helpers(@i, @param, @position, @size) when (@i >= 0) {
-  .generate-margin-helpers((@i - 1), @param, @position, @size);
+//Margins
+.mt3 {
+  margin-top: 3rem !important;
+}
+
+.generate-margin-top-helpers(@i, @param, @size) when (@i >= 0) {
+  .generate-margin-top-helpers((@i - 1), @param, @size);
 
   .m@{param}@{i}-@{size} {
-    /*margin-@{position}: unit(@i, rem) !important;*/
+    margin-top: unit(@i, rem) !important;
+  }
+}
+
+.generate-margin-bottom-helpers(@i, @param, @size) when (@i >= 0) {
+  .generate-margin-bottom-helpers((@i - 1), @param, @size);
+
+  .m@{param}@{i}-@{size} {
+    margin-bottom: unit(@i, rem) !important;
+  }
+}
+
+.generate-margin-right-helpers(@i, @param, @size) when (@i >= 0) {
+  .generate-margin-right-helpers((@i - 1), @param, @size);
+
+  .m@{param}@{i}-@{size} {
+    margin-right: unit(@i, rem) !important;
+  }
+}
+
+.generate-margin-left-helpers(@i, @param, @size) when (@i >= 0) {
+  .generate-margin-left-helpers((@i - 1), @param, @size);
+
+  .m@{param}@{i}-@{size} {
+    margin-left: unit(@i, rem) !important;
   }
 }
 
 @media (max-width: 991px) {
-  .generate-margin-helpers(12, t, top, sm);
-  .generate-margin-helpers(12, b, bottom, sm);
-  .generate-margin-helpers(12, r, right, sm);
-  .generate-margin-helpers(12, l, left, sm);
+  .generate-margin-top-helpers(12, t, sm);
+  .generate-margin-bottom-helpers(12, b, sm);
+  .generate-margin-right-helpers(12, r, sm);
+  .generate-margin-left-helpers(12, l, sm);
 }
 
 @media (min-width: 992px) {
-  .generate-margin-helpers(12, t, top, md);
-  .generate-margin-helpers(12, b, bottom, md);
-  .generate-margin-helpers(12, r, right, md);
-  .generate-margin-helpers(12, l, left, md);
+  .generate-margin-top-helpers(12, t, md);
+  .generate-margin-bottom-helpers(12, b, md);
+  .generate-margin-right-helpers(12, r, md);
+  .generate-margin-left-helpers(12, l, md);
 }
 
 //Micro Margins
-.generate-micro-margin-helpers(@i, @n, @param, @position, @size) when (@i >= 0.1) {
-  .generate-micro-margin-helpers((@i - 0.1), (@n - 1), @param, @position, @size);
+.generate-micro-margin-top-helpers(@i, @n, @param, @size) when (@i >= 0.1) {
+  .generate-micro-margin-top-helpers((@i - 0.1), (@n - 1), @param, @size);
 
   .mm@{param}@{n}-@{size} {
-    /*margin-@{position}: unit(@i, rem) !important;*/
+    margin-top: unit(@i, rem) !important;
+  }
+}
+
+.generate-micro-margin-bottom-helpers(@i, @n, @param, @size) when (@i >= 0.1) {
+  .generate-micro-margin-bottom-helpers((@i - 0.1), (@n - 1), @param, @size);
+
+  .mm@{param}@{n}-@{size} {
+    margin-bottom: unit(@i, rem) !important;
+  }
+}
+
+.generate-micro-margin-right-helpers(@i, @n, @param, @size) when (@i >= 0.1) {
+  .generate-micro-margin-right-helpers((@i - 0.1), (@n - 1), @param, @size);
+
+  .mm@{param}@{n}-@{size} {
+    margin-right: unit(@i, rem) !important;
+  }
+}
+
+.generate-micro-margin-left-helpers(@i, @n, @param, @size) when (@i >= 0.1) {
+  .generate-micro-margin-left-helpers((@i - 0.1), (@n - 1), @param, @size);
+
+  .mm@{param}@{n}-@{size} {
+    margin-left: unit(@i, rem) !important;
   }
 }
 
 @media (max-width: 991px) {
-  .generate-micro-margin-helpers(.9, 9, t, top, sm);
-  .generate-micro-margin-helpers(.9, 9, b, bottom, sm);
-  .generate-micro-margin-helpers(.9, 9, r, right, sm);
-  .generate-micro-margin-helpers(.9, 9, l, left, sm);
+  .generate-micro-margin-top-helpers(.9, 9, t, sm);
+  .generate-micro-margin-bottom-helpers(.9, 9, b, sm);
+  .generate-micro-margin-right-helpers(.9, 9, r, sm);
+  .generate-micro-margin-left-helpers(.9, 9, l, sm);
 }
 
 @media (min-width: 992px) {
-  .generate-micro-margin-helpers(.9, 9, t, top, md);
-  .generate-micro-margin-helpers(.9, 9, b, bottom, md);
-  .generate-micro-margin-helpers(.9, 9, r, right, md);
-  .generate-micro-margin-helpers(.9, 9, l, left, md);
+  .generate-micro-margin-top-helpers(.9, 9, t, md);
+  .generate-micro-margin-bottom-helpers(.9, 9, b, md);
+  .generate-micro-margin-right-helpers(.9, 9, r, md);
+  .generate-micro-margin-left-helpers(.9, 9, l, md);
 }
 
 //Negative Micro Margins
-.generate-negative-micro-margin-helpers(@i, @n, @param, @position, @size) when (@i >= 0.1) {
-  .generate-negative-micro-margin-helpers((@i - 0.1), (@n - 1), @param, @position, @size);
+.generate-negative-micro-margin-top-helpers(@i, @n, @param, @size) when (@i >= 0.1) {
+  .generate-negative-micro-margin-top-helpers((@i - 0.1), (@n - 1), @param, @size);
 
   .nmm@{param}@{n}-@{size} {
-    /*margin-@{position}: unit(-@i, rem) !important;*/
+    margin-top: unit(-@i, rem) !important;
+  }
+}
+
+.generate-negative-micro-margin-bottom-helpers(@i, @n, @param, @size) when (@i >= 0.1) {
+  .generate-negative-micro-margin-bottom-helpers((@i - 0.1), (@n - 1), @param, @size);
+
+  .nmm@{param}@{n}-@{size} {
+    margin-bottom: unit(-@i, rem) !important;
+  }
+}
+
+.generate-negative-micro-margin-right-helpers(@i, @n, @param, @size) when (@i >= 0.1) {
+  .generate-negative-micro-margin-right-helpers((@i - 0.1), (@n - 1), @param, @size);
+
+  .nmm@{param}@{n}-@{size} {
+    margin-right: unit(-@i, rem) !important;
+  }
+}
+
+.generate-negative-micro-margin-left-helpers(@i, @n, @param, @size) when (@i >= 0.1) {
+  .generate-negative-micro-margin-left-helpers((@i - 0.1), (@n - 1), @param, @size);
+
+  .nmm@{param}@{n}-@{size} {
+    margin-left: unit(-@i, rem) !important;
   }
 }
 
 @media (max-width: 991px) {
-  .generate-negative-micro-margin-helpers(.9, 9, t, top, sm);
-  .generate-negative-micro-margin-helpers(.9, 9, b, bottom, sm);
-  .generate-negative-micro-margin-helpers(.9, 9, r, right, sm);
-  .generate-negative-micro-margin-helpers(.9, 9, l, left, sm);
+  .generate-negative-micro-margin-top-helpers(.9, 9, t, sm);
+  .generate-negative-micro-margin-bottom-helpers(.9, 9, b, sm);
+  .generate-negative-micro-margin-right-helpers(.9, 9, r, sm);
+  .generate-negative-micro-margin-left-helpers(.9, 9, l, sm);
 }
 
 @media (min-width: 992px) {
-  .generate-negative-micro-margin-helpers(.9, 9, t, top, md);
-  .generate-negative-micro-margin-helpers(.9, 9, b, bottom, md);
-  .generate-negative-micro-margin-helpers(.9, 9, r, right, md);
-  .generate-negative-micro-margin-helpers(.9, 9, l, left, md);
+  .generate-negative-micro-margin-top-helpers(.9, 9, t, md);
+  .generate-negative-micro-margin-bottom-helpers(.9, 9, b, md);
+  .generate-negative-micro-margin-right-helpers(.9, 9, r, md);
+  .generate-negative-micro-margin-left-helpers(.9, 9, l, md);
 }
 
 //Font sizes

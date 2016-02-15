@@ -22,6 +22,11 @@ class ZipCodeFields extends Constraint
     public $onlyNumericRangesSupported = 'orob2b.tax.validator.constraints.only_numeric_ranges_supported';
 
     /**
+     * @var string
+     */
+    public $zipCodeCanNotBeEmpty = 'orob2b.tax.validator.constraints.zip_code_can_not_be_empty';
+
+    /**
      * {@inheritdoc}
      */
     public function getTargets()
