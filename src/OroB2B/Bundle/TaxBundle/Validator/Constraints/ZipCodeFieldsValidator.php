@@ -4,9 +4,10 @@ namespace OroB2B\Bundle\TaxBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Symfony\Component\Validator\Exception\UnexpectedTypeException;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use OroB2B\Bundle\TaxBundle\Entity\ZipCode;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer;
 
 class ZipCodeFieldsValidator extends ConstraintValidator
 {
@@ -31,57 +32,48 @@ class ZipCodeFieldsValidator extends ConstraintValidator
             );
         }
 
+        /** @var ExecutionContextInterface $context */
+        $context = $this->context;
+
         if ($entity->getZipCode() && ($entity->getZipRangeStart() || $entity->getZipRangeEnd())) {
-            $this->context->addViolationAt('zipCode', $constraint->onlyOneTypeMessage);
+            $context->buildViolation($constraint->onlyOneTypeMessage)->atPath('zipCode')->addViolation();
         }
 
         if (!$entity->getZipRangeStart() && $entity->getZipRangeEnd()) {
-            $this->context->addViolationAt('zipRangeStart', $constraint->rangeShouldHaveBothFieldMessage);
+            $context->buildViolation($constraint->rangeShouldHaveBothFieldMessage)
+                ->atPath('zipRangeStart')
+                ->addViolation();
         }
 
         if ($entity->getZipRangeStart() && !$entity->getZipRangeEnd()) {
-            $this->context->addViolationAt('zipRangeEnd', $constraint->rangeShouldHaveBothFieldMessage);
+            $context->buildViolation($constraint->rangeShouldHaveBothFieldMessage)
+                ->atPath('zipRangeEnd')
+                ->addViolation();
         }
 
         if ($entity->getZipRangeStart() && $entity->getZipRangeEnd() && (
-            !$this->validateInteger($entity->getZipRangeStart()) ||
-            !$this->validateInteger($entity->getZipRangeEnd()))
+            !$this->isInteger($entity->getZipRangeStart()) ||
+            !$this->isInteger($entity->getZipRangeEnd()))
         ) {
-            $this->context->addViolationAt('zipRangeStart', $constraint->onlyNumericRangesSupported);
+            $context->buildViolation($constraint->onlyNumericRangesSupported)->atPath('zipRangeStart')->addViolation();
         }
 
         if (!$entity->getZipCode() && !$entity->getZipRangeStart() && !$entity->getZipRangeEnd()) {
-            $this->context->addViolationAt('zipRangeStart', $constraint->zipCodeCanNotBeEmpty);
+            $context->buildViolation($constraint->zipCodeCanNotBeEmpty)->atPath('zipRangeStart')->addViolation();
         }
     }
 
     /**
-     * It's a part of Integer validator
-     *
      * @param string $value
      * @return bool
-     *
-     * @see OroB2B\Bundle\ValidationBundle\Validator\Constraints\IntegerValidator
      */
-    protected function validateInteger($value)
+    protected function isInteger($value)
     {
-        if (!is_scalar($value)) {
-            throw new UnexpectedTypeException($value, 'string');
-        }
+        /** @var ExecutionContextInterface $context */
+        $context = $this->context;
 
-        $formatter = new \NumberFormatter(\Locale::getDefault(), \NumberFormatter::DECIMAL);
-        $formatter->setAttribute(\NumberFormatter::ROUNDING_MODE, \NumberFormatter::ROUND_DOWN);
-        $formatter->setAttribute(\NumberFormatter::FRACTION_DIGITS, 0);
-        $formatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 0);
-        $formatter->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 0);
+        $violations = $context->getValidator()->validate($value, new Integer());
 
-        $decimalSeparator = $formatter->getSymbol(\NumberFormatter::DECIMAL_SEPARATOR_SYMBOL);
-
-        $position = 0;
-        $formatter->parse($value, PHP_INT_SIZE == 8 ? $formatter::TYPE_INT64 : $formatter::TYPE_INT32, $position);
-
-        return !intl_is_failure($formatter->getErrorCode())
-        && strpos($value, $decimalSeparator) === false
-        && $position === strlen($value);
+        return $violations->count() === 0;
     }
 }
