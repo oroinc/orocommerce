@@ -69,6 +69,5 @@ class ActionLineButtonsType extends AbstractButtonsType
     {
         parent::setDefaultOptions($resolver);
         $resolver->setOptional(['exclude_action', 'suffix', 'hide_icons']);
-        $resolver->setRequired(['entity']);
     }
 }

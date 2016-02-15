@@ -42,33 +42,26 @@ class ActionCombinedButtonsType extends AbstractButtonsType
             'hide_icon' => true,
             'only_link' => true
         ];
+        $layoutManipulator = $builder->getLayoutManipulator();
+        $builderId = $builder->getId();
 
-        $builder->getLayoutManipulator()->add(
+        $layoutManipulator->add(
             $primaryActionName . '_button_combined_primary',
-            $builder->getId(),
+            $builderId,
             ActionButtonType::NAME,
             $buttonOptions
         );
 
-        $builder->getLayoutManipulator()->add(
-            'action_dropdown_link',
-            $builder->getId(),
-            DropdownToggleType::NAME
-        );
+        $layoutManipulator->add('action_dropdown_link', $builderId, DropdownToggleType::NAME);
 
-        $lineButtonsOptions=[
+        $lineButtonsOptions = [
             'entity' => $options['entity'],
             'suffix' => 'combined',
             'hide_icons' => true,
             'exclude_action' => $primaryActionName
         ];
 
-        $builder->getLayoutManipulator()->add(
-            'action_dropdown_menu',
-            $builder->getId(),
-            ActionLineButtonsType::NAME,
-            $lineButtonsOptions
-        );
+        $layoutManipulator->add('action_dropdown_menu', $builderId, ActionLineButtonsType::NAME, $lineButtonsOptions);
     }
 
     /**
