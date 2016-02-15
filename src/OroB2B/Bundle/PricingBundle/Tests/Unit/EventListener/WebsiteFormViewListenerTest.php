@@ -38,11 +38,11 @@ class WebsiteFormViewListenerTest extends FormViewListenerTestCase
      * @dataProvider testOnWebsiteViewDataProvider
      *
      * @param PriceListWebsiteFallback|null $fallbackEntity
-     * @param integer $expectedFallbackValue
+     * @param string $expectedFallbackValue
      */
     public function testOnWebsiteView($fallbackEntity, $expectedFallbackValue)
     {
-        $renderedHtml = 'rendered_html';
+        $renderedHtml = $expectedFallbackValue;
         $event = $this->createEvent($renderedHtml);
 
         $requestStack = $this->getRequestStack();
@@ -101,6 +101,9 @@ class WebsiteFormViewListenerTest extends FormViewListenerTestCase
         );
     }
 
+    /**
+     * @return array
+     */
     public function testOnWebsiteViewDataProvider()
     {
         return [

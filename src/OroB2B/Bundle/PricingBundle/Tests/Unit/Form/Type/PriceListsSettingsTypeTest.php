@@ -171,9 +171,9 @@ class PriceListsSettingsTypeTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider testOnPostSubmitDataProvider
-     * @param PriceListFallback|null $fallbackEntity
+     * @param PriceListAccountFallback|null $fallbackEntity
      */
-    public function testOnPostSubmit(PriceListFallback $fallbackEntity = null)
+    public function testOnPostSubmit(PriceListAccountFallback $fallbackEntity = null)
     {
         $form = $this->getForm();
         $form->expects($this->once())->method('isValid')->willReturn(true);
