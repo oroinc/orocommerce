@@ -238,11 +238,10 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         if (!$priceList instanceof PriceList) {
             return false;
         }
-        $priority = 0;
-        if (isset($priceListWithPriorityData[PriceListSelectWithPriorityType::PRIORITY_FIELD])) {
-            $priority = (int)$priceListWithPriorityData[PriceListSelectWithPriorityType::PRIORITY_FIELD];
-        }
+
+        $priority = (int)$priceListWithPriorityData[PriceListSelectWithPriorityType::PRIORITY_FIELD];
         $mergeAllowed = $priceListWithPriorityData[PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD];
+
         if (in_array($priceList->getId(), array_keys($actualPriceListsToTargetEntity), true)) {
             /** @var BasePriceListRelation $priceListToTargetEntity */
             $priceListToTargetEntity = $actualPriceListsToTargetEntity[$priceList->getId()];
@@ -255,6 +254,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
                 ->setPriceList($priceListWithPriorityData[PriceListSelectWithPriorityType::PRICE_LIST_FIELD]);
             $hasChanges = true;
         }
+
         $priceListToTargetEntity
             ->setPriority($priority);
         $priceListToTargetEntity
