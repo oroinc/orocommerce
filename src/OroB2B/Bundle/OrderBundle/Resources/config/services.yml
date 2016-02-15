@@ -31,10 +31,8 @@ services:
         class: %orob2b_order.order.listener.order_listener.class%
         arguments:
             - @orob2b_order.order.entity.id_generator
-            - @orob2b_website.manager
         tags:
             - { name: doctrine.event_listener, event: postPersist }
-            - { name: doctrine.event_listener, event: prePersist }
 
     orob2b_order.provider.subtotals:
         class: %orob2b_order.provider.subtotals.class%

@@ -13,13 +13,18 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            $account: null,
-            $currency: null,
-            $website: null,
+            account: null,
+            currency: null,
+            website: null,
             tierPrices: null,
             tierPricesRoute: '',
             matchedPrices: {},
-            matchedPricesRoute: ''
+            matchedPricesRoute: '',
+            requestKeys: {
+                ACCOUNT: 'account_id',
+                WEBSITE: 'websiteId',
+                CURRENCY: 'currency'
+            }
         },
 
         /**
@@ -35,7 +40,9 @@ define(function(require) {
             mediator.on('pricing:get:line-items-matched-prices', this.getLineItemsMatchedPrices, this);
             mediator.on('pricing:load:line-items-matched-prices', this.loadLineItemsMatchedPrices, this);
 
-            mediator.on('update:currency', this.handleCurrencyChange, this);
+            mediator.on('update:currency', this.setCurrency, this);
+            mediator.on('update:account', this.setAccount, this);
+            mediator.on('update:website', this.setWebsite, this);
 
             if (this.options.$priceList) {
                 this.options.$priceList.change(_.bind(this.reloadPrices, this));
@@ -59,11 +66,6 @@ define(function(require) {
             });
         },
 
-        handleCurrencyChange: function (val) {
-            this._setCurrency(val);
-            this.reloadPrices();
-        },
-
         /**
          * @param {Array} products
          * @param {Function} callback
@@ -71,21 +73,37 @@ define(function(require) {
         loadProductsTierPrices: function(products, callback) {
             this.joinSubrequests(this.loadProductsTierPrices, products, callback, _.bind(function(products, callback) {
                 var params = {
-                    product_ids: products,
-                    currency: this._getCurrency()
+                    product_ids: products
                 };
-
-                var account = this._getAccount();
-                if (account.length !== 0) {
-                    params = _.extend(params, {account_id: account});
-                }
-
-                var website = this._getWebsite();
-                if (website.length !== 0) {
-                    params = _.extend(params, {websiteId: parseInt(website)});
-                }
+                params[this.options.requestKeys.CURRENCY] = this.getCurrency();
+                params[this.options.requestKeys.ACCOUNT] = this.getAccount();
+                params[this.options.requestKeys.WEBSITE] = this.getWebsite();
 
                 $.get(routing.generate(this.options.tierPricesRoute, params), callback);
+            }, this));
+        },
+
+        /**
+         * @param {Array} items
+         * @param {Function} callback
+         */
+        loadLineItemsMatchedPrices: function(items, callback) {
+            this.joinSubrequests(this.loadLineItemsMatchedPrices, items, callback, _.bind(function(items, callback) {
+                var params = {
+                    items: items
+                };
+                params[this.options.requestKeys.CURRENCY] = this.getCurrency();
+                params[this.options.requestKeys.ACCOUNT] = this.getAccount();
+                params[this.options.requestKeys.WEBSITE] = this.getWebsite();
+
+                $.ajax({
+                    url: routing.generate(this.options.matchedPricesRoute, params),
+                    type: 'GET',
+                    success: callback,
+                    error: function(response) {
+                        callback(response);
+                    }
+                });
             }, this));
         },
 
@@ -134,32 +152,6 @@ define(function(require) {
         },
 
         /**
-         * @param {Array} items
-         * @param {Function} callback
-         */
-        loadLineItemsMatchedPrices: function(items, callback) {
-            this.joinSubrequests(this.loadLineItemsMatchedPrices, items, callback, _.bind(function(items, callback) {
-                var params = {
-                    items: items
-                };
-
-                var account = this._getAccount();
-                if (account.length !== 0) {
-                    params = _.extend(params, {account_id: account});
-                }
-
-                $.ajax({
-                    url: routing.generate(this.options.matchedPricesRoute, params),
-                    type: 'GET',
-                    success: callback,
-                    error: function(response) {
-                        callback();
-                    }
-                });
-            }, this));
-        },
-
-        /**
          * @returns {Array} line items
          */
         getLineItems: function() {
@@ -168,48 +160,31 @@ define(function(require) {
             return items;
         },
 
-        /**
-         * @returns {String}
-         * @private
-         */
-        _getCurrency: function() {
-            if (_.isObject(this.options.$currency)) {
-                return this.options.$currency.val();
-            } else {
-                return this.options.$currency;
-            }
+        getCurrency: function() {
+            return this.options.currency;
         },
 
-        _setCurrency: function(val) {
-            this.options.$currency = val;
+        setCurrency: function(val) {
+            this.options.currency = val;
+            this.reloadPrices();
         },
 
-        /**
-         * @returns {String}
-         * @private
-         */
-        _getPriceList: function() {
-            if (this.options.priceList) {
-                return this.options.priceList;
-            }
-
-            return this.options.$priceList && this.options.$priceList.length !== 0 ? this.options.$priceList.val() : '';
+        getAccount: function() {
+            return this.options.account;
         },
 
-        /**
-         * @returns {String}
-         * @private
-         */
-        _getAccount: function() {
-            return this.options.$account && this.options.$account.length !== 0 ? this.options.$account.val() : '';
+        setAccount: function(val) {
+            this.options.account = val;
+            this.reloadPrices();
         },
 
-        /**
-         * @returns {String}
-         * @private
-         */
-        _getWebsite: function() {
-            return this.options.$website && this.options.$website.length !== 0 ? this.options.$website.val() : '';
+        getWebsite: function() {
+            return this.options.website;
+        },
+
+        setWebsite: function(val) {
+            this.options.website = val;
+            this.reloadPrices();
         },
 
         /**

@@ -21,18 +21,15 @@ define(function(require) {
             matchedPrices: {},
             tierPricesRoute: '',
             matchedPricesRoute: '',
-            currency: null
+            currency: null,
+            account: null,
+            website: null
         },
 
         /**
          * @property {jQuery}
          */
         $form: null,
-
-        /**
-         * @property {jQuery}
-         */
-        $priceList: null,
 
         /**
          * @property {jQuery}
@@ -51,11 +48,6 @@ define(function(require) {
          * Doing something after loading child components
          */
         handleLayoutInit: function() {
-            this.$form = this.$el.closest('form');
-            this.$account = this.$form.find(':input[name$="[account]"]');
-            this.$website = this.$form.find(':input[name$="[website]"]');
-            this.$currency = this.$form.find(':input[data-ftid="' + this.$form.attr('name') + '_currency"]');
-
             this.$el.find('.add-list-item').mousedown(function(e) {
                 $(this).click();
             });
@@ -64,9 +56,9 @@ define(function(require) {
                 _sourceElement: this.$el,
                 tierPrices: this.options.tierPrices,
                 matchedPrices: this.options.matchedPrices,
-                $currency: this.$currency.length ? this.$currency : this.options.currency,
-                $account: this.$account,
-                $website: this.$website,
+                currency: this.options.currency,
+                account: this.options.account,
+                website: this.options.website,
                 tierPricesRoute: this.options.tierPricesRoute,
                 matchedPricesRoute: this.options.matchedPricesRoute
             }));
