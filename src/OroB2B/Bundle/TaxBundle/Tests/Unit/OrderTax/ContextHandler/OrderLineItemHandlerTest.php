@@ -68,7 +68,12 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         $this->productTaxCode = (new ProductTaxCode())
             ->setCode(self::PRODUCT_TAX_CODE);
 
-        $this->order = new Order();
+        $billingAddress = new OrderAddress();
+        $shippingAddress = new OrderAddress();
+
+        $this->order = new Order(new OrderAddress());
+        $this->order->setBillingAddress($billingAddress);
+        $this->order->setShippingAddress($shippingAddress);
 
         $this->address = (new OrderAddress())
             ->setCountry(new Country(self::ORDER_ADDRESS_COUNTRY_CODE));
@@ -81,7 +86,7 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         $this->addressProvider
             ->expects($this->any())
             ->method('getAddressForTaxation')
-            ->with($this->order)
+            ->with($billingAddress, $shippingAddress)
             ->willReturn($this->address);
 
         $this->addressProvider
