@@ -86,7 +86,7 @@
 {% block _shopping_list_combined_button_widget %}
     {% set attr = attr|merge({ class: attr.class|default('') ~ " btn btn_orange btn_has-dropdown btn_has-dropdown_xlg"}) %}
     <div{{ block('block_attributes') }}>
-        {% set primary_button = block.orob2b_shoppinglist_frontend_action_createorder_button_combined_primary %}
+        {% set primary_button = block[primary_button_alias] %}
         {{ block_widget(primary_button,
         {attr:primary_button.vars.attr|merge({ class: primary_button.vars.attr.class|default('') ~ " direct-link"})}) }}
 
