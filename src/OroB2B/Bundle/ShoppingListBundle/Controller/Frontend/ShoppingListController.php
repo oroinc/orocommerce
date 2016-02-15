@@ -2,24 +2,26 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Controller\Frontend;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use OroB2B\Bundle\ShoppingListBundle\Form\Handler\ShoppingListHandler;
+use OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 
 class ShoppingListController extends Controller
 {
     /**
-     * @Route("/{id}", name="orob2b_shopping_list_frontend_view", defaults={"id" = null})
+     * @Route("/{id}", name="orob2b_shopping_list_frontend_view", defaults={"id" = null}, requirements={"id"="\d+"})
      * @ParamConverter(
      *     "shoppingList",
      *     class="OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList",
@@ -69,9 +71,10 @@ class ShoppingListController extends Controller
      *      group_name="commerce"
      * )
      *
-     * @return array|RedirectResponse
+     * @param Request $request
+     * @return array|Response
      */
-    public function createAction()
+    public function createAction(Request $request)
     {
         $shoppingList = new ShoppingList();
         /** @var AccountUser $accountUser */
@@ -81,34 +84,53 @@ class ShoppingListController extends Controller
             ->setAccount($accountUser->getAccount())
             ->setAccountUser($accountUser);
 
-        return [
-            'data' => [
-                'shoppingList' => $shoppingList,
-            ],
+        $response = $this->create($request, $shoppingList);
+        if ($response instanceof Response) {
+            return $response;
+        }
+
+        $defaultResponse = [
+            'savedId' => null,
+            'shoppingList' => $shoppingList
         ];
+
+        return ['data' => array_merge($defaultResponse, $response)];
     }
 
     /**
-     * @Route("/set-current/{id}", name="orob2b_shopping_list_frontend_set_current", requirements={"id"="\d+"})
-     * @AclAncestor("orob2b_shopping_list_frontend_update")
-     *
+     * @param Request $request
      * @param ShoppingList $shoppingList
      *
-     * @return RedirectResponse
+     * @return array|Response
      */
-    public function setCurrentAction(ShoppingList $shoppingList)
+    protected function create(Request $request, ShoppingList $shoppingList)
     {
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->getUser();
-        $this->get('orob2b_shopping_list.shopping_list.manager')->setCurrent(
-            $accountUser,
-            $shoppingList
-        );
-        $message = $this->get('translator')->trans('orob2b.shoppinglist.controller.shopping_list.saved.message');
-        $this->get('session')->getFlashBag()->add('success', $message);
+        $form = $this->createForm(ShoppingListType::NAME);
 
-        return $this->redirect(
-            $this->generateUrl('orob2b_shopping_list_frontend_view', ['id' => $shoppingList->getId()])
+        $handler = new ShoppingListHandler(
+            $form,
+            $request,
+            $this->get('orob2b_shopping_list.shopping_list.manager'),
+            $this->getDoctrine()
+        );
+
+        return $this->get('oro_form.model.update_handler')->handleUpdate(
+            $shoppingList,
+            $this->createForm(ShoppingListType::NAME, $shoppingList),
+            function (ShoppingList $shoppingList) {
+                return [
+                    'route' => 'orob2b_shopping_list_frontend_view',
+                    'parameters' => ['id' => $shoppingList->getId()]
+                ];
+            },
+            function (ShoppingList $shoppingList) {
+                return [
+                    'route' => 'orob2b_shopping_list_frontend_view',
+                    'parameters' => ['id' => $shoppingList->getId()]
+                ];
+            },
+            $this->get('translator')->trans('orob2b.shoppinglist.controller.shopping_list.saved.message'),
+            $handler
         );
     }
 }
