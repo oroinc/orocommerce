@@ -8,7 +8,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,14 +36,7 @@ class QuickAddController extends Controller
             'orob2b_product_frontend_quick_add'
         );
 
-        /** @var FormInterface $form */
-        $form = $result['form'];
-        /** @var Response|null $response */
-        $response = $result['response'];
-
-        $copyPasteForm = $this->createForm(QuickAddCopyPasteType::NAME);
-
-        return $response ?: ['copyPasteForm' => $copyPasteForm->createView()];
+        return $response !== null ? $response : [];
     }
 
     /**

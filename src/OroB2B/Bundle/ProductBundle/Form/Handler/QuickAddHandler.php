@@ -6,8 +6,6 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -32,10 +30,14 @@ class QuickAddHandler
      */
     protected $componentRegistry;
 
-    /** @var  ManagerRegistry */
+    /**
+     * @var  ManagerRegistry
+     */
     protected $registry;
 
-    /** @var UrlGeneratorInterface */
+    /**
+     * @var UrlGeneratorInterface
+     */
     protected $router;
 
     /**
@@ -48,7 +50,9 @@ class QuickAddHandler
      */
     protected $collectionBuilder;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $productClass;
 
     /**
@@ -56,7 +60,7 @@ class QuickAddHandler
      * @param ComponentProcessorRegistry $componentRegistry
      * @param ManagerRegistry $registry
      * @param UrlGeneratorInterface $router
-     * @param TranslatorInterface $translator,
+     * @param TranslatorInterface $translator ,
      * @param QuickAddRowCollectionBuilder $collectionBuilder
      */
     public function __construct(
@@ -88,7 +92,7 @@ class QuickAddHandler
      * @param string $successDefaultRoute
      * @return Response|null
      */
-    function process(Request $request, $successDefaultRoute)
+    public function process(Request $request, $successDefaultRoute)
     {
         $response = null;
         if (!$request->isMethod(Request::METHOD_POST)) {
@@ -117,7 +121,7 @@ class QuickAddHandler
         } elseif ($form->isValid()) {
             $products = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
             $additionalData = $request->get(
-                QuickAddType::NAME . '[' . QuickAddType::ADDITIONAL_FIELD_NAME . ']',
+                QuickAddType::NAME.'['.QuickAddType::ADDITIONAL_FIELD_NAME.']',
                 null,
                 true
             );
