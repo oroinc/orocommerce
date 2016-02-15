@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Symfony\Component\Form\PreloadedExtension;
+
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
@@ -18,7 +20,6 @@ use OroB2B\Bundle\TaxBundle\Form\Type\ZipCodeCollectionType;
 use OroB2B\Bundle\TaxBundle\Form\Type\ZipCodeType;
 use OroB2B\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
 use OroB2B\Bundle\TaxBundle\Form\Type\TaxJurisdictionType;
-use Symfony\Component\Form\PreloadedExtension;
 
 class TaxJurisdictionTypeTest extends AbstractAddressTestCase
 {
