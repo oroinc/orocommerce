@@ -31,7 +31,7 @@ class ShoppingListSelectorTypeTest extends \PHPUnit_Framework_TestCase
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setRequired')
-            ->with(['selectedShoppingList']);
+            ->with(['shoppingLists']);
 
         $this->blockType->setDefaultOptions($resolver);
     }

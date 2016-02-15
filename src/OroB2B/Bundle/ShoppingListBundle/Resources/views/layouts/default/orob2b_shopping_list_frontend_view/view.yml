@@ -39,5 +39,3 @@ layout:
             options:
                 shoppingLists:
                     @value: $data.orob2b_shopping_list_account_user_shopping_lists.allShoppingLists
-                selectedShoppingList:
-                    @value: $data.orob2b_shopping_list_account_user_shopping_lists.currentShoppingList

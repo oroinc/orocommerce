@@ -17,7 +17,7 @@ class ShoppingListSelectorType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setRequired(['selectedShoppingList']);
+        $resolver->setRequired(['shoppingLists']);
     }
 
     /**
