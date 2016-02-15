@@ -350,13 +350,13 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
     }
 
     /**
-     * Create orob2b_changed_product_price table
+     * Create orob2b_prod_price_ch_trigger table
      *
      * @param Schema $schema
      */
     protected function createOroB2BChangedProductPriceTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_changed_product_price');
+        $table = $schema->createTable('orob2b_prod_price_ch_trigger');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('price_list_id', 'integer', []);
         $table->addColumn('product_id', 'integer', []);
@@ -365,13 +365,13 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
     }
 
     /**
-     * Create orob2b_price_list_coll_changed table
+     * Create orob2b_price_list_ch_trigger table
      *
      * @param Schema $schema
      */
     protected function createOrob2BPriceListCollChangedTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_price_list_coll_changed');
+        $table = $schema->createTable('orob2b_price_list_ch_trigger');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('account_group_id', 'integer', ['notnull' => false]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
@@ -706,13 +706,13 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
     }
 
     /**
-     * Add orob2b_price_list_coll_changed foreign keys.
+     * Add orob2b_price_list_ch_trigger foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOrob2BPriceListCollChangedForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_price_list_coll_changed');
+        $table = $schema->getTable('orob2b_price_list_ch_trigger');
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_account_group'),
             ['account_group_id'],
@@ -734,13 +734,13 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
     }
 
     /**
-     * Add orob2b_changed_product_price foreign keys.
+     * Add orob2b_prod_price_ch_trigger foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroB2BChangedProductPriceForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_changed_product_price');
+        $table = $schema->getTable('orob2b_prod_price_ch_trigger');
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_product'),
             ['product_id'],

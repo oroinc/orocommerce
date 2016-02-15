@@ -161,7 +161,6 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         if (!$form->isValid()) {
             return;
         }
-
         $em = $this->getEntityManager();
         /** @var FormInterface $priceListsByWebsites */
         $priceListsByWebsites = $form->getParent()->get('priceListsByWebsites');
@@ -239,11 +238,16 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         if (!$priceList instanceof PriceList) {
             return false;
         }
+        $priority = 0;
+        if (isset($priceListWithPriorityData[PriceListSelectWithPriorityType::PRIORITY_FIELD])) {
+            $priority = (int)$priceListWithPriorityData[PriceListSelectWithPriorityType::PRIORITY_FIELD];
+        }
+        $mergeAllowed = $priceListWithPriorityData[PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD];
         if (in_array($priceList->getId(), array_keys($actualPriceListsToTargetEntity), true)) {
             /** @var BasePriceListRelation $priceListToTargetEntity */
             $priceListToTargetEntity = $actualPriceListsToTargetEntity[$priceList->getId()];
-            $hasChanges = $priceListToTargetEntity->getPriority() !== (int)$priceListWithPriorityData['priority']
-                || $priceListToTargetEntity->isMergeAllowed() !== $priceListWithPriorityData['mergeAllowed'];
+            $hasChanges = $priceListToTargetEntity->getPriority() !== $priority
+                || $priceListToTargetEntity->isMergeAllowed() !== $mergeAllowed;
         } else {
             $priceListToTargetEntity = $this->createPriceListToTargetEntity($targetEntity);
             $priceListToTargetEntity->setWebsite($website);
@@ -252,9 +256,9 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
             $hasChanges = true;
         }
         $priceListToTargetEntity
-            ->setPriority($priceListWithPriorityData[PriceListSelectWithPriorityType::PRIORITY_FIELD]);
+            ->setPriority($priority);
         $priceListToTargetEntity
-            ->setMergeAllowed($priceListWithPriorityData[PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD]);
+            ->setMergeAllowed($mergeAllowed);
         $em->persist($priceListToTargetEntity);
 
         return $hasChanges;

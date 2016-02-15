@@ -7,8 +7,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 
-use OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListChain;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ChangedPriceListCollectionRepository;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository;
 
 class CombinedPriceListQueueConsumer
 {
@@ -33,7 +33,7 @@ class CombinedPriceListQueueConsumer
     /** @var AccountCombinedPriceListsBuilder */
     protected $accountPriceListsBuilder;
 
-    /** @var  ChangedPriceListCollectionRepository */
+    /** @var  PriceListChangeTriggerRepository */
     protected $queueRepository;
 
     /**
@@ -75,18 +75,18 @@ class CombinedPriceListQueueConsumer
     }
 
     /**
-     * @return BufferedQueryResultIterator|ChangedPriceListChain[]
+     * @return BufferedQueryResultIterator|PriceListChangeTrigger[]
      */
     protected function getUniqueChangesIterator()
     {
-        return $this->getRepository()->getCollectionChangesIterator();
+        return $this->getRepository()->getPriceListChangesIterator();
     }
 
     /**
-     * @param ChangedPriceListChain $changeItem
+     * @param PriceListChangeTrigger $changeItem
      * @param bool $force
      */
-    protected function handleCollectionsJob(ChangedPriceListChain $changeItem, $force)
+    protected function handleCollectionsJob(PriceListChangeTrigger $changeItem, $force)
     {
         switch (true) {
             case !is_null($changeItem->getAccount()):
@@ -114,20 +114,20 @@ class CombinedPriceListQueueConsumer
     {
         if (!$this->manager) {
             $this->manager = $this->registry
-                ->getManagerForClass('OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListChain');
+                ->getManagerForClass('OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger');
         }
 
         return $this->manager;
     }
 
     /**
-     * @return ChangedPriceListCollectionRepository
+     * @return PriceListChangeTriggerRepository
      */
     protected function getRepository()
     {
         if (!$this->queueRepository) {
             $this->queueRepository = $this->getManager()
-                ->getRepository('OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListChain');
+                ->getRepository('OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger');
         }
 
         return $this->queueRepository;

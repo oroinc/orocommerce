@@ -2,14 +2,14 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
-use OroB2B\Bundle\PricingBundle\Entity\ChangedProductPrice;
+use OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener\AbstractChangedProductPriceTest;
 
 /**
  * @dbIsolation
  */
-class ChangedProductPriceRepositoryTest extends AbstractChangedProductPriceTest
+class ProductPriceChangeTriggerRepositoryTest extends AbstractChangedProductPriceTest
 {
     /**
      * {@inheritdoc}
@@ -30,7 +30,7 @@ class ChangedProductPriceRepositoryTest extends AbstractChangedProductPriceTest
         $priceList = $productPrice->getPriceList();
         $product = $productPrice->getProduct();
 
-        $changedProductPrice = new ChangedProductPrice($priceList, $product);
+        $changedProductPrice = new ProductPriceChangeTrigger($priceList, $product);
         //should be false before save
         $this->assertFalse($this->getChangedProductPriceRepository()->isCreated($changedProductPrice));
 

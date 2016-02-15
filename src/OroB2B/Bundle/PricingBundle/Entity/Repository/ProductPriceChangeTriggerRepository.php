@@ -7,16 +7,16 @@ use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 
-use OroB2B\Bundle\PricingBundle\Entity\ChangedProductPrice;
+use OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
 
-class ChangedProductPriceRepository extends EntityRepository
+class ProductPriceChangeTriggerRepository extends EntityRepository
 {
     /**
-     * @param ChangedProductPrice $changedProductPrice
+     * @param ProductPriceChangeTrigger $changedProductPrice
      * @return bool
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function isCreated(ChangedProductPrice $changedProductPrice)
+    public function isCreated(ProductPriceChangeTrigger $changedProductPrice)
     {
         //product or priceList can be not flushed yet
         if (!$changedProductPrice->getProduct()->getId() || !$changedProductPrice->getPriceList()->getId()) {
@@ -34,9 +34,9 @@ class ChangedProductPriceRepository extends EntityRepository
     }
 
     /**
-     * @return BufferedQueryResultIterator|ChangedProductPrice[]
+     * @return BufferedQueryResultIterator|ProductPriceChangeTrigger[]
      */
-    public function getCollectionChangesIterator()
+    public function getPriceListChangesIterator()
     {
         $qb = $this->createQueryBuilder('productPriceChanges');
 

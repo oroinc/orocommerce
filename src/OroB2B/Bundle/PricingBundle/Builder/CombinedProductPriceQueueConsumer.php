@@ -5,10 +5,10 @@ namespace OroB2B\Bundle\PricingBundle\Builder;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ChangedProductPriceRepository;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceChangeTriggerRepository;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
-use OroB2B\Bundle\PricingBundle\Entity\ChangedProductPrice;
+use OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
 
 class CombinedProductPriceQueueConsumer
 {
@@ -28,7 +28,7 @@ class CombinedProductPriceQueueConsumer
     protected $resolver;
 
     /**
-     * @var ChangedProductPriceRepository
+     * @var ProductPriceChangeTriggerRepository
      */
     protected $queueRepository;
 
@@ -40,7 +40,7 @@ class CombinedProductPriceQueueConsumer
     /**
      * @var string
      */
-    protected $changedProductPriceClass = 'OroB2B\Bundle\PricingBundle\Entity\ChangedProductPrice';
+    protected $changedProductPriceClass = 'OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger';
 
     /**
      * @var string
@@ -59,7 +59,7 @@ class CombinedProductPriceQueueConsumer
 
     public function process()
     {
-        foreach ($this->getQueueRepository()->getCollectionChangesIterator() as $changes) {
+        foreach ($this->getQueueRepository()->getPriceListChangesIterator() as $changes) {
             $this->handleProductPriceJob($changes);
             $this->getManager()->remove($changes);
         }
@@ -83,9 +83,9 @@ class CombinedProductPriceQueueConsumer
     }
 
     /**
-     * @param ChangedProductPrice $changes
+     * @param ProductPriceChangeTrigger $changes
      */
-    protected function handleProductPriceJob(ChangedProductPrice $changes)
+    protected function handleProductPriceJob(ProductPriceChangeTrigger $changes)
     {
         $repository = $this->getCombinedPriceListRepository();
         $iterator = $repository->getCombinedPriceListsByPriceList(
@@ -109,7 +109,7 @@ class CombinedProductPriceQueueConsumer
     }
 
     /**
-     * @return ChangedProductPriceRepository
+     * @return ProductPriceChangeTriggerRepository
      */
     protected function getQueueRepository()
     {

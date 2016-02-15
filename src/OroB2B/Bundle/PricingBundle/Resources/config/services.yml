@@ -9,7 +9,7 @@ parameters:
     orob2b_pricing.entity.combined_price_list_to_website.class: OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite
     orob2b_pricing.entity.product_price.class: OroB2B\Bundle\PricingBundle\Entity\ProductPrice
     orob2b_pricing.entity.combined_product_price.class: OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice
-    orob2b_pricing.entity.changed_product_price.class: OroB2B\Bundle\PricingBundle\Entity\ChangedProductPrice
+    orob2b_pricing.entity.changed_product_price.class: OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger
     orob2b_pricing.entity.price_list_currency.class: OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency
 
     orob2b_pricing.entity_listener.product_price.class: OroB2B\Bundle\PricingBundle\Entity\EntityListener\ProductPriceEntityListener

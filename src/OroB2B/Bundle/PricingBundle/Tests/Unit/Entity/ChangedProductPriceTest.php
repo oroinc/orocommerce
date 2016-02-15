@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Entity;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use OroB2B\Bundle\PricingBundle\Entity\ChangedProductPrice;
+use OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
@@ -18,7 +18,7 @@ class ChangedProductPriceTest extends \PHPUnit_Framework_TestCase
     {
         $priceList = new PriceList();
         $product = new Product();
-        $changedProductPrice = new ChangedProductPrice($priceList, $product);
+        $changedProductPrice = new ProductPriceChangeTrigger($priceList, $product);
 
         $this->assertSame($priceList, $changedProductPrice->getPriceList());
         $this->assertSame($product, $changedProductPrice->getProduct());
@@ -29,7 +29,7 @@ class ChangedProductPriceTest extends \PHPUnit_Framework_TestCase
         $changedProductPrice = $this->getChangedProductPrice(1, 1);
 
         $this->assertSame(
-            'OroB2B\Bundle\PricingBundle\Entity\ChangedProductPrice_1_1',
+            'OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger_1_1',
             $changedProductPrice->getObjectIdentifier()
         );
     }
@@ -47,7 +47,7 @@ class ChangedProductPriceTest extends \PHPUnit_Framework_TestCase
     /**
      * @param null|int $productId
      * @param null|int $priceListId
-     * @return ChangedProductPrice
+     * @return ProductPriceChangeTrigger
      */
     protected function getChangedProductPrice($productId = null, $priceListId = null)
     {
@@ -56,6 +56,6 @@ class ChangedProductPriceTest extends \PHPUnit_Framework_TestCase
         /** @var PriceList $priceList */
         $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', ['id' => $priceListId]);
 
-        return new ChangedProductPrice($priceList, $product);
+        return new ProductPriceChangeTrigger($priceList, $product);
     }
 }

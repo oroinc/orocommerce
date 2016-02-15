@@ -10,7 +10,7 @@ use Oro\Component\Testing\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ChangedProductPriceRepository;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceChangeTriggerRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
@@ -104,10 +104,10 @@ abstract class AbstractChangedProductPriceTest extends WebTestCase
     }
 
     /**
-     * @return ChangedProductPriceRepository
+     * @return ProductPriceChangeTriggerRepository
      */
     protected function getChangedProductPriceRepository()
     {
-        return $this->getChangedProductPriceManager()->getRepository('OroB2BPricingBundle:ChangedProductPrice');
+        return $this->getChangedProductPriceManager()->getRepository('OroB2BPricingBundle:ProductPriceChangeTrigger');
     }
 }

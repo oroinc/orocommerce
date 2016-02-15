@@ -100,6 +100,10 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         $this->assertSubmitError($form, 'orob2b.pricing.validators.product_price.unique_entity.message');
     }
 
+    /**
+     * @param $form
+     * @param string $message
+     */
     protected function assertSubmitError($form, $message)
     {
         $this->client->followRedirects(true);
