@@ -57,7 +57,7 @@ class ShoppingListFormProvider implements DataProviderInterface
 
         if (!isset($this->data[$shoppingListId])) {
             if ($shoppingListId) {
-                $action = FormAction::createByRoute('orob2b_shopping_list_frontend_update', ['id' => $shoppingListId]);
+                $action = FormAction::createByRoute('orob2b_shopping_list_frontend_view', ['id' => $shoppingListId]);
             } else {
                 $action = FormAction::createByRoute('orob2b_shopping_list_frontend_create');
             }
