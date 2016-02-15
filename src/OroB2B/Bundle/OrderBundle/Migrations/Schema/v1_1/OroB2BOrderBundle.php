@@ -18,8 +18,8 @@ class OroB2BOrderBundle implements Migration
     {
         $table = $schema->getTable('orob2b_order');
 
-        $table->removeForeignKey('account_id');
-        $table->removeForeignKey('price_list_id');
+        $table->removeForeignKey('fk_orob2b_account_id');
+        $table->removeForeignKey('fk_orob2b_price_list_id');
 
         $table->changeColumn('account_id', ['integer','notnull' => false]);
 

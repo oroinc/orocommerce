@@ -16,8 +16,6 @@ class OroB2BSaleBundle implements Migration
     {
         $table = $schema->getTable('orob2b_sale_quote');
 
-        $table->removeForeignKey('price_list_id');
-
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->dropColumn('price_list_id');
 
