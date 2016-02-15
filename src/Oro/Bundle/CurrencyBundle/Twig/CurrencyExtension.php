@@ -4,7 +4,7 @@ namespace Oro\Bundle\CurrencyBundle\Twig;
 
 use Symfony\Component\Intl\Intl;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 
 class CurrencyExtension extends \Twig_Extension
