@@ -2,12 +2,13 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Validator\ExecutionContext;
+
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use OroB2B\Bundle\TaxBundle\Form\Type\ZipCodeType;
 use OroB2B\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
 use OroB2B\Bundle\TaxBundle\Validator\Constraints\ZipCodeFields;
-use OroB2B\Bundle\TaxBundle\Validator\Constraints\ZipCodeFieldsValidator;
 
 class ZipCodeTypeTest extends FormIntegrationTestCase
 {
@@ -123,10 +124,48 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
     protected function getValidators()
     {
         $zipCodeFieldsConstraint = new ZipCodeFields();
-        $zipCodeFieldsValidator = new ZipCodeFieldsValidator();
+        $zipCodeFieldsValidator = $this
+            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Validator\Constraints\ZipCodeFieldsValidator')
+            ->setMethods(['initialize', 'isInteger'])
+            ->getMock();
+
+        $zipCodeFieldsValidator->expects($this->any())->method('isInteger')->willReturnCallback(
+            function ($value) {
+                $value = str_replace('0', '', $value);
+
+                return filter_var($value, FILTER_VALIDATE_INT);
+            }
+        );
+        $zipCodeFieldsValidator->expects($this->any())->method('initialize')->willReturnCallback(
+            function (ExecutionContext $legacyContext) use ($zipCodeFieldsValidator) {
+                $context = $this->getMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
+                $builder = $this->getMock('Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
+
+                $context->expects($this->any())->method('buildViolation')->with($this->isType('string'))
+                    ->willReturnCallback(
+                        function ($message) use ($builder, $legacyContext) {
+                            $constraint = new ZipCodeFields();
+                            if ($message === $constraint->onlyNumericRangesSupported) {
+                                $legacyContext->addViolation($constraint->onlyNumericRangesSupported);
+                            }
+
+                            return $builder;
+                        }
+                    );
+
+                $builder->expects($this->any())->method('atPath')->with($this->isType('string'))->willReturn($builder);
+                $builder->expects($this->any())->method('addViolation');
+
+                $prop = new \ReflectionProperty(get_class($zipCodeFieldsValidator), 'context');
+                $prop->setAccessible(true);
+                $prop->setValue($zipCodeFieldsValidator, $context);
+
+                return true;
+            }
+        );
 
         return [
-            $zipCodeFieldsConstraint->validatedBy() => $zipCodeFieldsValidator
+            $zipCodeFieldsConstraint->validatedBy() => $zipCodeFieldsValidator,
         ];
     }
 
