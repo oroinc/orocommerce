@@ -2,6 +2,7 @@ config:
     paths:
         'orob2bfrontend/js/app/components/widget-form-component': 'bundles/orob2bfrontend/js/app/components/widget-form-component.js'
         'orob2bfrontend/js/app/components/switchable-editable-view-component': 'bundles/orob2bfrontend/js/app/components/switchable-editable-view-component.js'
+        'orob2bfrontend/js/app/components/attached-editable-view-component': 'bundles/orob2bfrontend/js/app/components/attached-editable-view-component.js'
         'orob2bfrontend/js/app/views/theme-select-view': 'bundles/orob2bfrontend/js/app/views/theme-select-view.js'
 
         'orob2bfrontend/js/app/views/viewer/title-view': 'bundles/orob2bfrontend/js/app/views/viewer/title-view.js'
