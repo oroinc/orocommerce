@@ -83,11 +83,11 @@ class FrontendProductListModifierTest extends WebTestCase
         if ($priceList) {
             $priceList = $this->getReference($priceList);
             $this->priceListTreeHandler->expects($this->never())
-                ->method('getPriceListByAccount')
+                ->method('getPriceList')
                 ->with($this->tokenStorage->getToken()->getUser()->getAccount());
         } else {
             $this->priceListTreeHandler->expects($this->once())
-                ->method('getPriceListByAccount')
+                ->method('getPriceList')
                 ->with($this->tokenStorage->getToken()->getUser()->getAccount())
                 ->will($this->returnValue($this->getReference('price_list_2')));
         }
@@ -165,7 +165,7 @@ class FrontendProductListModifierTest extends WebTestCase
     public function testApplyPriceListLimitationsMultipleTimes()
     {
         $this->priceListTreeHandler->expects($this->exactly(3))
-            ->method('getPriceListByAccount')
+            ->method('getPriceList')
             ->with($this->tokenStorage->getToken()->getUser()->getAccount())
             ->will($this->returnValue($this->getReference('price_list_2')));
 

@@ -16,7 +16,6 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListProductPriceType;
-use OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList;
 
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {
@@ -63,24 +62,12 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     public function getMatchingPriceAction(Request $request)
     {
         $lineItems = $request->get('items', []);
-        /** @var CombinedPriceList|null $priceList */
-        $priceList = null;
-        $priceListId = $this->get('orob2b_pricing.model.price_list_request_handler')
-            ->getPriceListByAccount()
-            ->getId();
-
-        if ($priceListId) {
-            $priceList = $this->getEntityReference(
-                $this->getParameter('orob2b_pricing.entity.combined_price_list.class'),
-                $priceListId
-            );
-        }
 
         $productsPriceCriteria = $this->prepareProductsPriceCriteria($lineItems);
 
         /** @var Price[] $matchedPrice */
         $matchedPrice = $this->get('orob2b_pricing.provider.combined_product_price')
-            ->getMatchedPrices($productsPriceCriteria, $priceList);
+            ->getMatchedPrices($productsPriceCriteria);
 
         return new JsonResponse($this->formatMatchedPrices($matchedPrice));
     }
