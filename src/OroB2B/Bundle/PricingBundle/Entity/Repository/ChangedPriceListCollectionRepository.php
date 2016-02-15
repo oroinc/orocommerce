@@ -6,12 +6,12 @@ use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 
-use OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListCollection;
+use OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListChain;
 
 class ChangedPriceListCollectionRepository extends EntityRepository
 {
     /**
-     * @return BufferedQueryResultIterator|ChangedPriceListCollection[]
+     * @return BufferedQueryResultIterator|ChangedPriceListChain[]
      */
     public function getCollectionChangesIterator()
     {

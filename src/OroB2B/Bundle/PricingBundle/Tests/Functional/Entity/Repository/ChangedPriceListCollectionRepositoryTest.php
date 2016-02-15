@@ -32,6 +32,6 @@ class ChangedPriceListCollectionRepositoryTest extends WebTestCase
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroB2BPricingBundle:ChangedPriceListCollection');
+        return $this->getContainer()->get('doctrine')->getRepository('OroB2BPricingBundle:ChangedPriceListChain');
     }
 }

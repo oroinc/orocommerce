@@ -7,7 +7,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 
-use OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListCollection;
+use OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListChain;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ChangedPriceListCollectionRepository;
 
 class CombinedPriceListQueueConsumer
@@ -75,7 +75,7 @@ class CombinedPriceListQueueConsumer
     }
 
     /**
-     * @return BufferedQueryResultIterator|ChangedPriceListCollection[]
+     * @return BufferedQueryResultIterator|ChangedPriceListChain[]
      */
     protected function getUniqueChangesIterator()
     {
@@ -83,10 +83,10 @@ class CombinedPriceListQueueConsumer
     }
 
     /**
-     * @param ChangedPriceListCollection $changeItem
+     * @param ChangedPriceListChain $changeItem
      * @param bool $force
      */
-    protected function handleCollectionsJob(ChangedPriceListCollection $changeItem, $force)
+    protected function handleCollectionsJob(ChangedPriceListChain $changeItem, $force)
     {
         switch (true) {
             case !is_null($changeItem->getAccount()):
@@ -114,7 +114,7 @@ class CombinedPriceListQueueConsumer
     {
         if (!$this->manager) {
             $this->manager = $this->registry
-                ->getManagerForClass('OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListCollection');
+                ->getManagerForClass('OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListChain');
         }
 
         return $this->manager;
@@ -127,7 +127,7 @@ class CombinedPriceListQueueConsumer
     {
         if (!$this->queueRepository) {
             $this->queueRepository = $this->getManager()
-                ->getRepository('OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListCollection');
+                ->getRepository('OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListChain');
         }
 
         return $this->queueRepository;

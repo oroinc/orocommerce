@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListCollection;
+use OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListChain;
 use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -28,7 +28,7 @@ class PriceListCollectionListener
      */
     public function onChangeCollectionBefore(PriceListCollectionChange $event)
     {
-        $changedPriceListCollection = new ChangedPriceListCollection();
+        $changedPriceListCollection = new ChangedPriceListChain();
         $targetEntity = $event->getTargetEntity();
         if ($targetEntity instanceof Website) {
             $changedPriceListCollection->setWebsite($targetEntity);
@@ -40,7 +40,7 @@ class PriceListCollectionListener
             $changedPriceListCollection->setWebsite($event->getWebsite());
         }
         $this->registry
-            ->getManagerForClass('OroB2BPricingBundle:ChangedPriceListCollection')
+            ->getManagerForClass('OroB2BPricingBundle:ChangedPriceListChain')
             ->persist($changedPriceListCollection);
     }
 }

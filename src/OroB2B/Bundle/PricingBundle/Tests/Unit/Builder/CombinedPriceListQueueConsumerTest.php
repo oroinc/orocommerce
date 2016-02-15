@@ -77,7 +77,7 @@ class CombinedPriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $collectionChangesClass = 'OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListCollection';
+        $collectionChangesClass = 'OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListChain';
         $plChangeRepositoryClass = 'OroB2B\Bundle\PricingBundle\Entity\Repository\ChangedPriceListCollectionRepository';
 
         $this->collectionChangesRepository = $this->getMockBuilder($plChangeRepositoryClass)
@@ -256,7 +256,7 @@ class CombinedPriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
     {
         $changes = [];
         foreach ($changesData as $changeData) {
-            $collectionChange = $this->getMock('OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListCollection');
+            $collectionChange = $this->getMock('OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListChain');
             foreach ($changeData as $method => $data) {
                 $collectionChange->expects($data['expects'])
                     ->method($method)
