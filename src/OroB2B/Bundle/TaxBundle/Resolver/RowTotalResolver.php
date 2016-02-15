@@ -8,10 +8,11 @@ use Brick\Math\RoundingMode;
 use OroB2B\Bundle\TaxBundle\Calculator\TaxCalculatorInterface;
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 use OroB2B\Bundle\TaxBundle\Model\Result;
+use OroB2B\Bundle\TaxBundle\Model\ResultElement;
 use OroB2B\Bundle\TaxBundle\Model\TaxResultElement;
 use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
-class RowTotalResolver
+class RowTotalResolver extends AbstractUnitRowResolver
 {
     /**
      * @var TaxationSettingsProvider
@@ -34,34 +35,65 @@ class RowTotalResolver
     }
 
     /**
-     * @param Result $result
-     * @param TaxRule[] $taxRules
+     * @param Result     $result
+     * @param TaxRule[]  $taxRules
      * @param BigDecimal $taxableAmount
+     * @param int        $quantity
      */
-    public function resolveRowTotal(Result $result, array $taxRules, BigDecimal $taxableAmount)
+    public function resolveRowTotal(Result $result, array $taxRules, BigDecimal $taxableAmount, $quantity)
     {
         $taxRate = BigDecimal::zero();
 
         $taxResults = [];
 
-        if ($this->settingsProvider->isStartCalculationWithRowTotal()) {
-            $taxableAmount = $taxableAmount->toScale(TaxCalculatorInterface::SCALE, RoundingMode::UP);
+        foreach ($taxRules as $taxRule) {
+            $taxRate = $taxRate->plus($taxRule->getTax()->getRate());
         }
 
-        foreach ($taxRules as $taxRule) {
-            $currentTaxRate = $taxRule->getTax()->getRate();
-            $resultElement = $this->calculator->calculate($taxableAmount, $currentTaxRate);
-            $taxRate = $taxRate->plus($currentTaxRate);
+        $resultElementStartWith = $this->getRowTotalResult($taxableAmount, $taxRate, $quantity);
 
+        foreach ($taxRules as $taxRule) {
+            $currentTaxRate = BigDecimal::of($taxRule->getTax()->getRate());
             $taxResults[] = TaxResultElement::create(
-                (string)$taxRule->getTax(),
+                $taxRule->getTax(),
                 $currentTaxRate,
-                $resultElement->getExcludingTax(),
-                $resultElement->getTaxAmount()
+                $resultElementStartWith->getExcludingTax(),
+                BigDecimal::of($resultElementStartWith->getTaxAmount())
+                    ->multipliedBy($currentTaxRate->toScale(TaxationSettingsProvider::CALCULATION_SCALE))
+                    ->dividedBy(
+                        $taxRate->toScale(TaxationSettingsProvider::CALCULATION_SCALE),
+                        TaxationSettingsProvider::CALCULATION_SCALE,
+                        RoundingMode::HALF_UP
+                    )
             );
         }
 
-        $result->offsetSet(Result::ROW, $this->calculator->calculate($taxableAmount, $taxRate));
+        $result->offsetSet(Result::ROW, $resultElementStartWith);
         $result->offsetSet(Result::TAXES, $taxResults);
+    }
+
+    /**
+     * @param BigDecimal $taxableAmount
+     * @param BigDecimal $taxRate
+     * @param int        $quantity
+     * @return ResultElement
+     */
+    protected function getRowTotalResult(BigDecimal $taxableAmount, BigDecimal $taxRate, $quantity = 1)
+    {
+        if ($this->settingsProvider->isStartCalculationWithUnitPrice()) {
+            $resultElement = $this->calculator->calculate($taxableAmount, $taxRate);
+            $taxableAmount = BigDecimal::of($resultElement->getOffset($this->calculator->getAmountKey()))
+                ->toScale(TaxationSettingsProvider::SCALE, RoundingMode::HALF_UP)
+                ->multipliedBy($quantity);
+        } elseif ($this->settingsProvider->isStartCalculationWithRowTotal()) {
+            $taxableAmount = $taxableAmount
+                ->multipliedBy($quantity)
+                ->toScale(TaxationSettingsProvider::SCALE, RoundingMode::HALF_UP);
+        }
+
+        $resultElementStartWith = $this->calculator->calculate($taxableAmount, $taxRate);
+        $this->calculateAdjustment($resultElementStartWith);
+
+        return $resultElementStartWith;
     }
 }

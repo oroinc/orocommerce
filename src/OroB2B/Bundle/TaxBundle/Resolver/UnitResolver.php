@@ -5,10 +5,9 @@ namespace OroB2B\Bundle\TaxBundle\Resolver;
 use Brick\Math\BigDecimal;
 
 use OroB2B\Bundle\TaxBundle\Calculator\TaxCalculatorInterface;
-use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 
-class UnitResolver
+class UnitResolver extends AbstractUnitRowResolver
 {
     /**
      * @var TaxCalculatorInterface
@@ -30,11 +29,13 @@ class UnitResolver
     {
         $taxRate = BigDecimal::zero();
 
-        /** @var TaxRule $taxRule */
         foreach ($taxRules as $taxRule) {
             $taxRate = $taxRate->plus($taxRule->getTax()->getRate());
         }
 
-        $result->offsetSet(Result::UNIT, $this->calculator->calculate($taxableAmount, $taxRate));
+        $resultElement = $this->calculator->calculate($taxableAmount, $taxRate);
+        $this->calculateAdjustment($resultElement);
+
+        $result->offsetSet(Result::UNIT, $resultElement);
     }
 }

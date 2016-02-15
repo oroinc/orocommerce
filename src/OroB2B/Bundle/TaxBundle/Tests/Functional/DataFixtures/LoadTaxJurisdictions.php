@@ -64,13 +64,6 @@ class LoadTaxJurisdictions extends AbstractFixture implements DependentFixtureIn
 
         $this->createTaxJurisdiction(
             $manager,
-            self::TAX_3,
-            self::DESCRIPTION_1,
-            $this->getCountryByCode($manager, self::COUNTRY_US)
-        );
-
-        $this->createTaxJurisdiction(
-            $manager,
             self::TAX_4,
             self::DESCRIPTION_1,
             $this->getCountryByCode($manager, self::COUNTRY_US),

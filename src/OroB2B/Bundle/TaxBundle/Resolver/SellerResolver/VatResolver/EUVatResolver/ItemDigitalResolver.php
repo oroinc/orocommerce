@@ -34,22 +34,23 @@ class ItemDigitalResolver extends AbstractItemResolver
             return;
         }
 
+        if ($taxable->getResult()->count() !== 0) {
+            return;
+        }
+
         $isBuyerFromEU = $this->countryMatcher->isEuropeanUnionCountry($taxable->getDestination()->getCountryIso2());
 
         if ($isBuyerFromEU && $taxable->getContextValue(Taxable::DIGITAL_PRODUCT)) {
-            if ($taxable->getResult()->getTotal()->count() === 0) {
-                $taxRules = $this->countryMatcher->match(
-                    $buyerAddress,
-                    $taxable->getContextValue(Taxable::PRODUCT_TAX_CODE)
-                );
+            $taxRules = $this->countryMatcher->match(
+                $buyerAddress,
+                $taxable->getContextValue(Taxable::PRODUCT_TAX_CODE)
+            );
 
-                $taxableUnitPrice = BigDecimal::of($taxable->getPrice());
-                $taxableAmount = $taxableUnitPrice->multipliedBy($taxable->getQuantity());
+            $taxableAmount = BigDecimal::of($taxable->getPrice());
 
-                $result = $taxable->getResult();
-                $this->unitResolver->resolveUnitPrice($result, $taxRules, $taxableUnitPrice);
-                $this->rowTotalResolver->resolveRowTotal($result, $taxRules, $taxableAmount);
-            }
+            $result = $taxable->getResult();
+            $this->unitResolver->resolveUnitPrice($result, $taxRules, $taxableAmount);
+            $this->rowTotalResolver->resolveRowTotal($result, $taxRules, $taxableAmount, $taxable->getQuantity());
         }
     }
 

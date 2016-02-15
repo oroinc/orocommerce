@@ -313,9 +313,6 @@ services:
         arguments:
             - @event_dispatcher
             - @orob2b_tax.provider.taxation_address_provider
-        calls:
-            - [setDoctrineHelper, [@oro_entity.doctrine_helper]]
-            - [setProductTaxCodeClass, [%orob2b_tax.entity.product_tax_code.class%]]
         tags:
             - { name: orob2b_tax.tax_mapper }
 
@@ -413,13 +410,6 @@ services:
         tags:
             - { name: orob2b_tax.resolver, event: orob2b_tax.resolve_after }
 
-    orob2b_tax.resolver.non_eu:
-        class: OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\B2CNonEUResolver
-        arguments:
-            - @orob2b_tax.matcher.country_matcher
-        tags:
-            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve, alias: non_eu }
-
     orob2b_tax.resolver.rounding:
         class: %orob2b_tax.resolver.rounding.class%
         tags:
@@ -431,14 +421,14 @@ services:
         calls:
             - [setMatcher, [@orob2b_tax.matcher.zip_code_matcher]]
         tags:
-            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve }
+            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve, priority: -255 }
 
     orob2b_tax.resolver.customer_address:
         class: %orob2b_tax.resolver.customer_address.class%
         arguments:
             - @orob2b_tax.resolver.customer_address.item
         tags:
-            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve }
+            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve, priority: -255 }
 
     orob2b_tax.resolver.eu_item_digital:
         class: %orob2b_tax.resolver.eu_item_digital.class%

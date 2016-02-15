@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\OrderTax\Mapper;
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Component\Testing\Unit\EntityTrait;
 

@@ -21,7 +21,7 @@ class ZipCodeMatcher extends AbstractMatcher
         $regionText = $address->getRegionText();
         $zipCode = $address->getPostalCode();
 
-        $cacheKey = $this->getCacheKey($country, $region, $regionText, $zipCode);
+        $cacheKey = $this->getCacheKey($country, $region, $regionText, $zipCode, $productTaxCode);
         if (array_key_exists($cacheKey, $this->taxRulesCache)) {
             return $this->taxRulesCache[$cacheKey];
         }

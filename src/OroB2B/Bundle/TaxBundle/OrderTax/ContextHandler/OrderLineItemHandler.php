@@ -78,7 +78,10 @@ class OrderLineItemHandler
             return false;
         }
 
-        $address = $this->addressProvider->getAddressForTaxation($lineItem->getOrder());
+        $billingAddress = $lineItem->getOrder()->getBillingAddress();
+        $shippingAddress = $lineItem->getOrder()->getShippingAddress();
+
+        $address = $this->addressProvider->getAddressForTaxation($billingAddress, $shippingAddress);
 
         return $this->addressProvider->isDigitalProductTaxCode($address->getCountry()->getIso2Code(), $productTaxCode);
     }

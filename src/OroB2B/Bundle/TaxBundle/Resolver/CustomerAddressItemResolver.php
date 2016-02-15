@@ -30,6 +30,10 @@ class CustomerAddressItemResolver extends AbstractItemResolver
             return;
         }
 
+        if ($taxable->getResult()->count() !== 0) {
+            return;
+        }
+
         $productTaxCode = $taxable->getContextValue(Taxable::PRODUCT_TAX_CODE);
 
         $taxRules = $this->matcher->match($address, $productTaxCode);
