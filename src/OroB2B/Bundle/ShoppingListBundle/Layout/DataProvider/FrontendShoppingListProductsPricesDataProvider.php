@@ -17,11 +17,6 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 class FrontendShoppingListProductsPricesDataProvider implements DataProviderInterface
 {
     /**
-     * @var array|null
-     */
-    protected $data;
-
-    /**
      * @var ProductPriceProvider
      */
     protected $productPriceProvider;
@@ -64,10 +59,7 @@ class FrontendShoppingListProductsPricesDataProvider implements DataProviderInte
      */
     public function getData(ContextInterface $context)
     {
-        if (!$this->data) {
-            $this->data = $this->getProductsPrices($context->data()->get('shoppingList'));
-        }
-        return $this->data;
+        return $this->getProductsPrices($context->data()->get('shoppingList'));
     }
 
     /**

@@ -6,7 +6,6 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\DataProviderInterface;
-use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
 
 use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
@@ -15,11 +14,6 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class FrontendShoppingListProductsUnitsDataProvider implements DataProviderInterface
 {
-    /**
-     * @var FormAccessor
-     */
-    protected $data;
-
     /**
      * @var Registry
      */
@@ -63,10 +57,7 @@ class FrontendShoppingListProductsUnitsDataProvider implements DataProviderInter
      */
     public function getData(ContextInterface $context)
     {
-        if (!$this->data) {
-            $this->data = $this->getProductsUnits($context->data()->get('shoppingList'));
-        }
-        return $this->data;
+        return $this->getProductsUnits($context->data()->get('shoppingList'));
     }
 
     /**
