@@ -6,8 +6,8 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
 use OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListChain;
-use OroB2B\Bundle\PricingBundle\Event\PriceListCollectionChange;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class PriceListCollectionListener
@@ -24,9 +24,9 @@ class PriceListCollectionListener
     }
 
     /**
-     * @param PriceListCollectionChange $event
+     * @param PriceListQueueChangeEvent $event
      */
-    public function onChangeCollectionBefore(PriceListCollectionChange $event)
+    public function onChangeCollectionBefore(PriceListQueueChangeEvent $event)
     {
         $changedPriceListCollection = new ChangedPriceListChain();
         $targetEntity = $event->getTargetEntity();

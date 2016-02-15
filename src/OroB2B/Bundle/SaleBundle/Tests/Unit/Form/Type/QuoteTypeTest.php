@@ -8,7 +8,7 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
@@ -216,6 +216,8 @@ class QuoteTypeTest extends AbstractTest
                             ],
                         ],
                     ],
+                    'assignedUsers' => [1],
+                    'assignedAccountUsers' => [11],
                 ],
                 'expectedData'  => $this->getQuote(
                     1,
@@ -225,13 +227,17 @@ class QuoteTypeTest extends AbstractTest
                     false,
                     'poNumber',
                     new \DateTime($date . 'T00:00:00+0000')
-                ),
+                )
+                    ->addAssignedUser($this->getUser(1))
+                    ->addAssignedAccountUser($this->getAccountUser(11)),
             ],
         ];
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function getExtensions()
     {
@@ -286,10 +292,12 @@ class QuoteTypeTest extends AbstractTest
         $priceType                  = $this->preparePriceType();
         $entityType                 = $this->prepareProductEntityType();
         $productSelectType          = new ProductSelectTypeStub();
+        $userMultiSelectType        = $this->prepareUserMultiSelectType();
         $currencySelectionType      = new CurrencySelectionTypeStub();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
         $quoteProductOfferType      = $this->prepareQuoteProductOfferType();
         $quoteProductRequestType    = $this->prepareQuoteProductRequestType();
+        $accountUserMultiSelectType  = $this->prepareAccountUserMultiSelectType();
 
         $quoteProductType = new QuoteProductType(
             $translator,
@@ -317,10 +325,12 @@ class QuoteTypeTest extends AbstractTest
                     $userSelectType->getName()                  => $userSelectType,
                     $quoteProductType->getName()                => $quoteProductType,
                     $productSelectType->getName()               => $productSelectType,
+                    $userMultiSelectType->getName()             => $userMultiSelectType,
                     $currencySelectionType->getName()           => $currencySelectionType,
                     $quoteProductOfferType->getName()           => $quoteProductOfferType,
                     $quoteProductRequestType->getName()         => $quoteProductRequestType,
                     $productUnitSelectionType->getName()        => $productUnitSelectionType,
+                    $accountUserMultiSelectType->getName()      => $accountUserMultiSelectType,
                     $accountSelectType->getName()               => $accountSelectType,
                     $accountUserSelectType->getName()           => $accountUserSelectType,
                     $priceListSelectType->getName()             => $priceListSelectType,

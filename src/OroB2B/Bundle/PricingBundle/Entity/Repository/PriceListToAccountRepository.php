@@ -2,15 +2,18 @@
 
 namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
+use OroB2B\Bundle\PricingBundle\Model\DTO\AccountWebsiteDTO;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -94,6 +97,81 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
     }
 
     /**
+     * @param AccountGroup $accountGroup
+     * @param integer[] $websiteIds
+     * @return AccountWebsiteDTO[]|ArrayCollection
+     */
+    public function getAccountWebsitePairsByAccountGroup(AccountGroup $accountGroup, $websiteIds)
+    {
+        $pairs = $this->getAccountWebsitePairsByAccountGroupQueryBuilder($accountGroup, $websiteIds)
+            ->getQuery()
+            ->getResult();
+        $em = $this->getEntityManager();
+        $entityPair = new ArrayCollection();
+        foreach ($pairs as $pair) {
+            /** @var Account $account */
+            $account = $em->getReference('OroB2BAccountBundle:Account', $pair['account_id']);
+            /** @var Website $website */
+            $website = $em->getReference('OroB2BWebsiteBundle:Website', $pair['website_id']);
+            $entityPair->add(new AccountWebsiteDTO($account, $website));
+        }
+
+        return $entityPair;
+    }
+
+    /**
+     * @param AccountGroup $accountGroup
+     * @param integer[] $websiteIds
+     * @return QueryBuilder
+     */
+    public function getAccountWebsitePairsByAccountGroupQueryBuilder(AccountGroup $accountGroup, $websiteIds)
+    {
+        $qb = $this->createQueryBuilder('PriceListToAccount');
+
+        return $qb->select(
+            'IDENTITY(PriceListToAccount.account) as account_id',
+            'IDENTITY(PriceListToAccount.website) as website_id'
+        )
+            ->innerJoin('PriceListToAccount.account', 'account')
+            ->andWhere($qb->expr()->eq('account.group', ':accountGroup'))
+            ->andWhere($qb->expr()->in('PriceListToAccount.website', ':websiteIds'))
+            ->groupBy('PriceListToAccount.account', 'PriceListToAccount.website')
+            ->setParameter('accountGroup', $accountGroup)
+            ->setParameter('websiteIds', $websiteIds);
+    }
+
+    /**
+     * @param Account $account
+     * @return AccountWebsiteDTO[]|ArrayCollection
+     */
+    public function getAccountWebsitePairsByAccount(Account $account)
+    {
+        $qb = $this->createQueryBuilder('PriceListToAccount');
+
+        $pairs = $qb->select(
+            'IDENTITY(PriceListToAccount.account) as account_id',
+            'IDENTITY(PriceListToAccount.website) as website_id'
+        )
+            ->andWhere($qb->expr()->eq('PriceListToAccount.account', ':account'))
+            ->groupBy('PriceListToAccount.account', 'PriceListToAccount.website')
+            ->setParameter('account', $account)
+            ->getQuery()
+            ->getResult();
+
+        $em = $this->getEntityManager();
+        $entityPair = new ArrayCollection();
+        foreach ($pairs as $pair) {
+            /** @var Account $account */
+            $account = $em->getReference('OroB2BAccountBundle:Account', $pair['account_id']);
+            /** @var Website $website */
+            $website = $em->getReference('OroB2BWebsiteBundle:Website', $pair['website_id']);
+            $entityPair->add(new AccountWebsiteDTO($account, $website));
+        }
+
+        return $entityPair;
+    }
+
+    /**
      * @param Account $account
      * @param Website $website
      * @return mixed
@@ -108,5 +186,6 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
             ->setParameter('website', $website)
             ->getQuery()
             ->execute();
+
     }
 }

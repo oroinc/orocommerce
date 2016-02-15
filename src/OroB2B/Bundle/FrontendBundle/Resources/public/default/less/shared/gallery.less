@@ -22,7 +22,7 @@
   }
 
   &.product-gallery-container_vertical_m-sm {
-    width: @gallery-width_m-sm;
+    width: @gallery-width_sm;
 
     @media (max-width: 991px) {
       width: 100%;
@@ -83,7 +83,7 @@
     }
 
     .product-gallery__carousel-holder {
-      width: 8rem;
+      width: 5.6rem;
       height: 38rem;
       float: left;
       margin: 0 0 0 1.5rem;
@@ -98,9 +98,9 @@
     }
 
     .product-gallery__carousel {
-      width: 8rem;
+      width: 5.6rem;
       height: 100%; 
-      margin: 1.75rem 0;
+      padding: 2.6rem 0 3.4rem;
 
       @media (max-width: 991px) {
         width: 100%;
@@ -110,35 +110,35 @@
     }
 
     .product-gallery__carousel__list {
-      width: 8rem;
-      height: 34.5rem;
+      width: 5.6rem;
+      height: 100%;
       overflow: hidden;
 
       @media (max-width: 991px) {
         width: 100%;
         margin: 0 auto;
-        max-height: 5rem;
+        max-height: 5.6rem;
         text-align: center;
         font-size: 0;
       }
     }
 
     .product-gallery__carousel__list__item {
-      width: 7.8rem !important;
-      height: 7.8rem !important;
-      margin: .6rem 0;
+      width: 5.6rem !important;
+      height: 5.6rem !important;
+      margin: .8rem 0;
 
       @media (max-width: 991px) {
-        width: 5rem !important;
-        height: 5rem !important;
-        margin: 0 .5rem;
+        width: 5.6rem !important;
+        height: 5.6rem !important;
+        margin: 0 .4rem;
         display: inline-block;
         float: none;
       }
     }
 
     .product-gallery__carousel__btn {
-      width: 8rem;
+      width: 5.6rem;
       height: 2rem;
       line-height: 2rem;
       left: 0;
@@ -191,14 +191,14 @@
 
     .product-gallery__carousel__list {
       .list-normalize();
-      max-height: 7rem;
+      max-height: 5.6rem;
       display: inline-block;
       overflow: hidden;
 
       @media (max-width: 991px) {
         display: block;
         margin: 0 auto;
-        max-height: 5rem;
+        max-height: 5.6rem;
         text-align: center;
         font-size: 0;
       }
@@ -208,14 +208,14 @@
       display: block;
       float: left;
       box-sizing: border-box;
-      width: 7rem !important;
-      height: 7rem !important;
-      margin: 0 .5rem;
+      width: 5.6rem !important;
+      height: 5.6rem !important;
+      margin: 0 .4rem;
 
       @media (max-width: 991px) {
-        width: 5rem !important;
-        height: 5rem !important;
-        margin: 0 .5rem;
+        width: 5.6rem !important;
+        height: 5.6rem !important;
+        margin: 0 .4rem;
         display: inline-block;
         float: none;
       }
@@ -224,8 +224,8 @@
     .product-gallery__carousel__btn {
       top: 0;
       width: 2rem;
-      height: 7rem;
-      line-height: 7rem;
+      height: 5.6rem;
+      line-height: 5.6rem;
 
       @media (max-width: 991px) {
         display: none !important;
@@ -270,14 +270,14 @@
 
     .product-gallery__carousel__list {
       .list-normalize();
-      max-height: 5.5rem;
+      max-height: 5.6rem;
       display: inline-block;
       overflow: hidden;
 
       @media (max-width: 991px) {
         display: block;
         margin: 0 auto;
-        max-height: 5rem;
+        max-height: 5.6rem;
         text-align: center;
         font-size: 0;
       }
@@ -285,14 +285,14 @@
 
     .product-gallery__carousel__list__item {
       float: left;
-      width: 5.5rem !important;
-      height: 5.5rem !important;
-      margin: 0 .5rem;
+      width: 5.6rem !important;
+      height: 5.6rem !important;
+      margin: 0 .4rem;
 
       @media (max-width: 991px) {
-        width: 5rem !important;
-        height: 5rem !important;
-        margin: 0 .5rem;
+        width: 5.6rem !important;
+        height: 5.6rem !important;
+        margin: 0 .4rem;
         display: inline-block;
         float: none;
       }
@@ -332,6 +332,10 @@
     max-width: @gallery-width_md;
     max-height: @gallery-width_md;
     border: .1rem solid @base-border-color;
+
+    &:focus, &:visited {
+      outline: 0;
+    }
 
     img {
       max-width: 100%;

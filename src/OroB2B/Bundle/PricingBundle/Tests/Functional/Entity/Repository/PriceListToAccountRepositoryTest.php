@@ -6,6 +6,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\PricingBundle\Model\DTO\AccountWebsiteDTO;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
@@ -144,6 +145,38 @@ class PriceListToAccountRepositoryTest extends WebTestCase
                 'expectedAccounts' => ['account.level_1.3']
             ],
         ];
+    }
+
+
+    public function testGetAccountWebsitePairsByAccountGroup()
+    {
+        /** @var AccountGroup $accountGroup */
+        $accountGroup = $this->getReference('account_group.group1');
+        /** @var Account $account */
+        $account = $this->getReference('account.level_1.3');
+        /** @var Website $website */
+        $website = $this->getReference('US');
+        $result = $this->getRepository()->getAccountWebsitePairsByAccountGroup(
+            $accountGroup,
+            [$website->getId()]
+        );
+        $this->assertCount(1, $result);
+        $result = $result[0];
+        $this->assertEquals($result->getAccount()->getId(), $account->getId());
+        $this->assertEquals($result->getWebsite()->getId(), $website->getId());
+    }
+
+    public function testGetAccountWebsitePairsByAccount()
+    {
+        /** @var Account $account */
+        $account = $this->getReference('account.level_1_1');
+        /** @var Website $website */
+        $website = $this->getReference('US');
+        /** @var AccountWebsiteDTO[] $result */
+        $result = $this->getRepository()->getAccountWebsitePairsByAccount($account);
+        $this->assertCount(1, $result);
+        $this->assertEquals($result[0]->getAccount()->getId(), $account->getId());
+        $this->assertEquals($result[0]->getWebsite()->getId(), $website->getId());
     }
 
     public function testDelete()
