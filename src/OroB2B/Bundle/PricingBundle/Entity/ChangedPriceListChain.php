@@ -55,7 +55,7 @@ class ChangedPriceListChain
     }
 
     /**
-     * @return Account
+     * @return Account|null
      */
     public function getAccount()
     {
@@ -74,7 +74,7 @@ class ChangedPriceListChain
     }
 
     /**
-     * @return Website
+     * @return Website|null
      */
     public function getWebsite()
     {
@@ -93,7 +93,7 @@ class ChangedPriceListChain
     }
 
     /**
-     * @return AccountGroup
+     * @return AccountGroup|null
      */
     public function getAccountGroup()
     {
