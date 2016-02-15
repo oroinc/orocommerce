@@ -17,13 +17,15 @@
                         <div class="table-responsive">
                             <table class="table table-condensed">
                                 <tbody>
-                                    {% for field in privilegeConfig['permissions'] %}
-                                        {% set permission = privilege.permissions[field] | default({}) %}
-                                        {% if permission %}
+                                {% for field in privilegeConfig['permissions'] %}
+                                    {% for permission in privilege.permissions %}
+                                        {% if permission.name == field %}
                                             <tr>
                                                 <td class="span8">
-                                                    {{ acl_permission(permission).label|default(permission.name)|trans }}
-                                                    {% if acl_permission(permission).description %} ({{ acl_permission(permission).description|trans }}){% endif %}
+                                                    {% set aclPermission = acl_permission(permission) %}
+
+                                                    {{ aclPermission.label|default(permission.name)|trans }}
+                                                    {% if aclPermission.description %} ({{ aclPermission.description|trans }}){% endif %}
                                                 </td>
                                                 <td>
                                                     {% set accessLevel = prefix ~ (privileges.accessLevelNames[permission.accessLevel-1])|default(none_ownership) %}
@@ -32,6 +34,7 @@
                                             </tr>
                                         {% endif %}
                                     {% endfor %}
+                                {% endfor %}
                                 </tbody>
                             </table>
                         </div>
