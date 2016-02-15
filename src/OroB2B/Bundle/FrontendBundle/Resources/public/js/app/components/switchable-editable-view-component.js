@@ -19,9 +19,6 @@ define(function(require) {
         initialize: function(options) {
             options = $.extend(true, {}, this.options, options);
 
-            this.$el = options._sourceElement;
-            this.wrapper = new BaseView({el: this.$el.find('[data-role="editor"]')});
-
             this.messages = options.messages;
             this.metadata = options.metadata;
             this.fieldName = options.fieldName;
@@ -32,9 +29,6 @@ define(function(require) {
 
             this.model = new BaseModel();
             this.model.set(this.fieldName, options.value);
-
-            this.switcher = options._sourceElement.find('[data-role="start-editing"]');
-            this.switcher.on('click', _.bind(this.onSwitcherChange, this));
 
             var waitors = [];
             waitors.push(tools.loadModuleAndReplace(this.inlineEditingOptions.save_api_accessor, 'class').then(
@@ -47,15 +41,18 @@ define(function(require) {
 
             this.deferredInit = $.when.apply($, waitors);
 
-            var viewInstance = this.createEditorViewInstance();
-            this.initializeEditorListeners(viewInstance);
+            this.$el = options._sourceElement;
+            this.wrapper = new BaseView({el: this.$el.find('[data-role="editor"]')});
+
+            this.switcher = options._sourceElement.find('[data-role="start-editing"]');
+            this.switcher.on('click', _.bind(this.onSwitcherChange, this));
 
             this.onSwitcherChange();
         },
 
         onSwitcherChange: function() {
             if (this.switcher.is(':checked')) {
-                this.showEditor();
+                this.enterEditMode();
             } else {
                 this.hideEditor();
             }
@@ -66,6 +63,12 @@ define(function(require) {
         },
 
         enterEditMode: function() {
+            if (!this.editorView) {
+                var viewInstance = this.createEditorViewInstance();
+                this.initializeEditorListeners(viewInstance);
+            }
+            this.showEditor();
+
             return this.editorView;
         },
 
@@ -73,8 +76,10 @@ define(function(require) {
         },
 
         hideEditor: function() {
-            this.editorView.$el.val('');
-            this.saveCurrentCell();
+            if (this.editorView) {
+                this.editorView.$el.val('');
+                this.saveCurrentCell();
+            }
 
             this.wrapper.$el.hide();
         },
@@ -127,7 +132,7 @@ define(function(require) {
 
         getEditorOptions: function() {
             return {
-                el: this.wrapper.$(':input:visible:first'),
+                el: this.wrapper.$(':input:first'),
                 autoRender: true,
                 model: this.model,
                 fieldName: this.fieldName

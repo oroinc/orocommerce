@@ -61,52 +61,49 @@
 {% block _shopping_list_options_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
 
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " oq__options oq__options_bb" }) %}
+    {% set notes = shoppingList.notes %}
+    {% set hasRecords = notes is not empty %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " oro-more-info-toggler" }) %}
     <div{{ block('block_attributes') }}>
-        <div class="oro-more-info-toggler">
-            <i class="icon-play"></i>
-            {% set notes = shoppingList.notes %}
-            <a href="#" data-more-info-expand tabindex="0">{{ 'orob2b.frontend.shoppinglist.view.view_options.label'|trans }}</a>
-            <div class="oro-more-info-toggler__container"
-                 {% if notes is not empty %}data-more-info style="display: block;" {% endif %}>
+        <i class="icon-play {% if hasRecords %}expanded{% endif %}"></i>
+        <a href="#" data-more-info-expand tabindex="0">{{ 'orob2b.frontend.shoppinglist.view.view_options.label'|trans }}</a>
+        <div class="oro-more-info-toggler__container" data-more-info {% if hasRecords %}style="display: block"{% endif %}>
 
-                <div class="ml1-md mmt5-md" {{ UI.renderPageComponentAttributes({
-                    module: 'orob2bfrontend/js/app/components/switchable-editable-view-component',
-                    options: {
-                        frontend_type: 'multilineText',
-                        value: shoppingList.notes,
-                        fieldName: 'notes',
-                        insertEditorMethod: 'after',
-                        metadata: {
-                            inline_editing: {
-                                enable: resource_granted('orob2b_shopping_list_frontend_update'),
-                                save_api_accessor: {
-                                    route: 'orob2b_api_frontend_patch_entity_data',
-                                    http_method: 'PATCH',
-                                    default_route_parameters: {
-                                        className: oro_class_name(shoppingList, true),
-                                        id: shoppingList.id
-                                    }
+            <div class="ml1-md mmt5-md" {{ UI.renderPageComponentAttributes({
+                module: 'orob2bfrontend/js/app/components/switchable-editable-view-component',
+                options: {
+                    frontend_type: 'multilineText',
+                    value: shoppingList.notes,
+                    fieldName: 'notes',
+                    insertEditorMethod: 'after',
+                    metadata: {
+                        inline_editing: {
+                            enable: resource_granted('orob2b_shopping_list_frontend_update'),
+                            save_api_accessor: {
+                                route: 'orob2b_api_frontend_patch_entity_data',
+                                http_method: 'PATCH',
+                                default_route_parameters: {
+                                    className: oro_class_name(shoppingList, true),
+                                    id: shoppingList.id
                                 }
                             }
                         }
                     }
-                }) }}>
-                    <label for="addANote" class="checkbox_custom checkbox_custom_blue mml5-md
-                            {% if notes is not empty %} checked {% endif %}" data-checkbox>
-                        <input type="checkbox" name="addANote" id="addANote" data-role="start-editing" {% if notes is not empty %}checked="checked"{%  endif %}>
-                        <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
-                        <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
-                        <span class="checkbox_custom__text fs13">{{ 'orob2b.frontend.shoppinglist.view.add_note.label'|trans }}</span>
-                    </label>
-                    <div class="form-input" data-role="editor">
-                        <textarea placeholder="{{ 'orob2b.frontend.shoppinglist.view.note.placeholder'|trans }}"
-                                  rows="3" cols="30" name="copy_paste_order"
-                                  class="input input_sm input_block">{{ notes }}</textarea>
-                    </div>
+                }
+            }) }}>
+                <label for="addANote" data-checkbox
+                    class="checkbox_custom checkbox_custom_blue mml5-md {% if notes is not empty %}checked{% endif %}">
+                    <input type="checkbox" name="addANote" id="addANote" data-role="start-editing"
+                        {% if notes is not empty %}checked="checked"{% endif %}>
+                    <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
+                    <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
+                    <span class="checkbox_custom__text fs13">{{ 'orob2b.frontend.shoppinglist.view.add_note.label'|trans }}</span>
+                </label>
+                <div class="form-input" data-role="editor">
+                    <textarea placeholder="{{ 'orob2b.frontend.shoppinglist.view.add_note.placeholder'|trans }}"
+                        rows="3" cols="30" name="shopping_list_notes"
+                        class="input input_sm input_block">{{ notes }}</textarea>
                 </div>
-
-                {{ block_widget(block) }}
             </div>
         </div>
     </div>
