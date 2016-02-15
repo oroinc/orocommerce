@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Provider;
+namespace OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 

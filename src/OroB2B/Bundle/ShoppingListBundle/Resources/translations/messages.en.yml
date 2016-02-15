@@ -104,7 +104,19 @@ orob2b:
             view:
                 view_options.label: View Options for this Shopping List
                 add_note.label: Add a Note to This Shopping List
-                note.placeholder: Enter your note
+                add_note.placeholder: Enter your note
+
+                item.lable: Item
+                availability.lable: Availability
+                quantity.lable: Quantity
+                price.lable: Price
+
+                sku.label: 'SKU #:'
+                qty.label: 'QTY #'
+                your_price.label: 'Your Price:'
+
+                add_item_note.label: 'Add a Note to This Item'
+                add_item_note.placeholder: 'Enter your note'
             btn:
                 request_quote_create_rfp: 'Request a Quote'
                 create_order: 'Create Order'
