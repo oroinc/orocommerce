@@ -8,6 +8,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
+use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -263,7 +264,7 @@ class ProductPriceDatagridListener
         $this->addConfigElement($config, '[columns]', $column, $columnName);
 
         // sorter
-        $this->addConfigElement($config, '[sorters][columns]', ['data_name' => $columnName], $columnName);
+        $this->addConfigElement($config, '[sorters][columns]', $this->getSorter($columnName), $columnName);
 
         // filter
         $this->addConfigElement(
@@ -327,7 +328,7 @@ class ProductPriceDatagridListener
         $this->addConfigElement($config, '[columns]', $column, $columnName);
 
         // sorter
-        $this->addConfigElement($config, '[sorters][columns]', ['data_name' => $columnName], $columnName);
+        $this->addConfigElement($config, '[sorters][columns]', $this->getSorter($columnName), $columnName);
 
         // filter
         $this->addConfigElement(
@@ -340,6 +341,18 @@ class ProductPriceDatagridListener
             ],
             $columnName
         );
+    }
+
+    /**
+     * @param $columnName
+     * @return array
+     */
+    protected function getSorter($columnName)
+    {
+        return [
+            'data_name' => $columnName,
+            'type' => PropertyInterface::TYPE_CURRENCY,
+        ];
     }
 
     /**
