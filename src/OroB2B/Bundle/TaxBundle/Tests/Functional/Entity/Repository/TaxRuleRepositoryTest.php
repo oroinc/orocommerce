@@ -24,7 +24,7 @@ class TaxRuleRepositoryTest extends WebTestCase
     public function testFindByCountryAndProductTaxCode()
     {
         /** @var TaxRule $taxRule */
-        $taxRule = $this->getReference(LoadTaxRules::REFERENCE_PREFIX . '.' . LoadTaxRules::TAX_RULE_3);
+        $taxRule = $this->getReference(LoadTaxRules::REFERENCE_PREFIX . '.' . LoadTaxRules::TAX_RULE_1);
 
         /** @var TaxRule[] $result */
         $result = $this->getRepository()->findByCountryAndProductTaxCode(

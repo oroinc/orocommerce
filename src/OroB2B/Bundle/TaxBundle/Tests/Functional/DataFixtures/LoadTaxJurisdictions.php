@@ -17,13 +17,7 @@ use OroB2B\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
 
 class LoadTaxJurisdictions extends AbstractFixture implements DependentFixtureInterface
 {
-    const TAX_1 = 'TAX1';
-    const TAX_2 = 'TAX2';
-    const TAX_3 = 'TAX3';
-    const TAX_4 = 'TAX4';
-
-    const DESCRIPTION_1 = 'Tax description 1';
-    const DESCRIPTION_2 = 'Tax description 2';
+    const DESCRIPTION = 'Tax description';
 
     const COUNTRY_US = 'US';
     const STATE_US_NY = 'US-NY';
@@ -42,14 +36,14 @@ class LoadTaxJurisdictions extends AbstractFixture implements DependentFixtureIn
         $this->createTaxJurisdiction(
             $manager,
             LoadTaxes::TAX_1,
-            self::DESCRIPTION_1,
+            self::DESCRIPTION,
             $this->getCountryByCode($manager, self::COUNTRY_US)
         );
 
         $this->createTaxJurisdiction(
             $manager,
             LoadTaxes::TAX_2,
-            self::DESCRIPTION_2,
+            self::DESCRIPTION,
             $this->getCountryByCode($manager, self::COUNTRY_US),
             $this->getRegionByCode($manager, self::STATE_US_NY)
         );
@@ -57,15 +51,15 @@ class LoadTaxJurisdictions extends AbstractFixture implements DependentFixtureIn
         $this->createTaxJurisdiction(
             $manager,
             LoadTaxes::TAX_3,
-            self::DESCRIPTION_2,
+            self::DESCRIPTION,
             $this->getCountryByCode($manager, self::COUNTRY_US),
             $this->getRegionByCode($manager, self::STATE_US_CA)
         );
 
         $this->createTaxJurisdiction(
             $manager,
-            self::TAX_4,
-            self::DESCRIPTION_1,
+            LoadTaxes::TAX_4,
+            self::DESCRIPTION,
             $this->getCountryByCode($manager, self::COUNTRY_US),
             $this->getRegionByCode($manager, self::STATE_US_AL),
             null,

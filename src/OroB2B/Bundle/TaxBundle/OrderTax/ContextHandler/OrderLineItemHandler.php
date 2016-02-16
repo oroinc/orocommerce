@@ -100,6 +100,6 @@ class OrderLineItemHandler
         $productTaxCodeRepository = $this->doctrineHelper->getEntityRepositoryForClass($this->productTaxCodeClass);
         $productTaxCode = $productTaxCodeRepository->findOneByProduct($lineItem->getProduct());
 
-        return $productTaxCode->getCode();
+        return $productTaxCode ? $productTaxCode->getCode() : null;
     }
 }

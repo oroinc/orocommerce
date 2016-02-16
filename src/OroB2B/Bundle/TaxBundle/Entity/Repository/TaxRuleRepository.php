@@ -12,7 +12,7 @@ use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 class TaxRuleRepository extends EntityRepository
 {
     /**
-     * Find TaxRules by Country
+     * Find TaxRules by Country and ProductTaxCode
      *
      * @param Country $country
      * @param string  $productTaxCode
@@ -39,7 +39,7 @@ class TaxRuleRepository extends EntityRepository
     }
 
     /**
-     * Find TaxRules by Country
+     * Find TaxRules by Country, Region and ProductTaxCode
      *
      * @param string      $productTaxCode
      * @param Country     $country
@@ -81,7 +81,7 @@ class TaxRuleRepository extends EntityRepository
     }
 
     /**
-     * Find TaxRules by ZipCode (with Region/Country check)
+     * Find TaxRules by ZipCode (with Region/Country check) and ProductTaxCode
      *
      * @param string  $productTaxCode
      * @param string  $zipCode
