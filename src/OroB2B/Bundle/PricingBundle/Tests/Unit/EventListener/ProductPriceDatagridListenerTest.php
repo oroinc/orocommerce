@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -231,16 +232,20 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                     'sorters' => [
                         'columns' => [
                             'price_column_usd' => [
-                                'data_name' => 'price_column_usd'
+                                'data_name' => 'price_column_usd',
+                                'type' => PropertyInterface::TYPE_CURRENCY,
                             ],
                             'price_column_eur' => [
-                                'data_name' => 'price_column_eur'
+                                'data_name' => 'price_column_eur',
+                                'type' => PropertyInterface::TYPE_CURRENCY,
                             ],
                             'price_column_usd_unit1' => [
-                                'data_name' => 'price_column_usd_unit1'
+                                'data_name' => 'price_column_usd_unit1',
+                                'type' => PropertyInterface::TYPE_CURRENCY,
                             ],
                             'price_column_eur_unit1' => [
-                                'data_name' => 'price_column_eur_unit1'
+                                'data_name' => 'price_column_eur_unit1',
+                                'type' => PropertyInterface::TYPE_CURRENCY,
                             ],
                         ]
                     ],
