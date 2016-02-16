@@ -12,11 +12,12 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
-use OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
 
 class ProductPriceDatagridListener
 {
@@ -31,7 +32,7 @@ class ProductPriceDatagridListener
     protected $doctrineHelper;
 
     /**
-     * @var AbstractPriceListRequestHandler
+     * @var PriceListRequestHandler
      */
     protected $priceListRequestHandler;
 
@@ -46,18 +47,31 @@ class ProductPriceDatagridListener
     protected $productUnitClass;
 
     /**
+     * @var FrontendHelper
+     */
+    protected $frontendHelper;
+
+    /**
+     * @var BasePriceList
+     */
+    protected $priceList;
+
+    /**
      * @param TranslatorInterface $translator
      * @param DoctrineHelper $doctrineHelper
-     * @param AbstractPriceListRequestHandler $priceListRequestHandler
+     * @param PriceListRequestHandler $priceListRequestHandler
+     * @param FrontendHelper $frontendHelper
      */
     public function __construct(
         TranslatorInterface $translator,
         DoctrineHelper $doctrineHelper,
-        AbstractPriceListRequestHandler $priceListRequestHandler
+        PriceListRequestHandler $priceListRequestHandler,
+        FrontendHelper $frontendHelper
     ) {
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
         $this->priceListRequestHandler = $priceListRequestHandler;
+        $this->frontendHelper = $frontendHelper;
     }
 
     /**
@@ -187,7 +201,13 @@ class ProductPriceDatagridListener
      */
     protected function getPriceList()
     {
-        return $this->priceListRequestHandler->getPriceList();
+        if (!$this->priceList) {
+            $this->priceList = $this->frontendHelper->isFrontendRequest()
+                ? $this->priceListRequestHandler->getPriceListByAccount()
+                : $this->priceListRequestHandler->getPriceList();
+        }
+
+        return $this->priceList;
     }
 
     /**
@@ -195,7 +215,8 @@ class ProductPriceDatagridListener
      */
     protected function getCurrencies()
     {
-        return $this->priceListRequestHandler->getPriceListSelectedCurrencies();
+        $priceList = $this->getPriceList();
+        return $this->priceListRequestHandler->getPriceListSelectedCurrencies($priceList);
     }
 
     /**

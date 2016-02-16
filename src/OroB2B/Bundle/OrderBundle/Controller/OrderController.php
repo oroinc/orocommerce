@@ -176,12 +176,4 @@ class OrderController extends AbstractOrderController
     {
         return $this->get('orob2b_order.model.order_request_handler');
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getProductPriceProvider()
-    {
-        return $this->get('orob2b_pricing.provider.product_price');
-    }
 }

@@ -20,6 +20,7 @@ services:
             - { name: form.type, alias: orob2b_order_type }
         calls:
             - [setDataClass, [%orob2b_order.entity.order.class%]]
+            - [setWebsiteClass, [%orob2b_website.website.class%]]
 
     orob2b_order.form.type.frontend.order:
         class: %orob2b_order.form.type.frontend.order.class%
@@ -66,7 +67,7 @@ services:
         class: %orob2b_order.form.type.frontend.order_line_item.class%
         arguments:
             - @doctrine
-            - @orob2b_pricing.model.frontend.price_list_request_handler
+            - @orob2b_pricing.model.price_list_request_handler
             - %orob2b_pricing.entity.combined_product_price.class%
         calls:
             - [setDataClass, [%orob2b_order.entity.order_line_item.class%]]
