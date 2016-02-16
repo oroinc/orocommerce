@@ -9,10 +9,11 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
- * @ORM\Table(name="orob2b_price_list_coll_changed")
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\ChangedPriceListCollectionRepository")
+ * @ORM\Table(name="orob2b_price_list_ch_trigger")
+ * @ORM\Entity(
+ * repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository")
  */
-class ChangedPriceListCollection
+class PriceListChangeTrigger
 {
     /**
      * @var integer $id
@@ -55,7 +56,7 @@ class ChangedPriceListCollection
     }
 
     /**
-     * @return Account
+     * @return Account|null
      */
     public function getAccount()
     {
@@ -63,10 +64,10 @@ class ChangedPriceListCollection
     }
 
     /**
-     * @param Account $account
+     * @param Account|null $account
      * @return $this
      */
-    public function setAccount(Account $account)
+    public function setAccount(Account $account = null)
     {
         $this->account = $account;
 
@@ -74,7 +75,7 @@ class ChangedPriceListCollection
     }
 
     /**
-     * @return Website
+     * @return Website|null
      */
     public function getWebsite()
     {
@@ -82,10 +83,10 @@ class ChangedPriceListCollection
     }
 
     /**
-     * @param Website $website
+     * @param Website|null $website
      * @return $this
      */
-    public function setWebsite(Website $website)
+    public function setWebsite(Website $website = null)
     {
         $this->website = $website;
 
@@ -93,7 +94,7 @@ class ChangedPriceListCollection
     }
 
     /**
-     * @return AccountGroup
+     * @return AccountGroup|null
      */
     public function getAccountGroup()
     {
@@ -101,10 +102,10 @@ class ChangedPriceListCollection
     }
 
     /**
-     * @param AccountGroup $accountGroup
+     * @param AccountGroup|null $accountGroup
      * @return $this
      */
-    public function setAccountGroup(AccountGroup $accountGroup)
+    public function setAccountGroup(AccountGroup $accountGroup = null)
     {
         $this->accountGroup = $accountGroup;
 

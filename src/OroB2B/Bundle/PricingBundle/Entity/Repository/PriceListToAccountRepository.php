@@ -39,14 +39,14 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
     /**
      * {@inheritdoc}
      */
-    public function getPriceLists($account, Website $website, $order = Criteria::DESC)
+    public function getPriceLists($account, Website $website, $sortOrder = Criteria::DESC)
     {
         return $this->createQueryBuilder('PriceListToAccount')
             ->innerJoin('PriceListToAccount.priceList', 'priceList')
             ->innerJoin('PriceListToAccount.account', 'account')
             ->where('account = :account')
             ->andWhere('PriceListToAccount.website = :website')
-            ->orderBy('PriceListToAccount.priority', $order)
+            ->orderBy('PriceListToAccount.priority', $sortOrder)
             ->setParameters(['account' => $account, 'website' => $website])
             ->getQuery()
             ->getResult();
@@ -58,7 +58,7 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
      * @param int $fallback
      * @return BufferedQueryResultIterator|Account[]
      */
-    public function getAccountIteratorByFallback(AccountGroup $accountGroup, Website $website, $fallback)
+    public function getAccountIteratorByDefaultFallback(AccountGroup $accountGroup, Website $website, $fallback)
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('distinct account')
@@ -73,17 +73,22 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
                 $qb->expr()->eq('plToAccount.account', 'account')
             )
         );
-        $qb->innerJoin(
+        $qb->leftJoin(
             'OroB2BPricingBundle:PriceListAccountFallback',
             'priceListFallBack',
             Join::WITH,
             $qb->expr()->andX(
                 $qb->expr()->eq('priceListFallBack.website', ':website'),
-                $qb->expr()->eq('priceListFallBack.account', 'account'),
-                $qb->expr()->eq('priceListFallBack.fallback', ':fallbackToGroup')
+                $qb->expr()->eq('priceListFallBack.account', 'account')
             )
         );
-        $qb->andWhere('account.group = :accountGroup')
+        $qb->andWhere($qb->expr()->eq('account.group', ':accountGroup'))
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->eq('priceListFallBack.fallback', ':fallbackToGroup'),
+                    $qb->expr()->isNull('priceListFallBack.fallback')
+                )
+            )
             ->setParameter('accountGroup', $accountGroup)
             ->setParameter('fallbackToGroup', $fallback)
             ->setParameter('website', $website);

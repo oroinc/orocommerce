@@ -70,7 +70,7 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
             ->method('findOneBy')
             ->willReturn($priceListByWebsite);
         $this->priceListToEntityRepository->expects($this->exactly($callExpects))
-            ->method('getWebsiteIteratorByFallback')
+            ->method('getWebsiteIteratorByDefaultFallback')
             ->with(PriceListWebsiteFallback::CONFIG)
             ->will($this->returnValue([$website]));
         $this->garbageCollector->expects($this->never())
@@ -110,7 +110,7 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
             ->method('findOneBy')
             ->willReturn($priceListByWebsite);
         $this->priceListToEntityRepository->expects($this->never())
-            ->method('getWebsiteIteratorByFallback');
+            ->method('getWebsiteIteratorByDefaultFallback');
         $this->garbageCollector->expects($this->exactly($callExpects))
             ->method('cleanCombinedPriceLists');
 

@@ -8,14 +8,14 @@ use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListCollection;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
 
-class ChangedPriceListCollectionRepository extends EntityRepository
+class PriceListChangeTriggerRepository extends EntityRepository
 {
     /**
-     * @return BufferedQueryResultIterator|ChangedPriceListCollection[]
+     * @return BufferedQueryResultIterator|PriceListChangeTrigger[]
      */
-    public function getCollectionChangesIterator()
+    public function getPriceListChangeTriggersIterator()
     {
         $qb = $this->createQueryBuilder('changes');
 

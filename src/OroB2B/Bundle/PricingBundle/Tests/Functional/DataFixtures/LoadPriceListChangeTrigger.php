@@ -6,11 +6,15 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListCollection;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
 use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
-class LoadChangedPriceListCollection extends AbstractFixture implements DependentFixtureInterface
+class LoadPriceListChangeTrigger extends AbstractFixture implements DependentFixtureInterface
 {
+
+    /**
+     * @var array
+     */
     protected $data = [
         [
             'reference' => 'pl_changed_config',
@@ -51,7 +55,7 @@ class LoadChangedPriceListCollection extends AbstractFixture implements Dependen
     public function load(ObjectManager $manager)
     {
         foreach ($this->data as $changes) {
-            $changesObject = new ChangedPriceListCollection();
+            $changesObject = new PriceListChangeTrigger();
             if ($changes['account']) {
                 $changesObject->setAccount($this->getReference($changes['account']));
             }

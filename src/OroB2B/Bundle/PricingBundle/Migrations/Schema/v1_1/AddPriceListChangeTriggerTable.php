@@ -7,25 +7,25 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class AddPriceListCollection implements Migration
+class AddPriceListChangeTriggerTable implements Migration
 {
     /**
      * {@inheritdoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->createOrob2BPriceListCollChangedTable($schema);
-        $this->addOrob2BPriceListCollChangedForeignKeys($schema);
+        $this->createOroB2BPriceListChangeTriggerTable($schema);
+        $this->addOroB2BPriceListChangeTriggerForeignKeys($schema);
     }
 
     /**
-     * Create orob2b_price_list_coll_changed table
+     * Create orob2b_price_list_change_trigger table
      *
      * @param Schema $schema
      */
-    protected function createOrob2BPriceListCollChangedTable(Schema $schema)
+    protected function createOroB2BPriceListChangeTriggerTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_price_list_coll_changed');
+        $table = $schema->createTable('orob2b_price_list_change_trigger');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('account_group_id', 'integer', ['notnull' => false]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
@@ -34,13 +34,13 @@ class AddPriceListCollection implements Migration
     }
 
     /**
-     * Add orob2b_price_list_coll_changed foreign keys.
+     * Add orob2b_price_list_change_trigger foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOrob2BPriceListCollChangedForeignKeys(Schema $schema)
+    protected function addOroB2BPriceListChangeTriggerForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_price_list_coll_changed');
+        $table = $schema->getTable('orob2b_price_list_change_trigger');
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_account_group'),
             ['account_group_id'],

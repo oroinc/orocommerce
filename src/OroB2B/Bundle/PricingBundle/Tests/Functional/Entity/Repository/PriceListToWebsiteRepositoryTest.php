@@ -94,7 +94,7 @@ class PriceListToWebsiteRepositoryTest extends WebTestCase
      */
     public function testGetWebsiteIteratorByFallback($expectedWebsites)
     {
-        $iterator = $this->getRepository()->getWebsiteIteratorByFallback(PriceListWebsiteFallback::CONFIG);
+        $iterator = $this->getRepository()->getWebsiteIteratorByDefaultFallback(PriceListWebsiteFallback::CONFIG);
 
         $actualSiteMap = [];
         foreach ($iterator as $website) {

@@ -33,12 +33,11 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
      */
     public function build(Website $currentWebsite = null, $force = false)
     {
-        $cacheKey = $this->getCacheKey($currentWebsite);
-        if ($force || !$this->getCacheProvider()->contains($cacheKey)) {
+        if ($force || !$this->isBuiltForWebsite($currentWebsite)) {
             $websites = [$currentWebsite];
             if (!$currentWebsite) {
                 $websites = $this->getPriceListToEntityRepository()
-                    ->getWebsiteIteratorByFallback(PriceListWebsiteFallback::CONFIG);
+                    ->getWebsiteIteratorByDefaultFallback(PriceListWebsiteFallback::CONFIG);
             }
 
             foreach ($websites as $website) {
@@ -49,7 +48,7 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
             if ($currentWebsite) {
                 $this->garbageCollector->cleanCombinedPriceLists();
             }
-            $this->getCacheProvider()->save($cacheKey, 1);
+            $this->setBuiltForWebsite($currentWebsite);
         }
     }
 
@@ -75,17 +74,30 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
             ->updateCombinedPriceListConnection($actualCombinedPriceList, $website);
     }
 
+
     /**
-     * @param Website|null $currentWebsite
-     * @return string
+     * @param Website|null $website
+     * @return bool
      */
-    protected function getCacheKey(Website $currentWebsite = null)
+    protected function isBuiltForWebsite(Website $website = null)
     {
-        $key = 'config';
-        if ($currentWebsite) {
-            $key = sprintf('website_%d', $currentWebsite->getId());
+        $websiteId = 0;
+        if ($website) {
+            $websiteId = $website->getId();
+        }
+        return !empty($this->builtList[$websiteId]);
+    }
+
+    /**
+     * @param Website|null $website
+     */
+    protected function setBuiltForWebsite(Website $website = null)
+    {
+        $websiteId = 0;
+        if ($website) {
+            $websiteId  = $website->getId();
         }
 
-        return $key;
+        $this->builtList[$websiteId] = true;
     }
 }

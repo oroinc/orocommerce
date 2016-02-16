@@ -7,7 +7,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class AddPriceListsFallback implements Migration
+class AddPriceListsFallbackTables implements Migration
 {
     /**
      * {@inheritdoc}
@@ -36,6 +36,7 @@ class AddPriceListsFallback implements Migration
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('fallback', 'integer', []);
         $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['account_id', 'website_id'], 'orob2b_price_list_acc_fb_unq');
     }
 
     /**
@@ -51,6 +52,7 @@ class AddPriceListsFallback implements Migration
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('fallback', 'integer', []);
         $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['account_group_id', 'website_id'], 'orob2b_price_list_acc_gr_fb_unq');
     }
 
     /**
@@ -65,6 +67,7 @@ class AddPriceListsFallback implements Migration
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('fallback', 'integer', []);
         $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['website_id'], 'orob2b_price_list_website_fb_unq');
     }
 
     /**

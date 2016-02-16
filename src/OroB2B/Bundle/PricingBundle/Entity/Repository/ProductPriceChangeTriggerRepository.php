@@ -7,36 +7,36 @@ use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 
-use OroB2B\Bundle\PricingBundle\Entity\ChangedProductPrice;
+use OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
 
-class ChangedProductPriceRepository extends EntityRepository
+class ProductPriceChangeTriggerRepository extends EntityRepository
 {
     /**
-     * @param ChangedProductPrice $changedProductPrice
+     * @param ProductPriceChangeTrigger $trigger
      * @return bool
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function isCreated(ChangedProductPrice $changedProductPrice)
+    public function isCreated(ProductPriceChangeTrigger $trigger)
     {
         //product or priceList can be not flushed yet
-        if (!$changedProductPrice->getProduct()->getId() || !$changedProductPrice->getPriceList()->getId()) {
+        if (!$trigger->getProduct()->getId() || !$trigger->getPriceList()->getId()) {
             return false;
         }
 
         return (bool)$this->createQueryBuilder('cpp')
             ->select('1')
             ->where('cpp.priceList = :priceList')
-            ->setParameter('priceList', $changedProductPrice->getPriceList())
+            ->setParameter('priceList', $trigger->getPriceList())
             ->andWhere('cpp.product = :product')
-            ->setParameter('product', $changedProductPrice->getProduct())
+            ->setParameter('product', $trigger->getProduct())
             ->getQuery()
             ->getOneOrNullResult(AbstractQuery::HYDRATE_SCALAR);
     }
 
     /**
-     * @return BufferedQueryResultIterator|ChangedProductPrice[]
+     * @return BufferedQueryResultIterator|ProductPriceChangeTrigger[]
      */
-    public function getCollectionChangesIterator()
+    public function getProductPriceChangeTriggersIterator()
     {
         $qb = $this->createQueryBuilder('productPriceChanges');
 
