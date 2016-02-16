@@ -97,7 +97,7 @@ abstract class AbstractChangedProductPriceTest extends WebTestCase
     protected function getProductPriceChangeTriggerManager()
     {
         $changedProductPriceClassName = $this->getContainer()
-            ->getParameter('orob2b_pricing.entity.changed_product_price.class');
+            ->getParameter('orob2b_pricing.entity.product_price_change_trigger.class');
 
         return $this->getContainer()->get('oro_entity.doctrine_helper')
             ->getEntityManager($changedProductPriceClassName);
