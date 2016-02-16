@@ -10,6 +10,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteAddress;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
@@ -23,11 +24,16 @@ class QuoteTest extends AbstractTest
             ['qid', 'QID-123456'],
             ['owner', new User()],
             ['accountUser', new AccountUser()],
+            ['shippingAddress', new QuoteAddress()],
             ['account', new Account()],
             ['organization', new Organization()],
+            ['poNumber', '1'],
             ['validUntil', $now, false],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
+            ['shipUntil', $now, false],
+            ['expired', true],
+            ['locked', true],
             ['request', new Request()],
             ['priceList', new PriceList()]
         ];

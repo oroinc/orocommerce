@@ -66,7 +66,7 @@ class OroB2BSaleBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_3';
     }
 
     /**
@@ -76,6 +76,7 @@ class OroB2BSaleBundleInstaller implements
     {
         /** Tables generation **/
         $this->createOroB2BSaleQuoteTable($schema);
+        $this->createOroB2BSaleQuoteAddressTable($schema);
         $this->createOroB2BSaleQuoteProductTable($schema);
         $this->createOroB2BSaleQuoteProdOfferTable($schema);
         $this->createOroB2BSaleQuoteProdRequestTable($schema);
@@ -85,6 +86,7 @@ class OroB2BSaleBundleInstaller implements
         $this->addOroB2BSaleQuoteProductForeignKeys($schema);
         $this->addOroB2BSaleQuoteProdOfferForeignKeys($schema);
         $this->addOroB2BSaleQuoteProdRequestForeignKeys($schema);
+        $this->addOroB2BSalesQuoteAddressForeignKeys($schema);
 
         $this->addNoteAssociations($schema, $this->noteExtension);
         $this->addAttachmentAssociations($schema, $this->attachmentExtension);
@@ -104,6 +106,7 @@ class OroB2BSaleBundleInstaller implements
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('request_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
+        $table->addColumn('shipping_address_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('qid', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('po_number', 'string', ['notnull' => false, 'length' => 255]);
@@ -114,6 +117,36 @@ class OroB2BSaleBundleInstaller implements
         $table->addColumn('locked', 'boolean');
         $table->addColumn('expired', 'boolean', ['default' => false]);
         $table->addColumn('price_list_id', 'integer', ['notnull' => false]);
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Create orob2b_sale_quote_address table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BSaleQuoteAddressTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_sale_quote_address');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('account_address_id', 'integer', ['notnull' => false]);
+        $table->addColumn('account_user_address_id', 'integer', ['notnull' => false]);
+        $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
+        $table->addColumn('country_code', 'string', ['notnull' => false, 'length' => 2]);
+        $table->addColumn('label', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('street', 'string', ['notnull' => false, 'length' => 500]);
+        $table->addColumn('street2', 'string', ['notnull' => false, 'length' => 500]);
+        $table->addColumn('city', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('postal_code', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('organization', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('region_text', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('name_prefix', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('first_name', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('middle_name', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('last_name', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('name_suffix', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('created', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addColumn('updated', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
     }
 
@@ -229,6 +262,12 @@ class OroB2BSaleBundleInstaller implements
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_price_list'),
             ['price_list_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_sale_quote_address'),
+            ['shipping_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
@@ -360,5 +399,39 @@ class OroB2BSaleBundleInstaller implements
     {
         $activityExtension->addActivityAssociation($schema, 'oro_calendar_event', 'orob2b_sale_quote');
         $activityExtension->addActivityAssociation($schema, 'oro_email', 'orob2b_sale_quote', true);
+    }
+
+    /**
+     * Add orob2b_sale_quote_address foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BSalesQuoteAddressForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_sale_quote_address');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account_address'),
+            ['account_address_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account_user_address'),
+            ['account_user_address_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_dictionary_region'),
+            ['region_code'],
+            ['combined_code'],
+            ['onUpdate' => null, 'onDelete' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_dictionary_country'),
+            ['country_code'],
+            ['iso2_code'],
+            ['onUpdate' => null, 'onDelete' => null]
+        );
     }
 }
