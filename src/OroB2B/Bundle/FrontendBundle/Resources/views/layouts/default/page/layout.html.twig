@@ -24,9 +24,21 @@
 
 {% block _require_js_config_widget %}
     <script>
-        require.config({'orob2bshoppinglist/js/app/widget/shopping-list-widget': {
-            routeParams: {_theme: 'default'}
-        }});
+        require({
+            config: {
+                'oro/datagrid/cell/action-cell': {showCloseButton: true},
+                'orodatagrid/js/app/plugins/grid/column-manager-plugin': {icon: 'gear'},
+                'orodatagrid/js/datagrid/action-launcher': {iconHideText: false},
+                'oro/filter/abstract-filter': {
+                    placeholder: null,
+                    labelPrefix: '{{ 'oro.ui.filter.by'|trans  }} '
+                },
+                'orofilter/js/filter-hint': {inline: false},
+                'orob2bshoppinglist/js/app/widget/shopping-list-widget': {
+                    routeParams: {_theme: 'default'}
+                }
+            }
+        });
     </script>
 {% endblock %}
 
