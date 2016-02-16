@@ -101,24 +101,10 @@ class AccountUserShoppingListsProvider implements DataProviderInterface
         /** @var ShoppingListRepository $shoppingListRepository */
         $shoppingListRepository = $this->doctrineHelper->getEntityRepositoryForClass($this->shoppingListClass);
 
-        /** @var ShoppingList[] $allShoppingLists */
-        $allShoppingLists = $shoppingListRepository->findByUser($accountUser, $this->getSortOrder());
-        $shoppingListsExceptedCurrent = [];
-        $currentShoppingList = null;
+        /** @var ShoppingList[] $shoppingLists */
+        $shoppingLists = $shoppingListRepository->findByUser($accountUser, $this->getSortOrder());
 
-        foreach ($allShoppingLists as $shoppingList) {
-            if ($shoppingList->isCurrent()) {
-                $currentShoppingList = $shoppingList;
-            } else {
-                $shoppingListsExceptedCurrent[] = $shoppingList;
-            }
-        }
-
-        return [
-            'allShoppingLists' => $allShoppingLists,
-            'shoppingListsExceptedCurrent' => $shoppingListsExceptedCurrent,
-            'currentShoppingList' => $currentShoppingList,
-        ];
+        return ['shoppingLists' => $shoppingLists];
     }
 
     /**

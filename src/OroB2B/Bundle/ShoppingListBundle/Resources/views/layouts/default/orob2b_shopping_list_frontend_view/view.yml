@@ -46,4 +46,4 @@ layout:
             blockType: shopping_list_selector
             options:
                 shoppingLists:
-                    @value: $data.orob2b_shopping_list_account_user_shopping_lists.allShoppingLists
+                    @value: $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists
