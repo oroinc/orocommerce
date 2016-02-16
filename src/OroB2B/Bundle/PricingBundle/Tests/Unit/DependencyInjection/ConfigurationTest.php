@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\DependencyInjection;
 
+use Oro\DBAL\Types\MoneyType;
+use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use Symfony\Component\Config\Definition\Processor;
 
 use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
@@ -29,11 +31,11 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                         'scope' => 'app'
                 ],
                 'rounding_type' => [
-                    'value' => 'half_up',
+                    'value' => RoundingServiceInterface::ROUND_HALF_UP,
                     'scope' => 'app'
                 ],
                 'precision' => [
-                    'value' => 4,
+                    'value' => MoneyType::TYPE_SCALE,
                     'scope' => 'app'
                 ]
             ]
