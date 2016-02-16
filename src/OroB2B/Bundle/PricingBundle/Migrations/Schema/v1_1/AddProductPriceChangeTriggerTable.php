@@ -7,7 +7,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class AddChangedProductPriceTable implements Migration
+class AddProductPriceChangeTriggerTable implements Migration
 {
 
     /**
@@ -15,18 +15,18 @@ class AddChangedProductPriceTable implements Migration
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->createOroB2BChangedProductPriceTable($schema);
-        $this->addOroB2BChangedProductPriceForeignKeys($schema);
+        $this->createOroB2BProductPriceChangeTriggerTable($schema);
+        $this->addOroB2BProductPriceChangeTriggerForeignKeys($schema);
     }
 
     /**
-     * Create orob2b_changed_product_price table
+     * Create orob2b_prod_price_ch_trigger table
      *
      * @param Schema $schema
      */
-    protected function createOroB2BChangedProductPriceTable(Schema $schema)
+    protected function createOroB2BProductPriceChangeTriggerTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_changed_product_price');
+        $table = $schema->createTable('orob2b_prod_price_ch_trigger');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('price_list_id', 'integer', []);
         $table->addColumn('product_id', 'integer', []);
@@ -35,13 +35,13 @@ class AddChangedProductPriceTable implements Migration
     }
 
     /**
-     * Add orob2b_changed_product_price foreign keys.
+     * Add orob2b_prod_price_ch_trigger foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOroB2BChangedProductPriceForeignKeys(Schema $schema)
+    protected function addOroB2BProductPriceChangeTriggerForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_changed_product_price');
+        $table = $schema->getTable('orob2b_prod_price_ch_trigger');
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_product'),
             ['product_id'],

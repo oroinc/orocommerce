@@ -10,7 +10,7 @@ use Oro\Component\Testing\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ChangedProductPriceRepository;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceChangeTriggerRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
@@ -18,7 +18,7 @@ abstract class AbstractChangedProductPriceTest extends WebTestCase
 {
     protected function clearTable()
     {
-        $this->getChangedProductPriceRepository()
+        $this->getProductPriceChangeTriggerRepository()
             ->createQueryBuilder('cpp')
             ->delete()
             ->getQuery()
@@ -94,7 +94,7 @@ abstract class AbstractChangedProductPriceTest extends WebTestCase
     /**
      * @return ObjectManager
      */
-    protected function getChangedProductPriceManager()
+    protected function getProductPriceChangeTriggerManager()
     {
         $changedProductPriceClassName = $this->getContainer()
             ->getParameter('orob2b_pricing.entity.changed_product_price.class');
@@ -104,10 +104,11 @@ abstract class AbstractChangedProductPriceTest extends WebTestCase
     }
 
     /**
-     * @return ChangedProductPriceRepository
+     * @return ProductPriceChangeTriggerRepository
      */
-    protected function getChangedProductPriceRepository()
+    protected function getProductPriceChangeTriggerRepository()
     {
-        return $this->getChangedProductPriceManager()->getRepository('OroB2BPricingBundle:ChangedProductPrice');
+        return $this->getProductPriceChangeTriggerManager()
+            ->getRepository('OroB2BPricingBundle:ProductPriceChangeTrigger');
     }
 }

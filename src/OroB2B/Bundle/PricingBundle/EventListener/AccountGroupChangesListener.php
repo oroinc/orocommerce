@@ -79,8 +79,8 @@ class AccountGroupChangesListener
             ->getWebsiteIdsByAccountGroup($accountGroup);
 
         if ($websiteIds) {
-            $this->registry->getManagerForClass('OroB2BPricingBundle:ChangedPriceListCollection')
-                ->getRepository('OroB2BPricingBundle:ChangedPriceListCollection')
+            $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListChangeTrigger')
+                ->getRepository('OroB2BPricingBundle:PriceListChangeTrigger')
                 ->insertAccountWebsitePairsByAccountGroup(
                     $accountGroup,
                     $websiteIds,

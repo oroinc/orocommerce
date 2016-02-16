@@ -9,10 +9,11 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
- * @ORM\Table(name="orob2b_price_list_coll_changed")
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\ChangedPriceListCollectionRepository")
+ * @ORM\Table(name="orob2b_price_list_ch_trigger")
+ * @ORM\Entity(
+ * repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository")
  */
-class ChangedPriceListChain
+class PriceListChangeTrigger
 {
     /**
      * @var integer $id

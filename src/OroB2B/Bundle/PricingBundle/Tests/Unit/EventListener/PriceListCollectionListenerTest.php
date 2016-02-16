@@ -8,8 +8,8 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListChain;
 use OroB2B\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
 use OroB2B\Bundle\PricingBundle\EventListener\PriceListCollectionListener;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -32,7 +32,7 @@ class PriceListCollectionListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $registry->expects($this->once())
             ->method('getManagerForClass')
-            ->with('OroB2BPricingBundle:ChangedPriceListChain')
+            ->with('OroB2BPricingBundle:PriceListChangeTrigger')
             ->willReturn($this->manager);
         $this->listener = new PriceListCollectionListener($registry);
         parent::setUp();
@@ -41,11 +41,11 @@ class PriceListCollectionListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider onChangeCollectionBeforeDataProvider
      * @param PriceListQueueChangeEvent $event
-     * @param ChangedPriceListChain $changedPriceListCollection
+     * @param PriceListChangeTrigger $changedPriceListCollection
      */
     public function testOnChangeCollectionBefore(
         PriceListQueueChangeEvent $event,
-        ChangedPriceListChain $changedPriceListCollection
+        PriceListChangeTrigger $changedPriceListCollection
     ) {
         $this->manager->expects($this->once())->method('persist')->with($changedPriceListCollection);
         $this->listener->onChangeCollectionBefore($event);
@@ -59,7 +59,7 @@ class PriceListCollectionListenerTest extends \PHPUnit_Framework_TestCase
         $account = new Account();
         $accountGroup = new AccountGroup();
         $website = new Website();
-        $changedPriceListCollectionWithConfig = new ChangedPriceListChain();
+        $changedPriceListCollectionWithConfig = new PriceListChangeTrigger();
         $changedPriceListCollectionWithWebsite = clone $changedPriceListCollectionWithConfig;
         $changedPriceListCollectionWithWebsite->setWebsite($website);
         $changedPriceListCollectionWithAccount = clone $changedPriceListCollectionWithWebsite;

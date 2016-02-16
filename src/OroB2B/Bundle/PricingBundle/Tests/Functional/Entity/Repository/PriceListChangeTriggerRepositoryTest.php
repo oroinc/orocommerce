@@ -4,34 +4,34 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Component\Testing\WebTestCase;
 
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ChangedPriceListCollectionRepository;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository;
 
 /**
  * @dbIsolation
  */
-class ChangedPriceListCollectionRepositoryTest extends WebTestCase
+class PriceListChangeTriggerRepositoryTest extends WebTestCase
 {
     public function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([
-            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadChangedPriceListCollection'
+            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListChangeTrigger'
         ]);
     }
 
-    public function testGetCollectionChangesIterator()
+    public function testGetPriceListChangeTriggersIterator()
     {
-        $iterator = $this->getRepository()->getCollectionChangesIterator();
+        $iterator = $this->getRepository()->getPriceListChangeTriggersIterator();
         $allChanges = $this->getRepository()->findAll();
         $this->assertInstanceOf('Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator', $iterator);
         $this->assertCount(count($allChanges), $iterator);
     }
 
     /**
-     * @return ChangedPriceListCollectionRepository
+     * @return PriceListChangeTriggerRepository
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroB2BPricingBundle:ChangedPriceListChain');
+        return $this->getContainer()->get('doctrine')->getRepository('OroB2BPricingBundle:PriceListChangeTrigger');
     }
 }

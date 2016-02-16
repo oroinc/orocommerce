@@ -7,15 +7,15 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
-use OroB2B\Bundle\PricingBundle\Entity\ChangedPriceListChain;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
 
-class ChangedPriceListCollectionRepository extends EntityRepository
+class PriceListChangeTriggerRepository extends EntityRepository
 {
     /**
-     * @return BufferedQueryResultIterator|ChangedPriceListChain[]
+     * @return BufferedQueryResultIterator|PriceListChangeTrigger[]
      */
-    public function getCollectionChangesIterator()
+    public function getPriceListChangeTriggersIterator()
     {
         $qb = $this->createQueryBuilder('changes');
 
@@ -38,7 +38,7 @@ class ChangedPriceListCollectionRepository extends EntityRepository
         $insertFromSelectQueryExecutor->execute(
             $this->getClassName(),
             [
-                'account_id',
+                'account',
                 'website'
             ],
             $queryBuilder

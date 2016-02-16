@@ -11,7 +11,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @ORM\Table(
- *      name="orob2b_changed_product_price",
+ *      name="orob2b_prod_price_ch_trigger",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(name="orob2b_changed_product_price_list_unq", columns={
  *              "product_id",
@@ -19,9 +19,9 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
  *          })
  *      }
  * )
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\ChangedProductPriceRepository")
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceChangeTriggerRepository")
  */
-class ChangedProductPrice implements ObjectIdentifierAwareInterface
+class ProductPriceChangeTrigger implements ObjectIdentifierAwareInterface
 {
     /**
      * @var integer $id
