@@ -142,7 +142,7 @@ class CombinedProductPriceQueueConsumerTest extends \PHPUnit_Framework_TestCase
         $this->productPriceTriggerRepo = $this->getMockBuilder($class)->disableOriginalConstructor()->getMock();
 
         $this->productPriceTriggerRepo->expects($this->once())
-            ->method('getPriceListChangesIterator')
+            ->method('getProductPriceChangeTriggersIterator')
             ->willReturn($data['changesCollection']);
 
         $class = 'OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository';

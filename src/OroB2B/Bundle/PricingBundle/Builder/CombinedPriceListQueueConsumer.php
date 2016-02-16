@@ -64,8 +64,8 @@ class CombinedPriceListQueueConsumer
     {
         $manager = $this->getManager();
         $i = 0;
-        foreach ($this->getUniqueChangesIterator() as $changeItem) {
-            $this->handleCollectionsJob($changeItem, $force);
+        foreach ($this->getUniqueTriggersIterator() as $changeItem) {
+            $this->handlePriceListChangeTrigger($changeItem, $force);
             $manager->remove($changeItem);
             if (++$i % 100 === 0) {
                 $manager->flush();
@@ -77,16 +77,16 @@ class CombinedPriceListQueueConsumer
     /**
      * @return BufferedQueryResultIterator|PriceListChangeTrigger[]
      */
-    protected function getUniqueChangesIterator()
+    protected function getUniqueTriggersIterator()
     {
-        return $this->getRepository()->getPriceListChangesIterator();
+        return $this->getRepository()->getPriceListChangeTriggersIterator();
     }
 
     /**
      * @param PriceListChangeTrigger $changeItem
      * @param bool $force
      */
-    protected function handleCollectionsJob(PriceListChangeTrigger $changeItem, $force)
+    protected function handlePriceListChangeTrigger(PriceListChangeTrigger $changeItem, $force)
     {
         switch (true) {
             case !is_null($changeItem->getAccount()):

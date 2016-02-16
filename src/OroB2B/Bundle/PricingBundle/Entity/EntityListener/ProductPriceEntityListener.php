@@ -79,7 +79,7 @@ class ProductPriceEntityListener
      */
     protected function handleChanges(ProductPrice $productPrice, LifecycleEventArgs $event)
     {
-        $changedProductPrice = $this->createChangedProductPrice($productPrice);
+        $changedProductPrice = $this->createProductPriceChangeTrigger($productPrice);
 
         $em = $event->getEntityManager();
         if (null === $changedProductPrice
@@ -97,7 +97,7 @@ class ProductPriceEntityListener
      * @param ProductPrice $productPrice
      * @return ProductPriceChangeTrigger|null
      */
-    protected function createChangedProductPrice(ProductPrice $productPrice)
+    protected function createProductPriceChangeTrigger(ProductPrice $productPrice)
     {
         /** @var PriceList $priceList */
         $priceList = $productPrice->getPriceList();

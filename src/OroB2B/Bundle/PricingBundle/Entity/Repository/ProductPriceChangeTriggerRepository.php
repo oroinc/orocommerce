@@ -36,7 +36,7 @@ class ProductPriceChangeTriggerRepository extends EntityRepository
     /**
      * @return BufferedQueryResultIterator|ProductPriceChangeTrigger[]
      */
-    public function getPriceListChangesIterator()
+    public function getProductPriceChangeTriggersIterator()
     {
         $qb = $this->createQueryBuilder('productPriceChanges');
 

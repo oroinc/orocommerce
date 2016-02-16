@@ -59,7 +59,7 @@ class CombinedProductPriceQueueConsumer
 
     public function process()
     {
-        foreach ($this->getQueueRepository()->getPriceListChangesIterator() as $changes) {
+        foreach ($this->getQueueRepository()->getProductPriceChangeTriggersIterator() as $changes) {
             $this->handleProductPriceJob($changes);
             $this->getManager()->remove($changes);
         }

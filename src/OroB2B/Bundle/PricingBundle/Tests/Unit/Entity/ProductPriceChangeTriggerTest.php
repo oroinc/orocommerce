@@ -9,7 +9,7 @@ use OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class ChangedProductPriceTest extends \PHPUnit_Framework_TestCase
+class ProductPriceChangeTriggerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
     use EntityTrait;
@@ -18,15 +18,15 @@ class ChangedProductPriceTest extends \PHPUnit_Framework_TestCase
     {
         $priceList = new PriceList();
         $product = new Product();
-        $changedProductPrice = new ProductPriceChangeTrigger($priceList, $product);
+        $productPriceChangeTrigger = new ProductPriceChangeTrigger($priceList, $product);
 
-        $this->assertSame($priceList, $changedProductPrice->getPriceList());
-        $this->assertSame($product, $changedProductPrice->getProduct());
+        $this->assertSame($priceList, $productPriceChangeTrigger->getPriceList());
+        $this->assertSame($product, $productPriceChangeTrigger->getProduct());
     }
 
     public function testGetObjectIdentifier()
     {
-        $changedProductPrice = $this->getChangedProductPrice(1, 1);
+        $changedProductPrice = $this->getProductPriceChangeTrigger(1, 1);
 
         $this->assertSame(
             'OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger_1_1',
@@ -40,7 +40,7 @@ class ChangedProductPriceTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetObjectIdentifierError()
     {
-        $changedProductPrice = $this->getChangedProductPrice();
+        $changedProductPrice = $this->getProductPriceChangeTrigger();
         $changedProductPrice->getObjectIdentifier();
     }
 
@@ -49,7 +49,7 @@ class ChangedProductPriceTest extends \PHPUnit_Framework_TestCase
      * @param null|int $priceListId
      * @return ProductPriceChangeTrigger
      */
-    protected function getChangedProductPrice($productId = null, $priceListId = null)
+    protected function getProductPriceChangeTrigger($productId = null, $priceListId = null)
     {
         /** @var Product $product */
         $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => $productId]);

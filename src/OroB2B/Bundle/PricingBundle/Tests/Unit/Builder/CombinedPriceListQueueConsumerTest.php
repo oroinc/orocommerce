@@ -231,7 +231,7 @@ class CombinedPriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
     protected function assertRebuild($assertBuilders, $repositoryData)
     {
         $this->collectionChangesRepository->expects($this->once())
-            ->method('getPriceListChangesIterator')
+            ->method('getPriceListChangeTriggersIterator')
             ->willReturn($this->getCollectionChangesMock($repositoryData));
 
         $this->cplBuilder->expects($assertBuilders['cplBuilder'])

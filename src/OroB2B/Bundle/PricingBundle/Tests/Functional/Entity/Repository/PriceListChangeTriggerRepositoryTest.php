@@ -19,9 +19,9 @@ class PriceListChangeTriggerRepositoryTest extends WebTestCase
         ]);
     }
 
-    public function testGetCollectionChangesIterator()
+    public function testGetPriceListChangeTriggersIterator()
     {
-        $iterator = $this->getRepository()->getPriceListChangesIterator();
+        $iterator = $this->getRepository()->getPriceListChangeTriggersIterator();
         $allChanges = $this->getRepository()->findAll();
         $this->assertInstanceOf('Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator', $iterator);
         $this->assertCount(count($allChanges), $iterator);
