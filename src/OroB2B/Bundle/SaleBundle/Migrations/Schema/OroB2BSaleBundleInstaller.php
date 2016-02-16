@@ -66,7 +66,7 @@ class OroB2BSaleBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_3';
+        return 'v1_4';
     }
 
     /**
@@ -144,6 +144,13 @@ class OroB2BSaleBundleInstaller implements
         $table->addColumn('locked', 'boolean');
         $table->addColumn('expired', 'boolean', ['default' => false]);
         $table->addColumn('price_list_id', 'integer', ['notnull' => false]);
+        $table->addColumn('shipping_estimate_value', 'money', [
+            'notnull' => false,
+            'precision' => 19,
+            'scale' => 4,
+            'comment' => '(DC2Type:money)'
+        ]);
+        $table->addColumn('shipping_estimate_currency', 'string', ['notnull' => false, 'length' => 255]);
         $table->setPrimaryKey(['id']);
     }
 

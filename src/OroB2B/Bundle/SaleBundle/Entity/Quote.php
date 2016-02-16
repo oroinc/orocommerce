@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
@@ -312,6 +313,25 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      * )
      **/
     protected $assignedAccountUsers;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="shipping_estimate_value", type="money", nullable=true)
+     */
+    protected $shippingEstimateValue;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="shipping_estimate_currency", type="string", nullable=true)
+     */
+    protected $shippingEstimateCurrency;
+
+    /**
+     * @var Price
+     */
+    protected $shippingEstimate;
 
     /**
      * Constructor
@@ -802,5 +822,50 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
         }
 
         return $this;
+    }
+
+    /**
+     * Get shipping estimate
+     *
+     * @return Price|null
+     */
+    public function getShippingEstimate()
+    {
+        return $this->shippingEstimate;
+    }
+
+    /**
+     * Set shipping estimate
+     *
+     * @param Price $shippingEstimate
+     * @return $this
+     */
+    public function setShippingEstimate($shippingEstimate = null)
+    {
+        $this->shippingEstimate = $shippingEstimate;
+
+        $this->updateShippingEstimate();
+
+        return $this;
+    }
+
+    /**
+     * @ORM\PostLoad
+     */
+    public function postLoad()
+    {
+        if (null !== $this->shippingEstimateValue && null !==  $this->shippingEstimateCurrency) {
+            $this->shippingEstimate = Price::create($this->shippingEstimateValue, $this->shippingEstimateCurrency);
+        }
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updateShippingEstimate()
+    {
+        $this->shippingEstimateValue = $this->shippingEstimate ? $this->shippingEstimate->getValue() : null;
+        $this->shippingEstimateCurrency = $this->shippingEstimate ? $this->shippingEstimate->getCurrency() : null;
     }
 }
