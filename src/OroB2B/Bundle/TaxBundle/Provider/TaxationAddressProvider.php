@@ -5,15 +5,23 @@ namespace OroB2B\Bundle\TaxBundle\Provider;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
 use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
+use OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher;
 
 class TaxationAddressProvider
 {
     /**
-     * @param TaxationSettingsProvider $settingsProvider
+     * @var CountryMatcher
      */
-    public function __construct(TaxationSettingsProvider $settingsProvider)
+    protected $countryMatcher;
+
+    /**
+     * @param TaxationSettingsProvider $settingsProvider
+     * @param CountryMatcher $countryMatcher
+     */
+    public function __construct(TaxationSettingsProvider $settingsProvider, CountryMatcher $countryMatcher)
     {
         $this->settingsProvider = $settingsProvider;
+        $this->countryMatcher = $countryMatcher;
     }
 
     /**
@@ -96,5 +104,25 @@ class TaxationAddressProvider
     public function getOriginAddress()
     {
         return $this->settingsProvider->getOrigin();
+    }
+
+    /**
+     * Check is tax code is digital in specified country
+     *
+     * @param string $countryCode
+     * @param string $taxCode
+     * @return bool
+     */
+    public function isDigitalProductTaxCode($countryCode, $taxCode)
+    {
+        if ($this->countryMatcher->isEuropeanUnionCountry($countryCode)) {
+            $digitalProductTaxCodes = $this->settingsProvider->getDigitalProductsTaxCodesEU();
+        } elseif ($countryCode === 'US') {
+            $digitalProductTaxCodes = $this->settingsProvider->getDigitalProductsTaxCodesUS();
+        } else {
+            return false;
+        }
+
+        return in_array($taxCode, $digitalProductTaxCodes, true);
     }
 }

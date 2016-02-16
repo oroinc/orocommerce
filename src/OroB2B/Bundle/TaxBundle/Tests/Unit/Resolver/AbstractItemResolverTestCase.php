@@ -2,59 +2,63 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Resolver;
 
+use Brick\Math\BigDecimal;
+
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
-use OroB2B\Bundle\TaxBundle\Calculator\TaxCalculator;
-use OroB2B\Bundle\TaxBundle\Calculator\TaxCalculatorInterface;
 use OroB2B\Bundle\TaxBundle\Entity\Tax;
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 use OroB2B\Bundle\TaxBundle\Matcher\MatcherInterface;
-use OroB2B\Bundle\TaxBundle\Model\Result;
-use OroB2B\Bundle\TaxBundle\Model\ResultElement;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
-use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
-use OroB2B\Bundle\TaxBundle\Resolver\AbstractAddressResolver;
+use OroB2B\Bundle\TaxBundle\Resolver\AbstractItemResolver;
+use OroB2B\Bundle\TaxBundle\Resolver\RowTotalResolver;
+use OroB2B\Bundle\TaxBundle\Resolver\UnitResolver;
 use OroB2B\Bundle\TaxBundle\Tests\ResultComparatorTrait;
 
-abstract class AbstractAddressResolverTestCase extends \PHPUnit_Framework_TestCase
+abstract class AbstractItemResolverTestCase extends \PHPUnit_Framework_TestCase
 {
     use ResultComparatorTrait;
 
+    /** @var AbstractItemResolver */
+    protected $resolver;
+
     /**
-     * @var TaxationSettingsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var UnitResolver|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $settingsProvider;
+    protected $unitResolver;
+
+    /**
+     * @var RowTotalResolver|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $rowTotalResolver;
 
     /**
      * @var MatcherInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $matcher;
 
-    /**
-     * @var TaxCalculatorInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $calculator;
-
-    /** @var AbstractAddressResolver */
-    protected $resolver;
-
     protected function setUp()
     {
-        $this->settingsProvider = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
-            ->disableOriginalConstructor()->getMock();
+        $this->unitResolver = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Resolver\UnitResolver')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->rowTotalResolver = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Resolver\RowTotalResolver')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->matcher = $this->getMock('OroB2B\Bundle\TaxBundle\Matcher\MatcherInterface');
-        $this->calculator = new TaxCalculator();
 
         $this->resolver = $this->createResolver();
     }
 
-    /** @return AbstractAddressResolver */
+    /** @return AbstractItemResolver */
     abstract protected function createResolver();
 
     protected function assertNothing()
     {
-        $this->settingsProvider->expects($this->never())->method($this->anything());
         $this->matcher->expects($this->never())->method($this->anything());
+        $this->unitResolver->expects($this->never())->method($this->anything());
+        $this->rowTotalResolver->expects($this->never())->method($this->anything());
     }
 
     /**
@@ -115,39 +119,30 @@ abstract class AbstractAddressResolverTestCase extends \PHPUnit_Framework_TestCa
         $taxable->setPrice('1');
         $taxable->setAmount('1');
 
+        $taxableUnitPrice = BigDecimal::of($taxable->getPrice());
+        $taxableAmount = $taxableUnitPrice->multipliedBy($taxable->getQuantity());
+
         $this->matcher->expects($this->once())->method('match')->willReturn([]);
+
+        $this->unitResolver->expects($this->once())
+            ->method('resolveUnitPrice')
+            ->with($taxable->getResult(), [], $taxableUnitPrice);
+
+        $this->rowTotalResolver->expects($this->once())
+            ->method('resolveRowTotal')
+            ->with($taxable->getResult(), [], $taxableAmount);
+
         $this->resolver->resolve($taxable);
 
-        $this->compareResult(
-            new Result(
-                [
-                    Result::ROW => [
-                        ResultElement::INCLUDING_TAX => '1',
-                        ResultElement::EXCLUDING_TAX => '1',
-                        ResultElement::TAX_AMOUNT => '0',
-                        ResultElement::ADJUSTMENT => '0',
-                    ],
-                    Result::UNIT => [
-                        ResultElement::INCLUDING_TAX => '1',
-                        ResultElement::EXCLUDING_TAX => '1',
-                        ResultElement::TAX_AMOUNT => '0',
-                        ResultElement::ADJUSTMENT => '0',
-                    ],
-                    Result::TAXES => [],
-                ]
-            ),
-            $taxable->getResult()
-        );
+        $this->assertEquals([], $taxable->getResult()->getTaxes());
     }
 
     /**
      * @dataProvider rulesDataProvider
      * @param string $taxableAmount
      * @param array $taxRules
-     * @param Result $expectedResult
-     * @param bool $startWithRowTotal
      */
-    public function testRules($taxableAmount, array $taxRules, Result $expectedResult, $startWithRowTotal = false)
+    public function testRules($taxableAmount, array $taxRules)
     {
         $taxable = $this->getTaxable();
         $taxable->setPrice($taxableAmount);
@@ -155,15 +150,19 @@ abstract class AbstractAddressResolverTestCase extends \PHPUnit_Framework_TestCa
         $taxable->setAmount($taxableAmount);
         $taxable->setDestination(new OrderAddress());
 
+        $taxableUnitPrice = BigDecimal::of($taxable->getPrice());
+
         $this->matcher->expects($this->once())->method('match')->willReturn($taxRules);
-        $this->settingsProvider->expects($this->any())->method('isStartCalculationWithRowTotal')
-            ->willReturn($startWithRowTotal);
-        $this->settingsProvider->expects($this->any())->method('isStartCalculationWithUnitPrice')
-            ->willReturn(!$startWithRowTotal);
+
+        $this->unitResolver->expects($this->once())
+            ->method('resolveUnitPrice')
+            ->with($taxable->getResult(), $taxRules, $taxableUnitPrice);
+
+        $this->rowTotalResolver->expects($this->once())
+            ->method('resolveRowTotal')
+            ->with($taxable->getResult(), $taxRules, $taxableUnitPrice, $taxable->getQuantity());
 
         $this->resolver->resolve($taxable);
-
-        $this->compareResult($expectedResult, $taxable->getResult());
     }
 
     /**

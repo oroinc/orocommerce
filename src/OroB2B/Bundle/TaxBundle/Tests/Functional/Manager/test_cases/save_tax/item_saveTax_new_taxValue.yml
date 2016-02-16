@@ -22,11 +22,13 @@ databaseBefore:
             order: { reference: simple_order }
             quantity: { property_value: 6 }
             price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '15.99', currency: USD } }
+            product: { class: 'OroB2B\Bundle\ProductBundle\Entity\Product', query: { productCode: 'product.1' } }
         order_line_item_2:
             productSku: { property_value: order_line_item_2 }
             order: { reference: simple_order }
             quantity: { property_value: 6 }
             price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '5.55', currency: USD } }
+            product: { class: 'OroB2B\Bundle\ProductBundle\Entity\Product', query: { productCode: 'product.2' } }
 expectedResult: # values from simple_order_item_1 used to check database override
     row:
         includingTax: '36.63' # 33.3 + 3.33

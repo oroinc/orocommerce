@@ -6,8 +6,10 @@ use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
 use OroB2B\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository;
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
+use OroB2B\Bundle\TaxBundle\Entity\ZipCode;
 
 abstract class AbstractMatcher implements MatcherInterface
 {
@@ -82,6 +84,10 @@ abstract class AbstractMatcher implements MatcherInterface
                         return $argument->getIso2Code();
                     } elseif ($argument instanceof Region) {
                         return $argument->getCombinedCode();
+                    } elseif ($argument instanceof ZipCode) {
+                        return $argument->getZipCode();
+                    } elseif ($argument instanceof ProductTaxCode) {
+                        return $argument->getCode();
                     }
 
                     return $argument;
