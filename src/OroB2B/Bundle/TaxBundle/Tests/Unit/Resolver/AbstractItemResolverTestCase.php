@@ -151,7 +151,6 @@ abstract class AbstractItemResolverTestCase extends \PHPUnit_Framework_TestCase
         $taxable->setDestination(new OrderAddress());
 
         $taxableUnitPrice = BigDecimal::of($taxable->getPrice());
-        $taxableAmount = $taxableUnitPrice->multipliedBy($taxable->getQuantity());
 
         $this->matcher->expects($this->once())->method('match')->willReturn($taxRules);
 
@@ -161,7 +160,7 @@ abstract class AbstractItemResolverTestCase extends \PHPUnit_Framework_TestCase
 
         $this->rowTotalResolver->expects($this->once())
             ->method('resolveRowTotal')
-            ->with($taxable->getResult(), $taxRules, $taxableAmount);
+            ->with($taxable->getResult(), $taxRules, $taxableUnitPrice, $taxable->getQuantity());
 
         $this->resolver->resolve($taxable);
     }

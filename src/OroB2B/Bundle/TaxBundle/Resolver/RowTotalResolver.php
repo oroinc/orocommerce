@@ -40,7 +40,7 @@ class RowTotalResolver extends AbstractUnitRowResolver
      * @param BigDecimal $taxableAmount
      * @param int        $quantity
      */
-    public function resolveRowTotal(Result $result, array $taxRules, BigDecimal $taxableAmount, $quantity)
+    public function resolveRowTotal(Result $result, array $taxRules, BigDecimal $taxableAmount, $quantity = 1)
     {
         $taxRate = BigDecimal::zero();
 

@@ -74,11 +74,10 @@ class ItemDigitalResolverTest extends \PHPUnit_Framework_TestCase
         $this->matcher->expects($this->once())->method('match')->willReturn($taxRules);
 
         $taxableUnitPrice = BigDecimal::of($taxable->getPrice());
-        $taxableAmount = $taxableUnitPrice->multipliedBy($taxable->getQuantity());
 
         $this->rowTotalResolver->expects($this->once())
             ->method('resolveRowTotal')
-            ->with($taxable->getResult(), $taxRules, $taxableAmount);
+            ->with($taxable->getResult(), $taxRules, $taxableUnitPrice, $taxable->getQuantity());
 
         $this->unitResolver->expects($this->once())
             ->method('resolveUnitPrice')
