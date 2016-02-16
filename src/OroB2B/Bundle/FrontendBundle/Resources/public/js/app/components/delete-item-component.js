@@ -5,7 +5,7 @@ define(function (require) {
 
     var DeleteItemComponent;
     var BaseComponent = require('oroui/js/app/components/base/component');
-    var DeleteConfirmation = require('oroui/js/delete-confirmation');
+    var DeleteConfirmation = require('orob2bfrontend/js/app/components/delete-confirmation');
     var mediator = require('oroui/js/mediator');
     var __ = require('orotranslation/js/translator');
     var _ = require('underscore');
@@ -32,7 +32,7 @@ define(function (require) {
             var confirm = new DeleteConfirmation({
                 content: this.confirmMessage
             });
-            confirm.on('ok',_.bind(this.deleteWithConfirmation, this));
+            confirm.on('ok',_.bind(this.deleteWithoutConfirmation, this));
             confirm.open();
 
         },
