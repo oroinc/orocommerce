@@ -12,6 +12,7 @@ parameters:
     #Providers
     orob2b_sale.provider.quote_product_price.class: OroB2B\Bundle\SaleBundle\Provider\QuoteProductPriceProvider
     orob2b_sale.provider.quote_address.class: OroB2B\Bundle\SaleBundle\Provider\QuoteAddressProvider
+    orob2b_sale.provider.quote_address_security.class: OroB2B\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider
 
     #Models
     orob2b_sale.service.quote_to_order_converter.class: OroB2B\Bundle\SaleBundle\Model\QuoteToOrderConverter
@@ -123,5 +124,13 @@ services:
             - @oro_security.security_facade
             - @doctrine
             - @oro_security.acl_helper
+            - %orob2b_account.entity.account_address.class%
+            - %orob2b_account.entity.account_user_address.class%
+
+    orob2b_sale.provider.quote_address_security:
+        class: %orob2b_sale.provider.quote_address_security.class%
+        arguments:
+            - @oro_security.security_facade
+            - @orob2b_sale.provider.quote_address
             - %orob2b_account.entity.account_address.class%
             - %orob2b_account.entity.account_user_address.class%

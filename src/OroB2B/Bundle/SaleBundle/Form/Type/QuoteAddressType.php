@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
 use OroB2B\Bundle\SaleBundle\Model\QuoteAddressManager;
+use OroB2B\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -34,8 +35,8 @@ class QuoteAddressType extends AbstractType
     /** @var QuoteAddressManager */
     protected $quoteAddressManager;
 
-    /** @var OrderAddressSecurityProvider */
-    protected $orderAddressSecurityProvider;
+    /** @var QuoteAddressSecurityProvider */
+    protected $quoteAddressSecurityProvider;
 
     /** @var Serializer */
     protected $serializer;
@@ -43,18 +44,18 @@ class QuoteAddressType extends AbstractType
     /**
      * @param AddressFormatter $addressFormatter
      * @param QuoteAddressManager $quoteAddressManager
-     * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
+     * @param QuoteAddressSecurityProvider $quoteAddressSecurityProvider
      * @param Serializer $serializer
      */
     public function __construct(
         AddressFormatter $addressFormatter,
         QuoteAddressManager $quoteAddressManager,
-        OrderAddressSecurityProvider $orderAddressSecurityProvider,
+        QuoteAddressSecurityProvider $quoteAddressSecurityProvider,
         Serializer $serializer
     ) {
         $this->addressFormatter = $addressFormatter;
         $this->quoteAddressManager = $quoteAddressManager;
-        $this->orderAddressSecurityProvider = $orderAddressSecurityProvider;
+        $this->quoteAddressSecurityProvider = $quoteAddressSecurityProvider;
         $this->serializer = $serializer;
     }
 
@@ -66,7 +67,7 @@ class QuoteAddressType extends AbstractType
         $type = $options['addressType'];
         $order = $options['order'];
 
-        $isManualEditGranted = $this->orderAddressSecurityProvider->isManualEditGranted($type);
+        $isManualEditGranted = $this->quoteAddressSecurityProvider->isManualEditGranted($type);
         $addresses = $this->quoteAddressManager->getGroupedAddresses($order, $type);
 
         $accountAddressOptions = [
@@ -129,7 +130,7 @@ class QuoteAddressType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $isManualEditGranted = $this->orderAddressSecurityProvider->isManualEditGranted($options['addressType']);
+        $isManualEditGranted = $this->quoteAddressSecurityProvider->isManualEditGranted($options['addressType']);
 
         foreach ($view->children as $child) {
             $child->vars['disabled'] = !$isManualEditGranted;

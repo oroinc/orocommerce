@@ -92,7 +92,7 @@ services:
         arguments:
             - @oro_locale.formatter.address
             - @orob2b_sale.manager.quote_address
-            - @orob2b_order.order.provider.order_address_security
+            - @orob2b_sale.provider.quote_address_security
             - @oro_importexport.serializer
         tags:
             - { name: form.type, alias: orob2b_order_address_type }
