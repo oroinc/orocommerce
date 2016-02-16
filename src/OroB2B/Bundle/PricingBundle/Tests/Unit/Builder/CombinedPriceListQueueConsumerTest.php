@@ -24,7 +24,7 @@ class CombinedPriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|PriceListChangeTriggerRepository
      */
-    protected $collectionChangesRepository;
+    protected $priceListChangeTriggerRepository;
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
      */
@@ -80,7 +80,7 @@ class CombinedPriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
         $collectionChangesClass = 'OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger';
         $plChangeRepositoryClass = 'OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListChangeTriggerRepository';
 
-        $this->collectionChangesRepository = $this->getMockBuilder($plChangeRepositoryClass)
+        $this->priceListChangeTriggerRepository = $this->getMockBuilder($plChangeRepositoryClass)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -89,7 +89,7 @@ class CombinedPriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
         $this->manager->expects($this->any())
             ->method('getRepository')
             ->with($collectionChangesClass)
-            ->will($this->returnValue($this->collectionChangesRepository));
+            ->will($this->returnValue($this->priceListChangeTriggerRepository));
 
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
@@ -230,7 +230,7 @@ class CombinedPriceListQueueConsumerTest extends \PHPUnit_Framework_TestCase
      */
     protected function assertRebuild($assertBuilders, $repositoryData)
     {
-        $this->collectionChangesRepository->expects($this->once())
+        $this->priceListChangeTriggerRepository->expects($this->once())
             ->method('getPriceListChangeTriggersIterator')
             ->willReturn($this->getCollectionChangesMock($repositoryData));
 

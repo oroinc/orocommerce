@@ -74,7 +74,7 @@ class ProductPriceEntityListenerTest extends AbstractChangedProductPriceTest
             $this->assertRegExp('/^INSERT INTO/', $query);
         }
 
-        $actual = $this->getChangedProductPriceRepository()->findBy([
+        $actual = $this->getProductPriceChangeTriggerRepository()->findBy([
             'product' => $this->testProduct,
             'priceList' => $this->testPriceList,
         ]);
@@ -102,7 +102,7 @@ class ProductPriceEntityListenerTest extends AbstractChangedProductPriceTest
         }
 
         $this->getProductPriceManager()->flush();
-        $actual = $this->getChangedProductPriceRepository()->findBy([
+        $actual = $this->getProductPriceChangeTriggerRepository()->findBy([
             'product' => $this->testProduct,
             'priceList' => $this->testPriceList,
         ]);
@@ -125,7 +125,7 @@ class ProductPriceEntityListenerTest extends AbstractChangedProductPriceTest
         }
 
         $this->getProductPriceManager()->flush();
-        $actual = $this->getChangedProductPriceRepository()->findBy([
+        $actual = $this->getProductPriceChangeTriggerRepository()->findBy([
             'product' => $this->testProduct,
             'priceList' => $this->testPriceList,
         ]);

@@ -40,7 +40,7 @@ class CombinedProductPriceQueueConsumer
     /**
      * @var string
      */
-    protected $changedProductPriceClass = 'OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger';
+    protected $productPriceChangeTriggerClass = 'OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger';
 
     /**
      * @var string
@@ -67,11 +67,11 @@ class CombinedProductPriceQueueConsumer
     }
 
     /**
-     * @param string $changedProductPriceClass
+     * @param string $productPriceChangeTriggerClass
      */
-    public function setChangedProductPriceClass($changedProductPriceClass)
+    public function setProductPriceChangeTriggerClass($productPriceChangeTriggerClass)
     {
-        $this->changedProductPriceClass = $changedProductPriceClass;
+        $this->productPriceChangeTriggerClass = $productPriceChangeTriggerClass;
     }
 
     /**
@@ -102,7 +102,7 @@ class CombinedProductPriceQueueConsumer
     protected function getManager()
     {
         if (!$this->manager) {
-            $this->manager = $this->registry->getManagerForClass($this->changedProductPriceClass);
+            $this->manager = $this->registry->getManagerForClass($this->productPriceChangeTriggerClass);
         }
 
         return $this->manager;
@@ -114,7 +114,7 @@ class CombinedProductPriceQueueConsumer
     protected function getQueueRepository()
     {
         if (!$this->queueRepository) {
-            $this->queueRepository = $this->getManager()->getRepository($this->changedProductPriceClass);
+            $this->queueRepository = $this->getManager()->getRepository($this->productPriceChangeTriggerClass);
         }
 
         return $this->queueRepository;

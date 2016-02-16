@@ -79,18 +79,18 @@ class ProductPriceEntityListener
      */
     protected function handleChanges(ProductPrice $productPrice, LifecycleEventArgs $event)
     {
-        $changedProductPrice = $this->createProductPriceChangeTrigger($productPrice);
+        $trigger = $this->createProductPriceChangeTrigger($productPrice);
 
         $em = $event->getEntityManager();
-        if (null === $changedProductPrice
-            || $this->extraActionsStorage->isScheduledForInsert($changedProductPrice)
-            || $this->getRepository($em)->isCreated($changedProductPrice)
+        if (null === $trigger
+            || $this->extraActionsStorage->isScheduledForInsert($trigger)
+            || $this->getRepository($em)->isCreated($trigger)
         ) {
             return;
         }
 
         $this->eventDispatcher->dispatch(ProductPriceChange::NAME, new ProductPriceChange());
-        $this->extraActionsStorage->scheduleForExtraInsert($changedProductPrice);
+        $this->extraActionsStorage->scheduleForExtraInsert($trigger);
     }
 
     /**

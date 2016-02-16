@@ -18,7 +18,7 @@ abstract class AbstractChangedProductPriceTest extends WebTestCase
 {
     protected function clearTable()
     {
-        $this->getChangedProductPriceRepository()
+        $this->getProductPriceChangeTriggerRepository()
             ->createQueryBuilder('cpp')
             ->delete()
             ->getQuery()
@@ -94,7 +94,7 @@ abstract class AbstractChangedProductPriceTest extends WebTestCase
     /**
      * @return ObjectManager
      */
-    protected function getChangedProductPriceManager()
+    protected function getProductPriceChangeTriggerManager()
     {
         $changedProductPriceClassName = $this->getContainer()
             ->getParameter('orob2b_pricing.entity.changed_product_price.class');
@@ -106,8 +106,9 @@ abstract class AbstractChangedProductPriceTest extends WebTestCase
     /**
      * @return ProductPriceChangeTriggerRepository
      */
-    protected function getChangedProductPriceRepository()
+    protected function getProductPriceChangeTriggerRepository()
     {
-        return $this->getChangedProductPriceManager()->getRepository('OroB2BPricingBundle:ProductPriceChangeTrigger');
+        return $this->getProductPriceChangeTriggerManager()
+            ->getRepository('OroB2BPricingBundle:ProductPriceChangeTrigger');
     }
 }

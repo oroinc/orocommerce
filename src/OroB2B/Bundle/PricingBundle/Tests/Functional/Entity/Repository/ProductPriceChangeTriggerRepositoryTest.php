@@ -30,13 +30,13 @@ class ProductPriceChangeTriggerRepositoryTest extends AbstractChangedProductPric
         $priceList = $productPrice->getPriceList();
         $product = $productPrice->getProduct();
 
-        $changedProductPrice = new ProductPriceChangeTrigger($priceList, $product);
+        $trigger = new ProductPriceChangeTrigger($priceList, $product);
         //should be false before save
-        $this->assertFalse($this->getChangedProductPriceRepository()->isCreated($changedProductPrice));
+        $this->assertFalse($this->getProductPriceChangeTriggerRepository()->isCreated($trigger));
 
-        $this->getProductPriceManager()->persist($changedProductPrice);
+        $this->getProductPriceManager()->persist($trigger);
         $this->getProductPriceManager()->flush();
         //should be true after save
-        $this->assertTrue($this->getChangedProductPriceRepository()->isCreated($changedProductPrice));
+        $this->assertTrue($this->getProductPriceChangeTriggerRepository()->isCreated($trigger));
     }
 }

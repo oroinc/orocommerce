@@ -83,24 +83,24 @@ class CombinedPriceListQueueConsumer
     }
 
     /**
-     * @param PriceListChangeTrigger $changeItem
+     * @param PriceListChangeTrigger $trigger
      * @param bool $force
      */
-    protected function handlePriceListChangeTrigger(PriceListChangeTrigger $changeItem, $force)
+    protected function handlePriceListChangeTrigger(PriceListChangeTrigger $trigger, $force)
     {
         switch (true) {
-            case !is_null($changeItem->getAccount()):
-                $this->accountPriceListsBuilder->build($changeItem->getWebsite(), $changeItem->getAccount(), $force);
+            case !is_null($trigger->getAccount()):
+                $this->accountPriceListsBuilder->build($trigger->getWebsite(), $trigger->getAccount(), $force);
                 break;
-            case !is_null($changeItem->getAccountGroup()):
+            case !is_null($trigger->getAccountGroup()):
                 $this->accountGroupPriceListsBuilder->build(
-                    $changeItem->getWebsite(),
-                    $changeItem->getAccountGroup(),
+                    $trigger->getWebsite(),
+                    $trigger->getAccountGroup(),
                     $force
                 );
                 break;
-            case !is_null($changeItem->getWebsite()):
-                $this->websitePriceListsBuilder->build($changeItem->getWebsite(), $force);
+            case !is_null($trigger->getWebsite()):
+                $this->websitePriceListsBuilder->build($trigger->getWebsite(), $force);
                 break;
             default:
                 $this->commonPriceListsBuilder->build($force);
