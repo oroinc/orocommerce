@@ -30,10 +30,9 @@ class ProductHandlerListenerTest extends \PHPUnit_Framework_TestCase
     public function testVariantLinksWithoutHasVariant()
     {
         $entity = new Product();
-        $entity->setHasVariants(false);
-        $entity->addVariantLink($this->createProductVariantLink());
         $event = $this->createEvent($entity);
         $this->listener->onBeforeFlush($event);
+        $this->assertFalse($entity->getHasVariants());
         $this->assertCount(0, $entity->getVariantLinks());
     }
 
@@ -44,6 +43,7 @@ class ProductHandlerListenerTest extends \PHPUnit_Framework_TestCase
         $entity->addVariantLink($this->createProductVariantLink());
         $event = $this->createEvent($entity);
         $this->listener->onBeforeFlush($event);
+        $this->assertTrue($entity->getHasVariants());
         $this->assertCount(1, $entity->getVariantLinks());
     }
 
