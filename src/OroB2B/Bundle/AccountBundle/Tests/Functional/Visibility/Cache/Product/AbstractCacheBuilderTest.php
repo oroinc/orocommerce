@@ -44,7 +44,6 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
             'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
         ]);
 
-        $this->getContainer()->get('orob2b_account.storage.category_visibility_storage')->flush();
         $this->registry = $this->client->getContainer()->get('doctrine');
         $this->website = $this->getReference(LoadWebsiteData::WEBSITE1);
         $this->product = $this->getReference(LoadProductData::PRODUCT_1);
@@ -96,20 +95,30 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
      */
     public function testBuildCache($expectedStaticCount, $expectedCategoryCount, $websiteReference = null)
     {
+        $repository = $this->getRepository();
         $website = $this->getWebsite($websiteReference);
-        $this->getRepository()->clearTable();
+        $repository->clearTable();
         $this->getCacheBuilder()->buildCache($website);
 
-        $this->assertCount($expectedStaticCount + $expectedCategoryCount, $this->getRepository()->findAll());
+        $actualTotalCount = (int)$repository->createQueryBuilder('entity')
+            ->select('COUNT(entity.visibility)')
+            ->getQuery()
+            ->getSingleScalarResult();
+        $this->assertEquals($expectedStaticCount + $expectedCategoryCount, $actualTotalCount);
 
-        $this->assertCount(
-            $expectedStaticCount,
-            $this->getRepository()->findBy(['source' => BaseProductVisibilityResolved::SOURCE_STATIC])
-        );
-        $this->assertCount(
-            $expectedCategoryCount,
-            $this->getRepository()->findBy(['source' => BaseProductVisibilityResolved::SOURCE_CATEGORY])
-        );
+        $sourceCountQb = $repository->createQueryBuilder('entity')
+            ->select('COUNT(entity.visibility)')
+            ->where('entity.source = :source');
+        $actualStaticCount = (int)$sourceCountQb
+            ->setParameter('source', BaseProductVisibilityResolved::SOURCE_STATIC)
+            ->getQuery()
+            ->getSingleScalarResult();
+        $actualCategoryCount = (int)$sourceCountQb
+            ->setParameter('source', BaseProductVisibilityResolved::SOURCE_CATEGORY)
+            ->getQuery()
+            ->getSingleScalarResult();
+        $this->assertEquals($expectedStaticCount, $actualStaticCount);
+        $this->assertEquals($expectedCategoryCount, $actualCategoryCount);
     }
 
     /**
@@ -131,11 +140,6 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
      * @return CacheBuilderInterface
      */
     abstract protected function getCacheBuilder();
-
-    protected function clearCategoryCache()
-    {
-        $this->getContainer()->get('orob2b_account.storage.category_visibility_storage')->flush();
-    }
 
     /**
      * @param string $websiteReference

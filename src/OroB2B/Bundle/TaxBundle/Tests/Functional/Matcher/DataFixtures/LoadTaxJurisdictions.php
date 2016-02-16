@@ -3,13 +3,12 @@
 namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Matcher\DataFixtures;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
 use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions as BaseLoadTaxJurisdictions;
 
-class LoadTaxJurisdictions extends BaseLoadTaxJurisdictions implements DependentFixtureInterface
+class LoadTaxJurisdictions extends BaseLoadTaxJurisdictions
 {
     const REFERENCE_PREFIX = 'tax_jurisdiction_matcher';
 
@@ -52,14 +51,14 @@ class LoadTaxJurisdictions extends BaseLoadTaxJurisdictions implements Dependent
         $this->createTaxJurisdiction(
             $manager,
             self::JURISDICTION_US_ONLY,
-            self::DESCRIPTION_1,
+            self::DESCRIPTION,
             $this->getCountryByCode($manager, self::COUNTRY_US)
         );
 
         $this->createTaxJurisdiction(
             $manager,
             self::JURISDICTION_US_NY_RANGE,
-            self::DESCRIPTION_1,
+            self::DESCRIPTION,
             $this->getCountryByCode($manager, self::COUNTRY_US),
             $this->getRegionByCode($manager, self::STATE_US_NY),
             null,
@@ -69,7 +68,7 @@ class LoadTaxJurisdictions extends BaseLoadTaxJurisdictions implements Dependent
         $this->createTaxJurisdiction(
             $manager,
             self::JURISDICTION_US_NY_SINGLE,
-            self::DESCRIPTION_1,
+            self::DESCRIPTION,
             $this->getCountryByCode($manager, self::COUNTRY_US),
             $this->getRegionByCode($manager, self::STATE_US_NY),
             null,
@@ -79,7 +78,7 @@ class LoadTaxJurisdictions extends BaseLoadTaxJurisdictions implements Dependent
         $this->createTaxJurisdiction(
             $manager,
             self::JURISDICTION_US_LA_RANGE,
-            self::DESCRIPTION_1,
+            self::DESCRIPTION,
             $this->getCountryByCode($manager, self::COUNTRY_US),
             $this->getRegionByCode($manager, self::STATE_US_LA),
             null,
@@ -89,7 +88,7 @@ class LoadTaxJurisdictions extends BaseLoadTaxJurisdictions implements Dependent
         $this->createTaxJurisdiction(
             $manager,
             self::JURISDICTION_US_WITH_TEXT_STATE,
-            self::DESCRIPTION_1,
+            self::DESCRIPTION,
             $this->getCountryByCode($manager, self::COUNTRY_US),
             null,
             self::STATE_TEXT_SOME
@@ -98,7 +97,7 @@ class LoadTaxJurisdictions extends BaseLoadTaxJurisdictions implements Dependent
         $this->createTaxJurisdiction(
             $manager,
             self::JURISDICTION_CA_ON_WITHOUT_ZIP,
-            self::DESCRIPTION_1,
+            self::DESCRIPTION,
             $this->getCountryByCode($manager, self::COUNTRY_CA),
             $this->getRegionByCode($manager, self::STATE_CA_ON)
         );

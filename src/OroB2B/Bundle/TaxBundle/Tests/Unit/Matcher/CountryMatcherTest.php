@@ -44,6 +44,9 @@ class CountryMatcherTest extends AbstractMatcherTest
             ->willReturn($taxRules);
 
         $this->assertEquals($expected, $this->matcher->match($address, $productTaxCode, $accountTaxCode));
+
+        // cache
+        $this->assertEquals($expected, $this->matcher->match($address, $productTaxCode, $accountTaxCode));
     }
 
     /**

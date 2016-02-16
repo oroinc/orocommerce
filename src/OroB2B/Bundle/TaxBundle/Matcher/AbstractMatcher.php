@@ -2,13 +2,19 @@
 
 namespace OroB2B\Bundle\TaxBundle\Matcher;
 
+use Oro\Bundle\AddressBundle\Entity\Country;
+use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
 use OroB2B\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository;
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
+use OroB2B\Bundle\TaxBundle\Entity\ZipCode;
 
 abstract class AbstractMatcher implements MatcherInterface
 {
+    const CACHE_KEY_DELIMITER = ':';
+
     /**
      * @var DoctrineHelper
      */
@@ -20,8 +26,13 @@ abstract class AbstractMatcher implements MatcherInterface
     protected $taxRuleClass;
 
     /**
+     * @var array
+     */
+    protected $taxRulesCache = [];
+
+    /**
      * @param DoctrineHelper $doctrineHelper
-     * @param string         $taxRuleClass
+     * @param string $taxRuleClass
      */
     public function __construct(DoctrineHelper $doctrineHelper, $taxRuleClass)
     {
@@ -55,5 +66,34 @@ abstract class AbstractMatcher implements MatcherInterface
         }
 
         return array_values($result);
+    }
+
+    /**
+     * @param ...string[]
+     * @return string
+     */
+    protected function getCacheKey()
+    {
+        $arguments = func_get_args();
+
+        return implode(
+            self::CACHE_KEY_DELIMITER,
+            array_map(
+                function ($argument) {
+                    if ($argument instanceof Country) {
+                        return $argument->getIso2Code();
+                    } elseif ($argument instanceof Region) {
+                        return $argument->getCombinedCode();
+                    } elseif ($argument instanceof ZipCode) {
+                        return $argument->getZipCode();
+                    } elseif ($argument instanceof ProductTaxCode) {
+                        return $argument->getCode();
+                    }
+
+                    return $argument;
+                },
+                $arguments
+            )
+        );
     }
 }

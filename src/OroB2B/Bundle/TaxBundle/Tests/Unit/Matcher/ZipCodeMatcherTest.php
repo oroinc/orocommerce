@@ -66,7 +66,7 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
             ->setRegionText($regionText);
 
         $this->regionMatcher
-            ->expects($this->once())
+            ->expects($this->atLeastOnce())
             ->method('match')
             ->with($address)
             ->willReturn($regionMatcherRules);
@@ -89,6 +89,9 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
             )
             ->willReturn($zipCodeMatcherTaxRules);
 
+        $this->assertEquals($expected, $this->matcher->match($address, $productTaxCode, $accountTaxCode));
+
+        // cache
         $this->assertEquals($expected, $this->matcher->match($address, $productTaxCode, $accountTaxCode));
     }
 

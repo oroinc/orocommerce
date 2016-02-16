@@ -27,11 +27,19 @@ class CountryMatcher extends AbstractMatcher
             return [];
         }
 
-        return $this->getTaxRuleRepository()->findByCountryAndProductTaxCodeAndAccountTaxCode(
-            $country,
-            $productTaxCode,
-            $accountTaxCode
-        );
+        $cacheKey = $this->getCacheKey($country, $productTaxCode);
+        if (array_key_exists($cacheKey, $this->taxRulesCache)) {
+            return $this->taxRulesCache[$cacheKey];
+        }
+
+        $this->taxRulesCache[$cacheKey] =
+            $this->getTaxRuleRepository()->findByCountryAndProductTaxCodeAndAccountTaxCode(
+                $country,
+                $productTaxCode,
+                $accountTaxCode
+            );
+
+        return $this->taxRulesCache[$cacheKey];
     }
 
     /**

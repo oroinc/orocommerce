@@ -19,6 +19,11 @@ class RegionMatcher extends AbstractMatcher
         $country = $address->getCountry();
         $region = $address->getRegion();
         $regionText = $address->getRegionText();
+        $cacheKey = $this->getCacheKey($country, $region, $regionText);
+
+        if (array_key_exists($cacheKey, $this->taxRulesCache)) {
+            return $this->taxRulesCache[$cacheKey];
+        }
 
         $countryTaxRules = $this->countryMatcher->match($address, $productTaxCode, $accountTaxCode);
 
@@ -38,7 +43,9 @@ class RegionMatcher extends AbstractMatcher
             $regionText
         );
 
-        return $this->mergeResult($countryTaxRules, $regionTaxRules);
+        $this->taxRulesCache[$cacheKey] = $this->mergeResult($countryTaxRules, $regionTaxRules);
+
+        return $this->taxRulesCache[$cacheKey];
     }
 
     /**

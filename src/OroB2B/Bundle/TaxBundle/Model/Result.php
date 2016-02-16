@@ -14,6 +14,11 @@ final class Result extends AbstractResult
     const ITEMS = 'items';
 
     /**
+     * @var bool
+     */
+    protected $resultLocked;
+
+    /**
      * @return ResultElement
      */
     public function getTotal()
@@ -73,5 +78,21 @@ final class Result extends AbstractResult
         }
 
         return parent::serialize();
+    }
+
+    /**
+     * @param bool $locked
+     */
+    protected function setResultLocked($locked)
+    {
+        $this->resultLocked = $locked;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isResultLocked()
+    {
+        return $this->resultLocked;
     }
 }

@@ -58,11 +58,7 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->addressProvider->expects($this->any())
-            ->method('getAddressForTaxation')
-            ->willReturnCallback(function (Order $order) {
-                return $this->getTaxableAddress($order);
-            });
+        $this->addressProvider->expects($this->any())->method('getAddressForTaxation')->willReturnArgument(1);
 
         $this->eventDispatcher = $this
             ->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcher')
@@ -102,7 +98,7 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
 
         $taxable = $this->mapper->map($order);
 
-        $this->assertTaxable($taxable, self::ORDER_ID, self::ORDER_SUBTOTAL, $this->getTaxableAddress($order));
+        $this->assertTaxable($taxable, self::ORDER_ID, self::ORDER_SUBTOTAL, $order->getShippingAddress());
         $this->assertCount(1, $taxable->getItems());
         $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Taxable', $taxable->getItems()->current());
     }
@@ -147,14 +143,5 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($destination, $taxable->getDestination());
         $this->assertEquals(self::CONTEXT_VALUE, $taxable->getContextValue(self::CONTEXT_KEY));
         $this->assertNotEmpty($taxable->getItems());
-    }
-
-    /**
-     * @param Order $order
-     * @return null|OrderAddress
-     */
-    protected function getTaxableAddress(Order $order)
-    {
-        return $order->getShippingAddress();
     }
 }

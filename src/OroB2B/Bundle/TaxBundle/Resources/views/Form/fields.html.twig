@@ -122,10 +122,11 @@
 {% endblock %}
 
 {% macro tax_address_block(form, disabled) %}
-    <div class="controls tax-address {{ form.vars.name }}">{{ form_widget(form, {disabled: disabled}) }}</div>
+    {% set attrs = {'attr': {'data-validation': { NotBlank: null }|json_encode }, disabled: disabled } %}
+    <div class="controls tax-address {{ form.vars.name }}">{{ form_widget(form, attrs) }}</div>
 {% endmacro %}
 
-{% block _tax_calculation_orob2b_tax___origin_address_value_country_row %}<div class="control-group">{{ _self.tax_address_block(form, form.parent.vars.value.country|default(false) is empty) }}</div>{% endblock %}
-{% block _tax_calculation_orob2b_tax___origin_address_value_region_row %}<div class="control-group">{{ _self.tax_address_block(form, form.parent.vars.value.region|default(false) is empty) }}</div>{% endblock %}
-{% block _tax_calculation_orob2b_tax___origin_address_value_region_text_row %}<div class="control-group">{{ _self.tax_address_block(form, form.parent.vars.value.region_text|default(false) is empty) }}</div>{% endblock %}
-{% block _tax_calculation_orob2b_tax___origin_address_value_postal_code_row %}<div class="control-group">{{ _self.tax_address_block(form, form.parent.vars.value.postal_code|default(false) is empty) }}</div>{% endblock %}
+{% block _tax_calculation_orob2b_tax___origin_address_value_country_row %}<div class="control-group">{{ _self.tax_address_block(form, use_parent_scope_value) }}</div>{% endblock %}
+{% block _tax_calculation_orob2b_tax___origin_address_value_region_row %}<div class="control-group">{{ _self.tax_address_block(form, use_parent_scope_value) }}</div>{% endblock %}
+{% block _tax_calculation_orob2b_tax___origin_address_value_region_text_row %}<div class="control-group">{{ _self.tax_address_block(form, use_parent_scope_value) }}</div>{% endblock %}
+{% block _tax_calculation_orob2b_tax___origin_address_value_postal_code_row %}<div class="control-group">{{ _self.tax_address_block(form, use_parent_scope_value) }}</div>{% endblock %}

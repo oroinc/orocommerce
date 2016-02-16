@@ -10,6 +10,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Migrations\Data\ORM\LoadAccountUserRoles;
+use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
  * @dbIsolation
@@ -41,7 +42,8 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $this->loadFixtures(
             [
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData',
+                'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData'
             ]
         );
     }
@@ -85,6 +87,10 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $form['orob2b_account_account_user[passwordGenerate]'] = $isPasswordGenerate;
         $form['orob2b_account_account_user[sendEmail]'] = $isSendEmail;
         $form['orob2b_account_account_user[roles][0]']->tick();
+        $form['orob2b_account_account_user[salesRepresentatives]'] = implode(',', [
+            $this->getReference(LoadUserData::USER1)->getId(),
+            $this->getReference(LoadUserData::USER2)->getId()
+        ]);
 
         $this->client->submit($form);
 
@@ -103,6 +109,8 @@ class AccountUserControllerTest extends AbstractUserControllerTest
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('Account User has been saved', $crawler->html());
+        $this->assertContains($this->getReference(LoadUserData::USER1)->getFullName(), $result->getContent());
+        $this->assertContains($this->getReference(LoadUserData::USER2)->getFullName(), $result->getContent());
     }
 
 

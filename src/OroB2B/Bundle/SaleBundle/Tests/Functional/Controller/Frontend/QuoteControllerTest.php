@@ -292,10 +292,6 @@ class QuoteControllerTest extends WebTestCase
                             'property' => 'qid',
                         ],
                         [
-                            'label' => 'orob2b.frontend.sale.quote.account_user.label',
-                            'property' => 'account_user',
-                        ],
-                        [
                             'label' => 'orob2b.frontend.sale.quote.valid_until.label',
                             'property' => 'valid_until',
                         ],

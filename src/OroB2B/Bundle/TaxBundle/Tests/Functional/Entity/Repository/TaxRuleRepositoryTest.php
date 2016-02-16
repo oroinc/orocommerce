@@ -24,7 +24,7 @@ class TaxRuleRepositoryTest extends WebTestCase
     public function testFindByCountryAndProductTaxCodeAndAccountTaxCode()
     {
         /** @var TaxRule $taxRule */
-        $taxRule = $this->getReference(LoadTaxRules::REFERENCE_PREFIX . '.' . LoadTaxRules::TAX_RULE_3);
+        $taxRule = $this->getReference(LoadTaxRules::REFERENCE_PREFIX . '.' . LoadTaxRules::TAX_RULE_1);
 
         /** @var TaxRule[] $result */
         $result = $this->getRepository()->findByCountryAndProductTaxCodeAndAccountTaxCode(
@@ -33,13 +33,13 @@ class TaxRuleRepositoryTest extends WebTestCase
             $taxRule->getAccountTaxCode()->getCode()
         );
 
-        $this->assertEquals($taxRule->getId(), reset($result)->getId());
+        $this->assertContains($taxRule, $result);
     }
 
     public function testFindByCountryAndRegionAndProductTaxCodeAndAccountTaxCode()
     {
         /** @var TaxRule $taxRule */
-        $taxRule = $this->getReference(LoadTaxRules::REFERENCE_PREFIX . '.' . LoadTaxRules::TAX_RULE_1);
+        $taxRule = $this->getReference(LoadTaxRules::REFERENCE_PREFIX . '.' . LoadTaxRules::TAX_RULE_2);
 
         /** @var TaxRule[] $result */
         $result = $this->getRepository()->findByCountryAndRegionAndProductTaxCodeAndAccountTaxCode(
@@ -49,7 +49,7 @@ class TaxRuleRepositoryTest extends WebTestCase
             $taxRule->getTaxJurisdiction()->getRegion()
         );
 
-        $this->assertEquals($taxRule->getId(), reset($result)->getId());
+        $this->assertContains($taxRule, $result);
     }
 
     public function testFindByZipCodeAndProductTaxCodeAndAccountTaxCode()
@@ -66,8 +66,7 @@ class TaxRuleRepositoryTest extends WebTestCase
             $taxRule->getTaxJurisdiction()->getRegion()
         );
 
-        $this->assertCount(1, $result);
-        $this->assertEquals($taxRule->getId(), reset($result)->getId());
+        $this->assertContains($taxRule, $result);
     }
 
     /**

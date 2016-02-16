@@ -88,7 +88,10 @@ class OrderLineItemHandler
             return false;
         }
 
-        $address = $this->addressProvider->getAddressForTaxation($lineItem->getOrder());
+        $billingAddress = $lineItem->getOrder()->getBillingAddress();
+        $shippingAddress = $lineItem->getOrder()->getShippingAddress();
+
+        $address = $this->addressProvider->getAddressForTaxation($billingAddress, $shippingAddress);
 
         return $this->addressProvider->isDigitalProductTaxCode($address->getCountry()->getIso2Code(), $productTaxCode);
     }
@@ -107,7 +110,7 @@ class OrderLineItemHandler
         $productTaxCodeRepository = $this->doctrineHelper->getEntityRepositoryForClass($this->productTaxCodeClass);
         $productTaxCode = $productTaxCodeRepository->findOneByProduct($lineItem->getProduct());
 
-        return $productTaxCode->getCode();
+        return $productTaxCode ? $productTaxCode->getCode() : null;
     }
 
     /**

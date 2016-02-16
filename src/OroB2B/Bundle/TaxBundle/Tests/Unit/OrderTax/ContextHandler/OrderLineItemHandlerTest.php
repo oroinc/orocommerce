@@ -88,6 +88,12 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         $this->accountTaxCode = (new AccountTaxCode())
             ->setCode(self::ACCOUNT_TAX_CODE);
 
+        $billingAddress = new OrderAddress();
+        $shippingAddress = new OrderAddress();
+
+        $this->order->setBillingAddress($billingAddress);
+        $this->order->setShippingAddress($shippingAddress);
+
         $this->address = (new OrderAddress())
             ->setCountry(new Country(self::ORDER_ADDRESS_COUNTRY_CODE));
 
@@ -99,7 +105,7 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         $this->addressProvider
             ->expects($this->any())
             ->method('getAddressForTaxation')
-            ->with($this->order)
+            ->with($billingAddress, $shippingAddress)
             ->willReturn($this->address);
 
         $this->addressProvider
@@ -118,7 +124,11 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         $this->productTaxCodeRepository
             ->expects($this->any())
             ->method('findOneByProduct')
-            ->willReturn($this->productTaxCode);
+            ->willReturnCallback(
+                function () {
+                    return $this->productTaxCode;
+                }
+            );
 
         $this->accountTaxCodeRepository = $this
             ->getMockBuilder('OroB2B\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository')
@@ -164,10 +174,11 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider onContextEventProvider
      * @param bool $hasProduct
+     * @param bool $hasProductTaxCode
      * @param bool $isProductDigital
      * @param \ArrayObject $expectedContext
      */
-    public function testOnContextEvent($hasProduct, $isProductDigital, $expectedContext)
+    public function testOnContextEvent($hasProduct, $hasProductTaxCode, $isProductDigital, $expectedContext)
     {
         $this->isProductTaxCodeDigital = $isProductDigital;
 
@@ -176,6 +187,10 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
 
         if ($hasProduct) {
             $orderLineItem->setProduct(new Product());
+        }
+
+        if (!$hasProductTaxCode) {
+            $this->productTaxCode = null;
         }
 
         $contextEvent = new ContextEvent($orderLineItem);
@@ -193,6 +208,7 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         return [
             'order line item without product' => [
                 'hasProduct' => false,
+                'hasProductTaxCode' => true,
                 'isProductDigital' => false,
                 'expectedContext' => new \ArrayObject([
                     Taxable::DIGITAL_PRODUCT => false,
@@ -202,6 +218,7 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ],
             'product is not digital' => [
                 'hasProduct' => true,
+                'hasProductTaxCode' => true,
                 'isProductDigital' => false,
                 'expectedContext' => new \ArrayObject([
                     Taxable::DIGITAL_PRODUCT => false,
@@ -211,11 +228,21 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ],
             'product is digital' => [
                 'hasProduct' => true,
+                'hasProductTaxCode' => true,
                 'isProductDigital' => true,
                 'expectedContext' => new \ArrayObject([
                     Taxable::DIGITAL_PRODUCT => true,
                     Taxable::PRODUCT_TAX_CODE => self::PRODUCT_TAX_CODE,
                     Taxable::ACCOUNT_TAX_CODE => self::ACCOUNT_TAX_CODE,
+                ])
+            ],
+            'product without tax code' => [
+                'hasProduct' => true,
+                'hasProductTaxCode' => false,
+                'isProductDigital' => false,
+                'expectedContext' => new \ArrayObject([
+                    Taxable::DIGITAL_PRODUCT => false,
+                    Taxable::PRODUCT_TAX_CODE => null,
                 ])
             ],
         ];

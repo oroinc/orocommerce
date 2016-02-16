@@ -16,9 +16,15 @@ class ZipCodeMatcher extends AbstractMatcher
      */
     public function match(AbstractAddress $address, $productTaxCode, $accountTaxCode)
     {
+        $country = $address->getCountry();
         $region = $address->getRegion();
         $regionText = $address->getRegionText();
-        $country = $address->getCountry();
+        $zipCode = $address->getPostalCode();
+
+        $cacheKey = $this->getCacheKey($country, $region, $regionText, $zipCode, $productTaxCode);
+        if (array_key_exists($cacheKey, $this->taxRulesCache)) {
+            return $this->taxRulesCache[$cacheKey];
+        }
 
         $regionTaxRules = $this->regionMatcher->match($address, $productTaxCode, $accountTaxCode);
 
@@ -39,7 +45,9 @@ class ZipCodeMatcher extends AbstractMatcher
             $regionText
         );
 
-        return $this->mergeResult($regionTaxRules, $zipCodeTaxRules);
+        $this->taxRulesCache[$cacheKey] = $this->mergeResult($regionTaxRules, $zipCodeTaxRules);
+
+        return $this->taxRulesCache[$cacheKey];
     }
 
     /**
