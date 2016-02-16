@@ -93,6 +93,7 @@ class OrderController extends AbstractOrderController
     {
         $order = new Order();
         $order->setWebsite($this->get('orob2b_website.manager')->getCurrentWebsite());
+
         return $this->update($order, $request);
     }
 
