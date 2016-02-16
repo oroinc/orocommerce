@@ -80,7 +80,7 @@ class PriceListTreeHandler
             }
         }
 
-        $priceList = $priceList = $this->getPriceListRepository()->getPriceListByWebsite($website);
+        $priceList = $this->getPriceListRepository()->getPriceListByWebsite($website);
         if (!$priceList) {
             $priceList = $this->getPriceListFromConfig();
         }
