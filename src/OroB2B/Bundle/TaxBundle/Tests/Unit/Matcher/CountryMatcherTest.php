@@ -7,6 +7,8 @@ use Oro\Bundle\AddressBundle\Entity\Country;
 
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 use OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher;
+use OroB2B\Bundle\TaxBundle\Model\TaxCode;
+use OroB2B\Bundle\TaxBundle\Model\TaxCodes;
 
 class CountryMatcherTest extends AbstractMatcherTest
 {
@@ -35,18 +37,23 @@ class CountryMatcherTest extends AbstractMatcherTest
         $address = (new Address())
             ->setCountry($country);
 
+        $taxCodes = TaxCodes::create(
+            [
+                TaxCode::create($productTaxCode, TaxCode::TYPE_PRODUCT),
+                TaxCode::create($accountTaxCode, TaxCode::TYPE_ACCOUNT),
+            ]
+        );
+
         $this->taxRuleRepository
-            ->expects(
-                empty($taxRules) || empty($productTaxCode) || empty($accountTaxCode) ? $this->never() : $this->once()
-            )
-            ->method('findByCountryAndProductTaxCodeAndAccountTaxCode')
-            ->with($country, $productTaxCode, $accountTaxCode)
+            ->expects($country ? $this->once() : $this->never())
+            ->method('findByCountryAndTaxCode')
+            ->with($taxCodes, $country)
             ->willReturn($taxRules);
 
-        $this->assertEquals($expected, $this->matcher->match($address, $productTaxCode, $accountTaxCode));
+        $this->assertEquals($expected, $this->matcher->match($address, $taxCodes));
 
         // cache
-        $this->assertEquals($expected, $this->matcher->match($address, $productTaxCode, $accountTaxCode));
+        $this->assertEquals($expected, $this->matcher->match($address, $taxCodes));
     }
 
     /**
@@ -65,29 +72,29 @@ class CountryMatcherTest extends AbstractMatcherTest
                 'country' => new Country('US'),
                 'productTaxCode' => 'PRODUCT_TAX_CODE',
                 'accountTaxCode' => 'ACCOUNT_TAX_CODE',
-                'taxRules' => $taxRules
+                'taxRules' => $taxRules,
             ],
             'address without country' => [
                 'expected' => [],
                 'country' => null,
                 'productTaxCode' => 'PRODUCT_TAX_CODE',
                 'accountTaxCode' => 'ACCOUNT_TAX_CODE',
-                'taxRules' => []
+                'taxRules' => [],
             ],
             'address without product tax code' => [
                 'expected' => [],
                 'country' => new Country('US'),
                 'productTaxCode' => null,
                 'accountTaxCode' => 'ACCOUNT_TAX_CODE',
-                'taxRules' => []
+                'taxRules' => [],
             ],
             'address without account tax code' => [
                 'expected' => [],
                 'country' => new Country('US'),
                 'productTaxCode' => 'PRODUCT_TAX_CODE',
                 'accountTaxCode' => null,
-                'taxRules' => []
-            ]
+                'taxRules' => [],
+            ],
         ];
     }
 

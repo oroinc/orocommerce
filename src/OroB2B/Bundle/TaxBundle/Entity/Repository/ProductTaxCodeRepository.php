@@ -18,11 +18,6 @@ class ProductTaxCodeRepository extends AbstractTaxCodeRepository
             return null;
         }
 
-        return $this->createQueryBuilder('productTaxCode')
-            ->where(':product MEMBER OF productTaxCode.products')
-            ->setParameter('product', $product)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult();
+        return $this->findOneByEntity(ProductTaxCode::TYPE_PRODUCT, $product);
     }
 }

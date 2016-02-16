@@ -9,6 +9,8 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 use OroB2B\Bundle\TaxBundle\Matcher\RegionMatcher;
 use OroB2B\Bundle\TaxBundle\Matcher\ZipCodeMatcher;
+use OroB2B\Bundle\TaxBundle\Model\TaxCode;
+use OroB2B\Bundle\TaxBundle\Model\TaxCodes;
 
 class ZipCodeMatcherTest extends AbstractMatcherTest
 {
@@ -71,17 +73,18 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
             ->with($address)
             ->willReturn($regionMatcherRules);
 
+        $taxCodes = TaxCodes::create(
+            [
+                TaxCode::create($productTaxCode, TaxCode::TYPE_PRODUCT),
+                TaxCode::create($accountTaxCode, TaxCode::TYPE_ACCOUNT),
+            ]
+        );
+
         $this->taxRuleRepository
-            ->expects(
-                empty($zipCodeMatcherTaxRules) ||
-                empty($productTaxCode) ||
-                empty($accountTaxCode) ?
-                $this->never() : $this->once()
-            )
-            ->method('findByZipCodeAndProductTaxCodeAndAccountTaxCode')
+            ->expects($country && ($region || $regionText) ? $this->once() : $this->never())
+            ->method('findByZipCodeAndTaxCode')
             ->with(
-                $productTaxCode,
-                $accountTaxCode,
+                $taxCodes,
                 self::POSTAL_CODE,
                 $country,
                 $region,
@@ -89,10 +92,10 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
             )
             ->willReturn($zipCodeMatcherTaxRules);
 
-        $this->assertEquals($expected, $this->matcher->match($address, $productTaxCode, $accountTaxCode));
+        $this->assertEquals($expected, $this->matcher->match($address, $taxCodes));
 
         // cache
-        $this->assertEquals($expected, $this->matcher->match($address, $productTaxCode, $accountTaxCode));
+        $this->assertEquals($expected, $this->matcher->match($address, $taxCodes));
     }
 
     /**

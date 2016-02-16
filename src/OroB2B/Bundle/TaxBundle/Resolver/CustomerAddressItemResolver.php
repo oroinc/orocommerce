@@ -6,6 +6,8 @@ use Brick\Math\BigDecimal;
 
 use OroB2B\Bundle\TaxBundle\Matcher\MatcherInterface;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
+use OroB2B\Bundle\TaxBundle\Model\TaxCode;
+use OroB2B\Bundle\TaxBundle\Model\TaxCodes;
 
 class CustomerAddressItemResolver extends AbstractItemResolver
 {
@@ -34,15 +36,32 @@ class CustomerAddressItemResolver extends AbstractItemResolver
             return;
         }
 
-        $productTaxCode = $taxable->getContextValue(Taxable::PRODUCT_TAX_CODE);
-        $accountTaxCode = $taxable->getContextValue(Taxable::ACCOUNT_TAX_CODE);
-
-        $taxRules = $this->matcher->match($address, $productTaxCode, $accountTaxCode);
+        $taxRules = $this->matcher->match($address, $this->getTaxCodes($taxable));
         $taxableAmount = BigDecimal::of($taxable->getPrice());
 
         $result = $taxable->getResult();
         $this->unitResolver->resolveUnitPrice($result, $taxRules, $taxableAmount);
         $this->rowTotalResolver->resolveRowTotal($result, $taxRules, $taxableAmount, $taxable->getQuantity());
+    }
+
+    /**
+     * @param Taxable $taxable
+     * @return TaxCodes
+     */
+    protected function getTaxCodes(Taxable $taxable)
+    {
+        return TaxCodes::create(
+            [
+                TaxCode::create(
+                    TaxCode::TYPE_PRODUCT,
+                    $taxable->getContextValue(Taxable::PRODUCT_TAX_CODE)
+                ),
+                TaxCode::create(
+                    TaxCode::TYPE_ACCOUNT,
+                    $taxable->getContextValue(Taxable::ACCOUNT_TAX_CODE)
+                ),
+            ]
+        );
     }
 
     /**

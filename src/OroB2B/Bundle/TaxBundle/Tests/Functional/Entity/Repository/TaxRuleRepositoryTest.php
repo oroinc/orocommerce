@@ -4,8 +4,12 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
+use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 use OroB2B\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository;
+use OroB2B\Bundle\TaxBundle\Model\TaxCode;
+use OroB2B\Bundle\TaxBundle\Model\TaxCodes;
 use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules;
 use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions;
 
@@ -27,13 +31,17 @@ class TaxRuleRepositoryTest extends WebTestCase
         $taxRule = $this->getReference(LoadTaxRules::REFERENCE_PREFIX . '.' . LoadTaxRules::TAX_RULE_1);
 
         /** @var TaxRule[] $result */
-        $result = $this->getRepository()->findByCountryAndProductTaxCodeAndAccountTaxCode(
-            $taxRule->getTaxJurisdiction()->getCountry(),
-            $taxRule->getProductTaxCode()->getCode(),
-            $taxRule->getAccountTaxCode()->getCode()
+        $result = $this->getRepository()->findByCountryAndTaxCode(
+            TaxCodes::create(
+                [
+                    TaxCode::create($taxRule->getProductTaxCode()->getCode(), ProductTaxCode::TYPE_PRODUCT),
+                    TaxCode::create($taxRule->getAccountTaxCode()->getCode(), AccountTaxCode::TYPE_ACCOUNT),
+                ]
+            ),
+            $taxRule->getTaxJurisdiction()->getCountry()
         );
 
-        $this->assertContains($taxRule, $result);
+        $this->assertContainsId($taxRule, $result);
     }
 
     public function testFindByCountryAndRegionAndProductTaxCodeAndAccountTaxCode()
@@ -42,14 +50,18 @@ class TaxRuleRepositoryTest extends WebTestCase
         $taxRule = $this->getReference(LoadTaxRules::REFERENCE_PREFIX . '.' . LoadTaxRules::TAX_RULE_2);
 
         /** @var TaxRule[] $result */
-        $result = $this->getRepository()->findByCountryAndRegionAndProductTaxCodeAndAccountTaxCode(
-            $taxRule->getProductTaxCode()->getCode(),
-            $taxRule->getAccountTaxCode()->getCode(),
+        $result = $this->getRepository()->findByRegionAndTaxCode(
+            TaxCodes::create(
+                [
+                    TaxCode::create($taxRule->getProductTaxCode()->getCode(), ProductTaxCode::TYPE_PRODUCT),
+                    TaxCode::create($taxRule->getAccountTaxCode()->getCode(), AccountTaxCode::TYPE_ACCOUNT),
+                ]
+            ),
             $taxRule->getTaxJurisdiction()->getCountry(),
             $taxRule->getTaxJurisdiction()->getRegion()
         );
 
-        $this->assertContains($taxRule, $result);
+        $this->assertContainsId($taxRule, $result);
     }
 
     public function testFindByZipCodeAndProductTaxCodeAndAccountTaxCode()
@@ -58,15 +70,35 @@ class TaxRuleRepositoryTest extends WebTestCase
         $taxRule = $this->getReference(LoadTaxRules::REFERENCE_PREFIX . '.' . LoadTaxRules::TAX_RULE_4);
 
         /** @var TaxRule[] $result */
-        $result = $this->getRepository()->findByZipCodeAndProductTaxCodeAndAccountTaxCode(
-            $taxRule->getProductTaxCode()->getCode(),
-            $taxRule->getAccountTaxCode()->getCode(),
+        $result = $this->getRepository()->findByZipCodeAndTaxCode(
+            TaxCodes::create(
+                [
+                    TaxCode::create($taxRule->getProductTaxCode()->getCode(), ProductTaxCode::TYPE_PRODUCT),
+                    TaxCode::create($taxRule->getAccountTaxCode()->getCode(), AccountTaxCode::TYPE_ACCOUNT),
+                ]
+            ),
             LoadTaxJurisdictions::ZIP_CODE,
             $taxRule->getTaxJurisdiction()->getCountry(),
             $taxRule->getTaxJurisdiction()->getRegion()
         );
 
-        $this->assertContains($taxRule, $result);
+        $this->assertContainsId($taxRule, $result);
+    }
+
+    /**
+     * @param TaxRule $expectedTaxRule
+     * @param array $result
+     */
+    protected function assertContainsId(TaxRule $expectedTaxRule, array $result)
+    {
+        $ids = array_map(
+            function (TaxRule $taxRule) {
+                return $taxRule->getId();
+            },
+            $result
+        );
+
+        $this->assertTrue(in_array($expectedTaxRule->getId(), $ids, true));
     }
 
     /**

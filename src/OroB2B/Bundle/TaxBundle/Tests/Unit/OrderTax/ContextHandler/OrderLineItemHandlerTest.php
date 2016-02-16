@@ -243,6 +243,7 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
                 'expectedContext' => new \ArrayObject([
                     Taxable::DIGITAL_PRODUCT => false,
                     Taxable::PRODUCT_TAX_CODE => null,
+                    Taxable::ACCOUNT_TAX_CODE => self::ACCOUNT_TAX_CODE,
                 ])
             ],
         ];

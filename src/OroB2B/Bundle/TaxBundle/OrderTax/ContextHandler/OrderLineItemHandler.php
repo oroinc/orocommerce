@@ -39,6 +39,11 @@ class OrderLineItemHandler
     protected $orderLineItemClass;
 
     /**
+     * @var array
+     */
+    protected $taxCodes = [];
+
+    /**
      * @param TaxationAddressProvider $addressProvider
      * @param DoctrineHelper $doctrineHelper
      * @param string $productTaxCodeClass
@@ -58,6 +63,7 @@ class OrderLineItemHandler
         $this->accountTaxCodeClass = $accountTaxCodeClass;
         $this->orderLineItemClass = $orderLineItemClass;
     }
+
     /**
      * @param ContextEvent $contextEvent
      */
@@ -102,15 +108,23 @@ class OrderLineItemHandler
      */
     protected function getProductTaxCode(OrderLineItem $lineItem)
     {
+        if (array_key_exists($lineItem->getId(), $this->taxCodes)) {
+            return $this->taxCodes[$lineItem->getId()];
+        }
+
         if ($lineItem->getProduct() === null) {
-            return null;
+            $this->taxCodes[$lineItem->getId()] = null;
+
+            return $this->taxCodes[$lineItem->getId()];
         }
 
         /** @var ProductTaxCodeRepository $productTaxCodeRepository */
         $productTaxCodeRepository = $this->doctrineHelper->getEntityRepositoryForClass($this->productTaxCodeClass);
         $productTaxCode = $productTaxCodeRepository->findOneByProduct($lineItem->getProduct());
 
-        return $productTaxCode ? $productTaxCode->getCode() : null;
+        $this->taxCodes[$lineItem->getId()] = $productTaxCode ? $productTaxCode->getCode() : null;
+
+        return $this->taxCodes[$lineItem->getId()];
     }
 
     /**

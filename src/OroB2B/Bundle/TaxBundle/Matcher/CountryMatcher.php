@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\TaxBundle\Matcher;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
+use OroB2B\Bundle\TaxBundle\Model\TaxCodes;
+
 class CountryMatcher extends AbstractMatcher
 {
     /**
@@ -19,25 +21,21 @@ class CountryMatcher extends AbstractMatcher
     /**
      * {@inheritdoc}
      */
-    public function match(AbstractAddress $address, $productTaxCode, $accountTaxCode)
+    public function match(AbstractAddress $address, TaxCodes $taxCodes)
     {
         $country = $address->getCountry();
 
-        if (null === $country || $productTaxCode === null || $accountTaxCode === null) {
+        if (null === $country) {
             return [];
         }
 
-        $cacheKey = $this->getCacheKey($country, $productTaxCode);
+        $cacheKey = $this->getCacheKey($country, $taxCodes->getHash());
         if (array_key_exists($cacheKey, $this->taxRulesCache)) {
             return $this->taxRulesCache[$cacheKey];
         }
 
         $this->taxRulesCache[$cacheKey] =
-            $this->getTaxRuleRepository()->findByCountryAndProductTaxCodeAndAccountTaxCode(
-                $country,
-                $productTaxCode,
-                $accountTaxCode
-            );
+            $this->getTaxRuleRepository()->findByCountryAndTaxCode($taxCodes, $country);
 
         return $this->taxRulesCache[$cacheKey];
     }

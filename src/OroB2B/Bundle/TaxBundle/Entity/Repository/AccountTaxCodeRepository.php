@@ -19,12 +19,7 @@ class AccountTaxCodeRepository extends AbstractTaxCodeRepository
             return null;
         }
 
-        return $this->createQueryBuilder('accountTaxCode')
-            ->where(':account MEMBER OF accountTaxCode.accounts')
-            ->setParameter('account', $account)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult();
+        return $this->findOneByEntity(AccountTaxCode::TYPE_ACCOUNT, $account);
     }
 
     /**
@@ -38,11 +33,6 @@ class AccountTaxCodeRepository extends AbstractTaxCodeRepository
             return null;
         }
 
-        return $this->createQueryBuilder('accountTaxCode')
-            ->where(':accountGroup MEMBER OF accountTaxCode.accountGroups')
-            ->setParameter('accountGroup', $accountGroup)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult();
+        return $this->findOneByEntity(AccountTaxCode::TYPE_ACCOUNT_GROUP, $accountGroup);
     }
 }
