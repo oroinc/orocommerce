@@ -28,19 +28,19 @@ class PriceListCollectionListener
      */
     public function onChangeCollectionBefore(PriceListQueueChangeEvent $event)
     {
-        $changedPriceListCollection = new PriceListChangeTrigger();
+        $trigger = new PriceListChangeTrigger();
         $targetEntity = $event->getTargetEntity();
         if ($targetEntity instanceof Website) {
-            $changedPriceListCollection->setWebsite($targetEntity);
+            $trigger->setWebsite($targetEntity);
         } elseif ($targetEntity instanceof Account) {
-            $changedPriceListCollection->setAccount($targetEntity);
-            $changedPriceListCollection->setWebsite($event->getWebsite());
+            $trigger->setAccount($targetEntity);
+            $trigger->setWebsite($event->getWebsite());
         } elseif ($targetEntity instanceof AccountGroup) {
-            $changedPriceListCollection->setAccountGroup($targetEntity);
-            $changedPriceListCollection->setWebsite($event->getWebsite());
+            $trigger->setAccountGroup($targetEntity);
+            $trigger->setWebsite($event->getWebsite());
         }
         $this->registry
             ->getManagerForClass('OroB2BPricingBundle:PriceListChangeTrigger')
-            ->persist($changedPriceListCollection);
+            ->persist($trigger);
     }
 }

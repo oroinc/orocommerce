@@ -7,7 +7,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class AddChangedProductPriceTable implements Migration
+class AddProductPriceChangeTriggerTable implements Migration
 {
 
     /**
@@ -15,8 +15,8 @@ class AddChangedProductPriceTable implements Migration
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->createOroB2BChangedProductPriceTable($schema);
-        $this->addOroB2BChangedProductPriceForeignKeys($schema);
+        $this->createOroB2BProductPriceChangeTriggerTable($schema);
+        $this->addOroB2BProductPriceChangeTriggerForeignKeys($schema);
     }
 
     /**
@@ -24,7 +24,7 @@ class AddChangedProductPriceTable implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOroB2BChangedProductPriceTable(Schema $schema)
+    protected function createOroB2BProductPriceChangeTriggerTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_prod_price_ch_trigger');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -39,7 +39,7 @@ class AddChangedProductPriceTable implements Migration
      *
      * @param Schema $schema
      */
-    protected function addOroB2BChangedProductPriceForeignKeys(Schema $schema)
+    protected function addOroB2BProductPriceChangeTriggerForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_prod_price_ch_trigger');
         $table->addForeignKeyConstraint(

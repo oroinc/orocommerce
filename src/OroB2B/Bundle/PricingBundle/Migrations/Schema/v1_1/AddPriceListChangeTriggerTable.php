@@ -14,8 +14,8 @@ class AddPriceListChangeTriggerTable implements Migration
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->createOrob2BPriceListCollChangedTable($schema);
-        $this->addOrob2BPriceListCollChangedForeignKeys($schema);
+        $this->createOroB2BPriceListChangeTriggerTable($schema);
+        $this->addOroB2BPriceListChangeTriggerForeignKeys($schema);
     }
 
     /**
@@ -23,7 +23,7 @@ class AddPriceListChangeTriggerTable implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOrob2BPriceListCollChangedTable(Schema $schema)
+    protected function createOroB2BPriceListChangeTriggerTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_price_list_change_trigger');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -38,7 +38,7 @@ class AddPriceListChangeTriggerTable implements Migration
      *
      * @param Schema $schema
      */
-    protected function addOrob2BPriceListCollChangedForeignKeys(Schema $schema)
+    protected function addOroB2BPriceListChangeTriggerForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_price_list_change_trigger');
         $table->addForeignKeyConstraint(
