@@ -115,10 +115,10 @@ class TaxationAddressProvider
      */
     public function isDigitalProductTaxCode($countryCode, $taxCode)
     {
-        if ($this->countryMatcher->isEuropeanUnionCountry($countryCode)) {
-            $digitalProductTaxCodes = $this->settingsProvider->getDigitalProductsTaxCodesEU();
-        } elseif ($countryCode === 'US') {
+        if ($countryCode === 'US') {
             $digitalProductTaxCodes = $this->settingsProvider->getDigitalProductsTaxCodesUS();
+        } elseif ($this->countryMatcher->isEuropeanUnionCountry($countryCode)) {
+            $digitalProductTaxCodes = $this->settingsProvider->getDigitalProductsTaxCodesEU();
         } else {
             return false;
         }

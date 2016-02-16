@@ -37,7 +37,7 @@ class DigitalResolver implements ResolverInterface
             return;
         }
 
-        if ($taxable->getResult()->count() !== 0) {
+        if ($taxable->getResult()->isResultLocked()) {
             return;
         }
 
