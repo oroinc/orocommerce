@@ -20,6 +20,7 @@ services:
             - { name: form.type, alias: orob2b_order_type }
         calls:
             - [setDataClass, [%orob2b_order.entity.order.class%]]
+            - [setWebsiteClass, [%orob2b_website.website.class%]]
 
     orob2b_order.form.type.frontend.order:
         class: %orob2b_order.form.type.frontend.order.class%

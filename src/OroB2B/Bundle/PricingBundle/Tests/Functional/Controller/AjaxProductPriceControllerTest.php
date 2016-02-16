@@ -2,11 +2,11 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller;
 
-use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 use Symfony\Component\DomCrawler\Form;
 
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation

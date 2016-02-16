@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\OrderBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -109,5 +108,8 @@ abstract class AbstractOrderController extends Controller
     /**
      * @return ProductPriceProvider
      */
-    abstract protected function getProductPriceProvider();
+    protected function getProductPriceProvider()
+    {
+        return $this->get('orob2b_pricing.provider.combined_product_price');
+    }
 }

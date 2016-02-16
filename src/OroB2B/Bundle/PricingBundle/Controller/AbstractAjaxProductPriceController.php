@@ -20,11 +20,6 @@ use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 abstract class AbstractAjaxProductPriceController extends Controller
 {
     /**
-     * @var EntityManager[]
-     */
-    protected $managers = [];
-
-    /**
      * Get products prices by price list and product ids
      *
      * @param Request $request
@@ -130,11 +125,7 @@ abstract class AbstractAjaxProductPriceController extends Controller
      */
     protected function getManagerForClass($class)
     {
-        if (!array_key_exists($class, $this->managers)) {
-            $this->managers[$class] = $this->getDoctrine()->getManagerForClass($class);
-        }
-
-        return $this->managers[$class];
+        return $this->get('oro_entity.doctrine_helper')->getEntityManagerForClass($class);
     }
 
     /**

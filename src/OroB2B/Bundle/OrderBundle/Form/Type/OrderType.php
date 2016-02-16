@@ -23,9 +23,14 @@ class OrderType extends AbstractType
     const NAME = 'orob2b_order_type';
 
     /**
-     * @var  string
+     * @var string
      */
     protected $dataClass;
+
+    /**
+     * @var string
+     */
+    protected $websiteClass = 'OroB2B\Bundle\WebsiteBundle\Entity\Website';
 
     /**
      * @var OrderAddressSecurityProvider
@@ -88,7 +93,7 @@ class OrderType extends AbstractType
                 'website',
                 'entity',
                 [
-                    'class' => 'OroB2B\Bundle\WebsiteBundle\Entity\Website',
+                    'class' => $this->websiteClass,
                     'label' => 'orob2b.order.website.label'
                 ]
             )
@@ -218,5 +223,13 @@ class OrderType extends AbstractType
         $paymentTerm = $this->paymentTermProvider->getAccountGroupPaymentTerm($account->getGroup());
 
         return $paymentTerm ? $paymentTerm->getId() : null;
+    }
+
+    /**
+     * @param string $websiteClass
+     */
+    public function setWebsiteClass($websiteClass)
+    {
+        $this->websiteClass = $websiteClass;
     }
 }

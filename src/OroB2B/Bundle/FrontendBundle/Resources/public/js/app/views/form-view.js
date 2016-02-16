@@ -21,7 +21,8 @@ define(function (require) {
         initialize: function (options) {
             this.options = _.defaults(options || {}, this.options);
             _.each(this.options.selectors, function (selector, key) {
-                this.fields[key] = this.options.el.find(selector);
+                var $root = this.options._sourceElement || this.$el;
+                this.fields[key] = $root.find(selector);
             }, this);
 
             this._setChangeListeners();

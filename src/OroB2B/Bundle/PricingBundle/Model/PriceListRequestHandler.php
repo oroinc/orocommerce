@@ -46,7 +46,7 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
     protected $registry;
 
     /**
-     * @var string //todo setter injection
+     * @var string
      */
     protected $priceListClass = 'OroB2B\Bundle\PricingBundle\Entity\PriceList';
 

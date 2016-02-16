@@ -43,13 +43,14 @@ class ProductController extends Controller
             ->getPriceList($accountUser->getAccount());
 
         $currenciesList = null;
+        $selectedCurrencies = [];
         if ($priceList) {
             if ($priceList->getCurrencies()) {
                 $currenciesList = $priceList->getCurrencies();
             }
+            $selectedCurrencies = $this->getHandler()->getPriceListSelectedCurrencies($priceList);
         }
 
-        $selectedCurrencies = $this->getHandler()->getPriceListSelectedCurrencies($priceList);
         $formOptions = [
             'label' => 'orob2b.pricing.productprice.currency.label',
             'compact' => true,
