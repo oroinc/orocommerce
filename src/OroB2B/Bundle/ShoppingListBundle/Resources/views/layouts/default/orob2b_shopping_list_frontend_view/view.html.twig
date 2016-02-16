@@ -143,59 +143,35 @@
                 <td class="va-t_md">
                     <div class="green3">{{ lineItem.product.InventoryStatus }}</div>
                 </td>
-                <td class="va-t_md">
+                <td class="va-t_md" {{ UI.renderPageComponentAttributes({
+                    module: 'orob2bproduct/js/app/components/product-quantity-editable-component',
+                    options: {
+                        value: {'quantity': lineItem.quantity, 'unit': lineItem.unit.code},
+                        dataKey: constant('OroB2B\\Bundle\\ShoppingListBundle\\Form\\Type\\FrontendLineItemType::NAME'),
+                        metadata: {
+                            inline_editing: {
+                                enable: resource_granted('orob2b_shopping_list_frontend_update'),
+                                save_api_accessor: {
+                                    route: 'orob2b_api_shopping_list_frontend_put_line_item',
+                                    http_method: 'PUT',
+                                    default_route_parameters: {
+                                        id: lineItem.id
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }) }}>
                     <div class="product__qty-input product__qty-input_inline product__qty-input_more-info va-m_md">
                         <div class="product__qty-input__count-option">
                             <button class="count-minus" data-count-minus>-</button>
                             <input type="number" value="{{ lineItem.quantity }}" name="product_qty"
                                 placeholder="{{ 'orob2b.frontend.shoppinglist.view.qty.label'|trans }}"
-                                class="input input_sm input_block text-center" data-count-input
-                                {{ UI.renderPageComponentAttributes({
-                                    module: 'orob2bfrontend/js/app/components/attached-editable-view-component',
-                                    options: {
-                                        frontend_type: 'number',
-                                        value: lineItem.quantity,
-                                        fieldName: 'quantity',
-                                        metadata: {
-                                            inline_editing: {
-                                                enable: resource_granted('orob2b_shopping_list_frontend_update'),
-                                                save_api_accessor: {
-                                                    route: 'orob2b_api_frontend_patch_entity_data',
-                                                    http_method: 'PATCH',
-                                                    default_route_parameters: {
-                                                        className: oro_class_name(lineItem, true),
-                                                        id: lineItem.id
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }) }}
-                            />
+                                class="input input_sm input_block text-center" data-count-input />
                             <button class="count-plus" data-count-plus>+</button>
                         </div>
                     </div>
-                    <div class="product__select inline va-m_md" {{ UI.renderPageComponentAttributes({
-                        module: 'orob2bfrontend/js/app/components/attached-editable-view-component',
-                        options: {
-                            frontend_type: 'text',
-                            value: lineItem.unit,
-                            fieldName: 'unit',
-                            metadata: {
-                                inline_editing: {
-                                    enable: resource_granted('orob2b_shopping_list_frontend_update'),
-                                    save_api_accessor: {
-                                        route: 'orob2b_api_frontend_patch_entity_data',
-                                        http_method: 'PATCH',
-                                        default_route_parameters: {
-                                            className: oro_class_name(lineItem, true),
-                                            id: lineItem.id
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }) }}>
+                    <div class="product__select inline va-m_md">
                         <select data-chosen-selectbox class="input input_block input_sm">
                             {% for unit in productsUnits[lineItem.product.id] %}
                             <option value="{{ unit }}" {% if unit == lineItem.unit %}selected="selected"{% endif %}>{{ unit|orob2b_format_product_unit_label}}</option>
