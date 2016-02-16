@@ -8,7 +8,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 
 class ProductPriceProvider
@@ -19,7 +19,7 @@ class ProductPriceProvider
     protected $registry;
 
     /**
-     * @var FrontendPriceListRequestHandler
+     * @var PriceListRequestHandler
      */
     protected $requestHandler;
 
@@ -30,9 +30,9 @@ class ProductPriceProvider
 
     /**
      * @param ManagerRegistry $registry
-     * @param FrontendPriceListRequestHandler $requestHandler
+     * @param PriceListRequestHandler $requestHandler
      */
-    public function __construct(ManagerRegistry $registry, FrontendPriceListRequestHandler $requestHandler)
+    public function __construct(ManagerRegistry $registry, PriceListRequestHandler $requestHandler)
     {
         $this->registry = $registry;
         $this->requestHandler = $requestHandler;
@@ -63,20 +63,19 @@ class ProductPriceProvider
     }
 
     /**
-     * @param array $productsPriceCriteria
+     * @param ProductPriceCriteria[] $productsPriceCriteria
      * @param BasePriceList|null $priceList
      * @return array|Price[]
      */
     public function getMatchedPrices(array $productsPriceCriteria, BasePriceList $priceList = null)
     {
         if (!$priceList) {
-            $priceList = $this->requestHandler->getPriceList();
+            $priceList = $this->requestHandler->getPriceListByAccount();
         }
 
         $productIds = [];
         $productUnitCodes = [];
 
-        /** @var ProductPriceCriteria[] $productsPriceCriteria */
         foreach ($productsPriceCriteria as $productPriceCriteria) {
             $productIds[] = $productPriceCriteria->getProduct()->getId();
             $productUnitCodes[] = $productPriceCriteria->getProductUnit()->getCode();

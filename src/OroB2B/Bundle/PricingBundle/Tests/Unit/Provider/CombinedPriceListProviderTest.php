@@ -3,8 +3,8 @@
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Doctrine\Common\Persistence\ObjectRepository;
+
 use OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
 

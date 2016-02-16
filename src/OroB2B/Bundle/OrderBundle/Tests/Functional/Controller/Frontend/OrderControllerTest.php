@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Controller\Frontend;
 
-use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
@@ -12,7 +11,7 @@ use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 
 use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
+use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
 
@@ -111,7 +110,7 @@ class OrderControllerTest extends WebTestCase
             $date,
         ]);
 
-        /** @var ProductPrice $productPrice */
+        /** @var CombinedProductPrice $productPrice */
         $productPrice = $this->getReference('product_price.1');
         $expectedLineItems = [
             [
@@ -181,7 +180,7 @@ class OrderControllerTest extends WebTestCase
 
         $this->assertViewPage($crawler, [self::QUICK_ADD_ORDER_PO_NUMBER]);
 
-        /** @var ProductPrice $productPrice */
+        /** @var CombinedProductPrice $productPrice */
         $productPrice = $this->getReference('product_price.9');
 
         $expectedLineItems = [
@@ -258,7 +257,7 @@ class OrderControllerTest extends WebTestCase
                 ->extract('value')[0]
         );
 
-        /** @var ProductPrice $productPrice */
+        /** @var CombinedProductPrice $productPrice */
         $productPrice = $this->getReference('product_price.1');
         $expectedLineItems = [
             [
@@ -317,6 +316,7 @@ class OrderControllerTest extends WebTestCase
     }
 
     /**
+     * @param string $gridName
      * @param array $filters
      * @return array
      */

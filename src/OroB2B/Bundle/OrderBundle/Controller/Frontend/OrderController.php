@@ -20,7 +20,6 @@ use OroB2B\Bundle\OrderBundle\Controller\AbstractOrderController;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
 use OroB2B\Bundle\OrderBundle\Form\Handler\OrderHandler;
-use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 
 class OrderController extends AbstractOrderController
 {
@@ -92,7 +91,10 @@ class OrderController extends AbstractOrderController
      */
     public function createAction(Request $request)
     {
-        return $this->update(new Order(), $request);
+        $order = new Order();
+        $order->setWebsite($this->get('orob2b_website.manager')->getCurrentWebsite());
+
+        return $this->update($order, $request);
     }
 
     /**
@@ -190,13 +192,5 @@ class OrderController extends AbstractOrderController
                 ];
             }
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getProductPriceProvider()
-    {
-        return $this->get('orob2b_pricing.provider.combined_product_price');
     }
 }

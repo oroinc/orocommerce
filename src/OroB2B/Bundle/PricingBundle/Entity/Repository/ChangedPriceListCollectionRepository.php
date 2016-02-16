@@ -38,7 +38,7 @@ class ChangedPriceListCollectionRepository extends EntityRepository
         $insertFromSelectQueryExecutor->execute(
             $this->getClassName(),
             [
-                'account_id',
+                'account',
                 'website'
             ],
             $queryBuilder

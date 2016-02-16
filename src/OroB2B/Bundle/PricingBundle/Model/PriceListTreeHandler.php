@@ -6,11 +6,12 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 
@@ -31,6 +32,9 @@ class PriceListTreeHandler
     /** @var ConfigManager */
     protected $configManager;
 
+    /** @var BasePriceList[] */
+    protected $priceLists = [];
+
     /**
      * @param ManagerRegistry $registry
      * @param WebsiteManager $websiteManager
@@ -47,36 +51,59 @@ class PriceListTreeHandler
     }
 
     /**
-     * @param AccountUser|null $accountUser
+     * @param Account|null $account
+     * @param Website|null $website
      * @return BasePriceList
      */
-    public function getPriceList(AccountUser $accountUser = null)
+    public function getPriceList(Account $account = null, Website $website = null)
     {
-        $website = $this->websiteManager->getCurrentWebsite();
-        if ($accountUser) {
-            $account = $accountUser->getAccount();
+        $website = $website ?: $this->websiteManager->getCurrentWebsite();
 
-            if ($account) {
-                $priceList = $this->getPriceListRepository()->getPriceListByAccount($account, $website);
+        $key = $this->getUniqueKey($account, $website);
+        if (array_key_exists($key, $this->priceLists)) {
+            return $this->priceLists[$key];
+        }
+
+        if ($account) {
+            $priceList = $this->getPriceListRepository()->getPriceListByAccount($account, $website);
+            if ($priceList) {
+                $this->priceLists[$key] = $priceList;
+                return $priceList;
+            }
+            if ($account->getGroup()) {
+                $priceList = $this->getPriceListRepository()
+                    ->getPriceListByAccountGroup($account->getGroup(), $website);
                 if ($priceList) {
+                    $this->priceLists[$key] = $priceList;
                     return $priceList;
-                }
-                if ($account->getGroup()) {
-                    $priceList = $this->getPriceListRepository()
-                        ->getPriceListByAccountGroup($account->getGroup(), $website);
-                    if ($priceList) {
-                        return $priceList;
-                    }
                 }
             }
         }
 
-        $priceList =  $priceList = $this->getPriceListRepository()->getPriceListByWebsite($website);
+        $priceList = $priceList = $this->getPriceListRepository()->getPriceListByWebsite($website);
         if (!$priceList) {
             $priceList = $this->getPriceListFromConfig();
         }
 
+        $this->priceLists[$key] = $priceList;
         return $priceList;
+    }
+
+    /**
+     * @param Account|null $account
+     * @param Website|null $website
+     * @return string
+     */
+    protected function getUniqueKey(Account $account = null, Website $website = null)
+    {
+        $key = '';
+        if ($account) {
+            $key .= spl_object_hash($account);
+        }
+        if ($website) {
+            $key .= spl_object_hash($website);
+        }
+        return $key;
     }
 
     /**
