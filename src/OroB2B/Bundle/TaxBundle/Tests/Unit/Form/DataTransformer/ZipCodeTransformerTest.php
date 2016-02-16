@@ -24,7 +24,7 @@ class ZipCodeTransformerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider testTransformProvider
+     * @dataProvider transformProvider
      * @param ZipCode $zipCode
      * @param string $expected
      */
@@ -36,7 +36,7 @@ class ZipCodeTransformerTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function testTransformProvider()
+    public function transformProvider()
     {
         return [
             'nullable value' => [
@@ -55,7 +55,7 @@ class ZipCodeTransformerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider testReverseTransformProvider
+     * @dataProvider reverseTransformProvider
      * @param ZipCode $value
      * @param ZipCode $expected
      */
@@ -68,7 +68,7 @@ class ZipCodeTransformerTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function testReverseTransformProvider()
+    public function reverseTransformProvider()
     {
         return [
             'nullable value' => [
