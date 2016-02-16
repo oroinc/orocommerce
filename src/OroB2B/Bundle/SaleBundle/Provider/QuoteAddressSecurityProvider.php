@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\SaleBundle\Provider;
 
-use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
@@ -11,7 +10,7 @@ use OroB2B\Bundle\SaleBundle\Entity\Quote;
 
 class QuoteAddressSecurityProvider
 {
-    const MANUAL_EDIT_ACTION = 'orob2b_order_address_%s_allow_manual';
+    const MANUAL_EDIT_ACTION = 'orob2b_quote_address_%s_allow_manual';
 
     /** @var SecurityFacade */
     protected $securityFacade;
@@ -118,11 +117,7 @@ class QuoteAddressSecurityProvider
     {
         QuoteAddressProvider::assertType($type);
 
-        if ($type === AddressType::TYPE_SHIPPING) {
-            return $this->getPermission(QuoteAddressProvider::ADDRESS_SHIPPING_ACCOUNT_USER_USE_ANY);
-        }
-
-//        return $this->getPermission(QuoteAddressProvider::ADDRESS_BILLING_ACCOUNT_USER_USE_ANY);
+        return $this->getPermission(QuoteAddressProvider::ADDRESS_SHIPPING_ACCOUNT_USER_USE_ANY);
     }
 
     /**
