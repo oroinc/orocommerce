@@ -159,7 +159,7 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="cancellationReason", type="text",nullable=true)
+     * @ORM\Column(name="cancellation_reason", type="text", nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
