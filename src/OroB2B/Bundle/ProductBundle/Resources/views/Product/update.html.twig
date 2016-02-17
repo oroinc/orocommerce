@@ -51,7 +51,7 @@
 
 {% block content_data %}
     {% set id = 'product-edit' %}
-    {% set productHasVariants = entity.getHasVariants and form.variantFields.vars.choices|length != 0 %}
+    {% set productHasVariants = entity.hasVariants and form.variantFields.vars.choices|length != 0 %}
 
     {% set generalData = [
         form_row(form.sku),
