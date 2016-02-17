@@ -53,17 +53,36 @@ class ActionButtonType extends AbstractType
         $buttonOptions = $params['buttonOptions'];
         $actionUrl = $params['actionUrl'];
         $attributes = [];
-        if (array_key_exists('id', $params)) {
-            $attributes['id'] = $params['id'];
-        }
+        $attributes = $this->setId($params, $attributes);
         $attributes['href'] = $params['path'] ?: 'javascript:void(0);';
         $attributes['class'] = 'back icons-holder-text action-button';
         $titleRaw = array_key_exists('title', $frontendOptions) ? $frontendOptions['title'] : $params['label'];
         $title = $this->translator->trans($titleRaw);
         $attributes['title'] = $title;
         $attributes['data-from-url'] = $options['fromUrl'];
+        $attributes = $this->setDialogParameters($frontendOptions, $actionUrl, $attributes, $title);
+        $attributes['data-confirmation'] = array_key_exists('confirmation', $frontendOptions) ?
+            $frontendOptions['confirmation'] : '';
+        $attributes = $this->setPageComponentOptions($buttonOptions, $attributes);
+        $attributes = $this->setButtonOptions($buttonOptions, $attributes);
+        $view->vars['attr'] = $attributes;
+        $view->vars['linkLabel'] = $title;
+        $view->vars['buttonOptions'] = $buttonOptions;
+    }
+
+    /**
+     * @param array $frontendOptions
+     * @param string $actionUrl
+     * @param array $attributes
+     * @param string $title
+     * @return array
+     */
+    protected function setDialogParameters(array $frontendOptions, $actionUrl, array $attributes, $title)
+    {
         if (array_key_exists('show_dialog', $frontendOptions) && !$frontendOptions['show_dialog']) {
             $attributes['data-page-url'] = $actionUrl;
+
+            return $attributes;
         } else {
             $attributes['data-dialog-url'] = $actionUrl;
             $attributes['data-dialog-options'] = json_encode(
@@ -72,30 +91,61 @@ class ActionButtonType extends AbstractType
                     'dialogOptions' => $frontendOptions['options']
                 ]
             );
+
+            return $attributes;
         }
-        $attributes['data-confirmation'] = array_key_exists('confirmation', $frontendOptions) ?
-            $frontendOptions['confirmation'] : '';
+    }
+
+    /**
+     * @param array $buttonOptions
+     * @param array $attributes
+     * @return array
+     */
+    protected function setPageComponentOptions(array $buttonOptions, array $attributes)
+    {
         if (array_key_exists('page_component_module', $buttonOptions)) {
             $attributes['data-page-component-module'] = $buttonOptions['page_component_module'];
         }
         if (array_key_exists('page_component_options', $buttonOptions)) {
             $attributes['data-page-component-options'] = json_encode($buttonOptions['page_component_options']);
+
+            return $attributes;
         }
+
+        return $attributes;
+    }
+
+    /**
+     * @param array $buttonOptions
+     * @param array $attributes
+     * @return array
+     */
+    protected function setButtonOptions(array $buttonOptions, array $attributes)
+    {
         if (array_key_exists('data', $buttonOptions)) {
             foreach ($buttonOptions['data'] as $dataName => $dataValue) {
                 $attributes['data-' . $dataName] = $dataValue;
             }
+
+            return $attributes;
         }
 
-        if (array_key_exists('hide_icon', $options)) {
-            $view->vars['hide_icon'] = $options['hide_icon'];
-        }
-        if (array_key_exists('only_link', $options)) {
-            $view->vars['only_link'] = $options['only_link'];
+        return $attributes;
+    }
+
+    /**
+     * @param array $params
+     * @param array $attributes
+     * @return array
+     */
+    protected function setId(array $params, array $attributes)
+    {
+        if (array_key_exists('id', $params)) {
+            $attributes['id'] = $params['id'];
+
+            return $attributes;
         }
 
-        $view->vars['attr'] = $attributes;
-        $view->vars['linkLabel'] = $title;
-        $view->vars['buttonOptions'] = $buttonOptions;
+        return $attributes;
     }
 }
