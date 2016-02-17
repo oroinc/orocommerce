@@ -46,8 +46,6 @@ define(function (require) {
             _.each(this.fields, function ($field) {
                 $field.off();
             });
-
-            FormView.__super__.dispose.call(this);
         }
     });
 
