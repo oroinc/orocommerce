@@ -55,11 +55,8 @@
 
     {% set generalData = [
         form_row(form.sku),
+        form_row(form.variantFields)
     ] %}
-
-    {% if productHasVariants %}
-        {% set generalData = generalData|merge([form_row(form.variantFields)]) %}
-    {% endif %}
 
     {% set generalData = generalData|merge([
         form_row(form.names),
@@ -103,7 +100,7 @@
         }] ) %}
     {% endif %}
 
-    {% if entity.id is not empty %}
+    {% if productHasVariants %}
         {% set variantLinksForm = form.variantLinks %}
         {% set dataBlocks = dataBlocks|merge([{
             'title' : 'orob2b.product.sections.productVariants'|trans,

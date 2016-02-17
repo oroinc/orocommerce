@@ -12,6 +12,8 @@ use OroB2B\Bundle\ProductBundle\EventListener\ProductHandlerListener;
 
 class ProductHandlerListenerTest extends \PHPUnit_Framework_TestCase
 {
+    const CUSTOM_FIELD_NAME = 'Custom';
+
     /**
      * @var ProductHandlerListener
      */
@@ -30,6 +32,9 @@ class ProductHandlerListenerTest extends \PHPUnit_Framework_TestCase
     public function testVariantLinksWithoutHasVariant()
     {
         $entity = new Product();
+        $entity->setVariantFields([]);
+        $entity->setHasVariants(true);
+        $entity->addVariantLink($this->createProductVariantLink());
         $event = $this->createEvent($entity);
         $this->listener->onBeforeFlush($event);
         $this->assertFalse($entity->getHasVariants());
@@ -39,12 +44,11 @@ class ProductHandlerListenerTest extends \PHPUnit_Framework_TestCase
     public function testVariantLinksWithHasVariant()
     {
         $entity = new Product();
-        $entity->setHasVariants(true);
-        $entity->addVariantLink($this->createProductVariantLink());
+        $entity->setVariantFields([self::CUSTOM_FIELD_NAME]);
+        $entity->setHasVariants(false);
         $event = $this->createEvent($entity);
         $this->listener->onBeforeFlush($event);
         $this->assertTrue($entity->getHasVariants());
-        $this->assertCount(1, $entity->getVariantLinks());
     }
 
     protected function createEvent($entity)

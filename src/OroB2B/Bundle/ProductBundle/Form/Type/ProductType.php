@@ -105,12 +105,26 @@ class ProductType extends AbstractType
                 'variantFields',
                 ProductCustomFieldsChoiceType::NAME,
                 ['label' => 'orob2b.product.variant_fields.label']
-            )
-            ->add(
-                'variantLinks',
-                ProductVariantLinksType::NAME,
-                ['product_class' => $this->dataClass, 'by_reference' => false]
             );
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener']);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function preSetDataListener(FormEvent $event)
+    {
+        $product = $event->getData();
+        $form = $event->getForm();
+        if ($product instanceof Product && $product->getHasVariants()) {
+            $form
+                ->add(
+                    'variantLinks',
+                    ProductVariantLinksType::NAME,
+                    ['product_class' => $this->dataClass, 'by_reference' => false]
+                );
+        }
     }
 
     /**

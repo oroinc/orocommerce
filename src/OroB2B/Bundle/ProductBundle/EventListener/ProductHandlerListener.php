@@ -15,8 +15,13 @@ class ProductHandlerListener
     {
         $data = $event->getData();
 
-        if ($data instanceof Product && false === $data->getHasVariants()) {
-            $data->setHasVariants(!$data->getVariantLinks()->isEmpty());
+        if ($data instanceof Product) {
+            $hasVariants = !empty($data->getVariantFields());
+            $data->setHasVariants($hasVariants);
+
+            if (!$hasVariants) {
+                $data->getVariantLinks()->clear();
+            }
         }
     }
 }
