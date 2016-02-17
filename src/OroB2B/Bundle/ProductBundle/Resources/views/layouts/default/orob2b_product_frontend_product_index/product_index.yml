@@ -13,10 +13,10 @@ layout:
                     options:
                         grid_name: frontend-products-grid
                         grid_parameters:
-                            viewOptions:
+                            themeOptions:
                                 tableView: false
                                 headerHide: true
-                                rowTemplateSelector: "#template-grid-row"
+                                rowTemplateSelector: '#template-grid-row'
             tree:
                 content:
                     product_index_page:
