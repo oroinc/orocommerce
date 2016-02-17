@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Provider;
+namespace OroB2B\Bundle\CMSBundle\Layout\DataProvider;
 
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\DataProviderInterface;
+use Oro\Component\Layout\AbstractDataProvider;
 
 use OroB2B\Bundle\CMSBundle\Entity\LoginPage;
 
-class LoginPageDataProvider implements DataProviderInterface
+class LoginPageProvider extends AbstractDataProvider
 {
     /**
      * @var LoginPage
@@ -41,14 +41,6 @@ class LoginPageDataProvider implements DataProviderInterface
     public function setLoginPageClass($loginPageClass)
     {
         $this->loginPageClass = $loginPageClass;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getIdentifier()
-    {
-        return 'orob2b_cms_login_page';
     }
 
     /**

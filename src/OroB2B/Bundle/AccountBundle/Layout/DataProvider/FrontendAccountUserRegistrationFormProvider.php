@@ -1,16 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Provider;
+namespace OroB2B\Bundle\AccountBundle\Layout\DataProvider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
 
-use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\DataProviderInterface;
-use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
-use Oro\Bundle\LayoutBundle\Layout\Form\FormAction;
+use Oro\Bundle\LayoutBundle\Layout\DataProvider\FormProvider;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -18,20 +14,10 @@ use Oro\Bundle\UserBundle\Entity\UserManager;
 use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
-class FrontendAccountUserRegistrationForm implements DataProviderInterface
+class FrontendAccountUserRegistrationFormProvider extends FormProvider
 {
-    /** @var FormAccessor */
-    protected $data;
-
-    /** @var FormInterface */
-    protected $form;
-
-    /** @var FormFactoryInterface */
-    protected $formFactory;
-
     /** @var ManagerRegistry */
     protected $managerRegistry;
 
@@ -58,7 +44,7 @@ class FrontendAccountUserRegistrationForm implements DataProviderInterface
         WebsiteManager $websiteManager,
         UserManager $userManager
     ) {
-        $this->formFactory = $formFactory;
+        parent::__construct($formFactory);
         $this->managerRegistry = $managerRegistry;
         $this->configManager = $configManager;
         $this->websiteManager = $websiteManager;
@@ -66,34 +52,12 @@ class FrontendAccountUserRegistrationForm implements DataProviderInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getIdentifier()
+    public function getForm($data = null, array $options = [])
     {
-        return 'orob2b_account_frontend_account_user_register';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getData(ContextInterface $context)
-    {
-        if (!$this->data) {
-            $this->data = new FormAccessor(
-                $this->getForm(),
-                FormAction::createByRoute('orob2b_account_frontend_account_user_register')
-            );
-        }
-        return $this->data;
-    }
-
-    public function getForm()
-    {
-        if (!$this->form) {
-            $this->form = $this->formFactory
-                ->create(FrontendAccountUserRegistrationType::NAME, $this->getAccountUser());
-        }
-        return $this->form;
+        $accountUser = $data ? $data : $this->getAccountUser();
+        parent::getForm($accountUser, $options);
     }
 
     /**

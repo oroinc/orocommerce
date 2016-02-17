@@ -1,19 +1,20 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Provider;
+namespace OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider;
 
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\DataProviderInterface;
+use Oro\Component\Layout\AbstractDataProvider;
+use Oro\Bundle\FormBundle\Form\Handler\FormProviderInterface;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAction;
 
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 
-class ShoppingListFormProvider implements DataProviderInterface
+class ShoppingListFormProvider extends AbstractDataProvider implements FormProviderInterface
 {
     /**
      * @var FormAccessor[]
@@ -42,14 +43,6 @@ class ShoppingListFormProvider implements DataProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getIdentifier()
-    {
-        return 'orob2b_shopping_list_shopping_list_form';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getData(ContextInterface $context)
     {
         $shoppingList = $context->data()->get('shoppingList');
@@ -70,16 +63,17 @@ class ShoppingListFormProvider implements DataProviderInterface
     }
 
     /**
-     * @param ShoppingList $shoppingList
+     * @param ShoppingList|null $shoppingList
+     * @param array $options
      * @return FormInterface
      */
-    public function getForm(ShoppingList $shoppingList)
+    public function getForm($shoppingList = null, array $options = [])
     {
         $shoppingListId = $shoppingList->getId();
 
         if (!isset($this->form[$shoppingListId])) {
             $this->form[$shoppingListId] = $this->formFactory
-                ->create(ShoppingListType::NAME, $shoppingList);
+                ->create(ShoppingListType::NAME, $shoppingList, $options);
         }
         return $this->form[$shoppingListId];
     }

@@ -1,20 +1,21 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Provider;
+namespace OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider;
 
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\DataProviderInterface;
+use Oro\Component\Layout\AbstractDataProvider;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
+use Oro\Bundle\FormBundle\Form\Handler\FormProviderInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
 
-class FrontendLineItemFormProvider implements DataProviderInterface
+class FrontendLineItemFormProvider extends AbstractDataProvider implements FormProviderInterface
 {
     /**
      * @var FormAccessor[]
@@ -51,14 +52,6 @@ class FrontendLineItemFormProvider implements DataProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getIdentifier()
-    {
-        return 'orob2b_shopping_list_frontend_line_item_form';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getData(ContextInterface $context)
     {
         $product = $context->data()->get('product');
@@ -71,14 +64,15 @@ class FrontendLineItemFormProvider implements DataProviderInterface
     }
 
     /**
-     * @param Product $product
+     * @param Product|null $product
+     * @param array $options
      * @return FormInterface
      */
-    public function getForm(Product $product)
+    public function getForm($product = null, array $options = [])
     {
         if (!isset($this->form[$product->getId()])) {
             $this->form[$product->getId()] = $this->formFactory
-                ->create(FrontendLineItemType::NAME, $this->getLineItem($product));
+                ->create(FrontendLineItemType::NAME, $this->getLineItem($product), $options);
         }
         return $this->form[$product->getId()];
     }

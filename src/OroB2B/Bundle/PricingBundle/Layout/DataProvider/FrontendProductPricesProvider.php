@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Layout\Extension\Provider;
+namespace OroB2B\Bundle\PricingBundle\Layout\DataProvider;
 
 use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\DataProviderInterface;
+use Oro\Component\Layout\AbstractDataProvider;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
@@ -11,7 +11,7 @@ use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class FrontendProductPricesDataProvicer implements DataProviderInterface
+class FrontendProductPricesProvider extends AbstractDataProvider
 {
     /** @var array */
     protected $data;
@@ -32,14 +32,6 @@ class FrontendProductPricesDataProvicer implements DataProviderInterface
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->frontendPriceListRequestHandler = $frontendPriceListRequestHandler;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getIdentifier()
-    {
-        throw new \BadMethodCallException('Not implemented');
     }
 
     /**

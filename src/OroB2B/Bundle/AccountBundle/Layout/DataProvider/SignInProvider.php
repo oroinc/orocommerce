@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Provider;
+namespace OroB2B\Bundle\AccountBundle\Layout\DataProvider;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
@@ -8,9 +8,9 @@ use Symfony\Component\Security\Core\Security;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\DataProviderInterface;
+use Oro\Component\Layout\AbstractDataProvider;
 
-class SignInDataProvider implements DataProviderInterface
+class SignInProvider extends AbstractDataProvider
 {
     /**
      * @var array
@@ -45,14 +45,6 @@ class SignInDataProvider implements DataProviderInterface
         $this->requestStack = $requestStack;
         $this->securityFacade = $securityFacade;
         $this->csrfTokenManager = $csrfTokenManager;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getIdentifier()
-    {
-        return 'orob2b_account_sign_in';
     }
 
     /**

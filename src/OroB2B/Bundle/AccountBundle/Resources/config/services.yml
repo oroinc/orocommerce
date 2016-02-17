@@ -98,8 +98,8 @@ parameters:
     orob2b.account.catalog.visibility.change_set.validatior.class: OroB2B\Bundle\AccountBundle\Validator\Constraints\VisibilityChangeSetValidator
 
     orob2b_account.provider.visibility_choices.class: OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider
-    orob2b_account.provider.sign_in.class: OroB2B\Bundle\AccountBundle\Provider\SignInDataProvider
-    orob2b_account.provider.frontend_account_user_registration_form.class: OroB2B\Bundle\AccountBundle\Provider\FrontendAccountUserRegistrationForm
+    orob2b_account.provider.sign_in.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\SignInProvider
+    orob2b_account.provider.frontend_account_user_registration_form.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRegistrationFormProvider
 
     orob2b_account.audit.discriminator_map_listener.class: OroB2B\Bundle\AccountBundle\Audit\DiscriminatorMapListener
 
@@ -827,6 +827,9 @@ services:
             - @oro_config.manager
             - @orob2b_website.manager
             - @oro_user.manager
+        calls:
+            - [setFormType, ['orob2b_account_frontend_account_user_register']]
+            - [setActionRoute, ['orob2b_account_frontend_account_user_register']]
         tags:
             - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_register }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Layout\Extension\Provider;
+namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Component\Layout\LayoutContext;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -8,13 +8,13 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
-use OroB2B\Bundle\PricingBundle\Layout\Extension\Provider\FrontendProductPricesDataProvicer;
+use OroB2B\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
 
-class FrontendProductPricesDataProvicerTest extends \PHPUnit_Framework_TestCase
+class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
-    /** @var FrontendProductPricesDataProvicer */
+    /** @var FrontendProductPricesProvider */
     protected $provider;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
@@ -34,18 +34,10 @@ class FrontendProductPricesDataProvicerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->provider = new FrontendProductPricesDataProvicer(
+        $this->provider = new FrontendProductPricesProvider(
             $this->doctrineHelper,
             $this->frontendPriceListRequestHandler
         );
-    }
-
-    /**
-     * @expectedException \BadMethodCallException
-     */
-    public function testGetIdentifier()
-    {
-        $this->provider->getIdentifier();
     }
 
     /**
