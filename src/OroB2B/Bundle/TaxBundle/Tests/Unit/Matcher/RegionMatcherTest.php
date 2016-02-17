@@ -70,12 +70,15 @@ class RegionMatcherTest extends AbstractMatcherTest
             ->with($address)
             ->willReturn($countryMatcherTaxRules);
 
-        $taxCodes = TaxCodes::create(
-            [
-                TaxCode::create($productTaxCode, TaxCode::TYPE_PRODUCT),
-                TaxCode::create($accountTaxCode, TaxCode::TYPE_ACCOUNT),
-            ]
-        );
+        $taxCodes = [];
+        if ($productTaxCode) {
+            $taxCodes[] = TaxCode::create($productTaxCode, TaxCode::TYPE_PRODUCT);
+        }
+        if ($accountTaxCode) {
+            $taxCodes[] = TaxCode::create($accountTaxCode, TaxCode::TYPE_ACCOUNT);
+        }
+
+        $taxCodes = TaxCodes::create($taxCodes);
 
         $this->taxRuleRepository
             ->expects($country && ($region || $regionText) ? $this->once() : $this->never())

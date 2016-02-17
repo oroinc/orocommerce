@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Resolver;
 
+use OroB2B\Bundle\TaxBundle\Model\Address;
+use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use OroB2B\Bundle\TaxBundle\Resolver\CustomerAddressItemResolver;
@@ -14,9 +16,7 @@ class CustomerAddressItemResolverTest extends AbstractItemResolverTestCase
     /** {@inheritdoc} */
     protected function createResolver()
     {
-        $resolver = new CustomerAddressItemResolver($this->unitResolver, $this->rowTotalResolver);
-        $resolver->setMatcher($this->matcher);
-        return $resolver;
+        return new CustomerAddressItemResolver($this->unitResolver, $this->rowTotalResolver, $this->matcher);
     }
 
     /** {@inheritdoc} */
@@ -43,16 +43,30 @@ class CustomerAddressItemResolverTest extends AbstractItemResolverTestCase
         return [
             [
                 '19.99',
-                [$this->getTaxRule('city', '0.08')]
+                [$this->getTaxRule('city', '0.08')],
             ],
             [
                 '19.99',
                 [
                     $this->getTaxRule('city', '0.08'),
                     $this->getTaxRule('region', '0.07'),
-                ]
-            ]
+                ],
+            ],
         ];
+    }
+
+    public function testResultLocked()
+    {
+        $result = new Result();
+        $result->lockResult();
+        $taxable = new Taxable();
+        $taxable->setPrice('20');
+        $taxable->setDestination(new Address());
+        $taxable->setResult($result);
+
+        $this->assertNothing();
+
+        $this->resolver->resolve($taxable);
     }
 
     /** {@inheritdoc} */

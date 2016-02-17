@@ -4,11 +4,12 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Resolver\SellerResolver\VatResolver
 
 use Brick\Math\BigDecimal;
 
-use JMS\Serializer\Tests\Fixtures\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\AddressBundle\Entity\Country;
 use OroB2B\Bundle\TaxBundle\Entity\Tax;
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 use OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher;
+use OroB2B\Bundle\TaxBundle\Model\Address;
+use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use OroB2B\Bundle\TaxBundle\Resolver\RowTotalResolver;
 use OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\ItemDigitalResolver;
@@ -17,7 +18,7 @@ use OroB2B\Bundle\TaxBundle\Resolver\UnitResolver;
 class ItemDigitalResolverTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var UnitResolver|
+     * @var UnitResolver|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $unitResolver;
 
@@ -48,15 +49,13 @@ class ItemDigitalResolverTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $resolver = new ItemDigitalResolver($this->unitResolver, $this->rowTotalResolver);
-        $resolver->setMatcher($this->matcher);
-        $this->resolver = $resolver;
+        $this->resolver = new ItemDigitalResolver($this->unitResolver, $this->rowTotalResolver, $this->matcher);
     }
 
     /**
      * @dataProvider resolveDataProvider
      * @param string $taxableAmount
-     * @param array  $taxRules
+     * @param array $taxRules
      */
     public function testResolve($taxableAmount, array $taxRules)
     {
@@ -64,12 +63,10 @@ class ItemDigitalResolverTest extends \PHPUnit_Framework_TestCase
         $taxable->setPrice($taxableAmount);
         $taxable->setQuantity(3);
         $taxable->setAmount($taxableAmount);
-        $taxable->setDestination(new OrderAddress());
+        $taxable->setDestination((new Address())->setCountry(new Country('UK')));
         $taxable->getContext()->offsetSet(Taxable::DIGITAL_PRODUCT, true);
+        $taxable->getContext()->offsetSet(Taxable::PRODUCT_TAX_CODE, 'prod_tax_code');
 
-        $this->matcher->expects($this->once())
-            ->method('isEuropeanUnionCountry')
-            ->willReturn(true);
 
         $this->matcher->expects($this->once())->method('match')->willReturn($taxRules);
 
@@ -94,15 +91,15 @@ class ItemDigitalResolverTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 '19.99',
-                [$this->getTaxRule('city', '0.08')]
+                [$this->getTaxRule('city', '0.08')],
             ],
             [
                 '19.99',
                 [
                     $this->getTaxRule('city', '0.08'),
                     $this->getTaxRule('region', '0.07'),
-                ]
-            ]
+                ],
+            ],
         ];
     }
 
@@ -123,14 +120,29 @@ class ItemDigitalResolverTest extends \PHPUnit_Framework_TestCase
         $this->assertNothing();
         $this->resolver->resolve($taxable);
 
-        $taxable->addItem(new Taxable());
+        $item = new Taxable();
+        $taxable->addItem($item);
         $this->resolver->resolve($taxable);
 
-        $taxable->removeItem(new Taxable());
+        $taxable->removeItem($item);
         $taxable->setPrice('20');
         $this->resolver->resolve($taxable);
 
-        $taxable->setOrigin(new OrderAddress());
+        $taxable->setOrigin(new Address());
+        $this->resolver->resolve($taxable);
+    }
+
+    public function testResultLocked()
+    {
+        $result = new Result();
+        $result->lockResult();
+        $taxable = new Taxable();
+        $taxable->setPrice('20');
+        $taxable->setDestination(new Address());
+        $taxable->setResult($result);
+
+        $this->assertNothing();
+
         $this->resolver->resolve($taxable);
     }
 

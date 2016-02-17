@@ -4,18 +4,12 @@ namespace OroB2B\Bundle\TaxBundle\Resolver;
 
 use Brick\Math\BigDecimal;
 
-use OroB2B\Bundle\TaxBundle\Matcher\MatcherInterface;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use OroB2B\Bundle\TaxBundle\Model\TaxCode;
 use OroB2B\Bundle\TaxBundle\Model\TaxCodes;
 
 class CustomerAddressItemResolver extends AbstractItemResolver
 {
-    /**
-     * @var MatcherInterface
-     */
-    protected $matcher;
-
     /** {@inheritdoc} */
     public function resolve(Taxable $taxable)
     {
@@ -32,7 +26,7 @@ class CustomerAddressItemResolver extends AbstractItemResolver
             return;
         }
 
-        if ($taxable->getResult()->count() !== 0) {
+        if ($taxable->getResult()->isResultLocked()) {
             return;
         }
 
@@ -50,25 +44,18 @@ class CustomerAddressItemResolver extends AbstractItemResolver
      */
     protected function getTaxCodes(Taxable $taxable)
     {
-        return TaxCodes::create(
-            [
-                TaxCode::create(
-                    TaxCode::TYPE_PRODUCT,
-                    $taxable->getContextValue(Taxable::PRODUCT_TAX_CODE)
-                ),
-                TaxCode::create(
-                    TaxCode::TYPE_ACCOUNT,
-                    $taxable->getContextValue(Taxable::ACCOUNT_TAX_CODE)
-                ),
-            ]
-        );
-    }
+        $taxCodes = [];
 
-    /**
-     * @param MatcherInterface $matcher
-     */
-    public function setMatcher(MatcherInterface $matcher)
-    {
-        $this->matcher = $matcher;
+        $productContextCode = $taxable->getContextValue(Taxable::PRODUCT_TAX_CODE);
+        if (null !== $productContextCode) {
+            $taxCodes[] = TaxCode::create($productContextCode, TaxCode::TYPE_PRODUCT);
+        }
+
+        $accountContextCode = $taxable->getContextValue(Taxable::ACCOUNT_TAX_CODE);
+        if (null !== $accountContextCode) {
+            $taxCodes[] = TaxCode::create($accountContextCode, TaxCode::TYPE_ACCOUNT);
+        }
+
+        return TaxCodes::create($taxCodes);
     }
 }

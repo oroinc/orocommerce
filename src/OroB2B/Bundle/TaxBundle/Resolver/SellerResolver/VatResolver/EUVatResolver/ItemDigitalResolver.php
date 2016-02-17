@@ -4,9 +4,7 @@ namespace OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResol
 
 use Brick\Math\BigDecimal;
 
-use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
-use OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher;
-use OroB2B\Bundle\TaxBundle\Matcher\MatcherInterface;
+use OroB2B\Bundle\TaxBundle\Matcher\EuropeanUnionHelper;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use OroB2B\Bundle\TaxBundle\Model\TaxCode;
 use OroB2B\Bundle\TaxBundle\Model\TaxCodes;
@@ -14,11 +12,6 @@ use OroB2B\Bundle\TaxBundle\Resolver\AbstractItemResolver;
 
 class ItemDigitalResolver extends AbstractItemResolver
 {
-    /**
-     * @var CountryMatcher
-     */
-    protected $countryMatcher;
-
     /**
      * @param Taxable $taxable
      */
@@ -37,14 +30,14 @@ class ItemDigitalResolver extends AbstractItemResolver
             return;
         }
 
-        if ($taxable->getResult()->count() !== 0) {
+        if ($taxable->getResult()->isResultLocked()) {
             return;
         }
 
-        $isBuyerFromEU = $this->countryMatcher->isEuropeanUnionCountry($taxable->getDestination()->getCountryIso2());
+        $isBuyerFromEU = EuropeanUnionHelper::isEuropeanUnionCountry($taxable->getDestination()->getCountryIso2());
 
         if ($isBuyerFromEU && $taxable->getContextValue(Taxable::DIGITAL_PRODUCT)) {
-            $taxRules = $this->countryMatcher->match($buyerAddress, $this->getTaxCodes($taxable));
+            $taxRules = $this->matcher->match($buyerAddress, $this->getTaxCodes($taxable));
             $taxableAmount = BigDecimal::of($taxable->getPrice());
 
             $result = $taxable->getResult();
@@ -59,21 +52,13 @@ class ItemDigitalResolver extends AbstractItemResolver
      */
     protected function getTaxCodes(Taxable $taxable)
     {
-        return TaxCodes::create(
-            [
-                TaxCode::create(
-                    ProductTaxCode::TYPE_PRODUCT,
-                    $taxable->getContextValue(Taxable::PRODUCT_TAX_CODE)
-                ),
-            ]
-        );
-    }
+        $taxCodes = [];
 
-    /**
-     * @param MatcherInterface $matcher
-     */
-    public function setMatcher(MatcherInterface $matcher)
-    {
-        $this->countryMatcher = $matcher;
+        $productContextCode = $taxable->getContextValue(Taxable::PRODUCT_TAX_CODE);
+        if (null !== $productContextCode) {
+            $taxCodes[] = TaxCode::create($productContextCode, TaxCode::TYPE_PRODUCT);
+        }
+
+        return TaxCodes::create($taxCodes);
     }
 }

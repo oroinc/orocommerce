@@ -64,4 +64,9 @@ class ProductTaxCodeTest extends \PHPUnit_Framework_TestCase
     {
         return new ProductTaxCode();
     }
+
+    public function testGetType()
+    {
+        $this->assertEquals(ProductTaxCode::TYPE_PRODUCT, $this->createProductTaxCode()->getType());
+    }
 }

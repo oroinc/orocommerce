@@ -37,12 +37,15 @@ class CountryMatcherTest extends AbstractMatcherTest
         $address = (new Address())
             ->setCountry($country);
 
-        $taxCodes = TaxCodes::create(
-            [
-                TaxCode::create($productTaxCode, TaxCode::TYPE_PRODUCT),
-                TaxCode::create($accountTaxCode, TaxCode::TYPE_ACCOUNT),
-            ]
-        );
+        $taxCodes = [];
+        if ($productTaxCode) {
+            $taxCodes[] = TaxCode::create($productTaxCode, TaxCode::TYPE_PRODUCT);
+        }
+        if ($accountTaxCode) {
+            $taxCodes[] = TaxCode::create($accountTaxCode, TaxCode::TYPE_ACCOUNT);
+        }
+
+        $taxCodes = TaxCodes::create($taxCodes);
 
         $this->taxRuleRepository
             ->expects($country ? $this->once() : $this->never())
@@ -96,19 +99,5 @@ class CountryMatcherTest extends AbstractMatcherTest
                 'taxRules' => [],
             ],
         ];
-    }
-
-    public function testIsEuropeanUnionCountry()
-    {
-        $reflectionClass = new \ReflectionObject($this->matcher);
-        $reflectionProperty = $reflectionClass->getProperty('europeanUnionCountryCodes');
-        $reflectionProperty->setAccessible(true);
-        $europeanCountryCodes = $reflectionProperty->getValue();
-
-        foreach ($europeanCountryCodes as $europeanCode) {
-            $this->assertTrue($this->matcher->isEuropeanUnionCountry($europeanCode));
-        }
-
-        $this->assertFalse($this->matcher->isEuropeanUnionCountry('NON_EU_COUNTRY'));
     }
 }

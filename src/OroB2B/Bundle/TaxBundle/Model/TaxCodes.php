@@ -31,8 +31,12 @@ class TaxCodes
     /**
      * @param TaxCode $code
      */
-    public function addCode(TaxCode $code)
+    public function addCode($code)
     {
+        if (!$code instanceof TaxCode) {
+            return;
+        }
+
         if (!$code->getCode()) {
             return;
         }

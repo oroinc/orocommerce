@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\TaxBundle\Resolver;
 
+use OroB2B\Bundle\TaxBundle\Matcher\MatcherInterface;
+
 abstract class AbstractItemResolver implements ResolverInterface
 {
     /**
@@ -15,14 +17,22 @@ abstract class AbstractItemResolver implements ResolverInterface
     protected $rowTotalResolver;
 
     /**
-     * @param UnitResolver     $unitResolver
+     * @var MatcherInterface
+     */
+    protected $matcher;
+
+    /**
+     * @param UnitResolver $unitResolver
      * @param RowTotalResolver $rowTotalResolver
+     * @param MatcherInterface $matcher
      */
     public function __construct(
         UnitResolver $unitResolver,
-        RowTotalResolver $rowTotalResolver
+        RowTotalResolver $rowTotalResolver,
+        MatcherInterface $matcher
     ) {
         $this->unitResolver = $unitResolver;
         $this->rowTotalResolver = $rowTotalResolver;
+        $this->matcher = $matcher;
     }
 }

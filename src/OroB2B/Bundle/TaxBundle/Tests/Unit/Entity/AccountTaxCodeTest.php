@@ -66,4 +66,9 @@ class AccountTaxCodeTest extends \PHPUnit_Framework_TestCase
     {
         return new AccountTaxCode();
     }
+
+    public function testGetType()
+    {
+        $this->assertEquals(AccountTaxCode::TYPE_ACCOUNT, $this->createAccountTaxCode()->getType());
+    }
 }

@@ -7,7 +7,6 @@ use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
-use OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher;
 use OroB2B\Bundle\TaxBundle\Model\Address;
 use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
 use OroB2B\Bundle\TaxBundle\Provider\TaxationAddressProvider;
@@ -15,7 +14,7 @@ use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
 {
-    const EU = 'EU';
+    const EU = 'UK';
     const US = 'US';
 
     const DIGITAL_TAX_CODE = 'DIGITAL_TAX_CODE';
@@ -24,11 +23,6 @@ class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
      * @var TaxationSettingsProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $settingsProvider;
-
-    /**
-     * @var CountryMatcher|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $countryMatcher;
 
     /**
      * @var TaxationAddressProvider
@@ -42,12 +36,7 @@ class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->countryMatcher = $this
-            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->addressProvider = new TaxationAddressProvider($this->settingsProvider, $this->countryMatcher);
+        $this->addressProvider = new TaxationAddressProvider($this->settingsProvider);
     }
 
     protected function tearDown()
@@ -274,12 +263,6 @@ class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsDigitalProductTaxCode($country, $taxCode, $expected)
     {
-        $this->countryMatcher
-            ->expects($this->once())
-            ->method('isEuropeanUnionCountry')
-            ->with($country)
-            ->willReturn($country === self::EU);
-
         $this->settingsProvider
             ->expects($country === self::EU ? $this->once() : $this->never())
             ->method('getDigitalProductsTaxCodesEU')

@@ -2,8 +2,9 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Resolver\SellerResolver\VatResolver\EUVatResolver;
 
+use Oro\Bundle\AddressBundle\Entity\Country;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
-use OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher;
+use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalResolver;
 use OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\ItemDigitalResolver;
@@ -16,11 +17,6 @@ class DigitalResolverTest extends \PHPUnit_Framework_TestCase
     protected $resolver;
 
     /**
-     * @var  CountryMatcher|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $countryMatcher;
-
-    /**
      * @var ItemDigitalResolver|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $itemResolver;
@@ -30,15 +26,11 @@ class DigitalResolverTest extends \PHPUnit_Framework_TestCase
         $itemResolverClass =
             'OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\ItemDigitalResolver';
 
-        $this->countryMatcher = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher')
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->itemResolver = $this->getMockBuilder($itemResolverClass)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->resolver = new DigitalResolver($this->countryMatcher, $this->itemResolver);
+        $this->resolver = new DigitalResolver($this->itemResolver);
     }
 
     public function testResolve()
@@ -46,14 +38,11 @@ class DigitalResolverTest extends \PHPUnit_Framework_TestCase
         $taxableItem = new Taxable();
         $taxable = $this->getTaxable($taxableItem);
 
-        $this->countryMatcher->expects($this->once())
-            ->method('isEuropeanUnionCountry')
-            ->willReturn(true);
-
         $this->itemResolver->expects($this->once())->method('resolve')->with(
             $this->callback(
                 function ($dispatchedTaxable) use ($taxableItem) {
                     $this->assertSame($taxableItem, $dispatchedTaxable);
+
                     return true;
                 }
             )
@@ -66,10 +55,7 @@ class DigitalResolverTest extends \PHPUnit_Framework_TestCase
     {
         $taxableItem = new Taxable();
         $taxable = $this->getTaxable($taxableItem);
-
-        $this->countryMatcher->expects($this->once())
-            ->method('isEuropeanUnionCountry')
-            ->willReturn(false);
+        $taxable->setDestination((new OrderAddress())->setCountry(new Country('US')));
 
         $this->itemResolver->expects($this->never())->method('resolve');
 
@@ -83,6 +69,18 @@ class DigitalResolverTest extends \PHPUnit_Framework_TestCase
         $this->resolver->resolve($taxable);
     }
 
+    public function testResultLocked()
+    {
+        $result = new Result();
+        $result->lockResult();
+        $taxable = $this->getTaxable(new Taxable());
+        $taxable->setResult($result);
+
+        $this->itemResolver->expects($this->never())->method('resolve');
+
+        $this->resolver->resolve($taxable);
+    }
+
     /**
      * @param Taxable $taxableItem
      * @return Taxable
@@ -90,7 +88,7 @@ class DigitalResolverTest extends \PHPUnit_Framework_TestCase
     protected function getTaxable($taxableItem)
     {
         $taxable = new Taxable();
-        $taxable->setDestination(new OrderAddress());
+        $taxable->setDestination((new OrderAddress())->setCountry(new Country('UK')));
         $taxable->setOrigin(new OrderAddress());
         $taxable->addItem($taxableItem);
 

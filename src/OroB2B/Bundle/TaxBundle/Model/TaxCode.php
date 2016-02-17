@@ -16,8 +16,12 @@ class TaxCode implements TaxCodeInterface
      */
     public function __construct($code, $type)
     {
-        $this->code = (string)$code;
-        $this->type = (string)$type;
+        if (!is_string($code) || !is_string($type)) {
+            throw new \InvalidArgumentException('Strings required');
+        }
+
+        $this->code = $code;
+        $this->type = $type;
     }
 
     /**

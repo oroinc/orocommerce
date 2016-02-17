@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Resolver;
 
+use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use OroB2B\Bundle\TaxBundle\Resolver\CustomerAddressItemResolver;
 use OroB2B\Bundle\TaxBundle\Resolver\CustomerAddressResolver;
@@ -46,6 +47,19 @@ class CustomerAddressResolverTest extends \PHPUnit_Framework_TestCase
                 }
             )
         );
+
+        $this->resolver->resolve($taxable);
+    }
+
+    public function testResultLocked()
+    {
+        $result = new Result();
+        $result->lockResult();
+        $taxable = new Taxable();
+        $taxable->addItem(new Taxable());
+        $taxable->setResult($result);
+
+        $this->itemResolver->expects($this->never())->method($this->anything());
 
         $this->resolver->resolve($taxable);
     }
