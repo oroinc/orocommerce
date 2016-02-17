@@ -56,6 +56,16 @@ class QuoteControllerTest extends WebTestCase
     public static $shipUntilUpdated     = '2015-09-20T00:00:00+0000';
 
     /**
+     * @var string
+     */
+    public static $shippingEstimateValue = '999.9900';
+
+    /**
+     * @var string
+     */
+    public static $shippingEstimateCurrency = 'USD';
+
+    /**
      * {@inheritdoc}
      */
     public static function setUpBeforeClass()
@@ -189,6 +199,30 @@ class QuoteControllerTest extends WebTestCase
         $this->assertEquals(self::$shipUntilUpdated, $row['shipUntil']);
 
         return $id;
+    }
+
+    /**
+     * @depends testUpdate
+     * @param int $id
+     */
+    public function testUpdateShippingEstimate($id)
+    {
+        $crawler    = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_update', ['id' => $id]));
+
+        /* @var $form Form */
+        $form = $crawler->selectButton('Save')->form();
+        $form['orob2b_sale_quote[shippingEstimate][value]']  = self::$shippingEstimateValue;
+        $form['orob2b_sale_quote[shippingEstimate][currency]']  = self::$shippingEstimateCurrency;
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form);
+        $form = $crawler->selectButton('Save')->form();
+        $fields = $form->get('orob2b_sale_quote');
+        $this->assertEquals(self::$shippingEstimateValue, $fields['shippingEstimate']['value']->getValue());
+        $this->assertEquals(self::$shippingEstimateCurrency, $fields['shippingEstimate']['currency']->getValue());
+
+        $result = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
     }
 
     /**
