@@ -26,7 +26,8 @@ class OroB2BSaleBundle implements Migration
     /**
      * @param Schema $schema
      */
-    protected function createFieldShippingAddress(Schema $schema) {
+    protected function createFieldShippingAddress(Schema $schema)
+    {
         $table = $schema->getTable('orob2b_sale_quote');
         $table->addColumn('shipping_address_id', 'integer', ['notnull' => false]);
     }
