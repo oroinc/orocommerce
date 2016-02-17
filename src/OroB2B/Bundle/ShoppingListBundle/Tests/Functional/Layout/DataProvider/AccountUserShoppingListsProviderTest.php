@@ -56,8 +56,5 @@ class AccountUserShoppingListsProviderTest extends WebTestCase
 
         $this->assertArrayHasKey('shoppingLists', $actual);
         $this->assertNotEmpty($actual['shoppingLists']);
-
-        $this->assertArrayHasKey('currentShoppingList', $actual);
-        $this->assertNotEmpty($actual['currentShoppingList']);
     }
 }
