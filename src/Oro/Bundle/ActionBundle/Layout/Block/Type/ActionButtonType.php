@@ -61,17 +61,7 @@ class ActionButtonType extends AbstractType
         $title = $this->translator->trans($titleRaw);
         $attributes['title'] = $title;
         $attributes['data-from-url'] = $options['fromUrl'];
-        if (array_key_exists('show_dialog', $frontendOptions) && !$frontendOptions['show_dialog']) {
-            $attributes['data-page-url'] = $actionUrl;
-        } else {
-            $attributes['data-dialog-url'] = $actionUrl;
-            $attributes['data-dialog-options'] = json_encode(
-                [
-                    'title' => $title,
-                    'dialogOptions' => $frontendOptions['options']
-                ]
-            );
-        }
+        $attributes = $this->setDialogParameters($frontendOptions, $actionUrl, $attributes, $title);
         $attributes['data-confirmation'] = array_key_exists('confirmation', $frontendOptions) ?
             $frontendOptions['confirmation'] : '';
         if (array_key_exists('page_component_module', $buttonOptions)) {
@@ -88,5 +78,31 @@ class ActionButtonType extends AbstractType
         $view->vars['attr'] = $attributes;
         $view->vars['linkLabel'] = $title;
         $view->vars['buttonOptions'] = $buttonOptions;
+    }
+
+    /**
+     * @param array $frontendOptions
+     * @param string $actionUrl
+     * @param array $attributes
+     * @param string $title
+     * @return array
+     */
+    protected function setDialogParameters($frontendOptions, $actionUrl, $attributes, $title)
+    {
+        if (array_key_exists('show_dialog', $frontendOptions) && !$frontendOptions['show_dialog']) {
+            $attributes['data-page-url'] = $actionUrl;
+
+            return $attributes;
+        } else {
+            $attributes['data-dialog-url'] = $actionUrl;
+            $attributes['data-dialog-options'] = json_encode(
+                [
+                    'title' => $title,
+                    'dialogOptions' => $frontendOptions['options']
+                ]
+            );
+
+            return $attributes;
+        }
     }
 }
