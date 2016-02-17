@@ -38,3 +38,9 @@ doctrine:
     orm:
         resolve_target_entities:
             OroB2B\Bundle\AccountBundle\Entity\CustomerUserIdentity: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+        entity_managers:
+            default:
+                filters:
+                    soft_deleteable:
+                        class:      OroB2B\Bundle\AccountBundle\Doctrine\SoftDeleteableFilter
+                        enabled:    false
