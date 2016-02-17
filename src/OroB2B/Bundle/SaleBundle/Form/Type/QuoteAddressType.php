@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
-use OroB2B\Bundle\SaleBundle\Model\QuoteAddressManager;
-use OroB2B\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -17,10 +15,11 @@ use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 
+use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use OroB2B\Bundle\SaleBundle\Model\QuoteAddressManager;
+use OroB2B\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 
 class QuoteAddressType extends AbstractType
 {
@@ -65,29 +64,29 @@ class QuoteAddressType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $type = $options['addressType'];
-        $order = $options['order'];
+        $quote = $options['quote'];
 
         $isManualEditGranted = $this->quoteAddressSecurityProvider->isManualEditGranted($type);
-        $addresses = $this->quoteAddressManager->getGroupedAddresses($order, $type);
+        $addresses = $this->quoteAddressManager->getGroupedAddresses($quote, $type);
 
         $accountAddressOptions = [
             'label' => false,
             'required' => false,
             'mapped' => false,
             'choices' => $this->getChoices($addresses),
-            'configs' => ['placeholder' => 'orob2b.order.form.address.choose'],
+            'configs' => ['placeholder' => 'orob2b.quote.form.address.choose'],
             'attr' => [
                 'data-addresses' => json_encode($this->getPlainData($addresses)),
-                'data-default' => $this->getDefaultAddressKey($order, $type, $addresses),
+                'data-default' => $this->getDefaultAddressKey($quote, $type, $addresses),
             ],
         ];
 
         if ($isManualEditGranted) {
             $accountAddressOptions['choices'] = array_merge(
                 $accountAddressOptions['choices'],
-                ['orob2b.order.form.address.manual']
+                ['orob2b.quote.form.address.manual']
             );
-            $accountAddressOptions['configs']['placeholder'] = 'orob2b.order.form.address.choose_or_create';
+            $accountAddressOptions['configs']['placeholder'] = 'orob2b.quote.form.address.choose_or_create';
         }
 
         $builder->add('accountAddress', 'genemu_jqueryselect2_choice', $accountAddressOptions);
@@ -110,15 +109,15 @@ class QuoteAddressType extends AbstractType
                 }
 
                 //Enter manually or Account/AccountUser address
-                $orderAddress = $event->getData();
+                $quoteAddress = $event->getData();
 
                 $address = null;
                 if ($identifier) {
                     $address = $this->quoteAddressManager->getEntityByIdentifier($identifier);
                 }
 
-                if ($orderAddress || $address) {
-                    $event->setData($this->quoteAddressManager->updateFromAbstract($address, $orderAddress));
+                if ($quoteAddress || $address) {
+                    $event->setData($this->quoteAddressManager->updateFromAbstract($address, $quoteAddress));
                 }
             },
             -10
@@ -153,10 +152,10 @@ class QuoteAddressType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
-            ->setRequired(['order', 'addressType'])
+            ->setRequired(['quote', 'addressType'])
             ->setDefaults(['data_class' => $this->dataClass])
             ->setAllowedValues('addressType', [ AddressType::TYPE_SHIPPING])
-            ->setAllowedTypes('order', 'OroB2B\Bundle\OrderBundle\Entity\Order');
+            ->setAllowedTypes('quote', 'OroB2B\Bundle\SaleBundle\Entity\Quote');
     }
 
     /**
@@ -205,20 +204,20 @@ class QuoteAddressType extends AbstractType
     }
 
     /**
-     * @param Order $order
+     * @param Quote $quote
      * @param string $type
      * @param array $addresses
      *
      * @return null|string
      */
-    protected function getDefaultAddressKey(Order $order, $type, array $addresses)
+    protected function getDefaultAddressKey(Quote $quote, $type, array $addresses)
     {
         if (!$addresses) {
             return null;
         }
 
         $addresses = call_user_func_array('array_merge', array_values($addresses));
-        $accountUser = $order->getAccountUser();
+        $accountUser = $quote->getAccountUser();
         $addressKey = null;
 
         /** @var AbstractDefaultTypedAddress $address */
