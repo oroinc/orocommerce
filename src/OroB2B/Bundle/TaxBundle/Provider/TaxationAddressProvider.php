@@ -27,7 +27,7 @@ class TaxationAddressProvider
     /**
      * @param AbstractAddress $billingAddress
      * @param AbstractAddress $shippingAddress
-     * @return AbstractAddress
+     * @return AbstractAddress|null
      */
     public function getAddressForTaxation(
         AbstractAddress $billingAddress = null,

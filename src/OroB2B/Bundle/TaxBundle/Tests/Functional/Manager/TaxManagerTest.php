@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
 
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -80,7 +79,7 @@ class TaxManagerTest extends WebTestCase
         $this->executeMethod($method, $this->getReference($reference), $expectedResult);
 
         $this->assertDatabase($databaseAfter);
-        $this->clearDatabase($databaseAfter);
+        $this->clearDatabase($databaseBefore);
     }
 
     /**
@@ -226,14 +225,15 @@ class TaxManagerTest extends WebTestCase
     protected function clearDatabase(array $databaseBefore)
     {
         foreach ($databaseBefore as $class => $items) {
-            /** @var EntityRepository $repository */
-            $repository = $this->doctrine->getRepository($class);
+            /** @var EntityManager $em */
+            $em = $this->doctrine->getManagerForClass($class);
 
-            $repository
-                ->createQueryBuilder('e')
-                ->delete($class, 'e')
-                ->getQuery()
-                ->execute();
+            foreach ($items as $reference => $item) {
+                $object = $this->getReferenceRepository()->getReference($reference);
+                $em->remove($object);
+            }
+            $em->flush();
+            $em->clear();
         }
     }
 }

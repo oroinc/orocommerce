@@ -34,7 +34,7 @@ class ItemDigitalResolver extends AbstractItemResolver
             return;
         }
 
-        if ($taxable->getResult()->count() !== 0) {
+        if ($taxable->getResult()->isResultLocked()) {
             return;
         }
 
@@ -51,6 +51,7 @@ class ItemDigitalResolver extends AbstractItemResolver
             $result = $taxable->getResult();
             $this->unitResolver->resolveUnitPrice($result, $taxRules, $taxableAmount);
             $this->rowTotalResolver->resolveRowTotal($result, $taxRules, $taxableAmount, $taxable->getQuantity());
+            $result->lockResult();
         }
     }
 
