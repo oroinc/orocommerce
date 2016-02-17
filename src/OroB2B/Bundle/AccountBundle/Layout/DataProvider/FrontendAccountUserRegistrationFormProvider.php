@@ -56,14 +56,14 @@ class FrontendAccountUserRegistrationFormProvider extends FormProvider
      */
     public function getForm($data = null, array $options = [])
     {
-        $accountUser = $data ? $data : $this->getAccountUser();
+        $accountUser = $data ? $data : $this->createAccountUser();
         parent::getForm($accountUser, $options);
     }
 
     /**
      * @return AccountUser
      */
-    protected function getAccountUser()
+    protected function createAccountUser()
     {
         $accountUser = new AccountUser();
 
