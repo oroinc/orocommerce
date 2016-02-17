@@ -26,6 +26,14 @@ layout:
                                 @value: $data.shoppingList
                 shopping_list_line_items:
                     blockType: block
+                    options:
+                        vars:
+                            shoppingList:
+                                @value: $data.shoppingList
+                            productsPrices:
+                                @value: $data.orob2b_shopping_list_products_prices
+                            productsUnits:
+                                @value: $data.orob2b_shopping_list_products_units
                 shopping_list_combined_button:
                     blockType: block
             tree:
