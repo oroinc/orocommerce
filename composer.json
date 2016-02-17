@@ -13,11 +13,17 @@
         {
             "type": "composer",
             "url": "http://packagist.orocrm.com"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/nicholas-eden/math.git"
         }
     ],
     "require": {
+        "box/spout": "2.3.*",
+        "nicholas-eden/math": "0.6.*",
         "oro/platform": "self.version",
-        "box/spout": "2.3.*"
+        "oro/platform-serialised-fields": "self.version"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
