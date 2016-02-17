@@ -143,6 +143,10 @@ class OrderLineItemHandler
         $accountTaxCodeRepository = $this->doctrineHelper->getEntityRepositoryForClass($this->accountTaxCodeClass);
         $accountTaxCode = $accountTaxCodeRepository->findOneByAccount($lineItem->getOrder()->getAccount());
 
-        return $accountTaxCode->getCode();
+        if ($accountTaxCode) {
+            return $accountTaxCode->getCode();
+        }
+
+        return null;
     }
 }
