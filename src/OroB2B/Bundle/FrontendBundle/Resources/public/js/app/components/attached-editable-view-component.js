@@ -118,6 +118,7 @@ define(function(require) {
             if (!element.length) {
                 element = this.wrapper.$el;
             }
+            element.prop('disabled', false);
 
             return {
                 el: element,

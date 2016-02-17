@@ -101,7 +101,7 @@
                 </label>
                 <div class="form-input" data-role="editor">
                     <textarea placeholder="{{ 'orob2b.frontend.shoppinglist.view.add_note.placeholder'|trans }}"
-                        rows="3" cols="30" name="shopping_list_notes"
+                        rows="3" cols="30" name="shopping_list_notes" disabled="disabled"
                         class="input input_sm input_block">{{ notes }}</textarea>
                 </div>
             </div>
@@ -148,31 +148,27 @@
                     options: {
                         value: {'quantity': lineItem.quantity, 'unit': lineItem.unit.code},
                         dataKey: constant('OroB2B\\Bundle\\ShoppingListBundle\\Form\\Type\\FrontendLineItemType::NAME'),
-                        metadata: {
-                            inline_editing: {
-                                enable: resource_granted('orob2b_shopping_list_frontend_update'),
-                                save_api_accessor: {
-                                    route: 'orob2b_api_shopping_list_frontend_put_line_item',
-                                    http_method: 'PUT',
-                                    default_route_parameters: {
-                                        id: lineItem.id
-                                    }
-                                }
+                        enable: resource_granted('orob2b_shopping_list_frontend_update'),
+                        elements: {
+                            quantity: '[name="product_qty"]',
+                            unit: '[name="product_unit"]'
+                        },
+                        save_api_accessor: {
+                            default_route_parameters: {
+                                id: lineItem.id
                             }
                         }
                     }
                 }) }}>
                     <div class="product__qty-input product__qty-input_inline product__qty-input_more-info va-m_md">
                         <div class="product__qty-input__count-option">
-                            <button class="count-minus" data-count-minus>-</button>
                             <input type="number" value="{{ lineItem.quantity }}" name="product_qty"
                                 placeholder="{{ 'orob2b.frontend.shoppinglist.view.qty.label'|trans }}"
-                                class="input input_sm input_block text-center" data-count-input />
-                            <button class="count-plus" data-count-plus>+</button>
+                                class="input input_sm input_block text-center" disabled="disabled" />
                         </div>
                     </div>
                     <div class="product__select inline va-m_md">
-                        <select data-chosen-selectbox class="input input_block input_sm">
+                        <select data-chosen-selectbox class="input input_block input_sm" name="product_unit">
                             {% for unit in productsUnits[lineItem.product.id] %}
                             <option value="{{ unit }}" {% if unit == lineItem.unit %}selected="selected"{% endif %}>{{ unit|orob2b_format_product_unit_label}}</option>
                             {% endfor %}
@@ -227,7 +223,7 @@
                         </label>
 
                         <div class="form-input form-input_textarea" data-role="editor">
-                            <textarea class="input input_sm input_block" name="copy_paste_order" cols="30" rows="3"
+                            <textarea class="input input_sm input_block" name="copy_paste_order" cols="30" rows="3" disabled="disabled"
                                 placeholder="{{ 'orob2b.frontend.shoppinglist.view.add_item_note.placeholder'|trans }}">{{ lineItem.notes }}</textarea>
                         </div>
                     </div>
