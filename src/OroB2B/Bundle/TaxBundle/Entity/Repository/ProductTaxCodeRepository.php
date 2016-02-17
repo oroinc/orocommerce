@@ -2,12 +2,10 @@
 
 namespace OroB2B\Bundle\TaxBundle\Entity\Repository;
 
-use Doctrine\ORM\EntityRepository;
-
 use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class ProductTaxCodeRepository extends EntityRepository
+class ProductTaxCodeRepository extends AbstractTaxCodeRepository
 {
     /**
      * @param Product $product
