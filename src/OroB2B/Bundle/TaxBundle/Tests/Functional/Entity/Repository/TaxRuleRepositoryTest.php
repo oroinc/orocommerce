@@ -4,11 +4,10 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
-use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 use OroB2B\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository;
 use OroB2B\Bundle\TaxBundle\Model\TaxCode;
+use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
 use OroB2B\Bundle\TaxBundle\Model\TaxCodes;
 use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules;
 use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions;
@@ -34,8 +33,8 @@ class TaxRuleRepositoryTest extends WebTestCase
         $result = $this->getRepository()->findByCountryAndTaxCode(
             TaxCodes::create(
                 [
-                    TaxCode::create($taxRule->getProductTaxCode()->getCode(), ProductTaxCode::TYPE_PRODUCT),
-                    TaxCode::create($taxRule->getAccountTaxCode()->getCode(), AccountTaxCode::TYPE_ACCOUNT),
+                    TaxCode::create($taxRule->getProductTaxCode()->getCode(), TaxCodeInterface::TYPE_PRODUCT),
+                    TaxCode::create($taxRule->getAccountTaxCode()->getCode(), TaxCodeInterface::TYPE_ACCOUNT),
                 ]
             ),
             $taxRule->getTaxJurisdiction()->getCountry()
@@ -53,8 +52,8 @@ class TaxRuleRepositoryTest extends WebTestCase
         $result = $this->getRepository()->findByRegionAndTaxCode(
             TaxCodes::create(
                 [
-                    TaxCode::create($taxRule->getProductTaxCode()->getCode(), ProductTaxCode::TYPE_PRODUCT),
-                    TaxCode::create($taxRule->getAccountTaxCode()->getCode(), AccountTaxCode::TYPE_ACCOUNT),
+                    TaxCode::create($taxRule->getProductTaxCode()->getCode(), TaxCodeInterface::TYPE_PRODUCT),
+                    TaxCode::create($taxRule->getAccountTaxCode()->getCode(), TaxCodeInterface::TYPE_ACCOUNT),
                 ]
             ),
             $taxRule->getTaxJurisdiction()->getCountry(),
@@ -73,8 +72,8 @@ class TaxRuleRepositoryTest extends WebTestCase
         $result = $this->getRepository()->findByZipCodeAndTaxCode(
             TaxCodes::create(
                 [
-                    TaxCode::create($taxRule->getProductTaxCode()->getCode(), ProductTaxCode::TYPE_PRODUCT),
-                    TaxCode::create($taxRule->getAccountTaxCode()->getCode(), AccountTaxCode::TYPE_ACCOUNT),
+                    TaxCode::create($taxRule->getProductTaxCode()->getCode(), TaxCodeInterface::TYPE_PRODUCT),
+                    TaxCode::create($taxRule->getAccountTaxCode()->getCode(), TaxCodeInterface::TYPE_ACCOUNT),
                 ]
             ),
             LoadTaxJurisdictions::ZIP_CODE,

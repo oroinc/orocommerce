@@ -10,6 +10,7 @@ use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 use OroB2B\Bundle\TaxBundle\Matcher\RegionMatcher;
 use OroB2B\Bundle\TaxBundle\Matcher\ZipCodeMatcher;
 use OroB2B\Bundle\TaxBundle\Model\TaxCode;
+use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
 use OroB2B\Bundle\TaxBundle\Model\TaxCodes;
 
 class ZipCodeMatcherTest extends AbstractMatcherTest
@@ -75,10 +76,10 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
 
         $taxCodes = [];
         if ($productTaxCode) {
-            $taxCodes[] = TaxCode::create($productTaxCode, TaxCode::TYPE_PRODUCT);
+            $taxCodes[] = TaxCode::create($productTaxCode, TaxCodeInterface::TYPE_PRODUCT);
         }
         if ($accountTaxCode) {
-            $taxCodes[] = TaxCode::create($accountTaxCode, TaxCode::TYPE_ACCOUNT);
+            $taxCodes[] = TaxCode::create($accountTaxCode, TaxCodeInterface::TYPE_ACCOUNT);
         }
 
         $taxCodes = TaxCodes::create($taxCodes);

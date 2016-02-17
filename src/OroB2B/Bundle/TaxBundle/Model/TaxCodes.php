@@ -8,7 +8,7 @@ class TaxCodes
     protected $codes;
 
     /**
-     * @param TaxCode[]|string[] $codes
+     * @param TaxCode[] $codes
      */
     public function __construct(array $codes = [])
     {
@@ -20,7 +20,7 @@ class TaxCodes
     }
 
     /**
-     * @param TaxCode[]|string[] $codes
+     * @param TaxCode[] $codes
      * @return TaxCodes
      */
     public static function create(array $codes = [])

@@ -8,6 +8,7 @@ use Oro\Bundle\AddressBundle\Entity\Country;
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 use OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher;
 use OroB2B\Bundle\TaxBundle\Model\TaxCode;
+use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
 use OroB2B\Bundle\TaxBundle\Model\TaxCodes;
 
 class CountryMatcherTest extends AbstractMatcherTest
@@ -39,10 +40,10 @@ class CountryMatcherTest extends AbstractMatcherTest
 
         $taxCodes = [];
         if ($productTaxCode) {
-            $taxCodes[] = TaxCode::create($productTaxCode, TaxCode::TYPE_PRODUCT);
+            $taxCodes[] = TaxCode::create($productTaxCode, TaxCodeInterface::TYPE_PRODUCT);
         }
         if ($accountTaxCode) {
-            $taxCodes[] = TaxCode::create($accountTaxCode, TaxCode::TYPE_ACCOUNT);
+            $taxCodes[] = TaxCode::create($accountTaxCode, TaxCodeInterface::TYPE_ACCOUNT);
         }
 
         $taxCodes = TaxCodes::create($taxCodes);

@@ -39,7 +39,7 @@ class OrderLineItemHandler
     protected $orderLineItemClass;
 
     /**
-     * @var array
+     * @var TaxCodeInterface[]
      */
     protected $taxCodes = [];
 

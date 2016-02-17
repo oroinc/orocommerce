@@ -7,10 +7,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\AddressBundle\Entity\Address;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
-use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 use OroB2B\Bundle\TaxBundle\Model\TaxCode;
+use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
 use OroB2B\Bundle\TaxBundle\Model\TaxCodes;
 use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes;
 use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
@@ -59,10 +58,10 @@ class ZipCodeMatcherTest extends WebTestCase
             $address->setRegionText($regionText);
         }
 
-        /** @var ProductTaxCode $productTaxCode */
+        /** @var TaxCodeInterface $productTaxCode */
         $productTaxCode = $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX . '.' . LoadProductTaxCodes::TAX_1);
 
-        /** @var AccountTaxCode $accountTaxCode */
+        /** @var TaxCodeInterface $accountTaxCode */
         $accountTaxCode = $this->getReference(LoadAccountTaxCodes::REFERENCE_PREFIX . '.' . LoadAccountTaxCodes::TAX_1);
 
         $zipCodeMatcher = $this->getContainer()->get('orob2b_tax.matcher.zip_code_matcher');
@@ -71,8 +70,8 @@ class ZipCodeMatcherTest extends WebTestCase
             $address,
             TaxCodes::create(
                 [
-                    TaxCode::create($productTaxCode->getCode(), ProductTaxCode::TYPE_PRODUCT),
-                    TaxCode::create($accountTaxCode->getCode(), AccountTaxCode::TYPE_ACCOUNT),
+                    TaxCode::create($productTaxCode->getCode(), TaxCodeInterface::TYPE_PRODUCT),
+                    TaxCode::create($accountTaxCode->getCode(), TaxCodeInterface::TYPE_ACCOUNT),
                 ]
             )
         );
