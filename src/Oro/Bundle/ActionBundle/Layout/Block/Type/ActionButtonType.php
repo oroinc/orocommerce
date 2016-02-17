@@ -52,9 +52,7 @@ class ActionButtonType extends AbstractType
         $buttonOptions = $params['buttonOptions'];
         $actionUrl = $params['actionUrl'];
         $attributes = [];
-        if (array_key_exists('id', $params)) {
-            $attributes['id'] = $params['id'];
-        }
+        $attributes = $this->setId($params, $attributes);
         $attributes['href'] = $params['path'] ?: 'javascript:void(0);';
         $attributes['class'] = 'back icons-holder-text action-button';
         $titleRaw = array_key_exists('title', $frontendOptions) ? $frontendOptions['title'] : $params['label'];
@@ -78,7 +76,7 @@ class ActionButtonType extends AbstractType
      * @param string $title
      * @return array
      */
-    protected function setDialogParameters($frontendOptions, $actionUrl, $attributes, $title)
+    protected function setDialogParameters(array $frontendOptions, $actionUrl, array $attributes, $title)
     {
         if (array_key_exists('show_dialog', $frontendOptions) && !$frontendOptions['show_dialog']) {
             $attributes['data-page-url'] = $actionUrl;
@@ -102,7 +100,7 @@ class ActionButtonType extends AbstractType
      * @param array $attributes
      * @return array
      */
-    protected function setPageComponentOptions($buttonOptions, $attributes)
+    protected function setPageComponentOptions(array $buttonOptions, array $attributes)
     {
         if (array_key_exists('page_component_module', $buttonOptions)) {
             $attributes['data-page-component-module'] = $buttonOptions['page_component_module'];
@@ -121,12 +119,28 @@ class ActionButtonType extends AbstractType
      * @param array $attributes
      * @return array
      */
-    protected function setButtonOptions($buttonOptions, $attributes)
+    protected function setButtonOptions(array $buttonOptions, array $attributes)
     {
         if (array_key_exists('data', $buttonOptions)) {
             foreach ($buttonOptions['data'] as $dataName => $dataValue) {
                 $attributes['data-' . $dataName] = $dataValue;
             }
+
+            return $attributes;
+        }
+
+        return $attributes;
+    }
+
+    /**
+     * @param array $params
+     * @param array $attributes
+     * @return array
+     */
+    protected function setId(array $params, array $attributes)
+    {
+        if (array_key_exists('id', $params)) {
+            $attributes['id'] = $params['id'];
 
             return $attributes;
         }
