@@ -11,9 +11,10 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Bundle\FormBundle\Form\Handler\FormProviderInterface;
+
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
-use OroB2B\Bundle\ProductBundle\Provider\QuickAddFormProvider;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
 use OroB2B\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
@@ -21,9 +22,9 @@ use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 class QuickAddHandler
 {
     /**
-     * @var QuickAddFormProvider
+     * @var FormProviderInterface
      */
-    protected $quickAddFormProvider;
+    protected $formProvider;
 
     /**
      * @var ComponentProcessorRegistry
@@ -56,7 +57,7 @@ class QuickAddHandler
     protected $productClass;
 
     /**
-     * @param QuickAddFormProvider $quickAddFormProvider
+     * @param FormProviderInterface $formProvider
      * @param ComponentProcessorRegistry $componentRegistry
      * @param ManagerRegistry $registry
      * @param UrlGeneratorInterface $router
@@ -64,14 +65,14 @@ class QuickAddHandler
      * @param QuickAddRowCollectionBuilder $collectionBuilder
      */
     public function __construct(
-        QuickAddFormProvider $quickAddFormProvider,
+        FormProviderInterface $formProvider,
         ComponentProcessorRegistry $componentRegistry,
         ManagerRegistry $registry,
         UrlGeneratorInterface $router,
         TranslatorInterface $translator,
         QuickAddRowCollectionBuilder $collectionBuilder
     ) {
-        $this->quickAddFormProvider = $quickAddFormProvider;
+        $this->formProvider = $formProvider;
         $this->componentRegistry = $componentRegistry;
         $this->registry = $registry;
         $this->router = $router;
@@ -108,7 +109,7 @@ class QuickAddHandler
             $options['validation_required'] = $processor->isValidationRequired();
         }
 
-        $form = $this->quickAddFormProvider->getForm($options);
+        $form = $this->formProvider->getForm($options);
         $form->submit($request);
 
         if (!$processor || !$processor->isAllowed()) {

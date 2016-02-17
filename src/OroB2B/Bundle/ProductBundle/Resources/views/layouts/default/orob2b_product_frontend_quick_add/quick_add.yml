@@ -6,10 +6,14 @@ layout:
             id: page_title
             optionName: text
             optionValue: 'orob2b.product.frontend.quick_add.title'
+#        - @setOption:
+#            id: quick_add_form_fields_products
+#            optionName: label
+#            optionValue: false
         - @setOption:
-            id: quick_add_form_fields_products
-            optionName: label
-            optionValue: false
+            id: quick_add_copy_paste_form_fields_copyPaste
+            optionName: attr.placeholder
+            optionValue: 'orob2b.product.frontend.quick_add.copy_paste.placeholder'
         - @addTree:
             items:
                 quick_add_form:
@@ -28,9 +32,25 @@ layout:
                     blockType: form_end
                     options:
                         form: { @value: $data.orob2b_product_quick_add_form_provider }
+
+                quick_add_copy_paste_form_start:
+                    blockType: form_start
+                    options:
+                        form: { @value: $data.orob2b_product_quick_add_copy_paste_form_provider }
+                quick_add_copy_paste_form_fields:
+                    blockType: form
+                    options:
+                        form: { @value: $data.orob2b_product_quick_add_copy_paste_form_provider }
+                quick_add_copy_paste_form_end:
+                    blockType: form_end
+                    options:
+                        form: { @value: $data.orob2b_product_quick_add_copy_paste_form_provider }
             tree:
                 content:
                     quick_add_form:
                         quick_add_form_start: ~
                         quick_add_form_fields: ~
                         quick_add_form_end: ~
+                        quick_add_copy_paste_form_start: ~
+                        quick_add_copy_paste_form_fields: ~
+                        quick_add_copy_paste_form_end: ~

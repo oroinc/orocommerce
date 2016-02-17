@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Controller\Frontend;
 
 use Box\Spout\Common\Exception\UnsupportedTypeException;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -87,6 +88,7 @@ class QuickAddController extends Controller
 
     /**
      * @Route("/validation/result/", name="orob2b_product_frontend_quick_add_validation_result")
+     * @Method("POST")
      * @Template("OroB2BProductBundle:QuickAdd\Frontend:validationRedirectResult.html.twig")
      *
      * @param Request $request
@@ -94,12 +96,10 @@ class QuickAddController extends Controller
      */
     public function validationResultAction(Request $request)
     {
-        $result = $this->get('orob2b_product.form_handler.quick_add')->process($request);
-        $response = $result['response'];
-
-        if (!$response instanceof RedirectResponse) {
-            return ['targetUrl' => $this->generateUrl('orob2b_product_frontend_quick_add')];
-        }
+        $response = $this->get('orob2b_product.form_handler.quick_add')->process(
+            $request,
+            'orob2b_product_frontend_quick_add'
+        );
 
         return ['targetUrl' => $response->getTargetUrl()];
     }
@@ -113,8 +113,9 @@ class QuickAddController extends Controller
      */
     public function copyPasteAction(Request $request)
     {
-        $copyPasteForm = $this->createForm(QuickAddCopyPasteType::NAME)->handleRequest($request);
-        $copyPasteText = $copyPasteForm->get(QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME)->getData();
+        $form = $this->get('orob2b_product.provider.quick_add_copy_paste_form_provider')->getForm();
+        $form->handleRequest($request);
+        $copyPasteText = $form->get(QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME)->getData();
 
         $collection = $this->getQuickAddRowCollectionBuilder()->buildFromCopyPasteText($copyPasteText);
 
