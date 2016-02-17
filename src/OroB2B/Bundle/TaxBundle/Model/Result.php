@@ -80,12 +80,14 @@ final class Result extends AbstractResult
         return parent::serialize();
     }
 
-    /**
-     * @param bool $locked
-     */
-    protected function setResultLocked($locked)
+    public function lockResult()
     {
-        $this->resultLocked = $locked;
+        $this->resultLocked = true;
+    }
+
+    public function unlockResult()
+    {
+        $this->resultLocked = false;
     }
 
     /**

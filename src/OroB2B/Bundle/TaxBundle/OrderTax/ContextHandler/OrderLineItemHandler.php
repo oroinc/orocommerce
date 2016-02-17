@@ -77,7 +77,7 @@ class OrderLineItemHandler
             return;
         }
 
-        $context->offsetSet(Taxable::DIGITAL_PRODUCT, $this->isDigitProduct($lineItem));
+        $context->offsetSet(Taxable::DIGITAL_PRODUCT, $this->isDigital($lineItem));
         $context->offsetSet(Taxable::PRODUCT_TAX_CODE, $this->getProductTaxCode($lineItem));
         $context->offsetSet(Taxable::ACCOUNT_TAX_CODE, $this->getAccountTaxCode($lineItem));
     }
@@ -86,7 +86,7 @@ class OrderLineItemHandler
      * @param OrderLineItem $lineItem
      * @return bool
      */
-    protected function isDigitProduct(OrderLineItem $lineItem)
+    protected function isDigital(OrderLineItem $lineItem)
     {
         $productTaxCode = $this->getProductTaxCode($lineItem);
 
