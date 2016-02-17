@@ -124,8 +124,8 @@
                 <th class="w70"><small>&nbsp;</small></th>
             </tr>
             </thead>
-            <tbody>
             {% for lineItem in shoppingList.lineItems %}
+            <tbody class="line_item">
             <tr>
                 <td class="va-t_md">
                     <div class="product-item product-item_in-cart">
@@ -241,8 +241,8 @@
                     </div>
                 </td>
             </tr>
-            {% endfor %}
             </tbody>
+            {% endfor %}
         </table>
         {{ block_widget(block) }}
     </div>
