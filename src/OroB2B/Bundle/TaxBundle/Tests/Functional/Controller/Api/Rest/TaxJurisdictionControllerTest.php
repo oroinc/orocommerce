@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Controller\Api\Rest;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxes;
 use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions;
 
 /**
@@ -25,7 +26,7 @@ class TaxJurisdictionControllerTest extends WebTestCase
     public function testDelete()
     {
         $taxJurisdiction = $this->getReference(
-            LoadTaxJurisdictions::REFERENCE_PREFIX . '.' . LoadTaxJurisdictions::TAX_1
+            LoadTaxJurisdictions::REFERENCE_PREFIX . '.' . LoadTaxes::TAX_1
         );
         $taxJurisdictionId = $taxJurisdiction->getId();
         $this->client->request(

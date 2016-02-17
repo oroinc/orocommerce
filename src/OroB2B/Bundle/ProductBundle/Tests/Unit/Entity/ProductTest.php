@@ -77,7 +77,6 @@ class ProductTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('\DateTime', $product->getUpdatedAt());
         $this->assertCount(0, $product->getVariantFields());
-        $this->assertCount(0, $product->getVariantLinks());
     }
 
     public function testUnitRelation()
