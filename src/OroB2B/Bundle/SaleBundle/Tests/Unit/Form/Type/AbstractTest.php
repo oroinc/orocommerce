@@ -87,12 +87,13 @@ abstract class AbstractTest extends FormIntegrationTestCase
      * @param array $submittedData
      * @param mixed $expectedData
      * @param mixed $defaultData
+     * @param array $options
      *
      * @dataProvider submitProvider
      */
-    public function testSubmit($isValid, $submittedData, $expectedData, $defaultData = null)
+    public function testSubmit($isValid, $submittedData, $expectedData, $defaultData = null, $options = [])
     {
-        $form = $this->factory->create($this->formType, $defaultData, []);
+        $form = $this->factory->create($this->formType, $defaultData, $options);
 
         $this->assertEquals($defaultData, $form->getData());
 

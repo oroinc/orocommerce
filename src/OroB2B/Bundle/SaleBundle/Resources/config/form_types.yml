@@ -16,6 +16,8 @@ services:
     # Quote form types
     orob2b_sale.form.type.quote:
         class: %orob2b_sale.form.type.quote.class%
+        arguments:
+            - @orob2b_sale.provider.quote_address_security
         calls:
             - [setDataClass, [%orob2b_sale.entity.quote.class%]]
         tags:
