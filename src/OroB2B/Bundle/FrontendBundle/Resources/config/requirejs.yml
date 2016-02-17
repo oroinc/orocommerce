@@ -13,5 +13,7 @@ config:
 
         'orob2bfrontend/js/app/views/inline-editable-wrapper-view': 'bundles/orob2bfrontend/js/app/views/inline-editable-wrapper-view.js'
         'orob2bfrontend/js/app/modules/inline-editor-types-map-module': 'bundles/orob2bfrontend/js/app//modules/inline-editor-types-map-module.js'
+        'orob2bfrontend/js/app/components/delete-item-component': 'bundles/orob2bfrontend/js/app/components/delete-item-component.js'
+        'orob2bfrontend/js/app/components/delete-confirmation': 'bundles/orob2bfrontend/js/app/components/delete-confirmation.js'
     appmodules:
         - orob2bfrontend/js/app/modules/inline-editor-types-map-module

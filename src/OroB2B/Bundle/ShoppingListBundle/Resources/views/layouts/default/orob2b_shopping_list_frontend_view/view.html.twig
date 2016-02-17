@@ -186,7 +186,19 @@
                     </table>
                 </td>
                 <td class="va-t_md text-right">
-                    <button class="button-icon gray fs20"><i class="icon-trash"></i></button>
+                    <button class="item-remove button-icon gray fs20" {{ UI.renderPageComponentAttributes({
+                            module: 'orob2bfrontend/js/app/components/delete-item-component',
+                            options: {
+                                url: path('orob2b_api_shopping_list_frontend_delete_line_item', {'id': lineItem.id}),
+                                removeClass: 'line_item',
+                                confirmMessage: 'orob2b.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
+                                sucsessMessage: 'orob2b.frontend.shoppinglist.messages.line_item_deleted'|trans,
+                                okButtonClass: 'btn ok theme-btn_sm btn_orange',
+                                cancelButtonClass: 'btn cancel theme-btn_sm btn_gray'
+                            }
+                        }) }} >
+                        <i class="icon-trash"></i>
+                    </button>
                 </td>
             </tr>
             <tr class="borderless t_paddingless">
