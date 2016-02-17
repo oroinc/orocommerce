@@ -18,7 +18,6 @@ use OroB2B\Bundle\SaleBundle\Entity\QuoteAddress;
 use OroB2B\Bundle\SaleBundle\Provider\QuoteAddressProvider;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 
 class QuoteAddressManager
 {
@@ -72,14 +71,14 @@ class QuoteAddressManager
 
     /**
      * @param AbstractAddress $address
-     * @param QuoteAddress $orderAddress
+     * @param QuoteAddress $quoteAddress
      *
-     * @return OrderAddress
+     * @return QuoteAddress
      */
-    public function updateFromAbstract(AbstractAddress $address = null, QuoteAddress $orderAddress = null)
+    public function updateFromAbstract(AbstractAddress $address = null, QuoteAddress $quoteAddress = null)
     {
-        if (!$orderAddress) {
-            $orderAddress = new $this->quoteAddressClass();
+        if (!$quoteAddress) {
+            $quoteAddress = new $this->quoteAddressClass();
         }
 
         if ($address) {
@@ -88,24 +87,24 @@ class QuoteAddressManager
                 ->getClassMetadata($addressClassName);
 
             foreach ($addressMetadata->getFieldNames() as $fieldName) {
-                $this->setValue($address, $orderAddress, $fieldName);
+                $this->setValue($address, $quoteAddress, $fieldName);
             }
 
             foreach ($addressMetadata->getAssociationNames() as $associationName) {
-                $this->setValue($address, $orderAddress, $associationName);
+                $this->setValue($address, $quoteAddress, $associationName);
             }
         }
 
-        $orderAddress->setAccountAddress(null);
-        $orderAddress->setAccountUserAddress(null);
+        $quoteAddress->setAccountAddress(null);
+        $quoteAddress->setAccountUserAddress(null);
 
         if ($address instanceof AccountAddress) {
-            $orderAddress->setAccountAddress($address);
+            $quoteAddress->setAccountAddress($address);
         } elseif ($address instanceof AccountUserAddress) {
-            $orderAddress->setAccountUserAddress($address);
+            $quoteAddress->setAccountUserAddress($address);
         }
 
-        return $orderAddress;
+        return $quoteAddress;
     }
 
     /**
@@ -131,15 +130,16 @@ class QuoteAddressManager
     }
 
     /**
-     * @param Quote $order
+     * @param Quote $quote
      * @param string $type
+     *
      * @return array
      */
-    public function getGroupedAddresses(Quote $order, $type)
+    public function getGroupedAddresses(Quote $quote, $type)
     {
         $addresses = [];
 
-        $account = $order->getAccount();
+        $account = $quote->getAccount();
         if ($account) {
             $accountAddresses = $this->quoteAddressProvider->getAccountAddresses($account, $type);
             foreach ($accountAddresses as $accountAddress) {
@@ -147,7 +147,7 @@ class QuoteAddressManager
             }
         }
 
-        $accountUser = $order->getAccountUser();
+        $accountUser = $quote->getAccountUser();
         if ($accountUser) {
             $accountUserAddresses = $this->quoteAddressProvider->getAccountUserAddresses($accountUser, $type);
             if ($accountUserAddresses) {

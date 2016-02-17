@@ -22,7 +22,7 @@ class QuoteAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
     protected $securityFacade;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|QuoteAddressProvider */
-    protected $orderAddressProvider;
+    protected $quoteAddressProvider;
 
     protected function setUp()
     {
@@ -30,21 +30,21 @@ class QuoteAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->orderAddressProvider = $this->getMockBuilder('OroB2B\Bundle\SaleBundle\Provider\QuoteAddressProvider')
+        $this->quoteAddressProvider = $this->getMockBuilder('OroB2B\Bundle\SaleBundle\Provider\QuoteAddressProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->provider = new QuoteAddressSecurityProvider(
             $this->securityFacade,
-            $this->orderAddressProvider,
-            'AccountOrderClass',
-            'AccountUserOrderClass'
+            $this->quoteAddressProvider,
+            'AccountQuoteClass',
+            'AccountUserQuoteClass'
         );
     }
 
     protected function tearDown()
     {
-        unset($this->securityFacade, $this->provider, $this->orderAddressProvider);
+        unset($this->securityFacade, $this->provider, $this->quoteAddressProvider);
     }
 
     /**
@@ -97,27 +97,27 @@ class QuoteAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
         $isAccountAddressGranted,
         $isAccountUserAddressGranted
     ) {
-        $this->orderAddressProvider->expects($this->any())->method('getAccountAddresses')
+        $this->quoteAddressProvider->expects($this->any())->method('getAccountAddresses')
             ->willReturn($hasAccountAddresses);
-        $this->orderAddressProvider->expects($this->any())->method('getAccountUserAddresses')
+        $this->quoteAddressProvider->expects($this->any())->method('getAccountUserAddresses')
             ->willReturn($hasAccountUserAddresses);
 
         $this->securityFacade->expects($this->any())->method('getLoggedUser')->willReturn(new $userClass);
         $this->securityFacade->expects($this->any())->method('isGranted')->with($this->isType('string'))
             ->will($this->returnValueMap((array)$isGranted));
 
-        $order = null;
+        $quote = null;
         $account = null;
         $accountUser = null;
         if ($hasEntity) {
             $account = new Account();
             $accountUser = new AccountUser();
         }
-        $order = (new Quote())->setAccount($account)->setAccountUser($accountUser);
+        $quote = (new Quote())->setAccount($account)->setAccountUser($accountUser);
 
         $this->assertEquals(
             $isAddressGranted,
-            $this->provider->isAddressGranted($order, $addressType)
+            $this->provider->isAddressGranted($quote, $addressType)
         );
         $this->assertEquals(
             $isAccountAddressGranted,

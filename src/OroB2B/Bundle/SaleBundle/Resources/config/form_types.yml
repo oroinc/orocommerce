@@ -95,6 +95,6 @@ services:
             - @orob2b_sale.provider.quote_address_security
             - @oro_importexport.serializer
         tags:
-            - { name: form.type, alias: orob2b_order_address_type }
+            - { name: form.type, alias: orob2b_quote_address_type }
         calls:
-            - [setDataClass, [%orob2b_order.entity.order_address.class%]]
+            - [setDataClass, [%orob2b_sale.entity.quote_address.class%]]

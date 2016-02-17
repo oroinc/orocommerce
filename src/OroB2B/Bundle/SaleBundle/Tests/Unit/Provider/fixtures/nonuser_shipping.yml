@@ -2,8 +2,8 @@ nonuser_shipping_not_granted:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: shipping
     isGranted:
-        - ['VIEW;entity:AccountOrderClass', null, false]
-        - ['VIEW;entity:AccountUserOrderClass', null, false]
+        - ['VIEW;entity:AccountQuoteClass', null, false]
+        - ['VIEW;entity:AccountUserQuoteClass', null, false]
         - [orob2b_quote_address_shipping_allow_manual_backend, null, false]
         - [orob2b_quote_address_shipping_account_user_use_any_backend, null, false]
     hasAccountAddresses: ~
@@ -16,8 +16,8 @@ nonuser_shipping_view_account_user_granted:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: shipping
     isGranted:
-        - ['VIEW;entity:AccountOrderClass', null, false]
-        - ['VIEW;entity:AccountUserOrderClass', null, true]
+        - ['VIEW;entity:AccountQuoteClass', null, false]
+        - ['VIEW;entity:AccountUserQuoteClass', null, true]
         - [orob2b_quote_address_shipping_account_user_use_any_backend, null, false]
     hasAccountAddresses: ~
     hasAccountUserAddresses: ~
@@ -29,8 +29,8 @@ nonuser_shipping_use_account_user_granted:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: shipping
     isGranted:
-        - ['VIEW;entity:AccountOrderClass', null, false]
-        - ['VIEW;entity:AccountUserOrderClass', null, false]
+        - ['VIEW;entity:AccountQuoteClass', null, false]
+        - ['VIEW;entity:AccountUserQuoteClass', null, false]
         - [orob2b_quote_address_shipping_account_user_use_any_backend, null, true]
     hasAccountAddresses: ~
     hasAccountUserAddresses: ~
@@ -42,8 +42,8 @@ nonuser_shipping_use_account_user_granted:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: shipping
     isGranted:
-        - ['VIEW;entity:AccountOrderClass', null, false]
-        - ['VIEW;entity:AccountUserOrderClass', null, false]
+        - ['VIEW;entity:AccountQuoteClass', null, false]
+        - ['VIEW;entity:AccountUserQuoteClass', null, false]
         - [orob2b_quote_address_shipping_account_user_use_any_backend, null, true]
     hasAccountAddresses: ~
     hasAccountUserAddresses: ~
@@ -55,8 +55,8 @@ nonuser_shipping_account_user_address_granted:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: shipping
     isGranted:
-        - ['VIEW;entity:AccountOrderClass', null, false]
-        - ['VIEW;entity:AccountUserOrderClass', null, true]
+        - ['VIEW;entity:AccountQuoteClass', null, false]
+        - ['VIEW;entity:AccountUserQuoteClass', null, true]
         - [orob2b_quote_address_shipping_account_user_use_any_backend, null, true]
     hasAccountAddresses: ~
     hasAccountUserAddresses: ~
@@ -68,8 +68,8 @@ nonuser_shipping_account_user_address_granted_with_entity:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: shipping
     isGranted:
-        - ['VIEW;entity:AccountOrderClass', null, false]
-        - ['VIEW;entity:AccountUserOrderClass', null, true]
+        - ['VIEW;entity:AccountQuoteClass', null, false]
+        - ['VIEW;entity:AccountUserQuoteClass', null, true]
         - [orob2b_quote_address_shipping_account_user_use_any_backend, null, true]
     hasAccountAddresses: ~
     hasAccountUserAddresses: ~
@@ -81,8 +81,8 @@ nonuser_shipping_account_user_address_granted_with_entity_and_address:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: shipping
     isGranted:
-        - ['VIEW;entity:AccountOrderClass', null, false]
-        - ['VIEW;entity:AccountUserOrderClass', null, true]
+        - ['VIEW;entity:AccountQuoteClass', null, false]
+        - ['VIEW;entity:AccountUserQuoteClass', null, true]
         - [orob2b_quote_address_shipping_account_user_use_any_backend, null, true]
     hasAccountAddresses: ~
     hasAccountUserAddresses: true
@@ -94,8 +94,8 @@ nonuser_shipping_account_user_address_granted_with_entity_and_address:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: shipping
     isGranted:
-        - ['VIEW;entity:AccountOrderClass', null, false]
-        - ['VIEW;entity:AccountUserOrderClass', null, true]
+        - ['VIEW;entity:AccountQuoteClass', null, false]
+        - ['VIEW;entity:AccountUserQuoteClass', null, true]
         - [orob2b_quote_address_shipping_account_user_use_any_backend, null, true]
     hasAccountAddresses: ~
     hasAccountUserAddresses: true
@@ -107,8 +107,8 @@ nonuser_shipping_account_user_address_granted_with_manual:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: shipping
     isGranted:
-        - ['VIEW;entity:AccountOrderClass', null, false]
-        - ['VIEW;entity:AccountUserOrderClass', null, true]
+        - ['VIEW;entity:AccountQuoteClass', null, false]
+        - ['VIEW;entity:AccountUserQuoteClass', null, true]
         - [orob2b_quote_address_shipping_allow_manual_backend, null, true]
         - [orob2b_quote_address_shipping_account_user_use_any_backend, null, true]
     hasAccountAddresses: ~
@@ -121,8 +121,8 @@ nonuser_shipping_account_not_granted:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: shipping
     isGranted:
-        - ['VIEW;entity:AccountOrderClass', null, true]
-        - ['VIEW;entity:AccountUserOrderClass', null, false]
+        - ['VIEW;entity:AccountQuoteClass', null, true]
+        - ['VIEW;entity:AccountUserQuoteClass', null, false]
     hasAccountAddresses: ~
     hasAccountUserAddresses: ~
     hasEntity: ~
@@ -133,8 +133,8 @@ nonuser_shipping_account_without_entity:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: shipping
     isGranted:
-        - ['VIEW;entity:AccountOrderClass', null, true]
-        - ['VIEW;entity:AccountUserOrderClass', null, false]
+        - ['VIEW;entity:AccountQuoteClass', null, true]
+        - ['VIEW;entity:AccountUserQuoteClass', null, false]
     hasAccountAddresses: ~
     hasAccountUserAddresses: ~
     hasEntity: ~
@@ -145,8 +145,8 @@ nonuser_shipping_account_with_entity:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: shipping
     isGranted:
-        - ['VIEW;entity:AccountOrderClass', null, true]
-        - ['VIEW;entity:AccountUserOrderClass', null, false]
+        - ['VIEW;entity:AccountQuoteClass', null, true]
+        - ['VIEW;entity:AccountUserQuoteClass', null, false]
     hasAccountAddresses: ~
     hasAccountUserAddresses: ~
     hasEntity: true
@@ -157,8 +157,8 @@ nonuser_shipping_account_with_entity_and_addresses:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: shipping
     isGranted:
-        - ['VIEW;entity:AccountOrderClass', null, true]
-        - ['VIEW;entity:AccountUserOrderClass', null, false]
+        - ['VIEW;entity:AccountQuoteClass', null, true]
+        - ['VIEW;entity:AccountUserQuoteClass', null, false]
     hasAccountAddresses: true
     hasAccountUserAddresses: ~
     hasEntity: true
@@ -169,8 +169,8 @@ nonuser_shipping_account_with_manual:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: shipping
     isGranted:
-        - ['VIEW;entity:AccountOrderClass', null, true]
-        - ['VIEW;entity:AccountUserOrderClass', null, false]
+        - ['VIEW;entity:AccountQuoteClass', null, true]
+        - ['VIEW;entity:AccountUserQuoteClass', null, false]
         - [orob2b_quote_address_shipping_allow_manual_backend, null, true]
     hasAccountAddresses: ~
     hasAccountUserAddresses: ~

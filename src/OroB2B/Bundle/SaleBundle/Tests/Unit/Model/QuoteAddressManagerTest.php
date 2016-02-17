@@ -13,7 +13,6 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
-use OroB2B\Bundle\OrderBundle\Model\OrderAddressManager;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteAddress;
 use OroB2B\Bundle\SaleBundle\Model\QuoteAddressManager;
@@ -22,7 +21,7 @@ use OroB2B\Bundle\SaleBundle\Provider\QuoteAddressProvider;
 class QuoteAddressManagerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var OrderAddressManager
+     * @var QuoteAddressManager
      */
     protected $manager;
 
@@ -199,7 +198,7 @@ class QuoteAddressManagerTest extends \PHPUnit_Framework_TestCase
                     $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress', 2),
                 ],
                 [
-                    OrderAddressManager::ACCOUNT_USER_LABEL => [
+                    QuoteAddressManager::ACCOUNT_USER_LABEL => [
                         'au_1' => $this->getEntity(
                             'OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress',
                             1
