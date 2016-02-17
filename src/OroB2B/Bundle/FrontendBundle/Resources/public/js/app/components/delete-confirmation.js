@@ -13,15 +13,14 @@ define(function(require) {
      * @extends oroui.Modal
      */
     return Modal.extend({
-
         /** @property {String} */
         template: require('text!orob2bfrontend/templates/delete-confirmation.html'),
 
         /** @property {String} */
-        className: 'modal-dialog modal-md',
+        okButtonClass: 'btn ok',
 
         /** @property {String} */
-        okButtonClass: 'btn-danger',
+        cancelButtonClass: 'btn cancel',
 
         /** @property {Boolean} */
         allowOk: true,
@@ -41,7 +40,9 @@ define(function(require) {
                 okText: __('Yes, Delete'),
                 cancelText: __('Cancel'),
                 template: _.template(this.template, interpolate),
-                allowOk: this.allowOk
+                allowOk: this.allowOk,
+                okButtonClass: this.okButtonClass,
+                cancelButtonClass: this.cancelButtonClass
             }, options);
 
             arguments[0] = options;

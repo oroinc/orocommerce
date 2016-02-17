@@ -18,6 +18,8 @@ define(function (require) {
             this.removeClass = options.removeClass;
             this.confirmMessage = options.confirmMessage;
             this.sucsessMessage = options.sucsessMessage;
+            this.okButtonClass = options.okButtonClass;
+            this.cancelButtonClass = options.cancelButtonClass;
 
             this.$elem.on('click', _.bind(this.deleteItem, this));
         },
@@ -29,12 +31,21 @@ define(function (require) {
             }
         },
         deleteWithConfirmation: function() {
-            var confirm = new DeleteConfirmation({
+            var options = {
                 content: this.confirmMessage
-            });
+            };
+
+            if (this.okButtonClass) {
+                options = _.extend(options, {'okButtonClass' : this.okButtonClass})
+            }
+
+            if (this.cancelButtonClass) {
+                options = _.extend(options, {'cancelButtonClass' : this.cancelButtonClass})
+            }
+
+            var confirm = new DeleteConfirmation(options);
             confirm.on('ok',_.bind(this.deleteWithoutConfirmation, this));
             confirm.open();
-
         },
         deleteWithoutConfirmation: function(e) {
             var self = this;
