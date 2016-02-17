@@ -118,6 +118,7 @@ class OroB2BRFPBundleInstaller implements
         $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('status_id', 'integer', ['notnull' => false]);
+        $table->addColumn('cancellation_reason', 'text', ['notnull' => false]);
         $table->addColumn('first_name', 'string', ['length' => 255]);
         $table->addColumn('last_name', 'string', ['length' => 255]);
         $table->addColumn('email', 'string', ['length' => 255]);
