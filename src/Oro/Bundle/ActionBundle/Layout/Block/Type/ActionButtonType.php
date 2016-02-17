@@ -64,17 +64,8 @@ class ActionButtonType extends AbstractType
         $attributes = $this->setDialogParameters($frontendOptions, $actionUrl, $attributes, $title);
         $attributes['data-confirmation'] = array_key_exists('confirmation', $frontendOptions) ?
             $frontendOptions['confirmation'] : '';
-        if (array_key_exists('page_component_module', $buttonOptions)) {
-            $attributes['data-page-component-module'] = $buttonOptions['page_component_module'];
-        }
-        if (array_key_exists('page_component_options', $buttonOptions)) {
-            $attributes['data-page-component-options'] = json_encode($buttonOptions['page_component_options']);
-        }
-        if (array_key_exists('data', $buttonOptions)) {
-            foreach ($buttonOptions['data'] as $dataName => $dataValue) {
-                $attributes['data-' . $dataName] = $dataValue;
-            }
-        }
+        $attributes = $this->setPageComponentOptions($buttonOptions, $attributes);
+        $attributes = $this->setButtonOptions($buttonOptions, $attributes);
         $view->vars['attr'] = $attributes;
         $view->vars['linkLabel'] = $title;
         $view->vars['buttonOptions'] = $buttonOptions;
@@ -104,5 +95,42 @@ class ActionButtonType extends AbstractType
 
             return $attributes;
         }
+    }
+
+    /**
+     * @param array $buttonOptions
+     * @param array $attributes
+     * @return array
+     */
+    protected function setPageComponentOptions($buttonOptions, $attributes)
+    {
+        if (array_key_exists('page_component_module', $buttonOptions)) {
+            $attributes['data-page-component-module'] = $buttonOptions['page_component_module'];
+        }
+        if (array_key_exists('page_component_options', $buttonOptions)) {
+            $attributes['data-page-component-options'] = json_encode($buttonOptions['page_component_options']);
+
+            return $attributes;
+        }
+
+        return $attributes;
+    }
+
+    /**
+     * @param array $buttonOptions
+     * @param array $attributes
+     * @return array
+     */
+    protected function setButtonOptions($buttonOptions, $attributes)
+    {
+        if (array_key_exists('data', $buttonOptions)) {
+            foreach ($buttonOptions['data'] as $dataName => $dataValue) {
+                $attributes['data-' . $dataName] = $dataValue;
+            }
+
+            return $attributes;
+        }
+
+        return $attributes;
     }
 }
