@@ -51,14 +51,14 @@
 
 {% block content_data %}
     {% set id = 'product-edit' %}
-    {% set productHasVariants = entity.getHasVariants %}
+    {% set productHasVariantsAndFieldsNotEmpty = entity.getHasVariants and form.variantFields.vars.choices|length != 0 %}
 
     {% set generalData = [
         form_row(form.sku),
         form_row(form.hasVariants)
     ] %}
 
-    {% if productHasVariants and form.variantFields.vars.choices|length != 0 %}
+    {% if productHasVariantsAndFieldsNotEmpty %}
         {% set generalData = generalData|merge([form_row(form.variantFields)]) %}
     {% endif %}
 
@@ -104,7 +104,7 @@
         }] ) %}
     {% endif %}
 
-    {% if productHasVariants %}
+    {% if productHasVariantsAndFieldsNotEmpty %}
         {% set variantLinksForm = form.variantLinks %}
         {% set dataBlocks = dataBlocks|merge([{
             'title' : 'orob2b.product.sections.productVariants'|trans,

@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
 
-use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
@@ -46,11 +44,15 @@ class ShoppingListRepositoryTest extends WebTestCase
 
     public function testFindByUser()
     {
-        $shoppingLists = $this->getRepository()->findByUser($this->accountUser);
+        $shoppingLists = $this->getRepository()->findByUser($this->accountUser, ['list.updatedAt' => 'asc']);
         $this->assertTrue(count($shoppingLists) > 0);
+        /** @var ShoppingList $secondShoppingList */
         $shoppingList = array_shift($shoppingLists);
         $this->assertInstanceOf('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', $shoppingList);
         $this->assertEquals($this->accountUser, $shoppingList->getAccountUser());
+        /** @var ShoppingList $secondShoppingList */
+        $secondShoppingList = array_shift($shoppingLists);
+        $this->assertTrue($shoppingList->getUpdatedAt() <= $secondShoppingList->getUpdatedAt());
     }
 
     public function testFindByUserAndId()

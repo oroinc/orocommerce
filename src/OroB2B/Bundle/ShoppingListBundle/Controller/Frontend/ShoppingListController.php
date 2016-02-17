@@ -53,7 +53,7 @@ class ShoppingListController extends Controller
 
         return [
             'data' => [
-                'shoppingList' => $shoppingList
+                'shoppingList' => $shoppingList,
             ]
         ];
     }

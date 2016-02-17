@@ -48,21 +48,30 @@ class LoadTaxRules extends AbstractFixture implements DependentFixtureInterface
 
         /** @var TaxJurisdiction $taxJurisdiction */
         $taxJurisdiction = $this->getReference(
-            LoadTaxJurisdictions::REFERENCE_PREFIX . '.' . LoadTaxJurisdictions::TAX_1
+            LoadTaxJurisdictions::REFERENCE_PREFIX . '.' . LoadTaxes::TAX_1
         );
 
-        $this->createTaxRule($manager, $accountTaxCode, $productTaxCode, $tax, $taxJurisdiction, self::DESCRIPTION);
+        $this->createTaxRule(
+            $manager,
+            $accountTaxCode,
+            $productTaxCode,
+            $tax,
+            $taxJurisdiction,
+            self::DESCRIPTION,
+            self::TAX_RULE_NAME
+        );
 
         $manager->flush();
     }
 
     /**
-     * @param ObjectManager   $manager
-     * @param AccountTaxCode  $accountTaxCode
-     * @param ProductTaxCode  $productTaxCode
-     * @param Tax             $tax
+     * @param ObjectManager $manager
+     * @param AccountTaxCode $accountTaxCode
+     * @param ProductTaxCode $productTaxCode
+     * @param Tax $tax
      * @param TaxJurisdiction $taxJurisdiction
-     * @param string          $description
+     * @param string $description
+     * @param string $reference
      * @return TaxRule
      */
     protected function createTaxRule(
@@ -71,7 +80,8 @@ class LoadTaxRules extends AbstractFixture implements DependentFixtureInterface
         ProductTaxCode $productTaxCode,
         Tax $tax,
         TaxJurisdiction $taxJurisdiction,
-        $description
+        $description,
+        $reference
     ) {
         $taxRule = new TaxRule();
         $taxRule
@@ -82,7 +92,7 @@ class LoadTaxRules extends AbstractFixture implements DependentFixtureInterface
             ->setDescription($description);
 
         $manager->persist($taxRule);
-        $this->addReference(self::REFERENCE_PREFIX . '.' . self::TAX_RULE_NAME, $taxRule);
+        $this->addReference(static::REFERENCE_PREFIX . '.' . $reference, $taxRule);
 
         return $taxRule;
     }
