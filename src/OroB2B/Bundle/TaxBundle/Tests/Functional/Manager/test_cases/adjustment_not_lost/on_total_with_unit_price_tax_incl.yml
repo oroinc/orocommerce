@@ -94,6 +94,11 @@ databaseBefore:
                     - { reference: product_10 }
                     - { reference: product_11 }
                     - { reference: product_12 }
+    'OroB2B\Bundle\TaxBundle\Entity\TaxRule':
+        tax_rule_for_9_product:
+            productTaxCode: { reference: product_tax_code_with_9_product }
+            tax: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
+            taxJurisdiction: { class: 'OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction', query: { code: 'TAX1' } }
 expectedResult:
     total:
         includingTax: '199.89'   # 22.21 * 9
