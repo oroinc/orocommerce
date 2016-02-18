@@ -1,10 +1,8 @@
 <?php
 
-
 namespace OroB2B\Bundle\AccountBundle\Doctrine;
 
-
-class DoctrineListener
+class DoctrineFiltersListener
 {
     public function onRequest()
     {

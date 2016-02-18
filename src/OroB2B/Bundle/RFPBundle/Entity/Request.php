@@ -11,7 +11,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 
-use OroB2B\Bundle\AccountBundle\Doctrine\SoftDeleateableInterface;
+use OroB2B\Bundle\AccountBundle\Doctrine\SoftDeleteableInterface;
+use OroB2B\Bundle\AccountBundle\Doctrine\SoftDeleteableTrait;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
@@ -45,11 +46,14 @@ use OroB2B\Bundle\RFPBundle\Model\ExtendRequest;
  *          }
  *      }
  * )
+ * todo: index on deleted at
  * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class Request extends ExtendRequest implements AccountOwnerAwareInterface, SoftDeleateableInterface
+class Request extends ExtendRequest implements AccountOwnerAwareInterface, SoftDeleteableInterface
 {
+    use SoftDeleteableTrait;
+
     /**
      * @var integer
      *
