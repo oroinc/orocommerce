@@ -13,7 +13,7 @@ parameters:
 
     orob2b_rfp.service.request_to_quote_data_storage.class: OroB2B\Bundle\RFPBundle\Storage\RequestToQuoteDataStorage
 
-    orob2b_rfp.provider.request_duplicator.class: OroB2B\Bundle\RFPBundle\Duplicator\RequestDuplicator
+    orob2b_rfp.duplicator.request_duplicator.class: OroB2B\Bundle\RFPBundle\Duplicator\RequestDuplicator
 
 services:
     orob2b_rfp.datagrid.action_permission_provider:
@@ -67,7 +67,7 @@ services:
     orob2b_rfp.storage.offers_form_storage:
         class: %orob2b_rfp.storage.offers_form_storage.class%
 
-    orob2b_rfp.provider.request_duplicator:
-        class: %orob2b_rfp.provider.request_duplicator.class%
+    orob2b_rfp.duplicator.request_duplicator:
+        class: %orob2b_rfp.duplicator.request_duplicator.class%
         arguments:
             - @oro_entity.doctrine_helper
