@@ -157,23 +157,28 @@
                                 default_route_parameters: {
                                     id: lineItem.id
                                 }
+                            },
+                            validation: {
+                                showErrorsHandler: 'orob2bshoppinglist/js/shopping-list-item-errors-handler'
                             }
                         }
                     }) }}>
-                        <div class="product__qty-input product__qty-input_inline product__qty-input_more-info va-m_md">
-                            <div class="product__qty-input__count-option">
-                                <input type="number" value="{{ lineItem.quantity }}" name="product_qty"
-                                    placeholder="{{ 'orob2b.frontend.shoppinglist.view.qty.label'|trans }}"
-                                    class="input input_sm input_block text-center" disabled="disabled" />
+                        <form action="#">
+                            <div class="product__qty-input product__qty-input_inline product__qty-input_more-info va-m_md">
+                                <div class="product__qty-input__count-option">
+                                    <input type="number" value="{{ lineItem.quantity }}" name="product_qty"
+                                        placeholder="{{ 'orob2b.frontend.shoppinglist.view.qty.label'|trans }}"
+                                        class="input input_sm input_block text-center" disabled="disabled" required />
+                                </div>
                             </div>
-                        </div>
-                        <div class="product__select inline va-m_md">
-                            <select data-chosen-selectbox class="input input_block input_sm" name="product_unit">
-                                {% for unit in productsUnits[lineItem.product.id] %}
-                                <option value="{{ unit }}" {% if unit == lineItem.unit %}selected="selected"{% endif %}>{{ unit|orob2b_format_product_unit_label}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
+                            <div class="product__select inline va-m_md">
+                                <select data-chosen-selectbox class="input input_block input_sm" name="product_unit" required>
+                                    {% for unit in productsUnits[lineItem.product.id] %}
+                                    <option value="{{ unit }}" {% if unit == lineItem.unit %}selected="selected"{% endif %}>{{ unit|orob2b_format_product_unit_label}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </form>
                     </td>
                     <td class="va-t_md">
                         <table class="table borderless paddingless mb0-md">

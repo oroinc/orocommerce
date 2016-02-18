@@ -7,6 +7,7 @@ define(function(require) {
     var InlineEditableViewComponent = require('oroform/js/app/components/inline-editable-view-component');
     var ApiAccessor = require('oroui/js/tools/api-accessor');
     var mediator = require('oroui/js/mediator');
+    var tools = require('oroui/js/tools');
     var $ = require('jquery');
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
@@ -29,6 +30,25 @@ define(function(require) {
             elements: {
                 quantity: '[name$="[quantity]"]',
                 unit: '[name$="[unit]"]'
+            },
+            validation: {
+                showErrorsHandler: null,
+                rules: {
+                    quantity: {
+                        NotBlank: {
+                            message: 'orob2b.product.validation.quantity.required'
+                        },
+                        Range: {
+                            min: 0,
+                            minMessage: 'orob2b.product.validation.quantity.greaterThanZero'
+                        }
+                    },
+                    unit: {
+                        NotBlank: {
+                            message: 'orob2b.product.validation.unit.required'
+                        }
+                    }
+                }
             }
         },
 
@@ -49,7 +69,15 @@ define(function(require) {
             this.unitFieldName = options.unitFieldName;
 
             this.$el = options._sourceElement;
+            this.initElements(options);
 
+            this.model = new BaseModel(this.getValue());
+            this.saveModelState();
+
+            this.saveApiAccessor = new ApiAccessor(options.save_api_accessor);
+        },
+
+        initElements: function(options) {
             this.elements = {
                 quantity: options._sourceElement.find(options.elements.quantity),
                 unit: options._sourceElement.find(options.elements.unit)
@@ -58,12 +86,31 @@ define(function(require) {
             this.elements.quantity.prop('disabled', false);
             this.elements.unit.prop('disabled', false);
 
-            this.model = new BaseModel(this.getValue());
-            this.saveModelState();
-
+            this.initValidator(options);
             this.initListeners();
+        },
 
-            this.saveApiAccessor = new ApiAccessor(options.save_api_accessor);
+        initValidator: function(options) {
+            var validationRules = {};
+            validationRules[this.elements.quantity.attr('name')] = options.validation.rules.quantity;
+            validationRules[this.elements.unit.attr('name')] = options.validation.rules.unit;
+
+            var validationOptions = {
+                rules: validationRules
+            };
+
+            if (options.validation.showErrorsHandler) {
+                var waitors = [];
+                waitors.push(tools.loadModuleAndReplace(options.validation, 'showErrorsHandler').then(
+                    _.bind(function() {
+                        validationOptions.showErrors = options.validation.showErrorsHandler;
+                        this.validator = options._sourceElement.find('form').validate(validationOptions);
+                    }, this)
+                ));
+                this.deferredInit = $.when.apply($, waitors);
+            } else {
+                this.validator = options._sourceElement.find('form').validate(validationOptions);
+            }
         },
 
         initListeners: function() {
@@ -83,6 +130,10 @@ define(function(require) {
         },
 
         onViewChange: function() {
+            if (!this.isValid()) {
+                return;
+            }
+
             var value = this.getValue();
             this.model.set(this.quantityFieldName, value.quantity);
             this.model.set(this.unitFieldName, value.unit);
@@ -108,8 +159,14 @@ define(function(require) {
             return false;
         },
 
+        isValid: function() {
+            return this.validator.form();
+        },
+
         requireSave: function() {
-            return this.isChanged() && !this._isSaving;
+            return !this._isSaving &&
+                this.isChanged() &&
+                this.isValid();
         },
 
         saveChanges: function() {
