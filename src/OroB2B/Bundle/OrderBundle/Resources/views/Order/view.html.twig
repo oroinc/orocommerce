@@ -49,6 +49,7 @@
         {
             'title': 'orob2b.order.sections.general'|trans,
             'class': 'active',
+            'priority': -20,
             'subblocks': generalSectionBlocks
         }
     ] %}
@@ -56,14 +57,8 @@
     {% if entity.lineItems|length %}
         {% set dataBlocks = dataBlocks|merge([{
             'title': 'orob2b.order.sections.order_line_items'|trans,
+            'priority': -10,
             'subblocks': [{'data' : [dataGrid.renderGrid('order-line-items-grid', { order_id: entity.id })]}]
-        }]) %}
-
-        {# @todo: https://magecore.atlassian.net/browse/BB-1752 #}
-        {% import 'OroB2BTaxBundle::macros.html.twig' as TAX %}
-        {% set dataBlocks = dataBlocks|merge([{
-            'title': 'Taxes'|trans,
-            'subblocks': [{'data' : [TAX.renderResult(taxes)]}]
         }]) %}
     {% endif %}
 

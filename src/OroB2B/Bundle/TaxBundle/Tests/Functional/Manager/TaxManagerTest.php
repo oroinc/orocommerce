@@ -148,6 +148,8 @@ class TaxManagerTest extends WebTestCase
      * @param object $object
      * @param array $item
      * @return object
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function fillData($object, array $item)
     {
@@ -155,19 +157,47 @@ class TaxManagerTest extends WebTestCase
             $value = $this->extractValues($config);
             $isArray = is_array($config);
 
-            if ($isArray && array_key_exists('property_value', $config) && is_array($config['property_value'])) {
+            $hasPropertyValue = $isArray && array_key_exists('property_value', $config);
+            if ($hasPropertyValue && is_array($config['property_value'])) {
                 $value = $this->fillData($value, $config['property_value']);
             }
 
-            if ($isArray && array_key_exists('property', $config)) {
+            $hasProperty = $isArray && array_key_exists('property', $config);
+            if ($hasProperty) {
                 $value = $this->propertyAccessor->getValue($value, $config['property']);
             }
 
-            $propertyPath = $this->getPropertyPath($object, $property);
-            $this->propertyAccessor->setValue($object, $propertyPath, $value);
+            if ($isArray && !$hasPropertyValue && !$hasProperty && $this->isNestedArray($value)) {
+                foreach ($value as $key => $valueElem) {
+                    $this->fillData($object, [$property . '.' . $key => $valueElem]);
+                }
+            } else {
+                $propertyPath = $this->getPropertyPath($object, $property);
+                $this->propertyAccessor->setValue($object, $propertyPath, $value);
+            }
         }
 
         return $object;
+    }
+
+    /**
+     * @param array $data
+     * @return bool
+     */
+    protected function isNestedArray($data)
+    {
+        if (!is_array($data)) {
+            return false;
+        }
+
+        $filtered = array_filter(
+            $data,
+            function ($item) {
+                return is_array($item);
+            }
+        );
+
+        return count(array_filter($filtered)) === count($data);
     }
 
     /**
@@ -177,7 +207,19 @@ class TaxManagerTest extends WebTestCase
      */
     private function getPropertyPath($value, $path)
     {
-        return is_array($value) || $value instanceof \ArrayAccess ? sprintf('[%s]', $path) : (string)$path;
+        if (is_array($value) || $value instanceof \ArrayAccess) {
+            $parts = explode('.', $path);
+            $parts = array_map(
+                function ($item) {
+                    return sprintf('[%s]', $item);
+                },
+                $parts
+            );
+
+            return implode($parts);
+        }
+
+        return (string)$path;
     }
 
     /**

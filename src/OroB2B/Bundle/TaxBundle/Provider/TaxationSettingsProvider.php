@@ -56,6 +56,14 @@ class TaxationSettingsProvider
     }
 
     /**
+     * @return bool
+     */
+    public function isEnabled()
+    {
+        return (bool)$this->configManager->get('orob2b_tax.tax_enable');
+    }
+
+    /**
      * @return string
      */
     public function getStartCalculationWith()

@@ -1,8 +1,5 @@
-{% set resultElement = record.getValue('result') %}
-
-{% if resultElement|length is not empty %}
+{% set result = record.getValue('result') %}
+{% if result is not empty and result|length %}
     {% import 'OroB2BTaxBundle::macros.html.twig' as TAX %}
-
-    <p{{ TAX.renderResultElement(resultElement.unit) }}</p>
-    <p{{ TAX.renderResultElement(resultElement.row) }}</p>
+    {{ TAX.renderResult(result) }}
 {% endif %}

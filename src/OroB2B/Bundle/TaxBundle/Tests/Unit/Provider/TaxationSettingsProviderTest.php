@@ -448,4 +448,15 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($address, $this->provider->getOrigin());
     }
+
+    public function testIsEnabled()
+    {
+        $this->configManager
+            ->expects($this->once())
+            ->method('get')
+            ->with('orob2b_tax.tax_enable')
+            ->willReturn(true);
+
+        $this->assertTrue($this->provider->isEnabled());
+    }
 }

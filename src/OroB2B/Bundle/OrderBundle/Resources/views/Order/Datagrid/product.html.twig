@@ -1,6 +1,6 @@
-{% set isFreeFormProduct = record.getValue('product') and record.getValue('freeFormProduct') is not empty %}
+{% set isFreeFormProduct = record.getValue('productName') is empty and record.getValue('freeFormProduct') is not empty %}
 {% if isFreeFormProduct %}
     {{ record.getValue('freeFormProduct') }}
 {% else %}
-    {{ record.getValue('product') }}
+    {{ record.getValue('productName') }}
 {% endif %}

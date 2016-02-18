@@ -7,6 +7,8 @@ use Doctrine\ORM\Query\Expr;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 
+use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+
 class OrderLineItemGridListener
 {
     const ALIAS = 'taxValue';
@@ -20,14 +22,19 @@ class OrderLineItemGridListener
     /** @var array */
     protected $fromPart;
 
+    /** @var TaxationSettingsProvider */
+    protected $taxationSettingsProvider;
+
     /**
+     * @param TaxationSettingsProvider $taxationSettingsProvider
      * @param string $taxValueClass
      */
-    public function __construct($taxValueClass)
+    public function __construct(TaxationSettingsProvider $taxationSettingsProvider, $taxValueClass)
     {
         $this->taxValueClass = $taxValueClass;
 
         $this->expressionBuilder = new Expr();
+        $this->taxationSettingsProvider = $taxationSettingsProvider;
     }
 
     /**
@@ -35,12 +42,16 @@ class OrderLineItemGridListener
      */
     public function onBuildBefore(BuildBefore $event)
     {
+        if (!$this->taxationSettingsProvider->isEnabled()) {
+            return;
+        }
+
         $configuration = $event->getConfig();
 
-        $fromParts = $configuration->offsetGetByPath('[source][query][from]');
+        $fromParts = $configuration->offsetGetByPath('[source][query][from]', []);
         $this->fromPart = reset($fromParts);
 
-        if (!$this->fromPart) {
+        if (!isset($this->fromPart['table'], $this->fromPart['alias'])) {
             return;
         }
 
@@ -81,10 +92,7 @@ class OrderLineItemGridListener
      */
     protected function addSelect(DatagridConfiguration $configuration)
     {
-        $configuration->offsetAddToArrayByPath(
-            '[source][query][select]',
-            [sprintf('%s.result', self::ALIAS)]
-        );
+        $configuration->offsetAddToArrayByPath('[source][query][select]', [sprintf('%s.result', self::ALIAS)]);
     }
 
     /**
@@ -95,6 +103,7 @@ class OrderLineItemGridListener
         $configuration->offsetSetByPath(
             sprintf('[columns][%s]', 'result'),
             [
+                'label' => 'orob2b.tax.result.label',
                 'type' => 'twig',
                 'frontend_type' => 'html',
                 'template' => 'OroB2BTaxBundle::column.html.twig',
