@@ -5,19 +5,19 @@
 {% endblock %}
 
 {% block action_combined_buttons_widget %}
-    {#{{ block_widget(block[primary_button_alias]) }}#}
+    {{ block_widget(block[primary_button_alias]) }}
 
-    {#<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">#}
-        {#<i class="material-icons">arrow_drop_down</i>#}
-    {#</a>#}
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        <i class="material-icons">arrow_drop_down</i>
+    </a>
 
-    {#<ul>#}
-        {#{% for action in block.action_dropdown_menu %}#}
-            {#<li>#}
-                {#{{ block_widget(action) }}#}
-            {#</li>#}
-        {#{% endfor %}#}
-    {#</ul>#}
+    <ul>
+        {% for action in block.action_dropdown_menu %}
+            <li>
+                {{ block_widget(action) }}
+            </li>
+        {% endfor %}
+    </ul>
 
 {% endblock %}
 
