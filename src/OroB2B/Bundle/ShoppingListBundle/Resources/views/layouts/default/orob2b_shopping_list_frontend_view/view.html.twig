@@ -219,7 +219,7 @@
 {% endblock %}
 
 {% block _action_dropdown_menu_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " dropdown-menu"}) %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ "dropdown-menu"}) %}
     <ul {{ block('block_attributes') }}>
         {% for action in block %}
             <li>
