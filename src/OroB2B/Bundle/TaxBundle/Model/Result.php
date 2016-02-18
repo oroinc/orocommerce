@@ -16,7 +16,7 @@ final class Result extends AbstractResult
     /**
      * @var bool
      */
-    protected $resultLocked;
+    protected $resultLocked = false;
 
     /**
      * @return ResultElement
