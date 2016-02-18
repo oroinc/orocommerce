@@ -108,25 +108,52 @@
         </div>
     {% endset %}
 
+    {% set shippingAddress %}
+        {% if entity.shippingAddress %}
+            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.label.label'|trans, entity.shippingAddress.label) }}
+            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.name_prefix.label'|trans, entity.shippingAddress.namePrefix) }}
+            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.first_name.label'|trans, entity.shippingAddress.firstName) }}
+            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.middle_name.label'|trans,entity.shippingAddress.middleName) }}
+            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.last_name.label'|trans, entity.shippingAddress.lastName) }}
+            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.name_suffix.label'|trans, entity.shippingAddress.nameSuffix) }}
+            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.organization.label'|trans , entity.shippingAddress.organization) }}
+            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.country.label'|trans, entity.shippingAddress.country.name) }}
+            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.street.label'|trans, entity.shippingAddress.street) }}
+            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.street2.label'|trans,entity.shippingAddress.street2) }}
+            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.city.label'|trans, entity.shippingAddress.city) }}
+            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.postal_code.label'|trans, entity.shippingAddress.postalCode) }}
+        {% else %}
+            <div class="items list-box list-shaped"></div>
+            <div class="no-data">
+                <span>{{ "orob2b.sale.quoteaddress.no_exist"|trans|raw }}</span>
+            </div>
+        {% endif %}
+    {% endset %}
+
     {% set id = 'quoteView' %}
 
-    {% set generalBlock = {
-        'title': 'orob2b.sale.quote.sections.general'|trans,
+    {% set dataBlocks = [{
+        'title': 'orob2b.order.sections.general'|trans,
         'class': 'active',
         'subblocks': [{'data' : [quoteInformationWidget]}]
-    } %}
-
-    {% set lineItemsBlock = {
-        'title': 'orob2b.sale.quote.sections.quote_products'|trans,
-        'subblocks': [{'data' : [quoteProducts]}]
-    } %}
+    }] %}
 
     {% if entity.quoteProducts | length %}
-        {% set data = {'dataBlocks': [generalBlock, lineItemsBlock]} %}
-    {% else %}
-        {% set data = {'dataBlocks': [generalBlock]} %}
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': 'orob2b.sale.quote.sections.quote_products'|trans,
+            'subblocks': [{'data' : [quoteProducts]}]
+        }]) %}
     {% endif %}
 
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'orob2b.sale.quote.sections.shipping_address'|trans,
+        'subblocks': [{'data' : [shippingAddress]}]
+    }]) %}
+
+        {#{% set data = {'dataBlocks': [generalBlock, lineItemsBlock, shippingAddressBlock]} %}#}
+
+    {% set data = {'dataBlocks': dataBlocks} %}
     {{ parent() }}
     <script type="text/javascript">
         require(['underscore', 'orotranslation/js/translator', 'oroui/js/mediator'],
