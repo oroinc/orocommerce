@@ -19,6 +19,7 @@ orob2b:
         removed: '{title} - removed'
         is_variant.label: Is Variant
         variant_links.label: Product Variant Links
+        images.label: Images
 
         status:
             enabled: Enabled
@@ -59,6 +60,14 @@ orob2b:
             visible.label: Visible
             parent_product.label: Parent Product
             product.label: Product
+
+        productimage:
+            entity_label: Product Image
+            entity_plural_label: Product Images
+            id.label: Id
+            types.label: Types
+            product.label: Product
+            image.label: Image
 
         menu:
             products_tab.label: Products
