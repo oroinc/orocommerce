@@ -14,9 +14,6 @@ class OroB2BRFPBundle implements Migration
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $table = $schema->getTable('orob2b_rfp_request');
-        $table->addColumn('cancellation_reason', 'text', ['notnull' => false]);
-
         /** Tables generation **/
         $this->createOroRfpAssignedAccUsersTable($schema);
         $this->createOroRfpAssignedUsersTable($schema);
