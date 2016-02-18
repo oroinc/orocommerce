@@ -11,6 +11,7 @@ class LoadDefaultRequestStatus extends AbstractLoadDefaultRequestStatus
      */
     protected $items = [
         ['order' => 10, 'name' => RequestStatus::OPEN],
+        ['order' => 15, 'name' => RequestStatus::CANCELED],
         ['order' => 20, 'name' => RequestStatus::CLOSED],
         ['order' => 30, 'name' => RequestStatus::DRAFT],
     ];

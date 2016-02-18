@@ -46,6 +46,8 @@ use OroB2B\Bundle\RFPBundle\Model\ExtendRequest;
  * )
  * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Request extends ExtendRequest implements AccountOwnerAwareInterface
 {
@@ -155,6 +157,20 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
      * )
      */
     protected $note;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="cancellation_reason", type="text", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $cancellationReason;
 
     /**
      * @var RequestStatus
@@ -324,8 +340,8 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
     {
         parent::__construct();
 
-        $this->createdAt  = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt  = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
 
         $this->requestProducts = new ArrayCollection();
         $this->assignedUsers = new ArrayCollection();
@@ -798,6 +814,25 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
         if ($this->assignedAccountUsers->contains($assignedAccountUser)) {
             $this->assignedAccountUsers->removeElement($assignedAccountUser);
         }
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCancellationReason()
+    {
+        return $this->cancellationReason;
+    }
+
+    /**
+     * @param string $cancellationReason
+     * @return $this
+     */
+    public function setCancellationReason($cancellationReason)
+    {
+        $this->cancellationReason = $cancellationReason;
 
         return $this;
     }
