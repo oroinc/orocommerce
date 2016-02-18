@@ -15,7 +15,6 @@ use OroB2B\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 
 class QuoteType extends AbstractType
@@ -108,9 +107,7 @@ class QuoteType extends AbstractType
             ])
             ->add('assignedAccountUsers', AccountUserMultiSelectType::NAME, [
                 'label' => 'orob2b.sale.quote.assigned_account_users.label',
-            ])
-        ;
-            );
+            ]);
 
         if ($this->quoteAddressSecurityProvider->isAddressGranted($quote, AddressType::TYPE_SHIPPING)) {
             $builder

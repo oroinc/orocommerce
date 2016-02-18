@@ -242,14 +242,16 @@ class QuoteTypeTest extends AbstractTest
                     false,
                     'poNumber',
                     new \DateTime($date . 'T00:00:00+0000')
-                ),
+                )->addAssignedUser($this->getUser(1))
+                    ->addAssignedAccountUser($this->getAccountUser(11)),
                 'defaultData'   => $this->getQuote( 1,
                     1,
                     2,
                     [$quoteProduct],
                     false,
                     'poNumber',
-                    new \DateTime($date . 'T00:00:00+0000')),
+                    new \DateTime($date . 'T00:00:00+0000'))->addAssignedUser($this->getUser(1))
+                    ->addAssignedAccountUser($this->getAccountUser(11)),
                 'options' => [
                     'data' => $this->getQuote( 1,
                         1,
@@ -257,12 +259,10 @@ class QuoteTypeTest extends AbstractTest
                         [$quoteProduct],
                         false,
                         'poNumber',
-                        new \DateTime($date . 'T00:00:00+0000'))
+                        new \DateTime($date . 'T00:00:00+0000'))->addAssignedUser($this->getUser(1))
+                        ->addAssignedAccountUser($this->getAccountUser(11))
                 ]
-                )
-                    ->addAssignedUser($this->getUser(1))
-                    ->addAssignedAccountUser($this->getAccountUser(11)),
-            ],
+            ]
         ];
     }
 
