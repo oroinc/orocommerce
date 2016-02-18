@@ -23,7 +23,7 @@ orob2b:
             request_products.label: 'Request Products'
             assigned_users.label: 'Assigned To'
             assigned_account_users.label: 'Assigned Customers'
-            cancelation_reason.label: 'Cancelation reason'
+            cancellation_reason.label: 'Cancelation reason'
 
             submit.label: 'Submit Request For Quote'
             cancel.label: 'Cancel'

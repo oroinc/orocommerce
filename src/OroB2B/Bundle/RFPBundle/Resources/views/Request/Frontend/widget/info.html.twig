@@ -18,7 +18,7 @@
             {% endif %}
             {{ UI.renderProperty('orob2b.frontend.rfp.request.status.label'|trans, entity.status.label) }}
             {% if entity.status.name =='canceled' %}
-                {{ UI.renderHtmlProperty('orob2b.rfp.request.cancelation_reason.label'|trans,entity.cancellationReason ) }}
+                {{ UI.renderHtmlProperty('orob2b.rfp.request.cancellation_reason.label'|trans,entity.cancellationReason ) }}
             {% endif %}
             {% if entity.assignedAccountUsers | length %}
                 {{ UI.renderHtmlProperty('orob2b.frontend.rfp.request.assigned_account_users.label'|trans, UI.entityViewLinks(entity.assignedAccountUsers, 'fullName', 'orob2b_account_frontend_account_user_view')) }}
