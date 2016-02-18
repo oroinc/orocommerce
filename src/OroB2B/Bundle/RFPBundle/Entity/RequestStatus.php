@@ -43,6 +43,7 @@ class RequestStatus implements Translatable
     const OPEN = 'open';
     const CLOSED = 'closed';
     const DRAFT = 'draft';
+    const DELETED = 'deleted';
 
     /**
      * @var integer
@@ -113,6 +114,14 @@ class RequestStatus implements Translatable
     public function isDraft()
     {
         return self::DRAFT === $this->name;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDeleted()
+    {
+        return self::DELETED === $this->name;
     }
 
     /**

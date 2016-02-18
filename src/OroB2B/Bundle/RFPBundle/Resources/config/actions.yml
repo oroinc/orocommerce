@@ -96,3 +96,27 @@ actions:
                 attribute: $.isAllowed
         preconditions:
             @equal: [true, $.isAllowed]
+
+    orob2b_rfp_delete_action:
+        label: orob2b.rfp.btn.delete
+        enabled: true
+        applications: [backend]
+        routes:
+            - orob2b_rfp_request_view
+        datagrids:
+            - rfp-requests-grid
+        order: 100
+        button_options:
+            icon: icon-delete
+        frontend_options:
+            confirmation: orob2b.rfp.request.actions.delete_frp_confirm
+        preconditions:
+            @not_equal: [$status, $.deletedStatus]
+        prefunctions:
+            - @find_entity:
+                class: OroB2B\Bundle\RFPBundle\Entity\RequestStatus
+                attribute: $.deletedStatus
+                where:
+                    name: 'deleted'
+        functions:
+            - @assign_value: [$status, $.deletedStatus]

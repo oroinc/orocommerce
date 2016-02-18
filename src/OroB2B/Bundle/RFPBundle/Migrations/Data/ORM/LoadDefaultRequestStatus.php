@@ -20,6 +20,7 @@ class LoadDefaultRequestStatus extends AbstractTranslatableEntityFixture
         ['order' => 10, 'name' => RequestStatus::OPEN],
         ['order' => 20, 'name' => RequestStatus::CLOSED],
         ['order' => 30, 'name' => RequestStatus::DRAFT],
+        ['order' => 100, 'name' => RequestStatus::DELETED],
     ];
 
     /**
