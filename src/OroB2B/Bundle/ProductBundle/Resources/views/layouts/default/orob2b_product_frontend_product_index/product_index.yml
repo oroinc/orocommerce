@@ -14,7 +14,7 @@ layout:
                         grid_name: frontend-products-grid
                         grid_parameters:
                             themeOptions:
-                                tableView: false
+                                tagName: 'div'
                                 headerHide: true
                                 rowTemplateSelector: '#template-grid-row'
             tree:
