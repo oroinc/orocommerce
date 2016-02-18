@@ -5,26 +5,27 @@
 {% endblock %}
 
 {% block action_combined_buttons_widget %}
-    {{ block_widget(block) }}
-{% endblock %}
+    {#{{ block_widget(block[primary_button_alias]) }}#}
 
-{% block action_dropdown_toggle_widget %}
-    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-        <i class="material-icons">arrow_drop_down</i>
-    </a>
+    {#<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">#}
+        {#<i class="material-icons">arrow_drop_down</i>#}
+    {#</a>#}
+
+    {#<ul>#}
+        {#{% for action in block.action_dropdown_menu %}#}
+            {#<li>#}
+                {#{{ block_widget(action) }}#}
+            {#</li>#}
+        {#{% endfor %}#}
+    {#</ul>#}
+
 {% endblock %}
 
 {% block action_button_widget %}
-    {% block button %}
-        {% if only_link is not defined %}<li>{% endif %}
-        {% block link %}
-            <a {{ block('block_attributes') }}>
-                {% if hide_icon is not defined %}
-                    <i class="{{ buttonOptions.icon|default('') }} {{ buttonOptions.iCss|default('') }} hide-text">{{ linkLabel }}</i>
-                {% endif %}
-                {{ linkLabel|trim }}
-            </a>
-        {% endblock %}
-        {% if only_link is not defined %}</li>{% endif %}
-    {% endblock %}
+    <a {{ block('block_attributes') }}>
+        {% if hide_icon is not defined %}
+            <i class="{{ buttonOptions.icon|default('') }} {{ buttonOptions.iCss|default('') }} hide-text">{{ linkLabel }}</i>
+        {% endif %}
+        {{ linkLabel|trim }}
+    </a>
 {% endblock %}

@@ -53,8 +53,6 @@ class ActionCombinedButtonsType extends AbstractButtonsType
             $buttonOptions
         );
 
-        $layoutManipulator->add('action_dropdown_link', $builderId, DropdownToggleType::NAME);
-
         $lineButtonsOptions = [
             'entity' => $options['entity'],
             'suffix' => 'combined',
