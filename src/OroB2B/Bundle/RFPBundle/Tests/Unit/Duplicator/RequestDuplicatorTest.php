@@ -12,6 +12,7 @@ use OroB2B\Bundle\RFPBundle\Duplicator\RequestDuplicator;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
+use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 
 class RequestDuplicatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,6 +23,7 @@ class RequestDuplicatorTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject $doctrineHelper */
         $doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
@@ -30,15 +32,17 @@ class RequestDuplicatorTest extends \PHPUnit_Framework_TestCase
         $connection->expects($this->once())->method('beginTransaction');
         $connection->expects($this->once())->method('commit');
         $statusOpen = $this->getMock('OroB2B\Bundle\RFPBundle\Entity\RequestStatus');
+        $statusOpen->expects($this->any())->method('getName')->willReturn(RequestStatus::OPEN);
         $statusRepository = $this->getMockBuilder('OroB2B\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $statusRepository->expects($this->once())->method('findOneBy')->willReturn($statusOpen);
+        $statusRepository->expects($this->any())->method('findOneBy')->willReturn($statusOpen);
+
         $manager = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
         $manager->expects($this->exactly(2))->method('getConnection')->willReturn($connection);
         $manager->expects($this->once())->method('persist');
         $manager->expects($this->once())->method('flush');
-        $doctrineHelper->expects($this->once())->method('getEntityRepository')->willReturnMap([
+        $doctrineHelper->expects($this->any())->method('getEntityRepository')->willReturnMap([
             ['OroB2BRFPBundle:RequestStatus', $statusRepository],
         ]);
 
@@ -52,11 +56,36 @@ class RequestDuplicatorTest extends \PHPUnit_Framework_TestCase
     public function testDuplicate()
     {
         $request = $this->getRFP();
-        /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject $doctrineHelper */
         $requestCopy = $this->duplicator->duplicate($request);
         $requestCopy->setCreatedAt($request->getCreatedAt());
         $requestCopy->setUpdatedAt($request->getUpdatedAt());
         $this->checkCopy($request, $requestCopy);
+    }
+
+    public function testDuplicateExclude()
+    {
+        $request = $this->getRFP();
+        $reflect = new \ReflectionClass($request);
+        $fields = $reflect->getProperties(
+            \ReflectionProperty::IS_PUBLIC
+            | \ReflectionProperty::IS_PROTECTED
+            | \ReflectionProperty::IS_PRIVATE);
+
+        $excludeFields = array_map(function (\ReflectionProperty $field) {
+            return $field->getName();
+        }, $fields);
+        $requestCopy = $this->duplicator->duplicate($request, $excludeFields);
+
+        foreach ($excludeFields as $field) {
+            $method = 'get' . $field;
+            $value = $requestCopy->$method();
+            if ($field === 'status') {
+                /** @var $value RequestStatus */
+                $this->assertEquals(RequestStatus::OPEN, $value->getName());
+            } else {
+                $this->assertEmpty($value);
+            }
+        }
     }
 
     /**
@@ -99,7 +128,7 @@ class RequestDuplicatorTest extends \PHPUnit_Framework_TestCase
         /** @var AccountUser $accountUser */
         $accountUser = new AccountUser();
         $request->setAccountUser($accountUser);
-        $request->setStatus($statusOpen = $this->getMock('OroB2B\Bundle\RFPBundle\Entity\RequestStatus'));
+        $request->setStatus($this->getMock('OroB2B\Bundle\RFPBundle\Entity\RequestStatus'));
         $request->setCompany('test company');
 
         $request->setEmail('test@test.com');
@@ -123,6 +152,4 @@ class RequestDuplicatorTest extends \PHPUnit_Framework_TestCase
 
         return $request;
     }
-
-
 }

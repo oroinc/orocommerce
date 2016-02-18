@@ -69,3 +69,5 @@ services:
 
     orob2b_rfp.provider.request_duplicator:
         class: %orob2b_rfp.provider.request_duplicator.class%
+        arguments:
+            - @oro_entity.doctrine_helper

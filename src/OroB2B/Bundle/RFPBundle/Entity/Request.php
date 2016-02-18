@@ -382,10 +382,10 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
     }
 
     /**
-     * @param Organization $organization
+     * @param Organization|null $organization
      * @return Request
      */
-    public function setOrganization(Organization $organization)
+    public function setOrganization(Organization $organization = null)
     {
         $this->organization = $organization;
 
