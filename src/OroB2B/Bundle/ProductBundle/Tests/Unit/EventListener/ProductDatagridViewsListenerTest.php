@@ -42,7 +42,7 @@ class ProductDatagridViewsListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnPreBuild($viewName, array $expectedConfig)
     {
         $gridName = 'grid-name';
-        $this->request->query->set($gridName, [ProductDatagridViewsListener::GRID_TEMPLATE_PATH => $viewName]);
+        $this->request->query->set($gridName, [ProductDatagridViewsListener::GRID_THEME_PARAM_NAME => $viewName]);
         $config = DatagridConfiguration::createNamed($gridName, []);
         $params = new ParameterBag();
         $event = new PreBuild($config, $params);

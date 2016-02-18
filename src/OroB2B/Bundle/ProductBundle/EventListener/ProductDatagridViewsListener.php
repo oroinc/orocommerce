@@ -7,12 +7,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 
-use OroB2B\Bundle\ProductBundle\DataGrid\Extension\RowTemplate\Configuration as RowTemplateConfiguration;
-
 class ProductDatagridViewsListener
 {
-    const GRID_TEMPLATE_PATH = 'template';
-    const ROW_TEMPLATE_NAME = '%s-%s-row-template'; // [1] grid name, [2] view name
+    const GRID_THEME_PARAM_NAME = 'template';
+
     const VIEW_GRID = 'grid';
     const VIEW_LIST = 'list';
     const VIEW_TILES = 'tiles';
@@ -41,19 +39,7 @@ class ProductDatagridViewsListener
         if (!$viewName) {
             return;
         }
-        $this->addRowTemplate($config, $gridName, $viewName);
         $this->updateConfigByView($config, $viewName);
-    }
-
-    /**
-     * @param DatagridConfiguration $config
-     * @param $gridName
-     * @param $viewName
-     */
-    protected function addRowTemplate(DatagridConfiguration $config, $gridName, $viewName)
-    {
-        $rowTemplateName = sprintf(self::ROW_TEMPLATE_NAME, $gridName, $viewName);
-        $config->offsetSetByPath(RowTemplateConfiguration::ROW_TEMPLATE_PATH, $rowTemplateName);
     }
 
     /**
@@ -122,8 +108,8 @@ class ProductDatagridViewsListener
         }
         $gridParams = $request->query->get($gridName);
 
-        if (is_array($gridParams) && array_key_exists(self::GRID_TEMPLATE_PATH, $gridParams)) {
-            return $gridParams[self::GRID_TEMPLATE_PATH];
+        if (is_array($gridParams) && array_key_exists(self::GRID_THEME_PARAM_NAME, $gridParams)) {
+            return $gridParams[self::GRID_THEME_PARAM_NAME];
         } else {
             return null;
         }

@@ -291,7 +291,7 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-products-grid, method: onPreBuild }
 
     orob2b_product.datagrid.extension.row_template:
-        class: OroB2B\Bundle\ProductBundle\DataGrid\Extension\RowTemplate\Extension
+        class: OroB2B\Bundle\ProductBundle\DataGrid\Extension\Theme\ThemeExtension
         tags:
             - { name: oro_datagrid.extension }
 
