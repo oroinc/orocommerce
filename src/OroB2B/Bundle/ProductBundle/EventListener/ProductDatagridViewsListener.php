@@ -2,30 +2,24 @@
 
 namespace OroB2B\Bundle\ProductBundle\EventListener;
 
-use Symfony\Component\HttpFoundation\RequestStack;
-
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 
+use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
+
 class ProductDatagridViewsListener
 {
-    const GRID_THEME_PARAM_NAME = 'template';
-
-    const VIEW_GRID = 'grid';
-    const VIEW_LIST = 'list';
-    const VIEW_TILES = 'tiles';
+    /**
+     * @var DataGridThemeHelper
+     */
+    protected $themeHelper;
 
     /**
-     * @var RequestStack
+     * @param DataGridThemeHelper $themeHelper
      */
-    protected $requestStack;
-
-    /**
-     * @param RequestStack $requestStack
-     */
-    public function __construct(RequestStack $requestStack)
+    public function __construct(DataGridThemeHelper $themeHelper)
     {
-        $this->requestStack = $requestStack;
+        $this->themeHelper = $themeHelper;
     }
 
     /**
@@ -35,7 +29,7 @@ class ProductDatagridViewsListener
     {
         $config = $event->getConfig();
         $gridName = $config->getName();
-        $viewName = $this->getViewName($gridName);
+        $viewName = $this->themeHelper->getTheme($gridName);
         if (!$viewName) {
             return;
         }
@@ -49,10 +43,10 @@ class ProductDatagridViewsListener
     protected function updateConfigByView(DatagridConfiguration $config, $viewName)
     {
         switch ($viewName) {
-            case self::VIEW_GRID:
+            case DataGridThemeHelper::VIEW_GRID:
                 // grid view same as default
                 break;
-            case self::VIEW_LIST:
+            case DataGridThemeHelper::VIEW_LIST:
                 $updates = [
                     '[source][query][select]' => [
                         'productImage.filename as image',
@@ -74,7 +68,7 @@ class ProductDatagridViewsListener
                     ],
                 ];
                 break;
-            case self::VIEW_TILES:
+            case DataGridThemeHelper::VIEW_TILES:
                 $updates = [
                     '[source][query][select]' => [
                         'productImage.filename as image',
@@ -92,26 +86,6 @@ class ProductDatagridViewsListener
             foreach ($updates as $path => $update) {
                 $config->offsetAddToArrayByPath($path, $update);
             }
-        }
-    }
-
-    /**
-     *
-     * @param string $gridName
-     * @return null|string
-     */
-    protected function getViewName($gridName)
-    {
-        $request = $this->requestStack->getCurrentRequest();
-        if (!$request) {
-            return null;
-        }
-        $gridParams = $request->query->get($gridName);
-
-        if (is_array($gridParams) && array_key_exists(self::GRID_THEME_PARAM_NAME, $gridParams)) {
-            return $gridParams[self::GRID_THEME_PARAM_NAME];
-        } else {
-            return null;
         }
     }
 }

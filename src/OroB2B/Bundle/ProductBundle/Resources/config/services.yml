@@ -297,15 +297,21 @@ services:
         arguments:
             - @orob2b_product.repository.product
 
+    orob2b_product.datagrid_theme_helper:
+        class: OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper
+        arguments:
+            - @request_stack
+
     orob2b_product.event_listener.datagrid_views:
         class: OroB2B\Bundle\ProductBundle\EventListener\ProductDatagridViewsListener
         arguments:
-            - @request_stack
-            - @oro_datagrid.configuration.provider
+            - @orob2b_product.datagrid_theme_helper
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-products-grid, method: onPreBuild }
 
     orob2b_product.datagrid.extension.row_template:
         class: OroB2B\Bundle\ProductBundle\DataGrid\Extension\Theme\ThemeExtension
+        arguments:
+            - @orob2b_product.datagrid_theme_helper
         tags:
             - { name: oro_datagrid.extension }

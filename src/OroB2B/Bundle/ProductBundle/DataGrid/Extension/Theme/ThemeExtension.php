@@ -6,9 +6,25 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\MetadataObject;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
 
+use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
+
 class ThemeExtension extends AbstractExtension
 {
     const GRID_NAME = 'frontend-products-grid';
+    const METADATA_THEME_KEY = 'theme';
+
+    /**
+     * @var DataGridThemeHelper
+     */
+    protected $themeHelper;
+
+    /**
+     * @param DataGridThemeHelper $themeHelper
+     */
+    public function __construct(DataGridThemeHelper $themeHelper)
+    {
+        $this->themeHelper = $themeHelper;
+    }
 
     /**
      * {@inheritDoc}
@@ -23,7 +39,9 @@ class ThemeExtension extends AbstractExtension
      */
     public function visitMetadata(DatagridConfiguration $config, MetadataObject $data)
     {
-        parent::visitMetadata($config, $data);
-        \Symfony\Component\VarDumper\VarDumper::dump($data);
+        $data->offsetAddToArray(
+            static::METADATA_THEME_KEY,
+            ['rowView' => $this->themeHelper->getTheme($config->getName())]
+        );
     }
 }

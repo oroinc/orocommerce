@@ -2,12 +2,11 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\HttpFoundation\Request;
-
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 
+use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use OroB2B\Bundle\ProductBundle\EventListener\ProductDatagridViewsListener;
 
 class ProductDatagridViewsListenerTest extends \PHPUnit_Framework_TestCase
@@ -18,31 +17,32 @@ class ProductDatagridViewsListenerTest extends \PHPUnit_Framework_TestCase
     protected $listener;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|Request
+     * @var \PHPUnit_Framework_MockObject_MockObject|DataGridThemeHelper
      */
-    protected $request;
+    protected $themeHelper;
 
     public function setUp()
     {
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
-        $this->request = new Request();
+        $this->themeHelper = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $requestStack->expects($this->any())
-            ->method('getCurrentRequest')
-            ->willReturn($this->request);
-        $this->listener = new ProductDatagridViewsListener($requestStack);
+        $this->listener = new ProductDatagridViewsListener($this->themeHelper);
     }
 
     /**
      * @dataProvider onPreBuildDataProvider
      *
-     * @param string $viewName
+     * @param string $themeName
      * @param array $expectedConfig
      */
-    public function testOnPreBuild($viewName, array $expectedConfig)
+    public function testOnPreBuild($themeName, array $expectedConfig)
     {
         $gridName = 'grid-name';
-        $this->request->query->set($gridName, [ProductDatagridViewsListener::GRID_THEME_PARAM_NAME => $viewName]);
+        $this->themeHelper->expects($this->any())
+            ->method('getTheme')
+            ->willReturn($themeName);
+
         $config = DatagridConfiguration::createNamed($gridName, []);
         $params = new ParameterBag();
         $event = new PreBuild($config, $params);
@@ -57,21 +57,15 @@ class ProductDatagridViewsListenerTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                ProductDatagridViewsListener::VIEW_GRID,
+                DataGridThemeHelper::VIEW_GRID,
                 [
-                    'options' => [
-                        'templates' => ['row' => 'grid-name-grid-row-template']
-                    ],
                     'name' => 'grid-name',
 
                 ]
             ],
             [
-                ProductDatagridViewsListener::VIEW_LIST,
+                DataGridThemeHelper::VIEW_LIST,
                 [
-                    'options' => [
-                        'templates' => ['row' => 'grid-name-list-row-template']
-                    ],
                     'name' => 'grid-name',
                     'source' => [
                         'query' => [
@@ -100,14 +94,11 @@ class ProductDatagridViewsListenerTest extends \PHPUnit_Framework_TestCase
                 ]
             ],
             [
-                ProductDatagridViewsListener::VIEW_TILES,
+                DataGridThemeHelper::VIEW_TILES,
                 [
-                    'options' => [
-                        'templates' => ['row' => 'grid-name-tiles-row-template']
-                    ],
                     'name' => 'grid-name',
                     'source' => [
-                        'query'=> [
+                        'query' => [
                             'select' => [
                                 'productImage.filename as image',
                             ],
