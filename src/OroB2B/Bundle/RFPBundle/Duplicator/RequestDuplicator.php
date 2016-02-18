@@ -41,7 +41,6 @@ class RequestDuplicator
             $objectManager->persist($requestCopy);
             $objectManager->flush();
 
-
             $objectManager->getConnection()->commit();
         } catch (\Exception $e) {
             $objectManager->getConnection()->rollBack();
@@ -80,10 +79,10 @@ class RequestDuplicator
             $requestCopy->addRequestProduct($requestProductClone);
         }
         foreach ($request->getAssignedUsers() as $user) {
-            $requestCopy->addRequestProduct($user);
+            $requestCopy->addAssignedUser($user);
         }
         foreach ($request->getAssignedAccountUsers() as $accountUser) {
-            $requestCopy->addRequestProduct($accountUser);
+            $requestCopy->addAssignedAccountUser($accountUser);
         }
     }
 
@@ -96,6 +95,7 @@ class RequestDuplicator
         $cloneRequestProduct = clone $requestProduct;
         foreach ($requestProduct->getRequestProductItems() as $requestProductItem) {
             $cloneRequestProductItem = clone $requestProductItem;
+            $cloneRequestProductItem->setRequestProduct(null);
             $cloneRequestProduct->addRequestProductItem($cloneRequestProductItem);
         }
         return $cloneRequestProduct;

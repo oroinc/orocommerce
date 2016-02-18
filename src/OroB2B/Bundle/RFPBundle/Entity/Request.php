@@ -804,14 +804,12 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
 
     public function __clone()
     {
-        if ($this->id) {
-            $this->id = null;
-            $this->createdAt  = new \DateTime('now', new \DateTimeZone('UTC'));
-            $this->updatedAt  = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->id = null;
+        $this->createdAt  = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->updatedAt  = new \DateTime('now', new \DateTimeZone('UTC'));
 
-            $this->requestProducts = new ArrayCollection();
-            $this->assignedUsers = new ArrayCollection();
-            $this->assignedAccountUsers = new ArrayCollection();
-        }
+        $this->requestProducts = new ArrayCollection();
+        $this->assignedUsers = new ArrayCollection();
+        $this->assignedAccountUsers = new ArrayCollection();
     }
 }
