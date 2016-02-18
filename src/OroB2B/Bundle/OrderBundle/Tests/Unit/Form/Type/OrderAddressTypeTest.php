@@ -2,27 +2,17 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
-use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
-
-use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\ConstraintViolation;
 
+use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Oro\Bundle\AddressBundle\Entity\AddressType as AddressTypeEntity;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\AddressBundle\Form\Type\AddressType;
-use Oro\Bundle\AddressBundle\Form\Type\CountryType;
-use Oro\Bundle\AddressBundle\Form\Type\RegionType;
-use Oro\Bundle\FormBundle\Form\Extension\RandomIdExtension;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
-use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
@@ -30,9 +20,8 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderAddressType;
 use OroB2B\Bundle\OrderBundle\Model\OrderAddressManager;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
-use OroB2B\Bundle\OrderBundle\Tests\Unit\Stub\AddressCountryAndRegionSubscriberStub;
 
-class OrderAddressTypeTest extends FormIntegrationTestCase
+class OrderAddressTypeTest extends AddressFormExtensionTestCase
 {
     /** @var OrderAddressType */
     protected $formType;
@@ -411,61 +400,6 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatableEntityType $registry */
-        $translatableEntity = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType')
-            ->setMethods(['setDefaultOptions', 'buildForm'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $country = new Country('US');
-        $choices = [
-            'OroAddressBundle:Country' => ['US' => $country],
-            'OroAddressBundle:Region' => ['US-AL' => (new Region('US-AL'))->setCountry($country)],
-        ];
-
-        $translatableEntity->expects($this->any())->method('setDefaultOptions')->will(
-            $this->returnCallback(
-                function (OptionsResolver $resolver) use ($choices) {
-                    $choiceList = function (Options $options) use ($choices) {
-                        $className = $options->offsetGet('class');
-                        if (array_key_exists($className, $choices)) {
-                            return new ArrayChoiceList(
-                                $choices[$className],
-                                function ($item) {
-                                    if ($item instanceof Country) {
-                                        return $item->getIso2Code();
-                                    }
-
-                                    if ($item instanceof Region) {
-                                        return $item->getCombinedCode();
-                                    }
-
-                                    return $item . uniqid('form', true);
-                                }
-                            );
-                        }
-
-                        return new ArrayChoiceList([]);
-                    };
-
-                    $resolver->setDefault('choice_list', $choiceList);
-                }
-            )
-        );
-
-        return [
-            new PreloadedExtension(
-                [
-                    'oro_address' => new AddressType(new AddressCountryAndRegionSubscriberStub()),
-                    'oro_country' => new CountryType(),
-                    'genemu_jqueryselect2_translatable_entity' => new Select2Type('translatable_entity'),
-                    'genemu_jqueryselect2_choice' => new Select2Type('choice'),
-                    'translatable_entity' => $translatableEntity,
-                    'oro_region' => new RegionType(),
-                ],
-                ['form' => [new RandomIdExtension()]]
-            ),
-            $this->getValidatorExtension(true),
-        ];
+        return array_merge([$this->getValidatorExtension(true)], parent::getExtensions());
     }
 }

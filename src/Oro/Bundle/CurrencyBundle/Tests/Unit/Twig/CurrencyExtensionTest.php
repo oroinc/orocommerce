@@ -5,7 +5,7 @@ namespace Oro\Bundle\CurrencyBundle\Tests\Unit\Twig;
 use Twig_SimpleFilter;
 
 use Oro\Bundle\CurrencyBundle\Twig\CurrencyExtension;
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 class CurrencyExtensionTest extends \PHPUnit_Framework_TestCase
 {

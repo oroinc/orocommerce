@@ -71,7 +71,7 @@ class SubtotalsProvider
                 continue;
             }
             $rowTotal = $lineItem->getPrice()->getValue();
-            if ($lineItem->getPriceType() === OrderLineItem::PRICE_TYPE_UNIT) {
+            if ((int)$lineItem->getPriceType() === OrderLineItem::PRICE_TYPE_UNIT) {
                 $rowTotal *= $lineItem->getQuantity();
             }
             if ($order->getCurrency() !== $lineItem->getPrice()->getCurrency()) {

@@ -42,6 +42,8 @@ class QuoteTest extends AbstractTest
 
         static::assertPropertyCollections(new Quote(), [
             ['quoteProducts', new QuoteProduct()],
+            ['assignedUsers', new User()],
+            ['assignedAccountUsers', new AccountUser()],
         ]);
     }
 

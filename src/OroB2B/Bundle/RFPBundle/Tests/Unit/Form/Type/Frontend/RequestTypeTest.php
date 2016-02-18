@@ -181,6 +181,7 @@ class RequestTypeTest extends AbstractTest
                             ],
                         ],
                     ],
+                    'assignedAccountUsers' => [10],
                 ],
                 'expectedData'  => $this
                     ->getRequest(
@@ -196,7 +197,8 @@ class RequestTypeTest extends AbstractTest
                     )
                     ->addRequestProduct($requestProduct)->setStatus(
                         (new RequestStatus())->setName(RequestStatus::OPEN)
-                    ),
+                    )
+                    ->addAssignedAccountUser($this->getAccountUser(10)),
                 'defaultData'  => $this
                     ->getRequest(
                         'FirstName',
@@ -287,10 +289,10 @@ class RequestTypeTest extends AbstractTest
 
         $priceType                  = $this->preparePriceType();
         $entityType                 = $this->prepareProductSelectType();
-        $optionalPriceType          = $this->prepareOptionalPriceType();
         $currencySelectionType      = new CurrencySelectionTypeStub();
         $requestProductItemType     = $this->prepareRequestProductItemType();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
+        $accountUserMultiSelectType = $this->prepareAccountUserMultiSelectType();
         $requestProductType         = new RequestProductType($productUnitLabelFormatter);
         $requestProductType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
         $frontendRequestProductType = new FrontendRequestProductType();
@@ -307,11 +309,11 @@ class RequestTypeTest extends AbstractTest
                     OroDateType::NAME                       => new OroDateType(),
                     $priceType->getName()                   => $priceType,
                     $entityType->getName()                  => $entityType,
-                    $optionalPriceType->getName()           => $optionalPriceType,
                     $requestProductType->getName()          => $requestProductType,
                     $currencySelectionType->getName()       => $currencySelectionType,
                     $requestProductItemType->getName()      => $requestProductItemType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
+                    $accountUserMultiSelectType->getName()  => $accountUserMultiSelectType,
                     $frontendRequestProductType->getName()  => $frontendRequestProductType,
                     QuantityTypeTrait::$name                => $this->getQuantityType(),
                 ],
