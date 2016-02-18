@@ -12,7 +12,7 @@ layout:
                     blockType: datagrid
                     options:
                         grid_name: frontend-products-grid
-                        grid_parameters:
+                        grid_render_parameters:
                             themeOptions:
                                 tagName: 'div'
                                 headerHide: true
