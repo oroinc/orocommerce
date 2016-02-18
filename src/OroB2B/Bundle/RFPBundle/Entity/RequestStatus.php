@@ -43,6 +43,7 @@ class RequestStatus implements Translatable
     const OPEN = 'open';
     const CLOSED = 'closed';
     const DRAFT = 'draft';
+    const CANCELED = 'canceled';
 
     /**
      * @var integer
@@ -293,6 +294,6 @@ class RequestStatus implements Translatable
      */
     public function __toString()
     {
-        return (string) $this->getLabel();
+        return (string)$this->getLabel();
     }
 }
