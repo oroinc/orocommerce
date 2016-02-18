@@ -151,8 +151,6 @@
         'subblocks': [{'data' : [shippingAddress]}]
     }]) %}
 
-        {#{% set data = {'dataBlocks': [generalBlock, lineItemsBlock, shippingAddressBlock]} %}#}
-
     {% set data = {'dataBlocks': dataBlocks} %}
     {{ parent() }}
     <script type="text/javascript">
