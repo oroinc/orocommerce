@@ -8,7 +8,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository")
  * @ORM\Table(name="orob2b_tax_rule")
  * @ORM\HasLifecycleCallbacks
  * @Config(

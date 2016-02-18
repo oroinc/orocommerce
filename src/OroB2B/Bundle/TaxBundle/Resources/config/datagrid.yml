@@ -319,7 +319,7 @@ datagrid:
                     data_name: tax.code
                 tax_jurisdiction_code:
                     type:      string
-                    data_name: tax_jurisdiction.code
+                    data_name: tax_jurisdiction_code
                 createdAt:
                     type:      datetime
                     data_name: tax_code.createdAt

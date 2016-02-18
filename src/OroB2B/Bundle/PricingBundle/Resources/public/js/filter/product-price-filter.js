@@ -113,6 +113,13 @@ define([
         _updateValueField: function() {
             ProductPriceFilter.__super__._updateValueField.apply(this, arguments);
 
+            var valueFrame = this.$('.value-field-frame');
+            if (!valueFrame.length) {
+                return;
+            }
+
+            valueFrame.css('margin-right', 0);
+
             var type = this.$(this.criteriaValueSelectors.type).val();
 
             this.$('.product-price-unit-filter-separator').toggle(!this.isEmptyType(type));
@@ -164,7 +171,7 @@ define([
         _appendUnitFilter: function($filter) {
             var value = _.extend({}, this.emptyValue, this.value);
             var selectedChoiceLabel = '';
-            var $updateBtn;
+            var $filterValue;
             var $unitFilter;
 
             if (!_.isEmpty(this.unitChoices)) {
@@ -179,10 +186,11 @@ define([
                 selectedChoiceLabel: selectedChoiceLabel
             }));
 
-            $updateBtn = $filter.find('.filter-update');
-            $unitFilter.prepend($filter).append($updateBtn);
+            $filter.addClass('product-price-filter-criteria');
+            $filterValue = $filter.find('.filter-value');
+            $filterValue.append($unitFilter);
 
-            this._appendUnitFilter._appendFilter.call(this, $unitFilter);
+            this._appendUnitFilter._appendFilter.call(this, $filter);
         }
     });
 
