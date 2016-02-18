@@ -69,10 +69,6 @@ class ProductPriceType extends AbstractType
             );
 
         // make value not empty
-        $builder->get('price')
-            ->remove('value')
-            ->add('value', ProductPriceValueType::NAME, ['required' => true]);
-
         $builder->addEventListener(
             FormEvents::POST_SUBMIT,
             function (FormEvent $event) {

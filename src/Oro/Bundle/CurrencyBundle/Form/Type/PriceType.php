@@ -10,14 +10,30 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\DataTransformer\PriceTransformer;
 
+use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+
 class PriceType extends AbstractType
 {
     const NAME = 'oro_currency_price';
+    const OPTIONAL_VALIDATION_GROUP = 'Optional';
 
     /**
      * @var string
      */
     protected $dataClass;
+
+    /**
+     * @var RoundingServiceInterface
+     */
+    protected $roundingService;
+
+    /**
+     * @param RoundingServiceInterface $roundingService
+     */
+    public function __construct(RoundingServiceInterface $roundingService)
+    {
+        $this->roundingService = $roundingService;
+    }
 
     /**
      * @param string $dataClass
@@ -33,6 +49,8 @@ class PriceType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $isRequiredPrice = $this->resolvePriceIsRequired($options);
+
         if (empty($options['hide_currency'])) {
             $currencyType = CurrencySelectionType::NAME;
             $currencyOptions = [
@@ -40,7 +58,7 @@ class PriceType extends AbstractType
                 'currencies_list' => $options['currencies_list'],
                 'full_currency_list' => $options['full_currency_list'],
                 'compact' => $options['compact'],
-                'required' => true,
+                'required' => $isRequiredPrice,
                 'empty_value' => $options['currency_empty_value'],
             ];
         } else {
@@ -51,7 +69,16 @@ class PriceType extends AbstractType
         }
 
         $builder
-            ->add('value', 'number', ['required' => true])
+            ->add(
+                'value',
+                'number',
+                [
+                    'required' => $isRequiredPrice,
+                    'scale' => $this->roundingService->getPrecision(),
+                    'rounding_mode' => $this->roundingService->getRoundType(),
+                    'attr' => ['data-scale' => $this->roundingService->getPrecision()]
+                ]
+            )
             ->add('currency', $currencyType, $currencyOptions);
 
         $builder->addViewTransformer(new PriceTransformer());
@@ -66,7 +93,6 @@ class PriceType extends AbstractType
             'data_class' => $this->dataClass,
             'hide_currency' => false,
             'additional_currencies' => null,
-            'cascade_validation' => true,
             'currencies_list' => null,
             'default_currency' => null,
             'full_currency_list' => false,
@@ -89,5 +115,16 @@ class PriceType extends AbstractType
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * @param array $options
+     * @return bool
+     */
+    protected function resolvePriceIsRequired(array $options)
+    {
+        return array_key_exists('validation_groups', $options)
+            && is_array($options['validation_groups'])
+            && !in_array(self::OPTIONAL_VALIDATION_GROUP, $options['validation_groups'], true);
     }
 }

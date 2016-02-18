@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Provider;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;

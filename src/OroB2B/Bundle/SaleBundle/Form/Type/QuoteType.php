@@ -9,10 +9,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 
 use OroB2B\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 
 class QuoteType extends AbstractType
@@ -99,6 +102,14 @@ class QuoteType extends AbstractType
                         'compact_units' => true,
                     ]
                 ]
+            )
+            ->add('assignedUsers', UserMultiSelectType::NAME, [
+                'label' => 'orob2b.sale.quote.assigned_users.label',
+            ])
+            ->add('assignedAccountUsers', AccountUserMultiSelectType::NAME, [
+                'label' => 'orob2b.sale.quote.assigned_account_users.label',
+            ])
+        ;
             );
 
         if ($this->quoteAddressSecurityProvider->isAddressGranted($quote, AddressType::TYPE_SHIPPING)) {
