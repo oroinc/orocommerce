@@ -91,6 +91,36 @@
     ]
     %}
 
+    {% if isShippingAddressGranted %}
+        {% set shippingAddress %}
+            <div
+                data-page-component-module="oroui/js/app/components/view-component"
+                data-page-component-options="{{ {
+                    view: 'orob2bsale/js/app/views/address-view',
+                    type: 'shipping',
+                    selectors: {
+                        address: '#' ~ form.shippingAddress.accountAddress.vars.id,
+                        subtotalsFields: [
+                        '#' ~ form.shippingAddress.country.vars.id,
+                        '#' ~ form.shippingAddress.street.vars.id,
+                        '#' ~ form.shippingAddress.street2.vars.id,
+                        '#' ~ form.shippingAddress.city.vars.id,
+                        '#' ~ form.shippingAddress.region.vars.id,
+                        '#' ~ form.shippingAddress.postalCode.vars.id
+                        ]
+                    }
+                }|json_encode }}">
+                {{ form_widget(form.shippingAddress) }}
+            </div>
+        {% endset %}
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': 'orob2b.order.shipping_address.label'|trans,
+            'subblocks': [{
+                'data': [shippingAddress]
+            }]
+        }]) %}
+    {% endif %}
+
     {% set additionalData = [] %}
     {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
         {% set additionalData = additionalData|merge([form_row(child)]) %}

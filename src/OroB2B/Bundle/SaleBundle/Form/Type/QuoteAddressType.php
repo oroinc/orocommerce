@@ -84,9 +84,9 @@ class QuoteAddressType extends AbstractType
         if ($isManualEditGranted) {
             $accountAddressOptions['choices'] = array_merge(
                 $accountAddressOptions['choices'],
-                ['orob2b.quote.form.address.manual']
+                ['orob2b.sale.quote.form.address.manual']
             );
-            $accountAddressOptions['configs']['placeholder'] = 'orob2b.quote.form.address.choose_or_create';
+            $accountAddressOptions['configs']['placeholder'] = 'orob2b.sale.quote.form.address.choose_or_create';
         }
 
         $builder->add('accountAddress', 'genemu_jqueryselect2_choice', $accountAddressOptions);

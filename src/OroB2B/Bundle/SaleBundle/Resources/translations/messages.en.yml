@@ -25,6 +25,7 @@ orob2b:
             expired.label: 'Expired'
             assigned_users.label: 'Assigned To'
             assigned_account_users.label: 'Assigned Customers'
+            shipping_address.label: Shipping Address
 
             sections:
                 general: 'General'
@@ -63,6 +64,11 @@ orob2b:
             message:
                 quote.expire.success: 'Quote #%id% was successfully expired'
 
+            form:
+                address:
+                    choose: Select an address
+                    choose_or_create: Select an existing address or enter a new address below
+                    manual: Enter address manually
         system_configuration:
             fields:
                 backend_product_visibility.title: 'Can Be Added to Quotes'
@@ -140,6 +146,27 @@ orob2b:
             product_unit.removed: '{title} - removed'
             product_unit.empty: 'Choose Unit...'
             column_summary: 'Summary'
+
+        quoteaddress:
+            entity_label: Order Address
+            entity_plural_label: Order Addresses
+            id.label: ID
+            account_address.label: Account address
+            account_user_address.label: Account user address
+            label.label: Label
+            first_name.label: First Name
+            middle_name.label: Middle Name
+            last_name.label: Last Name
+            name_prefix.label: Name Prefix
+            name_suffix.label: Name Suffix
+            organization.label: Organization
+            city.label: City
+            postal_code.label: Zip/Postal Code
+            country.label: Country
+            region.label: State
+            region_text.label: State
+            street.label: Street
+            street2.label: Street 2
 
         controller:
             quote:
