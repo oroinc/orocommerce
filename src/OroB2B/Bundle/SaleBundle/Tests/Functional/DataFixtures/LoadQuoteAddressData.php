@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures;
+namespace OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\AbstractFixture as BaseAbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
@@ -11,9 +11,8 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteAddress;
-use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 
-class LoadQuoteAddressData extends AbstractFixture implements DependentFixtureInterface
+class LoadQuoteAddressData extends BaseAbstractFixture implements DependentFixtureInterface
 {
     const QUOTE_ADDRESS_1 = 'quote_address.office';
 
@@ -31,14 +30,6 @@ class LoadQuoteAddressData extends AbstractFixture implements DependentFixtureIn
             'postalCode' => '47981',
         ]
     ];
-
-//    const COMPANY_BILLING_DEFAULT_BILLING = '2413 Capitol Avenue, ROMNEY IN US 47981';
-//    const COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING = '1215 Caldwell Road, ROCHESTER NY US 14608';
-//    const COMPANY_BILLING_SHIPPING_ADDRESS = '722 Harvest Lane, SEDALIA MO US 65301';
-//
-//    const USER_BILLING_DEFAULT_BILLING = '2413 Capitol Avenue, ROMNEY IN US 47981';
-//    const USER_BILLING_SHIPPING_DEFAULT_SHIPPING = '1215 Caldwell Road, ROCHESTER NY US 14608';
-//    const USER_BILLING_SHIPPING_ADDRESS = '722 Harvest Lane, SEDALIA MO US 65301';
 
     /**
      * {@inheritdoc}
@@ -94,8 +85,7 @@ class LoadQuoteAddressData extends AbstractFixture implements DependentFixtureIn
             ->setCity($address['city'])
             ->setRegion($region)
             ->setStreet($address['street'])
-            ->setPostalCode($address['postalCode'])
-            ->
+            ->setPostalCode($address['postalCode']);
         $manager->persist($orderAddress);
         $this->addReference($name, $orderAddress);
 
