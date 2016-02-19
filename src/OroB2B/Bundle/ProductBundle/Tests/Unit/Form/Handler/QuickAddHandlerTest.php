@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Handler;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\Form\FormFactoryInterface;
@@ -11,18 +10,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
-use OroB2B\Bundle\ProductBundle\Form\Handler\QuickAddHandler;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
+use OroB2B\Bundle\ProductBundle\Form\Handler\QuickAddHandler;
+use OroB2B\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
+use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 {
-    const PRODUCT_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
-
     const COMPONENT_NAME = 'component';
 
     /**
@@ -46,9 +44,9 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
     protected $handler;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var QuickAddRowCollectionBuilder|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $managerRegistry;
+    protected $collectionBuilder;
 
     /**
      * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
@@ -56,9 +54,9 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
     protected $manager;
 
     /**
-     * @var ProductRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var QuickAddRowCollection|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $productRepository;
+    protected $quickAddRowCollection;
 
     protected function setUp()
     {
@@ -78,58 +76,17 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->collectionBuilder = $this
+            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->handler = new QuickAddHandler(
             $this->translator,
             $this->formFactory,
             $this->componentRegistry,
-            $this->getManagerRegistry()
+            $this->collectionBuilder
         );
-
-        $this->handler->setProductClass(self::PRODUCT_CLASS);
-    }
-
-    /**
-     * @return ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getManagerRegistry()
-    {
-        if (!$this->managerRegistry) {
-            $this->managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-            $this->managerRegistry->expects($this->any())
-                ->method('getManagerForClass')
-                ->with(self::PRODUCT_CLASS)
-                ->willReturn($this->getManager());
-        }
-        return $this->managerRegistry;
-    }
-
-    /**
-     * @return ObjectManager|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getManager()
-    {
-        if (!$this->manager) {
-            $this->manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
-            $this->manager->expects($this->any())
-                ->method('getRepository')
-                ->with(self::PRODUCT_CLASS)
-                ->willReturn($this->getProductRepository());
-        }
-        return $this->manager;
-    }
-
-    /**
-     * @return ProductRepository|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getProductRepository()
-    {
-        if (!$this->productRepository) {
-            $this->productRepository = $this
-                ->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository')
-                ->disableOriginalConstructor()
-                ->getMock();
-        }
-        return $this->productRepository;
     }
 
     public function testProcessGetRequest()
@@ -151,6 +108,8 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $request = Request::create('/post/no-processor', 'POST');
         $request->setSession($this->getSessionWithErrorMessage());
 
+        $this->prepareCollectionBuilder($request, []);
+
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
             ->method('submit')
@@ -169,6 +128,8 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $request = Request::create('/post/not-allowed-processor', 'POST');
         $request->request->set(QuickAddType::NAME, [QuickAddType::COMPONENT_FIELD_NAME => self::COMPONENT_NAME]);
         $request->setSession($this->getSessionWithErrorMessage());
+
+        $this->prepareCollectionBuilder($request, []);
 
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
@@ -204,10 +165,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $product = new Product();
         $product->setSku('SKU1');
 
-        $this->getProductRepository()->expects($this->once())
-            ->method('getProductWithNamesBySku')
-            ->with(['sku1', 'sku2'])
-            ->willReturn([$product]);
+        $this->prepareCollectionBuilder($request, ['SKU1' => $product]);
 
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
@@ -241,6 +199,8 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getData')
             ->willReturn($products);
 
+        $this->prepareCollectionBuilder($request, []);
+
         $mainForm = $this->getMock('Symfony\Component\Form\FormInterface');
         $mainForm->expects($this->once())
             ->method('submit')
@@ -267,7 +227,13 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $processor = $this->getProcessor();
         $processor->expects($this->once())
             ->method('process')
-            ->with([ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products], $request);
+            ->with(
+                [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
+                    ProductDataStorage::ADDITIONAL_DATA_KEY => null
+                ],
+                $request
+            );
 
         $this->assertEquals(['form' => $clearForm, 'response' => null], $this->handler->process($request));
     }
@@ -285,6 +251,8 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $productsForm->expects($this->once())
             ->method('getData')
             ->willReturn($products);
+
+        $this->prepareCollectionBuilder($request, []);
 
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
@@ -306,7 +274,13 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $processor = $this->getProcessor();
         $processor->expects($this->once())
             ->method('process')
-            ->with([ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products], $request)
+            ->with(
+                [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
+                    ProductDataStorage::ADDITIONAL_DATA_KEY => null
+                ],
+                $request
+            )
             ->willReturn($response);
 
         $this->assertEquals(['form' => $form, 'response' => $response], $this->handler->process($request));
@@ -320,7 +294,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $flashBag = $this->getMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBag');
         $flashBag->expects($this->once())
             ->method('add')
-            ->with('error', 'orob2b.product.frontend.component_not_accessible.message.trans');
+            ->with('error', 'orob2b.product.frontend.quick_add.messages.component_not_accessible.trans');
 
         $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
             ->disableOriginalConstructor()
@@ -353,5 +327,34 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($processor);
 
         return $processor;
+    }
+
+    /**
+     * @param Request $request
+     * @param array $products
+     */
+    protected function prepareCollectionBuilder(Request $request, array $products)
+    {
+        $this->collectionBuilder->expects($this->once())
+            ->method('buildFromRequest')
+            ->with($request)
+            ->willReturn($this->prepareCollection($products));
+    }
+
+    /**
+     * @param array $products
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function prepareCollection(array $products)
+    {
+        if (!$this->quickAddRowCollection) {
+            $this->quickAddRowCollection = $this->getMock('OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection');
+            $this->quickAddRowCollection->expects($this->once())
+                ->method('getProducts')
+                ->withAnyParameters()
+                ->willReturn($products);
+        }
+
+        return $this->quickAddRowCollection;
     }
 }

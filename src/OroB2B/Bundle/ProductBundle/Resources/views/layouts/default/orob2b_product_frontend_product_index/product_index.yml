@@ -1,5 +1,7 @@
 layout:
     actions:
+        - @setBlockTheme:
+            themes: 'OroB2BProductBundle:layouts:default/orob2b_product_frontend_product_index/product_index.html.twig'
         - @addTree:
             items:
                 product_index_page:
@@ -10,6 +12,11 @@ layout:
                     blockType: datagrid
                     options:
                         grid_name: frontend-products-grid
+                        grid_render_parameters:
+                            themeOptions:
+                                tagName: 'div'
+                                headerHide: true
+                                rowTemplateSelector: '#template-grid-row'
             tree:
                 content:
                     product_index_page:
