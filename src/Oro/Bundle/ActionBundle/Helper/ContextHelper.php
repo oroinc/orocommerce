@@ -6,6 +6,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
+use Doctrine\Common\Util\ClassUtils;
+
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
@@ -73,7 +75,7 @@ class ContextHelper
             !$this->doctrineHelper->isNewEntity($context['entity'])
         ) {
             $params['entityId'] = $this->doctrineHelper->getEntityIdentifier($context['entity']);
-            $params['entityClass'] = get_class($context['entity']);
+            $params['entityClass'] = ClassUtils::getClass($context['entity']);
         } elseif (isset($context['entity_class'])) {
             $params['entityClass'] = $context['entity_class'];
         }

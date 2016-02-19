@@ -2,23 +2,23 @@
 
 {% block form_field_widget %}
     {% set field_attr = form.vars.attr|merge({
-        class: [
-            form.vars.attr.class|default(''),
-            class_prefix ~ "__form__input"
-        ]|join(' ')
+    class: [
+    form.vars.attr.class|default(''),
+    class_prefix ~ "__form__input"
+    ]|join(' ')
     }) %}
     {% set field_label_attr = form.vars.label_attr|merge({
-        class: [
-            form.vars.label_attr.class|default(''),
-            class_prefix ~ "__form__label"
-        ]|join(' ')
+    class: [
+    form.vars.label_attr.class|default(''),
+    class_prefix ~ "__form__label"
+    ]|join(' ')
     }) %}
     {% set attr = attr|merge({
-        class: [
-            attr.class|default(''),
-            "form-field-" ~ form.vars.name,
-            "{{ class_prefix }}__form__row"
-        ]|join(' ')
+    class: [
+    attr.class|default(''),
+    "form-field-" ~ form.vars.name,
+    "{{ class_prefix }}__form__row"
+    ]|join(' ')
     }) %}
     <fieldset{{ block('block_attributes') }}>
         <div class="{{ class_prefix }}__form__col form__col_x12">
@@ -33,7 +33,7 @@
 
 {% block form_start_widget %}
     {% set attr = attr|merge({
-        id: form.vars.id
+    id: form.vars.id
     }) %}
     {{ parent() }}
 {% endblock %}
@@ -42,3 +42,55 @@
     {{ parent() }}
     {{ oro_form_js_validation(form) }}
 {% endblock %}
+
+{#Action Buttons#}
+
+{% block action_line_buttons_widget %}
+                                                            {#TODO: change class to more reusable#}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ "cart__order__controls-list" }) %}
+    <div{{ block('block_attributes') }}>
+        <ul>
+            {% for action in block %}
+                <li>
+                    {{ block_widget(action) }}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
+
+{% block action_combined_buttons_widget %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " btn btn_orange btn_has-dropdown btn_has-dropdown_xlg"}) %}
+    <div{{ block('block_attributes') }}>
+        {% set primary_button = block[primary_button_alias] %}
+        {{ block_widget(primary_button,
+        {attr:primary_button.vars.attr|merge({ class: primary_button.vars.attr.class|default('') ~ " direct-link"})}) }}
+
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            <i class="material-icons">arrow_drop_down</i>
+        </a>
+
+        {{ block_widget(block[dropdown_menu_alias]) }}
+    </div>
+{% endblock %}
+
+{% block action_drop_down_buttons_widget %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ "dropdown-menu"}) %}
+    <ul {{ block('block_attributes') }}>
+        {% for action in block %}
+            <li>
+                {{ block_widget(action) }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block action_button_widget %}
+    <a {{ block('block_attributes') }}>
+        {% if hide_icon is not defined %}
+            <i class="{{ buttonOptions.icon|default('') }} {{ buttonOptions.iCss|default('') }} hide-text">{{ linkLabel }}</i>
+        {% endif %}
+        {{ linkLabel|trim }}
+    </a>
+{% endblock %}
+

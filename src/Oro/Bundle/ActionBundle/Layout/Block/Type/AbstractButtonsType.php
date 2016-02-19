@@ -15,22 +15,34 @@ use Oro\Component\Layout\Block\Type\AbstractContainerType;
 
 abstract class AbstractButtonsType extends AbstractContainerType
 {
-    /** @var  ActionManager */
+    /**
+     * @var  ActionManager
+     */
     protected $actionManager;
 
-    /** @var  ContextHelper */
+    /**
+     * @var  ContextHelper
+     */
     protected $contextHelper;
 
-    /** @var  ApplicationsHelper */
+    /**
+     * @var  ApplicationsHelper
+     */
     protected $applicationsHelper;
 
-    /** @var  RequestStack */
+    /**
+     * @var  RequestStack
+     */
     protected $requestStack;
 
-    /** @var  UrlGeneratorInterface */
+    /**
+     * @var  UrlGeneratorInterface
+     */
     protected $router;
 
-    /** @var  RestrictHelper */
+    /**
+     * @var  RestrictHelper
+     */
     protected $restrictHelper;
 
     /**

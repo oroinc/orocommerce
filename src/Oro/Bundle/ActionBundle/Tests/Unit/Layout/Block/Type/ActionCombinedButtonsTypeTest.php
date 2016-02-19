@@ -37,11 +37,6 @@ class ActionCombinedButtonsTypeTest extends AbstractActionButtonsTypeTest
                 $expectedOptions
             ],
             [
-                'action_dropdown_link',
-                $builderId,
-                DropdownToggleType::NAME
-            ],
-            [
                 'action_dropdown_menu',
                 $builderId,
                 ActionLineButtonsType::NAME,

@@ -53,13 +53,7 @@
 {% block _shopping_list_top_actions_widget %}
     {% set attr = attr|merge({ class: attr.class|default('') ~ "cart__order__controls-list" }) %}
     <div{{ block('block_attributes') }}>
-        <ul>
-            {% for action in block %}
-                <li>
-                    {{ block_widget(action) }}
-                </li>
-            {% endfor %}
-        </ul>
+        {{ block_widget(block) }}
     </div>
 {% endblock %}
 
@@ -208,30 +202,4 @@
         </table>
         {{ block_widget(block) }}
     </div>
-{% endblock %}
-
-{% block _shopping_list_combined_button_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " btn btn_orange btn_has-dropdown btn_has-dropdown_xlg"}) %}
-    <div{{ block('block_attributes') }}>
-        {% set primary_button = block[primary_button_alias] %}
-        {{ block_widget(primary_button,
-        {attr:primary_button.vars.attr|merge({ class: primary_button.vars.attr.class|default('') ~ " direct-link"})}) }}
-
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-            <i class="material-icons">arrow_drop_down</i>
-        </a>
-
-        {{ block_widget(block.action_dropdown_menu) }}
-    </div>
-{% endblock %}
-
-{% block _action_dropdown_menu_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ "dropdown-menu"}) %}
-    <ul {{ block('block_attributes') }}>
-        {% for action in block %}
-            <li>
-                {{ block_widget(action) }}
-            </li>
-        {% endfor %}
-    </ul>
 {% endblock %}

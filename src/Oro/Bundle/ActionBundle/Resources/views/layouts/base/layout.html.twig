@@ -1,0 +1,47 @@
+{% block action_line_buttons_widget %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ "row-fluid" }) %}
+    <div{{ block('block_attributes') }}>
+        {% for action in block %}
+            <div class="pull-left btn-group icons-holder">
+                {{ block_widget(action) }}
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block action_combined_buttons_widget %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " btn-group pull-right"}) %}
+    <div{{ block('block_attributes') }}>
+        {% set primary_button = block[primary_button_alias] %}
+        {{ block_widget(primary_button,
+        {attr:primary_button.vars.attr|merge({ class: primary_button.vars.attr.class|default('') ~ " btn btn-default"})}) }}
+
+        <a href="#" class="btn-default btn  dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+           aria-expanded="true">
+            <i class="material-icons">arrow_drop_down</i>
+        </a>
+
+        {{ block_widget(block[dropdown_menu_alias]) }}
+    </div>
+{% endblock %}
+
+{% block action_drop_down_buttons_widget %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ "dropdown-menu"}) %}
+    <ul {{ block('block_attributes') }}>
+        {% for action in block %}
+            <li>
+                {{ block_widget(action) }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block action_button_widget %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ "back icons-holder-text btn action-button" }) %}
+    <a {{ block('block_attributes') }}>
+        {% if hide_icon is not defined %}
+            <i class="{{ buttonOptions.icon|default('') }} {{ buttonOptions.iCss|default('') }} hide-text">{{ linkLabel }}</i>
+        {% endif %}
+        {{ linkLabel|trim }}
+    </a>
+{% endblock %}

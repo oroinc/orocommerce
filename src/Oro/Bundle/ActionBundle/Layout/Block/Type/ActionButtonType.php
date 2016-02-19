@@ -68,6 +68,9 @@ class ActionButtonType extends AbstractType
         $view->vars['attr'] = $attributes;
         $view->vars['linkLabel'] = $title;
         $view->vars['buttonOptions'] = $buttonOptions;
+        if (array_key_exists('hide_icon', $options)) {
+            $view->vars['hide_icon'] = $options['hide_icon'];
+        }
     }
 
     /**
