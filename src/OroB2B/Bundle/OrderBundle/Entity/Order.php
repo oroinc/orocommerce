@@ -53,6 +53,10 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceList;
  */
 class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHolderInterface
 {
+    const STATUS_OPEN = 10;
+    const STATUS_PROCESSING = 20;
+
+    public $status = self::STATUS_OPEN;
     /**
      * @var integer
      *
