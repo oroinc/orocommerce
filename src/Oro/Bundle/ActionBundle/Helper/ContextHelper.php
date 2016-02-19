@@ -47,8 +47,9 @@ class ContextHelper
     public function getContext(array $context = null)
     {
         if (null === $context) {
+            $route = $this->getRequestParameter(self::ROUTE_PARAM) ?: $this->getRequestParameter('_route');
             $context = [
-                self::ROUTE_PARAM => $this->getRequestParameter(self::ROUTE_PARAM),
+                self::ROUTE_PARAM => $route,
                 self::ENTITY_ID_PARAM => $this->getRequestParameter(self::ENTITY_ID_PARAM),
                 self::ENTITY_CLASS_PARAM => $this->getRequestParameter(self::ENTITY_CLASS_PARAM),
                 self::DATAGRID_PARAM => $this->getRequestParameter(self::DATAGRID_PARAM),

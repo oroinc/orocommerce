@@ -80,7 +80,6 @@ abstract class AbstractButtonsType extends AbstractContainerType
      */
     protected function setActionParameters(array $options)
     {
-        /** @var Action[] $actions */
         $options['context']['entity'] = $options['entity'];
         $options['context'] = $this->contextHelper->getActionParameters($options['context']);
 
@@ -96,8 +95,6 @@ abstract class AbstractButtonsType extends AbstractContainerType
         $actions = $options['actions'];
         if (array_key_exists('group', $options)) {
             $actions = $this->restrictHelper->restrictActionsByGroup($actions, $options['group']);
-
-            return $actions;
         }
 
         return $actions;
@@ -142,7 +139,6 @@ abstract class AbstractButtonsType extends AbstractContainerType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $request = $this->requestStack->getCurrentRequest();
-        $request->attributes->set('route', $request->get('_route'));
         $resolver->setDefaults(
             [
                 'actions' => $this->actionManager->getActions(),
