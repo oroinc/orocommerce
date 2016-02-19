@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity;
 
+use Brick\Math\BigDecimal;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
 
 class ResultElementTest extends \PHPUnit_Framework_TestCase
@@ -59,5 +60,13 @@ class ResultElementTest extends \PHPUnit_Framework_TestCase
                 ]
             )
         );
+    }
+
+    public function testSetTransformsToNull()
+    {
+        $resultElement = $this->createResultElementModel();
+        $resultElement->offsetSet('index', BigDecimal::of('2'));
+        $this->assertInternalType('string', $resultElement->getOffset('index'));
+        $this->assertEquals('2', $resultElement->getOffset('index'));
     }
 }

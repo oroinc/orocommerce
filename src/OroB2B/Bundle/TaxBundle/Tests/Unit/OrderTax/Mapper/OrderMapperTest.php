@@ -2,9 +2,6 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\OrderTax\Mapper;
 
-use OroB2B\Bundle\TaxBundle\Event\ContextEvent;
-use Symfony\Component\EventDispatcher\EventDispatcher;
-
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -12,6 +9,7 @@ use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
+use OroB2B\Bundle\TaxBundle\Event\ContextEventDispatcher;
 use OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper;
 use OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderMapper;
 use OroB2B\Bundle\TaxBundle\Provider\TaxationAddressProvider;
@@ -42,7 +40,7 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
     protected $addressProvider;
 
     /**
-     * @var EventDispatcher
+     * @var ContextEventDispatcher
      */
     protected $eventDispatcher;
 
@@ -58,24 +56,17 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->addressProvider->expects($this->any())
-            ->method('getAddressForTaxation')
-            ->willReturnCallback(function (Order $order) {
-                return $this->getTaxableAddress($order);
-            });
+        $this->addressProvider->expects($this->any())->method('getAddressForTaxation')->willReturnArgument(1);
 
         $this->eventDispatcher = $this
-            ->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcher')
+            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Event\ContextEventDispatcher')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->eventDispatcher
             ->expects($this->any())
             ->method('dispatch')
-            ->with(ContextEvent::NAME)
-            ->willReturnCallback(function ($eventName, ContextEvent $event) {
-                $event->getContext()->offsetSet(self::CONTEXT_KEY, self::CONTEXT_VALUE);
-            });
+            ->willReturn(new \ArrayObject([self::CONTEXT_KEY => self::CONTEXT_VALUE]));
 
         $this->mapper = new OrderMapper($this->eventDispatcher, $this->addressProvider);
         $this->mapper->setOrderLineItemMapper($this->orderLineItemMapper);
@@ -102,7 +93,7 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
 
         $taxable = $this->mapper->map($order);
 
-        $this->assertTaxable($taxable, self::ORDER_ID, self::ORDER_SUBTOTAL, $this->getTaxableAddress($order));
+        $this->assertTaxable($taxable, self::ORDER_ID, self::ORDER_SUBTOTAL, $order->getShippingAddress());
         $this->assertCount(1, $taxable->getItems());
         $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Taxable', $taxable->getItems()->current());
     }
@@ -147,14 +138,5 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($destination, $taxable->getDestination());
         $this->assertEquals(self::CONTEXT_VALUE, $taxable->getContextValue(self::CONTEXT_KEY));
         $this->assertNotEmpty($taxable->getItems());
-    }
-
-    /**
-     * @param Order $order
-     * @return null|OrderAddress
-     */
-    protected function getTaxableAddress(Order $order)
-    {
-        return $order->getShippingAddress();
     }
 }

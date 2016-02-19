@@ -6,6 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
@@ -16,18 +17,13 @@ use OroB2B\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
 
 class LoadTaxJurisdictions extends AbstractFixture implements DependentFixtureInterface
 {
-    const TAX_1 = 'TAX1';
-    const TAX_2 = 'TAX2';
-    const TAX_3 = 'TAX3';
-    const TAX_4 = 'TAX4';
-
-    const DESCRIPTION_1 = 'Tax description 1';
-    const DESCRIPTION_2 = 'Tax description 2';
+    const DESCRIPTION = 'Tax description';
 
     const COUNTRY_US = 'US';
     const STATE_US_NY = 'US-NY';
     const STATE_US_AL = 'US-AL';
     const ZIP_CODE = '012345';
+    const STATE_US_CA = 'US-CA';
 
     const REFERENCE_PREFIX = 'tax_jurisdiction';
 
@@ -39,30 +35,31 @@ class LoadTaxJurisdictions extends AbstractFixture implements DependentFixtureIn
     {
         $this->createTaxJurisdiction(
             $manager,
-            self::TAX_1,
-            self::DESCRIPTION_1,
+            LoadTaxes::TAX_1,
+            self::DESCRIPTION,
             $this->getCountryByCode($manager, self::COUNTRY_US)
         );
 
         $this->createTaxJurisdiction(
             $manager,
-            self::TAX_2,
-            self::DESCRIPTION_2,
+            LoadTaxes::TAX_2,
+            self::DESCRIPTION,
             $this->getCountryByCode($manager, self::COUNTRY_US),
             $this->getRegionByCode($manager, self::STATE_US_NY)
         );
 
         $this->createTaxJurisdiction(
             $manager,
-            self::TAX_3,
-            self::DESCRIPTION_1,
-            $this->getCountryByCode($manager, self::COUNTRY_US)
+            LoadTaxes::TAX_3,
+            self::DESCRIPTION,
+            $this->getCountryByCode($manager, self::COUNTRY_US),
+            $this->getRegionByCode($manager, self::STATE_US_CA)
         );
 
         $this->createTaxJurisdiction(
             $manager,
-            self::TAX_4,
-            self::DESCRIPTION_1,
+            LoadTaxes::TAX_4,
+            self::DESCRIPTION,
             $this->getCountryByCode($manager, self::COUNTRY_US),
             $this->getRegionByCode($manager, self::STATE_US_AL),
             null,
@@ -124,22 +121,24 @@ class LoadTaxJurisdictions extends AbstractFixture implements DependentFixtureIn
     }
 
     /**
-     * @param EntityManager $manager
+     * @param ObjectManager $manager
      * @param string $code
      * @return Country
      */
-    public static function getCountryByCode($manager, $code)
+    public static function getCountryByCode(ObjectManager $manager, $code)
     {
+        /** @var EntityManagerInterface $manager */
         return $manager->getReference('OroAddressBundle:Country', $code);
     }
 
     /**
-     * @param EntityManager $manager
+     * @param ObjectManager $manager
      * @param string $code
      * @return Region
      */
-    public static function getRegionByCode($manager, $code)
+    public static function getRegionByCode(ObjectManager $manager, $code)
     {
+        /** @var EntityManagerInterface $manager */
         return $manager->getReference('OroAddressBundle:Region', $code);
     }
 }

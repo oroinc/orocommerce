@@ -1,0 +1,26 @@
+input.error, div.selector.error {
+    border: .1rem solid @theme-input-error;
+    box-shadow: 0 .1rem .7rem 0 rgba(223,96,96,.6);
+}
+span.validation-failed {
+    display: block;
+    padding: 0 1rem;
+    line-height: 2.4rem;
+    min-height: 2.4rem;
+    font-size: 1.3rem;
+
+    .radiused(.3rem);
+
+    background: @theme-error-bg-color;
+    color: @theme-error-font-color;
+
+    &:before {
+        content: "\26a0";
+        font-family: entypo;
+        font-style: normal;
+        display: inline-block;
+        width: 1.1em;
+        margin-right: .1em;
+        text-align: center;
+    }
+}
