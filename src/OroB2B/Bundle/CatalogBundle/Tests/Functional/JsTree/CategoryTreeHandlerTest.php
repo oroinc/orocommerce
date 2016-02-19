@@ -12,19 +12,6 @@ use OroB2B\Component\Tree\Test\AbstractTreeHandlerTestCase;
  */
 class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
 {
-    protected function setUp()
-    {
-        parent::setUp();
-        // TODO: remove after https://magecore.atlassian.net/browse/BB-1650 will be closed
-        $this->getContainer()->get('orob2b_account.storage.category_visibility_storage')->flush();
-    }
-
-    protected function tearDown()
-    {
-        // TODO: remove after https://magecore.atlassian.net/browse/BB-1650 closed will be closed
-        $this->getContainer()->get('orob2b_account.storage.category_visibility_storage')->flush();
-    }
-
     /**
      * {@inheritdoc}
      */

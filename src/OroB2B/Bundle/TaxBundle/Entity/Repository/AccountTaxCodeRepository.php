@@ -2,13 +2,11 @@
 
 namespace OroB2B\Bundle\TaxBundle\Entity\Repository;
 
-use Doctrine\ORM\EntityRepository;
-
 use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 
-class AccountTaxCodeRepository extends EntityRepository
+class AccountTaxCodeRepository extends AbstractTaxCodeRepository
 {
     /**
      * @param Account $account

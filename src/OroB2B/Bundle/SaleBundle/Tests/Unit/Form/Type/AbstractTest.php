@@ -7,10 +7,9 @@ use Symfony\Component\Form\FormTypeInterface;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
-use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use Oro\Bundle\CurrencyBundle\Form\Type\OptionalPriceType;
+use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
@@ -153,21 +152,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function preparePriceType()
     {
-        $price = new PriceType();
-        $price->setDataClass('Oro\Bundle\CurrencyBundle\Model\Price');
-
-        return $price;
-    }
-
-    /**
-     * @return OptionalPriceType
-     */
-    protected function prepareOptionalPriceType()
-    {
-        $price = new OptionalPriceType();
-        $price->setDataClass('Oro\Bundle\CurrencyBundle\Model\OptionalPrice');
-
-        return $price;
+        return PriceTypeGenerator::createPriceType();
     }
 
     /**
@@ -210,7 +195,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
         return new EntityType(
             [
                 10 => $this->getAccountUser(10),
-                11 => $this->getAccountuser(11),
+                11 => $this->getAccountUser(11),
             ],
             AccountUserMultiSelectType::NAME,
             [
@@ -411,14 +396,14 @@ abstract class AbstractTest extends FormIntegrationTestCase
      * @param int $productId
      * @param float $quantity
      * @param string $unitCode
-     * @param OptionalPrice $price
+     * @param Price $price
      * @return QuoteProductOffer
      */
     protected function getQuoteProductRequest(
         $productId = null,
         $quantity = null,
         $unitCode = null,
-        OptionalPrice $price = null
+        Price $price = null
     ) {
         $quoteProductRequest = new QuoteProductRequest();
         $quoteProductRequest->setQuoteProduct($this->getQuoteProduct($productId));

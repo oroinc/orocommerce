@@ -11,12 +11,15 @@ class LoadTaxes extends AbstractFixture
 {
     const TAX_1 = 'TAX1';
     const TAX_2 = 'TAX2';
+    const TAX_3 = 'TAX3';
 
     const DESCRIPTION_1 = 'Tax description 1';
     const DESCRIPTION_2 = 'Tax description 2';
+    const DESCRIPTION_3 = 'Tax description 3';
 
-    const RATE_1 = 10;
-    const RATE_2 = 20;
+    const RATE_1 = 0.1;
+    const RATE_2 = 0.2;
+    const RATE_3 = 0.075;
 
     const REFERENCE_PREFIX = 'tax';
 
@@ -27,6 +30,7 @@ class LoadTaxes extends AbstractFixture
     {
         $this->createTax($manager, self::TAX_1, self::DESCRIPTION_1, self::RATE_1);
         $this->createTax($manager, self::TAX_2, self::DESCRIPTION_2, self::RATE_2);
+        $this->createTax($manager, self::TAX_3, self::DESCRIPTION_3, self::RATE_3);
 
         $manager->flush();
     }
