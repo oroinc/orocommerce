@@ -68,7 +68,7 @@ class ContextHelper
         $request = $this->requestStack->getMasterRequest();
 
         $params = [
-            'route' => $request->get('_route'),
+            self::ROUTE_PARAM => $request->get('_route'),
             'fromUrl' => $request->getRequestUri()
         ];
 
