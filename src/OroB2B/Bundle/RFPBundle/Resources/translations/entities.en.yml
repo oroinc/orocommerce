@@ -2,3 +2,4 @@ request_status:
     open: Open
     closed: Closed
     draft: Draft
+    canceled: Canceled
