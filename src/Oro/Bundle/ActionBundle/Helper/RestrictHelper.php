@@ -7,6 +7,11 @@ use Oro\Bundle\ActionBundle\Model\Action;
 class RestrictHelper
 {
     /**
+     * $groups param can be array of groups, null or string with group
+     * if $groups is null - restrict only actions which not have group
+     * if $groups define as array - restrict only actions which in this array with groups
+     * if $groups define as string - restrict only actions which equals this string with group
+     *
      * @param Action[] $actions
      * @param array|null|string $groups
      * @return Action[]
