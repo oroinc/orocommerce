@@ -75,9 +75,6 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         $this->order->setBillingAddress($billingAddress);
         $this->order->setShippingAddress($shippingAddress);
 
-        $this->address = (new OrderAddress())
-            ->setCountry(new Country(self::ORDER_ADDRESS_COUNTRY_CODE));
-
         $this->addressProvider = $this
             ->getMockBuilder('OroB2B\Bundle\TaxBundle\Provider\TaxationAddressProvider')
             ->disableOriginalConstructor()
@@ -87,7 +84,11 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->expects($this->any())
             ->method('getAddressForTaxation')
             ->with($billingAddress, $shippingAddress)
-            ->willReturn($this->address);
+            ->willReturnCallback(
+                function () {
+                    return $this->address;
+                }
+            );
 
         $this->addressProvider
             ->expects($this->any())
@@ -140,11 +141,18 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
      * @param bool $hasProduct
      * @param bool $hasProductTaxCode
      * @param bool $isProductDigital
+     * @param OrderAddress|null $taxationAddress
      * @param \ArrayObject $expectedContext
      */
-    public function testOnContextEvent($hasProduct, $hasProductTaxCode, $isProductDigital, $expectedContext)
-    {
+    public function testOnContextEvent(
+        $hasProduct,
+        $hasProductTaxCode,
+        $isProductDigital,
+        $taxationAddress,
+        $expectedContext
+    ) {
         $this->isProductTaxCodeDigital = $isProductDigital;
+        $this->address = $taxationAddress;
 
         $orderLineItem = new OrderLineItem();
         $orderLineItem->setOrder($this->order);
@@ -169,11 +177,15 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function onContextEventProvider()
     {
+        $taxationAddress = (new OrderAddress())
+            ->setCountry(new Country(self::ORDER_ADDRESS_COUNTRY_CODE));
+
         return [
             'order line item without product' => [
                 'hasProduct' => false,
                 'hasProductTaxCode' => true,
                 'isProductDigital' => false,
+                'taxationAddress' => $taxationAddress,
                 'expectedContext' => new \ArrayObject([
                     Taxable::DIGITAL_PRODUCT => false,
                     Taxable::PRODUCT_TAX_CODE => null,
@@ -183,6 +195,7 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
                 'hasProduct' => true,
                 'hasProductTaxCode' => true,
                 'isProductDigital' => false,
+                'taxationAddress' => $taxationAddress,
                 'expectedContext' => new \ArrayObject([
                     Taxable::DIGITAL_PRODUCT => false,
                     Taxable::PRODUCT_TAX_CODE => self::PRODUCT_TAX_CODE,
@@ -192,6 +205,7 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
                 'hasProduct' => true,
                 'hasProductTaxCode' => true,
                 'isProductDigital' => true,
+                'taxationAddress' => $taxationAddress,
                 'expectedContext' => new \ArrayObject([
                     Taxable::DIGITAL_PRODUCT => true,
                     Taxable::PRODUCT_TAX_CODE => self::PRODUCT_TAX_CODE,
@@ -201,9 +215,20 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
                 'hasProduct' => true,
                 'hasProductTaxCode' => false,
                 'isProductDigital' => false,
+                'taxationAddress' => $taxationAddress,
                 'expectedContext' => new \ArrayObject([
                     Taxable::DIGITAL_PRODUCT => false,
                     Taxable::PRODUCT_TAX_CODE => null,
+                ])
+            ],
+            'nullable taxation address' => [
+                'hasProduct' => true,
+                'hasProductTaxCode' => true,
+                'isProductDigital' => true,
+                'taxationAddress' => null,
+                'expectedContext' => new \ArrayObject([
+                    Taxable::DIGITAL_PRODUCT => false,
+                    Taxable::PRODUCT_TAX_CODE => self::PRODUCT_TAX_CODE,
                 ])
             ],
         ];
