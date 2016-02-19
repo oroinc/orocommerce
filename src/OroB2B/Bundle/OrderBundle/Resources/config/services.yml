@@ -114,8 +114,12 @@ services:
         tags:
              - { name: layout.block_type, alias: currency }
 
-
     orob2b_order.layout.block_type.date:
         class: OroB2B\Bundle\OrderBundle\Layout\DateType
         tags:
              - { name: layout.block_type, alias: date }
+
+    orob2b_order.layout.block_type.address:
+        class: OroB2B\Bundle\OrderBundle\Layout\AddressType
+        tags:
+             - { name: layout.block_type, alias: address }

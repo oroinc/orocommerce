@@ -19,33 +19,30 @@
 {% block _order_body_column_left_widget %}{{ block('order_body_column') }}{% endblock %}
 {% block _order_body_column_right_widget %}{{ block('order_body_column') }}{% endblock %}
 
-{% macro order_body_item_element(label, text) %}
+{% block order_body_item_element %}
     <tr>
-        <td class="account-oq__order-info__title">{{ label|trans }}</td>
-        <td>{{ text }}</td>
+        <td class="account-oq__order-info__title">{{ block_label(block) }}</td>
+        <td>{{ block_widget(block) }}</td>
     </tr>
-{% endmacro %}
+{% endblock %}
 
-{% block _order_po_number_widget %}{{ _self.order_body_item_element('orob2b.order.po_number.label', text) }}{% endblock %}
-{% block _order_identifier_widget %}{{ _self.order_body_item_element('orob2b.order.identifier.label', text) }}{% endblock %}
-{% block _order_currency_widget %}{{ _self.order_body_item_element('orob2b.order.currency.label', text) }}{% endblock %}
+{% block _order_po_number_widget %}{{ block('order_body_item_element') }}{% endblock %}
+{% block _order_identifier_widget %}{{ block('order_body_item_element') }}{% endblock %}
+{% block _order_currency_widget %}{{ block('order_body_item_element') }}{% endblock %}
 
 {% block currency_widget %}
     {{ text|oro_format_currency({currency: currency, attributes: attributes, textAttributes: textAttributes, symbols: symbols, locale: locale}) }}
 {% endblock %}
 
-{% block date_widget %}
-    {{ date|oro_format_date({dateType: dateType, locale: locale, timeZone: timeZone}) }}
+{% block date_widget %}{{ date|oro_format_date({dateType: dateType, locale: locale, timeZone: timeZone}) }}{% endblock %}
+{% block _order_subtotal_widget %}{{ block('order_body_item_element') }}{% endblock %}
+{% block _order_ship_until_widget %}{{ block('order_body_item_element') }}{% endblock %}
+{% block _order_customer_notes_widget %}{{ block('order_body_item_element') }}{% endblock %}
+
+{% block address_widget %}
+    {% import 'OroAddressBundle::macros.html.twig' as AddressMacro %}
+    {{ AddressMacro.renderAddress(address) }}
 {% endblock %}
 
-{% block _order_subtotal_widget %}
-    {{ _self.order_body_item_element('orob2b.order.subtotal.label', block_widget(block)) }}
-{% endblock %}
-
-{% block _order_ship_until_widget %}
-    {{ _self.order_body_item_element('orob2b.order.ship_until.label', block_widget(block)) }}
-{% endblock %}
-
-{% block _order_customer_notes_widget %}
-    {{ _self.order_body_item_element('orob2b.order.customer_notes.label', text) }}
-{% endblock %}
+{% block _order_billing_address_widget %}{{ block('order_body_item_element') }}{% endblock %}
+{% block _order_shipping_address_widget %}{{ block('order_body_item_element') }}{% endblock %}
