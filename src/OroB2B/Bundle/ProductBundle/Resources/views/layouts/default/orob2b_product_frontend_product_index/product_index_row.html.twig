@@ -1,0 +1,178 @@
+{% block _product_grid_row_template_widget %}
+    <script id="template-grid-row" type="text/template">
+        {{ block_widget(block) }}
+    </script>
+{% endblock %}
+
+{% block _product_grid_row_image_holder_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " product-item__image-holder product-item__image-holder_<%= themeOptions.view %>"
+    }) %}
+    <div {{ block('block_attributes_raw_class')|raw }}>
+        <a href="#"><img src="http://b2b-design.local/images/related_2.jpg" alt=""/></a>
+        <div data-toggle="modal" data-target="#product1" class="product-item__quick-view-btn">
+            <span class="btn btn-dark btn_sm">Quick View</span>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _product_grid_row_title_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " product-item__title product-item__title_<%= themeOptions.view %>"
+    }) %}
+    <h3 {{ block('block_attributes_raw_class') }}>
+        <a href="#"><%= model.name %></a>
+    </h3>
+{% endblock %}
+
+{% block _product_grid_row_primary_content_container_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " product-item__primary-content product-item__primary-content_<%= themeOptions.view %>"
+    }) %}
+    <div {{ block('block_attributes_raw_class') }}>
+        <div class="product-item__primary-half product-item__primary-half_<%= themeOptions.view %>">
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block _product_grid_row_number_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " product-item__number product-item__number_<%= themeOptions.view %>"
+    }) %}
+    <div {{ block('block_attributes_raw_class') }}>
+        Item #: <span class="red"><%= model.sku %></span>
+    </div>
+{% endblock %}
+
+{% block _product_grid_row_specification_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " product__specification product__specification_<%= themeOptions.view %> mb2-md"
+    }) %}
+    <div {{ block('block_attributes_raw_class') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
+{% block _product_grid_row_sku_widget %}
+    {% set attr = attr|merge({
+    class: attr.class|default('') ~ " table borderless paddingless mb0-md mb0-sm"
+    }) %}
+    <table {{ block('block_attributes_raw_class') }}>
+        <tbody>
+        <tr>
+            <td>Item #:</td>
+            <td><span class="red">13656</span></td>
+        </tr>
+        <tr>
+            <td>MFG <span class="hidden-xs">Model</span> #:</td>
+            <td><span class="red">1ABC13656</span></td>
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block _product_grid_row_description_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " product__description product__description_<%= themeOptions.view %>"
+    }) %}
+    <div {{ block('block_attributes_raw_class') }}>
+        <p><%= model.description %></p>
+    </div>
+{% endblock %}
+
+{% block _product_grid_row_details_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " product__view-details-link product__view-details-link_<%= themeOptions.view %>"
+    }) %}
+    <div {{ block('block_attributes_raw_class') }}>
+        <a href="#">
+            <span class="underlined">View Details</span><i class="icon-right-open-mini"></i>
+        </a>
+    </div>
+{% endblock %}
+
+{% block _product_grid_row_secondary_content_container_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " product-item__secondary-content product-item__secondary-content_<%= themeOptions.view %>"
+    }) %}
+    <div {{ block('block_attributes_raw_class') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
+{% block _product_grid_row_secondary_content_first_container_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " product-item__secondary-half product-item__secondary-half_<%= themeOptions.view %>"
+    }) %}
+    <div {{ block('block_attributes_raw_class') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
+{% block _product_grid_row_specification_delivery_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " product__specification product__specification_delivery product__specification_<%= themeOptions.view %>"
+    }) %}
+    <div {{ block('block_attributes_raw_class') }}>
+        <table class="table borderless paddingless">
+            <tbody>
+            <tr>
+                <td style="width:100px;">SF</td>
+                <td><span class="green2">2 Days</span></td>
+            </tr>
+            <tr>
+                <td style="width:100px;">NY</td>
+                <td><span class="green2">8 Days</span></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block _product_grid_row_mspr_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " product-item__mspr product-item__mspr_<%= themeOptions.view %>"
+    }) %}
+    <div {{ block('block_attributes_raw_class') }}>
+        MSPR: <span>$24.99</span>
+    </div>
+{% endblock %}
+
+{% block _product_grid_row_secondary_content_second_container_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " product-item__secondary-half product-item__secondary-half_<%= themeOptions.view %>"
+    }) %}
+    <div {{ block('block_attributes_raw_class') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
+{% block _product_grid_row_more_info_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " oro-more-info-toggler oro-more-info-toggler_<%= themeOptions.view %>"
+    }) %}
+    <div {{ block('block_attributes_raw_class') }}>
+        <i class="icon-play"></i>
+        <a href="#" data-more-info-expand>More Info</a>
+        <div class="oro-more-info-toggler__container" data-more-info>
+            <ul class="oro-more-info-toggler__list oro-more-info-toggler__list_<%= themeOptions.view %>">
+                <li><span class="text-uppercase">Mspr:</span> $24.99</li>
+                <li>Shipping Weight: .08 lbs.</li>
+                <li>80 Items to a Box</li>
+            </ul>
+            <a href="#">View MAP Policy</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _product_grid_row_qty_widget %}
+    {% set attr = attr|merge({
+    class: attr.class|default('') ~ " product-item__qty product-item__qty_<%= themeOptions.view %>"
+    }) %}
+    <div {{ block('block_attributes_raw_class') }}>
+        <input type="text" value="1" class="input input_inline"/>
+        <div class="btn btn-dark btn_has-dropdown btn_has-dropdown_md">
+            <a href="#" class="direct-link">Add To List</a>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+               aria-expanded="true"><i class="material-icons">arrow_drop_down</i></a>
+            <ul class="dropdown-menu">
+                <li><a href="#">Option 1</a></li>
+                <li><a href="#">Option 2</a></li>
+                <li><a href="#">Option 3</a></li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}

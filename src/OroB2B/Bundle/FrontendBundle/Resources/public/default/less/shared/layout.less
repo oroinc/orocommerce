@@ -2468,7 +2468,7 @@
   align-content: stretch;
   align-items: center;
   font-size: 0;
-  padding: 1rem 0;
+  padding: 1rem 0 !important;
   border-bottom: .1rem solid @base-border-color;
   border-top: .1rem solid @base-border-color;
 }
@@ -2516,6 +2516,7 @@
     flex-grow: 0;
     flex-basis: 16rem;
     flex-shrink: 0;
+    order: 4;
 
     @media (max-width: 991px) {
       order: 2;

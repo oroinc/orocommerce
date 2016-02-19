@@ -1,0 +1,56 @@
+layout:
+    actions:
+        - @setBlockTheme:
+            themes: 'OroB2BProductBundle:layouts:default/orob2b_product_frontend_product_index/product_index_row.html.twig'
+        - @addTree:
+            items:
+                product_grid_row_template:
+                    blockType: container
+                product_grid_row_image_holder:
+                    blockType: block
+                product_grid_row_title:
+                    blockType: block
+                product_grid_row_primary_content_container:
+                    blockType: container
+                product_grid_row_number:
+                    blockType: block
+                product_grid_row_specification:
+                    blockType: container
+                product_grid_row_sku:
+                    blockType: block
+                product_grid_row_description:
+                    blockType: block
+                product_grid_row_details:
+                    blockType: block
+                product_grid_row_secondary_content_container:
+                    blockType: container
+                product_grid_row_secondary_content_first_container:
+                    blockType: container
+                product_grid_row_specification_delivery:
+                    blockType: block
+                product_grid_row_mspr:
+                    blockType: block
+                product_grid_row_secondary_content_second_container:
+                    blockType: container
+                product_grid_row_more_info:
+                    blockType: block
+                product_grid_row_qty:
+                    blockType: block
+            tree:
+                scripts_before:
+                    product_grid_row_template:
+                        product_grid_row_image_holder: ~
+                        product_grid_row_title: ~
+                        product_grid_row_primary_content_container:
+                            product_grid_row_number: ~
+                            product_grid_row_specification:
+                                product_grid_row_sku: ~
+                            product_grid_row_description: ~
+                            product_grid_row_details: ~
+                        product_grid_row_secondary_content_container:
+                            product_grid_row_secondary_content_first_container:
+                                product_grid_row_specification_delivery: ~
+                                product_grid_row_mspr: ~
+                            product_grid_row_secondary_content_second_container:
+                                product_grid_row_more_info: ~
+                                product_grid_row_qty: ~

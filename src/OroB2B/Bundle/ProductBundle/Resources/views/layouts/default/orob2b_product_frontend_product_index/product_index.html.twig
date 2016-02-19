@@ -1,7 +1,49 @@
 {% block _product_grid_widget %}
-    <script id="template-grid-row" type="text/template">
-        <b><%= model.sku %></b>
-        <p><%= model.name %></p>
-    </script>
+    {# TODO: remove after will be done BB-2054#}
+    {% set themeOptions = grid_parameters['themeOptions'] %}
+    {% set rowView = app.request.get('frontend-products-grid', {rowView: 'list-view'}).rowView %}
+    {% set grid_parameters = grid_parameters|merge({'themeOptions': themeOptions|merge({
+        'rowView': rowView,
+        'bodyClassName': 'grid-body products__list products__list_' ~ rowView,
+        'rowClassName': 'grid-row row-click-action product-item product-item_' ~ rowView
+    })}) %}
     {{ block_widget(block) }}
 {% endblock %}
+
+{% block _grid_display_options_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " catalog__filter-controls__item catalog__filter-controls__item_display-options pull-right"
+    }) %}
+    <div{{ block('block_attributes') }}>
+        {% set currentView = app.request.get('frontend-products-grid', {rowView: 'list-view'}).rowView  %}
+        {% set rowView = 'gallery-view' %}
+        <span class="fs14 va-m_md mmr9-md mmr9-sm hidden-sm hidden-xs">Display:</span>
+        <div class="buttons-inline-group inline">
+            <button class="btn btn_transparent btn_bordered btn_squared {% if currentView == rowView %}current{% endif %}" data-catalog-view-trigger="gallery-view">
+                <a href="{{ path('orob2b_product_frontend_product_index', {'frontend-products-grid': {'rowView': rowView}}) }}">
+                    <span class="catalog-view-option">
+                        <i class="material-icons">apps</i>
+                    </span>
+                </a>
+            </button>
+            {% set rowView = 'list-view' %}
+            <a href="{{ path('orob2b_product_frontend_product_index', {'frontend-products-grid': {'rowView': rowView}}) }}">
+                  <span class="btn btn_transparent btn_bordered btn_squared {% if currentView == rowView %}current{% endif %}"
+                        data-catalog-view-trigger="list-view">
+                    <span class="catalog-view-option">
+                      <i class="material-icons">view_list</i>
+                    </span>
+                  </span>
+            </a>
+            {% set rowView = 'no-image-view' %}
+            <button class="btn btn_transparent btn_bordered btn_squared {% if currentView == rowView %}current{% endif %}" data-catalog-view-trigger="no-image-view">
+                <a href="{{ path('orob2b_product_frontend_product_index', {'frontend-products-grid': {'rowView': rowView}}) }}">
+                    <span class="catalog-view-option">
+                      <i class="material-icons">view_headline</i>
+                    </span>
+                </a>
+            </button>
+        </div>
+    </div>
+{% endblock %}
+

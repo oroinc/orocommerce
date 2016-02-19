@@ -2,6 +2,24 @@ layout:
     actions:
         - @setBlockTheme:
             themes: 'OroB2BProductBundle:layouts:default/orob2b_product_frontend_product_index/product_index.html.twig'
+        - @add:
+            id: grid_display_options
+            parentId: datagrid_toolbar
+            blockType: block
+        - @setOption:
+            id: datagrid_toolbar
+            optionName: attr.class
+            optionValue: 'catalog__filter-controls'
+        - @setOption:
+            id: datagrid_toolbar_tools_container
+            optionName: attr.class
+            optionValue: 'catalog__filter-controls__item text-right'
+        - @setOption:
+            id: datagrid_toolbar_pagination
+            optionName: attr.class
+            optionValue: 'catalog__filter-controls__item'
+        - @remove:
+            id: datagrid_toolbar_actions
         - @addTree:
             items:
                 product_index_page:
@@ -16,9 +34,12 @@ layout:
                             themeOptions:
                                 tagName: 'div'
                                 headerHide: true
+                                bodyClassName: 'grid-body products__list products__list_list-view'
+                                rowClassName: 'grid-row row-click-action product-item product-item_list-view'
                                 rowTemplateSelector: '#template-grid-row'
+                                rowView: 'list-view'
             tree:
                 content:
                     product_index_page:
                         product_grid_container:
-                            product_grid: ~
+                            product_grid:
