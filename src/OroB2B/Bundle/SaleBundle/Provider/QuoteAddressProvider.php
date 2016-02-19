@@ -95,6 +95,7 @@ class QuoteAddressProvider
     /**
      * @param Account $account
      * @param string $type
+     *
      * @return AccountAddress[]
      * @throws \InvalidArgumentException
      */
@@ -123,6 +124,7 @@ class QuoteAddressProvider
     /**
      * @param AccountUser $accountUser
      * @param string $type
+     *
      * @return AccountUserAddress[]
      * @throws \InvalidArgumentException
      */
@@ -187,6 +189,7 @@ class QuoteAddressProvider
     /**
      * @param string $type
      * @param string $key
+     *
      * @return string
      */
     protected function getPermission($type, $key)
@@ -202,6 +205,7 @@ class QuoteAddressProvider
     /**
      * @param Account|AccountUser $object
      * @param string $type
+     *
      * @return string
      */
     protected function getCacheKey($object, $type)

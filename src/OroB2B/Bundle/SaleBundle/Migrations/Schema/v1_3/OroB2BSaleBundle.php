@@ -16,11 +16,11 @@ class OroB2BSaleBundle implements Migration
     {
         /** Tables generation **/
         $this->createFieldShippingAddress($schema);
-        $this->createOroB2BSaleQuoteAddressTable($schema);
+        $this->createOroB2BQuoteAddressTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroB2BSaleQuoteForeignKeys($schema);
-        $this->addOroB2BSalesQuoteAddressForeignKeys($schema);
+        $this->addOroB2BQuoteAddressForeignKeys($schema);
     }
 
     /**
@@ -33,13 +33,13 @@ class OroB2BSaleBundle implements Migration
     }
 
     /**
-     * Create orob2b_sale_quote_address table
+     * Create orob2b_quote_address table
      *
      * @param Schema $schema
      */
-    protected function createOroB2BSaleQuoteAddressTable(Schema $schema)
+    protected function createOroB2BQuoteAddressTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_sale_quote_address');
+        $table = $schema->createTable('orob2b_quote_address');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('account_address_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_user_address_id', 'integer', ['notnull' => false]);
@@ -72,7 +72,7 @@ class OroB2BSaleBundle implements Migration
     {
         $table = $schema->getTable('orob2b_sale_quote');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_sale_quote_address'),
+            $schema->getTable('orob2b_quote_address'),
             ['shipping_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
@@ -80,13 +80,13 @@ class OroB2BSaleBundle implements Migration
     }
 
     /**
-     * Add orob2b_sale_quote_address foreign keys.
+     * Add orob2b_quote_address foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOroB2BSalesQuoteAddressForeignKeys(Schema $schema)
+    protected function addOroB2BQuoteAddressForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_sale_quote_address');
+        $table = $schema->getTable('orob2b_quote_address');
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_account_address'),
             ['account_address_id'],
