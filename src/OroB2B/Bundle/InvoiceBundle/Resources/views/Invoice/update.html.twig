@@ -56,15 +56,6 @@
         } only %}
     {% endset %}
 
-    {% set ownerSelectors %}
-        <div>
-            <div data-page-component-module="orob2baccount/js/app/components/account-selection-component">
-                {{ form_row(form.account) }}
-                {{ form_row(form.accountUser) }}
-            </div>
-        </div>
-    {% endset %}
-
     {% set lineItems %}
         <div class="invoice-line-items"
              data-page-component-module="oroui/js/app/components/view-component"
@@ -83,7 +74,7 @@
         </div>
     {% endset %}
 
-    {% set invoiceFieldsWidgets %}
+    {% set mainFormFields %}
         <div
             data-page-component-module="oroui/js/app/components/view-component"
             data-page-component-options="{{ {
@@ -91,18 +82,18 @@
                 selectors: {
                     currency: 'select[name$="[currency]"]',
                     account: 'input[name$="[account]"]',
+                    website: 'select[name$="[website]"]'
                 }
             }|json_encode }}">
+            <div data-page-component-module="orob2baccount/js/app/components/account-selection-component">
+                {{ form_row(form.account) }}
+                {{ form_row(form.accountUser) }}
+            </div>
             <div>
                 {{ form_row(form.invoiceDate) }}
-            </div>
-            <div>
                 {{ form_row(form.paymentDueDate) }}
-            </div>
-            <div>
                 {{ form_row(form.poNumber) }}
-            </div>
-            <div class="invoice-currency">
+                {{ form_row(form.website) }}
                 {{ form_row(form.currency) }}
             </div>
         </div>
@@ -113,10 +104,7 @@
             'title': 'orob2b.invoice.sections.general'|trans,
             'class': 'active',
             'subblocks': [{
-                'data': [
-                    ownerSelectors,
-                    invoiceFieldsWidgets
-                ]
+                'data': [mainFormFields]
             }]
         },
         {

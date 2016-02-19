@@ -18,6 +18,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\InvoiceBundle\Model\ExtendInvoice;
 use OroB2B\Bundle\PricingBundle\Model\LineItemsAwareInterface;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Table(
@@ -119,6 +120,21 @@ class Invoice extends ExtendInvoice implements
     protected $account;
 
     /**
+     * @var Website
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $website;
+
+    /**
      * @var AccountUser
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
@@ -168,7 +184,7 @@ class Invoice extends ExtendInvoice implements
     /**
      * @var string
      *
-     * @ORM\Column(name="subtotal", type="float", nullable=true)
+     * @ORM\Column(name="subtotal", type="money", nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -429,6 +445,25 @@ class Invoice extends ExtendInvoice implements
     public function setSubtotal($subtotal)
     {
         $this->subtotal = $subtotal;
+
+        return $this;
+    }
+
+    /**
+     * @return Website
+     */
+    public function getWebsite()
+    {
+        return $this->website;
+    }
+
+    /**
+     * @param Website $website
+     * @return $this
+     */
+    public function setWebsite($website)
+    {
+        $this->website = $website;
 
         return $this;
     }

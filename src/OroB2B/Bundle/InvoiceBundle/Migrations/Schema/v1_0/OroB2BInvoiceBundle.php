@@ -40,13 +40,18 @@ class OroB2BInvoiceBundle implements Migration
         $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
+        $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->addColumn('invoice_number', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('invoice_date', 'date', []);
         $table->addColumn('po_number', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
-        $table->addColumn('subtotal', 'money', []);
+        $table->addColumn(
+            'subtotal',
+            'money',
+            ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
+        );
         $table->addColumn('payment_due_date', 'date');
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['invoice_number'], 'UNIQ_1CB885202DA68207');
@@ -76,7 +81,7 @@ class OroB2BInvoiceBundle implements Migration
             ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
         $table->addColumn('price_currency', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('price_type', 'smallint', ['notnull' => false, 'unsigned' => true]);
+        $table->addColumn('price_type', 'smallint', ['unsigned' => true]);
         $table->setPrimaryKey(['id']);
     }
 
@@ -111,6 +116,12 @@ class OroB2BInvoiceBundle implements Migration
             ['account_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_website'),
+            ['website_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
     }
 

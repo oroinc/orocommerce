@@ -13,6 +13,8 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -34,6 +36,7 @@ class InvoiceControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
+                'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
                 'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
@@ -68,6 +71,9 @@ class InvoiceControllerTest extends WebTestCase
         /** @var Product $product */
         $product = $this->getReference('product.1');
 
+        /** @var Website $website */
+        $website = $this->getReference(LoadWebsiteData::WEBSITE1);
+
         $lineItems = [
             [
                 'product' => $product->getId(),
@@ -92,6 +98,7 @@ class InvoiceControllerTest extends WebTestCase
                 'paymentDueDate' => $today,
                 'currency' => 'USD',
                 'lineItems' => $lineItems,
+                'website' => $website->getId()
             ],
         ];
 
@@ -156,6 +163,9 @@ class InvoiceControllerTest extends WebTestCase
         /** @var Product $product */
         $product = $this->getReference('product.2');
 
+        /** @var Website $website */
+        $website = $this->getReference(LoadWebsiteData::WEBSITE1);
+
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
@@ -194,6 +204,7 @@ class InvoiceControllerTest extends WebTestCase
                 'invoiceDate' => $today,
                 'paymentDueDate' => $today,
                 'lineItems' => $lineItems,
+                'website' => $website->getId()
             ],
         ];
 
