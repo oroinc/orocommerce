@@ -74,8 +74,6 @@ class TaxRuleRepository extends EntityRepository
                 $queryBuilder
                     ->andWhere($queryBuilder->expr()->in($joinAlias, sprintf(':%s', $type)))
                     ->setParameter($type, $plainTaxCodes[$type]);
-            } else {
-                $queryBuilder->andWhere($queryBuilder->expr()->isNull($joinAlias));
             }
         }
     }
