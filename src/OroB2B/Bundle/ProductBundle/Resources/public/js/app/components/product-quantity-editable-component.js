@@ -4,7 +4,7 @@ define(function(require) {
 
     var ProductQuantityEditableComponent;
     var BaseModel = require('oroui/js/app/models/base/model');
-    var InlineEditableViewComponent = require('oroform/js/app/components/inline-editable-view-component');
+    var BaseComponent = require('oroui/js/app/components/base/component');
     var ApiAccessor = require('oroui/js/tools/api-accessor');
     var mediator = require('oroui/js/mediator');
     var tools = require('oroui/js/tools');
@@ -12,14 +12,13 @@ define(function(require) {
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
 
-    ProductQuantityEditableComponent = InlineEditableViewComponent.extend(/** @exports ProductQuantityEditableComponent.prototype */{
+    ProductQuantityEditableComponent = BaseComponent.extend(/** @exports ProductQuantityEditableComponent.prototype */{
         options: {
             quantityFieldName: 'quantity',
             unitFieldName: 'unit',
             dataKey: null,
             enable: false,
             save_api_accessor: {
-                route: 'orob2b_api_shopping_list_frontend_put_line_item',
                 http_method: 'PUT'
             },
             messages: {
@@ -205,6 +204,13 @@ define(function(require) {
             this.elements.quantity.val(this.model.get(this.quantityFieldName));
             this.elements.unit.val(this.model.get(this.unitFieldName));
 
+            this.trigger(
+                'product:quantity-unit:update',
+                {
+                    quantity: this.model.get(this.quantityFieldName),
+                    unit: this.model.get(this.unitFieldName)
+                }
+            );
             mediator.execute('showFlashMessage', 'success', this.messages.success);
         },
 

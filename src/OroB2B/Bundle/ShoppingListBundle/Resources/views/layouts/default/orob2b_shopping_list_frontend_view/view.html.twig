@@ -126,7 +126,32 @@
             </thead>
             {% for lineItem in shoppingList.lineItems %}
             <tbody class="line_item">
-                <tr>
+                <tr {{ UI.renderPageComponentAttributes({
+                    module: 'oroui/js/app/components/view-component',
+                    options: {
+                        view: 'orob2bshoppinglist/js/app/views/line-item-view',
+                        product: lineItem.product.id,
+                        currency: productsPrices[lineItem.product.id].currency,
+                        matchedPricesRoute: 'orob2b_pricing_frontend_matching_price',
+                        priceContainer: '[data-container="matched-price"]',
+                        quantityContainer: '[data-container="quantity"]',
+                        quantityComponentOptions: {
+                            value: {'quantity': lineItem.quantity, 'unit': lineItem.unit.code},
+                            dataKey: constant('OroB2B\\Bundle\\ShoppingListBundle\\Form\\Type\\FrontendLineItemType::NAME'),
+                            enable: resource_granted('orob2b_shopping_list_frontend_update'),
+                            elements: {
+                                quantity: '[name="product_qty"]',
+                                unit: '[name="product_unit"]'
+                            },
+                            save_api_accessor: {
+                                route: 'orob2b_api_shopping_list_frontend_put_line_item',
+                                default_route_parameters: {
+                                    id: lineItem.id
+                                }
+                            }
+                        }
+                    }
+                }) }}>
                     <td class="va-t_md">
                         <div class="product-item product-item_in-cart">
                             <div class="product-item__image-holder product-item__image-holder_in-cart">
@@ -143,26 +168,7 @@
                     <td class="va-t_md">
                         <div class="green3">{{ lineItem.product.InventoryStatus }}</div>
                     </td>
-                    <td class="va-t_md" {{ UI.renderPageComponentAttributes({
-                        module: 'orob2bproduct/js/app/components/product-quantity-editable-component',
-                        options: {
-                            value: {'quantity': lineItem.quantity, 'unit': lineItem.unit.code},
-                            dataKey: constant('OroB2B\\Bundle\\ShoppingListBundle\\Form\\Type\\FrontendLineItemType::NAME'),
-                            enable: resource_granted('orob2b_shopping_list_frontend_update'),
-                            elements: {
-                                quantity: '[name="product_qty"]',
-                                unit: '[name="product_unit"]'
-                            },
-                            save_api_accessor: {
-                                default_route_parameters: {
-                                    id: lineItem.id
-                                }
-                            },
-                            validation: {
-                                showErrorsHandler: 'orob2bshoppinglist/js/shopping-list-item-errors-handler'
-                            }
-                        }
-                    }) }}>
+                    <td class="va-t_md" data-container="quantity">
                         <form action="#">
                             <div class="product__qty-input product__qty-input_inline product__qty-input_more-info va-m_md">
                                 <div class="product__qty-input__count-option">
@@ -185,7 +191,7 @@
                             <tbody>
                             <tr>
                                 <td>{{ 'orob2b.frontend.shoppinglist.view.your_price.label'|trans }}</td>
-                                <td class="text-right">{{ productsPrices[lineItem.product.id].value|oro_format_currency({'currency': productsPrices[lineItem.product.id].currency}) }}</td>
+                                <td class="text-right" data-container="matched-price">{{ productsPrices[lineItem.product.id].value|oro_format_currency({'currency': productsPrices[lineItem.product.id].currency}) }}</td>
                             </tr>
                             </tbody>
                         </table>
