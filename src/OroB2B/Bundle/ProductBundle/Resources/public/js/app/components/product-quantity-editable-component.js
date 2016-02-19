@@ -38,7 +38,7 @@ define(function(require) {
                         NotBlank: {
                             message: 'orob2b.product.validation.quantity.required'
                         },
-                        Range: {
+                        OpenRange: {
                             min: 0,
                             minMessage: 'orob2b.product.validation.quantity.greaterThanZero'
                         }
