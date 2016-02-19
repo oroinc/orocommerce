@@ -99,6 +99,10 @@ class OrderLineItemHandler
 
         $address = $this->addressProvider->getAddressForTaxation($billingAddress, $shippingAddress);
 
+        if (null === $address) {
+            return false;
+        }
+
         return $this->addressProvider->isDigitalProductTaxCode($address->getCountry()->getIso2Code(), $productTaxCode);
     }
 

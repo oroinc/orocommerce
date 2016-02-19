@@ -34,5 +34,6 @@ class CustomerAddressItemResolver extends AbstractItemResolver
         $result = $taxable->getResult();
         $this->unitResolver->resolveUnitPrice($result, $taxRules, $taxableAmount);
         $this->rowTotalResolver->resolveRowTotal($result, $taxRules, $taxableAmount, $taxable->getQuantity());
+        $result->lockResult();
     }
 }
