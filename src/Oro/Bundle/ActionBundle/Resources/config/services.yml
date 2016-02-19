@@ -14,7 +14,7 @@ parameters:
     oro_action.block_type.action_line_buttons.class: Oro\Bundle\ActionBundle\Layout\Block\Type\ActionLineButtonsType
     oro_action.block_type.action_combined_buttons.class: Oro\Bundle\ActionBundle\Layout\Block\Type\ActionCombinedButtonsType
     oro_action.block_type.action_button.class: Oro\Bundle\ActionBundle\Layout\Block\Type\ActionButtonType
-    oro_action.block_type.action_dropdown_toggle.class: Oro\Bundle\ActionBundle\Layout\Block\Type\DropdownToggleType
+    oro_action.block_type.action_drop_down_buttons.class: Oro\Bundle\ActionBundle\Layout\Block\Type\ActionDropDownButtons
 
 services:
     oro_action.helper.context:
@@ -139,6 +139,11 @@ services:
         tags:
              - { name: layout.block_type, alias: action_line_buttons }
 
+    oro_action.block_type.action_drop_down_buttons:
+        class: %oro_action.block_type.action_drop_down_buttons.class%
+        tags:
+             - { name: layout.block_type, alias: action_drop_down_buttons }
+
     oro_action.block_type.action_combined_buttons:
         class: %oro_action.block_type.action_combined_buttons.class%
         parent: oro_action.block_type.action_buttons
@@ -152,7 +157,3 @@ services:
         tags:
              - { name: layout.block_type, alias: action_button }
 
-    oro_action.block_type.dropdown_toggle:
-        class: %oro_action.block_type.action_dropdown_toggle.class%
-        tags:
-             - { name: layout.block_type, alias: action_dropdown_toggle }

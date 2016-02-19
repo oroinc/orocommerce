@@ -40,7 +40,7 @@ class ActionButtonType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setRequired(['params', 'fromUrl', 'actionData', 'context']);
-        $resolver->setOptional(['hide_icon','only_link']);
+        $resolver->setOptional(['hide_icon']);
     }
 
     /**

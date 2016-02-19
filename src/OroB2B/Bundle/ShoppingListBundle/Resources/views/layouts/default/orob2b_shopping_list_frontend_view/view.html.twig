@@ -53,7 +53,13 @@
 {% block _shopping_list_top_actions_widget %}
     {% set attr = attr|merge({ class: attr.class|default('') ~ "cart__order__controls-list" }) %}
     <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
+        <ul>
+            {% for action in block %}
+                <li>
+                    {{ block_widget(action) }}
+                </li>
+            {% endfor %}
+        </ul>
     </div>
 {% endblock %}
 
@@ -214,7 +220,8 @@
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
             <i class="material-icons">arrow_drop_down</i>
         </a>
-        {{ block_widget(block.action_dropdown_menu)}}
+
+        {{ block_widget(block.action_dropdown_menu) }}
     </div>
 {% endblock %}
 
