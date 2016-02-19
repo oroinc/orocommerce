@@ -1,0 +1,77 @@
+{% macro renderResult(taxResult) %}
+    <div class="accordion" id="taxes">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2"
+                   href="#collapseOne">Taxes</a>
+            </div>
+            <div id="collapseOne" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    {% for item in taxResult.items %}
+                        <table class="table table-bordered">
+                            {{ _self.renderResultElementHeader() }}
+                            <tr>
+                                <td>Unit</td>
+                                {{ _self.renderResultElement(item.unit) }}
+                            </tr>
+                            <tr>
+                                <td>Row</td>
+                                {{ _self.renderResultElement(item.row) }}
+                            </tr>
+                            {{ _self.renderTaxes(item.taxes) }}
+                        </table>
+                    {% endfor %}
+                    <table class="table table-bordered">
+                        {{ _self.renderResultElementHeader() }}
+                        <tr>
+                            <td>Total</td>
+                            {{ _self.renderResultElement(taxResult.total) }}
+                        </tr>
+                        {{ _self.renderTaxes(taxResult.taxes) }}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro renderResultElement(resultElement) %}
+    {% for value in resultElement %}
+        <td>{{ value }}</td>
+    {% endfor %}
+{% endmacro %}
+
+
+{% macro renderTaxes(taxes) %}
+    <tr>
+        <td>Taxes</td>
+        <td colspan="4">
+            <table class="table table-bordered">
+                <tr>
+                    <th>Tax code</th>
+                    <th>Tax rate</th>
+                    <th>Taxable amount</th>
+                    <th>Tax amount</th>
+                </tr>
+                {% for tax in taxes %}
+                    <tr>
+                        <td>{{ tax.tax }}</td>
+                        <td>{{ tax.rate * 100 }}%</td>
+                        <td>{{ tax.taxable_amount }}</td>
+                        <td>{{ tax.tax_amount }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </td>
+    </tr>
+{% endmacro %}
+
+{% macro renderResultElementHeader() %}
+    <tr>
+        <th>Type</th>
+        <th>Including tax</th>
+        <th>Excluding tax</th>
+        <th>Tax amount</th>
+        <th>Adjustment</th>
+    </tr>
+{% endmacro %}

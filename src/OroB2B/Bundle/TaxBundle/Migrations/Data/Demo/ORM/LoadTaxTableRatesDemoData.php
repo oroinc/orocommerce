@@ -69,7 +69,7 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
             if (isset($data['accounts'])) {
                 foreach ($data['accounts'] as $accountName) {
                     $account = $manager->getRepository('OroB2BAccountBundle:Account')->findOneByName($accountName);
-                    if (!is_null($account)) {
+                    if (null !== $account) {
                         $taxCode->addAccount($account);
                     }
                 }
@@ -77,7 +77,7 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
             if (isset($data['account_groups'])) {
                 foreach ($data['account_groups'] as $groupName) {
                     $group = $manager->getRepository('OroB2BAccountBundle:AccountGroup')->findOneByName($groupName);
-                    if (!is_null($group)) {
+                    if (null !== $group) {
                         $taxCode->addAccountGroup($group);
                     }
                 }
