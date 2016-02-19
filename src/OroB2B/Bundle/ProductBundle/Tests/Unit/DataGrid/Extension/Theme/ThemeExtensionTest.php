@@ -55,7 +55,7 @@ class ThemeExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->extension->visitMetadata($config, $data);
 
-        $actual = $data->toArray(['theme']);
-        $this->assertEquals(['theme'=> ['rowView'=> DataGridThemeHelper::VIEW_GRID]], $actual);
+        $actual = $data->toArray(['themeOptions']);
+        $this->assertEquals(['themeOptions'=> ['rowView'=> DataGridThemeHelper::VIEW_GRID]], $actual);
     }
 }
