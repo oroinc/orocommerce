@@ -239,10 +239,4 @@ class RequestProduct implements ProductHolderInterface
     {
         return $this->requestProductItems;
     }
-
-    public function __clone()
-    {
-        $this->id = null;
-        $this->requestProductItems = new ArrayCollection();
-    }
 }

@@ -382,10 +382,10 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
     }
 
     /**
-     * @param Organization|null $organization
+     * @param Organization $organization
      * @return Request
      */
-    public function setOrganization(Organization $organization = null)
+    public function setOrganization(Organization $organization)
     {
         $this->organization = $organization;
 
@@ -800,16 +800,5 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
         }
 
         return $this;
-    }
-
-    public function __clone()
-    {
-        $this->id = null;
-        $this->createdAt  = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt  = new \DateTime('now', new \DateTimeZone('UTC'));
-
-        $this->requestProducts = new ArrayCollection();
-        $this->assignedUsers = new ArrayCollection();
-        $this->assignedAccountUsers = new ArrayCollection();
     }
 }
