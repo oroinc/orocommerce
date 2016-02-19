@@ -11,7 +11,7 @@ use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 class ThemeExtension extends AbstractExtension
 {
     const GRID_NAME = 'frontend-products-grid';
-    const METADATA_THEME_KEY = 'theme';
+    const METADATA_THEME_KEY = 'themeOptions';
 
     /**
      * @var DataGridThemeHelper

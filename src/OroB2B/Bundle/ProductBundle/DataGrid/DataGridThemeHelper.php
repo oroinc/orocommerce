@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class DataGridThemeHelper
 {
-    const GRID_THEME_PARAM_NAME = 'template';
+    const GRID_THEME_PARAM_NAME = 'rowView';
 
     const VIEW_GRID = 'grid';
     const VIEW_TILES = 'tiles';
