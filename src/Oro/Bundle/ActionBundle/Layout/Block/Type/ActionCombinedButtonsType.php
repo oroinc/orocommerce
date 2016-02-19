@@ -33,13 +33,6 @@ class ActionCombinedButtonsType extends AbstractButtonsType
         $primaryActionName = array_keys($actions)[0];
         $params = $this->getParams($options, $primaryAction);
 
-        $buttonOptions = [
-            'params' => $params,
-            'context' => $options['context'],
-            'fromUrl' => $options['fromUrl'],
-            'actionData' => $options['actionData'],
-            'hide_icon' => true,
-        ];
         $layoutManipulator = $builder->getLayoutManipulator();
         $builderId = $builder->getId();
 
@@ -47,7 +40,13 @@ class ActionCombinedButtonsType extends AbstractButtonsType
             $builderId . '_' . self::PRIMARY_BUTTON_SUFFIX,
             $builderId,
             ActionButtonType::NAME,
-            $buttonOptions
+            [
+                'params' => $params,
+                'context' => $options['context'],
+                'fromUrl' => $options['fromUrl'],
+                'actionData' => $options['actionData'],
+                'hide_icon' => true,
+            ]
         );
 
         $layoutManipulator->add(

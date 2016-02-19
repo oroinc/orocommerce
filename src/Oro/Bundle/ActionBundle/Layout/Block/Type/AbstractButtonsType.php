@@ -70,11 +70,6 @@ abstract class AbstractButtonsType extends AbstractContainerType
     }
 
     /**
-     * {@inheritDoc}
-     */
-    abstract public function getName();
-
-    /**
      * @param array $options
      * @return array
      */
