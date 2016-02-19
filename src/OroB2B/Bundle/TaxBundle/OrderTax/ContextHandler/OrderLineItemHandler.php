@@ -119,13 +119,31 @@ class OrderLineItemHandler
             return $this->taxCodes[$cacheKey];
         }
 
-        if ($lineItem->getProduct() === null) {
-            $this->taxCodes[$cacheKey] = null;
+        $object = null;
 
+        if ($type === TaxCodeInterface::TYPE_PRODUCT) {
+            if ($lineItem->getProduct() === null) {
+                $this->taxCodes[$cacheKey] = null;
+
+                return null;
+            }
+
+            $object = $lineItem->getProduct();
+        } elseif ($type === TaxCodeInterface::TYPE_ACCOUNT) {
+            if ($lineItem->getOrder() === null || $lineItem->getOrder()->getAccount() === null) {
+                $this->taxCodes[$cacheKey] = null;
+
+                return null;
+            }
+
+            $object = $lineItem->getOrder()->getAccount();
+        }
+
+        if ($object === null) {
             return null;
         }
 
-        $taxCode = $this->getRepository($type)->findOneByEntity((string)$type, $lineItem->getProduct());
+        $taxCode = $this->getRepository($type)->findOneByEntity((string)$type, $object);
 
         $this->taxCodes[$cacheKey] = $taxCode ? $taxCode->getCode() : null;
 
