@@ -1,0 +1,15 @@
+data:
+    images:
+        types:
+            main:
+                label: Main
+                dimensions: ~
+                max_number: 1
+            additional:
+                label: Additional
+                dimensions: ~
+                max_number: ~
+            thumbnail:
+                label: Thumbnail
+                dimensions: ~
+                max_number: ~
