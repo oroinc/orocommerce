@@ -46,7 +46,6 @@ use OroB2B\Bundle\RFPBundle\Model\ExtendRequest;
  *          }
  *      }
  * )
- * todo: index on deleted at
  * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
