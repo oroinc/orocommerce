@@ -6,13 +6,19 @@ use OroB2B\Bundle\TaxBundle\Model\ResultElement;
 
 interface TaxCalculatorInterface
 {
-    const CALCULATION_SCALE = 9;
-    const SCALE = 2;
-
     /**
      * @param string $amount
      * @param string $taxRate
-     * @return ResultElement
+     * @return ResultElement|array
+     *      includingTax - amount with tax
+     *      excludingTax - amount without tax
+     *      taxAmount    - tax amount
+     *      adjustment   - adjustment, negative value when taxAmount rounded up, positive value if rounded down
      */
     public function calculate($amount, $taxRate);
+
+    /**
+     * @return string
+     */
+    public function getAmountKey();
 }

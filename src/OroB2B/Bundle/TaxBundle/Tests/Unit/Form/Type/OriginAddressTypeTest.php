@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
@@ -64,8 +66,8 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
                     'postal_code' => '35004',
                 ],
             ],
-            'invalid without region' => [
-                'isValid' => false,
+            'valid without region' => [
+                'isValid' => true,
                 'defaultData' => new Address(),
                 'viewData' => new Address(),
                 'submittedData' => [
@@ -81,8 +83,8 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
                     'postal_code' => '35004',
                 ],
             ],
-            'invalid without country' => [
-                'isValid' => false,
+            'valid without country' => [
+                'isValid' => true,
                 'defaultData' => new Address(),
                 'viewData' => new Address(),
                 'submittedData' => [
@@ -98,8 +100,8 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
                     'postal_code' => '35004',
                 ],
             ],
-            'invalid without postal code' => [
-                'isValid' => false,
+            'valid without postal code' => [
+                'isValid' => true,
                 'defaultData' => new Address(),
                 'viewData' => new Address(),
                 'submittedData' => [
@@ -132,5 +134,52 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
     protected function getExtensions()
     {
         return array_merge([$this->getValidatorExtension(true)], parent::getExtensions());
+    }
+
+    public function testFinishViewWithoutParent()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $formMock */
+        $formMock = $this->getMock('Symfony\Component\Form\FormInterface');
+
+        $formView = new FormView();
+        $this->formType->finishView($formView, $formMock, []);
+    }
+
+    public function testFinishViewWithoutUseDefault()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $formMock */
+        $formMock = $this->getMock('Symfony\Component\Form\FormInterface');
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $parent */
+        $parent = $this->getMock('Symfony\Component\Form\FormInterface');
+        $parent->expects($this->once())->method('has')->willReturn(false);
+
+        $formMock->expects($this->once())->method('getParent')->willReturn($parent);
+
+        $formView = new FormView();
+        $this->formType->finishView($formView, $formMock, []);
+    }
+
+    public function testFinishView()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $formMock */
+        $formMock = $this->getMock('Symfony\Component\Form\FormInterface');
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $useDefault */
+        $useDefault = $this->getMock('Symfony\Component\Form\FormInterface');
+        $useDefault->expects($this->once())->method('getData')->willReturn(true);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $parent */
+        $parent = $this->getMock('Symfony\Component\Form\FormInterface');
+        $parent->expects($this->once())->method('has')->willReturn(true);
+        $parent->expects($this->once())->method('get')->willReturn($useDefault);
+
+        $formMock->expects($this->once())->method('getParent')->willReturn($parent);
+
+        $formView = new FormView();
+        $child = new FormView();
+        $formView->children[] = $child;
+        $this->formType->finishView($formView, $formMock, []);
+        $this->assertTrue($child->vars['use_parent_scope_value']);
     }
 }

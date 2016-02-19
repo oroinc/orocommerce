@@ -257,10 +257,15 @@ class Taxable
 
     /**
      * @param Result $result
+     * @return $this
      */
     public function setResult(Result $result)
     {
-        $this->result = $result;
+        if ($this->result->count() === 0) {
+            $this->result = $result;
+        }
+
+        return $this;
     }
 
     /**

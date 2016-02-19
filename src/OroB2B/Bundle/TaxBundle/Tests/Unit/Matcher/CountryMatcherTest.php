@@ -7,6 +7,9 @@ use Oro\Bundle\AddressBundle\Entity\Country;
 
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 use OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher;
+use OroB2B\Bundle\TaxBundle\Model\TaxCode;
+use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
+use OroB2B\Bundle\TaxBundle\Model\TaxCodes;
 
 class CountryMatcherTest extends AbstractMatcherTest
 {
@@ -35,15 +38,26 @@ class CountryMatcherTest extends AbstractMatcherTest
         $address = (new Address())
             ->setCountry($country);
 
+        $taxCodes = [];
+        if ($productTaxCode) {
+            $taxCodes[] = TaxCode::create($productTaxCode, TaxCodeInterface::TYPE_PRODUCT);
+        }
+        if ($accountTaxCode) {
+            $taxCodes[] = TaxCode::create($accountTaxCode, TaxCodeInterface::TYPE_ACCOUNT);
+        }
+
+        $taxCodes = TaxCodes::create($taxCodes);
+
         $this->taxRuleRepository
-            ->expects(
-                empty($taxRules) || empty($productTaxCode) || empty($accountTaxCode) ? $this->never() : $this->once()
-            )
-            ->method('findByCountryAndProductTaxCodeAndAccountTaxCode')
-            ->with($country, $productTaxCode, $accountTaxCode)
+            ->expects($country ? $this->once() : $this->never())
+            ->method('findByCountryAndTaxCode')
+            ->with($taxCodes, $country)
             ->willReturn($taxRules);
 
-        $this->assertEquals($expected, $this->matcher->match($address, $productTaxCode, $accountTaxCode));
+        $this->assertEquals($expected, $this->matcher->match($address, $taxCodes));
+
+        // cache
+        $this->assertEquals($expected, $this->matcher->match($address, $taxCodes));
     }
 
     /**
@@ -62,43 +76,29 @@ class CountryMatcherTest extends AbstractMatcherTest
                 'country' => new Country('US'),
                 'productTaxCode' => 'PRODUCT_TAX_CODE',
                 'accountTaxCode' => 'ACCOUNT_TAX_CODE',
-                'taxRules' => $taxRules
+                'taxRules' => $taxRules,
             ],
             'address without country' => [
                 'expected' => [],
                 'country' => null,
                 'productTaxCode' => 'PRODUCT_TAX_CODE',
                 'accountTaxCode' => 'ACCOUNT_TAX_CODE',
-                'taxRules' => []
+                'taxRules' => [],
             ],
             'address without product tax code' => [
                 'expected' => [],
                 'country' => new Country('US'),
                 'productTaxCode' => null,
                 'accountTaxCode' => 'ACCOUNT_TAX_CODE',
-                'taxRules' => []
+                'taxRules' => [],
             ],
             'address without account tax code' => [
                 'expected' => [],
                 'country' => new Country('US'),
                 'productTaxCode' => 'PRODUCT_TAX_CODE',
                 'accountTaxCode' => null,
-                'taxRules' => []
-            ]
+                'taxRules' => [],
+            ],
         ];
-    }
-
-    public function testIsEuropeanUnionCountry()
-    {
-        $reflectionClass = new \ReflectionObject($this->matcher);
-        $reflectionProperty = $reflectionClass->getProperty('europeanUnionCountryCodes');
-        $reflectionProperty->setAccessible(true);
-        $europeanCountryCodes = $reflectionProperty->getValue();
-
-        foreach ($europeanCountryCodes as $europeanCode) {
-            $this->assertTrue($this->matcher->isEuropeanUnionCountry($europeanCode));
-        }
-
-        $this->assertFalse($this->matcher->isEuropeanUnionCountry('NON_EU_COUNTRY'));
     }
 }

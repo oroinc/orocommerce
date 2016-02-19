@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\TaxBundle\Matcher;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
+use OroB2B\Bundle\TaxBundle\Model\TaxCodes;
 
 class RegionMatcher extends AbstractMatcher
 {
@@ -14,31 +15,34 @@ class RegionMatcher extends AbstractMatcher
     /**
      * {@inheritdoc}
      */
-    public function match(AbstractAddress $address, $productTaxCode, $accountTaxCode)
+    public function match(AbstractAddress $address, TaxCodes $taxCodes)
     {
         $country = $address->getCountry();
         $region = $address->getRegion();
         $regionText = $address->getRegionText();
+        $cacheKey = $this->getCacheKey($country, $region, $regionText, $taxCodes->getHash());
 
-        $countryTaxRules = $this->countryMatcher->match($address, $productTaxCode, $accountTaxCode);
+        if (array_key_exists($cacheKey, $this->taxRulesCache)) {
+            return $this->taxRulesCache[$cacheKey];
+        }
 
-        if (null === $productTaxCode ||
-            null === $accountTaxCode ||
-            null === $country ||
-            (null === $region && empty($regionText))
+        $countryTaxRules = $this->countryMatcher->match($address, $taxCodes);
+
+        if (null === $country || (null === $region && empty($regionText))
         ) {
             return $countryTaxRules;
         }
 
-        $regionTaxRules = $this->getTaxRuleRepository()->findByCountryAndRegionAndProductTaxCodeAndAccountTaxCode(
-            $productTaxCode,
-            $accountTaxCode,
+        $regionTaxRules = $this->getTaxRuleRepository()->findByRegionAndTaxCode(
+            $taxCodes,
             $country,
             $region,
             $regionText
         );
 
-        return $this->mergeResult($countryTaxRules, $regionTaxRules);
+        $this->taxRulesCache[$cacheKey] = $this->mergeResult($countryTaxRules, $regionTaxRules);
+
+        return $this->taxRulesCache[$cacheKey];
     }
 
     /**

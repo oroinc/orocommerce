@@ -8,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;

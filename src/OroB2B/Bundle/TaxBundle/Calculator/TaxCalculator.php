@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\TaxBundle\Calculator;
 
 use Brick\Math\BigDecimal;
-use Brick\Math\RoundingMode;
 
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
 
@@ -18,10 +17,12 @@ class TaxCalculator implements TaxCalculatorInterface
         $taxAmount = $exclTax->multipliedBy($taxRate);
         $inclTax = $exclTax->plus($taxAmount);
 
-        $taxAmountRounded = $taxAmount->toScale(self::SCALE, RoundingMode::UP);
+        return ResultElement::create($inclTax, $exclTax, $taxAmount);
+    }
 
-        $adjustment = $taxAmountRounded->minus($taxAmount);
-
-        return ResultElement::create($inclTax, $exclTax, $taxAmount, $adjustment);
+    /** {@inheritdoc} */
+    public function getAmountKey()
+    {
+        return ResultElement::EXCLUDING_TAX;
     }
 }

@@ -4,12 +4,12 @@ namespace OroB2B\Bundle\TaxBundle\OrderTax\ContextHandler;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
-use OroB2B\Bundle\TaxBundle\Model\Taxable;
-use OroB2B\Bundle\TaxBundle\Event\ContextEvent;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
+use OroB2B\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository;
+use OroB2B\Bundle\TaxBundle\Event\ContextEvent;
+use OroB2B\Bundle\TaxBundle\Model\Taxable;
+use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
 use OroB2B\Bundle\TaxBundle\Provider\TaxationAddressProvider;
-use OroB2B\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository;
-use OroB2B\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository;
 
 class OrderLineItemHandler
 {
@@ -39,6 +39,11 @@ class OrderLineItemHandler
     protected $orderLineItemClass;
 
     /**
+     * @var TaxCodeInterface[]
+     */
+    protected $taxCodes = [];
+
+    /**
      * @param TaxationAddressProvider $addressProvider
      * @param DoctrineHelper $doctrineHelper
      * @param string $productTaxCodeClass
@@ -58,6 +63,7 @@ class OrderLineItemHandler
         $this->accountTaxCodeClass = $accountTaxCodeClass;
         $this->orderLineItemClass = $orderLineItemClass;
     }
+
     /**
      * @param ContextEvent $contextEvent
      */
@@ -71,61 +77,73 @@ class OrderLineItemHandler
             return;
         }
 
-        $context->offsetSet(Taxable::DIGITAL_PRODUCT, $this->isDigitProduct($lineItem));
-        $context->offsetSet(Taxable::PRODUCT_TAX_CODE, $this->getProductTaxCode($lineItem));
-        $context->offsetSet(Taxable::ACCOUNT_TAX_CODE, $this->getAccountTaxCode($lineItem));
+        $context->offsetSet(Taxable::DIGITAL_PRODUCT, $this->isDigital($lineItem));
+        $context->offsetSet(Taxable::PRODUCT_TAX_CODE, $this->getTaxCode($lineItem, TaxCodeInterface::TYPE_PRODUCT));
+        $context->offsetSet(Taxable::ACCOUNT_TAX_CODE, $this->getTaxCode($lineItem, TaxCodeInterface::TYPE_ACCOUNT));
     }
 
     /**
      * @param OrderLineItem $lineItem
      * @return bool
      */
-    protected function isDigitProduct(OrderLineItem $lineItem)
+    protected function isDigital(OrderLineItem $lineItem)
     {
-        $productTaxCode = $this->getProductTaxCode($lineItem);
+        $productTaxCode = $this->getTaxCode($lineItem, TaxCodeInterface::TYPE_PRODUCT);
 
         if (null === $productTaxCode) {
             return false;
         }
 
-        $address = $this->addressProvider->getAddressForTaxation($lineItem->getOrder());
+        $billingAddress = $lineItem->getOrder()->getBillingAddress();
+        $shippingAddress = $lineItem->getOrder()->getShippingAddress();
+
+        $address = $this->addressProvider->getAddressForTaxation($billingAddress, $shippingAddress);
+
+        if (null === $address) {
+            return false;
+        }
 
         return $this->addressProvider->isDigitalProductTaxCode($address->getCountry()->getIso2Code(), $productTaxCode);
     }
 
     /**
      * @param OrderLineItem $lineItem
+     * @param string $type
      * @return null|string
      */
-    protected function getProductTaxCode(OrderLineItem $lineItem)
+    protected function getTaxCode(OrderLineItem $lineItem, $type)
     {
+        $cacheKey = implode(':', [$type, $lineItem->getId()]);
+
+        if (array_key_exists($cacheKey, $this->taxCodes)) {
+            return $this->taxCodes[$cacheKey];
+        }
+
         if ($lineItem->getProduct() === null) {
+            $this->taxCodes[$cacheKey] = null;
+
             return null;
         }
 
-        /** @var ProductTaxCodeRepository $productTaxCodeRepository */
-        $productTaxCodeRepository = $this->doctrineHelper->getEntityRepositoryForClass($this->productTaxCodeClass);
-        $productTaxCode = $productTaxCodeRepository->findOneByProduct($lineItem->getProduct());
+        $taxCode = $this->getRepository($type)->findOneByEntity((string)$type, $lineItem->getProduct());
 
-        return $productTaxCode->getCode();
+        $this->taxCodes[$cacheKey] = $taxCode ? $taxCode->getCode() : null;
+
+        return $this->taxCodes[$cacheKey];
     }
 
     /**
-     * @param OrderLineItem $lineItem
-     * @return null|string
+     * @param string $type
+     * @return AbstractTaxCodeRepository
      */
-    protected function getAccountTaxCode(OrderLineItem $lineItem)
+    protected function getRepository($type)
     {
-        if ($lineItem->getOrder() === null
-            || $lineItem->getOrder()->getAccount() === null
-        ) {
-            return null;
+        if ($type === TaxCodeInterface::TYPE_PRODUCT) {
+            return $this->doctrineHelper->getEntityRepositoryForClass($this->productTaxCodeClass);
+        } elseif ($type === TaxCodeInterface::TYPE_ACCOUNT) {
+            return $this->doctrineHelper->getEntityRepositoryForClass($this->accountTaxCodeClass);
         }
 
-        /** @var AccountTaxCodeRepository $accountTaxCodeRepository */
-        $accountTaxCodeRepository = $this->doctrineHelper->getEntityRepositoryForClass($this->accountTaxCodeClass);
-        $accountTaxCode = $accountTaxCodeRepository->findOneByAccount($lineItem->getOrder()->getAccount());
-
-        return $accountTaxCode->getCode();
+        throw new \InvalidArgumentException(sprintf('Unknown type: %s', $type));
     }
 }

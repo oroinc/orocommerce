@@ -508,6 +508,7 @@
 
 .sales-m-panel__dropdown-level-2,
 .sales-m-panel__dropdown-level-3 {
+  display: none;
   position: absolute;
   width: 100%;
   top: 5rem;
@@ -519,10 +520,9 @@
   z-index: 999998;
   overflow: hidden;
   overflow-y: auto;
-  transform: translate3d(100%,0,0);
 
   &.active {
-    transform: translate3d(0,0,0);
+    display: block;
     box-shadow: 0 .3rem .5rem 0 rgba(0,0,0,.3);
   }
 

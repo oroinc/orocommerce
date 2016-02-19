@@ -36,7 +36,7 @@ class TaxFactoryTest extends \PHPUnit_Framework_TestCase
         $mapper
             ->expects($this->exactly(2))
             ->method('map')
-            ->willReturnCallback(function ($object) {
+            ->willReturnCallback(function () {
                 return new Taxable();
             });
 

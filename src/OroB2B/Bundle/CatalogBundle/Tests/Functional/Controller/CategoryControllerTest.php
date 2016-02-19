@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\CatalogBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Form;
-use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -12,7 +11,6 @@ use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
-use Oro\Bundle\AttachmentBundle\Entity\File;
 
 /**
  * @dbIsolation
@@ -252,7 +250,7 @@ class CategoryControllerTest extends WebTestCase
         $largeImage = new UploadedFile($largeImageFile, $largeImageName);
 
         /** @var Form $form */
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Save')->form();
         $form['orob2b_catalog_category[titles][values][default]'] = $title;
         $form['orob2b_catalog_category[shortDescriptions][values][default]'] = $shortDescription;
         $form['orob2b_catalog_category[longDescriptions][values][default]'] = $longDescription;
@@ -295,6 +293,7 @@ class CategoryControllerTest extends WebTestCase
      * @param string $newLongDescription
      *
      * @return int
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function assertEdit(
         $id,
@@ -306,7 +305,7 @@ class CategoryControllerTest extends WebTestCase
         $newLongDescription
     ) {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_catalog_category_update', ['id' => $id]));
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Save')->form();
         $formValues = $form->getValues();
         $html = $crawler->html();
         //Verified that actual values correspond with the ones that were set during Category creation
@@ -339,6 +338,9 @@ class CategoryControllerTest extends WebTestCase
         $parameters['orob2b_catalog_category']['longDescriptions']['values']['default'] = $newLongDescription;
         $parameters['orob2b_catalog_category']['largeImage']['emptyFile'] = true;
 
+        $parentCategory = $crawler->filter('[name = "orob2b_catalog_category[parentCategory]"]')->attr('value');
+        $parameters['orob2b_catalog_category']['parentCategory'] = $parentCategory;
+
         foreach ($this->locales as $locale) {
             $parameters['orob2b_catalog_category']['titles']['values']['locales'][$locale->getId()]['value']
                 = $locale->getCode() . $newTitle;
@@ -354,7 +356,7 @@ class CategoryControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('Category has been saved', $html);
 
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Save')->form();
         $formValues = $form->getValues();
         //Verified that values correspond with the new ones that has been set after submit
         $this->assertFormDefaultLocalized($formValues, $newTitle, $newShortDescription, $newLongDescription);
@@ -409,7 +411,7 @@ class CategoryControllerTest extends WebTestCase
         $longDescription = self::DEFAULT_CATEGORY_LONG_DESCRIPTION
     ) {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_catalog_category_update', ['id' => $id]));
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Save')->form();
         $formValues = $form->getValues();
 
         $this->assertEquals($title, $formValues['orob2b_catalog_category[titles][values][default]']);

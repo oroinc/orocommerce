@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Matcher\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManager;
 
 use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
@@ -16,7 +15,7 @@ use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules as BaseLo
 use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes;
 use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
 
-class LoadTaxRules extends BaseLoadTaxRules implements DependentFixtureInterface
+class LoadTaxRules extends BaseLoadTaxRules
 {
     const REFERENCE_PREFIX = 'tax_rule_matcher';
 

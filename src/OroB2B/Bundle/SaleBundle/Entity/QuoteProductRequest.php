@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\SaleBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
@@ -66,7 +66,7 @@ class QuoteProductRequest extends BaseQuoteProductItem
     }
 
     /**
-     * @param OptionalPrice $price
+     * @param Price $price
      * @return $this
      */
     public function setPrice($price = null)
@@ -80,7 +80,7 @@ class QuoteProductRequest extends BaseQuoteProductItem
     public function postLoad()
     {
         if (null !== $this->value && null !==  $this->currency) {
-            $this->price = OptionalPrice::create($this->value, $this->currency);
+            $this->price = Price::create($this->value, $this->currency);
         }
     }
 }

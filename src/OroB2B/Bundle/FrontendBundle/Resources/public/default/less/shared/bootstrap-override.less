@@ -50,7 +50,28 @@
 }
 
 //Bootstrap modal override
+.modal {
+  text-align: center;
+  padding: 0 !important;
+
+  &:before {
+    content: "";
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+    margin-right: -.4rem;
+
+    @media (max-width: 767px) {
+      display: none;
+    }
+  }
+}
+
 .modal-dialog {
+  display: inline-block;
+  text-align: left;
+  vertical-align: middle;
+
   @media (min-width: 768px) {
     width: 72rem;
     margin: 6rem auto 10.4rem;
@@ -58,6 +79,18 @@
 
   @media (max-width: 767px) {
     margin: 6rem 1rem 10.4rem;
+    display: block;
+  }
+
+  &.modal-auto {
+    font-size: 0;
+    width: auto;
+    text-align: center;
+    margin: 0;
+    
+    @media (max-width: 767px) {
+      margin: 6.5rem 1rem 10.4rem;
+    }
   }
 }
 
@@ -194,7 +227,8 @@
       background: lighten(@theme-dark-gray-color, 5%);
     }
 
-    &:active {
+    &:active,
+    &:focus {
       color: #fff;
       box-shadow: inset 0 .3rem .5rem 0 rgba(0,0,0,.35);
     }
@@ -217,7 +251,8 @@
       background: lighten(@theme-middle-gray-color, 5%);
     }
 
-    &:active {
+    &:active,
+    &:focus {
       color: #fff;
       box-shadow: inset 0 .3rem .5rem 0 rgba(0,0,0,.35);
     }
@@ -240,7 +275,8 @@
       background: lighten(@theme-orange-color, 5%);
     }
 
-    &:active {
+    &:active,
+    &:focus {
       color: #fff;
       box-shadow: inset 0 .3rem .5rem 0 rgba(0,0,0,.35);
     }
@@ -268,7 +304,8 @@
       cursor: not-allowed;
     }
 
-    &:active {
+    &:active,
+    &:focus  {
       box-shadow: none;
     }
   }
@@ -488,11 +525,14 @@
 
         &.direct-link {
           width: calc(~'100% - 48px');
+          padding: 0;
+          font-size: 1.7rem;
         }
 
         &.dropdown-toggle {
           width: 4.8rem;
           border-left: .1rem solid rgba(255, 255, 255, 0.3);
+          padding: 0;
         } 
       }
     }
@@ -639,15 +679,15 @@
   }
 
   &.badge_circle {
-    .radiused (50%);
+    .radiused(50%);
   }
 
   &.badge_circled-corners {
-    .radiused (.3rem);
+    .radiused(.3rem);
   } 
 
   &.badge_x-circled-corners {
-    .radiused (.5rem);
+    .radiused(.5rem);
   }    
 
   &.badge_transparent {

@@ -24,27 +24,27 @@ class TaxBaseExclusionFactory
     }
 
     /**
-     * @param array $value
+     * @param array $values
      * @return TaxBaseExclusion
      */
-    public function create($value)
+    public function create($values)
     {
         $entity = new TaxBaseExclusion();
 
-        if (!empty($value['country'])) {
+        if (!empty($values['country'])) {
             /** @var Country $country */
-            $country = $this->doctrineHelper->getEntityReference('OroAddressBundle:Country', $value['country']);
+            $country = $this->doctrineHelper->getEntityReference('OroAddressBundle:Country', $values['country']);
             $entity->setCountry($country);
         }
 
-        if (!empty($value['region'])) {
+        if (!empty($values['region'])) {
             /** @var Region $region */
-            $region = $this->doctrineHelper->getEntityReference('OroAddressBundle:Region', $value['region']);
+            $region = $this->doctrineHelper->getEntityReference('OroAddressBundle:Region', $values['region']);
             $entity->setRegion($region);
         }
 
-        if (!empty($value['option'])) {
-            $entity->setOption($value['option']);
+        if (!empty($values['option'])) {
+            $entity->setOption($values['option']);
         }
 
         return $entity;

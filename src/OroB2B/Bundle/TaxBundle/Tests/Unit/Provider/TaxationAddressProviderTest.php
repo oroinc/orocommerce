@@ -6,9 +6,7 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
-use OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher;
 use OroB2B\Bundle\TaxBundle\Model\Address;
 use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
 use OroB2B\Bundle\TaxBundle\Provider\TaxationAddressProvider;
@@ -16,7 +14,7 @@ use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
 {
-    const EU = 'EU';
+    const EU = 'UK';
     const US = 'US';
 
     const DIGITAL_TAX_CODE = 'DIGITAL_TAX_CODE';
@@ -25,11 +23,6 @@ class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
      * @var TaxationSettingsProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $settingsProvider;
-
-    /**
-     * @var CountryMatcher|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $countryMatcher;
 
     /**
      * @var TaxationAddressProvider
@@ -43,12 +36,7 @@ class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->countryMatcher = $this
-            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->addressProvider = new TaxationAddressProvider($this->settingsProvider, $this->countryMatcher);
+        $this->addressProvider = new TaxationAddressProvider($this->settingsProvider);
     }
 
     protected function tearDown()
@@ -88,10 +76,7 @@ class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
         $shippingAddress,
         $exclusions
     ) {
-        $this->settingsProvider
-            ->expects($origin !== null ? $this->once() : $this->never())
-            ->method('getOrigin')
-            ->willReturn($origin);
+        $this->settingsProvider->expects($this->any())->method('getOrigin')->willReturn($origin);
 
         $this->settingsProvider
             ->expects($exclusions !== null ? $this->once() : $this->never())
@@ -104,19 +89,20 @@ class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($destination);
 
         $this->settingsProvider
-            ->expects($originByDefault !== null ? $this->once() : $this->never())
+            ->expects($this->once())
             ->method('isOriginBaseByDefaultAddressType')
             ->willReturn($originByDefault);
 
-        $order = new Order();
-        $order->setBillingAddress($billingAddress);
-        $order->setShippingAddress($shippingAddress);
-
-        $this->assertSame($expectedResult, $this->addressProvider->getAddressForTaxation($order));
+        $this->assertEquals(
+            $expectedResult,
+            $this->addressProvider->getAddressForTaxation($billingAddress, $shippingAddress)
+        );
     }
 
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function getAddressForTaxationProvider()
     {
@@ -150,6 +136,9 @@ class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
                 ]
             ),
         ];
+
+        $usRegionTextAddress = (new OrderAddress())->setCountry($countryUS)->setRegionText('US LA');
+        $usAlRegionAddress = (new OrderAddress())->setCountry($countryUS)->setRegion(new Region('AL'));
 
         return [
             'billing address' => [
@@ -206,6 +195,63 @@ class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
                 $shippingAddress,
                 $exclusions
             ],
+            'shipping by default return origin if no billing and shipping' => [
+                $originAddress,
+                TaxationSettingsProvider::DESTINATION_SHIPPING_ADDRESS,
+                $originAddress,
+                true,
+                null,
+                null,
+                null,
+            ],
+            'shipping address with exclusion (use origin as base) region text do not match' => [
+                $usRegionTextAddress,
+                TaxationSettingsProvider::DESTINATION_SHIPPING_ADDRESS,
+                $originAddress,
+                null,
+                $billingAddress,
+                $usRegionTextAddress,
+                [
+                    new TaxBaseExclusion(
+                        [
+                            'country' => $countryUS,
+                            'region' => $regionUSLA,
+                            'option' => TaxationSettingsProvider::USE_AS_BASE_DESTINATION,
+                        ]
+                    ),
+                    new TaxBaseExclusion(
+                        [
+                            'country' => $countryCA,
+                            'region' => null,
+                            'option' => TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN,
+                        ]
+                    ),
+                ]
+            ],
+            'shipping address with exclusion (use origin as base) region do not match' => [
+                $usAlRegionAddress,
+                TaxationSettingsProvider::DESTINATION_SHIPPING_ADDRESS,
+                $originAddress,
+                null,
+                $billingAddress,
+                $usAlRegionAddress,
+                [
+                    new TaxBaseExclusion(
+                        [
+                            'country' => $countryUS,
+                            'region' => $regionUSLA,
+                            'option' => TaxationSettingsProvider::USE_AS_BASE_DESTINATION,
+                        ]
+                    ),
+                    new TaxBaseExclusion(
+                        [
+                            'country' => $countryCA,
+                            'region' => null,
+                            'option' => TaxationSettingsProvider::USE_AS_BASE_SHIPPING_ORIGIN,
+                        ]
+                    ),
+                ]
+            ],
         ];
     }
 
@@ -217,12 +263,6 @@ class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsDigitalProductTaxCode($country, $taxCode, $expected)
     {
-        $this->countryMatcher
-            ->expects($this->once())
-            ->method('isEuropeanUnionCountry')
-            ->with($country)
-            ->willReturn($country === self::EU);
-
         $this->settingsProvider
             ->expects($country === self::EU ? $this->once() : $this->never())
             ->method('getDigitalProductsTaxCodesEU')
