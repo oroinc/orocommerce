@@ -1,8 +1,23 @@
 {% extends 'form_div_layout.html.twig' %}
 
+{%- block form_label -%}
+    {% set label_attr = label_attr|merge({
+    class: [
+    label_attr.class|default(''),
+    class_prefix ~ "__form__label"
+    ]|join(' ')
+    }) %}
+
+    {{ parent() }}
+{%- endblock form_label -%}
+
 {% block form_widget_simple %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " input input_block input_md"
+        class: [
+            attr.class|default(''),
+            class_prefix ~ "__form__input",
+            "input input_block input_md"
+        ]|join(' ')
     }) %}
     {{ parent() }}
 {% endblock %}
@@ -16,9 +31,21 @@
 {% endblock %}
 
 {%- block form_row -%}
-    {{- form_label(form) -}}
-    {{- form_widget(form) -}}
-    {{- form_errors(form) -}}
+    {% set class_prefix = form.vars.class_prefix is defined ?  form.vars.class_prefix : '' %}
+    {% set attr = attr|merge({
+        class: [
+            attr.class|default(''),
+            "form-field-" ~ form.vars.name,
+            class_prefix ~ "__form__row"
+        ]|join(' ')
+    }) %}
+    <fieldset {{ block('widget_attributes') }}>
+        <div class="{{ class_prefix }}__form__col form__col_x12">
+            {{- form_label(form) -}}
+            {{- form_errors(form) -}}
+            {{- form_widget(form) -}}
+        </div>
+    </fieldset>
 {%- endblock form_row -%}
 
 {% block widget_attributes %}
