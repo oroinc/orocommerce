@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\ActionBundle\Layout\Block\Type;
 
-use Oro\Bundle\ActionBundle\Exception\ActionNotFoundException;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
 use Oro\Component\Layout\BlockBuilderInterface;
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\BlockView;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class ActionCombinedButtonsType extends AbstractButtonsType
 {
@@ -29,11 +29,8 @@ class ActionCombinedButtonsType extends AbstractButtonsType
     {
         $options = $this->setActionParameters($options);
         $actions = $this->getActions($options);
-        if (!array_key_exists($options['primary_action_name'], $actions)) {
-            throw new ActionNotFoundException($options['primary_action_name']);
-        }
-        $primaryActionName = $options['primary_action_name'];
-        $primaryAction = $actions[$primaryActionName];
+        $primaryAction = array_values($actions)[0];
+        $primaryActionName = array_keys($actions)[0];
         $params = $this->getParams($options, $primaryAction);
 
         $buttonOptions = [
@@ -47,14 +44,14 @@ class ActionCombinedButtonsType extends AbstractButtonsType
         $builderId = $builder->getId();
 
         $layoutManipulator->add(
-            $primaryActionName . '_' . self::PRIMARY_BUTTON_SUFFIX,
+            $builderId . '_' . self::PRIMARY_BUTTON_SUFFIX,
             $builderId,
             ActionButtonType::NAME,
             $buttonOptions
         );
 
         $layoutManipulator->add(
-            $builder->getId() . '_' . self::ACTION_DROPDOWN_MENU_SUFFIX,
+            $builderId . '_' . self::ACTION_DROPDOWN_MENU_SUFFIX,
             $builderId,
             ActionDropDownButtons::NAME,
             [
@@ -70,7 +67,7 @@ class ActionCombinedButtonsType extends AbstractButtonsType
     public function buildView(BlockView $view, BlockInterface $block, array $options)
     {
         $view->vars['attr'] = ['data-page-component-module' => 'oroaction/js/app/components/buttons-component'];
-        $view->vars['primary_button_alias'] = $options['primary_action_name'] . '_' . self::PRIMARY_BUTTON_SUFFIX;
+        $view->vars['primary_button_alias'] = $view->vars['id'] . '_' . self::PRIMARY_BUTTON_SUFFIX;
         $view->vars['dropdown_menu_alias'] = $view->vars['id'] . '_' . self::ACTION_DROPDOWN_MENU_SUFFIX;
     }
 
