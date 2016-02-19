@@ -4,24 +4,17 @@ namespace OroB2B\Bundle\TaxBundle\Provider;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
+use OroB2B\Bundle\TaxBundle\Matcher\EuropeanUnionHelper;
 use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
-use OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher;
 
 class TaxationAddressProvider
 {
     /**
-     * @var CountryMatcher
-     */
-    protected $countryMatcher;
-
-    /**
      * @param TaxationSettingsProvider $settingsProvider
-     * @param CountryMatcher $countryMatcher
      */
-    public function __construct(TaxationSettingsProvider $settingsProvider, CountryMatcher $countryMatcher)
+    public function __construct(TaxationSettingsProvider $settingsProvider)
     {
         $this->settingsProvider = $settingsProvider;
-        $this->countryMatcher = $countryMatcher;
     }
 
     /**
@@ -117,7 +110,7 @@ class TaxationAddressProvider
     {
         if ($countryCode === 'US') {
             $digitalProductTaxCodes = $this->settingsProvider->getDigitalProductsTaxCodesUS();
-        } elseif ($this->countryMatcher->isEuropeanUnionCountry($countryCode)) {
+        } elseif (EuropeanUnionHelper::isEuropeanUnionCountry($countryCode)) {
             $digitalProductTaxCodes = $this->settingsProvider->getDigitalProductsTaxCodesEU();
         } else {
             return false;

@@ -4,46 +4,29 @@ namespace OroB2B\Bundle\TaxBundle\Matcher;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
+use OroB2B\Bundle\TaxBundle\Model\TaxCodes;
+
 class CountryMatcher extends AbstractMatcher
 {
     /**
-     * @var array
-     */
-    protected static $europeanUnionCountryCodes = [
-        'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK',
-        'EE', 'FI', 'FR', 'DE', 'EL', 'HU', 'IE',
-        'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL',
-        'PT', 'RO', 'SK', 'SI', 'ES', 'SE', 'UK'
-    ];
-
-    /**
      * {@inheritdoc}
      */
-    public function match(AbstractAddress $address, $productTaxCode)
+    public function match(AbstractAddress $address, TaxCodes $taxCodes)
     {
         $country = $address->getCountry();
 
-        if (null === $country || $productTaxCode === null) {
+        if (null === $country) {
             return [];
         }
 
-        $cacheKey = $this->getCacheKey($country, $productTaxCode);
+        $cacheKey = $this->getCacheKey($country, $taxCodes->getHash());
         if (array_key_exists($cacheKey, $this->taxRulesCache)) {
             return $this->taxRulesCache[$cacheKey];
         }
 
         $this->taxRulesCache[$cacheKey] =
-            $this->getTaxRuleRepository()->findByCountryAndProductTaxCode($country, $productTaxCode);
+            $this->getTaxRuleRepository()->findByCountryAndTaxCode($taxCodes, $country);
 
         return $this->taxRulesCache[$cacheKey];
-    }
-
-    /**
-     * @param string $countryCode
-     * @return bool
-     */
-    public function isEuropeanUnionCountry($countryCode)
-    {
-        return in_array($countryCode, self::$europeanUnionCountryCodes, true);
     }
 }

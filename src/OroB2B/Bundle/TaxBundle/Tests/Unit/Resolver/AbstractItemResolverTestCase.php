@@ -149,6 +149,8 @@ abstract class AbstractItemResolverTestCase extends \PHPUnit_Framework_TestCase
         $taxable->setQuantity(3);
         $taxable->setAmount($taxableAmount);
         $taxable->setDestination(new OrderAddress());
+        $taxable->getContext()->offsetSet(Taxable::PRODUCT_TAX_CODE, 'prod_tax_code');
+        $taxable->getContext()->offsetSet(Taxable::ACCOUNT_TAX_CODE, 'acc_tax_code');
 
         $taxableUnitPrice = BigDecimal::of($taxable->getPrice());
 

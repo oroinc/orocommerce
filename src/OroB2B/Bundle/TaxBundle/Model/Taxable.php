@@ -8,6 +8,7 @@ class Taxable
 {
     const DIGITAL_PRODUCT = 'digital_product';
     const PRODUCT_TAX_CODE = 'product_tax_code';
+    const ACCOUNT_TAX_CODE = 'account_tax_code';
 
     /**
      * @var int

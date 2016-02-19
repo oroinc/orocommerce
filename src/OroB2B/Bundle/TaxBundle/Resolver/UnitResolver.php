@@ -24,13 +24,14 @@ class UnitResolver extends AbstractUnitRowResolver
     }
 
     /**
-     * {@inheritdoc}
+     * @param Result $result
+     * @param TaxRule[] $taxRules
+     * @param BigDecimal $taxableAmount
      */
     public function resolveUnitPrice(Result $result, array $taxRules, BigDecimal $taxableAmount)
     {
         $taxRate = BigDecimal::zero();
 
-        /** @var TaxRule $taxRule */
         foreach ($taxRules as $taxRule) {
             $taxRate = $taxRate->plus($taxRule->getTax()->getRate());
         }

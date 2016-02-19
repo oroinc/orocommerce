@@ -4,16 +4,10 @@ namespace OroB2B\Bundle\TaxBundle\Resolver;
 
 use Brick\Math\BigDecimal;
 
-use OroB2B\Bundle\TaxBundle\Matcher\MatcherInterface;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
 
 class CustomerAddressItemResolver extends AbstractItemResolver
 {
-    /**
-     * @var MatcherInterface
-     */
-    protected $matcher;
-
     /** {@inheritdoc} */
     public function resolve(Taxable $taxable)
     {
@@ -34,22 +28,12 @@ class CustomerAddressItemResolver extends AbstractItemResolver
             return;
         }
 
-        $productTaxCode = $taxable->getContextValue(Taxable::PRODUCT_TAX_CODE);
-
-        $taxRules = $this->matcher->match($address, $productTaxCode);
+        $taxRules = $this->matcher->match($address, $this->getTaxCodes($taxable));
         $taxableAmount = BigDecimal::of($taxable->getPrice());
 
         $result = $taxable->getResult();
         $this->unitResolver->resolveUnitPrice($result, $taxRules, $taxableAmount);
         $this->rowTotalResolver->resolveRowTotal($result, $taxRules, $taxableAmount, $taxable->getQuantity());
         $result->lockResult();
-    }
-
-    /**
-     * @param MatcherInterface $matcher
-     */
-    public function setMatcher(MatcherInterface $matcher)
-    {
-        $this->matcher = $matcher;
     }
 }

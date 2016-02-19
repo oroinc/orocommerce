@@ -4,18 +4,12 @@ namespace OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResol
 
 use Brick\Math\BigDecimal;
 
-use OroB2B\Bundle\TaxBundle\Matcher\CountryMatcher;
-use OroB2B\Bundle\TaxBundle\Matcher\MatcherInterface;
+use OroB2B\Bundle\TaxBundle\Matcher\EuropeanUnionHelper;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use OroB2B\Bundle\TaxBundle\Resolver\AbstractItemResolver;
 
 class ItemDigitalResolver extends AbstractItemResolver
 {
-    /**
-     * @var CountryMatcher
-     */
-    protected $countryMatcher;
-
     /**
      * @param Taxable $taxable
      */
@@ -38,14 +32,10 @@ class ItemDigitalResolver extends AbstractItemResolver
             return;
         }
 
-        $isBuyerFromEU = $this->countryMatcher->isEuropeanUnionCountry($taxable->getDestination()->getCountryIso2());
+        $isBuyerFromEU = EuropeanUnionHelper::isEuropeanUnionCountry($taxable->getDestination()->getCountryIso2());
 
         if ($isBuyerFromEU && $taxable->getContextValue(Taxable::DIGITAL_PRODUCT)) {
-            $taxRules = $this->countryMatcher->match(
-                $buyerAddress,
-                $taxable->getContextValue(Taxable::PRODUCT_TAX_CODE)
-            );
-
+            $taxRules = $this->matcher->match($buyerAddress, $this->getTaxCodes($taxable));
             $taxableAmount = BigDecimal::of($taxable->getPrice());
 
             $result = $taxable->getResult();
@@ -53,13 +43,5 @@ class ItemDigitalResolver extends AbstractItemResolver
             $this->rowTotalResolver->resolveRowTotal($result, $taxRules, $taxableAmount, $taxable->getQuantity());
             $result->lockResult();
         }
-    }
-
-    /**
-     * @param MatcherInterface $matcher
-     */
-    public function setMatcher(MatcherInterface $matcher)
-    {
-        $this->countryMatcher = $matcher;
     }
 }
