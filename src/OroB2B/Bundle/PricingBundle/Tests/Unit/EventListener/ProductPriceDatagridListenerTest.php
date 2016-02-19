@@ -69,12 +69,9 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
-        $this->listener = new ProductPriceDatagridListener(
-            $this->translator,
-            $this->doctrineHelper,
-            $this->priceListRequestHandler
-        );
+        $this->listener = new ProductPriceDatagridListener($this->translator, $this->doctrineHelper);
 
+        $this->listener->setPriceListRequestHandler($this->priceListRequestHandler);
         $this->listener->setProductPriceClass('OroB2BPricingBundle:ProductPrice');
         $this->listener->setProductUnitClass('OroB2BProductBundle:ProductUnit');
     }
@@ -184,24 +181,26 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                             'type' => 'twig',
                             'template' => 'OroB2BPricingBundle:Datagrid:Column/productPrice.html.twig',
                             'frontend_type' => 'html',
+                            'renderable' => true,
                         ],
                         'price_column_eur' => [
                             'label' => 'orob2b.pricing.productprice.price_in_EUR.trans',
                             'type' => 'twig',
                             'template' => 'OroB2BPricingBundle:Datagrid:Column/productPrice.html.twig',
                             'frontend_type' => 'html',
+                            'renderable' => true,
                         ],
                         'price_column_usd_unit1' => [
                             'label' => 'orob2b.pricing.productprice.price_unit1_in_USD.trans',
                             'type' => 'twig',
-                            'template' => 'OroB2BPricingBundle:Datagrid:Column/productUnitPrice.html.twig',
+                            'template' => 'OroB2BPricingBundle:Datagrid:Column/productPrice.html.twig',
                             'frontend_type' => 'html',
                             'renderable' => false,
                         ],
                         'price_column_eur_unit1' => [
                             'label' => 'orob2b.pricing.productprice.price_unit1_in_EUR.trans',
                             'type' => 'twig',
-                            'template' => 'OroB2BPricingBundle:Datagrid:Column/productUnitPrice.html.twig',
+                            'template' => 'OroB2BPricingBundle:Datagrid:Column/productPrice.html.twig',
                             'frontend_type' => 'html',
                             'renderable' => false,
                         ],
@@ -278,9 +277,9 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                                         'conditionType' => 'WITH',
                                         'condition' => 'price_column_usd_unit1_table.product = product.id ' .
                                             'AND price_column_usd_unit1_table.currency = \'USD\' ' .
-                                            'AND price_column_usd_unit1_table.unit = \'unit1\' ' .
                                             'AND price_column_usd_unit1_table.priceList = 1 ' .
-                                            'AND price_column_usd_unit1_table.quantity = 1',
+                                            'AND price_column_usd_unit1_table.quantity = 1 ' .
+                                            'AND price_column_usd_unit1_table.unit = \'unit1\'' ,
                                     ],
                                     3 => [
                                         'join' => 'OroB2BPricingBundle:ProductPrice',
@@ -288,9 +287,9 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                                         'conditionType' => 'WITH',
                                         'condition' => 'price_column_eur_unit1_table.product = product.id ' .
                                             'AND price_column_eur_unit1_table.currency = \'EUR\' ' .
-                                            'AND price_column_eur_unit1_table.unit = \'unit1\' ' .
                                             'AND price_column_eur_unit1_table.priceList = 1 ' .
-                                            'AND price_column_eur_unit1_table.quantity = 1',
+                                            'AND price_column_eur_unit1_table.quantity = 1 ' .
+                                            'AND price_column_eur_unit1_table.unit = \'unit1\'',
                                     ],
                                 ],
                             ],
