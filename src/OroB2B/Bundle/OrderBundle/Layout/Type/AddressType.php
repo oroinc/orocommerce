@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Layout;
+namespace OroB2B\Bundle\OrderBundle\Layout\Type;
 
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\BlockView;

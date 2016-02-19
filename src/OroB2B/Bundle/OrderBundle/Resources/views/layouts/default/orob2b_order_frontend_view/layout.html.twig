@@ -4,7 +4,7 @@
     </div>
 {% endblock %}
 
-{% block order_body_column %}
+{% block order_body_column_widget %}
     <div class="account-oq__item">
         <div class="account-oq__order-info">
             <table class="table borderless b_paddingless">
@@ -16,33 +16,22 @@
     </div>
 {% endblock %}
 
-{% block _order_body_column_left_widget %}{{ block('order_body_column') }}{% endblock %}
-{% block _order_body_column_right_widget %}{{ block('order_body_column') }}{% endblock %}
-
-{% block order_body_item_element %}
+{% block order_body_column_element_widget %}
     <tr>
         <td class="account-oq__order-info__title">{{ block_label(block) }}</td>
         <td>{{ block_widget(block) }}</td>
     </tr>
 {% endblock %}
 
-{% block _order_po_number_widget %}{{ block('order_body_item_element') }}{% endblock %}
-{% block _order_identifier_widget %}{{ block('order_body_item_element') }}{% endblock %}
-{% block _order_currency_widget %}{{ block('order_body_item_element') }}{% endblock %}
-
 {% block currency_widget %}
     {{ text|oro_format_currency({currency: currency, attributes: attributes, textAttributes: textAttributes, symbols: symbols, locale: locale}) }}
 {% endblock %}
 
-{% block date_widget %}{{ date|oro_format_date({dateType: dateType, locale: locale, timeZone: timeZone}) }}{% endblock %}
-{% block _order_subtotal_widget %}{{ block('order_body_item_element') }}{% endblock %}
-{% block _order_ship_until_widget %}{{ block('order_body_item_element') }}{% endblock %}
-{% block _order_customer_notes_widget %}{{ block('order_body_item_element') }}{% endblock %}
+{% block date_widget %}
+    {{ date|oro_format_date({dateType: dateType, locale: locale, timeZone: timeZone}) }}
+{% endblock %}
 
 {% block address_widget %}
     {% import 'OroAddressBundle::macros.html.twig' as AddressMacro %}
     {{ AddressMacro.renderAddress(address) }}
 {% endblock %}
-
-{% block _order_billing_address_widget %}{{ block('order_body_item_element') }}{% endblock %}
-{% block _order_shipping_address_widget %}{{ block('order_body_item_element') }}{% endblock %}

@@ -110,16 +110,21 @@ services:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
 
     orob2b_order.layout.block_type.currency:
-        class: OroB2B\Bundle\OrderBundle\Layout\CurrencyType
+        class: OroB2B\Bundle\OrderBundle\Layout\Type\CurrencyType
         tags:
              - { name: layout.block_type, alias: currency }
 
     orob2b_order.layout.block_type.date:
-        class: OroB2B\Bundle\OrderBundle\Layout\DateType
+        class: OroB2B\Bundle\OrderBundle\Layout\Type\DateType
         tags:
              - { name: layout.block_type, alias: date }
 
     orob2b_order.layout.block_type.address:
-        class: OroB2B\Bundle\OrderBundle\Layout\AddressType
+        class: OroB2B\Bundle\OrderBundle\Layout\Type\AddressType
         tags:
              - { name: layout.block_type, alias: address }
+
+    orob2b_order.layout.block_type_extension.block_prefixes:
+        class:  OroB2B\Bundle\OrderBundle\Layout\Extension\BlockPrefixExtension
+        tags:
+            - { name: layout.block_type_extension, alias: block }

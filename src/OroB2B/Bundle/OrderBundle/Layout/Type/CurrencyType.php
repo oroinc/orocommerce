@@ -1,27 +1,29 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Layout;
+namespace OroB2B\Bundle\OrderBundle\Layout\Type;
 
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use Oro\Bundle\LayoutBundle\Layout\Block\Type\TextType;
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\BlockView;
 use Oro\Component\Layout\Block\Type\AbstractType;
 
-class DateType extends AbstractType
+class CurrencyType extends AbstractType
 {
-    const NAME = 'date';
+    const NAME = 'currency';
 
     /** {@inheritdoc} */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver
-            ->setRequired(['date'])
+            ->setRequired(['currency'])
             ->setDefaults(
                 [
-                    'dateType' => null,
+                    'attributes' => [],
+                    'textAttributes' => [],
+                    'symbols' => [],
                     'locale' => null,
-                    'timeZone' => null,
                 ]
             );
     }
@@ -29,10 +31,17 @@ class DateType extends AbstractType
     /** {@inheritdoc} */
     public function buildView(BlockView $view, BlockInterface $block, array $options)
     {
-        $view->vars['date'] = $options['date'];
-        $view->vars['dateType'] = $options['dateType'];
+        $view->vars['currency'] = $options['currency'];
+        $view->vars['attributes'] = $options['attributes'];
+        $view->vars['textAttributes'] = $options['textAttributes'];
+        $view->vars['symbols'] = $options['symbols'];
         $view->vars['locale'] = $options['locale'];
-        $view->vars['timeZone'] = $options['timeZone'];
+    }
+
+    /** {@inheritdoc} */
+    public function getParent()
+    {
+        return TextType::NAME;
     }
 
     /** {@inheritdoc} */

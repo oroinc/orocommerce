@@ -20,49 +20,61 @@ layout:
                     blockType: container
                 order_body_column_left:
                     blockType: container
+                    options:
+                        block_prefixes: ['order_body_column']
                 order_body_column_right:
                     blockType: container
+                    options:
+                        block_prefixes: ['order_body_column']
                 order_identifier:
                     blockType: text
                     options:
                         text: {@value: $data.order.identifier}
                         label: 'orob2b.order.identifier.label'
+                        block_prefixes: ['order_body_column_element']
                 order_po_number:
                     blockType: text
                     options:
                         text: {@value: $data.order.poNumber}
                         label: 'orob2b.order.po_number.label'
+                        block_prefixes: ['order_body_column_element']
                 order_currency:
                     blockType: text
                     options:
                         text: {@value: $data.order.currency}
                         label: 'orob2b.order.currency.label'
+                        block_prefixes: ['order_body_column_element']
                 order_subtotal:
                     blockType: currency
                     options:
                         text: {@value: $data.order.subtotal}
                         currency: {@value: $data.order.currency}
                         label: 'orob2b.order.subtotal.label'
+                        block_prefixes: ['order_body_column_element']
                 order_ship_until:
                     blockType: date
                     options:
                         date: {@value: $data.order.shipUntil}
                         label: 'orob2b.order.ship_until.label'
+                        block_prefixes: ['order_body_column_element']
                 order_customer_notes:
                     blockType: text
                     options:
                         text: {@value: $data.order.customerNotes}
                         label: 'orob2b.order.customer_notes.label'
+                        block_prefixes: ['order_body_column_element']
                 order_billing_address:
                     blockType: address
                     options:
                         address: {@value: $data.order.billingAddress}
                         label: 'orob2b.order.billing_address.label'
+                        block_prefixes: ['order_body_column_element']
                 order_shipping_address:
                     blockType: address
                     options:
                         address: {@value: $data.order.shippingAddress}
                         label: 'orob2b.order.shipping_address.label'
+                        block_prefixes: ['order_body_column_element']
                 order_line_items_grid:
                     id: order-line-items
                     parentId: content
