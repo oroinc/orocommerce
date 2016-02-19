@@ -1,0 +1,70 @@
+layout:
+    actions:
+        - @setBlockTheme:
+            themes: 'OroB2BOrderBundle:layouts:default/orob2b_order_frontend_view/layout.html.twig'
+        - @setOption:
+            id: page_title
+            optionName: text
+            optionValue: 'orob2b.order.entity_label'
+        - @setOption:
+            id: content
+            optionName: class_prefix
+            optionValue: 'order'
+        - @addTree:
+            items:
+                order_view_page:
+                    blockType: container
+                order_container:
+                    blockType: container
+                order_body:
+                    blockType: container
+                order_body_column_left:
+                    blockType: container
+                order_body_column_right:
+                    blockType: container
+                order_identifier:
+                    blockType: text
+                    options:
+                        text: {@value: $data.order.identifier}
+                order_po_number:
+                    blockType: text
+                    options:
+                        text: {@value: $data.order.poNumber}
+                order_currency:
+                    blockType: text
+                    options:
+                        text: {@value: $data.order.currency}
+                order_subtotal:
+                    blockType: currency
+                    options:
+                        text: {@value: $data.order.subtotal}
+                        currency: {@value: $data.order.currency}
+                order_ship_until:
+                    blockType: date
+                    options:
+                        date: {@value: $data.order.shipUntil}
+                order_customer_notes:
+                    blockType: text
+                    options:
+                        text: {@value: $data.order.customerNotes}
+                order_line_items_grid:
+                    id: order-line-items
+                    parentId: content
+                    blockType: datagrid
+                    options:
+                        grid_name: order-line-items-grid
+                        grid_parameters: { order_id: {@value: $data.order.id} }
+            tree:
+                content:
+                    order_view_page:
+                        order_container:
+                            order_body:
+                                order_body_column_left:
+                                    order_identifier: ~
+                                    order_po_number: ~
+                                    order_currency: ~
+                                    order_subtotal: ~
+                                    order_ship_until: ~
+                                order_body_column_right:
+                                    order_customer_notes: ~
+                            order_line_items_grid: ~

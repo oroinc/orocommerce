@@ -108,3 +108,14 @@ services:
             - [setBackendSystemConfigurationPath, ['oro_b2b_order.backend_product_visibility']]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
+
+    orob2b_order.layout.block_type.currency:
+        class: OroB2B\Bundle\OrderBundle\Layout\CurrencyType
+        tags:
+             - { name: layout.block_type, alias: currency }
+
+
+    orob2b_order.layout.block_type.date:
+        class: OroB2B\Bundle\OrderBundle\Layout\DateType
+        tags:
+             - { name: layout.block_type, alias: date }
