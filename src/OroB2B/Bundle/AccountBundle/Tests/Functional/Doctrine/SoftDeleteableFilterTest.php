@@ -16,6 +16,7 @@ use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
 /**
  * @dbIsolation
+ * @SuppressWarnings(PHPMD.TooManyMethods).
  */
 class SoftDeleteableFilterTest extends WebTestCase
 {
