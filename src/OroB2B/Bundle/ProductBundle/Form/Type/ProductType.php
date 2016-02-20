@@ -105,6 +105,10 @@ class ProductType extends AbstractType
                 'variantFields',
                 ProductCustomFieldsChoiceType::NAME,
                 ['label' => 'orob2b.product.variant_fields.label']
+            )->add(
+                'images',
+                'oro_collection',
+                ['type' => ProductImageType::NAME]
             );
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener']);

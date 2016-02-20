@@ -47,7 +47,7 @@ class ProductImage extends ExtendProductImage
 
     /**
      * @var array
-     * @ORM\Column(name="visible", type="array", nullable=true)
+     * @ORM\Column(name="types", type="array", nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
