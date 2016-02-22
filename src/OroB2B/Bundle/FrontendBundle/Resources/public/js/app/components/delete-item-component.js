@@ -57,7 +57,7 @@ define(function (require) {
                         || __('item_deleted');
                     self.$elem.closest('.' + self.removeClass).remove();
                     mediator.trigger('frontend:item:delete', e);
-                    mediator.execute('showMessage', 'success', message);
+                    mediator.execute('showMessage', 'success', message, {'flash': true});
                 },
                 error: function() {
                     var message = __('unexpected_error');
