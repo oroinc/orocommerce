@@ -23,10 +23,10 @@ class AddMergeAllowedColumn implements Migration
         $schema->getTable('orob2b_price_list_to_acc_group')
             ->addColumn('merge_allowed', 'boolean');
 
-        $schema->createTable('orob2b_price_list_to_account')
+        $schema->getTable('orob2b_price_list_to_account')
             ->addColumn('merge_allowed', 'boolean');
 
-        $schema->createTable('orob2b_price_list_to_website')
+        $schema->getTable('orob2b_price_list_to_website')
             ->addColumn('merge_allowed', 'boolean');
     }
 }
