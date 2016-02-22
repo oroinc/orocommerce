@@ -34,9 +34,8 @@ class ShoppingListFormProvider extends AbstractDataProvider implements FormProvi
     /**
      * @param FormFactoryInterface $formFactory
      */
-    public function __construct(
-        FormFactoryInterface $formFactory
-    ) {
+    public function __construct(FormFactoryInterface $formFactory)
+    {
         $this->formFactory = $formFactory;
     }
 

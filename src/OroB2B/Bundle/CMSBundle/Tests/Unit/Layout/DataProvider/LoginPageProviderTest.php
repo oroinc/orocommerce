@@ -26,7 +26,7 @@ class LoginPageProviderTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $this->provider = new \OroB2B\Bundle\CMSBundle\Layout\DataProvider\LoginPageProvider($this->managerRegistry);
+        $this->provider = new LoginPageProvider($this->managerRegistry);
         $this->provider->setLoginPageClass(self::LOGIN_PAGE_CLASS);
     }
 
