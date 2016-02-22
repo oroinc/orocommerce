@@ -50,6 +50,47 @@ actions:
                 message: orob2b.rfp.message.request_status_changed
                 type: 'info'
 
+    orob2b_rfp_cancel_action:
+        label: orob2b.rfp.request.cancel.label
+        enabled: true
+        applications: [backend]
+        routes:
+            - orob2b_rfp_request_view
+        datagrids:
+            - rfp-requests-grid
+        order: 150
+        attributes:
+            cancellation_reason:
+                property_path: entity.cancellationReason
+                label: orob2b.rfp.request.cancellation_reason.label
+                type: string
+        form_options:
+            attribute_fields:
+                cancellation_reason:
+                    form_type: oro_rich_text
+        button_options:
+            icon: icon-remove-circle
+        prefunctions:
+            - @assign_constant_value:
+                attribute: $.cancelledStatusName
+                value: OroB2B\Bundle\RFPBundle\Entity\RequestStatus::CANCELED
+            - @find_entity:
+                class: OroB2B\Bundle\RFPBundle\Entity\RequestStatus
+                attribute: $.cancelledStatus
+                where:
+                    name: $.cancelledStatusName
+#        TODO: uncomment after BB-2169 fix
+#        preconditions:
+#            @and:
+#                - @not_empty: $status
+#                - @not_equal: [$status.id, $.cancelledStatus.id]
+        functions:
+            - @assign_value: [$cancellationReason, $.cancellation_reason]
+            - @assign_value: [$status, $.cancelledStatus]
+            - @flash_message:
+                message: 'orob2b.rfp.request.cancellation_success.label'
+                type: 'info'
+
     orob2b_rfp_create_quote_action:
         label: orob2b.rfp.btn.create_quote
         applications: [backend]
