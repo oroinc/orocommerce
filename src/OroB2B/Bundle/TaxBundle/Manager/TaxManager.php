@@ -95,7 +95,7 @@ class TaxManager
 
     /**
      * @param object $object
-     * @return Result|bool
+     * @return Result|false
      */
     public function saveTax($object)
     {
