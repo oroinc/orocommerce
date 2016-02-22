@@ -70,15 +70,20 @@ actions:
                     form_type: oro_rich_text
         button_options:
             icon: icon-remove-circle
-#            TODO: uncomment after BB-2169 fix
-#        preconditions:
-#            @not_equal: [$status, $.cancelledStatus]
         prefunctions:
+            - @assign_constant_value:
+                attribute: $.cancelledStatusName
+                value: OroB2B\Bundle\RFPBundle\Entity\RequestStatus::CANCELED
             - @find_entity:
                 class: OroB2B\Bundle\RFPBundle\Entity\RequestStatus
                 attribute: $.cancelledStatus
                 where:
-                    name: 'canceled'
+                    name: $.cancelledStatusName
+#        TODO: uncomment after BB-2169 fix
+#        preconditions:
+#            @and:
+#                - @not_empty: $status
+#                - @not_equal: [$status.id, $.cancelledStatus.id]
         functions:
             - @assign_value: [$cancellationReason, $.cancellation_reason]
             - @assign_value: [$status, $.cancelledStatus]
