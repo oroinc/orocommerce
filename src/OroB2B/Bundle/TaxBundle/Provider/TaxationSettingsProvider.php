@@ -9,6 +9,9 @@ use OroB2B\Bundle\TaxBundle\Factory\AddressModelFactory;
 use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
 use OroB2B\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class TaxationSettingsProvider
 {
     const DESTINATION_BILLING_ADDRESS = 'billing_address';
