@@ -24,7 +24,7 @@
 {% endblock %}
 
 {% block currency_widget %}
-    {{ text|oro_format_currency({currency: currency, attributes: attributes, textAttributes: textAttributes, symbols: symbols, locale: locale}) }}
+    {{ value|oro_format_currency({currency: currency, attributes: attributes, textAttributes: textAttributes, symbols: symbols, locale: locale}) }}
 {% endblock %}
 
 {% block date_widget %}

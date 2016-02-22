@@ -1,0 +1,11 @@
+layout:
+    actions:
+        - @setBlockTheme:
+            themes: 'OroB2BTaxBundle:layouts:default/orob2b_order_frontend_view/layout.html.twig'
+        - @add:
+            id: order_tax
+            parentId: order_container
+            siblingId: order_body
+            blockType: tax
+            options:
+                result: {@value: $data.tax}

@@ -417,3 +417,15 @@ services:
             - @orob2b_tax.resolver.customer_address.item
         tags:
             - { name: orob2b_tax.resolver, event: orob2b_tax.resolve }
+
+    orob2b_tax.layout.data_provider.tax:
+        class: OroB2B\Bundle\TaxBundle\Layout\Provider\TaxDataProvider
+        arguments:
+            - @orob2b_tax.manager.tax_manager
+        tags:
+            - { name: layout.data_provider, alias: tax }
+
+    orob2b_tax.layout.type.tax:
+        class: OroB2B\Bundle\TaxBundle\Layout\Type\TaxType
+        tags:
+             - { name: layout.block_type, alias: tax }
