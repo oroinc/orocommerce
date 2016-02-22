@@ -138,6 +138,7 @@ services:
 
     orob2b_product.form.type.product_image:
         class: %orob2b_product.form.type.product_image.class%
+        arguments: [ @oro_layout.theme_manager, @request_stack ]
         tags:
             - { name: form.type, alias: 'orob2b_product_image' }
 
