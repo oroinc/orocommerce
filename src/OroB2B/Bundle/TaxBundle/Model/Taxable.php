@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\TaxBundle\Model;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
+use OroB2B\Bundle\TaxBundle\DependencyInjection\OroB2BTaxExtension;
+
 class Taxable
 {
     /**
@@ -251,5 +253,13 @@ class Taxable
     public function setResult(Result $result)
     {
         $this->result = $result;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHash()
+    {
+        return sprintf('%s.%s#%s', OroB2BTaxExtension::ALIAS, $this->getClassName(), $this->getIdentifier());
     }
 }

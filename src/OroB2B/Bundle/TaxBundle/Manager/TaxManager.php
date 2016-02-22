@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\TaxBundle\Manager;
 use OroB2B\Bundle\TaxBundle\Event\TaxEventDispatcher;
 use OroB2B\Bundle\TaxBundle\Factory\TaxFactory;
 use OroB2B\Bundle\TaxBundle\Model\Result;
+use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use OroB2B\Bundle\TaxBundle\Transformer\TaxTransformerInterface;
 
 class TaxManager
@@ -114,5 +115,43 @@ class TaxManager
         $this->taxValueManager->saveTaxValue($taxValue);
 
         return $result;
+    }
+
+    /**
+     * @param $object
+     * @return Result|false
+     */
+    public function saveTaxWithItems($object)
+    {
+        $result = $this->saveTax($object);
+
+        if (false === $result) {
+            return false;
+        }
+
+        $taxable = $this->taxFactory->create($object);
+
+        $this->saveTaxItems($taxable, $result);
+
+        return $result;
+    }
+
+    /**
+     * @param Taxable $taxable
+     * @param Result $result
+     */
+    protected function saveTaxItems(Taxable $taxable, Result $result)
+    {
+        $itemResults = $result->getItems();
+
+        foreach ($taxable->getItems() as $item) {
+            $itemResult = $itemResults[$item->getHash()];
+
+
+            $itemTransformer = $this->getTaxTransformer($item->getClassName());
+            $taxItemValue = $itemTransformer->reverseTransform($itemResult, $item);
+
+            $this->taxValueManager->saveTaxValue($taxItemValue);
+        }
     }
 }
