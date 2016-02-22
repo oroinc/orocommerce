@@ -12,6 +12,8 @@ define(function(require) {
     var LineItemView;
 
     LineItemView = BaseView.extend(/** @exports LineItemView.prototype */{
+        $priceContainer: {},
+
         options: {
             currency: null,
             product: null,
