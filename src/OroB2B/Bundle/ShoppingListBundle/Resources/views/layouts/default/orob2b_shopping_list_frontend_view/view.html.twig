@@ -59,30 +59,50 @@
 {% endblock %}
 
 {% block _shopping_list_options_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " oq__options oq__options_bb" }) %}
-    <div{{ block('block_attributes') }}>
-        <div class="oro-more-info-toggler">
-            <i class="icon-play"></i>
-            {% set notes = shoppingList.notes %}
-            <a href="#" data-more-info-expand tabindex="0">{{ 'orob2b.frontend.shoppinglist.view.view_options.label'|trans }}</a>
-            <div class="oro-more-info-toggler__container"
-                data-more-info {% if notes is not empty %}style="display: block;" {% endif %}>
-                <div class="ml1-md mmt5-md">
-                    <label for="addANote" class="checkbox_custom checkbox_custom_blue mml5-md
-                            {% if notes is not empty %} checked {% endif %}" data-checkbox>
-                        <input type="checkbox" name="addANote" id="addANote"
-                            {% if notes is not empty %} checked = "checked" {% endif %}">
-                        <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
-                        <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
-                        <span class="checkbox_custom__text fs13">{{ 'orob2b.frontend.shoppinglist.view.add_note.label'|trans }}</span>
-                    </label>
-                    <div class="form-input">
-                        <textarea placeholder="{{ 'orob2b.frontend.shoppinglist.view.add_note.placeholder'|trans }}"
-                                  rows="3" cols="30" name="copy_paste_order"
-                                  class="input input_sm input_block">{{ notes }}</textarea>
-                    </div>
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
 
-                    {{ block_widget(block) }}
+    {% set notes = shoppingList.notes %}
+    {% set hasRecords = notes is not empty %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " oro-more-info-toggler" }) %}
+    <div{{ block('block_attributes') }}>
+        <i class="icon-play {% if hasRecords %}expanded{% endif %}"></i>
+        <a href="#" data-more-info-expand tabindex="0">{{ 'orob2b.frontend.shoppinglist.view.view_options.label'|trans }}</a>
+        <div class="oro-more-info-toggler__container" data-more-info {% if hasRecords %}style="display: block"{% endif %}>
+
+            <div class="ml1-md mmt5-md" {{ UI.renderPageComponentAttributes({
+                module: 'orob2bfrontend/js/app/components/switchable-editable-view-component',
+                options: {
+                    frontend_type: 'multilineText',
+                    value: shoppingList.notes,
+                    fieldName: 'notes',
+                    insertEditorMethod: 'after',
+                    metadata: {
+                        inline_editing: {
+                            enable: resource_granted('orob2b_shopping_list_frontend_update'),
+                            save_api_accessor: {
+                                route: 'orob2b_api_frontend_patch_entity_data',
+                                http_method: 'PATCH',
+                                default_route_parameters: {
+                                    className: oro_class_name(shoppingList, true),
+                                    id: shoppingList.id
+                                }
+                            }
+                        }
+                    }
+                }
+            }) }}>
+                <label for="addANote" data-checkbox
+                    class="checkbox_custom checkbox_custom_blue mml5-md {% if notes is not empty %}checked{% endif %}">
+                    <input type="checkbox" name="addANote" id="addANote" data-role="start-editing"
+                        {% if notes is not empty %}checked="checked"{% endif %}>
+                    <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
+                    <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
+                    <span class="checkbox_custom__text fs13">{{ 'orob2b.frontend.shoppinglist.view.add_note.label'|trans }}</span>
+                </label>
+                <div class="form-input" data-role="editor">
+                    <textarea placeholder="{{ 'orob2b.frontend.shoppinglist.view.add_note.placeholder'|trans }}"
+                        rows="3" cols="30" name="shopping_list_notes" disabled="disabled"
+                        class="input input_sm input_block">{{ notes }}</textarea>
                 </div>
             </div>
         </div>
@@ -90,6 +110,8 @@
 {% endblock %}
 
 {% block _shopping_list_line_items_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-table cart-table_b-bordered cart-table__verticalp-enlarged mt1-md"}) %}
     <div{{ block('block_attributes') }}>
         <table class="oro-grid-table oro-grid-table_b-bordered oro-grid-table__verticalp-enlarged mt1-md">
@@ -121,21 +143,42 @@
                     <td class="va-t_md">
                         <div class="green3">{{ lineItem.product.InventoryStatus }}</div>
                     </td>
-                    <td class="va-t_md">
-                        <div class="product__qty-input product__qty-input_inline product__qty-input_more-info va-m_md">
-                            <div class="product__qty-input__count-option">
-                                <button class="count-minus" data-count-minus>-</button>
-                                <input type="number" value="{{ lineItem.quantity }}" name="product_qty" placeholder="{{ 'orob2b.frontend.shoppinglist.view.qty.label'|trans }}" class="input input_sm input_block text-center" data-count-input />
-                                <button class="count-plus" data-count-plus>+</button>
+                    <td class="va-t_md" {{ UI.renderPageComponentAttributes({
+                        module: 'orob2bproduct/js/app/components/product-quantity-editable-component',
+                        options: {
+                            value: {'quantity': lineItem.quantity, 'unit': lineItem.unit.code},
+                            dataKey: constant('OroB2B\\Bundle\\ShoppingListBundle\\Form\\Type\\FrontendLineItemType::NAME'),
+                            enable: resource_granted('orob2b_shopping_list_frontend_update'),
+                            elements: {
+                                quantity: '[name="product_qty"]',
+                                unit: '[name="product_unit"]'
+                            },
+                            save_api_accessor: {
+                                default_route_parameters: {
+                                    id: lineItem.id
+                                }
+                            },
+                            validation: {
+                                showErrorsHandler: 'orob2bshoppinglist/js/shopping-list-item-errors-handler'
+                            }
+                        }
+                    }) }}>
+                        <form action="#">
+                            <div class="product__qty-input product__qty-input_inline product__qty-input_more-info va-m_md">
+                                <div class="product__qty-input__count-option">
+                                    <input type="number" value="{{ lineItem.quantity }}" name="product_qty"
+                                        placeholder="{{ 'orob2b.frontend.shoppinglist.view.qty.label'|trans }}"
+                                        class="input input_sm input_block text-center" disabled="disabled" required />
+                                </div>
                             </div>
-                        </div>
-                        <div class="product__select inline va-m_md">
-                            <select data-chosen-selectbox class="input input_block input_sm">
-                                {% for unit in productsUnits[lineItem.product.id] %}
-                                <option value="{{ unit }}">{{ unit|orob2b_format_product_unit_label}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
+                            <div class="product__select inline va-m_md">
+                                <select data-chosen-selectbox class="input input_block input_sm" name="product_unit" required>
+                                    {% for unit in productsUnits[lineItem.product.id] %}
+                                    <option value="{{ unit }}" {% if unit == lineItem.unit %}selected="selected"{% endif %}>{{ unit|orob2b_format_product_unit_label}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </form>
                     </td>
                     <td class="va-t_md">
                         <table class="table borderless paddingless mb0-md">
@@ -147,36 +190,58 @@
                             </tbody>
                         </table>
                     </td>
-                    {% set DeleteItemComponentOptions  = {
-                        url: path('orob2b_api_shopping_list_frontend_delete_line_item', {'id': lineItem.id}),
-                        removeClass: 'line_item',
-                        confirmMessage: 'orob2b.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
-                        sucsessMessage: 'orob2b.frontend.shoppinglist.messages.line_item_deleted'|trans,
-                        okButtonClass: 'btn ok theme-btn_sm btn_orange',
-                        cancelButtonClass: 'btn cancel theme-btn_sm btn_gray'
-                    } %}
                     <td class="va-t_md text-right">
-                        <button class="item-remove button-icon gray fs20"
-                            data-page-component-module="orob2bfrontend/js/app/components/delete-item-component"
-                            data-page-component-options="{{ DeleteItemComponentOptions|json_encode }}">
+                        <button class="item-remove button-icon gray fs20" {{ UI.renderPageComponentAttributes({
+                                module: 'orob2bfrontend/js/app/components/delete-item-component',
+                                options: {
+                                    url: path('orob2b_api_shopping_list_frontend_delete_line_item', {'id': lineItem.id}),
+                                    removeClass: 'line_item',
+                                    confirmMessage: 'orob2b.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
+                                    sucsessMessage: 'orob2b.frontend.shoppinglist.messages.line_item_deleted'|trans,
+                                    okButtonClass: 'btn ok theme-btn_sm btn_orange',
+                                    cancelButtonClass: 'btn cancel theme-btn_sm btn_gray'
+                                }
+                            }) }} >
                             <i class="icon-trash"></i>
                         </button>
                     </td>
                 </tr>
                 <tr class="borderless t_paddingless">
-                    {% set notes = shoppingList.notes %}
+                    {% set notes = lineItem.notes %}
                     <td colspan="5">
-                        <div class="checkbox_custom-wrapper">
+                        <div class="checkbox_custom-wrapper" {{ UI.renderPageComponentAttributes({
+                            module: 'orob2bfrontend/js/app/components/switchable-editable-view-component',
+                            options: {
+                                frontend_type: 'multilineText',
+                                value: lineItem.notes,
+                                fieldName: 'notes',
+                                metadata: {
+                                    inline_editing: {
+                                        enable: resource_granted('orob2b_shopping_list_frontend_update'),
+                                        save_api_accessor: {
+                                            route: 'orob2b_api_frontend_patch_entity_data',
+                                            http_method: 'PATCH',
+                                            default_route_parameters: {
+                                                className: oro_class_name(lineItem, true),
+                                                id: lineItem.id
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }) }}>
                             <label for="{{ 'lineItem'~lineItem.id }}" class="checkbox_custom checkbox_custom_blue
                                 {% if notes is not empty %} checked {% endif %}" data-checkbox>
-                                <input type="checkbox" name="{{ 'lineItem'~lineItem.id }}" id="{{ 'lineItem'~lineItem.id }}" {% if notes is not empty %} checked = "checked" {% endif %}">
+                                <input type="checkbox" name="{{ 'lineItem'~lineItem.id }}" id="{{ 'lineItem'~lineItem.id }}"
+                                    data-role="start-editing" {% if notes is not empty %} checked = "checked" {% endif %}">
                                 <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
                                 <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
                                 <span class="checkbox_custom__text fs13">{{ 'orob2b.frontend.shoppinglist.view.add_item_note.label'|trans }}</span>
                             </label>
 
-                            <div class="form-input form-input_textarea">
-                                <textarea class="input input_sm input_block" name="copy_paste_order" cols="30" rows="3" placeholder="{{ 'orob2b.frontend.shoppinglist.view.add_item_note.placeholder'|trans }}">{{ lineItem.notes }}</textarea>
+                            <div class="form-input form-input_textarea" data-role="editor">
+                                <textarea class="input input_sm input_block" name="copy_paste_order" cols="30" rows="3" disabled="disabled"
+                                    placeholder="{{ 'orob2b.frontend.shoppinglist.view.add_item_note.placeholder'|trans }}">{{ lineItem.notes }}</textarea>
                             </div>
                         </div>
                     </td>
