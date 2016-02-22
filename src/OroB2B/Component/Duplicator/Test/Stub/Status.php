@@ -24,6 +24,4 @@ class Status
     {
         $this->title = $title;
     }
-
-
 }

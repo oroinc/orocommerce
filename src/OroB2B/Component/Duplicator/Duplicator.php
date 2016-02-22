@@ -92,7 +92,6 @@ class Duplicator
         $filterParameters = isset($filterOptions[1]) ? : null;
 
         switch ($filterName) {
-
             case 'shallowCopy':
                 $filter = new ShallowCopyFilter();
                 break;
