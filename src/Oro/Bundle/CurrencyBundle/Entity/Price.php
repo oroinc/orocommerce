@@ -24,7 +24,7 @@ class Price implements CurrencyAwareInterface
     protected $currency;
 
     /**
-     * @param float $value
+     * @param string $value
      * @param string $currency
      * @return Price
      */
