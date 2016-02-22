@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Component\EntityDuplicator;
+namespace OroB2B\Component\Duplicator;
 
 use DeepCopy\DeepCopy;
 use DeepCopy\Filter\Doctrine\DoctrineCollectionFilter;
