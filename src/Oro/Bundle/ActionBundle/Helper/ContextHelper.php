@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ActionBundle\Helper;
 
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
@@ -62,11 +63,14 @@ class ContextHelper
     /**
      * @param array $context
      * @return array
+     * @throws \HttpRequestMethodException
      */
     public function getActionParameters(array $context)
     {
         $request = $this->requestStack->getMasterRequest();
-
+        if (!$request) {
+            throw new BadRequestHttpException('Master Request is not defined');
+        }
         $params = [
             self::ROUTE_PARAM => $request->get('_route'),
             'fromUrl' => $request->getRequestUri()

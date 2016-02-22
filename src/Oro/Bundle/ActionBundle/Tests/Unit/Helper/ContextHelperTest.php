@@ -98,14 +98,14 @@ class ContextHelperTest extends \PHPUnit_Framework_TestCase
             ]
         ];
     }
-    
+
     /**
      * @dataProvider getActionParametersDataProvider
      *
      * @param array $context
      * @param array $expected
      */
-    public function testGetWidgetParameters(array $context, array $expected)
+    public function testGetActionParameters(array $context, array $expected)
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|Request $request */
         $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
@@ -136,6 +136,15 @@ class ContextHelperTest extends \PHPUnit_Framework_TestCase
         }
 
         $this->assertEquals($expected, $this->helper->getActionParameters($context));
+    }
+
+    /**
+     * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
+     * @expectedExceptionMessage Master Request is not defined
+     */
+    public function testGetActionParametersException()
+    {
+        $this->helper->getActionParameters([]);
     }
 
     /**
