@@ -124,7 +124,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('account_group_id', 'integer', []);
         $table->addColumn('priority', 'integer', []);
-        $table->addColumn('merge_allowed', 'boolean');
+        $table->addColumn('merge_allowed', 'boolean', ['default' => true]);
         $table->setPrimaryKey(['account_group_id', 'price_list_id', 'website_id']);
     }
 
@@ -140,7 +140,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('account_id', 'integer', []);
         $table->addColumn('priority', 'integer', []);
-        $table->addColumn('merge_allowed', 'boolean');
+        $table->addColumn('merge_allowed', 'boolean', ['default' => true]);
         $table->setPrimaryKey(['account_id', 'price_list_id', 'website_id']);
     }
 
@@ -155,7 +155,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('price_list_id', 'integer', []);
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('priority', 'integer', []);
-        $table->addColumn('merge_allowed', 'boolean');
+        $table->addColumn('merge_allowed', 'boolean', ['default' => true]);
         $table->setPrimaryKey(['price_list_id', 'website_id']);
     }
 

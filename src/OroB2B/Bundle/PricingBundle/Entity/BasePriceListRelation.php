@@ -40,7 +40,7 @@ class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInte
     /**
      * @var boolean
      *
-     * @ORM\Column(name="merge_allowed", type="boolean", nullable=false)
+     * @ORM\Column(name="merge_allowed", type="boolean", nullable=false, options={"default": true})
      */
     protected $mergeAllowed = true;
 
