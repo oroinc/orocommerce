@@ -21,12 +21,12 @@ class AddMergeAllowedColumn implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         $schema->getTable('orob2b_price_list_to_acc_group')
-            ->addColumn('merge_allowed', 'boolean');
+            ->addColumn('merge_allowed', 'boolean', ['default' => true]);
 
         $schema->getTable('orob2b_price_list_to_account')
-            ->addColumn('merge_allowed', 'boolean');
+            ->addColumn('merge_allowed', 'boolean', ['default' => true]);
 
         $schema->getTable('orob2b_price_list_to_website')
-            ->addColumn('merge_allowed', 'boolean');
+            ->addColumn('merge_allowed', 'boolean', ['default' => true]);
     }
 }
