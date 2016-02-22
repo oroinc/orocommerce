@@ -31,6 +31,7 @@ orob2b:
                 general: 'General'
                 additional: 'Additional'
                 quote_products: 'Line Items'
+                shipping_address: 'Shipping Address'
 
             widgets:
                 quote_information: 'Quote Information'
@@ -148,8 +149,8 @@ orob2b:
             column_summary: 'Summary'
 
         quoteaddress:
-            entity_label: Order Address
-            entity_plural_label: Order Addresses
+            entity_label: Quote Address
+            entity_plural_label: Quote Addresses
             id.label: ID
             account_address.label: Account address
             account_user_address.label: Account user address
@@ -168,6 +169,7 @@ orob2b:
             street.label: Street
             street2.label: Street 2
 
+            no_exist: No shipping address found
         controller:
             quote:
                 saved.message: 'Quote has been saved'
