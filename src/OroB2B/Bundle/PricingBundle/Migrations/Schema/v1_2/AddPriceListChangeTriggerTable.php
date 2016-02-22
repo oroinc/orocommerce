@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Migrations\Schema\v1_1;
+namespace OroB2B\Bundle\PricingBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Schema\Schema;
 
@@ -25,7 +25,7 @@ class AddPriceListChangeTriggerTable implements Migration
      */
     protected function createOroB2BPriceListChangeTriggerTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_price_list_change_trigger');
+        $table = $schema->createTable('orob2b_pl_change_trigger');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('account_group_id', 'integer', ['notnull' => false]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
