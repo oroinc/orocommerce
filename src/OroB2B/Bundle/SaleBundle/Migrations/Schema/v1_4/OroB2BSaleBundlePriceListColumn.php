@@ -7,7 +7,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroB2BSaleBundle implements Migration
+class OroB2BSaleBundlePriceListColumn implements Migration
 {
     /**
      * {@inheritdoc}
@@ -15,13 +15,7 @@ class OroB2BSaleBundle implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_sale_quote');
-
-        $table->addColumn('website_id', 'integer', ['notnull' => false]);
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_website'),
-            ['website_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'SET NULL']
-        );
+        $table->removeForeignKey('FK_4F66B6F65688DED7');
+        $table->dropColumn('price_list_id');
     }
 }
