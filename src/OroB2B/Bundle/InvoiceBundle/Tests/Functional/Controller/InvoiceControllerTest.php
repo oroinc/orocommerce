@@ -140,7 +140,7 @@ class InvoiceControllerTest extends WebTestCase
 
         $invoice = $this->fetchInvoice((int)$result['id']);
 
-        $this->assertSame(1000.0, $invoice->getSubtotal());
+        $this->assertSame('1000.0000', $invoice->getSubtotal());
         $this->assertSame(self::PO_NUMBER, $invoice->getPoNumber());
 
         return $invoice->getId();
@@ -159,10 +159,8 @@ class InvoiceControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $account = $this->getAccount();
-
         /** @var Product $product */
         $product = $this->getReference('product.2');
-
         /** @var Website $website */
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
 
@@ -249,7 +247,7 @@ class InvoiceControllerTest extends WebTestCase
         $invoice = $this->fetchInvoice($id);
         $this->assertEquals($expectedLineItems, $actualLineItems);
         $this->assertNotEquals($invoice->getCreatedAt(), $invoice->getUpdatedAt());
-        $this->assertSame(210.0, $invoice->getSubtotal());
+        $this->assertSame('210.0000', $invoice->getSubtotal());
     }
 
     /**

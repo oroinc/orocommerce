@@ -89,7 +89,7 @@ class OroB2BInvoiceBundleInstaller implements Installation
             ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
         $table->addColumn('price_currency', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('price_type', 'smallint', ['unsigned' => true]);
+        $table->addColumn('price_type', 'integer', ['unsigned' => true]);
         $table->setPrimaryKey(['id']);
     }
 

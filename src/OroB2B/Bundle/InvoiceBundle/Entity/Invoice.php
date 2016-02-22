@@ -431,7 +431,7 @@ class Invoice extends ExtendInvoice implements
     }
 
     /**
-     * @return float
+     * @return string
      */
     public function getSubtotal()
     {
@@ -439,7 +439,7 @@ class Invoice extends ExtendInvoice implements
     }
 
     /**
-     * @param float $subtotal
+     * @param string $subtotal
      * @return $this
      */
     public function setSubtotal($subtotal)
@@ -461,7 +461,7 @@ class Invoice extends ExtendInvoice implements
      * @param Website $website
      * @return $this
      */
-    public function setWebsite($website)
+    public function setWebsite(Website $website)
     {
         $this->website = $website;
 
