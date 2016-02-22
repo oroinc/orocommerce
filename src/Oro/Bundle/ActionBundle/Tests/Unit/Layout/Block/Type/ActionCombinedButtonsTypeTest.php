@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ActionBundle\Tests\Unit\Layout\Block\Type;
 
 use Oro\Bundle\ActionBundle\Layout\Block\Type\ActionButtonType;
+use Oro\Bundle\ActionBundle\Layout\Block\Type\ActionDropDownButtons;
 use Oro\Bundle\ActionBundle\Layout\Block\Type\ActionLineButtonsType;
 use Oro\Bundle\ActionBundle\Layout\Block\Type\DropdownToggleType;
 use Oro\Component\Layout\LayoutManipulatorInterface;
@@ -27,23 +28,20 @@ class ActionCombinedButtonsTypeTest extends AbstractActionButtonsTypeTest
         /** @var LayoutManipulatorInterface|\PHPUnit_Framework_MockObject_MockObject $manipulator */
         $manipulator = $this->getMock('Oro\Component\Layout\LayoutManipulatorInterface');
         $expectedOptions['hide_icon'] = true;
-        $expectedOptions['only_link'] = true;
 
-        $manipulator->expects($this->exactly(3))->method('add')->withConsecutive(
+        $manipulator->expects($this->exactly(2))->method('add')->withConsecutive(
             [
-                $actionName . '_button_combined_primary',
+                $builderId . '_button_combined_primary',
                 $builderId,
                 ActionButtonType::NAME,
                 $expectedOptions
             ],
             [
-                'action_dropdown_menu',
+                $builderId . '_action_dropdown_menu',
                 $builderId,
-                ActionLineButtonsType::NAME,
+                ActionDropDownButtons::NAME,
                 [
                     'entity' => $options['entity'],
-                    'suffix' => 'combined',
-                    'hide_icons' => true,
                     'exclude_action' => $options['primary_action_name']
                 ]
             ]
