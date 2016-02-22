@@ -105,7 +105,7 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
     /**
      * @var int
      *
-     * @ORM\Column(name="price_type", type="integer", options={"unsigned":true})
+     * @ORM\Column(name="price_type", type="integer")
      */
     protected $priceType = PriceTypeAwareInterface::PRICE_TYPE_UNIT;
 
