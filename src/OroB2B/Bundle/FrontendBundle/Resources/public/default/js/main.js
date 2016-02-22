@@ -25,6 +25,7 @@ require(['jquery', 'orob2bfrontend/default/js/app'], function(jQuery) {
                 app.init = function() {
                     sidebarToggleBinding(); //Sidebar toggling binding function
                     oroMPAccordionBinding(); //Multi pupose accordion toggling binding function
+                    oroExpandLongTextBinding(); //Multi pupose long text toggling binding function
                     tabToggleBinding(); //Tabs toggling binding function
                     ratyInit(); //Initing function of raty plugin
                     chosenInit(); // Initing function of chosen (custom selectboxes) plugin
@@ -101,6 +102,37 @@ require(['jquery', 'orob2bfrontend/default/js/app'], function(jQuery) {
 
                         $widget.toggleClass('oro-mp-widget__list-expanded');
                         $container.toggleClass('hidden');
+
+                        event.preventDefault();
+                    });
+                }
+
+                function oroExpandLongTextBinding() {
+                    var trigger = '[data-oro-expand-trigger]';
+
+                    $(trigger).each(function () {
+                        var $widget = $(this).closest('[data-oro-expand-widget]'),
+                            $container = $widget.find('[data-oro-expand-container]'),
+                            content = $container.html(),
+                            showTotalChar = $container.attr('max-length');
+                        if (content.length > showTotalChar) {
+                            var short = content.substr(0, showTotalChar),
+                                newContent = '<span data-oro-expand-short>' + short + '...' + '</span>';
+
+                            newContent += '<span class="hidden" data-oro-expand-long>' + content + '</span>';
+                            $container.html(newContent);
+                        }
+                    });
+
+                    $(document).on('click', trigger, function(event) {
+                        var $widget = $(this).closest('[data-oro-expand-widget]'),
+                            $container = $widget.find('[data-oro-expand-container]'),
+                            $shortText = $container.find('[data-oro-expand-short]'),
+                            $longText = $container.find('[data-oro-expand-long]');
+
+                        $widget.toggleClass('oro-long-text-expanded');
+                        $shortText.toggleClass('hidden');
+                        $longText.toggleClass('hidden');
 
                         event.preventDefault();
                     });
