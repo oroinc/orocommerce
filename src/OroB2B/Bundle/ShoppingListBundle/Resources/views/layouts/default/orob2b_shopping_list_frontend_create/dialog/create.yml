@@ -2,10 +2,6 @@ layout:
     actions:
         - @setBlockTheme:
             themes: 'OroB2BShoppingListBundle:layouts:default/orob2b_shopping_list_frontend_create/dialog/create.html.twig'
-        - @setOption:
-            id: form_label
-            optionName: label
-            optionValue: orob2b.shoppinglist.create_new_form.input_label
         - @addTree:
             items:
                 widget_content:

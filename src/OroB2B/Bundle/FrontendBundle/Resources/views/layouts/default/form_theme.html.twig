@@ -36,10 +36,9 @@
         class: [
             attr.class|default(''),
             "form-field-" ~ form.vars.name,
-            class_prefix ~ "__form__row"
         ]|join(' ')
     }) %}
-    <fieldset {{ block('widget_attributes') }}>
+    <fieldset class="{{ class_prefix }}__form__row">
         <div class="{{ class_prefix }}__form__col form__col_x12">
             {{- form_label(form) -}}
             {{- form_errors(form) -}}
