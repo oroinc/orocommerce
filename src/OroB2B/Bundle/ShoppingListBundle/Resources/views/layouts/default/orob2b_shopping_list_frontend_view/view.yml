@@ -30,6 +30,16 @@ layout:
                                 @value: $data.orob2b_shopping_list_products_prices
                             productsUnits:
                                 @value: $data.orob2b_shopping_list_products_units
+                shopping_list_checkout_container:
+                    blockType: container
+                shopping_list_button_container:
+                    blockType: container
+                shopping_list_delete_button:
+                    blockType: block
+                    options:
+                        vars:
+                            shoppingList:
+                                @value: $data.shoppingList
                 shopping_list_combined_button:
                     blockType: block
             tree:
@@ -39,7 +49,10 @@ layout:
                         shopping_list_top_actions: ~
                         shopping_list_options: ~
                         shopping_list_line_items: ~
-                        shopping_list_combined_button: ~
+                        shopping_list_checkout_container:
+                            shopping_list_button_container:
+                                shopping_list_delete_button: ~
+                            shopping_list_combined_button: ~
         - @add:
             id: shopping_list_selector
             parentId: sidebar_left

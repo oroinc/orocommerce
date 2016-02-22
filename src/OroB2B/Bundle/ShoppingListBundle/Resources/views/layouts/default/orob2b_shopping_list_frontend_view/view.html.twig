@@ -7,9 +7,7 @@
 {% endblock %}
 
 {% block _shopping_list_view_container_widget %}
-    {% set attr = attr|merge({
-    class: attr.class|default('') ~ " container-fluid"
-    }) %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " container-fluid"}) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
@@ -113,6 +111,7 @@
     {% import 'OroUIBundle::macros.html.twig' as UI %}
 
     {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-table cart-table_b-bordered cart-table__verticalp-enlarged mt1-md"}) %}
+    {% if shoppingList.lineItems is not empty %}
     <div{{ block('block_attributes') }}>
         <table class="oro-grid-table oro-grid-table_b-bordered oro-grid-table__verticalp-enlarged mt1-md">
             <thead>
@@ -257,6 +256,46 @@
         </table>
         {{ block_widget(block) }}
     </div>
+    {% else %}
+    <!-- START EMPTY CART -->
+    <div class="cart-list_empty">
+          <span class="badge badge_orange badge_xlg badge_circle">
+            <i class="icon-basket"></i>
+          </span>
+        <span class="fs24 va-m_md">{{ 'orob2b.frontend.shoppinglist.view.empty'|trans }}</span>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block _shopping_list_checkout_container_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " order-checkout-widget order-checkout-widget_block text-right mb4-md"}) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _shopping_list_button_container_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " order-builder-clear-btn fs0"}) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _shopping_list_delete_button_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    <button class="btn btn_default theme-btn_sm btn-dark fs15 mr1-md" {{ UI.renderPageComponentAttributes({
+        module: 'orob2bfrontend/js/app/components/delete-item-component',
+        options: {
+            url: path('orob2b_api_delete_shoppinglist', {'id': shoppingList.id}),
+            removeClass: 'line_item',
+            confirmMessage: 'orob2b.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
+            sucsessMessage: 'orob2b.frontend.shoppinglist.messages.line_item_deleted'|trans,
+            okButtonClass: 'btn ok theme-btn_sm btn_orange',
+            cancelButtonClass: 'btn cancel theme-btn_sm btn_gray'
+        }
+    }) }} >
+        <i class="fa fa-trash mmr5-md"></i> {{ 'orob2b.frontend.shoppinglist.btn.delete'|trans }}
+    </button>
 {% endblock %}
 
 {% block _shopping_list_combined_button_widget %}
