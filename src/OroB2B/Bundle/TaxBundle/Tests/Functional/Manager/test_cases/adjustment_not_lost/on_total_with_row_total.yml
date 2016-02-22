@@ -41,6 +41,6 @@ expectedResult:
                 taxAmount: '2.22'      # 22.226 * 0.1 = 2.2226 ~ 2.22
                 adjustment: '0.0026'   # 2.2226 - 2.22
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '44.45', tax_amount: '4.45' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '44.45', taxAmount: '4.45' }
     taxes:
-        - { tax: 'TAX1', rate: '0.1', taxable_amount: '44.45', tax_amount: '4.45' }
+        - { tax: 'TAX1', rate: '0.1', taxableAmount: '44.45', taxAmount: '4.45' }

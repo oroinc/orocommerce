@@ -39,4 +39,4 @@ expectedResult: # values from simple_order_item_1 used to check database overrid
         taxAmount: '0.56'    # 5.55 * 0.1
         adjustment: '-0.005' # 0.555 - 0.56
     taxes:
-        - { tax: 'TAX1', rate: '0.1', taxable_amount: '33.3', tax_amount: '3.33' }
+        - { tax: 'TAX1', rate: '0.1', taxableAmount: '33.3', taxAmount: '3.33' }

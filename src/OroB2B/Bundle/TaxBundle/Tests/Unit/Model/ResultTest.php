@@ -104,21 +104,21 @@ class ResultTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testTaxesDropped()
+    public function testItemsDropped()
     {
         $result = $this->createResultModel();
 
         /** @var Result $newResult */
         $newResult = unserialize(serialize($result));
-        $this->assertEquals([], $newResult->getTaxes());
+        $this->assertEquals([], $newResult->getItems());
     }
 
-    public function testSerializeWithoutTaxes()
+    public function testSerializeWithoutItems()
     {
         $result = $this->createResultModel();
         $result->offsetUnset(Result::TAXES);
 
         $newResult = unserialize(serialize($result));
-        $this->assertEquals([], $newResult->getTaxes());
+        $this->assertEquals([], $newResult->getItems());
     }
 }

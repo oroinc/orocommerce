@@ -123,3 +123,20 @@ orob2b.tax:
 
     providers:
         built_in.label: Built-In Table Rates
+
+    result:
+        label: Taxes
+        unit: Unit Price
+        row: Row Total
+        total: Total
+        shipping: Shipping
+        taxes: Applied Taxes
+
+        includingTax: Including Tax
+        excludingTax: Excluding Tax
+        taxAmount: Tax Amount
+        adjustment: Adjustment
+
+        tax: Tax
+        rate: Rate
+        taxableAmount: Taxable Amount

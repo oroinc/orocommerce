@@ -81,7 +81,7 @@ expectedResult:
                 taxAmount: '2.22'     # 2.221
                 adjustment: '0.001'   # 2.221 - 2.22
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '22.21', tax_amount: '2.22' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '22.21', taxAmount: '2.22' }
         -
             row:
                 includingTax: '24.43' # 22.21 + 2.221 = 24.431
@@ -94,7 +94,7 @@ expectedResult:
                 taxAmount: '2.22'     # 2.221
                 adjustment: '0.001'   # 2.221 - 2.22
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '22.21', tax_amount: '2.22' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '22.21', taxAmount: '2.22' }
         -
             row:
                 includingTax: '24.43' # 22.21 + 2.221 = 24.431
@@ -107,7 +107,7 @@ expectedResult:
                 taxAmount: '2.22'     # 2.221
                 adjustment: '0.001'   # 2.221 - 2.22
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '22.21', tax_amount: '2.22' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '22.21', taxAmount: '2.22' }
         -
             row:
                 includingTax: '24.43' # 22.21 + 2.221 = 24.431
@@ -120,7 +120,7 @@ expectedResult:
                 taxAmount: '2.22'     # 2.221
                 adjustment: '0.001'   # 2.221 - 2.22
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '22.21', tax_amount: '2.22' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '22.21', taxAmount: '2.22' }
         -
             row:
                 includingTax: '24.43' # 22.21 + 2.221 = 24.431
@@ -133,7 +133,7 @@ expectedResult:
                 taxAmount: '2.22'     # 2.221
                 adjustment: '0.001'   # 2.221 - 2.22
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '22.21', tax_amount: '2.22' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '22.21', taxAmount: '2.22' }
         -
             row:
                 includingTax: '24.43' # 22.21 + 2.221 = 24.431
@@ -146,7 +146,7 @@ expectedResult:
                 taxAmount: '2.22'     # 2.221
                 adjustment: '0.001'   # 2.221 - 2.22
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '22.21', tax_amount: '2.22' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '22.21', taxAmount: '2.22' }
         -
             row:
                 includingTax: '24.43' # 22.21 + 2.221 = 24.431
@@ -159,7 +159,7 @@ expectedResult:
                 taxAmount: '2.22'     # 2.221
                 adjustment: '0.001'   # 2.221 - 2.22
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '22.21', tax_amount: '2.22' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '22.21', taxAmount: '2.22' }
         -
             row:
                 includingTax: '24.43' # 22.21 + 2.221 = 24.431
@@ -172,7 +172,7 @@ expectedResult:
                 taxAmount: '2.22'     # 2.221
                 adjustment: '0.001'   # 2.221 - 2.22
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '22.21', tax_amount: '2.22' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '22.21', taxAmount: '2.22' }
         -
             row:
                 includingTax: '24.43' # 22.21 + 2.221 = 24.431
@@ -185,6 +185,6 @@ expectedResult:
                 taxAmount: '2.22'     # 2.221
                 adjustment: '0.001'   # 2.221 - 2.22
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '22.21', tax_amount: '2.22' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '22.21', taxAmount: '2.22' }
     taxes:
-        - { tax: 'TAX1', rate: '0.1', taxable_amount: '199.89', tax_amount: '19.99' }
+        - { tax: 'TAX1', rate: '0.1', taxableAmount: '199.89', taxAmount: '19.99' }
