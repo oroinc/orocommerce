@@ -70,6 +70,14 @@ class FrontendLineItemFormProvider extends AbstractDataProvider implements FormP
      */
     public function getForm($product = null, array $options = [])
     {
+        if (!$product instanceof Product) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'product should be instance of Product, instance of %s given.',
+                    is_object($product) ? get_class($product) : gettype($product)
+                )
+            );
+        }
         if (!isset($this->form[$product->getId()])) {
             $this->form[$product->getId()] = $this->formFactory
                 ->create(FrontendLineItemType::NAME, $this->getLineItem($product), $options);

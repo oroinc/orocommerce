@@ -68,6 +68,14 @@ class ShoppingListFormProvider extends AbstractDataProvider implements FormProvi
      */
     public function getForm($shoppingList = null, array $options = [])
     {
+        if (!$shoppingList instanceof ShoppingList) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'shoppingList should be instance of ShoppingList, instance of %s given.',
+                    is_object($shoppingList) ? get_class($shoppingList) : gettype($shoppingList)
+                )
+            );
+        }
         $shoppingListId = $shoppingList->getId();
 
         if (!isset($this->form[$shoppingListId])) {

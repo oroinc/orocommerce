@@ -36,4 +36,12 @@ class FrontendLineItemFormProviderTest extends WebTestCase
         $this->assertSame($this->dataProvider->getForm($product), $actual->getForm());
         $this->assertEquals(FrontendLineItemType::NAME, $actual->getForm()->getName());
     }
+
+    /**
+     * @expectedException \InvalidargumentException
+     */
+    public function testGetFormWithInvalidArgument()
+    {
+        $this->dataProvider->getForm(null);
+    }
 }
