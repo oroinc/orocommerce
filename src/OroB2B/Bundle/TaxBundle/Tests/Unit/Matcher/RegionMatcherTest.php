@@ -174,26 +174,4 @@ class RegionMatcherTest extends AbstractMatcherTest
             ],
         ];
     }
-
-    public function testIsStateWithNonTaxableDigitals()
-    {
-        $country = new Country('US');
-        $region1 = new Region('US-IN');
-        $region1->setCode('IN');
-        $region2 = new Region('US-CA');
-        $region2->setCode('CA');
-        $productTaxCode = 'PRODUCT_TAX_CODE';
-
-        $address1 = (new Address())
-            ->setCountry($country)
-            ->setRegion($region1);
-
-        $this->assertFalse($this->matcher->isStateWithNonTaxableDigitals($address1, $productTaxCode));
-
-        $address2 = (new Address())
-            ->setCountry($country)
-            ->setRegion($region2);
-
-        $this->assertTrue($this->matcher->isStateWithNonTaxableDigitals($address2, $productTaxCode));
-    }
 }

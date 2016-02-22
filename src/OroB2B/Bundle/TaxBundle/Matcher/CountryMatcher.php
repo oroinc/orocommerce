@@ -8,8 +8,6 @@ use OroB2B\Bundle\TaxBundle\Model\TaxCodes;
 
 class CountryMatcher extends AbstractMatcher
 {
-    const COUNTRY_CODE_USA = 'US';
-
     /**
      * {@inheritdoc}
      */

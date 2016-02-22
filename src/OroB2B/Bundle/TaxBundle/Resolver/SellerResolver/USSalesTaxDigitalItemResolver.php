@@ -2,12 +2,11 @@
 
 namespace OroB2B\Bundle\TaxBundle\Resolver\SellerResolver;
 
-use Brick\Math\BigDecimal;
-
+use OroB2B\Bundle\TaxBundle\Matcher\UnitedStatesHelper;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
-use OroB2B\Bundle\TaxBundle\Resolver\CustomerAddressItemResolver;
+use OroB2B\Bundle\TaxBundle\Resolver\ResolverInterface;
 
-class USSalesTaxDigitalItemResolver extends CustomerAddressItemResolver
+class USSalesTaxDigitalItemResolver implements ResolverInterface
 {
     /** {@inheritdoc} */
     public function resolve(Taxable $taxable)
@@ -25,18 +24,13 @@ class USSalesTaxDigitalItemResolver extends CustomerAddressItemResolver
             return;
         }
 
-        if ($taxable->getContextValue(Taxable::DIGITAL_PRODUCT)) {
-            return;
+        $isStateWithoutDigitalTax = UnitedStatesHelper::isStateWithoutDigitalTax(
+            $address->getCountry()->getIso2Code(),
+            $address->getRegion()->getCode()
+        );
+
+        if ($isStateWithoutDigitalTax && $taxable->getContextValue(Taxable::DIGITAL_PRODUCT)) {
+            $taxable->getResult()->lockResult();
         }
-
-        $productTaxCode = $taxable->getContextValue(Taxable::PRODUCT_TAX_CODE);
-
-        $taxRules = $this->matcher->match($address, $productTaxCode);
-        $taxableUnitPrice = BigDecimal::of($taxable->getPrice());
-        $taxableAmount = $taxableUnitPrice->multipliedBy($taxable->getQuantity());
-
-        $result = $taxable->getResult();
-        $this->resolveUnitPrice($result, $taxRules, $taxableUnitPrice);
-        $this->resolveRowTotal($result, $taxRules, $taxableAmount);
     }
 }
