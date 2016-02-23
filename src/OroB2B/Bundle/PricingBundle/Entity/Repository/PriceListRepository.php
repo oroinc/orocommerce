@@ -12,6 +12,9 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class PriceListRepository extends EntityRepository
 {
+    /**
+     * @todo: should be dropped in scope of BB-1858
+     */
     protected function dropDefaults()
     {
         $qb = $this->createQueryBuilder('pl');
@@ -27,6 +30,7 @@ class PriceListRepository extends EntityRepository
     }
 
     /**
+     * @todo: should be dropped in scope of BB-1858
      * @param PriceList $priceList
      */
     public function setDefault(PriceList $priceList)
@@ -46,6 +50,7 @@ class PriceListRepository extends EntityRepository
     }
 
     /**
+     * @todo: should be dropped in scope of BB-1858
      * @return PriceList
      */
     public function getDefault()
@@ -61,6 +66,7 @@ class PriceListRepository extends EntityRepository
     }
 
     /**
+     * @todo remove in scope of BB-1851
      * @param Account $account
      * @return PriceList|null
      */
@@ -85,6 +91,7 @@ class PriceListRepository extends EntityRepository
     }
 
     /**
+     * @todo remove in scope of BB-1851
      * @param AccountGroup $accountGroup
      * @return PriceList|null
      */
@@ -109,6 +116,7 @@ class PriceListRepository extends EntityRepository
     }
 
     /**
+     * @todo remove in scope of BB-1851
      * @param Website $website
      * @return PriceList|null
      */

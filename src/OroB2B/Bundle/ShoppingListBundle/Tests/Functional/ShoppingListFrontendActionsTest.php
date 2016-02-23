@@ -26,6 +26,7 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
         $this->loadFixtures(
             [
                 'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
             ]
         );
     }
