@@ -227,7 +227,7 @@ class SoftDeleteableFilterTest extends WebTestCase
     {
         $connection = $this->em->getConnection();
         $platform = $connection->getDatabasePlatform();
-        $metadata = $this->em->getClassMetadata(Request::class);
+        $metadata = $this->em->getClassMetadata('OroB2B\Bundle\RFPBundle\Entity\Request');
 
         $column = $this->em
             ->getConfiguration()
