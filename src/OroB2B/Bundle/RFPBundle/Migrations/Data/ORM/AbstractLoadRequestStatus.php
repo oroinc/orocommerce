@@ -9,7 +9,7 @@ use Oro\Bundle\TranslationBundle\DataFixtures\AbstractTranslatableEntityFixture;
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatusTranslation;
 
-abstract class AbstractDefaultRequestStatus extends AbstractTranslatableEntityFixture
+abstract class AbstractLoadRequestStatus extends AbstractTranslatableEntityFixture
 {
     const PREFIX = 'request_status';
 

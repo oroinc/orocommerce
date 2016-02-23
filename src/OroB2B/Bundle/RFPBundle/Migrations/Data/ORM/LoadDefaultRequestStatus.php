@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\RFPBundle\Migrations\Data\ORM;
 
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 
-class LoadDefaultRequestStatus extends AbstractDefaultRequestStatus
+class LoadDefaultRequestStatus extends AbstractLoadRequestStatus
 {
     /**
      * {@inheritDoc}
