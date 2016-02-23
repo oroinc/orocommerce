@@ -403,3 +403,4 @@ services:
             - @orob2b_tax.manager.tax_manager
         tags:
             - { name: doctrine.event_listener, event: postUpdate }
+            - { name: doctrine.event_listener, event: postPersist }

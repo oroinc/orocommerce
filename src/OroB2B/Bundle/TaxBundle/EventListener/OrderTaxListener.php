@@ -25,7 +25,22 @@ class OrderTaxListener
      */
     public function postUpdate(LifecycleEventArgs $event)
     {
-        /** @var Order $order */
+        $this->processEvent($event);
+    }
+
+    /**
+     * @param LifecycleEventArgs $event
+     */
+    public function postPersist(LifecycleEventArgs $event)
+    {
+        $this->processEvent($event);
+    }
+
+    /**
+     * @param LifecycleEventArgs $event
+     */
+    protected function processEvent(LifecycleEventArgs $event)
+    {
         $order = $event->getEntity();
         if (!$this->isApplicable($order)) {
             return;

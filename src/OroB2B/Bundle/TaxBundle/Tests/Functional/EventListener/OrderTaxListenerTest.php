@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\TaxBundle\Tests\Functional\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -20,30 +21,32 @@ class OrderTaxListenerTest extends WebTestCase
     /** @var ManagerRegistry */
     protected $doctrine;
 
+    /** @var Order */
+    protected $order;
+
+    /** @var EntityManager */
+    protected $entityManager;
+
     protected function setUp()
     {
         $this->initClient();
         $this->doctrine = $this->getContainer()->get('doctrine');
+        $this->entityManager = $this->doctrine->getManagerForClass('OroB2B\Bundle\OrderBundle\Entity\Order');
     }
 
     public function testSaveOrderTaxValue()
     {
-        $order = $this->createOrder();
+        $this->createOrder();
 
-        /** @var TaxValue $taxValue */
-        $taxValue = $this->doctrine->getRepository('OroB2BTaxBundle:TaxValue')->findOneBy(
-            [
-                'entityClass' => 'OroB2B\Bundle\OrderBundle\Entity\Order',
-                'entityId'    => $order->getId()
-            ]
-        );
-
+        $taxValue = $this->getTaxValue();
         $this->assertNotNull($taxValue);
+
+        $this->removeTaxValue($taxValue);
+        $this->updateOrder();
+
+        $this->assertNotNull($this->getTaxValue());
     }
 
-    /**
-     * @return Order
-     */
     protected function createOrder()
     {
         /** @var User $orderUser */
@@ -59,8 +62,6 @@ class OrderTaxListenerTest extends WebTestCase
         /** @var PaymentTerm $paymentTerm */
         $paymentTerm = $this->doctrine->getRepository('OroB2BPaymentBundle:PaymentTerm')->findOneBy([]);
 
-        $entityManager = $this->doctrine->getManagerForClass('OroB2B\Bundle\OrderBundle\Entity\Order');
-
         $order = new Order();
         $order
             ->setIdentifier('tax_order')
@@ -74,8 +75,46 @@ class OrderTaxListenerTest extends WebTestCase
             ->setAccount($accountUser->getAccount())
             ->setAccountUser($accountUser);
 
-        $entityManager->persist($order);
+        $this->entityManager->persist($order);
+        $this->entityManager->flush();
+
+        $this->order = $order;
+    }
+
+    protected function updateOrder()
+    {
+        $this->order
+            ->setIdentifier('tax_order_updated')
+            ->setSubtotal('1800');
+
+        $this->entityManager->persist($this->order);
+        $this->entityManager->flush();
+    }
+
+    /**
+     * @return TaxValue $taxValue
+     */
+    protected function getTaxValue()
+    {
+        /** @var TaxValue $taxValue */
+        $taxValue = $this->doctrine->getRepository('OroB2BTaxBundle:TaxValue')->findOneBy(
+            [
+                'entityClass' => 'OroB2B\Bundle\OrderBundle\Entity\Order',
+                'entityId'    => $this->order->getId()
+            ]
+        );
+
+        return $taxValue;
+    }
+
+    /**
+     * @param TaxValue $taxValue
+     */
+    protected function removeTaxValue(TaxValue $taxValue)
+    {
+        $entityManager = $this->doctrine->getManagerForClass('OroB2B\Bundle\TaxBundle\Entity\TaxValue');
+
+        $entityManager->remove($taxValue);
         $entityManager->flush();
-        return $order;
     }
 }
