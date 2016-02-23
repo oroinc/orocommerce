@@ -1,10 +1,18 @@
 parameters:
     orob2b_pricing.entity.price_list.class: OroB2B\Bundle\PricingBundle\Entity\PriceList
+    orob2b_pricing.entity.combined_price_list.class: OroB2B\Bundle\PricingBundle\Entity\CombinedPriceList
     orob2b_pricing.entity.price_list_to_account.class: OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount
     orob2b_pricing.entity.price_list_to_account_group.class: OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup
     orob2b_pricing.entity.price_list_to_website.class: OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite
+    orob2b_pricing.entity.combined_price_list_to_account.class: OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccount
+    orob2b_pricing.entity.combined_price_list_to_account_group.class: OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup
+    orob2b_pricing.entity.combined_price_list_to_website.class: OroB2B\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite
     orob2b_pricing.entity.product_price.class: OroB2B\Bundle\PricingBundle\Entity\ProductPrice
+    orob2b_pricing.entity.combined_product_price.class: OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice
+    orob2b_pricing.entity.product_price_change_trigger.class: OroB2B\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger
     orob2b_pricing.entity.price_list_currency.class: OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency
+
+    orob2b_pricing.entity_listener.product_price.class: OroB2B\Bundle\PricingBundle\Entity\EntityListener\ProductPriceEntityListener
 
     orob2b_pricing.price_list.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_pricing.product_price.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
@@ -18,6 +26,21 @@ parameters:
     orob2b_pricing.provider.user_currency.class: OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider
     orob2b_pricing.provider.product_price.class: OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider
     orob2b_pricing.provider.line_items_subtotal.class: OroB2B\Bundle\PricingBundle\Provider\LineItemsSubtotalProvider
+    orob2b_pricing.provider.combined_price_list.class: OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider
+    orob2b_pricing.provider.price_list_collection.class: OroB2B\Bundle\PricingBundle\Provider\PriceListCollectionProvider
+
+    orob2b_pricing.resolver.combined_product_price_resolver.class: OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver
+
+    orob2b_pricing.builder.abstract_combined_price_list_builder.class: OroB2B\Bundle\PricingBundle\Builder\AbstractCombinedPriceListBuilder
+    orob2b_pricing.builder.combined_price_list_builder.class: OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder
+    orob2b_pricing.builder.website_combined_price_list_builder.class: OroB2B\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder
+    orob2b_pricing.builder.account_group_combined_price_list_builder.class: OroB2B\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder
+    orob2b_pricing.builder.account_combined_price_list_builder.class: OroB2B\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder
+
+    orob2b_pricing.builder.queue_consumer.class: OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer
+    orob2b_pricing.builder.combined_product_price_queue_consumer.class: OroB2B\Bundle\PricingBundle\Builder\CombinedProductPriceQueueConsumer
+
+    orob2b_pricing.builder.combined_price_list_garbage_collector.class: OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector
 
     orob2b_pricing.validator.unique_product_prices.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\UniqueProductPricesValidator
     orob2b_pricing.validator.unique_price_list.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\UniquePriceListValidator
@@ -28,15 +51,17 @@ parameters:
     orob2b_pricing.event_listener.form_view.class: OroB2B\Bundle\PricingBundle\EventListener\FormViewListener
     orob2b_pricing.event_listener.website_form_view.class: OroB2B\Bundle\PricingBundle\EventListener\WebsiteFormViewListener
     orob2b_pricing.event_listener.datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\DatagridListener
+    orob2b_pricing.event_listener.account_group_changes.class: OroB2B\Bundle\PricingBundle\EventListener\AccountGroupChangesListener
     orob2b_pricing.event_listener.product_price_datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener
     orob2b_pricing.event_listener.frontend.product_price_datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener
     orob2b_pricing.event_listener.product_duplicate.class: OroB2B\Bundle\PricingBundle\EventListener\ProductDuplicateListener
     orob2b_pricing.event_listener.product_select_price_list_aware.class: OroB2B\Bundle\PricingBundle\EventListener\ProductSelectPriceListAwareListener
+    orob2b_pricing.event_listener.price_list_collection.class: OroB2B\Bundle\PricingBundle\EventListener\PriceListCollectionListener
+    orob2b_pricing.event_listener.combined_price_list_queue.class: OroB2B\Bundle\PricingBundle\EventListener\CombinedPriceListQueueListener
     orob2b_pricing.event_subscriber.system_config.class: OroB2B\Bundle\PricingBundle\EventListener\PriceListSystemConfigSubscriber
 
     orob2b_pricing.model.price_list_request_handler.abstract.class: OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler
     orob2b_pricing.model.price_list_request_handler.class: OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler
-    orob2b_pricing.model.frontend.price_list_request_handler.class: OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler
     orob2b_pricing.model.price_list_tree_handler.class: OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler
     orob2b_pricing.model.frontend_product_list_modifier.class: OroB2B\Bundle\PricingBundle\Model\FrontendProductListModifier
     orob2b_pricing.system_config.class: OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig
@@ -101,12 +126,114 @@ services:
         arguments:
             - @session
 
-    orob2b_pricing.provider.product_price:
+    orob2b_pricing.provider.abstract_product_price:
         class: %orob2b_pricing.provider.product_price.class%
+        abstract: true
         arguments:
             - @doctrine
-            - @orob2b_pricing.model.frontend.price_list_request_handler
-            - %orob2b_pricing.entity.product_price.class%
+            - @orob2b_pricing.model.price_list_request_handler
+
+    orob2b_pricing.provider.product_price:
+        parent: orob2b_pricing.provider.abstract_product_price
+        calls:
+            - [setClassName, [%orob2b_pricing.entity.product_price.class%]]
+
+    orob2b_pricing.provider.combined_product_price:
+        parent: orob2b_pricing.provider.abstract_product_price
+        calls:
+            - [setClassName, [%orob2b_pricing.entity.combined_product_price.class%]]
+
+    orob2b_pricing.provider.combined_price_list:
+        class: %orob2b_pricing.provider.combined_price_list.class%
+        arguments:
+            - @doctrine
+        calls:
+            - [setClassName, [%orob2b_pricing.entity.combined_price_list.class%]]
+            - [setResolver, [@orob2b_pricing.resolver.combined_product_price_resolver]]
+
+    orob2b_pricing.provider.price_list_collection:
+        class: %orob2b_pricing.provider.price_list_collection.class%
+        arguments:
+            - @doctrine
+            - @oro_config.global
+            - @orob2b_pricing.system_config_converter
+
+    orob2b_pricing.resolver.combined_product_price_resolver:
+        class: %orob2b_pricing.resolver.combined_product_price_resolver.class%
+        arguments:
+            - @doctrine
+            - @oro_entity.orm.insert_from_select_query_executor
+
+
+    orob2b_pricing.builder.combined_price_list_garbage_collector:
+        class: %orob2b_pricing.builder.combined_price_list_garbage_collector.class%
+        arguments:
+            - @doctrine
+            - @oro_config.global
+        calls:
+            - [setCombinedPriceListClass, [%orob2b_pricing.entity.combined_price_list.class%]]
+
+    orob2b_pricing.builder.abstract_combined_price_list_builder:
+        class: %orob2b_pricing.builder.abstract_combined_price_list_builder.class%
+        abstract: true
+        arguments:
+            - @doctrine
+            - @orob2b_pricing.provider.price_list_collection
+            - @orob2b_pricing.provider.combined_price_list
+            - @orob2b_pricing.builder.combined_price_list_garbage_collector
+        calls:
+            - [setCombinedPriceListClassName, [%orob2b_pricing.entity.combined_price_list.class%]]
+
+    orob2b_pricing.builder.account_combined_price_list_builder:
+        class: %orob2b_pricing.builder.account_combined_price_list_builder.class%
+        parent: orob2b_pricing.builder.abstract_combined_price_list_builder
+        calls:
+            - [setPriceListToEntityClassName, [%orob2b_pricing.entity.price_list_to_account.class%]]
+            - [setCombinedPriceListToEntityClassName, [%orob2b_pricing.entity.combined_price_list_to_account.class%]]
+
+    orob2b_pricing.builder.account_group_combined_price_list_builder:
+        class: %orob2b_pricing.builder.account_group_combined_price_list_builder.class%
+        parent: orob2b_pricing.builder.abstract_combined_price_list_builder
+        calls:
+            - [setAccountCombinedPriceListsBuilder, [@orob2b_pricing.builder.account_combined_price_list_builder]]
+            - [setPriceListToEntityClassName, [%orob2b_pricing.entity.price_list_to_account_group.class%]]
+            - [setCombinedPriceListToEntityClassName, [%orob2b_pricing.entity.combined_price_list_to_account_group.class%]]
+
+    orob2b_pricing.builder.website_combined_price_list_builder:
+        class: %orob2b_pricing.builder.website_combined_price_list_builder.class%
+        parent: orob2b_pricing.builder.abstract_combined_price_list_builder
+        calls:
+            - [setAccountGroupCombinedPriceListsBuilder, [@orob2b_pricing.builder.account_group_combined_price_list_builder]]
+            - [setPriceListToEntityClassName, [%orob2b_pricing.entity.price_list_to_website.class%]]
+            - [setCombinedPriceListToEntityClassName, [%orob2b_pricing.entity.combined_price_list_to_website.class%]]
+
+    orob2b_pricing.builder.combined_price_list_builder:
+        class: %orob2b_pricing.builder.combined_price_list_builder.class%
+        arguments:
+            - @oro_config.global
+            - @orob2b_pricing.provider.price_list_collection
+            - @orob2b_pricing.provider.combined_price_list
+            - @orob2b_pricing.builder.combined_price_list_garbage_collector
+        calls:
+            - [setWebsiteCombinedPriceListBuilder, [@orob2b_pricing.builder.website_combined_price_list_builder]]
+
+    orob2b_pricing.builder.queue_consumer:
+        class: %orob2b_pricing.builder.queue_consumer.class%
+        arguments:
+            - @doctrine
+            - @orob2b_pricing.builder.combined_price_list_builder
+            - @orob2b_pricing.builder.website_combined_price_list_builder
+            - @orob2b_pricing.builder.account_group_combined_price_list_builder
+            - @orob2b_pricing.builder.account_combined_price_list_builder
+
+    orob2b_pricing.builder.combined_product_price_queue_consumer:
+        class: %orob2b_pricing.builder.combined_product_price_queue_consumer.class%
+        calls:
+            - [setProductPriceChangeTriggerClass, [%orob2b_pricing.entity.product_price_change_trigger.class%]]
+            - [setCombinedPriceListClass, [%orob2b_pricing.entity.combined_price_list.class%]]
+        arguments:
+            - @doctrine
+            - @orob2b_pricing.resolver.combined_product_price_resolver
 
     orob2b_pricing.validator.unique_product_prices:
         class: %orob2b_pricing.validator.unique_product_prices.class%
@@ -119,14 +246,12 @@ services:
             - @request_stack
             - @translator
             - @oro_entity.doctrine_helper
-            - @orob2b_pricing.model.frontend.price_list_request_handler
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-edit, method: onEntityEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-view, method: onAccountGroupView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-edit, method: onEntityEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.frontend-product-view, method: onFrontendProductView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
 
     orob2b_pricing.event_listener.web_site_form_view:
@@ -148,12 +273,42 @@ services:
 #            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-grid, method: onBuildBeforeAccounts }
 #            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-groups-grid, method: onBuildBeforeAccountGroups }
 
+    orob2b_pricing.event_listener.account_group:
+        class: %orob2b_pricing.event_listener.account_group_changes.class%
+        arguments:
+            - @doctrine
+            - @event_dispatcher
+            - @oro_entity.orm.insert_from_select_query_executor
+        tags:
+            - { name: kernel.event_listener, event: orob2b_account.account_group.pre_remove, method: onGroupRemove }
+            - { name: kernel.event_listener, event: orob2b_account.account.on_account_group_change, method: onChangeGroupInAccount }
+
+    orob2b_pricing.event_listener.price_list_collection:
+        class: %orob2b_pricing.event_listener.price_list_collection.class%
+        arguments:
+            - @doctrine
+        tags:
+            - { name: kernel.event_listener, event: orob2b_pricing.price_list_collection.change_before, method: onChangeCollectionBefore }
+
+    orob2b_pricing.event_listener.combined_price_list_queue:
+        class: %orob2b_pricing.event_listener.combined_price_list_queue.class%
+        arguments:
+            - @orob2b_pricing.builder.queue_consumer
+            - @orob2b_pricing.builder.combined_product_price_queue_consumer
+            - @oro_config.global
+        tags:
+            - { name: kernel.event_listener, event: kernel.terminate, method: onTerminate }
+            - { name: kernel.event_listener, event: orob2b_pricing.price_list_collection.change_before, method: onQueueChanged }
+            - { name: kernel.event_listener, event: orob2b_pricing.product_price.change, method: onProductPriceChanged }
+            - { name: kernel.event_listener, event: orob2b_pricing.price_list_collection.multi_change, method: onQueueChanged }
+
     orob2b_pricing.event_listener.product_price_datagrid:
         class: %orob2b_pricing.event_listener.product_price_datagrid.class%
         arguments:
             - @translator
             - @oro_entity.doctrine_helper
             - @orob2b_pricing.model.price_list_request_handler
+            - @orob2b_frontend.request.frontend_helper
         calls:
             - [setProductPriceClass, [%orob2b_pricing.entity.product_price.class%]]
             - [setProductUnitClass, [%orob2b_product.product_unit.class%]]
@@ -166,9 +321,10 @@ services:
         arguments:
             - @translator
             - @oro_entity.doctrine_helper
-            - @orob2b_pricing.model.frontend.price_list_request_handler
+            - @orob2b_pricing.model.price_list_request_handler
+            - @orob2b_frontend.request.frontend_helper
         calls:
-            - [setProductPriceClass, [%orob2b_pricing.entity.product_price.class%]]
+            - [setProductPriceClass, [%orob2b_pricing.entity.combined_product_price.class%]]
             - [setProductUnitClass, [%orob2b_product.product_unit.class%]]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-products-grid, method: onBuildBefore }
@@ -189,33 +345,25 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: orob2b_pricing_price_list_product_prices_currency_validator }
 
-    orob2b_pricing.model.price_list_request_handler.abstract:
-        class: %orob2b_pricing.model.price_list_request_handler.abstract.class%
-        abstract: true
-        arguments:
-            - @request_stack
-
     orob2b_pricing.model.price_list_request_handler:
         class: %orob2b_pricing.model.price_list_request_handler.class%
-        parent: orob2b_pricing.model.price_list_request_handler.abstract
+        calls:
+            - [setPriceListClass, [%orob2b_pricing.entity.price_list.class%]]
         arguments:
-            - @doctrine
-            - %orob2b_pricing.entity.price_list.class%
-
-    orob2b_pricing.model.frontend.price_list_request_handler:
-        class: %orob2b_pricing.model.frontend.price_list_request_handler.class%
-        parent: orob2b_pricing.model.price_list_request_handler.abstract
-        arguments:
+            - @request_stack
             - @session
             - @oro_security.security_facade
             - @orob2b_pricing.model.price_list_tree_handler
+            - @doctrine
 
     orob2b_pricing.model.price_list_tree_handler:
         class: %orob2b_pricing.model.price_list_tree_handler.class%
         arguments:
             - @doctrine
             - @orob2b_website.manager
-            - %orob2b_pricing.entity.price_list.class%
+            - @oro_config.global
+        calls:
+            - [setPriceListClass, [%orob2b_pricing.entity.combined_price_list.class%]]
 
     orob2b_pricing.filter.product_price:
             class: %orob2b_pricing.filter.product_price.class%
@@ -266,6 +414,8 @@ services:
         class: %orob2b_pricing.event_subscriber.system_config.class%
         arguments:
             - @orob2b_pricing.system_config_converter
+            - @event_dispatcher
+            - @doctrine
         tags:
             - { name: kernel.event_subscriber }
 
@@ -286,3 +436,12 @@ services:
         arguments:
             - @translator
             - @orob2b_pricing.rounding.price_rounding_service
+
+    #TODO: refactor after BB-1289
+    orob2b_pricing.entity_listener.product_price:
+        class: %orob2b_pricing.entity_listener.product_price.class%
+        arguments:
+            - @oro_b2bentity.extra_insert_entity_storage
+            - @event_dispatcher
+        tags:
+            - { name: doctrine.orm.entity_listener }
