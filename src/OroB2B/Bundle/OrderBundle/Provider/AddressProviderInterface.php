@@ -26,4 +26,10 @@ interface AddressProviderInterface
      * @throws \InvalidArgumentException
      */
     public function getAccountUserAddresses(AccountUser $accountUser, $type);
+
+    /**
+     * @param string $type
+     * @throws \InvalidArgumentException
+     */
+    public static function assertType($type);
 }
