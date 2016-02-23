@@ -39,9 +39,11 @@ class ThemeExtension extends AbstractExtension
      */
     public function visitMetadata(DatagridConfiguration $config, MetadataObject $data)
     {
-        $data->offsetAddToArray(
-            static::METADATA_THEME_KEY,
-            ['rowView' => $this->themeHelper->getTheme($config->getName())]
-        );
+        $view = $this->themeHelper->getTheme($config->getName());
+        $data->offsetAddToArray(static::METADATA_THEME_KEY, [
+            'bodyClassName' => 'grid-body products__list products__list_' . $view,
+            'rowClassName' => 'grid-row row-click-action product-item product-item_' . $view,
+            'rowView' => $view,
+        ]);
     }
 }

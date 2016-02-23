@@ -1,15 +1,3 @@
-{% block _product_grid_widget %}
-    {# TODO: remove after will be done BB-2054#}
-    {% set themeOptions = grid_parameters['themeOptions'] %}
-    {% set rowView = app.request.get('frontend-products-grid', {rowView: 'list-view'}).rowView %}
-    {% set grid_parameters = grid_parameters|merge({'themeOptions': themeOptions|merge({
-        'rowView': rowView,
-        'bodyClassName': 'grid-body products__list products__list_' ~ rowView,
-        'rowClassName': 'grid-row row-click-action product-item product-item_' ~ rowView
-    })}) %}
-    {{ block_widget(block) }}
-{% endblock %}
-
 {% block _grid_display_options_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " catalog__filter-controls__item catalog__filter-controls__item_display-options pull-right"

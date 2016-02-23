@@ -34,10 +34,7 @@ layout:
                             themeOptions:
                                 tagName: 'div'
                                 headerHide: true
-                                bodyClassName: 'grid-body products__list products__list_list-view'
-                                rowClassName: 'grid-row row-click-action product-item product-item_list-view'
                                 rowTemplateSelector: '#template-grid-row'
-                                rowView: 'list-view'
             tree:
                 content:
                     product_index_page:
