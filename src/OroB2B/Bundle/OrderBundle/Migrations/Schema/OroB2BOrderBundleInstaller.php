@@ -57,7 +57,7 @@ class OroB2BOrderBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_0';
+        return 'v1_1';
     }
 
     /**
@@ -142,6 +142,7 @@ class OroB2BOrderBundleInstaller implements
         $table->addColumn('middle_name', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('last_name', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('name_suffix', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('from_external_source', 'boolean', []);
         $table->addColumn('created', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);

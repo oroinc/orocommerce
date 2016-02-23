@@ -139,6 +139,7 @@ class QuoteToOrderConverter
             $orderAddress->setNameSuffix($quoteAddress->getNameSuffix());
             $orderAddress->setRegion($quoteAddress->getRegion());
             $orderAddress->setCountry($quoteAddress->getCountry());
+            $orderAddress->setFromExternalSource(true);
         }
 
         return $orderAddress;
