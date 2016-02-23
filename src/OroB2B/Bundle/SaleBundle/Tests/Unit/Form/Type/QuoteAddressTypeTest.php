@@ -2,29 +2,26 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\ConstraintViolation;
 
-use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Oro\Bundle\AddressBundle\Entity\AddressType as AddressTypeEntity;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 
+use OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type\AbstractAddressTypeTest;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
-use OroB2B\Bundle\OrderBundle\Form\Type\OrderAddressType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteAddressType;
 use OroB2B\Bundle\SaleBundle\Model\QuoteAddressManager;
 use OroB2B\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 
-class QuoteAddressTypeTest extends AddressFormExtensionTestCase
+class QuoteAddressTypeTest extends AbstractAddressTypeTest
 {
-    /** @var OrderAddressType */
+    /** @var QuoteAddressType */
     protected $formType;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|AddressFormatter */
@@ -121,7 +118,21 @@ class QuoteAddressTypeTest extends AddressFormExtensionTestCase
         $this->quoteAddressManager->expects($this->once())->method('getGroupedAddresses')->willReturn([]);
         $this->quoteAddressSecurityProvider->expects($this->once())->method('isManualEditGranted')->willReturn(true);
 
-        $this->checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors);
+        $this->quoteAddressManager->expects($this->any())->method('updateFromAbstract')
+            ->will(
+                $this->returnCallback(
+                    function (AccountAddress $address = null, QuoteAddress $orderAddress = null) {
+                        if (!$orderAddress) {
+                            $orderAddress = new QuoteAddress();
+                        }
+                        return $orderAddress;
+                    }
+                )
+            );
+
+        $formOptions = ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'quote' => new Quote()];
+
+        $this->checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors, $formOptions);
     }
 
     /**
@@ -255,7 +266,21 @@ class QuoteAddressTypeTest extends AddressFormExtensionTestCase
 
         $this->quoteAddressSecurityProvider->expects($this->once())->method('isManualEditGranted')->willReturn(false);
 
-        $this->checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors);
+        $this->quoteAddressManager->expects($this->any())->method('updateFromAbstract')
+            ->will(
+                $this->returnCallback(
+                    function (AccountAddress $address = null, QuoteAddress $orderAddress = null) {
+                        if (!$orderAddress) {
+                            $orderAddress = new QuoteAddress();
+                        }
+                        return $orderAddress;
+                    }
+                )
+            );
+
+        $formOptions = ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'quote' => new Quote()];
+
+        $this->checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors, $formOptions);
     }
 
     /**
@@ -304,69 +329,6 @@ class QuoteAddressTypeTest extends AddressFormExtensionTestCase
         ];
     }
 
-    /**
-     * @param bool $isValid
-     * @param array $submittedData
-     * @param mixed $expectedData
-     * @param mixed $defaultData
-     * @param array $formErrors
-     */
-    protected function checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors)
-    {
-        $this->quoteAddressManager->expects($this->any())->method('updateFromAbstract')
-            ->will(
-                $this->returnCallback(
-                    function (AccountAddress $address = null, QuoteAddress $orderAddress = null) {
-                        if (!$orderAddress) {
-                            $orderAddress = new QuoteAddress();
-                        }
-                        return $orderAddress;
-                    }
-                )
-            );
-
-        $form = $this->factory->create(
-            $this->formType,
-            $defaultData,
-            ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'quote' => new Quote()]
-        );
-
-        $this->assertEquals($defaultData, $form->getData());
-        $form->submit($submittedData);
-        $this->assertEquals($isValid, $form->isValid());
-
-        if ($form->getErrors(true)->count()) {
-            $this->assertNotEmpty($formErrors);
-        }
-
-        /** @var FormError $error */
-        foreach ($form->getErrors(true) as $error) {
-            $this->assertArrayHasKey($error->getOrigin()->getName(), $formErrors);
-
-            /** @var ConstraintViolation $violation */
-            $violation = $error->getCause();
-            $this->assertEquals(
-                $formErrors[$error->getOrigin()->getName()],
-                $error->getMessage(),
-                sprintf('Failed path: %s', $violation->getPropertyPath())
-            );
-        }
-        $this->assertEquals($expectedData, $form->getData());
-
-        $this->assertTrue($form->has('accountAddress'));
-        $this->assertTrue($form->get('accountAddress')->getConfig()->hasOption('attr'));
-        $this->assertArrayHasKey('data-addresses', $form->get('accountAddress')->getConfig()->getOption('attr'));
-        $this->assertInternalType(
-            'string',
-            $form->get('accountAddress')->getConfig()->getOption('attr')['data-addresses']
-        );
-        $this->assertInternalType(
-            'array',
-            json_decode($form->get('accountAddress')->getConfig()->getOption('attr')['data-addresses'], true)
-        );
-        $this->assertArrayHasKey('data-default', $form->get('accountAddress')->getConfig()->getOption('attr'));
-    }
-
     public function testFinishView()
     {
         $view = new FormView();
@@ -395,13 +357,5 @@ class QuoteAddressTypeTest extends AddressFormExtensionTestCase
 
         $this->assertFalse($view->offsetGet('accountAddress')->vars['disabled']);
         $this->assertFalse($view->offsetGet('accountAddress')->vars['required']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getExtensions()
-    {
-        return array_merge([$this->getValidatorExtension(true)], parent::getExtensions());
     }
 }
