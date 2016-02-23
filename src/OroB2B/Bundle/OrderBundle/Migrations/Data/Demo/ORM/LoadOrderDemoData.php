@@ -19,7 +19,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -33,7 +33,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
     protected $paymentTerms = [];
 
     /** @var array */
-    protected $priceLists = [];
+    protected $websites = [];
 
     /** @var ContainerInterface */
     protected $container;
@@ -114,7 +114,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
                 ->setBillingAddress($this->createOrderAddress($manager, $billingAddress))
                 ->setShippingAddress($this->createOrderAddress($manager, $shippingAddress))
                 ->setPaymentTerm($this->getPaymentTerm($manager, $row['paymentTerm']))
-                ->setPriceList($this->getPriceList($manager, $row['priceListName']))
+                ->setWebsite($this->getWebsite($manager, $row['websiteName']))
                 ->setShipUntil(new \DateTime())
                 ->setCurrency($row['currency'])
                 ->setPoNumber($row['poNumber'])
@@ -208,15 +208,15 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
     /**
      * @param EntityManager $manager
      * @param string $name
-     * @return PriceList
+     * @return Website
      */
-    protected function getPriceList(EntityManager $manager, $name)
+    protected function getWebsite(EntityManager $manager, $name)
     {
-        if (!array_key_exists($name, $this->priceLists)) {
-            $this->priceLists[$name] = $manager->getRepository('OroB2BPricingBundle:PriceList')
+        if (!array_key_exists($name, $this->websites)) {
+            $this->websites[$name] = $manager->getRepository('OroB2BWebsiteBundle:Website')
                 ->findOneBy(['name' => $name]);
         }
 
-        return $this->priceLists[$name];
+        return $this->websites[$name];
     }
 }

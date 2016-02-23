@@ -2,10 +2,13 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\Validator\ExecutionContext;
+
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use OroB2B\Bundle\TaxBundle\Form\Type\ZipCodeType;
 use OroB2B\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
+use OroB2B\Bundle\TaxBundle\Validator\Constraints\ZipCodeFields;
 
 class ZipCodeTypeTest extends FormIntegrationTestCase
 {
@@ -74,45 +77,105 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
         return [
             'different range' => [
                 'submittedData' => [
-                    'zipRangeStart' => '123',
-                    'zipRangeEnd' => '234',
+                    'zipRangeStart' => '00123',
+                    'zipRangeEnd' => '00234',
                 ],
-                'expectedData' => ZipCodeTestHelper::getRangeZipCode('123', '234'),
+                'expectedData' => ZipCodeTestHelper::getRangeZipCode('00123', '00234'),
                 'valid' => true,
             ],
             'same range' => [
                 'submittedData' => [
-                    'zipRangeStart' => '123',
-                    'zipRangeEnd' => '123',
+                    'zipRangeStart' => '00123',
+                    'zipRangeEnd' => '00123',
                 ],
-                'expectedData' => ZipCodeTestHelper::getSingleValueZipCode('123'),
+                'expectedData' => ZipCodeTestHelper::getSingleValueZipCode('00123'),
                 'valid' => true,
             ],
             'start range only' => [
                 'submittedData' => [
-                    'zipRangeStart' => '123',
+                    'zipRangeStart' => '00123',
                     'zipRangeEnd' => null,
                 ],
-                'expectedData' => ZipCodeTestHelper::getSingleValueZipCode('123'),
+                'expectedData' => ZipCodeTestHelper::getSingleValueZipCode('00123'),
                 'valid' => true,
             ],
             'end range only' => [
                 'submittedData' => [
                     'zipRangeStart' => null,
-                    'zipRangeEnd' => '123',
+                    'zipRangeEnd' => '00123',
                 ],
-                'expectedData' => ZipCodeTestHelper::getSingleValueZipCode('123'),
+                'expectedData' => ZipCodeTestHelper::getSingleValueZipCode('00123'),
                 'valid' => true,
             ],
-            // TODO: should pass test after BB-1957
-//            'alphanumeric zip code' => [
-//                'submittedData' => [
-//                    'zipRangeStart' => '1A30D',
-//                    'zipRangeEnd' => '1A32B',
-//                ],
-//                'expectedData' => null,
-//                'valid' => false,
-//            ],
+            'alphanumeric zip code' => [
+                'submittedData' => [
+                    'zipRangeStart' => '1A30D',
+                    'zipRangeEnd' => '1A32B',
+                ],
+                'expectedData' => ZipCodeTestHelper::getRangeZipCode('1A30D', '1A32B'),
+                'valid' => false,
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getValidators()
+    {
+        $zipCodeFieldsConstraint = new ZipCodeFields();
+        $zipCodeFieldsValidator = $this
+            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Validator\Constraints\ZipCodeFieldsValidator')
+            ->setMethods(['initialize', 'isInteger'])
+            ->getMock();
+
+        $zipCodeFieldsValidator->expects($this->any())->method('isInteger')->willReturnCallback(
+            function ($value) {
+                $value = str_replace('0', '', $value);
+
+                return filter_var($value, FILTER_VALIDATE_INT);
+            }
+        );
+        $zipCodeFieldsValidator->expects($this->any())->method('initialize')->willReturnCallback(
+            function (ExecutionContext $legacyContext) use ($zipCodeFieldsValidator) {
+                $context = $this->getMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
+                $builder = $this->getMock('Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
+
+                $context->expects($this->any())->method('buildViolation')->with($this->isType('string'))
+                    ->willReturnCallback(
+                        function ($message) use ($builder, $legacyContext) {
+                            $constraint = new ZipCodeFields();
+                            if ($message === $constraint->onlyNumericRangesSupported) {
+                                $legacyContext->addViolation($constraint->onlyNumericRangesSupported);
+                            }
+
+                            return $builder;
+                        }
+                    );
+
+                $builder->expects($this->any())->method('atPath')->with($this->isType('string'))->willReturn($builder);
+                $builder->expects($this->any())->method('addViolation');
+
+                $prop = new \ReflectionProperty(get_class($zipCodeFieldsValidator), 'context');
+                $prop->setAccessible(true);
+                $prop->setValue($zipCodeFieldsValidator, $context);
+
+                return true;
+            }
+        );
+
+        return [
+            $zipCodeFieldsConstraint->validatedBy() => $zipCodeFieldsValidator,
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
+    {
+        return [
+            $this->getValidatorExtension(true),
         ];
     }
 }

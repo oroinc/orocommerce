@@ -8,11 +8,11 @@ use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class QuoteTest extends AbstractTest
 {
@@ -30,7 +30,7 @@ class QuoteTest extends AbstractTest
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
             ['request', new Request()],
-            ['priceList', new PriceList()],
+            ['website', new Website()],
             ['shippingEstimate', new Price()]
         ];
 
@@ -109,7 +109,7 @@ class QuoteTest extends AbstractTest
 
         $value = 100;
         $currency = 'EUR';
-        $this->setProperty($item, 'shippingEstimateValue', $value)
+        $this->setProperty($item, 'shippingEstimateAmount', $value)
             ->setProperty($item, 'shippingEstimateCurrency', $currency);
 
         $item->postLoad();
@@ -126,7 +126,7 @@ class QuoteTest extends AbstractTest
 
         $item->updateShippingEstimate();
 
-        $this->assertEquals($value, $this->getProperty($item, 'shippingEstimateValue'));
+        $this->assertEquals($value, $this->getProperty($item, 'shippingEstimateAmount'));
         $this->assertEquals($currency, $this->getProperty($item, 'shippingEstimateCurrency'));
     }
 
@@ -141,7 +141,7 @@ class QuoteTest extends AbstractTest
 
         $this->assertEquals($price, $item->getShippingEstimate());
 
-        $this->assertEquals($value, $this->getProperty($item, 'shippingEstimateValue'));
+        $this->assertEquals($value, $this->getProperty($item, 'shippingEstimateAmount'));
         $this->assertEquals($currency, $this->getProperty($item, 'shippingEstimateCurrency'));
     }
 

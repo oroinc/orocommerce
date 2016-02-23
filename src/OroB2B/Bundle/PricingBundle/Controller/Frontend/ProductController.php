@@ -11,7 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 
 class ProductController extends Controller
 {
@@ -39,11 +39,18 @@ class ProductController extends Controller
             $accountUser = null;
         }
 
-        $currenciesList = $this->get('orob2b_pricing.model.price_list_tree_handler')
-            ->getPriceList($accountUser)
-            ->getCurrencies();
+        $priceList = $this->get('orob2b_pricing.model.price_list_tree_handler')
+            ->getPriceList($accountUser->getAccount());
 
-        $selectedCurrencies = $this->getHandler()->getPriceListSelectedCurrencies();
+        $currenciesList = null;
+        $selectedCurrencies = [];
+        if ($priceList) {
+            if ($priceList->getCurrencies()) {
+                $currenciesList = $priceList->getCurrencies();
+            }
+            $selectedCurrencies = $this->getHandler()->getPriceListSelectedCurrencies($priceList);
+        }
+
         $formOptions = [
             'label' => 'orob2b.pricing.productprice.currency.label',
             'compact' => true,
@@ -73,10 +80,10 @@ class ProductController extends Controller
     }
 
     /**
-     * @return FrontendPriceListRequestHandler
+     * @return PriceListRequestHandler
      */
     protected function getHandler()
     {
-        return $this->get('orob2b_pricing.model.frontend.price_list_request_handler');
+        return $this->get('orob2b_pricing.model.price_list_request_handler');
     }
 }
