@@ -330,10 +330,9 @@ class QuoteAddressTypeTest extends AddressFormExtensionTestCase
             $defaultData,
             ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'quote' => new Quote()]
         );
+
         $this->assertEquals($defaultData, $form->getData());
-
         $form->submit($submittedData);
-
         $this->assertEquals($isValid, $form->isValid());
 
         if ($form->getErrors(true)->count()) {

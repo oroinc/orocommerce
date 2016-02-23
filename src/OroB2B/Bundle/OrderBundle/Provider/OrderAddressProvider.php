@@ -13,7 +13,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountAddressRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserAddressRepository;
 
-class OrderAddressProvider
+class OrderAddressProvider implements AddressProviderInterface
 {
     const ADDRESS_TYPE_SHIPPING = 'shipping';
     const ADDRESS_TYPE_BILLING = 'billing';

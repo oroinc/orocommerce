@@ -14,8 +14,9 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountAddressRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserAddressRepository;
+use OroB2B\Bundle\OrderBundle\Provider\AddressProviderInterface;
 
-class QuoteAddressProvider
+class QuoteAddressProvider implements AddressProviderInterface
 {
     const ADDRESS_TYPE_SHIPPING = 'shipping';
 
