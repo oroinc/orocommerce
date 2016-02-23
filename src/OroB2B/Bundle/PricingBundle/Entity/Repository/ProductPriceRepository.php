@@ -246,13 +246,13 @@ class ProductPriceRepository extends EntityRepository
     }
 
     /**
-     * @param PriceList $priceList
+     * @param BasePriceList $priceList
      * @param Collection $products
      * @param string $currency
      *
      * @return array
      */
-    public function getProductsUnitsByPriceList(PriceList $priceList, Collection $products, $currency)
+    public function getProductsUnitsByPriceList(BasePriceList $priceList, Collection $products, $currency)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('DISTINCT IDENTITY(price.product) AS productId, unit.code AS code')
