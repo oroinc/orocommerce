@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
-use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 
 class UserCurrencyProvider
 {
@@ -35,11 +35,13 @@ class UserCurrencyProvider
      */
     public function getUserCurrency()
     {
-        $currency = $this->session->get(FrontendPriceListRequestHandler::PRICE_LIST_CURRENCY_KEY);
+        $currencies = $this->session->get(PriceListRequestHandler::PRICE_LIST_CURRENCY_KEY);
 
         //@TODO return correct currency. Now we have not default currency value.
-        if (!$currency) {
+        if (empty($currency)) {
             $currency = self::DEFAULT_CURRENCY;
+        } else {
+            $currency = reset($currencies);
         }
 
         return $currency;
