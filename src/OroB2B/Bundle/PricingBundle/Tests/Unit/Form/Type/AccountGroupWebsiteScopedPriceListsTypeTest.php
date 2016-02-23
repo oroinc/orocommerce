@@ -8,6 +8,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\PricingBundle\Form\Type\AccountGroupWebsiteScopedPriceListsType;
 use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class AccountGroupWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -15,6 +16,9 @@ class AccountGroupWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_Tes
 
     /** @var AccountGroupWebsiteScopedPriceListsType */
     protected $formType;
+
+    /** @var  EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $eventDispatcher;
 
     /**
      * {@inheritdoc}
@@ -26,7 +30,7 @@ class AccountGroupWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_Tes
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->formType = new AccountGroupWebsiteScopedPriceListsType($registry);
+        $this->formType = new AccountGroupWebsiteScopedPriceListsType($registry, $this->getEventDispatcher());
     }
 
     /**
@@ -45,5 +49,17 @@ class AccountGroupWebsiteScopedPriceListsTypeTest extends \PHPUnit_Framework_Tes
     public function testGetParent()
     {
         $this->assertEquals(WebsiteScopedDataType::NAME, $this->formType->getParent());
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|EventDispatcherInterface
+     */
+    protected function getEventDispatcher()
+    {
+        if (!$this->eventDispatcher) {
+            $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        }
+
+        return $this->eventDispatcher;
     }
 }
