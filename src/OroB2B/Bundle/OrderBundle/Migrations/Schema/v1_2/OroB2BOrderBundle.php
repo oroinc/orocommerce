@@ -1,4 +1,4 @@
-<<?php
+<?php
 
 namespace OroB2B\Bundle\OrderBundle\Migrations\Schema\v1_2;
 
