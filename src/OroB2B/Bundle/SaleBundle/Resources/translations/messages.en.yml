@@ -27,6 +27,8 @@ orob2b:
             assigned_users.label: 'Assigned To'
             assigned_account_users.label: 'Assigned Customers'
             shipping_estimate.label: 'Shipping Estimate'
+            shipping_estimate_amount.label: 'Shipping Estimate Ammount'
+            shipping_estimate_currency.label: 'Shipping Estimate Currency'
 
             sections:
                 general: 'General'
