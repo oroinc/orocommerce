@@ -145,8 +145,11 @@ class TaxManager
         $itemResults = $result->getItems();
 
         foreach ($taxable->getItems() as $item) {
-            $itemResult = $itemResults[$item->getHash()];
+            if (!array_key_exists($item->getHash(), $itemResults)) {
+                continue;
+            }
 
+            $itemResult = $itemResults[$item->getHash()];
 
             $itemTransformer = $this->getTaxTransformer($item->getClassName());
             $taxItemValue = $itemTransformer->reverseTransform($itemResult, $item);

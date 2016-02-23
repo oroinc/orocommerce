@@ -260,6 +260,6 @@ class Taxable
      */
     public function getHash()
     {
-        return sprintf('%s.%s#%s', OroB2BTaxExtension::ALIAS, $this->getClassName(), $this->getIdentifier());
+        return spl_object_hash($this);
     }
 }
