@@ -8,7 +8,7 @@ use Oro\Component\Layout\LayoutContext;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -32,7 +32,7 @@ class FrontendShoppingListProductsUnitsDataProviderTest extends \PHPUnit_Framewo
     protected $registry;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FrontendPriceListRequestHandler
+     * @var \PHPUnit_Framework_MockObject_MockObject|PriceListRequestHandler
      */
     protected $requestHandler;
 
@@ -48,7 +48,7 @@ class FrontendShoppingListProductsUnitsDataProviderTest extends \PHPUnit_Framewo
             ->getMock();
 
         $this->requestHandler = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler')
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -94,7 +94,7 @@ class FrontendShoppingListProductsUnitsDataProviderTest extends \PHPUnit_Framewo
         /** @var PriceList $priceList */
         $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', ['id'=> 42]);
         $this->requestHandler->expects($this->once())
-            ->method('getPriceList')
+            ->method('getPriceListByAccount')
             ->willReturn($priceList);
 
         $repository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
@@ -102,7 +102,6 @@ class FrontendShoppingListProductsUnitsDataProviderTest extends \PHPUnit_Framewo
             ->getMock();
         $repository->expects($this->once())
             ->method('getProductsUnitsByPriceList')
-            ->with()
             ->willReturn($expected);
 
         $em = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');

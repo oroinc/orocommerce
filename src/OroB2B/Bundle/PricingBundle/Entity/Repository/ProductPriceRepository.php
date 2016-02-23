@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -203,13 +204,13 @@ class ProductPriceRepository extends EntityRepository
     }
 
     /**
-     * @param PriceList $priceList
+     * @param BasePriceList $priceList
      * @param Product $product
      * @param string|null $currency
      *
      * @return ProductUnit[]
      */
-    public function getProductUnitsByPriceList(PriceList $priceList, Product $product, $currency = null)
+    public function getProductUnitsByPriceList(BasePriceList $priceList, Product $product, $currency = null)
     {
         $qb = $this->getProductUnitsByPriceListQueryBuilder($priceList, $product, $currency);
 
@@ -217,13 +218,13 @@ class ProductPriceRepository extends EntityRepository
     }
 
     /**
-     * @param PriceList $priceList
+     * @param BasePriceList $priceList
      * @param Product $product
      * @param string|null $currency
      *
      * @return QueryBuilder
      */
-    public function getProductUnitsByPriceListQueryBuilder(PriceList $priceList, Product $product, $currency = null)
+    public function getProductUnitsByPriceListQueryBuilder(BasePriceList $priceList, Product $product, $currency = null)
     {
         $qb = $this->_em->createQueryBuilder();
         $qb->select('partial unit.{code}')
@@ -245,13 +246,13 @@ class ProductPriceRepository extends EntityRepository
     }
 
     /**
-     * @param PriceList $priceList
+     * @param BasePriceList $priceList
      * @param Collection $products
      * @param string $currency
      *
      * @return array
      */
-    public function getProductsUnitsByPriceList(PriceList $priceList, Collection $products, $currency)
+    public function getProductsUnitsByPriceList(BasePriceList $priceList, Collection $products, $currency)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('DISTINCT IDENTITY(price.product) AS productId, unit.code AS code')

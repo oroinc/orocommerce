@@ -14,12 +14,22 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListProductPriceType;
 
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {
+    /**
+     * @Route("/get-product-prices-by-account", name="orob2b_pricing_price_by_account")
+     * @Method({"GET"})
+     *
+     * {@inheritdoc}
+     */
+    public function getProductPricesByAccount(Request $request)
+    {
+        return parent::getProductPricesByAccount($request);
+    }
+
     /**
      * Edit product form
      *
@@ -36,37 +46,10 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
      */
     public function updateAction(ProductPrice $productPrice)
     {
-        return $this->update($productPrice);
-    }
+        $form = $this->createForm(PriceListProductPriceType::NAME, $productPrice);
 
-    /**
-     * @Route("/get-product-prices-by-pricelist", name="orob2b_pricing_price_by_pricelist")
-     * @Method({"GET"})
-     * @AclAncestor("orob2b_pricing_product_price_view")
-     *
-     * {@inheritdoc}
-     */
-    public function getProductPricesByPriceListAction(Request $request)
-    {
-        return parent::getProductPricesByPriceListAction($request);
-    }
-
-    /**
-     * @Route("/get-product-units-by-currency", name="orob2b_pricing_units_by_pricelist")
-     * @Method({"GET"})
-     * @AclAncestor("orob2b_pricing_product_price_view")
-     *
-     * {@inheritdoc}
-     */
-    public function getProductUnitsByCurrencyAction(Request $request)
-    {
-        /** @var PriceList $priceList */
-        $priceList = $this->getEntityReference(
-            $this->getParameter('orob2b_pricing.entity.price_list.class'),
-            $request->get('price_list_id')
-        );
-
-        return $this->getProductUnitsByCurrency($priceList, $request);
+        return $this->get('oro_form.model.update_handler')
+            ->handleUpdate($productPrice, $form, null, null, null);
     }
 
     /**
@@ -79,34 +62,13 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     public function getMatchingPriceAction(Request $request)
     {
         $lineItems = $request->get('items', []);
-        $priceListId = $request->get('pricelist');
-
-        $priceList = null;
-        if ($priceListId) {
-            $priceList = $this->getEntityReference(
-                $this->getParameter('orob2b_pricing.entity.price_list.class'),
-                $priceListId
-            );
-        }
 
         $productsPriceCriteria = $this->prepareProductsPriceCriteria($lineItems);
 
         /** @var Price[] $matchedPrice */
-        $matchedPrice = $this->get('orob2b_pricing.provider.product_price')
-            ->getMatchedPrices($productsPriceCriteria, $priceList);
+        $matchedPrice = $this->get('orob2b_pricing.provider.combined_product_price')
+            ->getMatchedPrices($productsPriceCriteria);
 
         return new JsonResponse($this->formatMatchedPrices($matchedPrice));
-    }
-
-    /**
-     * @param ProductPrice $productPrice
-     * @return array|RedirectResponse
-     */
-    protected function update(ProductPrice $productPrice)
-    {
-        $form = $this->createForm(PriceListProductPriceType::NAME, $productPrice);
-
-        return $this->get('oro_form.model.update_handler')
-            ->handleUpdate($productPrice, $form, null, null, null);
     }
 }
