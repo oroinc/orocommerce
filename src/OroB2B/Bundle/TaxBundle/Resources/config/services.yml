@@ -20,6 +20,7 @@ parameters:
     orob2b_tax.event_listener.account_grid.class: OroB2B\Bundle\TaxBundle\EventListener\AccountTaxCodeGridListener
     orob2b_tax.event_listener.config.address.class: OroB2B\Bundle\TaxBundle\EventListener\Config\AddressEventListener
     orob2b_tax.event_listener.config.digital_products.class: OroB2B\Bundle\TaxBundle\EventListener\Config\DigitalProductEventListener
+    orob2b_tax.event_listener.order_tax.class: OroB2B\Bundle\TaxBundle\EventListener\OrderTaxListener
 
     orob2b_tax.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
@@ -395,3 +396,10 @@ services:
             - @orob2b_tax.resolver.customer_address.item
         tags:
             - { name: orob2b_tax.resolver, event: orob2b_tax.resolve }
+
+    orob2b_tax.event_listener.order_tax:
+        class: %orob2b_tax.event_listener.order_tax.class%
+        arguments:
+            - @orob2b_tax.manager.tax_manager
+        tags:
+            - { name: doctrine.event_listener, event: postUpdate }
