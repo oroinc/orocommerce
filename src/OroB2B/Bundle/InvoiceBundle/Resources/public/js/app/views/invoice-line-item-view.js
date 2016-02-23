@@ -79,8 +79,7 @@ define(function (require) {
                 this.fieldsByName.quantity,
                 this.fieldsByName.productUnit,
                 this.fieldsByName.priceValue,
-                this.fieldsByName.priceType,
-                this.fieldsByName.priceCurrency
+                this.fieldsByName.priceType
             ]);
         },
 

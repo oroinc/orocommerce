@@ -82,6 +82,9 @@ define(function(require) {
             this.updateSubtotals();
 
             mediator.on('line-items-subtotals:update', this.updateSubtotals, this);
+            mediator.on('update:account', this.updateSubtotals, this);
+            mediator.on('update:website', this.updateSubtotals, this);
+            mediator.on('update:currency', this.updateSubtotals, this);
         },
 
         /**
@@ -164,7 +167,9 @@ define(function(require) {
             }
 
             mediator.off('line-items-subtotals:update', this.updateSubtotals, this);
-
+            mediator.off('update:account', this.updateSubtotals, this);
+            mediator.off('update:website', this.updateSubtotals, this);
+            mediator.off('update:currency', this.updateSubtotals, this);
             SubtotalsComponent.__super__.dispose.call(this);
         }
     });

@@ -18,6 +18,7 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
 
     const WEBSITE1 = 'US';
     const WEBSITE2 = 'Canada';
+    const WEBSITE3 = 'CA';
 
     /**
      * @var array
@@ -25,6 +26,7 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
     protected $webSites = [
         ['name' => self::WEBSITE1, 'url' => 'http://www.us.com', 'locales' => ['en_US']],
         ['name' => self::WEBSITE2, 'url' => 'http://www.canada.com', 'locales' => ['en_CA']],
+        ['name' => self::WEBSITE3, 'url' => 'http://www.canada-new.com', 'locales' => ['en_CA']],
     ];
 
     /**
