@@ -317,9 +317,9 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
     /**
      * @var float
      *
-     * @ORM\Column(name="shipping_estimate_value", type="money", nullable=true)
+     * @ORM\Column(name="shipping_estimate_amount", type="money", nullable=true)
      */
-    protected $shippingEstimateValue;
+    protected $shippingEstimateAmount;
 
     /**
      * @var string
@@ -854,8 +854,8 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      */
     public function postLoad()
     {
-        if (null !== $this->shippingEstimateValue && null !==  $this->shippingEstimateCurrency) {
-            $this->shippingEstimate = Price::create($this->shippingEstimateValue, $this->shippingEstimateCurrency);
+        if (null !== $this->shippingEstimateAmount && null !==  $this->shippingEstimateCurrency) {
+            $this->shippingEstimate = Price::create($this->shippingEstimateAmount, $this->shippingEstimateCurrency);
         }
     }
 
@@ -865,7 +865,7 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      */
     public function updateShippingEstimate()
     {
-        $this->shippingEstimateValue = $this->shippingEstimate ? $this->shippingEstimate->getValue() : null;
+        $this->shippingEstimateAmount = $this->shippingEstimate ? $this->shippingEstimate->getValue() : null;
         $this->shippingEstimateCurrency = $this->shippingEstimate ? $this->shippingEstimate->getCurrency() : null;
     }
 }

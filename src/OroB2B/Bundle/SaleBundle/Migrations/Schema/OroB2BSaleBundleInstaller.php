@@ -144,7 +144,7 @@ class OroB2BSaleBundleInstaller implements
         $table->addColumn('locked', 'boolean');
         $table->addColumn('expired', 'boolean', ['default' => false]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
-        $table->addColumn('shipping_estimate_value', 'money', [
+        $table->addColumn('shipping_estimate_amount', 'money', [
             'notnull' => false,
             'precision' => 19,
             'scale' => 4,

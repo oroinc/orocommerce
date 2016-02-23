@@ -25,7 +25,7 @@ class OroB2BSaleBundle implements Migration
     protected function addOroQuoteEstimateShipping(Schema $schema)
     {
         $table = $schema->getTable('orob2b_sale_quote');
-        $table->addColumn('shipping_estimate_value', 'money', [
+        $table->addColumn('shipping_estimate_amount', 'money', [
             'notnull' => false,
             'precision' => 19,
             'scale' => 4,
