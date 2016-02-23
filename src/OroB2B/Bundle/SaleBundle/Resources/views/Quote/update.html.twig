@@ -50,7 +50,7 @@
                  view: 'orob2bsale/js/app/views/line-items-view',
                  tierPrices: tierPrices|default({}),
                  matchedPrices: matchedPrices|default({}),
-                 tierPricesRoute: 'orob2b_pricing_price_by_pricelist',
+                 tierPricesRoute: 'orob2b_pricing_price_by_account',
                  matchedPricesRoute: 'orob2b_pricing_matching_price'
              }|json_encode }}"
              data-layout="separate">
@@ -59,24 +59,37 @@
         </div>
     {% endset %}
 
+    {% set generalFields %}
+        <div
+            data-page-component-module="oroui/js/app/components/view-component"
+            data-page-component-options="{{ {
+                'view': 'orob2bfrontend/js/app/views/form-view',
+                 selectors: {
+                     account: 'input[name$="[account]"]',
+                     website: 'select[name$="[website]"]'
+                 }
+             }|json_encode }}"
+        >
+            {{ form_row(form.owner) }}
+            {{ form_row(form.account) }}
+            {{ form_row(form.accountUser) }}
+            {{ form_row(form.website) }}
+            {{ form_row(form.validUntil) }}
+            {{ form_row(form.locked) }}
+            {{ form_row(form.poNumber) }}
+            {{ form_row(form.shipUntil) }}
+            {{ form_row(form.assignedUsers) }}
+            {{ form_row(form.assignedAccountUsers) }}
+        </div>
+    {% endset %}
     {% set dataBlocks = [
         {
             'title': 'orob2b.sale.quote.sections.general'|trans,
             'class': 'active',
             'subblocks': [{
                 'title': '',
-                'data': [
-                    form_row(form.owner),
-                    form_row(form.account),
-                    form_row(form.accountUser),
-                    form_row(form.priceList),
-                    form_row(form.validUntil),
-                    form_row(form.locked),
-                    form_row(form.poNumber),
-                    form_row(form.shipUntil),
-                    form_row(form.assignedUsers),
-                    form_row(form.assignedAccountUsers)
-                ]
+                'data-page-component-module': 'sadfas',
+                'data': [generalFields]
             }]
         },
         {

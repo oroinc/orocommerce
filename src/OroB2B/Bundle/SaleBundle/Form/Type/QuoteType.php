@@ -69,11 +69,11 @@ class QuoteType extends AbstractType
                 'required'  => false
             ])
             ->add(
-                'priceList',
-                PriceListSelectType::NAME,
+                'website',
+                'entity',
                 [
-                    'required' => false,
-                    'label' => 'orob2b.sale.quote.price_list.label'
+                    'class' => 'OroB2B\Bundle\WebsiteBundle\Entity\Website',
+                    'label' => 'orob2b.sale.quote.website.label'
                 ]
             )
             ->add('validUntil', OroDateTimeType::NAME, [

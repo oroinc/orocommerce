@@ -7,12 +7,12 @@ use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteAddress;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class QuoteTest extends AbstractTest
 {
@@ -35,7 +35,7 @@ class QuoteTest extends AbstractTest
             ['expired', true],
             ['locked', true],
             ['request', new Request()],
-            ['priceList', new PriceList()]
+            ['website', new Website()]
         ];
 
         static::assertPropertyAccessors(new Quote(), $properties);
