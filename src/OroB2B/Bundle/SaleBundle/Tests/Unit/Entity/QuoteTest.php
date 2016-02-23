@@ -30,7 +30,7 @@ class QuoteTest extends AbstractTest
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
             ['request', new Request()],
-            ['website', new Website()]
+            ['website', new Website()],
             ['shippingEstimate', new Price()]
         ];
 
