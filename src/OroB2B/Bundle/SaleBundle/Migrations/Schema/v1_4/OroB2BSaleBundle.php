@@ -31,6 +31,6 @@ class OroB2BSaleBundle implements Migration
             'scale' => 4,
             'comment' => '(DC2Type:money)'
         ]);
-        $table->addColumn('shipping_estimate_currency', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('shipping_estimate_currency', 'string', ['notnull' => false, 'length' => 3]);
     }
 }

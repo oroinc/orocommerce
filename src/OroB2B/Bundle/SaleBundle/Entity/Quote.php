@@ -324,7 +324,7 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
     /**
      * @var string
      *
-     * @ORM\Column(name="shipping_estimate_currency", type="string", nullable=true)
+     * @ORM\Column(name="shipping_estimate_currency", type="string", nullable=true, length=3)
      */
     protected $shippingEstimateCurrency;
 
