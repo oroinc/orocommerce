@@ -16,9 +16,9 @@ use Oro\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Table(name="orob2b_sale_quote")
@@ -139,6 +139,21 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      * )
      */
     protected $organization;
+
+    /**
+     * @var Website
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $website;
 
     /**
      * @var Request
@@ -266,21 +281,6 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      * )
      */
     protected $expired = false;
-
-    /**
-     * @var PriceList
-     *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList")
-     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     **/
-    protected $priceList;
 
     /**
      * @var Collection|User[]
@@ -738,20 +738,20 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
     }
 
     /**
-     * @return PriceList|null
+     * @return Website
      */
-    public function getPriceList()
+    public function getWebsite()
     {
-        return $this->priceList;
+        return $this->website;
     }
 
     /**
-     * @param PriceList|null $priceList
-     * @return Quote
+     * @param Website $website
+     * @return $this
      */
-    public function setPriceList(PriceList $priceList = null)
+    public function setWebsite(Website $website)
     {
-        $this->priceList = $priceList;
+        $this->website = $website;
 
         return $this;
     }

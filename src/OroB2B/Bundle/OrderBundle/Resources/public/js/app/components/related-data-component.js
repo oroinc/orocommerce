@@ -6,6 +6,7 @@ define(function(require) {
     var routing = require('routing');
     var mediator = require('oroui/js/mediator');
     var BaseComponent = require('oroui/js/app/components/base/component');
+    var FormView = require('orob2bfrontend/js/app/views/form-view');
 
     /**
      * @export orob2border/js/app/components/related-data-component
@@ -26,6 +27,7 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
+            this.view = new FormView(this.options);
 
             mediator.on('account-account-user:change', this.loadRelatedData, this);
         },

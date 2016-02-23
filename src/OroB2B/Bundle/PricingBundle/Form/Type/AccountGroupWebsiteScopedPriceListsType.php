@@ -2,12 +2,10 @@
 
 namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
-use Doctrine\Common\Persistence\ObjectManager;
-
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository;
 
 class AccountGroupWebsiteScopedPriceListsType extends AbstractWebsiteScopedPriceListsType
 {
@@ -38,6 +36,43 @@ class AccountGroupWebsiteScopedPriceListsType extends AbstractWebsiteScopedPrice
      */
     protected function getClassName()
     {
-        return 'OroB2BPricingBundle:PriceListToAccountGroup';
+        return 'OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getFallbackChoices()
+    {
+        return [
+            PriceListAccountGroupFallback::WEBSITE =>
+                'orob2b.pricing.fallback.website.label',
+            PriceListAccountGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY =>
+                'orob2b.pricing.fallback.current_account_group_only.label',
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getTargetFieldName()
+    {
+        return 'accountGroup';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getFallbackClassName()
+    {
+        return 'OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getDefaultFallback()
+    {
+        return PriceListAccountGroupFallback::WEBSITE;
     }
 }

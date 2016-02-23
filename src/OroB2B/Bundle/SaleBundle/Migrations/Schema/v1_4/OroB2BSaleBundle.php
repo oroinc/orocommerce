@@ -14,23 +14,14 @@ class OroB2BSaleBundle implements Migration
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->addOroQuoteEstimateShipping($schema);
-    }
-
-    /**
-     * Adds Shipping Estimate fields
-     *
-     * @param Schema $schema
-     */
-    protected function addOroQuoteEstimateShipping(Schema $schema)
-    {
         $table = $schema->getTable('orob2b_sale_quote');
-        $table->addColumn('shipping_estimate_value', 'money', [
-            'notnull' => false,
-            'precision' => 19,
-            'scale' => 4,
-            'comment' => '(DC2Type:money)'
-        ]);
-        $table->addColumn('shipping_estimate_currency', 'string', ['notnull' => false, 'length' => 3]);
+
+        $table->addColumn('website_id', 'integer', ['notnull' => false]);
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_website'),
+            ['website_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
     }
 }
