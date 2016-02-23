@@ -57,7 +57,13 @@ class FrontendShoppingListProductsUnitsDataProvider implements DataProviderInter
      */
     public function getData(ContextInterface $context)
     {
-        return $this->getProductsUnits($context->data()->get('shoppingList'));
+        $shoppingList = $context->data()->get('shoppingList');
+
+        if (!$shoppingList) {
+            return null;
+        }
+
+        return $this->getProductsUnits($shoppingList);
     }
 
     /**

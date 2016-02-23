@@ -16,8 +16,9 @@ define(function (require) {
             this.$elem = options._sourceElement;
             this.url = options.url;
             this.removeClass = options.removeClass;
+            this.redirect = options.redirect;
             this.confirmMessage = options.confirmMessage;
-            this.sucsessMessage = options.sucsessMessage;
+            this.sucsessMessage = options.sucsessMessage || __('item_deleted');
             this.okButtonClass = options.okButtonClass;
             this.cancelButtonClass = options.cancelButtonClass;
 
@@ -53,11 +54,13 @@ define(function (require) {
                 url: self.url,
                 type: 'DELETE',
                 success: function() {
-                    var message = self.sucsessMessage
-                        || __('item_deleted');
                     self.$elem.closest('.' + self.removeClass).remove();
-                    mediator.trigger('frontend:item:delete', e);
-                    mediator.execute('showMessage', 'success', message, {'flash': true});
+
+                    if (self.redirect) {
+                        self.deleteWithRedirect(e);
+                    } else {
+                        self.deleteWithoutRedirect(e);
+                    }
                 },
                 error: function() {
                     var message = __('unexpected_error');
@@ -65,6 +68,14 @@ define(function (require) {
                     mediator.execute('showMessage', 'error', message);
                 }
             })
+        },
+        deleteWithRedirect: function(e) {
+            mediator.execute('showFlashMessage', 'success', this.sucsessMessage);
+            mediator.execute('redirectTo', {url: this.redirect}, {redirect: true});
+        },
+        deleteWithoutRedirect: function(e) {
+            mediator.trigger('frontend:item:delete', e);
+            mediator.execute('showMessage', 'success', this.sucsessMessage, {'flash': true});
         }
     });
 

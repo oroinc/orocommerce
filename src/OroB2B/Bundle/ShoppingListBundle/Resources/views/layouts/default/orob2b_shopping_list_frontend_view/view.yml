@@ -6,6 +6,12 @@ layout:
             items:
                 shopping_list_view_container:
                     blockType: container
+                no_shopping_lists:
+                    blockType: block
+                    options:
+                        vars:
+                            shoppingList:
+                                @value: $data.shoppingList
                 shopping_list_title:
                     blockType: block
                     options:
@@ -14,6 +20,10 @@ layout:
                                 @value: $data.shoppingList
                 shopping_list_top_actions:
                     blockType: block
+                    options:
+                        vars:
+                            shoppingList:
+                                @value: $data.shoppingList
                 shopping_list_options:
                     blockType: block
                     options:
@@ -42,9 +52,14 @@ layout:
                                 @value: $data.shoppingList
                 shopping_list_combined_button:
                     blockType: block
+                    options:
+                        vars:
+                            shoppingList:
+                                @value: $data.shoppingList
             tree:
                 content:
                     shopping_list_view_container:
+                        no_shopping_lists: ~
                         shopping_list_title: ~
                         shopping_list_top_actions: ~
                         shopping_list_options: ~
