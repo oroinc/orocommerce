@@ -67,7 +67,7 @@ class OrderAddressType extends AbstractType
         $order = $options['order'];
 
         $isManualEditGranted = $this->orderAddressSecurityProvider->isManualEditGranted($type);
-        if (!$this->hasAccessToEditAddress($order, $type)) {
+        if ($this->hasAccessToEditAddress($order, $type)) {
             $addresses = $this->orderAddressManager->getGroupedAddresses($order, $type);
 
             $accountAddressOptions = [
@@ -266,10 +266,10 @@ class OrderAddressType extends AbstractType
      */
     protected function hasAccessToEditAddress(Order $order, $type)
     {
-        $isFromExternalSource = false;
+        $isFromExternalSource = true;
 
         if ($type === AddressType::TYPE_SHIPPING && $order->getShippingAddress()) {
-            $isFromExternalSource = $order->getShippingAddress()->isFromExternalSource();
+            $isFromExternalSource = !$order->getShippingAddress()->isFromExternalSource();
         }
 
         return $isFromExternalSource;
