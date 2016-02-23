@@ -46,7 +46,7 @@
 {#Action Buttons#}
 
 {% block action_line_buttons_widget %}
-                                                            {#TODO: change class to more reusable#}
+    {#TODO: change class to more reusable#}
     {% set attr = attr|merge({ class: attr.class|default('') ~ "cart__order__controls-list" }) %}
     <div{{ block('block_attributes') }}>
         <ul>
@@ -60,18 +60,20 @@
 {% endblock %}
 
 {% block action_combined_buttons_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " btn btn_orange btn_has-dropdown btn_has-dropdown_xlg"}) %}
-    <div{{ block('block_attributes') }}>
-        {% set primary_button = block[primary_button_alias] %}
-        {{ block_widget(primary_button,
-        {attr:primary_button.vars.attr|merge({ class: primary_button.vars.attr.class|default('') ~ " direct-link"})}) }}
+    {% if block[primary_button_alias] is defined %}
+        {% set attr = attr|merge({ class: attr.class|default('') ~ " btn btn_orange btn_has-dropdown btn_has-dropdown_xlg"}) %}
+        <div{{ block('block_attributes') }}>
 
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-            <i class="material-icons">arrow_drop_down</i>
-        </a>
+            {% set primary_button = block[primary_button_alias] %}
+            {{ block_widget(primary_button,
+            {attr:primary_button.vars.attr|merge({ class: primary_button.vars.attr.class|default('') ~ " direct-link"})}) }}
 
-        {{ block_widget(block[dropdown_menu_alias]) }}
-    </div>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <i class="material-icons">arrow_drop_down</i>
+            </a>
+            {{ block_widget(block[dropdown_menu_alias]) }}
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block action_drop_down_buttons_widget %}

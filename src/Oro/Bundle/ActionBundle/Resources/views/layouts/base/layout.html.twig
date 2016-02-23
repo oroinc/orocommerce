@@ -10,19 +10,21 @@
 {% endblock %}
 
 {% block action_combined_buttons_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " btn-group pull-right"}) %}
-    <div{{ block('block_attributes') }}>
-        {% set primary_button = block[primary_button_alias] %}
-        {{ block_widget(primary_button,
-        {attr:primary_button.vars.attr|merge({ class: primary_button.vars.attr.class|default('') ~ " btn btn-default"})}) }}
+    {% if block[primary_button_alias] is defined %}
+        {% set attr = attr|merge({ class: attr.class|default('') ~ " btn-group pull-right"}) %}
+        <div{{ block('block_attributes') }}>
+            {% set primary_button = block[primary_button_alias] %}
+            {{ block_widget(primary_button,
+            {attr:primary_button.vars.attr|merge({ class: primary_button.vars.attr.class|default('') ~ " btn btn-default"})}) }}
 
-        <a href="#" class="btn-default btn  dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-           aria-expanded="true">
-            <i class="material-icons">arrow_drop_down</i>
-        </a>
+            <a href="#" class="btn-default btn  dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+               aria-expanded="true">
+                <i class="material-icons">arrow_drop_down</i>
+            </a>
 
-        {{ block_widget(block[dropdown_menu_alias]) }}
-    </div>
+            {{ block_widget(block[dropdown_menu_alias]) }}
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block action_drop_down_buttons_widget %}

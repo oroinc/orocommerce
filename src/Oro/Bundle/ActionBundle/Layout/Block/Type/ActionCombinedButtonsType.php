@@ -29,6 +29,9 @@ class ActionCombinedButtonsType extends AbstractButtonsType
     {
         $options = $this->setActionParameters($options);
         $actions = $this->getActions($options);
+        if (!$actions) {
+            return;
+        }
         $primaryAction = array_values($actions)[0];
         $primaryActionName = array_keys($actions)[0];
         $params = $this->getParams($options, $primaryAction);
