@@ -84,35 +84,36 @@ class FrontendShoppingListProductsPricesDataProviderTest extends \PHPUnit_Framew
 
     /**
      * @dataProvider getDataDataProvider
-     * @param ShoppingList $shoppingList
+     * @param ShoppingList|null $shoppingList
      * @param ProductPriceCriteria $criteria
      * @param Price $price
      * @param AccountUser|null $accountUser
      */
-    public function testGetData(ShoppingList $shoppingList, ProductPriceCriteria $criteria, Price $price, $accountUser)
+    public function testGetData($shoppingList, ProductPriceCriteria $criteria, Price $price, $accountUser)
     {
         $context = new LayoutContext();
         $context->data()->set('shoppingList', null, $shoppingList);
-
-        $this->securityFacade->expects($this->once())
-            ->method('getLoggedUser')
-            ->willReturn($accountUser);
-
         $expected = null;
 
-        if ($accountUser) {
-            $this->userCurrencyProvider->expects($this->once())
-                ->method('getUserCurrency')
-                ->willReturn(self::TEST_CURRENCY);
+        if ($shoppingList) {
+            $this->securityFacade->expects($this->once())
+                ->method('getLoggedUser')
+                ->willReturn($accountUser);
 
-            $this->productPriceProvider->expects($this->once())
-                ->method('getMatchedPrices')
-                ->with([$criteria])
-                ->willReturn([
-                    $criteria->getIdentifier() => $price
-                ]);
+            if ($accountUser) {
+                $this->userCurrencyProvider->expects($this->once())
+                    ->method('getUserCurrency')
+                    ->willReturn(self::TEST_CURRENCY);
 
-            $expected = ['42' => $price];
+                $this->productPriceProvider->expects($this->once())
+                    ->method('getMatchedPrices')
+                    ->with([$criteria])
+                    ->willReturn([
+                        $criteria->getIdentifier() => $price
+                    ]);
+
+                $expected = ['42' => $price];
+            }
         }
 
         $result = $this->provider->getData($context);
@@ -156,6 +157,12 @@ class FrontendShoppingListProductsPricesDataProviderTest extends \PHPUnit_Framew
                 'criteria' => $criteria,
                 'price' => $price,
                 'accountUser' => null
+            ],
+            'without shoppingList' => [
+                'shoppingList' => null,
+                'criteria' => $criteria,
+                'price' => $price,
+                'accountUser' => new AccountUser()
             ]
         ];
     }
