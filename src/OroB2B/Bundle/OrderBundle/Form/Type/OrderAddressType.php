@@ -67,7 +67,7 @@ class OrderAddressType extends AbstractType
         $order = $options['order'];
 
         $isManualEditGranted = $this->orderAddressSecurityProvider->isManualEditGranted($type);
-        if (!$this->hasAccessToEdit($order, $type)) {
+        if (!$this->hasAccessToEditAddress($order, $type)) {
             $addresses = $this->orderAddressManager->getGroupedAddresses($order, $type);
 
             $accountAddressOptions = [
@@ -264,7 +264,7 @@ class OrderAddressType extends AbstractType
      *
      * @return bool
      */
-    protected function hasAccessToEdit(Order $order, $type)
+    protected function hasAccessToEditAddress(Order $order, $type)
     {
         $isFromExternalSource = false;
 
