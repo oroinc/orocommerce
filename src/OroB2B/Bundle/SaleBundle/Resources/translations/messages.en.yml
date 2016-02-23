@@ -186,11 +186,11 @@ orob2b:
 
         security:
             permission:
-                address_shipping_account_use_any: Use any shipping address from the account address book for quote
-                address_shipping_account_user_use_default: Use the default shipping address from the account user's address book for quote
-                address_shipping_account_user_use_any: Use any shipping address from the account user's address book for quote
-                address_shipping_allow_manual: Enter the shipping address manually for quote
-                payment_term_account_can_override: Override account payment term for quote
+                address_shipping_account_use_any: "[Quote] Use any shipping address from the account address book"
+                address_shipping_account_user_use_default: "[Quote] Use the default shipping address from the account user's address book"
+                address_shipping_account_user_use_any: "[Quote] Use any shipping address from the account user's address book"
+                address_shipping_allow_manual: "[Quote] Enter the shipping address manually"
+                payment_term_account_can_override: "[Quote] Override account payment term"
 
     frontend:
         sale:
