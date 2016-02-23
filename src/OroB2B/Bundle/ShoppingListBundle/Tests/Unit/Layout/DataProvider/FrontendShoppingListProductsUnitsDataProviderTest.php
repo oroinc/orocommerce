@@ -94,7 +94,7 @@ class FrontendShoppingListProductsUnitsDataProviderTest extends \PHPUnit_Framewo
         /** @var PriceList $priceList */
         $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', ['id'=> 42]);
         $this->requestHandler->expects($this->once())
-            ->method('getPriceList')
+            ->method('getPriceListByAccount')
             ->willReturn($priceList);
 
         $repository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
@@ -102,7 +102,6 @@ class FrontendShoppingListProductsUnitsDataProviderTest extends \PHPUnit_Framewo
             ->getMock();
         $repository->expects($this->once())
             ->method('getProductsUnitsByPriceList')
-            ->with()
             ->willReturn($expected);
 
         $em = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
