@@ -59,10 +59,8 @@ class ActionButtonType extends AbstractType
         $titleRaw = array_key_exists('title', $frontendOptions) ? $frontendOptions['title'] : $params['label'];
         $title = $this->translator->trans($titleRaw);
         $attributes['title'] = $title;
-        $attributes['data-from-url'] = $options['fromUrl'];
         $attributes = $this->setDialogParameters($frontendOptions, $actionUrl, $attributes, $title);
-        $attributes['data-confirmation'] = array_key_exists('confirmation', $frontendOptions) ?
-            $frontendOptions['confirmation'] : '';
+        $attributes = $this->setDataParameters($options, $attributes, $frontendOptions);
         $attributes = $this->setPageComponentOptions($buttonOptions, $attributes);
         $attributes = $this->setButtonOptions($buttonOptions, $attributes);
         $view->vars['attr'] = $attributes;
@@ -148,6 +146,21 @@ class ActionButtonType extends AbstractType
 
             return $attributes;
         }
+
+        return $attributes;
+    }
+
+    /**
+     * @param array $options
+     * @param array $attributes
+     * @param array $frontendOptions
+     * @return array
+     */
+    protected function setDataParameters(array $options, array $attributes, array $frontendOptions)
+    {
+        $attributes['data-from-url'] = $options['fromUrl'];
+        $attributes['data-confirmation'] = array_key_exists('confirmation', $frontendOptions) ?
+            $frontendOptions['confirmation'] : '';
 
         return $attributes;
     }
