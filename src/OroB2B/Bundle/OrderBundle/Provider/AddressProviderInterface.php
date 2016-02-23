@@ -12,6 +12,7 @@ interface AddressProviderInterface
     /**
      * @param Account $account
      * @param string $type
+     *
      * @return AccountAddress[]
      * @throws \InvalidArgumentException
      */
@@ -20,6 +21,7 @@ interface AddressProviderInterface
     /**
      * @param AccountUser $accountUser
      * @param string $type
+     *
      * @return AccountUserAddress[]
      * @throws \InvalidArgumentException
      */

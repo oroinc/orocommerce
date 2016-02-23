@@ -4,12 +4,12 @@ namespace OroB2B\Bundle\OrderBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
+
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountAddressRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserAddressRepository;
 
@@ -101,10 +101,7 @@ class OrderAddressProvider implements AddressProviderInterface
     }
 
     /**
-     * @param Account $account
-     * @param string $type
-     * @return AccountAddress[]
-     * @throws \InvalidArgumentException
+     * {@inheritdoc}
      */
     public function getAccountAddresses(Account $account, $type)
     {
@@ -129,10 +126,7 @@ class OrderAddressProvider implements AddressProviderInterface
     }
 
     /**
-     * @param AccountUser $accountUser
-     * @param string $type
-     * @return AccountUserAddress[]
-     * @throws \InvalidArgumentException
+     * {@inheritdoc}
      */
     public function getAccountUserAddresses(AccountUser $accountUser, $type)
     {

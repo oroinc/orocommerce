@@ -9,9 +9,7 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountAddressRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserAddressRepository;
 use OroB2B\Bundle\OrderBundle\Provider\AddressProviderInterface;
@@ -94,11 +92,7 @@ class QuoteAddressProvider implements AddressProviderInterface
     }
 
     /**
-     * @param Account $account
-     * @param string $type
-     *
-     * @return AccountAddress[]
-     * @throws \InvalidArgumentException
+     * {@inheritdoc}
      */
     public function getAccountAddresses(Account $account, $type)
     {
@@ -123,11 +117,7 @@ class QuoteAddressProvider implements AddressProviderInterface
     }
 
     /**
-     * @param AccountUser $accountUser
-     * @param string $type
-     *
-     * @return AccountUserAddress[]
-     * @throws \InvalidArgumentException
+     * {@inheritdoc}
      */
     public function getAccountUserAddresses(AccountUser $accountUser, $type)
     {
