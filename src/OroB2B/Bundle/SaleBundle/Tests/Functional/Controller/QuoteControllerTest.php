@@ -58,7 +58,7 @@ class QuoteControllerTest extends WebTestCase
     /**
      * @var string
      */
-    public static $shippingEstimateValue = '999.9900';
+    public static $shippingEstimateAmount = '999.9900';
 
     /**
      * @var string
@@ -211,14 +211,14 @@ class QuoteControllerTest extends WebTestCase
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save')->form();
-        $form['orob2b_sale_quote[shippingEstimate][value]']  = self::$shippingEstimateValue;
+        $form['orob2b_sale_quote[shippingEstimate][amount]']  = self::$shippingEstimateAmount;
         $form['orob2b_sale_quote[shippingEstimate][currency]']  = self::$shippingEstimateCurrency;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
         $form = $crawler->selectButton('Save')->form();
         $fields = $form->get('orob2b_sale_quote');
-        $this->assertEquals(self::$shippingEstimateValue, $fields['shippingEstimate']['value']->getValue());
+        $this->assertEquals(self::$shippingEstimateAmount, $fields['shippingEstimate']['amount']->getValue());
         $this->assertEquals(self::$shippingEstimateCurrency, $fields['shippingEstimate']['currency']->getValue());
 
         $result = $this->client->getResponse();

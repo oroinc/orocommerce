@@ -109,7 +109,7 @@ class QuoteTest extends AbstractTest
 
         $value = 100;
         $currency = 'EUR';
-        $this->setProperty($item, 'shippingEstimateValue', $value)
+        $this->setProperty($item, 'shippingEstimateAmount', $value)
             ->setProperty($item, 'shippingEstimateCurrency', $currency);
 
         $item->postLoad();
@@ -126,7 +126,7 @@ class QuoteTest extends AbstractTest
 
         $item->updateShippingEstimate();
 
-        $this->assertEquals($value, $this->getProperty($item, 'shippingEstimateValue'));
+        $this->assertEquals($value, $this->getProperty($item, 'shippingEstimateAmount'));
         $this->assertEquals($currency, $this->getProperty($item, 'shippingEstimateCurrency'));
     }
 
@@ -141,7 +141,7 @@ class QuoteTest extends AbstractTest
 
         $this->assertEquals($price, $item->getShippingEstimate());
 
-        $this->assertEquals($value, $this->getProperty($item, 'shippingEstimateValue'));
+        $this->assertEquals($value, $this->getProperty($item, 'shippingEstimateAmount'));
         $this->assertEquals($currency, $this->getProperty($item, 'shippingEstimateCurrency'));
     }
 
