@@ -56,10 +56,9 @@ class ProductImageType extends AbstractType
                 $imageType,
                 'choice',
                 [
-                    'choices' => [$imageType],
+                    'choices' => [$imageType => $this->defineLabelForImageType($imageType)],
                     'multiple' => $this->defineMultipleOptionForImageType($imageType),
                     'expanded' => true,
-                    'label' => null,
                 ]
             );
         }
@@ -68,8 +67,11 @@ class ProductImageType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'OroB2B\Bundle\ProductBundle\Entity\ProductImage'
+            'data_class' => 'OroB2B\Bundle\ProductBundle\Entity\ProductImage',
+            'image_types' => self::$imageTypes,
         ]);
+
+        $resolver->setAllowedTypes('image_types', 'array');
     }
 
     /**
@@ -86,8 +88,30 @@ class ProductImageType extends AbstractType
      */
     private function defineMultipleOptionForImageType($imageType)
     {
+        $imageTypeConfig = $this->getImageTypeConfig($imageType);
+
+        return $imageTypeConfig['max_number'] !== 1;
+    }
+
+    /**
+     * @param string $imageType
+     * @return mixed
+     */
+    private function defineLabelForImageType($imageType)
+    {
+        $imageTypeConfig = $this->getImageTypeConfig($imageType);
+
+        return $imageTypeConfig['label'];
+    }
+
+    /**
+     * @param string $imageType
+     * @return array
+     */
+    private function getImageTypeConfig($imageType)
+    {
         $imagesConfig = $this->theme->getDataByKey('images');
 
-        return $imagesConfig['types'][$imageType]['max_number'] !== 1;
+        return $imagesConfig['types'][$imageType];
     }
 }
