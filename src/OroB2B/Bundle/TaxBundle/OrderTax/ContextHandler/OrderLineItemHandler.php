@@ -78,8 +78,8 @@ class OrderLineItemHandler
         }
 
         $context->offsetSet(Taxable::DIGITAL_PRODUCT, $this->isDigital($lineItem));
-        $context->offsetSet(Taxable::PRODUCT_TAX_CODE, $this->getTaxCode($lineItem, TaxCodeInterface::TYPE_PRODUCT));
-        $context->offsetSet(Taxable::ACCOUNT_TAX_CODE, $this->getTaxCode($lineItem, TaxCodeInterface::TYPE_ACCOUNT));
+        $context->offsetSet(Taxable::PRODUCT_TAX_CODE, $this->getProductTaxCode($lineItem));
+        $context->offsetSet(Taxable::ACCOUNT_TAX_CODE, $this->getAccountTaxCode($lineItem));
     }
 
     /**
@@ -88,7 +88,7 @@ class OrderLineItemHandler
      */
     protected function isDigital(OrderLineItem $lineItem)
     {
-        $productTaxCode = $this->getTaxCode($lineItem, TaxCodeInterface::TYPE_PRODUCT);
+        $productTaxCode = $this->getProductTaxCode($lineItem);
 
         if (null === $productTaxCode) {
             return false;
@@ -108,43 +108,59 @@ class OrderLineItemHandler
 
     /**
      * @param OrderLineItem $lineItem
-     * @param string $type
-     * @return null|string
+     * @return null|TaxCodeInterface
      */
-    protected function getTaxCode(OrderLineItem $lineItem, $type)
+    protected function getProductTaxCode(OrderLineItem $lineItem)
     {
-        $cacheKey = implode(':', [$type, $lineItem->getId()]);
+        $cacheKey  = $this->getCacheTaxCodeKey(TaxCodeInterface::TYPE_PRODUCT, $lineItem->getId());
+        $cachedTaxCode = $this->getCachedTaxCode($cacheKey);
 
-        if (array_key_exists($cacheKey, $this->taxCodes)) {
+        if ($cachedTaxCode) {
+            return $cachedTaxCode;
+        }
+
+        $product = $lineItem->getProduct();
+
+        if ($product === null) {
+            $this->taxCodes[$cacheKey] = null;
+
             return $this->taxCodes[$cacheKey];
         }
 
-        $object = null;
+        return $this->getTaxCode(TaxCodeInterface::TYPE_PRODUCT, $product, $cacheKey);
+    }
 
-        if ($type === TaxCodeInterface::TYPE_PRODUCT) {
-            if ($lineItem->getProduct() === null) {
-                $this->taxCodes[$cacheKey] = null;
+    /**
+     * @param OrderLineItem $lineItem
+     * @return null|TaxCodeInterface
+     */
+    protected function getAccountTaxCode(OrderLineItem $lineItem)
+    {
+        $cacheKey  = $this->getCacheTaxCodeKey(TaxCodeInterface::TYPE_ACCOUNT, $lineItem->getId());
+        $cachedTaxCode = $this->getCachedTaxCode($cacheKey);
 
-                return null;
-            }
-
-            $object = $lineItem->getProduct();
-        } elseif ($type === TaxCodeInterface::TYPE_ACCOUNT) {
-            if ($lineItem->getOrder() === null || $lineItem->getOrder()->getAccount() === null) {
-                $this->taxCodes[$cacheKey] = null;
-
-                return null;
-            }
-
-            $object = $lineItem->getOrder()->getAccount();
+        if ($cachedTaxCode) {
+            return $cachedTaxCode;
         }
 
-        if ($object === null) {
-            return null;
+        if (!$lineItem->getOrder() && !$lineItem->getOrder()->getAccount()) {
+            $this->taxCodes[$cacheKey] = null;
+
+            return $this->taxCodes[$cacheKey];
         }
 
+        return $this->getTaxCode(TaxCodeInterface::TYPE_ACCOUNT, $lineItem->getOrder()->getAccount(), $cacheKey);
+    }
+
+    /**
+     * @param string $type
+     * @param object $object
+     * @param string $cacheKey
+     * @return TaxCodeInterface
+     */
+    protected function getTaxCode($type, $object, $cacheKey)
+    {
         $taxCode = $this->getRepository($type)->findOneByEntity((string)$type, $object);
-
         $this->taxCodes[$cacheKey] = $taxCode ? $taxCode->getCode() : null;
 
         return $this->taxCodes[$cacheKey];
@@ -163,5 +179,28 @@ class OrderLineItemHandler
         }
 
         throw new \InvalidArgumentException(sprintf('Unknown type: %s', $type));
+    }
+
+    /**
+     * @param string $type
+     * @param int $id
+     * @return string
+     */
+    protected function getCacheTaxCodeKey($type, $id)
+    {
+        return implode(':', [$type, $id]);
+    }
+
+    /**
+     * @param string $cacheKey
+     * @return null|TaxCodeInterface
+     */
+    protected function getCachedTaxCode($cacheKey)
+    {
+        if (!array_key_exists($cacheKey, $this->taxCodes)) {
+            return null;
+        }
+
+        return $this->taxCodes[$cacheKey];
     }
 }

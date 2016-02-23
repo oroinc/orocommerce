@@ -36,8 +36,8 @@ class USSalesTaxDigitalResolver implements ResolverInterface
         }
 
         $isStateWithoutDigitalTax = UnitedStatesHelper::isStateWithoutDigitalTax(
-            $address->getCountry()->getIso2Code(),
-            $address->getRegion()->getCode()
+            $address->getCountryIso2(),
+            $address->getRegionCode()
         );
 
         if ($isStateWithoutDigitalTax) {
