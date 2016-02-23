@@ -85,7 +85,7 @@ class QuoteAddressProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider accountAddressPermissions
+     * @dataProvider quoteAccountAddressPermissions
      * @param string $type
      * @param string $expectedPermission
      * @param object $loggedUser
@@ -118,7 +118,7 @@ class QuoteAddressProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider accountAddressPermissions
+     * @dataProvider quoteAccountAddressPermissions
      * @param string $type
      * @param string $expectedPermission
      * @param object $loggedUser
@@ -152,7 +152,7 @@ class QuoteAddressProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function accountAddressPermissions()
+    public function quoteAccountAddressPermissions()
     {
         return [
             ['shipping', 'orob2b_quote_address_shipping_account_use_any', new AccountUser()],
@@ -161,7 +161,7 @@ class QuoteAddressProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider accountAddressPermissions
+     * @dataProvider quoteAccountAddressPermissions
      * @param string $type
      * @param string $expectedPermission
      * @param object $loggedUser
