@@ -402,5 +402,11 @@ services:
         arguments:
             - @orob2b_tax.manager.tax_manager
         tags:
-            - { name: doctrine.event_listener, event: postUpdate }
-            - { name: doctrine.event_listener, event: postPersist }
+            -
+                name: doctrine.orm.entity_listener
+                entity: %orob2b_order.entity.order.class%
+                event: postPersist
+            -
+                name: doctrine.orm.entity_listener
+                entity: %orob2b_order.entity.order.class%
+                event: postUpdate

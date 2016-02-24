@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\TaxBundle\EventListener;
 
-use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
+use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 
 class OrderTaxListener
@@ -21,40 +21,20 @@ class OrderTaxListener
     }
 
     /**
+     * @param Order $order
      * @param LifecycleEventArgs $event
      */
-    public function postUpdate(LifecycleEventArgs $event)
+    public function postUpdate(Order $order, LifecycleEventArgs $event)
     {
-        $this->processEvent($event);
-    }
-
-    /**
-     * @param LifecycleEventArgs $event
-     */
-    public function postPersist(LifecycleEventArgs $event)
-    {
-        $this->processEvent($event);
-    }
-
-    /**
-     * @param LifecycleEventArgs $event
-     */
-    protected function processEvent(LifecycleEventArgs $event)
-    {
-        $order = $event->getEntity();
-        if (!$this->isApplicable($order)) {
-            return;
-        }
-
         $this->taxManager->saveTax($order);
     }
 
     /**
-     * @param  object  $entity
-     * @return boolean
+     * @param Order $order
+     * @param LifecycleEventArgs $event
      */
-    protected function isApplicable($entity)
+    public function postPersist(Order $order, LifecycleEventArgs $event)
     {
-        return $entity instanceof Order;
+        $this->taxManager->saveTax($order);
     }
 }
