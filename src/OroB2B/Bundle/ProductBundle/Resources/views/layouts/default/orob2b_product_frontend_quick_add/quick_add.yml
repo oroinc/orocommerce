@@ -2,24 +2,24 @@ layout:
     actions:
         - @setBlockTheme:
             themes: 'OroB2BProductBundle:layouts:default/orob2b_product_frontend_quick_add/quick_add.html.twig'
+        - @setFormTheme:
+            themes: 'OroB2BProductBundle:layouts:default/orob2b_product_frontend_quick_add/form.html.twig'
         - @setOption:
             id: page_title
             optionName: text
             optionValue: 'orob2b.product.frontend.quick_add.title'
-#        - @setOption:
-#            id: quick_add_form_fields_products
-#            optionName: label
-#            optionValue: false
         - @setOption:
-            id: quick_add_copy_paste_form_fields_copyPaste
-            optionName: attr.placeholder
-            optionValue: 'orob2b.product.frontend.quick_add.copy_paste.placeholder'
+            id: page_title
+            optionName: class_prefix
+            optionValue: 'quick-order'
         - @addTree:
             items:
-                quick_add_form:
+                quick_add_form_container:
                     blockType: container
                     options:
                         class_prefix: 'quick-order'
+                quick_add_form:
+                    blockType: container
                 quick_add_form_start:
                     blockType: form_start
                     options:
@@ -33,6 +33,8 @@ layout:
                     options:
                         form: { @value: $data.orob2b_product_quick_add_form_provider }
 
+                quick_add_copy_paste_form:
+                    blockType: container
                 quick_add_copy_paste_form_start:
                     blockType: form_start
                     options:
@@ -47,10 +49,12 @@ layout:
                         form: { @value: $data.orob2b_product_quick_add_copy_paste_form_provider }
             tree:
                 content:
-                    quick_add_form:
-                        quick_add_form_start: ~
-                        quick_add_form_fields: ~
-                        quick_add_form_end: ~
-                        quick_add_copy_paste_form_start: ~
-                        quick_add_copy_paste_form_fields: ~
-                        quick_add_copy_paste_form_end: ~
+                    quick_add_form_container:
+                        quick_add_form:
+                            quick_add_form_start: ~
+                            quick_add_form_fields: ~
+                            quick_add_form_end: ~
+                        quick_add_copy_paste_form:
+                            quick_add_copy_paste_form_start: ~
+                            quick_add_copy_paste_form_fields: ~
+                            quick_add_copy_paste_form_end: ~

@@ -5843,6 +5843,11 @@
     clear: both;
   }
 }
+.quick-order__quote-form__row__head {
+  & .quick-order__quote-form__col {
+    margin-bottom: 0;
+  }
+}
 
 .quick-order__quote-form__col {
   float: left;
@@ -5859,18 +5864,10 @@
   }
 
   &.quick-order__quote-form__col_item {
-    width: 43%;
+    width: 86%;
 
     @media (max-width: 767px) {
-      width: 40%;
-    }
-  }
-
-  &.quick-order__quote-form__col_mfg {
-    width: 43%;
-
-    @media (max-width: 767px) {
-      width: 40%;
+      width: 80%;
     }
   }
 
