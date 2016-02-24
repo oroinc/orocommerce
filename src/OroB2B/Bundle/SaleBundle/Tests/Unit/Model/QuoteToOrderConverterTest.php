@@ -11,7 +11,9 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -336,8 +338,8 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         if ($entity instanceof Quote) {
             if (!$emptyShippingAddress) {
                 $shippingAddress = new QuoteAddress();
-                $shippingAddress->setAccountAddress(null);
-                $shippingAddress->setAccountUserAddress(null);
+                $shippingAddress->setAccountAddress(new AccountAddress());
+                $shippingAddress->setAccountUserAddress(new AccountUserAddress());
                 $shippingAddress->setLabel('Label');
                 $shippingAddress->setStreet('Street');
                 $shippingAddress->setStreet2('Street');
@@ -470,8 +472,8 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
     {
         $shippingAddress = new OrderAddress();
 
-        $shippingAddress->setAccountAddress(null);
-        $shippingAddress->setAccountUserAddress(null);
+        $shippingAddress->setAccountAddress(new AccountAddress());
+        $shippingAddress->setAccountUserAddress(new AccountUserAddress());
         $shippingAddress->setLabel('Label');
         $shippingAddress->setStreet('Street');
         $shippingAddress->setStreet2('Street');

@@ -124,7 +124,7 @@ class QuoteToOrderConverter
             $orderAddress = new OrderAddress();
 
             $orderAddress->setAccountAddress($quoteAddress->getAccountAddress());
-            $orderAddress->setAccountUserAddress($quoteAddress->getAccountAddress());
+            $orderAddress->setAccountUserAddress($quoteAddress->getAccountUserAddress());
             $orderAddress->setLabel($quoteAddress->getLabel());
             $orderAddress->setStreet($quoteAddress->getStreet());
             $orderAddress->setStreet2($quoteAddress->getStreet2());
