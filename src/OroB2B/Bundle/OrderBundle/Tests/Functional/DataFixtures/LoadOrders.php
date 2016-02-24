@@ -2,6 +2,9 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures;
 
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -13,7 +16,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 
-class LoadOrders extends AbstractFixture implements DependentFixtureInterface
+class LoadOrders extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
     const ORDER_1 = 'simple_order';
     const MY_ORDER = 'my_order';
@@ -45,6 +48,19 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface
     ];
 
     /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getDependencies()
@@ -53,6 +69,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface
             'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
             'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderUsers',
             'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadPaymentTermData',
+            'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData'
         ];
     }
 
@@ -88,6 +105,8 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface
         /** @var PaymentTerm $paymentTerm */
         $paymentTerm = $this->getReference($orderData['paymentTerm']);
 
+        $website = $this->container->get('orob2b_website.manager')->getCurrentWebsite();
+
         $order = new Order();
         $order
             ->setIdentifier($name)
@@ -99,6 +118,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface
             ->setPoNumber($orderData['poNumber'])
             ->setSubtotal($orderData['subtotal'])
             ->setAccount($accountUser->getAccount())
+            ->setWebsite($website)
             ->setAccountUser($accountUser);
 
         $manager->persist($order);

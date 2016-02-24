@@ -39,14 +39,6 @@ class ProductType extends AbstractType
         $builder
             ->add('sku', 'text', ['required' => true, 'label' => 'orob2b.product.sku.label'])
             ->add(
-                'hasVariants',
-                'checkbox',
-                [
-                    'label' => 'orob2b.product.has_variants.label',
-                    'tooltip'  => 'orob2b.product.form.tooltip.has_variants'
-                ]
-            )
-            ->add(
                 'status',
                 ProductStatusType::NAME,
                 [
@@ -108,6 +100,11 @@ class ProductType extends AbstractType
                     'tooltip'  => 'orob2b.product.form.tooltip.unit_precision',
                     'required' => false
                 ]
+            )
+            ->add(
+                'variantFields',
+                ProductCustomFieldsChoiceType::NAME,
+                ['label' => 'orob2b.product.variant_fields.label']
             );
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener']);
@@ -120,14 +117,8 @@ class ProductType extends AbstractType
     {
         $product = $event->getData();
         $form = $event->getForm();
-
         if ($product instanceof Product && $product->getHasVariants()) {
             $form
-                ->add(
-                    'variantFields',
-                    ProductCustomFieldsChoiceType::NAME,
-                    ['label' => 'orob2b.product.variant_fields.label']
-                )
                 ->add(
                     'variantLinks',
                     ProductVariantLinksType::NAME,

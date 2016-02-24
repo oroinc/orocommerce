@@ -12,7 +12,7 @@ use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class OrderTest extends \PHPUnit_Framework_TestCase
 {
@@ -38,7 +38,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
             ['paymentTerm', new PaymentTerm()],
             ['account', new Account()],
             ['accountUser', new AccountUser()],
-            ['priceList', new PriceList()]
+            ['website', new Website()]
         ];
 
         $order = new Order();

@@ -43,7 +43,7 @@ define(function(require) {
             var currency = $(this.options.currenciesSelector).val();
 
             var params = {
-                priceCurrency: currency,
+                priceCurrencies: currency,
                 showTierPrices: $(this.options.showTierPricesSelector).prop('checked'),
                 saveState: true
             };
