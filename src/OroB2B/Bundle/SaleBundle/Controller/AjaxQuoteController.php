@@ -36,7 +36,7 @@ class AjaxQuoteController extends Controller
     public function getRelatedDataAction()
     {
         $quote = new Quote();
-        $accountUser = $this->getQuoteHandler()->getAccountUser();
+        $accountUser = $this->getQuoteRequestHandler()->getAccountUser();
         $account = $this->getAccount($accountUser);
 
         $quote->setAccount($account);
@@ -81,7 +81,7 @@ class AjaxQuoteController extends Controller
      */
     protected function getAccount(AccountUser $accountUser = null)
     {
-        $account = $this->getQuoteHandler()->getAccount();
+        $account = $this->getQuoteRequestHandler()->getAccount();
         if (!$account && $accountUser) {
             $account = $accountUser->getAccount();
         }
@@ -124,7 +124,7 @@ class AjaxQuoteController extends Controller
     /**
      * @return QuoteRequestHelper
      */
-    protected function getQuoteHandler()
+    protected function getQuoteRequestHandler()
     {
         return $this->get('orob2b_sale.service.quote_request_helper');
     }
