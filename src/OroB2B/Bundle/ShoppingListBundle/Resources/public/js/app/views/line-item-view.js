@@ -38,7 +38,7 @@ define(function(require) {
             });
 
             var productQuantityComponentInstance = new ProductQuantityComponent(
-                _.extend({}, options.quantityComponentOptions, {_sourceElement: this.$(options.quantityContainer)})
+                _.extend({}, this.options.quantityComponentOptions, {_sourceElement: this.$(options.quantityContainer)})
             );
             this.listenTo(productQuantityComponentInstance, 'product:quantity-unit:update', this.onQuantityUnitChange);
 
