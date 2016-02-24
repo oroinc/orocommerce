@@ -108,6 +108,10 @@ orob2b:
             request:
                 saved.message: 'Request has been saved'
 
+        action:
+            request:
+                saved.message: 'Request has been saved'
+
         btn:
             delete: 'Delete'
             restore: 'Restore'

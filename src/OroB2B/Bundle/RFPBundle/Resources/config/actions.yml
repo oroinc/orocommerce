@@ -97,9 +97,8 @@ actions:
         preconditions:
             @equal: [true, $.isAllowed]
 
-    orob2b_rfp_resubmit_action:
+    orob2b_rfp_edit_action:
         label: orob2b.rfp.btn.edit
-        enabled: true
         applications: [backend]
         routes:
             - orob2b_rfp_request_view
@@ -125,3 +124,11 @@ actions:
             attribute_default_values:
                 request:
                     $.data
+        functions:
+            - @flash_message:
+                message: orob2b.rfp.action.request.saved.message
+                type: 'success'
+            - @redirect:
+                parameters:
+                    route: 'orob2b_product_create'
+
