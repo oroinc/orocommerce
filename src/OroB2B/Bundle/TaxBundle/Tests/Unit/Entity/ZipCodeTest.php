@@ -65,4 +65,11 @@ class ZipCodeTest extends \PHPUnit_Framework_TestCase
     {
         return new ZipCode();
     }
+
+    public function testToString()
+    {
+        $zipCode = 'm3c';
+        $code = $this->createZipCode()->setZipCode($zipCode);
+        $this->assertEquals($zipCode, (string)$code);
+    }
 }
