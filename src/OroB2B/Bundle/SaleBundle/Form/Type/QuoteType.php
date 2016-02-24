@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -107,7 +108,18 @@ class QuoteType extends AbstractType
             ])
             ->add('assignedAccountUsers', AccountUserMultiSelectType::NAME, [
                 'label' => 'orob2b.sale.quote.assigned_account_users.label',
-            ]);
+            ])
+            ->add(
+                'shippingEstimate',
+                PriceType::NAME,
+                [
+                    'currency_empty_value' => null,
+                    'error_bubbling' => false,
+                    'required' => false,
+                    'label' => 'orob2b.sale.quote.shipping_estimate.label',
+                ]
+            )
+        ;
 
         if ($this->quoteAddressSecurityProvider->isAddressGranted($quote, AddressType::TYPE_SHIPPING)) {
             $builder
