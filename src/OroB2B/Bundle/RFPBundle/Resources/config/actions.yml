@@ -128,7 +128,10 @@ actions:
             - @flash_message:
                 message: orob2b.rfp.action.request.saved.message
                 type: 'success'
-            - @redirect:
-                parameters:
-                    route: 'orob2b_product_create'
+# @TODO: redirect will be fixed in scope https://magecore.atlassian.net/browse/BB-2200
+#            - @redirect:
+#                parameters:
+#                     route: 'orob2b_rfp_request_view'
+#                      route_parameters:
+#                          id: $id
 
