@@ -6,7 +6,6 @@ define(function(require) {
     var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    //var SubtotalsListener = require('orob2border/js/app/listener/subtotals-listener');
     var BaseView = require('oroui/js/app/views/base/view');
 
     /**
@@ -67,8 +66,8 @@ define(function(require) {
 
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
 
-            mediator.on('order:load:related-data', this.loadingStart, this);
-            mediator.on('order:loaded:related-data', this.loadedRelatedData, this);
+            mediator.on('quote:load:related-data', this.loadingStart, this);
+            mediator.on('quote:loaded:related-data', this.loadedRelatedData, this);
         },
 
         /**
@@ -94,10 +93,6 @@ define(function(require) {
             });
 
             this.accountAddressChange();
-
-            //if (this.options.selectors.subtotalsFields.length > 0) {
-            //    SubtotalsListener.listen(this.$el.find(this.options.selectors.subtotalsFields.join(', ')));
-            //}
         },
 
         /**
@@ -133,8 +128,7 @@ define(function(require) {
         /**
          * Implement account address change logic
          */
-        accountAddressChange: function(e) {
-            debugger;
+        accountAddressChange: function() {
             if (this.$address.val() !== this.options.enterManuallyValue) {
                 this.$fields.each(function() {
                     var $field = $(this);
@@ -162,8 +156,6 @@ define(function(require) {
                             }
                         }
                     });
-
-                    //SubtotalsListener.updateSubtotals(e);
                 }
             } else {
                 this.$fields.each(function() {

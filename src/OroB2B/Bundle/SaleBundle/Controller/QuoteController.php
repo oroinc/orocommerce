@@ -78,7 +78,7 @@ class QuoteController extends Controller
         $quote = new Quote();
 
         if (!$request->get(ProductDataStorage::STORAGE_KEY, false)) {
-            return $this->update($quote);
+            return $this->update($quote, $request);
         }
 
         $this->createForm(QuoteType::NAME, $quote);
@@ -104,12 +104,13 @@ class QuoteController extends Controller
      * @ParamConverter("quote", options={"repository_method" = "getQuote"})
      *
      * @param Quote $quote
+     * @param Request $request
      *
      * @return array|RedirectResponse
      */
-    public function updateAction(Quote $quote)
+    public function updateAction(Quote $quote, Request $request)
     {
-        return $this->update($quote);
+        return $this->update($quote, $request);
     }
 
     /**
@@ -131,8 +132,13 @@ class QuoteController extends Controller
      * @param Quote $quote
      * @return array|RedirectResponse
      */
-    protected function update(Quote $quote)
+    protected function update(Quote $quote, Request $request)
     {
+        if (in_array($request->getMethod(), ['POST', 'PUT'], true)) {
+            $quote->setAccount($this->getQuoteHandler()->getAccount());
+            $quote->setAccountUser($this->getQuoteHandler()->getAccountUser());
+        }
+
         /* @var $handler UpdateHandler */
         $handler = $this->get('oro_form.model.update_handler');
         return $handler->handleUpdate(
@@ -178,5 +184,13 @@ class QuoteController extends Controller
     protected function getQuoteAddressSecurityProvider()
     {
         return $this->get('orob2b_sale.provider.quote_address_security');
+    }
+
+    /**
+     * @return \OroB2B\Bundle\SaleBundle\Model\QuoteRequestHelper
+     */
+    protected function getQuoteHandler()
+    {
+        return $this->get('orob2b_sale.service.quote_request_helper');
     }
 }

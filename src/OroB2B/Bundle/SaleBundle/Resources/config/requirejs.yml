@@ -7,5 +7,6 @@ config:
         'orob2bsale/js/validator/quote-product-offer-quantity': 'bundles/orob2bsale/js/validator/quote-product-offer-quantity.js'
         'orob2bsale/js/app/components/quote-to-order-widget-component': 'bundles/orob2bsale/js/app/components/quote-to-order-widget-component.js'
         'orob2bsale/js/app/views/address-view': 'bundles/orob2bsale/js/app/views/address-view.js'
+        'orob2bsale/js/app/components/related-data-component': 'bundles/orob2bsale/js/app/components/related-data-component.js'
     appmodules:
         - orob2bsale/js/app/modules/validator-constraints-module

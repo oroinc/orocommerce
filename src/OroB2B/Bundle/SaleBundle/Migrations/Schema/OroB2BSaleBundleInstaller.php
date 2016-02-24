@@ -66,7 +66,7 @@ class OroB2BSaleBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_5';
+        return 'v1_6';
     }
 
     /**
@@ -78,7 +78,7 @@ class OroB2BSaleBundleInstaller implements
         $this->createOroQuoteAssignedAccUsersTable($schema);
         $this->createOroQuoteAssignedUsersTable($schema);
         $this->createOroB2BSaleQuoteTable($schema);
-        $this->createOroB2BSaleQuoteAddressTable($schema);
+        $this->createOroB2BQuoteAddressTable($schema);
         $this->createOroB2BSaleQuoteProductTable($schema);
         $this->createOroB2BSaleQuoteProdOfferTable($schema);
         $this->createOroB2BSaleQuoteProdRequestTable($schema);
@@ -90,7 +90,7 @@ class OroB2BSaleBundleInstaller implements
         $this->addOroB2BSaleQuoteProductForeignKeys($schema);
         $this->addOroB2BSaleQuoteProdOfferForeignKeys($schema);
         $this->addOroB2BSaleQuoteProdRequestForeignKeys($schema);
-        $this->addOroB2BSalesQuoteAddressForeignKeys($schema);
+        $this->addOroB2BQuoteAddressForeignKeys($schema);
 
         $this->addNoteAssociations($schema, $this->noteExtension);
         $this->addAttachmentAssociations($schema, $this->attachmentExtension);
@@ -158,13 +158,13 @@ class OroB2BSaleBundleInstaller implements
     }
 
     /**
-     * Create orob2b_sale_quote_address table
+     * Create orob2b_quote_address table
      *
      * @param Schema $schema
      */
-    protected function createOroB2BSaleQuoteAddressTable(Schema $schema)
+    protected function createOroB2BQuoteAddressTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_sale_quote_address');
+        $table = $schema->createTable('orob2b_quote_address');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('account_address_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_user_address_id', 'integer', ['notnull' => false]);
@@ -348,7 +348,7 @@ class OroB2BSaleBundleInstaller implements
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_sale_quote_address'),
+            $schema->getTable('orob2b_quote_address'),
             ['shipping_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
@@ -484,13 +484,13 @@ class OroB2BSaleBundleInstaller implements
     }
 
     /**
-     * Add orob2b_sale_quote_address foreign keys.
+     * Add orob2b_quote_address foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOroB2BSalesQuoteAddressForeignKeys(Schema $schema)
+    protected function addOroB2BQuoteAddressForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_sale_quote_address');
+        $table = $schema->getTable('orob2b_quote_address');
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_account_address'),
             ['account_address_id'],

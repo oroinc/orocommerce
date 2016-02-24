@@ -43,6 +43,16 @@
 {% block content_data %}
     {% set id = 'quote-edit' %}
 
+    {% set ownerSelectors %}
+        <div data-page-component-module="orob2bsale/js/app/components/related-data-component"
+             data-page-component-options="{{ {formName: form.vars.name}|json_encode }}">
+            <div data-page-component-module="orob2baccount/js/app/components/account-selection-component">
+                {{ form_row(form.account) }}
+                {{ form_row(form.accountUser) }}
+            </div>
+        </div>
+    {% endset %}
+
     {% set lineItems %}
         <div class="quote-lineitems"
              data-page-component-module="oroui/js/app/components/view-component"
@@ -71,8 +81,7 @@
              }|json_encode }}"
         >
             {{ form_row(form.owner) }}
-            {{ form_row(form.account) }}
-            {{ form_row(form.accountUser) }}
+            {{ ownerSelectors }}
             {{ form_row(form.website) }}
             {{ form_row(form.validUntil) }}
             {{ form_row(form.locked) }}
@@ -163,7 +172,5 @@
         'dataBlocks': dataBlocks
     }%}
 
-    <div class="sale-quote-form" data-page-component-module="orob2baccount/js/app/components/account-selection-component">
-        {{ parent() }}
-    </div>
+    {{ parent() }}
 {% endblock content_data %}

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
+namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -11,26 +11,27 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 
+use OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type\AbstractAddressTypeTest;
+use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
-use OroB2B\Bundle\OrderBundle\Form\Type\OrderAddressType;
-use OroB2B\Bundle\OrderBundle\Model\OrderAddressManager;
-use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteAddressType;
+use OroB2B\Bundle\SaleBundle\Model\QuoteAddressManager;
+use OroB2B\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 
-class OrderAddressTypeTest extends AbstractAddressTypeTest
+class QuoteAddressTypeTest extends AbstractAddressTypeTest
 {
-    /** @var OrderAddressType */
+    /** @var QuoteAddressType */
     protected $formType;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|AddressFormatter */
     protected $addressFormatter;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|OrderAddressSecurityProvider */
-    protected $orderAddressSecurityProvider;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|QuoteAddressSecurityProvider */
+    protected $quoteAddressSecurityProvider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|OrderAddressManager */
-    protected $orderAddressManager;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|QuoteAddressManager */
+    protected $quoteAddressManager;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|Serializer */
     protected $serializer;
@@ -43,12 +44,12 @@ class OrderAddressTypeTest extends AbstractAddressTypeTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->orderAddressSecurityProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider')
+        $this->quoteAddressSecurityProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->orderAddressManager = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Model\OrderAddressManager')
+        $this->quoteAddressManager = $this->getMockBuilder('OroB2B\Bundle\SaleBundle\Model\QuoteAddressManager')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -56,13 +57,14 @@ class OrderAddressTypeTest extends AbstractAddressTypeTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->formType = new OrderAddressType(
+        $this->formType = new QuoteAddressType(
             $this->addressFormatter,
-            $this->orderAddressManager,
-            $this->orderAddressSecurityProvider,
+            $this->quoteAddressManager,
+            $this->quoteAddressSecurityProvider,
             $this->serializer
         );
-        $this->formType->setDataClass('OroB2B\Bundle\OrderBundle\Entity\OrderAddress');
+
+        $this->formType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\QuoteAddress');
     }
 
     protected function tearDown()
@@ -88,7 +90,7 @@ class OrderAddressTypeTest extends AbstractAddressTypeTest
 
     public function testGetName()
     {
-        $this->assertEquals(OrderAddressType::NAME, $this->formType->getName());
+        $this->assertEquals(QuoteAddressType::NAME, $this->formType->getName());
     }
 
     public function testGetParent()
@@ -102,6 +104,7 @@ class OrderAddressTypeTest extends AbstractAddressTypeTest
      * @param mixed $expectedData
      * @param mixed $defaultData
      * @param array $formErrors
+     *
      * @dataProvider submitProvider
      */
     public function testSubmitWithManualPermission(
@@ -112,22 +115,22 @@ class OrderAddressTypeTest extends AbstractAddressTypeTest
         array $formErrors = []
     ) {
         $this->serializer->expects($this->any())->method('normalize')->willReturn(['a_1' => ['street' => 'street']]);
-        $this->orderAddressManager->expects($this->once())->method('getGroupedAddresses')->willReturn([]);
-        $this->orderAddressSecurityProvider->expects($this->once())->method('isManualEditGranted')->willReturn(true);
+        $this->quoteAddressManager->expects($this->once())->method('getGroupedAddresses')->willReturn([]);
+        $this->quoteAddressSecurityProvider->expects($this->once())->method('isManualEditGranted')->willReturn(true);
 
-        $this->orderAddressManager->expects($this->any())->method('updateFromAbstract')
+        $this->quoteAddressManager->expects($this->any())->method('updateFromAbstract')
             ->will(
                 $this->returnCallback(
-                    function (AccountAddress $address = null, OrderAddress $orderAddress = null) {
+                    function (AccountAddress $address = null, QuoteAddress $orderAddress = null) {
                         if (!$orderAddress) {
-                            $orderAddress = new OrderAddress();
+                            $orderAddress = new QuoteAddress();
                         }
                         return $orderAddress;
                     }
                 )
             );
 
-        $formOptions =  ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'order' => new Order()];
+        $formOptions = ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'quote' => new Quote()];
 
         $this->checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors, $formOptions);
     }
@@ -145,8 +148,8 @@ class OrderAddressTypeTest extends AbstractAddressTypeTest
             'empty data' => [
                 'isValid' => false,
                 'submittedData' => [],
-                'expectedData' => new OrderAddress(),
-                'defaultData' => new OrderAddress(),
+                'expectedData' => new QuoteAddress(),
+                'defaultData' => new QuoteAddress(),
                 'formErrors' => ['country' => 'This value should not be blank.'],
             ],
             'invalid country' => [
@@ -154,8 +157,8 @@ class OrderAddressTypeTest extends AbstractAddressTypeTest
                 'submittedData' => [
                     'country' => 'XX',
                 ],
-                'expectedData' => new OrderAddress(),
-                'defaultData' => new OrderAddress(),
+                'expectedData' => new QuoteAddress(),
+                'defaultData' => new QuoteAddress(),
                 'formErrors' => ['country' => 'This value is not valid.'],
             ],
             'valid country only' => [
@@ -163,8 +166,8 @@ class OrderAddressTypeTest extends AbstractAddressTypeTest
                 'submittedData' => [
                     'country' => 'US',
                 ],
-                'expectedData' => (new OrderAddress())->setCountry(new Country('US')),
-                'defaultData' => new OrderAddress(),
+                'expectedData' => (new QuoteAddress())->setCountry(new Country('US')),
+                'defaultData' => new QuoteAddress(),
             ],
             'account address preselector' => [
                 'isValid' => true,
@@ -172,8 +175,8 @@ class OrderAddressTypeTest extends AbstractAddressTypeTest
                     'country' => 'US',
                     'accountAddress' => null,
                 ],
-                'expectedData' => (new OrderAddress())->setCountry(new Country('US')),
-                'defaultData' => new OrderAddress(),
+                'expectedData' => (new QuoteAddress())->setCountry(new Country('US')),
+                'defaultData' => new QuoteAddress(),
             ],
             'valid full' => [
                 'isValid' => true,
@@ -193,7 +196,7 @@ class OrderAddressTypeTest extends AbstractAddressTypeTest
                     'postalCode' => 'AL',
                     'country' => 'US',
                 ],
-                'expectedData' => (new OrderAddress())
+                'expectedData' => (new QuoteAddress())
                     ->setLabel('Label')
                     ->setNamePrefix('NamePrefix')
                     ->setFirstName('FirstName')
@@ -208,7 +211,7 @@ class OrderAddressTypeTest extends AbstractAddressTypeTest
                     ->setRegionText('Region Text')
                     ->setPostalCode('AL')
                     ->setCountry($country),
-                'defaultData' => new OrderAddress(),
+                'defaultData' => new QuoteAddress(),
             ],
         ];
     }
@@ -231,9 +234,9 @@ class OrderAddressTypeTest extends AbstractAddressTypeTest
         array $groupedAddresses = []
     ) {
         $this->serializer->expects($this->any())->method('normalize')->willReturn(['a_1' => ['street' => 'street']]);
-        $this->orderAddressManager->expects($this->once())->method('getGroupedAddresses')
+        $this->quoteAddressManager->expects($this->once())->method('getGroupedAddresses')
             ->willReturn($groupedAddresses);
-        $this->orderAddressManager->expects($this->any())->method('getEntityByIdentifier')
+        $this->quoteAddressManager->expects($this->any())->method('getEntityByIdentifier')
             ->will(
                 $this->returnCallback(
                     function ($identifier) use ($groupedAddresses) {
@@ -248,34 +251,34 @@ class OrderAddressTypeTest extends AbstractAddressTypeTest
                 )
             );
 
-        $this->orderAddressManager->expects($this->any())->method('updateFromAbstract')
+        $this->quoteAddressManager->expects($this->any())->method('updateFromAbstract')
             ->will(
                 $this->returnCallback(
                     function (AccountAddress $address) {
-                        $orderAddress = new OrderAddress();
-                        $orderAddress->setCountry($address->getCountry());
-                        $orderAddress->setStreet($address->getStreet());
+                        $quoteAddress = new QuoteAddress();
+                        $quoteAddress->setCountry($address->getCountry());
+                        $quoteAddress->setStreet($address->getStreet());
 
-                        return $orderAddress;
+                        return $quoteAddress;
                     }
                 )
             );
 
-        $this->orderAddressSecurityProvider->expects($this->once())->method('isManualEditGranted')->willReturn(false);
+        $this->quoteAddressSecurityProvider->expects($this->once())->method('isManualEditGranted')->willReturn(false);
 
-        $this->orderAddressManager->expects($this->any())->method('updateFromAbstract')
+        $this->quoteAddressManager->expects($this->any())->method('updateFromAbstract')
             ->will(
                 $this->returnCallback(
-                    function (AccountAddress $address = null, OrderAddress $orderAddress = null) {
+                    function (AccountAddress $address = null, QuoteAddress $orderAddress = null) {
                         if (!$orderAddress) {
-                            $orderAddress = new OrderAddress();
+                            $orderAddress = new QuoteAddress();
                         }
                         return $orderAddress;
                     }
                 )
             );
 
-        $formOptions =  ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'order' => new Order()];
+        $formOptions = ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'quote' => new Quote()];
 
         $this->checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors, $formOptions);
     }
@@ -294,7 +297,7 @@ class OrderAddressTypeTest extends AbstractAddressTypeTest
                 'isValid' => true,
                 'submittedData' => [],
                 'expectedData' => null,
-                'defaultData' => new OrderAddress(),
+                'defaultData' => new QuoteAddress(),
             ],
             'not valid identifier' => [
                 'isValid' => false,
@@ -302,7 +305,7 @@ class OrderAddressTypeTest extends AbstractAddressTypeTest
                     'accountAddress' => 'a_1',
                 ],
                 'expectedData' => null,
-                'defaultData' => new OrderAddress(),
+                'defaultData' => new QuoteAddress(),
                 'formErrors' => ['accountAddress' => 'This value is not valid.'],
             ],
             'has identifier' => [
@@ -310,10 +313,10 @@ class OrderAddressTypeTest extends AbstractAddressTypeTest
                 'submittedData' => [
                     'accountAddress' => 'a_1',
                 ],
-                'expectedData' => (new OrderAddress())
+                'expectedData' => (new QuoteAddress())
                     ->setCountry($country)
                     ->setStreet('Street'),
-                'defaultData' => new OrderAddress(),
+                'defaultData' => new QuoteAddress(),
                 'formErrors' => ['accountAddress' => 1],
                 'groupedAddresses' => [
                     'group_name' => [
@@ -331,14 +334,14 @@ class OrderAddressTypeTest extends AbstractAddressTypeTest
         $view = new FormView();
         $view->children = ['country' => new FormView(), 'city' => new FormView(), 'accountAddress' => new FormView()];
 
-        $this->orderAddressManager->expects($this->once())->method('getGroupedAddresses')->willReturn([]);
-        $this->orderAddressSecurityProvider->expects($this->atLeastOnce())->method('isManualEditGranted')
+        $this->quoteAddressManager->expects($this->once())->method('getGroupedAddresses')->willReturn([]);
+        $this->quoteAddressSecurityProvider->expects($this->atLeastOnce())->method('isManualEditGranted')
             ->willReturn(false);
 
         $form = $this->factory->create(
             $this->formType,
-            new OrderAddress(),
-            ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'order' => new Order()]
+            new QuoteAddress(),
+            ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'quote' => new Quote()]
         );
 
         $this->formType->finishView($view, $form, ['addressType' => AddressTypeEntity::TYPE_SHIPPING]);

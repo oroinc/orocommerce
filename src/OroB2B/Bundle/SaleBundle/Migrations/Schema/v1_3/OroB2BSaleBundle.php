@@ -15,101 +15,81 @@ class OroB2BSaleBundle implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createFieldShippingAddress($schema);
-        $this->createOroB2BSaleQuoteAddressTable($schema);
+        $this->createOroQuoteAssignedAccUsersTable($schema);
+        $this->createOroQuoteAssignedUsersTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOroB2BSaleQuoteForeignKeys($schema);
-        $this->addOroB2BSalesQuoteAddressForeignKeys($schema);
+        $this->addOroQuoteAssignedAccUsersForeignKeys($schema);
+        $this->addOroQuoteAssignedUsersForeignKeys($schema);
     }
 
     /**
-     * @param Schema $schema
-     */
-    protected function createFieldShippingAddress(Schema $schema)
-    {
-        $table = $schema->getTable('orob2b_sale_quote');
-        $table->addColumn('shipping_address_id', 'integer', ['notnull' => false]);
-    }
-
-    /**
-     * Create orob2b_sale_quote_address table
+     * Create oro_quote_assigned_acc_users table
      *
      * @param Schema $schema
      */
-    protected function createOroB2BSaleQuoteAddressTable(Schema $schema)
+    protected function createOroQuoteAssignedAccUsersTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_sale_quote_address');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('account_address_id', 'integer', ['notnull' => false]);
-        $table->addColumn('account_user_address_id', 'integer', ['notnull' => false]);
-        $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
-        $table->addColumn('country_code', 'string', ['notnull' => false, 'length' => 2]);
-        $table->addColumn('label', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('street', 'string', ['notnull' => false, 'length' => 500]);
-        $table->addColumn('street2', 'string', ['notnull' => false, 'length' => 500]);
-        $table->addColumn('city', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('postal_code', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('organization', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('region_text', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('name_prefix', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('first_name', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('middle_name', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('last_name', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('name_suffix', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('created', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addColumn('updated', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addColumn('serialized_data', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
-        $table->setPrimaryKey(['id']);
+        $table = $schema->createTable('oro_quote_assigned_acc_users');
+        $table->addColumn('quote_id', 'integer', []);
+        $table->addColumn('account_user_id', 'integer', []);
+        $table->setPrimaryKey(['quote_id', 'account_user_id']);
     }
 
     /**
-     * Add orob2b_sale_quote foreign keys.
+     * Create oro_quote_assigned_users table
      *
      * @param Schema $schema
      */
-    protected function addOroB2BSaleQuoteForeignKeys(Schema $schema)
+    protected function createOroQuoteAssignedUsersTable(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_sale_quote');
+        $table = $schema->createTable('oro_quote_assigned_users');
+        $table->addColumn('quote_id', 'integer', []);
+        $table->addColumn('user_id', 'integer', []);
+        $table->setPrimaryKey(['quote_id', 'user_id']);
+    }
+
+    /**
+     * Add oro_quote_assigned_acc_users foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroQuoteAssignedAccUsersForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_quote_assigned_acc_users');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_sale_quote_address'),
-            ['shipping_address_id'],
+            $schema->getTable('orob2b_account_user'),
+            ['account_user_id'],
             ['id'],
-            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_sale_quote'),
+            ['quote_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 
     /**
-     * Add orob2b_sale_quote_address foreign keys.
+     * Add oro_quote_assigned_users foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOroB2BSalesQuoteAddressForeignKeys(Schema $schema)
+    protected function addOroQuoteAssignedUsersForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_sale_quote_address');
+        $table = $schema->getTable('oro_quote_assigned_users');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_address'),
-            ['account_address_id'],
+            $schema->getTable('oro_user'),
+            ['user_id'],
             ['id'],
-            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_user_address'),
-            ['account_user_address_id'],
+            $schema->getTable('orob2b_sale_quote'),
+            ['quote_id'],
             ['id'],
-            ['onUpdate' => null, 'onDelete' => 'SET NULL']
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_dictionary_region'),
-            ['region_code'],
-            ['combined_code'],
-            ['onUpdate' => null, 'onDelete' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_dictionary_country'),
-            ['country_code'],
-            ['iso2_code'],
-            ['onUpdate' => null, 'onDelete' => null]
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 }
