@@ -10,6 +10,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
 
 /**
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository")
@@ -146,5 +147,11 @@ class AccountTaxCode extends AbstractTaxCode
     public function getAccountGroups()
     {
         return $this->accountGroups;
+    }
+
+    /** {@inheritdoc} */
+    public function getType()
+    {
+        return TaxCodeInterface::TYPE_ACCOUNT;
     }
 }
