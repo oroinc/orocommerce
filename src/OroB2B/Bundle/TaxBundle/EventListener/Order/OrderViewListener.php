@@ -3,13 +3,13 @@
 namespace OroB2B\Bundle\TaxBundle\EventListener\Order;
 
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
 use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
 use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
-use Symfony\Component\Translation\TranslatorInterface;
 
 class OrderViewListener
 {
