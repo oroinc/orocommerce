@@ -79,11 +79,10 @@ actions:
                 attribute: $.cancelledStatus
                 where:
                     name: $.cancelledStatusName
-#        TODO: uncomment after BB-2169 fix
-#        preconditions:
-#            @and:
-#                - @not_empty: $status
-#                - @not_equal: [$status.id, $.cancelledStatus.id]
+        preconditions:
+            @and:
+                - @not_empty: $status
+                - @not_equal: [$status.id, $.cancelledStatus.id]
         functions:
             - @assign_value: [$cancellationReason, $.cancellation_reason]
             - @assign_value: [$status, $.cancelledStatus]
