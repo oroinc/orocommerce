@@ -74,8 +74,8 @@ class FrontendShoppingListProductsUnitsDataProvider implements DataProviderInter
             }
         );
 
-        return $this->registry->getManagerForClass('OroB2BPricingBundle:ProductPrice')
-            ->getRepository('OroB2BPricingBundle:ProductPrice')
+        return $this->registry->getManagerForClass('OroB2BPricingBundle:CombinedProductPrice')
+            ->getRepository('OroB2BPricingBundle:CombinedProductPrice')
             ->getProductsUnitsByPriceList($priceList, $products, $this->userCurrencyProvider->getUserCurrency());
     }
 }
