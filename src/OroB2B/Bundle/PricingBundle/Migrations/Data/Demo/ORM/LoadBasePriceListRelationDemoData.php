@@ -31,7 +31,7 @@ abstract class LoadBasePriceListRelationDemoData extends AbstractFixture impleme
 
     /**
      * @param EntityManager $manager
-     * @param $name
+     * @param string $name
      * @return PriceList
      */
     protected function getPriceListByName(EntityManager $manager, $name)
@@ -47,7 +47,7 @@ abstract class LoadBasePriceListRelationDemoData extends AbstractFixture impleme
 
     /**
      * @param EntityManager $manager
-     * @param $name
+     * @param string $name
      * @return Website
      */
     protected function getWebsiteByName(EntityManager $manager, $name)

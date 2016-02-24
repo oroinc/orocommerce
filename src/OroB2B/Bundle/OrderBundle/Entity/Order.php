@@ -17,7 +17,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Table(name="orob2b_order",indexes={@ORM\Index(name="orob2b_order_created_at_index", columns={"created_at"})})
@@ -50,6 +50,7 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceList;
  * )
  * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHolderInterface
 {
@@ -252,7 +253,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
      * @var Account
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
-     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -262,6 +263,21 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
      * )
      */
     protected $account;
+
+    /**
+     * @var Website
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $website;
 
     /**
      * @var AccountUser
@@ -293,21 +309,6 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
      * )
      */
     protected $lineItems;
-
-    /**
-     * @var PriceList
-     *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList")
-     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     **/
-    protected $priceList;
 
     /**
      * Constructor
@@ -408,7 +409,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
      *
      * @return Order
      */
-    public function setOwner(User $owningUser)
+    public function setOwner(User $owningUser = null)
     {
         $this->owner = $owningUser;
 
@@ -732,25 +733,6 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
     }
 
     /**
-     * @return PriceList
-     */
-    public function getPriceList()
-    {
-        return $this->priceList;
-    }
-
-    /**
-     * @param PriceList $priceList
-     * @return Order
-     */
-    public function setPriceList(PriceList $priceList = null)
-    {
-        $this->priceList = $priceList;
-
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getEmail()
@@ -760,5 +742,24 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
         }
 
         return '';
+    }
+
+    /**
+     * @param Website $website
+     * @return $this
+     */
+    public function setWebsite(Website $website)
+    {
+        $this->website = $website;
+
+        return $this;
+    }
+
+    /**
+     * @return Website
+     */
+    public function getWebsite()
+    {
+        return $this->website;
     }
 }

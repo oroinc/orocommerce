@@ -18,12 +18,14 @@ parameters:
     orob2b_product.validator.product_by_sku.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator
     orob2b_product.provider.custom_field_provider.class: OroB2B\Bundle\ProductBundle\Provider\CustomFieldProvider
     orob2b_product.provider.product_status_provider.class: OroB2B\Bundle\ProductBundle\Provider\ProductStatusProvider
-    orob2b_product.provider.quick_add_form_provider.class: OroB2B\Bundle\ProductBundle\Provider\QuickAddFormProvider
+    orob2b_product.provider.quick_add_form_provider.class: Oro\Bundle\LayoutBundle\Layout\DataProvider\FormProvider
+    orob2b_product.provider.quick_add_copy_paste_form_provider.class: Oro\Bundle\LayoutBundle\Layout\DataProvider\FormProvider
     orob2b_product.event_listener.product_variant_custom_fields_datagrid.class: OroB2B\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener
     orob2b_product.event_listener.restricted_products_datagrid.class: OroB2B\Bundle\ProductBundle\EventListener\RestrictedProductsDatagridEventListener
     orob2b_product.event_listener.product_select_db_query.class: OroB2B\Bundle\ProductBundle\EventListener\ProductSelectDBQueryEventListener
     orob2b_product.event_listener.scoped_product_select_db_query.class: OroB2B\Bundle\ProductBundle\EventListener\ScopedProductSelectDBQueryEventListener
     orob2b_product.event_listener.restrict_disabled_products.class: OroB2B\Bundle\ProductBundle\EventListener\RestrictDisabledProductsEventListener
+    orob2b_product.model.builder.quick_add_row_collection.class: OroB2B\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder
 
     orob2b_product.validator.unique_variant_links.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator
     orob2b_product.validator.product_variant_field.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantFieldValidator
@@ -40,7 +42,6 @@ parameters:
     orob2b_product.menu.frontend.quick_add.class: OroB2B\Bundle\ProductBundle\Menu\Frontend\QuickAddMenuBuilder
 
     orob2b_product.autocomplete.product_visibility_limited.search_handler.class: OroB2B\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler
-
 
 services:
     orob2b_product.product.manager.api:
@@ -174,6 +175,7 @@ services:
             - @doctrine
             - @router
             - @translator
+            - @orob2b_product.model.builder.quick_add_row_collection
         calls:
             - [setProductClass, [%orob2b_product.product.class%]]
 
@@ -204,8 +206,21 @@ services:
         class: %orob2b_product.provider.quick_add_form_provider.class%
         arguments:
             - @form.factory
+        calls:
+            - [setFormType, ['orob2b_product_quick_add']]
+            - [setActionRoute, ['orob2b_product_frontend_quick_add']]
         tags:
             - { name: layout.data_provider, alias: orob2b_product_quick_add_form_provider }
+
+    orob2b_product.provider.quick_add_copy_paste_form_provider:
+        class: %orob2b_product.provider.quick_add_copy_paste_form_provider.class%
+        arguments:
+            - @form.factory
+        calls:
+            - [setFormType, ['orob2b_product_quick_add_copy_paste']]
+            - [setActionRoute, ['orob2b_product_frontend_quick_add_copy_paste']]
+        tags:
+            - { name: layout.data_provider, alias: orob2b_product_quick_add_copy_paste_form_provider }
 
     orob2b_product.event_listener.product_variant_custom_fields_datagrid:
         class: %orob2b_product.event_listener.product_variant_custom_fields_datagrid.class%
@@ -290,3 +305,14 @@ services:
             - [setFrontendSystemConfigurationPath, ['orob2b_product.general_frontend_product_visibility']]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
+
+    orob2b_product.repository.product:
+        class: Doctrine\ORM\EntityRepository
+        factory: [@oro_entity.doctrine_helper, getEntityRepository]
+        arguments:
+            - %orob2b_product.product.class%
+
+    orob2b_product.model.builder.quick_add_row_collection:
+        class: %orob2b_product.model.builder.quick_add_row_collection.class%
+        arguments:
+            - @orob2b_product.repository.product

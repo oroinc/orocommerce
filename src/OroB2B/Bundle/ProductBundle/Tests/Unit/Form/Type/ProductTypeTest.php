@@ -15,7 +15,7 @@ use Oro\Bundle\TranslationBundle\Translation\Translator;
 
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
+use OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -176,7 +176,6 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
-                    'hasVariants' => true,
                     'variantFields' => array_keys($this->exampleCustomFields)
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(),
@@ -195,7 +194,6 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
-                    'hasVariants' => true,
                     'variantFields' => array_keys($this->exampleCustomFields)
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(true),
@@ -217,7 +215,6 @@ class ProductTypeTest extends FormIntegrationTestCase
                         ['text' => 'first description'],
                         ['text' => 'second description'],
                     ],
-                    'hasVariants' => true,
                     'variantFields' => array_keys($this->exampleCustomFields)
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(false, true),
@@ -231,7 +228,6 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
-                    'hasVariants' => false,
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(false, false, false),
                 'rounding' => false
@@ -288,7 +284,7 @@ class ProductTypeTest extends FormIntegrationTestCase
 
         $this->assertTrue($form->has('sku'));
         $this->assertTrue($form->has('unitPrecisions'));
-        $this->assertTrue($form->has('hasVariants'));
+        $this->assertFalse($form->has('hasVariants'));
     }
 
     public function testGetName()

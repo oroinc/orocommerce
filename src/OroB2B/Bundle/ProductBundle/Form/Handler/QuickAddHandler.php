@@ -11,30 +11,34 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
+use Oro\Bundle\FormBundle\Form\Handler\FormProviderInterface;
+
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
-use OroB2B\Bundle\ProductBundle\Provider\QuickAddFormProvider;
+use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
+use OroB2B\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class QuickAddHandler
 {
     /**
-     * @var QuickAddFormProvider
+     * @var FormProviderInterface
      */
-    protected $quickAddFormProvider;
+    protected $formProvider;
 
     /**
      * @var ComponentProcessorRegistry
      */
     protected $componentRegistry;
 
-    /** @var  ManagerRegistry */
+    /**
+     * @var  ManagerRegistry
+     */
     protected $registry;
 
-    /** @var UrlGeneratorInterface */
+    /**
+     * @var UrlGeneratorInterface
+     */
     protected $router;
 
     /**
@@ -42,28 +46,38 @@ class QuickAddHandler
      */
     protected $translator;
 
-    /** @var string */
+    /**
+     * @var QuickAddRowCollectionBuilder
+     */
+    protected $collectionBuilder;
+
+    /**
+     * @var string
+     */
     protected $productClass;
 
     /**
-     * @param QuickAddFormProvider $quickAddFormProvider
+     * @param FormProviderInterface $formProvider
      * @param ComponentProcessorRegistry $componentRegistry
      * @param ManagerRegistry $registry
      * @param UrlGeneratorInterface $router
-     * @param TranslatorInterface $translator
+     * @param TranslatorInterface $translator ,
+     * @param QuickAddRowCollectionBuilder $collectionBuilder
      */
     public function __construct(
-        QuickAddFormProvider $quickAddFormProvider,
+        FormProviderInterface $formProvider,
         ComponentProcessorRegistry $componentRegistry,
         ManagerRegistry $registry,
         UrlGeneratorInterface $router,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        QuickAddRowCollectionBuilder $collectionBuilder
     ) {
-        $this->quickAddFormProvider = $quickAddFormProvider;
+        $this->formProvider = $formProvider;
         $this->componentRegistry = $componentRegistry;
         $this->registry = $registry;
         $this->router = $router;
         $this->translator = $translator;
+        $this->collectionBuilder = $collectionBuilder;
     }
 
     /**
@@ -89,12 +103,13 @@ class QuickAddHandler
         $processor = $this->getProcessor($this->getComponentName($request));
 
         $options = [];
-        $options['products'] = $this->getProducts($request);
+        $collection = $this->collectionBuilder->buildFromRequest($request);
+        $options['products'] = $collection->getProducts();
         if ($processor) {
             $options['validation_required'] = $processor->isValidationRequired();
         }
 
-        $form = $this->quickAddFormProvider->getForm($options);
+        $form = $this->formProvider->getForm($options);
         $form->submit($request);
 
         if (!$processor || !$processor->isAllowed()) {
@@ -102,12 +117,21 @@ class QuickAddHandler
             $session = $request->getSession();
             $session->getFlashBag()->add(
                 'error',
-                $this->translator->trans('orob2b.product.frontend.component_not_accessible.message')
+                $this->translator->trans('orob2b.product.frontend.quick_add.messages.component_not_accessible')
             );
         } elseif ($form->isValid()) {
             $products = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
+            $additionalData = $request->get(
+                QuickAddType::NAME.'['.QuickAddType::ADDITIONAL_FIELD_NAME.']',
+                null,
+                true
+            );
+
             $response = $processor->process(
-                [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products],
+                [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
+                    ProductDataStorage::ADDITIONAL_DATA_KEY => $additionalData
+                ],
                 $request
             );
             if (!$response) {
@@ -141,47 +165,5 @@ class QuickAddHandler
     protected function getProcessor($name)
     {
         return $this->componentRegistry->getProcessorByName($name);
-    }
-
-    /**
-     * @param Request $request
-     * @return Product[]
-     */
-    protected function getProducts(Request $request)
-    {
-        $products = [];
-
-        $data = $request->request->get(QuickAddType::NAME);
-        if (!isset($data[QuickAddType::PRODUCTS_FIELD_NAME])) {
-            return $products;
-        }
-
-        $skus = [];
-        foreach ($data[QuickAddType::PRODUCTS_FIELD_NAME] as $productData) {
-            $sku = trim($productData[ProductDataStorage::PRODUCT_SKU_KEY]);
-            if (strlen($sku) > 0) {
-                $skus[] = $sku;
-            }
-        }
-
-        if (!$skus) {
-            return $products;
-        }
-
-        $products = $this->getRepository()->getProductWithNamesBySku($skus);
-        $productsBySku = [];
-        foreach ($products as $product) {
-            $productsBySku[strtoupper($product->getSku())] = $product;
-        }
-
-        return $productsBySku;
-    }
-
-    /**
-     * @return ProductRepository
-     */
-    protected function getRepository()
-    {
-        return $this->registry->getManagerForClass($this->productClass)->getRepository($this->productClass);
     }
 }

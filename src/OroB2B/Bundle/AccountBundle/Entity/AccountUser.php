@@ -348,6 +348,14 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     }
 
     /**
+     * @return string
+     */
+    public function getFullName()
+    {
+        return sprintf('%s %s', $this->getFirstName(), $this->getLastName());
+    }
+
+    /**
      * @return Account
      */
     public function getAccount()

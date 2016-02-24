@@ -11,6 +11,7 @@ orob2b:
         account_user.label: Account User
         organization.label: Organization
         currency.label: Currency
+        website.label: Website
         customer_notes.label: Customer Notes
         customer_notes.frontend.label: Notes
         po_number.label: PO Number
@@ -73,8 +74,6 @@ orob2b:
             from_external_source.label: Created from External Source
             price_type:
                 label: 'Price Type'
-                bundled: 'bundle'
-                unit: 'per unit'
             select:
                 product: Select product
                 free_form: Free-form entry

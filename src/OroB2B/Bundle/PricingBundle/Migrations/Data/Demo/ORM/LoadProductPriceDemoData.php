@@ -10,7 +10,7 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
@@ -120,6 +120,7 @@ class LoadProductPriceDemoData extends AbstractFixture implements ContainerAware
         fclose($handler);
 
         $manager->flush();
+        $this->container->get('orob2b_pricing.builder.combined_price_list_builder')->build(true);
     }
 
     /**

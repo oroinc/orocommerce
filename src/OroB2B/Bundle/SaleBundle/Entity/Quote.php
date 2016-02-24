@@ -15,9 +15,9 @@ use Oro\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Table(name="orob2b_sale_quote")
@@ -51,6 +51,8 @@ use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
  *      }
  * )
  * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHolderInterface
 {
@@ -136,6 +138,21 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      * )
      */
     protected $organization;
+
+    /**
+     * @var Website
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $website;
 
     /**
      * @var Request
@@ -265,19 +282,36 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
     protected $expired = false;
 
     /**
-     * @var PriceList
+     * @var Collection|User[]
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList")
-     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\UserBundle\Entity\User")
+     * @ORM\JoinTable(
+     *      name="oro_quote_assigned_users",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="quote_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
      *      }
      * )
      **/
-    protected $priceList;
+    protected $assignedUsers;
+
+    /**
+     * @var Collection|AccountUser[]
+     *
+     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
+     * @ORM\JoinTable(
+     *      name="oro_quote_assigned_acc_users",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="quote_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
+     *      }
+     * )
+     **/
+    protected $assignedAccountUsers;
 
     /**
      * Constructor
@@ -287,6 +321,8 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
         parent::__construct();
 
         $this->quoteProducts = new ArrayCollection();
+        $this->assignedUsers = new ArrayCollection();
+        $this->assignedAccountUsers = new ArrayCollection();
     }
 
     /**
@@ -682,20 +718,88 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
     }
 
     /**
-     * @return PriceList|null
+     * @return Website
      */
-    public function getPriceList()
+    public function getWebsite()
     {
-        return $this->priceList;
+        return $this->website;
     }
 
     /**
-     * @param PriceList|null $priceList
-     * @return Quote
+     * @param Website $website
+     * @return $this
      */
-    public function setPriceList(PriceList $priceList = null)
+    public function setWebsite(Website $website)
     {
-        $this->priceList = $priceList;
+        $this->website = $website;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getAssignedUsers()
+    {
+        return $this->assignedUsers;
+    }
+
+    /**
+     * @param User $assignedUser
+     * @return $this
+     */
+    public function addAssignedUser(User $assignedUser)
+    {
+        if (!$this->assignedUsers->contains($assignedUser)) {
+            $this->assignedUsers->add($assignedUser);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param User $assignedUser
+     * @return $this
+     */
+    public function removeAssignedUser(User $assignedUser)
+    {
+        if ($this->assignedUsers->contains($assignedUser)) {
+            $this->assignedUsers->removeElement($assignedUser);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|AccountUser[]
+     */
+    public function getAssignedAccountUsers()
+    {
+        return $this->assignedAccountUsers;
+    }
+
+    /**
+     * @param AccountUser $assignedAccountUser
+     * @return $this
+     */
+    public function addAssignedAccountUser(AccountUser $assignedAccountUser)
+    {
+        if (!$this->assignedAccountUsers->contains($assignedAccountUser)) {
+            $this->assignedAccountUsers->add($assignedAccountUser);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param AccountUser $assignedAccountUser
+     * @return $this
+     */
+    public function removeAssignedAccountUser(AccountUser $assignedAccountUser)
+    {
+        if ($this->assignedAccountUsers->contains($assignedAccountUser)) {
+            $this->assignedAccountUsers->removeElement($assignedAccountUser);
+        }
 
         return $this;
     }

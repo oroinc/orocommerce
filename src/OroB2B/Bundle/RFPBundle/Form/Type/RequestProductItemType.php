@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Oro\Bundle\CurrencyBundle\Form\Type\OptionalPriceType as PriceType;
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
@@ -41,6 +41,7 @@ class RequestProductItemType extends AbstractType
                     'currency_empty_value' => null,
                     'required' => true,
                     'label' => 'orob2b.rfp.requestproductitem.price.label',
+                    'validation_groups' => ['Optional'],
                 ]
             )
             ->add(

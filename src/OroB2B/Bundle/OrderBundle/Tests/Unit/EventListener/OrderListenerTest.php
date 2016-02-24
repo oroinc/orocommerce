@@ -10,12 +10,19 @@ use OroB2B\Bundle\OrderBundle\EventListener\OrderListener;
 
 class OrderListenerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|EntityAwareGeneratorInterface */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|EntityAwareGeneratorInterface
+     */
     protected $generator;
 
-    /** @var OrderListener */
+    /**
+     * @var OrderListener
+     */
     protected $listener;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->generator = $this->getMock('OroB2B\Bundle\OrderBundle\Doctrine\ORM\Id\EntityAwareGeneratorInterface');
@@ -23,6 +30,9 @@ class OrderListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener = new OrderListener($this->generator);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function tearDown()
     {
         unset($this->generator, $this->listener);
