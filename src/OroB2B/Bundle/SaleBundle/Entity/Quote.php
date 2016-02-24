@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
@@ -53,6 +54,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHolderInterface
 {
@@ -327,6 +329,25 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      * )
      **/
     protected $assignedAccountUsers;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="shipping_estimate_amount", type="money", nullable=true)
+     */
+    protected $shippingEstimateAmount;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="shipping_estimate_currency", type="string", nullable=true, length=3)
+     */
+    protected $shippingEstimateCurrency;
+
+    /**
+     * @var Price
+     */
+    protected $shippingEstimate;
 
     /**
      * Constructor
@@ -843,5 +864,50 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
         }
 
         return $this;
+    }
+
+    /**
+     * Get shipping estimate
+     *
+     * @return Price|null
+     */
+    public function getShippingEstimate()
+    {
+        return $this->shippingEstimate;
+    }
+
+    /**
+     * Set shipping estimate
+     *
+     * @param Price $shippingEstimate
+     * @return $this
+     */
+    public function setShippingEstimate($shippingEstimate = null)
+    {
+        $this->shippingEstimate = $shippingEstimate;
+
+        $this->updateShippingEstimate();
+
+        return $this;
+    }
+
+    /**
+     * @ORM\PostLoad
+     */
+    public function postLoad()
+    {
+        if (null !== $this->shippingEstimateAmount && null !==  $this->shippingEstimateCurrency) {
+            $this->shippingEstimate = Price::create($this->shippingEstimateAmount, $this->shippingEstimateCurrency);
+        }
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updateShippingEstimate()
+    {
+        $this->shippingEstimateAmount = $this->shippingEstimate ? $this->shippingEstimate->getValue() : null;
+        $this->shippingEstimateCurrency = $this->shippingEstimate ? $this->shippingEstimate->getCurrency() : null;
     }
 }
