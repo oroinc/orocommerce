@@ -83,26 +83,27 @@ class FrontendShoppingListProductsUnitsDataProviderTest extends \PHPUnit_Framewo
 
     /**
      * @dataProvider getDataDataProvider
-     * @param ShoppingList $shoppingList
-     * @param array $expected
+     * @param ShoppingList|null $shoppingList
+     * @param array|null $expected
      */
-    public function testGetData(ShoppingList $shoppingList, array $expected)
+    public function testGetData($shoppingList, $expected)
     {
         $context = new LayoutContext();
         $context->data()->set('shoppingList', null, $shoppingList);
 
-        /** @var PriceList $priceList */
-        $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', ['id'=> 42]);
-        $this->requestHandler->expects($this->once())
-            ->method('getPriceListByAccount')
-            ->willReturn($priceList);
+        if ($shoppingList) {
+            /** @var PriceList $priceList */
+            $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', ['id'=> 42]);
+            $this->requestHandler->expects($this->once())
+                ->method('getPriceListByAccount')
+                ->willReturn($priceList);
 
-        $repository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repository->expects($this->once())
-            ->method('getProductsUnitsByPriceList')
-            ->willReturn($expected);
+            $repository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
+                ->disableOriginalConstructor()
+                ->getMock();
+            $repository->expects($this->once())
+                ->method('getProductsUnitsByPriceList')
+                ->willReturn($expected);
 
         $em = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
         $em->expects($this->once())
@@ -115,9 +116,10 @@ class FrontendShoppingListProductsUnitsDataProviderTest extends \PHPUnit_Framewo
             ->with('OroB2BPricingBundle:CombinedProductPrice')
             ->willReturn($em);
 
-        $this->userCurrencyProvider->expects($this->once())
-            ->method('getUserCurrency')
-            ->willReturn(self::TEST_CURRENCY);
+            $this->userCurrencyProvider->expects($this->once())
+                ->method('getUserCurrency')
+                ->willReturn(self::TEST_CURRENCY);
+        }
 
         $actual = $this->provider->getData($context);
 
@@ -151,6 +153,10 @@ class FrontendShoppingListProductsUnitsDataProviderTest extends \PHPUnit_Framewo
                     '123' => ['liter', 'bottle'],
                     '321' => ['piece' ]
                 ]
+            ],
+            [
+                'shoppingList' => null,
+                'expected' => null
             ]
         ];
     }

@@ -30,6 +30,38 @@ class ShoppingListRepository extends EntityRepository
     /**
      * @param AccountUser $accountUser
      *
+     * @return ShoppingList|null
+     */
+    public function findOneForAccountUser(AccountUser $accountUser)
+    {
+        return $this->createQueryBuilder('list')
+            ->select('list')
+            ->where('list.accountUser = :accountUser')
+            ->setParameter('accountUser', $accountUser)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     *
+     * @return null|ShoppingList
+     */
+    public function findAvailableForAccountUser(AccountUser $accountUser)
+    {
+        $shoppingList = $this->findCurrentForAccountUser($accountUser);
+
+        if (!$shoppingList) {
+            $shoppingList = $this->findOneForAccountUser($accountUser);
+        }
+
+        return $shoppingList;
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     *
      * @return QueryBuilder
      */
     public function createFindForAccountUserQueryBuilder(AccountUser $accountUser)
@@ -48,8 +80,8 @@ class ShoppingListRepository extends EntityRepository
 
     /**
      * @param AccountUser $accountUser
-     *
      * @param array $sortCriteria
+     *
      * @return array
      */
     public function findByUser(AccountUser $accountUser, array $sortCriteria = [])
