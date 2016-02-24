@@ -66,4 +66,4 @@ expectedResult:
         - { tax: 'TAX1', rate: '0.1', taxableAmount: '113.25', taxAmount: '11.33' }
 databaseAfter:
     'OroB2B\Bundle\TaxBundle\Entity\TaxValue':
-        simple_order_tax_value_applied_tax: { entityClass: 'OroB2B\Bundle\OrderBundle\Entity\Order' }
+        - { entityClass: 'OroB2B\Bundle\OrderBundle\Entity\Order' }

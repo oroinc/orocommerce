@@ -32,7 +32,7 @@ class CustomerAddressResolver implements ResolverInterface
         $itemsResult = [];
         foreach ($taxable->getItems() as $taxableItem) {
             $this->itemResolver->resolve($taxableItem);
-            $itemsResult[$taxableItem->getHash()] = $taxableItem->getResult();
+            $itemsResult[] = $taxableItem->getResult();
         }
 
         $taxable->getResult()->offsetSet(Result::ITEMS, $itemsResult);

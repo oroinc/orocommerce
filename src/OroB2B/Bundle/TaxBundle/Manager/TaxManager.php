@@ -80,6 +80,15 @@ class TaxManager
      */
     public function getTax($object)
     {
+        return $this->getTaxable($object)->getResult();
+    }
+
+    /**
+     * @param object $object
+     * @return Taxable
+     */
+    protected function getTaxable($object)
+    {
         try {
             $taxResult = $this->loadTax($object);
         } catch (\InvalidArgumentException $e) {
@@ -91,7 +100,7 @@ class TaxManager
 
         $this->eventDispatcher->dispatch($taxable);
 
-        return $taxResult;
+        return $taxable;
     }
 
     /**
@@ -106,10 +115,10 @@ class TaxManager
             return false;
         }
 
+        $taxable = $this->getTaxable($object);
+        $result = $taxable->getResult();
+
         $transformer = $this->getTaxTransformer($taxable->getClassName());
-
-        $result = $this->getTax($object);
-
         $taxValue = $transformer->reverseTransform($result, $taxable);
 
         $this->taxValueManager->saveTaxValue($taxValue);
@@ -123,33 +132,31 @@ class TaxManager
      */
     public function saveTaxWithItems($object)
     {
-        $result = $this->saveTax($object);
+        $taxable = $this->taxFactory->create($object);
 
-        if (false === $result) {
+        if (!$taxable->getIdentifier()) {
             return false;
         }
 
-        $taxable = $this->taxFactory->create($object);
+        $taxable = $this->getTaxable($object);
+        $result = $taxable->getResult();
 
-        $this->saveTaxItems($taxable, $result);
+        $transformer = $this->getTaxTransformer($taxable->getClassName());
+        $taxValue = $transformer->reverseTransform($result, $taxable);
+        $this->taxValueManager->saveTaxValue($taxValue);
+
+        $this->saveTaxItems($taxable);
 
         return $result;
     }
 
     /**
      * @param Taxable $taxable
-     * @param Result $result
      */
-    protected function saveTaxItems(Taxable $taxable, Result $result)
+    protected function saveTaxItems(Taxable $taxable)
     {
-        $itemResults = $result->getItems();
-
         foreach ($taxable->getItems() as $item) {
-            if (!array_key_exists($item->getHash(), $itemResults)) {
-                continue;
-            }
-
-            $itemResult = $itemResults[$item->getHash()];
+            $itemResult = $item->getResult();
 
             $itemTransformer = $this->getTaxTransformer($item->getClassName());
             $taxItemValue = $itemTransformer->reverseTransform($itemResult, $item);

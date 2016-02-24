@@ -8,7 +8,8 @@ use OroB2B\Bundle\TaxBundle\Model\AbstractResult;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 
 /**
- * @method void assertEquals($expected, $actual, $message = null)
+ * @method void assertEquals($expected, $actual, $message = '')
+ * @method void assertTrue($condition, $message = '')
  */
 trait ResultComparatorTrait
 {
@@ -46,7 +47,7 @@ trait ResultComparatorTrait
     protected function compareResult($expected, Result $actual)
     {
         foreach ($expected as $key => $expectedValue) {
-            $this->assertEquals(true, $actual->offsetExists($key), $key);
+            $this->assertTrue($actual->offsetExists($key), $key);
             $actualValue = $actual->offsetGet($key);
 
             $this->assertEquals(
@@ -57,7 +58,7 @@ trait ResultComparatorTrait
         }
 
         if (!$expected) {
-            $this->assertEquals($expected, $actual->getArrayCopy());
+            $this->assertEquals([], $actual->getArrayCopy());
         }
     }
 }

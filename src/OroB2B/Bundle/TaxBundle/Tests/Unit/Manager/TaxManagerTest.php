@@ -244,24 +244,20 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
         $taxableItem->setClassName('stdClass');
         $taxableItem->setIdentifier(1);
 
-        $taxableItem2 = clone $taxableItem;
-        $taxableItem2->setIdentifier(2);
-
         $taxable = new Taxable();
         $taxable->setClassName('stdClass');
         $taxable->setIdentifier(1);
         $taxable->addItem($taxableItem);
-        $taxable->addItem($taxableItem2);
 
         $itemResult = new Result();
 
         $result = new Result();
-        $result->offsetSet(Result::ITEMS, [$taxableItem->getHash() => $itemResult]);
+        $result->offsetSet(Result::ITEMS, [$itemResult]);
 
         $taxValue = new TaxValue();
         $taxValue->setResult($result);
 
-        $this->factory->expects($this->exactly(4))->method('create')->willReturn($taxable);
+        $this->factory->expects($this->exactly(3))->method('create')->willReturn($taxable);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TaxTransformerInterface $transformer */
         $transformer = $this->getMock('OroB2B\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
