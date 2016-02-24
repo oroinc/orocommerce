@@ -3,8 +3,6 @@
 namespace Oro\Bundle\ActionBundle\Helper;
 
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 use Doctrine\Common\Util\ClassUtils;
@@ -33,11 +31,16 @@ class ContextHelper
 
     /**
      * @param DoctrineHelper $doctrineHelper
+     * @param PropertyAccessor $propertyAccessor
      * @param RequestStack $requestStack
      */
-    public function __construct(DoctrineHelper $doctrineHelper, RequestStack $requestStack = null)
-    {
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        PropertyAccessor $propertyAccessor,
+        RequestStack $requestStack = null
+    ) {
         $this->doctrineHelper = $doctrineHelper;
+        $this->propertyAccessor = $propertyAccessor;
         $this->requestStack = $requestStack;
     }
 
@@ -69,7 +72,7 @@ class ContextHelper
     {
         $request = $this->requestStack->getMasterRequest();
         if (!$request) {
-            throw new BadRequestHttpException('Master Request is not defined');
+            throw new \RuntimeException('Master Request is not defined');
         }
         $params = [
             self::ROUTE_PARAM => $request->get('_route'),
@@ -79,10 +82,10 @@ class ContextHelper
         if (array_key_exists('entity', $context) && is_object($context['entity']) &&
             !$this->doctrineHelper->isNewEntity($context['entity'])
         ) {
-            $params['entityId'] = $this->doctrineHelper->getEntityIdentifier($context['entity']);
-            $params['entityClass'] = ClassUtils::getClass($context['entity']);
+            $params[self::ENTITY_ID_PARAM] = $this->doctrineHelper->getEntityIdentifier($context['entity']);
+            $params[self::ENTITY_CLASS_PARAM] = ClassUtils::getClass($context['entity']);
         } elseif (isset($context['entity_class'])) {
-            $params['entityClass'] = $context['entity_class'];
+            $params[self::ENTITY_CLASS_PARAM] = $context['entity_class'];
         }
 
         return $params;
@@ -172,22 +175,10 @@ class ContextHelper
     {
         $array = [];
         foreach ($properties as $property) {
-            $array[$property] = $this->getPropertyAccessor()->getValue($context, sprintf('[%s]', $property));
+            $array[$property] = $this->propertyAccessor->getValue($context, sprintf('[%s]', $property));
         }
         array_multisort($array);
 
         return md5(json_encode($array, JSON_NUMERIC_CHECK));
-    }
-
-    /**
-     * @return PropertyAccessor
-     */
-    protected function getPropertyAccessor()
-    {
-        if (!$this->propertyAccessor) {
-            $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
-        }
-
-        return $this->propertyAccessor;
     }
 }

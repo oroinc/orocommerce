@@ -1,9 +1,57 @@
+{% macro get_action_attributes(dialogRoute, executionRoute, action, entityClass, entityId) %}
+    {% spaceless %}
+    {% set context = {
+        'route': app.request.get('route', app.request.get('_route')),
+        'entityClass': entityClass,
+        'entityId': entityId
+    } %}
+    {% set fromUrl = app.request.requestUri %}
+    {% set actionUrl = action.hasForm ? path(dialogRoute|default('oro_action_widget_form'), {actionName: action.name, fromUrl: fromUrl}|merge(context)) : null %}
+
+    {% if executionRoute is not empty %}
+        {% set actionPath = path(executionRoute|default('oro_api_action_execute_actions'), {actionName: action.name}|merge(context)) %}
+    {% endif %}
+    href="{{ actionPath|default('javascript:void(0);') }}"
+    class="{{ action.buttonOptions.class|default('back icons-holder-text action-button') }} {{ params.buttonOptions.aCss|default('') }}"
+    title="{{ action.title }}"
+
+    data-from-url="{{ fromUrl }}"
+
+    {% if action.showDialog %}
+        {% set dialogOptions = {
+            'title': action.title,
+            'dialogOptions': action.frontendOptions.options|default({}),
+        } %}
+
+        data-dialog-url="{{ actionUrl }}"
+        data-dialog-options="{{ dialogOptions|json_encode }}"
+
+    {% else %}
+        data-page-url="{{ actionUrl }}"
+    {% endif %}
+    data-confirmation="{{ action.frontendOptions.confirmation|default('') }}"
+    {% if action.buttonOptions.page_component_module is defined %}data-page-component-module={{ action.buttonOptions.page_component_module }}{% endif %}
+    {% if action.buttonOptions.page_component_options is defined %}data-page-component-options={{ action.buttonOptions.page_component_options|json_encode }}{% endif %}
+    {% if action.buttonOptions.data is defined %}
+        {% for dataName,dataValue in action.buttonOptions.data %}
+            data-{{ dataName }}="{{ dataValue|e('html_attr')|raw }}" {{ dataName }}
+        {% endfor %}
+    {% endif %}
+    {% endspaceless %}
+{% endmacro %}
+
 {% block action_line_buttons_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ "row-fluid" }) %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ "row-fluid", 'data-page-component-module': 'oroaction/js/app/components/buttons-component'}) %}
     <div{{ block('block_attributes') }}>
-        {% for action in block %}
+        {% for action in actions %}
             <div class="pull-left btn-group icons-holder">
-                {{ block_widget(action) }}
+                {{ dump(action) }}
+                <a {{ _self.get_action_attributes(dialogRoute, executionRoute, action, entityClass, entityId) }}>
+                    {% if action.icon is not empty %}
+                        <i class="{{ action.icon }} {{ action.buttonOptions.iCss|default('') }} hide-text">{{ action.label }}</i>
+                    {% endif %}
+                    {{ action.label|trim }}
+                </a>
             </div>
         {% endfor %}
     </div>
@@ -12,36 +60,26 @@
 {% block action_combined_buttons_widget %}
     {% set attr = attr|merge({ class: attr.class|default('') ~ " btn-group pull-right"}) %}
     <div{{ block('block_attributes') }}>
-        {% set primary_button = block[primary_button_alias] %}
-        {{ block_widget(primary_button,
-        {attr:primary_button.vars.attr|merge({ class: primary_button.vars.attr.class|default('') ~ " btn btn-default"})}) }}
+        {#{% set primary_button = block[primary_button_alias] %}#}
+        {#{{ block_widget(primary_button,#}
+        {#{attr:primary_button.vars.attr|merge({ class: primary_button.vars.attr.class|default('') ~ " btn btn-default"})}) }}#}
 
         <a href="#" class="btn-default btn  dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
            aria-expanded="true">
             <i class="material-icons">arrow_drop_down</i>
         </a>
 
-        {{ block_widget(block[dropdown_menu_alias]) }}
+        {#{{ block_widget(block[dropdown_menu_alias]) }}#}
     </div>
 {% endblock %}
 
 {% block action_drop_down_buttons_widget %}
     {% set attr = attr|merge({ class: attr.class|default('') ~ "dropdown-menu"}) %}
     <ul {{ block('block_attributes') }}>
-        {% for action in block %}
+        {% for action in actions %}
             <li>
-                {{ block_widget(action) }}
+                {#{{ block_widget(action) }}#}
             </li>
         {% endfor %}
     </ul>
-{% endblock %}
-
-{% block action_button_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ "back icons-holder-text btn action-button" }) %}
-    <a {{ block('block_attributes') }}>
-        {% if hide_icon is not defined %}
-            <i class="{{ buttonOptions.icon|default('') }} {{ buttonOptions.iCss|default('') }} hide-text">{{ linkLabel }}</i>
-        {% endif %}
-        {{ linkLabel|trim }}
-    </a>
 {% endblock %}
