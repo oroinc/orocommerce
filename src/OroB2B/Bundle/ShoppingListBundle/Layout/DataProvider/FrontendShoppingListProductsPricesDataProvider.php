@@ -59,7 +59,12 @@ class FrontendShoppingListProductsPricesDataProvider implements DataProviderInte
      */
     public function getData(ContextInterface $context)
     {
-        return $this->getProductsPrices($context->data()->get('shoppingList'));
+        $shoppingList = $context->data()->get('shoppingList');
+        if (!$shoppingList) {
+            return null;
+        }
+
+        return $this->getProductsPrices($shoppingList);
     }
 
     /**

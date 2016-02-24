@@ -39,7 +39,35 @@ class ShoppingListRepositoryTest extends WebTestCase
     {
         $shoppingList = $this->getRepository()->findCurrentForAccountUser($this->accountUser);
         $this->assertInstanceOf('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', $shoppingList);
+        $this->assertTrue($shoppingList->isCurrent());
         $this->assertEquals($this->accountUser, $shoppingList->getAccountUser());
+    }
+
+    public function findOneForAccountUser()
+    {
+        $shoppingList = $this->getRepository()->findOneForAccountUser($this->accountUser);
+        $this->assertInstanceOf('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', $shoppingList);
+        $this->assertEquals($this->accountUser, $shoppingList->getAccountUser());
+    }
+
+    public function findAvailableForAccountUser()
+    {
+        // Isset current shopping list
+        $currentShoppingList = $this->getRepository()->findCurrentForAccountUser($this->accountUser);
+        $availableShoppingList = $this->getRepository()->findAvailableForAccountUser($this->accountUser);
+        $this->assertInstanceOf('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', $availableShoppingList);
+        $this->assertEquals($currentShoppingList->getId(), $availableShoppingList->getId());
+
+        // Remove current shopping list
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
+        $em->remove($currentShoppingList);
+        $em->flush();
+
+        $availableShoppingList = $this->getRepository()->findAvailableForAccountUser($this->accountUser);
+
+        // Check shopping list is not current for account user
+        $this->assertFalse($availableShoppingList->isCurrent());
+        $this->assertEquals($this->accountUser, $availableShoppingList->getAccountUser());
     }
 
     public function testFindByUser()

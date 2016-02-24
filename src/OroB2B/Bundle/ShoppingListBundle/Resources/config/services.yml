@@ -122,7 +122,7 @@ services:
     orob2b_shopping_list.layout.data_provider.frontend_shopping_list_products_prices:
         class: %orob2b_shopping_list.layout.data_provider.frontend_shopping_list_products_prices.class%
         arguments:
-            - @orob2b_pricing.provider.product_price
+            - @orob2b_pricing.provider.combined_product_price
             - @oro_security.security_facade
             - @orob2b_pricing.provider.user_currency
         tags:

@@ -16,6 +16,7 @@ use Oro\Bundle\ActionBundle\Model\AttributeAssembler;
 use Oro\Bundle\ActionBundle\Model\FormOptionsAssembler;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\WorkflowBundle\Model\Action\ActionFactory as FunctionFactory;
+use Oro\Bundle\WorkflowBundle\Model\Condition\Configurable as ConfigurableCondition;
 
 use Oro\Component\ConfigExpression\ExpressionFactory as ConditionFactory;
 
@@ -168,10 +169,17 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
      * @dataProvider getActionDataProvider
      *
      * @param string $actionName
+     * @param $checkAvailable
      * @param mixed $expected
      */
-    public function testGetAction($actionName, $expected)
+    public function testGetAction($actionName, $checkAvailable, $expected)
     {
+        $this->conditionFactory
+            ->expects($this->any())
+            ->method('create')
+            ->withAnyParameters()
+            ->willReturn($this->createCondition(false));
+
         if (!$expected) {
             $this->setExpectedException(
                 '\Oro\Bundle\ActionBundle\Exception\ActionNotFoundException',
@@ -181,7 +189,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertApplicationsHelperCalled();
 
-        $action = $this->manager->getAction($actionName, new ActionData());
+        $action = $this->manager->getAction($actionName, new ActionData(), $checkAvailable);
 
         if ($expected) {
             $this->assertEquals($expected, $action->getName());
@@ -196,11 +204,23 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
         return [
             'invalid action name' => [
                 'actionName' => 'test',
+                true,
                 'expected' => null
             ],
             'valid action name' => [
                 'actionName' => 'action2',
+                true,
                 'expected' => 'action2'
+            ],
+            'valid action name with wrong preconditions' => [
+                'actionName' => 'action_wrong_preconditions',
+                true,
+                'expected' => null
+            ],
+            'valid action name with wrong preconditions without checking' => [
+                'actionName' => 'action_wrong_preconditions',
+                false,
+                'expected' => 'action_wrong_preconditions'
             ],
         ];
     }
@@ -753,6 +773,13 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
                 'enabled' => true,
                 'frontend_options' => ['show_dialog' => true]
             ],
+            'action_wrong_preconditions' => [
+                'label' => 'Label2',
+                'entities' => [],
+                'order' => 40,
+                'frontend_options' => ['show_dialog' => true],
+                'preconditions' => [$this->createCondition(false)],
+            ],
         ];
     }
 
@@ -769,5 +796,24 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
                     return in_array('backend', $action->getDefinition()->getApplications(), true);
                 }
             );
+    }
+
+    /**
+     * @param bool $returnValue
+     * @return ConfigurableCondition|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function createCondition($returnValue)
+    {
+        /* @var $condition ConfigurableCondition|\PHPUnit_Framework_MockObject_MockObject */
+        $condition = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Condition\Configurable')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $condition->expects($this->any())
+            ->method('evaluate')
+            ->withAnyParameters()
+            ->willReturn($returnValue);
+
+        return $condition;
     }
 }

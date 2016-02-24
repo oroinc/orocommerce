@@ -57,7 +57,13 @@ class FrontendShoppingListProductsUnitsDataProvider implements DataProviderInter
      */
     public function getData(ContextInterface $context)
     {
-        return $this->getProductsUnits($context->data()->get('shoppingList'));
+        $shoppingList = $context->data()->get('shoppingList');
+
+        if (!$shoppingList) {
+            return null;
+        }
+
+        return $this->getProductsUnits($shoppingList);
     }
 
     /**
@@ -74,8 +80,8 @@ class FrontendShoppingListProductsUnitsDataProvider implements DataProviderInter
             }
         );
 
-        return $this->registry->getManagerForClass('OroB2BPricingBundle:ProductPrice')
-            ->getRepository('OroB2BPricingBundle:ProductPrice')
+        return $this->registry->getManagerForClass('OroB2BPricingBundle:CombinedProductPrice')
+            ->getRepository('OroB2BPricingBundle:CombinedProductPrice')
             ->getProductsUnitsByPriceList($priceList, $products, $this->userCurrencyProvider->getUserCurrency());
     }
 }
