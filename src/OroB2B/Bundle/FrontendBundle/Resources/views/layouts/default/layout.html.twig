@@ -1,36 +1,5 @@
 {% extends 'OroLayoutBundle:Layout:div_layout.html.twig' %}
 
-{% block form_field_widget %}
-    {% set field_attr = form.vars.attr|merge({
-    class: [
-    form.vars.attr.class|default(''),
-    class_prefix ~ "__form__input"
-    ]|join(' ')
-    }) %}
-    {% set field_label_attr = form.vars.label_attr|merge({
-    class: [
-    form.vars.label_attr.class|default(''),
-    class_prefix ~ "__form__label"
-    ]|join(' ')
-    }) %}
-    {% set attr = attr|merge({
-    class: [
-    attr.class|default(''),
-    "form-field-" ~ form.vars.name,
-    "{{ class_prefix }}__form__row"
-    ]|join(' ')
-    }) %}
-    <fieldset{{ block('block_attributes') }}>
-        <div class="{{ class_prefix }}__form__col form__col_x12">
-            {{ form_row(form, {
-                label: label|default(null) ? label : form.vars.label,
-                attr: field_attr,
-                label_attr: field_label_attr
-            }) }}
-        </div>
-    </fieldset>
-{% endblock %}
-
 {% block form_start_widget %}
     {% set attr = attr|merge({
     id: form.vars.id
