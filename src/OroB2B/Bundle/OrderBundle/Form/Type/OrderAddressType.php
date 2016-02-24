@@ -25,6 +25,8 @@ class OrderAddressType extends AbstractType
 {
     const NAME = 'orob2b_order_address_type';
 
+    const APPLICATION_FRONT_END = 'frontend';
+
     /** @var string */
     protected $dataClass;
 
@@ -66,8 +68,13 @@ class OrderAddressType extends AbstractType
         $type = $options['addressType'];
         $order = $options['order'];
 
+        $application = null;
+        if (array_key_exists('application', $options)) {
+            $application =  $options['application'];
+        }
+
         $isManualEditGranted = $this->orderAddressSecurityProvider->isManualEditGranted($type);
-        if ($this->hasAccessToEditAddress($order, $type)) {
+        if ($this->hasAccessToEditAddress($order, $type, $application)) {
             $addresses = $this->orderAddressManager->getGroupedAddresses($order, $type);
 
             $accountAddressOptions = [
@@ -155,7 +162,9 @@ class OrderAddressType extends AbstractType
     {
         $resolver
             ->setRequired(['order', 'addressType'])
-            ->setDefaults(['data_class' => $this->dataClass])
+            ->setDefaults(['data_class' => $this->dataClass,
+                'application' => null
+            ])
             ->setAllowedValues('addressType', [AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING])
             ->setAllowedTypes('order', 'OroB2B\Bundle\OrderBundle\Entity\Order');
     }
@@ -264,12 +273,14 @@ class OrderAddressType extends AbstractType
      *
      * @return bool
      */
-    protected function hasAccessToEditAddress(Order $order, $type)
+    protected function hasAccessToEditAddress(Order $order, $type, $application)
     {
         $isFromExternalSource = true;
 
-        if ($type === AddressType::TYPE_SHIPPING && $order->getShippingAddress()) {
-            $isFromExternalSource = !$order->getShippingAddress()->isFromExternalSource();
+        if ($application === self::APPLICATION_FRONT_END) {
+            if ($type === AddressType::TYPE_SHIPPING && $order->getShippingAddress()) {
+                $isFromExternalSource = !$order->getShippingAddress()->isFromExternalSource();
+            }
         }
 
         return $isFromExternalSource;

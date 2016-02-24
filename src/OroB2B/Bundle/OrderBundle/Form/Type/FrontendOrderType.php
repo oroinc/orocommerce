@@ -114,6 +114,7 @@ class FrontendOrderType extends AbstractType
                     'order' => $options['data'],
                     'required' => false,
                     'addressType' => AddressType::TYPE_SHIPPING,
+                    'application' => OrderAddressType::APPLICATION_FRONT_END
                 ]
             );
         }
