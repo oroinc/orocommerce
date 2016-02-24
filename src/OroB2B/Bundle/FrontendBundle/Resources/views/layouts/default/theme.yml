@@ -7,9 +7,7 @@ data:
         styles:
             inputs:
                 - 'bundles/orob2bfrontend/default/vendors/bootstrap/css/bootstrap.min.css'
-                - 'https://fonts.googleapis.com/css?family=Lato:700,400'
-                - 'https://fonts.googleapis.com/css?family=Roboto'
-                - 'https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css'
+                - 'bundles/orob2bfrontend/default/vendors/fontawesome/css/font-awesome.min.css'
                 - 'bundles/orob2bfrontend/default/fonts/entypo.css'
                 - 'bundles/orob2bfrontend/default/css/chosen.min.css'
                 - 'bundles/orob2bfrontend/default/css/slick/slick.css'

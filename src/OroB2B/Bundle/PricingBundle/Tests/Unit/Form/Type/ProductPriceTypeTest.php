@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -12,6 +11,7 @@ use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
@@ -102,7 +102,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
 
     /**
      * @param ProductPrice $defaultData
-     * @param $submittedData
+     * @param array $submittedData
      * @param ProductPrice $expectedData
      * @dataProvider submitProvider
      */
