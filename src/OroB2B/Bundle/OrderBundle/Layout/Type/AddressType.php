@@ -2,11 +2,11 @@
 
 namespace OroB2B\Bundle\OrderBundle\Layout\Type;
 
-use Oro\Component\Layout\BlockInterface;
-use Oro\Component\Layout\BlockView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Component\Layout\Block\Type\AbstractType;
+use Oro\Component\Layout\BlockInterface;
+use Oro\Component\Layout\BlockView;
 
 class AddressType extends AbstractType
 {
