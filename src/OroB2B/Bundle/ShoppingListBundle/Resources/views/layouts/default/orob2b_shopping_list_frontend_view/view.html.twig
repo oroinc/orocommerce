@@ -51,9 +51,8 @@
 {% endblock %}
 
 {% block _shopping_list_top_actions_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ "oq__options__right" }) %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ "cart__order__controls-list" }) %}
     <div{{ block('block_attributes') }}>
-        ACTIONS
         {{ block_widget(block) }}
     </div>
 {% endblock %}
@@ -255,21 +254,6 @@
             </tbody>
             {% endfor %}
         </table>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
-{% block _shopping_list_combined_button_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " btn btn_orange btn_has-dropdown btn_has-dropdown_xlg" }) %}
-
-    <div{{ block('block_attributes') }}>
-        <a href="#" class="direct-link">Combined button</a>
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><i class="material-icons">arrow_drop_down</i></a>
-        <ul class="dropdown-menu">
-            <li><a href="#">Option 1</a></li>
-            <li><a href="#">Option 2</a></li>
-            <li><a href="#">Option 3</a></li>
-        </ul>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
