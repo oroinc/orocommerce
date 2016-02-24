@@ -250,6 +250,30 @@ class QuoteTypeTest extends AbstractTest
                     ->addAssignedUser($this->getUser(1))
                     ->addAssignedAccountUser($this->getAccountUser(11))
                     ->setShippingEstimate(Price::create(111.12, 'USD')),
+                'defaultData' => $this->getQuote(
+                    1,
+                    1,
+                    2,
+                    [$quoteProduct],
+                    false,
+                    'poNumber',
+                    new \DateTime($date . 'T00:00:00+0000')
+                )->addAssignedUser($this->getUser(1))
+                    ->addAssignedAccountUser($this->getAccountUser(11))
+                    ->setShippingEstimate(Price::create(111.12, 'USD')),
+                'options' => [
+                    'data' => $this->getQuote(
+                        1,
+                        1,
+                        2,
+                        [$quoteProduct],
+                        false,
+                        'poNumber',
+                        new \DateTime($date . 'T00:00:00+0000')
+                    )->addAssignedUser($this->getUser(1))
+                        ->addAssignedAccountUser($this->getAccountUser(11))
+                        ->setShippingEstimate(Price::create(111.12, 'USD')),
+                ]
             ],
         ];
     }

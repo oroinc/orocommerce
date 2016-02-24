@@ -2,11 +2,11 @@
 
 namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
@@ -16,7 +16,6 @@ use OroB2B\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 
 class QuoteType extends AbstractType
 {
