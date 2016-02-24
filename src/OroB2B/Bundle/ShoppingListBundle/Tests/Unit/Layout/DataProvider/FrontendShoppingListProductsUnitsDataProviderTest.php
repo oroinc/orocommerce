@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Layout\DataProvider;
+namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
@@ -107,12 +107,12 @@ class FrontendShoppingListProductsUnitsDataProviderTest extends \PHPUnit_Framewo
         $em = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2BPricingBundle:ProductPrice')
+            ->with('OroB2BPricingBundle:CombinedProductPrice')
             ->willReturn($repository);
 
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
-            ->with('OroB2BPricingBundle:ProductPrice')
+            ->with('OroB2BPricingBundle:CombinedProductPrice')
             ->willReturn($em);
 
         $this->userCurrencyProvider->expects($this->once())

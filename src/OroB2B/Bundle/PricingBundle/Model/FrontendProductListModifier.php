@@ -56,7 +56,7 @@ class FrontendProductListModifier
 
                 // Select only products that are in specific price list
                 $limitationQb = $queryBuilder->getEntityManager()->createQueryBuilder();
-                $limitationQb->from('OroB2BPricingBundle:ProductPrice', $productPriceAlias)
+                $limitationQb->from('OroB2BPricingBundle:CombinedProductPrice', $productPriceAlias)
                     ->select('IDENTITY(' . $this->getParameterName($productPriceAlias, 'product') . ')')
                     ->where($limitationQb->expr()->eq(
                         $this->getParameterName($productPriceAlias, 'priceList'),
