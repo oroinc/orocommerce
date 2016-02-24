@@ -3,14 +3,15 @@
 namespace Oro\Bundle\ActionBundle\Layout\Block\Type;
 
 use Doctrine\Common\Util\ClassUtils;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\OptionsResolver\Options;
 
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\BlockView;
 use Oro\Component\Layout\Block\Type\AbstractType;
 use Oro\Component\Layout\Exception\LogicException;
+
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
 
 class ActionLineButtonsType extends AbstractType
@@ -21,6 +22,11 @@ class ActionLineButtonsType extends AbstractType
      * @var  ApplicationsHelper
      */
     protected $applicationsHelper;
+
+    /**
+     * @var DoctrineHelper
+     */
+    protected $doctrineHelper;
 
     /**
      * @param ApplicationsHelper $applicationsHelper
@@ -47,39 +53,36 @@ class ActionLineButtonsType extends AbstractType
     {
         $resolver->setDefaults(
             [
+                'group' => null,
                 'dialogRoute' => $this->applicationsHelper->getDialogRoute(),
-                'executionRoute' => $this->applicationsHelper->getExecutionRoute()
+                'executionRoute' => $this->applicationsHelper->getExecutionRoute(),
+                'attr' => [
+                    'data-page-component-module' => 'oroaction/js/app/components/buttons-component'
+                ]
             ]
         );
         $resolver->setOptional(['group', 'entity', 'entityClass']);
-        $resolver->setNormalizers([
-            'entity' => function (Options $options, $value) {
-                if (empty($value) && !$options['entityClass']) {
-                    throw new LogicException(
-                        'entity or entityClass must be provided'
-                    );
-                }
-
-                return $value;
-            }
-        ]);
     }
 
     /**
-     * @todo: data fetch should be performed automatically from registered data provider
-     *
      * {@inheritdoc}
      */
     public function buildView(BlockView $view, BlockInterface $block, array $options)
     {
+        if (empty($options['entity']) && empty($options['entityClass'])) {
+            throw new LogicException(
+                'entity or entityClass must be provided'
+            );
+        }
+
         $view->vars['actions'] = $block->getData()->get('actions');
         $view->vars['dialogRoute'] = $options['dialogRoute'];
         $view->vars['executionRoute'] = $options['executionRoute'];
+        $view->vars['attr'] = $options['attr'];
 
-        $entity = $options['entity'];
-        if ($entity && is_object($entity)) {
-            $view->vars['entityClass'] = ClassUtils::getClass($entity);
-            $view->vars['entityId'] = $this->doctrineHelper->getSingleEntityIdentifier($entity);
+        if (!empty($options['entity']) && is_object($options['entity'])) {
+            $view->vars['entityClass'] = ClassUtils::getClass($options['entity']);
+            $view->vars['entityId'] = $this->doctrineHelper->getSingleEntityIdentifier($options['entity']);
         } else {
             $view->vars['entityClass'] = ClassUtils::getRealClass($options['entityClass']);
             $view->vars['entityId'] = null;

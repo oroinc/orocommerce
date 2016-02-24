@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Price implements CurrencyAwareInterface
 {
     /**
-     * @var float
+     * @var string
      *
      * @ORM\Column(name="value", type="money", nullable=true)
      */
@@ -24,7 +24,7 @@ class Price implements CurrencyAwareInterface
     protected $currency;
 
     /**
-     * @param float $value
+     * @param string $value
      * @param string $currency
      * @return Price
      */
@@ -39,7 +39,7 @@ class Price implements CurrencyAwareInterface
     }
 
     /**
-     * @return float
+     * @return string
      */
     public function getValue()
     {
@@ -47,7 +47,7 @@ class Price implements CurrencyAwareInterface
     }
 
     /**
-     * @param float $value
+     * @param string $value
      * @return $this
      */
     public function setValue($value)

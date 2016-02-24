@@ -47,8 +47,7 @@ class ActionsDataProvider implements DataProviderInterface
      */
     public function getIdentifier()
     {
-        // TODO: add real ID here
-        return 'some_id';
+        return 'oro_action';
     }
 
     /**
@@ -75,7 +74,6 @@ class ActionsDataProvider implements DataProviderInterface
             } else {
                 $title = $definition->getLabel();
             }
-            // TODO: Use icons mapping service here
             $icon = !empty($buttonOptions['icon']) ? $buttonOptions['icon'] : '';
 
             $data[] = [

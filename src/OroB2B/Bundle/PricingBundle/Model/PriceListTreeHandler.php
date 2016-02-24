@@ -4,11 +4,16 @@ namespace OroB2B\Bundle\PricingBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 
 class PriceListTreeHandler
 {
@@ -24,146 +29,103 @@ class PriceListTreeHandler
     /**  @var PriceListRepository */
     protected $priceListRepository;
 
+    /** @var ConfigManager */
+    protected $configManager;
+
+    /** @var BasePriceList[] */
+    protected $priceLists = [];
+
     /**
      * @param ManagerRegistry $registry
      * @param WebsiteManager $websiteManager
-     * @param string $priceListClass
+     * @param ConfigManager $configManager
      */
-    public function __construct(ManagerRegistry $registry, WebsiteManager $websiteManager, $priceListClass)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        WebsiteManager $websiteManager,
+        ConfigManager $configManager
+    ) {
         $this->registry = $registry;
         $this->websiteManager = $websiteManager;
-        $this->priceListClass = $priceListClass;
+        $this->configManager = $configManager;
     }
 
     /**
-     * @param AccountUser|null $accountUser
-     * @return PriceList
+     * @param Account|null $account
+     * @param Website|null $website
+     * @return BasePriceList
      */
-    public function getPriceList(AccountUser $accountUser = null)
+    public function getPriceList(Account $account = null, Website $website = null)
     {
-        if ($accountUser) {
-            $account = $accountUser->getAccount();
+        $website = $website ?: $this->websiteManager->getCurrentWebsite();
 
-            if ($account) {
-                $priceList = $this->getPriceListRepository()->getPriceListByAccount($account);
-                if ($priceList) {
-                    return $priceList;
-                }
-
-                $priceList = $this->getPriceListFromAccountTree($account);
-                if ($priceList) {
-                    return $priceList;
-                }
-
-                $priceList = $this->getPriceListFromAccountGroup($account);
-                if ($priceList) {
-                    return $priceList;
-                }
-
-                $priceList = $this->getPriceListFromAccountGroupTree($account);
-                if ($priceList) {
-                    return $priceList;
-                }
-            }
+        $key = $this->getUniqueKey($account, $website);
+        if (array_key_exists($key, $this->priceLists)) {
+            return $this->priceLists[$key];
         }
 
-        $priceList = $this->getPriceListFromWebsite();
-        if ($priceList) {
-            return $priceList;
-        }
-
-        return $this->getPriceListRepository()->getDefault();
-    }
-
-    /**
-     * @param Account $account
-     * @return null|PriceList
-     */
-    protected function getPriceListFromAccountTree(Account $account)
-    {
-        $parentAccount = $account->getParent();
-        if (!$parentAccount) {
-            return null;
-        }
-
-        while ($parentAccount) {
-            $priceList = $this->getPriceListRepository()->getPriceListByAccount($parentAccount);
+        if ($account) {
+            $priceList = $this->getPriceListRepository()->getPriceListByAccount($account, $website);
             if ($priceList) {
+                $this->priceLists[$key] = $priceList;
                 return $priceList;
             }
-
-            $parentAccount = $parentAccount->getParent();
-        }
-
-        return null;
-    }
-
-    /**
-     * @param Account $account
-     * @return null|PriceList
-     */
-    protected function getPriceListFromAccountGroupTree(Account $account)
-    {
-        $parentAccount = $account->getParent();
-        if (!$parentAccount) {
-            return null;
-        }
-
-        while ($parentAccount) {
-            $parentGroup = $parentAccount->getGroup();
-            if ($parentGroup) {
-                $priceList = $this->getPriceListRepository()->getPriceListByAccountGroup($parentGroup);
+            if ($account->getGroup()) {
+                $priceList = $this->getPriceListRepository()
+                    ->getPriceListByAccountGroup($account->getGroup(), $website);
                 if ($priceList) {
+                    $this->priceLists[$key] = $priceList;
                     return $priceList;
                 }
             }
-
-            $parentAccount = $parentAccount->getParent();
-        }
-
-        return null;
-    }
-
-    /**
-     * @return null|PriceList
-     */
-    protected function getPriceListFromWebsite()
-    {
-        $website = $this->websiteManager->getCurrentWebsite();
-        if (!$website) {
-            return null;
         }
 
         $priceList = $this->getPriceListRepository()->getPriceListByWebsite($website);
-        if ($priceList) {
-            return $priceList;
+        if (!$priceList) {
+            $priceList = $this->getPriceListFromConfig();
         }
 
-        return null;
+        $this->priceLists[$key] = $priceList;
+        return $priceList;
     }
 
     /**
-     * @param Account $account
-     * @return null|PriceList
+     * @param Account|null $account
+     * @param Website|null $website
+     * @return string
      */
-    protected function getPriceListFromAccountGroup(Account $account)
+    protected function getUniqueKey(Account $account = null, Website $website = null)
     {
-        $accountGroup = $account->getGroup();
-        if (!$accountGroup) {
+        $key = '';
+        if ($account) {
+            $key .= spl_object_hash($account);
+        }
+        if ($website) {
+            $key .= spl_object_hash($website);
+        }
+        return $key;
+    }
+
+    /**
+     * @return null|BasePriceList
+     */
+    protected function getPriceListFromConfig()
+    {
+        $key = implode(
+            ConfigManager::SECTION_MODEL_SEPARATOR,
+            [OroB2BPricingExtension::ALIAS, Configuration::COMBINED_PRICE_LIST]
+        );
+        $priceListId = $this->configManager->get($key);
+
+        if (!$priceListId) {
             return null;
         }
 
-        $priceList = $this->getPriceListRepository()->getPriceListByAccountGroup($accountGroup);
-        if ($priceList) {
-            return $priceList;
-        }
-
-        return null;
+        return $this->getPriceListRepository()->find($priceListId);
     }
 
     /**
-     * @return PriceListRepository
+     * @return CombinedPriceListRepository
      */
     protected function getPriceListRepository()
     {
@@ -173,5 +135,14 @@ class PriceListTreeHandler
         }
 
         return $this->priceListRepository;
+    }
+
+    /**
+     * @param string $priceListClass
+     */
+    public function setPriceListClass($priceListClass)
+    {
+        $this->priceListClass = $priceListClass;
+        $this->priceListRepository = null;
     }
 }

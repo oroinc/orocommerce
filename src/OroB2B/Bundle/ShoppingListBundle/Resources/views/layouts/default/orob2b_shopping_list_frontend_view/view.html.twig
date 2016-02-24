@@ -51,7 +51,7 @@
 {% endblock %}
 
 {% block _shopping_list_top_actions_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ "cart__order__controls-list" }) %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " cart__order__controls-list" }) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>

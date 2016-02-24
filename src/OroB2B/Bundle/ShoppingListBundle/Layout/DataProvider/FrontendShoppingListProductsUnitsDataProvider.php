@@ -7,7 +7,7 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\DataProviderInterface;
 
-use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -20,7 +20,7 @@ class FrontendShoppingListProductsUnitsDataProvider implements DataProviderInter
     protected $registry;
 
     /**
-     * @var FrontendPriceListRequestHandler
+     * @var PriceListRequestHandler
      */
     protected $requestHandler;
 
@@ -31,12 +31,12 @@ class FrontendShoppingListProductsUnitsDataProvider implements DataProviderInter
 
     /**
      * @param Registry $registry
-     * @param FrontendPriceListRequestHandler $requestHandler
+     * @param PriceListRequestHandler $requestHandler
      * @param UserCurrencyProvider $userCurrencyProvider
      */
     public function __construct(
         Registry $registry,
-        FrontendPriceListRequestHandler $requestHandler,
+        PriceListRequestHandler $requestHandler,
         UserCurrencyProvider $userCurrencyProvider
     ) {
         $this->registry = $registry;
@@ -66,7 +66,7 @@ class FrontendShoppingListProductsUnitsDataProvider implements DataProviderInter
      */
     protected function getProductsUnits(ShoppingList $shoppingList)
     {
-        $priceList = $this->requestHandler->getPriceList();
+        $priceList = $this->requestHandler->getPriceListByAccount();
 
         $products = $shoppingList->getLineItems()->map(
             function (LineItem $lineItem) {

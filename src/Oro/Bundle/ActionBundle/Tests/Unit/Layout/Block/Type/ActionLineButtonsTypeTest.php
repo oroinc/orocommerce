@@ -2,50 +2,111 @@
 
 namespace Oro\Bundle\ActionBundle\Tests\Unit\Layout\Block\Type;
 
-use Oro\Bundle\ActionBundle\Layout\Block\Type\ActionButtonType;
-use Oro\Component\Layout\LayoutManipulatorInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ActionLineButtonsTypeTest extends AbstractActionButtonsTypeTest
+use Oro\Component\Layout\BlockInterface;
+use Oro\Component\Layout\BlockView;
+
+use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
+use Oro\Bundle\ActionBundle\Layout\Block\Type\ActionLineButtonsType;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+
+class ActionLineButtonsTypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @dataProvider buildBlockDataProvider
-     * @param string|null $groupValue
-     * @param string $executionRoute
-     * @param string $dialogRoute
-     * @param boolean $actionHasForm
-     * @param array $expectedOptions
+     * @var ApplicationsHelper|\PHPUnit_Framework_MockObject_MockObject
      */
-    public function testBuildBlock($groupValue, $executionRoute, $dialogRoute, $actionHasForm, array $expectedOptions)
-    {
-        $actionName = 'action1';
-        $options = $this->getOptions($groupValue, $executionRoute, $dialogRoute, $actionHasForm, $actionName);
-        $builderId = 'builder';
-        /** @var LayoutManipulatorInterface|\PHPUnit_Framework_MockObject_MockObject $manipulator */
-        $manipulator = $this->getMock('Oro\Component\Layout\LayoutManipulatorInterface');
-        $manipulator->expects($this->once())->method('add')->with(
-            $actionName . '_button',
-            $builderId,
-            ActionButtonType::NAME,
-            $expectedOptions
-        );
-        $blockBuilder = $this->getBlockBuilder($manipulator, $builderId);
+    protected $applicationHelper;
 
-        $this->blockType->buildBlock($blockBuilder, $options);
+    /**
+     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $doctrineHelper;
+
+    /**
+     * @var ActionLineButtonsType
+     */
+    protected $type;
+
+    protected function setUp()
+    {
+        $this->applicationHelper = $this->getMockBuilder('Oro\Bundle\ActionBundle\Helper\ApplicationsHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->type = new ActionLineButtonsType($this->applicationHelper, $this->doctrineHelper);
+    }
+
+    public function testBuildView()
+    {
+        $this->applicationHelper->expects($this->once())
+            ->method('getDialogRoute')
+            ->will($this->returnValue('dialog'));
+
+        $this->applicationHelper->expects($this->once())
+            ->method('getExecutionRoute')
+            ->will($this->returnValue('execution'));
+
+        $resolver = new OptionsResolver();
+        $this->type->setDefaultOptions($resolver);
+
+        $entity = new \stdClass();
+        $expected = [
+            'entity' => $entity,
+            'group' => null,
+            'dialogRoute' => 'dialog',
+            'executionRoute' => 'execution',
+            'attr' => [
+                'data-page-component-module' => 'oroaction/js/app/components/buttons-component'
+            ]
+        ];
+        $resolvedOptions = $resolver->resolve(['entity' => $entity]);
+        $this->assertEquals($expected, $resolvedOptions);
+
+        $view = new BlockView();
+        /** @var BlockInterface|\PHPUnit_Framework_MockObject_MockObject $block */
+        $block = $this->getMock('Oro\Component\Layout\BlockInterface');
+
+        $actions = [];
+        $data = $this->getMock('Oro\Component\Layout\DataAccessorInterface');
+        $data->expects($this->once())
+            ->method('get')
+            ->with('actions')
+            ->will($this->returnValue($actions));
+        $block->expects($this->once())
+            ->method('getData')
+            ->will($this->returnValue($data));
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getSingleEntityIdentifier')
+            ->will($this->returnValue(1));
+
+        $this->type->buildView($view, $block, $resolvedOptions);
+
+        $expectedViewVars = [
+            'dialogRoute' => $resolvedOptions['dialogRoute'],
+            'executionRoute' => $resolvedOptions['executionRoute'],
+            'attr' => $resolvedOptions['attr'],
+            'actions' => $actions,
+            'entityClass' => get_class($entity),
+            'entityId' => 1
+        ];
+        $this->assertEquals($expectedViewVars, $view->vars);
     }
 
     /**
-     * {@inheritDoc}
+     * @expectedException \Oro\Component\Layout\Exception\LogicException
+     * @expectedExceptionMessage entity or entityClass must be provided
      */
-    protected function getTypeClassName()
+    public function testBuildViewException()
     {
-        return 'Oro\Bundle\ActionBundle\Layout\Block\Type\ActionLineButtonsType';
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function setResolverExpectations($resolver)
-    {
-        $resolver->expects($this->at(3))->method('setOptional')->with(['exclude_action', 'suffix', 'hide_icons']);
+        $view = new BlockView();
+        /** @var BlockInterface|\PHPUnit_Framework_MockObject_MockObject $block */
+        $block = $this->getMock('Oro\Component\Layout\BlockInterface');
+        $this->type->buildView($view, $block, []);
     }
 }

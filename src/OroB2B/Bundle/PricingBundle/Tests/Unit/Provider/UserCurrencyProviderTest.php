@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Provider;
 
 use Symfony\Component\HttpFoundation\Session\Session;
 
-use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 
 class UserCurrencyProviderTest extends \PHPUnit_Framework_TestCase
@@ -41,7 +41,7 @@ class UserCurrencyProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->session->expects($this->once())
             ->method('get')
-            ->with(FrontendPriceListRequestHandler::PRICE_LIST_CURRENCY_KEY)
+            ->with(PriceListRequestHandler::PRICE_LIST_CURRENCY_KEY)
             ->willReturn($sessionCurrencyValue);
 
         if ($sessionCurrencyValue) {
