@@ -19,11 +19,11 @@ layout:
                             shoppingList:
                                 @value: $data.shoppingList
                 shopping_list_top_actions:
-                    blockType: block
+                    blockType: action_line_buttons
                     options:
-                        vars:
-                            shoppingList:
-                                @value: $data.shoppingList
+                        group: null
+                        entity:
+                            @value: $data.shoppingList
                 shopping_list_options:
                     blockType: block
                     options:
@@ -51,11 +51,11 @@ layout:
                             shoppingList:
                                 @value: $data.shoppingList
                 shopping_list_combined_button:
-                    blockType: block
+                    blockType: action_combined_buttons
                     options:
-                        vars:
-                            shoppingList:
-                                @value: $data.shoppingList
+                        entity:
+                            @value: $data.shoppingList
+                        primary_action_name: orob2b_shoppinglist_frontend_action_createorder
             tree:
                 content:
                     shopping_list_view_container:

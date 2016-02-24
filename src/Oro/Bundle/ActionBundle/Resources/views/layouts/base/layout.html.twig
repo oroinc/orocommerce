@@ -1,45 +1,27 @@
-{% extends 'OroLayoutBundle:Layout:div_layout.html.twig' %}
-
-{% block form_start_widget %}
-    {% set attr = attr|merge({
-    id: form.vars.id
-    }) %}
-    {{ parent() }}
-{% endblock %}
-
-{% block form_end_widget %}
-    {{ parent() }}
-    {{ oro_form_js_validation(form) }}
-{% endblock %}
-
-{#Action Buttons#}
-
 {% block action_line_buttons_widget %}
-    {#TODO: change class to more reusable#}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ "cart__order__controls-list" }) %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ "row-fluid" }) %}
     <div{{ block('block_attributes') }}>
-        <ul>
-            {% for action in block %}
-                <li>
-                    {{ block_widget(action) }}
-                </li>
-            {% endfor %}
-        </ul>
+        {% for action in block %}
+            <div class="pull-left btn-group icons-holder">
+                {{ block_widget(action) }}
+            </div>
+        {% endfor %}
     </div>
 {% endblock %}
 
 {% block action_combined_buttons_widget %}
     {% if block[primary_button_alias] is defined %}
-        {% set attr = attr|merge({ class: attr.class|default('') ~ " btn btn_orange btn_has-dropdown btn_has-dropdown_xlg"}) %}
+        {% set attr = attr|merge({ class: attr.class|default('') ~ " btn-group pull-right"}) %}
         <div{{ block('block_attributes') }}>
-
             {% set primary_button = block[primary_button_alias] %}
             {{ block_widget(primary_button,
-            {attr:primary_button.vars.attr|merge({ class: primary_button.vars.attr.class|default('') ~ " direct-link"})}) }}
+            {attr:primary_button.vars.attr|merge({ class: primary_button.vars.attr.class|default('') ~ " btn btn-default"})}) }}
 
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            <a href="#" class="btn-default btn  dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+               aria-expanded="true">
                 <i class="material-icons">arrow_drop_down</i>
             </a>
+
             {{ block_widget(block[dropdown_menu_alias]) }}
         </div>
     {% endif %}
@@ -57,6 +39,7 @@
 {% endblock %}
 
 {% block action_button_widget %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ "back icons-holder-text btn action-button" }) %}
     <a {{ block('block_attributes') }}>
         {% if hide_icon is not defined %}
             <i class="{{ buttonOptions.icon|default('') }} {{ buttonOptions.iCss|default('') }} hide-text">{{ linkLabel }}</i>
@@ -64,4 +47,3 @@
         {{ linkLabel|trim }}
     </a>
 {% endblock %}
-
