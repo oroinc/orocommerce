@@ -37,7 +37,7 @@ define(function (require) {
                 _sourceElement: this.$el,
                 tierPrices: this.options.tierPrices,
                 matchedPrices: this.options.matchedPrices,
-                $currency: this.options.currency,
+                currency: this.options.currency,
                 priceList: this.options.priceList,
                 tierPricesRoute: this.options.tierPricesRoute,
                 matchedPricesRoute: this.options.matchedPricesRoute

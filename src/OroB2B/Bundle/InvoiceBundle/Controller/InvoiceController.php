@@ -172,7 +172,7 @@ class InvoiceController extends Controller
 
         if ($productIds) {
             $tierPrices = $this->get('orob2b_pricing.provider.product_price')->getPriceByPriceListIdAndProductIds(
-                $this->get('orob2b_pricing.model.frontend.price_list_request_handler')->getPriceList()->getId(),
+                $this->get('orob2b_pricing.model.price_list_request_handler')->getPriceListByAccount()->getId(),
                 $productIds->toArray(),
                 $invoice->getCurrency()
             );

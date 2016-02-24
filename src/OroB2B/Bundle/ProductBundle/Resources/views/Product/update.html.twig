@@ -51,16 +51,12 @@
 
 {% block content_data %}
     {% set id = 'product-edit' %}
-    {% set productHasVariants = entity.getHasVariants %}
+    {% set productHasVariants = entity.hasVariants and form.variantFields.vars.choices|length != 0 %}
 
     {% set generalData = [
         form_row(form.sku),
-        form_row(form.hasVariants)
+        form_row(form.variantFields)
     ] %}
-
-    {% if productHasVariants and form.variantFields.vars.choices|length != 0 %}
-        {% set generalData = generalData|merge([form_row(form.variantFields)]) %}
-    {% endif %}
 
     {% set generalData = generalData|merge([
         form_row(form.names),
