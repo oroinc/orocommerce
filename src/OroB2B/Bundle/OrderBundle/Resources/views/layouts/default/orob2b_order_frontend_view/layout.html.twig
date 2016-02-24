@@ -1,0 +1,37 @@
+{% block _order_body_widget %}
+    <div class="account-oq__item__body">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block order_body_column_widget %}
+    <div class="account-oq__item">
+        <div class="account-oq__order-info">
+            <table class="table borderless b_paddingless">
+                <tbody>
+                    {{ block_widget(block) }}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block order_body_column_element_widget %}
+    <tr>
+        <td class="account-oq__order-info__title">{{ block_label(block) }}</td>
+        <td>{{ block_widget(block) }}</td>
+    </tr>
+{% endblock %}
+
+{% block currency_widget %}
+    {{ text|oro_format_currency({currency: currency, attributes: attributes, textAttributes: textAttributes, symbols: symbols, locale: locale}) }}
+{% endblock %}
+
+{% block date_widget %}
+    {{ date|oro_format_date({dateType: dateType, locale: locale, timeZone: timeZone}) }}
+{% endblock %}
+
+{% block address_widget %}
+    {% import 'OroAddressBundle::macros.html.twig' as AddressMacro %}
+    {{ AddressMacro.renderAddress(address) }}
+{% endblock %}
