@@ -25,6 +25,9 @@ class OrderAddressType extends AbstractType
 {
     const NAME = 'orob2b_order_address_type';
 
+    const APPLICATION_FRONTEND = 'frontend';
+    const APPLICATION_BACKEND = 'backend';
+
     /** @var string */
     protected $dataClass;
 
@@ -65,31 +68,10 @@ class OrderAddressType extends AbstractType
     {
         $type = $options['addressType'];
         $order = $options['order'];
+        $application =  $options['application'];
 
         $isManualEditGranted = $this->orderAddressSecurityProvider->isManualEditGranted($type);
-        $addresses = $this->orderAddressManager->getGroupedAddresses($order, $type);
-
-        $accountAddressOptions = [
-            'label' => false,
-            'required' => false,
-            'mapped' => false,
-            'choices' => $this->getChoices($addresses),
-            'configs' => ['placeholder' => 'orob2b.order.form.address.choose'],
-            'attr' => [
-                'data-addresses' => json_encode($this->getPlainData($addresses)),
-                'data-default' => $this->getDefaultAddressKey($order, $type, $addresses),
-            ],
-        ];
-
-        if ($isManualEditGranted) {
-            $accountAddressOptions['choices'] = array_merge(
-                $accountAddressOptions['choices'],
-                ['orob2b.order.form.address.manual']
-            );
-            $accountAddressOptions['configs']['placeholder'] = 'orob2b.order.form.address.choose_or_create';
-        }
-
-        $builder->add('accountAddress', 'genemu_jqueryselect2_choice', $accountAddressOptions);
+        $this->initAccountAddressField($builder, $type, $order, $application, $isManualEditGranted);
 
         $builder->addEventListener(
             FormEvents::SUBMIT,
@@ -153,7 +135,9 @@ class OrderAddressType extends AbstractType
     {
         $resolver
             ->setRequired(['order', 'addressType'])
-            ->setDefaults(['data_class' => $this->dataClass])
+            ->setDefaults(['data_class' => $this->dataClass,
+                'application' => self::APPLICATION_BACKEND
+            ])
             ->setAllowedValues('addressType', [AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING])
             ->setAllowedTypes('order', 'OroB2B\Bundle\OrderBundle\Entity\Order');
     }
@@ -254,5 +238,67 @@ class OrderAddressType extends AbstractType
         );
 
         return $data;
+    }
+
+    /**
+     * @param Order $order
+     * @param string $type
+     *
+     * @return bool
+     */
+    protected function hasAccessToEditAddress(Order $order, $type, $application)
+    {
+        $isFromExternalSource = true;
+
+        if ($application === self::APPLICATION_FRONTEND) {
+            if ($type === AddressType::TYPE_SHIPPING && $order->getShippingAddress()) {
+                $isFromExternalSource = !$order->getShippingAddress()->isFromExternalSource();
+            }
+        }
+
+        return $isFromExternalSource;
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param string $type - address type
+     * @param Order $order
+     * @param string $application - values: frontend, backend
+     * @param bool $isManualEditGranted
+     *
+     * @return bool
+     */
+    protected function initAccountAddressField(
+        FormBuilderInterface $builder,
+        $type,
+        Order $order,
+        $application,
+        $isManualEditGranted
+    ) {
+        if ($this->hasAccessToEditAddress($order, $type, $application)) {
+            $addresses = $this->orderAddressManager->getGroupedAddresses($order, $type);
+
+            $accountAddressOptions = [
+                'label' => false,
+                'required' => false,
+                'mapped' => false,
+                'choices' => $this->getChoices($addresses),
+                'configs' => ['placeholder' => 'orob2b.order.form.address.choose'],
+                'attr' => [
+                    'data-addresses' => json_encode($this->getPlainData($addresses)),
+                    'data-default' => $this->getDefaultAddressKey($order, $type, $addresses),
+                ],
+            ];
+
+            if ($isManualEditGranted) {
+                $accountAddressOptions['choices'] = array_merge(
+                    $accountAddressOptions['choices'],
+                    ['orob2b.order.form.address.manual']
+                );
+                $accountAddressOptions['configs']['placeholder'] = 'orob2b.order.form.address.choose_or_create';
+            }
+
+            $builder->add('accountAddress', 'genemu_jqueryselect2_choice', $accountAddressOptions);
+        }
     }
 }
