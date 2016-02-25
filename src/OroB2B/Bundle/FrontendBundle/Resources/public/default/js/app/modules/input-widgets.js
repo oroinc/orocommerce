@@ -4,7 +4,8 @@ define(function(require) {
     var InputWidgetManager = require('oroui/js/input-widget-manager');
     var ChosenInputWidget = require('orob2bfrontend/default/js/app/views/input-widget/chosen');
 
-    InputWidgetManager.registerWidget({
+    InputWidgetManager.removeWidget('uniform-select');
+    InputWidgetManager.addWidget('chosen', {
         tagName: 'SELECT',
         Widget: ChosenInputWidget
     });
