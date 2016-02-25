@@ -26,7 +26,7 @@ define(function(require) {
             this.$el.trigger('chosen:updated');
         },
 
-        setContainer: function() {
+        findContainer: function() {
             this.$container = this.$el.data('chosen').container;
         }
     });
