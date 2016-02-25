@@ -6,6 +6,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository;
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
+use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestStatusData;
 
 /**
  * @dbIsolation
@@ -67,7 +68,7 @@ class RequestStatusRepositoryTest extends WebTestCase
         foreach ($statuses as $status) {
             $this->assertInstanceOf('OroB2B\Bundle\RFPBundle\Entity\RequestStatus', $status);
 
-            $this->assertEquals($status->getName() === 'deleted', $status->getDeleted());
+            $this->assertEquals($status->getName() === LoadRequestStatusData::NAME_DELETED, $status->getDeleted());
         }
     }
 }
