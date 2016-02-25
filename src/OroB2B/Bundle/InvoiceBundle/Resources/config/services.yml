@@ -20,6 +20,7 @@ services:
         class: %orob2b_invoice.form.type.invoice.class%
         calls:
             - [setDataClass, [%orob2b_invoice.entity.invoice.class%]]
+            - [setWebsiteClass, [%orob2b_website.website.class%]]
         tags:
             - { name: form.type, alias: orob2b_invoice_type }
 

@@ -4,6 +4,8 @@ oro_system_configuration:
             title: orob2b.pricing.system_configuration.groups.default_price_lists.title
         price_rounding:
             title: orob2b.pricing.system_configuration.groups.price_rounding.title
+        price_lists_update_mode:
+            title: orob2b.pricing.system_configuration.groups.price_lists_update_mode.title
         pricing:
             title: orob2b.pricing.system_configuration.groups.pricing.title
             icon: 'icon-credit-card'
@@ -44,6 +46,17 @@ oro_system_configuration:
                         min: 0
                     - Type:
                         type: integer
+        oro_b2b_pricing.price_lists_update_mode:
+                    data_type: string
+                    type: choice
+                    options:
+                        label: orob2b.pricing.system_configuration.fields.price_lists_update_mode.label
+                        tooltip: orob2b.pricing.system_configuration.fields.price_lists_update_mode.tooltip
+                        choice_translation_domain: messages
+                        choices:
+                            scheduled: orob2b.pricing.system_configuration.fields.price_lists_update_mode.choices.scheduled.label
+                            real_time: orob2b.pricing.system_configuration.fields.price_lists_update_mode.choices.real_time.label
+
 
     tree:
         system_configuration:
@@ -63,3 +76,7 @@ oro_system_configuration:
                                         priority: 100
                                         children:
                                             - oro_b2b_pricing.default_price_lists
+                                    price_lists_update_mode:
+                                        priority: 50
+                                        children:
+                                            - oro_b2b_pricing.price_lists_update_mode
