@@ -3,23 +3,26 @@
 namespace OroB2B\Component\Duplicator;
 
 use DeepCopy\DeepCopy;
-use DeepCopy\Filter\Doctrine\DoctrineCollectionFilter;
-use DeepCopy\Filter\Doctrine\DoctrineEmptyCollectionFilter;
 use DeepCopy\Filter\Filter;
-use DeepCopy\Filter\KeepFilter;
-use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\Matcher;
-use DeepCopy\Matcher\PropertyMatcher;
-use DeepCopy\Matcher\PropertyNameMatcher;
-use DeepCopy\Matcher\PropertyTypeMatcher;
-use DeepCopy\Filter\ReplaceFilter;
-use DeepCopy\Filter\ReplaceFilter as TypeReplaceFilter;
-use DeepCopy\TypeFilter\ShallowCopyFilter;
 use DeepCopy\TypeFilter\TypeFilter;
 use DeepCopy\TypeMatcher\TypeMatcher;
 
-class Duplicator
+use OroB2B\Component\Duplicator\Filter\FilterFactory;
+use OroB2B\Component\Duplicator\Matcher\MatcherFactory;
+
+class Duplicator implements DuplicatorInterface
 {
+    /**
+     * @var FilterFactory
+     */
+    protected $filterFactory;
+
+    /**
+     * @var MatcherFactory
+     */
+    protected $matcherFactory;
+
     /**
      * @param $object
      * @param array $settings
@@ -34,6 +37,7 @@ class Duplicator
             }
             $filterOptions = $option[0];
             $matcherArguments = $option[1];
+
             $filter = $this->getFilter($filterOptions);
             if ($filter instanceof TypeFilter) {
                 $matcher = new TypeMatcher($matcherArguments);
@@ -55,60 +59,7 @@ class Duplicator
     {
         $filterName = $filterOptions[0];
         $filterParameters = isset($filterOptions[1]) ? $filterOptions[1] : null;
-
-        switch ($filterName) {
-            case 'setNull':
-                $filter = new SetNullFilter();
-                break;
-            case 'keep':
-                $filter = new KeepFilter();
-                break;
-            case 'collection':
-                $filter = new DoctrineCollectionFilter();
-                break;
-            case 'emptyCollection':
-                $filter = new DoctrineEmptyCollectionFilter();
-                break;
-            case 'replace':
-                $callBack = function () use ($filterParameters) {
-                    return $filterParameters;
-                };
-                $filter = new ReplaceFilter($callBack);
-                break;
-            default:
-                $filter = $this->getTypeFilter($filterOptions);
-        }
-
-        return $filter;
-    }
-
-    /**
-     * @param $filterOptions
-     * @return TypeFilter
-     */
-    protected function getTypeFilter($filterOptions)
-    {
-        $filterName = $filterOptions[0];
-        $filterParameters = isset($filterOptions[1]) ? : null;
-
-        switch ($filterName) {
-            case 'shallowCopy':
-                $filter = new ShallowCopyFilter();
-                break;
-            case 'typeReplace':
-                $callBack = function () use ($filterParameters) {
-                    return $filterParameters;
-                };
-                $filter = new TypeReplaceFilter($callBack);
-                break;
-            default:
-                $message = 'Filter name %s not found in '
-                    . '(setNull, keep, collection, emptyCollection, replace, typeReplace, shallowCopy)';
-                $message = sprintf($message, $filterName);
-                throw new \InvalidArgumentException($message);
-        }
-
-        return $filter;
+        return $this->filterFactory->create($filterName, array_filter([$filterParameters]));
     }
 
     /**
@@ -119,22 +70,23 @@ class Duplicator
     {
         $matcherKeyword = $matcherArguments[0];
         $arguments = $matcherArguments[1];
-        switch ($matcherKeyword) {
-            case 'propertyName':
-                $matcher = new PropertyNameMatcher($arguments);
-                break;
-            case 'property':
-                $matcher = new PropertyMatcher($arguments[0], $arguments[1]);
-                break;
-            case 'propertyType':
-                $matcher = new PropertyTypeMatcher($arguments);
-                break;
-            default:
-                $message = 'Matcher name %s not found in (property, propertyName)';
-                $message = sprintf($message, $matcherKeyword);
-                throw new \InvalidArgumentException($message);
-        }
 
-        return $matcher;
+        return $this->matcherFactory->create($matcherKeyword, $arguments);
+    }
+
+    /**
+     * @param FilterFactory $filterFactory
+     */
+    public function setFilterFactory($filterFactory)
+    {
+        $this->filterFactory = $filterFactory;
+    }
+
+    /**
+     * @param MatcherFactory $matcherFactory
+     */
+    public function setMatcherFactory($matcherFactory)
+    {
+        $this->matcherFactory = $matcherFactory;
     }
 }

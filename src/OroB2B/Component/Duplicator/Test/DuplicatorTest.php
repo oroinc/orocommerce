@@ -3,6 +3,8 @@
 namespace OroB2B\Component\Duplicator\Test;
 
 use OroB2B\Component\Duplicator\Duplicator;
+use OroB2B\Component\Duplicator\Filter\FilterFactory;
+use OroB2B\Component\Duplicator\Matcher\MatcherFactory;
 use OroB2B\Component\Duplicator\Test\Stub\ProductUnit;
 use OroB2B\Component\Duplicator\Test\Stub\RequestProduct;
 use OroB2B\Component\Duplicator\Test\Stub\RequestProductItem;
@@ -16,21 +18,18 @@ class DuplicatorTest extends \PHPUnit_Framework_TestCase
         $now = new \DateTime();
 
         $params = [
-            [['collection'], ['propertyType', 'Doctrine\Common\Collections\Collection']],
+            [['setNull'], ['propertyName', ['id']]],
+            [['keep'], ['propertyName', ['status']]],
+            [['replaceValue', $now], ['property', ['OroB2B\Component\Duplicator\Test\Stub\RFPRequest', 'createdAt']]],
 
-            [['setNull'], ['propertyName', 'id']],
-            [['keep'], ['propertyName', 'status']],
-            [['replace', $now], ['property', [RFPRequest::class, 'createdAt']]],
+            [['setNull'], ['property', ['OroB2B\Component\Duplicator\Test\Stub\RequestProduct', 'id']]],
+            [['keep'], ['property', ['OroB2B\Component\Duplicator\Test\Stub\RequestProduct', 'product']]],
 
-            [['setNull'], ['property', [RequestProduct::class, 'id']]],
-            [['keep'], ['property', [RequestProduct::class, 'product']]],
-
-
-            [['keep'], ['property', [RequestProductItem::class, 'unit']]],
+            [['keep'], ['property', ['OroB2B\Component\Duplicator\Test\Stub\RequestProductItem', 'unit']]],
         ];
         $rfpRequest = $this->getRFP();
 
-        $duplicator = new Duplicator();
+        $duplicator = $this->createDuplicator();
         /** @var RFPRequest $rfpRequestCopy */
         $rfpRequestCopy = $duplicator->duplicate($rfpRequest, $params);
 
@@ -39,6 +38,9 @@ class DuplicatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($rfpRequestCopy->getId(), null);
         $this->assertEquals($rfpRequest->getEmail(), $rfpRequestCopy->getEmail());
         $this->assertSame($rfpRequest->getStatus(), $rfpRequestCopy->getStatus());
+
+        $this->assertNotSame($rfpRequestCopy->getRequestProducts(),  $rfpRequest->getRequestProducts());
+        $this->assertEquals($rfpRequestCopy->getRequestProducts(),  $rfpRequest->getRequestProducts());
 
         /** @var RequestProduct $productCopy */
         $productCopy = $rfpRequestCopy->getRequestProducts()->first();
@@ -91,5 +93,37 @@ class DuplicatorTest extends \PHPUnit_Framework_TestCase
         $requestProduct->addRequestProductItem($item);
 
         return $requestProduct;
+    }
+
+    protected function createDuplicator()
+    {
+        $duplicator = new Duplicator();
+        $duplicator->setFilterFactory($this->createFilterFactory());
+        $duplicator->setMatcherFactory($this->createMatcherFactory());
+
+        return $duplicator;
+    }
+
+    protected function createFilterFactory()
+    {
+        $factory = new FilterFactory();
+        $factory->addObjectType('setNull', '\DeepCopy\Filter\SetNullFilter')
+            ->addObjectType('keep', '\DeepCopy\Filter\KeepFilter')
+            ->addObjectType('collection', '\DeepCopy\Filter\Doctrine\DoctrineCollectionFilter')
+            ->addObjectType('emptyCollection', '\DeepCopy\Filter\Doctrine\DoctrineEmptyCollectionFilter')
+            ->addObjectType('replaceValue', '\OroB2B\Component\Duplicator\Filter\ReplaceValueFilter')
+            ->addObjectType('shallowCopy', '\OroB2B\Component\Duplicator\Filter\ShallowCopyFilter');
+
+        return $factory;
+    }
+
+    protected function createMatcherFactory()
+    {
+        $factory = new MatcherFactory();
+        $factory->addObjectType('property', '\DeepCopy\Matcher\PropertyMatcher')
+            ->addObjectType('propertyName', '\DeepCopy\Matcher\PropertyNameMatcher')
+            ->addObjectType('propertyType', '\DeepCopy\Matcher\PropertyTypeMatcher');
+
+        return $factory;
     }
 }
