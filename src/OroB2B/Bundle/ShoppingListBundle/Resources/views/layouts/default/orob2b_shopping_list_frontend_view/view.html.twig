@@ -122,12 +122,8 @@
         {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-table cart-table_b-bordered cart-table__verticalp-enlarged mt1-md"}) %}
         <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
             module: 'orob2bfrontend/js/app/components/empty-items-component',
-            options: {
-                eventName: 'frontend:item:delete',
-                itemsSelector: '.line_item',
-                emptyBlockSelector: '.cart-list_empty'
-            }
-        }) }}>
+            options: {eventName: 'frontend:item:delete'}
+        }) }} data-items-selector=".line_item" data-empty-block-selector=".cart-list_empty">
             <table class="oro-grid-table oro-grid-table_b-bordered oro-grid-table__verticalp-enlarged mt1-md">
                 <thead>
                 <tr>
@@ -275,7 +271,7 @@
 {% endblock %}
 
 {% block _shopping_list_line_items_empty_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ "cart-list_empty"}) %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-list_empty"}) %}
     {% if shoppingList.lineItems is not empty %}
         {% set attr = attr|merge({ class: attr.class ~ " hidden"}) %}
     {% endif %}

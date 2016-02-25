@@ -10,22 +10,41 @@ define(function (require) {
     var $ = require('jquery');
 
     EmptyItemsComponent = BaseComponent.extend({
+        /**
+         * @property {Object}
+         */
+        options: {
+            eventName: 'item:delete',
+            hiddenClass: 'hidden'
+        },
+        /**
+         * @param {Object} options
+         */
         initialize: function(options) {
-            this.options = _.extend({
-                eventName: 'item:delete',
-                itemsSelector: '.itemsSelectorContainer',
-                emptyBlockSelector: '.emptyBlockSelectorContainer',
-                hiddenClass: 'hidden'
-            }, options);
-            this.$elem = options._sourceElement;
+            this.options = _.extend(this.options, options);
+            this.$el = options._sourceElement;
 
-            mediator.on(this.options.eventName, _.bind(this.showEmptyMessage, this));
+            mediator.on(this.options.eventName, this.showEmptyMessage, this);
         },
         showEmptyMessage: function() {
-            if (this.$elem.find(this.options.itemsSelector).length == 0) {
-                this.$elem.remove();
-                $(this.options.emptyBlockSelector).removeClass(this.options.hiddenClass);
+            var itemsSelector = this.$el.data('items-selector') || '.itemsSelectorContainer';
+            var emptyBlockSelector = this.$el.data('empty-block-selector') || '.emptyBlockSelectorContainer';
+            if (this.$el.find(itemsSelector).length == 0) {
+                this.$el.remove();
+                $(emptyBlockSelector).removeClass(this.options.hiddenClass);
             }
+        },
+        /**
+         * @inheritDoc
+         */
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            mediator.off(this.options.eventName, this.showEmptyMessage, this);
+
+            EmptyItemsComponent.__super__.dispose.call(this);
         }
     });
 
