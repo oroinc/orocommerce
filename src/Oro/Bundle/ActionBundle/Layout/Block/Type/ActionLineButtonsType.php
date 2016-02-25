@@ -53,7 +53,6 @@ class ActionLineButtonsType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'group' => null,
                 'dialogRoute' => $this->applicationsHelper->getDialogRoute(),
                 'executionRoute' => $this->applicationsHelper->getExecutionRoute(),
                 'attr' => [
@@ -62,7 +61,7 @@ class ActionLineButtonsType extends AbstractType
             ]
         );
         $resolver->setRequired(['actions']);
-        $resolver->setOptional(['group', 'entity', 'entityClass']);
+        $resolver->setOptional(['entity', 'entityClass']);
     }
 
     /**

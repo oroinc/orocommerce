@@ -59,7 +59,6 @@ class ActionLineButtonsTypeTest extends \PHPUnit_Framework_TestCase
         $expected = [
             'entity' => $entity,
             'actions' => $actions,
-            'group' => null,
             'dialogRoute' => 'dialog',
             'executionRoute' => 'execution',
             'attr' => [
