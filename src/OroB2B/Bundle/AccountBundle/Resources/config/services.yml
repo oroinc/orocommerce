@@ -827,9 +827,6 @@ services:
             - @oro_config.manager
             - @orob2b_website.manager
             - @oro_user.manager
-        calls:
-            - [setFormType, ['orob2b_account_frontend_account_user_register']]
-            - [setActionRoute, ['orob2b_account_frontend_account_user_register']]
         tags:
             - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_register }
 
