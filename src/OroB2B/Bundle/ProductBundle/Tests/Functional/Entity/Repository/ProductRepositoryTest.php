@@ -22,7 +22,10 @@ class ProductRepositoryTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->loadFixtures(['OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData']);
+        $this->loadFixtures([
+            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
+            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductImageData',
+        ]);
 
         $this->repository = $this->getContainer()->get('doctrine')->getRepository(
             $this->getContainer()->getParameter('orob2b_product.product.class')
