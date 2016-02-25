@@ -17,6 +17,7 @@ orob2b:
         po_number.label: PO Number
         ship_until.label: Do Not Ship Later Than
         subtotal.label: Subtotal
+        total.label: Total
         payment_term.label: Payment Term
         billing_address.label: Billing Address
         shipping_address.label: Shipping Address
