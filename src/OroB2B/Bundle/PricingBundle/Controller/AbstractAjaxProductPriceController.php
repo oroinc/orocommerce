@@ -9,49 +9,41 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\UserBundle\Entity\User;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
-class AbstractAjaxProductPriceController extends Controller
+abstract class AbstractAjaxProductPriceController extends Controller
 {
-    /** @var EntityManager[] */
-    protected $managers = [];
-
     /**
      * Get products prices by price list and product ids
      *
      * @param Request $request
      * @return JsonResponse
      */
-    public function getProductPricesByPriceListAction(Request $request)
+    public function getProductPricesByAccount(Request $request)
     {
-        $priceListId = null;
-        if ($this->getUser() instanceof User) {
-            $priceListId = $request->get('price_list_id');
-        }
-        if (!$priceListId) {
-            $priceListId = $this->get('orob2b_pricing.model.frontend.price_list_request_handler')
-                ->getPriceList()->getId();
-        }
+        $priceListId = $this->get('orob2b_pricing.model.price_list_request_handler')
+            ->getPriceListByAccount()
+            ->getId();
 
         return new JsonResponse(
-            $this->get('orob2b_pricing.provider.product_price')->getPriceByPriceListIdAndProductIds(
-                $priceListId,
-                $request->get('product_ids', []),
-                $request->get('currency')
-            )
+            $this->get('orob2b_pricing.provider.combined_product_price')
+                ->getPriceByPriceListIdAndProductIds(
+                    $priceListId,
+                    $request->get('product_ids', []),
+                    $request->get('currency')
+                )
         );
     }
 
     /**
      * @param array $lineItems
-     * @return array
+     * @return ProductPriceCriteria[]
      */
     protected function prepareProductsPriceCriteria(array $lineItems)
     {
@@ -133,11 +125,7 @@ class AbstractAjaxProductPriceController extends Controller
      */
     protected function getManagerForClass($class)
     {
-        if (!array_key_exists($class, $this->managers)) {
-            $this->managers[$class] = $this->getDoctrine()->getManagerForClass($class);
-        }
-
-        return $this->managers[$class];
+        return $this->get('oro_entity.doctrine_helper')->getEntityManagerForClass($class);
     }
 
     /**
@@ -151,20 +139,20 @@ class AbstractAjaxProductPriceController extends Controller
     /**
      * Get product units that for which prices in given currency are exists.
      *
-     * @param PriceList $priceList
+     * @param BasePriceList $priceList
      * @param Request $request
+     * @param string $productPriceClass
      * @return JsonResponse
      */
-    protected function getProductUnitsByCurrency(PriceList $priceList, Request $request)
+    protected function getProductUnitsByCurrency(BasePriceList $priceList, Request $request, $productPriceClass)
     {
-        $priceClass = $this->getParameter('orob2b_pricing.entity.product_price.class');
         $productClass = $this->getParameter('orob2b_product.product.class');
 
         /** @var Product $product */
         $product = $this->getEntityReference($productClass, $request->get('id'));
 
         /** @var ProductPriceRepository $repository */
-        $repository = $this->getManagerForClass($priceClass)->getRepository($priceClass);
+        $repository = $this->getManagerForClass($productPriceClass)->getRepository($productPriceClass);
         $units = $repository->getProductUnitsByPriceList($priceList, $product, $request->get('currency'));
 
         return new JsonResponse(['units' => $this->getProductUnitFormatter()->formatChoices($units)]);

@@ -14,6 +14,7 @@ orob2b:
             quote_products.label: 'Quote Products'
             request.label: 'Request'
             account.label: 'Account'
+            website.label: 'Website'
             account_user.label: 'Account User'
             locked.label: 'Locked'
             not_locked.label: 'Not Locked'
@@ -25,11 +26,15 @@ orob2b:
             expired.label: 'Expired'
             assigned_users.label: 'Assigned To'
             assigned_account_users.label: 'Assigned Customers'
+            shipping_estimate.label: 'Shipping Estimate'
+            shipping_estimate_amount.label: 'Shipping Estimate Ammount'
+            shipping_estimate_currency.label: 'Shipping Estimate Currency'
 
             sections:
                 general: 'General'
                 additional: 'Additional'
                 quote_products: 'Line Items'
+                shipping_information: 'Shipping Information'
 
             widgets:
                 quote_information: 'Quote Information'

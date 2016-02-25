@@ -10,6 +10,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
 use OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class InvoiceEntityTest extends \PHPUnit_Framework_TestCase
 {
@@ -31,6 +32,7 @@ class InvoiceEntityTest extends \PHPUnit_Framework_TestCase
             ['poNumber', 'po-test'],
             ['account', new Account()],
             ['accountUser', new AccountUser()],
+            ['website', new Website()],
             ['subtotal', 12.55]
         ];
 
