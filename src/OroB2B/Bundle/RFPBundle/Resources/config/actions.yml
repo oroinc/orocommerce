@@ -50,6 +50,46 @@ actions:
                 message: orob2b.rfp.message.request_status_changed
                 type: 'info'
 
+    orob2b_rfp_cancel_action:
+        label: orob2b.rfp.request.cancel.label
+        enabled: true
+        applications: [backend]
+        routes:
+            - orob2b_rfp_request_view
+        datagrids:
+            - rfp-requests-grid
+        order: 150
+        attributes:
+            cancellation_reason:
+                property_path: entity.cancellationReason
+                label: orob2b.rfp.request.cancellation_reason.label
+                type: string
+        form_options:
+            attribute_fields:
+                cancellation_reason:
+                    form_type: oro_rich_text
+        button_options:
+            icon: icon-remove-circle
+        prefunctions:
+            - @assign_constant_value:
+                attribute: $.cancelledStatusName
+                value: OroB2B\Bundle\RFPBundle\Entity\RequestStatus::CANCELED
+            - @find_entity:
+                class: OroB2B\Bundle\RFPBundle\Entity\RequestStatus
+                attribute: $.cancelledStatus
+                where:
+                    name: $.cancelledStatusName
+        preconditions:
+            @and:
+                - @not_empty: $status
+                - @not_equal: [$status.id, $.cancelledStatus.id]
+        functions:
+            - @assign_value: [$cancellationReason, $.cancellation_reason]
+            - @assign_value: [$status, $.cancelledStatus]
+            - @flash_message:
+                message: 'orob2b.rfp.request.cancellation_success.label'
+                type: 'info'
+
     orob2b_rfp_create_quote_action:
         label: orob2b.rfp.btn.create_quote
         applications: [backend]
@@ -96,6 +136,45 @@ actions:
                 attribute: $.isAllowed
         preconditions:
             @equal: [true, $.isAllowed]
+
+    orob2b_rfp_edit_action:
+        label: orob2b.rfp.btn.edit
+        applications: [backend]
+        routes:
+            - orob2b_rfp_request_view
+        datagrids:
+            - rfp-requests-grid
+        order: 30
+        button_options:
+            icon: icon-edit
+        acl_resource: orob2b_rfp_request_update
+        frontend_options:
+            template: OroB2BRFPBundle:Action:rfpEditForm.html.twig
+            show_dialog: false
+        attributes:
+            request:
+                label: ' '
+                type: entity
+                options:
+                    class: OroB2B\Bundle\RFPBundle\Entity\Request
+        form_options:
+            attribute_fields:
+                request:
+                    form_type: orob2b_rfp_request
+            attribute_default_values:
+                request:
+                    $.data
+        functions:
+            - @flash_message:
+                message: orob2b.rfp.action.request.saved.message
+                type: 'success'
+# @TODO: redirect will be fixed in scope https://magecore.atlassian.net/browse/BB-2200
+#            - @redirect:
+#                parameters:
+#                     route: 'orob2b_rfp_request_view'
+#                      route_parameters:
+#                          id: $id
+
 
     orob2b_rfp_delete_action:
         label: orob2b.rfp.btn.delete
