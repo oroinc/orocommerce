@@ -4,12 +4,12 @@ namespace OroB2B\Bundle\AccountBundle\Layout\DataProvider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\Test\FormInterface;
+
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAction;
 use Oro\Component\Layout\ContextInterface;
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType;
-use Symfony\Component\Form\FormFactoryInterface;
-
 use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
@@ -18,8 +18,8 @@ use Oro\Bundle\UserBundle\Entity\UserManager;
 use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use Symfony\Component\Form\Test\FormInterface;
 
 class FrontendAccountUserRegistrationFormProvider extends AbstractServerRenderDataProvider
 {
