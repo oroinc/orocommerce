@@ -110,7 +110,7 @@ class FrontendShoppingListProductsUnitsDataProviderTest extends \PHPUnit_Framewo
                 ->method('getRepository')
                 ->with('OroB2BPricingBundle:CombinedProductPrice')
                 ->willReturn($repository);
-    
+
             $this->registry->expects($this->once())
                 ->method('getManagerForClass')
                 ->with('OroB2BPricingBundle:CombinedProductPrice')
