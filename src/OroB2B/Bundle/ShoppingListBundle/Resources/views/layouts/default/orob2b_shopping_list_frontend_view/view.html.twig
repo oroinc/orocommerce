@@ -1,11 +1,3 @@
-{% block _shopping_list_list_of_shopping_lists_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " orders-sidebar mt3-md" }) %}
-    <div{{ block('block_attributes') }}>
-        SHOPPING LISTS
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block _shopping_list_view_container_widget %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " container-fluid"}) %}
     <div{{ block('block_attributes') }}>
@@ -116,7 +108,7 @@
 {% endblock %}
 
 {% block _shopping_list_line_items_list_widget %}
-    {% if shoppingList.lineItems %}
+    {% if shoppingList.lineItems is not empty %}
         {% import 'OroUIBundle::macros.html.twig' as UI %}
 
         {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-table cart-table_b-bordered cart-table__verticalp-enlarged mt1-md"}) %}
