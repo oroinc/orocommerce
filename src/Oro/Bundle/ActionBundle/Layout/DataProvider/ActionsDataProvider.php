@@ -57,15 +57,15 @@ class ActionsDataProvider implements DataProviderInterface
      */
     public function __get($var)
     {
-        if (strpos($var, 'getByGroup') === 0) {
-            $groups = explode('And', str_replace('getByGroup', '', $var));
+        if (strpos($var, 'group') === 0) {
+            $groups = explode('And', str_replace('group', '', $var));
             foreach ($groups as &$group) {
                 $group = preg_replace('/(?<=[a-zA-Z])(?=[A-Z])/', '_', $group);
                 $groupNameParts =  array_map('strtolower', explode('_', $group));
                 $group = implode('_', $groupNameParts);
             }
 
-            return $this->getRestrictedActions($groups);
+            return $this->getByGroup($groups);
         } else {
             throw new \RuntimeException('Property ' . $var . ' is unknown');
         }
@@ -76,7 +76,7 @@ class ActionsDataProvider implements DataProviderInterface
      */
     public function getAll()
     {
-        return $this->getPreparedData($this->actionManager->getActions());
+        return $this->getByGroup();
     }
 
     /**
@@ -84,16 +84,14 @@ class ActionsDataProvider implements DataProviderInterface
      */
     public function getWithoutGroup()
     {
-        $actions = $this->restrictHelper->restrictActionsByGroup($this->actionManager->getActions(), false);
-
-        return $this->getPreparedData($actions);
+        return $this->getByGroup(false);
     }
 
     /**
-     * @param array $groups
+     * @param array|null|bool|string $groups
      * @return array
      */
-    protected function getRestrictedActions(array $groups)
+    public function getByGroup($groups = null)
     {
         $actions = $this->restrictHelper->restrictActionsByGroup($this->actionManager->getActions(), $groups);
 
