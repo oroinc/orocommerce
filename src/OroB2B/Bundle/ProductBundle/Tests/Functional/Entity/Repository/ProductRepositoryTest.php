@@ -112,7 +112,10 @@ class ProductRepositoryTest extends WebTestCase
     {
         $actualSkuList = $this->getRepository()->findAllSkuByPattern($pattern);
 
-        $this->assertEquals($expectedSkuList, $actualSkuList);
+        $this->assertCount(count($expectedSkuList), $actualSkuList);
+        foreach ($expectedSkuList as $expectedSku) {
+            $this->assertContains($expectedSku, $actualSkuList);
+        }
     }
 
     /**
@@ -191,29 +194,48 @@ class ProductRepositoryTest extends WebTestCase
         );
     }
 
-    public function testGetProductsNamesBySku()
+    /**
+     * @dataProvider getProductsNamesBySkuDataProvider
+     *
+     * @param array $productSkus
+     * @param array $expectedData
+     */
+    public function testGetProductsNamesBySku(array $productSkus, array $expectedData)
     {
-        $product1 = $this->getProduct(ProductFixture::PRODUCT_1);
-        $product2 = $this->getProduct(ProductFixture::PRODUCT_2);
-        $product3 = $this->getProduct(ProductFixture::PRODUCT_3);
+        $result = $this->getRepository()->getProductWithNamesBySku($productSkus);
+        $expectedData = $this->referencesToEntities($expectedData);
+        $this->assertCount(count($expectedData), $result);
+        foreach ($expectedData as $expectedProduct) {
+            $this->assertContains($expectedProduct, $result);
+        }
+    }
 
-        $this->assertEquals(
+    /**
+     * @return array
+     */
+    public function getProductsNamesBySkuDataProvider()
+    {
+        return [
             [
-                $product1,
-                $product2,
-                $product3,
+                'skus' => [
+                    ProductFixture::PRODUCT_1,
+                    ProductFixture::PRODUCT_2,
+                    ProductFixture::PRODUCT_3,
+                    'not a sku',
+                ],
+                'expectedData' => [
+                    ProductFixture::PRODUCT_1,
+                    ProductFixture::PRODUCT_2,
+                    ProductFixture::PRODUCT_3,
+                ],
             ],
-            $this->getRepository()->getProductWithNamesBySku(
-                [
-                    $product3->getSku(),
-                    $product1->getSku(),
-                    $product2->getSku(),
-                    'not a sku'
-                ]
-            )
-        );
-
-        $this->assertEmpty($this->getRepository()->getProductWithNamesBySku(['nonExistingSKU']));
+            [
+                'skus' => [
+                    'not a sku',
+                ],
+                'expectedData' => [],
+            ]
+        ];
     }
 
     public function testGetFilterSkuQueryBuilder()
