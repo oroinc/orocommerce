@@ -25,6 +25,8 @@ orob2b:
             assigned_account_users.label: 'Assigned Customers'
             cancellation_reason.label: 'Cancelation reason'
             cancellation_success.label: 'Cancellation was successful'
+            deleted_at.label: 'Deleted At'
+
             submit.label: 'Submit Request For Quote'
             cancel.label: 'Cancel'
 

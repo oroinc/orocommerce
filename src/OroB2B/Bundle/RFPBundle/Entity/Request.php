@@ -11,6 +11,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 
+use OroB2B\Bundle\AccountBundle\Doctrine\SoftDeleteableInterface;
+use OroB2B\Bundle\AccountBundle\Doctrine\SoftDeleteableTrait;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
@@ -49,8 +51,10 @@ use OroB2B\Bundle\RFPBundle\Model\ExtendRequest;
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class Request extends ExtendRequest implements AccountOwnerAwareInterface
+class Request extends ExtendRequest implements AccountOwnerAwareInterface, SoftDeleteableInterface
 {
+    use SoftDeleteableTrait;
+
     /**
      * @var integer
      *
