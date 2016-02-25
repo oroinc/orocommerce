@@ -11,7 +11,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 
-class QuoteRequestHelper
+class QuoteRequestHandler
 {
     /** @var RequestStack */
     protected $requestStack;

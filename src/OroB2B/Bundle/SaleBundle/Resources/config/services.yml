@@ -19,7 +19,7 @@ parameters:
     orob2b_sale.service.quote_product_offer_matcher.class: OroB2B\Bundle\SaleBundle\Model\QuoteProductOfferMatcher
     orob2b_sale.service.request_helper.class: OroB2B\Bundle\SaleBundle\Model\RequestHelper
 
-    orob2b_sale.service.quote_request_helper.class: OroB2B\Bundle\SaleBundle\Model\QuoteRequestHelper
+    orob2b_sale.service.quote_request_handler.class: OroB2B\Bundle\SaleBundle\Model\QuoteRequestHandler
 
     #Formatters
     orob2b_sale.formatter.quote_product.class: OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter
@@ -136,8 +136,8 @@ services:
             - %orob2b_account.entity.account_address.class%
             - %orob2b_account.entity.account_user_address.class%
 
-    orob2b_sale.service.quote_request_helper:
-        class: %orob2b_sale.service.quote_request_helper.class%
+    orob2b_sale.service.quote_request_handler:
+        class: %orob2b_sale.service.quote_request_handler.class%
         arguments:
             - @doctrine
             - @request_stack
