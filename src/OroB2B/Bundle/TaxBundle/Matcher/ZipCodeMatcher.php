@@ -30,13 +30,13 @@ class ZipCodeMatcher extends AbstractMatcher
 
         $regionTaxRules = $this->regionMatcher->match($address, $taxCodes);
 
-        if (null === $country || (null === $region && empty($regionText))) {
+        if (null === $country || (null === $region && empty($regionText)) || $taxCodes->isFullFilledTaxCode()) {
             return $regionTaxRules;
         }
 
         $zipCodeTaxRules = $this->getTaxRuleRepository()->findByZipCodeAndTaxCode(
             $taxCodes,
-            $address->getPostalCode(),
+            $zipCode,
             $country,
             $region,
             $regionText

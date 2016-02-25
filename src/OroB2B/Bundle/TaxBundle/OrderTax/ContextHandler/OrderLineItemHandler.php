@@ -103,7 +103,7 @@ class OrderLineItemHandler
             return false;
         }
 
-        return $this->addressProvider->isDigitalProductTaxCode($address->getCountry()->getIso2Code(), $productTaxCode);
+        return $this->addressProvider->isDigitalProductTaxCode($address->getCountryIso2(), $productTaxCode);
     }
 
     /**
@@ -115,19 +115,18 @@ class OrderLineItemHandler
         $cacheKey  = $this->getCacheTaxCodeKey(TaxCodeInterface::TYPE_PRODUCT, $lineItem->getId());
         $cachedTaxCode = $this->getCachedTaxCode($cacheKey);
 
-        if ($cachedTaxCode) {
+        if ($cachedTaxCode !== false) {
             return $cachedTaxCode;
         }
 
         $product = $lineItem->getProduct();
+        $this->taxCodes[$cacheKey] = null;
 
-        if ($product === null) {
-            $this->taxCodes[$cacheKey] = null;
-
-            return $this->taxCodes[$cacheKey];
+        if ($product) {
+            $this->taxCodes[$cacheKey] = $this->getTaxCode(TaxCodeInterface::TYPE_PRODUCT, $product);
         }
 
-        return $this->getTaxCode(TaxCodeInterface::TYPE_PRODUCT, $product, $cacheKey);
+        return $this->taxCodes[$cacheKey];
     }
 
     /**
@@ -139,31 +138,36 @@ class OrderLineItemHandler
         $cacheKey  = $this->getCacheTaxCodeKey(TaxCodeInterface::TYPE_ACCOUNT, $lineItem->getId());
         $cachedTaxCode = $this->getCachedTaxCode($cacheKey);
 
-        if ($cachedTaxCode) {
+        if ($cachedTaxCode !== false) {
             return $cachedTaxCode;
         }
 
-        if (!$lineItem->getOrder() && !$lineItem->getOrder()->getAccount()) {
-            $this->taxCodes[$cacheKey] = null;
+        $taxCode = null;
+        $account = null;
 
-            return $this->taxCodes[$cacheKey];
+        if ($lineItem->getOrder() && $lineItem->getOrder()->getAccount()) {
+            $account = $lineItem->getOrder()->getAccount();
+            $taxCode = $this->getTaxCode(TaxCodeInterface::TYPE_ACCOUNT, $account);
         }
 
-        return $this->getTaxCode(TaxCodeInterface::TYPE_ACCOUNT, $lineItem->getOrder()->getAccount(), $cacheKey);
+        if (!$taxCode && $account && $account->getGroup()) {
+            $taxCode = $this->getTaxCode(TaxCodeInterface::TYPE_ACCOUNT_GROUP, $account->getGroup());
+        }
+
+        $this->taxCodes[$cacheKey] = $taxCode;
+
+        return $taxCode;
     }
 
     /**
      * @param string $type
      * @param object $object
-     * @param string $cacheKey
      * @return TaxCodeInterface
      */
-    protected function getTaxCode($type, $object, $cacheKey)
+    protected function getTaxCode($type, $object)
     {
         $taxCode = $this->getRepository($type)->findOneByEntity((string)$type, $object);
-        $this->taxCodes[$cacheKey] = $taxCode ? $taxCode->getCode() : null;
-
-        return $this->taxCodes[$cacheKey];
+        return $taxCode ? $taxCode->getCode() : null;
     }
 
     /**
@@ -174,7 +178,7 @@ class OrderLineItemHandler
     {
         if ($type === TaxCodeInterface::TYPE_PRODUCT) {
             return $this->doctrineHelper->getEntityRepositoryForClass($this->productTaxCodeClass);
-        } elseif ($type === TaxCodeInterface::TYPE_ACCOUNT) {
+        } elseif ($type === TaxCodeInterface::TYPE_ACCOUNT || $type === TaxCodeInterface::TYPE_ACCOUNT_GROUP) {
             return $this->doctrineHelper->getEntityRepositoryForClass($this->accountTaxCodeClass);
         }
 
@@ -198,7 +202,7 @@ class OrderLineItemHandler
     protected function getCachedTaxCode($cacheKey)
     {
         if (!array_key_exists($cacheKey, $this->taxCodes)) {
-            return null;
+            return false;
         }
 
         return $this->taxCodes[$cacheKey];

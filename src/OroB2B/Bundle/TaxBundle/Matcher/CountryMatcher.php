@@ -15,7 +15,7 @@ class CountryMatcher extends AbstractMatcher
     {
         $country = $address->getCountry();
 
-        if (null === $country) {
+        if (null === $country || !$taxCodes->isFullFilledTaxCode()) {
             return [];
         }
 

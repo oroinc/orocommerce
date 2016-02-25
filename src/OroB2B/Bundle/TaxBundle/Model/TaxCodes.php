@@ -41,7 +41,7 @@ class TaxCodes
             return;
         }
 
-        $this->codes->append($code);
+        $this->codes->offsetSet($code->getType(), $code);
     }
 
     /**
@@ -80,5 +80,16 @@ class TaxCodes
     public function getHash()
     {
         return md5(json_encode($this->getPlainTypedCodes()));
+    }
+
+    public function isFullFilledTaxCode()
+    {
+        foreach ($this->getAvailableTypes() as $availableType) {
+            if (!$this->codes->offsetExists($availableType)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

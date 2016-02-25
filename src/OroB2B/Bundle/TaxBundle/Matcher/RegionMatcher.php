@@ -29,7 +29,7 @@ class RegionMatcher extends AbstractMatcher
 
         $countryTaxRules = $this->countryMatcher->match($address, $taxCodes);
 
-        if (null === $country || (null === $region && empty($regionText))
+        if (null === $country || (null === $region && empty($regionText)) || !$taxCodes->isFullFilledTaxCode()
         ) {
             return $countryTaxRules;
         }
