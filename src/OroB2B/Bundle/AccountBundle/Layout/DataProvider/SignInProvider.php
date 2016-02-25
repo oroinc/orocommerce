@@ -8,9 +8,9 @@ use Symfony\Component\Security\Core\Security;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\AbstractDataProvider;
+use Oro\Component\Layout\AbstractServerRenderDataProvider;
 
-class SignInProvider extends AbstractDataProvider
+class SignInProvider extends AbstractServerRenderDataProvider
 {
     /**
      * @var array
