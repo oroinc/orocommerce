@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\ProductBundle\DataGrid\Extension\Theme;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
-use Oro\Bundle\DataGridBundle\Datagrid\Common\MetadataObject;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
 
 use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
@@ -37,13 +36,11 @@ class ThemeExtension extends AbstractExtension
     /**
      * {@inheritDoc}
      */
-    public function visitMetadata(DatagridConfiguration $config, MetadataObject $data)
+    public function processConfigs(DatagridConfiguration $config)
     {
-        $view = $this->themeHelper->getTheme($config->getName());
-        $data->offsetAddToArray(static::METADATA_THEME_KEY, [
-            'bodyClassName' => 'grid-body products__list products__list_' . $view,
-            'rowClassName' => 'grid-row row-click-action product-item product-item_' . $view,
-            'rowView' => $view,
-        ]);
+        $this->validateConfiguration(
+            new Configuration(),
+            ['theme' => $config->offsetGetByPath(Configuration::THEME_PATH)]
+        );
     }
 }

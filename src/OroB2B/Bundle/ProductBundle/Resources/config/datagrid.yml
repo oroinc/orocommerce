@@ -148,6 +148,7 @@ datagrid:
                 select:
                     - product.id
                     - product.sku
+                    - productImage.id as image
                     - productInventoryStatus.id as inventoryStatusId
                     - productInventoryStatus.name as inventoryStatusName
                     - productNames.string as name
@@ -156,6 +157,7 @@ datagrid:
                 join:
                     left:
                         - { join: product.inventory_status, alias: productInventoryStatus}
+                        - { join: product.image, alias: productImage}
                     inner:
                         -
                             join: product.names
@@ -167,8 +169,8 @@ datagrid:
                 label: orob2b.product.sku.label
             name:
                 label: orob2b.product.names.label
-            inventoryStatusName:
-                label: orob2b.product.inventory_status.label
+            image:
+                label: orob2b.product.image.label
         properties:
             id: ~
             view_link:

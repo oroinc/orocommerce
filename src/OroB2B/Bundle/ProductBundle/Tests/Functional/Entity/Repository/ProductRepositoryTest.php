@@ -13,11 +13,20 @@ use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData as
  */
 class ProductRepositoryTest extends WebTestCase
 {
+    /**
+     * @var ProductRepository
+     */
+    protected $repository;
+
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
         $this->loadFixtures(['OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData']);
+
+        $this->repository = $this->getContainer()->get('doctrine')->getRepository(
+            $this->getContainer()->getParameter('orob2b_product.product.class')
+        );
     }
 
     public function testFindOneBySku()
@@ -154,9 +163,7 @@ class ProductRepositoryTest extends WebTestCase
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository(
-            $this->getContainer()->getParameter('orob2b_product.product.class')
-        );
+        return $this->repository;
     }
 
     public function testGetProductsIdsBySku()
@@ -216,5 +223,63 @@ class ProductRepositoryTest extends WebTestCase
 
         $this->assertCount(1, $result);
         $this->assertEquals($product->getSku(), $result[0]['sku']);
+    }
+
+    /**
+     * @dataProvider getProductsWithImageDataProvider
+     *
+     * @param array $products
+     * @param array $expectedProducts
+     */
+    public function testGetProductsWithImage(array $products, array $expectedProducts)
+    {
+        $result = $this->repository->getProductsWithImage($this->referencesToEntities($products));
+        $this->assertEquals($this->referencesToEntities($expectedProducts), $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function getProductsWithImageDataProvider()
+    {
+        return [
+            [
+                'products' => [
+                    'product.1',
+                    'product.2',
+                    'product.3',
+                    'product.4',
+                    'product.5',
+                    'product.6',
+                    'product.7',
+                    'product.8',
+                ],
+                'expectedProducts' => [
+                    'product.1',
+                    'product.2',
+                ],
+            ],
+            [
+                'products' => [
+                    'product.1',
+                    'product.2',
+                ],
+                'expectedProducts' => [
+                    'product.1',
+                    'product.2',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @param array $references
+     * @return array
+     */
+    protected function referencesToEntities(array $references)
+    {
+        return array_map(function ($reference) {
+            return $this->getReference($reference);
+        }, $references);
     }
 }

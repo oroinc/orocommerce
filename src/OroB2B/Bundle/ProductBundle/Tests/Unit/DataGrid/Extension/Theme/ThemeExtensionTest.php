@@ -3,8 +3,8 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\DataGrid\Extension\Theme;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
-use Oro\Bundle\DataGridBundle\Datagrid\Common\MetadataObject;
 
+use OroB2B\Bundle\ProductBundle\DataGrid\Extension\Theme\Configuration;
 use OroB2B\Bundle\ProductBundle\DataGrid\Extension\Theme\ThemeExtension;
 use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 
@@ -48,14 +48,16 @@ class ThemeExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(true, $actual);
     }
 
-    public function testVisitMetadata()
+    public function testProcessConfigs()
     {
-        $config = DatagridConfiguration::createNamed(ThemeExtension::GRID_NAME, []);
-        $data = MetadataObject::createNamed(self::GRID_NAME, []);
+        /** @var DatagridConfiguration|\PHPUnit_Framework_MockObject_MockObject $config */
+        $config = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration')
+            ->disableOriginalConstructor()->getMock();
+        $config->expects($this->once())
+            ->method('offsetGetByPath')
+            ->with(Configuration::THEME_PATH)
+            ->willReturn([DataGridThemeHelper::GRID_THEME_PARAM_NAME => 'row-template']);
 
-        $this->extension->visitMetadata($config, $data);
-
-        $actual = $data->toArray(['themeOptions']);
-        $this->assertEquals(['themeOptions'=> ['rowView'=> DataGridThemeHelper::VIEW_GRID]], $actual);
+        $this->extension->processConfigs($config);
     }
 }

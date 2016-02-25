@@ -2,10 +2,18 @@
 
 namespace OroB2B\Bundle\ProductBundle\EventListener;
 
+use Symfony\Bridge\Doctrine\RegistryInterface;
+
+use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
+use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
+use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 
+use OroB2B\Bundle\ProductBundle\DataGrid\Extension\Theme\Configuration as ThemeConfiguration;
 use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 
 class ProductDatagridViewsListener
 {
@@ -15,11 +23,28 @@ class ProductDatagridViewsListener
     protected $themeHelper;
 
     /**
-     * @param DataGridThemeHelper $themeHelper
+     * @var RegistryInterface
      */
-    public function __construct(DataGridThemeHelper $themeHelper)
-    {
+    protected $registry;
+
+    /**
+     * @var AttachmentManager
+     */
+    protected $attachmentManager;
+
+    /**
+     * @param DataGridThemeHelper $themeHelper
+     * @param RegistryInterface $registry
+     * @param AttachmentManager $attachmentManager
+     */
+    public function __construct(
+        DataGridThemeHelper $themeHelper,
+        RegistryInterface $registry,
+        AttachmentManager $attachmentManager
+    ) {
         $this->themeHelper = $themeHelper;
+        $this->registry = $registry;
+        $this->attachmentManager = $attachmentManager;
     }
 
     /**
@@ -29,11 +54,7 @@ class ProductDatagridViewsListener
     {
         $config = $event->getConfig();
         $gridName = $config->getName();
-        $viewName = $this->themeHelper->getTheme($gridName);
-        if (!$viewName) {
-            return;
-        }
-        $this->updateConfigByView($config, $viewName);
+        $this->updateConfigByView($config, $this->themeHelper->getTheme($gridName));
     }
 
     /**
@@ -42,6 +63,7 @@ class ProductDatagridViewsListener
      */
     protected function updateConfigByView(DatagridConfiguration $config, $viewName)
     {
+        $config->offsetSetByPath(ThemeConfiguration::ROW_VIEW_PATH, $viewName);
         switch ($viewName) {
             case DataGridThemeHelper::VIEW_GRID:
                 // grid view same as default
@@ -86,6 +108,41 @@ class ProductDatagridViewsListener
             foreach ($updates as $path => $update) {
                 $config->offsetAddToArrayByPath($path, $update);
             }
+        }
+    }
+
+    /**
+     * @param OrmResultAfter $event
+     */
+    public function onResultAfter(OrmResultAfter $event)
+    {
+        /** @var ProductRepository $repository */
+        $repository = $this->registry->getEntityManagerForClass('OroB2BProductBundle:Product')
+            ->getRepository('OroB2BProductBundle:Product');
+
+        /** @var ResultRecord[] $records */
+        $records = $event->getRecords();
+
+        /** @var Product[] $products */
+        $products = $repository->getProductsWithImage(array_map(function (ResultRecord $record) {
+            return $record->getValue('id');
+        }, $records));
+
+        foreach ($records as $record) {
+            $imageUrl = null;
+            $productId = $record->getValue('id');
+            foreach ($products as $product) {
+                if ($product->getId() === $productId) {
+                    $imageUrl = $this->attachmentManager->getAttachment(
+                        'OroB2B\Bundle\ProductBundle\Entity\Product',
+                        $productId,
+                        'image',
+                        $product->getImage()
+                    );
+                    break;
+                }
+            }
+            $record->addData(['image' => $imageUrl]);
         }
     }
 }

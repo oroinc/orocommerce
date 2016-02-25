@@ -35,6 +35,7 @@ layout:
                                 tagName: 'div'
                                 headerHide: true
                                 rowTemplateSelector: '#template-grid-row'
+                                rowActionSelector: '.view-product'
             tree:
                 content:
                     product_index_page:

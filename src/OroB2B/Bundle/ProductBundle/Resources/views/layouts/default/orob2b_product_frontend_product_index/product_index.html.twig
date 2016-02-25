@@ -1,10 +1,23 @@
+{% block _product_grid_widget %}
+    {% set datagrid = oro_datagrid_build(grid_full_name, grid_parameters) %}
+    {% set rowView = datagrid.config.options.theme.rowView %}
+    {% set themeOptions = grid_render_parameters.themeOptions %}
+    {% set grid_render_parameters = grid_render_parameters|merge({'themeOptions': themeOptions|merge({
+        'rowView': rowView,
+        'bodyClassName': 'grid-body products__list products__list_' ~ rowView,
+        'rowClassName': 'grid-row product-item product-item_' ~ rowView
+    })}) %}
+    {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+    {{ dataGrid.renderGrid(datagrid, grid_parameters, grid_render_parameters) }}
+{% endblock %}
+
 {% block _grid_display_options_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " catalog__filter-controls__item catalog__filter-controls__item_display-options pull-right"
     }) %}
     <div{{ block('block_attributes') }}>
         {% set currentView = app.request.get('frontend-products-grid', {rowView: 'list-view'}).rowView  %}
-        {% set rowView = 'gallery-view' %}
+        {% set rowView = constant('OroB2B\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_GRID') %}
         <span class="fs14 va-m_md mmr9-md mmr9-sm hidden-sm hidden-xs">Display:</span>
         <div class="buttons-inline-group inline">
             <button class="btn btn_transparent btn_bordered btn_squared {% if currentView == rowView %}current{% endif %}" data-catalog-view-trigger="gallery-view">
@@ -14,7 +27,7 @@
                     </span>
                 </a>
             </button>
-            {% set rowView = 'list-view' %}
+            {% set rowView = constant('OroB2B\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_LIST') %}
             <a href="{{ path('orob2b_product_frontend_product_index', {'frontend-products-grid': {'rowView': rowView}}) }}">
                   <span class="btn btn_transparent btn_bordered btn_squared {% if currentView == rowView %}current{% endif %}"
                         data-catalog-view-trigger="list-view">
@@ -23,7 +36,7 @@
                     </span>
                   </span>
             </a>
-            {% set rowView = 'no-image-view' %}
+            {% set rowView = constant('OroB2B\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_TILES') %}
             <button class="btn btn_transparent btn_bordered btn_squared {% if currentView == rowView %}current{% endif %}" data-catalog-view-trigger="no-image-view">
                 <a href="{{ path('orob2b_product_frontend_product_index', {'frontend-products-grid': {'rowView': rowView}}) }}">
                     <span class="catalog-view-option">

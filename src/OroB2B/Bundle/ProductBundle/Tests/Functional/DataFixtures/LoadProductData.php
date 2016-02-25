@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\Yaml\Yaml;
 
+use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -81,6 +82,13 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
                 foreach ($item['descriptions'] as $name) {
                     $product->addDescription($this->createValue($name));
                 }
+            }
+
+            if (!empty($item['image'])) {
+                $image = new File();
+                $image->setFilename($item['image']);
+                $product->setImage($image);
+                $manager->persist($image);
             }
 
             $manager->persist($product);
