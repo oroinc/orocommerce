@@ -8,15 +8,17 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
+use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
-use OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
 
 abstract class AbstractProductPriceDatagridListener
 {
@@ -31,7 +33,7 @@ abstract class AbstractProductPriceDatagridListener
     protected $doctrineHelper;
 
     /**
-     * @var AbstractPriceListRequestHandler
+     * @var PriceListRequestHandler
      */
     protected $priceListRequestHandler;
 
@@ -46,33 +48,31 @@ abstract class AbstractProductPriceDatagridListener
     protected $productUnitClass;
 
     /**
+     * @var FrontendHelper
+     */
+    protected $frontendHelper;
+
+    /**
+     * @var BasePriceList
+     */
+    protected $priceList;
+
+    /**
      * @param TranslatorInterface $translator
      * @param DoctrineHelper $doctrineHelper
+     * @param PriceListRequestHandler $priceListRequestHandler
+     * @param FrontendHelper $frontendHelper
      */
-    public function __construct(TranslatorInterface $translator, DoctrineHelper $doctrineHelper)
-    {
+    public function __construct(
+        TranslatorInterface $translator,
+        DoctrineHelper $doctrineHelper,
+        PriceListRequestHandler $priceListRequestHandler,
+        FrontendHelper $frontendHelper
+    ) {
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
-    }
-
-    /**
-     * @param AbstractPriceListRequestHandler $priceListRequestHandler
-     * @return $this
-     */
-    public function setPriceListRequestHandler($priceListRequestHandler)
-    {
         $this->priceListRequestHandler = $priceListRequestHandler;
-    }
-
-    /**
-     * @return AbstractPriceListRequestHandler
-     */
-    protected function getPriceListRequestHandler()
-    {
-        if ($this->priceListRequestHandler === null) {
-            throw new \LogicException('PriceListRequestHandler is empty');
-        }
-        return $this->priceListRequestHandler;
+        $this->frontendHelper = $frontendHelper;
     }
 
     /**
@@ -193,11 +193,17 @@ abstract class AbstractProductPriceDatagridListener
     }
 
     /**
-     * @return PriceList
+     * @return BasePriceList
      */
     protected function getPriceList()
     {
-        return $this->getPriceListRequestHandler()->getPriceList();
+        if (!$this->priceList) {
+            $this->priceList = $this->frontendHelper->isFrontendRequest()
+                ? $this->priceListRequestHandler->getPriceListByAccount()
+                : $this->priceListRequestHandler->getPriceList();
+        }
+
+        return $this->priceList;
     }
 
     /**
@@ -205,7 +211,7 @@ abstract class AbstractProductPriceDatagridListener
      */
     protected function getCurrencies()
     {
-        return $this->getPriceListRequestHandler()->getPriceListSelectedCurrencies();
+        return $this->priceListRequestHandler->getPriceListSelectedCurrencies($this->getPriceList());
     }
 
     /**
@@ -266,7 +272,7 @@ abstract class AbstractProductPriceDatagridListener
         $column = $this->createPriceColumn($currency, $enabled, $unit);
         $this->addConfigElement($config, '[columns]', $column, $columnName);
 
-        $this->addConfigElement($config, '[sorters][columns]', ['data_name' => $columnName], $columnName);
+        $this->addConfigElement($config, '[sorters][columns]', $this->getSorter($columnName), $columnName);
 
         $filter = ['type' => 'product-price', 'data_name' => $currency];
         if ($unit) {
@@ -306,6 +312,18 @@ abstract class AbstractProductPriceDatagridListener
      * @return string
      */
     abstract protected function getColumnTemplate();
+
+    /**
+     * @param $columnName
+     * @return array
+     */
+    protected function getSorter($columnName)
+    {
+        return [
+            'data_name' => $columnName,
+            'type' => PropertyInterface::TYPE_CURRENCY,
+        ];
+    }
 
     /**
      * @param DatagridConfiguration $config
