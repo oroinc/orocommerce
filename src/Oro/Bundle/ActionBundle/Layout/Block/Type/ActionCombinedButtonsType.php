@@ -9,7 +9,7 @@ class ActionCombinedButtonsType extends AbstractType
     const NAME = 'action_combined_buttons';
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -17,7 +17,7 @@ class ActionCombinedButtonsType extends AbstractType
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getParent()
     {

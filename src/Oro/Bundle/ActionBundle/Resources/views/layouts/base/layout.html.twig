@@ -39,7 +39,7 @@
 {% endmacro %}
 
 {% block action_line_buttons_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " row-fluid",}) %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " row-fluid"}) %}
     <div{{ block('block_attributes') }}>
         {% for action in actions %}
             <div class="btn-group icons-holder">
