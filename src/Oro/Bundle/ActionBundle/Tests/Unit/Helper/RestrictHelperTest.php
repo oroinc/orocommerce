@@ -20,7 +20,7 @@ class RestrictHelperTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider restrictActionsByGroupDataProvider
      * @param array $actionsValues
-     * @param string|array|null $definedGroups
+     * @param string|array|null|bool $definedGroups
      * @param string[] $expectedActions
      */
     public function testRestrictActionsByGroup($actionsValues, $definedGroups, $expectedActions)
@@ -32,14 +32,14 @@ class RestrictHelperTest extends \PHPUnit_Framework_TestCase
                 ->getMock();
             $actionDefinition = new ActionDefinition();
             $actionDefinition->setButtonOptions($buttonOptions);
-            $action->expects($this->once())->method('getDefinition')->willReturn($actionDefinition);
+            $action->expects($this->any())->method('getDefinition')->willReturn($actionDefinition);
             $actions[$actionName] = $action;
         }
         /** @var Action[] $actions */
         $restrictedActions = $this->helper->restrictActionsByGroup($actions, $definedGroups);
         foreach ($expectedActions as $expectedActionName) {
-            $this->assertTrue(isset($actions[$expectedActionName]));
-            $this->assertTrue(isset($restrictedActions[$expectedActionName]));
+            $this->assertArrayHasKey($expectedActionName, $actions);
+            $this->assertArrayHasKey($expectedActionName, $restrictedActions);
             $this->assertEquals(
                 spl_object_hash($actions[$expectedActionName]),
                 spl_object_hash($restrictedActions[$expectedActionName])
@@ -77,15 +77,24 @@ class RestrictHelperTest extends \PHPUnit_Framework_TestCase
                 'definedGroups' => ['group1', 'group2'],
                 'expectedActions' => ['action2', 'action3']
             ],
-            'groupIsNull' => [
+            'groupIsFalse' => [
                 'actionsValues' => [
                     'action0' => ['group' => null],
                     'action2' => ['group' => 'group1'],
                     'action3' => ['group' => 'group2'],
                     'action4' => []
                 ],
-                'definedGroups' => null,
+                'definedGroups' => false,
                 'expectedActions' => ['action4']
+            ],
+            'groupIsNull' => [
+                'actionsValues' => [
+                    'action0' => ['group' => null],
+                    'action1' => ['group' => 'group1'],
+                    'action2' => []
+                ],
+                'definedGroups' => null,
+                'expectedActions' => ['action0', 'action1', 'action2']
             ],
         ];
     }

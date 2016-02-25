@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Oro\Bundle\ActionBundle\Helper\ContextHelper;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class ContextHelperTest extends \PHPUnit_Framework_TestCase
 {
@@ -32,8 +33,10 @@ class ContextHelperTest extends \PHPUnit_Framework_TestCase
         $this->requestStack = $this->getMockBuilder('Symfony\Component\HttpFoundation\RequestStack')
             ->disableOriginalConstructor()
             ->getMock();
+        
+        $propertyAccessor = PropertyAccess::createPropertyAccessor();
 
-        $this->helper = new ContextHelper($this->doctrineHelper, $this->requestStack);
+        $this->helper = new ContextHelper($this->doctrineHelper, $propertyAccessor, $this->requestStack);
     }
 
     protected function tearDown()
@@ -139,7 +142,7 @@ class ContextHelperTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
+     * @expectedException \RuntimeException
      * @expectedExceptionMessage Master Request is not defined
      */
     public function testGetActionParametersException()
