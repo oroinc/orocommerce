@@ -4,12 +4,15 @@ namespace OroB2B\Bundle\RFPBundle\Migrations\Data\ORM;
 
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 
-class LoadDeletedRequestStatus extends AbstractLoadDefaultRequestStatus
+class LoadDeletedRequestStatus extends AbstractLoadRequestStatus
 {
     /**
-     * @var array
+     * {@inheritDoc}
      */
-    protected $items = [
-        ['order' => 100, 'name' => RequestStatus::DELETED],
-    ];
+    protected function getItems()
+    {
+        return [
+            ['order' => 100, 'name' => RequestStatus::DELETED],
+        ];
+    }
 }

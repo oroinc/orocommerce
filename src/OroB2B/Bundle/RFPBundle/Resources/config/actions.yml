@@ -192,10 +192,16 @@ actions:
         preconditions:
             @not_equal: [$status, $.deletedStatus]
         prefunctions:
+            - @assign_constant_value:
+                attribute: $.deletedStatusName
+                value: OroB2B\Bundle\RFPBundle\Entity\RequestStatus::DELETED
             - @find_entity:
                 class: OroB2B\Bundle\RFPBundle\Entity\RequestStatus
                 attribute: $.deletedStatus
                 where:
-                    name: 'deleted'
+                    name: $.deletedStatusName
         functions:
+            - @create_datetime:
+                attribute: $.currentDatetime
             - @assign_value: [$status, $.deletedStatus]
+            - @assign_value: [$deletedAt, $.currentDatetime]
