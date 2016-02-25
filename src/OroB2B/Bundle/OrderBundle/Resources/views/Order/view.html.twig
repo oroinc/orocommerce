@@ -90,9 +90,19 @@
             </div>
         {% endset %}
 
+        {% set orderTotals %}
+            {#{% for subtotal in subtotals %}#}
+            {{ entity.total }}
+        {% endset %}
+
         {% set dataBlocks = dataBlocks|merge([{
             'title': 'orob2b.order.sections.order_line_items'|trans,
             'subblocks': [{'data' : [lineItems]}]
+        }]) %}
+
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': 'orob2b.order.sections.order_totals'|trans,
+            'subblocks': [{'data' : [orderTotals]}]
         }]) %}
 
         {# @todo: https://magecore.atlassian.net/browse/BB-1752 #}

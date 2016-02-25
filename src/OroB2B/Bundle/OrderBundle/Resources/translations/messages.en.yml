@@ -105,6 +105,7 @@ orob2b:
             additional: Additional
             subtotals: Order Totals
             order_line_items: 'Line Items'
+            order_totals: Totals
 
         security:
             permission:
