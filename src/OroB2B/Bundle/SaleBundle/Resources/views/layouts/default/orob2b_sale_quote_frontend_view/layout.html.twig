@@ -101,7 +101,7 @@
                     <tbody>
                     {% for quoteProduct in quote.quoteProducts %}
                         {% for productOffer in quoteProduct.quoteProductOffers %}
-                            <tr>
+                            <tr class="borderless b_paddingless">
                                 {% if loop.first %}
                                     <td class="va-t_md" rowspan="{{ quoteProduct.quoteProductOffers|length }}">
                                         <h3 class="product-item__title product-item__title_in-cart mb1-md">
@@ -123,7 +123,7 @@
                         {% endfor %}
 
                         {% if (quoteProduct.commentAccount is not empty) %}
-                            <tr class="borderless t_paddingless">
+                            <tr class="borderless b_paddingless">
                                 <td class="account-oq__order-item-more" colspan="3">
                                     <div data-oro-expand-widget>
                                         {% if (quoteProduct.commentAccount|length > maxChars) %}
@@ -136,7 +136,7 @@
                         {% endif %}
 
                         {% if (quoteProduct.comment is not empty) %}
-                            <tr class="borderless t_paddingless">
+                            <tr class="borderless">
                                 <td class="account-oq__order-item-more" colspan="3">
                                     <div data-oro-expand-widget>
                                         {% if (quoteProduct.commentAccount|length > maxChars) %}
