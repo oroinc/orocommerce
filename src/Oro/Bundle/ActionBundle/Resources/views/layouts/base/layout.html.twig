@@ -55,32 +55,35 @@
 {% endblock %}
 
 {% block action_combined_buttons_widget %}
-    {% set action = actions|first %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " btn-group"}) %}
-    {% set primaryButtonCss = 'btn btn-primary ' ~ action.buttonOptions.class|default('') ~ " "  ~ params.buttonOptions.aCss|default('') %}
-    <div{{ block('block_attributes') }}>
-        <a {{ _self.get_action_attributes(dialogRoute, executionRoute, action, entityClass, entityId, primaryButtonCss) }}>
-            {% if action.icon is not empty %}
-                <i class="{{ action.icon }} {{ action.buttonOptions.iCss|default('') }} hide-text">{{ action.label }}</i>
+    {% set actionsCount = actions|length %}
+    {% if actionsCount > 0 %}
+        {% set action = actions|first %}
+        {% set attr = attr|merge({ class: attr.class|default('') ~ " btn-group"}) %}
+        {% set primaryButtonCss = 'btn btn-primary ' ~ action.buttonOptions.class|default('') ~ " "  ~ params.buttonOptions.aCss|default('') %}
+        <div{{ block('block_attributes') }}>
+            <a {{ _self.get_action_attributes(dialogRoute, executionRoute, action, entityClass, entityId, primaryButtonCss) }}>
+                {% if action.icon is not empty %}
+                    <i class="{{ action.icon }} {{ action.buttonOptions.iCss|default('') }} hide-text">{{ action.label }}</i>
+                {% endif %}
+                {{ action.label|trim }}
+            </a>
+
+            {% if actionsCount > 1 %}
+            <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
+
+            <ul class="dropdown-menu">
+                {% for action in actions|slice(1) %}
+                    <li>
+                        <a {{ _self.get_action_attributes(dialogRoute, executionRoute, action, entityClass, entityId) }}>
+                            {% if action.icon is not empty %}
+                                <i class="{{ action.icon }} {{ action.buttonOptions.iCss|default('') }} hide-text">{{ action.label }}</i>
+                            {% endif %}
+                            {{ action.label|trim }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
             {% endif %}
-            {{ action.label|trim }}
-        </a>
-
-        {% if actions|length > 1 %}
-        <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
-
-        <ul class="dropdown-menu">
-            {% for action in actions|slice(1) %}
-                <li>
-                    <a {{ _self.get_action_attributes(dialogRoute, executionRoute, action, entityClass, entityId) }}>
-                        {% if action.icon is not empty %}
-                            <i class="{{ action.icon }} {{ action.buttonOptions.iCss|default('') }} hide-text">{{ action.label }}</i>
-                        {% endif %}
-                        {{ action.label|trim }}
-                    </a>
-                </li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-    </div>
+        </div>
+    {% endif %}
 {% endblock %}

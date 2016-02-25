@@ -61,6 +61,7 @@ class ActionLineButtonsType extends AbstractType
                 ]
             ]
         );
+        $resolver->setRequired(['actions']);
         $resolver->setOptional(['group', 'entity', 'entityClass']);
     }
 
@@ -75,7 +76,7 @@ class ActionLineButtonsType extends AbstractType
             );
         }
 
-        $view->vars['actions'] = $block->getData()->get('actions');
+        $view->vars['actions'] = $options['actions'];
         $view->vars['dialogRoute'] = $options['dialogRoute'];
         $view->vars['executionRoute'] = $options['executionRoute'];
         $view->vars['attr'] = $options['attr'];

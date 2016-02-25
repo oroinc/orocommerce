@@ -5,6 +5,7 @@ namespace Oro\Bundle\ActionBundle\Layout\DataProvider;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\ActionBundle\Helper\RestrictHelper;
+use Oro\Bundle\ActionBundle\Model\Action;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 
 use Oro\Component\Layout\ContextInterface;
@@ -51,14 +52,60 @@ class ActionsDataProvider implements DataProviderInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $var
+     * @return mixed
      */
-    public function getData(ContextInterface $context)
+    public function __get($var)
     {
-        // TODO: get group from block options
-        $group = null;
-        $actions = $this->restrictHelper->restrictActionsByGroup($this->actionManager->getActions(), $group);
+        if (strpos($var, 'getByGroup') === 0) {
+            $groups = explode('And', str_replace('getByGroup', '', $var));
+            foreach ($groups as &$group) {
+                $group = preg_replace('/(?<=[a-zA-Z])(?=[A-Z])/', '_', $group);
+                $groupNameParts =  array_map('strtolower', explode('_', $group));
+                $group = implode('_', $groupNameParts);
+            }
 
+            return $this->getRestrictedActions($groups);
+        } else {
+            throw new \RuntimeException('Property ' . $var . ' is unknown');
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function getAll()
+    {
+        return $this->getPreparedData($this->actionManager->getActions());
+    }
+
+    /**
+     * @return array
+     */
+    public function getWithoutGroup()
+    {
+        $actions = $this->restrictHelper->restrictActionsByGroup($this->actionManager->getActions(), false);
+
+        return $this->getPreparedData($actions);
+    }
+
+    /**
+     * @param array $groups
+     * @return array
+     */
+    protected function getRestrictedActions(array $groups)
+    {
+        $actions = $this->restrictHelper->restrictActionsByGroup($this->actionManager->getActions(), $groups);
+
+        return $this->getPreparedData($actions);
+    }
+
+    /**
+     * @param Action[] $actions
+     * @return array
+     */
+    protected function getPreparedData(array $actions = [])
+    {
         $data = [];
         foreach ($actions as $action) {
             if (!$action->getDefinition()->isEnabled()) {
@@ -89,5 +136,13 @@ class ActionsDataProvider implements DataProviderInterface
         }
 
         return $data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getData(ContextInterface $context)
+    {
+        return $this;
     }
 }

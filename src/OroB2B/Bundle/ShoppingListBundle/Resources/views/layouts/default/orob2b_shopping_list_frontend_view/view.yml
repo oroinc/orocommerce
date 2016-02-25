@@ -21,7 +21,8 @@ layout:
                 shopping_list_top_actions:
                     blockType: action_line_buttons
                     options:
-                        group: false
+                        actions:
+                            @value: $data.actions.all
                         entity:
                             @value: $data.shoppingList
                 shopping_list_options:
@@ -53,6 +54,8 @@ layout:
                 shopping_list_combined_button:
                     blockType: action_combined_buttons
                     options:
+                        actions:
+                            @value: $data.actions.all
                         entity:
                             @value: $data.shoppingList
             tree:
