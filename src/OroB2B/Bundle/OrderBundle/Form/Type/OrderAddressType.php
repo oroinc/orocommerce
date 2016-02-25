@@ -25,7 +25,8 @@ class OrderAddressType extends AbstractType
 {
     const NAME = 'orob2b_order_address_type';
 
-    const APPLICATION_FRONT_END = 'frontend';
+    const APPLICATION_FRONTEND = 'frontend';
+    const APPLICATION_BACKEND = 'backend';
 
     /** @var string */
     protected $dataClass;
@@ -67,11 +68,8 @@ class OrderAddressType extends AbstractType
     {
         $type = $options['addressType'];
         $order = $options['order'];
+        $application =  $options['application'];
 
-        $application = null;
-        if (array_key_exists('application', $options)) {
-            $application =  $options['application'];
-        }
         $isManualEditGranted = $this->orderAddressSecurityProvider->isManualEditGranted($type);
         $this->initAccountAddressField($builder, $type, $order, $application, $isManualEditGranted);
 
@@ -138,7 +136,7 @@ class OrderAddressType extends AbstractType
         $resolver
             ->setRequired(['order', 'addressType'])
             ->setDefaults(['data_class' => $this->dataClass,
-                'application' => null
+                'application' => self::APPLICATION_BACKEND
             ])
             ->setAllowedValues('addressType', [AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING])
             ->setAllowedTypes('order', 'OroB2B\Bundle\OrderBundle\Entity\Order');
@@ -252,7 +250,7 @@ class OrderAddressType extends AbstractType
     {
         $isFromExternalSource = true;
 
-        if ($application === self::APPLICATION_FRONT_END) {
+        if ($application === self::APPLICATION_FRONTEND) {
             if ($type === AddressType::TYPE_SHIPPING && $order->getShippingAddress()) {
                 $isFromExternalSource = !$order->getShippingAddress()->isFromExternalSource();
             }
