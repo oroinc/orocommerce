@@ -2,14 +2,41 @@
 
 namespace Oro\Bundle\ActionBundle\Layout\Block\Type;
 
-use Oro\Component\Layout\BlockBuilderInterface;
-use Oro\Component\Layout\BlockInterface;
-use Oro\Component\Layout\BlockView;
+use Doctrine\Common\Util\ClassUtils;
+
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class ActionLineButtonsType extends AbstractButtonsType
+use Oro\Component\Layout\BlockInterface;
+use Oro\Component\Layout\BlockView;
+use Oro\Component\Layout\Block\Type\AbstractType;
+use Oro\Component\Layout\Exception\LogicException;
+
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
+
+class ActionLineButtonsType extends AbstractType
 {
     const NAME = 'action_line_buttons';
+
+    /**
+     * @var  ApplicationsHelper
+     */
+    protected $applicationsHelper;
+
+    /**
+     * @var DoctrineHelper
+     */
+    protected $doctrineHelper;
+
+    /**
+     * @param ApplicationsHelper $applicationsHelper
+     * @param DoctrineHelper $doctrineHelper
+     */
+    public function __construct(ApplicationsHelper $applicationsHelper, DoctrineHelper $doctrineHelper)
+    {
+        $this->applicationsHelper = $applicationsHelper;
+        $this->doctrineHelper = $doctrineHelper;
+    }
 
     /**
      * {@inheritDoc}
@@ -20,38 +47,21 @@ class ActionLineButtonsType extends AbstractButtonsType
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function buildBlock(BlockBuilderInterface $builder, array $options)
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $options = $this->setActionParameters($options);
-        $actions = $this->getActions($options);
-
-        foreach ($actions as $actionName => $action) {
-            if (isset($options['exclude_action']) && $options['exclude_action'] === $actionName) {
-                continue;
-            }
-            $params = $this->getParams($options, $action);
-            $buttonId = $actionName . '_button';
-            if (array_key_exists('suffix', $options)) {
-                $buttonId .= '_' . $options['suffix'];
-            }
-            $buttonParameters = [
-                'params' => $params,
-                'context' => $options['context'],
-                'fromUrl' => $options['fromUrl'],
-                'actionData' => $options['actionData'],
-            ];
-            if (array_key_exists('hide_icons', $options)) {
-                $buttonParameters['hide_icon'] = $options['hide_icons'];
-            }
-            $builder->getLayoutManipulator()->add(
-                $buttonId,
-                $builder->getId(),
-                ActionButtonType::NAME,
-                $buttonParameters
-            );
-        }
+        $resolver->setDefaults(
+            [
+                'dialogRoute' => $this->applicationsHelper->getDialogRoute(),
+                'executionRoute' => $this->applicationsHelper->getExecutionRoute(),
+                'attr' => [
+                    'data-page-component-module' => 'oroaction/js/app/components/buttons-component'
+                ]
+            ]
+        );
+        $resolver->setRequired(['actions']);
+        $resolver->setOptional(['entity', 'entityClass']);
     }
 
     /**
@@ -59,15 +69,23 @@ class ActionLineButtonsType extends AbstractButtonsType
      */
     public function buildView(BlockView $view, BlockInterface $block, array $options)
     {
-        $view->vars['attr'] = ['data-page-component-module' => 'oroaction/js/app/components/buttons-component'];
-    }
+        if (empty($options['entity']) && empty($options['entityClass'])) {
+            throw new LogicException(
+                'entity or entityClass must be provided'
+            );
+        }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        parent::setDefaultOptions($resolver);
-        $resolver->setOptional(['exclude_action', 'suffix', 'hide_icons']);
+        $view->vars['actions'] = $options['actions'];
+        $view->vars['dialogRoute'] = $options['dialogRoute'];
+        $view->vars['executionRoute'] = $options['executionRoute'];
+        $view->vars['attr'] = $options['attr'];
+
+        if (!empty($options['entity']) && is_object($options['entity'])) {
+            $view->vars['entityClass'] = ClassUtils::getClass($options['entity']);
+            $view->vars['entityId'] = $this->doctrineHelper->getSingleEntityIdentifier($options['entity']);
+        } else {
+            $view->vars['entityClass'] = ClassUtils::getRealClass($options['entityClass']);
+            $view->vars['entityId'] = null;
+        }
     }
 }

@@ -23,7 +23,8 @@ layout:
                     blockType: action_line_buttons
                     options:
                         visible: { @not_empty: $data.shoppingList }
-                        group: null
+                        actions:
+                            @value: $data.actions.all
                         entity:
                             @value: $data.shoppingList
                 shopping_list_options:
@@ -69,9 +70,10 @@ layout:
                     blockType: action_combined_buttons
                     options:
                         visible: { @not_empty: $data.shoppingList }
+                        actions:
+                            @value: $data.actions.all
                         entity:
                             @value: $data.shoppingList
-                        primary_action_name: orob2b_shoppinglist_frontend_action_createorder
             tree:
                 content:
                     shopping_list_view_container:
