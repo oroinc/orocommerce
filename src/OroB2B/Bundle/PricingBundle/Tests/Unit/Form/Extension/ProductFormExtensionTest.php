@@ -247,7 +247,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $class string
+     * @param string $class
      * @param int|null $id
      * @return object
      */

@@ -7,8 +7,8 @@ use Oro\Component\Testing\Unit\EntityTrait;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
-use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 
 class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,23 +20,23 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
     protected $doctrineHelper;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|FrontendPriceListRequestHandler */
-    protected $frontendPriceListRequestHandler;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|PriceListRequestHandler */
+    protected $priceListRequestHandler;
 
     public function setUp()
     {
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->frontendPriceListRequestHandler = $this->getMockBuilder(
-            'OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler'
+        $this->priceListRequestHandler = $this->getMockBuilder(
+            'OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler'
         )
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->provider = new FrontendProductPricesProvider(
             $this->doctrineHelper,
-            $this->frontendPriceListRequestHandler
+            $this->priceListRequestHandler
         );
     }
 
@@ -70,8 +70,8 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
             ->with('OroB2BPricingBundle:ProductPrice')
             ->willReturn($repo);
 
-        $this->frontendPriceListRequestHandler->expects($this->once())
-            ->method('getPriceList')
+        $this->priceListRequestHandler->expects($this->once())
+            ->method('getPriceListByAccount')
             ->willReturn($priceList);
 
         $actual = $this->provider->getData($context);
