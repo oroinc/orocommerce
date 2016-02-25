@@ -75,7 +75,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
-            ->with('OroB2BPricingBundle:ProductPrice')
+            ->with('OroB2BPricingBundle:CombinedProductPrice')
             ->willReturn($repo);
 
         $this->priceListRequestHandler->expects($this->once())

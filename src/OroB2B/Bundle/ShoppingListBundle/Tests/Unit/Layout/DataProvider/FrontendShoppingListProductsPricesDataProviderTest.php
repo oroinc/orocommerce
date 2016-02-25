@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Layout\DataProvider;
+namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
