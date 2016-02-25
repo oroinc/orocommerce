@@ -43,6 +43,7 @@ class ActionLineButtonsTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildView()
     {
+        $actions = [];
         $this->applicationHelper->expects($this->once())
             ->method('getDialogRoute')
             ->will($this->returnValue('dialog'));
@@ -57,6 +58,7 @@ class ActionLineButtonsTypeTest extends \PHPUnit_Framework_TestCase
         $entity = new \stdClass();
         $expected = [
             'entity' => $entity,
+            'actions' => $actions,
             'group' => null,
             'dialogRoute' => 'dialog',
             'executionRoute' => 'execution',
@@ -64,22 +66,12 @@ class ActionLineButtonsTypeTest extends \PHPUnit_Framework_TestCase
                 'data-page-component-module' => 'oroaction/js/app/components/buttons-component'
             ]
         ];
-        $resolvedOptions = $resolver->resolve(['entity' => $entity]);
+        $resolvedOptions = $resolver->resolve(['entity' => $entity, 'actions' => $actions]);
         $this->assertEquals($expected, $resolvedOptions);
 
         $view = new BlockView();
         /** @var BlockInterface|\PHPUnit_Framework_MockObject_MockObject $block */
         $block = $this->getMock('Oro\Component\Layout\BlockInterface');
-
-        $actions = [];
-        $data = $this->getMock('Oro\Component\Layout\DataAccessorInterface');
-        $data->expects($this->once())
-            ->method('get')
-            ->with('actions')
-            ->will($this->returnValue($actions));
-        $block->expects($this->once())
-            ->method('getData')
-            ->will($this->returnValue($data));
 
         $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
