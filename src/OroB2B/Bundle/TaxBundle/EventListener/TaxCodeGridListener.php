@@ -22,6 +22,9 @@ class TaxCodeGridListener
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
+    /** @var Expr */
+    protected $expressionBuilder;
+
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param string $taxCodeClass

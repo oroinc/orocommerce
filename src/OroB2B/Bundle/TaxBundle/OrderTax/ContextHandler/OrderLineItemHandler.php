@@ -103,7 +103,7 @@ class OrderLineItemHandler
             return false;
         }
 
-        return $this->addressProvider->isDigitalProductTaxCode($address->getCountry()->getIso2Code(), $productTaxCode);
+        return $this->addressProvider->isDigitalProductTaxCode($address->getCountryIso2(), $productTaxCode);
     }
 
     /**

@@ -65,6 +65,6 @@ expectedResult:
                 taxAmount: '8'        # 79.95 * 0.1
                 adjustment: '-0.005'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '79.95', tax_amount: '8' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '79.95', taxAmount: '8' }
     taxes:
-        - { tax: 'TAX1', rate: '0.1', taxable_amount: '79.95', tax_amount: '8' }
+        - { tax: 'TAX1', rate: '0.1', taxableAmount: '79.95', taxAmount: '8' }
