@@ -215,7 +215,7 @@ class QuoteControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $controls = $crawler->filter('.control-group');
+        $controls = $crawler->filter('.account-oq__order-info__control, .account-page-title');
 
         $this->assertSameSize($expectedData['columns'], $controls);
 
@@ -239,7 +239,8 @@ class QuoteControllerTest extends WebTestCase
             $this->assertContains($property, $control->textContent);
         }
 
-        $createOrderButton = (bool)$crawler->filterXPath('//a[contains(., \'Accept and Submit to Order\')]')->count();
+        $createOrderButton = (bool)$crawler
+            ->filterXPath('//button[contains(., \'Accept and Submit to Order\')]')->count();
 
         $this->assertEquals($expectedData['createOrderButton'], $createOrderButton);
     }
