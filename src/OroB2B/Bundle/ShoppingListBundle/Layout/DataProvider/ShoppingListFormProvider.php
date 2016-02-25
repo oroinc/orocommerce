@@ -6,15 +6,14 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\AbstractDataProvider;
-use Oro\Bundle\FormBundle\Form\Handler\FormProviderInterface;
+use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAction;
 
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 
-class ShoppingListFormProvider extends AbstractDataProvider implements FormProviderInterface
+class ShoppingListFormProvider extends AbstractServerRenderDataProvider
 {
     /**
      * @var FormAccessor[]
@@ -62,25 +61,16 @@ class ShoppingListFormProvider extends AbstractDataProvider implements FormProvi
     }
 
     /**
-     * @param ShoppingList|null $shoppingList
-     * @param array $options
+     * @param ShoppingList $shoppingList
      * @return FormInterface
      */
-    public function getForm($shoppingList = null, array $options = [])
+    public function getForm(ShoppingList $shoppingList)
     {
-        if (!$shoppingList instanceof ShoppingList) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'shoppingList should be instance of ShoppingList, instance of %s given.',
-                    is_object($shoppingList) ? get_class($shoppingList) : gettype($shoppingList)
-                )
-            );
-        }
         $shoppingListId = $shoppingList->getId();
 
         if (!isset($this->form[$shoppingListId])) {
             $this->form[$shoppingListId] = $this->formFactory
-                ->create(ShoppingListType::NAME, $shoppingList, $options);
+                ->create(ShoppingListType::NAME, $shoppingList);
         }
         return $this->form[$shoppingListId];
     }

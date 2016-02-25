@@ -6,16 +6,15 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\AbstractDataProvider;
+use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
-use Oro\Bundle\FormBundle\Form\Handler\FormProviderInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
 
-class FrontendLineItemFormProvider extends AbstractDataProvider implements FormProviderInterface
+class FrontendLineItemFormProvider extends AbstractServerRenderDataProvider
 {
     /**
      * @var FormAccessor[]
@@ -64,23 +63,14 @@ class FrontendLineItemFormProvider extends AbstractDataProvider implements FormP
     }
 
     /**
-     * @param Product|null $product
-     * @param array $options
+     * @param Product $product
      * @return FormInterface
      */
-    public function getForm($product = null, array $options = [])
+    public function getForm(Product $product)
     {
-        if (!$product instanceof Product) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'product should be instance of Product, instance of %s given.',
-                    is_object($product) ? get_class($product) : gettype($product)
-                )
-            );
-        }
         if (!isset($this->form[$product->getId()])) {
             $this->form[$product->getId()] = $this->formFactory
-                ->create(FrontendLineItemType::NAME, $this->getLineItem($product), $options);
+                ->create(FrontendLineItemType::NAME, $this->getLineItem($product), $this->getLineItem($product));
         }
         return $this->form[$product->getId()];
     }

@@ -6,11 +6,11 @@ use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\AbstractDataProvider;
+use Oro\Component\Layout\AbstractServerRenderDataProvider;
 
 use OroB2B\Bundle\CMSBundle\Entity\LoginPage;
 
-class LoginPageProvider extends AbstractDataProvider
+class LoginPageProvider extends AbstractServerRenderDataProvider
 {
     /**
      * @var LoginPage

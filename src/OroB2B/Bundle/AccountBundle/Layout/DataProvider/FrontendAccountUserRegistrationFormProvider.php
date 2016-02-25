@@ -4,9 +4,13 @@ namespace OroB2B\Bundle\AccountBundle\Layout\DataProvider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
+use Oro\Bundle\LayoutBundle\Layout\Form\FormAction;
+use Oro\Component\Layout\ContextInterface;
+use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType;
 use Symfony\Component\Form\FormFactoryInterface;
 
-use Oro\Bundle\LayoutBundle\Layout\DataProvider\FormProvider;
+use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -15,9 +19,19 @@ use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Symfony\Component\Form\Test\FormInterface;
 
-class FrontendAccountUserRegistrationFormProvider extends FormProvider
+class FrontendAccountUserRegistrationFormProvider extends AbstractServerRenderDataProvider
 {
+    /** @var FormAccessor */
+    protected $data;
+
+    /** @var FormInterface */
+    protected $form;
+
+    /** @var FormFactoryInterface */
+    protected $formFactory;
+
     /** @var ManagerRegistry */
     protected $managerRegistry;
 
@@ -44,7 +58,7 @@ class FrontendAccountUserRegistrationFormProvider extends FormProvider
         WebsiteManager $websiteManager,
         UserManager $userManager
     ) {
-        parent::__construct($formFactory);
+        $this->formFactory = $formFactory;
         $this->managerRegistry = $managerRegistry;
         $this->configManager = $configManager;
         $this->websiteManager = $websiteManager;
@@ -54,10 +68,27 @@ class FrontendAccountUserRegistrationFormProvider extends FormProvider
     /**
      * {@inheritDoc}
      */
-    public function getForm($data = null, array $options = [])
+    public function getData(ContextInterface $context)
     {
-        $accountUser = $this->createAccountUser();
-        return parent::getForm($accountUser, $options);
+        if (!$this->data) {
+            $this->data = new FormAccessor(
+                $this->getForm(),
+                FormAction::createByRoute('orob2b_account_frontend_account_user_register')
+            );
+        }
+        return $this->data;
+    }
+
+    /**
+     * @return FormInterface
+     */
+    public function getForm()
+    {
+        if (!$this->form) {
+            $this->form = $this->formFactory
+                ->create(FrontendAccountUserRegistrationType::NAME, $this->createAccountUser());
+        }
+        return $this->form;
     }
 
     /**

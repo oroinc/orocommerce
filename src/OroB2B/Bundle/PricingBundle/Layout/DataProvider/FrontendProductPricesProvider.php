@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\PricingBundle\Layout\DataProvider;
 
 use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\AbstractDataProvider;
+use Oro\Component\Layout\AbstractServerRenderDataProvider;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
@@ -11,7 +11,7 @@ use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class FrontendProductPricesProvider extends AbstractDataProvider
+class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
 {
     /** @var array */
     protected $data;
