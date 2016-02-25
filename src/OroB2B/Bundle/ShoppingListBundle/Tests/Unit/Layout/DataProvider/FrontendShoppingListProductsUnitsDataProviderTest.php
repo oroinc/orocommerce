@@ -105,16 +105,16 @@ class FrontendShoppingListProductsUnitsDataProviderTest extends \PHPUnit_Framewo
                 ->method('getProductsUnitsByPriceList')
                 ->willReturn($expected);
 
-        $em = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $em->expects($this->once())
-            ->method('getRepository')
-            ->with('OroB2BPricingBundle:CombinedProductPrice')
-            ->willReturn($repository);
-
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with('OroB2BPricingBundle:CombinedProductPrice')
-            ->willReturn($em);
+            $em = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+            $em->expects($this->once())
+                ->method('getRepository')
+                ->with('OroB2BPricingBundle:CombinedProductPrice')
+                ->willReturn($repository);
+    
+            $this->registry->expects($this->once())
+                ->method('getManagerForClass')
+                ->with('OroB2BPricingBundle:CombinedProductPrice')
+                ->willReturn($em);
 
             $this->userCurrencyProvider->expects($this->once())
                 ->method('getUserCurrency')
