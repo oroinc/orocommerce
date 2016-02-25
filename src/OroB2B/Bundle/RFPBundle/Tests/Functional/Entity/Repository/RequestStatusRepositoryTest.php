@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Entity\Repository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository;
+use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 
 /**
  * @dbIsolation
@@ -40,7 +41,7 @@ class RequestStatusRepositoryTest extends WebTestCase
             ->getRepository('OroB2BRFPBundle:RequestStatus')
             ->getNotDeletedStatuses();
 
-        $this->assertCount(7, $statuses); // 3 from fixtures + 4 default
+        $this->assertCount(8, $statuses); // 3 from fixtures + 5 default
 
         foreach ($statuses as $status) {
             $this->assertInstanceOf('OroB2B\Bundle\RFPBundle\Entity\RequestStatus', $status);
@@ -53,6 +54,7 @@ class RequestStatusRepositoryTest extends WebTestCase
      */
     public function testGetNotDeletedAndDeletedWithRequestsStatuses()
     {
+        /** @var RequestStatus[] $statuses */
         $statuses = $this->getContainer()
             ->get('doctrine')
             ->getRepository('OroB2BRFPBundle:RequestStatus')
@@ -60,7 +62,7 @@ class RequestStatusRepositoryTest extends WebTestCase
             ->getQuery()
             ->getResult();
 
-        $this->assertCount(8, $statuses); // 3 from fixtures + 1 deleted + 4 default
+        $this->assertCount(9, $statuses); // 3 from fixtures + 1 deleted + 5 default
 
         foreach ($statuses as $status) {
             $this->assertInstanceOf('OroB2B\Bundle\RFPBundle\Entity\RequestStatus', $status);
