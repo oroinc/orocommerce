@@ -187,10 +187,10 @@ class QuoteController extends Controller
     }
 
     /**
-     * @return \OroB2B\Bundle\SaleBundle\Model\QuoteRequestHelper
+     * @return \OroB2B\Bundle\SaleBundle\Model\QuoteRequestHandler
      */
     protected function getQuoteHandler()
     {
-        return $this->get('orob2b_sale.service.quote_request_helper');
+        return $this->get('orob2b_sale.service.quote_request_handler');
     }
 }

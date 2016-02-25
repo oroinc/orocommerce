@@ -20,7 +20,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Model\QuoteRequestHelper;
+use OroB2B\Bundle\SaleBundle\Model\QuoteRequestHandler;
 
 class AjaxQuoteController extends Controller
 {
@@ -122,10 +122,10 @@ class AjaxQuoteController extends Controller
     }
 
     /**
-     * @return QuoteRequestHelper
+     * @return QuoteRequestHandler
      */
     protected function getQuoteRequestHandler()
     {
-        return $this->get('orob2b_sale.service.quote_request_helper');
+        return $this->get('orob2b_sale.service.quote_request_handler');
     }
 }
