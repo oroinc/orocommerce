@@ -9,13 +9,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use OroB2B\Bundle\OrderBundle\Form\Handler\OrderHandler;
-use OroB2B\Bundle\OrderBundle\Provider\SubtotalsProvider;
+use OroB2B\Bundle\OrderBundle\Provider\SubtotalProvider;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Model\Subtotal;
 
 class OrderHandlerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|SubtotalsProvider */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|SubtotalProvider */
     protected $subtotalsProvider;
 
     /** @var OrderHandler */
@@ -79,7 +79,7 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $subtotal = new Subtotal();
         $amount = 42;
-        $subtotal->setType(SubtotalsProvider::TYPE);
+        $subtotal->setType(SubtotalProvider::TYPE);
         $subtotal->setAmount($amount);
 
         $this->subtotalsProvider->expects($this->any())
@@ -122,7 +122,7 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $subtotal = new Subtotal();
         $amount = 42;
-        $subtotal->setType(SubtotalsProvider::TYPE);
+        $subtotal->setType(SubtotalProvider::TYPE);
         $subtotal->setAmount($amount);
 
         $this->subtotalsProvider->expects($this->any())

@@ -13,7 +13,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
-use OroB2B\Bundle\OrderBundle\Provider\SubtotalsProvider;
+use OroB2B\Bundle\OrderBundle\Provider\SubtotalProvider;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
@@ -25,24 +25,24 @@ class QuoteToOrderConverter
     /** @var OrderCurrencyHandler */
     protected $orderCurrencyHandler;
 
-    /** @var SubtotalsProvider */
-    protected $subtotalsProvider;
+    /** @var SubtotalProvider */
+    protected $subtotalProvider;
 
     /** @var ManagerRegistry */
     protected $registry;
 
     /**
      * @param OrderCurrencyHandler $orderCurrencyHandler
-     * @param SubtotalsProvider $subtotalsProvider
+     * @param SubtotalProvider $subtotalProvider
      * @param ManagerRegistry $registry
      */
     public function __construct(
         OrderCurrencyHandler $orderCurrencyHandler,
-        SubtotalsProvider $subtotalsProvider,
+        SubtotalProvider $subtotalProvider,
         ManagerRegistry $registry
     ) {
         $this->orderCurrencyHandler = $orderCurrencyHandler;
-        $this->subtotalsProvider = $subtotalsProvider;
+        $this->subtotalProvider = $subtotalProvider;
         $this->registry = $registry;
     }
 
@@ -189,10 +189,10 @@ class QuoteToOrderConverter
      */
     protected function fillSubtotals(Order $order)
     {
-        $subtotals = $this->subtotalsProvider->getSubtotals($order);
+        $subtotal = $this->subtotalProvider->getSubtotal($order);
 
-        $propertyAccessor = PropertyAccess::createPropertyAccessor();
-        foreach ($subtotals as $subtotal) {
+        if ($subtotal) {
+            $propertyAccessor = PropertyAccess::createPropertyAccessor();
             try {
                 $propertyAccessor->setValue($order, $subtotal->getType(), $subtotal->getAmount());
             } catch (NoSuchPropertyException $e) {
