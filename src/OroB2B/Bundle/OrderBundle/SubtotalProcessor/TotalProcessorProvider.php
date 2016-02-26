@@ -13,11 +13,13 @@ use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 class TotalProcessorProvider
 {
     const NAME = 'orob2b_order.subtotal_total';
+    const TYPE_TOTAL = 'total';
 
     /**
      * @var SubtotalProviderRegistry
      */
     protected $subtotalProviderRegistry;
+
     /**
      * @var TranslatorInterface
      */
@@ -58,7 +60,7 @@ class TotalProcessorProvider
     {
         $total = new Subtotal();
 
-        $total->setType(Subtotal::TYPE_TOTAL);
+        $total->setType(self::TYPE_TOTAL);
         $translation = sprintf('orob2b.order.subtotals.%s', $total->getType());
         $total->setLabel($this->translator->trans($translation));
 
