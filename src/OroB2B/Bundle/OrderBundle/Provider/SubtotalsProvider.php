@@ -2,17 +2,18 @@
 
 namespace OroB2B\Bundle\OrderBundle\Provider;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Model\Subtotal;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use OroB2B\Bundle\OrderBundle\SubtotalProcessor\SubtotalProviderInterface;
 
-class SubtotalsProvider
+class SubtotalsProvider implements SubtotalProviderInterface
 {
+    const NAME = 'orob2b_order.subtotal_lineitem';
+
     /**
      * @var TranslatorInterface
      */
@@ -34,30 +35,17 @@ class SubtotalsProvider
     }
 
     /**
-     * Collect all order subtotals
-     *
-     * @param Order $order
-     *
-     * @return ArrayCollection|Subtotal[]
+     * {@inheritdoc}
      */
-    public function getSubtotals(Order $order)
+    public function getName()
     {
-        $subtotals = new ArrayCollection();
-
-        $subtotal = $this->getSubtotal($order);
-        $subtotals->set($subtotal->getType(), $subtotal);
-
-        return $subtotals;
+        return self::NAME;
     }
 
     /**
-     * Get order subtotal
-     *
-     * @param Order $order
-     *
-     * @return Subtotal
+     * {@inheritdoc}
      */
-    protected function getSubtotal(Order $order)
+    public function getSubtotal(Order $order)
     {
         $subtotal = new Subtotal();
 

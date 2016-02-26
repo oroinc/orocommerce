@@ -127,6 +127,7 @@ orob2b:
 
         subtotals:
             subtotal: Subtotal
+            total: Total
         sales_orders.label: 'Sales Orders'
 
         navigation:
