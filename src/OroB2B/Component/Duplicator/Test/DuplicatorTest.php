@@ -42,8 +42,8 @@ class DuplicatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($rfpRequest->getEmail(), $rfpRequestCopy->getEmail());
         $this->assertSame($rfpRequest->getStatus(), $rfpRequestCopy->getStatus());
 
-        $this->assertNotSame($rfpRequestCopy->getRequestProducts(),  $rfpRequest->getRequestProducts());
-        $this->assertEquals($rfpRequestCopy->getRequestProducts(),  $rfpRequest->getRequestProducts());
+        $this->assertNotSame($rfpRequestCopy->getRequestProducts(), $rfpRequest->getRequestProducts());
+        $this->assertEquals($rfpRequestCopy->getRequestProducts(), $rfpRequest->getRequestProducts());
 
         /** @var RequestProduct $productCopy */
         $productCopy = $rfpRequestCopy->getRequestProducts()->first();
@@ -110,10 +110,11 @@ class DuplicatorTest extends \PHPUnit_Framework_TestCase
     protected function createFilterFactory()
     {
         $factory = new FilterFactory();
+        $collectionFilterClass = '\DeepCopy\Filter\Doctrine\DoctrineEmptyCollectionFilter';
         $factory->addObjectType(new ObjectType('setNull', '\DeepCopy\Filter\SetNullFilter'))
             ->addObjectType(new ObjectType('keep', '\DeepCopy\Filter\KeepFilter'))
             ->addObjectType(new ObjectType('collection', '\DeepCopy\Filter\Doctrine\DoctrineCollectionFilter'))
-            ->addObjectType(new ObjectType('emptyCollection', '\DeepCopy\Filter\Doctrine\DoctrineEmptyCollectionFilter'))
+            ->addObjectType(new ObjectType('emptyCollection', $collectionFilterClass))
             ->addObjectType(new ObjectType('replaceValue', '\OroB2B\Component\Duplicator\Filter\ReplaceValueFilter'))
             ->addObjectType(new ObjectType('shallowCopy', '\OroB2B\Component\Duplicator\Filter\ShallowCopyFilter'));
 

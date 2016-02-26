@@ -4,6 +4,7 @@ namespace OroB2B\src\Oro\Bundle\ActionBundle\DependencyInjection\CompilerPass;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 class DuplicatorMatcherPass implements CompilerPassInterface
 {
