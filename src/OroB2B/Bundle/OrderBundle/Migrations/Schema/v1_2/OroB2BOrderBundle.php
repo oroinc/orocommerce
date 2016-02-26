@@ -16,11 +16,5 @@ class OroB2BOrderBundle implements Migration
     {
         $table = $schema->getTable('orob2b_order_address');
         $table->addColumn('from_external_source', 'boolean', []);
-        $table = $schema->getTable('orob2b_order');
-        $table->addColumn(
-            'total',
-            'money',
-            ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
-        );
     }
 }

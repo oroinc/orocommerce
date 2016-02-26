@@ -14,8 +14,6 @@ class OroB2BOrderBundle implements Migration
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $table = $schema->getTable('orob2b_order_address');
-        $table->addColumn('from_external_source', 'boolean', []);
         $table = $schema->getTable('orob2b_order');
         $table->addColumn(
             'total',
