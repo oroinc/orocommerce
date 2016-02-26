@@ -12,7 +12,7 @@ class SubtotalProviderPass implements CompilerPassInterface
     const TAG = 'orob2b_order.subtotal_provider';
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function process(ContainerBuilder $container)
     {
