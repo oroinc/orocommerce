@@ -54,6 +54,7 @@ class TotalProcessorProvider
      * Calculate and return total based on all subtotals
      *
      * @param Order $order
+     *
      * @return Subtotal
      */
     public function getTotal(Order $order)
@@ -102,6 +103,7 @@ class TotalProcessorProvider
     /**
      * @param string $fromCurrency
      * @param string $toCurrency
+     *
      * @return float
      */
     protected function getExchangeRate($fromCurrency, $toCurrency)

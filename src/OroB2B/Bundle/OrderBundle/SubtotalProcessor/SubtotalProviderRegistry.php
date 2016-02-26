@@ -27,6 +27,7 @@ class SubtotalProviderRegistry
 
     /**
      * @param string $name
+     *
      * @return null|SubtotalProviderInterface
      */
     public function getProviderByName($name)
@@ -40,6 +41,7 @@ class SubtotalProviderRegistry
 
     /**
      * @param string $name
+     *
      * @return bool
      */
     public function hasProvider($name)
