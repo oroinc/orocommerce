@@ -62,14 +62,24 @@ class OrderHandler
      */
     protected function fillSubtotals(Order $order)
     {
-        $subtotals = $this->subtotalsProvider->getSubtotals($order);
+        $subtotal = $this->subtotalsProvider->getSubtotal($order);
 
-        $propertyAccessor = PropertyAccess::createPropertyAccessor();
-        foreach ($subtotals as $subtotal) {
+        if ($subtotal) {
+            $propertyAccessor = PropertyAccess::createPropertyAccessor();
             try {
                 $propertyAccessor->setValue($order, $subtotal->getType(), $subtotal->getAmount());
             } catch (NoSuchPropertyException $e) {
             }
         }
+// todo: refactor to use total BB-2093
+//        $subtotals = $this->subtotalsProvider->getSubtotals($order);
+//
+//        $propertyAccessor = PropertyAccess::createPropertyAccessor();
+//        foreach ($subtotals as $subtotal) {
+//            try {
+//                $propertyAccessor->setValue($order, $subtotal->getType(), $subtotal->getAmount());
+//            } catch (NoSuchPropertyException $e) {
+//            }
+//        }
     }
 }

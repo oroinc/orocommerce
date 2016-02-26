@@ -4,8 +4,6 @@ namespace OroB2B\Bundle\OrderBundle\Model;
 
 class Subtotal
 {
-    const TYPE_SUBTOTAL = 'subtotal';
-
     /**
      * @var string
      */
