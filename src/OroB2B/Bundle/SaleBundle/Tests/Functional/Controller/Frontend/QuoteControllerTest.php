@@ -239,10 +239,9 @@ class QuoteControllerTest extends WebTestCase
             $this->assertContains($property, $control->textContent);
         }
 
-        // todo: temporary skipped. move back after done bb-2064 and configure action button
-        //$createOrderButton = (bool)$crawler
-        //    ->filterXPath('//button[contains(., \'Accept and Submit to Order\')]')->count();
-        // $this->assertEquals($expectedData['createOrderButton'], $createOrderButton);
+        $createOrderButton = (bool)$crawler
+            ->filterXPath('//button[contains(., \'Accept and Submit to Order\')]')->count();
+         $this->assertEquals($expectedData['createOrderButton'], $createOrderButton);
     }
 
     /**
@@ -258,7 +257,9 @@ class QuoteControllerTest extends WebTestCase
                     'password' => LoadUserData::ACCOUNT1_USER1,
                 ],
                 'expected' => [
-                    'createOrderButton' => false,
+                   // todo: temporary changed. move back after done bb-2064 and configure action button
+//                    'createOrderButton' => false,
+                    'createOrderButton' => true,
                     'columns' => [
                         [
                             'label' => 'orob2b.frontend.sale.quote.qid.label',
