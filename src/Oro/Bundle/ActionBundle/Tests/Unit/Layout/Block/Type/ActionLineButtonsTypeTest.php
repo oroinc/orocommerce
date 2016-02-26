@@ -100,4 +100,12 @@ class ActionLineButtonsTypeTest extends \PHPUnit_Framework_TestCase
         $block = $this->getMock('Oro\Component\Layout\BlockInterface');
         $this->type->buildView($view, $block, []);
     }
+
+    public function testBuildViewInvisible()
+    {
+        $view = new BlockView();
+        /** @var BlockInterface|\PHPUnit_Framework_MockObject_MockObject $block */
+        $block = $this->getMock('Oro\Component\Layout\BlockInterface');
+        $this->type->buildView($view, $block, ['visible' => false]);
+    }
 }

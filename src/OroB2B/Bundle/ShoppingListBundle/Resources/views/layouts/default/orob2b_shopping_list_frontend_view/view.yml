@@ -15,12 +15,14 @@ layout:
                 shopping_list_title:
                     blockType: block
                     options:
+                        visible: { @not_empty: $data.shoppingList }
                         vars:
                             shoppingList:
                                 @value: $data.shoppingList
                 shopping_list_top_actions:
                     blockType: action_line_buttons
                     options:
+                        visible: { @not_empty: $data.shoppingList }
                         actions:
                             @value: $data.actions.all
                         entity:
@@ -28,12 +30,17 @@ layout:
                 shopping_list_options:
                     blockType: block
                     options:
+                        visible: { @not_empty: $data.shoppingList }
                         vars:
                             shoppingList:
                                 @value: $data.shoppingList
                 shopping_list_line_items:
+                    blockType: container
+                shopping_list_line_items_list:
                     blockType: block
                     options:
+                        visible:
+                          @not_empty: $data.shoppingList
                         vars:
                             shoppingList:
                                 @value: $data.shoppingList
@@ -41,6 +48,13 @@ layout:
                                 @value: $data.orob2b_shopping_list_products_prices
                             productsUnits:
                                 @value: $data.orob2b_shopping_list_products_units
+                shopping_list_line_items_empty:
+                    blockType: block
+                    options:
+                        visible: { @not_empty: $data.shoppingList }
+                        vars:
+                            shoppingList:
+                                @value: $data.shoppingList
                 shopping_list_checkout_container:
                     blockType: container
                 shopping_list_button_container:
@@ -48,12 +62,14 @@ layout:
                 shopping_list_delete_button:
                     blockType: block
                     options:
+                        visible: { @not_empty: $data.shoppingList }
                         vars:
                             shoppingList:
                                 @value: $data.shoppingList
                 shopping_list_combined_button:
                     blockType: action_combined_buttons
                     options:
+                        visible: { @not_empty: $data.shoppingList }
                         actions:
                             @value: $data.actions.all
                         entity:
@@ -65,7 +81,9 @@ layout:
                         shopping_list_title: ~
                         shopping_list_top_actions: ~
                         shopping_list_options: ~
-                        shopping_list_line_items: ~
+                        shopping_list_line_items:
+                            shopping_list_line_items_list: ~
+                            shopping_list_line_items_empty: ~
                         shopping_list_checkout_container:
                             shopping_list_button_container:
                                 shopping_list_delete_button: ~
@@ -75,5 +93,6 @@ layout:
             parentId: sidebar_left
             blockType: shopping_list_selector
             options:
+                visible: { @not_empty: $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists }
                 shoppingLists:
                     @value: $data.orob2b_shopping_list_account_user_shopping_lists.shoppingLists

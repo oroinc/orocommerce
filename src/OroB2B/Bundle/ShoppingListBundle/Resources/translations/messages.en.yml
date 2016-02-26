@@ -119,7 +119,7 @@ orob2b:
                 add_item_note.placeholder: 'Enter your note'
 
                 not_have_available: 'You do not have available Shopping Lists'
-                empty: 'Your Order List Is Empty'
+                empty: 'Your Shopping List Is Empty'
 
             messages:
                 line_item_delete_confirm: 'Are you sure you want to delete this Shopping list item?'

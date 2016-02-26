@@ -1,11 +1,3 @@
-{% block _shopping_list_list_of_shopping_lists_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " orders-sidebar mt3-md" }) %}
-    <div{{ block('block_attributes') }}>
-        SHOPPING LISTS
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block _shopping_list_view_container_widget %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " container-fluid"}) %}
     <div{{ block('block_attributes') }}>
@@ -25,38 +17,36 @@
 {% block _shopping_list_title_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
 
-    {% if shoppingList %}
-        <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
-            module: 'oroform/js/app/components/inline-editable-view-component',
-            options: {
-                frontend_type: 'title',
-                value: shoppingList.label,
-                fieldName: 'label',
-                insertEditorMethod: 'after',
-                metadata: {
-                    inline_editing: {
-                        enable: resource_granted('orob2b_shopping_list_frontend_update'),
-                        save_api_accessor: {
-                            route: 'orob2b_api_frontend_patch_entity_data',
-                            http_method: 'PATCH',
-                            default_route_parameters: {
-                                className: oro_class_name(shoppingList, true),
-                                id: shoppingList.id
-                            }
+    <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
+        module: 'oroform/js/app/components/inline-editable-view-component',
+        options: {
+            frontend_type: 'title',
+            value: shoppingList.label,
+            fieldName: 'label',
+            insertEditorMethod: 'after',
+            metadata: {
+                inline_editing: {
+                    enable: resource_granted('orob2b_shopping_list_frontend_update'),
+                    save_api_accessor: {
+                        route: 'orob2b_api_frontend_patch_entity_data',
+                        http_method: 'PATCH',
+                        default_route_parameters: {
+                            className: oro_class_name(shoppingList, true),
+                            id: shoppingList.id
                         }
-                    },
-                    view_options: {
-                        tooltip: 'orob2b.shoppinglist.label.edit.tooltip'|trans,
-                        additionalClass: 'cart__order-title'
                     }
+                },
+                view_options: {
+                    tooltip: 'orob2b.shoppinglist.label.edit.tooltip'|trans,
+                    additionalClass: 'cart__order-title'
                 }
             }
-        }) }}>
-            <h1 class="cart__order-title nmmt4-md">
-                <span>{{ shoppingList.label }}</span>
-            </h1>
-        </div>
-    {% endif %}
+        }
+    }) }}>
+        <h1 class="cart__order-title nmmt4-md">
+            <span>{{ shoppingList.label }}</span>
+        </h1>
+    </div>
 {% endblock %}
 
 {% block _shopping_list_top_actions_widget %}
@@ -69,63 +59,63 @@
 {% block _shopping_list_options_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
 
-    {% if shoppingList %}
-        {% set notes = shoppingList.notes %}
-        {% set hasRecords = notes is not empty %}
-        {% set attr = attr|merge({ class: attr.class|default('') ~ " oro-more-info-toggler" }) %}
-        <div{{ block('block_attributes') }}>
-            <i class="icon-play {% if hasRecords %}expanded{% endif %}"></i>
-            <a href="#" data-more-info-expand tabindex="0">{{ 'orob2b.frontend.shoppinglist.view.view_options.label'|trans }}</a>
-            <div class="oro-more-info-toggler__container" data-more-info {% if hasRecords %}style="display: block"{% endif %}>
+    {% set notes = shoppingList.notes %}
+    {% set hasRecords = notes is not empty %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " oro-more-info-toggler" }) %}
+    <div{{ block('block_attributes') }}>
+        <i class="icon-play {% if hasRecords %}expanded{% endif %}"></i>
+        <a href="#" data-more-info-expand tabindex="0">{{ 'orob2b.frontend.shoppinglist.view.view_options.label'|trans }}</a>
+        <div class="oro-more-info-toggler__container" data-more-info {% if hasRecords %}style="display: block"{% endif %}>
 
-                <div class="ml1-md mmt5-md" {{ UI.renderPageComponentAttributes({
-                    module: 'orob2bfrontend/js/app/components/switchable-editable-view-component',
-                    options: {
-                        frontend_type: 'multilineText',
-                        value: shoppingList.notes,
-                        fieldName: 'notes',
-                        insertEditorMethod: 'after',
-                        metadata: {
-                            inline_editing: {
-                                enable: resource_granted('orob2b_shopping_list_frontend_update'),
-                                save_api_accessor: {
-                                    route: 'orob2b_api_frontend_patch_entity_data',
-                                    http_method: 'PATCH',
-                                    default_route_parameters: {
-                                        className: oro_class_name(shoppingList, true),
-                                        id: shoppingList.id
-                                    }
+            <div class="ml1-md mmt5-md" {{ UI.renderPageComponentAttributes({
+                module: 'orob2bfrontend/js/app/components/switchable-editable-view-component',
+                options: {
+                    frontend_type: 'multilineText',
+                    value: shoppingList.notes,
+                    fieldName: 'notes',
+                    insertEditorMethod: 'after',
+                    metadata: {
+                        inline_editing: {
+                            enable: resource_granted('orob2b_shopping_list_frontend_update'),
+                            save_api_accessor: {
+                                route: 'orob2b_api_frontend_patch_entity_data',
+                                http_method: 'PATCH',
+                                default_route_parameters: {
+                                    className: oro_class_name(shoppingList, true),
+                                    id: shoppingList.id
                                 }
                             }
                         }
                     }
-                }) }}>
-                    <label for="addANote" data-checkbox
-                        class="checkbox_custom checkbox_custom_blue mml5-md {% if notes is not empty %}checked{% endif %}">
-                        <input type="checkbox" name="addANote" id="addANote" data-role="start-editing"
-                            {% if notes is not empty %}checked="checked"{% endif %}>
-                        <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
-                        <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
-                        <span class="checkbox_custom__text fs13">{{ 'orob2b.frontend.shoppinglist.view.add_note.label'|trans }}</span>
-                    </label>
-                    <div class="form-input" data-role="editor">
-                        <textarea placeholder="{{ 'orob2b.frontend.shoppinglist.view.add_note.placeholder'|trans }}"
-                            rows="3" cols="30" name="shopping_list_notes" disabled="disabled"
-                            class="input input_sm input_block">{{ notes }}</textarea>
-                    </div>
+                }
+            }) }}>
+                <label for="addANote" data-checkbox
+                    class="checkbox_custom checkbox_custom_blue mml5-md {% if notes is not empty %}checked{% endif %}">
+                    <input type="checkbox" name="addANote" id="addANote" data-role="start-editing"
+                        {% if notes is not empty %}checked="checked"{% endif %}>
+                    <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
+                    <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
+                    <span class="checkbox_custom__text fs13">{{ 'orob2b.frontend.shoppinglist.view.add_note.label'|trans }}</span>
+                </label>
+                <div class="form-input" data-role="editor">
+                    <textarea placeholder="{{ 'orob2b.frontend.shoppinglist.view.add_note.placeholder'|trans }}"
+                        rows="3" cols="30" name="shopping_list_notes" disabled="disabled"
+                        class="input input_sm input_block">{{ notes }}</textarea>
                 </div>
             </div>
         </div>
-    {% endif %}
+    </div>
 {% endblock %}
 
-{% block _shopping_list_line_items_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+{% block _shopping_list_line_items_list_widget %}
+    {% if shoppingList.lineItems is not empty %}
+        {% import 'OroUIBundle::macros.html.twig' as UI %}
 
-    {% if shoppingList %}
         {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-table cart-table_b-bordered cart-table__verticalp-enlarged mt1-md"}) %}
-        {% if shoppingList.lineItems is not empty %}
-        <div{{ block('block_attributes') }}>
+        <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
+            module: 'orob2bfrontend/js/app/components/empty-items-component',
+            options: {eventName: 'frontend:item:delete'}
+        }) }} data-items-selector=".line_item" data-empty-block-selector=".cart-list_empty">
             <table class="oro-grid-table oro-grid-table_b-bordered oro-grid-table__verticalp-enlarged mt1-md">
                 <thead>
                 <tr>
@@ -178,7 +168,7 @@
                             </div>
                         </td>
                         <td class="va-t_md">
-                            <div class="green3">{{ lineItem.product.InventoryStatus }}</div>
+                            <div>{{ lineItem.product.InventoryStatus }}</div>
                         </td>
                         <td class="va-t_md" data-container="quantity">
                             <form action="#">
@@ -269,16 +259,20 @@
             </table>
             {{ block_widget(block) }}
         </div>
-        {% else %}
-        <!-- START EMPTY CART -->
-        <div class="cart-list_empty">
-              <span class="badge badge_orange badge_xlg badge_circle">
-                <i class="icon-basket"></i>
-              </span>
-            <span class="fs24 va-m_md">{{ 'orob2b.frontend.shoppinglist.view.empty'|trans }}</span>
-        </div>
-        {% endif %}
     {% endif %}
+{% endblock %}
+
+{% block _shopping_list_line_items_empty_widget %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-list_empty"}) %}
+    {% if shoppingList.lineItems is not empty %}
+        {% set attr = attr|merge({ class: attr.class ~ " hidden"}) %}
+    {% endif %}
+    <div {{ block('block_attributes') }}>
+          <span class="badge badge_orange badge_xlg badge_circle">
+            <i class="icon-basket"></i>
+          </span>
+        <span class="fs24 va-m_md">{{ 'orob2b.frontend.shoppinglist.view.empty'|trans }}</span>
+    </div>
 {% endblock %}
 
 {% block _shopping_list_checkout_container_widget %}
@@ -297,7 +291,6 @@
 
 {% block _shopping_list_delete_button_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {% if shoppingList %}
         <button class="btn btn_default theme-btn_sm btn-dark fs15 mr1-md" {{ UI.renderPageComponentAttributes({
             module: 'orob2bfrontend/js/app/components/delete-item-component',
             options: {
@@ -311,6 +304,5 @@
         }) }} >
             <i class="fa icon-trash mmr5-md"></i> {{ 'orob2b.frontend.shoppinglist.btn.delete'|trans }}
         </button>
-    {% endif %}
 {% endblock %}
 

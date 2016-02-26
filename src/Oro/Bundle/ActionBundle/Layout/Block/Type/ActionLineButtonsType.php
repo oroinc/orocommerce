@@ -69,6 +69,9 @@ class ActionLineButtonsType extends AbstractType
      */
     public function buildView(BlockView $view, BlockInterface $block, array $options)
     {
+        if (array_key_exists('visible', $options) && !$options['visible']) {
+            return;
+        }
         if (empty($options['entity']) && empty($options['entityClass'])) {
             throw new LogicException(
                 'entity or entityClass must be provided'
