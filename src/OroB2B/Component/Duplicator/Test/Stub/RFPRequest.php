@@ -42,7 +42,7 @@ class RFPRequest
     }
 
     /**
-     * @return mixed
+     * @return id
      */
     public function getId()
     {
@@ -50,7 +50,7 @@ class RFPRequest
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getEmail()
     {
@@ -58,7 +58,7 @@ class RFPRequest
     }
 
     /**
-     * @param mixed $email
+     * @param string $email
      */
     public function setEmail($email)
     {
@@ -82,7 +82,7 @@ class RFPRequest
     }
 
     /**
-     * @return ArrayCollection|RequestProduct
+     * @return ArrayCollection|RequestProduct[]
      */
     public function getRequestProducts()
     {
@@ -98,7 +98,7 @@ class RFPRequest
     }
 
     /**
-     * @return mixed
+     * @return \DateTime
      */
     public function getCreatedAt()
     {
@@ -106,9 +106,9 @@ class RFPRequest
     }
 
     /**
-     * @param mixed $createdAt
+     * @param \DateTime $createdAt
      */
-    public function setCreatedAt($createdAt)
+    public function setCreatedAt(\DateTime $createdAt)
     {
         $this->createdAt = $createdAt;
     }
