@@ -151,7 +151,7 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
         $currencies = $request->get(self::PRICE_LIST_CURRENCY_KEY);
 
         if (null === $currencies && $this->session->has(self::PRICE_LIST_CURRENCY_KEY)) {
-            $currencies = (array)$this->session->get(self::PRICE_LIST_CURRENCY_KEY);
+            $currencies = $this->session->get(self::PRICE_LIST_CURRENCY_KEY);
         }
 
         if (null === $currencies || filter_var($currencies, FILTER_VALIDATE_BOOLEAN)) {
@@ -159,6 +159,10 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
         }
 
         if ($this->frontendHelper->isFrontendRequest()) {
+            $filter = filter_var($currencies, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+            if ($filter === false) {
+                $currencies = $priceListCurrencies;
+            }
             $currencies = array_slice((array)$currencies, 0, 1);
         }
 

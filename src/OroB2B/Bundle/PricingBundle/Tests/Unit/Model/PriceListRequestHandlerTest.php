@@ -349,7 +349,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
     public function getPriceListCurrenciesDataProvider()
     {
         return [
-            'all currencies on initial state' => ['requestParam' => null,['USD', 'GBP', 'EUR'],['EUR', 'GBP', 'USD']],
+            'all currencies on initial state' => [null,['USD', 'GBP', 'EUR'],['EUR', 'GBP', 'USD']],
             'true returns all price list currencies with cast' => ['true', ['USD', 'EUR'], ['EUR', 'USD']],
             'true returns all price list currencies' => [true, ['USD', 'EUR'], ['EUR', 'USD']],
             'false returns nothings with cast' => [false, ['USD', 'EUR'], []],
@@ -360,7 +360,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider getPriceListCurrenciesDataProvider
+     * @dataProvider getPriceListCurrenciesFrontendDataProvider
      *
      * @param string $paramValue
      * @param array $currencies
@@ -378,8 +378,34 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
         $this->testGetPriceListCurrenciesWithRequest($paramValue, $currencies, array_slice($expected, 0, 1));
     }
 
-    public function testGetPriceListCurrenciesWithSessionParam()
+    /**
+     * @return array
+     */
+    public function getPriceListCurrenciesFrontendDataProvider()
     {
+        return [
+            'all currencies on initial state' => [null,['USD', 'GBP', 'EUR'], ['EUR']],
+            'true returns all price list currencies with cast' => ['true', ['USD', 'EUR'], ['EUR']],
+            'true returns all price list currencies' => [true, ['USD', 'EUR'], ['EUR']],
+            'false returns nothings with cast' => [false, ['USD', 'EUR'], ['EUR']],
+            'false returns nothings' => ['false', ['USD', 'EUR'], ['EUR']],
+            'submit valid currency' => ['GBP', ['USD', 'GBP', 'EUR'], ['GBP']],
+            'submit invalid currency' => [['USD', 'UAH'], ['USD', 'EUR'], ['USD']],
+        ];
+    }
+
+    /**
+     * @dataProvider getPriceListCurrenciesWithSessionDataProvider
+     *
+     * @param mixed $sessionParam
+     * @param array $currencies
+     * @param array $expected
+     */
+    public function testGetPriceListCurrenciesWithSessionParam(
+        $sessionParam = null,
+        array $currencies = [],
+        array $expected = []
+    ) {
         $this->session->expects($this->once())
             ->method('has')
             ->with(PriceListRequestHandler::PRICE_LIST_CURRENCY_KEY)
@@ -388,12 +414,28 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
         $this->session->expects($this->once())
             ->method('get')
             ->with(PriceListRequestHandler::PRICE_LIST_CURRENCY_KEY)
-            ->willReturn('USD');
+            ->willReturn($sessionParam);
 
         $this->assertEquals(
-            ['USD'],
-            $this->createHandler()->getPriceListSelectedCurrencies($this->getPriceList(42, ['USD', 'EUR']))
+            $expected,
+            $this->createHandler()->getPriceListSelectedCurrencies($this->getPriceList(42, $currencies))
         );
+    }
+
+    /**
+     * @return array
+     */
+    public function getPriceListCurrenciesWithSessionDataProvider()
+    {
+        return [
+            'all currencies on initial state' => [null, ['USD', 'GBP', 'EUR'],['EUR', 'GBP', 'USD']],
+            'true returns all price list currencies with cast' => ['true', ['USD', 'EUR'], ['EUR', 'USD']],
+            'true returns all price list currencies' => [true, ['USD', 'EUR'], ['EUR', 'USD']],
+            'false returns nothings with cast' => [false, ['USD', 'EUR'], []],
+            'false returns nothings' => ['false', ['USD', 'EUR'], []],
+            'submit valid currency' => ['GBP', ['USD', 'GBP', 'EUR'], ['GBP']],
+            'submit invalid currency' => [['USD', 'UAH'], ['USD', 'EUR'], ['USD']],
+        ];
     }
 
     public function testGetShowTierPricesWithoutRequest()
