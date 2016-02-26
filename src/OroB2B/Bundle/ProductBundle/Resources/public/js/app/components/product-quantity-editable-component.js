@@ -82,11 +82,17 @@ define(function(require) {
                 unit: options._sourceElement.find(options.elements.unit)
             };
 
-            this.elements.quantity.prop('disabled', false);
             this.elements.unit.prop('disabled', false);
+            if (!this.elements.unit.find(':selected').is(':disabled')) {
+                this.enableQuantity();
+            }
 
             this.initValidator(options);
             this.initListeners();
+        },
+
+        enableQuantity: function() {
+            this.elements.quantity.prop('disabled', false);
         },
 
         initValidator: function(options) {
@@ -134,6 +140,7 @@ define(function(require) {
             }
 
             var value = this.getValue();
+            this.enableQuantity();
             this.model.set(this.quantityFieldName, value.quantity);
             this.model.set(this.unitFieldName, value.unit);
 

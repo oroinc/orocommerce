@@ -110,6 +110,8 @@
 {% block _shopping_list_line_items_list_widget %}
     {% if shoppingList.lineItems is not empty %}
         {% import 'OroUIBundle::macros.html.twig' as UI %}
+        {# TODO: Pass default currency from provider. BB-2218 #}
+        {% set defaultCurrency = 'USD' %}
 
         {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-table cart-table_b-bordered cart-table__verticalp-enlarged mt1-md"}) %}
         <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
@@ -127,13 +129,15 @@
                 </tr>
                 </thead>
                 {% for lineItem in shoppingList.lineItems %}
+                {% set productPrice = lineItem is defined and productsPrices[lineItem.product.id] is not empty ? productsPrices[lineItem.product.id] : null %}
+                {% set currency = productPrice ? productPrice.currency : defaultCurrency %}
                 <tbody class="line_item">
                     <tr {{ UI.renderPageComponentAttributes({
                         module: 'oroui/js/app/components/view-component',
                         options: {
                             view: 'orob2bshoppinglist/js/app/views/line-item-view',
                             product: lineItem.product.id,
-                            currency: productsPrices[lineItem.product.id].currency,
+                            currency: currency,
                             matchedPricesRoute: 'orob2b_pricing_frontend_matching_price',
                             priceContainer: '[data-container="matched-price"]',
                             quantityContainer: '[data-container="quantity"]',
@@ -182,8 +186,11 @@
                                 <div class="product__select inline va-m_md">
                                     <select data-chosen-selectbox class="input input_block input_sm" name="product_unit" required>
                                         {% for unit in productsUnits[lineItem.product.id] %}
-                                        <option value="{{ unit }}" {% if unit == lineItem.unit %}selected="selected"{% endif %}>{{ unit|orob2b_format_product_unit_label}}</option>
+                                        <option value="{{ unit }}" {% if unit == lineItem.unit.code %}selected="selected"{% endif %}>{{ unit|orob2b_format_product_unit_label}}</option>
                                         {% endfor %}
+                                        {% if lineItem.unit.code not in productsUnits[lineItem.product.id] %}
+                                            <option value="{{ lineItem.unit.code }}" selected="selected" disabled="disabled">{{ lineItem.unit.code|orob2b_format_product_unit_label}}</option>
+                                        {% endif %}
                                     </select>
                                 </div>
                             </form>
@@ -193,7 +200,7 @@
                                 <tbody>
                                 <tr>
                                     <td>{{ 'orob2b.frontend.shoppinglist.view.your_price.label'|trans }}</td>
-                                    <td class="text-right" data-container="matched-price">{{ productsPrices[lineItem.product.id].value|oro_format_currency({'currency': productsPrices[lineItem.product.id].currency}) }}</td>
+                                    <td class="text-right" data-container="matched-price">{% if productPrice %}{{ productPrice.value|oro_format_currency({'currency': currency}) }}{% else %}{{ 'oro.ui.empty'|trans }}{% endif %}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -305,4 +312,3 @@
             <i class="fa icon-trash mmr5-md"></i> {{ 'orob2b.frontend.shoppinglist.btn.delete'|trans }}
         </button>
 {% endblock %}
-
