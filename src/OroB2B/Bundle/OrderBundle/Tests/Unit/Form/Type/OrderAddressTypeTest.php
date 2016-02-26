@@ -2,12 +2,9 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\ConstraintViolation;
 
-use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Oro\Bundle\AddressBundle\Entity\AddressType as AddressTypeEntity;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
@@ -21,7 +18,7 @@ use OroB2B\Bundle\OrderBundle\Form\Type\OrderAddressType;
 use OroB2B\Bundle\OrderBundle\Model\OrderAddressManager;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 
-class OrderAddressTypeTest extends AddressFormExtensionTestCase
+class OrderAddressTypeTest extends AbstractAddressTypeTest
 {
     /** @var OrderAddressType */
     protected $formType;
@@ -118,7 +115,21 @@ class OrderAddressTypeTest extends AddressFormExtensionTestCase
         $this->orderAddressManager->expects($this->once())->method('getGroupedAddresses')->willReturn([]);
         $this->orderAddressSecurityProvider->expects($this->once())->method('isManualEditGranted')->willReturn(true);
 
-        $this->checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors);
+        $this->orderAddressManager->expects($this->any())->method('updateFromAbstract')
+            ->will(
+                $this->returnCallback(
+                    function (AccountAddress $address = null, OrderAddress $orderAddress = null) {
+                        if (!$orderAddress) {
+                            $orderAddress = new OrderAddress();
+                        }
+                        return $orderAddress;
+                    }
+                )
+            );
+
+        $formOptions =  ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'order' => new Order()];
+
+        $this->checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors, $formOptions);
     }
 
     /**
@@ -252,7 +263,21 @@ class OrderAddressTypeTest extends AddressFormExtensionTestCase
 
         $this->orderAddressSecurityProvider->expects($this->once())->method('isManualEditGranted')->willReturn(false);
 
-        $this->checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors);
+        $this->orderAddressManager->expects($this->any())->method('updateFromAbstract')
+            ->will(
+                $this->returnCallback(
+                    function (AccountAddress $address = null, OrderAddress $orderAddress = null) {
+                        if (!$orderAddress) {
+                            $orderAddress = new OrderAddress();
+                        }
+                        return $orderAddress;
+                    }
+                )
+            );
+
+        $formOptions =  ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'order' => new Order()];
+
+        $this->checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors, $formOptions);
     }
 
     /**
@@ -301,70 +326,6 @@ class OrderAddressTypeTest extends AddressFormExtensionTestCase
         ];
     }
 
-    /**
-     * @param bool $isValid
-     * @param array $submittedData
-     * @param mixed $expectedData
-     * @param mixed $defaultData
-     * @param array $formErrors
-     */
-    protected function checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors)
-    {
-        $this->orderAddressManager->expects($this->any())->method('updateFromAbstract')
-            ->will(
-                $this->returnCallback(
-                    function (AccountAddress $address = null, OrderAddress $orderAddress = null) {
-                        if (!$orderAddress) {
-                            $orderAddress = new OrderAddress();
-                        }
-                        return $orderAddress;
-                    }
-                )
-            );
-
-        $form = $this->factory->create(
-            $this->formType,
-            $defaultData,
-            ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'order' => new Order()]
-        );
-        $this->assertEquals($defaultData, $form->getData());
-
-        $form->submit($submittedData);
-
-        $this->assertEquals($isValid, $form->isValid());
-
-        if ($form->getErrors(true)->count()) {
-            $this->assertNotEmpty($formErrors);
-        }
-
-        /** @var FormError $error */
-        foreach ($form->getErrors(true) as $error) {
-            $this->assertArrayHasKey($error->getOrigin()->getName(), $formErrors);
-
-            /** @var ConstraintViolation $violation */
-            $violation = $error->getCause();
-            $this->assertEquals(
-                $formErrors[$error->getOrigin()->getName()],
-                $error->getMessage(),
-                sprintf('Failed path: %s', $violation->getPropertyPath())
-            );
-        }
-        $this->assertEquals($expectedData, $form->getData());
-
-        $this->assertTrue($form->has('accountAddress'));
-        $this->assertTrue($form->get('accountAddress')->getConfig()->hasOption('attr'));
-        $this->assertArrayHasKey('data-addresses', $form->get('accountAddress')->getConfig()->getOption('attr'));
-        $this->assertInternalType(
-            'string',
-            $form->get('accountAddress')->getConfig()->getOption('attr')['data-addresses']
-        );
-        $this->assertInternalType(
-            'array',
-            json_decode($form->get('accountAddress')->getConfig()->getOption('attr')['data-addresses'], true)
-        );
-        $this->assertArrayHasKey('data-default', $form->get('accountAddress')->getConfig()->getOption('attr'));
-    }
-
     public function testFinishView()
     {
         $view = new FormView();
@@ -393,13 +354,5 @@ class OrderAddressTypeTest extends AddressFormExtensionTestCase
 
         $this->assertFalse($view->offsetGet('accountAddress')->vars['disabled']);
         $this->assertFalse($view->offsetGet('accountAddress')->vars['required']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getExtensions()
-    {
-        return array_merge([$this->getValidatorExtension(true)], parent::getExtensions());
     }
 }
