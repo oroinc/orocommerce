@@ -6,14 +6,14 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\DataProviderInterface;
+use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAction;
 
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 
-class ShoppingListFormProvider implements DataProviderInterface
+class ShoppingListFormProvider extends AbstractServerRenderDataProvider
 {
     /**
      * @var FormAccessor[]
@@ -33,18 +33,9 @@ class ShoppingListFormProvider implements DataProviderInterface
     /**
      * @param FormFactoryInterface $formFactory
      */
-    public function __construct(
-        FormFactoryInterface $formFactory
-    ) {
-        $this->formFactory = $formFactory;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getIdentifier()
+    public function __construct(FormFactoryInterface $formFactory)
     {
-        return 'orob2b_shopping_list_shopping_list_form';
+        $this->formFactory = $formFactory;
     }
 
     /**

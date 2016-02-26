@@ -26,11 +26,6 @@ class ShoppingListFormProviderTest extends WebTestCase
             ->get('orob2b_shopping_list.layout.data_provider.shopping_list_form');
     }
 
-    public function testGetIdentifier()
-    {
-        $this->assertEquals('orob2b_shopping_list_shopping_list_form', $this->dataProvider->getIdentifier());
-    }
-
     public function testGetData()
     {
         $shoppingList = new ShoppingList();

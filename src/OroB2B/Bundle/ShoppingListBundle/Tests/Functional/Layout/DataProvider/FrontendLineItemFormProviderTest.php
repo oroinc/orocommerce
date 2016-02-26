@@ -26,11 +26,6 @@ class FrontendLineItemFormProviderTest extends WebTestCase
             ->get('orob2b_shopping_list.layout.data_provider.frontend_line_item_form');
     }
 
-    public function testGetIdentifier()
-    {
-        $this->assertEquals('orob2b_shopping_list_frontend_line_item_form', $this->dataProvider->getIdentifier());
-    }
-
     public function testGetData()
     {
         $product = new Product();

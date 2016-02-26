@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Doctrine\Common\Collections\Criteria;
 
 use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\DataProviderInterface;
+use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
@@ -15,7 +15,7 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 
-class AccountUserShoppingListsProvider implements DataProviderInterface
+class AccountUserShoppingListsProvider extends AbstractServerRenderDataProvider
 {
     const DATA_SORT_BY_UPDATED = 'updated';
 
@@ -65,14 +65,6 @@ class AccountUserShoppingListsProvider implements DataProviderInterface
     public function setShoppingListClass($shoppingListClass)
     {
         $this->shoppingListClass = $shoppingListClass;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getIdentifier()
-    {
-        return 'orob2b_shopping_list_account_user_shopping_lists';
     }
 
     /**

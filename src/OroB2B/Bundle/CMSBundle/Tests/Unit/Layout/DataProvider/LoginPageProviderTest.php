@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Tests\Unit\Provider;
+namespace OroB2B\Bundle\CMSBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
@@ -8,13 +8,13 @@ use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Component\Layout\ContextInterface;
 
 use OroB2B\Bundle\CMSBundle\Entity\LoginPage;
-use OroB2B\Bundle\CMSBundle\Provider\LoginPageDataProvider;
+use OroB2B\Bundle\CMSBundle\Layout\DataProvider\LoginPageProvider;
 
-class LoginPageDataProviderTest extends \PHPUnit_Framework_TestCase
+class LoginPageProviderTest extends \PHPUnit_Framework_TestCase
 {
     const LOGIN_PAGE_CLASS = 'OroB2B\Bundle\CMSBundle\Entity\LoginPage';
     /**
-     * @var LoginPageDataProvider
+     * @var LoginPageProvider
      */
     protected $provider;
 
@@ -26,13 +26,8 @@ class LoginPageDataProviderTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $this->provider = new LoginPageDataProvider($this->managerRegistry);
+        $this->provider = new LoginPageProvider($this->managerRegistry);
         $this->provider->setLoginPageClass(self::LOGIN_PAGE_CLASS);
-    }
-
-    public function testGetIdentifier()
-    {
-        $this->assertEquals('orob2b_cms_login_page', $this->provider->getIdentifier());
     }
 
     public function testGetData()

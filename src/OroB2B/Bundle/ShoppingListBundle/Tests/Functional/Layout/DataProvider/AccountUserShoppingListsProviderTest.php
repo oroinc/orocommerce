@@ -43,11 +43,6 @@ class AccountUserShoppingListsProviderTest extends WebTestCase
             ->get('orob2b_shopping_list.layout.data_provider.account_user_shopping_lists');
     }
 
-    public function testGetIdentifier()
-    {
-        $this->assertEquals('orob2b_shopping_list_account_user_shopping_lists', $this->dataProvider->getIdentifier());
-    }
-
     public function testGetData()
     {
         $actual = $this->dataProvider->getData($this->context);
