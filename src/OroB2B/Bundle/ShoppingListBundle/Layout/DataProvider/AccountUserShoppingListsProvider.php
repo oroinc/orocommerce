@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Provider;
+namespace OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider;
 
 use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\DataProviderInterface;
+use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 
-class AccountUserShoppingListsProvider implements DataProviderInterface
+class AccountUserShoppingListsProvider extends AbstractServerRenderDataProvider
 {
     /**
      * @var FormAccessor
@@ -50,14 +50,6 @@ class AccountUserShoppingListsProvider implements DataProviderInterface
     public function setShoppingListClass($shoppingListClass)
     {
         $this->shoppingListClass = $shoppingListClass;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getIdentifier()
-    {
-        return 'orob2b_shopping_list_account_user_shopping_lists';
     }
 
     /**

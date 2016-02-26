@@ -1,20 +1,20 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Layout\Extension\Provider;
+namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Component\Layout\LayoutContext;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
-use OroB2B\Bundle\PricingBundle\Layout\Extension\Provider\FrontendProductPricesDataProvider;
+use OroB2B\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 
-class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
+class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
-    /** @var FrontendProductPricesDataProvider */
+    /** @var FrontendProductPricesProvider */
     protected $provider;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
@@ -34,18 +34,10 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->provider = new FrontendProductPricesDataProvider(
+        $this->provider = new FrontendProductPricesProvider(
             $this->doctrineHelper,
             $this->priceListRequestHandler
         );
-    }
-
-    /**
-     * @expectedException \BadMethodCallException
-     */
-    public function testGetIdentifier()
-    {
-        $this->provider->getIdentifier();
     }
 
     /**

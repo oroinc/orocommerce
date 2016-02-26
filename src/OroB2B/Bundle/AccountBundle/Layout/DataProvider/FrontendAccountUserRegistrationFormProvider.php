@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Provider;
+namespace OroB2B\Bundle\AccountBundle\Layout\DataProvider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\Test\FormInterface;
 
-use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\DataProviderInterface;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAction;
+use Oro\Component\Layout\ContextInterface;
+use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -21,7 +21,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
-class FrontendAccountUserRegistrationForm implements DataProviderInterface
+class FrontendAccountUserRegistrationFormProvider extends AbstractServerRenderDataProvider
 {
     /** @var FormAccessor */
     protected $data;
@@ -66,15 +66,7 @@ class FrontendAccountUserRegistrationForm implements DataProviderInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getIdentifier()
-    {
-        return 'orob2b_account_frontend_account_user_register';
-    }
-
-    /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getData(ContextInterface $context)
     {
@@ -87,11 +79,14 @@ class FrontendAccountUserRegistrationForm implements DataProviderInterface
         return $this->data;
     }
 
+    /**
+     * @return FormInterface
+     */
     public function getForm()
     {
         if (!$this->form) {
             $this->form = $this->formFactory
-                ->create(FrontendAccountUserRegistrationType::NAME, $this->getAccountUser());
+                ->create(FrontendAccountUserRegistrationType::NAME, $this->createAccountUser());
         }
         return $this->form;
     }
@@ -99,7 +94,7 @@ class FrontendAccountUserRegistrationForm implements DataProviderInterface
     /**
      * @return AccountUser
      */
-    protected function getAccountUser()
+    protected function createAccountUser()
     {
         $accountUser = new AccountUser();
 
