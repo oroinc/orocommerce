@@ -127,7 +127,7 @@ services:
         class: OroB2B\Component\Duplicator\Filter\FilterFactory
 
     oro_action.factory.duplicator_matcher_factory:
-        class: OroB2B\Component\Duplicator\Filter\MatcherFactory
+        class: OroB2B\Component\Duplicator\Matcher\MatcherFactory
 
     oro_action.duplicator_filter_type.set_null:
         class: %oro_action.duplicator_object_type.class%
@@ -169,7 +169,7 @@ services:
         tags:
             - { name: oro_action.duplicate.filter_type }
 
-    oro_action.duplicator_filter_type.keep:
+    oro_action.duplicator_filter_type.shallow_copy:
         class: %oro_action.duplicator_object_type.class%
         arguments:
             - shallowCopy
@@ -177,7 +177,7 @@ services:
         tags:
             - { name: oro_action.duplicate.filter_type }
 
-    oro_action.duplicator_filter_type.keep:
+    oro_action.duplicator_matcher_type.property:
         class: %oro_action.duplicator_object_type.class%
         arguments:
             - property
@@ -185,7 +185,7 @@ services:
         tags:
             - { name: oro_action.duplicate.matcher_type }
 
-    oro_action.duplicator_filter_type.keep:
+    oro_action.duplicator_mather_type.property_name:
         class: %oro_action.duplicator_object_type.class%
         arguments:
             - propertyName
@@ -193,7 +193,7 @@ services:
         tags:
             - { name: oro_action.duplicate.matcher_type }
 
-    oro_action.duplicator_filter_type.keep:
+    oro_action.duplicator_matcher_type.property_type:
         class: %oro_action.duplicator_object_type.class%
         arguments:
             - propertyType
