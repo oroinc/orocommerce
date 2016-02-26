@@ -8,6 +8,7 @@ orob2b:
         po_number.label: 'PO Number'
         owner.label: 'Owner'
         account.label: 'Account'
+        website.label: 'Website'
         account_user.label: 'Account User'
         organization.label: 'Organization'
         line_items.label: 'Line Items'

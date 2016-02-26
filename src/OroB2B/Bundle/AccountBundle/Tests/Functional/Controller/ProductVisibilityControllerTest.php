@@ -248,6 +248,7 @@ class ProductVisibilityControllerTest extends WebTestCase
             LoadWebsiteData::DEFAULT_WEBSITE_NAME,
             TestFixturesLoadWebsiteData::WEBSITE1,
             TestFixturesLoadWebsiteData::WEBSITE2,
+            TestFixturesLoadWebsiteData::WEBSITE3
         ];
         $counter = 0;
 

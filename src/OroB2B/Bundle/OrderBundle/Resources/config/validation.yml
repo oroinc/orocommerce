@@ -18,6 +18,8 @@ OroB2B\Bundle\OrderBundle\Entity\Order:
 #                type: float
         account:
             - NotBlank: ~
+        website:
+            - NotBlank: ~
         lineItems:
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Count:
                 min: 1
