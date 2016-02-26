@@ -1,22 +1,22 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Provider;
+namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Layout\DataProvider;
 
 use Oro\Component\Layout\LayoutContext;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType;
-use OroB2B\Bundle\AccountBundle\Provider\FrontendAccountUserRegistrationForm;
+use OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRegistrationFormProvider;
 
 /**
  * @dbIsolation
  */
-class FrontendAccountUserRegistrationFormTest extends WebTestCase
+class FrontendAccountUserRegistrationFormProviderTest extends WebTestCase
 {
     /** @var LayoutContext */
     protected $context;
 
-    /** @var FrontendAccountUserRegistrationForm */
+    /** @var FrontendAccountUserRegistrationFormProvider */
     protected $dataProvider;
 
     protected function setUp()
@@ -26,11 +26,6 @@ class FrontendAccountUserRegistrationFormTest extends WebTestCase
         $this->context = new LayoutContext();
         $this->dataProvider = $this->getContainer()
             ->get('orob2b_account.provider.frontend_account_user_registration_form');
-    }
-
-    public function testGetIdentifier()
-    {
-        $this->assertEquals('orob2b_account_frontend_account_user_register', $this->dataProvider->getIdentifier());
     }
 
     public function testGetData()
