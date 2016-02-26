@@ -55,6 +55,7 @@ class OrderController extends AbstractOrderController
     {
         return [
             'entity' => $order,
+            'totals' => $this->get('orob2b_order.provide.total_provider')->getTotal($order)
         ];
     }
 

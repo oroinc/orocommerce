@@ -46,6 +46,8 @@ class SubtotalsProvider
 
         $subtotal = $this->getSubtotal($order);
         $subtotals->set($subtotal->getType(), $subtotal);
+        $subtotals->set('tax', $subtotal);
+        $subtotals->set('shipping', $subtotal);
 
         return $subtotals;
     }

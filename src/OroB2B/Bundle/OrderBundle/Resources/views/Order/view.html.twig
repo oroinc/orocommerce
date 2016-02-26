@@ -91,8 +91,13 @@
         {% endset %}
 
         {% set orderTotals %}
-            {#{% for subtotal in subtotals %}#}
-            {{ entity.total }}
+            {% for item in totals['subtotals'] %}
+                <dt>{{ item['label'] }}</dt>
+                <dd>{{ item['value'] }}</dd>
+            {% endfor %}
+
+            <dt>{{ totals['total']['label'] }}</dt>
+            <dd>{{ totals['total']['value'] }}</dd>
         {% endset %}
 
         {% set dataBlocks = dataBlocks|merge([{

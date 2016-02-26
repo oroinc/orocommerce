@@ -38,7 +38,14 @@ abstract class AbstractAjaxOrderController extends Controller
             }
         )->toArray();
 
-        return new JsonResponse(['subtotals' => $subtotals]);
+        return new JsonResponse([
+            'subtotals' => $subtotals,
+            'total' => [
+                'label' => 'Total',
+                'amount' => $order->getTotal(),
+                'currency' => $order->getCurrency()
+            ]
+        ]);
     }
 
     /**
