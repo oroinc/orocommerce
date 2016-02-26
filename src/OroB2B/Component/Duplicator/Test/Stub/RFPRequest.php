@@ -42,7 +42,7 @@ class RFPRequest
     }
 
     /**
-     * @return id
+     * @return int
      */
     public function getId()
     {
@@ -90,11 +90,11 @@ class RFPRequest
     }
 
     /**
-     * @param RequestProduct $requestProducts
+     * @param RequestProduct $requestProduct
      */
-    public function addRequestProduct(RequestProduct $requestProducts)
+    public function addRequestProduct(RequestProduct $requestProduct)
     {
-        $this->requestProducts->add($requestProducts);
+        $this->requestProducts->add($requestProduct);
     }
 
     /**
@@ -103,13 +103,5 @@ class RFPRequest
     public function getCreatedAt()
     {
         return $this->createdAt;
-    }
-
-    /**
-     * @param \DateTime $createdAt
-     */
-    public function setCreatedAt(\DateTime $createdAt)
-    {
-        $this->createdAt = $createdAt;
     }
 }

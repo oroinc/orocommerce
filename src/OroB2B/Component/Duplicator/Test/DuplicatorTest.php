@@ -20,15 +20,11 @@ class DuplicatorTest extends \PHPUnit_Framework_TestCase
 
         $params = [
             [['collection'], ['propertyType', ['Doctrine\Common\Collections\Collection']]],
-
             [['setNull'], ['propertyName', ['id']]],
             [['keep'], ['propertyName', ['status']]],
             [['replaceValue', $now], ['property', ['OroB2B\Component\Duplicator\Test\Stub\RFPRequest', 'createdAt']]],
-
             [['setNull'], ['property', ['OroB2B\Component\Duplicator\Test\Stub\RequestProduct', 'id']]],
-            [['keep'], ['property', ['OroB2B\Component\Duplicator\Test\Stub\RequestProduct', 'product']]],
-
-            [['keep'], ['property', ['OroB2B\Component\Duplicator\Test\Stub\RequestProductItem', 'unit']]],
+            [['shallowCopy'], ['property', ['OroB2B\Component\Duplicator\Test\Stub\RequestProductItem', 'unit']]],
         ];
         $rfpRequest = $this->getRFP();
 
@@ -41,6 +37,7 @@ class DuplicatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($rfpRequestCopy->getId(), null);
         $this->assertEquals($rfpRequest->getEmail(), $rfpRequestCopy->getEmail());
         $this->assertSame($rfpRequest->getStatus(), $rfpRequestCopy->getStatus());
+        $this->assertSame($rfpRequest->getStatus()->getTitle(), $rfpRequestCopy->getStatus()->getTitle());
 
         $this->assertNotSame($rfpRequestCopy->getRequestProducts(), $rfpRequest->getRequestProducts());
         $this->assertEquals($rfpRequestCopy->getRequestProducts(), $rfpRequest->getRequestProducts());
@@ -51,6 +48,7 @@ class DuplicatorTest extends \PHPUnit_Framework_TestCase
         $product = $rfpRequest->getRequestProducts()->first();
         $this->assertNotSame($product, $productCopy);
         $this->assertEquals($product, $productCopy);
+        $this->assertEquals($product->getComment(), $productCopy->getComment());
 
         /** @var RequestProductItem $productItem */
         $productItem = $product->getProductItems()->first();
@@ -59,7 +57,10 @@ class DuplicatorTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($productItem, $productItemCopy);
         $this->assertNotSame($productItem, $productItemCopy);
-        $this->assertSame($productItem->getUnit(), $productItemCopy->getUnit());
+
+        $this->assertNotSame($productItem->getUnit(), $productItemCopy->getUnit());
+        $this->assertEquals($productItem->getUnit(), $productItemCopy->getUnit());
+        $this->assertEquals($productItem->getUnit()->getUnit(), $productItemCopy->getUnit()->getUnit());
     }
 
     /**

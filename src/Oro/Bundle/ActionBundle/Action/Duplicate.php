@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ActionBundle\Action;
 
 use Oro\Bundle\ActionBundle\Exception\InvalidParameterException;
-use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\WorkflowBundle\Model\Action\ActionInterface;
 use Oro\Bundle\WorkflowBundle\Model\Action\AbstractAction;
 
@@ -32,8 +31,7 @@ class Duplicate extends AbstractAction
     protected $options;
 
     /**
-     * @param ActionData $context
-     * @return mixed
+     * @{@inheritdoc}
      */
     protected function executeAction($context)
     {
