@@ -11,7 +11,7 @@ class SubtotalTest extends \PHPUnit_Framework_TestCase
     {
         $subtotal = new Subtotal();
 
-        $this->assertEquals(SubtotalsProvider::TYPE_SUBTOTAL, $subtotal->setType(SubtotalsProvider::TYPE_SUBTOTAL)->getType());
+        $this->assertEquals(SubtotalsProvider::TYPE, $subtotal->setType(SubtotalsProvider::TYPE)->getType());
         $this->assertEquals('Subtotal', $subtotal->setLabel('Subtotal')->getLabel());
         $this->assertEquals('USD', $subtotal->setCurrency('USD')->getCurrency());
         $this->assertEquals(999.99, $subtotal->setAmount(999.99)->getAmount());

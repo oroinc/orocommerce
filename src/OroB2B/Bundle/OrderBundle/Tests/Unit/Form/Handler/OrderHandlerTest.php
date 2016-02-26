@@ -79,7 +79,7 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $subtotal = new Subtotal();
         $amount = 42;
-        $subtotal->setType(SubtotalsProvider::TYPE_SUBTOTAL);
+        $subtotal->setType(SubtotalsProvider::TYPE);
         $subtotal->setAmount($amount);
 
         $this->subtotalsProvider->expects($this->any())
@@ -122,7 +122,7 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $subtotal = new Subtotal();
         $amount = 42;
-        $subtotal->setType(SubtotalsProvider::TYPE_SUBTOTAL);
+        $subtotal->setType(SubtotalsProvider::TYPE);
         $subtotal->setAmount($amount);
 
         $this->subtotalsProvider->expects($this->any())

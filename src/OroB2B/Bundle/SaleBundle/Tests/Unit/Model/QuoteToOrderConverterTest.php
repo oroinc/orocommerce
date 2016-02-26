@@ -302,7 +302,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
     protected function assertCalculateSubtotalsCalled($subtotalAmount)
     {
         $subtotal = new Subtotal();
-        $subtotal->setType(SubtotalsProvider::TYPE_SUBTOTAL)->setAmount($subtotalAmount);
+        $subtotal->setType(SubtotalsProvider::TYPE)->setAmount($subtotalAmount);
 
         $this->subtotalsProvider->expects($this->once())
             ->method('getSubtotals')

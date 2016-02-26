@@ -56,8 +56,8 @@ class SubtotalsProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->translator->expects($this->never())
             ->method('trans')
-            ->with(sprintf('orob2b.order.subtotals.%s', SubtotalsProvider::TYPE_SUBTOTAL))
-            ->willReturn(ucfirst(SubtotalsProvider::TYPE_SUBTOTAL));
+            ->with(sprintf('orob2b.order.subtotals.%s', SubtotalsProvider::TYPE))
+            ->willReturn(ucfirst(SubtotalsProvider::TYPE));
 
         $order = new Order();
         $perUnitLineItem = new OrderLineItem();

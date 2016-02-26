@@ -132,7 +132,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
         foreach ($this->orders as $order) {
             $subtotals = $subtotalsProvider->getSubtotals($order);
             /** @var Subtotal $subtotal */
-            $subtotal = $subtotals->get(SubtotalsProvider::TYPE_SUBTOTAL);
+            $subtotal = $subtotals->get(SubtotalsProvider::TYPE);
 
             $order->setSubtotal($subtotal->getAmount());
         }
