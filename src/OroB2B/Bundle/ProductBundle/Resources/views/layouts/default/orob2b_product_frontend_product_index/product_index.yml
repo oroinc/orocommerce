@@ -40,4 +40,4 @@ layout:
                 content:
                     product_index_page:
                         product_grid_container:
-                            product_grid:
+                            product_grid: ~

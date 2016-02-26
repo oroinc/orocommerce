@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\AbstractUser;
 
+use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -65,6 +66,11 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
     protected $em;
 
     /**
+     * @var FrontendHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $frontendHelper;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -94,6 +100,9 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
             ->with('OroB2B\Bundle\PricingBundle\Entity\PriceList')
             ->willReturn($this->em);
         $this->em->expects($this->any())->method('getRepository')->willReturn($this->repository);
+
+        $this->frontendHelper = $this->getMockBuilder('OroB2B\Bundle\FrontendBundle\Request\FrontendHelper')
+            ->disableOriginalConstructor()->getMock();
     }
 
     protected function tearDown()
@@ -105,7 +114,8 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
             $this->handler,
             $this->request,
             $this->requestStack,
-            $this->repository
+            $this->repository,
+            $this->frontendHelper
         );
     }
 
@@ -119,7 +129,8 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
             $this->session,
             $this->securityFacade,
             $this->priceListTreeHandler,
-            $this->registry
+            $this->registry,
+            $this->frontendHelper
         );
     }
 
@@ -302,6 +313,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
     public function testGetPriceListCurrenciesWithoutRequest()
     {
         $priceList = $this->getPriceList(2, ['USD']);
+        $this->requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')
             ->willReturn(null);
@@ -331,6 +343,41 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @return array
+     */
+    public function getPriceListCurrenciesDataProvider()
+    {
+        return [
+            'all currencies on initial state' => ['requestParam' => null,['USD', 'GBP', 'EUR'],['EUR', 'GBP', 'USD']],
+            'true returns all price list currencies with cast' => ['true', ['USD', 'EUR'], ['EUR', 'USD']],
+            'true returns all price list currencies' => [true, ['USD', 'EUR'], ['EUR', 'USD']],
+            'false returns nothings with cast' => [false, ['USD', 'EUR'], []],
+            'false returns nothings' => ['false', ['USD', 'EUR'], []],
+            'submit valid currency' => ['GBP', ['USD', 'GBP', 'EUR'], ['GBP']],
+            'submit invalid currency' => [['USD', 'UAH'], ['USD', 'EUR'], ['USD']],
+        ];
+    }
+
+    /**
+     * @dataProvider getPriceListCurrenciesDataProvider
+     *
+     * @param string $paramValue
+     * @param array $currencies
+     * @param array $expected
+     */
+    public function testGetPriceListCurrenciesFrontendWithRequest(
+        $paramValue,
+        array $currencies = [],
+        array $expected = []
+    ) {
+        $this->frontendHelper->expects($this->once())
+            ->method('isFrontendRequest')
+            ->willReturn(true);
+
+        $this->testGetPriceListCurrenciesWithRequest($paramValue, $currencies, array_slice($expected, 0, 1));
+    }
+
     public function testGetPriceListCurrenciesWithSessionParam()
     {
         $this->session->expects($this->once())
@@ -347,22 +394,6 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
             ['USD'],
             $this->createHandler()->getPriceListSelectedCurrencies($this->getPriceList(42, ['USD', 'EUR']))
         );
-    }
-
-    /**
-     * @return array
-     */
-    public function getPriceListCurrenciesDataProvider()
-    {
-        return [
-            'all currencies on initial state' => [null, ['USD', 'GBP', 'EUR'], ['EUR', 'GBP', 'USD']],
-            'true returns all price list currencies with cast' => ['true', ['USD', 'EUR'], ['EUR', 'USD']],
-            'true returns all price list currencies' => [true, ['USD', 'EUR'], ['EUR', 'USD']],
-            'false returns nothings with cast' => [false, ['USD', 'EUR'], []],
-            'false returns nothings' => ['false', ['USD', 'EUR'], []],
-            'submit valid currency' => ['GBP', ['USD', 'GBP', 'EUR'], ['GBP']],
-            'submit invalid currency' => [['USD', 'UAH'], ['USD', 'EUR'], ['USD']],
-        ];
     }
 
     public function testGetShowTierPricesWithoutRequest()

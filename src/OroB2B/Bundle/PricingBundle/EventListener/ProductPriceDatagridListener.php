@@ -20,4 +20,12 @@ class ProductPriceDatagridListener extends AbstractProductPriceDatagridListener
     {
         return 'OroB2BPricingBundle:Datagrid:Column/productPrice.html.twig';
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function providePriceList()
+    {
+        return $this->priceListRequestHandler->getPriceList();
+    }
 }

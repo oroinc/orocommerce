@@ -18,7 +18,6 @@ use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
 
 abstract class AbstractProductPriceDatagridListener
 {
@@ -48,11 +47,6 @@ abstract class AbstractProductPriceDatagridListener
     protected $productUnitClass;
 
     /**
-     * @var FrontendHelper
-     */
-    protected $frontendHelper;
-
-    /**
      * @var BasePriceList
      */
     protected $priceList;
@@ -61,18 +55,15 @@ abstract class AbstractProductPriceDatagridListener
      * @param TranslatorInterface $translator
      * @param DoctrineHelper $doctrineHelper
      * @param PriceListRequestHandler $priceListRequestHandler
-     * @param FrontendHelper $frontendHelper
      */
     public function __construct(
         TranslatorInterface $translator,
         DoctrineHelper $doctrineHelper,
-        PriceListRequestHandler $priceListRequestHandler,
-        FrontendHelper $frontendHelper
+        PriceListRequestHandler $priceListRequestHandler
     ) {
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
         $this->priceListRequestHandler = $priceListRequestHandler;
-        $this->frontendHelper = $frontendHelper;
     }
 
     /**
@@ -198,13 +189,15 @@ abstract class AbstractProductPriceDatagridListener
     protected function getPriceList()
     {
         if (!$this->priceList) {
-            $this->priceList = $this->frontendHelper->isFrontendRequest()
-                ? $this->priceListRequestHandler->getPriceListByAccount()
-                : $this->priceListRequestHandler->getPriceList();
+            $this->priceList = $this->providePriceList();
         }
-
         return $this->priceList;
     }
+
+    /**
+     * @return BasePriceList
+     */
+    abstract protected function providePriceList();
 
     /**
      * @return array

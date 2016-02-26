@@ -14,6 +14,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
+use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -66,24 +67,32 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
     protected $priceListRepository;
 
     /**
+     * @var FrontendHelper
+     */
+    protected $frontendHelper;
+
+    /**
      * @param RequestStack $requestStack
      * @param SessionInterface $session
      * @param SecurityFacade $securityFacade
      * @param PriceListTreeHandler $priceListTreeHandler
      * @param ManagerRegistry $registry
+     * @param FrontendHelper $frontendHelper
      */
     public function __construct(
         RequestStack $requestStack,
         SessionInterface $session,
         SecurityFacade $securityFacade,
         PriceListTreeHandler $priceListTreeHandler,
-        ManagerRegistry $registry
+        ManagerRegistry $registry,
+        FrontendHelper $frontendHelper
     ) {
         $this->requestStack = $requestStack;
         $this->session = $session;
         $this->securityFacade = $securityFacade;
         $this->priceListTreeHandler = $priceListTreeHandler;
         $this->registry = $registry;
+        $this->frontendHelper = $frontendHelper;
     }
 
     /**
@@ -146,12 +155,18 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
         }
 
         if (null === $currencies || filter_var($currencies, FILTER_VALIDATE_BOOLEAN)) {
-            return $priceListCurrencies;
+            $currencies = $priceListCurrencies;
+        }
+
+        if ($this->frontendHelper->isFrontendRequest()) {
+            $currencies = array_slice((array)$currencies, 0, 1);
         }
 
         $currencies = array_intersect($priceListCurrencies, (array)$currencies);
-
         sort($currencies);
+
+        $this->session->set(self::PRICE_LIST_CURRENCY_KEY, $currencies);
+
         return $currencies;
     }
 
