@@ -419,6 +419,8 @@ datagrid:
                     - partial order_item.{ id, currency, value }
                     - productNames.string as productName
                     - order_item.productSku
+                    - order_item.freeFormProduct
+                    - order_item.quantity
                     - order_item.shipBy
                     - order_item.comment
                 from:
