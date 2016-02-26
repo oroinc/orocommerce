@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -13,6 +15,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
 /**
  * @dbIsolation
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class ProductPriceRepositoryTest extends WebTestCase
 {
@@ -74,6 +77,73 @@ class ProductPriceRepositoryTest extends WebTestCase
                 'product.1',
                 'EUR',
                 ['bottle']
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider getProductsUnitsByPriceListDataProvider
+     * @param string $priceList
+     * @param array $products
+     * @param null|string $currency
+     * @param array $expected
+     */
+    public function testGetProductsUnitsByPriceList($priceList, array $products, $currency = null, array $expected = [])
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference($priceList);
+
+        $productsCollection = new ArrayCollection();
+
+        foreach ($products as $productName) {
+            /** @var Product $product */
+            $product = $this->getReference($productName);
+            $productsCollection->add($product);
+        }
+
+        $actual = $this->repository->getProductsUnitsByPriceList($priceList, $productsCollection, $currency);
+
+        $expectedData = [];
+        foreach ($expected as $productName => $units) {
+            $product = $this->getReference($productName);
+            $expectedData[$product->getId()] = $units;
+        }
+
+        $this->assertEquals($expectedData, $actual);
+    }
+
+    /**
+     * @return array
+     */
+    public function getProductsUnitsByPriceListDataProvider()
+    {
+        return [
+            [
+                'priceList' => 'price_list_1',
+                'products' => [
+                    'product.1',
+                    'product.2',
+                    'product.3'
+                ],
+                'currency' => 'USD',
+                'expected' => [
+                    'product.1' => ['liter'],
+                    'product.2' => ['liter'],
+                    'product.3' => ['liter'],
+                ]
+            ],
+            [
+                'priceList' => 'price_list_1',
+                'products' => [
+                    'product.1',
+                    'product.2',
+                    'product.3'
+                ],
+                'currency' => 'EUR',
+                'expected' => [
+                    'product.1' => ['bottle'],
+                    'product.2' => ['liter']
+                ]
             ]
         ];
     }
