@@ -16,10 +16,21 @@ orob2b.pricing:
         websites.label: Websites
         prices.label: Prices
         priority.label: Priority
+        merge_allowed.label: Merge Allowed
+        merge_allowed.yes.label: Yes
+        merge_allowed.no.label: No
 
         form:
             pricelist_required: Please select a price list first...
     quantity.label: Quantity
+    fallback:
+        label: Fallback
+        current_account_only.label: Current account only
+        account_group.label: Account group
+        current_account_group_only.label: Current account group only
+        website.label: Website
+        current_website_only.label: Current website only
+        config.label: Config
     unit.label: Unit
     price.label: Price
     add_product_price: Add Product Price
@@ -86,6 +97,7 @@ orob2b.pricing:
             default_price_lists.title: Default Price Lists
             price_rounding.title: Pricing Rounding
             pricing.title: Pricing
+            price_lists_update_mode.title: Price Lists Updating
         fields:
             price_lists.title: Price Lists
             precision.label: Pricing Precision
@@ -100,6 +112,12 @@ orob2b.pricing:
                     half_even.label: Half Even
                     half_down.label: Half Down
                     half_up.label: Half Up
+            price_lists_update_mode:
+                label: mode Price Lists Updating
+                tooltip: Use scheduled mode to process big data.
+                choices:
+                    scheduled.label: Scheduled
+                    real_time.label: Real Time
 
     lineitem:
         subtotal.label: 'Line items subtotal'
