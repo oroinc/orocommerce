@@ -24,7 +24,7 @@ class QuoteControllerTest extends WebTestCase
         $this->initClient();
 
         $this->loadFixtures([
-            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
+            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteAddressData',
         ]);
     }
 
@@ -279,7 +279,7 @@ class QuoteControllerTest extends WebTestCase
                         ],
                         [
                             'label' => 'orob2b.sale.quote.sections.shipping_address',
-                            'property' => 'shippingAddress',
+                            'property' => 'shippingAddress.street',
                         ]
                     ],
                 ],
@@ -311,7 +311,7 @@ class QuoteControllerTest extends WebTestCase
                         ],
                         [
                             'label' => 'orob2b.sale.quote.sections.shipping_address',
-                            'property' => 'shippingAddress',
+                            'property' => 'shippingAddress.street',
                         ]
                     ],
                 ],
