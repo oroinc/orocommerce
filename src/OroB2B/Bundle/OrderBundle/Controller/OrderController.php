@@ -38,9 +38,14 @@ class OrderController extends AbstractOrderController
      */
     public function viewAction(Order $order)
     {
+        $orderProviderTotals =  $this->get('orob2b_order.provider.totals');
+
         return [
             'entity' => $order,
-            'totals' => $this->get('orob2b_order.provide.total_provider')->getTotal($order),
+            'totals' => [
+                'total' => $orderProviderTotals->getTotal($order),
+                'subtotals' => $orderProviderTotals->getSubtotals($order)
+            ],
             /** @todo: https://magecore.atlassian.net/browse/BB-1752 */
             'taxes' => $this->get('orob2b_tax.manager.tax_manager')->getTax($order)
         ];
