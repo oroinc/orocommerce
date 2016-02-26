@@ -164,6 +164,9 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
      * @param \ArrayObject $expectedContext
      * @param bool $hasAccountGroup
      * @param bool $hasAccountGroupTaxCode
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function testOnContextEvent(
         $hasProduct,

@@ -46,10 +46,13 @@ class CountryMatcherTest extends AbstractMatcherTest
             $taxCodes[] = TaxCode::create($accountTaxCode, TaxCodeInterface::TYPE_ACCOUNT);
         }
 
+
         $taxCodes = TaxCodes::create($taxCodes);
 
+        $isCallFindByCountryAndTaxCode = $country && $taxCodes->isFullFilledTaxCode();
+
         $this->taxRuleRepository
-            ->expects($country ? $this->once() : $this->never())
+            ->expects($isCallFindByCountryAndTaxCode ? $this->once() : $this->never())
             ->method('findByCountryAndTaxCode')
             ->with($taxCodes, $country)
             ->willReturn($taxRules);

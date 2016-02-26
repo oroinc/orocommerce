@@ -41,7 +41,7 @@ class TaxCodes
             return;
         }
 
-        $this->codes->offsetSet($code->getType(), $code);
+        $this->codes->append($code);
     }
 
     /**
@@ -84,8 +84,9 @@ class TaxCodes
 
     public function isFullFilledTaxCode()
     {
+        $plainTypeCodes = $this->getPlainTypedCodes();
         foreach ($this->getAvailableTypes() as $availableType) {
-            if (!$this->codes->offsetExists($availableType)) {
+            if (!array_key_exists($availableType, $plainTypeCodes)) {
                 return false;
             }
         }
