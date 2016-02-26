@@ -45,6 +45,7 @@ orob2b:
             region_text.label: State
             street.label: Street
             street2.label: Street 2
+            from_external_source.label: Created from External Source
 
         orderlineitem:
             entity_label: 'Order Line Item'
