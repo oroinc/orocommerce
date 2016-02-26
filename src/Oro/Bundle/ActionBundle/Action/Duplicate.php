@@ -8,6 +8,7 @@ use Oro\Bundle\WorkflowBundle\Model\Action\ActionInterface;
 use Oro\Bundle\WorkflowBundle\Model\Action\AbstractAction;
 
 use OroB2B\Component\Duplicator\Duplicator;
+use OroB2B\src\Oro\Bundle\ActionBundle\Factory\DuplicatorFactory;
 
 class Duplicate extends AbstractAction
 {
@@ -21,10 +22,14 @@ class Duplicate extends AbstractAction
     protected $duplicator;
 
     /**
+     * @var DuplicatorFactory
+     */
+    protected $duplicatorFactory;
+
+    /**
      * @var array
      */
     protected $options;
-
 
     /**
      * @param ActionData $context
@@ -73,9 +78,17 @@ class Duplicate extends AbstractAction
     protected function getDuplicator()
     {
         if (!$this->duplicator) {
-            $this->duplicator = new Duplicator();
+            $this->duplicator = $this->duplicatorFactory->create();
         }
 
         return $this->duplicator;
+    }
+
+    /**
+     * @param DuplicatorFactory $duplicatorFactory
+     */
+    public function setDuplicatorFactory($duplicatorFactory)
+    {
+        $this->duplicatorFactory = $duplicatorFactory;
     }
 }

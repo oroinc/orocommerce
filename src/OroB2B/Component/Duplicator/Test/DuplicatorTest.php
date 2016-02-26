@@ -5,6 +5,7 @@ namespace OroB2B\Component\Duplicator\Test;
 use OroB2B\Component\Duplicator\Duplicator;
 use OroB2B\Component\Duplicator\Filter\FilterFactory;
 use OroB2B\Component\Duplicator\Matcher\MatcherFactory;
+use OroB2B\Component\Duplicator\ObjectType;
 use OroB2B\Component\Duplicator\Test\Stub\ProductUnit;
 use OroB2B\Component\Duplicator\Test\Stub\RequestProduct;
 use OroB2B\Component\Duplicator\Test\Stub\RequestProductItem;
@@ -18,6 +19,8 @@ class DuplicatorTest extends \PHPUnit_Framework_TestCase
         $now = new \DateTime();
 
         $params = [
+            [['collection'], ['propertyType', ['Doctrine\Common\Collections\Collection']]],
+
             [['setNull'], ['propertyName', ['id']]],
             [['keep'], ['propertyName', ['status']]],
             [['replaceValue', $now], ['property', ['OroB2B\Component\Duplicator\Test\Stub\RFPRequest', 'createdAt']]],
@@ -107,12 +110,12 @@ class DuplicatorTest extends \PHPUnit_Framework_TestCase
     protected function createFilterFactory()
     {
         $factory = new FilterFactory();
-        $factory->addObjectType('setNull', '\DeepCopy\Filter\SetNullFilter')
-            ->addObjectType('keep', '\DeepCopy\Filter\KeepFilter')
-            ->addObjectType('collection', '\DeepCopy\Filter\Doctrine\DoctrineCollectionFilter')
-            ->addObjectType('emptyCollection', '\DeepCopy\Filter\Doctrine\DoctrineEmptyCollectionFilter')
-            ->addObjectType('replaceValue', '\OroB2B\Component\Duplicator\Filter\ReplaceValueFilter')
-            ->addObjectType('shallowCopy', '\OroB2B\Component\Duplicator\Filter\ShallowCopyFilter');
+        $factory->addObjectType(new ObjectType('setNull', '\DeepCopy\Filter\SetNullFilter'))
+            ->addObjectType(new ObjectType('keep', '\DeepCopy\Filter\KeepFilter'))
+            ->addObjectType(new ObjectType('collection', '\DeepCopy\Filter\Doctrine\DoctrineCollectionFilter'))
+            ->addObjectType(new ObjectType('emptyCollection', '\DeepCopy\Filter\Doctrine\DoctrineEmptyCollectionFilter'))
+            ->addObjectType(new ObjectType('replaceValue', '\OroB2B\Component\Duplicator\Filter\ReplaceValueFilter'))
+            ->addObjectType(new ObjectType('shallowCopy', '\OroB2B\Component\Duplicator\Filter\ShallowCopyFilter'));
 
         return $factory;
     }
@@ -120,9 +123,9 @@ class DuplicatorTest extends \PHPUnit_Framework_TestCase
     protected function createMatcherFactory()
     {
         $factory = new MatcherFactory();
-        $factory->addObjectType('property', '\DeepCopy\Matcher\PropertyMatcher')
-            ->addObjectType('propertyName', '\DeepCopy\Matcher\PropertyNameMatcher')
-            ->addObjectType('propertyType', '\DeepCopy\Matcher\PropertyTypeMatcher');
+        $factory->addObjectType(new ObjectType('property', '\DeepCopy\Matcher\PropertyMatcher'))
+            ->addObjectType(new ObjectType('propertyName', '\DeepCopy\Matcher\PropertyNameMatcher'))
+            ->addObjectType(new ObjectType('propertyType', '\DeepCopy\Matcher\PropertyTypeMatcher'));
 
         return $factory;
     }

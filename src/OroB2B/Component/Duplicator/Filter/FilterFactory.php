@@ -5,9 +5,10 @@ namespace OroB2B\Component\Duplicator\Filter;
 use DeepCopy\Filter\Filter;
 
 use OroB2B\Component\Duplicator\AbstractFactory;
+use OroB2B\Component\Duplicator\ObjectType;
 
 /**
- * @method Filter create(string $keyword, array $constructorArgs)
+ * @method Filter create(ObjectType $objectType)
  */
 class FilterFactory extends AbstractFactory
 {

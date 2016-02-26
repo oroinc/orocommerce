@@ -5,9 +5,10 @@ namespace OroB2B\Component\Duplicator\Matcher;
 use DeepCopy\Matcher\Matcher;
 
 use OroB2B\Component\Duplicator\AbstractFactory;
+use OroB2B\Component\Duplicator\ObjectType;
 
 /**
- * @method Matcher create(string $keyword, array $constructorArgs)
+ * @method Matcher create(ObjectType $objectType)
  */
 class MatcherFactory extends AbstractFactory
 {

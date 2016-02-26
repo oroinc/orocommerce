@@ -2,7 +2,6 @@
 
 namespace OroB2B\Component\Duplicator;
 
-
 abstract class AbstractFactory
 {
     /**
@@ -11,12 +10,13 @@ abstract class AbstractFactory
     protected $availableObjectTypes = [];
 
     /**
-     * @param $keyword
-     * @param $className
+     * @param ObjectType $objectType
      * @return $this
      */
-    public function addObjectType($keyword, $className)
+    public function addObjectType(ObjectType $objectType)
     {
+        $className = $objectType->getClassName();
+        $keyword = $objectType->getKeyword();
         if (!is_a($className, $this->getSupportedClassName(), true)) {
             throw new \InvalidArgumentException('Class not supported');
         }

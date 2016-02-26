@@ -5,8 +5,6 @@ namespace OroB2B\Component\Duplicator;
 use DeepCopy\DeepCopy;
 use DeepCopy\Filter\Filter;
 use DeepCopy\Matcher\Matcher;
-use DeepCopy\TypeFilter\TypeFilter;
-use DeepCopy\TypeMatcher\TypeMatcher;
 
 use OroB2B\Component\Duplicator\Filter\FilterFactory;
 use OroB2B\Component\Duplicator\Matcher\MatcherFactory;
@@ -24,7 +22,7 @@ class Duplicator implements DuplicatorInterface
     protected $matcherFactory;
 
     /**
-     * @param $object
+     * @param object $object
      * @param array $settings
      * @return mixed
      */
@@ -39,12 +37,7 @@ class Duplicator implements DuplicatorInterface
             $matcherArguments = $option[1];
 
             $filter = $this->getFilter($filterOptions);
-            if ($filter instanceof TypeFilter) {
-                $matcher = new TypeMatcher($matcherArguments);
-                $deepCopy->addTypeFilter($this->getTypeFilter($filterOptions), $matcher);
-            } else {
-                $deepCopy->addFilter($filter, $this->getMatcher($matcherArguments));
-            }
+            $deepCopy->addFilter($filter, $this->getMatcher($matcherArguments));
         }
 
         return $deepCopy->copy($object);
@@ -52,7 +45,7 @@ class Duplicator implements DuplicatorInterface
 
     /**
      * @param $filterOptions
-     * @return Filter|TypeFilter
+     * @return Filter
      * @internal param array|string $filterName
      */
     protected function getFilter($filterOptions)

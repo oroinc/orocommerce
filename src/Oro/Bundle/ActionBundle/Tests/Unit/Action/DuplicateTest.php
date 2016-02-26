@@ -8,6 +8,8 @@ use Oro\Bundle\ActionBundle\Action\Duplicate;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\WorkflowBundle\Model\ContextAccessor;
 
+use OroB2B\src\Oro\Bundle\ActionBundle\Factory\DuplicatorFactory;
+
 class DuplicateTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -31,6 +33,7 @@ class DuplicateTest extends \PHPUnit_Framework_TestCase
         $this->action = new Duplicate($this->contextAccessor);
         $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
         $this->action->setDispatcher($this->eventDispatcher);
+        $this->action->setDuplicatorFactory($this->getDuplicateFactory());
     }
 
     protected function tearDown()
@@ -111,5 +114,16 @@ class DuplicateTest extends \PHPUnit_Framework_TestCase
         $this->assertNotSame($copyObject, $target);
         $this->assertEquals($copyObject, $target);
         $this->assertSame($copyObject->child, $copyObject->child);
+    }
+
+    protected function getDuplicateFactory()
+    {
+        $container = $this->getMockBuilder('Symfony\Component\DependencyInjection\TaggedContainerInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $factory = new DuplicatorFactory($container);
+
+        return $factory;
     }
 }

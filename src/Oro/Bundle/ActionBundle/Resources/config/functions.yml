@@ -223,6 +223,8 @@ services:
         class: %oro_action.function.duplicate.class%
         arguments:
             - @oro_action.context_accessor
+        calls:
+          - [setDuplicatorFactory, [@oro_action.factory.duplicator_factory]]
         tags:
             - { name: oro_action.function, alias: duplicate }
             - { name: oro_workflow.action, alias: duplicate }

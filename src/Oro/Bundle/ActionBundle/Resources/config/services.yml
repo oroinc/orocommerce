@@ -11,6 +11,8 @@ parameters:
     oro_action.datagrid.action.action_widget_action.class: Oro\Bundle\ActionBundle\Datagrid\Action\ActionWidgetAction
     oro_action.datagrid.mass_action_provider.registry.class: Oro\Bundle\ActionBundle\Datagrid\Provider\MassActionProviderRegistry
 
+    oro_action.duplicator_object_type.class: OroB2B\Component\Duplicator\ObjectType
+
 services:
     oro_action.helper.context:
             class: %oro_action.helper.context.class%
@@ -114,3 +116,87 @@ services:
 
     oro_action.datagrid.mass_action_provider.registry:
         class: %oro_action.datagrid.mass_action_provider.registry.class%
+
+    oro_action.factory.duplicator_factory:
+        class: OroB2B\src\Oro\Bundle\ActionBundle\Factory\DuplicatorFactory
+        calls:
+            - [setFilterFactory, [@oro_action.factory.duplicator_filter_factory]]
+            - [setMatcherFactory, [@oro_action.factory.duplicator_matcher_factory]]
+
+    oro_action.factory.duplicator_filter_factory:
+        class: OroB2B\Component\Duplicator\Filter\FilterFactory
+
+    oro_action.factory.duplicator_matcher_factory:
+        class: OroB2B\Component\Duplicator\Filter\MatcherFactory
+
+    oro_action.duplicator_filter_type.set_null:
+        class: %oro_action.duplicator_object_type.class%
+        arguments:
+            - setNull
+            - DeepCopy\Filter\SetNullFilter
+        tags:
+            - { name: oro_action.duplicate.filter_type }
+
+    oro_action.duplicator_filter_type.keep:
+        class: %oro_action.duplicator_object_type.class%
+        arguments:
+            - keep
+            - DeepCopy\Filter\KeepFilter
+        tags:
+            - { name: oro_action.duplicate.filter_type }
+
+    oro_action.duplicator_filter_type.collection:
+        class: %oro_action.duplicator_object_type.class%
+        arguments:
+            - collection
+            - DeepCopy\Filter\Doctrine\DoctrineCollectionFilter
+        tags:
+            - { name: oro_action.duplicate.filter_type }
+
+    oro_action.duplicator_filter_type.empty_collection:
+        class: %oro_action.duplicator_object_type.class%
+        arguments:
+            - emptyCollection
+            - DeepCopy\Filter\Doctrine\DoctrineEmptyCollectionFilter
+        tags:
+            - { name: oro_action.duplicate.filter_type }
+
+    oro_action.duplicator_filter_type.replace_value:
+        class: %oro_action.duplicator_object_type.class%
+        arguments:
+            - replaceValue
+            - OroB2B\Component\Duplicator\Filter\ReplaceValueFilter
+        tags:
+            - { name: oro_action.duplicate.filter_type }
+
+    oro_action.duplicator_filter_type.keep:
+        class: %oro_action.duplicator_object_type.class%
+        arguments:
+            - shallowCopy
+            - OroB2B\Component\Duplicator\Filter\ShallowCopyFilter
+        tags:
+            - { name: oro_action.duplicate.filter_type }
+
+    oro_action.duplicator_filter_type.keep:
+        class: %oro_action.duplicator_object_type.class%
+        arguments:
+            - property
+            - DeepCopy\Matcher\PropertyMatcher
+        tags:
+            - { name: oro_action.duplicate.matcher_type }
+
+    oro_action.duplicator_filter_type.keep:
+        class: %oro_action.duplicator_object_type.class%
+        arguments:
+            - propertyName
+            - DeepCopy\Matcher\PropertyNameMatcher
+        tags:
+            - { name: oro_action.duplicate.matcher_type }
+
+    oro_action.duplicator_filter_type.keep:
+        class: %oro_action.duplicator_object_type.class%
+        arguments:
+            - propertyType
+            - DeepCopy\Matcher\PropertyTypeMatcher
+        tags:
+            - { name: oro_action.duplicate.matcher_type }
