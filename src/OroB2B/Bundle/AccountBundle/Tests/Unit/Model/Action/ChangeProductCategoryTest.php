@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Model\Action;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-use Oro\Component\ConfigExpression\Model\ContextAccessor;
+use Oro\Component\Action\Model\ContextAccessor;
 use Oro\Bundle\WorkflowBundle\Model\ProcessData;
 
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;

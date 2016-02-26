@@ -7,7 +7,7 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Doctrine\ORM\EntityManager;
 
-use Oro\Component\ConfigExpression\Model\ContextAccessor;
+use Oro\Component\Action\Model\ContextAccessor;
 use Oro\Bundle\WorkflowBundle\Model\ProcessData;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
