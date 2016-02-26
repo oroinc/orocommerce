@@ -70,7 +70,7 @@ class FrontendLineItemFormProvider extends AbstractServerRenderDataProvider
     {
         if (!isset($this->form[$product->getId()])) {
             $this->form[$product->getId()] = $this->formFactory
-                ->create(FrontendLineItemType::NAME, $this->getLineItem($product), $this->getLineItem($product));
+                ->create(FrontendLineItemType::NAME, $this->getLineItem($product));
         }
         return $this->form[$product->getId()];
     }

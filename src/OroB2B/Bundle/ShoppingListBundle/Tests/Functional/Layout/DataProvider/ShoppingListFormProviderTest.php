@@ -36,12 +36,4 @@ class ShoppingListFormProviderTest extends WebTestCase
         $this->assertSame($this->dataProvider->getForm($shoppingList), $actual->getForm());
         $this->assertEquals(ShoppingListType::NAME, $actual->getForm()->getName());
     }
-
-    /**
-     * @expectedException \InvalidargumentException
-     */
-    public function testGetFormWithInvalidArgument()
-    {
-        $this->dataProvider->getForm(null);
-    }
 }
