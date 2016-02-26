@@ -1,28 +1,27 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Layout\Type;
+namespace OroB2B\Bundle\TaxBundle\Layout\Type;
 
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use Oro\Component\Layout\Block\Type\AbstractType;
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\BlockView;
-use Oro\Component\Layout\Block\Type\AbstractType;
 
-class AddressType extends AbstractType
+class TaxType extends AbstractType
 {
-    const NAME = 'address';
+    const NAME = 'tax';
 
     /** {@inheritdoc} */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver
-            ->setRequired(['address']);
+        $resolver->setRequired(['result']);
     }
 
     /** {@inheritdoc} */
-    public function buildView(BlockView $view, BlockInterface $block, array $options)
+    public function finishView(BlockView $view, BlockInterface $block, array $options)
     {
-        $view->vars['address'] = $options['address'];
+        $view->vars['result'] = $options['result'];
     }
 
     /** {@inheritdoc} */

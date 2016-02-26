@@ -30,3 +30,7 @@
 .tax-address-row .row-oro {
     margin: 0 !important;
 }
+
+.other-scroll-container .tax-result-grid {
+    margin-bottom: 20px !important;
+}

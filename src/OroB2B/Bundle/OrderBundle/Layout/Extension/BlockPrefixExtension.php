@@ -22,7 +22,15 @@ class BlockPrefixExtension extends AbstractBlockTypeExtension
     /** {@inheritdoc} */
     public function finishView(BlockView $view, BlockInterface $block, array $options)
     {
-        $view->vars['block_prefixes'] = array_merge($view->vars['block_prefixes'], $options['block_prefixes']);
+        $blockPrefixes = [];
+        if (array_key_exists('block_prefixes', $view->vars)) {
+            $blockPrefixes = (array)$view->vars['block_prefixes'];
+        }
+        if (array_key_exists('block_prefixes', $options)) {
+            $blockPrefixes = array_merge($blockPrefixes, $options['block_prefixes']);
+        }
+
+        $view->vars['block_prefixes'] = $blockPrefixes;
     }
 
     /** {@inheritdoc} */

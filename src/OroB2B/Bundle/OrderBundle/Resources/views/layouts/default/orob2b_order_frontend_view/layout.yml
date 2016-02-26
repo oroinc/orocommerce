@@ -47,7 +47,7 @@ layout:
                 order_subtotal:
                     blockType: currency
                     options:
-                        text: {@value: $data.order.subtotal}
+                        value: {@value: $data.order.subtotal}
                         currency: {@value: $data.order.currency}
                         label: 'orob2b.order.subtotal.label'
                         block_prefixes: ['order_body_column_element']

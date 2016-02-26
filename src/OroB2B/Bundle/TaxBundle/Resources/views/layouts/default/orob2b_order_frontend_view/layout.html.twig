@@ -1,0 +1,59 @@
+{% block tax_info_widget %}
+    {% if result|length %}
+        <table class="oro-grid-table oro-grid-table__orders">
+            <thead>
+            <tr>
+                <th></th>
+                <th>{{ 'orob2b.tax.result.includingTax'|trans }}</th>
+                <th>{{ 'orob2b.tax.result.excludingTax'|trans }}</th>
+                <th>{{ 'orob2b.tax.result.taxAmount'|trans }}</th>
+                <th>{{ 'orob2b.tax.result.adjustment'|trans }}</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            {% for type, data in result if data.includingTax is defined %}
+                <tr>
+                    <td class="va-t_md">{{ 'orob2b.tax.result.%s'|format(type)|trans }}</td>
+                    <td class="va-t_md">{{ data.includingTax }}</td>
+                    <td class="va-t_md">{{ data.excludingTax }}</td>
+                    <td class="va-t_md">{{ data.taxAmount }}</td>
+                    <td class="va-t_md">{{ data.adjustment }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}
+
+{% block tax_taxes_widget %}
+    {% if result.taxes is defined and result.taxes|length %}
+        <table class="oro-grid-table oro-grid-table__orders">
+            <thead>
+            <tr>
+                <th>{{ 'orob2b.tax.result.tax'|trans }}</th>
+                <th>{{ 'orob2b.tax.result.rate'|trans }}</th>
+                <th>{{ 'orob2b.tax.result.taxableAmount'|trans }}</th>
+                <th>{{ 'orob2b.tax.result.taxAmount'|trans }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for tax in result.taxes %}
+                <tr>
+                    <td class="va-t_md">{{ tax.tax }}</td>
+                    <td class="va-t_md">{{ tax.rate|oro_format_percent }}</td>
+                    <td class="va-t_md">{{ tax.taxableAmount }}</td>
+                    <td class="va-t_md">{{ tax.taxAmount }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}
+
+{% block _order_tax_widget %}
+    <div class="account-oq__item__body">
+        <div class="account-oq__item">{{ block('tax_info_widget') }}</div>
+        <div class="account-oq__item">{{ block('tax_taxes_widget') }}</div>
+    </div>
+{% endblock %}
