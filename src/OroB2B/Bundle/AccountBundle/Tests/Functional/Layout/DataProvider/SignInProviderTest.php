@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Provider;
+namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Layout\DataProvider;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -13,17 +13,17 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Layout\LayoutContext;
 
-use OroB2B\Bundle\AccountBundle\Provider\SignInDataProvider;
+use OroB2B\Bundle\AccountBundle\Layout\DataProvider\SignInProvider;
 
 /**
  * @dbIsolation
  */
-class SignInDataProviderTest extends WebTestCase
+class SignInProviderTest extends WebTestCase
 {
     /** @var LayoutContext */
     protected $context;
 
-    /** @var SignInDataProvider */
+    /** @var SignInProvider */
     protected $dataProvider;
 
     /** @var  RequestStack */
@@ -40,11 +40,6 @@ class SignInDataProviderTest extends WebTestCase
         $this->requestStack = $this->getContainer()->get('request_stack');
         $this->tokenManager = $this->getContainer()->get('security.csrf.token_manager');
         $this->dataProvider = $this->getContainer()->get('orob2b_account.provider.sign_in');
-    }
-
-    public function testGetIdentifier()
-    {
-        $this->assertEquals('orob2b_account_sign_in', $this->dataProvider->getIdentifier());
     }
 
     public function testGetData()

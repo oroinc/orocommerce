@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Provider;
+namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Layout\DataProvider;
 
 use Oro\Component\Layout\LayoutContext;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
-use OroB2B\Bundle\ShoppingListBundle\Provider\FrontendLineItemFormProvider;
+use OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendLineItemFormProvider;
 
 class FrontendLineItemFormProviderTest extends WebTestCase
 {
@@ -23,11 +23,6 @@ class FrontendLineItemFormProviderTest extends WebTestCase
 
         $this->context = new LayoutContext();
         $this->dataProvider = $this->getContainer()->get('orob2b_shopping_list.provider.frontend_line_item_form');
-    }
-
-    public function testGetIdentifier()
-    {
-        $this->assertEquals('orob2b_shopping_list_frontend_line_item_form', $this->dataProvider->getIdentifier());
     }
 
     public function testGetData()
