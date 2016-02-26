@@ -66,5 +66,5 @@ expectedResult:
 databaseAfter:
     'OroB2B\Bundle\TaxBundle\Entity\TaxValue':
         - { entityClass: 'OroB2B\Bundle\OrderBundle\Entity\Order' }
-        - { entityClass: 'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem' }
-        - { entityClass: 'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem' }
+        - { entityClass: 'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem', entityId: { reference: 'order_line_item_1' } }
+        - { entityClass: 'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem', entityId: { reference: 'order_line_item_2' } }
