@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Layout\Provider;
 
 use Oro\Component\Layout\LayoutContext;
+
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\TaxBundle\Layout\Provider\TaxDataProvider;
 use OroB2B\Bundle\TaxBundle\Manager\TaxManager;

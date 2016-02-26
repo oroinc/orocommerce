@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Layout\Type;
 
 use Oro\Bundle\LayoutBundle\Tests\Unit\BlockTypeTestCase;
-
 use Oro\Component\Layout\Block\Type\BaseType;
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\LayoutFactoryBuilderInterface;
