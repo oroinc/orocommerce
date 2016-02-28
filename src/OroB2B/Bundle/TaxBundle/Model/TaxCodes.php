@@ -82,6 +82,7 @@ class TaxCodes
         return md5(json_encode($this->getPlainTypedCodes()));
     }
 
+    /** @return bool */
     public function isFullFilledTaxCode()
     {
         $plainTypeCodes = $this->getPlainTypedCodes();

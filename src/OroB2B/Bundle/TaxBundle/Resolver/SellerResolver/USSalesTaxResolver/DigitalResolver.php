@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Resolver\SellerResolver;
+namespace OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver;
 
 use OroB2B\Bundle\TaxBundle\Matcher\UnitedStatesHelper;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use OroB2B\Bundle\TaxBundle\Resolver\ResolverInterface;
 
-class USSalesTaxDigitalResolver implements ResolverInterface
+class DigitalResolver implements ResolverInterface
 {
     /**
      * @var ResolverInterface

@@ -7,26 +7,26 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
-use OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxDigitalItemResolver;
-use OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxDigitalResolver;
+use OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver\DigitalItemResolver;
+use OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver\DigitalResolver;
 
-class USSalesTaxDigitalResolverTest extends \PHPUnit_Framework_TestCase
+class DigitalResolverTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var USSalesTaxDigitalResolver */
+    /** @var DigitalResolver */
     protected $resolver;
 
-    /** @var USSalesTaxDigitalItemResolver|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DigitalItemResolver|\PHPUnit_Framework_MockObject_MockObject */
     protected $itemResolver;
 
     /** {@inheritdoc} */
     protected function setUp()
     {
         $this->itemResolver = $this
-            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxDigitalItemResolver')
+            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver\DigitalItemResolver')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->resolver = new USSalesTaxDigitalResolver($this->itemResolver);
+        $this->resolver = new DigitalResolver($this->itemResolver);
     }
 
     public function testEmptyCollection()

@@ -92,7 +92,7 @@ class TaxManagerTest extends WebTestCase
 
         $finder
             ->files()
-            ->in(__DIR__ . '/test_cases/get_tax')
+            ->in(__DIR__)
             ->name('*.yml');
 
         $cases = [];
