@@ -39,6 +39,28 @@ class DigitalItemResolverTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($taxable->getResult()->isResultLocked());
     }
 
+    public function testResultLocket()
+    {
+        $taxable = new Taxable();
+        $address = new OrderAddress();
+        $address
+            ->setCountry(new Country('US'))
+            ->setRegion((new Region('US-CA'))->setCode('CA'));
+
+        $taxable
+            ->setPrice('19.99')
+            ->setDestination($address)
+            ->addContext(Taxable::DIGITAL_PRODUCT, true);
+
+        $taxable->getResult()->lockResult();
+
+        $this->resolver->resolve($taxable);
+
+        $this->assertTrue($taxable->getResult()->isResultLocked());
+        $this->assertEmpty($taxable->getResult()->getUnit()->getExcludingTax());
+        $this->assertEmpty($taxable->getResult()->getRow()->getExcludingTax());
+    }
+
     public function testEmptyData()
     {
         $taxable = new Taxable();

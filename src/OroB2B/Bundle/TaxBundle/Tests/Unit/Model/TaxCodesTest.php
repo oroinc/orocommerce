@@ -56,14 +56,19 @@ class TaxCodesTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider isFullFilledTaxCodeProvide
+     * @param array $codes
+     * @param bool $expected
      */
-    public function testIsFullFilledTaxCode($codes, $expected)
+    public function testIsFullFilledTaxCode(array $codes, $expected)
     {
         $taxCodes = TaxCodes::create($codes);
 
         $this->assertEquals($expected, $taxCodes->isFullFilledTaxCode());
     }
 
+    /**
+     * @return array
+     */
     public function isFullFilledTaxCodeProvide()
     {
         return [

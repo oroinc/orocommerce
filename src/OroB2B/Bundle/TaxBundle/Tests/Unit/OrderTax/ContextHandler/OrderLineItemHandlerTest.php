@@ -5,14 +5,14 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\OrderTax\ContextHandler;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
+use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
 use OroB2B\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository;
 use OroB2B\Bundle\TaxBundle\Event\ContextEvent;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
@@ -222,6 +222,8 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
                     case TaxCodeInterface::TYPE_ACCOUNT_GROUP:
                         return $this->accountGroupTaxCode;
                 }
+
+                return true;
             });
 
         $contextEvent = new ContextEvent($orderLineItem);
