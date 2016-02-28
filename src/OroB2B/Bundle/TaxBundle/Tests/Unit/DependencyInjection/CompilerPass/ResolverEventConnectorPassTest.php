@@ -109,7 +109,7 @@ class ResolverEventConnectorPassTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('setDefinition')
             ->with(
-                ResolverEventConnectorPass::CONNECTOR_SERVICE_NAME . '.total',
+                sprintf('%s.%s', $id, ResolverEventConnectorPass::CONNECTOR_SERVICE_NAME_SUFFIX),
                 $this->callback(
                     function (Definition $definition) use ($class, $id) {
                         $this->assertEquals($class, $definition->getClass());
