@@ -10,7 +10,7 @@ databaseBefore:
     'OroB2B\Bundle\OrderBundle\Entity\Order':
         simple_order:
             poNumber: { property_value: simple_order }
-            account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+            account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: { name: 'account.orphan' } }
             billingAddress:
                 class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
                 property_value:
@@ -42,10 +42,12 @@ databaseBefore:
             tax: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
             taxJurisdiction: { reference: canada_ontario_jurisdiction }
             productTaxCode: { reference: product_tax_code.TAX1 }
+            accountTaxCode: { class: 'OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
         tax_rule.TAX2:
             tax: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX2' } }
             taxJurisdiction: { reference: canada_nova_scotia_jurisdiction }
             productTaxCode: { reference: product_tax_code.TAX2 }
+            accountTaxCode: { class: 'OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
 expectedResult:
     total:
         includingTax: '87.95'  # 79.95 + 8

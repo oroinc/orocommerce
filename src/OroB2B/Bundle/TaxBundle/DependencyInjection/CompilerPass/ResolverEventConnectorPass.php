@@ -11,7 +11,7 @@ class ResolverEventConnectorPass implements CompilerPassInterface
 {
     const TAG_NAME = 'orob2b_tax.resolver';
     const CONNECTOR_CLASS = 'orob2b_tax.event.resolver_event_connector.class';
-    const CONNECTOR_SERVICE_NAME = 'orob2b_tax.event.resolver_event_connector';
+    const CONNECTOR_SERVICE_NAME_SUFFIX = 'event.resolver_event_connector';
 
     /** {@inheritdoc} */
     public function process(ContainerBuilder $container)
@@ -23,7 +23,6 @@ class ResolverEventConnectorPass implements CompilerPassInterface
                 continue;
             }
 
-            $alias = $this->getAlias($id);
             $definition = new Definition($container->getParameter(self::CONNECTOR_CLASS), [new Reference($id)]);
             foreach ($tags as $tag) {
                 if (empty($tag['event'])) {
@@ -36,18 +35,8 @@ class ResolverEventConnectorPass implements CompilerPassInterface
                 }
                 $definition->addTag('kernel.event_listener', $attributes);
             }
-            $container->setDefinition(sprintf('%s.%s', self::CONNECTOR_SERVICE_NAME, $alias), $definition);
+
+            $container->setDefinition(sprintf('%s.%s', $id, self::CONNECTOR_SERVICE_NAME_SUFFIX), $definition);
         }
-    }
-
-    /**
-     * @param string $id
-     * @return string
-     */
-    protected function getAlias($id)
-    {
-        $parts = explode('.', (string)$id);
-
-        return (string)end($parts);
     }
 }

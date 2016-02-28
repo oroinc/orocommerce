@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity;
 
 use OroB2B\Bundle\TaxBundle\Model\TaxCode;
+use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
 use OroB2B\Bundle\TaxBundle\Model\TaxCodes;
 
 class TaxCodesTest extends \PHPUnit_Framework_TestCase
@@ -51,5 +52,40 @@ class TaxCodesTest extends \PHPUnit_Framework_TestCase
         $taxCodes = new TaxCodes([TaxCode::create('', 'type')]);
 
         $this->assertEquals([], $taxCodes->getCodes());
+    }
+
+    /**
+     * @dataProvider isFullFilledTaxCodeProvide
+     */
+    public function testIsFullFilledTaxCode($codes, $expected)
+    {
+        $taxCodes = TaxCodes::create($codes);
+
+        $this->assertEquals($expected, $taxCodes->isFullFilledTaxCode());
+    }
+
+    public function isFullFilledTaxCodeProvide()
+    {
+        return [
+            'all taxCodes' => [
+                'codes' => [
+                    TaxCode::create('val1', TaxCodeInterface::TYPE_PRODUCT),
+                    TaxCode::create('val2', TaxCodeInterface::TYPE_ACCOUNT)
+                ],
+                'expected' => true
+            ],
+            'without account' => [
+                'codes' => [
+                    TaxCode::create('val1', TaxCodeInterface::TYPE_PRODUCT),
+                ],
+                'expected' => false
+            ],
+            'without product' => [
+                'codes' => [
+                    TaxCode::create('val2', TaxCodeInterface::TYPE_ACCOUNT)
+                ],
+                'expected' => false
+            ]
+        ];
     }
 }

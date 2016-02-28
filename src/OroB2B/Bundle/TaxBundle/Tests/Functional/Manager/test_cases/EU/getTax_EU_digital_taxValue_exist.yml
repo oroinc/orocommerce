@@ -5,7 +5,7 @@ databaseBefore:
     'OroB2B\Bundle\OrderBundle\Entity\Order':
         simple_order:
             poNumber: { property_value: simple_order }
-            account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+            account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: { name: 'account.orphan' } }
             billingAddress:
                 class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
                 property_value:
@@ -48,14 +48,17 @@ databaseBefore:
             tax: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX3' } }
             taxJurisdiction: { reference: europe_germany_jurisdiction }
             productTaxCode: { reference: product_tax_code.TAX1 }
+            accountTaxCode: { class: 'OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
         tax_rule.TAX4:
             tax: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX2' } }
             taxJurisdiction: { reference: europe_germany_jurisdiction }
             productTaxCode: { reference: product_tax_code.TAX1 }
+            accountTaxCode: { class: 'OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
         tax_rule.TAX5:
             tax: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
             taxJurisdiction: { reference: europe_germany_non_digital_jurisdiction_code }
             productTaxCode: { reference: product_tax_code.TAX2 }
+            accountTaxCode: { class: 'OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
     'OroB2B\Bundle\TaxBundle\Entity\TaxApply':
         simple_order_tax_value_applied_tax:
             tax: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }

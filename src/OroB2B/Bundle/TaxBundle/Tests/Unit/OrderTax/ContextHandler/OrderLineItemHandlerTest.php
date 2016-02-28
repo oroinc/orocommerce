@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\OrderTax\ContextHandler;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -15,6 +16,7 @@ use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
 use OroB2B\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository;
 use OroB2B\Bundle\TaxBundle\Event\ContextEvent;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
+use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
 use OroB2B\Bundle\TaxBundle\OrderTax\ContextHandler\OrderLineItemHandler;
 use OroB2B\Bundle\TaxBundle\Provider\TaxationAddressProvider;
 
@@ -25,6 +27,7 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
     const ORDER_LINE_ITEM_CLASS = 'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem';
     const PRODUCT_TAX_CODE = 'PTC';
     const ACCOUNT_TAX_CODE = 'ATC';
+    const ACCOUNT_GROUP_TAX_CODE = 'AGTC';
     const ORDER_ADDRESS_COUNTRY_CODE = 'US';
 
     /**
@@ -58,6 +61,11 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
     protected $accountTaxCode;
 
     /**
+     * @var AccountTaxCode
+     */
+    protected $accountGroupTaxCode;
+
+    /**
      * @var Order
      */
     protected $order;
@@ -78,9 +86,12 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->setCode(self::PRODUCT_TAX_CODE);
 
         $this->order = new Order();
-        $this->order->setAccount(new Account());
+
         $this->accountTaxCode = (new AccountTaxCode())
             ->setCode(self::ACCOUNT_TAX_CODE);
+
+        $this->accountGroupTaxCode = (new AccountTaxCode())
+            ->setCode(self::ACCOUNT_GROUP_TAX_CODE);
 
         $billingAddress = new OrderAddress();
         $shippingAddress = new OrderAddress();
@@ -145,39 +156,80 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider onContextEventProvider
      * @param bool $hasProduct
-     * @param bool $hasTaxCode
+     * @param bool $hasAccount
+     * @param bool $hasProductTaxCode
+     * @param bool $hasAccountTaxCode
      * @param bool $isProductDigital
      * @param OrderAddress|null $taxationAddress
      * @param \ArrayObject $expectedContext
+     * @param bool $hasAccountGroup
+     * @param bool $hasAccountGroupTaxCode
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function testOnContextEvent(
         $hasProduct,
-        $hasTaxCode,
+        $hasAccount,
+        $hasProductTaxCode,
+        $hasAccountTaxCode,
         $isProductDigital,
         $taxationAddress,
-        $expectedContext
+        $expectedContext,
+        $hasAccountGroup = false,
+        $hasAccountGroupTaxCode = false
     ) {
         $this->isProductTaxCodeDigital = $isProductDigital;
         $this->address = $taxationAddress;
 
         $orderLineItem = new OrderLineItem();
+
+        if ($hasAccount) {
+            $this->order->setAccount(new Account());
+        }
+
+        if ($hasAccount && $hasAccountGroup) {
+            $this->order->getAccount()->setGroup(new AccountGroup());
+        }
+
         $orderLineItem->setOrder($this->order);
 
         if ($hasProduct) {
             $orderLineItem->setProduct(new Product());
         }
 
-        if (!$hasTaxCode) {
+        if (!$hasProductTaxCode) {
             $this->productTaxCode = null;
+        }
+
+        if (!$hasAccountTaxCode) {
             $this->accountTaxCode = null;
+        }
+
+        if (!$hasAccountGroupTaxCode) {
+            $this->accountGroupTaxCode = null;
         }
 
         $this->repository
             ->expects($this->any())
             ->method('findOneByEntity')
-            ->willReturnOnConsecutiveCalls($this->productTaxCode, $this->accountTaxCode);
+            ->willReturnCallback(function ($type) {
+                switch ($type) {
+                    case TaxCodeInterface::TYPE_PRODUCT:
+                        return $this->productTaxCode;
+                    case TaxCodeInterface::TYPE_ACCOUNT:
+                        return $this->accountTaxCode;
+                    case TaxCodeInterface::TYPE_ACCOUNT_GROUP:
+                        return $this->accountGroupTaxCode;
+                }
+            });
 
         $contextEvent = new ContextEvent($orderLineItem);
+        $this->handler->onContextEvent($contextEvent);
+
+        $this->assertSame($orderLineItem, $contextEvent->getMappingObject());
+        $this->assertEquals($expectedContext, $contextEvent->getContext());
+
         $this->handler->onContextEvent($contextEvent);
 
         $this->assertSame($orderLineItem, $contextEvent->getMappingObject());
@@ -185,6 +237,7 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     public function onContextEventProvider()
@@ -195,7 +248,9 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         return [
             'order line item without product' => [
                 'hasProduct' => false,
-                'hasProductTaxCode' => true,
+                'hasAccount' => true,
+                'hasProductTaxCode' => false,
+                'hasAccountTaxCode' => false,
                 'isProductDigital' => false,
                 'taxationAddress' => $taxationAddress,
                 'expectedContext' => new \ArrayObject(
@@ -208,33 +263,39 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ],
             'product is not digital' => [
                 'hasProduct' => true,
+                'hasAccount' => true,
                 'hasProductTaxCode' => true,
+                'hasAccountTaxCode' => false,
                 'isProductDigital' => false,
                 'taxationAddress' => $taxationAddress,
                 'expectedContext' => new \ArrayObject(
                     [
                         Taxable::DIGITAL_PRODUCT => false,
                         Taxable::PRODUCT_TAX_CODE => self::PRODUCT_TAX_CODE,
-                        Taxable::ACCOUNT_TAX_CODE => self::ACCOUNT_TAX_CODE,
+                        Taxable::ACCOUNT_TAX_CODE => null,
                     ]
                 ),
             ],
             'product is digital' => [
                 'hasProduct' => true,
+                'hasAccount' => true,
                 'hasProductTaxCode' => true,
+                'hasAccountTaxCode' => false,
                 'isProductDigital' => true,
                 'taxationAddress' => $taxationAddress,
                 'expectedContext' => new \ArrayObject(
                     [
                         Taxable::DIGITAL_PRODUCT => true,
                         Taxable::PRODUCT_TAX_CODE => self::PRODUCT_TAX_CODE,
-                        Taxable::ACCOUNT_TAX_CODE => self::ACCOUNT_TAX_CODE,
+                        Taxable::ACCOUNT_TAX_CODE => null,
                     ]
                 ),
             ],
             'product without product tax code' => [
                 'hasProduct' => true,
+                'hasAccount' => true,
                 'hasProductTaxCode' => false,
+                'hasAccountTaxCode' => false,
                 'isProductDigital' => false,
                 'taxationAddress' => $taxationAddress,
                 'expectedContext' => new \ArrayObject(
@@ -247,7 +308,9 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ],
             'nullable taxation address' => [
                 'hasProduct' => true,
+                'hasAccount' => true,
                 'hasProductTaxCode' => true,
+                'hasAccountTaxCode' => true,
                 'isProductDigital' => true,
                 'taxationAddress' => null,
                 'expectedContext' => new \ArrayObject([
@@ -255,6 +318,85 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
                     Taxable::PRODUCT_TAX_CODE => self::PRODUCT_TAX_CODE,
                     Taxable::ACCOUNT_TAX_CODE => self::ACCOUNT_TAX_CODE,
                 ])
+            ],
+            'order with account and account product tax code' => [
+                'hasProduct' => true,
+                'hasAccount' => true,
+                'hasProductTaxCode' => true,
+                'hasAccountTaxCode' => true,
+                'isProductDigital' => true,
+                'taxationAddress' => $taxationAddress,
+                'expectedContext' => new \ArrayObject(
+                    [
+                        Taxable::DIGITAL_PRODUCT => true,
+                        Taxable::PRODUCT_TAX_CODE => self::PRODUCT_TAX_CODE,
+                        Taxable::ACCOUNT_TAX_CODE => self::ACCOUNT_TAX_CODE,
+                    ]
+                ),
+            ],
+            'order with account and without account tax code' => [
+                'hasProduct' => true,
+                'hasAccount' => true,
+                'hasProductTaxCode' => true,
+                'hasAccountTaxCode' => false,
+                'isProductDigital' => true,
+                'taxationAddress' => $taxationAddress,
+                'expectedContext' => new \ArrayObject(
+                    [
+                        Taxable::DIGITAL_PRODUCT => true,
+                        Taxable::PRODUCT_TAX_CODE => self::PRODUCT_TAX_CODE,
+                        Taxable::ACCOUNT_TAX_CODE => null,
+                    ]
+                ),
+            ],
+            'order without account' => [
+                'hasProduct' => true,
+                'hasAccount' => false,
+                'hasProductTaxCode' => true,
+                'hasAccountTaxCode' => false,
+                'isProductDigital' => true,
+                'taxationAddress' => $taxationAddress,
+                'expectedContext' => new \ArrayObject(
+                    [
+                        Taxable::DIGITAL_PRODUCT => true,
+                        Taxable::PRODUCT_TAX_CODE => self::PRODUCT_TAX_CODE,
+                        Taxable::ACCOUNT_TAX_CODE => null,
+                    ]
+                ),
+            ],
+            'order with account Group tax code' => [
+                'hasProduct' => true,
+                'hasAccount' => true,
+                'hasProductTaxCode' => true,
+                'hasAccountTaxCode' => false,
+                'isProductDigital' => true,
+                'taxationAddress' => $taxationAddress,
+                'expectedContext' => new \ArrayObject(
+                    [
+                        Taxable::DIGITAL_PRODUCT => true,
+                        Taxable::PRODUCT_TAX_CODE => self::PRODUCT_TAX_CODE,
+                        Taxable::ACCOUNT_TAX_CODE => self::ACCOUNT_GROUP_TAX_CODE,
+                    ]
+                ),
+                'hasAccountGroup' => true,
+                'hasAccountGroupTaxCode' => true
+            ],
+            'order without account Group tax code and account tax code' => [
+                'hasProduct' => true,
+                'hasAccount' => true,
+                'hasProductTaxCode' => true,
+                'hasAccountTaxCode' => true,
+                'isProductDigital' => true,
+                'taxationAddress' => $taxationAddress,
+                'expectedContext' => new \ArrayObject(
+                    [
+                        Taxable::DIGITAL_PRODUCT => true,
+                        Taxable::PRODUCT_TAX_CODE => self::PRODUCT_TAX_CODE,
+                        Taxable::ACCOUNT_TAX_CODE => self::ACCOUNT_TAX_CODE,
+                    ]
+                ),
+                'hasAccountGroup' => true,
+                'hasAccountGroupTaxCode' => true
             ],
         ];
     }
