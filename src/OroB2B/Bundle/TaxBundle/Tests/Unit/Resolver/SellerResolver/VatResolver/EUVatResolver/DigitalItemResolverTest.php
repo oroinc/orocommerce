@@ -12,10 +12,10 @@ use OroB2B\Bundle\TaxBundle\Model\Address;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use OroB2B\Bundle\TaxBundle\Resolver\RowTotalResolver;
-use OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\ItemDigitalResolver;
+use OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalItemResolver;
 use OroB2B\Bundle\TaxBundle\Resolver\UnitResolver;
 
-class ItemDigitalResolverTest extends \PHPUnit_Framework_TestCase
+class DigitalItemResolverTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var UnitResolver|\PHPUnit_Framework_MockObject_MockObject
@@ -32,7 +32,7 @@ class ItemDigitalResolverTest extends \PHPUnit_Framework_TestCase
      */
     protected $matcher;
 
-    /** @var  ItemDigitalResolver|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var  DigitalItemResolver|\PHPUnit_Framework_MockObject_MockObject */
     protected $resolver;
 
     public function setUp()
@@ -49,7 +49,7 @@ class ItemDigitalResolverTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->resolver = new ItemDigitalResolver($this->unitResolver, $this->rowTotalResolver, $this->matcher);
+        $this->resolver = new DigitalItemResolver($this->unitResolver, $this->rowTotalResolver, $this->matcher);
     }
 
     /**

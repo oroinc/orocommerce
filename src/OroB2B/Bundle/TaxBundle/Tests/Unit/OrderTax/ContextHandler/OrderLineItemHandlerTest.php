@@ -223,7 +223,7 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
                         return $this->accountGroupTaxCode;
                 }
 
-                return true;
+                return false;
             });
 
         $contextEvent = new ContextEvent($orderLineItem);

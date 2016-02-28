@@ -8,7 +8,7 @@ use OroB2B\Bundle\TaxBundle\Matcher\EuropeanUnionHelper;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use OroB2B\Bundle\TaxBundle\Resolver\AbstractItemResolver;
 
-class ItemDigitalResolver extends AbstractItemResolver
+class DigitalItemResolver extends AbstractItemResolver
 {
     /**
      * @param Taxable $taxable
