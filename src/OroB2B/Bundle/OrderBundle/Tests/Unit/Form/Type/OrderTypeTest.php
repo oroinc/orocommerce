@@ -14,21 +14,34 @@ use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 
 class OrderTypeTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var OrderType */
+    /**
+     * @var OrderType
+     */
     protected $type;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|OrderAddressSecurityProvider */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|OrderAddressSecurityProvider
+     */
     protected $provider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|PaymentTermProvider */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|PaymentTermProvider
+     */
     protected $paymentTermProvider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade
+     */
     protected $securityFacade;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|OrderCurrencyHandler */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|OrderCurrencyHandler
+     */
     protected $orderCurrencyHandler;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')

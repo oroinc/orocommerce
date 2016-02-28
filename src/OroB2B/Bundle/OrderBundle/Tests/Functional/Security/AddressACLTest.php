@@ -2,15 +2,7 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Security;
 
-use Symfony\Component\DomCrawler\Crawler;
-
-use Doctrine\Common\Collections\ArrayCollection;
-
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
-use Oro\Bundle\SecurityBundle\Model\AclPermission;
-use Oro\Bundle\SecurityBundle\Model\AclPrivilege;
-use Oro\Bundle\SecurityBundle\Model\AclPrivilegeIdentity;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\Role;
 use Oro\Bundle\UserBundle\Entity\User;
 
@@ -20,7 +12,7 @@ use OroB2B\Bundle\OrderBundle\Entity\Order;
  * @dbIsolation
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
-class AddressACLTest extends WebTestCase
+class AddressACLTest extends AbstractAddressACLTest
 {
     const BILLING_ADDRESS = 'billingAddress';
     const SHIPPING_ADDRESS = 'shippingAddress';
@@ -35,6 +27,9 @@ class AddressACLTest extends WebTestCase
 
     /** @var Role */
     protected $role;
+
+    /** @var string */
+    protected $formName = 'orob2b_order_type';
 
     protected function setUp()
     {
@@ -85,7 +80,7 @@ class AddressACLTest extends WebTestCase
         if (!empty($expected)) {
             // Check shipping addresses
             $this->assertContains('Shipping Address', $crawler->filter('.navbar-static')->html());
-            $this->checkAddresses($crawler, self::SHIPPING_ADDRESS, $expected);
+            $this->checkAddresses($crawler, $this->formName, self::SHIPPING_ADDRESS, $expected);
         } else {
             $this->assertNotContains('Shipping Address', $crawler->filter('.navbar-static')->html());
         }
@@ -592,7 +587,7 @@ class AddressACLTest extends WebTestCase
         if (!empty($expected)) {
             // Check billing addresses
             $this->assertContains('Billing Address', $crawler->filter('.navbar-static')->html());
-            $this->checkAddresses($crawler, self::BILLING_ADDRESS, $expected);
+            $this->checkAddresses($crawler, $this->formName, self::BILLING_ADDRESS, $expected);
         } else {
             $this->assertNotContains('Billing Address', $crawler->filter('.navbar-static')->html());
         }
@@ -1087,106 +1082,5 @@ class AddressACLTest extends WebTestCase
                 ]
             ]
         ];
-    }
-
-    /**
-     * @param Crawler $crawler
-     * @param string $addressType
-     * @param array $expected
-     */
-    protected function checkAddresses(Crawler $crawler, $addressType, array $expected)
-    {
-        if ($expected['manually']) {
-            $accountAddressSelector = $crawler
-                ->filter('select[name="orob2b_order_type['. $addressType .'][accountAddress]"]')->html();
-
-            $this->assertContains('Enter address manually', $accountAddressSelector);
-        }
-
-        // Check account addresses
-        if (!empty($expected['account'])) {
-            $accountAddresses = $crawler
-                ->filter('select[name="orob2b_order_type['. $addressType .'][accountAddress]"]'
-                    .' optgroup[label="Account"]')
-                ->html();
-
-            foreach ($expected['account'] as $accountAddress) {
-                $this->assertContains($accountAddress, $accountAddresses);
-            }
-        }
-
-        // Check account users addresses
-        if (!empty($expected['accountUser'])) {
-            $accountUserAddresses = $crawler
-                ->filter('select[name="orob2b_order_type['. $addressType .'][accountAddress]"]'
-                    .' optgroup[label="Account User"]')
-                ->html();
-
-            foreach ($expected['accountUser'] as $accountUserAddress) {
-                $this->assertContains($accountUserAddress, $accountUserAddresses);
-            }
-        }
-    }
-
-    /**
-     * @param int $level
-     * @param AclPrivilegeIdentity $identity
-     */
-    protected function setRolePermissions($level, AclPrivilegeIdentity $identity)
-    {
-        $aclPrivilege = new AclPrivilege();
-
-        $aclPrivilege->setIdentity($identity);
-        $permissions = [
-            new AclPermission('VIEW', $level)
-        ];
-
-        foreach ($permissions as $permission) {
-            $aclPrivilege->addPermission($permission);
-        }
-
-        $this->getContainer()->get('oro_security.acl.privilege_repository')->savePrivileges(
-            $this->getContainer()->get('oro_security.acl.manager')->getSid($this->role),
-            new ArrayCollection([$aclPrivilege])
-        );
-    }
-
-    /**
-     * @return AclPrivilegeIdentity
-     */
-    protected function getAccountAddressIdentity()
-    {
-        return new AclPrivilegeIdentity(
-            'entity:OroB2B\Bundle\AccountBundle\Entity\AccountAddress',
-            'orob2b.account.accountaddress.entity_label'
-        );
-    }
-
-    /**
-     * @return AclPrivilegeIdentity
-     */
-    protected function getAccountAddressUserIdentity()
-    {
-        return new AclPrivilegeIdentity(
-            'entity:OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress',
-            'orob2b.account.accountuseraddress.entity_label'
-        );
-    }
-
-    /**
-     * @param string $actionId
-     * @param bool $value
-     */
-    protected function setActionPermissions($actionId, $value)
-    {
-        $aclManager = $this->getContainer()->get('oro_security.acl.manager');
-
-        $sid = $aclManager->getSid($this->role);
-        $oid = $aclManager->getOid('action:' . $actionId);
-        $builder = $aclManager->getMaskBuilder($oid);
-        $mask = $value ? $builder->reset()->add('EXECUTE')->get() : $builder->reset()->get();
-        $aclManager->setPermission($sid, $oid, $mask, true);
-
-        $aclManager->flush();
     }
 }

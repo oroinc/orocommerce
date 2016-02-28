@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -15,7 +16,6 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Model\Subtotal;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -44,7 +44,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
-        $this->productPriceProvider = $container->get('orob2b_pricing.provider.product_price');
+        $this->productPriceProvider = $container->get('orob2b_pricing.provider.combined_product_price');
     }
 
     /**
@@ -92,12 +92,15 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
 
             $price = Price::create(mt_rand(10, 1000), $order->getCurrency());
             if ($product) {
+                $priceList = $this->container->get('orob2b_pricing.model.price_list_tree_handler')
+                    ->getPriceList($order->getAccount(), $order->getWebsite());
+
                 $price = $this->getPrice(
                     $product,
                     $productUnit,
                     $quantity,
                     $order->getCurrency(),
-                    $order->getPriceList()
+                    $priceList
                 );
             }
 
@@ -180,11 +183,16 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
      * @param ProductUnit $productUnit
      * @param float $quantity
      * @param string $currency
-     * @param PriceList $priceList
+     * @param BasePriceList $priceList
      * @return Price
      */
-    protected function getPrice(Product $product, ProductUnit $productUnit, $quantity, $currency, PriceList $priceList)
-    {
+    protected function getPrice(
+        Product $product,
+        ProductUnit $productUnit,
+        $quantity,
+        $currency,
+        BasePriceList $priceList
+    ) {
         $productPriceCriteria = new ProductPriceCriteria($product, $productUnit, $quantity, $currency);
         $identifier = $productPriceCriteria->getIdentifier();
 
