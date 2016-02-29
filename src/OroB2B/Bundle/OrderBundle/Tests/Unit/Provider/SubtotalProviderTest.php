@@ -9,13 +9,13 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Model\Subtotal;
-use OroB2B\Bundle\OrderBundle\Provider\SubtotalProvider;
+use OroB2B\Bundle\OrderBundle\Provider\SubtotalLineItemProvider;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
 class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var SubtotalProvider
+     * @var SubtotalLineItemProvider
      */
     protected $provider;
 
@@ -44,7 +44,7 @@ class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
                 )
             );
 
-        $this->provider = new SubtotalProvider($this->translator, $this->roundingService);
+        $this->provider = new SubtotalLineItemProvider($this->translator, $this->roundingService);
     }
 
     protected function tearDown()
@@ -56,8 +56,8 @@ class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with(sprintf('orob2b.order.subtotals.%s', SubtotalProvider::TYPE))
-            ->willReturn(ucfirst(SubtotalProvider::TYPE));
+            ->with(sprintf('orob2b.order.subtotals.%s', SubtotalLineItemProvider::TYPE))
+            ->willReturn(ucfirst(SubtotalLineItemProvider::TYPE));
 
         $order = new Order();
         $perUnitLineItem = new OrderLineItem();
@@ -86,8 +86,8 @@ class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
 
         $subtotal = $this->provider->getSubtotal($order);
         $this->assertInstanceOf('OroB2B\Bundle\OrderBundle\Model\Subtotal', $subtotal);
-        $this->assertEquals(SubtotalProvider::TYPE, $subtotal->getType());
-        $this->assertEquals(ucfirst(SubtotalProvider::TYPE), $subtotal->getLabel());
+        $this->assertEquals(SubtotalLineItemProvider::TYPE, $subtotal->getType());
+        $this->assertEquals(ucfirst(SubtotalLineItemProvider::TYPE), $subtotal->getLabel());
         $this->assertEquals($order->getCurrency(), $subtotal->getCurrency());
         $this->assertInternalType('float', $subtotal->getAmount());
         $this->assertEquals(142.0, $subtotal->getAmount());

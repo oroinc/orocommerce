@@ -142,7 +142,8 @@ class OrderController extends AbstractOrderController
             $form,
             $request,
             $this->getDoctrine()->getManagerForClass(ClassUtils::getClass($order)),
-            $this->get('orob2b_order.provider.subtotal')
+            $this->get('orob2b_order.provider.total'),
+            $this->get('orob2b_order.provider.subtotal_line_item')
         );
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(

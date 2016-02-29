@@ -7,7 +7,6 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\OrderBundle\Provider\SubtotalProvider;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -128,7 +127,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
 
         fclose($handler);
 
-        $subtotalProvider = $this->container->get('orob2b_order.provider.subtotal');
+        $subtotalProvider = $this->container->get('orob2b_order.provider.subtotal_line_item');
         $totalProvider = $this->container->get('orob2b_order.provider.total');
         foreach ($this->orders as $order) {
             /** @var Subtotal $subtotal */

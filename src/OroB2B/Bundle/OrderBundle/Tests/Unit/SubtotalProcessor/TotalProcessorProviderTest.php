@@ -9,7 +9,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Model\Subtotal;
-use OroB2B\Bundle\OrderBundle\Provider\SubtotalProvider;
+use OroB2B\Bundle\OrderBundle\Provider\SubtotalLineItemProvider;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use OroB2B\Bundle\OrderBundle\SubtotalProcessor\SubtotalProviderRegistry;
 use OroB2B\Bundle\OrderBundle\SubtotalProcessor\TotalProcessorProvider;
@@ -77,10 +77,10 @@ class TotalProviderProviderTest extends \PHPUnit_Framework_TestCase
 
         $subtotals = $this->provider->getSubtotals($order);
         $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $subtotals);
-        $subtotal = $subtotals->get(SubtotalProvider::TYPE);
+        $subtotal = $subtotals->get(SubtotalLineItemProvider::TYPE);
 
         $this->assertInstanceOf('OroB2B\Bundle\OrderBundle\Model\Subtotal', $subtotal);
-        $this->assertEquals(SubtotalProvider::TYPE, $subtotal->getType());
+        $this->assertEquals(SubtotalLineItemProvider::TYPE, $subtotal->getType());
         $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $subtotal->getLabel());
         $this->assertEquals($order->getCurrency(), $subtotal->getCurrency());
         $this->assertInternalType('float', $subtotal->getAmount());
@@ -142,7 +142,7 @@ class TotalProviderProviderTest extends \PHPUnit_Framework_TestCase
         $sub = new Subtotal();
         $sub->setCurrency($order->getCurrency());
         $sub->setAmount(142.0);
-        $sub->setType(SubtotalProvider::TYPE);
+        $sub->setType(SubtotalLineItemProvider::TYPE);
         $sub->setLabel('Total');
 
         $this->subtotalProviderRegistry

@@ -17,9 +17,7 @@ parameters:
 
     orob2b_order.subtotal_provider.registry.class: OroB2B\Bundle\OrderBundle\SubtotalProcessor\SubtotalProviderRegistry
     orob2b_order.provider.total.class: OroB2B\Bundle\OrderBundle\SubtotalProcessor\TotalProcessorProvider
-    orob2b_order.provider.subtotal.class: OroB2B\Bundle\OrderBundle\Provider\SubtotalProvider
-
-    orob2b_order.provide.total_provider.class: OroB2B\Bundle\OrderBundle\Provider\TotalProvider
+    orob2b_order.provider.subtotal_line_item.class: OroB2B\Bundle\OrderBundle\Provider\SubtotalLineItemProvider
 
 services:
     orob2b_order.order.manager.api:
@@ -39,8 +37,8 @@ services:
         tags:
             - { name: doctrine.event_listener, event: postPersist }
 
-    orob2b_order.provider.subtotal:
-        class: %orob2b_order.provider.subtotal.class%
+    orob2b_order.provider.subtotal_line_item:
+        class: %orob2b_order.provider.subtotal_line_item.class%
         arguments:
             - @translator
             - @orob2b_pricing.rounding.price_rounding_service
