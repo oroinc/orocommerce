@@ -22,7 +22,8 @@ class FrontendLineItemFormProviderTest extends WebTestCase
         $this->initClient();
 
         $this->context = new LayoutContext();
-        $this->dataProvider = $this->getContainer()->get('orob2b_shopping_list.provider.frontend_line_item_form');
+        $this->dataProvider = $this->getContainer()
+            ->get('orob2b_shopping_list.layout.data_provider.frontend_line_item_form');
     }
 
     public function testGetData()

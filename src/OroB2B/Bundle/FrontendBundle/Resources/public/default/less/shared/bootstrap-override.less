@@ -82,6 +82,37 @@
     display: block;
   }
 
+  &.oro-modal {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+
+    @media (max-width: 767px) {
+      width: 100%;
+      padding: 0 1.5rem;
+      margin: 0;
+      left: 0;
+    }
+
+    &.modal-sm {
+      @media (min-width: 768px) {
+        margin-left: -15rem;
+      }
+    }
+
+    &.modal-md {
+      @media (min-width: 768px) {
+        margin-left: -20rem;
+      }
+    }
+
+    &.modal-lg {
+      @media (min-width: 992px) {
+        margin-left: -41rem;
+      }
+    }
+  }
+
   &.modal-auto {
     font-size: 0;
     width: auto;
