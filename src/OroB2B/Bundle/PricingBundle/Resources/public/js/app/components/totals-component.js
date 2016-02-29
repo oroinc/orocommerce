@@ -136,7 +136,7 @@ define(function(require) {
             $.post(this.options.url, formData, function(response) {
                 if (formData === self.formData) {
                     //data doesn't change after ajax call
-                    var totals = response.tat || {};
+                    var totals = response || {};
                     callback(totals);
                 }
             });

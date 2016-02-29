@@ -38,13 +38,14 @@ class OrderController extends AbstractOrderController
      */
     public function viewAction(Order $order)
     {
-        $orderProviderTotals =  $this->get('orob2b_order.provider.totals');
+        $subtotals = $this->get('orob2b_order.provider.total')->getSubtotals($order);
+        $total = $this->get('orob2b_order.provider.total')->getTotal($order);
 
         return [
             'entity' => $order,
             'totals' => [
-                'total' => $orderProviderTotals->getTotal($order),
-                'subtotals' => $orderProviderTotals->getSubtotals($order)
+                'total' => $total,
+                'subtotals' => $subtotals
             ],
             /** @todo: https://magecore.atlassian.net/browse/BB-1752 */
             'taxes' => $this->get('orob2b_tax.manager.tax_manager')->getTax($order)
@@ -165,7 +166,10 @@ class OrderController extends AbstractOrderController
                 return [
                     'form' => $form->createView(),
                     'entity' => $order,
-                    'totals'=> $this->get('orob2b_order.provide.total_provider')->getTotal($order),
+                    'totals' => [
+                        'total' =>  $this->get('orob2b_order.provider.total')->getTotal($order),
+                        'subtotals' => $this->get('orob2b_order.provider.total')->getSubtotals($order)
+                    ],
                     'isWidgetContext' => (bool)$request->get('_wid', false),
                     'isShippingAddressGranted' => $this->getOrderAddressSecurityProvider()
                         ->isAddressGranted($order, AddressType::TYPE_SHIPPING),
