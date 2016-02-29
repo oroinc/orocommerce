@@ -58,7 +58,7 @@ actions:
             - orob2b_rfp_request_view
         datagrids:
             - rfp-requests-grid
-        order: 150
+        order: 90
         attributes:
             cancellation_reason:
                 property_path: entity.cancellationReason
@@ -69,7 +69,7 @@ actions:
                 cancellation_reason:
                     form_type: oro_rich_text
         button_options:
-            icon: icon-remove-circle
+            icon: icon-ban-circle
         prefunctions:
             - @assign_constant_value:
                 attribute: $.cancelledStatusName
@@ -137,20 +137,9 @@ actions:
         preconditions:
             @equal: [true, $.isAllowed]
 
-    orob2b_rfp_edit_action:
-        label: orob2b.rfp.btn.edit
+    orob2b_rfp_base_edit_action:
+        label: ' '
         applications: [backend]
-        routes:
-            - orob2b_rfp_request_view
-        datagrids:
-            - rfp-requests-grid
-        order: 30
-        button_options:
-            icon: icon-edit
-        acl_resource: orob2b_rfp_request_update
-        frontend_options:
-            template: OroB2BRFPBundle:Action:rfpEditForm.html.twig
-            show_dialog: false
         attributes:
             request:
                 label: ' '
@@ -164,17 +153,71 @@ actions:
             attribute_default_values:
                 request:
                     $.data
+
+    orob2b_rfp_edit_action:
+        extends: orob2b_rfp_base_edit_action
+        label: orob2b.rfp.btn.edit
+        routes:
+            - orob2b_rfp_request_view
+        datagrids:
+            - rfp-requests-grid
+        order: 70
+        button_options:
+            icon: icon-edit
+        acl_resource: orob2b_rfp_request_update
+        frontend_options:
+            template: OroB2BRFPBundle:Action:rfpEditForm.html.twig
+            show_dialog: false
         functions:
             - @flash_message:
-                message: orob2b.rfp.action.request.saved.message
+                message: orob2b.rfp.action.request.updated.message
                 type: 'success'
-# @TODO: redirect will be fixed in scope https://magecore.atlassian.net/browse/BB-2200
-#            - @redirect:
-#                parameters:
-#                     route: 'orob2b_rfp_request_view'
-#                      route_parameters:
-#                          id: $id
+            - @redirect:
+                route: 'orob2b_rfp_request_view'
+                route_parameters:
+                    id: $id
 
+    orob2b_rfp_resubmit_action:
+        extends: orob2b_rfp_base_edit_action
+        label: orob2b.rfp.btn.resubmit
+        applications: [backend]
+        routes:
+            - orob2b_rfp_request_view
+        datagrids:
+            - rfp-requests-grid
+        order: 80
+        button_options:
+            icon: icon-share
+        acl_resource: orob2b_rfp_request_update
+        frontend_options:
+            template: OroB2BRFPBundle:Action:rfpResubmitForm.html.twig
+            show_dialog: false
+        form_init:
+            - @create_datetime:
+                attribute: $.currentDatetime
+            - @duplicate:
+                attribute: $.entityCopy
+                settings:
+                  - [[setNull], [propertyName, [id]]]
+                  - [[collection], [propertyType, ['Doctrine\Common\Collections\Collection']]]
+                  - [[keep], [propertyName, [status]]]
+                  - [[keep], [propertyName, [accountUser]]]
+                  - [[keep], [propertyName, [account]]]
+                  - [[keep], [propertyName, [organization]]]
+                  - [[keep], [property, [%orob2b_rfp.entity.request_product.class%, product]]]
+                  - [[keep], [property, [%orob2b_rfp.entity.request_product_item.class%, productUnit]]]
+            - @assign_value: [$.entityCopy.createdAt, $.currentDatetime]
+            - @assign_value: [$.entityCopy.updatedAt, $.currentDatetime]
+            - @assign_value: [$.data, $.entityCopy]
+        functions:
+            - @flush_entity: ~
+            - @flash_message:
+                message: orob2b.rfp.action.request.resubmited.message
+                type: 'success'
+            - @redirect:
+                route: 'orob2b_rfp_request_view'
+                route_parameters:
+                    id: $id
 
     orob2b_rfp_delete_action:
         label: orob2b.rfp.btn.delete
