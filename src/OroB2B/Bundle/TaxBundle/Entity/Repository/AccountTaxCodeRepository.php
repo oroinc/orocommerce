@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\TaxBundle\Entity\Repository;
 use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
 
 class AccountTaxCodeRepository extends AbstractTaxCodeRepository
 {
@@ -19,12 +20,7 @@ class AccountTaxCodeRepository extends AbstractTaxCodeRepository
             return null;
         }
 
-        return $this->createQueryBuilder('accountTaxCode')
-            ->where(':account MEMBER OF accountTaxCode.accounts')
-            ->setParameter('account', $account)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult();
+        return $this->findOneByEntity(TaxCodeInterface::TYPE_ACCOUNT, $account);
     }
 
     /**
@@ -38,11 +34,6 @@ class AccountTaxCodeRepository extends AbstractTaxCodeRepository
             return null;
         }
 
-        return $this->createQueryBuilder('accountTaxCode')
-            ->where(':accountGroup MEMBER OF accountTaxCode.accountGroups')
-            ->setParameter('accountGroup', $accountGroup)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult();
+        return $this->findOneByEntity(TaxCodeInterface::TYPE_ACCOUNT_GROUP, $accountGroup);
     }
 }
