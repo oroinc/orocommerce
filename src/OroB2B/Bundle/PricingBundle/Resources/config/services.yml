@@ -28,6 +28,7 @@ parameters:
     orob2b_pricing.provider.line_items_subtotal.class: OroB2B\Bundle\PricingBundle\Provider\LineItemsSubtotalProvider
     orob2b_pricing.provider.combined_price_list.class: OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider
     orob2b_pricing.provider.price_list_collection.class: OroB2B\Bundle\PricingBundle\Provider\PriceListCollectionProvider
+    orob2b_pricing.provider.matching_price.class: OroB2B\Bundle\PricingBundle\Provider\MatchingPriceProvider
 
     orob2b_pricing.resolver.combined_product_price_resolver.class: OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver
 
@@ -445,3 +446,11 @@ services:
             - @event_dispatcher
         tags:
             - { name: doctrine.orm.entity_listener }
+
+    orob2b_pricing.provider.matching_price:
+        class: %orob2b_pricing.provider.matching_price.class%
+        arguments:
+            - @orob2b_pricing.provider.combined_product_price
+            - @oro_entity.doctrine_helper
+            - %orob2b_product.product.class%
+            - %orob2b_product.product_unit.class%

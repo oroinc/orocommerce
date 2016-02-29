@@ -6,7 +6,6 @@ define(function(require) {
     var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    var SubtotalsListener = require('orob2bpricing/js/app/listener/subtotals-listener');
     var BaseView = require('oroui/js/app/views/base/view');
 
     /**
@@ -92,7 +91,11 @@ define(function(require) {
             });
 
             if (this.options.selectors.subtotalsFields.length > 0) {
-                SubtotalsListener.listen(this.$el.find(this.options.selectors.subtotalsFields.join(', ')));
+                _.each(this.options.selectors.subtotalsFields, function(field) {
+                    $(field).attr('data-entry-point-trigger', true);
+                });
+
+                mediator.trigger('entry-point:order:init');
             }
 
             if (this.options.selectors.address) {
@@ -157,8 +160,6 @@ define(function(require) {
                             }
                         }
                     });
-
-                    SubtotalsListener.updateSubtotals(e);
                 }
             } else {
                 this._setReadOnlyMode(false);

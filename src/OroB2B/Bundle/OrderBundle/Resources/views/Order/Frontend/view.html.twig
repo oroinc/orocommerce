@@ -58,12 +58,10 @@
         }
     ] %}
 
-    {% if entity.lineItems|length %}
-        {% set dataBlocks = dataBlocks|merge([{
-            'title': 'orob2b.order.sections.order_line_items'|trans,
-            'subblocks': [{'data' : [dataGrid.renderGrid('order-line-items-grid', { order_id: entity.id })]}]
-        }]) %}
-    {% endif %}
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'orob2b.order.sections.order_line_items'|trans,
+        'subblocks': [{'data' : [dataGrid.renderGrid('order-line-items-grid', { order_id: entity.id })]}]
+    }]) %}
 
     {% set id = 'frontend-order-view' %}
     {% set data = {'dataBlocks': dataBlocks} %}
