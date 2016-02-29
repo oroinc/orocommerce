@@ -56,9 +56,15 @@ layout:
                         vars:
                             quote: { @value: $data.quote }
                 quote_view_accept_button:
-                    blockType: button
+                    blockType: action_combined_buttons
                     options:
-                        text: 'orob2b.frontend.sale.btn.accept_quote_create_order'
+                        visible: { @not_empty: $data.quote.hasOfferVariants }
+                        actions:
+                            @value: $data.actions.all
+                        entity:
+                            @value: $data.quote
+                quote_view_accept_container:
+                    blockType: container
             tree:
                 content:
                     quote_view_page:
@@ -67,4 +73,5 @@ layout:
                         quote_view_information: ~
                         quote_view_line_items: ~
                         quote_view_line_items_mobile: ~
-                        quote_view_accept_button: ~
+                        quote_view_accept_container:
+                            quote_view_accept_button: ~
