@@ -1,0 +1,13 @@
+{% extends 'OroLayoutBundle:Layout:div_layout.html.twig' %}
+
+{% block form_start_widget %}
+    {% set attr = attr|merge({
+        id: form.vars.id
+    }) %}
+    {{ parent() }}
+{% endblock %}
+
+{% block form_end_widget %}
+    {{ parent() }}
+    {{ oro_form_js_validation(form) }}
+{% endblock %}

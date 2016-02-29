@@ -23,6 +23,13 @@ orob2b:
         price_list.label: 'Price List'
         line_items.label: Line Items
         line_items_count.label: '# Line Items'
+        checkout:
+            label: Checkout
+            billing_information: Billing Information
+            shipping_information: Shipping Information
+            shipping_method: Shipping Method
+            payment: Payment
+            order_review: Order Review
 
         orderaddress:
             entity_label: Order Address
