@@ -5,13 +5,12 @@ namespace OroB2B\Bundle\PricingBundle\Form\Extension;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-use OroB2B\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
+use OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
@@ -34,25 +33,29 @@ class WebsiteFormExtension extends AbstractTypeExtension
      */
     protected $entityManager;
 
-    /** @var  ManagerRegistry */
+    /**
+     * @var  ManagerRegistry
+     */
     protected $registry;
 
-    /** @var  EventDispatcherInterface */
-    protected $eventDispatcher;
+    /**
+     * @var  PriceListChangeTriggerHandler
+     */
+    protected $triggerHandler;
 
     /**
      * @param ManagerRegistry $registry
      * @param string $priceListToWebsiteClass
-     * @param EventDispatcherInterface $eventDispatcher
+     * @param PriceListChangeTriggerHandler $triggerHandler
      */
     public function __construct(
         ManagerRegistry $registry,
         $priceListToWebsiteClass,
-        EventDispatcherInterface $eventDispatcher
+        PriceListChangeTriggerHandler $triggerHandler
     ) {
         $this->registry = $registry;
         $this->priceListToWebsiteClass = $priceListToWebsiteClass;
-        $this->eventDispatcher = $eventDispatcher;
+        $this->triggerHandler = $triggerHandler;
     }
 
     /**
@@ -161,10 +164,7 @@ class WebsiteFormExtension extends AbstractTypeExtension
         $fallback->setFallback($submittedFallback);
 
         if ($hasChanges) {
-            $this->eventDispatcher->dispatch(
-                PriceListQueueChangeEvent::BEFORE_CHANGE,
-                new PriceListQueueChangeEvent($website)
-            );
+            $this->triggerHandler->handleWebsiteChange($website);
         }
         $fallback->setFallback($form->get(self::PRICE_LISTS_FALLBACK_FIELD)->getData());
     }

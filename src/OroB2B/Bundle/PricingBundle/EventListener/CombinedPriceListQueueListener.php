@@ -2,15 +2,11 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
-use Symfony\Component\HttpKernel\Event\PostResponseEvent;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
-use OroB2B\Bundle\PricingBundle\Event\AbstractPriceListQueueChangeEvent;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\PricingBundle\Event\ProductPriceChange;
 use OroB2B\Bundle\PricingBundle\Builder\CombinedProductPriceQueueConsumer;
 
 class CombinedPriceListQueueListener
@@ -60,10 +56,7 @@ class CombinedPriceListQueueListener
         $this->configManager = $configManager;
     }
 
-    /**
-     * @param PostResponseEvent $event
-     */
-    public function onTerminate(PostResponseEvent $event)
+    public function onTerminate()
     {
         if ($this->hasCollectionChanges) {
             if ($this->isRealTimeMode()) {
@@ -77,18 +70,12 @@ class CombinedPriceListQueueListener
         }
     }
 
-    /**
-     * @param AbstractPriceListQueueChangeEvent $event
-     */
-    public function onQueueChanged(AbstractPriceListQueueChangeEvent $event)
+    public function onQueueChanged()
     {
         $this->hasCollectionChanges = true;
     }
 
-    /**
-     * @param ProductPriceChange $event
-     */
-    public function onProductPriceChanged(ProductPriceChange $event)
+    public function onProductPriceChanged()
     {
         $this->hasProductPriceChanges = true;
     }

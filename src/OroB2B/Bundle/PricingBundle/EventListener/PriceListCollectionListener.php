@@ -12,7 +12,9 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class PriceListCollectionListener
 {
-    /** @var  ManagerRegistry */
+    /**
+     * @var  ManagerRegistry
+     */
     protected $registry;
 
     /**
@@ -28,6 +30,7 @@ class PriceListCollectionListener
      */
     public function onChangeCollectionBefore(PriceListQueueChangeEvent $event)
     {
+        asdfas
         $trigger = new PriceListChangeTrigger();
         $targetEntity = $event->getTargetEntity();
         if ($targetEntity instanceof Website) {

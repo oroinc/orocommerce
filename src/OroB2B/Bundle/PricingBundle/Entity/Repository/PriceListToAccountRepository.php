@@ -159,16 +159,16 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
             ->getResult();
 
         $em = $this->getEntityManager();
-        $entityPair = new ArrayCollection();
+        $collection = new ArrayCollection();
         foreach ($pairs as $pair) {
             /** @var Account $account */
             $account = $em->getReference('OroB2BAccountBundle:Account', $pair['account_id']);
             /** @var Website $website */
             $website = $em->getReference('OroB2BWebsiteBundle:Website', $pair['website_id']);
-            $entityPair->add(new AccountWebsiteDTO($account, $website));
+            $collection->add(new AccountWebsiteDTO($account, $website));
         }
 
-        return $entityPair;
+        return $collection;
     }
 
     /**

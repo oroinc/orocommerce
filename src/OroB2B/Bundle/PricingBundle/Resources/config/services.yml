@@ -56,11 +56,10 @@ parameters:
     orob2b_pricing.event_listener.frontend.product_price_datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener
     orob2b_pricing.event_listener.product_duplicate.class: OroB2B\Bundle\PricingBundle\EventListener\ProductDuplicateListener
     orob2b_pricing.event_listener.product_select_price_list_aware.class: OroB2B\Bundle\PricingBundle\EventListener\ProductSelectPriceListAwareListener
-    orob2b_pricing.event_listener.price_list_collection.class: OroB2B\Bundle\PricingBundle\EventListener\PriceListCollectionListener
+    orob2b_pricing.price_list_change_trigger_handler.class: OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler
     orob2b_pricing.event_listener.combined_price_list_queue.class: OroB2B\Bundle\PricingBundle\EventListener\CombinedPriceListQueueListener
-    orob2b_pricing.event_subscriber.system_config.class: OroB2B\Bundle\PricingBundle\EventListener\PriceListSystemConfigSubscriber
+    orob2b_pricing.event_listener.system_config.class: OroB2B\Bundle\PricingBundle\EventListener\PriceListSystemConfigSubscriber
 
-    orob2b_pricing.model.price_list_request_handler.abstract.class: OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler
     orob2b_pricing.model.price_list_request_handler.class: OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler
     orob2b_pricing.model.price_list_tree_handler.class: OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler
     orob2b_pricing.model.frontend_product_list_modifier.class: OroB2B\Bundle\PricingBundle\Model\FrontendProductListModifier
@@ -277,18 +276,15 @@ services:
         class: %orob2b_pricing.event_listener.account_group_changes.class%
         arguments:
             - @doctrine
-            - @event_dispatcher
-            - @oro_entity.orm.insert_from_select_query_executor
+            - @orob2b_pricing.price_list_change_trigger_handler
         tags:
-            - { name: kernel.event_listener, event: orob2b_account.account_group.pre_remove, method: onGroupRemove }
             - { name: kernel.event_listener, event: orob2b_account.account.on_account_group_change, method: onChangeGroupInAccount }
 
-    orob2b_pricing.event_listener.price_list_collection:
-        class: %orob2b_pricing.event_listener.price_list_collection.class%
+    orob2b_pricing.price_list_change_trigger_handler:
+        class: %orob2b_pricing.price_list_change_trigger_handler.class%
         arguments:
             - @doctrine
-        tags:
-            - { name: kernel.event_listener, event: orob2b_pricing.price_list_collection.change_before, method: onChangeCollectionBefore }
+            - @event_dispatcher
 
     orob2b_pricing.event_listener.combined_price_list_queue:
         class: %orob2b_pricing.event_listener.combined_price_list_queue.class%
@@ -411,13 +407,14 @@ services:
         parent: orob2b_product.service.abstract_rounding
 
     orob2b_pricing.event_listener.system_config:
-        class: %orob2b_pricing.event_subscriber.system_config.class%
+        class: %orob2b_pricing.event_listener.system_config.class%
         arguments:
             - @orob2b_pricing.system_config_converter
-            - @event_dispatcher
-            - @doctrine
+            - @orob2b_pricing.price_list_change_trigger_handler
         tags:
-            - { name: kernel.event_subscriber }
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
+            - { name: kernel.event_listener, event: oro_config.update_after, method: updateAfter }
 
     orob2b_pricing.system_config_converter:
         class: %orob2b_pricing.system_config_convereter.class%
