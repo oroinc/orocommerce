@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\TaxBundle\Transformer;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+
 use OroB2B\Bundle\TaxBundle\Entity\TaxApply;
 use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
 use OroB2B\Bundle\TaxBundle\Manager\TaxValueManager;
@@ -17,14 +19,19 @@ class TaxValueToResultTransformer implements TaxTransformerInterface
     /** @var string */
     protected $taxClass;
 
+    /** @var DoctrineHelper */
+    protected $doctrineHelper;
+
     /**
      * @param TaxValueManager $taxValueManager
      * @param string $taxClass
+     * @param DoctrineHelper $doctrineHelper
      */
-    public function __construct(TaxValueManager $taxValueManager, $taxClass)
+    public function __construct(TaxValueManager $taxValueManager, $taxClass, DoctrineHelper $doctrineHelper)
     {
         $this->taxValueManager = $taxValueManager;
         $this->taxClass = $taxClass;
+        $this->doctrineHelper = $doctrineHelper;
     }
 
     /** {@inheritdoc} */
@@ -32,14 +39,21 @@ class TaxValueToResultTransformer implements TaxTransformerInterface
     {
         $result = $taxValue->getResult();
 
+        $entity = $this->doctrineHelper->getEntityRepositoryForClass($taxValue->getEntityClass())
+            ->findOneBy(['id' => $taxValue->getEntityId()]);
+        $currency = $entity->getCurrency();
+
         $taxResultElements = [];
         foreach ($taxValue->getAppliedTaxes() as $taxApply) {
-            $taxResultElements[] = TaxResultElement::create(
+            $taxResultElement = TaxResultElement::create(
                 (string)$taxApply->getTax(),
                 $taxApply->getRate(),
                 $taxApply->getTaxableAmount(),
                 $taxApply->getTaxAmount()
             );
+
+            $taxResultElement->setCurrency($currency);
+            $taxResultElements[] = $taxResultElement;
         }
 
         if ($taxResultElements) {

@@ -265,6 +265,7 @@ services:
         arguments:
             - @orob2b_tax.manager.tax_value_manager
             - %orob2b_tax.entity.tax.class%
+            - @oro_entity.doctrine_helper
 
     orob2b_tax.event.tax_event_dispatcher:
         class: %orob2b_tax.event.tax_event_dispatcher.class%

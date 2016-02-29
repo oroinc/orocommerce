@@ -33,5 +33,4 @@ abstract class AbstractResultElement extends AbstractResult
     {
         return $this->getOffset(self::CURRENCY);
     }
-
 }
