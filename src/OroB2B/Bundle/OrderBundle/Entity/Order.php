@@ -12,6 +12,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
@@ -310,6 +311,25 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
      * )
      */
     protected $lineItems;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="shipping_cost_value", type="money", nullable=true)
+     */
+    protected $shippingCostValue;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="shipping_cost_currency", type="string", nullable=true, length=3)
+     */
+    protected $shippingCostCurrency;
+
+    /**
+     * @var Price
+     */
+    protected $shippingCost;
 
     /**
      * Constructor
@@ -762,5 +782,50 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
     public function getWebsite()
     {
         return $this->website;
+    }
+
+    /**
+     * Get shipping cost
+     *
+     * @return Price|null
+     */
+    public function getShippingCost()
+    {
+        return $this->shippingCost;
+    }
+
+    /**
+     * Set shipping cost
+     *
+     * @param Price $shippingCost
+     * @return $this
+     */
+    public function setShippingCost(Price $shippingCost = null)
+    {
+        $this->shippingCost = $shippingCost;
+
+        $this->updateShippingCost();
+
+        return $this;
+    }
+
+    /**
+     * @ORM\PostLoad
+     */
+    public function postLoad()
+    {
+        if (null !== $this->shippingCostValue && null !== $this->shippingCostCurrency) {
+            $this->shippingCost = Price::create($this->shippingCostValue, $this->shippingCostCurrency);
+        }
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updateShippingCost()
+    {
+        $this->shippingCostValue = $this->shippingCost ? $this->shippingCost->getValue() : null;
+        $this->shippingCostCurrency = $this->shippingCost ? $this->shippingCost->getCurrency() : null;
     }
 }
