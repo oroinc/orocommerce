@@ -33,6 +33,12 @@ orob2b:
                 full: set
                 short: set
 
+        validation:
+            unit:
+                required: Unit is required
+            quantity:
+                required: Quantity is required
+                greaterThanZero: Quantity should be greater than 0
         frontend:
             quick_add:
                 import_from_file:

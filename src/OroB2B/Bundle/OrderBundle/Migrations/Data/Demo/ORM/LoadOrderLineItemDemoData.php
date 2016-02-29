@@ -45,7 +45,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
-        $this->productPriceProvider = $container->get('orob2b_pricing.provider.product_price');
+        $this->productPriceProvider = $container->get('orob2b_pricing.provider.combined_product_price');
     }
 
     /**

@@ -6,19 +6,51 @@ use OroB2B\Bundle\TaxBundle\Event\ResolverEventConnector;
 use OroB2B\Bundle\TaxBundle\Event\ResolveTaxEvent;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use OroB2B\Bundle\TaxBundle\Resolver\ResolverInterface;
+use OroB2B\Bundle\TaxBundle\Resolver\StopPropagationException;
 
 class ResolverEventConnectorTest extends \PHPUnit_Framework_TestCase
 {
-    public function testOnResolve()
+    /**
+     * @var ResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $resolver;
+
+    /**
+     * @var ResolverEventConnector
+     */
+    protected $connector;
+
+    protected function setUp()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ResolverInterface $resolver */
-        $resolver = $this->getMock('OroB2B\Bundle\TaxBundle\Resolver\ResolverInterface');
+        $this->resolver = $this->getMock('OroB2B\Bundle\TaxBundle\Resolver\ResolverInterface');
+        $this->connector = new ResolverEventConnector($this->resolver);
+    }
 
+    public function testOnResolve()
+    {
         $taxable = new Taxable();
+        $this->resolver
+            ->expects($this->once())
+            ->method('resolve')
+            ->with($taxable);
 
-        $resolver->expects($this->once())->method('resolve')->with($taxable);
+        $event = new ResolveTaxEvent($taxable);
+        $this->connector->onResolve($event);
+        $this->assertFalse($event->isPropagationStopped());
+    }
 
-        $connector = new ResolverEventConnector($resolver);
-        $connector->onResolve(new ResolveTaxEvent($taxable));
+    public function testOnResolveStopPropagation()
+    {
+        $taxable = new Taxable();
+        $this->resolver
+            ->expects($this->once())
+            ->method('resolve')
+            ->with($taxable)
+            ->will($this->throwException(new StopPropagationException));
+
+        $event = new ResolveTaxEvent($taxable);
+        $this->connector->onResolve($event);
+        $this->assertTrue($event->isPropagationStopped());
     }
 }

@@ -2,16 +2,23 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider;
 
+use Symfony\Component\HttpFoundation\RequestStack;
+
+use Doctrine\Common\Collections\Criteria;
+
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 
 class AccountUserShoppingListsProvider extends AbstractServerRenderDataProvider
 {
+    const DATA_SORT_BY_UPDATED = 'updated';
+
     /**
      * @var FormAccessor
      */
@@ -28,6 +35,11 @@ class AccountUserShoppingListsProvider extends AbstractServerRenderDataProvider
     protected $securityFacade;
 
     /**
+     * @var RequestStack
+     */
+    protected $requestStack;
+
+    /**
      * @var string
      */
     protected $shoppingListClass;
@@ -35,13 +47,16 @@ class AccountUserShoppingListsProvider extends AbstractServerRenderDataProvider
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param SecurityFacade $securityFacade
+     * @param RequestStack $requestStack
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        SecurityFacade $securityFacade
+        SecurityFacade $securityFacade,
+        RequestStack $requestStack
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->securityFacade = $securityFacade;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -60,11 +75,13 @@ class AccountUserShoppingListsProvider extends AbstractServerRenderDataProvider
         if (!$this->data) {
             $this->data = $this->getAccountUserShoppingLists();
         }
+
         return $this->data;
     }
 
     /**
      * @return array|null
+     * @throws \InvalidArgumentException
      */
     protected function getAccountUserShoppingLists()
     {
@@ -76,9 +93,29 @@ class AccountUserShoppingListsProvider extends AbstractServerRenderDataProvider
         /** @var ShoppingListRepository $shoppingListRepository */
         $shoppingListRepository = $this->doctrineHelper->getEntityRepositoryForClass($this->shoppingListClass);
 
-        return [
-            'shoppingLists' => $shoppingListRepository->findAllExceptCurrentForAccountUser($accountUser),
-            'currentShoppingList' => $shoppingListRepository->findCurrentForAccountUser($accountUser),
-        ];
+        /** @var ShoppingList[] $shoppingLists */
+        $shoppingLists = $shoppingListRepository->findByUser($accountUser, $this->getSortOrder());
+
+        return ['shoppingLists' => $shoppingLists];
+    }
+
+    /**
+     * @return string
+     */
+    protected function getSortOrder()
+    {
+        $sortOrder = [];
+        $request = $this->requestStack->getCurrentRequest();
+        $sort = $request ? $request->get('shopping_list_sort') : self::DATA_SORT_BY_UPDATED;
+
+        switch ($sort) {
+            case self::DATA_SORT_BY_UPDATED:
+                $sortOrder['list.updatedAt'] = Criteria::DESC;
+                break;
+            default:
+                $sortOrder['list.id'] = Criteria::ASC;
+        }
+
+        return $sortOrder;
     }
 }
