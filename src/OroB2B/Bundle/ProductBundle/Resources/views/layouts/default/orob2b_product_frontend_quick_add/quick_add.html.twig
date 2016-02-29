@@ -1,0 +1,37 @@
+{% block _quick_add_form_start_widget %}
+    {% set pageComponentOptions = {
+        'componentSelector': '#' ~ form.component.vars.id,
+        'additionalSelector': '#' ~ form.additional.vars.id
+    } %}
+    {% set attr = {
+        'data-page-component-module': 'orob2bproduct/js/app/components/quick-add-component',
+        'data-page-component-options': pageComponentOptions|json_encode
+    }|merge(attr) %}
+    {{ block('form_start_widget') }}
+{% endblock %}
+
+{% block _quick_add_form_buttons_widget %}
+    {% placeholder orob2b_product_quick_add_buttons %}
+{% endblock %}
+
+{% block _quick_add_import_button_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {{ UI.clientLink({
+        'dataUrl': path('orob2b_product_frontend_quick_add_import'),
+        'aCss': 'no-hash import-link',
+        'label' : 'orob2b.product.frontend.quick_add.import_from_file.title'|trans,
+        'widget' : {
+            'type' : 'dialog',
+            'options' : {
+                'dialogOptions' : {
+                    'title' : 'orob2b.product.frontend.quick_add.import_from_file.title'|trans,
+                    'modal': true,
+                    'resizable': false,
+                    'width': 680,
+                    'height': 350,
+                    'autoResize': true
+                }
+            }
+        }
+    }) }}
+{% endblock %}

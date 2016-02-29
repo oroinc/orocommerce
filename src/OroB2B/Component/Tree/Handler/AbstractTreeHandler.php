@@ -5,12 +5,13 @@ namespace OroB2B\Component\Tree\Handler;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
-use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
+use OroB2B\Component\Tree\Entity\Repository\NestedTreeRepository;
 
 abstract class AbstractTreeHandler
 {
+    const ROOT_PARENT_VALUE = '#';
     const SUCCESS_STATUS = true;
-    const ERROR_STATUS   = false;
+    const ERROR_STATUS = false;
 
     /**
      * @var ManagerRegistry
@@ -28,34 +29,20 @@ abstract class AbstractTreeHandler
      */
     public function __construct($entityClass, ManagerRegistry $managerRegistry)
     {
-        $this->entityClass     = $entityClass;
+        $this->entityClass = $entityClass;
         $this->managerRegistry = $managerRegistry;
     }
 
     /**
+     * @param object|null $root
+     * @param bool $includeRoot
      * @return array
      */
-    public function createTree()
+    public function createTree($root = null, $includeRoot = true)
     {
-        $tree = $this->getEntityRepository()
-            ->getChildren(null, false, 'left', 'ASC');
-
-        return $this->formatTree($tree);
-    }
-
-    /**
-     * @param array $entities
-     * @return array
-     */
-    protected function formatTree(array $entities)
-    {
-        $formattedTree = [];
-
-        foreach ($entities as $entity) {
-            $formattedTree[] = $this->formatEntity($entity);
-        }
-
-        return $formattedTree;
+        $root = $this->getRootNode($root);
+        $tree = $this->getNodes($root, $includeRoot);
+        return $this->formatTree($tree, $root, $includeRoot);
     }
 
     /**
@@ -91,6 +78,69 @@ abstract class AbstractTreeHandler
     }
 
     /**
+     * @param null $root
+     * @param bool $includeRoot
+     * @return array
+     */
+    protected function getNodes($root, $includeRoot)
+    {
+        return $this->getEntityRepository()->getChildren($root, false, 'left', 'ASC', $includeRoot);
+    }
+
+    /**
+     * @param object $root
+     * @return bool|\Doctrine\Common\Proxy\Proxy|null|object
+     * @throws \Doctrine\ORM\ORMException
+     */
+    protected function getRootNode($root)
+    {
+        if ($root && !$root instanceof $this->entityClass) {
+            return $this->getEntityManager()->getReference($this->entityClass, $root);
+        }
+        return $root;
+    }
+
+    /**
+     * @param array $entities
+     * @param object|null $root
+     * @param bool $includeRoot
+     * @return array
+     */
+    protected function formatTree(array $entities, $root, $includeRoot)
+    {
+        $formattedTree = [];
+
+        foreach ($entities as $entity) {
+            $node = $this->formatEntity($entity);
+            $rootId = $root ? $root->getId() : null;
+            $node['parent'] = $this->getParent($node['id'], $node['parent'], $rootId, $includeRoot);
+            $formattedTree[] = $node;
+        }
+
+        return $formattedTree;
+    }
+
+    /**
+     * @param int $entityId
+     * @param int $parentId
+     * @param int $rootId
+     * @param bool $includeRoot
+     * @return string
+     */
+    protected function getParent($entityId, $parentId, $rootId, $includeRoot)
+    {
+        $parent = self::ROOT_PARENT_VALUE;
+        if ($rootId && $entityId === $rootId) {
+            return $parent;
+        }
+        if ($parentId && !($rootId && $parentId === $rootId && !$includeRoot)) {
+            $parent = $parentId;
+        }
+
+        return $parent;
+    }
+
+    /**
      * Move node processing
      *
      * @param int $entityId
@@ -107,7 +157,7 @@ abstract class AbstractTreeHandler
      *     'text'   => string  // tree item label
      * )
      *
-     * @param Object $entity
+     * @param object $entity
      * @return array
      */
     abstract protected function formatEntity($entity);
@@ -117,6 +167,14 @@ abstract class AbstractTreeHandler
      */
     protected function getEntityRepository()
     {
-        return $this->managerRegistry->getRepository($this->entityClass);
+        return $this->getEntityManager()->getRepository($this->entityClass);
+    }
+
+    /**
+     * @return EntityManager|null
+     */
+    protected function getEntityManager()
+    {
+        return $this->managerRegistry->getManagerForClass($this->entityClass);
     }
 }

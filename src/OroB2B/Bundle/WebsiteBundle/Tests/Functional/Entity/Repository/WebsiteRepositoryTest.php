@@ -44,7 +44,8 @@ class WebsiteRepositoryTest extends WebTestCase
                 'expected' => [
                     'Default',
                     'US',
-                    'Canada'
+                    'Canada',
+                    'CA'
                 ],
             ],
         ];

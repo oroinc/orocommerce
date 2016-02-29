@@ -4,8 +4,7 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Formatter;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
-use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -21,7 +20,7 @@ use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 /**
  * @SuppressWarnings(PHPMD.NPathComplexity)
  */
-class QuoteProductTypeFormatterTest extends \PHPUnit_Framework_TestCase
+class QuoteProductFormatterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var QuoteProductFormatter
@@ -147,7 +146,7 @@ class QuoteProductTypeFormatterTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($expectedData['formattedUnits']))
         ;
 
-        $price = $inputData['price'] ?: new OptionalPrice();
+        $price = $inputData['price'] ?: new Price();
 
         $this->numberFormatter->expects($expectedData['formatPrice'] ? $this->once() : $this->never())
             ->method('formatCurrency')
@@ -276,7 +275,7 @@ class QuoteProductTypeFormatterTest extends \PHPUnit_Framework_TestCase
                     'item'      => new QuoteProductRequest(),
                     'quantity'  => 15,
                     'unitCode'  => 'kg',
-                    'price'     => OptionalPrice::create(10, 'USD'),
+                    'price'     => Price::create(10, 'USD'),
                     'unit'      => (new ProductUnit())->setCode('kg'),
                 ],
                 'expectedData' => [
@@ -312,7 +311,7 @@ class QuoteProductTypeFormatterTest extends \PHPUnit_Framework_TestCase
                     'item'      => new QuoteProductRequest(),
                     'quantity'  => null,
                     'unitCode'  => 'kg',
-                    'price'     => OptionalPrice::create(10, 'USD'),
+                    'price'     => Price::create(10, 'USD'),
                     'unit'      => (new ProductUnit())->setCode('kg'),
                 ],
                 'expectedData' => [
@@ -348,7 +347,7 @@ class QuoteProductTypeFormatterTest extends \PHPUnit_Framework_TestCase
                     'item'      => new QuoteProductRequest(),
                     'quantity'  => 25,
                     'unitCode'  => 'item',
-                    'price'     => OptionalPrice::create(20, 'EUR'),
+                    'price'     => Price::create(20, 'EUR'),
                     'unit'      => null,
                 ],
                 'expectedData' => [

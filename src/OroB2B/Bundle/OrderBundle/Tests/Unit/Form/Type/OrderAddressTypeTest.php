@@ -2,27 +2,14 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
-use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
-
-use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\ConstraintViolation;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType as AddressTypeEntity;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\AddressBundle\Form\Type\AddressType;
-use Oro\Bundle\AddressBundle\Form\Type\CountryType;
-use Oro\Bundle\AddressBundle\Form\Type\RegionType;
-use Oro\Bundle\FormBundle\Form\Extension\RandomIdExtension;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
-use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
@@ -30,9 +17,8 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderAddressType;
 use OroB2B\Bundle\OrderBundle\Model\OrderAddressManager;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
-use OroB2B\Bundle\OrderBundle\Tests\Unit\Stub\AddressCountryAndRegionSubscriberStub;
 
-class OrderAddressTypeTest extends FormIntegrationTestCase
+class OrderAddressTypeTest extends AbstractAddressTypeTest
 {
     /** @var OrderAddressType */
     protected $formType;
@@ -129,7 +115,21 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
         $this->orderAddressManager->expects($this->once())->method('getGroupedAddresses')->willReturn([]);
         $this->orderAddressSecurityProvider->expects($this->once())->method('isManualEditGranted')->willReturn(true);
 
-        $this->checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors);
+        $this->orderAddressManager->expects($this->any())->method('updateFromAbstract')
+            ->will(
+                $this->returnCallback(
+                    function (AccountAddress $address = null, OrderAddress $orderAddress = null) {
+                        if (!$orderAddress) {
+                            $orderAddress = new OrderAddress();
+                        }
+                        return $orderAddress;
+                    }
+                )
+            );
+
+        $formOptions =  ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'order' => new Order()];
+
+        $this->checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors, $formOptions);
     }
 
     /**
@@ -263,7 +263,21 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
 
         $this->orderAddressSecurityProvider->expects($this->once())->method('isManualEditGranted')->willReturn(false);
 
-        $this->checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors);
+        $this->orderAddressManager->expects($this->any())->method('updateFromAbstract')
+            ->will(
+                $this->returnCallback(
+                    function (AccountAddress $address = null, OrderAddress $orderAddress = null) {
+                        if (!$orderAddress) {
+                            $orderAddress = new OrderAddress();
+                        }
+                        return $orderAddress;
+                    }
+                )
+            );
+
+        $formOptions =  ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'order' => new Order()];
+
+        $this->checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors, $formOptions);
     }
 
     /**
@@ -312,70 +326,6 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @param bool $isValid
-     * @param array $submittedData
-     * @param mixed $expectedData
-     * @param mixed $defaultData
-     * @param array $formErrors
-     */
-    protected function checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors)
-    {
-        $this->orderAddressManager->expects($this->any())->method('updateFromAbstract')
-            ->will(
-                $this->returnCallback(
-                    function (AccountAddress $address = null, OrderAddress $orderAddress = null) {
-                        if (!$orderAddress) {
-                            $orderAddress = new OrderAddress();
-                        }
-                        return $orderAddress;
-                    }
-                )
-            );
-
-        $form = $this->factory->create(
-            $this->formType,
-            $defaultData,
-            ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'order' => new Order()]
-        );
-        $this->assertEquals($defaultData, $form->getData());
-
-        $form->submit($submittedData);
-
-        $this->assertEquals($isValid, $form->isValid());
-
-        if ($form->getErrors(true)->count()) {
-            $this->assertNotEmpty($formErrors);
-        }
-
-        /** @var FormError $error */
-        foreach ($form->getErrors(true) as $error) {
-            $this->assertArrayHasKey($error->getOrigin()->getName(), $formErrors);
-
-            /** @var ConstraintViolation $violation */
-            $violation = $error->getCause();
-            $this->assertEquals(
-                $formErrors[$error->getOrigin()->getName()],
-                $error->getMessage(),
-                sprintf('Failed path: %s', $violation->getPropertyPath())
-            );
-        }
-        $this->assertEquals($expectedData, $form->getData());
-
-        $this->assertTrue($form->has('accountAddress'));
-        $this->assertTrue($form->get('accountAddress')->getConfig()->hasOption('attr'));
-        $this->assertArrayHasKey('data-addresses', $form->get('accountAddress')->getConfig()->getOption('attr'));
-        $this->assertInternalType(
-            'string',
-            $form->get('accountAddress')->getConfig()->getOption('attr')['data-addresses']
-        );
-        $this->assertInternalType(
-            'array',
-            json_decode($form->get('accountAddress')->getConfig()->getOption('attr')['data-addresses'], true)
-        );
-        $this->assertArrayHasKey('data-default', $form->get('accountAddress')->getConfig()->getOption('attr'));
-    }
-
     public function testFinishView()
     {
         $view = new FormView();
@@ -404,68 +354,5 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
 
         $this->assertFalse($view->offsetGet('accountAddress')->vars['disabled']);
         $this->assertFalse($view->offsetGet('accountAddress')->vars['required']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getExtensions()
-    {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatableEntityType $registry */
-        $translatableEntity = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType')
-            ->setMethods(['setDefaultOptions', 'buildForm'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $country = new Country('US');
-        $choices = [
-            'OroAddressBundle:Country' => ['US' => $country],
-            'OroAddressBundle:Region' => ['US-AL' => (new Region('US-AL'))->setCountry($country)],
-        ];
-
-        $translatableEntity->expects($this->any())->method('setDefaultOptions')->will(
-            $this->returnCallback(
-                function (OptionsResolver $resolver) use ($choices) {
-                    $choiceList = function (Options $options) use ($choices) {
-                        $className = $options->offsetGet('class');
-                        if (array_key_exists($className, $choices)) {
-                            return new ArrayChoiceList(
-                                $choices[$className],
-                                function ($item) {
-                                    if ($item instanceof Country) {
-                                        return $item->getIso2Code();
-                                    }
-
-                                    if ($item instanceof Region) {
-                                        return $item->getCombinedCode();
-                                    }
-
-                                    return $item . uniqid('form', true);
-                                }
-                            );
-                        }
-
-                        return new ArrayChoiceList([]);
-                    };
-
-                    $resolver->setDefault('choice_list', $choiceList);
-                }
-            )
-        );
-
-        return [
-            new PreloadedExtension(
-                [
-                    'oro_address' => new AddressType(new AddressCountryAndRegionSubscriberStub()),
-                    'oro_country' => new CountryType(),
-                    'genemu_jqueryselect2_translatable_entity' => new Select2Type('translatable_entity'),
-                    'genemu_jqueryselect2_choice' => new Select2Type('choice'),
-                    'translatable_entity' => $translatableEntity,
-                    'oro_region' => new RegionType(),
-                ],
-                ['form' => [new RandomIdExtension()]]
-            ),
-            $this->getValidatorExtension(true),
-        ];
     }
 }

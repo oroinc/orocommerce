@@ -6,7 +6,9 @@ parameters:
     orob2b_pricing.form.type.product_price_value.class: OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceValueType
     orob2b_pricing.form.type.price_list_product_price.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceListProductPriceType
     orob2b_pricing.form.price_list_collection.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceListCollectionType
+    orob2b_pricing.form.price_lists_settings.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceListsSettingsType
     orob2b_pricing.form.type.product_price_filter.class: OroB2B\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType
+    orob2b_pricing.form.type.price_type_selector.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceTypeSelectorType
     orob2b_pricing.form.type.price_list_select_with_priority.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType
     orob2b_pricing.form.type.orob2b_pricing_account_group_website_scoped_price_lists.class: OroB2B\Bundle\PricingBundle\Form\Type\AccountGroupWebsiteScopedPriceListsType
     orob2b_pricing.form.type.orob2b_pricing_account_website_scoped_price_lists.class: OroB2B\Bundle\PricingBundle\Form\Type\AccountWebsiteScopedPriceListsType
@@ -51,12 +53,10 @@ services:
         calls:
             - [setDataClass, [%orob2b_pricing.entity.product_price.class%]]
 
-    orob2b_pricing.form.type.product_price_value:
-        class: %orob2b_pricing.form.type.product_price_value.class%
-        arguments:
-            - @orob2b_pricing.rounding.price_rounding_service
+    orob2b_pricing.form.type.price_type_selector:
+        class: %orob2b_pricing.form.type.price_type_selector.class%
         tags:
-            - { name: form.type, alias: orob2b_pricing_product_price_value }
+            - { name: form.type, alias: "orob2b_pricing_price_type" }
 
     orob2b_pricing.form.type.price_list_product_price:
         class: %orob2b_pricing.form.type.price_list_product_price.class%
@@ -69,6 +69,14 @@ services:
         class: %orob2b_pricing.form.price_list_collection.class%
         tags:
             - { name: form.type, alias: orob2b_pricing_price_list_collection }
+
+    orob2b_pricing.form.price_lists_settings:
+        class: %orob2b_pricing.form.price_lists_settings.class%
+        arguments:
+            - @doctrine
+            - @property_accessor
+        tags:
+            - { name: form.type, alias: orob2b_pricing_price_lists_settings }
 
     orob2b_pricing.form.type.product_price_filter:
         class: %orob2b_pricing.form.type.product_price_filter.class%
@@ -106,6 +114,7 @@ services:
         arguments:
             - @doctrine
             - %orob2b_pricing.entity.price_list_to_website.class%
+            - @event_dispatcher
         tags:
             - { name: form.type_extension, alias: orob2b_website_type }
 
@@ -113,6 +122,7 @@ services:
         class: %orob2b_pricing.form.type.orob2b_pricing_account_group_website_scoped_price_lists.class%
         arguments:
             - @doctrine
+            - @event_dispatcher
         tags:
             - { name: form.type, alias: orob2b_pricing_account_group_website_scoped_price_lists }
 
@@ -120,8 +130,10 @@ services:
         class: %orob2b_pricing.form.type.orob2b_pricing_account_website_scoped_price_lists.class%
         arguments:
             - @doctrine
+            - @event_dispatcher
         tags:
             - { name: form.type, alias: orob2b_pricing_account_website_scoped_price_lists }
+
     orob2b_pricing.form.type.price_list_system_config:
         class: %orob2b_pricing.form.type.price_list_system_config.class%
         arguments:

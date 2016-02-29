@@ -43,6 +43,16 @@
 {% block content_data %}
     {% set id = 'quote-edit' %}
 
+    {% set ownerSelectors %}
+        <div data-page-component-module="orob2bsale/js/app/components/related-data-component"
+             data-page-component-options="{{ {formName: form.vars.name}|json_encode }}">
+            <div data-page-component-module="orob2baccount/js/app/components/account-selection-component">
+                {{ form_row(form.account) }}
+                {{ form_row(form.accountUser) }}
+            </div>
+        </div>
+    {% endset %}
+
     {% set lineItems %}
         <div class="quote-lineitems"
              data-page-component-module="oroui/js/app/components/view-component"
@@ -50,7 +60,7 @@
                  view: 'orob2bsale/js/app/views/line-items-view',
                  tierPrices: tierPrices|default({}),
                  matchedPrices: matchedPrices|default({}),
-                 tierPricesRoute: 'orob2b_pricing_price_by_pricelist',
+                 tierPricesRoute: 'orob2b_pricing_price_by_account',
                  matchedPricesRoute: 'orob2b_pricing_matching_price'
              }|json_encode }}"
              data-layout="separate">
@@ -59,22 +69,36 @@
         </div>
     {% endset %}
 
+    {% set generalFields %}
+        <div
+            data-page-component-module="oroui/js/app/components/view-component"
+            data-page-component-options="{{ {
+                'view': 'orob2bfrontend/js/app/views/form-view',
+                 selectors: {
+                     account: 'input[name$="[account]"]',
+                     website: 'select[name$="[website]"]'
+                 }
+             }|json_encode }}"
+        >
+            {{ form_row(form.owner) }}
+            {{ ownerSelectors }}
+            {{ form_row(form.website) }}
+            {{ form_row(form.validUntil) }}
+            {{ form_row(form.locked) }}
+            {{ form_row(form.poNumber) }}
+            {{ form_row(form.shipUntil) }}
+            {{ form_row(form.assignedUsers) }}
+            {{ form_row(form.assignedAccountUsers) }}
+        </div>
+    {% endset %}
     {% set dataBlocks = [
         {
             'title': 'orob2b.sale.quote.sections.general'|trans,
             'class': 'active',
             'subblocks': [{
                 'title': '',
-                'data': [
-                    form_row(form.owner),
-                    form_row(form.account),
-                    form_row(form.accountUser),
-                    form_row(form.priceList),
-                    form_row(form.validUntil),
-                    form_row(form.locked),
-                    form_row(form.poNumber),
-                    form_row(form.shipUntil)
-                ]
+                'data-page-component-module': 'sadfas',
+                'data': [generalFields]
             }]
         },
         {
@@ -85,9 +109,48 @@
                     lineItems
                 ]
             }]
+        },
+        {
+            'title': 'orob2b.sale.quote.sections.shipping_information'|trans,
+            'subblocks': [{
+                'title': '',
+                'data': [
+                    form_row(form.shippingEstimate),
+                ]
+            }]
         }
     ]
     %}
+
+    {% if isShippingAddressGranted %}
+        {% set shippingAddress %}
+            <div
+                data-page-component-module="oroui/js/app/components/view-component"
+                data-page-component-options="{{ {
+                    view: 'orob2bsale/js/app/views/address-view',
+                    type: 'shipping',
+                    selectors: {
+                        address: '#' ~ form.shippingAddress.accountAddress.vars.id,
+                        subtotalsFields: [
+                        '#' ~ form.shippingAddress.country.vars.id,
+                        '#' ~ form.shippingAddress.street.vars.id,
+                        '#' ~ form.shippingAddress.street2.vars.id,
+                        '#' ~ form.shippingAddress.city.vars.id,
+                        '#' ~ form.shippingAddress.region.vars.id,
+                        '#' ~ form.shippingAddress.postalCode.vars.id
+                        ]
+                    }
+                }|json_encode }}">
+                {{ form_widget(form.shippingAddress) }}
+            </div>
+        {% endset %}
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': 'orob2b.order.shipping_address.label'|trans,
+            'subblocks': [{
+                'data': [shippingAddress]
+            }]
+        }]) %}
+    {% endif %}
 
     {% set additionalData = [] %}
     {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
@@ -109,7 +172,5 @@
         'dataBlocks': dataBlocks
     }%}
 
-    <div class="sale-quote-form" data-page-component-module="orob2baccount/js/app/components/account-selection-component">
-        {{ parent() }}
-    </div>
+    {{ parent() }}
 {% endblock content_data %}

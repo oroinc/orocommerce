@@ -1,0 +1,4 @@
+config:
+    paths:
+        'orob2binvoice/js/app/views/invoice-line-items-view': 'bundles/orob2binvoice/js/app/views/invoice-line-items-view.js'
+        'orob2binvoice/js/app/views/invoice-line-item-view': 'bundles/orob2binvoice/js/app/views/invoice-line-item-view.js'

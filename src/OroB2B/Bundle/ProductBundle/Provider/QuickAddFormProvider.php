@@ -60,13 +60,14 @@ class QuickAddFormProvider implements DataProviderInterface
     }
 
     /**
+     * @param array $data
      * @param array $options
      * @return FormInterface
      */
-    public function getForm(array $options = [])
+    public function getForm($data = [], array $options = [])
     {
         if (!$this->form) {
-            $this->form = $this->formFactory->create(QuickAddType::NAME, null, $options);
+            $this->form = $this->formFactory->create(QuickAddType::NAME, $data, $options);
         }
         return $this->form;
     }

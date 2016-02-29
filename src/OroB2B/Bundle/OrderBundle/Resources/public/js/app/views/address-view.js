@@ -6,7 +6,7 @@ define(function(require) {
     var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    var SubtotalsListener = require('orob2border/js/app/listener/subtotals-listener');
+    var SubtotalsListener = require('orob2bpricing/js/app/listener/subtotals-listener');
     var BaseView = require('oroui/js/app/views/base/view');
 
     /**
@@ -79,12 +79,10 @@ define(function(require) {
 
             this.ftid = this.$el.find('div[data-ftid]:first').data('ftid');
 
-            this.setAddress(this.$el.find(this.options.selectors.address));
-
             this.useDefaultAddress = true;
             this.$fields = this.$el.find(':input[data-ftid]').filter(':not(' + this.options.selectors.address + ')');
             this.fieldsByName = {};
-            this.$fields.each(function() {
+            this.$fields.each(function () {
                 var $field = $(this);
                 if ($field.val().length > 0) {
                     self.useDefaultAddress = false;
@@ -93,10 +91,16 @@ define(function(require) {
                 self.fieldsByName[name] = $field;
             });
 
-            this.accountAddressChange();
-
             if (this.options.selectors.subtotalsFields.length > 0) {
                 SubtotalsListener.listen(this.$el.find(this.options.selectors.subtotalsFields.join(', ')));
+            }
+
+            if (this.options.selectors.address) {
+                this.setAddress(this.$el.find(this.options.selectors.address));
+
+                this.accountAddressChange();
+            } else {
+                this._setReadOnlyMode(true);
             }
         },
 
@@ -135,15 +139,7 @@ define(function(require) {
          */
         accountAddressChange: function(e) {
             if (this.$address.val() !== this.options.enterManuallyValue) {
-                this.$fields.each(function() {
-                    var $field = $(this);
-
-                    if ($field.data('select2')) {
-                        $field.select2('readonly', true);
-                    } else {
-                        $field.attr('readonly', true);
-                    }
-                });
+                this._setReadOnlyMode(true);
 
                 var address = this.$address.data('addresses')[this.$address.val()] || null;
                 if (address) {
@@ -165,16 +161,20 @@ define(function(require) {
                     SubtotalsListener.updateSubtotals(e);
                 }
             } else {
-                this.$fields.each(function() {
-                    var $field = $(this);
-
-                    if ($field.data('select2')) {
-                        $field.select2('readonly', false);
-                    } else {
-                        $field.attr('readonly', false);
-                    }
-                });
+                this._setReadOnlyMode(false);
             }
+        },
+
+        _setReadOnlyMode: function(mode) {
+            this.$fields.each(function() {
+                var $field = $(this);
+
+                if ($field.data('select2')) {
+                    $field.select2('readonly', mode);
+                } else {
+                    $field.attr('readonly', mode);
+                }
+            });
         },
 
         /**

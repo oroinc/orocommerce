@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
@@ -114,6 +114,7 @@ class FrontendOrderType extends AbstractType
                     'order' => $options['data'],
                     'required' => false,
                     'addressType' => AddressType::TYPE_SHIPPING,
+                    'application' => OrderAddressType::APPLICATION_FRONTEND
                 ]
             );
         }

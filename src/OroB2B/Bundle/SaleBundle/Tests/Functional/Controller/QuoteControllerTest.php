@@ -56,6 +56,16 @@ class QuoteControllerTest extends WebTestCase
     public static $shipUntilUpdated     = '2015-09-20T00:00:00+0000';
 
     /**
+     * @var string
+     */
+    public static $shippingEstimateAmount = '999.9900';
+
+    /**
+     * @var string
+     */
+    public static $shippingEstimateCurrency = 'USD';
+
+    /**
      * {@inheritdoc}
      */
     public static function setUpBeforeClass()
@@ -154,12 +164,22 @@ class QuoteControllerTest extends WebTestCase
         $form['orob2b_sale_quote[poNumber]']   = self::$poNumberUpdated;
         $form['orob2b_sale_quote[shipUntil]']  = self::$shipUntilUpdated;
 
+        $form['orob2b_sale_quote[assignedUsers]'] = $this->getReference(LoadUserData::USER1)->getId();
+        $form['orob2b_sale_quote[assignedAccountUsers]'] = implode(',', [
+            $this->getReference(LoadUserData::ACCOUNT1_USER1)->getId(),
+            $this->getReference(LoadUserData::ACCOUNT1_USER2)->getId()
+        ]);
+
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
 
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('Quote has been saved', $crawler->html());
+
+        $this->assertContains($this->getReference(LoadUserData::USER1)->getFullName(), $result->getContent());
+        $this->assertContains($this->getReference(LoadUserData::ACCOUNT1_USER1)->getFullName(), $result->getContent());
+        $this->assertContains($this->getReference(LoadUserData::ACCOUNT1_USER2)->getFullName(), $result->getContent());
 
         $this->client->request('GET', $this->getUrl('orob2b_sale_quote_index'));
         $response = $this->client->requestGrid(
@@ -179,6 +199,30 @@ class QuoteControllerTest extends WebTestCase
         $this->assertEquals(self::$shipUntilUpdated, $row['shipUntil']);
 
         return $id;
+    }
+
+    /**
+     * @depends testUpdate
+     * @param int $id
+     */
+    public function testUpdateShippingEstimate($id)
+    {
+        $crawler    = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_update', ['id' => $id]));
+
+        /* @var $form Form */
+        $form = $crawler->selectButton('Save')->form();
+        $form['orob2b_sale_quote[shippingEstimate][value]']  = self::$shippingEstimateAmount;
+        $form['orob2b_sale_quote[shippingEstimate][currency]']  = self::$shippingEstimateCurrency;
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form);
+        $form = $crawler->selectButton('Save')->form();
+        $fields = $form->get('orob2b_sale_quote');
+        $this->assertEquals(self::$shippingEstimateAmount, $fields['shippingEstimate']['value']->getValue());
+        $this->assertEquals(self::$shippingEstimateCurrency, $fields['shippingEstimate']['currency']->getValue());
+
+        $result = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
     }
 
     /**

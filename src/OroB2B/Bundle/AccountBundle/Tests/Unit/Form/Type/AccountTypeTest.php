@@ -2,12 +2,14 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EnumSelectType;
@@ -16,22 +18,35 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountGroupSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountType;
 use OroB2B\Bundle\AccountBundle\Form\Type\ParentAccountSelectType;
-use OroB2B\Bundle\AccountBundle\Form\Type\SalesRepresentativesCollectionType;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
 
 class AccountTypeTest extends FormIntegrationTestCase
 {
-    /** @var AccountType */
+    /**
+     * @var AccountType
+     */
     protected $formType;
 
-    /** @var EntityManager */
+    /**
+     * @var EntityManager
+     */
     protected $entityManager;
 
-    /** @var AccountAddress[] */
+    /**
+     * @var AccountAddress[]
+     */
     protected static $addresses;
 
-    /** @var User[] */
+    /**
+     * @var User[]
+     */
     protected static $users;
+
+    /**
+     * @var  EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $eventDispatcher;
+
 
     /**
      * {@inheritdoc}
@@ -40,7 +55,7 @@ class AccountTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->formType = new AccountType();
+        $this->formType = new AccountType($this->getEventDispatcher());
         $this->formType->setAddressClass('OroB2B\Bundle\AccountBundle\Entity\AccountAddress');
     }
 
@@ -82,9 +97,9 @@ class AccountTypeTest extends FormIntegrationTestCase
             ]
         );
 
-        $salesRepsCollectionType = new EntityType(
+        $userMultiSelectType = new EntityType(
             $this->getUsers(),
-            SalesRepresentativesCollectionType::NAME,
+            UserMultiSelectType::NAME,
             [
                 'class' => 'Oro\Bundle\UserBundle\Entity\User',
                 'multiple' => true
@@ -94,12 +109,12 @@ class AccountTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    AccountGroupSelectType::NAME  => $accountGroupSelectType,
+                    AccountGroupSelectType::NAME => $accountGroupSelectType,
                     ParentAccountSelectType::NAME => $parentAccountSelectType,
-                    'oro_address_collection'  => new AddressCollectionTypeStub(),
-                    $addressEntityType->getName()  => $addressEntityType,
+                    'oro_address_collection' => new AddressCollectionTypeStub(),
+                    $addressEntityType->getName() => $addressEntityType,
                     EnumSelectType::NAME => $internalRatingEnumSelect,
-                    SalesRepresentativesCollectionType::NAME => $salesRepsCollectionType,
+                    $userMultiSelectType->getName() => $userMultiSelectType,
                 ],
                 []
             )
@@ -280,6 +295,7 @@ class AccountTypeTest extends FormIntegrationTestCase
                 2 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountAddress', 2)
             ];
         }
+
         return self::$addresses;
     }
 
@@ -294,6 +310,19 @@ class AccountTypeTest extends FormIntegrationTestCase
                 2 => $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 2)
             ];
         }
+
         return self::$users;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|EventDispatcherInterface
+     */
+    protected function getEventDispatcher()
+    {
+        if (!$this->eventDispatcher) {
+            $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        }
+
+        return $this->eventDispatcher;
     }
 }

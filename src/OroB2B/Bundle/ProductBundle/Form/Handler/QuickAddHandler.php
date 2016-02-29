@@ -2,21 +2,26 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\Handler;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Box\Spout\Common\Exception\UnsupportedTypeException;
 
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
+use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
+use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
+use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
+use OroB2B\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
+use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
+use OroB2B\Bundle\ProductBundle\Provider\QuickAddCopyPasteFormProvider;
 use OroB2B\Bundle\ProductBundle\Provider\QuickAddFormProvider;
+use OroB2B\Bundle\ProductBundle\Provider\QuickAddImportFormProvider;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class QuickAddHandler
@@ -27,12 +32,24 @@ class QuickAddHandler
     protected $quickAddFormProvider;
 
     /**
+     * @var QuickAddImportFormProvider
+     */
+    protected $quickAddImportFormProvider;
+
+    /**
+     * @var QuickAddCopyPasteFormProvider
+     */
+    protected $quickAddCopyPasteFormProvider;
+
+    /**
+     * @var QuickAddRowCollectionBuilder
+     */
+    protected $quickAddRowCollectionBuilder;
+
+    /**
      * @var ComponentProcessorRegistry
      */
     protected $componentRegistry;
-
-    /** @var  ManagerRegistry */
-    protected $registry;
 
     /** @var UrlGeneratorInterface */
     protected $router;
@@ -42,36 +59,31 @@ class QuickAddHandler
      */
     protected $translator;
 
-    /** @var string */
-    protected $productClass;
-
     /**
      * @param QuickAddFormProvider $quickAddFormProvider
+     * @param QuickAddImportFormProvider $quickAddImportFormProvider
+     * @param QuickAddCopyPasteFormProvider $quickAddCopyPasteFormProvider
+     * @param QuickAddRowCollectionBuilder $quickAddRowCollectionBuilder
      * @param ComponentProcessorRegistry $componentRegistry
-     * @param ManagerRegistry $registry
      * @param UrlGeneratorInterface $router
      * @param TranslatorInterface $translator
      */
     public function __construct(
         QuickAddFormProvider $quickAddFormProvider,
+        QuickAddImportFormProvider $quickAddImportFormProvider,
+        QuickAddCopyPasteFormProvider $quickAddCopyPasteFormProvider,
+        QuickAddRowCollectionBuilder $quickAddRowCollectionBuilder,
         ComponentProcessorRegistry $componentRegistry,
-        ManagerRegistry $registry,
         UrlGeneratorInterface $router,
         TranslatorInterface $translator
     ) {
         $this->quickAddFormProvider = $quickAddFormProvider;
+        $this->quickAddImportFormProvider = $quickAddImportFormProvider;
+        $this->quickAddCopyPasteFormProvider = $quickAddCopyPasteFormProvider;
+        $this->quickAddRowCollectionBuilder = $quickAddRowCollectionBuilder;
         $this->componentRegistry = $componentRegistry;
-        $this->registry = $registry;
         $this->router = $router;
         $this->translator = $translator;
-    }
-
-    /**
-     * @param string $productClass
-     */
-    public function setProductClass($productClass)
-    {
-        $this->productClass = $productClass;
     }
 
     /**
@@ -89,12 +101,13 @@ class QuickAddHandler
         $processor = $this->getProcessor($this->getComponentName($request));
 
         $options = [];
-        $options['products'] = $this->getProducts($request);
+        $collection = $this->quickAddRowCollectionBuilder->buildFromRequest($request);
+        $options['products'] = $collection->getProducts();
         if ($processor) {
             $options['validation_required'] = $processor->isValidationRequired();
         }
 
-        $form = $this->quickAddFormProvider->getForm($options);
+        $form = $this->quickAddFormProvider->getForm([], $options);
         $form->submit($request);
 
         if (!$processor || !$processor->isAllowed()) {
@@ -102,12 +115,20 @@ class QuickAddHandler
             $session = $request->getSession();
             $session->getFlashBag()->add(
                 'error',
-                $this->translator->trans('orob2b.product.frontend.component_not_accessible.message')
+                $this->translator->trans('orob2b.product.frontend.quick_add.messages.component_not_accessible')
             );
         } elseif ($form->isValid()) {
             $products = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
+            $additionalData = $request->get(
+                QuickAddType::NAME . '[' . QuickAddType::ADDITIONAL_FIELD_NAME . ']',
+                null,
+                true
+            );
             $response = $processor->process(
-                [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products],
+                [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
+                    ProductDataStorage::ADDITIONAL_DATA_KEY => $additionalData,
+                ],
                 $request
             );
             if (!$response) {
@@ -116,6 +137,52 @@ class QuickAddHandler
         }
 
         return $response;
+    }
+
+    /**
+     * @param Request $request
+     * @return QuickAddRowCollection|null
+     */
+    public function processImport(Request $request)
+    {
+        $form = $this->quickAddImportFormProvider->getForm()->handleRequest($request);
+        $collection = null;
+
+        if ($form->isValid()) {
+            $file = $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->getData();
+            try {
+                $collection = $this->quickAddRowCollectionBuilder->buildFromFile($file);
+                $this->quickAddFormProvider->getForm($collection->getFormData());
+            } catch (UnsupportedTypeException $e) {
+                $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->addError(new FormError(
+                    $this->translator->trans(
+                        'orob2b.product.frontend.quick_add.invalid_file_type',
+                        [],
+                        'validators'
+                    )
+                ));
+            }
+        }
+
+        return $collection;
+    }
+
+    /**
+     * @param Request $request
+     * @return QuickAddRowCollection|null
+     */
+    public function processCopyPaste(Request $request)
+    {
+        $form = $this->quickAddCopyPasteFormProvider->getForm()->handleRequest($request);
+        $collection = null;
+
+        if ($form->isValid()) {
+            $copyPasteText = $form->get(QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME)->getData();
+            $collection = $this->quickAddRowCollectionBuilder->buildFromCopyPasteText($copyPasteText);
+            $this->quickAddFormProvider->getForm($collection->getFormData());
+        }
+
+        return $collection;
     }
 
     /**
@@ -141,47 +208,5 @@ class QuickAddHandler
     protected function getProcessor($name)
     {
         return $this->componentRegistry->getProcessorByName($name);
-    }
-
-    /**
-     * @param Request $request
-     * @return Product[]
-     */
-    protected function getProducts(Request $request)
-    {
-        $products = [];
-
-        $data = $request->request->get(QuickAddType::NAME);
-        if (!isset($data[QuickAddType::PRODUCTS_FIELD_NAME])) {
-            return $products;
-        }
-
-        $skus = [];
-        foreach ($data[QuickAddType::PRODUCTS_FIELD_NAME] as $productData) {
-            $sku = trim($productData[ProductDataStorage::PRODUCT_SKU_KEY]);
-            if (strlen($sku) > 0) {
-                $skus[] = $sku;
-            }
-        }
-
-        if (!$skus) {
-            return $products;
-        }
-
-        $products = $this->getRepository()->getProductWithNamesBySku($skus);
-        $productsBySku = [];
-        foreach ($products as $product) {
-            $productsBySku[strtoupper($product->getSku())] = $product;
-        }
-
-        return $productsBySku;
-    }
-
-    /**
-     * @return ProductRepository
-     */
-    protected function getRepository()
-    {
-        return $this->registry->getManagerForClass($this->productClass)->getRepository($this->productClass);
     }
 }

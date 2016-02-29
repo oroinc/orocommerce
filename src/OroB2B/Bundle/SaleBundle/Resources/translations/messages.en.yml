@@ -14,6 +14,7 @@ orob2b:
             quote_products.label: 'Quote Products'
             request.label: 'Request'
             account.label: 'Account'
+            website.label: 'Website'
             account_user.label: 'Account User'
             locked.label: 'Locked'
             not_locked.label: 'Not Locked'
@@ -23,17 +24,22 @@ orob2b:
             ship_until.label: 'Do Not Ship Later Than'
             price_list.label: 'Price List'
             expired.label: 'Expired'
+            assigned_users.label: 'Assigned To'
+            assigned_account_users.label: 'Assigned Customers'
+            shipping_estimate.label: 'Shipping Estimate'
+            shipping_estimate_amount.label: 'Shipping Estimate Ammount'
+            shipping_estimate_currency.label: 'Shipping Estimate Currency'
+            shipping_address.label: Shipping Address
 
             sections:
                 general: 'General'
                 additional: 'Additional'
                 quote_products: 'Line Items'
+                shipping_information: 'Shipping Information'
+                shipping_address: 'Shipping Address'
 
             widgets:
                 quote_information: 'Quote Information'
-
-            column:
-                assigned_to: 'Assigned to'
 
             notify_customer:
                 label: 'Notify Customer'
@@ -64,6 +70,11 @@ orob2b:
             message:
                 quote.expire.success: 'Quote #%id% was successfully expired'
 
+            form:
+                address:
+                    choose: Select an address
+                    choose_or_create: Select an existing address or enter a new address below
+                    manual: Enter address manually
         system_configuration:
             fields:
                 backend_product_visibility.title: 'Can Be Added to Quotes'
@@ -142,6 +153,28 @@ orob2b:
             product_unit.empty: 'Choose Unit...'
             column_summary: 'Summary'
 
+        quoteaddress:
+            entity_label: Quote Address
+            entity_plural_label: Quote Addresses
+            id.label: ID
+            account_address.label: Account address
+            account_user_address.label: Account user address
+            label.label: Label
+            first_name.label: First Name
+            middle_name.label: Middle Name
+            last_name.label: Last Name
+            name_prefix.label: Name Prefix
+            name_suffix.label: Name Suffix
+            organization.label: Organization
+            city.label: City
+            postal_code.label: Zip/Postal Code
+            country.label: Country
+            region.label: State
+            region_text.label: State
+            street.label: Street
+            street2.label: Street 2
+
+            no_exist: No shipping address found
         controller:
             quote:
                 saved.message: 'Quote has been saved'
@@ -156,6 +189,14 @@ orob2b:
         navigation:
             view: 'Quote #%id%'
 
+        security:
+            permission:
+                address_shipping_account_use_any: "[Quote] Use any shipping address from the account address book"
+                address_shipping_account_user_use_default: "[Quote] Use the default shipping address from the account user's address book"
+                address_shipping_account_user_use_any: "[Quote] Use any shipping address from the account user's address book"
+                address_shipping_allow_manual: "[Quote] Enter the shipping address manually"
+                payment_term_account_can_override: "[Quote] Override account payment term"
+
     frontend:
         sale:
             menu:
@@ -163,10 +204,11 @@ orob2b:
             quote:
                 entity_plural_label: Quotes
                 qid.label: 'Quote #'
-                account_user.label: 'Assigned To'
+                account_user.label: 'Owner'
                 valid_until.label: 'Valid Until'
                 po_number.label: 'PO Number'
                 ship_until.label: 'Do Not Ship Later Than'
+                assigned_account_users.label: 'Assigned To'
                 sections:
                     general: 'General'
                     quote_products: 'Line Items'

@@ -49,7 +49,7 @@
     {% set id = 'order-edit' %}
 
     {% set subtotals %}
-        {% include 'OroB2BOrderBundle:Order:subtotals.html.twig' with {
+        {% include 'OroB2BPricingBundle:Subtotals:subtotals.html.twig' with {
             options: {
                 url: path('orob2b_order_subtotals', {id: entity.id}),
                 selectors: {form: '#' ~ form.vars.id}
@@ -59,11 +59,18 @@
 
     {% set ownerSelectors %}
         <div data-page-component-module="orob2border/js/app/components/related-data-component"
-             data-page-component-options="{{ {formName: form.vars.name}|json_encode }}">
+             data-page-component-options="{{ {
+                 formName: form.vars.name,
+                 selectors: {
+                     account: 'input[name$="[account]"]',
+                     website: 'select[name$="[website]"]'
+                 }
+             }|json_encode }}">
             <div data-page-component-module="orob2baccount/js/app/components/account-selection-component">
                 {{ form_row(form.account) }}
                 {{ form_row(form.accountUser) }}
             </div>
+            {{ form_row(form.website) }}
         </div>
     {% endset %}
 
@@ -74,8 +81,11 @@
                  view: 'orob2border/js/app/views/line-items-view',
                  tierPrices: tierPrices|default({}),
                  matchedPrices: matchedPrices|default({}),
-                 tierPricesRoute: 'orob2b_pricing_price_by_pricelist',
-                 matchedPricesRoute: 'orob2b_pricing_matching_price'
+                 tierPricesRoute: 'orob2b_pricing_price_by_account',
+                 matchedPricesRoute: 'orob2b_pricing_matching_price',
+                 currency: entity.currency,
+                 account: entity.account is null ? null : entity.account.id,
+                 account: entity.website is null ? null : entity.website.id
              }|json_encode }}"
              data-layout="separate">
             {{ form_widget(form.lineItems) }}
@@ -90,7 +100,6 @@
             'subblocks': [{
                 'data': [
                     ownerSelectors,
-                    form_row(form.priceList),
                     form_row(form.currency),
                     UI.renderProperty('orob2b.order.currency.label'|trans, entity.currency)
                 ]
@@ -139,13 +148,18 @@
 
     {% if isShippingAddressGranted %}
         {% set shippingAddress %}
+            {% if form.shippingAddress.accountAddress is defined %}
+                {% set idAddressBlock = '#' ~ form.shippingAddress.accountAddress.vars.id %}
+            {% else %}
+                {% set idAddressBlock = null %}
+            {% endif %}
             <div
                 data-page-component-module="oroui/js/app/components/view-component"
                 data-page-component-options="{{ {
                     view: 'orob2border/js/app/views/address-view',
                     type: 'shipping',
                     selectors: {
-                        address: '#' ~ form.shippingAddress.accountAddress.vars.id,
+                        address: idAddressBlock ,
                         subtotalsFields: [
                         '#' ~ form.shippingAddress.country.vars.id,
                         '#' ~ form.shippingAddress.street.vars.id,

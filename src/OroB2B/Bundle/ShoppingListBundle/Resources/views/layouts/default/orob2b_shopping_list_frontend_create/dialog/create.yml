@@ -2,14 +2,8 @@ layout:
     actions:
         - @setBlockTheme:
             themes: 'OroB2BShoppingListBundle:layouts:default/orob2b_shopping_list_frontend_create/dialog/create.html.twig'
-        - @setOption:
-            id: form_label
-            optionName: label
-            optionValue: orob2b.shoppinglist.create_new_form.input_label
         - @addTree:
             items:
-                widget_content:
-                    blockType: container
                 form_errors:
                     blockType: block
                     options:
@@ -42,13 +36,12 @@ layout:
                         action: submit
                         text: orob2b.shoppinglist.create_new_form.submit_label
             tree:
-                root:
-                    widget_content:
-                        form_errors: ~
-                        form_start: ~
-                        form_fields: ~
-                        form_comment: ~
-                        form_actions:
-                            form_actions_reset: ~
-                            form_actions_create: ~
-                        form_end: ~
+                widget_content:
+                    form_errors: ~
+                    form_start: ~
+                    form_fields: ~
+                    form_comment: ~
+                    form_actions:
+                        form_actions_reset: ~
+                        form_actions_create: ~
+                    form_end: ~

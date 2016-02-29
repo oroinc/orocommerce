@@ -6,13 +6,16 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
+use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
 use OroB2B\Bundle\OrderBundle\Model\Subtotal;
@@ -20,6 +23,7 @@ use OroB2B\Bundle\OrderBundle\Provider\SubtotalsProvider;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteAddress;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Model\QuoteToOrderConverter;
@@ -104,6 +108,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         $quoteProduct2->addQuoteProductOffer(
             $this->createQuoteProductOffer($unit2, $qty2, QuoteProductOffer::PRICE_TYPE_UNIT, $pr2, self::CURRENCY)
         );
+        $shippingAddress = $this->createShippingAddress();
 
         $quote = $this
             ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME)
@@ -133,7 +138,8 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
                     self::CURRENCY
                 )
             )
-            ->setSubtotal($subtotalAmount);
+            ->setSubtotal($subtotalAmount)
+            ->setShippingAddress($shippingAddress);
 
         $this->assertCalculateSubtotalsCalled($subtotalAmount);
         $this->assertEquals($order, $this->converter->convert($quote));
@@ -155,6 +161,8 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             $this->createQuoteProductOffer($unit, $qty, QuoteProductOffer::PRICE_TYPE_BUNDLED, $pr, self::CURRENCY)
         );
 
+        $shippingAddress = $this->createShippingAddress();
+
         $quote = $this
             ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME)
             ->addQuoteProduct($quoteProduct);
@@ -174,7 +182,8 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
                     self::CURRENCY
                 )
             )
-            ->setSubtotal($subtotalAmount);
+            ->setSubtotal($subtotalAmount)
+            ->setShippingAddress($shippingAddress);
 
         $this->assertCalculateSubtotalsCalled($subtotalAmount);
         $this->assertEquals($order, $this->converter->convert($quote, $accountUser));
@@ -195,9 +204,60 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
 
         $quoteProduct = $this->createQuoteProduct($sku, true);
         $quoteProduct->setProduct((new Product())->setSku('test sku'));
+        $shippingAddress = $this->createShippingAddress();
 
         $quote = $this
             ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME);
+
+        $order = $this
+            ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME, true)
+            ->setCurrency(self::CURRENCY)
+            ->addLineItem(
+                $this->createOrderLineItem($sku, $unit, $qty, OrderLineItem::PRICE_TYPE_UNIT, $price, self::CURRENCY)
+            )
+            ->setSubtotal($subtotalAmount)
+            ->setShippingAddress($shippingAddress);
+
+        $offer = $this->createQuoteProductOffer(
+            $unit,
+            1000,
+            QuoteProductOffer::PRICE_TYPE_UNIT,
+            $price,
+            self::CURRENCY
+        );
+
+        $this->createQuoteProduct($sku, true)->addQuoteProductOffer($offer);
+
+        $this->assertCalculateSubtotalsCalled($subtotalAmount);
+
+        if ($needFlush) {
+            $this->assertDoctrineCalled();
+        }
+
+        $this->assertEquals(
+            $order,
+            $this->converter->convert($quote, null, [['offer' => $offer, 'quantity' => $qty]], $needFlush)
+        );
+    }
+
+    public function testConvertFromQuoteWithEMptyShippingAddress()
+    {
+        $sku = 'sku1';
+        $unit = 'kg';
+        $qty = 55.5;
+        $price = 555;
+        $subtotalAmount = 25355.5;
+
+        $quoteProduct = $this->createQuoteProduct($sku, true);
+        $quoteProduct->setProduct((new Product())->setSku('test sku'));
+
+        $quote = $this->createMainEntity(
+            self::ACCOUNT_NAME,
+            self::ACCOUNT_USER_FIRST_NAME,
+            self::ACCOUNT_USER_LAST_NAME,
+            false,
+            true
+        );
 
         $order = $this
             ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME, true)
@@ -219,13 +279,9 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
 
         $this->assertCalculateSubtotalsCalled($subtotalAmount);
 
-        if ($needFlush) {
-            $this->assertDoctrineCalled();
-        }
-
         $this->assertEquals(
             $order,
-            $this->converter->convert($quote, null, [['offer' => $offer, 'quantity' => $qty]], $needFlush)
+            $this->converter->convert($quote, null, [['offer' => $offer, 'quantity' => $qty]])
         );
     }
 
@@ -258,10 +314,17 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
      * @param string $userFirstName
      * @param string $userLastName
      * @param bool $isOrder
+     * @param bool $emptyShippingAddress
+     *
      * @return Order|Quote
      */
-    protected function createMainEntity($accountName, $userFirstName, $userLastName, $isOrder = false)
-    {
+    protected function createMainEntity(
+        $accountName,
+        $userFirstName,
+        $userLastName,
+        $isOrder = false,
+        $emptyShippingAddress = false
+    ) {
         $accountUser = $this->createAccountUser($accountName);
 
         $owner = new User();
@@ -271,6 +334,30 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         $organization->setName($userFirstName . ' ' . $userLastName . ' org');
 
         $entity = $isOrder ? new Order : new Quote();
+
+        if ($entity instanceof Quote) {
+            if (!$emptyShippingAddress) {
+                $shippingAddress = new QuoteAddress();
+                $shippingAddress->setAccountAddress(new AccountAddress());
+                $shippingAddress->setAccountUserAddress(new AccountUserAddress());
+                $shippingAddress->setLabel('Label');
+                $shippingAddress->setStreet('Street');
+                $shippingAddress->setStreet2('Street');
+                $shippingAddress->setCity('City');
+                $shippingAddress->setPostalCode('Postal code');
+                $shippingAddress->setOrganization('Organization');
+                $shippingAddress->setRegionText('Region text');
+                $shippingAddress->setNamePrefix('Prefix');
+                $shippingAddress->setFirstName('First Name');
+                $shippingAddress->setMiddleName('Middle Name');
+                $shippingAddress->setLastName('Last Name');
+                $shippingAddress->setNameSuffix('Suffix');
+                $shippingAddress->setRegion(null);
+                $shippingAddress->setCountry(null);
+                $entity->setShippingAddress($shippingAddress);
+            }
+        }
+
         $entity
             ->setAccount($accountUser->getAccount())
             ->setAccountUser($accountUser)
@@ -379,5 +466,31 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->with('OroB2BOrderBundle:Order')
             ->willReturn($manager);
+    }
+
+    protected function createShippingAddress()
+    {
+        $shippingAddress = new OrderAddress();
+
+        $shippingAddress->setAccountAddress(new AccountAddress());
+        $shippingAddress->setAccountUserAddress(new AccountUserAddress());
+        $shippingAddress->setLabel('Label');
+        $shippingAddress->setStreet('Street');
+        $shippingAddress->setStreet2('Street');
+        $shippingAddress->setCity('City');
+        $shippingAddress->setPostalCode('Postal code');
+        $shippingAddress->setOrganization('Organization');
+        $shippingAddress->setRegionText('Region text');
+        $shippingAddress->setNamePrefix('Prefix');
+        $shippingAddress->setFirstName('First Name');
+        $shippingAddress->setMiddleName('Middle Name');
+        $shippingAddress->setLastName('Last Name');
+        $shippingAddress->setNameSuffix('Suffix');
+        $shippingAddress->setRegion(null);
+        $shippingAddress->setCountry(null);
+
+        $shippingAddress->setFromExternalSource(true);
+
+        return $shippingAddress;
     }
 }
