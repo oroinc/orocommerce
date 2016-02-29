@@ -116,6 +116,10 @@ class ProductDatagridViewsListener
      */
     public function onResultAfter(OrmResultAfter $event)
     {
+        $gridName = $event->getDatagrid()->getName();
+        if ($gridName === DataGridThemeHelper::VIEW_GRID) {
+            return;
+        }
         /** @var ProductRepository $repository */
         $repository = $this->registry->getEntityManagerForClass('OroB2BProductBundle:Product')
             ->getRepository('OroB2BProductBundle:Product');
