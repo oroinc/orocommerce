@@ -6,11 +6,13 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
+use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
+
 /**
  * @ORM\MappedSuperclass
  * @ORM\HasLifecycleCallbacks
  */
-abstract class AbstractTaxCode
+abstract class AbstractTaxCode implements TaxCodeInterface
 {
     /**
      * @ORM\Id
@@ -101,11 +103,7 @@ abstract class AbstractTaxCode
         return $this;
     }
 
-    /**
-     * Get code
-     *
-     * @return string
-     */
+    /** {@inheritdoc} */
     public function getCode()
     {
         return $this->code;

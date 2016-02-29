@@ -284,6 +284,21 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
     protected $expired = false;
 
     /**
+     * @var QuoteAddress
+     *
+     * @ORM\OneToOne(targetEntity="QuoteAddress", cascade={"persist"})
+     * @ORM\JoinColumn(name="shipping_address_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $shippingAddress;
+
+    /**
      * @var Collection|User[]
      *
      * @ORM\ManyToMany(targetEntity="Oro\Bundle\UserBundle\Entity\User")
@@ -496,6 +511,7 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      * Add quoteProducts
      *
      * @param QuoteProduct $quoteProduct
+     *
      * @return Quote
      */
     public function addQuoteProduct(QuoteProduct $quoteProduct)
@@ -512,6 +528,7 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      * Remove quoteProducts
      *
      * @param QuoteProduct $quoteProduct
+     *
      * @return Quote
      */
     public function removeQuoteProduct(QuoteProduct $quoteProduct)
@@ -543,6 +560,7 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
 
     /**
      * @param AccountUser $accountUser
+     *
      * @return Quote
      */
     public function setAccountUser(AccountUser $accountUser = null)
@@ -562,6 +580,7 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
 
     /**
      * @param Account $account
+     *
      * @return Quote
      */
     public function setAccount(Account $account = null)
@@ -575,6 +594,7 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      * Set organization
      *
      * @param OrganizationInterface $organization
+     *
      * @return Quote
      */
     public function setOrganization(OrganizationInterface $organization = null)
@@ -598,6 +618,7 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      * Set request
      *
      * @param Request $request
+     *
      * @return Quote
      */
     public function setRequest(Request $request = null)
@@ -753,6 +774,26 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
     public function setWebsite(Website $website)
     {
         $this->website = $website;
+
+        return $this;
+    }
+
+    /**
+     * @return QuoteAddress|null
+     */
+    public function getShippingAddress()
+    {
+        return $this->shippingAddress;
+    }
+
+    /**
+     * @param QuoteAddress|null $shippingAddress
+     *
+     * @return Quote
+     */
+    public function setShippingAddress(QuoteAddress $shippingAddress = null)
+    {
+        $this->shippingAddress = $shippingAddress;
 
         return $this;
     }
