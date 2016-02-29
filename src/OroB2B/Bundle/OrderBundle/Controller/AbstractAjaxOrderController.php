@@ -31,19 +31,15 @@ abstract class AbstractAjaxOrderController extends Controller
         $form = $this->createForm($this->getOrderFormTypeName(), $order);
         $form->submit($request, false);
 
-        $orderProviderTotals =  $this->get('orob2b_order.provider.totals');
+        $subtotals = $this->get('orob2b_order.provider.total')->getSubtotals($order);
+        $subtotals = $subtotals->map(
+            function (Subtotal $subtotal) {
+                return $subtotal->toArray();
+            }
+        )->toArray();
+        $total = $this->get('orob2b_order.provider.total')->getTotal($order);
 
-//        $subtotals = $this->get('orob2b_order.provider.subtotals')->getSubtotals($order);
-//        $subtotals = $subtotals->map(
-//            function (Subtotal $subtotal) {
-//                return $subtotal->toArray();
-//            }
-//        )->toArray();
-
-        return new JsonResponse([
-            'subtotals' => $orderProviderTotals->getSubtotals($order),
-            'total' =>  $orderProviderTotals->getTotal($order)
-        ]);
+        return new JsonResponse(['subtotals' => $subtotals, 'total' => $total]);
     }
 
     /**

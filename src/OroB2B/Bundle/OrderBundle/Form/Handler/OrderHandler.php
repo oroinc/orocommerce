@@ -15,6 +15,23 @@ use OroB2B\Bundle\OrderBundle\Entity\Order;
 class OrderHandler
 {
     /**
+     * @var FormInterface
+     */
+    protected $form;
+    /**
+     * @var Request
+     */
+    protected $request;
+    /**
+     * @var ObjectManager
+     */
+    protected $manager;
+    /**
+     * @var SubtotalProvider
+     */
+    protected $subtotalProvider;
+
+    /**
      * @param FormInterface $form
      * @param Request $request
      * @param ObjectManager $manager
