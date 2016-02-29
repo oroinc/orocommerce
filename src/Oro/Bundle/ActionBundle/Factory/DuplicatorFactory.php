@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\src\Oro\Bundle\ActionBundle\Factory;
+namespace Oro\Bundle\ActionBundle\Factory;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\src\Oro\Bundle\ActionBundle\Tests\Unit\DependencyInjection\CompilerPass;
+namespace Oro\Bundle\ActionBundle\Tests\Unit\DependencyInjection\CompilerPass;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -13,12 +13,19 @@ abstract class AbstractDuplicatorPassTest extends \PHPUnit_Framework_TestCase
      */
     protected $compilerPass;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ContainerBuilder */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ContainerBuilder
+     */
     protected $container;
 
-    /** @var \PHPUnit_Framework_MockObject_MockBuilder */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockBuilder
+     */
     protected $definitionBuilder;
 
+    /**
+     * @var string
+     */
     protected $filterId = 'testFilter';
 
     protected function setUp()

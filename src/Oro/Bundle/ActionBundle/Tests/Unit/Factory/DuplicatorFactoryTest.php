@@ -1,13 +1,14 @@
 <?php
 
-namespace OroB2B\src\Oro\Bundle\ActionBundle\Tests\Unit\Factory;
+namespace Oro\Bundle\ActionBundle\Tests\Unit\Factory;
 
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
 
+use Oro\Bundle\ActionBundle\Factory\DuplicatorFactory;
+
 use OroB2B\Component\Duplicator\Filter\FilterFactory;
 use OroB2B\Component\Duplicator\Matcher\MatcherFactory;
-use OroB2B\src\Oro\Bundle\ActionBundle\Factory\DuplicatorFactory;
 
 class DuplicatorFactoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,7 +21,7 @@ class DuplicatorFactoryTest extends \PHPUnit_Framework_TestCase
         $filterFactory = $this->getMock('OroB2B\Component\Duplicator\Filter\FilterFactory');
         $filterFactory->expects($this->once())->method('create')->with('setNull', [])->willReturn($filter);
 
-        /** @var MatcherFactory $filterFactory */
+        /** @var MatcherFactory|\PHPUnit_Framework_MockObject_MockObject $matcherFactory */
         $matcherFactory = $this->getMock('OroB2B\Component\Duplicator\Matcher\MatcherFactory');
         $matcherFactory->expects($this->once())
             ->method('create')

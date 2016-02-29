@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\src\Oro\Bundle\ActionBundle\Tests\Unit\DependencyInjection\CompilerPass;
+namespace Oro\Bundle\ActionBundle\Tests\Unit\DependencyInjection\CompilerPass;
 
-use OroB2B\src\Oro\Bundle\ActionBundle\DependencyInjection\CompilerPass\DuplicatorMatcherPass;
+use Oro\Bundle\ActionBundle\DependencyInjection\CompilerPass\DuplicatorMatcherPass;
 
 class DuplicatorMatcherPassTest extends AbstractDuplicatorPassTest
 {

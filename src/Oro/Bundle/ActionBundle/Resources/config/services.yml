@@ -118,7 +118,7 @@ services:
         class: %oro_action.datagrid.mass_action_provider.registry.class%
 
     oro_action.factory.duplicator_factory:
-        class: OroB2B\src\Oro\Bundle\ActionBundle\Factory\DuplicatorFactory
+        class: Oro\Bundle\ActionBundle\Factory\DuplicatorFactory
         calls:
             - [setFilterFactory, [@oro_action.factory.duplicator_filter_factory]]
             - [setMatcherFactory, [@oro_action.factory.duplicator_matcher_factory]]

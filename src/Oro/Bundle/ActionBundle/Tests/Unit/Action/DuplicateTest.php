@@ -7,8 +7,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Oro\Bundle\ActionBundle\Action\Duplicate;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\WorkflowBundle\Model\ContextAccessor;
-
-use OroB2B\src\Oro\Bundle\ActionBundle\Factory\DuplicatorFactory;
+use Oro\Bundle\ActionBundle\Factory\DuplicatorFactory;
 
 class DuplicateTest extends \PHPUnit_Framework_TestCase
 {
@@ -27,6 +26,9 @@ class DuplicateTest extends \PHPUnit_Framework_TestCase
      */
     protected $eventDispatcher;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->contextAccessor = new ContextAccessor();
@@ -116,6 +118,9 @@ class DuplicateTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($copyObject->child, $copyObject->child);
     }
 
+    /**
+     * @return DuplicatorFactory
+     */
     protected function getDuplicateFactory()
     {
         $container = $this->getMockBuilder('Symfony\Component\DependencyInjection\TaggedContainerInterface')

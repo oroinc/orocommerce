@@ -99,6 +99,9 @@ class DuplicatorTest extends \PHPUnit_Framework_TestCase
         return $requestProduct;
     }
 
+    /**
+     * @return Duplicator
+     */
     protected function createDuplicator()
     {
         $duplicator = new Duplicator();
@@ -108,6 +111,9 @@ class DuplicatorTest extends \PHPUnit_Framework_TestCase
         return $duplicator;
     }
 
+    /**
+     * @return FilterFactory
+     */
     protected function createFilterFactory()
     {
         $factory = new FilterFactory();
@@ -122,6 +128,9 @@ class DuplicatorTest extends \PHPUnit_Framework_TestCase
         return $factory;
     }
 
+    /**
+     * @return MatcherFactory
+     */
     protected function createMatcherFactory()
     {
         $factory = new MatcherFactory();

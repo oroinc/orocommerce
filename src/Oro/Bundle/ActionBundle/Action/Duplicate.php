@@ -5,9 +5,9 @@ namespace Oro\Bundle\ActionBundle\Action;
 use Oro\Bundle\ActionBundle\Exception\InvalidParameterException;
 use Oro\Bundle\WorkflowBundle\Model\Action\ActionInterface;
 use Oro\Bundle\WorkflowBundle\Model\Action\AbstractAction;
+use Oro\Bundle\ActionBundle\Factory\DuplicatorFactory;
 
 use OroB2B\Component\Duplicator\Duplicator;
-use OroB2B\src\Oro\Bundle\ActionBundle\Factory\DuplicatorFactory;
 
 class Duplicate extends AbstractAction
 {
@@ -31,7 +31,7 @@ class Duplicate extends AbstractAction
     protected $options;
 
     /**
-     * @{@inheritdoc}
+     * {@inheritdoc}
      */
     protected function executeAction($context)
     {

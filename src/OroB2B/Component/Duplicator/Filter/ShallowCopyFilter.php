@@ -11,7 +11,7 @@ class ShallowCopyFilter implements Filter
     {
         $reflectionProperty = new \ReflectionProperty($object, $property);
         $reflectionProperty->setAccessible(true);
-        $value  = $reflectionProperty->getValue($object);
+        $value = $reflectionProperty->getValue($object);
         $reflectionProperty->setValue($object, clone $value);
     }
 }
