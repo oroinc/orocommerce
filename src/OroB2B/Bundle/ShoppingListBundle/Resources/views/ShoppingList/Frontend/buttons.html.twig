@@ -89,8 +89,15 @@
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% import _self as buttons %}
     {% set buttonsHtml %}
-        {{ buttons.addToCurrentShoppingListButton(options.current|merge({shoppingList: options.currentShoppingList})) }}
+        {% set existingShoppingLists = [] %}
         {% for shoppingList in options.shoppingLists %}
+            {% if shoppingList.current %}
+                {{ buttons.addToCurrentShoppingListButton(options.current|merge({shoppingList: shoppingList})) }}
+            {% else %}
+                {%  set existingShoppingLists = existingShoppingLists|merge([shoppingList]) %}
+            {% endif %}
+        {% endfor %}
+        {% for shoppingList in existingShoppingLists %}
             {{ buttons.addToShoppingListButton(options.existing|merge({shoppingList: shoppingList})) }}
         {% endfor %}
         {{ buttons.addToNewShoppingListButton(options.new) }}

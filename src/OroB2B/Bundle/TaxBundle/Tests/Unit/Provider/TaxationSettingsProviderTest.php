@@ -238,7 +238,7 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($value, $this->provider->getDestination());
     }
 
-    public function testGetDigitalProductsTaxCodesUs()
+    public function testGetDigitalProductsTaxCodesUS()
     {
         $value = ['AAAA', 'BBBB'];
 
@@ -248,10 +248,10 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
             ->with('orob2b_tax.digital_products_us')
             ->willReturn($value);
 
-        $this->assertEquals($value, $this->provider->getDigitalProductsTaxCodesUs());
+        $this->assertEquals($value, $this->provider->getDigitalProductsTaxCodesUS());
     }
 
-    public function testGetDigitalProductsTaxCodesEu()
+    public function testGetDigitalProductsTaxCodesEU()
     {
         $value = ['AAAA', 'BBBB'];
 
@@ -261,7 +261,7 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
             ->with('orob2b_tax.digital_products_eu')
             ->willReturn($value);
 
-        $this->assertEquals($value, $this->provider->getDigitalProductsTaxCodesEu());
+        $this->assertEquals($value, $this->provider->getDigitalProductsTaxCodesEU());
     }
 
     /**

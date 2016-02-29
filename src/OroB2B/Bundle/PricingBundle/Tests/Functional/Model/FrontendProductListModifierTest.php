@@ -84,11 +84,11 @@ class FrontendProductListModifierTest extends WebTestCase
             $priceList = $this->getReference($priceList);
             $this->priceListTreeHandler->expects($this->never())
                 ->method('getPriceList')
-                ->with($this->tokenStorage->getToken()->getUser());
+                ->with($this->tokenStorage->getToken()->getUser()->getAccount());
         } else {
             $this->priceListTreeHandler->expects($this->once())
                 ->method('getPriceList')
-                ->with($this->tokenStorage->getToken()->getUser())
+                ->with($this->tokenStorage->getToken()->getUser()->getAccount())
                 ->will($this->returnValue($this->getReference('price_list_2')));
         }
 
@@ -103,9 +103,12 @@ class FrontendProductListModifierTest extends WebTestCase
         $result = $qb->getQuery()->getResult();
 
         $this->assertCount(count($expectedProductSku), $result);
-        $sku = array_map(function (Product $product) {
-            return $product->getSku();
-        }, $result);
+        $sku = array_map(
+            function (Product $product) {
+                return $product->getSku();
+            },
+            $result
+        );
         $this->assertEquals($expectedProductSku, $sku);
     }
 
@@ -163,7 +166,7 @@ class FrontendProductListModifierTest extends WebTestCase
     {
         $this->priceListTreeHandler->expects($this->exactly(3))
             ->method('getPriceList')
-            ->with($this->tokenStorage->getToken()->getUser())
+            ->with($this->tokenStorage->getToken()->getUser()->getAccount())
             ->will($this->returnValue($this->getReference('price_list_2')));
 
         $qb = $this->getManager()->createQueryBuilder()

@@ -275,6 +275,10 @@ class QuoteControllerTest extends WebTestCase
                             'label' => 'orob2b.sale.quote.ship_until.label',
                             'property' => 'ship_until',
                         ],
+                        [
+                            'label' => 'orob2b.sale.quote.sections.shipping_address',
+                            'property' => 'shippingAddress',
+                        ]
                     ],
                 ],
             ],
@@ -303,6 +307,10 @@ class QuoteControllerTest extends WebTestCase
                             'label' => 'orob2b.sale.quote.ship_until.label',
                             'property' => 'ship_until',
                         ],
+                        [
+                            'label' => 'orob2b.sale.quote.sections.shipping_address',
+                            'property' => 'shippingAddress',
+                        ]
                     ],
                 ],
             ],

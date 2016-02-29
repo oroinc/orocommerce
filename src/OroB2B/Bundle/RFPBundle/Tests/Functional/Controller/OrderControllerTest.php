@@ -24,6 +24,7 @@ class OrderControllerTest extends WebTestCase
         $this->loadFixtures(
             [
                 'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData',
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
             ]
         );
     }
@@ -42,6 +43,7 @@ class OrderControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 302);
 
         $crawler = $this->client->followRedirect();
+        $d = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertStringStartsWith(
             $this->getUrl('orob2b_order_create'),

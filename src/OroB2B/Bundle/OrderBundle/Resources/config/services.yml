@@ -29,7 +29,8 @@ services:
 
     orob2b_order.order.listener.order_listener:
         class: %orob2b_order.order.listener.order_listener.class%
-        arguments: [@orob2b_order.order.entity.id_generator]
+        arguments:
+            - @orob2b_order.order.entity.id_generator
         tags:
             - { name: doctrine.event_listener, event: postPersist }
 
