@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\TaxBundle\Provider;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
 use OroB2B\Bundle\TaxBundle\Matcher\EuropeanUnionHelper;
+use OroB2B\Bundle\TaxBundle\Matcher\UnitedStatesHelper;
 use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
 
 class TaxationAddressProvider
@@ -108,7 +109,7 @@ class TaxationAddressProvider
      */
     public function isDigitalProductTaxCode($countryCode, $taxCode)
     {
-        if ($countryCode === 'US') {
+        if ($countryCode === UnitedStatesHelper::COUNTRY_CODE_USA) {
             $digitalProductTaxCodes = $this->settingsProvider->getDigitalProductsTaxCodesUS();
         } elseif (EuropeanUnionHelper::isEuropeanUnionCountry($countryCode)) {
             $digitalProductTaxCodes = $this->settingsProvider->getDigitalProductsTaxCodesEU();

@@ -10,8 +10,9 @@ class OrderLineItemMapper extends AbstractOrderMapper
     const PROCESSING_CLASS_NAME = 'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem';
 
     /**
-     * {@inheritdoc}
      * @param OrderLineItem $lineItem
+     *
+     * {@inheritdoc}
      */
     public function map($lineItem)
     {

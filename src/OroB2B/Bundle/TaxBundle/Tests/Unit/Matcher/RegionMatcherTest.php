@@ -80,9 +80,10 @@ class RegionMatcherTest extends AbstractMatcherTest
         }
 
         $taxCodes = TaxCodes::create($taxCodes);
+        $isCallFindByCountryAndTaxCode = $country && ($region || $regionText) && $taxCodes->isFullFilledTaxCode();
 
         $this->taxRuleRepository
-            ->expects($country && ($region || $regionText) ? $this->once() : $this->never())
+            ->expects($isCallFindByCountryAndTaxCode ? $this->once() : $this->never())
             ->method('findByRegionAndTaxCode')
             ->with($taxCodes, $country, $region, $regionText)
             ->willReturn($regionTaxRules);
