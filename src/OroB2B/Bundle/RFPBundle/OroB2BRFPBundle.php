@@ -2,11 +2,27 @@
 
 namespace OroB2B\Bundle\RFPBundle;
 
-use OroB2B\Bundle\RFPBundle\DependencyInjection\OroB2BRFPExtension;
+use Symfony\Component\DependencyInjection\Compiler\PassConfig;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
+
+use OroB2B\Bundle\RFPBundle\DependencyInjection\CompilerPass\DuplicatorMatcherPass;
+use OroB2B\Bundle\RFPBundle\DependencyInjection\OroB2BRFPExtension;
+use OroB2B\Bundle\RFPBundle\DependencyInjection\CompilerPass\DuplicatorFilterPass;
 
 class OroB2BRFPBundle extends Bundle
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function build(ContainerBuilder $container)
+    {
+        parent::build($container);
+
+        $container->addCompilerPass(new DuplicatorFilterPass(), PassConfig::TYPE_AFTER_REMOVING);
+        $container->addCompilerPass(new DuplicatorMatcherPass(), PassConfig::TYPE_AFTER_REMOVING);
+    }
+
     /**
      * {@inheritdoc}
      */
