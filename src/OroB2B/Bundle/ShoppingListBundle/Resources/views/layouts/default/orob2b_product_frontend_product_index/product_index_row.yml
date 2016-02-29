@@ -1,0 +1,9 @@
+layout:
+    actions:
+        - @setBlockTheme:
+            themes: 'OroB2BShoppingListBundle:layouts:default/orob2b_product_frontend_product_index/product_index_row.html.twig'
+        - @add:
+            id: product_grid_row_qty
+            parentId: product_grid_row_secondary_content_second_container
+            blockType: block
+            siblingId: product_grid_row_more_info

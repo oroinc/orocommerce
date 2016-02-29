@@ -6,6 +6,9 @@ layout:
             id: grid_display_options
             parentId: datagrid_toolbar
             blockType: block
+            options:
+                vars:
+                    current_view: {@value: $data.orob2b_product_frontend_datagrid_row_view}
         - @setOption:
             id: datagrid_toolbar
             optionName: attr.class
@@ -30,12 +33,8 @@ layout:
                     blockType: datagrid
                     options:
                         grid_name: frontend-products-grid
-                        grid_render_parameters:
-                            themeOptions:
-                                tagName: 'div'
-                                headerHide: true
-                                rowTemplateSelector: '#template-grid-row'
-                                rowActionSelector: '.view-product'
+                        vars:
+                            current_row_view: {@value: $data.orob2b_product_frontend_datagrid_row_view}
             tree:
                 content:
                     product_index_page:

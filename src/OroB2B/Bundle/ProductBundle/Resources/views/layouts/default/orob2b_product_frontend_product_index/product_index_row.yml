@@ -34,8 +34,6 @@ layout:
                     blockType: container
                 product_grid_row_more_info:
                     blockType: block
-                product_grid_row_qty:
-                    blockType: block
             tree:
                 scripts_before:
                     product_grid_row_template:
@@ -53,4 +51,3 @@ layout:
                                 product_grid_row_mspr: ~
                             product_grid_row_secondary_content_second_container:
                                 product_grid_row_more_info: ~
-                                product_grid_row_qty: ~

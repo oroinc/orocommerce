@@ -191,10 +191,6 @@ datagrid:
                 name:
                     type:      string
                     data_name: name
-                inventoryStatusName:
-                    type:      enum
-                    data_name: inventoryStatusId
-                    enum_code: prod_inventory_status
         actions:
             view:
                 type:          navigate

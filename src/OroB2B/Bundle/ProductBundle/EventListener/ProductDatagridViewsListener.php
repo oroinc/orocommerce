@@ -10,7 +10,6 @@ use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 
-use OroB2B\Bundle\ProductBundle\DataGrid\Extension\Theme\Configuration as ThemeConfiguration;
 use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -63,12 +62,11 @@ class ProductDatagridViewsListener
      */
     protected function updateConfigByView(DatagridConfiguration $config, $viewName)
     {
-        $config->offsetSetByPath(ThemeConfiguration::ROW_VIEW_PATH, $viewName);
         switch ($viewName) {
-            case DataGridThemeHelper::VIEW_GRID:
+            case DataGridThemeHelper::VIEW_LIST:
                 // grid view same as default
                 break;
-            case DataGridThemeHelper::VIEW_LIST:
+            case DataGridThemeHelper::VIEW_GRID:
                 $updates = [
                     '[source][query][select]' => [
                         'productImage.filename as image',
@@ -117,7 +115,8 @@ class ProductDatagridViewsListener
     public function onResultAfter(OrmResultAfter $event)
     {
         $gridName = $event->getDatagrid()->getName();
-        if ($gridName === DataGridThemeHelper::VIEW_GRID) {
+        $supportedViews = [DataGridThemeHelper::VIEW_GRID, DataGridThemeHelper::VIEW_TILES];
+        if (!in_array($this->themeHelper->getTheme($gridName), $supportedViews, true)) {
             return;
         }
         /** @var ProductRepository $repository */

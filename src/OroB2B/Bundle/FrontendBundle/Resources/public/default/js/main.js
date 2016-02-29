@@ -449,8 +449,6 @@ require(['jquery', 'orob2bfrontend/default/js/app'], function(jQuery) {
                                 class: view
                             }
                         }));
-
-                        event.preventDefault();
                     });
                 }
 

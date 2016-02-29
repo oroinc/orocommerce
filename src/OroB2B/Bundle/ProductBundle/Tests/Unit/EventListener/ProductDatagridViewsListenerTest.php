@@ -9,6 +9,7 @@ use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
+use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 
@@ -84,17 +85,13 @@ class ProductDatagridViewsListenerTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
+                DataGridThemeHelper::VIEW_LIST,
+                ['name' => 'grid-name']
+            ],
+            [
                 DataGridThemeHelper::VIEW_GRID,
                 [
                     'name' => 'grid-name',
-                    'options' => ['theme' => ['rowView' => DataGridThemeHelper::VIEW_GRID]],
-                ]
-            ],
-            [
-                DataGridThemeHelper::VIEW_LIST,
-                [
-                    'name' => 'grid-name',
-                    'options' => ['theme' => ['rowView' => DataGridThemeHelper::VIEW_LIST]],
                     'source' => [
                         'query' => [
                             'select' => [
@@ -125,7 +122,6 @@ class ProductDatagridViewsListenerTest extends \PHPUnit_Framework_TestCase
                 DataGridThemeHelper::VIEW_TILES,
                 [
                     'name' => 'grid-name',
-                    'options' => ['theme' => ['rowView' => DataGridThemeHelper::VIEW_TILES]],
                     'source' => [
                         'query' => [
                             'select' => [
@@ -149,11 +145,12 @@ class ProductDatagridViewsListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider onResultAfterDataProvider
      *
+     * @param string $themeName
      * @param array $data
      * @param array $productWithImages
      * @param array $expectedData
      */
-    public function testOnResultAfter(array $data, array $productWithImages, array $expectedData)
+    public function testOnResultAfter($themeName, array $data, array $productWithImages, array $expectedData)
     {
         $ids = [];
         $records = [];
@@ -167,6 +164,23 @@ class ProductDatagridViewsListenerTest extends \PHPUnit_Framework_TestCase
         $event->expects($this->once())
             ->method('getRecords')
             ->willReturn($records);
+
+        /** @var Datagrid|\PHPUnit_Framework_MockObject_MockObject $datagrid */
+        $datagrid = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\Datagrid')
+            ->disableOriginalConstructor()->getMock();
+
+        $gridName = 'grid-name';
+        $datagrid->expects($this->once())
+            ->method('getName')
+            ->willReturn($gridName);
+
+        $this->themeHelper->expects($this->any())
+            ->method('getTheme')
+            ->willReturn($themeName);
+
+        $event->expects($this->once())
+            ->method('getDatagrid')
+            ->willReturn($datagrid);
 
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()->getMock();
@@ -228,6 +242,7 @@ class ProductDatagridViewsListenerTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
+                'themeName' => DataGridThemeHelper::VIEW_TILES,
                 'records' => [
                     ['id' => 1],
                     ['id' => 2],
@@ -250,6 +265,7 @@ class ProductDatagridViewsListenerTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             [
+                'themeName' => DataGridThemeHelper::VIEW_TILES,
                 'records' => [
                     ['id' => 1],
                     ['id' => 2],
@@ -270,7 +286,53 @@ class ProductDatagridViewsListenerTest extends \PHPUnit_Framework_TestCase
                         'image' => 3,
                     ],
                 ],
-            ]
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider onResultAfterViewWithImageDataProvider
+     *
+     * @param string $themeName
+     */
+    public function testOnResultAfterViewWithImage($themeName)
+    {
+        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Event\OrmResultAfter')
+            ->disableOriginalConstructor()->getMock();
+        $event->expects($this->never())
+            ->method('getRecords');
+
+        /** @var Datagrid|\PHPUnit_Framework_MockObject_MockObject $datagrid */
+        $datagrid = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\Datagrid')
+            ->disableOriginalConstructor()->getMock();
+
+        $gridName = 'grid-name';
+        $datagrid->expects($this->once())
+            ->method('getName')
+            ->willReturn($gridName);
+
+        $this->themeHelper->expects($this->any())
+            ->method('getTheme')
+            ->willReturn($themeName);
+
+        $event->expects($this->once())
+            ->method('getDatagrid')
+            ->willReturn($datagrid);
+
+        $this->doctrine->expects($this->never())
+            ->method('getEntityManagerForClass');
+
+        $this->listener->onResultAfter($event);
+    }
+
+    /**
+     * @return array
+     */
+    public function onResultAfterViewWithImageDataProvider()
+    {
+        return [
+            ['themeName' => DataGridThemeHelper::VIEW_LIST],
         ];
     }
 }
