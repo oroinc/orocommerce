@@ -110,7 +110,7 @@ class TotalProviderProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected function prepareSubtotals()
     {
-        $subtotalProvider = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Provider\SubtotalProvider')
+        $subtotalProvider = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Provider\SubtotalLineItemProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
