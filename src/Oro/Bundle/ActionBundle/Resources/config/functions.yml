@@ -25,7 +25,6 @@ parameters:
     oro_action.function.assign_constant_value.class: Oro\Bundle\WorkflowBundle\Model\Action\AssignConstantValue
     oro_action.function.copy_tagging.class: Oro\Bundle\WorkflowBundle\Model\Action\CopyTagging
     oro_action.function.call_service_method.class: Oro\Bundle\ActionBundle\Action\CallServiceMethod
-    oro_action.function.duplicate.class: Oro\Bundle\ActionBundle\Action\Duplicate
     oro_action.function.refresh_grid.class: Oro\Bundle\ActionBundle\Action\RefreshGrid
     oro_action.function.run_action.class: Oro\Bundle\ActionBundle\Action\RunAction
     oro_action.function.find_entities.class: Oro\Bundle\ActionBundle\Action\FindEntities
@@ -218,16 +217,6 @@ services:
         tags:
             - { name: oro_action.function, alias: call_service_method }
             - { name: oro_workflow.action, alias: call_service_method }
-
-    oro_action.function.duplicate:
-        class: %oro_action.function.duplicate.class%
-        arguments:
-            - @oro_action.context_accessor
-        calls:
-          - [setDuplicatorFactory, [@oro_action.factory.duplicator_factory]]
-        tags:
-            - { name: oro_action.function, alias: duplicate }
-            - { name: oro_workflow.action, alias: duplicate }
 
     oro_action.function.refresh_grid:
         class: %oro_action.function.refresh_grid.class%
