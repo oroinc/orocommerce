@@ -142,7 +142,7 @@ class OroB2BOrderBundleInstaller implements
         $table->addColumn('middle_name', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('last_name', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('name_suffix', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('from_external_source', 'boolean', ['notnull' => false, 'default'=> 0]);
+        $table->addColumn('from_external_source', 'boolean', ['notnull' => true, 'default'=> 0]);
         $table->addColumn('created', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
