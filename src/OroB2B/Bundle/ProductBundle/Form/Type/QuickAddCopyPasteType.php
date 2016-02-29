@@ -30,6 +30,9 @@ class QuickAddCopyPasteType extends AbstractType
                     ]),
                 ],
                 'label' => false,
+                'attr' => [
+                    'placeholder' => 'orob2b.product.frontend.quick_add.copy_paste.placeholder'
+                ],
             ]
         );
     }

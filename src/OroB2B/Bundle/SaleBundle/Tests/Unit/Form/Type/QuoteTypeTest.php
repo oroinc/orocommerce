@@ -33,6 +33,7 @@ use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductCollectionType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductRequestCollectionType;
 use OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type\Stub\EntityType as StubEntityType;
+use OroB2B\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 
 class QuoteTypeTest extends AbstractTest
 {
@@ -44,13 +45,23 @@ class QuoteTypeTest extends AbstractTest
     protected $formType;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|QuoteAddressSecurityProvider
+     */
+    protected $quoteAddressSecurityProvider;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
         parent::setUp();
 
-        $this->formType = new QuoteType();
+        $this->quoteAddressSecurityProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->formType = new QuoteType($this->quoteAddressSecurityProvider);
         $this->formType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\Quote');
     }
 
@@ -139,6 +150,10 @@ class QuoteTypeTest extends AbstractTest
                 'submittedData' => [
                 ],
                 'expectedData'  => new Quote(),
+                'defaultData'   => $this->getQuote(1),
+                'options' => [
+                    'data' => $this->getQuote(1)
+                ]
             ],
             'empty PO number' => [
                 'isValid'       => true,
@@ -218,6 +233,10 @@ class QuoteTypeTest extends AbstractTest
                     ],
                     'assignedUsers' => [1],
                     'assignedAccountUsers' => [11],
+                    'shippingEstimate' => [
+                        'value' => 111.12,
+                        'currency' => 'USD'
+                    ]
                 ],
                 'expectedData'  => $this->getQuote(
                     1,
@@ -229,7 +248,32 @@ class QuoteTypeTest extends AbstractTest
                     new \DateTime($date . 'T00:00:00+0000')
                 )
                     ->addAssignedUser($this->getUser(1))
-                    ->addAssignedAccountUser($this->getAccountUser(11)),
+                    ->addAssignedAccountUser($this->getAccountUser(11))
+                    ->setShippingEstimate(Price::create(111.12, 'USD')),
+                'defaultData' => $this->getQuote(
+                    1,
+                    1,
+                    2,
+                    [$quoteProduct],
+                    false,
+                    'poNumber',
+                    new \DateTime($date . 'T00:00:00+0000')
+                )->addAssignedUser($this->getUser(1))
+                    ->addAssignedAccountUser($this->getAccountUser(11))
+                    ->setShippingEstimate(Price::create(111.12, 'USD')),
+                'options' => [
+                    'data' => $this->getQuote(
+                        1,
+                        1,
+                        2,
+                        [$quoteProduct],
+                        false,
+                        'poNumber',
+                        new \DateTime($date . 'T00:00:00+0000')
+                    )->addAssignedUser($this->getUser(1))
+                        ->addAssignedAccountUser($this->getAccountUser(11))
+                        ->setShippingEstimate(Price::create(111.12, 'USD')),
+                ]
             ],
         ];
     }

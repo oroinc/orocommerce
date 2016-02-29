@@ -1,129 +1,37 @@
-{% block _page_title_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {% if text %}
-        {% set attr = attr|merge({
-        class: attr.class|default('') ~ " page-title " ~ (class_prefix ? " {{ class_prefix }}-page-title")
-        }) %}
-        <h1{{ block('block_attributes') }}>{{ block_widget(block) }}
-
-            {{ UI.clientLink({
-                'dataUrl': path('orob2b_product_frontend_quick_add_import'),
-                'aCss': 'no-hash import-link download-csv-link',
-                'iCss': 'icon-download',
-
-                'label' : 'orob2b.product.frontend.quick_add.import_from_file.title'|trans,
-                'widget' : {
-                    'type' : 'dialog',
-                    'options' : {
-                        'dialogOptions' : {
-                            'title' : 'orob2b.product.frontend.quick_add.import_from_file.title'|trans,
-                            'modal': true,
-                            'resizable': false,
-                            'width': 680,
-                            'height': 350,
-                            'autoResize': true
-                        }
-                    }
-                }
-            }) }}
-        </h1>
-    {% endif %}
-{% endblock %}
-
-{% block _quick_add_form_container_widget %}
-    {% set attr = attr|merge({
-    class: attr.class|default('') ~ " {{ class_prefix }}"
-    }) %}
-    <div {{ block('block_attributes') }}>
-        <div class="{{ class_prefix ? class_prefix ~ "__container" }}">
-            {{ block_widget(block) }}
-        </div>
-    </div>
-{% endblock %}
-
-{% block _quick_add_form_widget %}
-    {% set attr = attr|merge({
-    class: attr.class|default('') ~ class_prefix ? class_prefix ~ "__col " ~ class_prefix ~ "__col_two-thirds" : ""
-    }) %}
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
-{% block _quick_add_copy_paste_form_widget %}
-    {% set attr = attr|merge({
-    class: attr.class|default('') ~ class_prefix ? class_prefix ~ "__col " ~ class_prefix ~ "__col_one-third" : ""
-    }) %}
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
-
-{% block _quick_add_form_fields_widget %}
-        {{ form_errors(form) }}
-
-        <div class="row-oro add-products">
-            {{ form_widget(form.products) }}
-
-            <fieldset class="quick-order__quote-form__row">
-                {% placeholder orob2b_product_quick_add_buttons %}
-
-            </fieldset>
-        </div>
-
-        {{ form_row(form.component) }}
-        {{ form_row(form.additional) }}
-        {{ form_rest(form) }}
-{% endblock %}
-
 {% block _quick_add_form_start_widget %}
     {% set pageComponentOptions = {
-    'componentSelector': '#' ~ form.component.vars.id,
-    'additionalSelector': '#' ~ form.additional.vars.id
+        'componentSelector': '#' ~ form.component.vars.id,
+        'additionalSelector': '#' ~ form.additional.vars.id
     } %}
-    {% set attr = attr|merge({
-    "data-page-component-module": "orob2bproduct/js/app/components/quick-add-component",
-    "data-page-component-options": pageComponentOptions|json_encode
-    }) %}
+    {% set attr = {
+        'data-page-component-module': 'orob2bproduct/js/app/components/quick-add-component',
+        'data-page-component-options': pageComponentOptions|json_encode
+    }|merge(attr) %}
     {{ block('form_start_widget') }}
 {% endblock %}
 
-{% block _quick_add_copy_paste_form_start_widget %}
-    {% set attr = attr|merge({
-    "data-page-component-module": "orob2bproduct/js/app/components/quick-add-copy-paste-form-component"
-    }) %}
-    {{ block('form_start_widget') }}
+{% block _quick_add_form_buttons_widget %}
+    {% placeholder orob2b_product_quick_add_buttons %}
 {% endblock %}
 
-{% block _quick_add_copy_paste_form_fields_widget %}
-    <fieldset class="{{ class_prefix }}__quote-form__row">
-        <div class="{{ class_prefix }}__quote-form__col {{ class_prefix }}__quote-form__col_full">
-            <h3 class="quick-order__quote-form__title">{{ 'orob2b.product.frontend.quick_add.copy_paste.title'|trans }}</h3>
-            <p>{{ 'orob2b.product.frontend.quick_add.copy_paste.description'|trans }}</p>
-        </div>
-    </fieldset>
-    <fieldset class="{{ class_prefix }}__quote-form__row">
-        <div class="{{ class_prefix }}__quote-form__col {{ class_prefix }}__quote-form__col_full">
-            {{ form_widget(form.copyPaste, {
-                'attr': {
-                    'placeholder': 'orob2b.product.frontend.quick_add.copy_paste.placeholder'|trans,
-                    'class': 'input input_md input_block checkout__form__input',
-                    'cols': 30,
-                    'rows': 10
+{% block _quick_add_import_button_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {{ UI.clientLink({
+        'dataUrl': path('orob2b_product_frontend_quick_add_import'),
+        'aCss': 'no-hash import-link',
+        'label' : 'orob2b.product.frontend.quick_add.import_from_file.title'|trans,
+        'widget' : {
+            'type' : 'dialog',
+            'options' : {
+                'dialogOptions' : {
+                    'title' : 'orob2b.product.frontend.quick_add.import_from_file.title'|trans,
+                    'modal': true,
+                    'resizable': false,
+                    'width': 680,
+                    'height': 350,
+                    'autoResize': true
                 }
             }
-            ) }}
-            {{ form_errors(form.copyPaste) }}
-        </div>
-    </fieldset>
-    <fieldset class="{{ class_prefix }}__quote-form__row">
-        <div class="{{ class_prefix }}__quote-form__col {{ class_prefix }}__quote-form__col_full {{ class_prefix }}__quote-form__btn-group">
-            <button type="submit"
-                    class="btn theme-btn btn-dark get-quote-btn mr0-md copy-paste-button">{{ 'orob2b.product.frontend.quick_add.continue.label'|trans }}</button>
-        </div>
-    </fieldset>
-    <div class="hidden">
-        {{ form_rest(form) }}
-    </div>
+        }
+    }) }}
 {% endblock %}
