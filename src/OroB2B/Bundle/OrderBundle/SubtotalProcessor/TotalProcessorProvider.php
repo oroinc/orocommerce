@@ -15,19 +15,13 @@ class TotalProcessorProvider
     const NAME = 'orob2b_order.subtotal_total';
     const TYPE = 'total';
 
-    /**
-     * @var SubtotalProviderRegistry
-     */
+    /** @var SubtotalProviderRegistry */
     protected $subtotalProviderRegistry;
 
-    /**
-     * @var TranslatorInterface
-     */
+    /** @var TranslatorInterface */
     protected $translator;
 
-    /**
-     * @var RoundingServiceInterface
-     */
+    /** @var RoundingServiceInterface */
     protected $rounding;
 
     /**
