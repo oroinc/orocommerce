@@ -15,7 +15,7 @@ class OroB2BOrderBundle implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_order');
-        $table->addColumn('shipping_cost_value', 'money', [
+        $table->addColumn('shipping_cost_amount', 'money', [
             'notnull' => false,
             'precision' => 19,
             'scale' => 4,

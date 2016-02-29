@@ -105,7 +105,7 @@ class OroB2BOrderBundleInstaller implements
         $table->addColumn('payment_term_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
-        $table->addColumn('shipping_cost_value', 'money', [
+        $table->addColumn('shipping_cost_amount', 'money', [
             'notnull' => false,
             'precision' => 19,
             'scale' => 4,
