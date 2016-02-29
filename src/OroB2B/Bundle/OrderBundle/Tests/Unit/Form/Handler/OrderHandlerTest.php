@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Handler;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\Form\FormInterface;
@@ -10,13 +9,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use OroB2B\Bundle\OrderBundle\Form\Handler\OrderHandler;
-use OroB2B\Bundle\OrderBundle\Provider\SubtotalsProvider;
+use OroB2B\Bundle\OrderBundle\Provider\SubtotalProvider;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Model\Subtotal;
 
 class OrderHandlerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|SubtotalsProvider */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|SubtotalProvider */
     protected $subtotalsProvider;
 
     /** @var OrderHandler */
@@ -78,9 +77,14 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testProcessSupportedRequest($method, $isValid, $isProcessed)
     {
+        $subtotal = new Subtotal();
+        $amount = 42;
+        $subtotal->setType(SubtotalProvider::TYPE);
+        $subtotal->setAmount($amount);
+
         $this->subtotalsProvider->expects($this->any())
-            ->method('getSubtotals')
-            ->willReturn(new ArrayCollection());
+            ->method('getSubtotal')
+            ->willReturn($subtotal);
 
         $this->form->expects($this->any())
             ->method('isValid')
@@ -118,12 +122,12 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $subtotal = new Subtotal();
         $amount = 42;
-        $subtotal->setType(Subtotal::TYPE_SUBTOTAL);
+        $subtotal->setType(SubtotalProvider::TYPE);
         $subtotal->setAmount($amount);
-        $subtotals = new ArrayCollection([$subtotal]);
+
         $this->subtotalsProvider->expects($this->any())
-            ->method('getSubtotals')
-            ->willReturn($subtotals);
+            ->method('getSubtotal')
+            ->willReturn($subtotal);
 
         $this->request->setMethod('POST');
 
@@ -145,8 +149,6 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->handler->process($this->entity));
 
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
-        foreach ($subtotals as $subtotal) {
-            $this->assertEquals($amount, $propertyAccessor->getValue($this->entity, $subtotal->getType()));
-        }
+        $this->assertEquals($amount, $propertyAccessor->getValue($this->entity, $subtotal->getType()));
     }
 }

@@ -19,7 +19,7 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
 use OroB2B\Bundle\OrderBundle\Model\Subtotal;
-use OroB2B\Bundle\OrderBundle\Provider\SubtotalsProvider;
+use OroB2B\Bundle\OrderBundle\Provider\SubtotalProvider;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
@@ -42,7 +42,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|OrderCurrencyHandler */
     protected $orderCurrencyHandler;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|SubtotalsProvider */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|SubtotalProvider */
     protected $subtotalsProvider;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
@@ -302,7 +302,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
     protected function assertCalculateSubtotalsCalled($subtotalAmount)
     {
         $subtotal = new Subtotal();
-        $subtotal->setType(Subtotal::TYPE_SUBTOTAL)->setAmount($subtotalAmount);
+        $subtotal->setType(SubtotalProvider::TYPE)->setAmount($subtotalAmount);
 
         $this->subtotalsProvider->expects($this->once())
             ->method('getSubtotals')

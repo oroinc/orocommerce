@@ -9,13 +9,13 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Model\Subtotal;
-use OroB2B\Bundle\OrderBundle\Provider\SubtotalsProvider;
+use OroB2B\Bundle\OrderBundle\Provider\SubtotalProvider;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
-class SubtotalsProviderTest extends \PHPUnit_Framework_TestCase
+class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var SubtotalsProvider
+     * @var SubtotalProvider
      */
     protected $provider;
 
@@ -44,7 +44,7 @@ class SubtotalsProviderTest extends \PHPUnit_Framework_TestCase
                 )
             );
 
-        $this->provider = new SubtotalsProvider($this->translator, $this->roundingService);
+        $this->provider = new SubtotalProvider($this->translator, $this->roundingService);
     }
 
     protected function tearDown()
@@ -52,12 +52,12 @@ class SubtotalsProviderTest extends \PHPUnit_Framework_TestCase
         unset($this->translator, $this->provider);
     }
 
-    public function testGetSubtotals()
+    public function testGetSubtotal()
     {
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with(sprintf('orob2b.order.subtotals.%s', Subtotal::TYPE_SUBTOTAL))
-            ->willReturn(ucfirst(Subtotal::TYPE_SUBTOTAL));
+            ->with(sprintf('orob2b.order.subtotals.%s', SubtotalProvider::TYPE))
+            ->willReturn(ucfirst(SubtotalProvider::TYPE));
 
         $order = new Order();
         $perUnitLineItem = new OrderLineItem();
@@ -84,13 +84,10 @@ class SubtotalsProviderTest extends \PHPUnit_Framework_TestCase
 
         $order->setCurrency('USD');
 
-        $subtotals = $this->provider->getSubtotals($order);
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $subtotals);
-
-        $subtotal = $subtotals->get(Subtotal::TYPE_SUBTOTAL);
+        $subtotal = $this->provider->getSubtotal($order);
         $this->assertInstanceOf('OroB2B\Bundle\OrderBundle\Model\Subtotal', $subtotal);
-        $this->assertEquals(Subtotal::TYPE_SUBTOTAL, $subtotal->getType());
-        $this->assertEquals(ucfirst(Subtotal::TYPE_SUBTOTAL), $subtotal->getLabel());
+        $this->assertEquals(SubtotalProvider::TYPE, $subtotal->getType());
+        $this->assertEquals(ucfirst(SubtotalProvider::TYPE), $subtotal->getLabel());
         $this->assertEquals($order->getCurrency(), $subtotal->getCurrency());
         $this->assertInternalType('float', $subtotal->getAmount());
         $this->assertEquals(142.0, $subtotal->getAmount());
