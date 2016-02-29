@@ -13,7 +13,7 @@ use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 class TotalProcessorProvider
 {
     const NAME = 'orob2b_order.subtotal_total';
-    const TYPE_TOTAL = 'total';
+    const TYPE = 'total';
 
     /**
      * @var SubtotalProviderRegistry
@@ -54,13 +54,14 @@ class TotalProcessorProvider
      * Calculate and return total based on all subtotals
      *
      * @param Order $order
+     *
      * @return Subtotal
      */
     public function getTotal(Order $order)
     {
         $total = new Subtotal();
 
-        $total->setType(self::TYPE_TOTAL);
+        $total->setType(self::TYPE);
         $translation = sprintf('orob2b.order.subtotals.%s', $total->getType());
         $total->setLabel($this->translator->trans($translation));
 
@@ -102,6 +103,7 @@ class TotalProcessorProvider
     /**
      * @param string $fromCurrency
      * @param string $toCurrency
+     *
      * @return float
      */
     protected function getExchangeRate($fromCurrency, $toCurrency)

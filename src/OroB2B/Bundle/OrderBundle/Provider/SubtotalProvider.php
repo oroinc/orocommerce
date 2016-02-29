@@ -10,9 +10,9 @@ use OroB2B\Bundle\OrderBundle\Model\Subtotal;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use OroB2B\Bundle\OrderBundle\SubtotalProcessor\SubtotalProviderInterface;
 
-class SubtotalsProvider implements SubtotalProviderInterface
+class SubtotalProvider implements SubtotalProviderInterface
 {
-    const TYPE_SUBTOTAL = 'subtotal';
+    const TYPE = 'subtotal';
     const NAME = 'orob2b_order.subtotal_lineitem';
 
     /**
@@ -50,7 +50,7 @@ class SubtotalsProvider implements SubtotalProviderInterface
     {
         $subtotal = new Subtotal();
 
-        $subtotal->setType(self::TYPE_SUBTOTAL);
+        $subtotal->setType(self::TYPE);
         $translation = sprintf('orob2b.order.subtotals.%s', $subtotal->getType());
         $subtotal->setLabel($this->translator->trans($translation));
 

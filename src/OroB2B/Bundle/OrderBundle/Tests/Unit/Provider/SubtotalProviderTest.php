@@ -9,13 +9,13 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Model\Subtotal;
-use OroB2B\Bundle\OrderBundle\Provider\SubtotalsProvider;
+use OroB2B\Bundle\OrderBundle\Provider\SubtotalProvider;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
-class SubtotalsProviderTest extends \PHPUnit_Framework_TestCase
+class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var SubtotalsProvider
+     * @var SubtotalProvider
      */
     protected $provider;
 
@@ -44,7 +44,7 @@ class SubtotalsProviderTest extends \PHPUnit_Framework_TestCase
                 )
             );
 
-        $this->provider = new SubtotalsProvider($this->translator, $this->roundingService);
+        $this->provider = new SubtotalProvider($this->translator, $this->roundingService);
     }
 
     protected function tearDown()
@@ -56,8 +56,8 @@ class SubtotalsProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->translator->expects($this->never())
             ->method('trans')
-            ->with(sprintf('orob2b.order.subtotals.%s', SubtotalsProvider::TYPE_SUBTOTAL))
-            ->willReturn(ucfirst(SubtotalsProvider::TYPE_SUBTOTAL));
+            ->with(sprintf('orob2b.order.subtotals.%s', SubtotalProvider::TYPE))
+            ->willReturn(ucfirst(SubtotalProvider::TYPE));
 
         $order = new Order();
         $perUnitLineItem = new OrderLineItem();
