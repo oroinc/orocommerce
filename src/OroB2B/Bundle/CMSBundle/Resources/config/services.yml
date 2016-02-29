@@ -5,7 +5,7 @@ parameters:
     orob2b_cms.page.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_cms.loginpage.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_cms.listener.page_slug_listener.class: OroB2B\Bundle\CMSBundle\EventListener\PageSlugListener
-    orob2b_cms.provider.login_page_data_provider.class: OroB2B\Bundle\CMSBundle\Provider\LoginPageDataProvider
+    orob2b_cms.provider.login_page_data_provider.class: OroB2B\Bundle\CMSBundle\Layout\DataProvider\LoginPageProvider
 
 services:
     orob2b_cms.page_tree_handler:

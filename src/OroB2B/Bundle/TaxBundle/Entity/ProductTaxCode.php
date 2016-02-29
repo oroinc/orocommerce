@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
 
 /**
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository")
@@ -88,5 +89,11 @@ class ProductTaxCode extends AbstractTaxCode
     public function getProducts()
     {
         return $this->products;
+    }
+
+    /** {@inheritdoc} */
+    public function getType()
+    {
+        return TaxCodeInterface::TYPE_PRODUCT;
     }
 }
