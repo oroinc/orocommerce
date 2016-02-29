@@ -256,6 +256,7 @@ orob2b:
 
             btn:
                 accept_quote_create_order: 'Accept and Submit to Order'
+                widget_accept_quote_create_order: 'Submit to Order'
 
             message:
                 quote.create_order.success: 'Your sales order was submitted successfully'
