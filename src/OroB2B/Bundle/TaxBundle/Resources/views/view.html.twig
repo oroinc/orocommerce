@@ -1,0 +1,4 @@
+{% if result is defined %}
+    {% import 'OroB2BTaxBundle::macros.html.twig' as TAX %}
+    {{ TAX.renderResult(result, 'table-bordered table-striped table-hover') }}
+{% endif %}

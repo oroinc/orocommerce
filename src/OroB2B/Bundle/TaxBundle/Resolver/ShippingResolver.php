@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\TaxBundle\Resolver;
 
+use Brick\Math\BigDecimal;
+
 use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
@@ -15,6 +17,9 @@ class ShippingResolver implements ResolverInterface
             return;
         }
 
-        $taxable->getResult()->offsetSet(Result::SHIPPING, new ResultElement());
+        $taxable->getResult()->offsetSet(
+            Result::SHIPPING,
+            ResultElement::create(BigDecimal::zero(), BigDecimal::zero())
+        );
     }
 }

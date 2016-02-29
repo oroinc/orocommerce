@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-use OroB2B\Bundle\TaxBundle\Entity\TaxApply;
 use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 
@@ -23,16 +22,6 @@ class TaxValueTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this->assertPropertyAccessors($this->createTaxValue(), $properties);
-    }
-
-    /**
-     * Test TaxValue relations
-     */
-    public function testRelations()
-    {
-        $this->assertPropertyCollections($this->createTaxValue(), [
-            ['appliedTaxes', new TaxApply()],
-        ]);
     }
 
     /**
