@@ -45,7 +45,7 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
      */
     public function load(ObjectManager $manager)
     {
-        $data = require 'data/tax_table_rates.php';
+        $data = require __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'tax_table_rates.php';
 
         $this->loadAccountTaxCodes($manager, $data['account_tax_codes']);
         $this->loadProductTaxCodes($manager, $data['product_tax_codes']);

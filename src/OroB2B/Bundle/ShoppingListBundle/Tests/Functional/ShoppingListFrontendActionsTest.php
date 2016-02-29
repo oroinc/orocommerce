@@ -5,9 +5,7 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
 use OroB2B\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
@@ -93,30 +91,6 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
         foreach ($shoppingList->getLineItems() as $lineItem) {
             $this->assertContains($lineItem->getProduct()->getSku(), $content);
         }
-    }
-
-    public function testLineItemUpdate()
-    {
-        /** @var LineItem $lineItem */
-        $lineItem = $this->getReference('shopping_list_line_item.1');
-        /** @var ProductUnit $unit */
-        $unit = $this->getReference('product_unit.liter');
-
-        $crawler = $this->assertActionForm(
-            'orob2b_shoppinglist_frontend_updatelineitem',
-            $lineItem->getId(),
-            get_class($lineItem)
-        );
-
-        $form = $crawler->selectButton('Save')->form(
-            [
-                'oro_action[lineItem][quantity]' => 33.3,
-                'oro_action[lineItem][unit]' => $unit->getCode(),
-                'oro_action[lineItem][notes]' => 'Updated test notes',
-            ]
-        );
-
-        $this->assertActionFormSubmitted($form, 'Line item has been updated');
     }
 
     /**

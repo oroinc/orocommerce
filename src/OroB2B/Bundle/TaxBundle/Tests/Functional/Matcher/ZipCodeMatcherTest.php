@@ -8,6 +8,11 @@ use Oro\Bundle\AddressBundle\Entity\Address;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
+use OroB2B\Bundle\TaxBundle\Model\TaxCode;
+use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
+use OroB2B\Bundle\TaxBundle\Model\TaxCodes;
+use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes;
+use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
 use OroB2B\Bundle\TaxBundle\Tests\Functional\Matcher\DataFixtures\LoadTaxJurisdictions;
 use OroB2B\Bundle\TaxBundle\Tests\Functional\Matcher\DataFixtures\LoadTaxRules;
 
@@ -24,7 +29,7 @@ class ZipCodeMatcherTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\TaxBundle\Tests\Functional\Matcher\DataFixtures\LoadTaxRules'
+                'OroB2B\Bundle\TaxBundle\Tests\Functional\Matcher\DataFixtures\LoadTaxRules',
             ]
         );
     }
@@ -53,15 +58,37 @@ class ZipCodeMatcherTest extends WebTestCase
             $address->setRegionText($regionText);
         }
 
-        $zipCodeMatcher = $this->getContainer()->get('orob2b_tax.matcher.zip_code_matcher');
-        $rules = $zipCodeMatcher->match($address);
+        /** @var TaxCodeInterface $productTaxCode */
+        $productTaxCode = $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX . '.' . LoadProductTaxCodes::TAX_1);
 
-        $expectedRules = [];
-        foreach ($expectedRuleReferences as $reference) {
-            $expectedRules[] = $this->getTaxRuleByReference($reference);
+        /** @var TaxCodeInterface $accountTaxCode */
+        $accountTaxCode = $this->getReference(LoadAccountTaxCodes::REFERENCE_PREFIX . '.' . LoadAccountTaxCodes::TAX_1);
+
+        $zipCodeMatcher = $this->getContainer()->get('orob2b_tax.matcher.zip_code_matcher');
+        /** @var TaxRule[] $rules */
+        $rules = $zipCodeMatcher->match(
+            $address,
+            TaxCodes::create(
+                [
+                    TaxCode::create($productTaxCode->getCode(), TaxCodeInterface::TYPE_PRODUCT),
+                    TaxCode::create($accountTaxCode->getCode(), TaxCodeInterface::TYPE_ACCOUNT),
+                ]
+            )
+        );
+
+        $actualRules = [];
+        foreach ($rules as $rule) {
+            $actualRules[$rule->getId()] = $rule;
         }
 
-        $this->assertEquals($this->valueToArray($expectedRules), $this->valueToArray($rules));
+        foreach ($expectedRuleReferences as $reference) {
+            $expectedRule = $this->getTaxRuleByReference($reference);
+            $this->assertTrue(
+                array_key_exists($expectedRule->getId(), $actualRules),
+                sprintf('Can\'t find expected reference with id "%s" in actual rules', $expectedRule->getId())
+            );
+            $this->assertEquals($expectedRule, $actualRules[$expectedRule->getId()]);
+        }
     }
 
     /**
@@ -74,26 +101,26 @@ class ZipCodeMatcherTest extends WebTestCase
                 [LoadTaxRules::RULE_US_NY_RANGE, LoadTaxRules::RULE_US_ONLY],
                 self::ZIP_US_NY_RANGE_INSIDE,
                 LoadTaxJurisdictions::COUNTRY_US,
-                LoadTaxJurisdictions::STATE_US_NY
+                LoadTaxJurisdictions::STATE_US_NY,
             ],
             'Match by country, region and single zip' => [
                 [LoadTaxRules::RULE_US_NY_SINGLE, LoadTaxRules::RULE_US_ONLY],
                 LoadTaxJurisdictions::ZIP_US_NY_SINGLE,
                 LoadTaxJurisdictions::COUNTRY_US,
-                LoadTaxJurisdictions::STATE_US_NY
+                LoadTaxJurisdictions::STATE_US_NY,
             ],
             'Match by country and region only' => [
                 [LoadTaxRules::RULE_CA_ON_WITHOUT_ZIP],
                 self::ZIP_UNUSED_CODE,
                 LoadTaxJurisdictions::COUNTRY_CA,
-                LoadTaxJurisdictions::STATE_CA_ON
+                LoadTaxJurisdictions::STATE_CA_ON,
             ],
             'Match by country' => [
                 [LoadTaxRules::RULE_US_ONLY],
                 self::ZIP_UNUSED_CODE,
                 LoadTaxJurisdictions::COUNTRY_US,
                 null,
-                LoadTaxJurisdictions::STATE_TEXT_SOME
+                LoadTaxJurisdictions::STATE_TEXT_SOME,
             ],
         ];
     }

@@ -6,6 +6,9 @@ layout:
             items:
                 widget_content:
                     blockType: container
+                    options:
+                        vars:
+                            savedId: { @value: $data.savedId }
                 form_errors:
                     blockType: block
                     options:

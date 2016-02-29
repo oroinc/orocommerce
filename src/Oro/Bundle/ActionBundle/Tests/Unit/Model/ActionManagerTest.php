@@ -508,7 +508,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->manager->getFrontendTemplate($actionName));
     }
 
-    /**
+   /**
      * @param array $expectedActions
      * @param array $inputContext
      */
