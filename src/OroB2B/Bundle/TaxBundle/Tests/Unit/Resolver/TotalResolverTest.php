@@ -42,6 +42,18 @@ class TotalResolverTest extends \PHPUnit_Framework_TestCase
         $this->compareResult([], $taxable->getResult());
     }
 
+    public function testResolveLockedResult()
+    {
+        $taxable = new Taxable();
+        $taxable->addItem(new Taxable());
+        $taxable->getResult()->lockResult();
+
+        $this->resolver->resolve($taxable);
+
+        $this->assertNull($taxable->getResult()->getOffset(Result::TOTAL));
+        $this->assertNull($taxable->getResult()->getOffset(Result::TAXES));
+    }
+
     /**
      * @param array $items
      * @param ResultElement $expectedTotalResult

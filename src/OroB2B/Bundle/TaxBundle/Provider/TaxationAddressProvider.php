@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\TaxBundle\Provider;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
+use OroB2B\Bundle\TaxBundle\Matcher\EuropeanUnionHelper;
+use OroB2B\Bundle\TaxBundle\Matcher\UnitedStatesHelper;
 use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
 
 class TaxationAddressProvider
@@ -19,7 +21,7 @@ class TaxationAddressProvider
     /**
      * @param AbstractAddress $billingAddress
      * @param AbstractAddress $shippingAddress
-     * @return AbstractAddress
+     * @return AbstractAddress|null
      */
     public function getAddressForTaxation(
         AbstractAddress $billingAddress = null,
@@ -96,5 +98,25 @@ class TaxationAddressProvider
     public function getOriginAddress()
     {
         return $this->settingsProvider->getOrigin();
+    }
+
+    /**
+     * Check is tax code is digital in specified country
+     *
+     * @param string $countryCode
+     * @param string $taxCode
+     * @return bool
+     */
+    public function isDigitalProductTaxCode($countryCode, $taxCode)
+    {
+        if ($countryCode === UnitedStatesHelper::COUNTRY_CODE_USA) {
+            $digitalProductTaxCodes = $this->settingsProvider->getDigitalProductsTaxCodesUS();
+        } elseif (EuropeanUnionHelper::isEuropeanUnionCountry($countryCode)) {
+            $digitalProductTaxCodes = $this->settingsProvider->getDigitalProductsTaxCodesEU();
+        } else {
+            return false;
+        }
+
+        return in_array($taxCode, $digitalProductTaxCodes, true);
     }
 }
