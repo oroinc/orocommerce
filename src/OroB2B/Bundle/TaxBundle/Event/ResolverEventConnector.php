@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\TaxBundle\Event;
 
 use OroB2B\Bundle\TaxBundle\Resolver\ResolverInterface;
+use OroB2B\Bundle\TaxBundle\Resolver\StopPropagationException;
 
 class ResolverEventConnector
 {
@@ -22,6 +23,10 @@ class ResolverEventConnector
      */
     public function onResolve(ResolveTaxEvent $event)
     {
-        $this->resolver->resolve($event->getTaxable());
+        try {
+            $this->resolver->resolve($event->getTaxable());
+        } catch (StopPropagationException $e) {
+            $event->stopPropagation();
+        }
     }
 }

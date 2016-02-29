@@ -39,7 +39,8 @@ class AccountUserShoppingListsProviderTest extends WebTestCase
         );
 
         $this->context = new LayoutContext();
-        $this->dataProvider = $this->getContainer()->get('orob2b_shopping_list.provider.account_user_shopping_lists');
+        $this->dataProvider = $this->getContainer()
+            ->get('orob2b_shopping_list.layout.data_provider.account_user_shopping_lists');
     }
 
     public function testGetData()
@@ -50,8 +51,5 @@ class AccountUserShoppingListsProviderTest extends WebTestCase
 
         $this->assertArrayHasKey('shoppingLists', $actual);
         $this->assertNotEmpty($actual['shoppingLists']);
-
-        $this->assertArrayHasKey('currentShoppingList', $actual);
-        $this->assertNotEmpty($actual['currentShoppingList']);
     }
 }

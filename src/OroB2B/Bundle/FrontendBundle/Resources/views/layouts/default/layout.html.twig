@@ -2,7 +2,7 @@
 
 {% block form_start_widget %}
     {% set attr = attr|merge({
-        id: form.vars.id
+    id: form.vars.id
     }) %}
     {{ parent() }}
 {% endblock %}
@@ -10,4 +10,58 @@
 {% block form_end_widget %}
     {{ parent() }}
     {{ oro_form_js_validation(form) }}
+{% endblock %}
+
+{#Action Buttons#}
+
+{% block action_line_buttons_widget %}
+    {% import 'OroActionBundle:layouts/base:layout.html.twig' as _layout %}
+    <ul{{ block('block_attributes') }}>
+        {% for action in actions %}
+            <li>
+                <a {{ _layout.get_action_attributes(dialogRoute, executionRoute, action, entityClass, entityId) }}>
+                    {% if action.icon is not empty %}
+                        <i class="{{ action.icon }} {{ action.buttonOptions.iCss|default('') }}"></i>
+                    {% endif %}
+                    {{ action.label|trim }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block action_combined_buttons_widget %}
+    {% set actionsCount = actions|length %}
+    {% if actionsCount > 0 %}
+        {% import 'OroActionBundle:layouts/base:layout.html.twig' as _layout %}
+        {% set hasVariants = actionsCount > 1 %}
+        {% set additionalCss = "btn btn_orange" %}
+        {% if hasVariants %}
+            {% set additionalCss = additionalCss ~ " btn_has-dropdown btn_has-dropdown_xlg" %}
+        {% endif %}
+        {% set attr = attr|merge({ class: attr.class|default('') ~ additionalCss}) %}
+        <div{{ block('block_attributes') }}>
+            {% set action = actions|first %}
+            {% set primaryButtonCss = 'direct-link ' ~ action.buttonOptions.class|default('') ~ " "  ~ params.buttonOptions.aCss|default('') %}
+            <a {{ _layout.get_action_attributes(dialogRoute, executionRoute, action, entityClass, entityId, primaryButtonCss) }}>
+                {{ action.label|trim }}
+            </a>
+
+            {% if hasVariants %}
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <i class="material-icons">arrow_drop_down</i>
+            </a>
+
+            <ul class="dropdown-menu">
+                {% for action in actions|slice(1) %}
+                <li>
+                    <a {{ _layout.get_action_attributes(dialogRoute, executionRoute, action, entityClass, entityId, '') }}>
+                        {{ action.label|trim }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+    {% endif %}
 {% endblock %}
