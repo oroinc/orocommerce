@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ActionBundle\Tests\Unit\DependencyInjection\CompilerPass;
+namespace OroB2B\Bundle\RFPBundle\Tests\Unit\DependencyInjection\CompilerPass;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

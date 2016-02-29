@@ -1,12 +1,11 @@
 <?php
 
-namespace Oro\Bundle\ActionBundle\Tests\Unit\Factory;
+namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Factory;
 
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
 
-use Oro\Bundle\ActionBundle\Factory\DuplicatorFactory;
-
+use OroB2B\Bundle\RFPBundle\Factory\DuplicatorFactory;
 use OroB2B\Component\Duplicator\Filter\FilterFactory;
 use OroB2B\Component\Duplicator\Matcher\MatcherFactory;
 
