@@ -52,9 +52,9 @@ class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
         unset($this->translator, $this->provider);
     }
 
-    public function testGetSubtotals()
+    public function testGetSubtotal()
     {
-        $this->translator->expects($this->never())
+        $this->translator->expects($this->once())
             ->method('trans')
             ->with(sprintf('orob2b.order.subtotals.%s', SubtotalProvider::TYPE))
             ->willReturn(ucfirst(SubtotalProvider::TYPE));
@@ -84,12 +84,12 @@ class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
 
         $order->setCurrency('USD');
 
-//        $subtotal = $this->provider->getSubtotal($order);
-//        $this->assertInstanceOf('OroB2B\Bundle\OrderBundle\Model\Subtotal', $subtotal);
-//        $this->assertEquals(Subtotal::TYPE_SUBTOTAL, $subtotal->getType());
-//        $this->assertEquals(ucfirst(Subtotal::TYPE_SUBTOTAL), $subtotal->getLabel());
-//        $this->assertEquals($order->getCurrency(), $subtotal->getCurrency());
-//        $this->assertInternalType('float', $subtotal->getAmount());
-//        $this->assertEquals(142.0, $subtotal->getAmount());
+        $subtotal = $this->provider->getSubtotal($order);
+        $this->assertInstanceOf('OroB2B\Bundle\OrderBundle\Model\Subtotal', $subtotal);
+        $this->assertEquals(SubtotalProvider::TYPE, $subtotal->getType());
+        $this->assertEquals(ucfirst(SubtotalProvider::TYPE), $subtotal->getLabel());
+        $this->assertEquals($order->getCurrency(), $subtotal->getCurrency());
+        $this->assertInternalType('float', $subtotal->getAmount());
+        $this->assertEquals(142.0, $subtotal->getAmount());
     }
 }

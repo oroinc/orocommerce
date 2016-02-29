@@ -67,7 +67,7 @@ class TotalProcessorProvider
 
         $totalAmount = 0.0;
         foreach ($this->getSubtotals($order) as $subtotal) {
-            $rowTotal = $subtotal->getPrice()->getValue();
+            $rowTotal = $subtotal->getAmount();
 
             if ($order->getCurrency() !== $subtotal->getCurrency()) {
                 $rowTotal *= $this->getExchangeRate($subtotal->getCurrency(), $order->getCurrency());

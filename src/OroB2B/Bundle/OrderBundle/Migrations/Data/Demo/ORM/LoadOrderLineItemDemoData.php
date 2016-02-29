@@ -128,13 +128,15 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
 
         fclose($handler);
 
-        $subtotalsProvider = $this->container->get('orob2b_order.provider.subtotals');
+        $subtotalProvider = $this->container->get('orob2b_order.provider.subtotal');
+        $totalProvider = $this->container->get('orob2b_order.provider.total');
         foreach ($this->orders as $order) {
-            $subtotals = $subtotalsProvider->getSubtotals($order);
             /** @var Subtotal $subtotal */
-            $subtotal = $subtotals->get(SubtotalProvider::TYPE);
+            $subtotal = $subtotalProvider->getSubtotal($order);
+            $total = $totalProvider->getTotal($order);
 
             $order->setSubtotal($subtotal->getAmount());
+            $order->setTotal($total->getAmount());
         }
 
         $manager->flush();
