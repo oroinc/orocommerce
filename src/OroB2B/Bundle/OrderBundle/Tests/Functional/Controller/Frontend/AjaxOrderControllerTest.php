@@ -59,7 +59,7 @@ class AjaxOrderControllerTest extends WebTestCase
     {
         $form = $crawler->selectButton('Save and Close')->form();
 
-        $form->getFormNode()->setAttribute('action', $this->getUrl('orob2b_order_frontend_subtotals', ['id' => $id]));
+        $form->getFormNode()->setAttribute('action', $this->getUrl('orob2b_order_frontend_entry_point', ['id' => $id]));
 
         $this->client->submit($form);
 
