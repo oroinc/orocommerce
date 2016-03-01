@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Transformer;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
 use OroB2B\Bundle\TaxBundle\Entity\TaxApply;
 use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
 use OroB2B\Bundle\TaxBundle\Manager\TaxValueManager;
@@ -42,40 +40,17 @@ class TaxValueToResultTransformerTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|TaxValueManager */
     protected $taxValueManager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
-    protected $doctrineHelper;
-
     public function setUp()
     {
         $this->taxValueManager = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Manager\TaxValueManager')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->taxValueToResultTransformer = new TaxValueToResultTransformer(
-            $this->taxValueManager,
-            'stdClass',
-            $this->doctrineHelper
-        );
+        $this->taxValueToResultTransformer = new TaxValueToResultTransformer($this->taxValueManager, 'stdClass');
     }
 
     public function testTransform()
     {
-        $order = $this->getMock('OroB2B\Bundle\OrderBundle\Entity\Order');
-        $order->expects($this->once())->method('getCurrency')->willReturn('USD');
-
-        $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
-        $repository->expects($this->once())->method('findOneBy')->willReturn($order);
-
-        $this->doctrineHelper
-            ->expects($this->once())
-            ->method('getEntityRepositoryForClass')
-            ->willReturn($repository);
-
-
         $taxValue = (new TaxValue())
             ->setResult($this->createTaxResult())
             ->setAddress('1st street')
