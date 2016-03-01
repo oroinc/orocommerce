@@ -103,10 +103,10 @@ class SubtotalProviderPassTest extends \PHPUnit_Framework_TestCase
             );
 
         $serviceIds = [
-            'provider1' => [['class' => 'Test\Class1']],
-            'provider2' => [['class' => 'Test\Class2']],
-            'provider3' => [['class' => 'Test\Class1', 'priority' => 100]],
-            'provider4' => [['class' => 'Test\Class1', 'priority' => -100]],
+            'provider1' => [['class' => '\stdClass']],
+            'provider2' => [['class' => '\stdClass']],
+            'provider3' => [['class' => '\stdClass', 'priority' => 10]],
+            'provider4' => [['class' => '\stdClass', 'priority' => -10]],
         ];
 
         $this->container->expects($this->once())
