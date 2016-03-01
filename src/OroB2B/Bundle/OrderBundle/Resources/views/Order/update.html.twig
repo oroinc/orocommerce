@@ -47,7 +47,7 @@
 
 {% set pageComponent = {
     module: 'orob2border/js/app/components/entry-point-component',
-    options: { route: 'orob2b_order_entry_point', routeParams: {id: entity.id} },
+    options: { route: 'orob2b_order_entry_point', routeParams: {id: entity.id|default(0)} },
 } %}
 
 {% block content_data %}
@@ -56,7 +56,7 @@
     {% set subtotals %}
         {% include 'OroB2BPricingBundle:Subtotals:subtotals.html.twig' with {
             pageComponent: 'orob2border/js/app/components/subtotals-component',
-            options: { url: path('orob2b_order_entry_point', {id: entity.id}), selectors: {form: '#' ~ form.vars.id} }
+            options: { url: path('orob2b_order_entry_point', {id: entity.id|default(0)}), selectors: {form: '#' ~ form.vars.id} }
         } only %}
     {% endset %}
 
