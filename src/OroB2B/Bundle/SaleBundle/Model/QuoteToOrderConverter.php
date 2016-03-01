@@ -13,7 +13,8 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
-use OroB2B\Bundle\OrderBundle\Provider\SubtotalProvider;
+use OroB2B\Bundle\OrderBundle\Provider\SubtotalLineItemProvider;
+use OroB2B\Bundle\OrderBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
@@ -25,24 +26,29 @@ class QuoteToOrderConverter
     /** @var OrderCurrencyHandler */
     protected $orderCurrencyHandler;
 
-    /** @var SubtotalProvider */
-    protected $subtotalProvider;
+    /** @var SubtotalLineItemProvider */
+    protected $subtotalLineItemProvider;
 
     /** @var ManagerRegistry */
     protected $registry;
 
+    /** @var TotalProcessorProvider */
+    protected $totalProvider;
+
     /**
      * @param OrderCurrencyHandler $orderCurrencyHandler
-     * @param SubtotalProvider $subtotalProvider
+     * @param SubtotalLineItemProvider $subtotalLineItemProvider
      * @param ManagerRegistry $registry
      */
     public function __construct(
         OrderCurrencyHandler $orderCurrencyHandler,
-        SubtotalProvider $subtotalProvider,
+        SubtotalLineItemProvider $subtotalLineItemProvider,
+        TotalProcessorProvider $totalProvider,
         ManagerRegistry $registry
     ) {
         $this->orderCurrencyHandler = $orderCurrencyHandler;
-        $this->subtotalProvider = $subtotalProvider;
+        $this->subtotalLineItemProvider = $subtotalLineItemProvider;
+        $this->totalProvider = $totalProvider;
         $this->registry = $registry;
     }
 
@@ -189,12 +195,20 @@ class QuoteToOrderConverter
      */
     protected function fillSubtotals(Order $order)
     {
-        $subtotal = $this->subtotalProvider->getSubtotal($order);
+        $subtotal = $this->subtotalLineItemProvider->getSubtotal($order);
+        $total = $this->totalProvider->getTotal($order);
+        $propertyAccessor = PropertyAccess::createPropertyAccessor();
 
         if ($subtotal) {
-            $propertyAccessor = PropertyAccess::createPropertyAccessor();
             try {
                 $propertyAccessor->setValue($order, $subtotal->getType(), $subtotal->getAmount());
+            } catch (NoSuchPropertyException $e) {
+            }
+        }
+
+        if ($total) {
+            try {
+                $propertyAccessor->setValue($order, $total->getType(), $total->getAmount());
             } catch (NoSuchPropertyException $e) {
             }
         }

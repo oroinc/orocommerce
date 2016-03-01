@@ -15,20 +15,17 @@ class TotalProcessorProvider
     const NAME = 'orob2b_order.subtotal_total';
     const TYPE = 'total';
 
-    /**
-     * @var SubtotalProviderRegistry
-     */
+    /** @var SubtotalProviderRegistry */
     protected $subtotalProviderRegistry;
 
-    /**
-     * @var TranslatorInterface
-     */
+    /** @var TranslatorInterface */
     protected $translator;
 
-    /**
-     * @var RoundingServiceInterface
-     */
+    /** @var RoundingServiceInterface */
     protected $rounding;
+
+    /** @var  [] */
+    protected $subtotals;
 
     /**
      * @param SubtotalProviderRegistry $subtotalProviderRegistry
@@ -43,6 +40,7 @@ class TotalProcessorProvider
         $this->subtotalProviderRegistry = $subtotalProviderRegistry;
         $this->translator = $translator;
         $this->rounding = $rounding;
+        $this->subtotals = [];
     }
 
     public function getName()
@@ -90,13 +88,25 @@ class TotalProcessorProvider
     public function getSubtotals(Order $order)
     {
         $subtotals = new ArrayCollection();
+        $hash = spl_object_hash($order);
 
-        foreach ($this->subtotalProviderRegistry->getProviders() as $provider) {
-            $subtotal = $provider->getSubtotal($order);
-            $subtotals->set($subtotal->getType(), $subtotal);
+        if (!array_key_exists(spl_object_hash($order), $this->subtotals)) {
+            foreach ($this->subtotalProviderRegistry->getProviders() as $provider) {
+                $subtotal = $provider->getSubtotal($order);
+                $subtotals->set($subtotal->getType(), $subtotal);
+            }
+            $this->subtotals[$hash] = $subtotals;
         }
 
-        return $subtotals;
+        return $this->subtotals[$hash];
+    }
+
+    /**
+     * Clear subtotals cache
+     */
+    public function clearCache()
+    {
+        $this->subtotals = [];
     }
 
 

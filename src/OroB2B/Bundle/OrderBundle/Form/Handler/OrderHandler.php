@@ -9,44 +9,45 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-use OroB2B\Bundle\OrderBundle\Provider\SubtotalProvider;
+use OroB2B\Bundle\OrderBundle\SubtotalProcessor\TotalProcessorProvider;
+use OroB2B\Bundle\OrderBundle\Provider\SubtotalLineItemProvider;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 
 class OrderHandler
 {
-    /**
-     * @var FormInterface
-     */
+    /** @var FormInterface */
     protected $form;
-    /**
-     * @var Request
-     */
+
+    /** @var Request */
     protected $request;
-    /**
-     * @var ObjectManager
-     */
+
+    /** @var ObjectManager */
     protected $manager;
-    /**
-     * @var SubtotalProvider
-     */
-    protected $subtotalProvider;
+
+    /** @var TotalProcessorProvider */
+    protected $totalProvider;
+
+    /** @var SubtotalLineItemProvider */
+    protected $subTotalLineItemProvider;
 
     /**
      * @param FormInterface $form
      * @param Request $request
      * @param ObjectManager $manager
-     * @param SubtotalProvider $subtotalProvider
+     * @param TotalProcessorProvider $totalProvider
      */
     public function __construct(
         FormInterface $form,
         Request $request,
         ObjectManager $manager,
-        SubtotalProvider $subtotalProvider
+        TotalProcessorProvider $totalProvider,
+        SubtotalLineItemProvider $subTotalLineItemProvider
     ) {
         $this->form    = $form;
         $this->request = $request;
         $this->manager = $manager;
-        $this->subtotalProvider = $subtotalProvider;
+        $this->totalProvider = $totalProvider;
+        $this->subTotalLineItemProvider = $subTotalLineItemProvider;
     }
 
     /**
@@ -79,24 +80,22 @@ class OrderHandler
      */
     protected function fillSubtotals(Order $order)
     {
-        $subtotal = $this->subtotalProvider->getSubtotal($order);
+        $subtotal = $this->subTotalLineItemProvider->getSubtotal($order);
+        $total = $this->totalProvider->getTotal($order);
+        $propertyAccessor = PropertyAccess::createPropertyAccessor();
 
         if ($subtotal) {
-            $propertyAccessor = PropertyAccess::createPropertyAccessor();
             try {
                 $propertyAccessor->setValue($order, $subtotal->getType(), $subtotal->getAmount());
             } catch (NoSuchPropertyException $e) {
             }
         }
-// todo: refactor to use total BB-2093
-//        $subtotals = $this->subtotalsProvider->getSubtotals($order);
-//
-//        $propertyAccessor = PropertyAccess::createPropertyAccessor();
-//        foreach ($subtotals as $subtotal) {
-//            try {
-//                $propertyAccessor->setValue($order, $subtotal->getType(), $subtotal->getAmount());
-//            } catch (NoSuchPropertyException $e) {
-//            }
-//        }
+
+        if ($total) {
+            try {
+                $propertyAccessor->setValue($order, $total->getType(), $total->getAmount());
+            } catch (NoSuchPropertyException $e) {
+            }
+        }
     }
 }
