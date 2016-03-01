@@ -34,7 +34,8 @@ class OrderMapper extends AbstractOrderMapper
             ->setItems($this->mapLineItems($order->getLineItems()))
             ->setDestination($this->getOrderAddress($order))
             ->setOrigin($this->addressProvider->getOriginAddress())
-            ->setContext($this->getContext($order));
+            ->setContext($this->getContext($order))
+            ->setCurrency($order->getCurrency());
 
         return $taxable;
     }
