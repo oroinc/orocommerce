@@ -63,10 +63,6 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  */
 class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHolderInterface, AccountOwnerAwareInterface
 {
-    const STATUS_OPEN = 10;
-    const STATUS_PROCESSING = 20;
-
-    public $status = self::STATUS_OPEN;
     /**
      * @var integer
      *
