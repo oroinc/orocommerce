@@ -58,6 +58,7 @@ parameters:
     orob2b_tax.resolver.customer_address.item.class: OroB2B\Bundle\TaxBundle\Resolver\CustomerAddressItemResolver
     orob2b_tax.resolver.customer_address.class: OroB2B\Bundle\TaxBundle\Resolver\CustomerAddressResolver
     orob2b_tax.resolver.rounding.class: OroB2B\Bundle\TaxBundle\Resolver\RoundingResolver
+    orob2b_tax.resolver.currency.class: OroB2B\Bundle\TaxBundle\Resolver\CurrencyResolver
     orob2b_tax.resolver.unit.class: OroB2B\Bundle\TaxBundle\Resolver\UnitResolver
     orob2b_tax.resolver.row_total.class: OroB2B\Bundle\TaxBundle\Resolver\RowTotalResolver
     orob2b_tax.resolver.eu_digital.class: OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalResolver
@@ -263,7 +264,6 @@ services:
         class: %orob2b_tax.transformer.tax_value.class%
         arguments:
             - @orob2b_tax.manager.tax_value_manager
-            - %orob2b_tax.entity.tax.class%
 
     orob2b_tax.event.tax_event_dispatcher:
         class: %orob2b_tax.event.tax_event_dispatcher.class%
@@ -412,6 +412,11 @@ services:
 
     orob2b_tax.resolver.rounding:
         class: %orob2b_tax.resolver.rounding.class%
+        tags:
+            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve_after, priority: -255 }
+
+    orob2b_tax.resolver.currency:
+        class: %orob2b_tax.resolver.currency.class%
         tags:
             - { name: orob2b_tax.resolver, event: orob2b_tax.resolve_after, priority: -255 }
 

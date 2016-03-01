@@ -6,6 +6,7 @@ databaseBefore:
         simple_order:
             poNumber: { property_value: simple_order }
             account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: { name: 'account.orphan' } }
+            currency: 'USD'
             billingAddress:
                 class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
                 property_value:
@@ -35,8 +36,10 @@ expectedResult:
         excludingTax: '0'
         taxAmount: '0'
         adjustment: '0'
+        currency: 'USD'
     unit:
         includingTax: '5.55'
         excludingTax: '5.05' # 5.55 - 0.5045 = 5.0455
         taxAmount: '0.5'     # 5.55 * 0.1 / 1.1 = 0.5045
         adjustment: '0.0045' # 0.5045 - 0.5
+        currency: 'USD'

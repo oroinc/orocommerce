@@ -24,7 +24,7 @@ class QuoteControllerTest extends WebTestCase
         $this->initClient();
 
         $this->loadFixtures([
-            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
+            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteAddressData',
         ]);
     }
 
@@ -215,7 +215,7 @@ class QuoteControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $controls = $crawler->filter('.control-group');
+        $controls = $crawler->filter('.account-oq__order-info__control, .account-page-title');
 
         $this->assertSameSize($expectedData['columns'], $controls);
 
@@ -239,9 +239,9 @@ class QuoteControllerTest extends WebTestCase
             $this->assertContains($property, $control->textContent);
         }
 
-        $createOrderButton = (bool)$crawler->filterXPath('//a[contains(., \'Accept and Submit to Order\')]')->count();
-
-        $this->assertEquals($expectedData['createOrderButton'], $createOrderButton);
+        $createOrderButton = (bool)$crawler
+            ->filterXPath('//a[contains(., \'Submit to Order\')]')->count();
+         $this->assertEquals($expectedData['createOrderButton'], $createOrderButton);
     }
 
     /**
@@ -277,7 +277,7 @@ class QuoteControllerTest extends WebTestCase
                         ],
                         [
                             'label' => 'orob2b.sale.quote.sections.shipping_address',
-                            'property' => 'shippingAddress',
+                            'property' => 'shippingAddress.street',
                         ]
                     ],
                 ],
@@ -309,7 +309,7 @@ class QuoteControllerTest extends WebTestCase
                         ],
                         [
                             'label' => 'orob2b.sale.quote.sections.shipping_address',
-                            'property' => 'shippingAddress',
+                            'property' => 'shippingAddress.street',
                         ]
                     ],
                 ],
