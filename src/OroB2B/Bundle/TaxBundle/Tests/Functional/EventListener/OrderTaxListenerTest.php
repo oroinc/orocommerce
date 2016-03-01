@@ -18,36 +18,73 @@ use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
  */
 class OrderTaxListenerTest extends WebTestCase
 {
+    const ORDER_CLASS = 'OroB2B\Bundle\OrderBundle\Entity\Order';
+    const TAX_VALUE_CLASS = 'OroB2B\Bundle\TaxBundle\Entity\TaxValue';
+
     /** @var ManagerRegistry */
     protected $doctrine;
 
-    /** @var Order */
-    protected $order;
-
     /** @var EntityManager */
-    protected $entityManager;
+    protected $orderEm;
 
     protected function setUp()
     {
         $this->initClient();
         $this->doctrine = $this->getContainer()->get('doctrine');
-        $this->entityManager = $this->doctrine->getManagerForClass('OroB2B\Bundle\OrderBundle\Entity\Order');
+        $this->orderEm = $this->doctrine->getManagerForClass(self::ORDER_CLASS);
+    }
+
+    protected function tearDown()
+    {
+        unset($this->orderEm, $this->doctrine);
     }
 
     public function testSaveOrderTaxValue()
     {
-        $this->createOrder();
+        $order = $this->createOrder();
 
-        $taxValue = $this->getTaxValue();
+        $taxValue = $this->getTaxValue($order);
         $this->assertNotNull($taxValue);
-
         $this->removeTaxValue($taxValue);
-        $this->updateOrder();
+        $this->assertNull($this->getTaxValue($order));
 
-        $this->assertNotNull($this->getTaxValue());
+        $this->updateOrder($order);
+        $this->assertNotNull($this->getTaxValue($order));
     }
 
-    protected function createOrder()
+    public function testSaveTwoNewOrders()
+    {
+        $order1 = $this->createOrder(false);
+        $order2 = $this->createOrder();
+
+        $taxValue1 = $this->getTaxValue($order1);
+        $this->assertNotNull($taxValue1);
+
+        $taxValue2 = $this->getTaxValue($order2);
+        $this->assertNotNull($taxValue2);
+    }
+
+    public function testRemoveOrderShouldRemoveTaxValue()
+    {
+        $order1 = $this->createOrder(false);
+        $order2 = $this->createOrder(false);
+        $order3 = $this->createOrder();
+
+        $this->assertNotNull($this->getTaxValue($order1));
+        $this->assertNotNull($this->getTaxValue($order2));
+
+        $this->removeOrder($order1);
+
+        $this->assertNull($this->getTaxValue($order1));
+        $this->assertNotNull($this->getTaxValue($order2));
+        $this->assertNotNull($this->getTaxValue($order3));
+    }
+
+    /**
+     * @param bool $flush
+     * @return Order
+     */
+    protected function createOrder($flush = true)
     {
         /** @var User $orderUser */
         $orderUser = $this->doctrine->getRepository('OroUserBundle:User')->findOneBy([]);
@@ -64,7 +101,7 @@ class OrderTaxListenerTest extends WebTestCase
 
         $order = new Order();
         $order
-            ->setIdentifier('tax_order')
+            ->setIdentifier(uniqid('identifier_', true))
             ->setOwner($orderUser)
             ->setOrganization($orderUser->getOrganization())
             ->setPaymentTerm($paymentTerm)
@@ -75,32 +112,39 @@ class OrderTaxListenerTest extends WebTestCase
             ->setAccount($accountUser->getAccount())
             ->setAccountUser($accountUser);
 
-        $this->entityManager->persist($order);
-        $this->entityManager->flush();
+        $this->orderEm->persist($order);
 
-        $this->order = $order;
-    }
+        if ($flush) {
+            $this->orderEm->flush();
+        }
 
-    protected function updateOrder()
-    {
-        $this->order
-            ->setIdentifier('tax_order_updated')
-            ->setSubtotal('1800');
-
-        $this->entityManager->persist($this->order);
-        $this->entityManager->flush();
+        return $order;
     }
 
     /**
+     * @param Order $order
+     */
+    protected function updateOrder(Order $order)
+    {
+        $order
+            ->setIdentifier(uniqid('identifier_', true))
+            ->setSubtotal('1800');
+
+        $this->orderEm->persist($order);
+        $this->orderEm->flush();
+    }
+
+    /**
+     * @param Order $order
      * @return TaxValue $taxValue
      */
-    protected function getTaxValue()
+    protected function getTaxValue(Order $order)
     {
         /** @var TaxValue $taxValue */
-        $taxValue = $this->doctrine->getRepository('OroB2BTaxBundle:TaxValue')->findOneBy(
+        $taxValue = $this->doctrine->getRepository(self::TAX_VALUE_CLASS)->findOneBy(
             [
-                'entityClass' => 'OroB2B\Bundle\OrderBundle\Entity\Order',
-                'entityId'    => $this->order->getId()
+                'entityClass' => self::ORDER_CLASS,
+                'entityId' => $order->getId()
             ]
         );
 
@@ -109,12 +153,27 @@ class OrderTaxListenerTest extends WebTestCase
 
     /**
      * @param TaxValue $taxValue
+     * @param bool $flush
      */
-    protected function removeTaxValue(TaxValue $taxValue)
+    protected function removeTaxValue(TaxValue $taxValue, $flush = true)
     {
-        $entityManager = $this->doctrine->getManagerForClass('OroB2B\Bundle\TaxBundle\Entity\TaxValue');
+        $em = $this->doctrine->getManagerForClass(self::TAX_VALUE_CLASS);
+        $em->remove($taxValue);
+        if ($flush) {
+            $em->flush();
+        }
+    }
 
-        $entityManager->remove($taxValue);
-        $entityManager->flush();
+    /**
+     * @param $entity
+     * @param bool $flush
+     */
+    protected function removeOrder($entity, $flush = true)
+    {
+        $em = $this->orderEm;
+        $em->remove($entity);
+        if ($flush) {
+            $em->flush();
+        }
     }
 }
