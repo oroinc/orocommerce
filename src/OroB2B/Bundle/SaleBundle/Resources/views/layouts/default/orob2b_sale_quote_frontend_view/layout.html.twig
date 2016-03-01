@@ -352,11 +352,22 @@
     <!-- END ITEMS ORDERED MOBILE -->
 {% endblock %}
 
+{% block _quote_view_page_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " quote container-fluid"}) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _quote_view_accept_container_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " order-checkout-widget order-checkout-widget_block text-right mb4-md"}) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _quote_view_accept_button_widget %}
-    <div class="pull-right">
-        {% set attr = attr|merge({
-            class: attr.class|default('') ~ " btn btn_lg btn_orange ml1-md"
-        }) %}
-        {{ block('button_widget') }}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
     </div>
 {% endblock %}
