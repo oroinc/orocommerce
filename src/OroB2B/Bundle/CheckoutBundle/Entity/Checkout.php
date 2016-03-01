@@ -76,7 +76,7 @@ class Checkout extends ExtendCheckout implements
     /**
      * @var OrderAddress
      *
-     * @ORM\OneToOne(targetEntity="OrderAddress", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity="OroB2B\Bundle\OrderBundle\Entity\OrderAddress", cascade={"persist"})
      * @ORM\JoinColumn(name="billing_address_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $billingAddress;
@@ -98,7 +98,7 @@ class Checkout extends ExtendCheckout implements
     /**
      * @var OrderAddress
      *
-     * @ORM\OneToOne(targetEntity="OrderAddress", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity="OroB2B\Bundle\OrderBundle\Entity\OrderAddress", cascade={"persist"})
      * @ORM\JoinColumn(name="shipping_address_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $shippingAddress;
