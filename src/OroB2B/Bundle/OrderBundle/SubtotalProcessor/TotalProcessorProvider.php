@@ -109,7 +109,6 @@ class TotalProcessorProvider
         $this->subtotals = [];
     }
 
-
     /**
      * @param string $fromCurrency
      * @param string $toCurrency
