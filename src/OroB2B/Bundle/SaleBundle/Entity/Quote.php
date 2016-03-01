@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
@@ -15,9 +16,9 @@ use Oro\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Table(name="orob2b_sale_quote")
@@ -53,6 +54,7 @@ use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHolderInterface
 {
@@ -138,6 +140,21 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      * )
      */
     protected $organization;
+
+    /**
+     * @var Website
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $website;
 
     /**
      * @var Request
@@ -267,10 +284,10 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
     protected $expired = false;
 
     /**
-     * @var PriceList
+     * @var QuoteAddress
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList")
-     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\OneToOne(targetEntity="QuoteAddress", cascade={"persist"})
+     * @ORM\JoinColumn(name="shipping_address_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -278,8 +295,8 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      *          }
      *      }
      * )
-     **/
-    protected $priceList;
+     */
+    protected $shippingAddress;
 
     /**
      * @var Collection|User[]
@@ -312,6 +329,25 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      * )
      **/
     protected $assignedAccountUsers;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="shipping_estimate_amount", type="money", nullable=true)
+     */
+    protected $shippingEstimateAmount;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="shipping_estimate_currency", type="string", nullable=true, length=3)
+     */
+    protected $shippingEstimateCurrency;
+
+    /**
+     * @var Price
+     */
+    protected $shippingEstimate;
 
     /**
      * Constructor
@@ -475,6 +511,7 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      * Add quoteProducts
      *
      * @param QuoteProduct $quoteProduct
+     *
      * @return Quote
      */
     public function addQuoteProduct(QuoteProduct $quoteProduct)
@@ -491,6 +528,7 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      * Remove quoteProducts
      *
      * @param QuoteProduct $quoteProduct
+     *
      * @return Quote
      */
     public function removeQuoteProduct(QuoteProduct $quoteProduct)
@@ -522,6 +560,7 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
 
     /**
      * @param AccountUser $accountUser
+     *
      * @return Quote
      */
     public function setAccountUser(AccountUser $accountUser = null)
@@ -541,6 +580,7 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
 
     /**
      * @param Account $account
+     *
      * @return Quote
      */
     public function setAccount(Account $account = null)
@@ -554,6 +594,7 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      * Set organization
      *
      * @param OrganizationInterface $organization
+     *
      * @return Quote
      */
     public function setOrganization(OrganizationInterface $organization = null)
@@ -577,6 +618,7 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      * Set request
      *
      * @param Request $request
+     *
      * @return Quote
      */
     public function setRequest(Request $request = null)
@@ -718,20 +760,40 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
     }
 
     /**
-     * @return PriceList|null
+     * @return Website
      */
-    public function getPriceList()
+    public function getWebsite()
     {
-        return $this->priceList;
+        return $this->website;
     }
 
     /**
-     * @param PriceList|null $priceList
+     * @param Website $website
+     * @return $this
+     */
+    public function setWebsite(Website $website)
+    {
+        $this->website = $website;
+
+        return $this;
+    }
+
+    /**
+     * @return QuoteAddress|null
+     */
+    public function getShippingAddress()
+    {
+        return $this->shippingAddress;
+    }
+
+    /**
+     * @param QuoteAddress|null $shippingAddress
+     *
      * @return Quote
      */
-    public function setPriceList(PriceList $priceList = null)
+    public function setShippingAddress(QuoteAddress $shippingAddress = null)
     {
-        $this->priceList = $priceList;
+        $this->shippingAddress = $shippingAddress;
 
         return $this;
     }
@@ -802,5 +864,50 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
         }
 
         return $this;
+    }
+
+    /**
+     * Get shipping estimate
+     *
+     * @return Price|null
+     */
+    public function getShippingEstimate()
+    {
+        return $this->shippingEstimate;
+    }
+
+    /**
+     * Set shipping estimate
+     *
+     * @param Price $shippingEstimate
+     * @return $this
+     */
+    public function setShippingEstimate($shippingEstimate = null)
+    {
+        $this->shippingEstimate = $shippingEstimate;
+
+        $this->updateShippingEstimate();
+
+        return $this;
+    }
+
+    /**
+     * @ORM\PostLoad
+     */
+    public function postLoad()
+    {
+        if (null !== $this->shippingEstimateAmount && null !==  $this->shippingEstimateCurrency) {
+            $this->shippingEstimate = Price::create($this->shippingEstimateAmount, $this->shippingEstimateCurrency);
+        }
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updateShippingEstimate()
+    {
+        $this->shippingEstimateAmount = $this->shippingEstimate ? $this->shippingEstimate->getValue() : null;
+        $this->shippingEstimateCurrency = $this->shippingEstimate ? $this->shippingEstimate->getCurrency() : null;
     }
 }

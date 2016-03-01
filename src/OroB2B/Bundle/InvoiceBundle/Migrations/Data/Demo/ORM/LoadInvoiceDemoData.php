@@ -10,10 +10,11 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
+use Oro\Bundle\UserBundle\Entity\User;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
-
-use Oro\Bundle\UserBundle\Entity\User;
+use OroB2B\Bundle\WebsiteBundle\Migrations\Data\Demo\ORM\LoadWebsiteDemoData;
 
 class LoadInvoiceDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -51,6 +52,9 @@ class LoadInvoiceDemoData extends AbstractFixture implements ContainerAwareInter
         /** @var Account $account */
         $account = $manager->getRepository('OroB2BAccountBundle:Account')->findOneBy([]);
 
+        $website = $manager->getRepository('OroB2BWebsiteBundle:Website')
+            ->findOneBy(['name' => LoadWebsiteDemoData::US]);
+
         while (($data = fgetcsv($handler)) !== false) {
             $row = array_combine($headers, array_values($data));
             $row['invoiceDate'] = \DateTime::createFromFormat('Y-m-d', $row['invoiceDate'], new \DateTimeZone('UTC'));
@@ -68,6 +72,7 @@ class LoadInvoiceDemoData extends AbstractFixture implements ContainerAwareInter
                 ->setUpdatedAt($row['invoiceDate'])
                 ->setCurrency($row['currency'])
                 ->setPoNumber($row['poNumber'])
+                ->setWebsite($website)
                 ->setSubtotal(0);
 
             $manager->persist($invoice);
