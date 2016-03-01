@@ -1,0 +1,11 @@
+layout:
+    actions:
+        - @setBlockTheme:
+            themes: 'OroB2BOrderBundle:layouts:default/orob2b_order_frontend_checkout/templates/shipping_method.html.twig'
+        - @add:
+            id: order_checkout_shipping_method
+            parentId: order_checkout_information
+            blockType: block
+
+    conditions:
+        @eq: [$context.page, 3]

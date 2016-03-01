@@ -1,0 +1,255 @@
+{% block _order_checkout_order_review_widget %}
+    <div class="checkout__head">
+        <h2 class="checkout__title">
+            <span class="badge badge_md badge_circle badge_orange">5</span>
+            Order Review
+        </h2>
+    </div>
+    <div class="checkout__body">
+        <form action="#" class="checkout__form">
+            <fieldset class="checkout__form__row">
+                <div class="checkout__form__col form__col_x12 mmb5-md mmb5-sm">
+                    <label for="addShipDate" class="checkbox_custom checkbox_custom_blue" data-checkbox="">
+                        <input type="checkbox" name="addShipDate" id="addShipDate">
+                        <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
+                        <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
+                        <span class="checkbox_custom__text fs13">Add last ship to this order</span>
+                    </label>
+                </div>
+            </fieldset>
+
+            <fieldset class="checkout__form__row">
+                <div class="checkout__form__col form__col_x12 mmb5-md mmb5-sm">
+                    <label for="addRefNumber" class="checkbox_custom checkbox_custom_blue" data-checkbox="">
+                        <input type="checkbox" name="addRefNumber" id="addRefNumber">
+                        <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
+                        <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
+                        <span class="checkbox_custom__text fs13">Add a reference umber (optional)</span>
+                    </label>
+                </div>
+            </fieldset>
+
+            <fieldset class="checkout__form__row">
+                <div class="checkout__form__col form__col_x12 mmb5-md mmb5-sm">
+                    <label for="addNote" class="checkbox_custom checkbox_custom_blue" data-checkbox="">
+                        <input type="checkbox" name="addNote" id="addNote">
+                        <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
+                        <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
+                        <span class="checkbox_custom__text fs13">Add a note to the order</span>
+                    </label>
+                </div>
+            </fieldset>
+
+            <div class="checkout__order-review-info_mobile">
+                <h3>Billing Information</h3>
+                <div>Robin Williams</div>
+                <div>1234 Fake St., #261</div>
+                <div>San Francisco, CA 94109</div>
+
+                <h3>Shipping Information</h3>
+                <div>Robin Williams</div>
+                <div>1234 Fake St., #261</div>
+                <div>San Francisco, CA 94109</div>
+
+                <h3>Shipping Method</h3>
+                <div>USPS Ground - $19.75</div>
+
+                <h3>Payment Method</h3>
+                <div>Wells Fargo ************1234</div>
+
+                <h3>Summary</h3>
+            </div>
+
+            <div class="checkout-order-summary__tab__content">
+                <table class="oro-grid-table">
+                    <thead class="hidden-xs">
+                    <tr>
+                        <th>Item</th>
+                        <th>Shipping</th>
+                        <th class="text-center">Quantity</th>
+                        <th class="text-right">Price</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td class="va-t_md">
+                            <h3 class="product-item__title product-item__title_in-cart mb1-md">
+                                <a href="#">Basic Unisex Scrub Pants</a>
+                            </h3>
+                            <div>Item #: <span class="red">12323</span></div>
+                            <div>MFG Model #: <span class="red">1ABC13</span></div>
+                            <div>Size: <span class="red">L</span></div>
+
+                            <div class="mt1-sm hidden-lg hidden-md hidden-sm">
+                                <div>QTY: <span class="red">6</span></div>
+                                <div>Price per item: $1.50</div>
+                                <div>Your Price: <span class="fs16 blue">$12.00</span></div>
+                            </div>
+                        </td>
+                        <td class="va-t_md hidden-xs">
+                            <div>Warehouse 2</div>
+                            <div>Chicago, IL</div>
+                            <div>Ship Tomorrow</div>
+                        </td>
+                        <td class="text-center va-t_md hidden-xs">2</td>
+                        <td class="va-t_md text-right hidden-xs">
+                            <div class="checkout-order-summary__price-table">
+                                <table class="table">
+                                    <tbody>
+                                    <tr>
+                                        <td>Price per item:</td>
+                                        <td>$1.50</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Shipping:</td>
+                                        <td>$12.95</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Total Price:</td>
+                                        <td><span class="fs16 blue">$12.0</span></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="va-t_md">
+                            <h3 class="product-item__title product-item__title_in-cart mb1-md">
+                                <a href="#">Basic Unisex Scrub Pants</a>
+                            </h3>
+                            <div>Item #: <span class="red">12323</span></div>
+                            <div>MFG Model #: <span class="red">1ABC13</span></div>
+                            <div>Size: <span class="red">L</span></div>
+
+                            <div class="mt1-sm hidden-lg hidden-md hidden-sm">
+                                <div>QTY: <span class="red">6</span></div>
+                                <div>Price per item: $1.50</div>
+                                <div>Your Price: <span class="fs16 blue">$12.00</span></div>
+                            </div>
+                        </td>
+                        <td class="va-t_md hidden-xs">
+                            <div>Warehouse 2</div>
+                            <div>Chicago, IL</div>
+                            <div>Ship Tomorrow</div>
+                        </td>
+                        <td class="text-center va-t_md hidden-xs">2</td>
+                        <td class="va-t_md text-right hidden-xs">
+                            <div class="checkout-order-summary__price-table">
+                                <table class="table">
+                                    <tbody>
+                                    <tr>
+                                        <td>Price per item:</td>
+                                        <td class="text-right">$1.50</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Shipping:</td>
+                                        <td>$12.95</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Total Price:</td>
+                                        <td class="text-right"><span class="fs16 blue">$12.0</span></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="borderless t_paddingless hidden-xs">
+                        <td class="account-oq__order-item-more" colspan="3">
+                            <div>
+                                <i class="icon-play"></i> Lorem ipsum dolor sit amet, consecterur adipiscing elit. Cras
+                                volutpat metrus vitae. Dolor sit amet.
+                            </div>
+                        </td>
+                        <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td class="va-t_md">
+                            <h3 class="product-item__title product-item__title_in-cart mb1-md">
+                                <a href="#">Basic Unisex Scrub Pants</a>
+                            </h3>
+                            <div>Item #: <span class="red">12323</span></div>
+                            <div>MFG Model #: <span class="red">1ABC13</span></div>
+                            <div>Size: <span class="red">L</span></div>
+
+                            <div class="mt1-sm hidden-lg hidden-md hidden-sm">
+                                <div>QTY: <span class="red">6</span></div>
+                                <div>Price per item: $1.50</div>
+                                <div>Your Price: <span class="fs16 blue">$12.00</span></div>
+                            </div>
+                        </td>
+                        <td class="va-t_md hidden-xs">
+                            <div>Warehouse 2</div>
+                            <div>Chicago, IL</div>
+                            <div>Ship Tomorrow</div>
+                        </td>
+                        <td class="text-center va-t_md hidden-xs">2</td>
+                        <td class="va-t_md text-right hidden-xs">
+                            <div class="checkout-order-summary__price-table">
+                                <table class="table">
+                                    <tbody>
+                                    <tr>
+                                        <td>Price per item:</td>
+                                        <td class="text-right">$1.50</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Shipping:</td>
+                                        <td>$12.95</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Total Price:</td>
+                                        <td class="text-right"><span class="fs16 blue">$12.0</span></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="va-t_md hidden-xs">
+                            <a href="#"><i class="icon-pencil"></i>Edit your Order List</a>
+                        </td>
+                        <td colspan="3" class="va-t_md text-right">
+                            <div class="checkout-order-summary__price-table">
+                                <table class="table">
+                                    <tbody>
+                                    <tr>
+                                        <td>Total QTY</td>
+                                        <td class="text-right">8</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Price Total</td>
+                                        <td class="text-right">$190.75</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Shipping Total</td>
+                                        <td class="text-right">$42.75</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="fs18 text-uppercase">Total</span></td>
+                                        <td class="text-right"><span class="fs18">$223.54</span></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="edit-order-list-link-mobile-container">
+                                <a href="#"><i class="icon-pencil"></i>Edit your Order List</a>
+                            </div>
+
+                            <div class="order-checkout-widget order-checkout-widget_block text-right">
+                                <button type="submit" class="btn btn_xlg btn_orange checkout__submit-btn">Submit Order
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="checkout__form__back checkout__form__back_order-review">
+                <a href="#"><i class="icon-left-open-mini"></i>Back</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}
