@@ -63,7 +63,9 @@ parameters:
     orob2b_tax.resolver.unit.class: OroB2B\Bundle\TaxBundle\Resolver\UnitResolver
     orob2b_tax.resolver.row_total.class: OroB2B\Bundle\TaxBundle\Resolver\RowTotalResolver
     orob2b_tax.resolver.eu_digital.class: OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalResolver
-    orob2b_tax.resolver.eu_item_digital.class: OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\ItemDigitalResolver
+    orob2b_tax.resolver.eu_item_digital.class: OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalItemResolver
+    orob2b_tax.resolver.us_sales_tax_digital.item.class: OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver\DigitalItemResolver
+    orob2b_tax.resolver.us_sales_tax_digital.class: OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver\DigitalResolver
 
     orob2b_tax.event.tax_event_dispatcher.class: OroB2B\Bundle\TaxBundle\Event\TaxEventDispatcher
     orob2b_tax.event.context_event_dispatcher.class: OroB2B\Bundle\TaxBundle\Event\ContextEventDispatcher
@@ -464,5 +466,17 @@ services:
         class: %orob2b_tax.resolver.eu_digital.class%
         arguments:
             - @orob2b_tax.resolver.eu_item_digital
+        tags:
+            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve }
+
+    orob2b_tax.resolver.us_sales_tax_digital.item:
+        class: %orob2b_tax.resolver.us_sales_tax_digital.item.class%
+        tags:
+            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve }
+
+    orob2b_tax.resolver.us_sales_tax_digital:
+        class: %orob2b_tax.resolver.us_sales_tax_digital.class%
+        arguments:
+            - @orob2b_tax.resolver.us_sales_tax_digital.item
         tags:
             - { name: orob2b_tax.resolver, event: orob2b_tax.resolve }

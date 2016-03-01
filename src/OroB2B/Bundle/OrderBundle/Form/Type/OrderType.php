@@ -17,25 +17,39 @@ use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 
 class OrderType extends AbstractType
 {
     const NAME = 'orob2b_order_type';
 
-    /** @var  string */
+    /**
+     * @var string
+     */
     protected $dataClass;
 
-    /** @var OrderAddressSecurityProvider */
+    /**
+     * @var string
+     */
+    protected $websiteClass = 'OroB2B\Bundle\WebsiteBundle\Entity\Website';
+
+    /**
+     * @var OrderAddressSecurityProvider
+     */
     protected $orderAddressSecurityProvider;
 
-    /** @var PaymentTermProvider */
+    /**
+     * @var PaymentTermProvider
+     */
     protected $paymentTermProvider;
 
-    /** @var SecurityFacade */
+    /**
+     * @var SecurityFacade
+     */
     protected $securityFacade;
 
-    /** @var OrderCurrencyHandler */
+    /**
+     * @var OrderCurrencyHandler
+     */
     protected $orderCurrencyHandler;
 
     /**
@@ -75,21 +89,18 @@ class OrderType extends AbstractType
                     'required' => false,
                 ]
             )
+            ->add(
+                'website',
+                'entity',
+                [
+                    'class' => $this->websiteClass,
+                    'label' => 'orob2b.order.website.label'
+                ]
+            )
             ->add('poNumber', 'text', ['required' => false, 'label' => 'orob2b.order.po_number.label'])
             ->add('shipUntil', OroDateType::NAME, ['required' => false, 'label' => 'orob2b.order.ship_until.label'])
             ->add('customerNotes', 'textarea', ['required' => false, 'label' => 'orob2b.order.customer_notes.label'])
-            ->add(
-                'priceList',
-                PriceListSelectType::NAME,
-                [
-                    'required' => false,
-                    'label' => 'orob2b.order.price_list.label',
-                ]
-            )
-            ->add(
-                'currency',
-                'hidden'
-            )
+            ->add('currency', 'hidden')
             ->add(
                 'lineItems',
                 OrderLineItemsCollectionType::NAME,
@@ -124,6 +135,7 @@ class OrderType extends AbstractType
                         'order' => $options['data'],
                         'required' => false,
                         'addressType' => AddressType::TYPE_SHIPPING,
+                        'application' => OrderAddressType::APPLICATION_BACKEND
                     ]
                 );
         }
@@ -212,5 +224,13 @@ class OrderType extends AbstractType
         $paymentTerm = $this->paymentTermProvider->getAccountGroupPaymentTerm($account->getGroup());
 
         return $paymentTerm ? $paymentTerm->getId() : null;
+    }
+
+    /**
+     * @param string $websiteClass
+     */
+    public function setWebsiteClass($websiteClass)
+    {
+        $this->websiteClass = $websiteClass;
     }
 }

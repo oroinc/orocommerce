@@ -10,7 +10,7 @@ databaseBefore:
     'OroB2B\Bundle\OrderBundle\Entity\Order':
         simple_order:
             poNumber: { property_value: simple_order }
-            account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+            account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: { name: 'account.orphan' } }
             shippingAddress:
                 class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
                 property_value:
@@ -64,10 +64,12 @@ databaseBefore:
             tax: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
             taxJurisdiction: { class: 'OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction', query: { code: 'TAX3' } }
             productTaxCode: { reference: product_tax_code }
+            accountTaxCode: { class: 'OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
         tax_rule_2:
             tax: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX3' } }
             taxJurisdiction: { class: 'OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction', query: { code: 'TAX3' } }
             productTaxCode: { reference: product_tax_code }
+            accountTaxCode: { class: 'OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
 expectedResult:
     total:
         includingTax: '1371.12'  # 140.22 + 128.25 + 234.65 + 868

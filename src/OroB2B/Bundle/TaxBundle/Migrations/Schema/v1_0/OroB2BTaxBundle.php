@@ -27,7 +27,6 @@ class OroB2BTaxBundle implements Migration
         $this->createOroB2BTaxProductTaxCodeTable($schema);
         $this->createOroB2BTaxRuleTable($schema);
         $this->createOroB2BTaxZipCodeTable($schema);
-        $this->createOroB2BTaxValueTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroB2BTaxAccGrpTcAccGrpForeignKeys($schema);
@@ -187,25 +186,6 @@ class OroB2BTaxBundle implements Migration
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
-    }
-
-    /**
-     * Create orob2b_tax_value table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroB2BTaxValueTable(Schema $schema)
-    {
-        $table = $schema->createTable('orob2b_tax_value');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('result', 'object', ['comment' => '(DC2Type:object)']);
-        $table->addColumn('entity_class', 'string', ['length' => 255]);
-        $table->addColumn('entity_id', 'integer', []);
-        $table->addColumn('address', 'text', []);
-        $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->setPrimaryKey(['id']);
-        $table->addIndex(['entity_class', 'entity_id'], 'orob2b_tax_value_class_id_idx');
     }
 
     /**

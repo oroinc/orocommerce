@@ -357,6 +357,7 @@ orob2b.account:
             send_password_in_welcome_email.label: 'Send plain text password in welcome emails'
 
     security:
+        permissions: 'Action Permissions'
         permission:
             register_account_user: 'Register Account User'
         access-level:

@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\TaxBundle\Matcher;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
+
 use OroB2B\Bundle\TaxBundle\Model\TaxCodes;
 
 class RegionMatcher extends AbstractMatcher
@@ -28,7 +29,7 @@ class RegionMatcher extends AbstractMatcher
 
         $countryTaxRules = $this->countryMatcher->match($address, $taxCodes);
 
-        if (null === $country || (null === $region && empty($regionText))
+        if (null === $country || (null === $region && empty($regionText)) || !$taxCodes->isFullFilledTaxCode()
         ) {
             return $countryTaxRules;
         }

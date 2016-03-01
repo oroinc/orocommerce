@@ -39,7 +39,7 @@ class DigitalResolver implements ResolverInterface
             return;
         }
 
-        $isBuyerFromEU = EuropeanUnionHelper::isEuropeanUnionCountry($taxable->getDestination()->getCountryIso2());
+        $isBuyerFromEU = EuropeanUnionHelper::isEuropeanUnionCountry($buyerAddress->getCountryIso2());
 
         if ($isBuyerFromEU) {
             foreach ($taxable->getItems() as $item) {
