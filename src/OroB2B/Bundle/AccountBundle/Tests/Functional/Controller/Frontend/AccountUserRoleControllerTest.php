@@ -82,13 +82,15 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         /** @var AclManager $aclManager */
         $aclManager = $this->getContainer()->get('oro_security.acl.manager');
+        $extension = $aclManager->getExtensionSelector()->select('entity:(root)');
+
         foreach ($classes as $class) {
             $aclManager->setPermission(
                 $aclManager->getSid(ObjectIdentityFactory::ROOT_IDENTITY_TYPE),
                 $aclManager->getOid(
                     'entity:' . $class
                 ),
-                EntityMaskBuilder::MASK_VIEW_SYSTEM
+                $extension->getMaskBuilder('VIEW')->getMask('MASK_VIEW_SYSTEM')
             );
         }
         $aclManager->flush();

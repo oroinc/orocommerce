@@ -23,6 +23,7 @@
             'url': path('orob2b_sale_quote_frontend_info', {'id': entity.id})
         }) }}
     {% endset %}
+
     {% set quoteProducts %}
         <div class="quote-line-items-info grid-container">
             <table class="grid table table-bordered table-condensed quote-line-items">
@@ -72,22 +73,19 @@
 
     {% set id = 'frontend-quote-view' %}
 
-    {% set generalBlock = {
-        'title': 'orob2b.frontend.sale.quote.sections.general'|trans,
+    {% set dataBlocks = [{
+        'title': 'orob2b.order.sections.general'|trans,
         'class': 'active',
         'subblocks': [{'data' : [quoteInformationWidget]}]
-    } %}
-
-    {% set lineItemsBlock = {
-        'title': 'orob2b.frontend.sale.quote.sections.quote_products'|trans,
-        'subblocks': [{'data' : [quoteProducts]}]
-    } %}
+    }] %}
 
     {% if entity.quoteProducts | length %}
-        {% set data = {'dataBlocks': [generalBlock, lineItemsBlock]} %}
-    {% else %}
-        {% set data = {'dataBlocks': [generalBlock]} %}
+        {% set dataBlocks = dataBlocks|merge([{
+        'title': 'orob2b.sale.quote.sections.quote_products'|trans,
+        'subblocks': [{'data' : [quoteProducts]}]
+        }]) %}
     {% endif %}
 
+    {% set data = {'dataBlocks': dataBlocks} %}
     {{ UI.scrollData(id, data) }}
 {% endblock content_data %}

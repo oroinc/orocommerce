@@ -83,8 +83,10 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
         }
 
         $taxCodes = TaxCodes::create($taxCodes);
+        $isCallFindByCountryAndTaxCode = $country && ($region || $regionText) && $taxCodes->isFullFilledTaxCode();
+
         $this->taxRuleRepository
-            ->expects($country && ($region || $regionText) ? $this->once() : $this->never())
+            ->expects($isCallFindByCountryAndTaxCode ? $this->once() : $this->never())
             ->method('findByZipCodeAndTaxCode')
             ->with(
                 $taxCodes,

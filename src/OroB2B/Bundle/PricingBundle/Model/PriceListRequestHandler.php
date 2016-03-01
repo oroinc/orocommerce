@@ -2,123 +2,200 @@
 
 namespace OroB2B\Bundle\PricingBundle\Model;
 
+use Doctrine\ORM\EntityRepository;
+
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\UserBundle\Entity\User;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-/**
- * Get price list by id from request or return default if not found
- */
-class PriceListRequestHandler extends AbstractPriceListRequestHandler
+class PriceListRequestHandler implements PriceListRequestHandlerInterface
 {
-    const PRICE_LIST_KEY = 'priceListId';
-    const PRICE_LIST_CURRENCY_KEY = 'priceCurrencies';
+    /**
+     * @var RequestStack
+     */
+    protected $requestStack;
 
-    /** @var ManagerRegistry */
+    /**
+     * @var SessionInterface
+     */
+    protected $session;
+
+    /**
+     * @var SecurityFacade
+     */
+    protected $securityFacade;
+
+    /**
+     * @var PriceListTreeHandler
+     */
+    protected $priceListTreeHandler;
+
+    /**
+     * @var ManagerRegistry
+     */
     protected $registry;
 
-    /** @var ManagerRegistry */
-    protected $priceListClass;
+    /**
+     * @var string
+     */
+    protected $priceListClass = 'OroB2B\Bundle\PricingBundle\Entity\PriceList';
 
-    /** @var PriceList */
+    /**
+     * @var PriceList
+     */
     protected $defaultPriceList;
 
-    /** @var PriceList[] */
+    /**
+     * @var PriceList[]
+     */
     protected $priceLists = [];
 
     /**
-     * @param RequestStack $requestStack
-     * @param ManagerRegistry $registry
-     * @param string $priceListClass
+     * @var EntityRepository
      */
-    public function __construct(RequestStack $requestStack, ManagerRegistry $registry, $priceListClass)
-    {
-        parent::__construct($requestStack);
+    protected $priceListRepository;
+
+    /**
+     * @param RequestStack $requestStack
+     * @param SessionInterface $session
+     * @param SecurityFacade $securityFacade
+     * @param PriceListTreeHandler $priceListTreeHandler
+     * @param ManagerRegistry $registry
+     */
+    public function __construct(
+        RequestStack $requestStack,
+        SessionInterface $session,
+        SecurityFacade $securityFacade,
+        PriceListTreeHandler $priceListTreeHandler,
+        ManagerRegistry $registry
+    ) {
+        $this->requestStack = $requestStack;
+        $this->session = $session;
+        $this->securityFacade = $securityFacade;
+        $this->priceListTreeHandler = $priceListTreeHandler;
         $this->registry = $registry;
-        $this->priceListClass = $priceListClass;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     */
+    public function getPriceListByAccount()
+    {
+        $website = $this->getWebsite();
+        $account = $this->getAccount();
+        $priceList = $this->priceListTreeHandler->getPriceList($account, $website);
+
+        if (!$priceList) {
+            throw new \RuntimeException('PriceList not found');
+        }
+
+        return $priceList;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getPriceList()
     {
-        $request = $this->requestStack->getCurrentRequest();
-        if (!$request) {
+        $priceListId = $this->getPriceListId();
+        if (!$priceListId) {
             return $this->getDefaultPriceList();
         }
 
-        $priceListId = $this->getPriceListId();
-        if ($priceListId) {
-            if (array_key_exists($priceListId, $this->priceLists)) {
-                return $this->priceLists[$priceListId];
-            }
+        if (array_key_exists($priceListId, $this->priceLists)) {
+            return $this->priceLists[$priceListId];
+        }
 
-            $priceList = $this->getPriceListRepository()->find($priceListId);
-            if ($priceList) {
-                $this->priceLists[$priceListId] = $priceList;
+        $priceList = $this->getPriceListRepository()->find($priceListId);
+        if ($priceList) {
+            $this->priceLists[$priceListId] = $priceList;
 
-                return $priceList;
-            }
+            return $priceList;
         }
 
         return $this->getDefaultPriceList();
     }
 
     /**
-     * @return int|bool
+     * {@inheritdoc}
      */
-    public function getPriceListId()
+    public function getPriceListSelectedCurrencies(BasePriceList $priceList)
     {
-        $request = $this->requestStack->getCurrentRequest();
-        if (!$request) {
-            return false;
-        }
+        $priceListCurrencies = $priceList->getCurrencies();
 
-        $value = $request->get(self::PRICE_LIST_KEY);
-
-        if (is_bool($value)) {
-            return false;
-        }
-
-        $value = filter_var($value, FILTER_VALIDATE_INT);
-        if ($value > 0) {
-            return $value;
-        }
-
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getPriceListSelectedCurrencies()
-    {
-        $priceListCurrencies = $this->getPriceList()->getCurrencies();
-
-        $request = $this->requestStack->getCurrentRequest();
+        $request = $this->getRequest();
 
         if (!$request) {
             return $priceListCurrencies;
         }
 
         $currencies = $request->get(self::PRICE_LIST_CURRENCY_KEY);
-        if (null === $currencies) {
+
+        if (null === $currencies && $this->session->has(self::PRICE_LIST_CURRENCY_KEY)) {
+            $currencies = (array)$this->session->get(self::PRICE_LIST_CURRENCY_KEY);
+        }
+
+        if (null === $currencies || filter_var($currencies, FILTER_VALIDATE_BOOLEAN)) {
             return $priceListCurrencies;
         }
 
-        if (!is_array($currencies)) {
-            return filter_var($currencies, FILTER_VALIDATE_BOOLEAN) ? $priceListCurrencies : [];
-        }
-
-        $currencies = array_intersect($priceListCurrencies, $currencies);
+        $currencies = array_intersect($priceListCurrencies, (array)$currencies);
 
         sort($currencies);
-
         return $currencies;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getShowTierPrices()
+    {
+        $request = $this->getRequest();
+        if (!$request) {
+            return false;
+        }
+
+        return filter_var($request->get(self::TIER_PRICES_KEY), FILTER_VALIDATE_BOOLEAN);
+    }
+
+    /**
+     * @param string $priceListClass
+     */
+    public function setPriceListClass($priceListClass)
+    {
+        $this->priceListClass = $priceListClass;
+    }
+
+    /**
+     * @return null|Account
+     */
+    protected function getAccount()
+    {
+        $user = $this->securityFacade->getLoggedUser();
+
+        if ($user instanceof AccountUser) {
+            return $user->getAccount();
+        } elseif ($user instanceof User) {
+            $request = $this->getRequest();
+            if ($request && $accountId = $request->get(self::ACCOUNT_ID_KEY)) {
+                return $this->registry
+                    ->getManagerForClass('OroB2B\Bundle\AccountBundle\Entity\Account')
+                    ->getRepository('OroB2B\Bundle\AccountBundle\Entity\Account')
+                    ->find($accountId);
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -138,10 +215,63 @@ class PriceListRequestHandler extends AbstractPriceListRequestHandler
     }
 
     /**
+     * @return int|null
+     */
+    protected function getPriceListId()
+    {
+        $request = $this->getRequest();
+        if (!$request) {
+            return null;
+        }
+
+        $value = $request->get(self::PRICE_LIST_KEY);
+
+        if (is_bool($value)) {
+            return null;
+        }
+
+        $value = filter_var($value, FILTER_VALIDATE_INT);
+        if ($value > 0) {
+            return $value;
+        }
+
+        return null;
+    }
+
+    /**
      * @return PriceListRepository
      */
     protected function getPriceListRepository()
     {
-        return $this->registry->getManagerForClass($this->priceListClass)->getRepository($this->priceListClass);
+        if (!$this->priceListRepository) {
+            $this->priceListRepository = $this->registry
+                ->getManagerForClass($this->priceListClass)
+                ->getRepository($this->priceListClass);
+        }
+        return $this->priceListRepository;
+    }
+
+    /**
+     * @return null|Website
+     */
+    protected function getWebsite()
+    {
+        $website = null;
+        $request = $this->getRequest();
+        if ($request && $id = $this->getRequest()->get(self::WEBSITE_KEY)) {
+            $website = $this->registry->getManagerForClass('OroB2B\Bundle\WebsiteBundle\Entity\Website')
+                ->getRepository('OroB2B\Bundle\WebsiteBundle\Entity\Website')
+                ->find($id);
+        }
+        return $website;
+    }
+
+    /**
+     * @return null|\Symfony\Component\HttpFoundation\Request
+     */
+    protected function getRequest()
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        return $request;
     }
 }

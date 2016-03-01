@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
+use Doctrine\Common\Collections\Criteria;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -18,6 +19,7 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceListAwareInterface;
 class PriceListCollectionType extends AbstractType
 {
     const NAME = 'orob2b_pricing_price_list_collection';
+    const DEFAULT_ORDER = Criteria::DESC;
 
     /**
      * @param FormBuilderInterface $builder

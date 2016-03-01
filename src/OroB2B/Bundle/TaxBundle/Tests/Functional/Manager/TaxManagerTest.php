@@ -264,6 +264,12 @@ class TaxManagerTest extends WebTestCase
             $repository = $this->doctrine->getRepository($class);
 
             foreach ($items as $item) {
+                foreach ($item as $key => $param) {
+                    if (is_array($param) && array_key_exists('reference', $param)) {
+                        $item[$key] = $this->getReference($param['reference'])->getId();
+                    }
+                }
+
                 $this->assertNotEmpty($repository->findBy($item), sprintf('%s %s', $class, json_encode($item)));
             }
         }
