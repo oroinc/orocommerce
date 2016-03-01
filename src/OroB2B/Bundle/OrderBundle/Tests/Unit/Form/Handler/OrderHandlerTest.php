@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Handler;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\OrderBundle\SubtotalProcessor\TotalProcessorProvider;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -13,6 +12,7 @@ use OroB2B\Bundle\OrderBundle\Form\Handler\OrderHandler;
 use OroB2B\Bundle\OrderBundle\Provider\SubtotalLineItemProvider;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Model\Subtotal;
+use OroB2B\Bundle\OrderBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class OrderHandlerTest extends \PHPUnit_Framework_TestCase
 {

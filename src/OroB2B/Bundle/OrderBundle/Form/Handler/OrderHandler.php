@@ -4,12 +4,12 @@ namespace OroB2B\Bundle\OrderBundle\Form\Handler;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\OrderBundle\SubtotalProcessor\TotalProcessorProvider;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
+use OroB2B\Bundle\OrderBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\OrderBundle\Provider\SubtotalLineItemProvider;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 
@@ -63,7 +63,7 @@ class OrderHandler
         if ($this->request->isMethod('POST')) {
             $this->form->submit($this->request);
             if ($this->form->isValid()) {
-                $this->fillTotal($entity);
+                $this->fillSubtotals($entity);
 
                 $this->manager->persist($entity);
                 $this->manager->flush();
@@ -78,7 +78,7 @@ class OrderHandler
     /**
      * @param Order $order
      */
-    protected function fillTotal(Order $order)
+    protected function fillSubtotals(Order $order)
     {
         $subtotal = $this->subTotalLineItemProvider->getSubtotal($order);
         $total = $this->totalProvider->getTotal($order);

@@ -38,8 +38,9 @@ abstract class AbstractAjaxOrderController extends Controller
             }
         )->toArray();
         $total = $this->get('orob2b_order.provider.total')->getTotal($order);
+        $total = $total->toArray();
 
-        return new JsonResponse(['subtotals' => $subtotals, 'total' => $total->toArray()]);
+        return new JsonResponse(['subtotals' => $subtotals, 'total' => $total]);
     }
 
     /**
