@@ -70,6 +70,11 @@ actions:
                     form_type: oro_rich_text
         button_options:
             icon: icon-ban-circle
+        frontend_options:
+            template: OroB2BRFPBundle:Action:cancelForm.html.twig
+            title: orob2b.rfp.widget.cancel_title
+            options:
+                width: 550
         prefunctions:
             - @assign_constant_value:
                 attribute: $.cancelledStatusName
@@ -79,10 +84,19 @@ actions:
                 attribute: $.cancelledStatus
                 where:
                     name: $.cancelledStatusName
+            - @assign_constant_value:
+                attribute: $.deletedStatusName
+                value: OroB2B\Bundle\RFPBundle\Entity\RequestStatus::DELETED
+            - @find_entity:
+                class: OroB2B\Bundle\RFPBundle\Entity\RequestStatus
+                attribute: $.deletedStatus
+                where:
+                    name: $.deletedStatusName
         preconditions:
             @and:
                 - @not_empty: $status
-                - @not_equal: [$status.id, $.cancelledStatus.id]
+                - @not_equal: [$status, $.cancelledStatus]
+                - @not_equal: [$status, $.deletedStatus]
         functions:
             - @assign_value: [$cancellationReason, $.cancellation_reason]
             - @assign_value: [$status, $.cancelledStatus]
@@ -193,6 +207,14 @@ actions:
             template: OroB2BRFPBundle:Action:rfpResubmitForm.html.twig
             show_dialog: false
         form_init:
+            - @assign_constant_value:
+                attribute: $.openStatusName
+                value: OroB2B\Bundle\RFPBundle\Entity\RequestStatus::OPEN
+            - @find_entity:
+                class: OroB2B\Bundle\RFPBundle\Entity\RequestStatus
+                attribute: $.openStatus
+                where:
+                    name: $.openStatusName
             - @create_datetime:
                 attribute: $.currentDatetime
             - @duplicate:
@@ -200,7 +222,7 @@ actions:
                 settings:
                   - [[setNull], [propertyName, [id]]]
                   - [[collection], [propertyType, ['Doctrine\Common\Collections\Collection']]]
-                  - [[keep], [propertyName, [status]]]
+                  - [[setNull], [propertyName, [status]]]
                   - [[keep], [propertyName, [accountUser]]]
                   - [[keep], [propertyName, [account]]]
                   - [[keep], [propertyName, [organization]]]
@@ -208,9 +230,11 @@ actions:
                   - [[keep], [property, [%orob2b_rfp.entity.request_product_item.class%, productUnit]]]
             - @assign_value: [$.entityCopy.createdAt, $.currentDatetime]
             - @assign_value: [$.entityCopy.updatedAt, $.currentDatetime]
+            - @assign_value: [$.entityCopy.status, $.openStatus]
             - @assign_value: [$.data, $.entityCopy]
         functions:
-            - @flush_entity: ~
+            - @flush_entity:
+                entity: $.data
             - @flash_message:
                 message: orob2b.rfp.action.request.resubmited.message
                 type: 'success'

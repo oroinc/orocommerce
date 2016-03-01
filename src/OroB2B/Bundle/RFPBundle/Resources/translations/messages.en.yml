@@ -113,8 +113,8 @@ orob2b:
 
         action:
             request:
-                updated.message: 'Your Request For Quote has been successfully updated!'
-                resubmited.message: 'Your Request For Quote has been successfully resubmited!'
+                updated.message: 'Your Request For Quote has been successfully updated'
+                resubmited.message: 'Your Request For Quote has been successfully resubmited'
 
         btn:
             delete: 'Delete'
@@ -128,6 +128,7 @@ orob2b:
 
         widget:
             change_status_title: 'Change RFQ Status'
+            cancel_title: 'Cancel RFQ'
 
         frontend:
             request:
