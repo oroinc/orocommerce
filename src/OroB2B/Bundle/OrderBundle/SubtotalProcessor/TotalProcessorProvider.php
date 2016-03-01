@@ -90,7 +90,7 @@ class TotalProcessorProvider
         $subtotals = new ArrayCollection();
         $hash = spl_object_hash($order);
 
-        if (!array_key_exists(spl_object_hash($order), $this->subtotals)) {
+        if (!array_key_exists($hash, $this->subtotals)) {
             foreach ($this->subtotalProviderRegistry->getProviders() as $provider) {
                 $subtotal = $provider->getSubtotal($order);
                 $subtotals->set($subtotal->getType(), $subtotal);
