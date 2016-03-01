@@ -59,8 +59,8 @@ expectedResult:
                 taxAmount: '5.83'     # 33.3 * 0.175
                 adjustment: '-0.0025'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '33.3', tax_amount: '3.33' }
-                - { tax: 'TAX3', rate: '0.075', taxable_amount: '33.3', tax_amount: '2.5' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '33.3', taxAmount: '3.33' }
+                - { tax: 'TAX3', rate: '0.075', taxableAmount: '33.3', taxAmount: '2.5' }
 
         -
             unit:
@@ -74,6 +74,6 @@ expectedResult:
                 taxAmount: '0'
                 adjustment: '0'
     taxes:
-        - { tax: 'TAX1', rate: '0.1', taxable_amount: '33.3', tax_amount: '3.33' }
-        - { tax: 'TAX3', rate: '0.075', taxable_amount: '33.3', tax_amount: '2.5' }
+        - { tax: 'TAX1', rate: '0.1', taxableAmount: '33.3', taxAmount: '3.33' }
+        - { tax: 'TAX3', rate: '0.075', taxableAmount: '33.3', taxAmount: '2.5' }
 

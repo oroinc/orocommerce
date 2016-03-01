@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\TaxBundle\Model;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
+use OroB2B\Bundle\TaxBundle\DependencyInjection\OroB2BTaxExtension;
+
 class Taxable
 {
     const DIGITAL_PRODUCT = 'digital_product';

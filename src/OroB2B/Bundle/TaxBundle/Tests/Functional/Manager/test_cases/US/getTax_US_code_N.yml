@@ -67,6 +67,6 @@ expectedResult:
                 taxAmount: '10'     # 100 * 0.1
                 adjustment: '0'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '100', tax_amount: '10' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '100', taxAmount: '10' }
     taxes:
-        - { tax: 'TAX1', rate: '0.1', taxable_amount: '100', tax_amount: '10' }
+        - { tax: 'TAX1', rate: '0.1', taxableAmount: '100', taxAmount: '10' }
