@@ -77,42 +77,27 @@ class SubtotalProviderPassTest extends \PHPUnit_Framework_TestCase
             ->with($this->equalTo(SubtotalProviderPass::REGISTRY_SERVICE))
             ->will($this->returnValue($definition));
 
-        $definition->expects($this->at(0))
-            ->method('addMethodCall')
-            ->with(
-                $this->equalTo('addProvider'),
-                $this->equalTo([new Reference('provider4')])
-            );
-        $definition->expects($this->at(1))
-            ->method('addMethodCall')
-            ->with(
-                $this->equalTo('addProvider'),
-                $this->equalTo([new Reference('provider1')])
-            );
-        $definition->expects($this->at(2))
-            ->method('addMethodCall')
-            ->with(
-                $this->equalTo('addProvider'),
-                $this->equalTo([new Reference('provider2')])
-            );
-        $definition->expects($this->at(3))
-            ->method('addMethodCall')
-            ->with(
-                $this->equalTo('addProvider'),
-                $this->equalTo([new Reference('provider3')])
-            );
-
-        $serviceIds = [
-            'provider1' => [['class' => '\stdClass']],
-            'provider2' => [['class' => '\stdClass']],
-            'provider3' => [['class' => '\stdClass', 'priority' => 10]],
-            'provider4' => [['class' => '\stdClass', 'priority' => -10]],
+        $taggedServices = [
+            'service.name.1' => [['priority' => 1]],
+            'service.name.2' => [[]],
+            'service.name.3' => [['priority' => -255]],
+            'service.name.4' => [['priority' => 255]],
         ];
+
+        $definition
+            ->expects($this->exactly(4))
+            ->method('addMethodCall')
+            ->withConsecutive(
+                ['addProvider', [new Reference('service.name.4')]],
+                ['addProvider', [new Reference('service.name.1')]],
+                ['addProvider', [new Reference('service.name.2')]],
+                ['addProvider', [new Reference('service.name.3')]]
+            );
 
         $this->container->expects($this->once())
             ->method('findTaggedServiceIds')
             ->with($this->equalTo(SubtotalProviderPass::TAG))
-            ->will($this->returnValue($serviceIds));
+            ->will($this->returnValue($taggedServices));
 
         $this->compilerPass->process($this->container);
     }

@@ -10,6 +10,7 @@ class SubtotalProviderPass implements CompilerPassInterface
 {
     const REGISTRY_SERVICE = 'orob2b_order.subtotal_provider.registry';
     const TAG = 'orob2b_order.subtotal_provider';
+    const PRIORITY = 'priority';
 
     /**
      * {@inheritdoc}
@@ -20,24 +21,25 @@ class SubtotalProviderPass implements CompilerPassInterface
             return;
         }
 
-        $providers      = [];
         $taggedServices = $container->findTaggedServiceIds(self::TAG);
-        foreach ($taggedServices as $id => $attributes) {
-            $priority = isset($attributes[0]['priority']) ? $attributes[0]['priority'] : 0;
-            $providers[$priority][] = new Reference($id);
-        }
 
-        if (empty($providers)) {
+        if (empty($taggedServices)) {
             return;
         }
 
-        ksort($providers);
+        $providers      = [];
+        foreach ($taggedServices as $serviceId => $tags) {
+            $priority = isset($tags[0][self::PRIORITY]) ? $tags[0][self::PRIORITY] : 0;
+            $providers[$priority][] = $serviceId;
+        }
+
+        krsort($providers);
         $providers = call_user_func_array('array_merge', $providers);
 
         $registryDefinition = $container->getDefinition(self::REGISTRY_SERVICE);
 
-        foreach ($providers as $id) {
-            $registryDefinition->addMethodCall('addProvider', [$id]);
+        foreach ($providers as $provider) {
+            $registryDefinition->addMethodCall('addProvider', [new Reference($provider)]);
         }
     }
 }
