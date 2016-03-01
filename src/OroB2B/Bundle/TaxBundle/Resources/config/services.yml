@@ -31,12 +31,17 @@ parameters:
 
     orob2b_tax.manager.tax_manager.class: OroB2B\Bundle\TaxBundle\Manager\TaxManager
     orob2b_tax.manager.tax_value_manager.class: OroB2B\Bundle\TaxBundle\Manager\TaxValueManager
+
     orob2b_tax.transformer.tax_value.class: OroB2B\Bundle\TaxBundle\Transformer\TaxValueToResultTransformer
+
     orob2b_tax.factory.tax.class: OroB2B\Bundle\TaxBundle\Factory\TaxFactory
     orob2b_tax.factory.tax_base_exclusion.class: OroB2B\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory
     orob2b_tax.factory.address_model_factory.class: OroB2B\Bundle\TaxBundle\Factory\AddressModelFactory
+
     orob2b_tax.order_tax.mapper.order_mapper.class: OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderMapper
     orob2b_tax.order_tax.mapper.order_line_item_mapper.class: OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper
+
+    orob2b_tax.order_tax.context_handler.order_line_item_handler.class: OroB2B\Bundle\TaxBundle\OrderTax\ContextHandler\OrderLineItemHandler
 
     orob2b_tax.form.data_transformer.tax_base_exclusion_transformer.class: OroB2B\Bundle\TaxBundle\Form\DataTransformer\TaxBaseExclusionTransformer
 
@@ -48,14 +53,21 @@ parameters:
     orob2b_tax.calculator.included_tax.class: OroB2B\Bundle\TaxBundle\Calculator\IncludedTaxCalculator
     orob2b_tax.calculator.tax.class: OroB2B\Bundle\TaxBundle\Calculator\TaxCalculator
 
-    orob2b_tax.resolver.abstract_address.class: OroB2B\Bundle\TaxBundle\Resolver\AbstractAddressResolver
     orob2b_tax.resolver.total.class: OroB2B\Bundle\TaxBundle\Resolver\TotalResolver
     orob2b_tax.resolver.shipping.class: OroB2B\Bundle\TaxBundle\Resolver\ShippingResolver
     orob2b_tax.resolver.customer_address.item.class: OroB2B\Bundle\TaxBundle\Resolver\CustomerAddressItemResolver
     orob2b_tax.resolver.customer_address.class: OroB2B\Bundle\TaxBundle\Resolver\CustomerAddressResolver
     orob2b_tax.resolver.rounding.class: OroB2B\Bundle\TaxBundle\Resolver\RoundingResolver
+    orob2b_tax.resolver.currency.class: OroB2B\Bundle\TaxBundle\Resolver\CurrencyResolver
+    orob2b_tax.resolver.unit.class: OroB2B\Bundle\TaxBundle\Resolver\UnitResolver
+    orob2b_tax.resolver.row_total.class: OroB2B\Bundle\TaxBundle\Resolver\RowTotalResolver
+    orob2b_tax.resolver.eu_digital.class: OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalResolver
+    orob2b_tax.resolver.eu_item_digital.class: OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalItemResolver
+    orob2b_tax.resolver.us_sales_tax_digital.item.class: OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver\DigitalItemResolver
+    orob2b_tax.resolver.us_sales_tax_digital.class: OroB2B\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver\DigitalResolver
 
     orob2b_tax.event.tax_event_dispatcher.class: OroB2B\Bundle\TaxBundle\Event\TaxEventDispatcher
+    orob2b_tax.event.context_event_dispatcher.class: OroB2B\Bundle\TaxBundle\Event\ContextEventDispatcher
     orob2b_tax.event.resolver_event_connector.class: OroB2B\Bundle\TaxBundle\Event\ResolverEventConnector
 
 services:
@@ -252,10 +264,14 @@ services:
         class: %orob2b_tax.transformer.tax_value.class%
         arguments:
             - @orob2b_tax.manager.tax_value_manager
-            - %orob2b_tax.entity.tax.class%
 
     orob2b_tax.event.tax_event_dispatcher:
         class: %orob2b_tax.event.tax_event_dispatcher.class%
+        arguments:
+            - @event_dispatcher
+
+    orob2b_tax.event.context_event_dispatcher:
+        class: %orob2b_tax.event.context_event_dispatcher.class%
         arguments:
             - @event_dispatcher
 
@@ -292,6 +308,7 @@ services:
     orob2b_tax.order_tax.mapper.order_mapper:
         class: %orob2b_tax.order_tax.mapper.order_mapper.class%
         arguments:
+            - @orob2b_tax.event.context_event_dispatcher
             - @orob2b_tax.provider.taxation_address_provider
         calls:
             - [setOrderLineItemMapper, [@orob2b_tax.order_tax.mapper.order_line_item_mapper]]
@@ -301,9 +318,21 @@ services:
     orob2b_tax.order_tax.mapper.order_line_item_mapper:
         class: %orob2b_tax.order_tax.mapper.order_line_item_mapper.class%
         arguments:
+            - @orob2b_tax.event.context_event_dispatcher
             - @orob2b_tax.provider.taxation_address_provider
         tags:
             - { name: orob2b_tax.tax_mapper }
+
+    orob2b_tax.order_tax.context_handler.order_line_item_handler:
+        class: %orob2b_tax.order_tax.context_handler.order_line_item_handler.class%
+        arguments:
+            - @orob2b_tax.provider.taxation_address_provider
+            - @oro_entity.doctrine_helper
+            - %orob2b_tax.entity.product_tax_code.class%
+            - %orob2b_tax.entity.account_tax_code.class%
+            - %orob2b_order.entity.order_line_item.class%
+        tags:
+            - { name: kernel.event_listener, event: orob2b_tax.mapper.context, method: onContextEvent }
 
     orob2b_tax.provider.taxation_settings_provider:
         class: %orob2b_tax.provider.taxation_settings_provider.class%
@@ -357,12 +386,15 @@ services:
     orob2b_tax.calculator.tax:
         class: %orob2b_tax.calculator.tax.class%
 
-    orob2b_tax.resolver.abstract_address:
-        class: %orob2b_tax.resolver.abstract_address.class%
-        abstract: true
+    orob2b_tax.resolver.unit:
+        class: %orob2b_tax.resolver.unit.class%
+        arguments:
+            - @orob2b_tax.calculator
+
+    orob2b_tax.resolver.row_total:
+        class: %orob2b_tax.resolver.row_total.class%
         arguments:
             - @orob2b_tax.provider.taxation_settings_provider
-            - @orob2b_tax.matcher.zip_code_matcher
             - @orob2b_tax.calculator
 
     orob2b_tax.resolver.total:
@@ -383,15 +415,51 @@ services:
         tags:
             - { name: orob2b_tax.resolver, event: orob2b_tax.resolve_after, priority: -255 }
 
+    orob2b_tax.resolver.currency:
+        class: %orob2b_tax.resolver.currency.class%
+        tags:
+            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve_after, priority: -255 }
+
     orob2b_tax.resolver.customer_address.item:
         class: %orob2b_tax.resolver.customer_address.item.class%
-        parent: orob2b_tax.resolver.abstract_address
+        arguments:
+            - @orob2b_tax.resolver.unit
+            - @orob2b_tax.resolver.row_total
+            - @orob2b_tax.matcher.zip_code_matcher
         tags:
-            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve }
+            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve, priority: -255 }
 
     orob2b_tax.resolver.customer_address:
         class: %orob2b_tax.resolver.customer_address.class%
         arguments:
             - @orob2b_tax.resolver.customer_address.item
+        tags:
+            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve, priority: -255 }
+
+    orob2b_tax.resolver.eu_item_digital:
+        class: %orob2b_tax.resolver.eu_item_digital.class%
+        arguments:
+            - @orob2b_tax.resolver.unit
+            - @orob2b_tax.resolver.row_total
+            - @orob2b_tax.matcher.country_matcher
+        tags:
+            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve }
+
+    orob2b_tax.resolver.eu_digital:
+        class: %orob2b_tax.resolver.eu_digital.class%
+        arguments:
+            - @orob2b_tax.resolver.eu_item_digital
+        tags:
+            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve }
+
+    orob2b_tax.resolver.us_sales_tax_digital.item:
+        class: %orob2b_tax.resolver.us_sales_tax_digital.item.class%
+        tags:
+            - { name: orob2b_tax.resolver, event: orob2b_tax.resolve }
+
+    orob2b_tax.resolver.us_sales_tax_digital:
+        class: %orob2b_tax.resolver.us_sales_tax_digital.class%
+        arguments:
+            - @orob2b_tax.resolver.us_sales_tax_digital.item
         tags:
             - { name: orob2b_tax.resolver, event: orob2b_tax.resolve }

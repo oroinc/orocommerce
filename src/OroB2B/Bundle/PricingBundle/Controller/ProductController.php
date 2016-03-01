@@ -55,6 +55,7 @@ class ProductController extends Controller
      */
     protected function createCurrenciesForm()
     {
+        $priceList = $this->getPriceListHandler()->getPriceList();
         return $this->createForm(
             CurrencySelectionType::NAME,
             null,
@@ -65,7 +66,7 @@ class ProductController extends Controller
                 'multiple' => true,
                 'csrf_protection' => false,
                 'currencies_list' => $this->getPriceListHandler()->getPriceList()->getCurrencies(),
-                'data' => $this->getPriceListHandler()->getPriceListSelectedCurrencies(),
+                'data' => $this->getPriceListHandler()->getPriceListSelectedCurrencies($priceList),
             ]
         );
     }
