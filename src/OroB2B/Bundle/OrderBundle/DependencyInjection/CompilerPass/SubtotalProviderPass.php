@@ -20,15 +20,25 @@ class SubtotalProviderPass implements CompilerPassInterface
             return;
         }
 
+        // find providers
+        $providers      = [];
         $taggedServices = $container->findTaggedServiceIds(self::TAG);
-        if (empty($taggedServices)) {
+        foreach ($taggedServices as $id => $attributes) {
+            $priority               = isset($attributes[0]['priority']) ? $attributes[0]['priority'] : 0;
+            $providers[$priority][] = new Reference($id);
+        }
+        if (empty($providers)) {
             return;
         }
 
+        // sort by priority and flatten
+        ksort($providers);
+        $providers = call_user_func_array('array_merge', $providers);
+
         $registryDefinition = $container->getDefinition(self::REGISTRY_SERVICE);
 
-        foreach (array_keys($taggedServices) as $id) {
-            $registryDefinition->addMethodCall('addProvider', [new Reference($id)]);
+        foreach ($providers as $id) {
+            $registryDefinition->addMethodCall('addProvider', [$id]);
         }
     }
 }

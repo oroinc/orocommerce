@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\DependencyInjection\CompilerPass;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 use OroB2B\Bundle\OrderBundle\DependencyInjection\CompilerPass\SubtotalProviderPass;
 
@@ -69,11 +70,6 @@ class SubtotalProviderPassTest extends \PHPUnit_Framework_TestCase
             ->with($this->equalTo(SubtotalProviderPass::REGISTRY_SERVICE))
             ->will($this->returnValue(true));
 
-        $this->container->expects($this->once())
-            ->method('findTaggedServiceIds')
-            ->with($this->equalTo(SubtotalProviderPass::TAG))
-            ->will($this->returnValue(['service' => ['class' => '\stdClass']]));
-
         $definition = $this->getMock('Symfony\Component\DependencyInjection\Definition');
 
         $this->container->expects($this->once())
@@ -81,9 +77,42 @@ class SubtotalProviderPassTest extends \PHPUnit_Framework_TestCase
             ->with($this->equalTo(SubtotalProviderPass::REGISTRY_SERVICE))
             ->will($this->returnValue($definition));
 
-        $definition->expects($this->once())
+        $definition->expects($this->at(0))
             ->method('addMethodCall')
-            ->with('addProvider', $this->isType('array'));
+            ->with(
+                $this->equalTo('addProvider'),
+                $this->equalTo([new Reference('provider4')])
+            );
+        $definition->expects($this->at(1))
+            ->method('addMethodCall')
+            ->with(
+                $this->equalTo('addProvider'),
+                $this->equalTo([new Reference('provider1')])
+            );
+        $definition->expects($this->at(2))
+            ->method('addMethodCall')
+            ->with(
+                $this->equalTo('addProvider'),
+                $this->equalTo([new Reference('provider2')])
+            );
+        $definition->expects($this->at(3))
+            ->method('addMethodCall')
+            ->with(
+                $this->equalTo('addProvider'),
+                $this->equalTo([new Reference('provider3')])
+            );
+
+        $serviceIds = [
+            'provider1' => [['class' => 'Test\Class1']],
+            'provider2' => [['class' => 'Test\Class2']],
+            'provider3' => [['class' => 'Test\Class1', 'priority' => 100]],
+            'provider4' => [['class' => 'Test\Class1', 'priority' => -100]],
+        ];
+
+        $this->container->expects($this->once())
+            ->method('findTaggedServiceIds')
+            ->with($this->equalTo(SubtotalProviderPass::TAG))
+            ->will($this->returnValue($serviceIds));
 
         $this->compilerPass->process($this->container);
     }
