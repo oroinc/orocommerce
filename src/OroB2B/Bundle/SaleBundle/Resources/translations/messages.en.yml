@@ -209,21 +209,29 @@ orob2b:
                 po_number.label: 'PO Number'
                 ship_until.label: 'Do Not Ship Later Than'
                 assigned_account_users.label: 'Assigned To'
+                title.label: 'Quote #id'
+                head_title.label: 'Quote #id - Quotes'
+                shipping_address.label: 'Shipping Address'
                 sections:
-                    general: 'General'
-                    quote_products: 'Line Items'
+                    general: 'Quote Information'
+                    back.label: 'Back to Quote List'
+                    quote_products:
+                        label: 'Line Items'
+                        columns:
+                            item: 'Item'
+                            quantity: 'Quantity'
+                            unit_price: 'Unit Price'
                 widgets:
                     quote_information: 'Quote Information'
-
                 submit_to_order:
                     submit: 'Submit'
                     cancel: 'Cancel'
 
             quoteproduct:
-                product_sku.label: 'Sku'
+                product_sku.label: 'SKU'
                 product_name.label: 'Product'
                 comment.label: 'Seller Notes'
-                comment_account.label: 'Customer Notes'
+                comment_account.label: 'My Notes'
                 product_replacement.label: 'Suggested Replacement:'
                 column:
                     product: 'Product'
@@ -248,6 +256,7 @@ orob2b:
 
             btn:
                 accept_quote_create_order: 'Accept and Submit to Order'
+                widget_accept_quote_create_order: 'Submit to Order'
 
             message:
                 quote.create_order.success: 'Your sales order was submitted successfully'
