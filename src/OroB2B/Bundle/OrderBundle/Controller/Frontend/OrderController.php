@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\OrderBundle\Controller\Frontend;
 
 use Doctrine\Common\Util\ClassUtils;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
