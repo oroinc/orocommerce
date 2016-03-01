@@ -442,3 +442,14 @@ services:
             - @event_dispatcher
         tags:
             - { name: doctrine.orm.entity_listener }
+
+    orob2b_pricing.price_list_with_priority_collection.handler:
+        class: OroB2B\Bundle\PricingBundle\Form\PriceListWithPriorityCollectionHandler
+
+    orob2b_pricing.entity_listener.website:
+        class: OroB2B\Bundle\PricingBundle\EventListener\WebsiteListener
+        arguments:
+            - @orob2b_pricing.price_list_with_priority_collection.handler
+            - @oro_api.doctrine_helper
+        tags:
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.orob2b_website_type, method: beforeFlush }

@@ -114,7 +114,7 @@ services:
         arguments:
             - @doctrine
             - %orob2b_pricing.entity.price_list_to_website.class%
-            - @event_dispatcher
+            - @orob2b_pricing.price_list_change_trigger_handler
         tags:
             - { name: form.type_extension, alias: orob2b_website_type }
 
