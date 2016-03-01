@@ -14,12 +14,10 @@
         class: attr.class|default('') ~ " product-item__image-holder product-item__image-holder_<%= themeOptions.view %>"
     }) %}
     <div {{ block('block_attributes_raw_class') }}>
-        <a href="#"><img src="<% if (model.image) { %><%= model.image %><% } else { %>
+        <a href="#" class="view-product"><img src="<% if (model.image) { %><%= model.image %><% } else { %>
             {%- image '@OroB2BProductBundle/Resources/public/default/images/no_image.png' %}{{ asset_url }}"{% endimage -%}
         <% } %>" alt=""/></a>
-        <div data-toggle="modal" data-target="#product1" class="product-item__quick-view-btn view-product">
             <span class="btn btn-dark btn_sm">Quick View</span>
-        </div>
     </div>
 {% endblock %}
 
@@ -28,7 +26,7 @@
         class: attr.class|default('') ~ " product-item__title product-item__title_<%= themeOptions.view %>"
     }) %}
     <h3 {{ block('block_attributes_raw_class') }}>
-        <a href="#"><%= model.name %></a>
+        <a href="#" class="view-product"><%= model.name %></a>
     </h3>
 {% endblock %}
 
