@@ -165,6 +165,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
      * )
      */
     protected $shippingAddress;
+
     /**
      * @var string
      *
