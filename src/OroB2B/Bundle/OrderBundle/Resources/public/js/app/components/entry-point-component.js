@@ -60,8 +60,6 @@ define(function(require) {
             this.listenerOff();
             mediator.trigger(self.options.events.before);
 
-
-
             $.ajax({
                 url: routing.generate(this.options.route, this.options.routeParams),
                 type: 'POST',
