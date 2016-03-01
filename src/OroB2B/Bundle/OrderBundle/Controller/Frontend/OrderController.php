@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\OrderBundle\Controller\Frontend;
 
 use Doctrine\Common\Util\ClassUtils;
 
-use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -97,45 +96,6 @@ class OrderController extends AbstractOrderController
         $order->setWebsite($this->get('orob2b_website.manager')->getCurrentWebsite());
 
         return $this->update($order, $request);
-    }
-
-    /**
-     * Create checkout form
-     *
-     * @Route(
-     *     "/checkout/{orderId}",
-     *     name="orob2b_order_frontend_checkout",
-     *     defaults={"orderId" = null},
-     *     requirements={"orderId"="\d+"}
-     * )
-     * @ParamConverter("orderId", class="OroB2BOrderBundle:Order", isOptional="true", options={"id" = "orderId"})
-     * @Layout(vars={"page", "page"})
-     * @Acl(
-     *      id="orob2b_order_frontend_checkout",
-     *      type="entity",
-     *      class="OroB2BOrderBundle:Order",
-     *      permission="CREATE",
-     *      group_name="commerce"
-     * )
-     *
-     * @param Order|null $order
-     * @param Request $request
-     * @return array
-     */
-    public function checkoutAction(Request $request, Order $order = null)
-    {
-        if (!$order) {
-            $order = new Order();
-        }
-        $page = $request->query->get('page');
-        $page = $page ?: 1;
-
-
-        return [
-            'page' => $page,
-            'data' =>
-                ['order' => $order, 'page' => $page]
-        ];
     }
 
     /**

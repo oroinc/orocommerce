@@ -1,22 +1,22 @@
-{% block _order_checkout_billing_information_widget %}
+{% block _checkout_shipping_information_widget %}
     <div class="checkout__head">
         <h2 class="checkout__title">
-            <span class="badge badge_md badge_circle badge_orange">1</span>
-            Billing Information
+            <span class="badge badge_md badge_circle badge_orange">2</span>
+            Shipping Information
         </h2>
     </div>
     <div class="checkout__body">
         <form action="#" class="checkout__form">
             <fieldset class="checkout__form__row">
                 <div class="checkout__form__col form__col_x6">
-                    <label for="billingAddress" class="checkout__form__label">Select a Billing Address form your Account<sup
-                                class="red">*</sup></label>
+                    <label for="billingAddress" class="checkout__form__label">Select a Shipping Address form your
+                        Account<sup class="red">*</sup></label>
                     <div class="checkout__form__select">
                         <select data-chosen-selectbox="" class="input input_md" name="billingAddress"
                                 id="billingAddress">
                             <option value="0">Robin Williams, 1234 Fake St., #276, San Francisco, CA 94109</option>
-                            <option value="1">Jack Daniels, 1234 Fake St., #276, San Francisco, CA 94109</option>
-                            <option value="2">John Doe, 1234 Fake St., #276, San Francisco, CA 94109</option>
+                            <option value="0">Jack Daniels, 1234 Fake St., #276, San Francisco, CA 94109</option>
+                            <option value="0">John Doe, 1234 Fake St., #276, San Francisco, CA 94109</option>
                         </select>
                     </div>
                 </div>
@@ -24,13 +24,12 @@
 
             <fieldset class="checkout__form__row">
                 <div class="checkout__form__col">
-                    <label for="confirmShippingAddress" class="checkbox_custom checkbox_custom_blue checked"
+                    <label for="useBillingAddress" class="checkbox_custom checkbox_custom_blue checked"
                            data-checkbox="">
-                        <input type="checkbox" name="confirmShippingAddress" id="confirmShippingAddress"
-                               checked="checked">
+                        <input type="checkbox" name="useBillingAddress" id="useBillingAddress" checked="checked">
                         <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
                         <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
-                        <span class="checkbox_custom__text fs13">Ship to this address</span>
+                        <span class="checkbox_custom__text fs13">Use your billing address</span>
                     </label>
                 </div>
             </fieldset>
