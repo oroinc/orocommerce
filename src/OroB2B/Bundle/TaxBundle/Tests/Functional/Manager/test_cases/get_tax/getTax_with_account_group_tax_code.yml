@@ -69,7 +69,7 @@ expectedResult:
                 taxAmount: '1.6'      # 15.99 * 0.1 = 1.599
                 adjustment: '-0.001'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '79.95', tax_amount: '8' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '79.95', taxAmount: '8' }
         -
             row:
                 includingTax: '36.63' # 6.105 * 6
@@ -82,6 +82,6 @@ expectedResult:
                 taxAmount: '0.56'     # 5.55 * 0.1 = 0.555
                 adjustment: '-0.005'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '33.3', tax_amount: '3.33' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '33.3', taxAmount: '3.33' }
     taxes:
-        - { tax: 'TAX1', rate: '0.1', taxable_amount: '113.25', tax_amount: '11.33' }
+        - { tax: 'TAX1', rate: '0.1', taxableAmount: '113.25', taxAmount: '11.33' }
