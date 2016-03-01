@@ -12,6 +12,8 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowAwareInterface;
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowAwareTrait;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -23,7 +25,6 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 /**
  * @todo consider to use OrderAddress or create new address for checkout
  * @todo add disabled steps flags
- * @todo add workflows relations
  * @todo add source document. Try to use associations
  * @see https://github.com/laboro/platform/blob/master/src/Oro/Bundle/EntityExtendBundle/Resources/doc/associations.md
  *
@@ -60,9 +61,11 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 class Checkout extends ExtendCheckout implements
     OrganizationAwareInterface,
     AccountOwnerAwareInterface,
-    DatesAwareInterface
+    DatesAwareInterface,
+    WorkflowAwareInterface
 {
     use DatesAwareTrait;
+    use WorkflowAwareTrait;
 
     /**
      * @var int
