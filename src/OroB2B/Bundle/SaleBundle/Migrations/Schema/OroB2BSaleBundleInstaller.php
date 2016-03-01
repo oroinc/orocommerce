@@ -66,7 +66,7 @@ class OroB2BSaleBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_6';
+        return 'v1_7';
     }
 
     /**
@@ -155,6 +155,7 @@ class OroB2BSaleBundleInstaller implements
         ]);
         $table->addColumn('shipping_estimate_currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['shipping_address_id'], 'UNIQ_4F66B6F64D4CFF2B');
     }
 
     /**
