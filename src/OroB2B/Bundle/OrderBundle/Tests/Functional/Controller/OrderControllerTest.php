@@ -28,6 +28,16 @@ class OrderControllerTest extends WebTestCase
     protected $formatter;
 
     /**
+     * @var string
+     */
+    public static $shippingCostAmount = '999.9900';
+
+    /**
+     * @var string
+     */
+    public static $shippingCostCurrency = 'USD';
+
+    /**
      * @var array
      */
     protected $disabledAddressInputs = [
@@ -336,6 +346,30 @@ class OrderControllerTest extends WebTestCase
             $crawler->filter('input[name="orob2b_order_type['. $addressType .']['. $input .']"][readonly="readonly"]');
         }
     }
+
+//    /**
+//     * @depends testUpdate
+//     * @param int $id
+//     */
+//    public function testUpdateShippingEstimate($id)
+//    {
+//        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_update', ['id' => $id]));
+//
+//        /* @var $form Form */
+//        $form = $crawler->selectButton('Save')->form();
+//        $form['orob2b_order_type[shippingCost][amount]'] = self::$shippingCostAmount;
+//        $form['orob2b_order_type[shippingCost][currency]'] = self::$shippingCostCurrency;
+//
+//        $this->client->followRedirects(true);
+//        $crawler = $this->client->submit($form);
+//        $form = $crawler->selectButton('Save')->form();
+//        $fields = $form->get('orob2b_order_type');
+//        $this->assertEquals(self::$shippingCostAmount, $fields['shippingCost']['amount']->getValue());
+//        $this->assertEquals(self::$shippingCostCurrency, $fields['shippingCost']['currency']->getValue());
+//
+//        $result = $this->client->getResponse();
+//        static::assertHtmlResponseStatusCodeEquals($result, 200);
+//    }
 
     /**
      * @depends testCreate
