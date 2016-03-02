@@ -14,7 +14,7 @@ class OroB2BShoppingListBundleInstaller implements Installation
      */
     public function getMigrationVersion()
     {
-        return 'v1_0';
+        return 'v1_1';
     }
 
     /**
@@ -45,6 +45,17 @@ class OroB2BShoppingListBundleInstaller implements Installation
         $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('label', 'string', ['length' => 255]);
         $table->addColumn('notes', 'text', ['notnull' => false]);
+        $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
+        $table->addColumn(
+            'subtotal',
+            'money',
+            ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
+        );
+        $table->addColumn(
+            'total',
+            'money',
+            ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
+        );
         $table->addColumn('created_at', 'datetime');
         $table->addColumn('updated_at', 'datetime');
         $table->addColumn('is_current', 'boolean', ['default' => false]);
