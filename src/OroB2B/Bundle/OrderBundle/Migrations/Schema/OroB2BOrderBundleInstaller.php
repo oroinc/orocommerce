@@ -115,12 +115,6 @@ class OroB2BOrderBundleInstaller implements
         $table->addColumn('payment_term_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
-        $table->addColumn('shipping_cost_amount', 'money', [
-            'notnull' => false,
-            'precision' => 19,
-            'scale' => 4,
-            'comment' => '(DC2Type:money)'
-        ]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['created_at'], 'orob2b_order_created_at_index', []);
         $table->addUniqueIndex(['identifier'], 'uniq_orob2b_order_identifier');
