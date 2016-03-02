@@ -54,7 +54,7 @@ class SubtotalShippingCostProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with(sprintf('orob2b.order.subtotals.%s', SubtotalShippingCostProvider::TYPE))
+            ->with('orob2b.order.subtotals.' . SubtotalShippingCostProvider::TYPE)
             ->willReturn(ucfirst(SubtotalShippingCostProvider::TYPE));
 
         $order = new Order();

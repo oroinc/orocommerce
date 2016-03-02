@@ -50,7 +50,7 @@ class SubtotalShippingCostProvider implements SubtotalProviderInterface
         $subtotal = new Subtotal();
 
         $subtotal->setType(self::TYPE);
-        $translation = sprintf('orob2b.order.subtotals.%s', $subtotal->getType());
+        $translation = 'orob2b.order.subtotals.' . self::TYPE;
         $subtotal->setLabel($this->translator->trans($translation));
 
         $subtotalAmount = 0.0;
