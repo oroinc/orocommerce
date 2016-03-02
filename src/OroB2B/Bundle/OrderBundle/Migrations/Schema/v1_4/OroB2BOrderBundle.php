@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Migrations\Schema\v1_3;
+namespace OroB2B\Bundle\OrderBundle\Migrations\Schema\v1_4;
 
 use Doctrine\DBAL\Schema\Schema;
 
@@ -15,10 +15,12 @@ class OroB2BOrderBundle implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_order');
-        $table->addColumn(
-            'total',
-            'money',
-            ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
-        );
+        $table->addColumn('shipping_cost_amount', 'money', [
+            'notnull' => false,
+            'precision' => 19,
+            'scale' => 4,
+            'comment' => '(DC2Type:money)'
+        ]);
+        $table->addColumn('shipping_cost_currency', 'string', ['notnull' => false, 'length' => 3]);
     }
 }
