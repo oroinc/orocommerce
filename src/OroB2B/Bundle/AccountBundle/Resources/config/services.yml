@@ -756,7 +756,7 @@ services:
         class: %orob2b_account.model.action.abstract_entity_aware_action.class%
         abstract: true
         arguments:
-            - @oro_workflow.context_accessor
+            - @oro_action.context_accessor
 
     orob2b_account.model.action.abstract_visibility_action:
         parent: orob2b_account.model.action.abstract_entity_aware_action
