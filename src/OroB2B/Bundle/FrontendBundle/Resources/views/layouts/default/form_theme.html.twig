@@ -23,10 +23,14 @@
     {{ parent() }}
 {% endblock %}
 
-{% block choice_widget_collapsed %}
+{% block textarea_widget %}
+    {% set class_prefix = form.vars.class_prefix is defined ?  form.vars.class_prefix : '' %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " no-uniform",
-        'data-chosen-selectbox': true
+        class: [
+            attr.class|default(''),
+            class_prefix ~ "__form__input",
+            "input input_block input_md",
+        ]|join(' ')
     }) %}
     {{ parent() }}
 {% endblock %}
@@ -43,7 +47,9 @@
         <div class="{{ class_prefix }}__form__col form__col_x12">
             {{- form_label(form) -}}
             {{- form_errors(form) -}}
-            {{- form_widget(form) -}}
+            {{- form_widget(form, {
+                attr: attr
+            }) -}}
         </div>
     </fieldset>
 {%- endblock form_row -%}
