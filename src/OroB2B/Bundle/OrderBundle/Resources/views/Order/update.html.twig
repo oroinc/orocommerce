@@ -181,7 +181,7 @@
         }]) %}
     {% endif %}
 
-    {% set shippingBlock %}
+    {% set shippingInformation %}
         {%  set options = {
             view: 'orob2border/js/app/views/shipping-cost-view',
             selectors: {
@@ -200,7 +200,7 @@
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'orob2b.order.sections.shipping_information'|trans,
         'subblocks': [{
-            'data': [shippingBlock]
+            'data': [shippingInformation]
         }]
     }]) %}
 
