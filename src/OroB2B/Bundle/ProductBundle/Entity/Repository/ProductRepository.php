@@ -184,4 +184,20 @@ class ProductRepository extends EntityRepository
             ->getQuery()
             ->execute();
     }
+
+    /**
+     * @param array $products
+     * @return Product[]
+     */
+    public function getProductsWithUnits(array $products)
+    {
+        $qb = $this->createQueryBuilder('p');
+        return $qb->select('partial p.{id}, unitPrecisions, unit')
+            ->leftJoin('p.unitPrecisions', 'unitPrecisions')
+            ->leftJoin('unitPrecisions.unit', 'unit')
+            ->where($qb->expr()->in('p', ':products'))
+            ->setParameter('products', $products)
+            ->getQuery()
+            ->execute();
+    }
 }

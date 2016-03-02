@@ -1,5 +1,5 @@
 {% if value and value|length > 0 %}
     {% for key, price in value %}
-        {{ price.price|oro_format_price }}
+        {{ price.price|oro_format_price }}/{{ price.unit.code }}
     {% endfor %}
 {% endif %}

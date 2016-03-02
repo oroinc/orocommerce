@@ -102,11 +102,10 @@
         {% endfor %}
         {{ buttons.addToNewShoppingListButton(options.new) }}
     {% endset %}
-    {# @TODO: remove options.layout #}
     {{ UI.pinnedDropdownButton({
         'html': buttonsHtml,
         'options': {
             'truncateLength': 15
-        }|merge(options.layout|default(false) ? {'groupContainer': '<div class="btn btn-block btn_orange btn_has-dropdown btn_has-dropdown_lg"></div>'} : {} )
+        }|merge(options.groupContainer|default(false) ? {'groupContainer': options.groupContainer} : {} )
     }) }}
 {% endmacro %}

@@ -16,6 +16,8 @@ use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
 
 class FrontendLineItemFormProvider extends AbstractServerRenderDataProvider
 {
+    const NULL_PRODUCT_KEY = 'no-product';
+
     /**
      * @var FormAccessor[]
      */
@@ -53,33 +55,40 @@ class FrontendLineItemFormProvider extends AbstractServerRenderDataProvider
      */
     public function getData(ContextInterface $context)
     {
-        $product = $context->data()->get('product');
-        if (!isset($this->data[$product->getId()])) {
-            $this->data[$product->getId()] = new FormAccessor(
-                $this->getForm($product)
-            );
+        $key = static::NULL_PRODUCT_KEY;
+        $product = null;
+        $data = $context->data();
+        if ($data->has('product')) {
+            $product = $data->get('product');
+            $key = $product->getId();
         }
-        return $this->data[$product->getId()];
+        if (!isset($this->data[$key])) {
+            $this->data[$key] = new FormAccessor($this->getForm($product));
+        }
+        return $this->data[$key];
     }
 
     /**
      * @param Product $product
      * @return FormInterface
      */
-    public function getForm(Product $product)
+    public function getForm(Product $product = null)
     {
-        if (!isset($this->form[$product->getId()])) {
-            $this->form[$product->getId()] = $this->formFactory
-                ->create(FrontendLineItemType::NAME, $this->getLineItem($product));
+        $key = static::NULL_PRODUCT_KEY;
+        if ($product !== null) {
+            $key = $product->getId();
         }
-        return $this->form[$product->getId()];
+        if (!isset($this->form[$key])) {
+            $this->form[$key] = $this->formFactory->create(FrontendLineItemType::NAME, $this->getLineItem($product));
+        }
+        return $this->form[$key];
     }
 
     /**
      * @param Product $product
      * @return LineItem|null
      */
-    public function getLineItem(Product $product)
+    public function getLineItem(Product $product = null)
     {
         $accountUser = $this->securityFacade->getLoggedUser();
         if (!$accountUser) {
@@ -87,9 +96,12 @@ class FrontendLineItemFormProvider extends AbstractServerRenderDataProvider
         }
 
         $lineItem = (new LineItem())
-            ->setProduct($product)
             ->setAccountUser($accountUser)
             ->setOrganization($accountUser->getOrganization());
+
+        if ($product) {
+            $lineItem->setProduct($product);
+        }
 
         return $lineItem;
     }

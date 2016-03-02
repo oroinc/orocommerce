@@ -10,6 +10,7 @@ use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData as
 
 /**
  * @dbIsolation
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class ProductRepositoryTest extends WebTestCase
 {
@@ -296,6 +297,45 @@ class ProductRepositoryTest extends WebTestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider getProductsWithUnitsDataProvider
+     *
+     * @param array $products
+     */
+    public function testGetProductsWithUnits(array $products)
+    {
+        $result = $this->repository->getProductsWithUnits($this->referencesToEntities($products));
+        $this->assertEquals($this->referencesToEntities($products), $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function getProductsWithUnitsDataProvider()
+    {
+        return [
+            [
+                'products' => [
+                    'product.1',
+                    'product.2',
+                    'product.3',
+                    'product.4',
+                    'product.5',
+                    'product.6',
+                    'product.7',
+                    'product.8',
+                ],
+            ],
+            [
+                'products' => [
+                    'product.1',
+                    'product.2',
+                ],
+            ],
+        ];
+    }
+
 
     /**
      * @param array $references

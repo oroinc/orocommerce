@@ -1,9 +1,3 @@
-{% block _require_modules_widget %}
-    <script type="text/javascript">
-        require(['oroui/js/app']);
-    </script>
-{% endblock %}
-
 {% block _wrapper_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " wrapper"

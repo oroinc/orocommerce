@@ -17,7 +17,9 @@
         <a href="#" class="view-product"><img src="<% if (model.image) { %><%= model.image %><% } else { %>
             {%- image '@OroB2BProductBundle/Resources/public/default/images/no_image.png' %}{{ asset_url }}"{% endimage -%}
         <% } %>" alt=""/></a>
+        <div data-toggle="modal" data-target="#product1" class="product-item__quick-view-btn">
             <span class="btn btn-dark btn_sm">Quick View</span>
+        </div>
     </div>
 {% endblock %}
 
@@ -65,11 +67,7 @@
         <tbody>
         <tr>
             <td>Item #:</td>
-            <td><span class="red">13656</span></td>
-        </tr>
-        <tr>
-            <td>MFG <span class="hidden-xs">Model</span> #:</td>
-            <td><span class="red">1ABC13656</span></td>
+            <td><span class="red"><%= model.sku %></span></td>
         </tr>
         </tbody>
     </table>
@@ -111,21 +109,9 @@
 
 {% block _product_grid_row_specification_delivery_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " product__specification product__specification_delivery product__specification_<%= themeOptions.view %>"
+        class: attr.class|default('') ~ " product__specification product__specification_delivery product__specification_<%= themeOptions.view %> not-implemented"
     }) %}
     <div {{ block('block_attributes_raw_class') }}>
-        <table class="table borderless paddingless">
-            <tbody>
-            <tr>
-                <td style="width:100px;">SF</td>
-                <td><span class="green2">2 Days</span></td>
-            </tr>
-            <tr>
-                <td style="width:100px;">NY</td>
-                <td><span class="green2">8 Days</span></td>
-            </tr>
-            </tbody>
-        </table>
     </div>
 {% endblock %}
 
@@ -134,7 +120,6 @@
         class: attr.class|default('') ~ " product-item__mspr product-item__mspr_<%= themeOptions.view %>"
     }) %}
     <div {{ block('block_attributes_raw_class') }}>
-        MSPR: <span>$24.99</span>
     </div>
 {% endblock %}
 
@@ -158,7 +143,6 @@
                 <li>Shipping Weight: .08 lbs.</li>
                 <li>80 Items to a Box</li>
             </ul>
-            <a href="#">View MAP Policy</a>
         </div>
     </div>
 {% endblock %}

@@ -6,12 +6,3 @@
         Your Price: <span class="fs16 blue"><%= model.price_column %></span>
     </div>
 {% endblock %}
-
-{% block _product_grid_row_listed_price_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " product-item__listed-price product-item__listed-price_<%= themeOptions.view %>"
-    }) %}
-    <div {{ block('block_attributes_raw_class') }}>
-        Listed Price: <span><%= model.price_column %></span>
-    </div>
-{% endblock %}

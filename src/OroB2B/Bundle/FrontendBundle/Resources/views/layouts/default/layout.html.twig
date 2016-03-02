@@ -1,10 +1,10 @@
 {% extends 'OroLayoutBundle:Layout:div_layout.html.twig' %}
 
 {% block block_attributes_raw_class -%}
-    {% spaceless %}
+    {{ ' ' }}{% spaceless %}
         {% if attr.class is defined %}
             {% set attr = attr|merge({
-            class: attr.class|replace({'{{ class_prefix }}': class_prefix})
+                class: attr.class|replace({'{{ class_prefix }}': class_prefix})
             }) %}
         {% endif %}
         {% for attrname, attrvalue in attr %}
@@ -20,9 +20,11 @@
 {%- endblock %}
 
 {% block form_start_widget %}
-    {% set attr = attr|merge({
-    id: form.vars.id
-    }) %}
+    {% if attr.id is not defined %}
+        {% set attr = attr|merge({
+            id: form.vars.id
+        }) %}
+    {% endif %}
     {{ parent() }}
 {% endblock %}
 
