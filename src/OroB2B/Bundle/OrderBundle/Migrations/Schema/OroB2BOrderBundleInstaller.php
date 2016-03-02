@@ -121,7 +121,6 @@ class OroB2BOrderBundleInstaller implements
             'scale' => 4,
             'comment' => '(DC2Type:money)'
         ]);
-        $table->addColumn('shipping_cost_currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['created_at'], 'orob2b_order_created_at_index', []);
         $table->addUniqueIndex(['identifier'], 'uniq_orob2b_order_identifier');
