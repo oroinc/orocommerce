@@ -35,7 +35,7 @@ class CheckoutController extends Controller
      *     isOptional="true",
      *     options={"id" = "checkoutId"}
      *     )
-     * @Layout(vars={"page", "page"})
+     * @Layout(vars={"page"})
      * @Acl(
      *      id="orob2b_checkout_frontend_checkout",
      *      type="entity",
@@ -53,14 +53,11 @@ class CheckoutController extends Controller
         if (!$checkout) {
             $checkout = new Checkout();
         }
-        $page = $request->query->get('page');
-        $page = $page ?: 1;
-
+        $page = $request->query->get('page', 1);
 
         return [
             'page' => $page,
-            'data' =>
-                ['checkout' => $checkout, 'page' => $page]
+            'data' => ['checkout' => $checkout, 'page' => $page]
         ];
     }
 }
