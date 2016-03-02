@@ -1,0 +1,27 @@
+orob2b:
+    checkout:
+        entity_label: Checkout
+        entity_plural_label: Checkouts
+        id.label: Id
+        owner.label: Owner
+        account.label: Account
+        account_user.label: Account User
+        organization.label: Organization
+        customer_notes.label: Customer Notes
+        customer_notes.frontend.label: Notes
+        po_number.label: PO Number
+        ship_until.label: Do Not Ship Later Than
+        billing_address.label: Billing Address
+        shipping_address.label: Shipping Address
+        save_billing_address.label: Save Billing Address
+        save_shipping_address.label: Save Shipping Address
+        ship_to_billing_address.label: Ship to Billing Address
+        source.label: Source
+        website.label: Website
+        workflow_item.label: Workflow Item
+        workflow_step.label: Workflow Step
+
+        checkoutsource:
+            entity_label: Checkout Source
+            entity_plural_label: Checkout Sources
+            id.label: Id

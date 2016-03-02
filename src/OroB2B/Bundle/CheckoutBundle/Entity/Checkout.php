@@ -18,26 +18,16 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\CheckoutBundle\Model\ExtendCheckout;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
- * @todo consider to use OrderAddress or create new address for checkout
- * @todo add disabled steps flags
- * @todo add source document. Try to use associations
- * @see https://github.com/laboro/platform/blob/master/src/Oro/Bundle/EntityExtendBundle/Resources/doc/associations.md
- *
  * @ORM\Table(name="orob2b_checkout")
  * @ORM\Entity
- * @ORM\InheritanceType("SINGLE_TABLE")
- * @ORM\DiscriminatorColumn(name="type", type="string", length=50)
  * @Config(
- *      routeName="orob2b_checkout",
- *      routeView="orob2b_checkout",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-briefcase"
+ *              "icon"="icon-shopping-cart"
  *          },
  *          "ownership"={
  *              "owner_type"="USER",
@@ -135,21 +125,6 @@ class Checkout extends ExtendCheckout implements
     protected $shipUntil;
 
     /**
-     * @var
-     */
-    protected $shippingMethod;
-
-    /**
-     * @var
-     */
-    protected $paymentMethod;
-
-    /**
-     * @var Order
-     */
-    protected $order;
-
-    /**
      * @var User
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
@@ -188,6 +163,24 @@ class Checkout extends ExtendCheckout implements
      * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      */
     protected $website;
+
+    /**
+     * @var CheckoutSource
+     *
+     * @ORM\OneToOne(targetEntity="OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource", cascade={"persist"})
+     * @ORM\JoinColumn(name="source_id", referencedColumnName="id")
+     */
+    protected $source;
+
+    /**
+     * @var
+     */
+    protected $shippingMethod;
+
+    /**
+     * @var
+     */
+    protected $paymentMethod;
 
     /**
      * @return Account
@@ -280,25 +273,6 @@ class Checkout extends ExtendCheckout implements
     public function setId($id)
     {
         $this->id = $id;
-
-        return $this;
-    }
-
-    /**
-     * @return Order
-     */
-    public function getOrder()
-    {
-        return $this->order;
-    }
-
-    /**
-     * @param Order $order
-     * @return Checkout
-     */
-    public function setOrder(Order $order = null)
-    {
-        $this->order = $order;
 
         return $this;
     }
@@ -508,6 +482,37 @@ class Checkout extends ExtendCheckout implements
     public function setWebsite(Website $website = null)
     {
         $this->website = $website;
+
+        return $this;
+    }
+
+    /**
+     * @return object
+     */
+    public function getSourceEntity()
+    {
+        if ($this->source) {
+            return $this->source->getEntity();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return CheckoutSource
+     */
+    public function getSource()
+    {
+        return $this->source;
+    }
+
+    /**
+     * @param CheckoutSource $source
+     * @return Checkout
+     */
+    public function setSource(CheckoutSource $source = null)
+    {
+        $this->source = $source;
 
         return $this;
     }
