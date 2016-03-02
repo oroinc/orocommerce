@@ -140,21 +140,16 @@ class DuplicateTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        if (!empty($options)) {
-            $contextAccessor->expects($this->once())
-                ->method('getValue')
-                ->with($context, $options[Duplicate::OPTION_KEY_ENTITY])
-                ->willReturn($target);
-        } else {
-            $context->expects($this->once())
-                ->method('getEntity')
-                ->willReturn($target);
-        }
-
-        $action->initialize([
+        $options = [
             Duplicate::OPTION_KEY_ENTITY => '$.data',
             Duplicate::OPTION_KEY_ATTRIBUTE => 'copyResult'
-        ]);
+        ];
+        $contextAccessor->expects($this->once())
+            ->method('getValue')
+            ->with($context, $options[Duplicate::OPTION_KEY_ENTITY])
+            ->willReturn($target);
+
+        $action->initialize($options);
         $action->execute($context);
     }
 
@@ -167,8 +162,6 @@ class DuplicateTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $factory = new DuplicatorFactory($container);
-
-        return $factory;
+        return new DuplicatorFactory($container);
     }
 }

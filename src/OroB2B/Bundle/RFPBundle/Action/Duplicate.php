@@ -36,7 +36,7 @@ class Duplicate extends AbstractAction
      */
     protected function executeAction($context)
     {
-        $target = $this->getEntity($context) ? : $context->getEntity();
+        $target = $this->getEntity($context);
         $settings = [];
         if (isset($this->options[self::OPTION_KEY_TARGET])) {
             $target = $this->contextAccessor->getValue($context, $this->options[self::OPTION_KEY_TARGET]);
@@ -97,8 +97,10 @@ class Duplicate extends AbstractAction
      */
     protected function getEntity($context)
     {
-        return !empty($this->options[self::OPTION_KEY_ENTITY])
-            ? $this->contextAccessor->getValue($context, $this->options[self::OPTION_KEY_ENTITY])
-            : null;
+        if (empty($this->options[self::OPTION_KEY_ENTITY])) {
+            return $context->getEntity();
+        } else {
+            return $this->contextAccessor->getValue($context, $this->options[self::OPTION_KEY_ENTITY]);
+        }
     }
 }
