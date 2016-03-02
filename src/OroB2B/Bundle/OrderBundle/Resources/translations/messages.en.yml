@@ -110,6 +110,7 @@ orob2b:
             subtotals: Order Totals
             order_line_items: 'Line Items'
             order_totals: Totals
+            shipping_cost: Shipping Cost
 
         security:
             permission:

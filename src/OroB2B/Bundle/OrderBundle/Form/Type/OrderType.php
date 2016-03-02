@@ -110,7 +110,8 @@ class OrderType extends AbstractType
                     'cascade_validation' => true,
                     'options' => ['currency' => $order->getCurrency()]
                 ]
-            )->add(
+            )
+            ->add(
                 'shippingCost',
                 PriceType::NAME,
                 [
