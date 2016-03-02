@@ -36,6 +36,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
             ['shipUntil', $now],
             ['currency', 'USD'],
             ['subtotal', 999.99],
+            ['total', 999.99],
             ['paymentTerm', new PaymentTerm()],
             ['account', new Account()],
             ['accountUser', new AccountUser()],

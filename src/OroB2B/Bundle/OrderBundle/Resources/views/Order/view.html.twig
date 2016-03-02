@@ -90,9 +90,24 @@
             </div>
         {% endset %}
 
+        {% set orderTotals %}
+            {% for item in totals.subtotals %}
+                <dt>{{ item.label }}</dt>
+                <dd>{{ item.amount|oro_format_currency({'currency': item.currency}) }}</dd>
+            {% endfor %}
+
+            <dt>{{ totals.total.label }}</dt>
+            <dd>{{ totals.total.amount|oro_format_currency({'currency': totals.total.currency}) }}</dd>
+        {% endset %}
+
         {% set dataBlocks = dataBlocks|merge([{
             'title': 'orob2b.order.sections.order_line_items'|trans,
             'subblocks': [{'data' : [lineItems]}]
+        }]) %}
+
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': 'orob2b.order.sections.order_totals'|trans,
+            'subblocks': [{'data' : [orderTotals]}]
         }]) %}
 
         {# @todo: https://magecore.atlassian.net/browse/BB-1752 #}
