@@ -118,7 +118,7 @@ class OrderType extends AbstractType
                     'currency_empty_value' => null,
                     'error_bubbling' => false,
                     'required' => false,
-                    'label' => 'orob2b.order.shipping_cost.label',
+                    'label' => 'orob2b.order.shipping_cost.label'
                 ]
             );
 

@@ -113,15 +113,6 @@
                     lineItems
                 ]
             }]
-        },
-        {
-            'title': 'orob2b.order.sections.shipping_cost'|trans,
-            'subblocks': [{
-                'title': '',
-                'data': [
-                    form_row(form.shippingCost),
-                ]
-            }]
         }
     ] %}
 
@@ -189,6 +180,29 @@
             }]
         }]) %}
     {% endif %}
+
+    {% set shippingBlock %}
+        {%  set options = {
+            view: 'orob2border/js/app/views/shipping-cost-view',
+            selectors: {
+                subtotalsFields: [
+                    '#' ~ form.shippingCost.value.vars.id
+                ]
+            }
+        } %}
+
+        <div data-page-component-module="oroui/js/app/components/view-component"
+             data-page-component-options="{{ options|json_encode }}">
+            {{ form_row(form.shippingCost) }}
+        </div>
+    {% endset %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'orob2b.order.sections.shipping_information'|trans,
+        'subblocks': [{
+            'data': [shippingBlock]
+        }]
+    }]) %}
 
     {% if form.paymentTerm is defined %}
         {% set paymentTerm %}
