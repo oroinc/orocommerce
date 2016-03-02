@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Action;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;
-use Oro\Bundle\WorkflowBundle\Model\ContextAccessor;
+use Oro\Component\Action\Model\ContextAccessor;
 
 use OroB2B\Bundle\RFPBundle\Action\Duplicate;
 use OroB2B\Bundle\RFPBundle\Factory\DuplicatorFactory;
@@ -53,7 +53,7 @@ class DuplicateTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this->assertInstanceOf(
-            'Oro\Bundle\WorkflowBundle\Model\Action\ActionInterface',
+            'Oro\Component\Action\Action\ActionInterface',
             $this->action->initialize($options)
         );
 
