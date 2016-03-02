@@ -101,8 +101,8 @@ class OrderTest extends \PHPUnit_Framework_TestCase
 
         $value = 100;
         $currency = 'EUR';
-        $this->setProperty($item, 'shippingCostAmount', $value)
-            ->setProperty($item, 'shippingCostCurrency', $currency);
+        $this->setProperty($item, 'shippingCostAmount', $value);
+        $this->setProperty($item, 'currency', $currency);
 
         $item->postLoad();
 
@@ -119,7 +119,6 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $item->updateShippingCost();
 
         $this->assertEquals($value, $this->getProperty($item, 'shippingCostAmount'));
-        $this->assertEquals($currency, $this->getProperty($item, 'shippingCostCurrency'));
     }
 
     public function testSetShippingEstimate()
@@ -134,7 +133,6 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($price, $item->getShippingCost());
 
         $this->assertEquals($value, $this->getProperty($item, 'shippingCostAmount'));
-        $this->assertEquals($currency, $this->getProperty($item, 'shippingCostCurrency'));
     }
 
     /**

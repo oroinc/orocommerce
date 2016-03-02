@@ -335,13 +335,6 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
     protected $shippingCostAmount;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="shipping_cost_currency", type="string", nullable=true, length=3)
-     */
-    protected $shippingCostCurrency;
-
-    /**
      * @var Price
      */
     protected $shippingCost;
@@ -853,8 +846,8 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
      */
     public function postLoad()
     {
-        if (null !== $this->shippingCostAmount && null !== $this->shippingCostCurrency) {
-            $this->shippingCost = Price::create($this->shippingCostAmount, $this->shippingCostCurrency);
+        if (null !== $this->shippingCostAmount && null !== $this->currency) {
+            $this->shippingCost = Price::create($this->shippingCostAmount, $this->currency);
         }
     }
 
@@ -865,6 +858,5 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
     public function updateShippingCost()
     {
         $this->shippingCostAmount = $this->shippingCost ? $this->shippingCost->getValue() : null;
-        $this->shippingCostCurrency = $this->shippingCost ? $this->shippingCost->getCurrency() : null;
     }
 }
