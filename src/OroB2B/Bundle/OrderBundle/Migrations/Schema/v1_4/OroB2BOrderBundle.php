@@ -21,6 +21,5 @@ class OroB2BOrderBundle implements Migration
             'scale' => 4,
             'comment' => '(DC2Type:money)'
         ]);
-        $table->addColumn('shipping_cost_currency', 'string', ['notnull' => false, 'length' => 3]);
     }
 }
