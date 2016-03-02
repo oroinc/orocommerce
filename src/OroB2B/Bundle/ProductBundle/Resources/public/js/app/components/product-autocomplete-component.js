@@ -16,7 +16,7 @@ define(function(require) {
                 product: {},
                 productBySkuRoute: 'orob2b_product_frontend_ajax_names_by_skus',
                 selectors: {
-                    row: '.fields-row',
+                    row: '.quick-order__form__row',
                     name: '.product-autocomplete-name',
                     error: '.product-autocomplete-error',
                     success: '.product-autocomplete-success'

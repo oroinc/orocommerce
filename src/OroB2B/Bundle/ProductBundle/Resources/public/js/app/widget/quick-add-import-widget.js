@@ -15,7 +15,6 @@ define(function(require) {
                 'modal': true,
                 'resizable': false,
                 'width': 680,
-                'height': 350,
                 'autoResize': true
             };
 
