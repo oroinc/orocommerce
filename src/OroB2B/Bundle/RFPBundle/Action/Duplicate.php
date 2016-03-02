@@ -11,6 +11,7 @@ use OroB2B\Component\Duplicator\Duplicator;
 
 class Duplicate extends AbstractAction
 {
+    const OPTION_KEY_ENTITY = 'entity';
     const OPTION_KEY_TARGET = 'target';
     const OPTION_KEY_SETTINGS = 'settings';
     const OPTION_KEY_ATTRIBUTE = 'attribute';
@@ -35,7 +36,7 @@ class Duplicate extends AbstractAction
      */
     protected function executeAction($context)
     {
-        $target = $context->getEntity();
+        $target = $this->getEntity($context);
         $settings = [];
         if (isset($this->options[self::OPTION_KEY_TARGET])) {
             $target = $this->contextAccessor->getValue($context, $this->options[self::OPTION_KEY_TARGET]);
@@ -88,5 +89,18 @@ class Duplicate extends AbstractAction
     public function setDuplicatorFactory($duplicatorFactory)
     {
         $this->duplicatorFactory = $duplicatorFactory;
+    }
+
+    /**
+     * @param mixed $context
+     * @return object|null
+     */
+    protected function getEntity($context)
+    {
+        if (empty($this->options[self::OPTION_KEY_ENTITY])) {
+            return $context->getEntity();
+        } else {
+            return $this->contextAccessor->getValue($context, $this->options[self::OPTION_KEY_ENTITY]);
+        }
     }
 }

@@ -1,24 +1,4 @@
-{% extends 'OroUIBundle:actions:update.html.twig' %}
-
-{% set formAction = app.request.uri  %}
-{% set entity = context.data %}
-
-{% if entity %}
-    {% set className = oro_class_name(context.data) %}
-    {% set entityLabel = oro_entity_config_value(className, 'label')|trans %}
-
-    {% oro_title_set({
-        titleTemplate : "%entity% - %actionName% - %label% - %pluralLabel%",
-        params : {
-            "%entity%": entity.__toString,
-            "%actionName%": action.definition.label|trans,
-            "%label%": entityLabel,
-            "%pluralLabel%": oro_entity_config_value(className, 'plural_label')|trans
-        }
-    }) %}
-{% else %}
-    {% oro_title_set({titleTemplate : action.definition.label|trans}) %}
-{% endif %}
+{% extends 'OroActionBundle:Action:page.html.twig' %}
 
 {% block pageHeader %}
     {% if entity %}
@@ -35,15 +15,7 @@
     {% endif %}
 {% endblock pageHeader %}
 
-{% block navButtons %}
-    {{ UI.cancelButton(fromUrl) }}
-
-    {{ UI.dropdownSaveButton({'html': UI.saveAndStayButton('Submit')}) }}
-{% endblock navButtons %}
-
 {% block content_data %}
-    {% set id = 'action-page-' ~ action.name %}
-
     {% set lineItems %}
         {{ form_widget(form.request.requestProducts) }}
         {{ form_errors(form.request.requestProducts) }}

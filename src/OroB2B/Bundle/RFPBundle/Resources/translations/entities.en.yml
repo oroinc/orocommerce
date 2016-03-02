@@ -3,3 +3,4 @@ request_status:
     closed: Closed
     draft: Draft
     canceled: Canceled
+    deleted: Deleted

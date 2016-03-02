@@ -110,13 +110,47 @@ class DuplicateTest extends \PHPUnit_Framework_TestCase
         $target->name = 'parent';
         $target->child = $child;
 
-        $data = new ActionData(['data' => $target]);
+        $context = new ActionData(['data' => $target]);
         $this->action->initialize([Duplicate::OPTION_KEY_ATTRIBUTE => 'copyResult']);
-        $this->action->execute($data);
-        $copyObject = $data['copyResult'];
+        $this->action->execute($context);
+        /** @var \stdClass $copyObject */
+        $copyObject = $context['copyResult'];
         $this->assertNotSame($copyObject, $target);
         $this->assertEquals($copyObject, $target);
         $this->assertSame($copyObject->child, $copyObject->child);
+    }
+
+    public function testExecuteWithEntity()
+    {
+        $target = new \stdClass();
+
+        /** @var ContextAccessor|\PHPUnit_Framework_MockObject_MockObject $contextAccessor */
+        $contextAccessor = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\ContextAccessor')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject $eventDispatcher $eventDispatcher */
+        $eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+
+        $action = new Duplicate($contextAccessor);
+        $action->setDispatcher($eventDispatcher);
+        $action->setDuplicatorFactory($this->getDuplicateFactory());
+
+        $context = $this->getMockBuilder('Oro\Bundle\ActionBundle\Model\ActionData')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $options = [
+            Duplicate::OPTION_KEY_ENTITY => '$.data',
+            Duplicate::OPTION_KEY_ATTRIBUTE => 'copyResult'
+        ];
+        $contextAccessor->expects($this->once())
+            ->method('getValue')
+            ->with($context, $options[Duplicate::OPTION_KEY_ENTITY])
+            ->willReturn($target);
+
+        $action->initialize($options);
+        $action->execute($context);
     }
 
     /**
@@ -128,8 +162,6 @@ class DuplicateTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $factory = new DuplicatorFactory($container);
-
-        return $factory;
+        return new DuplicatorFactory($container);
     }
 }

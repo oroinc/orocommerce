@@ -12,6 +12,7 @@ parameters:
     oro_action.function.create_object.class: Oro\Bundle\WorkflowBundle\Model\Action\CreateObject
     oro_action.function.create_date.class: Oro\Bundle\WorkflowBundle\Model\Action\CreateDate
     oro_action.function.create_entity.class: Oro\Bundle\WorkflowBundle\Model\Action\CreateEntity
+    oro_action.function.flush_entity.class: Oro\Bundle\WorkflowBundle\Model\Action\FlushEntity
     oro_action.function.create_related_entity.class: Oro\Bundle\WorkflowBundle\Model\Action\CreateRelatedEntity
     oro_action.function.request_entity.class: Oro\Bundle\WorkflowBundle\Model\Action\RequestEntity
     oro_action.function.redirect.class: Oro\Bundle\WorkflowBundle\Model\Action\Redirect
@@ -111,6 +112,14 @@ services:
             - @doctrine
         tags:
             - { name: oro_action.function, alias: create_entity }
+
+    oro_action.function.flush_entity:
+        class: %oro_action.function.flush_entity.class%
+        arguments:
+            - @oro_workflow.context_accessor
+            - @doctrine
+        tags:
+            - { name: oro_action.function, alias: flush_entity }
 
     oro_action.function.create_related_entity:
         class: %oro_action.function.create_related_entity.class%
