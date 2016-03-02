@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\OrderBundle\Form\Type;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -67,7 +68,7 @@ class OrderAddressType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $type = $options['addressType'];
-        $order = $options['order'];
+        $order = $options['object'];
         $application =  $options['application'];
 
         $isManualEditGranted = $this->orderAddressSecurityProvider->isManualEditGranted($type);
@@ -134,12 +135,12 @@ class OrderAddressType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
-            ->setRequired(['order', 'addressType'])
+            ->setRequired(['object', 'addressType'])
             ->setDefaults(['data_class' => $this->dataClass,
                 'application' => self::APPLICATION_BACKEND
             ])
             ->setAllowedValues('addressType', [AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING])
-            ->setAllowedTypes('order', 'OroB2B\Bundle\OrderBundle\Entity\Order');
+            ->setAllowedTypes('object', 'OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface');
     }
 
     /**
@@ -188,20 +189,20 @@ class OrderAddressType extends AbstractType
     }
 
     /**
-     * @param Order $order
+     * @param AccountOwnerAwareInterface $object
      * @param string $type
      * @param array $addresses
      *
      * @return null|string
      */
-    protected function getDefaultAddressKey(Order $order, $type, array $addresses)
+    protected function getDefaultAddressKey(AccountOwnerAwareInterface $object, $type, array $addresses)
     {
         if (!$addresses) {
             return null;
         }
 
         $addresses = call_user_func_array('array_merge', array_values($addresses));
-        $accountUser = $order->getAccountUser();
+        $accountUser = $object->getAccountUser();
         $addressKey = null;
 
         /** @var AbstractDefaultTypedAddress $address */
@@ -246,7 +247,7 @@ class OrderAddressType extends AbstractType
      *
      * @return bool
      */
-    protected function hasAccessToEditAddress(Order $order, $type, $application)
+    protected function hasAccessToEditAddress($order, $type, $application)
     {
         $isFromExternalSource = true;
 
@@ -271,7 +272,7 @@ class OrderAddressType extends AbstractType
     protected function initAccountAddressField(
         FormBuilderInterface $builder,
         $type,
-        Order $order,
+        $order,
         $application,
         $isManualEditGranted
     ) {

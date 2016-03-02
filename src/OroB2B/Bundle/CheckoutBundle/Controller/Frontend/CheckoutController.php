@@ -61,18 +61,21 @@ class CheckoutController extends Controller
         $page = $request->query->get('page');
         $page = $page ?: 1;
         $user = $this->getUser();
-        $order = new Order();
+        $order = new Checkout();
         $orderAddress = new OrderAddress();
         $order->setAccountUser($user);
         $billingForm = $this->createForm(
             OrderAddressType::NAME,
             $orderAddress,
             [
-                'order' => $order,
+                'object' => $order,
                 'addressType' => AddressType::TYPE_BILLING,
+                'application' => OrderAddressType::APPLICATION_FRONTEND
             ]
         );
 
+        $formView = $billingForm->createView();
+        $formView->vars['class_prefix'] = '';
         return [
             'page' => $page,
             'data' =>
@@ -80,7 +83,7 @@ class CheckoutController extends Controller
                     'checkout' => $checkout,
                     'page' => $page,
                     'user' => $user,
-                    'billingForm' => $billingForm->createView(),
+                    'billingForm' => $formView,
                 ]
         ];
     }

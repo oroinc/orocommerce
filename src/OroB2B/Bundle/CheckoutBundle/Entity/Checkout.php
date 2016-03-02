@@ -219,6 +219,10 @@ class Checkout extends ExtendCheckout implements
     {
         $this->accountUser = $accountUser;
 
+        if ($accountUser && $accountUser->getAccount()) {
+            $this->setAccount($accountUser->getAccount());
+        }
+
         return $this;
     }
 
