@@ -24,6 +24,7 @@ class OroB2BSaleBundle implements Migration
     protected function createInexForFieldShippingAddress(Schema $schema)
     {
         $table = $schema->getTable('orob2b_sale_quote');
+        $table->dropIndex('IDX_4F66B6F64D4CFF2B');
         $table->addUniqueIndex(['shipping_address_id'], 'UNIQ_4F66B6F64D4CFF2B');
     }
 }
