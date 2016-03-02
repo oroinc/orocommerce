@@ -1,37 +1,118 @@
 {% block _checkout_billing_information_widget %}
+    {% set form = billingForm %}
     <div class="checkout__head">
         <h2 class="checkout__title">
             <span class="badge badge_md badge_circle badge_orange">1</span>
             Billing Information
         </h2>
     </div>
-    <div class="checkout__body">
-        <form action="#" class="checkout__form">
+    <div class="checkout__body" data-page-component-module="oroui/js/app/components/view-component"
+         data-page-component-options="{{ {
+             view: 'orob2border/js/app/views/address-view',
+             type: 'billing',
+             selectors: {
+                 address: '#' ~ form.accountAddress.vars.id,
+                 subtotalsFields: [
+                 '#' ~ form.country.vars.id,
+                 '#' ~ form.street.vars.id,
+                 '#' ~ form.street2.vars.id,
+                 '#' ~ form.city.vars.id,
+                 '#' ~ form.region.vars.id,
+                 '#' ~ form.postalCode.vars.id
+                 ]
+             }
+         }|json_encode }}">
+
+        {{ form_start(form, {'attr' : {'class' : 'checkout__form'}}) }}
+            {{ form_errors(form) }}
             <fieldset class="checkout__form__row">
                 <div class="checkout__form__col form__col_x6">
-                    <label for="billingAddress" class="checkout__form__label">Select a Billing Address form your Account<sup
-                                class="red">*</sup></label>
+                    <label for="billingAddress" class="checkout__form__label">Select a Billing Address form your Account<sup class="red">*</sup></label>
                     <div class="checkout__form__select">
-                        <select data-chosen-selectbox="" class="input input_md" name="billingAddress"
-                                id="billingAddress">
-                            <option value="0">Robin Williams, 1234 Fake St., #276, San Francisco, CA 94109</option>
-                            <option value="1">Jack Daniels, 1234 Fake St., #276, San Francisco, CA 94109</option>
-                            <option value="2">John Doe, 1234 Fake St., #276, San Francisco, CA 94109</option>
-                        </select>
+                        {{ form_row(form.accountAddress, {'class_prefix' : '', 'attr' : {'class': 'input input_md'}   }) }}
                     </div>
                 </div>
             </fieldset>
 
             <fieldset class="checkout__form__row">
-                <div class="checkout__form__col">
-                    <label for="confirmShippingAddress" class="checkbox_custom checkbox_custom_blue checked"
-                           data-checkbox="">
-                        <input type="checkbox" name="confirmShippingAddress" id="confirmShippingAddress"
-                               checked="checked">
-                        <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
-                        <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
-                        <span class="checkbox_custom__text fs13">Ship to this address</span>
-                    </label>
+                <div class="checkout__form__col form__col_x6">
+                    <label for="firstName" class="checkout__form__label checkout__form__label_additional">First Name<sup class="red">*</sup></label>
+                    {{ form_row(form.firstName, {
+                        'class_prefix' : '',
+                        'attr': {
+                            'class': 'input input_md input_block checkout__form__input',
+                            'placeholder' : 'Enter your first name',
+                        }
+                    }) }}
+                </div>
+                <div class="checkout__form__col form__col_x6">
+                    <label for="lastName" class="checkout__form__label checkout__form__label_additional">Last Name<sup class="red">*</sup></label>
+                    {{ form_row(form.lastName, {'class_prefix' : '', 'attr': {'class' : 'input input_md input_block checkout__form__input', 'placeholder' : 'Enter your last name'}}) }}
+                </div>
+            </fieldset>
+
+            <fieldset class="checkout__form__row">
+                <div class="checkout__form__col form__col_x12">
+                    <label for="companyName" class="checkout__form__label checkout__form__label_additional">Company</label>
+                    <input type="text" name="companyName" id="companyName" class="input input_md input_block checkout__form__input" placeholder="Enter your company name" />
+                </div>
+            </fieldset>
+
+            <fieldset class="checkout__form__row">
+                <div class="checkout__form__col form__col_x12">
+                    <label class="checkout__form__label checkout__form__label_additional">Street Address<sup class="red">*</sup></label>
+                    <input type="text" name="streetAddress1" id="streetAddress1" class="input input_md input_block checkout__form__input mb1-md mb1-sm" placeholder="Enter your street address" />
+                    <input type="text" name="streetAddress2" id="streetAddress2" class="input input_md input_block checkout__form__input" placeholder="Enter your street address 2" />
+                </div>
+            </fieldset>
+
+            <fieldset class="checkout__form__row">
+                <div class="checkout__form__col col-city">
+                    <label for="cityName" class="checkout__form__label checkout__form__label_additional">City<sup class="red">*</sup></label>
+                    <input type="text" id="cityName" name="cityName" class="input input_block input_md checkout__form__input" placeholder="Enter your city name" />
+                </div>
+                <div class="checkout__form__col col-state">
+                    <label for="stateProvince" class="checkout__form__label checkout__form__label_additional wsnr">State / Province<sup class="red">*</sup></label>
+                    <div class="checkout__form__select">
+                        <select data-chosen-selectbox class="input input_md" name="stateProvince" id="stateProvince">
+                            <option value="0">-</option>
+                            <option value="1">NY</option>
+                            <option value="2">FL</option>
+                            <option value="2">CO</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="checkout__form__col col-zip">
+                    <label for="zipCode" class="checkout__form__label checkout__form__label_additional wsnr">Zip Code<sup class="red">*</sup></label>
+                    <input type="text" id="zipCode" name="zipCode" class="input input_block input_md checkout__form__input" placeholder="Zip" />
+                </div>
+            </fieldset>
+
+            <fieldset class="checkout__form__row">
+                <div class="checkout__form__col form__col_x6">
+                    <label for="phoneNumber" class="checkout__form__label checkout__form__label_additional">Phone Number<sup class="red">*</sup></label>
+                    <input type="text" name="phoneNumber" id="phoneNumber" class="input input_md input_block checkout__form__input" placeholder="Enter your phone number" />
+                </div>
+            </fieldset>
+
+            <fieldset class="checkout__form__row">
+                <div class="checkout__form__col form__col_x12">
+                    <div class="mmb5-md mmb5-sm">
+                        <label for="saveAddress" class="checkbox_custom checkbox_custom_blue checked" data-checkbox>
+                            <input type="checkbox" name="saveAddress" id="saveAddress" checked="checked" />
+                            <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
+                            <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
+                            <span class="checkbox_custom__text fs13">Save address</span>
+                        </label>
+                    </div>
+                    <div>
+                        <label for="confirmShippingAddress" class="checkbox_custom checkbox_custom_blue checked" data-checkbox>
+                            <input type="checkbox" name="confirmShippingAddress" id="confirmShippingAddress" checked="checked" />
+                            <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
+                            <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
+                            <span class="checkbox_custom__text fs13">Ship to this address</span>
+                        </label>
+                    </div>
                 </div>
             </fieldset>
 
@@ -46,6 +127,6 @@
             <div class="checkout__form__back">
                 <a href="#"><i class="icon-left-open-mini"></i>Back</a>
             </div>
-        </form>
+        {{ form_end(form) }}
     </div>
 {% endblock %}

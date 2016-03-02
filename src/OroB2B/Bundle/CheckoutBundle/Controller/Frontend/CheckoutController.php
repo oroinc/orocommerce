@@ -4,7 +4,12 @@ namespace OroB2B\Bundle\CheckoutBundle\Controller\Frontend;
 
 use Doctrine\Common\Util\ClassUtils;
 
+
+use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
+use OroB2B\Bundle\OrderBundle\Entity\Order;
+use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
+use OroB2B\Bundle\OrderBundle\Form\Type\OrderAddressType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormInterface;
@@ -55,12 +60,28 @@ class CheckoutController extends Controller
         }
         $page = $request->query->get('page');
         $page = $page ?: 1;
-
+        $user = $this->getUser();
+        $order = new Order();
+        $orderAddress = new OrderAddress();
+        $order->setAccountUser($user);
+        $billingForm = $this->createForm(
+            OrderAddressType::NAME,
+            $orderAddress,
+            [
+                'order' => $order,
+                'addressType' => AddressType::TYPE_BILLING,
+            ]
+        );
 
         return [
             'page' => $page,
             'data' =>
-                ['checkout' => $checkout, 'page' => $page]
+                [
+                    'checkout' => $checkout,
+                    'page' => $page,
+                    'user' => $user,
+                    'billingForm' => $billingForm->createView(),
+                ]
         ];
     }
 }
