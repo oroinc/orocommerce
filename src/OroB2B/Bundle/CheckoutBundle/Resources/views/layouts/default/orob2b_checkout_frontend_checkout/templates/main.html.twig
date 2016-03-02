@@ -12,7 +12,7 @@
                 {% for key, element in elements %}
                     {% set page_num = key+1 %}
                     <li>
-                        <a href="{{ path('orob2b_checkout_frontend_checkout', {'page' : page_num, 'checkoutId' : checkout.id}) }}">
+                        <a href="{{ path('orob2b_checkout_frontend_checkout', {'page' : page_num, 'id' : checkout.id}) }}">
                     <span class="badge badge_xmd badge_circle {{ page_num == page ?  'badge_orange':'badge_ll_gray' }}">
                             {{ page_num }}
                         </span>

@@ -24,17 +24,10 @@ class CheckoutController extends Controller
      * Create checkout form
      *
      * @Route(
-     *     "/{checkoutId}",
+     *     "/{id}",
      *     name="orob2b_checkout_frontend_checkout",
-     *     defaults={"checkoutId" = null},
-     *     requirements={"checkoutId"="\d+"}
+     *     requirements={"id"="\d+"}
      * )
-     * @ParamConverter(
-     *     "checkoutId",
-     *     class="OroB2BCheckoutBundle:Checkout",
-     *     isOptional="true",
-     *     options={"id" = "checkoutId"}
-     *     )
      * @Layout(vars={"page"})
      * @Acl(
      *      id="orob2b_checkout_frontend_checkout",
@@ -44,15 +37,12 @@ class CheckoutController extends Controller
      *      group_name="commerce"
      * )
      *
-     * @param Checkout|null $checkout
+     * @param Checkout $checkout
      * @param Request $request
      * @return array
      */
-    public function checkoutAction(Request $request, Checkout $checkout = null)
+    public function checkoutAction(Checkout $checkout, Request $request)
     {
-        if (!$checkout) {
-            $checkout = new Checkout();
-        }
         $page = $request->query->get('page', 1);
 
         return [

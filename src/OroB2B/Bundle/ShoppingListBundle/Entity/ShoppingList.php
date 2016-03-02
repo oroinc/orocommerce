@@ -14,6 +14,7 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
+use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
  * @ORM\Table(
@@ -48,7 +49,7 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
  * )
  * @ORM\HasLifecycleCallbacks()
  */
-class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterface
+class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterface, CheckoutSourceEntityInterface
 {
     /**
      * @var int

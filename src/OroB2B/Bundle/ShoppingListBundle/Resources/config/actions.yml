@@ -52,7 +52,7 @@ actions:
             - @redirect:
                 parameters:
                     route: orob2b_checkout_frontend_checkout
-                    route_parameters: {checkoutId: $.checkout.id}
+                    route_parameters: {id: $.checkout.id}
 
     orob2b_shoppinglist_frontend_products_add_to_shoppinglist_base:
         label: orob2b.shoppinglist.product.add_to_shopping_list.label
