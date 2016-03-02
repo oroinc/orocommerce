@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\SaleBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -82,6 +83,7 @@ class QuoteToOrderConverter
         }
 
         $this->orderCurrencyHandler->setOrderCurrency($order);
+        $this->fillShippingCost($quote->getShippingEstimate(), $order);
         $this->fillSubtotals($order);
 
         if ($needFlush) {
@@ -212,5 +214,31 @@ class QuoteToOrderConverter
             } catch (NoSuchPropertyException $e) {
             }
         }
+    }
+
+    /**
+     * @param Price $shippingEstimate
+     * @param Order $order
+     */
+    protected function fillShippingCost(Price $shippingEstimate, Order $order)
+    {
+        $shippingCostAmount = $shippingEstimate->getValue();
+        $shippingEstimateCurrency = $shippingEstimate->getCurrency();
+        $orderCurrency = $order->getCurrency();
+        if ($orderCurrency !== $shippingEstimateCurrency) {
+            $shippingCostAmount *= $this->getExchangeRate($shippingEstimateCurrency, $orderCurrency);
+        }
+
+        $order->setShippingCost(Price::create($shippingCostAmount, $orderCurrency));
+    }
+
+    /**
+     * @param string $fromCurrency
+     * @param string $toCurrency
+     * @return float
+     */
+    protected function getExchangeRate($fromCurrency, $toCurrency)
+    {
+        return 1.0;
     }
 }
