@@ -6,3 +6,14 @@ orob2b:
         shipping_method: Shipping Method
         payment: Payment
         order_review: Order Review
+        order_summary:
+            label: Order Summary
+            items: Items
+            subtotal: Subtotal
+            edit_order: Edit Order
+            item: Item
+            quantity : Quantity
+            price : Price
+            price_per_item: Price per item
+            total_price: Total Price
+            total_qty: Total QTY

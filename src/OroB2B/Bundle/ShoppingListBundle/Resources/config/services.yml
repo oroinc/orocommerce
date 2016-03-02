@@ -11,6 +11,7 @@ parameters:
     orob2b_shopping_list.service.product_data_storage.class: OroB2B\Bundle\ShoppingListBundle\Storage\ProductDataStorage
     orob2b_shopping_list.layout.data_provider.account_user_shopping_lists.class: OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\AccountUserShoppingListsProvider
     orob2b_shopping_list.layout.data_provider.frontend_shopping_list_products_prices.class: OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsPricesDataProvider
+    orob2b_shopping_list.data_provider.frontend_product_prices.class: OroB2B\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider
     orob2b_shopping_list.layout.data_provider.frontend_shopping_list_products_units.class: OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsUnitsDataProvider
     orob2b_shopping_list.layout.data_provider.frontend_line_item_form.class: OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendLineItemFormProvider
     orob2b_shopping_list.layout.data_provider.shopping_list_form.class: OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider\ShoppingListFormProvider
@@ -123,11 +124,16 @@ services:
     orob2b_shopping_list.layout.data_provider.frontend_shopping_list_products_prices:
         class: %orob2b_shopping_list.layout.data_provider.frontend_shopping_list_products_prices.class%
         arguments:
+            - @orob2b_shopping_list.data_provider.frontend_product_prices
+        tags:
+            - { name: layout.data_provider, alias: orob2b_shopping_list_products_prices }
+
+    orob2b_shopping_list.data_provider.frontend_product_prices:
+        class: %orob2b_shopping_list.data_provider.frontend_product_prices.class%
+        arguments:
             - @orob2b_pricing.provider.combined_product_price
             - @oro_security.security_facade
             - @orob2b_pricing.provider.user_currency
-        tags:
-            - { name: layout.data_provider, alias: orob2b_shopping_list_products_prices }
 
     orob2b_shopping_list.layout.data_provider.frontend_shopping_list_products_units:
         class: %orob2b_shopping_list.layout.data_provider.frontend_shopping_list_products_units.class%
@@ -154,6 +160,7 @@ services:
     orob2b_shopping_list.data_provider:
         class: %orob2b_shopping_list.data_provider.class%
         arguments:
-             - @doctrine
+             - @orob2b_shopping_list.data_provider.frontend_product_prices
+             - @orob2b_pricing.provider.user_currency
         tags:
              - { name: checkout.data_provider, alias: shopping_list }

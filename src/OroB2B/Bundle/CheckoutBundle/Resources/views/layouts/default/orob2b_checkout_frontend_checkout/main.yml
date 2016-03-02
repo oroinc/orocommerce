@@ -11,6 +11,7 @@ layout:
                     options:
                         vars:
                             page: { @value: $data.page }
+                            summary: { @value: $data.summary}
                             checkout: { @value: $data.checkout}
                 checkout_content:
                     blockType: container
@@ -18,6 +19,9 @@ layout:
                     blockType: container
                 checkout_order_summary:
                     blockType: block
+                    options:
+                        vars:
+                            summary: { @value: $data.summary}
             tree:
                 main:
                     checkout_content:

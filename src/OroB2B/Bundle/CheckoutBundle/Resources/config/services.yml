@@ -1,3 +1,7 @@
 parameters:
-
+    orob2b_checkout.data_provider.manager.class: OroB2B\Component\Checkout\DataProvider\CheckoutDataProviderManager
 services:
+    orob2b_checkout.data_provider.manager:
+        class: %orob2b_checkout.data_provider.manager.class%
+        arguments:
+            - @doctrine
