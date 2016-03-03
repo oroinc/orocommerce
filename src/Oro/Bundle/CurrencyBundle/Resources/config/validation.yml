@@ -4,7 +4,8 @@ Oro\Bundle\CurrencyBundle\Entity\Price:
             groups: [Optional]
     properties:
         value:
-            - NotBlank: ~
+            - NotBlank:
+                groups: [Default]
             - Type:
                 groups: [Default, Optional]
                 type: numeric
