@@ -130,3 +130,12 @@
         {% endif %}
     {% endspaceless %}
 {% endblock %}
+
+{% block orob2b_product_image_widget %}
+        <div>{{ form_widget(form.image) }}</div>
+
+        {% for imageType in form.vars.imageTypes %}
+            <div>{{ form_widget(form[imageType]) }}</div>
+        {% endfor %}
+
+{% endblock %}

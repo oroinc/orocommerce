@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -72,6 +74,14 @@ class ProductImageType extends AbstractType
         ]);
 
         $resolver->setAllowedTypes('image_types', 'array');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars['imageTypes'] = $options['image_types'];
     }
 
     /**
