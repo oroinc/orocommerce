@@ -2,34 +2,44 @@
 
 namespace OroB2B\Bundle\PricingBundle\Form;
 
-use Doctrine\ORM\EntityManagerInterface;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
-use Symfony\Component\Form\FormInterface;
+use Doctrine\Common\Util\ClassUtils;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
+
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
 
 class PriceListWithPriorityCollectionHandler
 {
     /**
-     * @var EntityManagerInterface
+     * @var bool
      */
-    protected $em;
+    protected $hasChanges = false;
 
     /**
-     * @var string
+     * @var DoctrineHelper
      */
-    protected $relationClass;
+    protected $doctrineHelper;
 
     /**
-     * @param array $submitted
+     * @var PropertyAccessor
+     */
+    protected $propertyAccessor;
+
+    /**
+     * @param DoctrineHelper $doctrineHelper
+     * @param PropertyAccessor $propertyAccessor
+     */
+    public function __construct(DoctrineHelper $doctrineHelper, PropertyAccessor $propertyAccessor)
+    {
+        $this->doctrineHelper = $doctrineHelper;
+        $this->propertyAccessor = $propertyAccessor;
+    }
+
+    /**
+     * @param array|BasePriceListRelation[] $submitted
      * @param array|BasePriceListRelation[] $existing
      * @param object $targetEntity
      * @param Website $website
@@ -37,103 +47,87 @@ class PriceListWithPriorityCollectionHandler
      */
     public function handleChanges(array $submitted, array $existing, $targetEntity, Website $website)
     {
-        $hasChanges = false;
-        foreach ($submitted as $submittedItem) {
-            $priceList = $submittedItem[PriceListSelectWithPriorityType::PRICE_LIST_FIELD];
-            $priority = $submittedItem[PriceListSelectWithPriorityType::PRIORITY_FIELD];
-            $mergeAllowed = $submittedItem[PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD];
-
-            if (!$priceList instanceof PriceList) {
-                continue;
-            }
-
-            $existingItem = $this->findExistingItemByPriceList($priceList, $existing);
-            if ($existingItem) {
-                if ($existingItem->getPriority() !== $priority
-                    || $existingItem->isMergeAllowed() !== $mergeAllowed
-                ) {
-                    $existingItem->setPriority($priority);
-                    $existingItem->setMergeAllowed($mergeAllowed);
-                    $hasChanges = true;
-                }
-            } else {
-                $relation = $this->createRelation($targetEntity);
-                $relation->setWebsite($website)
-                    ->setPriority($priority)
-                    ->setMergeAllowed($mergeAllowed)
-                    ->setPriceList($priceList);
-                $this->em->persist($relation);
-                $hasChanges = true;
-            }
-
+        $this->removeDeleted($existing, $submitted);
+        $this->persistNew($existing, $submitted, $website, $targetEntity);
+        if (!$this->hasChanges && 0 !== count($existing)) {
+            $this->hasChanges = $this->checkCollectionUpdates($existing);
         }
 
-        return $hasChanges;
+        return $this->hasChanges;
     }
 
     /**
-     * @param $targetEntity
-     * @param Website $website
-     * @return BasePriceListRelation
+     * @param array $existing
+     * @return bool
      */
-    protected function createRelation($targetEntity, Website $website = null)
+    protected function checkCollectionUpdates(array $existing)
     {
-        if ($targetEntity instanceof Account) {
-            $relation = new PriceListToAccount();
-            $relation->setAccount($targetEntity);
-            return $relation;
+        $manager = $this->doctrineHelper->getEntityManager(ClassUtils::getClass(current($existing)));
+        $unitOfWork = $manager->getUnitOfWork();
+        $unitOfWork->computeChangeSets();
+
+        foreach ($existing as $relation) {
+            if ($unitOfWork->isScheduledForUpdate($relation)) {
+                return true;
+            }
         }
 
-        if ($targetEntity instanceof AccountGroup) {
-            $relation = new PriceListToAccountGroup();
-            $relation->setAccountGroup($targetEntity);
-            return $relation;
-        }
-
-        if ($targetEntity instanceof Website) {
-            $relation = new PriceListToWebsite();
-            return $relation;
-        }
-
-        return null;
+        return false;
     }
 
     /**
-     * @param PriceList $priceList
      * @param array|BasePriceListRelation[] $existing
-     * @return BasePriceListRelation
+     * @param array|BasePriceListRelation[] $submitted
      */
-    protected function findExistingItemByPriceList(PriceList $priceList, array $existing)
+    protected function removeDeleted(array $existing, array $submitted)
     {
-        foreach ($existing as $existingItem) {
-            if ($existingItem->getPriceList() === $priceList) {
-                return $existingItem;
+        if (count($existing) === 0) {
+            return;
+        }
+
+        $manager = $this->doctrineHelper->getEntityManager(current($existing));
+        foreach ($existing as $relation) {
+            if (!in_array($relation, $submitted)) {
+                $manager->remove($relation);
+                $this->hasChanges = true;
             }
         }
-
-        return null;
     }
 
     /**
-     * @param FormInterface $priceListsByWebsite
-     * @return array
+     * @param BasePriceListRelation $relation
+     * @param object|mixed $targetEntity
      */
-    protected function getWebsiteSubmittedPriceLists($priceListsByWebsite)
+    protected function setTargetEntity(BasePriceListRelation $relation, $targetEntity)
     {
-        $submittedPriceLists = [];
+        $manager = $this->doctrineHelper->getEntityManager($relation);
+        $meta = $manager->getClassMetadata(ClassUtils::getClass($relation));
+        $associations = $meta->getAssociationsByTargetClass(ClassUtils::getClass($targetEntity));
+        foreach ($associations as $association) {
+            $this->propertyAccessor->setValue($relation, $association['fieldName'], $targetEntity);
+        }
+    }
 
-        foreach ($priceListsByWebsite->get(PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD)->getData() as $item) {
-            $submittedPriceLists[] = $item[PriceListSelectWithPriorityType::PRICE_LIST_FIELD];
+    /**
+     * @param array|BasePriceListRelation[] $existing
+     * @param array|BasePriceListRelation[] $submitted
+     * @param Website $website
+     * @param $targetEntity
+     */
+    protected function persistNew(array $existing, array $submitted, Website $website, $targetEntity)
+    {
+        if (count($submitted) === 0) {
+            return;
         }
 
-        return $submittedPriceLists;
-    }
-
-    /**
-     * @return string
-     */
-    protected function getRelationClass()
-    {
-        return $this->relationClass;
+        $manager = $this->doctrineHelper->getEntityManager(current($submitted));
+        foreach ($submitted as $relation) {
+            if (!in_array($relation, $existing)) {
+                $this->setTargetEntity($relation, $targetEntity);
+                $relation->setWebsite($website);
+                $manager->persist($relation);
+                $this->hasChanges = true;
+            }
+        }
     }
 }

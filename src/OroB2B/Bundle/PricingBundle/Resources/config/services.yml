@@ -445,11 +445,15 @@ services:
 
     orob2b_pricing.price_list_with_priority_collection.handler:
         class: OroB2B\Bundle\PricingBundle\Form\PriceListWithPriorityCollectionHandler
+        arguments:
+            - @oro_entity.doctrine_helper
+            - @property_accessor
 
     orob2b_pricing.entity_listener.website:
         class: OroB2B\Bundle\PricingBundle\EventListener\WebsiteListener
         arguments:
             - @orob2b_pricing.price_list_with_priority_collection.handler
             - @oro_api.doctrine_helper
+            - @orob2b_pricing.price_list_change_trigger_handler
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.orob2b_website_type, method: beforeFlush }
