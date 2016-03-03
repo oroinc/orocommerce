@@ -9,7 +9,7 @@ use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 class LoadRequestStatusData extends AbstractFixture
 {
     const NAME_NOT_DELETED = 'not_deleted';
-    const NAME_DELETED = 'deleted';
+    const NAME_DELETED = 'is_deleted';
     const NAME_IN_PROGRESS = 'in_progress';
     const NAME_CLOSED = 'closed';
 
