@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Provider;
+namespace OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -10,12 +10,16 @@ use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use OroB2B\Bundle\PricingBundle\Entity\QuantityAwareInterface;
-use OroB2B\Bundle\PricingBundle\Model\LineItemsAwareInterface;
-use OroB2B\Bundle\PricingBundle\Model\Subtotal;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
-class LineItemsSubtotalProvider
+class LineItemSubtotalProvider implements SubtotalProviderInterface
 {
+    const TYPE = 'subtotal';
+    const NAME = 'orob2b_pricing.subtotals';
+
     /**
      * @var TranslatorInterface
      */
@@ -37,17 +41,33 @@ class LineItemsSubtotalProvider
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return self::NAME;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isSupported($entity)
+    {
+        return $entity instanceof LineItemsAwareInterface;
+    }
+
+    /**
      * Get line items subtotal
      *
      * @param LineItemsAwareInterface $entity
      *
      * @return Subtotal
      */
-    public function getSubtotal(LineItemsAwareInterface $entity)
+    public function getSubtotal($entity)
     {
         $subtotalAmount = 0.0;
         $subtotal = new Subtotal();
-        $subtotal->setLabel($this->translator->trans('orob2b.pricing.lineitem.subtotal.label'));
+        $subtotal->setLabel($this->translator->trans('orob2b.pricing.subtotals.subtotal.label'));
 
         $baseCurrency = $this->getBaseCurrency($entity);
         foreach ($entity->getLineItems() as $lineItem) {

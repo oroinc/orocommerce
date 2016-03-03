@@ -17,10 +17,6 @@ parameters:
     orob2b_shopping_list.action.datagrid.mass_action_provider.class: OroB2B\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction\AddLineItemMassActionProvider
     orob2b_shopping_list.layout.block.type.shopping_list_selector.class: OroB2B\Bundle\ShoppingListBundle\Layout\Block\Type\ShoppingListSelectorType
 
-    orob2b_shopping_list.subtotal_processor.subtotal_provider_registry.class: OroB2B\Bundle\ShoppingListBundle\SubtotalProcessor\SubtotalProviderRegistry
-    orob2b_shopping_list.subtotal_processor.total_processor_provider.class: OroB2B\Bundle\ShoppingListBundle\SubtotalProcessor\TotalProcessorProvider
-    orob2b_shopping_list.subtotal_processor.provider.subtotal_line_item.class: OroB2B\Bundle\ShoppingListBundle\SubtotalProcessor\Provider\SubtotalLineItemProvider
-
 services:
     orob2b_shopping_list.validator.line_item:
         class: %orob2b_shopping_list.validator.line_item.class%
@@ -153,21 +149,3 @@ services:
         class: %orob2b_shopping_list.layout.block.type.shopping_list_selector.class%
         tags:
              - { name: layout.block_type, alias: shopping_list_selector }
-
-    orob2b_shopping_list.subtotal_processor.subtotal_provider_registry:
-        class: %orob2b_shopping_list.subtotal_processor.subtotal_provider_registry.class%
-
-    orob2b_shopping_list.subtotal_processor.total_processor_provider:
-        class: %orob2b_shopping_list.subtotal_processor.total_processor_provider.class%
-        arguments:
-            - @orob2b_shopping_list.subtotal_processor.subtotal_provider_registry
-            - @translator
-            - @orob2b_pricing.rounding.price_rounding_service
-
-    orob2b_shopping_list.subtotal_processor.provider.subtotal_line_item:
-        class: %orob2b_shopping_list.subtotal_processor.provider.subtotal_line_item.class%
-        arguments:
-            - @translator
-            - @orob2b_pricing.rounding.price_rounding_service
-        tags:
-            - { name: orob2b_shopping_list.subtotal_provider, priority: 0 }

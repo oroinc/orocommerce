@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Model;
 
-class LineItemsSubtotal
+class Subtotal
 {
     const SUBTOTAL_TYPE = 'subtotal';
 

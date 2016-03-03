@@ -13,6 +13,7 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
 
 /**
@@ -48,7 +49,7 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
  * )
  * @ORM\HasLifecycleCallbacks()
  */
-class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterface
+class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterface, LineItemsAwareInterface
 {
     /**
      * @var int
