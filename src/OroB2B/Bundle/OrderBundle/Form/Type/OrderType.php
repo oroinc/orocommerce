@@ -119,7 +119,8 @@ class OrderType extends AbstractType
                     'error_bubbling' => false,
                     'required' => false,
                     'label' => 'orob2b.order.shipping_cost.label',
-                    'validation_groups' => ['Optional']
+                    'validation_groups' => ['Optional'],
+                    'currencies_list' => [$order->getCurrency()]
                 ]
             );
 
