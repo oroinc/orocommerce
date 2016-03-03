@@ -4,10 +4,10 @@ namespace OroB2B\Bundle\SaleBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
