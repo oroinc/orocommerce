@@ -127,7 +127,11 @@ class OrderAddressTypeTest extends AbstractAddressTypeTest
                 )
             );
 
-        $formOptions =  ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'object' => new Order()];
+        $formOptions = [
+            'addressType' => AddressTypeEntity::TYPE_SHIPPING,
+            'order' => new Order(),
+            'isEditEnabled' => true,
+        ];
 
         $this->checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors, $formOptions);
     }
@@ -275,7 +279,7 @@ class OrderAddressTypeTest extends AbstractAddressTypeTest
                 )
             );
 
-        $formOptions =  ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'object' => new Order()];
+        $formOptions =  ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'order' => new Order(), 'isEditEnabled' => true,];
 
         $this->checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors, $formOptions);
     }
@@ -338,7 +342,7 @@ class OrderAddressTypeTest extends AbstractAddressTypeTest
         $form = $this->factory->create(
             $this->formType,
             new OrderAddress(),
-            ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'object' => new Order()]
+            ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'order' => new Order(), 'isEditEnabled' => true]
         );
 
         $this->formType->finishView($view, $form, ['addressType' => AddressTypeEntity::TYPE_SHIPPING]);

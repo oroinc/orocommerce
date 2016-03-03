@@ -121,6 +121,7 @@ class OrderType extends AbstractType
                         'object' => $options['data'],
                         'required' => false,
                         'addressType' => AddressType::TYPE_BILLING,
+                        'isEditEnabled' => true,
                     ]
                 );
         }
@@ -135,7 +136,7 @@ class OrderType extends AbstractType
                         'object' => $options['data'],
                         'required' => false,
                         'addressType' => AddressType::TYPE_SHIPPING,
-                        'application' => OrderAddressType::APPLICATION_BACKEND
+                        'isEditEnabled' => true,
                     ]
                 );
         }
