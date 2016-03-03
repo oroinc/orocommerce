@@ -91,13 +91,16 @@
         {% endset %}
 
         {% set orderTotals %}
-            {% for item in totals.subtotals %}
-                <dt>{{ item.label }}</dt>
-                <dd>{{ item.amount|oro_format_currency({'currency': item.currency}) }}</dd>
-            {% endfor %}
-
-            <dt>{{ totals.total.label }}</dt>
-            <dd>{{ totals.total.amount|oro_format_currency({'currency': totals.total.currency}) }}</dd>
+            <div class="widget-content">
+                <div class="row-fluid form-horizontal">
+                    <div class="responsive-block">
+                        {% for item in totals.subtotals %}
+                            {{ UI.renderProperty(item.label, item.amount|oro_format_currency({'currency': item.currency})) }}
+                        {% endfor %}
+                        {{ UI.renderProperty(totals.total.label, totals.total.amount|oro_format_currency({'currency': totals.total.currency})) }}
+                    </div>
+                </div>
+            </div>
         {% endset %}
 
         {% set dataBlocks = dataBlocks|merge([{
