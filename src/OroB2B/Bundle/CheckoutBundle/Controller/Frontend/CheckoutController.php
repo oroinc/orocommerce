@@ -57,8 +57,7 @@ class CheckoutController extends Controller
 
         return [
             'page' => $page,
-            'data' =>
-                ['checkout' => $checkout, 'page' => $page]
+            'data' => ['checkout' => $checkout, 'page' => $page]
         ];
     }
 }
