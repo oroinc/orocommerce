@@ -1,0 +1,10 @@
+layout:
+    actions:
+        - @setBlockTheme:
+            themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/order_review.html.twig'
+        - @add:
+            id: checkout_order_review
+            parentId: checkout_information
+            blockType: block
+    conditions:
+        @eq: [$context.page, 5]
