@@ -241,6 +241,20 @@ class Order extends ExtendOrder implements
     protected $subtotal;
 
     /**
+     * @var float
+     *
+     * @ORM\Column(name="total", type="money", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $total;
+
+    /**
      * @var PaymentTerm
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm")
@@ -619,6 +633,30 @@ class Order extends ExtendOrder implements
     public function getSubtotal()
     {
         return $this->subtotal;
+    }
+
+    /**
+     * Set total
+     *
+     * @param float $total
+     *
+     * @return Order
+     */
+    public function setTotal($total)
+    {
+        $this->total = $total;
+
+        return $this;
+    }
+
+    /**
+     * Get total
+     *
+     * @return float
+     */
+    public function getTotal()
+    {
+        return $this->total;
     }
 
     /**
