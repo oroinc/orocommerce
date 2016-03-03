@@ -6,7 +6,7 @@ define(function(require) {
 
     InputWidgetManager.removeWidget('uniform-select');
     InputWidgetManager.addWidget('chosen', {
-        tagName: 'SELECT',
+        selector: 'select',
         Widget: ChosenInputWidget
     });
 });
