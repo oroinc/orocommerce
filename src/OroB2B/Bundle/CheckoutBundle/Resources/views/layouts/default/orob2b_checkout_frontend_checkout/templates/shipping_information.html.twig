@@ -1,0 +1,50 @@
+{% block _checkout_shipping_information_widget %}
+    <div class="checkout__head">
+        <h2 class="checkout__title">
+            <span class="badge badge_md badge_circle badge_orange">2</span>
+            Shipping Information
+        </h2>
+    </div>
+    <div class="checkout__body">
+        <form action="#" class="checkout__form">
+            <fieldset class="checkout__form__row">
+                <div class="checkout__form__col form__col_x6">
+                    <label for="billingAddress" class="checkout__form__label">Select a Shipping Address form your
+                        Account<sup class="red">*</sup></label>
+                    <div class="checkout__form__select">
+                        <select data-chosen-selectbox="" class="input input_md" name="billingAddress"
+                                id="billingAddress">
+                            <option value="0">Robin Williams, 1234 Fake St., #276, San Francisco, CA 94109</option>
+                            <option value="0">Jack Daniels, 1234 Fake St., #276, San Francisco, CA 94109</option>
+                            <option value="0">John Doe, 1234 Fake St., #276, San Francisco, CA 94109</option>
+                        </select>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="checkout__form__row">
+                <div class="checkout__form__col">
+                    <label for="useBillingAddress" class="checkbox_custom checkbox_custom_blue checked"
+                           data-checkbox="">
+                        <input type="checkbox" name="useBillingAddress" id="useBillingAddress" checked="checked">
+                        <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
+                        <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
+                        <span class="checkbox_custom__text fs13">Use your billing address</span>
+                    </label>
+                </div>
+            </fieldset>
+
+            <fieldset class="checkout__form__row">
+                <div class="create-account__form__req-text"><sup>*</sup>Required Field</div>
+                <div class="create-account__form__col form__col_x12">
+                    <button type="submit" class="btn btn_orange btn_lg checkout__form__submit">
+                        Continue<i class="icon-right-open-mini va-m_md"></i>
+                    </button>
+                </div>
+            </fieldset>
+            <div class="checkout__form__back">
+                <a href="#"><i class="icon-left-open-mini"></i>Back</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,11 @@
+layout:
+    actions:
+        - @setBlockTheme:
+            themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/billing_information.html.twig'
+        - @add:
+            id: checkout_billing_information
+            parentId: checkout_information
+            blockType: block
+
+    conditions:
+        @eq: [$context.page, 1]

@@ -25,3 +25,9 @@ orob2b:
             entity_label: Checkout Source
             entity_plural_label: Checkout Sources
             id.label: Id
+
+        billing_information: Billing Information
+        shipping_information: Shipping Information
+        shipping_method: Shipping Method
+        payment: Payment
+        order_review: Order Review
