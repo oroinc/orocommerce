@@ -308,6 +308,7 @@ datagrid:
                 type:          twig
                 frontend_type: html
                 template:      OroB2BOrderBundle:Order:Datagrid/subtotal.html.twig
+                renderable:    false
             total:
                 label:         orob2b.order.total.label
                 type:          twig
@@ -334,7 +335,6 @@ datagrid:
                     data_name: order1.identifier
                 subtotal:
                     data_name: order1.subtotal
-                    renderable:    false
                 total:
                     data_name: order1.total
                 lineItemsCount:
