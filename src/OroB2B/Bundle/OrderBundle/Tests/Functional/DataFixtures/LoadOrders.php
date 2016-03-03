@@ -22,6 +22,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
     const MY_ORDER = 'my_order';
     const ACCOUNT_USER = 'grzegorz.brzeczyszczykiewicz@example.com';
     const SUBTOTAL = '789';
+    const TOTAL = '1234';
 
     /**
      * @var array
@@ -34,6 +35,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
             'customerNotes' => 'Test account user notes',
             'currency' => 'USD',
             'subtotal' => self::SUBTOTAL,
+            'total' => self::TOTAL,
             'paymentTerm' => LoadPaymentTermData::PAYMENT_TERM_NET_10,
         ],
         self::MY_ORDER => [
@@ -43,6 +45,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
             'customerNotes' => 'Test account user notes',
             'currency' => 'EUR',
             'subtotal' => '1500',
+            'total' => '1700',
             'paymentTerm' => LoadPaymentTermData::PAYMENT_TERM_NET_10,
         ],
     ];
@@ -117,6 +120,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
             ->setCurrency($orderData['currency'])
             ->setPoNumber($orderData['poNumber'])
             ->setSubtotal($orderData['subtotal'])
+            ->setTotal($orderData['total'])
             ->setAccount($accountUser->getAccount())
             ->setWebsite($website)
             ->setAccountUser($accountUser);
