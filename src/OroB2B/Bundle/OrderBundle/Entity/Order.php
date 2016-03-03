@@ -312,6 +312,20 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
     protected $lineItems;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="source_entity_class", type="string", length=255)
+     */
+    protected $sourceEntityClass;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="source_entity_id", type="integer")
+     */
+    protected $sourceEntityId;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -762,5 +776,53 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
     public function getWebsite()
     {
         return $this->website;
+    }
+
+    /**
+     * Get Source Entity Class
+     *
+     * @return string
+     */
+    public function getSourceEntityClass()
+    {
+        return $this->sourceEntityClass;
+    }
+
+    /**
+     * Set Source Entity Class
+     *
+     * @param string $sourceEntityClass
+     *
+     * @return $this
+     */
+    public function setSourceEntityClass($sourceEntityClass)
+    {
+        $this->sourceEntityClass = $sourceEntityClass;
+
+        return $this;
+    }
+
+    /**
+     * Get Source Entity Id
+     *
+     * @return string
+     */
+    public function getSourceEntityId()
+    {
+        return $this->sourceEntityId;
+    }
+
+    /**
+     * Set Source Entity Id
+     *
+     * @param integer $sourceEntityId
+     *
+     * @return $this
+     */
+    public function setSourceEntityId($sourceEntityId)
+    {
+        $this->sourceEntityId = $sourceEntityId;
+
+        return $this;
     }
 }

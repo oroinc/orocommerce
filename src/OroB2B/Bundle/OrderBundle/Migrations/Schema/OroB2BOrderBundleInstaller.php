@@ -57,7 +57,7 @@ class OroB2BOrderBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_3';
     }
 
     /**
@@ -105,6 +105,8 @@ class OroB2BOrderBundleInstaller implements
         $table->addColumn('payment_term_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
+        $table->addColumn('source_entity_class', 'string', ['length' => 255]);
+        $table->addColumn('source_entity_id', 'integer', []);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['created_at'], 'orob2b_order_created_at_index', []);
         $table->addUniqueIndex(['identifier'], 'uniq_orob2b_order_identifier');

@@ -38,7 +38,9 @@ class OrderTest extends \PHPUnit_Framework_TestCase
             ['paymentTerm', new PaymentTerm()],
             ['account', new Account()],
             ['accountUser', new AccountUser()],
-            ['website', new Website()]
+            ['website', new Website()],
+            ['sourceEntityClass', 'EntityClass'],
+            ['sourceEntityId', 1]
         ];
 
         $order = new Order();
