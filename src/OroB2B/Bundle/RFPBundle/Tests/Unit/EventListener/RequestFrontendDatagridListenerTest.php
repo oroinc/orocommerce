@@ -85,6 +85,11 @@ class RequestFrontendDatagridListenerTest extends \PHPUnit_Framework_TestCase
                         'statusName' => RequestStatus::CLOSED,
                         'createdAt' => $date,
                     ],
+                    [
+                        'id' => 4,
+                        'statusName' => RequestStatus::DELETED,
+                        'createdAt' => $date,
+                    ],
                 ],
                 'expectedResults' => [
                     [
@@ -102,6 +107,12 @@ class RequestFrontendDatagridListenerTest extends \PHPUnit_Framework_TestCase
                     [
                         'id' => 3,
                         'statusName' => RequestStatus::CLOSED,
+                        'isDraft' => false,
+                        'createdAt' => $date,
+                    ],
+                    [
+                        'id' => 4,
+                        'statusName' => RequestStatus::DELETED,
                         'isDraft' => false,
                         'createdAt' => $date,
                     ],
