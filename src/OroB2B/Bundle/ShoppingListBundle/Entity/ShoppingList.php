@@ -159,6 +159,48 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     protected $current = false;
 
     /**
+     * @var float
+     *
+     * @ORM\Column(name="subtotal", type="money", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $subtotal;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="total", type="money", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $total;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="currency", type="string", length=3, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $currency;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
@@ -398,5 +440,77 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
         $this->accountUser = $accountUser;
 
         return $this;
+    }
+
+    /**
+     * Set currency
+     *
+     * @param string $currency
+     *
+     * @return $this
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
+
+        return $this;
+    }
+
+    /**
+     * Get currency
+     *
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * Set subtotal
+     *
+     * @param float $subtotal
+     *
+     * @return $this
+     */
+    public function setSubtotal($subtotal)
+    {
+        $this->subtotal = $subtotal;
+
+        return $this;
+    }
+
+    /**
+     * Get subtotal
+     *
+     * @return float
+     */
+    public function getSubtotal()
+    {
+        return $this->subtotal;
+    }
+
+    /**
+     * Set total
+     *
+     * @param float $total
+     *
+     * @return $this
+     */
+    public function setTotal($total)
+    {
+        $this->total = $total;
+
+        return $this;
+    }
+
+    /**
+     * Get total
+     *
+     * @return float
+     */
+    public function getTotal()
+    {
+        return $this->total;
     }
 }

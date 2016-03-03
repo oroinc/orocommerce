@@ -15,6 +15,9 @@ orob2b:
         current.label: Current
         default.label: Default
         items.label: 'Item|Items'
+        subtotal.label: Subtotal
+        total.label: Total
+        currency.label: Currency
 
         btn:
             create_order: 'Create Order'
