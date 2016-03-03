@@ -84,4 +84,13 @@ class RequestStatusTest extends EntityTestCase
 
         $this->assertTrue($requestStatus->isDraft());
     }
+
+
+    public function testIsDeleted()
+    {
+        $requestStatus = new RequestStatus();
+        $requestStatus->setName(RequestStatus::DELETED);
+
+        $this->assertTrue($requestStatus->isDeleted());
+    }
 }
