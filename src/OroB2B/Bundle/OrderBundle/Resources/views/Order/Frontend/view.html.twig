@@ -100,6 +100,20 @@
             'subblocks': [{'data' : [lineItems]}]
         }]) %}
 
+        {% set shippingInformation %}
+            {% if entity.shippingCost is not null %}
+                {{ UI.renderHtmlProperty('orob2b.order.shipping_cost.label'|trans,
+                entity.shippingCost.value|oro_format_currency({'currency': entity.shippingCost.currency})) }}
+            {% else %}
+                {{ UI.renderHtmlProperty('orob2b.order.shipping_cost.label'|trans, 'N/A'|trans) }}
+            {% endif %}
+        {% endset %}
+
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': 'orob2b.order.sections.shipping_information'|trans,
+            'subblocks': [{'data' : [shippingInformation]}]
+        }]) %}
+
         {% set orderTotals %}
             <div class="widget-content">
                 <div class="row-fluid form-horizontal">
