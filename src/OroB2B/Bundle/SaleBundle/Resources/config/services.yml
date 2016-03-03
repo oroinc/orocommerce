@@ -46,6 +46,7 @@ services:
         arguments:
             - @orob2b_pricing.provider.combined_product_price
             - @orob2b_pricing.model.price_list_tree_handler
+
     orob2b_sale.validator.quote_product:
         class: %orob2b_sale.validator.quote_product.class%
         tags:
@@ -75,7 +76,8 @@ services:
         class: %orob2b_sale.service.quote_to_order_converter.class%
         arguments:
             - @orob2b_order.model.order_currency_handler
-            - @orob2b_order.provider.subtotals
+            - @orob2b_order.provider.subtotal_line_item
+            - @orob2b_order.provider.total
             - @doctrine
 
     orob2b_sale.service.quote_product_offer_matcher:

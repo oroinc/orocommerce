@@ -48,7 +48,7 @@
     {% set id = 'frontend-order-edit' %}
 
     {% set subtotals %}
-        {% include 'OroB2BPricingBundle:Subtotals:subtotals.html.twig' with {
+        {% include 'OroB2BPricingBundle:Totals:totals.html.twig' with {
             options: {
                 url: path('orob2b_order_frontend_subtotals', {id: entity.id}),
                 selectors: {form: '#' ~ form.vars.id}
