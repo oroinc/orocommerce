@@ -57,7 +57,7 @@ class OroB2BCheckoutBundleInstaller implements Installation
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('workflow_step_id', 'integer', ['notnull' => false]);
         $table->addColumn('workflow_item_id', 'integer', ['notnull' => false]);
-        $table->addColumn('source_id', 'integer', ['notnull' => false]);
+        $table->addColumn('source_id', 'integer', ['notnull' => true]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);

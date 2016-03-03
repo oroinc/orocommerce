@@ -6,6 +6,5 @@ layout:
             id: checkout_order_review
             parentId: checkout_information
             blockType: block
-
     conditions:
         @eq: [$context.page, 5]
