@@ -1,9 +1,22 @@
+{% block orob2b_rfp_request_widget %}
+    <div class="rfp-request-widget" data-page-component-module="orob2baccount/js/app/components/account-selection-component">
+        {{ form(form) }}
+    </div>
+{% endblock %}
+
 {% block orob2b_rfp_frontend_request_product_collection_widget %}
     {{ block('orob2b_rfp_lineitem_collection_widget') }}
 {% endblock %}
 
 {% block orob2b_rfp_request_product_collection_widget %}
+<div class="rfp-lineitems"
+     data-page-component-module="oroui/js/app/components/view-component"
+     data-page-component-options="{{ {
+         view: 'orob2brfp/js/app/views/line-items-view'
+     }|json_encode }}"
+     data-layout="separate">
     {{ block('orob2b_rfp_lineitem_collection_widget') }}
+</div>
 {% endblock %}
 
 {% block orob2b_rfp_lineitem_collection_widget %}
