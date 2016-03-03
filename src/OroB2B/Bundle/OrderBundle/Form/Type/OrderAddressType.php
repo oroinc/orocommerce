@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\OrderBundle\Form\Type;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -16,9 +15,9 @@ use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Model\OrderAddressManager;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 
@@ -69,10 +68,10 @@ class OrderAddressType extends AbstractType
     {
         $type = $options['addressType'];
         $order = $options['object'];
-        $application =  $options['application'];
+        $isEditEnabled = $options['isEditEnabled'];
 
         $isManualEditGranted = $this->orderAddressSecurityProvider->isManualEditGranted($type);
-        $this->initAccountAddressField($builder, $type, $order, $application, $isManualEditGranted);
+        $this->initAccountAddressField($builder, $type, $order, $isManualEditGranted, $isEditEnabled);
 
         $builder->addEventListener(
             FormEvents::SUBMIT,
@@ -136,8 +135,9 @@ class OrderAddressType extends AbstractType
     {
         $resolver
             ->setRequired(['object', 'addressType'])
-            ->setDefaults(['data_class' => $this->dataClass,
-                'application' => self::APPLICATION_BACKEND
+            ->setDefaults([
+                'data_class' => $this->dataClass,
+                'isEditEnabled' => false,
             ])
             ->setAllowedValues('addressType', [AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING])
             ->setAllowedTypes('object', 'OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface');
@@ -189,20 +189,20 @@ class OrderAddressType extends AbstractType
     }
 
     /**
-     * @param AccountOwnerAwareInterface $object
+     * @param AccountOwnerAwareInterface $entity
      * @param string $type
      * @param array $addresses
      *
      * @return null|string
      */
-    protected function getDefaultAddressKey(AccountOwnerAwareInterface $object, $type, array $addresses)
+    protected function getDefaultAddressKey(AccountOwnerAwareInterface $entity, $type, array $addresses)
     {
         if (!$addresses) {
             return null;
         }
 
         $addresses = call_user_func_array('array_merge', array_values($addresses));
-        $accountUser = $object->getAccountUser();
+        $accountUser = $entity->getAccountUser();
         $addressKey = null;
 
         /** @var AbstractDefaultTypedAddress $address */
@@ -242,42 +242,23 @@ class OrderAddressType extends AbstractType
     }
 
     /**
-     * @param Order $order
-     * @param string $type
-     *
-     * @return bool
-     */
-    protected function hasAccessToEditAddress($order, $type, $application)
-    {
-        $isFromExternalSource = true;
-
-        if ($application === self::APPLICATION_FRONTEND) {
-            if ($type === AddressType::TYPE_SHIPPING && $order->getShippingAddress()) {
-                $isFromExternalSource = !$order->getShippingAddress()->isFromExternalSource();
-            }
-        }
-
-        return $isFromExternalSource;
-    }
-
-    /**
      * @param FormBuilderInterface $builder
      * @param string $type - address type
-     * @param Order $order
-     * @param string $application - values: frontend, backend
+     * @param AccountOwnerAwareInterface $entity
      * @param bool $isManualEditGranted
+     * @param bool $isEditEnabled
      *
      * @return bool
      */
     protected function initAccountAddressField(
         FormBuilderInterface $builder,
         $type,
-        $order,
-        $application,
-        $isManualEditGranted
+        AccountOwnerAwareInterface $entity,
+        $isManualEditGranted,
+        $isEditEnabled
     ) {
-        if ($this->hasAccessToEditAddress($order, $type, $application)) {
-            $addresses = $this->orderAddressManager->getGroupedAddresses($order, $type);
+        if ($isEditEnabled) {
+            $addresses = $this->orderAddressManager->getGroupedAddresses($entity, $type);
 
             $accountAddressOptions = [
                 'label' => false,
@@ -287,7 +268,7 @@ class OrderAddressType extends AbstractType
                 'configs' => ['placeholder' => 'orob2b.order.form.address.choose'],
                 'attr' => [
                     'data-addresses' => json_encode($this->getPlainData($addresses)),
-                    'data-default' => $this->getDefaultAddressKey($order, $type, $addresses),
+                    'data-default' => $this->getDefaultAddressKey($entity, $type, $addresses),
                 ],
             ];
 

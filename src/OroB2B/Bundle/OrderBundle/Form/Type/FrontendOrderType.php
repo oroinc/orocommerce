@@ -114,7 +114,7 @@ class FrontendOrderType extends AbstractType
                     'object' => $options['data'],
                     'required' => false,
                     'addressType' => AddressType::TYPE_SHIPPING,
-                    'application' => OrderAddressType::APPLICATION_FRONTEND
+                    'isEditEnabled' => true
                 ]
             );
         }
