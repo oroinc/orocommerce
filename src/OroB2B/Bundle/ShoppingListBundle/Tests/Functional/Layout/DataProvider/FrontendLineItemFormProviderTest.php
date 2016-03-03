@@ -35,16 +35,18 @@ class FrontendLineItemFormProviderTest extends WebTestCase
     /**
      * @dataProvider getDataDataProvider
      *
-     * @param Product|null $product
-     * @param AccountUser|null $accountUser
+     * @param true $isProduct
+     * @param bool $isAccountUser
      */
-    public function testGetData(Product $product = null, AccountUser $accountUser = null)
+    public function testGetData($isProduct, $isAccountUser)
     {
         $context = new LayoutContext();
-        if ($product) {
+        $product = null;
+        if ($isProduct) {
+            $product = new Product();
             $context->data()->set('product', null, $product);
         }
-        $this->setUpAccount($accountUser);
+        $this->setUpAccount($isAccountUser);
 
         $actual = $this->dataProvider->getData($context);
         $form = $actual->getForm();
@@ -52,7 +54,7 @@ class FrontendLineItemFormProviderTest extends WebTestCase
         $this->assertInstanceOf('\Oro\Bundle\LayoutBundle\Layout\Form\FormAccessorInterface', $actual);
         $this->assertSame($this->dataProvider->getForm($product), $form);
         $lineItem = $form->getData();
-        $this->assertLineItem($accountUser, $product, $lineItem);
+        $this->assertLineItem($isAccountUser, $product, $lineItem);
         $this->assertEquals(FrontendLineItemType::NAME, $actual->getForm()->getName());
     }
 
@@ -62,47 +64,35 @@ class FrontendLineItemFormProviderTest extends WebTestCase
     public function getDataDataProvider()
     {
         return [
-            [
-                'product' => new Product(),
-                'account' => $this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountUser'),
-            ],
-            [
-                'product' => new Product(),
-                'account' => null,
-            ],
-            [
-                'product' => null,
-                'account' => $this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountUser'),
-            ],
-            [
-                'product' => null,
-                'account' => null,
-            ],
+            ['isProduct' => true, 'isAccountUser' => true],
+            ['isProduct' => true, 'isAccountUser' => false],
+            ['isProduct' => false, 'isAccountUser' => true],
+            ['isProduct' => false, 'isAccountUser' => false],
         ];
     }
 
     /**
-     * @param AccountUser|null $accountUser
-     * @return AccountUser
+     * @param bool $isAccountUser
      */
-    protected function setUpAccount(AccountUser $accountUser = null)
+    protected function setUpAccount($isAccountUser)
     {
+        $accountUser = null;
+        if ($isAccountUser) {
+            $accountUser = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountUser');
+        }
         $this->securityFacade->expects($this->once())
             ->method('getLoggedUser')
             ->willReturn($accountUser);
     }
 
     /**
-     * @param AccountUser|null $accountUser
+     * @param bool $isAccountUser
      * @param Product|null $product
      * @param LineItem|null $lineItem
      */
-    protected function assertLineItem(
-        AccountUser $accountUser = null,
-        Product $product = null,
-        LineItem $lineItem = null
-    ) {
-        if ($accountUser) {
+    protected function assertLineItem($isAccountUser = false, Product $product = null, LineItem $lineItem = null)
+    {
+        if ($isAccountUser) {
             $this->assertInstanceOf('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem', $lineItem);
             $this->assertSame($product, $lineItem->getProduct());
             return;
