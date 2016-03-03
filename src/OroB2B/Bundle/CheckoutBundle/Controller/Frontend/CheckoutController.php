@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\CheckoutBundle\Controller\Frontend;
 
 use Doctrine\Common\Util\ClassUtils;
 
-use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormInterface;
@@ -14,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
+use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
@@ -53,9 +53,7 @@ class CheckoutController extends Controller
         if (!$checkout) {
             $checkout = new Checkout();
         }
-        $page = $request->query->get('page');
-        $page = $page ?: 1;
-
+        $page = $request->get('page', 1);
 
         return [
             'page' => $page,
