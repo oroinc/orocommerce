@@ -61,7 +61,7 @@ class TotalProcessorProvider
         $total = new Subtotal();
 
         $total->setType(self::TYPE);
-        $translation = sprintf('orob2b.order.subtotals.%s', $total->getType());
+        $translation = sprintf('orob2b.pricing.subtotals.%s.label', $total->getType());
         $total->setLabel($this->translator->trans($translation));
 
         $totalAmount = 0.0;

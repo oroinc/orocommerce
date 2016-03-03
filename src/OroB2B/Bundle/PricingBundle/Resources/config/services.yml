@@ -60,7 +60,6 @@ parameters:
     orob2b_pricing.event_listener.combined_price_list_queue.class: OroB2B\Bundle\PricingBundle\EventListener\CombinedPriceListQueueListener
     orob2b_pricing.event_subscriber.system_config.class: OroB2B\Bundle\PricingBundle\EventListener\PriceListSystemConfigSubscriber
 
-    orob2b_pricing.model.price_list_request_handler.abstract.class: OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler
     orob2b_pricing.model.price_list_request_handler.class: OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler
     orob2b_pricing.model.price_list_tree_handler.class: OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler
     orob2b_pricing.model.frontend_product_list_modifier.class: OroB2B\Bundle\PricingBundle\Model\FrontendProductListModifier
@@ -73,7 +72,7 @@ parameters:
 
     orob2b_pricing.subtotal_processor.subtotal_provider_registry.class: OroB2B\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry
     orob2b_pricing.subtotal_processor.total_processor_provider.class: OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider
-    orob2b_pricing.subtotal_processor.provider.subtotal_line_item.class: OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalLineItemProvider
+    orob2b_pricing.subtotal_processor.provider.subtotal_line_item.class: OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider
 
 services:
     orob2b_pricing.acl.voter.product_list:

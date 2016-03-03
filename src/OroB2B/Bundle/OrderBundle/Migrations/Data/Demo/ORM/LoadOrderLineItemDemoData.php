@@ -14,7 +14,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\OrderBundle\Model\Subtotal;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
@@ -127,8 +127,8 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
 
         fclose($handler);
 
-        $subtotalProvider = $this->container->get('orob2b_order.provider.subtotal_line_item');
-        $totalProvider = $this->container->get('orob2b_order.provider.total');
+        $subtotalProvider = $this->container->get('orob2b_pricing.subtotal_processor.provider.subtotal_line_item');
+        $totalProvider = $this->container->get('orob2b_pricing.subtotal_processor.total_processor_provider');
         foreach ($this->orders as $order) {
             /** @var Subtotal $subtotal */
             $subtotal = $subtotalProvider->getSubtotal($order);

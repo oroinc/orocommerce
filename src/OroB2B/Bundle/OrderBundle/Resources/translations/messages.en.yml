@@ -127,9 +127,6 @@ orob2b:
                 choose_or_create: Select an existing address or enter a new address below
                 manual: Enter address manually
 
-        subtotals:
-            subtotal: Subtotal
-            total: Total
         sales_orders.label: 'Sales Orders'
 
         navigation:

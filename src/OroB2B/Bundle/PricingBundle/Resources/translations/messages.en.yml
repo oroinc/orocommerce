@@ -123,7 +123,8 @@ orob2b.pricing:
         subtotal.label: 'Line items subtotal'
 
     subtotals:
-        subtotal.label: 'Line items subtotal'
+        subtotal.label: 'Subtotal'
+        total.label: 'Total'
 
 oro:
     importexport:

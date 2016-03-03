@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Model;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
@@ -18,9 +17,9 @@ use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
-use OroB2B\Bundle\OrderBundle\Model\Subtotal;
-use OroB2B\Bundle\OrderBundle\Provider\SubtotalLineItemProvider;
-use OroB2B\Bundle\OrderBundle\SubtotalProcessor\TotalProcessorProvider;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
@@ -46,7 +45,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|TotalProcessorProvider */
     protected $totalsProvider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|SubtotalLineItemProvider */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemSubtotalProvider */
     protected $subTotalLineItemProvider;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
@@ -69,12 +68,12 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             );
 
         $this->totalsProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\OrderBundle\SubtotalProcessor\TotalProcessorProvider')
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->subTotalLineItemProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\OrderBundle\Provider\SubtotalLineItemProvider')
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -331,7 +330,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
     protected function assertCalculateSubtotalsCalled($subtotalAmount)
     {
         $subtotal = new Subtotal();
-        $subtotal->setType(SubtotalLineItemProvider::TYPE)->setAmount($subtotalAmount);
+        $subtotal->setType(LineItemSubtotalProvider::TYPE)->setAmount($subtotalAmount);
 
         $this->subTotalLineItemProvider->expects($this->once())
             ->method('getSubtotal')
