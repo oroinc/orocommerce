@@ -24,18 +24,18 @@ class CheckoutController extends Controller
      * Create checkout form
      *
      * @Route(
-     *     "/{checkoutId}",
+     *     "/{id}",
      *     name="orob2b_checkout_frontend_checkout",
-     *     defaults={"checkoutId" = null},
-     *     requirements={"checkoutId"="\d+"}
+     *     defaults={"id" = null},
+     *     requirements={"id"="\d+"}
      * )
      * @ParamConverter(
-     *     "checkoutId",
+     *     "checkout",
      *     class="OroB2BCheckoutBundle:Checkout",
      *     isOptional="true",
-     *     options={"id" = "checkoutId"}
+     *     options={"id" = "id"}
      *     )
-     * @Layout(vars={"page", "page"})
+     * @Layout(vars={"page"})
      * @Acl(
      *      id="orob2b_checkout_frontend_checkout",
      *      type="entity",

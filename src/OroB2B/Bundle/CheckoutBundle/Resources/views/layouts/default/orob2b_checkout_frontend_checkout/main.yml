@@ -17,10 +17,17 @@ layout:
                 checkout_information:
                     blockType: container
                 checkout_order_summary:
+                    blockType: container
+                checkout_order_summary_title:
                     blockType: block
+                checkout_order_summary_table:
+                    blockType: block
+
             tree:
                 main:
                     checkout_content:
                         checkout_information: ~
-                        checkout_order_summary: ~
+                        checkout_order_summary:
+                            checkout_order_summary_title: ~
+                            checkout_order_summary_table: ~
                     checkout_sidebar: ~
