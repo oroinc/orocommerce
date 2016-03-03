@@ -21,7 +21,9 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
- * @todo consider to use OrderAddress or create new address for checkkout
+ * @todo consider to use OrderAddress or create new address for checkout
+ * @todo add disabled steps flags
+ * @todo add workflows relations
  * @todo add source document. Try to use associations
  * @see https://github.com/laboro/platform/blob/master/src/Oro/Bundle/EntityExtendBundle/Resources/doc/associations.md
  *
