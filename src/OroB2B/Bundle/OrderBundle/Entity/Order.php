@@ -314,14 +314,14 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
     /**
      * @var string
      *
-     * @ORM\Column(name="source_entity_class", type="string", length=255)
+     * @ORM\Column(name="source_entity_class", type="string", length=255, nullable=true)
      */
     protected $sourceEntityClass;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="source_entity_id", type="integer")
+     * @ORM\Column(name="source_entity_id", type="integer", nullable=true )
      */
     protected $sourceEntityId;
 

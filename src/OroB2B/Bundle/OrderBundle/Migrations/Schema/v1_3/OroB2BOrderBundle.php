@@ -15,7 +15,7 @@ class OroB2BOrderBundle implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_order');
-        $table->addColumn('source_entity_class', 'string', ['length' => 255]);
-        $table->addColumn('source_entity_id', 'integer', []);
+        $table->addColumn('source_entity_class', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('source_entity_id', 'integer', ['notnull' => false]);
     }
 }
