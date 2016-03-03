@@ -83,7 +83,9 @@ class QuoteToOrderConverter
         }
 
         $this->orderCurrencyHandler->setOrderCurrency($order);
-        $this->fillShippingCost($quote->getShippingEstimate(), $order);
+        if ($quote->getShippingEstimate() !== null) {
+            $this->fillShippingCost($quote->getShippingEstimate(), $order);
+        }
         $this->fillSubtotals($order);
 
         if ($needFlush) {
