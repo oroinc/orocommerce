@@ -334,7 +334,7 @@ require(['jquery', 'orob2bfrontend/default/js/app'], function(jQuery) {
                 }
 
                 function heroSliderInit() {
-                    var $hero = $('[data-hero-slider');
+                    var $hero = $('[data-hero-slider]');
 
                     if ($hero.length) {
                         $hero.slick({
@@ -563,7 +563,7 @@ require(['jquery', 'orob2bfrontend/default/js/app'], function(jQuery) {
                 }
 
                 function datepickerInit() {
-                    var $datepicker = $('[data-datepicker]');
+                    var $datepicker = $('.input_datepicker');
 
                     if ($datepicker.length) {
                         $datepicker.datepicker({
@@ -573,7 +573,7 @@ require(['jquery', 'orob2bfrontend/default/js/app'], function(jQuery) {
                 }
 
                 function datepickerSetDateBindingInit() {
-                    var $datepicker = $('[data-datepicker]');
+                    var $datepicker = $('.input_datepicker');
 
                     $datepicker.on('changeDate', function(event) {
                         $(this).prev().addClass('date-applied');

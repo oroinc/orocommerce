@@ -2,9 +2,36 @@ layout:
     actions:
         - @setBlockTheme:
             themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/order_review.html.twig'
-        - @add:
-            id: checkout_order_review
-            parentId: checkout_information
-            blockType: block
+        - @addTree:
+            items:
+                checkout_order_review:
+                    blockType: container
+                checkout_order_review_form:
+                    blockType: container
+                checkout_order_review_form_start:
+                    blockType: form_start
+                    options:
+                        form: { @value: $data.form }
+                        attr:
+                            class: checkout__form
+                checkout_order_review_form_fields:
+                    blockType: form
+                    options:
+                        form: { @value: $data.form }
+                checkout_order_review_form_end:
+                    blockType: form_end
+                    options:
+                        form: { @value: $data.form }
+                add_to_shopping_list_form_button:
+                    blockType: block
+            tree:
+                checkout_information:
+                    checkout_order_review:
+                        checkout_order_review_form:
+                            checkout_order_review_form_start: ~
+                            checkout_order_review_form_fields: ~
+                            add_to_shopping_list_form_button: ~
+                            checkout_order_review_form_end: ~
+
     conditions:
         @eq: [$context.page, 5]
