@@ -168,7 +168,7 @@ class Checkout extends ExtendCheckout implements
      * @var CheckoutSource
      *
      * @ORM\OneToOne(targetEntity="OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource", cascade={"persist"})
-     * @ORM\JoinColumn(name="source_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="source_id", referencedColumnName="id", nullable=false)
      */
     protected $source;
 
@@ -491,7 +491,7 @@ class Checkout extends ExtendCheckout implements
     }
 
     /**
-     * @return object
+     * @return object|null
      */
     public function getSourceEntity()
     {
@@ -514,7 +514,7 @@ class Checkout extends ExtendCheckout implements
      * @param CheckoutSource $source
      * @return Checkout
      */
-    public function setSource(CheckoutSource $source = null)
+    public function setSource(CheckoutSource $source)
     {
         $this->source = $source;
 
