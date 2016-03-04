@@ -58,6 +58,11 @@ class Taxable
     protected $result;
 
     /**
+     * @var string
+     */
+    protected $currency;
+
+    /**
      * @var \ArrayObject
      */
     protected $context;
@@ -289,6 +294,25 @@ class Taxable
     public function addContext($keyName, $value)
     {
         $this->context->offsetSet($keyName, $value);
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * @param string $currency
+     * @return Taxable
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
 
         return $this;
     }

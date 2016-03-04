@@ -52,7 +52,7 @@ class OrderAddress extends ExtendOrderAddress
     /**
      * @var bool
      *
-     * @ORM\Column(name="from_external_source", type="boolean")
+     * @ORM\Column(name="from_external_source", type="boolean", options={"default"=false})
      */
     protected $fromExternalSource = false;
 
