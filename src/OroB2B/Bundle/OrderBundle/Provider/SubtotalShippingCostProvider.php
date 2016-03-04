@@ -56,6 +56,9 @@ class SubtotalShippingCostProvider implements SubtotalProviderInterface
         $subtotalAmount = 0.0;
         if ($order->getShippingCost()) {
             $subtotalAmount = $order->getShippingCost()->getValue();
+            $subtotal->setVisible(true);
+        } else {
+            $subtotal->setVisible(false);
         }
         $subtotal->setAmount($this->rounding->round($subtotalAmount));
         $subtotal->setCurrency($order->getCurrency());

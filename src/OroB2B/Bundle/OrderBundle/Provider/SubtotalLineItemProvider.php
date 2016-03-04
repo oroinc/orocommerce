@@ -53,6 +53,7 @@ class SubtotalLineItemProvider implements SubtotalProviderInterface
         $subtotal->setType(self::TYPE);
         $translation = sprintf('orob2b.order.subtotals.%s', $subtotal->getType());
         $subtotal->setLabel($this->translator->trans($translation));
+        $subtotal->setVisible(true);
 
         $subtotalAmount = 0.0;
         foreach ($order->getLineItems() as $lineItem) {

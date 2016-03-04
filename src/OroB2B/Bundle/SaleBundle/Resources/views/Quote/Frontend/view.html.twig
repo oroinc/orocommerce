@@ -71,6 +71,15 @@
         </div>
     {% endset %}
 
+    {% set shippingInformation %}
+        {% if entity.shippingEstimate is not null %}
+            {{ UI.renderHtmlProperty('orob2b.sale.quote.shipping_estimate.label'|trans,
+            entity.shippingEstimate.value|oro_format_currency({'currency': entity.shippingEstimate.currency})) }}
+        {% else %}
+            {{ UI.renderHtmlProperty('orob2b.sale.quote.shipping_estimate.label'|trans, 'N/A'|trans) }}
+        {% endif %}
+    {% endset %}
+
     {% set id = 'frontend-quote-view' %}
 
     {% set dataBlocks = [{
@@ -85,6 +94,11 @@
         'subblocks': [{'data' : [quoteProducts]}]
         }]) %}
     {% endif %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'orob2b.sale.quote.sections.shipping_information'|trans,
+        'subblocks': [{'data' : [shippingInformation]}]
+    }]) %}
 
     {% set data = {'dataBlocks': dataBlocks} %}
     {{ UI.scrollData(id, data) }}
