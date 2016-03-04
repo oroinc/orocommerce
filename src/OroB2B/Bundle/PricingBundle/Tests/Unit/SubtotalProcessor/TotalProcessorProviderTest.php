@@ -14,7 +14,7 @@ use OroB2B\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
-class TotalProviderProviderTest extends \PHPUnit_Framework_TestCase
+class TotalProcessorProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|SubtotalProviderRegistry
@@ -70,7 +70,7 @@ class TotalProviderProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->translator->expects($this->never())
             ->method('trans')
-            ->with(sprintf('orob2b.order.subtotals.%s', TotalProcessorProvider::TYPE))
+            ->with(sprintf('orob2b.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
             ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
 
         $order = $this->prepareSubtotals();
@@ -91,7 +91,7 @@ class TotalProviderProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with(sprintf('orob2b.order.subtotals.%s', TotalProcessorProvider::TYPE))
+            ->with(sprintf('orob2b.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
             ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
 
         $order = $this->prepareSubtotals();
@@ -109,7 +109,7 @@ class TotalProviderProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->translator->expects($this->never())
             ->method('trans')
-            ->with(sprintf('orob2b.order.subtotals.%s', TotalProcessorProvider::TYPE))
+            ->with(sprintf('orob2b.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
             ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
 
         $order = $this->prepareSubtotals();
@@ -136,7 +136,7 @@ class TotalProviderProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->translator->expects($this->never())
             ->method('trans')
-            ->with(sprintf('orob2b.order.subtotals.%s', TotalProcessorProvider::TYPE))
+            ->with(sprintf('orob2b.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
             ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
 
         $order = $this->prepareSubtotals(2);
