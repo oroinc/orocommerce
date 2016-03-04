@@ -124,6 +124,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
                 ->setCurrency($row['currency'])
                 ->setPoNumber($row['poNumber'])
                 ->setSubtotal($row['subtotal'])
+                ->setTotal($row['total'])
                 ->setSourceEntityClass($row['sourceEntityClass']);
 
             if ($row['sourceEntityClass'] === 'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList') {
