@@ -46,8 +46,7 @@ class ProductImageType extends AbstractType
     }
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
+     * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -60,12 +59,15 @@ class ProductImageType extends AbstractType
                 [
                     'choices' => [$imageType => $this->defineLabelForImageType($imageType)],
                     'multiple' => $this->defineMultipleOptionForImageType($imageType),
-                    'expanded' => true,
+                    'expanded' => true
                 ]
             );
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -85,7 +87,7 @@ class ProductImageType extends AbstractType
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getName()
     {

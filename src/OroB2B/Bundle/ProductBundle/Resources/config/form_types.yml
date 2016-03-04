@@ -18,6 +18,7 @@ parameters:
     orob2b_product.form.type.quick_add_copy_paste.class: OroB2B\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType
     orob2b_product.form.type.quick_add_import_from_file.class: OroB2B\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType
     orob2b_product.form.type.product_image.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductImageType
+    orob2b_product.form.type.product_image_collection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductImageCollectionType
 
 services:
     # Product form types
@@ -141,4 +142,9 @@ services:
         arguments: [ @oro_layout.theme_manager, @request_stack ]
         tags:
             - { name: form.type, alias: 'orob2b_product_image' }
+
+    orob2b_product.form.type.product_image_collection:
+        class: %orob2b_product.form.type.product_image_collection.class%
+        tags:
+            - { name: form.type, alias: 'orob2b_product_image_collection' }
 
