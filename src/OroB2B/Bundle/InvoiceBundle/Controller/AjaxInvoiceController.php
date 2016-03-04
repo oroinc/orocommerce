@@ -38,7 +38,7 @@ class AjaxInvoiceController extends Controller
             $form->submit($request);
         }
 
-        $subtotal = $this->get('orob2b_pricing.provider.line_items_subtotal')->getSubtotal($invoice);
+        $subtotal = $this->get('orob2b_pricing.subtotal_processor.provider.subtotal_line_item')->getSubtotal($invoice);
 
         return new JsonResponse(
             [

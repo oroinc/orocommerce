@@ -84,7 +84,7 @@ class LoadInvoiceLineItemDemoData extends AbstractFixture implements ContainerAw
                     $lineItem->setProductSku($product->getSku());
                 }
                 $subtotal = $this->container
-                    ->get('orob2b_pricing.provider.line_items_subtotal')
+                    ->get('orob2b_pricing.subtotal_processor.provider.subtotal_line_item')
                     ->getSubtotal($invoice)
                     ->getAmount();
                 $invoice->setSubtotal($subtotal);

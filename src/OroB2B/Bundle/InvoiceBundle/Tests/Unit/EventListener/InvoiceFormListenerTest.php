@@ -10,7 +10,7 @@ use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
 use OroB2B\Bundle\InvoiceBundle\EventListener\InvoiceFormListener;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use OroB2B\Bundle\PricingBundle\Provider\LineItemsSubtotalProvider;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -24,8 +24,10 @@ class InvoiceFormListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testBeforeFlush()
     {
-        /** @var LineItemsSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject $provider*/
-        $provider = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Provider\LineItemsSubtotalProvider')
+        /** @var LineItemSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject $provider*/
+        $provider = $this->getMockBuilder(
+            'OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
+        )
             ->disableOriginalConstructor()
             ->getMock();
 
