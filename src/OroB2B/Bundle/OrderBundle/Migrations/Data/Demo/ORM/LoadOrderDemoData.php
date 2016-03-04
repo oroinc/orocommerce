@@ -124,7 +124,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
                 ->setSubtotal($row['subtotal'])
                 ->setSourceEntityClass($row['sourceEntityClass']);
 
-            if ($row['sourceEntityClass']==='OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList') {
+            if ($row['sourceEntityClass'] === 'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList') {
                 $order->setSourceEntityId($shoppingList->getId());
             }
 
