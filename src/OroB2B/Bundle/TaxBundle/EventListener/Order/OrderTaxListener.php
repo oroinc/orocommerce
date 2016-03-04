@@ -39,7 +39,12 @@ class OrderTaxListener
          */
         if (!$order->getId()) {
             try {
-                $event->getEntityManager()->persist($this->getTaxValue($order));
+                $taxValue = $this->getTaxValue($order);
+                $this->taxValues[$this->getKey($order)] = $taxValue;
+
+                // EntityId null is not allowed. It will be updated in postPersist
+                $taxValue->setEntityId(0);
+                $event->getEntityManager()->persist($taxValue);
             } catch (TaxationDisabledException $e) {
                 // Taxation disabled, skip tax saving
             }
@@ -107,10 +112,7 @@ class OrderTaxListener
      */
     protected function getTaxValue($object)
     {
-        $taxValue = $this->taxManager->createTaxValue($object);
-        $this->taxValues[$this->getKey($object)] = $taxValue;
-
-        return $taxValue;
+        return $this->taxManager->createTaxValue($object);
     }
 
     /**
