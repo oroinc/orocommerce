@@ -2,14 +2,38 @@ layout:
     actions:
         - @setBlockTheme:
             themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/billing_information.html.twig'
-        - @add:
-            id: checkout_billing_information
-            parentId: checkout_information
-            blockType: block
-            options:
-                vars:
-                    user: { @value: $data.user }
-                    checkout: { @value: $data.checkout }
-                    billingForm: { @value: $data.billingForm }
+        - @addTree:
+            items:
+                checkout_billing_information:
+                    blockType: container
+                checkout_billing_form:
+                    blockType: container
+                    options:
+                        vars:
+                            form: { @value: $data.form }
+                checkout_billing_form_start:
+                    blockType: form_start
+                    options:
+                        form: { @value: $data.form }
+                checkout_billing_form_fields:
+                    blockType: form
+                    options:
+                        form: { @value: $data.form }
+                checkout_billing_form_button:
+                    blockType: block
+                checkout_billing_form_end:
+                    blockType: form_end
+                    options:
+                        form: { @value: $data.form }
+
+
+            tree:
+                checkout_information:
+                    checkout_billing_information:
+                        checkout_billing_form:
+                            checkout_billing_form_start: ~
+                            checkout_billing_form_fields: ~
+                            checkout_billing_form_button: ~
+                            checkout_billing_form_end: ~
     conditions:
         @eq: [$context.page, 1]

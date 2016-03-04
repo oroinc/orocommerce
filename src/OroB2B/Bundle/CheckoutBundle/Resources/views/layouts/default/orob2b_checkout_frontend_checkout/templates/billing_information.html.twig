@@ -1,156 +1,177 @@
-{% block _checkout_billing_information_widget %}
-    {% set form = billingForm %}
+{% block _checkout_billing_information_widget -%}
     <div class="checkout__head">
         <h2 class="checkout__title">
             <span class="badge badge_md badge_circle badge_orange">1</span>
             Billing Information
         </h2>
     </div>
-    <div class="checkout__body" data-page-component-module="oroui/js/app/components/view-component"
+    {{ block_widget(block) }}
+{%- endblock  %}
+
+{% block _checkout_billing_form_widget -%}
+    <div class="checkout__body" >
+        {{ block_widget(block) }}
+    </div>
+{%- endblock  %}
+
+{% block _checkout_billing_form_fields_widget -%}
+    <div data-page-component-module="oroui/js/app/components/view-component"
          data-page-component-options="{{ {
              view: 'orob2border/js/app/views/address-view',
              type: 'billing',
              selectors: {
-                 address: '#' ~ form.accountAddress.vars.id,
+                 address: '#' ~ form.address.accountAddress.vars.id,
                  subtotalsFields: [
-                 '#' ~ form.country.vars.id,
-                 '#' ~ form.street.vars.id,
-                 '#' ~ form.street2.vars.id,
-                 '#' ~ form.city.vars.id,
-                 '#' ~ form.region.vars.id,
-                 '#' ~ form.postalCode.vars.id
+                 '#' ~ form.address.country.vars.id,
+                 '#' ~ form.address.street.vars.id,
+                 '#' ~ form.address.street2.vars.id,
+                 '#' ~ form.address.city.vars.id,
+                 '#' ~ form.address.region.vars.id,
+                 '#' ~ form.address.postalCode.vars.id
                  ]
              }
          }|json_encode }}">
-
-        {{ form_start(form, {'action' : path('orob2b_checkout_frontend_checkout', {'page': 2}), 'attr' : {'class' : 'checkout__form'}}) }}
-            {{ form_errors(form) }}
-            <fieldset class="checkout__form__row">
-                <div class="checkout__form__col form__col_x6">
-                    <label for="billingAddress" class="checkout__form__label">Select a Billing Address form your Account<sup class="red">*</sup></label>
-                    <div class="checkout__form__select">
-                        {{ form_row(form.accountAddress, {'class_prefix' : '', 'attr' : {'class': 'input input_md'}   }) }}
-                    </div>
+        <fieldset class="checkout__form__row">
+            <div class="checkout__form__col form__col_x6">
+                {{ form_label(form.address.accountAddress, 'First Name', {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) }}
+                <div class="checkout__form__select">
+                    {{ form_widget(form.address.accountAddress, {'class_prefix' : '', 'attr' : {'class': 'input input_md'}}) }}
                 </div>
-            </fieldset>
-
-            <fieldset class="checkout__form__row">
-                <div class="checkout__form__col form__col_x6">
-                    <label for="firstName" class="checkout__form__label checkout__form__label_additional">First Name<sup class="red">*</sup></label>
-                    {{ form_row(form.firstName, {
-                        'class_prefix' : '',
-                        'attr': {
-                            'class': 'input input_md input_block checkout__form__input',
-                            'placeholder' : 'Enter your first name',
-                        }
-                    }) }}
-                </div>
-                <div class="checkout__form__col form__col_x6">
-                    <label for="lastName" class="checkout__form__label checkout__form__label_additional">Last Name<sup class="red">*</sup></label>
-                    {{ form_row(form.lastName, {'class_prefix' : '', 'attr': {'class' : 'input input_md input_block checkout__form__input', 'placeholder' : 'Enter your last name'}}) }}
-                </div>
-                <div class="checkout__form__col form__col_x6">
-                    <label for="middleName" class="checkout__form__label checkout__form__label_additional">Middle Name<sup class="red">*</sup></label>
-                    {{ form_row(form.middleName, {
-                        'class_prefix' : '',
-                        'attr': {
-                            'class': 'input input_md input_block checkout__form__input',
-                            'placeholder' : 'Enter your middle name',
-                        }
-                    }) }}
-                </div>
-            </fieldset>
-
-            <fieldset class="checkout__form__row">
-                <div class="checkout__form__col form__col_x12">
-                    <label for="companyName" class="checkout__form__label checkout__form__label_additional">Name Sufix</label>
-                    {{ form_row(form.nameSuffix, {'class_prefix' : '', 'attr': {'class' : 'input input_md input_block checkout__form__input', 'placeholder' : 'Enter your organization name'}}) }}
-                </div>
-            </fieldset>
-
-            <fieldset class="checkout__form__row">
-                <div class="checkout__form__col form__col_x12">
-                    <label for="companyName" class="checkout__form__label checkout__form__label_additional">Organization</label>
-                    {#<input type="text" name="companyName" id="companyName" class="input input_md input_block checkout__form__input" placeholder="Enter your organization name" />#}
-                    {{ form_row(form.organization, {'class_prefix' : '', 'attr': {'class' : 'input input_md input_block checkout__form__input', 'placeholder' : 'Enter your organization name'}}) }}
-                </div>
-            </fieldset>
-
-            <fieldset class="checkout__form__row">
-                <div class="checkout__form__col form__col_x12">
-                    <label class="checkout__form__label checkout__form__label_additional">Street Address<sup class="red">*</sup></label>
-                    {{ form_widget(form.street, {'class_prefix' : '', 'attr': {'class' : 'input input_md input_block checkout__form__input mb1-md mb1-sm', 'placeholder' : 'Enter your street address'}}) }}
-                    {{ form_widget(form.street2, {'class_prefix' : '', 'attr': {'class' : 'input input_md input_block checkout__form__input', 'placeholder' : 'Enter your street address 2'}}) }}
-                </div>
-            </fieldset>
-
-            <fieldset class="checkout__form__row">
-                <div class="checkout__form__col form__col_x12">
-                    <label class="checkout__form__label checkout__form__label_additional">City<sup class="red">*</sup></label>
-                    {{ form_widget(form.city, {'class_prefix' : '', 'attr': {'class' : 'input input_md input_block checkout__form__input mb1-md mb1-sm', 'placeholder' : 'Enter your city'}}) }}
-                </div>
-            </fieldset>
-
-            <fieldset class="checkout__form__row">
-                <div class="checkout__form__col col-country">
-                    <label for="stateProvince" class="checkout__form__label checkout__form__label_additional wsnr">Country<sup class="red">*</sup></label>
-                    <div class="checkout__form__select">
-                        {{ form_row(form.country, {'class_prefix' : '', 'attr': {'class' : 'checkout__form__label checkout__form__label_additional wsnr'}}) }}
-                    </div>
-                </div>
-                <div class="checkout__form__col col-state">
-                    <label for="stateProvince" class="checkout__form__label checkout__form__label_additional wsnr">State / Province<sup class="red">*</sup></label>
-                    <div class="checkout__form__select">
-                        {{ form_row(form.region, {'class_prefix' : '', 'attr': {'class' : 'checkout__form__label checkout__form__label_additional wsnr'}}) }}
-                    </div>
-                </div>
-            </fieldset>
-
-            <fieldset class="checkout__form__row">
-                <div class="checkout__form__col form__col_x6">
-                    <label for="phoneNumber" class="checkout__form__label checkout__form__label_additional">Phone Number<sup class="red">*</sup></label>
-                    <input type="text" name="phoneNumber" id="phoneNumber" class="input input_md input_block checkout__form__input" placeholder="Enter your phone number" />
-                </div>
-            </fieldset>
-
-            <fieldset class="checkout__form__row">
-                <div class="checkout__form__col col-zip">
-                    <label for="zipCode" class="checkout__form__label checkout__form__label_additional wsnr">Zip Code<sup class="red">*</sup></label>
-                    {{ form_widget(form.postalCode, {'class_prefix' : '', 'attr': {'class' : 'input input_block input_md checkout__form__input', 'placeholder' : 'Zip'}}) }}
-                </div>
-            </fieldset>
-            <fieldset class="checkout__form__row">
-                <div class="checkout__form__col form__col_x12">
-                    <div class="mmb5-md mmb5-sm">
-                        <label for="saveAddress" class="checkbox_custom checkbox_custom_blue checked" data-checkbox>
-                            <input type="checkbox" name="saveAddress" id="saveAddress" checked="checked" />
-                            <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
-                            <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
-                            <span class="checkbox_custom__text fs13">Save address</span>
-                        </label>
-                    </div>
-                    <div>
-                        <label for="confirmShippingAddress" class="checkbox_custom checkbox_custom_blue checked" data-checkbox>
-                            <input type="checkbox" name="confirmShippingAddress" id="confirmShippingAddress" checked="checked" />
-                            <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
-                            <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
-                            <span class="checkbox_custom__text fs13">Ship to this address</span>
-                        </label>
-                    </div>
-                </div>
-            </fieldset>
-
-            <fieldset class="checkout__form__row">
-                <div class="create-account__form__req-text"><sup>*</sup>Required Field</div>
-                <div class="create-account__form__col form__col_x12">
-                    <button type="submit" class="btn btn_orange btn_lg checkout__form__submit">
-                        Continue<i class="icon-right-open-mini va-m_md"></i>
-                    </button>
-                </div>
-            </fieldset>
-            <div class="checkout__form__back">
-                <a href="#"><i class="icon-left-open-mini"></i>Back</a>
             </div>
-        </form>
+        </fieldset>
+
+        <fieldset class="checkout__form__row">
+            <div class="checkout__form__col form__col_x12">
+                {{ form_label(form.address.label, 'Address label', {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) }}
+                <div class="checkout__form__select">
+                    {{ form_widget(form.address.label, {'class_prefix' : '', 'attr' : {'class': 'input input_md'}}) }}
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="checkout__form__row">
+            <div class="checkout__form__col form__col_x6">
+                {{ form_label(form.address.firstName, 'First Name', {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) }}
+                {{ form_widget(form.address.firstName, {
+                    'attr': {
+                        'class': 'input input_md input_block checkout__form__input',
+                        'placeholder' : 'Enter your first name',
+                    }
+                }) }}
+            </div>
+            <div class="checkout__form__col form__col_x6">
+                {{ form_label(form.address.lastName, 'Last Name', {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) }}
+                {{ form_widget(form.address.lastName, {'class_prefix' : '', 'attr': {'class' : 'input input_md input_block checkout__form__input', 'placeholder' : 'Enter your last name'}}) }}
+            </div>
+            <div class="checkout__form__col form__col_x6">
+                {{ form_label(form.address.middleName, 'Middle Name', {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) }}
+                {{ form_widget(form.address.middleName, {
+                    'attr': {
+                        'class': 'input input_md input_block checkout__form__input',
+                        'placeholder' : 'Enter your middle name',
+                    }
+                }) }}
+            </div>
+        </fieldset>
+
+        <fieldset class="checkout__form__row">
+            <div class="checkout__form__col form__col_x12">
+                {{ form_label(form.address.nameSuffix, 'Name Sufix', {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) }}
+                {{ form_widget(form.address.nameSuffix, {'class_prefix' : '', 'attr': {'class' : 'input input_md input_block checkout__form__input', 'placeholder' : 'Enter your organization name'}}) }}
+            </div>
+        </fieldset>
+
+        <fieldset class="checkout__form__row">
+            <div class="checkout__form__col form__col_x12">
+                {{ form_label(form.address.organization, 'Organization', {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) }}
+                {{ form_widget(form.address.organization, {'class_prefix' : '', 'attr': {'class' : 'input input_md input_block checkout__form__input', 'placeholder' : 'Enter your organization name'}}) }}
+            </div>
+        </fieldset>
+
+        <fieldset class="checkout__form__row">
+            <div class="checkout__form__col form__col_x12">
+                {{ form_label(form.address.street, 'Street Address', {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) }}
+                {{ form_widget(form.address.street, {'class_prefix' : '', 'attr': {'class' : 'input input_md input_block checkout__form__input mb1-md mb1-sm', 'placeholder' : 'Enter your street address'}}) }}
+                {{ form_widget(form.address.street2, {'class_prefix' : '', 'attr': {'class' : 'input input_md input_block checkout__form__input', 'placeholder' : 'Enter your street address 2'}}) }}
+            </div>
+        </fieldset>
+
+        <fieldset class="checkout__form__row">
+            <div class="checkout__form__col form__col_x12">
+                {{ form_label(form.address.city, 'City', {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) }}
+                {{ form_widget(form.address.city, {'class_prefix' : '', 'attr': {'class' : 'input input_md input_block checkout__form__input mb1-md mb1-sm', 'placeholder' : 'Enter your city'}}) }}
+            </div>
+        </fieldset>
+
+        <fieldset class="checkout__form__row">
+            <div class="checkout__form__col col-country">
+                {{ form_label(form.address.country, 'Country', {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) }}
+                <div class="checkout__form__select">
+                    {{ form_widget(form.address.country, {'class_prefix' : '', 'attr': {'class' : 'checkout__form__label checkout__form__label_additional wsnr'}}) }}
+                </div>
+            </div>
+            <div class="checkout__form__col col-state">
+                {{ form_label(form.address.region, 'State / Province', {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) }}
+                <div class="checkout__form__select">
+                    {{ form_widget(form.address.region, {'class_prefix' : '', 'attr': {'class' : 'checkout__form__label checkout__form__label_additional wsnr'}}) }}
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="checkout__form__row">
+            <div class="checkout__form__col col-zip">
+                {{ form_label(form.address.postalCode, 'Zip Code', {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) }}
+                {{ form_widget(form.address.postalCode, {'class_prefix' : '', 'attr': {'class' : 'input input_block input_md checkout__form__input', 'placeholder' : 'Zip'}}) }}
+            </div>
+        </fieldset>
+        <fieldset class="checkout__form__row">
+            <div class="checkout__form__col form__col_x12">
+                <div class="mmb5-md mmb5-sm">
+                    <label for="saveAddress" class="checkbox_custom checkbox_custom_blue checked" data-checkbox>
+                        {{ form_widget(form.saveAddress) }}
+                        <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
+                        <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
+                        <span class="checkbox_custom__text fs13">Save address</span>
+                    </label>
+
+                </div>
+                <div>
+                    {{ form_row(form.useAsShipAddress) }}
+                    {#<label for="confirmShippingAddress" class="checkbox_custom checkbox_custom_blue checked"#}
+                           {#data-checkbox>#}
+                        {#{{ form_widget(form.useAsShipAddress) }}#}
+                        {#<i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>#}
+                        {#<i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>#}
+                        {#<span class="checkbox_custom__text fs13">Ship to this address</span>#}
+                    {#</label>#}
+                </div>
+            </div>
+        </fieldset>
+
     </div>
+{%- endblock  %}
+
+{% block _checkout_billing_form_button_widget -%}
+    <fieldset class="checkout__form__row">
+        <div class="create-account__form__req-text"><sup>*</sup>Required Field</div>
+        <div class="create-account__form__col form__col_x12">
+            <button type="submit" class="btn btn_orange btn_lg checkout__form__submit">
+                Continue<i class="icon-right-open-mini va-m_md"></i>
+            </button>
+        </div>
+    </fieldset>
+    <div class="checkout__form__back">
+        <a href="#"><i class="icon-left-open-mini"></i>Back</a>
+    </div>
+{%- endblock %}
+
+{% block checkbox_widget %}
+    {% spaceless %}
+        <label for="{{ id }}" class="checkbox_custom checkbox_custom_blue checked" data-checkbox>
+            <input id = "{{ id }}" type="checkbox" name="{{ name }}" {{ block('widget_attributes') }} {% if value is defined %} value="{{ value }}"{% endif %} {% if checked %} checked="checked"{% endif %}/>
+            <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
+            <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
+            <span class="checkbox_custom__text fs13">{{ label }}</span>
+        </label>
+    {% endspaceless %}
 {% endblock %}
