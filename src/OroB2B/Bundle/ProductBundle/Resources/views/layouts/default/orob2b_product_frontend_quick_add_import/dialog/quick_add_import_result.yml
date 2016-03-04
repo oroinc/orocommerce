@@ -65,7 +65,7 @@ layout:
                     options:
                         type: button
                         action: button
-                        text: Cancel
+                        text: Back
                         vars:
                             style: gray
                         attr:
