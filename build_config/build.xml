@@ -577,7 +577,8 @@
             <arg line="--exclude=WarehouseBundle/Migrations/Schema"/>
             <arg line="--exclude=TaxBundle/Migrations/Schema"/>
             <arg line="--exclude=MenuBundle/Migrations/Schema"/>
-            <arg line="--names-exclude=src/OroB2B/src/OroB2B/Bundle/SaleBundle/Entity/Quote.php, src/OroB2B/src/OroB2B/Bundle/RFPBundle/Entity/Request.php"/>
+            <arg line="--exclude=SaleBundle/Entity"/>
+            <arg line="--exclude=RFPBundle/Entity"/>
             <arg line="${srcdir}"/>
         </exec>
     </target>

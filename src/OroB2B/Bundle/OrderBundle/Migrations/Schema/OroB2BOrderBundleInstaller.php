@@ -57,7 +57,7 @@ class OroB2BOrderBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_3';
     }
 
     /**
@@ -99,6 +99,11 @@ class OroB2BOrderBundleInstaller implements
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->addColumn(
             'subtotal',
+            'money',
+            ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
+        );
+        $table->addColumn(
+            'total',
             'money',
             ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
