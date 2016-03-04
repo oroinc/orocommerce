@@ -21,6 +21,8 @@ workflows:
                 property_path: checkout.poNumber
             ship_until:
                 property_path: checkout.shipUntil
+            customer_notes:
+                property_path: checkout.customerNotes
 
         steps:
             enter_billing_address:
@@ -63,49 +65,228 @@ workflows:
             continue_to_shipping_address:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.continue_to_shipping_address.label
                 step_to: enter_shipping_address
-                transition_definition: dummy
+                transition_definition: continue_to_shipping_address_definition
+                form_options:
+                    attribute_fields:
+                        billing_address:
+                            form_type: orob2b_order_address_type
+                            options:
+                                object: $checkout
+                                isEditEnabled: true
+                                addressType: 'billing'
+                                required: true
+                        save_billing_address:
+                            options:
+                                label: orob2b.checkout.workflow.b2b_flow_checkout.form.save_address.label
+                        ship_to_billing_address:
+                            options:
+                                label: orob2b.checkout.workflow.b2b_flow_checkout.form.ship_to_this_address.label
 
             continue_to_shipping_method:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.continue_to_shipping_method.label
                 step_to: enter_shipping_method
-                transition_definition: dummy
+                transition_definition: continue_to_shipping_method_definition
+                form_options:
+                    attribute_fields:
+                        shipping_address:
+                            form_type: orob2b_order_address_type
+                            options:
+                                object: $checkout
+                                isEditEnabled: true
+                                addressType: 'shipping'
+                                required: true
+                        save_shipping_address:
+                            options:
+                                label: orob2b.checkout.workflow.b2b_flow_checkout.form.save_address.label
+                        ship_to_billing_address:
+                            options:
+                                label: orob2b.checkout.workflow.b2b_flow_checkout.form.use_billing_address.label
 
             continue_to_payment:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.continue_to_payment.label
                 step_to: enter_payment
-                transition_definition: dummy
+                transition_definition: do_nothing
 
             continue_to_place_order:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.continue_to_place_order.label
                 step_to: place_order
-                transition_definition: dummy
+                transition_definition: do_nothing
 
             back_to_billing_address:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.back_to_billing_address.label
                 step_to: enter_billing_address
-                transition_definition: dummy
+                transition_definition: do_nothing
 
             back_to_shipping_address:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.back_to_shipping_address.label
                 step_to: enter_shipping_address
-                transition_definition: dummy
+                transition_definition: do_nothing
 
             back_to_shipping_method:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.back_to_shipping_method.label
                 step_to: enter_shipping_method
-                transition_definition: dummy
+                transition_definition: do_nothing
 
             back_to_payment:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.back_to_payment.label
                 step_to: enter_payment
-                transition_definition: dummy
+                transition_definition: do_nothing
 
             place_order:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.place_order.label
                 step_to: place_order
-                transition_definition: dummy
+                transition_definition: place_order_definition
+                form_options:
+                    attribute_fields:
+                        po_number: ~
+                        ship_until: ~
+                        customer_notes:
+                            form_type: textarea
 
         transition_definitions:
-            dummy:
-                pre_conditions:
-                    @not_empty: $checkout.id
+            do_nothing: ~
+            continue_to_shipping_address_definition:
+                conditions:
+                    @not_empty: $checkout.billingAddress
+            continue_to_shipping_method_definition:
+                conditions:
+                    @not_empty: $checkout.shippingAddress
+            place_order_definition:
+                post_actions:
+                    - @assign_constant_value: [$.result.typeBillingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_BILLING]
+                    - @assign_constant_value: [$.result.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
+
+                    - @assign_value:
+                        conditions:
+                            @equal: [$checkout.shipToBillingAddress, false]
+                        parameters: [$.result.shippingAddress, $checkout.shippingAddress]
+                    - @assign_value:
+                        conditions:
+                            @equal: [$checkout.shipToBillingAddress, true]
+                        parameters: [$.result.shippingAddress, $checkout.billingAddress]
+                    
+                    # Save billing address if required
+                    - @tree:
+                        conditions:
+                            @and:
+                                - @equal: [$checkout.saveBillingAddress, true]
+                                - @empty: $checkout.billingAddress.accountAddress
+                                - @empty: $checkout.billingAddress.accountUserAddress
+                                - @acl_granted: 'orob2b_order_address_billing_allow_manual'
+                        actions:
+                            - @find_entity:
+                                class: Oro\Bundle\AddressBundle\Entity\AddressType
+                                attribute: $.result.typeBilling
+                                identifier: $.result.typeBillingName
+                            - @create_entity:
+                                attribute: $.result.customerBillingAddress
+                                class: OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress
+                                data:
+                                    frontendOwner: $checkout.accountUser
+                                    owner: $checkout.owner
+                                    systemOrganization: $checkout.organization
+                                    organization: $checkout.organization
+                                    street: $checkout.billingAddress.street
+                                    street2: $checkout.billingAddress.street2
+                                    city: $checkout.billingAddress.city
+                                    postalCode: $checkout.billingAddress.postalCode
+                                    country: $checkout.billingAddress.country
+                                    region: $checkout.billingAddress.region
+                                    regionText: $checkout.billingAddress.regionText
+                                    namePrefix: $checkout.billingAddress.namePrefix
+                                    firstName: $checkout.billingAddress.firstName
+                                    middleName: $checkout.billingAddress.middleName
+                                    lastName: $checkout.billingAddress.lastName
+                                    nameSuffix: $checkout.billingAddress.nameSuffix
+                            - @call_method:
+                                object: $.result.customerBillingAddress
+                                method: addType
+                                method_parameters:
+                                    - $.result.typeBilling
+
+                    # Save shipping address if required
+                    - @tree:
+                        conditions:
+                            @and:
+                                - @equal: [$checkout.saveShippingAddress, true]
+                                - @empty: $.result.shippingAddress.accountAddress
+                                - @empty: $.result.shippingAddress.accountUserAddress
+                                - @acl_granted: 'orob2b_order_address_shipping_allow_manual'
+                        actions:
+                            - @find_entity:
+                                class: Oro\Bundle\AddressBundle\Entity\AddressType
+                                attribute: $.result.typeShipping
+                                identifier: $.result.typeShippingName
+                            - @create_entity:
+                                attribute: $.result.customerShippingAddress
+                                class: OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress
+                                data:
+                                    frontendOwner: $checkout.accountUser
+                                    owner: $checkout.owner
+                                    systemOrganization: $checkout.organization
+                                    organization: $checkout.organization
+                                    street: $.result.shippingAddress.street
+                                    street2: $.result.shippingAddress.street2
+                                    city: $.result.shippingAddress.city
+                                    postalCode: $.result.shippingAddress.postalCode
+                                    country: $.result.shippingAddress.country
+                                    region: $.result.shippingAddress.region
+                                    regionText: $.result.shippingAddress.regionText
+                                    namePrefix: $.result.shippingAddress.namePrefix
+                                    firstName: $.result.shippingAddress.firstName
+                                    middleName: $.result.shippingAddress.middleName
+                                    lastName: $.result.shippingAddress.lastName
+                                    nameSuffix: $.result.shippingAddress.nameSuffix
+                            - @call_method:
+                                object: $.result.customerBillingAddress
+                                method: addType
+                                method_parameters:
+                                    - $.result.typeShipping
+
+                    # Place order
+                    - @create_entity:
+                        attribute: $.result.order
+                        class: OroB2B\Bundle\OrderBundle\Entity\Order
+                        data:
+                            website: $checkout.website
+                            owner: $checkout.owner
+                            organization: $checkout.organization
+                            account: $checkout.account
+                            accountUser: $checkout.accountUser
+                            billingAddress: $checkout.billingAddress
+                            shippingAddress: $.result.shippingAddress
+                            poNumber: $checkout.poNumber
+                            customerNotes: $checkout.customerNotes
+                            shipUntil: $checkout.shipUntil
+                            paymentTerm: ~
+                            currency: ~
+
+                    # TODO Add order line items BB-2240
+#                    - @get_order_line_items:
+#                        attribute: $.result.lineItems
+#                        checkout: $checkout
+#                    - @call_method:
+#                        object: $.result.order
+#                        method: setLineItems
+#                        method_parameters:
+#                            - $.result.lineItems
+                    - @flush_entity: $.result.order
+
+                    - @tree:
+                        conditions:
+                            @not_empty: $.result.order.id
+                        actions:
+                            - @flush_entity:
+                                conditions:
+                                    @not_empty: $.result.customerBillingAddress
+                                parameters: [$.result.customerBillingAddress]
+                            - @flush_entity:
+                                conditions:
+                                    @not_empty: $.result.customerShippingAddress
+                                parameters: [$.result.customerShippingAddress]
+                            - @remove_entity: $checkout.sourceEntity
+                            - @remove_entity: $checkout
+                            - @redirect:
+                                route: orob2b_order_frontend_success
+                                route_parameters:
+                                    id: $.result.order.id

@@ -8,8 +8,7 @@ layout:
             blockType: block
             options:
                 vars:
-                    user: { @value: $data.user }
                     checkout: { @value: $data.checkout }
                     billingForm: { @value: $data.billingForm }
     conditions:
-        @eq: [$context.page, 1]
+        @eq: [$context.workflowStepName, 'enter_billing_address']

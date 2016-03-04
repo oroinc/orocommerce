@@ -8,4 +8,4 @@ layout:
             blockType: block
 
     conditions:
-        @eq: [$context.page, 4]
+        @eq: [$context.workflowStepName, 'enter_payment']

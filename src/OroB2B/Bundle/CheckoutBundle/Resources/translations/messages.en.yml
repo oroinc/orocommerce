@@ -29,12 +29,14 @@ orob2b:
         workflow:
             b2b_flow_checkout:
                 label: eCommerce Checkout
+
                 step:
                     enter_billing_address.label: Billing Information
                     enter_shipping_address.label: Shipping Information
                     enter_shipping_method.label: Shipping Method
                     enter_payment.label: Payment
                     place_order.label: Order Review
+
                 transition:
                     continue_to_shipping_address.label: Continue
                     continue_to_shipping_method.label: Continue
@@ -43,5 +45,11 @@ orob2b:
                     back_to_billing_address.label: Edit Billing Information
                     back_to_shipping_address.label: Edit Shipping Information
                     back_to_shipping_method.label: Edit Shipping Method
+                    back_to_payment.label: Edit Payment
                     transitions.back_to_payment.label: Edit Payment
                     place_order.label: Submit Order
+
+                form:
+                    save_address.label: Save address
+                    ship_to_this_address.label: Ship to this address
+                    use_billing_address.label: Use billing address

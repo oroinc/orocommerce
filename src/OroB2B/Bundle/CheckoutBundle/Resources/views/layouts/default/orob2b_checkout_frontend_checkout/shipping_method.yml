@@ -8,4 +8,4 @@ layout:
             blockType: block
 
     conditions:
-        @eq: [$context.page, 3]
+        @eq: [$context.workflowStepName, 'enter_shipping_method']

@@ -23,7 +23,7 @@
              }
          }|json_encode }}">
 
-        {{ form_start(form, {'action' : path('orob2b_checkout_frontend_checkout', {'page': 2}), 'attr' : {'class' : 'checkout__form'}}) }}
+        {{ form_start(form, {'action' : path('orob2b_checkout_frontend_checkout', {'page': 2, 'id': checkout.id}), 'attr' : {'class' : 'checkout__form'}}) }}
             {{ form_errors(form) }}
             <fieldset class="checkout__form__row">
                 <div class="checkout__form__col form__col_x6">

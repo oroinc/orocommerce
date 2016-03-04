@@ -2,26 +2,19 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Controller\Frontend;
 
-use Doctrine\Common\Util\ClassUtils;
-
-
-use Oro\Bundle\AddressBundle\Entity\AddressType;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
-use OroB2B\Bundle\OrderBundle\Form\Type\OrderAddressType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\LayoutBundle\Annotation\Layout;
 
+use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
+use OroB2B\Bundle\OrderBundle\Form\Type\OrderAddressType;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
+use Symfony\Component\HttpFoundation\Response;
 
 class CheckoutController extends Controller
 {
@@ -31,16 +24,9 @@ class CheckoutController extends Controller
      * @Route(
      *     "/{id}",
      *     name="orob2b_checkout_frontend_checkout",
-     *     defaults={"id" = null},
      *     requirements={"id"="\d+"}
      * )
-     * @ParamConverter(
-     *     "checkout",
-     *     class="OroB2BCheckoutBundle:Checkout",
-     *     isOptional="true",
-     *     options={"id" = "id"}
-     *     )
-     * @Layout(vars={"page"})
+     * @Layout(vars={"workflowStepName", "workflowStepOrder"})
      * @Acl(
      *      id="orob2b_checkout_frontend_checkout",
      *      type="entity",
@@ -49,41 +35,56 @@ class CheckoutController extends Controller
      *      group_name="commerce"
      * )
      *
-     * @param Checkout|null $checkout
-     * @param Request $request
+     * @param Checkout $checkout
      * @return array
      */
-    public function checkoutAction(Request $request, Checkout $checkout = null)
+    public function checkoutAction(Checkout $checkout)
     {
-        if (!$checkout) {
-            $checkout = new Checkout();
-        }
-        $page = $request->query->get('page', 1);
-        $user = $this->getUser();
-        $order = new Checkout();
+        $currentStep = $checkout->getWorkflowStep();
         $orderAddress = new OrderAddress();
-        $order->setAccountUser($user);
         $billingForm = $this->createForm(
             OrderAddressType::NAME,
             $orderAddress,
             [
-                'object' => $order,
+                'object' => $checkout,
                 'addressType' => AddressType::TYPE_BILLING,
-                'application' => OrderAddressType::APPLICATION_FRONTEND
+                'isEditEnabled' => true
             ]
         );
 
         $formView = $billingForm->createView();
         $formView->vars['class_prefix'] = '';
         return [
-            'page' => $page,
+            'workflowStepName' => $currentStep->getName(),
+            'workflowStepOrder' => $currentStep->getStepOrder(),
             'data' =>
                 [
                     'checkout' => $checkout,
-                    'page' => $page,
-                    'user' => $user,
                     'billingForm' => $formView,
                 ]
         ];
+    }
+
+    /**
+     * @TODO remove after BB-2245
+     * @Route(
+     *     "/success/{id}",
+     *     name="orob2b_order_frontend_success",
+     *     requirements={"id"="\d+"}
+     * )
+     * @Acl(
+     *      id="orob2b_checkout_frontend_checkout",
+     *      type="entity",
+     *      class="OroB2BCheckoutBundle:Checkout",
+     *      permission="CREATE",
+     *      group_name="commerce"
+     * )
+     *
+     * @param Order $order
+     * @return Response
+     */
+    public function successAction(Order $order)
+    {
+        return new Response($order->getId());
     }
 }

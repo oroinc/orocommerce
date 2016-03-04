@@ -7,4 +7,4 @@ layout:
             parentId: checkout_information
             blockType: block
     conditions:
-        @eq: [$context.page, 5]
+        @eq: [$context.workflowStepName, 'place_order']

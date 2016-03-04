@@ -8,11 +8,13 @@
             'orob2b.checkout.shipping_method',
             'orob2b.checkout.payment',
             'orob2b.checkout.order_review'] %}
+
+            {% set page = 1 %}
             <ul class="checkout-navigation">
                 {% for key, element in elements %}
                     {% set page_num = key+1 %}
                     <li>
-                        <a href="{{ path('orob2b_checkout_frontend_checkout', {'page' : page_num, 'id' : checkout.id}) }}">
+                        <a href="{{ path('orob2b_checkout_frontend_checkout', {'id' : checkout.id}) }}">
                     <span class="badge badge_xmd badge_circle {{ page_num == page ?  'badge_orange':'badge_ll_gray' }}">
                             {{ page_num }}
                         </span>
@@ -29,6 +31,8 @@
 {% endblock %}
 
 {% block _checkout_content_widget %}
+    {% placeholder view_navButtons_before with {entity: checkout} %}
+
     {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-page-container"}) %}
     <div class="content content_has-sidebar">
         <div class="content__container">

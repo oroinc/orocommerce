@@ -28,7 +28,7 @@ actions:
         button_options:
             icon: icon-briefcase
         functions:
-            # TODO: Set current website
+            - @assign_current_website: $.currentWebsite
             - @assign_active_user: $.currentUser
             - @create_entity:
                 class: OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource
@@ -45,6 +45,7 @@ actions:
                     account: $.currentUser.account
                     owner: $.currentUser.account.owner
                     organization: $.currentUser.account.organization
+                    website: $.currentWebsite
             - @start_workflow:
                 name: b2b_flow_checkout
                 attribute: $.checkoutWorkflow

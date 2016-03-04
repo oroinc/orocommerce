@@ -7,6 +7,8 @@ parameters:
 
     orob2b_website.twig.website_extension.class: OroB2B\Bundle\WebsiteBundle\Twig\OroB2BWebsiteExtension
 
+    orob2b_website.model.action.assign_current_website.class: OroB2B\Bundle\WebsiteBundle\Model\Action\AssignCurrentWebsite
+
 services:
     orob2b_website.manager:
         class: %orob2b_website.manager.class%
@@ -33,3 +35,12 @@ services:
             - @doctrine
         calls:
             - [setEntityClass, [%orob2b_website.locale.class%]]
+
+    orob2b_website.model.action.assign_current_website:
+        class: %orob2b_website.model.action.assign_current_website.class%
+        arguments:
+            - @oro_action.context_accessor
+            - @orob2b_website.manager
+        tags:
+            - { name: oro_action.function, alias: assign_current_website }
+            - { name: oro_workflow.action, alias: assign_current_website }
