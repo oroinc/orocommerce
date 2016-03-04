@@ -76,7 +76,7 @@ class FrontendProductPriceDatagridListener extends AbstractProductPriceDatagridL
         $selectPattern = 'min(%s.value) as %s';
         $select = sprintf($selectPattern, $joinAlias, $columnName);
         $this->addConfigElement($config, '[source][query][select]', $select);
-        $selectPattern = '(%s.unit) as %s';
+        $selectPattern = 'IDENTITY(%s.unit) as %s';
         $select = sprintf($selectPattern, $joinAlias, $unitColumnName);
         $this->addConfigElement($config, '[source][query][select]', $select);
         $this->addConfigProductPriceJoin($config, $currency);
