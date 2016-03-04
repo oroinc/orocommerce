@@ -141,7 +141,7 @@ class TotalProcessorProviderTest extends \PHPUnit_Framework_TestCase
             ->with(sprintf('orob2b.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
             ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
 
-        $entity = $this->prepareSubtotals(new EntityStub(),2);
+        $entity = $this->prepareSubtotals(new EntityStub(), 2);
 
         $subtotals = $this->provider->getSubtotals($entity);
         $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $subtotals);
