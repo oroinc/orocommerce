@@ -1,4 +1,5 @@
 {% block _checkout_sidebar_widget %}
+    {% set page = 1 %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-sidebar"}) %}
     <aside class="sidebar sidebar_left">
         <div {{ block('block_attributes') }}>
