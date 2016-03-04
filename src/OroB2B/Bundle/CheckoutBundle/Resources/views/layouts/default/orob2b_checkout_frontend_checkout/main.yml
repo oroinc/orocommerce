@@ -6,12 +6,6 @@ layout:
             items:
                 checkout_container:
                     blockType: container
-                checkout_sidebar:
-                    blockType: block
-                    options:
-                        vars:
-                            page: { @value: $data.page }
-                            checkout: { @value: $data.checkout}
                 checkout_content:
                     blockType: container
                 checkout_information:
@@ -26,9 +20,16 @@ layout:
                     blockType: block
 
             tree:
-                main:
+                content:
                     checkout_content:
                         checkout_information: ~
                         checkout_order_summary:
                             checkout_order_summary_table: ~
-                    checkout_sidebar: ~
+        - @add:
+            id: checkout_sidebar
+            parentId: sidebar_left
+            blockType: block
+            options:
+                vars:
+                    page: { @value: $data.page }
+                    checkout: { @value: $data.checkout}

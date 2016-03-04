@@ -1,46 +1,36 @@
 {% block _checkout_sidebar_widget %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-sidebar"}) %}
-    <aside class="sidebar sidebar_left">
-        <div {{ block('block_attributes') }}>
-            {% set elements =
-            ['orob2b.checkout.billing_information',
-            'orob2b.checkout.shipping_information',
-            'orob2b.checkout.shipping_method',
-            'orob2b.checkout.payment',
-            'orob2b.checkout.order_review'] %}
-            <ul class="checkout-navigation">
-                {% for key, element in elements %}
-                    {% set page_num = key+1 %}
-                    <li>
-                        <a href="{{ path('orob2b_checkout_frontend_checkout', {'page' : page_num, 'checkoutId' : checkout.id}) }}">
-                    <span class="badge badge_xmd badge_circle {{ page_num == page ?  'badge_orange':'badge_ll_gray' }}">
-                            {{ page_num }}
-                        </span>
-                            <h3 class="checkout-navigation__title">
-                                {{ element|trans }}
-                            </h3>
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
-            {{ block_widget(block) }}
-        </div>
-    </aside>
+    <div {{ block('block_attributes') }}>
+        {% set elements =
+        ['orob2b.checkout.billing_information',
+        'orob2b.checkout.shipping_information',
+        'orob2b.checkout.shipping_method',
+        'orob2b.checkout.payment',
+        'orob2b.checkout.order_review'] %}
+        <ul class="checkout-navigation">
+            {% for key, element in elements %}
+                {% set page_num = key+1 %}
+                <li>
+                    <a href="{{ path('orob2b_checkout_frontend_checkout', {'page' : page_num, 'checkoutId' : checkout.id}) }}">
+                <span class="badge badge_xmd badge_circle {{ page_num == page ?  'badge_orange':'badge_ll_gray' }}">
+                        {{ page_num }}
+                    </span>
+                        <h3 class="checkout-navigation__title">
+                            {{ element|trans }}
+                        </h3>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+        {{ block_widget(block) }}
+    </div>
 {% endblock %}
 
 {% block _checkout_content_widget %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-page-container"}) %}
-    <div class="content content_has-sidebar">
-        <div class="content__container">
-            <div class="container-fluid">
-                <div class="content__inner">
-                    <h1 class="checkout-page-title">{{ 'orob2b.checkout.label'|trans }}</h1>
-                    <div {{ block('block_attributes') }}>
-                        {{ block_widget(block) }}
-                    </div>
-                </div>
-            </div>
-        </div>
+    <h1 class="checkout-page-title">{{ 'orob2b.checkout.label'|trans }}</h1>
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
     </div>
 {% endblock %}
 
