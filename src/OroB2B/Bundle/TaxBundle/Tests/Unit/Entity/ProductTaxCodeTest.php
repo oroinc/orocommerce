@@ -6,6 +6,7 @@ use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
+use OroB2B\Bundle\TaxBundle\Model\TaxCodeInterface;
 
 class ProductTaxCodeTest extends \PHPUnit_Framework_TestCase
 {
@@ -63,5 +64,10 @@ class ProductTaxCodeTest extends \PHPUnit_Framework_TestCase
     private function createProductTaxCode()
     {
         return new ProductTaxCode();
+    }
+
+    public function testGetType()
+    {
+        $this->assertEquals(TaxCodeInterface::TYPE_PRODUCT, $this->createProductTaxCode()->getType());
     }
 }

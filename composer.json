@@ -16,11 +16,12 @@
         },
         {
             "type": "composer",
-            "url": "http://packagist.orocrm.com"
+            "url": "https://packagist.orocrm.com"
         }
     ],
     "require": {
-        "oro/platform": "1.x-dev"
+        "oro/platform": "1.x-dev",
+        "myclabs/deep-copy": "1.5.*"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

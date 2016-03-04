@@ -49,7 +49,7 @@
     {% set id = 'order-edit' %}
 
     {% set subtotals %}
-        {% include 'OroB2BPricingBundle:Subtotals:subtotals.html.twig' with {
+        {% include 'OroB2BPricingBundle:Totals:totals.html.twig' with {
             options: {
                 url: path('orob2b_order_subtotals', {id: entity.id}),
                 selectors: {form: '#' ~ form.vars.id}
@@ -148,13 +148,18 @@
 
     {% if isShippingAddressGranted %}
         {% set shippingAddress %}
+            {% if form.shippingAddress.accountAddress is defined %}
+                {% set idAddressBlock = '#' ~ form.shippingAddress.accountAddress.vars.id %}
+            {% else %}
+                {% set idAddressBlock = null %}
+            {% endif %}
             <div
                 data-page-component-module="oroui/js/app/components/view-component"
                 data-page-component-options="{{ {
                     view: 'orob2border/js/app/views/address-view',
                     type: 'shipping',
                     selectors: {
-                        address: '#' ~ form.shippingAddress.accountAddress.vars.id,
+                        address: idAddressBlock ,
                         subtotalsFields: [
                         '#' ~ form.shippingAddress.country.vars.id,
                         '#' ~ form.shippingAddress.street.vars.id,

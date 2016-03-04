@@ -84,7 +84,7 @@ abstract class AbstractMatcher implements MatcherInterface
                         return $argument->getCombinedCode();
                     }
 
-                    return $argument;
+                    return (string)$argument;
                 },
                 $arguments
             )

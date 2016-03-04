@@ -50,6 +50,13 @@ class OrderAddress extends ExtendOrderAddress
     protected $accountUserAddress;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="from_external_source", type="boolean", options={"default"=false})
+     */
+    protected $fromExternalSource = false;
+
+    /**
      * Set accountAddress
      *
      * @param AccountAddress|null $accountAddress
@@ -95,5 +102,24 @@ class OrderAddress extends ExtendOrderAddress
     public function getAccountUserAddress()
     {
         return $this->accountUserAddress;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isFromExternalSource()
+    {
+        return $this->fromExternalSource;
+    }
+
+    /**
+     * @param boolean $fromExternalSource
+     * @return $this
+     */
+    public function setFromExternalSource($fromExternalSource)
+    {
+        $this->fromExternalSource = (bool)$fromExternalSource;
+
+        return $this;
     }
 }

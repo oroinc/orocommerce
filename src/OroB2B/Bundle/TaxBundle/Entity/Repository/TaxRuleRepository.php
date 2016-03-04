@@ -3,82 +3,144 @@
 namespace OroB2B\Bundle\TaxBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
+use OroB2B\Bundle\TaxBundle\Model\TaxCodes;
 
 class TaxRuleRepository extends EntityRepository
 {
     /**
-     * Find TaxRules by Country
-     *
      * @param Country $country
-     * @return TaxRule[]
+     * @return QueryBuilder
      */
-    public function findByCountry(Country $country)
+    protected function createCountryQueryBuilder(Country $country)
     {
         $qb = $this->createQueryBuilder('taxRule');
         $qb
             ->join('taxRule.taxJurisdiction', 'taxJurisdiction')
             ->leftJoin('taxJurisdiction.zipCodes', 'zipCodes')
             ->where($qb->expr()->eq('taxJurisdiction.country', ':country'))
-            ->andWhere($qb->expr()->isNull('taxJurisdiction.region'))
-            ->andWhere($qb->expr()->isNull('taxJurisdiction.regionText'))
-            ->andWhere($qb->expr()->isNull('zipCodes.id'))
             ->setParameter('country', $country);
+
+        return $qb;
+    }
+
+    /**
+     * @param Country $country
+     * @param Region $region
+     * @param string $regionText
+     * @return QueryBuilder
+     */
+    protected function createRegionQueryBuilder(Country $country, Region $region = null, $regionText = null)
+    {
+        $qb = $this->createCountryQueryBuilder($country);
+
+        if ($region) {
+            $qb->andWhere($qb->expr()->eq('taxJurisdiction.region', ':region'))
+                ->setParameter('region', $region);
+        } else {
+            $qb->andWhere($qb->expr()->isNull('taxJurisdiction.region'));
+        }
+
+        if ($regionText) {
+            $qb->andWhere($qb->expr()->eq('taxJurisdiction.regionText', ':region_text'))
+                ->setParameter('region_text', $regionText);
+        } else {
+            $qb->andWhere($qb->expr()->isNull('taxJurisdiction.regionText'));
+        }
+
+        return $qb;
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param TaxCodes $taxCodes
+     */
+    protected function joinTaxCodes(QueryBuilder $queryBuilder, TaxCodes $taxCodes)
+    {
+        $plainTaxCodes = $taxCodes->getPlainTypedCodes();
+
+        foreach ($taxCodes->getAvailableTypes() as $type) {
+            $alias = sprintf('%sTaxCode', $type);
+            $joinAlias = sprintf('%s.code', $alias);
+
+            $queryBuilder->leftJoin(sprintf('taxRule.%s', $alias), $alias);
+
+            if (array_key_exists($type, $plainTaxCodes)) {
+                $queryBuilder
+                    ->andWhere($queryBuilder->expr()->in($joinAlias, sprintf(':%s', $type)))
+                    ->setParameter($type, $plainTaxCodes[$type]);
+            }
+        }
+    }
+
+    /**
+     * Find TaxRules by Country and TaxCodes
+     *
+     * @param TaxCodes $taxCodes
+     * @param Country $country
+     * @return TaxRule[]
+     */
+    public function findByCountryAndTaxCode(TaxCodes $taxCodes, Country $country)
+    {
+        $qb = $this->createRegionQueryBuilder($country);
+        $qb->andWhere($qb->expr()->isNull('zipCodes.id'));
+
+        $this->joinTaxCodes($qb, $taxCodes);
 
         return $qb->getQuery()->getResult();
     }
 
     /**
-     * Find TaxRules by Country
+     * Find TaxRules by Country, Region and TaxCodes
      *
+     * @param TaxCodes $taxCodes
      * @param Country $country
      * @param Region|null $region
      * @param null $regionText
      * @return TaxRule[]
      */
-    public function findByCountryAndRegion(Country $country, Region $region = null, $regionText = null)
-    {
-        $qb = $this->createQueryBuilder('tax_rule');
-        $qb->leftJoin('tax_rule.taxJurisdiction', 'tax_jurisdiction')
-            ->leftJoin('tax_jurisdiction.zipCodes', 'zip_codes')
-            ->where($qb->expr()->eq('tax_jurisdiction.country', ':country'))
-            ->andWhere($qb->expr()->isNull('zip_codes.id'))
-            ->setParameter('country', $country);
+    public function findByRegionAndTaxCode(
+        TaxCodes $taxCodes,
+        Country $country,
+        Region $region = null,
+        $regionText = null
+    ) {
+        $this->assertRegion($region, $regionText);
 
-        if ($region) {
-            $qb->andWhere($qb->expr()->eq('tax_jurisdiction.region', ':region'))
-                ->setParameter('region', $region);
+        $qb = $this->createRegionQueryBuilder($country, $region, $regionText);
+        $qb->andWhere($qb->expr()->isNull('zipCodes.id'));
 
-        } elseif ($regionText) {
-            $qb->andWhere($qb->expr()->eq('tax_jurisdiction.regionText', ':region_text'))
-                ->setParameter('region_text', $regionText);
-        } else {
-            throw new \InvalidArgumentException('Region or Region Text arguments missed');
-        }
+        $this->joinTaxCodes($qb, $taxCodes);
 
         return $qb->getQuery()->getResult();
     }
 
     /**
-     * Find TaxRules by ZipCode (with Region/Country check)
+     * Find TaxRules by ZipCode (with Region/Country check) and TaxCodes
      *
+     * @param TaxCodes $taxCodes
      * @param string $zipCode
      * @param Country $country
      * @param Region $region
      * @param string $regionText
      * @return TaxRule[]
      */
-    public function findByZipCode($zipCode, Country $country, Region $region = null, $regionText = null)
-    {
-        $qb = $this->createQueryBuilder('taxRule');
+    public function findByZipCodeAndTaxCode(
+        TaxCodes $taxCodes,
+        $zipCode,
+        Country $country,
+        Region $region = null,
+        $regionText = null
+    ) {
+        $this->assertRegion($region, $regionText);
+
+        $qb = $this->createRegionQueryBuilder($country, $region, $regionText);
         $qb
-            ->join('taxRule.taxJurisdiction', 'taxJurisdiction')
-            ->leftJoin('taxJurisdiction.zipCodes', 'zipCodes')
-            ->where($qb->expr()->eq('taxJurisdiction.country', ':country'))
             ->andWhere(
                 $qb->expr()->orX(
                     $qb->expr()->andX(
@@ -88,25 +150,22 @@ class TaxRuleRepository extends EntityRepository
                     $qb->expr()->eq('zipCodes.zipCode', ':zipCode')
                 )
             )
-            ->setParameters([
-                'country' => $country,
-                'zipCode' => $zipCode,
-                'zipCodeForRange' => (int)$zipCode
-            ]);
+            ->setParameter('zipCode', $zipCode)
+            ->setParameter('zipCodeForRange', (int)$zipCode);
 
-        if ($region) {
-            $qb
-                ->andWhere($qb->expr()->eq('taxJurisdiction.region', ':region'))
-                ->setParameter('region', $region);
-        } elseif ($regionText) {
-            $qb
-                ->andWhere($qb->expr()->eq('taxJurisdiction.regionText', ':regionText'))
-                ->setParameter('regionText', $regionText);
-
-        } else {
-            throw new \InvalidArgumentException('You should pass only region or region text and country');
-        }
+        $this->joinTaxCodes($qb, $taxCodes);
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param Region|null $region
+     * @param string|null $regionText
+     */
+    protected function assertRegion(Region $region = null, $regionText = null)
+    {
+        if (!$region && !$regionText) {
+            throw new \InvalidArgumentException('Region or Region Text arguments missed');
+        }
     }
 }
