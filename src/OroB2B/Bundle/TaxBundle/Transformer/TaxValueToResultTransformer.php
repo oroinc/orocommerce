@@ -14,17 +14,12 @@ class TaxValueToResultTransformer implements TaxTransformerInterface
     /** @var TaxValueManager */
     protected $taxValueManager;
 
-    /** @var string */
-    protected $taxClass;
-
     /**
      * @param TaxValueManager $taxValueManager
-     * @param string $taxClass
      */
-    public function __construct(TaxValueManager $taxValueManager, $taxClass)
+    public function __construct(TaxValueManager $taxValueManager)
     {
         $this->taxValueManager = $taxValueManager;
-        $this->taxClass = $taxClass;
     }
 
     /** {@inheritdoc} */
@@ -34,12 +29,14 @@ class TaxValueToResultTransformer implements TaxTransformerInterface
 
         $taxResultElements = [];
         foreach ($taxValue->getAppliedTaxes() as $taxApply) {
-            $taxResultElements[] = TaxResultElement::create(
+            $taxResultElement = TaxResultElement::create(
                 (string)$taxApply->getTax(),
                 $taxApply->getRate(),
                 $taxApply->getTaxableAmount(),
                 $taxApply->getTaxAmount()
             );
+
+            $taxResultElements[] = $taxResultElement;
         }
 
         if ($taxResultElements) {

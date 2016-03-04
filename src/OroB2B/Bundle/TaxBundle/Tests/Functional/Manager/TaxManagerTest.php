@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
 
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -39,7 +38,8 @@ class TaxManagerTest extends WebTestCase
         $this->loadFixtures(
             [
                 'OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules',
-            ]
+            ],
+            true // self::resetClient doesn't clear loaded fixtures
         );
 
         $this->configManager = $this->getContainer()->get('oro_config.global');
@@ -50,6 +50,7 @@ class TaxManagerTest extends WebTestCase
     protected function tearDown()
     {
         $this->configManager->reload();
+        $this->resetClient();
 
         parent::tearDown();
     }
@@ -80,7 +81,6 @@ class TaxManagerTest extends WebTestCase
         $this->executeMethod($method, $this->getReference($reference), $expectedResult);
 
         $this->assertDatabase($databaseAfter);
-        $this->clearDatabase($databaseAfter);
     }
 
     /**
@@ -217,23 +217,6 @@ class TaxManagerTest extends WebTestCase
             foreach ($items as $item) {
                 $this->assertNotEmpty($repository->findBy($item), sprintf('%s %s', $class, json_encode($item)));
             }
-        }
-    }
-
-    /**
-     * @param array $databaseBefore
-     */
-    protected function clearDatabase(array $databaseBefore)
-    {
-        foreach ($databaseBefore as $class => $items) {
-            /** @var EntityRepository $repository */
-            $repository = $this->doctrine->getRepository($class);
-
-            $repository
-                ->createQueryBuilder('e')
-                ->delete($class, 'e')
-                ->getQuery()
-                ->execute();
         }
     }
 }

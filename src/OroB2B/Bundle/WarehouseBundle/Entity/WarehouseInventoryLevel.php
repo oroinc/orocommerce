@@ -25,7 +25,6 @@ use OroB2B\Bundle\WarehouseBundle\Model\ExtendWarehouseInventoryLevel;
  *      defaultValues={
  *          "security"={
  *              "type"="ACL",
- *              "permissions"="VIEW;EDIT",
  *              "group_name"=""
  *          }
  *      }

@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
+use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
 
 class TaxableTest extends \PHPUnit_Framework_TestCase
@@ -20,6 +21,8 @@ class TaxableTest extends \PHPUnit_Framework_TestCase
             ['price', '10'],
             ['amount', '100'],
             ['items', new \SplObjectStorage(), false],
+            ['result', new Result(), false],
+            ['context', new \ArrayObject(), false],
             ['className', '\stdClass'],
         ];
 
@@ -49,6 +52,27 @@ class TaxableTest extends \PHPUnit_Framework_TestCase
         $taxable->removeItem($item);
         $this->assertSame($item2, $items->current());
         $this->assertSame($item2, $taxable->getItems()->current());
+    }
+
+    public function testAddContext()
+    {
+        $taxable = $this->createTaxable();
+        $key = 'context_key';
+        $value = 'context_value';
+        $taxable->addContext($key, $value);
+        $this->assertTrue($taxable->getContext()->offsetExists($key));
+        $this->assertEquals($value, $taxable->getContext()->offsetGet($key));
+    }
+
+    public function getContextValue()
+    {
+        $key = 'context_key';
+        $value = 'context_value';
+
+        $taxable = $this->createTaxable();
+        $taxable->addContext($key, $value);
+        $this->assertNull($taxable->getContextValue('not_existed_key'));
+        $this->assertEquals($value, $taxable->getContextValue($key));
     }
 
     /**

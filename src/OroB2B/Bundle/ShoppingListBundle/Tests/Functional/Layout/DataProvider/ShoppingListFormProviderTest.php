@@ -22,7 +22,8 @@ class ShoppingListFormProviderTest extends WebTestCase
         $this->initClient();
 
         $this->context = new LayoutContext();
-        $this->dataProvider = $this->getContainer()->get('orob2b_shopping_list.provider.shopping_list_form');
+        $this->dataProvider = $this->getContainer()
+            ->get('orob2b_shopping_list.layout.data_provider.shopping_list_form');
     }
 
     public function testGetData()
