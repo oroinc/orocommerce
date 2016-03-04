@@ -23,6 +23,9 @@ orob2b:
             request_products.label: 'Request Products'
             assigned_users.label: 'Assigned To'
             assigned_account_users.label: 'Assigned Customers'
+            cancellation_reason.label: 'Cancelation reason'
+            cancellation_success.label: 'Cancellation was successful'
+            deleted_at.label: 'Deleted At'
 
             submit.label: 'Submit Request For Quote'
             cancel.label: 'Cancel'
@@ -108,6 +111,11 @@ orob2b:
             request:
                 saved.message: 'Request has been saved'
 
+        action:
+            request:
+                updated.message: 'Your Request For Quote has been successfully updated'
+                resubmited.message: 'Your Request For Quote has been successfully resubmited'
+
         btn:
             delete: 'Delete'
             restore: 'Restore'
@@ -115,9 +123,12 @@ orob2b:
             create_quote: 'Create Quote'
             add_to_rfp: 'Request A Quote'
             create_rfp: 'Submit'
+            edit: 'Edit'
+            resubmit: 'Resubmit'
 
         widget:
             change_status_title: 'Change RFQ Status'
+            cancel_title: 'Cancel RFQ'
 
         frontend:
             request:
