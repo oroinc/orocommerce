@@ -133,7 +133,7 @@ define(function(require) {
 
             this.currenciesContainer.html(html.join(''));
 
-            this.triggerSidebarChanged(true);
+            this.triggerSidebarChanged(false);
         },
 
         /**
