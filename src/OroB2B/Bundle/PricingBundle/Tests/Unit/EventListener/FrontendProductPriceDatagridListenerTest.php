@@ -103,8 +103,8 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
                     'source' => [
                         'query' => [
                             'select' => [
-                                'min(price_column_table.value) as price_column,'
-                                 . ' price_column_table.unit as price_unit_column',
+                                'min(price_column_table.value) as price_column',
+                                '(price_column_table.unit) as price_unit_column',
                             ],
                             'join' => [
                                 'left' => [
