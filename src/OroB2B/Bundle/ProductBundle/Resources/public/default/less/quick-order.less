@@ -331,7 +331,8 @@
 /*END QUICK ORDER*/
 
 .quick-order-buttons, .quick-order-import-validation-buttons {
-    float: right;
+  float: right;
+  margin: 0;
 }
 
 .quick-order-import-validation {
@@ -375,5 +376,89 @@
 }
 
 .quick-order {
+  .mass-action-controls {
+    &:before, &:after {
+      content: "";
+      display: block;
+      clear: both;
+      height: 0;
+    }
 
+    > div {
+      > .btn-group {
+        display: inline-block;
+        margin-bottom: 0;
+        font-weight: 400;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        -ms-touch-action: manipulation;
+        touch-action: manipulation;
+        cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        border-radius: 4px;
+        background: #252525;
+        color: #fff;
+        position: relative;
+        padding: 0;
+        border: 0;
+        font-size: 1.5rem;
+        line-height: 1.5rem;
+        min-height: 4.7rem;
+        min-width: 14rem;
+
+        > .direct-link {
+          display: block;
+          margin: 0;
+          float: left;
+          line-height: 4.7rem;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          color: #fff;
+          width: calc(~'100% - 36px');
+          padding: 0 1.5rem;
+        }
+
+        > .dropdown-toggle {
+          display: block;
+          margin: 0;
+          float: left;
+          line-height: 4.7rem;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          width: 3.6rem;
+          border-left: 0.1rem solid rgba(255, 255, 255, 0.3);
+          color: #fff;
+          padding: 0 1.2rem;
+        }
+      }
+    }
+  }
+
+  .action-button {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border-radius: 4px;
+    padding: 0 2.9rem;
+    line-height: 4.7rem;
+    background: #626365;
+    color: #fff;
+    margin: 0 1rem 0 0;
+  }
 }
