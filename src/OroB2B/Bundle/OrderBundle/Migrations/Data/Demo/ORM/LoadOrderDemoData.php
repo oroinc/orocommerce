@@ -73,7 +73,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
             $filePath = current($filePath);
         }
 
-        /** @var ShoppingList */
+        /** @var ShoppingList $shoppingList */
         $shoppingList = $manager->getRepository('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList')->findOneBy([]);
 
         $handler = fopen($filePath, 'r');
@@ -124,9 +124,10 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
                 ->setCurrency($row['currency'])
                 ->setPoNumber($row['poNumber'])
                 ->setSubtotal($row['subtotal'])
-                ->setSourceEntityClass($row['sourceEntityClass']);
+                ->setTotal($row['total']);
 
             if ($row['sourceEntityClass'] === 'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList') {
+                $order->setSourceEntityClass($row['sourceEntityClass']);
                 $order->setSourceEntityId($shoppingList->getId());
             }
 

@@ -14,6 +14,7 @@ databaseBefore:
         simple_order:
             poNumber: { property_value: simple_order }
             account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: { name: 'account.orphan' } }
+            currency: 'USD'
             billingAddress:
                 class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
                 property_value:
@@ -57,6 +58,7 @@ expectedResult:
         excludingTax: '79.95'
         taxAmount: '8'         # (79.95 * 0.1) with round
         adjustment: '-0.005'   # 8 - (79.95 * 0.1)
+        currency: 'USD'
     items:
         -
             unit:
@@ -64,12 +66,14 @@ expectedResult:
                 excludingTax: '15.99'
                 taxAmount: '1.6'      # 15.99 * 0.1
                 adjustment: '-0.001'
+                currency: 'USD'
             row:
                 includingTax: '87.95' # 79.95 + 8
                 excludingTax: '79.95' # 15.99 * 5
                 taxAmount: '8'        # 79.95 * 0.1
                 adjustment: '-0.005'
+                currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '79.95', tax_amount: '8' }
+                - { tax: 'TAX1', rate: '0.1', taxable_amount: '79.95', tax_amount: '8', currency: 'USD' }
     taxes:
-        - { tax: 'TAX1', rate: '0.1', taxable_amount: '79.95', tax_amount: '8' }
+        - { tax: 'TAX1', rate: '0.1', taxable_amount: '79.95', tax_amount: '8', currency: 'USD' }
