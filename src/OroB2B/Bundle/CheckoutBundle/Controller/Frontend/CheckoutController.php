@@ -24,6 +24,7 @@ class CheckoutController extends Controller
      * @Route(
      *     "/{id}",
      *     name="orob2b_checkout_frontend_checkout",
+<<<<<<< Temporary merge branch 1
      *     requirements={"id"="\d+"}
      * )
      * @Layout(vars={"workflowStepName", "workflowStepOrder"})

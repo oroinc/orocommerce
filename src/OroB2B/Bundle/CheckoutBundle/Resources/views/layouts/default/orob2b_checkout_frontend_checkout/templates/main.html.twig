@@ -3,13 +3,11 @@
     <aside class="sidebar sidebar_left">
         <div {{ block('block_attributes') }}>
             {% set elements =
-            ['orob2b.checkout.billing_information',
-            'orob2b.checkout.shipping_information',
-            'orob2b.checkout.shipping_method',
-            'orob2b.checkout.payment',
-            'orob2b.checkout.order_review'] %}
-
-            {% set page = 1 %}
+            ['orob2b.checkout.workflow.b2b_flow_checkout.step.enter_billing_address.label',
+            'orob2b.checkout.workflow.b2b_flow_checkout.step.enter_shipping_address.label',
+            'orob2b.checkout.workflow.b2b_flow_checkout.step.enter_shipping_method.label',
+            'orob2b.checkout.workflow.b2b_flow_checkout.step.enter_payment.label',
+            'orob2b.checkout.workflow.b2b_flow_checkout.step.place_order.label'] %}
             <ul class="checkout-navigation">
                 {% for key, element in elements %}
                     {% set page_num = key+1 %}
