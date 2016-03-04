@@ -158,6 +158,10 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
             $currencies = $priceListCurrencies;
         }
 
+        /*
+         * TODO: remove due BB-2218
+         * On frontend we must always show prices even when self::PRICE_LIST_CURRENCY_KEY === false
+         */
         if ($this->frontendHelper->isFrontendRequest()) {
             $filter = filter_var($currencies, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
             if ($filter === false) {
@@ -290,7 +294,6 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
      */
     protected function getRequest()
     {
-        $request = $this->requestStack->getCurrentRequest();
-        return $request;
+        return $this->requestStack->getCurrentRequest();
     }
 }

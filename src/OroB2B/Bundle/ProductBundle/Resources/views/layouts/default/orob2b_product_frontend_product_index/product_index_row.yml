@@ -16,8 +16,14 @@ layout:
                     blockType: block
                 product_grid_row_specification:
                     blockType: container
+                product_grid_row_sku_container:
+                    blockType: container
                 product_grid_row_sku:
                     blockType: block
+                product_grid_row_mfg:
+                    blockType: block
+                    options:
+                        visible: false
                 product_grid_row_description:
                     blockType: block
                 product_grid_row_details:
@@ -28,12 +34,14 @@ layout:
                     blockType: container
                 product_grid_row_specification_delivery:
                     blockType: block
-                product_grid_row_mspr:
-                    blockType: block
+                    options:
+                        visible: false
                 product_grid_row_secondary_content_second_container:
                     blockType: container
                 product_grid_row_more_info:
                     blockType: block
+                    options:
+                        visible: false
             tree:
                 scripts_before:
                     product_grid_row_template:
@@ -42,12 +50,13 @@ layout:
                         product_grid_row_primary_content_container:
                             product_grid_row_number: ~
                             product_grid_row_specification:
-                                product_grid_row_sku: ~
+                                product_grid_row_sku_container:
+                                    product_grid_row_sku: ~
+                                    product_grid_row_mfg: ~
                             product_grid_row_description: ~
                             product_grid_row_details: ~
                         product_grid_row_secondary_content_container:
                             product_grid_row_secondary_content_first_container:
                                 product_grid_row_specification_delivery: ~
-                                product_grid_row_mspr: ~
                             product_grid_row_secondary_content_second_container:
                                 product_grid_row_more_info: ~

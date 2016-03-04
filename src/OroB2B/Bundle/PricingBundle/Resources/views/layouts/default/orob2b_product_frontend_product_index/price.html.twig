@@ -3,7 +3,9 @@
         class: attr.class|default('') ~ " product-item__price product-item__price_<%= themeOptions.view %> mt1-md mb1-md mt1-sm mb1-sm"
     }) %}
     <div {{ block('block_attributes_raw_class') }}>
-        Your Price: <span class="fs16 blue"><%= model.price_column %></span>
+        <% if (model.price_column) { %>
+            {{ 'orob2b.pricing.frontend.pricelist.index.your_price'|trans }} <span class="fs16 blue"><%= model.price_column %></span> / <%= model.price_unit_column %>
+        <% } %>
     </div>
 {% endblock %}
 
@@ -12,6 +14,15 @@
         class: attr.class|default('') ~ " product-item__listed-price product-item__listed-price_<%= themeOptions.view %>"
     }) %}
     <div {{ block('block_attributes_raw_class') }}>
-        Listed Price: <span><%= model.price_column %></span>
+        {{ 'orob2b.pricing.frontend.pricelist.index.listed_price'|trans }} <span>$12.99</span>
+    </div>
+{% endblock %}
+
+{% block _product_grid_row_msrp_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " product-item__mspr product-item__mspr_<%= themeOptions.view %>"
+    }) %}
+    <div {{ block('block_attributes_raw_class') }}>
+        {{ 'orob2b.pricing.frontend.pricelist.index.msrp'|trans }} <span>$24.99</span>
     </div>
 {% endblock %}
