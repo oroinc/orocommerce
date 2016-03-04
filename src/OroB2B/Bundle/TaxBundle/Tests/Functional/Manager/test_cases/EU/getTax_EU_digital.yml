@@ -6,6 +6,7 @@ databaseBefore:
         simple_order:
             poNumber: { property_value: simple_order }
             account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: { name: 'account.orphan' } }
+            currency: 'USD'
             billingAddress:
                 class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
                 property_value:
@@ -65,6 +66,7 @@ expectedResult:
         excludingTax: '198.79' # 79.95 + 33.3 + 85.54
         taxAmount: '39.7'     # 21.98625 + 9.1575 + 8.554 and round
         adjustment: '-0.00225'   # -0.00375 - 0.0025 + 0.004
+        currency: 'USD'
     items:
         -
             unit:
@@ -72,42 +74,48 @@ expectedResult:
                 excludingTax: '15.99'
                 taxAmount: '4.4'      # 15.99 * 0.275 (0.2 + 0.075)
                 adjustment: '-0.00275'
+                currency: 'USD'
             row:
                 includingTax: '101.94' # 79.95 + 21.98625 and round
                 excludingTax: '79.95' # 15.99 * 5
                 taxAmount: '21.99'        # 79.95 * 0.275
                 adjustment: '-0.00375'
+                currency: 'USD'
             taxes:
-                - { tax: 'TAX3', rate: '0.075', taxableAmount: '79.95', taxAmount: '6' }
-                - { tax: 'TAX2', rate: '0.2', taxableAmount: '79.95', taxAmount: '15.99' }
+                - { tax: 'TAX3', rate: '0.075', taxableAmount: '79.95', taxAmount: '6', currency: 'USD' }
+                - { tax: 'TAX2', rate: '0.2', taxableAmount: '79.95', taxAmount: '15.99', currency: 'USD' }
         -
             unit:
                 includingTax: '7.08'  # 5.55 + 1.52625 and round
                 excludingTax: '5.55'
                 taxAmount: '1.53'     # 5.55 * 0.275
                 adjustment: '-0.00375'
+                currency: 'USD'
             row:
                 includingTax: '42.46' # 33.3 + 9.16
                 excludingTax: '33.3'
                 taxAmount: '9.16'     # 33.3 * 0.275
                 adjustment: '-0.0025'
+                currency: 'USD'
             taxes:
-                - { tax: 'TAX3', rate: '0.075', taxableAmount: '33.3', taxAmount: '2.5' }
-                - { tax: 'TAX2', rate: '0.2', taxableAmount: '33.3', taxAmount: '6.66' }
+                - { tax: 'TAX3', rate: '0.075', taxableAmount: '33.3', taxAmount: '2.5', currency: 'USD' }
+                - { tax: 'TAX2', rate: '0.2', taxableAmount: '33.3', taxAmount: '6.66', currency: 'USD' }
         -
             unit:
                 includingTax: '13.44'  # 12.22 + 1.22
                 excludingTax: '12.22'
                 taxAmount: '1.22'     # 12.22 * 0.1
                 adjustment: '0.002'
+                currency: 'USD'
             row:
                 includingTax: '94.09' # 85.54 + 8.554
                 excludingTax: '85.54'
                 taxAmount: '8.55'     # 85.54 * 0.1
                 adjustment: '0.004'
+                currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '85.54', taxAmount: '8.55' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '85.54', taxAmount: '8.55', currency: 'USD' }
     taxes:
-        - { tax: 'TAX3', rate: '0.075', taxableAmount: '113.25', taxAmount: '8.49' }
-        - { tax: 'TAX2', rate: '0.2', taxableAmount: '113.25', taxAmount: '22.65' }
-        - { tax: 'TAX1', rate: '0.1', taxableAmount: '85.54', taxAmount: '8.55' }
+        - { tax: 'TAX3', rate: '0.075', taxableAmount: '113.25', taxAmount: '8.49', currency: 'USD' }
+        - { tax: 'TAX2', rate: '0.2', taxableAmount: '113.25', taxAmount: '22.65', currency: 'USD' }
+        - { tax: 'TAX1', rate: '0.1', taxableAmount: '85.54', taxAmount: '8.55', currency: 'USD' }

@@ -63,6 +63,24 @@
             'title': 'orob2b.order.sections.order_line_items'|trans,
             'subblocks': [{'data' : [dataGrid.renderGrid('order-line-items-grid', { order_id: entity.id })]}]
         }]) %}
+
+        {% set orderTotals %}
+            <div class="widget-content">
+                <div class="row-fluid form-horizontal">
+                    <div class="responsive-block">
+                        {% for item in totals.subtotals %}
+                            {{ UI.renderProperty(item.label, item.amount|oro_format_currency({'currency': item.currency})) }}
+                        {% endfor %}
+                        {{ UI.renderProperty(totals.total.label, totals.total.amount|oro_format_currency({'currency': totals.total.currency})) }}
+                    </div>
+                </div>
+            </div>
+        {% endset %}
+
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': 'orob2b.order.sections.order_totals'|trans,
+            'subblocks': [{'data' : [orderTotals]}]
+        }]) %}
     {% endif %}
 
     {% set id = 'frontend-order-view' %}
