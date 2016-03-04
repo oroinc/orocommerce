@@ -20,6 +20,7 @@ use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -72,6 +73,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
             $filePath = current($filePath);
         }
 
+        /** @var ShoppingList */
         $shoppingList = $manager->getRepository('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList')->findOneBy([]);
 
         $handler = fopen($filePath, 'r');
