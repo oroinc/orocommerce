@@ -2,13 +2,13 @@
 
 namespace OroB2B\Component\Duplicator\Matcher;
 
-use DeepCopy\Matcher\Matcher;
+use DeepCopy\Matcher\Matcher as BaseMatcher;
 
 use OroB2B\Component\Duplicator\AbstractFactory;
 use OroB2B\Component\Duplicator\ObjectType;
 
 /**
- * @method Matcher create(ObjectType $objectType)
+ * @method BaseMatcher create(ObjectType $objectType)
  */
 class MatcherFactory extends AbstractFactory
 {

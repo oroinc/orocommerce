@@ -2,13 +2,13 @@
 
 namespace OroB2B\Component\Duplicator\Filter;
 
-use DeepCopy\Filter\Filter;
+use DeepCopy\Filter\Filter as BaseFilter;
 
 use OroB2B\Component\Duplicator\AbstractFactory;
 use OroB2B\Component\Duplicator\ObjectType;
 
 /**
- * @method Filter create(ObjectType $objectType)
+ * @method BaseFilter create(ObjectType $objectType)
  */
 class FilterFactory extends AbstractFactory
 {
