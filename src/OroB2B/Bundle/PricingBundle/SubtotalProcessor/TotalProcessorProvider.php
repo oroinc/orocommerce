@@ -15,6 +15,7 @@ class TotalProcessorProvider
 {
     const NAME = 'orob2b_pricing.subtotal_total';
     const TYPE = 'total';
+    const DEFAULT_CURRENCY = 'USD';
 
     /** @var SubtotalProviderRegistry */
     protected $subtotalProviderRegistry;
@@ -109,7 +110,7 @@ class TotalProcessorProvider
     protected function getBaseCurrency($entity)
     {
         if (!$entity instanceof CurrencyAwareInterface) {
-            return 'USD';
+            return self::DEFAULT_CURRENCY;
         } else {
             return $entity->getCurrency();
         }

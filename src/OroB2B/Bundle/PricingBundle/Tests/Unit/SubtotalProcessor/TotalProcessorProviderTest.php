@@ -4,14 +4,16 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub;
+use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityWithoutCurrencyStub;
+use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\LineItemStub;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
 class TotalProcessorProviderTest extends \PHPUnit_Framework_TestCase
@@ -73,16 +75,16 @@ class TotalProcessorProviderTest extends \PHPUnit_Framework_TestCase
             ->with(sprintf('orob2b.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
             ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
 
-        $order = $this->prepareSubtotals();
+        $entity = $this->prepareSubtotals(new EntityStub());
 
-        $subtotals = $this->provider->getSubtotals($order);
+        $subtotals = $this->provider->getSubtotals($entity);
         $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $subtotals);
         $subtotal = $subtotals->get(LineItemSubtotalProvider::TYPE);
 
         $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
         $this->assertEquals(LineItemSubtotalProvider::TYPE, $subtotal->getType());
         $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $subtotal->getLabel());
-        $this->assertEquals($order->getCurrency(), $subtotal->getCurrency());
+        $this->assertEquals($entity->getCurrency(), $subtotal->getCurrency());
         $this->assertInternalType('float', $subtotal->getAmount());
         $this->assertEquals(142.0, $subtotal->getAmount());
     }
@@ -94,13 +96,13 @@ class TotalProcessorProviderTest extends \PHPUnit_Framework_TestCase
             ->with(sprintf('orob2b.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
             ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
 
-        $order = $this->prepareSubtotals();
+        $entity = $this->prepareSubtotals(new EntityStub());
 
-        $total = $this->provider->getTotal($order);
+        $total = $this->provider->getTotal($entity);
         $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $total);
         $this->assertEquals(TotalProcessorProvider::TYPE, $total->getType());
         $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $total->getLabel());
-        $this->assertEquals($order->getCurrency(), $total->getCurrency());
+        $this->assertEquals($entity->getCurrency(), $total->getCurrency());
         $this->assertInternalType('float', $total->getAmount());
         $this->assertEquals(142.0, $total->getAmount());
     }
@@ -112,22 +114,22 @@ class TotalProcessorProviderTest extends \PHPUnit_Framework_TestCase
             ->with(sprintf('orob2b.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
             ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
 
-        $order = $this->prepareSubtotals();
+        $entity = $this->prepareSubtotals(new EntityStub());
 
-        $subtotals = $this->provider->getSubtotals($order);
+        $subtotals = $this->provider->getSubtotals($entity);
         $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $subtotals);
         $subtotal = $subtotals->get(LineItemSubtotalProvider::TYPE);
         $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
 
         // try to get again but getProviders and getSubtotal expect run once
-        $subtotals = $this->provider->getSubtotals($order);
+        $subtotals = $this->provider->getSubtotals($entity);
         $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $subtotals);
         $subtotal = $subtotals->get(LineItemSubtotalProvider::TYPE);
 
         $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
         $this->assertEquals(LineItemSubtotalProvider::TYPE, $subtotal->getType());
         $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $subtotal->getLabel());
-        $this->assertEquals($order->getCurrency(), $subtotal->getCurrency());
+        $this->assertEquals($entity->getCurrency(), $subtotal->getCurrency());
         $this->assertInternalType('float', $subtotal->getAmount());
         $this->assertEquals(142.0, $subtotal->getAmount());
     }
@@ -139,67 +141,74 @@ class TotalProcessorProviderTest extends \PHPUnit_Framework_TestCase
             ->with(sprintf('orob2b.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
             ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
 
-        $order = $this->prepareSubtotals(2);
+        $entity = $this->prepareSubtotals(new EntityStub(),2);
 
-        $subtotals = $this->provider->getSubtotals($order);
+        $subtotals = $this->provider->getSubtotals($entity);
         $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $subtotals);
         $subtotal = $subtotals->get(LineItemSubtotalProvider::TYPE);
         $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
         $this->provider->clearCache();
 
         // try to get again and getProviders and getSubtotal expect run twice
-        $subtotals = $this->provider->getSubtotals($order);
+        $subtotals = $this->provider->getSubtotals($entity);
         $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $subtotals);
         $subtotal = $subtotals->get(LineItemSubtotalProvider::TYPE);
 
         $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
         $this->assertEquals(LineItemSubtotalProvider::TYPE, $subtotal->getType());
         $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $subtotal->getLabel());
-        $this->assertEquals($order->getCurrency(), $subtotal->getCurrency());
+        $this->assertEquals($entity->getCurrency(), $subtotal->getCurrency());
         $this->assertInternalType('float', $subtotal->getAmount());
         $this->assertEquals(142.0, $subtotal->getAmount());
+    }
+
+    public function testGetName()
+    {
+        $this->assertEquals(TotalProcessorProvider::NAME, $this->provider->getName());
     }
 
     /**
      * @param int $runCount
      *
-     * @return Order
+     * @return EntityStub
      */
-    protected function prepareSubtotals($runCount = 1)
+    protected function prepareSubtotals($entity, $runCount = 1)
     {
+        $currency = 'USD';
         $subtotalProvider = $this->getMockBuilder(
             'OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
         )
             ->disableOriginalConstructor()
             ->getMock();
 
-        $order = new Order();
-        $perUnitLineItem = new OrderLineItem();
-        $perUnitLineItem->setPriceType(OrderLineItem::PRICE_TYPE_UNIT);
+        $perUnitLineItem = new LineItemStub();
+        $perUnitLineItem->setPriceType(LineItemStub::PRICE_TYPE_UNIT);
         $perUnitLineItem->setPrice(Price::create(20, 'USD'));
         $perUnitLineItem->setQuantity(2);
 
-        $bundledUnitLineItem = new OrderLineItem();
-        $bundledUnitLineItem->setPriceType(OrderLineItem::PRICE_TYPE_BUNDLED);
+        $bundledUnitLineItem = new LineItemStub();
+        $bundledUnitLineItem->setPriceType(LineItemStub::PRICE_TYPE_BUNDLED);
         $bundledUnitLineItem->setPrice(Price::create(2, 'USD'));
         $bundledUnitLineItem->setQuantity(10);
 
-        $otherCurrencyLineItem = new OrderLineItem();
-        $otherCurrencyLineItem->setPriceType(OrderLineItem::PRICE_TYPE_UNIT);
+        $otherCurrencyLineItem = new LineItemStub();
+        $otherCurrencyLineItem->setPriceType(LineItemStub::PRICE_TYPE_UNIT);
         $otherCurrencyLineItem->setPrice(Price::create(10, 'EUR'));
         $otherCurrencyLineItem->setQuantity(10);
 
-        $emptyLineItem = new OrderLineItem();
+        $emptyLineItem = new LineItemStub();
 
-        $order->addLineItem($perUnitLineItem);
-        $order->addLineItem($bundledUnitLineItem);
-        $order->addLineItem($emptyLineItem);
-        $order->addLineItem($otherCurrencyLineItem);
+        $entity->addLineItem($perUnitLineItem);
+        $entity->addLineItem($bundledUnitLineItem);
+        $entity->addLineItem($emptyLineItem);
+        $entity->addLineItem($otherCurrencyLineItem);
 
-        $order->setCurrency('USD');
+        if ($entity instanceof CurrencyAwareInterface) {
+            $entity->setCurrency($currency);
+        }
 
         $sub = new Subtotal();
-        $sub->setCurrency($order->getCurrency());
+        $sub->setCurrency($currency);
         $sub->setAmount(142.0);
         $sub->setType(LineItemSubtotalProvider::TYPE);
         $sub->setLabel('Total');
@@ -213,6 +222,24 @@ class TotalProcessorProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getSubtotal')
             ->willReturn($sub);
 
-        return $order;
+        return $entity;
+    }
+
+    public function testGetTotalInDefaultCurrency()
+    {
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->with(sprintf('orob2b.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
+            ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
+
+        $entity = $this->prepareSubtotals(new EntityWithoutCurrencyStub());
+
+        $total = $this->provider->getTotal($entity);
+        $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $total);
+        $this->assertEquals(TotalProcessorProvider::TYPE, $total->getType());
+        $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $total->getLabel());
+        $this->assertEquals('USD', $total->getCurrency());
+        $this->assertInternalType('float', $total->getAmount());
+        $this->assertEquals(142.0, $total->getAmount());
     }
 }

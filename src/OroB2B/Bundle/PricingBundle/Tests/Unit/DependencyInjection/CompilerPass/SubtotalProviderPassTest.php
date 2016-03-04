@@ -88,10 +88,10 @@ class SubtotalProviderPassTest extends \PHPUnit_Framework_TestCase
             ->expects($this->exactly(4))
             ->method('addMethodCall')
             ->withConsecutive(
-                ['addProvider', [new Reference('service.name.4')]],
-                ['addProvider', [new Reference('service.name.1')]],
+                ['addProvider', [new Reference('service.name.3')]],
                 ['addProvider', [new Reference('service.name.2')]],
-                ['addProvider', [new Reference('service.name.3')]]
+                ['addProvider', [new Reference('service.name.1')]],
+                ['addProvider', [new Reference('service.name.4')]]
             );
 
         $this->container->expects($this->once())

@@ -17,7 +17,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\InvoiceBundle\Model\ExtendInvoice;
-use OroB2B\Bundle\PricingBundle\Model\LineItemsAwareInterface;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**

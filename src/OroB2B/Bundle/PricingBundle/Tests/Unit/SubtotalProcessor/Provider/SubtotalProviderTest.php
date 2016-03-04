@@ -6,8 +6,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
+use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\LineItemStub;
+use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
@@ -58,37 +58,54 @@ class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
             ->with(sprintf('orob2b.pricing.subtotals.%s.label', LineItemSubtotalProvider::TYPE))
             ->willReturn(ucfirst(LineItemSubtotalProvider::TYPE));
 
-        $order = new Order();
-        $perUnitLineItem = new OrderLineItem();
-        $perUnitLineItem->setPriceType(OrderLineItem::PRICE_TYPE_UNIT);
+        $entity = new EntityStub();
+        $perUnitLineItem = new LineItemStub();
+        $perUnitLineItem->setPriceType(LineItemStub::PRICE_TYPE_UNIT);
         $perUnitLineItem->setPrice(Price::create(20, 'USD'));
         $perUnitLineItem->setQuantity(2);
 
-        $bundledUnitLineItem = new OrderLineItem();
-        $bundledUnitLineItem->setPriceType(OrderLineItem::PRICE_TYPE_BUNDLED);
+        $bundledUnitLineItem = new LineItemStub();
+        $bundledUnitLineItem->setPriceType(LineItemStub::PRICE_TYPE_BUNDLED);
         $bundledUnitLineItem->setPrice(Price::create(2, 'USD'));
         $bundledUnitLineItem->setQuantity(10);
 
-        $otherCurrencyLineItem = new OrderLineItem();
-        $otherCurrencyLineItem->setPriceType(OrderLineItem::PRICE_TYPE_UNIT);
+        $otherCurrencyLineItem = new LineItemStub();
+        $otherCurrencyLineItem->setPriceType(LineItemStub::PRICE_TYPE_UNIT);
         $otherCurrencyLineItem->setPrice(Price::create(10, 'EUR'));
         $otherCurrencyLineItem->setQuantity(10);
 
-        $emptyLineItem = new OrderLineItem();
+        $emptyLineItem = new LineItemStub();
 
-        $order->addLineItem($perUnitLineItem);
-        $order->addLineItem($bundledUnitLineItem);
-        $order->addLineItem($emptyLineItem);
-        $order->addLineItem($otherCurrencyLineItem);
+        $entity->addLineItem($perUnitLineItem);
+        $entity->addLineItem($bundledUnitLineItem);
+        $entity->addLineItem($emptyLineItem);
+        $entity->addLineItem($otherCurrencyLineItem);
 
-        $order->setCurrency('USD');
+        $entity->setCurrency('USD');
 
-        $subtotal = $this->provider->getSubtotal($order);
+        $subtotal = $this->provider->getSubtotal($entity);
         $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
         $this->assertEquals(LineItemSubtotalProvider::TYPE, $subtotal->getType());
         $this->assertEquals(ucfirst(LineItemSubtotalProvider::TYPE), $subtotal->getLabel());
-        $this->assertEquals($order->getCurrency(), $subtotal->getCurrency());
+        $this->assertEquals($entity->getCurrency(), $subtotal->getCurrency());
         $this->assertInternalType('float', $subtotal->getAmount());
         $this->assertEquals(142.0, $subtotal->getAmount());
+    }
+
+    public function testGetName()
+    {
+        $this->assertEquals(LineItemSubtotalProvider::NAME, $this->provider->getName());
+    }
+
+    public function testIsSupported()
+    {
+        $entity = new EntityStub();
+        $this->assertTrue($this->provider->isSupported($entity));
+    }
+
+    public function testIsNotSupported()
+    {
+        $entity = new LineItemStub();
+        $this->assertFalse($this->provider->isSupported($entity));
     }
 }
