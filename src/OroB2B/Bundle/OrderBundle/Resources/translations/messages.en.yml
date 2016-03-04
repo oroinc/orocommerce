@@ -139,3 +139,9 @@ orob2b:
             fields:
                 backend_product_visibility.title: 'Can Be Added to Orders'
                 frontend_product_visibility.title: 'Can Be Added to Orders'
+
+        success:
+            thank_you: 'Thank You For Your Purchase!'
+            order_number: 'Your Order number is'
+            receive_email: 'You will receive an email with a confirmation and a link to your purchase order.'
+            done: 'Done'
