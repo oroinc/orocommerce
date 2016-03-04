@@ -2,6 +2,10 @@ layout:
     actions:
         - @setBlockTheme:
             themes: 'OroB2BShoppingListBundle:layouts:default/orob2b_shopping_list_frontend_create/dialog/create.html.twig'
+        - @setOption:
+            id: widget_content
+            optionName: 'vars.savedId'
+            optionValue: { @value: $data.savedId }
         - @addTree:
             items:
                 form_errors:

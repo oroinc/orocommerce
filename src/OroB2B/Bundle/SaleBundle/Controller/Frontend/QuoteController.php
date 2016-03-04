@@ -18,7 +18,7 @@ class QuoteController extends Controller
 {
     /**
      * @Route("/view/{id}", name="orob2b_sale_quote_frontend_view", requirements={"id"="\d+"})
-     * @Template("OroB2BSaleBundle:Quote/Frontend:view.html.twig")
+     * @Layout()
      * @Acl(
      *      id="orob2b_sale_quote_frontend_view",
      *      type="entity",
@@ -34,7 +34,9 @@ class QuoteController extends Controller
     public function viewAction(Quote $quote)
     {
         return [
-            'entity' => $quote
+            'data' => [
+                'quote' => $quote
+            ]
         ];
     }
 

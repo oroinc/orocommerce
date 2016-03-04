@@ -6,6 +6,10 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
 class Taxable
 {
+    const DIGITAL_PRODUCT = 'digital_product';
+    const PRODUCT_TAX_CODE = 'product_tax_code';
+    const ACCOUNT_TAX_CODE = 'account_tax_code';
+
     /**
      * @var int
      */
@@ -51,10 +55,21 @@ class Taxable
      */
     protected $result;
 
+    /**
+     * @var string
+     */
+    protected $currency;
+
+    /**
+     * @var \ArrayObject
+     */
+    protected $context;
+
     public function __construct()
     {
         $this->items = new \SplObjectStorage();
         $this->result = new Result();
+        $this->context = new \ArrayObject();
     }
 
     /**
@@ -247,9 +262,77 @@ class Taxable
 
     /**
      * @param Result $result
+     * @return $this
      */
     public function setResult(Result $result)
     {
-        $this->result = $result;
+        if ($this->result->count() === 0) {
+            $this->result = $result;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param \ArrayObject $arrayObject
+     * @return $this
+     */
+    public function setContext(\ArrayObject $arrayObject)
+    {
+        $this->context = $arrayObject;
+
+        return $this;
+    }
+
+    /**
+     * @param string $keyName
+     * @param mixed  $value
+     * @return $this
+     */
+    public function addContext($keyName, $value)
+    {
+        $this->context->offsetSet($keyName, $value);
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * @param string $currency
+     * @return Taxable
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
+
+        return $this;
+    }
+
+    /**
+     * @return \ArrayObject
+     */
+    public function getContext()
+    {
+        return $this->context;
+    }
+
+    /**
+     * @param string $keyName
+     * @return mixed
+     */
+    public function getContextValue($keyName)
+    {
+        if ($this->context->offsetExists($keyName)) {
+            return $this->context->offsetGet($keyName);
+        }
+
+        return null;
     }
 }
