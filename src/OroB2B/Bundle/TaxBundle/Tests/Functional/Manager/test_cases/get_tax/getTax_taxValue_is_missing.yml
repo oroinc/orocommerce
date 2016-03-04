@@ -6,4 +6,5 @@ databaseBefore:
         empty_order:
             poNumber: { property_value: empty_order }
             account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+            currency: 'USD'
 expectedResult: []

@@ -1,9 +1,3 @@
-{% block _require_modules_widget %}
-    <script type="text/javascript">
-        require(['oroui/js/app']);
-    </script>
-{% endblock %}
-
 {% block _wrapper_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " wrapper"
@@ -46,6 +40,26 @@
                     routeParams: {_theme: 'default'}
                 }
             }
+        });
+        require({
+            paths: {
+                lodash: '/bundles/orob2bfrontend/default/js/vendors/lodash.min',
+                bootstrapDatepicker: '/bundles/orob2bfrontend/default/js/vendors/bootstrap-datepicker.min',
+                raty: '/bundles/orob2bfrontend/default/js/vendors/jquery.raty',
+                chosen: '/bundles/orob2bfrontend/default/js/vendors/chosen.jquery.min',
+                slick: '/bundles/orob2bfrontend/default/js/vendors/slick.min',
+                perfectScrollbar: '/bundles/orob2bfrontend/default/js/vendors/perfect-scrollbar.jquery.min',
+                fastclick: '/bundles/orob2bfrontend/default/js/vendors/fastclick'
+            },
+            shim: {
+                raty: {deps: ['jquery']},
+                'orob2bfrontend/default/js/app/views/input-widget/chosen': {deps: ['chosen']}
+            }
+        });
+        require({
+            appmodules: (requirejs.s.contexts._.config.appmodules || []).concat([
+                '/bundles/orob2bfrontend/default/js/app/modules/input-widgets.js'
+            ])
         });
     </script>
 {% endblock %}

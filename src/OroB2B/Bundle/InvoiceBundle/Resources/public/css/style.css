@@ -56,9 +56,9 @@
 
 
 .invoice-line-item-quantity input[type="text"],
-.invoice-line-item-quantity .selector,
+.invoice-line-item-quantity .input-widget-select,
 .invoice-line-item-price input[type="text"],
-.invoice-line-item-price .selector {
+.invoice-line-item-price .input-widget-select {
     float: left;
 }
 
