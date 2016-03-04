@@ -21,7 +21,7 @@ parameters:
     orob2b_tax.event_listener.config.address.class: OroB2B\Bundle\TaxBundle\EventListener\Config\AddressEventListener
     orob2b_tax.event_listener.config.digital_products.class: OroB2B\Bundle\TaxBundle\EventListener\Config\DigitalProductEventListener
     orob2b_tax.event_listener.grid.order_line_item.class: OroB2B\Bundle\TaxBundle\EventListener\Order\OrderLineItemGridListener
-    orob2b_tax.event_listener.view.orde.class: OroB2B\Bundle\TaxBundle\EventListener\Order\OrderViewListener
+    orob2b_tax.event_listener.view.order.class: OroB2B\Bundle\TaxBundle\EventListener\Order\OrderViewListener
 
     orob2b_tax.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
@@ -262,7 +262,7 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid, method: onBuildBefore }
 
     orob2b_tax.event_listener.view.order:
-        class: %orob2b_tax.event_listener.view.orde.class%
+        class: %orob2b_tax.event_listener.view.order.class%
         arguments:
             - @orob2b_tax.provider.taxation_settings_provider
             - @orob2b_tax.manager.tax_manager
@@ -272,6 +272,7 @@ services:
             - %orob2b_order.entity.order.class%
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.order-view, method: onView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.order-edit, method: onEdit }
 
     orob2b_tax.provider.tax_provider_registry:
         class: %orob2b_tax.provider.tax_provider_registry.class%

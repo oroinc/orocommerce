@@ -130,3 +130,7 @@
 {% block _tax_calculation_orob2b_tax___origin_address_value_region_row %}<div class="control-group">{{ _self.tax_address_block(form, use_parent_scope_value) }}</div>{% endblock %}
 {% block _tax_calculation_orob2b_tax___origin_address_value_region_text_row %}<div class="control-group">{{ _self.tax_address_block(form, use_parent_scope_value) }}</div>{% endblock %}
 {% block _tax_calculation_orob2b_tax___origin_address_value_postal_code_row %}<div class="control-group">{{ _self.tax_address_block(form, use_parent_scope_value) }}</div>{% endblock %}
+
+{% block _orob2b_order_type_lineItems_entry_taxes_widget %}
+    {{ value|raw }}
+{% endblock %}

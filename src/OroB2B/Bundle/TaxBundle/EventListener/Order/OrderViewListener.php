@@ -58,6 +58,22 @@ class OrderViewListener
     /** {@inheritdoc} */
     public function onView(BeforeListRenderEvent $event)
     {
+        $this->setTaxSection($event, true, -15);
+    }
+
+    /** {@inheritdoc} */
+    public function onEdit(BeforeListRenderEvent $event)
+    {
+        $this->setTaxSection($event);
+    }
+
+    /**
+     * @param BeforeListRenderEvent $event
+     * @param bool $loadTax
+     * @param int $sectionPriority
+     */
+    protected function setTaxSection(BeforeListRenderEvent $event, $loadTax = false, $sectionPriority = 0)
+    {
         if (!$this->taxationSettingsProvider->isEnabled()) {
             return;
         }
@@ -74,7 +90,7 @@ class OrderViewListener
 
         $entity = $this->doctrineHelper->getEntityReference($this->entityClass, $entityId);
 
-        $result = $this->taxManager->loadTax($entity);
+        $result = $loadTax ? $this->taxManager->loadTax($entity) : $this->taxManager->getTax($entity);
         if (!$result->count()) {
             return;
         }
@@ -85,7 +101,7 @@ class OrderViewListener
         );
 
         $scrollData = $event->getScrollData();
-        $blockId = $scrollData->addBlock($this->translator->trans('orob2b.tax.result.label'), -15);
+        $blockId = $scrollData->addBlock($this->translator->trans('orob2b.tax.result.label'), $sectionPriority);
         $subBlockId = $scrollData->addSubBlock($blockId);
         $scrollData->addSubBlockData($blockId, $subBlockId, $template);
     }
