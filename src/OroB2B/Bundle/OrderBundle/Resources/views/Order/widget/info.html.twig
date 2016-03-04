@@ -4,6 +4,7 @@
 
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
+
         <div class="responsive-block">
             {{ UI.renderProperty('orob2b.order.identifier.label'|trans, order.identifier) }}
             {{ UI.renderProperty('orob2b.order.po_number.label'|trans, order.poNumber) }}
@@ -38,7 +39,20 @@
             {% endif %}
 
             {{ UI.renderProperty('orob2b.order.ship_until.label'|trans, order.shipUntil|oro_format_date) }}
+
+            {% set SourceEntityBlock %}
+                {% if sourceEntity is not null%}
+                    <i class="icon {{ oro_entity_config_value(oro_class_name(sourceEntity),'icon') }}"></i>
+                    {{ oro_class_name(sourceEntity) }}
+                {% else %}
+
+                    <i class="icon {{ oro_entity_config_value(order.sourceEntityClass,'icon') }}"></i>
+                    {{ order.sourceEntityClass|default('N/A') }}
+                {% endif %}
+            {% endset %}
+            {{ UI.renderHtmlProperty('orob2b.order.source_document.label'|trans, SourceEntityBlock) }}
         </div>
+
         <div class="responsive-block">
             {{ UI.renderHtmlProperty('orob2b.order.billing_address.label'|trans, address.renderAddress(order.billingAddress)) }}
             {{ UI.renderHtmlProperty('orob2b.order.shipping_address.label'|trans, address.renderAddress(order.shippingAddress)) }}
