@@ -4,23 +4,29 @@
     {% set allow_delete = form.parent.vars.allow_delete %}
 
     <div data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}>
-        <fieldset class="{{ class_prefix }}__form__row">
-            <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col_item">
-                {{ form_widget(form.productSku, {attr: {
-                    placeholder: "orob2b.product.sku.placeholder"
-                }}) }}
+        <fieldset class="{{ class_prefix }}__form__row fields-row">
+            <div class="clearfix">
+                <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col_item">
+                    {{ form_widget(form.productSku, {attr: {
+                        placeholder: "orob2b.product.sku.placeholder"
+                    }}) }}
+                </div>
+                <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col_qty">
+                    {{ form_widget(form.productQuantity, {attr: {placeholder: "orob2b.product.quantity.placeholder"}}) }}
+                </div>
+                {% if allow_delete %}
+                    <span class="{{ class_prefix }}__form__item-remove removeRow"><i class="icon-remove"></i></span>
+                {% endif %}
+            </div>
+            <div class="fields-row-error">
+                <div class="product-autocomplete-name" style="display: none">
+                    <i class="icon-ok-sign"></i><span></span>
+                </div>
                 <div class="product-autocomplete-error" style="display: none;">
                     <span class="validation-failed">SKU not found</span>
                 </div>
-                <div class="product-autocomplete-name"></div>
-            </div>
-            <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col_qty">
-                {{ form_widget(form.productQuantity, {attr: {placeholder: "orob2b.product.quantity.placeholder"}}) }}
                 {{ form_errors(form.productQuantity) }}
             </div>
-            {% if allow_delete %}
-                <span class="{{ class_prefix }}__form__item-remove removeRow"><i class="icon-remove"></i></span>
-            {% endif %}
         </fieldset>
     </div>
 {% endblock %}

@@ -197,7 +197,7 @@
 }
 
 .quick-order__form__row {
-    margin: 0 -.7rem;
+    margin: 0 -.7rem 1.5rem -.7rem;
     position: relative;
 
     @media (max-width: 991px) {
@@ -210,11 +210,23 @@
         height: 0;
         clear: both;
     }
+
+    .fields-row-error {
+        margin: 0 .7rem;
+        .validation-failed {
+            font-size: 1.2rem;
+            color: @theme-red2-color;
+            padding: 0;
+            background: none;
+        }
+        .product-autocomplete-name {
+            font-size: 1.2rem;
+            color: @theme-green2-color;
+        }
+    }
 }
 .quick-order__form__row__head {
-    & .quick-order__form__col {
-        margin-bottom: 0;
-    }
+    margin-bottom: 0;
     label {
         font-weight: 400;
         margin-bottom: 1rem;
@@ -224,7 +236,6 @@
 .quick-order__form__col {
     float: left;
     padding: 0 .7rem;
-    margin: 0 0 1.5rem;
 
     @media (max-width: 991px) {
         padding: 0 .5rem;
@@ -250,16 +261,6 @@
             width: 20%;
         }
     }
-}
-
-.product-autocomplete-name {
-    font-size: 1.2rem;
-    color: @theme-green2-color;
-}
-
-.quick-order__form__item-error {
-    font-size: 1.2rem;
-    color: @theme-red2-color;
 }
 
 .add-more-rows-btn {

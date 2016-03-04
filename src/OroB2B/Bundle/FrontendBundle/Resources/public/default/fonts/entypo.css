@@ -18,8 +18,11 @@
 
   display: inline-block;
   /*width: 1.1em;*/
-  margin-right: .3rem;
   text-align: center;
+}
+
+[class^="icon-"]:before, [class*=" icon-"]:before {
+    margin-right: .3rem;
 }
 
 .the-icons li {
