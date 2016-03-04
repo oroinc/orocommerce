@@ -60,6 +60,7 @@ databaseBefore:
                                 rate: '0.1'
                                 taxableAmount: '9.6'
                                 taxAmount: '1.6'
+                                currency: 'USD'
 expectedResult: # loaded from fixtures, values from simple_order_item_1 used to check database overrid
     row:
         includingTax: '105.54' # 95.94 + 9.594

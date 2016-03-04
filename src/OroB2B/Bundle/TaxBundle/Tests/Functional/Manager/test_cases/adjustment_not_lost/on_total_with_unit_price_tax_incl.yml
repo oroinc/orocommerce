@@ -138,7 +138,7 @@ expectedResult:
                 adjustment: '-0.0009'   # 20.19 - 20.1909
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD's }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
         -
             row:
                 includingTax: '22.21'
