@@ -457,5 +457,10 @@ services:
         arguments:
             - @translator
             - @orob2b_pricing.rounding.price_rounding_service
+            - @orob2b_pricing.provider.combined_product_price
+            - @oro_entity.doctrine_helper
+        calls:
+            - [setProductClass, [%orob2b_product.product.class%]]
+            - [setProductUnitClass, [%orob2b_product.product_unit.class%]]
         tags:
             - { name: orob2b_pricing.subtotal_provider, priority: 0 }

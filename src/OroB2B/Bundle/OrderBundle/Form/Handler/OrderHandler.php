@@ -6,8 +6,6 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
@@ -83,20 +81,12 @@ class OrderHandler
     {
         $subtotal = $this->lineItemSubtotalProvider->getSubtotal($order);
         $total = $this->totalProvider->getTotal($order);
-        $propertyAccessor = PropertyAccess::createPropertyAccessor();
 
         if ($subtotal) {
-            try {
-                $propertyAccessor->setValue($order, $subtotal->getType(), $subtotal->getAmount());
-            } catch (NoSuchPropertyException $e) {
-            }
+            $order->setSubtotal($subtotal->getAmount());
         }
-
         if ($total) {
-            try {
-                $propertyAccessor->setValue($order, $total->getType(), $total->getAmount());
-            } catch (NoSuchPropertyException $e) {
-            }
+            $order->setTotal($total->getAmount());
         }
     }
 }

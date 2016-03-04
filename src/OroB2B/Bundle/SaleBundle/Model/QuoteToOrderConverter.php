@@ -4,9 +4,6 @@ namespace OroB2B\Bundle\SaleBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
@@ -198,20 +195,12 @@ class QuoteToOrderConverter
     {
         $subtotal = $this->lineItemSubtotalProvider->getSubtotal($order);
         $total = $this->totalProvider->getTotal($order);
-        $propertyAccessor = PropertyAccess::createPropertyAccessor();
 
         if ($subtotal) {
-            try {
-                $propertyAccessor->setValue($order, $subtotal->getType(), $subtotal->getAmount());
-            } catch (NoSuchPropertyException $e) {
-            }
+            $order->setSubtotal($subtotal->getAmount());
         }
-
         if ($total) {
-            try {
-                $propertyAccessor->setValue($order, $total->getType(), $total->getAmount());
-            } catch (NoSuchPropertyException $e) {
-            }
+            $order->setTotal($total->getAmount());
         }
     }
 }

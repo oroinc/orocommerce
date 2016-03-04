@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ShoppingListBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -49,7 +50,10 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
  * )
  * @ORM\HasLifecycleCallbacks()
  */
-class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterface, LineItemsAwareInterface
+class ShoppingList extends ExtendShoppingList implements
+    OrganizationAwareInterface,
+    LineItemsAwareInterface,
+    CurrencyAwareInterface
 {
     /**
      * @var int
