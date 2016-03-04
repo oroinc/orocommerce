@@ -123,7 +123,7 @@ abstract class AbstractProductPriceDatagridListener
      * @param string $currency
      * @param ProductUnit|null $unit
      */
-    protected function addConfigJoin(DatagridConfiguration $config, $currency, $unit = null)
+    protected function addConfigProductPriceJoin(DatagridConfiguration $config, $currency, $unit = null)
     {
         $columnName = $this->buildColumnName($currency, $unit);
         $joinAlias = $this->buildJoinAlias($columnName);

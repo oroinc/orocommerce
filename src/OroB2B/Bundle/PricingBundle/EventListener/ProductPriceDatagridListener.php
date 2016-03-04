@@ -144,7 +144,7 @@ class ProductPriceDatagridListener extends AbstractProductPriceDatagridListener
 
         $this->addConfigElement($config, '[source][query][select]', sprintf($selectPattern, $joinAlias, $columnName));
 
-        $this->addConfigJoin($config, $currency, $unit);
+        $this->addConfigProductPriceJoin($config, $currency, $unit);
 
         $column = $this->createPriceColumn($currency, $enabled, $unit);
         $this->addConfigElement($config, '[columns]', $column, $columnName);
