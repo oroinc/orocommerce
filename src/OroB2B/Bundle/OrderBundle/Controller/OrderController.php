@@ -67,15 +67,9 @@ class OrderController extends AbstractOrderController
         $routeSourceEntityView = null;
 
         if ($order->getSourceEntityClass() && $order->getSourceEntityId()) {
-            $sourceEntity = $this->get('oro_entity.doctrine_helper')->getEntity(
-                $order->getSourceEntityClass(),
-                $order->getSourceEntityId()
-            );
-
-            $routeSourceEntityView = $this->get('orob2b_order.manager.source_entity')->getSourceEntityLink(
-                $order->getSourceEntityClass(),
-                $order->getSourceEntityId()
-            );
+            $sourceEntityManager = $this->get('orob2b_order.manager.source_entity');
+            $sourceEntity = $sourceEntityManager->getSourceEntity($order);
+            $routeSourceEntityView = $sourceEntityManager->getSourceEntityLink($order);
         }
 
         return [
@@ -83,41 +77,6 @@ class OrderController extends AbstractOrderController
             'sourceEntity' => $sourceEntity,
             'routeSourceEntityView' => $routeSourceEntityView
         ];
-    }
-
-
-    /**
-     * @param string $targetClass The FQCN of the activity target entity
-     * @param int    $targetId    The identifier of the activity target entity
-     *
-     * @return string|null
-     */
-    protected function getContextLink($targetClass, $targetId)
-    {
-        $metadata = $this->configManager->getEntityMetadata($targetClass);
-        $link     = null;
-        if ($metadata) {
-            try {
-                $route = $metadata->getRoute('view', true);
-            } catch (\LogicException $exception) {
-                // Need for cases when entity does not have route.
-                return null;
-            }
-            $link = $this->router->generate($route, ['id' => $targetId]);
-        } elseif (ExtendHelper::isCustomEntity($targetClass)) {
-            $safeClassName = $this->entityClassNameHelper->getUrlSafeClassName($targetClass);
-            // Generate view link for the custom entity
-            $link = $this->router->generate(
-                'oro_entity_view',
-                [
-                    'id'         => $targetId,
-                    'entityName' => $safeClassName
-
-                ]
-            );
-        }
-
-        return $link;
     }
 
     /**

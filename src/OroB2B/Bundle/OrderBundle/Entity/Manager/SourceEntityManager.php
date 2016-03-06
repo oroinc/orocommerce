@@ -2,93 +2,58 @@
 
 namespace OroB2B\Bundle\OrderBundle\Entity\Manager;
 
-use Doctrine\Common\Util\ClassUtils;
-use Doctrine\Common\Persistence\ObjectManager;
-
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use Oro\Bundle\ActivityBundle\Model\ActivityInterface;
-use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
-use Oro\Bundle\SearchBundle\Engine\ObjectMapper;
-use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
-use Oro\Bundle\ActivityBundle\Event\PrepareContextTitleEvent;
+use Oro\Bundle\EntityBundle\Tools\EntityClassNameHelper;
 
-class SourceEntityManager //extends ApiEntityManager
+use OroB2B\Bundle\OrderBundle\Entity\Order;
+
+class SourceEntityManager
 {
-//    /** @var ActivityManager */
-//    protected $activityManager;
-//
-//    /** @var TokenStorageInterface */
-//    protected $securityTokenStorage;
-
     /** @var ConfigManager */
     protected $configManager;
 
     /** @var RouterInterface */
     protected $router;
 
-//    /** @var EntityAliasResolver */
-//    protected $entityAliasResolver;
-//
-//    /** @var ObjectMapper */
-//    protected $mapper;
-//
-//    /** @var TranslatorInterface */
-//    protected $translator;
-//
+    /** @var EntityClassNameHelper */
+    protected $entityClassNameHelper;
+
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
     /**
-     * @param ObjectManager         $om
-     * @param ActivityManager       $activityManager
-     * @param TokenStorageInterface $securityTokenStorage
-     * @param ConfigManager         $configManager
-     * @param RouterInterface       $router
-     * @param EntityAliasResolver   $entityAliasResolver
-     * @param ObjectMapper          $objectMapper
-     * @param TranslatorInterface   $translator
-     * @param DoctrineHelper        $doctrineHelper
+     * @param ConfigManager $configManager
+     * @param RouterInterface $router
+     * @param DoctrineHelper $doctrineHelper
+     * @param EntityClassNameHelper $entityClassNameHelper
      */
     public function __construct(
-//        ObjectManager $om,
-//        ActivityManager $activityManager,
-//        TokenStorageInterface $securityTokenStorage,
         ConfigManager $configManager,
         RouterInterface $router,
-//        EntityAliasResolver $entityAliasResolver,
-//        ObjectMapper $objectMapper,
-//        TranslatorInterface $translator,
-        DoctrineHelper $doctrineHelper
+        DoctrineHelper $doctrineHelper,
+        EntityClassNameHelper $entityClassNameHelper
     ) {
-       // parent::__construct(null, $om);
-
-//        $this->activityManager      = $activityManager;
-//        $this->securityTokenStorage = $securityTokenStorage;
         $this->configManager        = $configManager;
         $this->router               = $router;
-//        $this->entityAliasResolver  = $entityAliasResolver;
-//        $this->mapper               = $objectMapper;
-//        $this->translator           = $translator;
         $this->doctrineHelper       = $doctrineHelper;
+        $this->entityClassNameHelper = $entityClassNameHelper;
     }
 
     /**
-     * @param string $targetClass The FQCN of the activity target entity
-     * @param int    $targetId    The identifier of the activity target entity
+     * @param Order $order
      *
-     * @return string|null
+     * @return null|string
      */
-    public function getSourceEntityLink($targetClass, $targetId)
+    public function getSourceEntityLink(Order $order)
     {
-        $metadata = $this->configManager->getEntityMetadata($targetClass);
+        $sourceEntityClass = $order->getSourceEntityClass();
+        $sourceEntityId = $order->getSourceEntityId();
+
+        $metadata = $this->configManager->getEntityMetadata($sourceEntityClass);
         $link     = null;
         if ($metadata) {
             try {
@@ -97,14 +62,14 @@ class SourceEntityManager //extends ApiEntityManager
                 // Need for cases when entity does not have route.
                 return null;
             }
-            $link = $this->router->generate($route, ['id' => $targetId]);
-        } elseif (ExtendHelper::isCustomEntity($targetClass)) {
-            $safeClassName = $this->entityClassNameHelper->getUrlSafeClassName($targetClass);
+            $link = $this->router->generate($route, ['id' => $sourceEntityId]);
+        } elseif (ExtendHelper::isCustomEntity($sourceEntityClass)) {
+            $safeClassName = $this->entityClassNameHelper->getUrlSafeClassName($sourceEntityClass);
             // Generate view link for the custom entity
             $link = $this->router->generate(
                 'oro_entity_view',
                 [
-                    'id'         => $targetId,
+                    'id'         => $sourceEntityId,
                     'entityName' => $safeClassName
 
                 ]
@@ -114,29 +79,16 @@ class SourceEntityManager //extends ApiEntityManager
         return $link;
     }
 
-//    /**
-//     * @param $item
-//     * @param $targetClass
-//     * @param $target
-//     * @param $targetId
-//     *
-//     * @return mixed
-//     */
-//    public function prepareItemTitle($item, $targetClass, $target, $targetId)
-//    {
-//        if (!array_key_exists('title', $item) || !$item['title']) {
-//            if ($fields = $this->mapper->getEntityMapParameter($targetClass, 'title_fields')) {
-//                $text = [];
-//                foreach ($fields as $field) {
-//                    $text[] = $this->mapper->getFieldValue($target, $field);
-//                }
-//                $item['title'] = implode(' ', $text);
-//                return $item;
-//            } else {
-//                $item['title'] = $this->translator->trans('oro.entity.item', ['%id%' => $targetId]);
-//                return $item;
-//            }
-//        }
-//        return $item;
-//    }
+    /**
+     * @param Order $order
+     *
+     * @return null|object
+     */
+    public function getSourceEntity(Order $order)
+    {
+        return $this->doctrineHelper->getEntity(
+            $order->getSourceEntityClass(),
+            $order->getSourceEntityId()
+        );
+    }
 }

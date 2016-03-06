@@ -130,14 +130,7 @@ services:
     orob2b_order.manager.source_entity:
         class: %orob2b_order.manager.source_entity.class%
         arguments:
-#            - @doctrine.orm.entity_manager
-#            - @oro_activity.manager
-#            - @security.token_storage
             - @oro_entity_config.config_manager
             - @router
-#            - @oro_entity.entity_alias_resolver
-#            - @oro_search.mapper
-#            - @translator
             - @oro_entity.doctrine_helper
-#        calls:
-#            - [setEventDispatcher, [@event_dispatcher]]
+            - @oro_entity.entity_class_name_helper
