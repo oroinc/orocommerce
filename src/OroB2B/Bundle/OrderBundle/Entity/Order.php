@@ -859,7 +859,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
      */
     public function setSourceEntityId($sourceEntityId)
     {
-        $this->sourceEntityId = $sourceEntityId;
+        $this->sourceEntityId = (int)$sourceEntityId;
 
         return $this;
     }
