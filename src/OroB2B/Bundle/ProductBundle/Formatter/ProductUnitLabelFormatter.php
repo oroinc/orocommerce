@@ -29,7 +29,7 @@ class ProductUnitLabelFormatter
      */
     public function format($unitCode, $isShort = false, $isPlural = false)
     {
-        $labelForm = ($isShort ? 'short' : 'full') . ($isPlural ? '_plural': '');
+        $labelForm = ($isShort ? 'short' : 'full') . ($isPlural ? '_plural' : '');
 
         $translationKey = sprintf('orob2b.product_unit.%s.label.' . $labelForm, $unitCode);
 
@@ -44,11 +44,22 @@ class ProductUnitLabelFormatter
      */
     public function formatChoices(array $units, $isShort = false, $isPlural = false)
     {
-        $result = [];
-        foreach ($units as $unit) {
-            $result[$unit->getCode()] = $this->format($unit->getCode(), $isShort, $isPlural);
-        }
+        return $this->formatChoicesByCodes(array_map(function (ProductUnit $unit) {
+            return $unit->getCode();
+        }, $units), $isShort, $isPlural);
+    }
 
-        return $result;
+    /**
+     * @param array $codes
+     * @param bool $isShort
+     * @param bool $isPlural
+     * @return array
+     */
+    public function formatChoicesByCodes(array $codes, $isShort = false, $isPlural = false)
+    {
+        return array_reduce($codes, function ($result, $code) use ($isShort, $isPlural) {
+            $result[$code] = $this->format($code, $isShort, $isPlural);
+            return $result;
+        }, []);
     }
 }

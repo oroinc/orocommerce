@@ -8,32 +8,74 @@ layout:
                     blockType: container
                 product_grid_row_image_holder:
                     blockType: block
+                    options:
+                        vars:
+                            attr_renderer: 'block_attributes_underscore'
                 product_grid_row_title:
                     blockType: block
+                    options:
+                        vars:
+                            attr_renderer: 'block_attributes_underscore'
                 product_grid_row_primary_content_container:
                     blockType: container
+                    options:
+                        vars:
+                            attr_renderer: 'block_attributes_underscore'
                 product_grid_row_number:
                     blockType: block
+                    options:
+                        vars:
+                            attr_renderer: 'block_attributes_underscore'
                 product_grid_row_specification:
                     blockType: container
+                    options:
+                        vars:
+                            attr_renderer: 'block_attributes_underscore'
                 product_grid_row_sku:
                     blockType: block
+                    options:
+                        vars:
+                            attr_renderer: 'block_attributes_underscore'
                 product_grid_row_description:
                     blockType: block
+                    options:
+                        vars:
+                            attr_renderer: 'block_attributes_underscore'
                 product_grid_row_details:
                     blockType: block
+                    options:
+                        vars:
+                            attr_renderer: 'block_attributes_underscore'
                 product_grid_row_secondary_content_container:
                     blockType: container
+                    options:
+                        vars:
+                            attr_renderer: 'block_attributes_underscore'
                 product_grid_row_secondary_content_first_container:
                     blockType: container
+                    options:
+                        vars:
+                            attr_renderer: 'block_attributes_underscore'
                 product_grid_row_specification_delivery:
                     blockType: block
+                    options:
+                        vars:
+                            attr_renderer: 'block_attributes_underscore'
                 product_grid_row_mspr:
                     blockType: block
+                    options:
+                        vars:
+                            attr_renderer: 'block_attributes_underscore'
                 product_grid_row_secondary_content_second_container:
                     blockType: container
+                    options:
+                        vars:
+                            attr_renderer: 'block_attributes_underscore'
                 product_grid_row_more_info:
                     blockType: block
+                    options:
+                        vars:
+                            attr_renderer: 'block_attributes_underscore'
             tree:
                 scripts_before:
                     product_grid_row_template:

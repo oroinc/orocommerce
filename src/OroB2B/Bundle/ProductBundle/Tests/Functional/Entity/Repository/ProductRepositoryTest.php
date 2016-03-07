@@ -24,7 +24,7 @@ class ProductRepositoryTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
 
         $this->loadFixtures([
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
+            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
             'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductImageData',
         ]);
 
@@ -297,45 +297,6 @@ class ProductRepositoryTest extends WebTestCase
             ],
         ];
     }
-
-    /**
-     * @dataProvider getProductsWithUnitsDataProvider
-     *
-     * @param array $products
-     */
-    public function testGetProductsWithUnits(array $products)
-    {
-        $result = $this->repository->getProductsWithUnits($this->referencesToEntities($products));
-        $this->assertEquals($this->referencesToEntities($products), $result);
-    }
-
-    /**
-     * @return array
-     */
-    public function getProductsWithUnitsDataProvider()
-    {
-        return [
-            [
-                'products' => [
-                    'product.1',
-                    'product.2',
-                    'product.3',
-                    'product.4',
-                    'product.5',
-                    'product.6',
-                    'product.7',
-                    'product.8',
-                ],
-            ],
-            [
-                'products' => [
-                    'product.1',
-                    'product.2',
-                ],
-            ],
-        ];
-    }
-
 
     /**
      * @param array $references

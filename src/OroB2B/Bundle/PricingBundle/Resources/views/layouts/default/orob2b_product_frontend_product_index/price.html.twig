@@ -2,7 +2,7 @@
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " product-item__price product-item__price_<%= themeOptions.view %> mt1-md mb1-md mt1-sm mb1-sm"
     }) %}
-    <div {{ block('block_attributes_raw_class') }}>
+    <div {{ block('block_attributes') }}>
         Your Price: <span class="fs16 blue"><%= model.price_column %></span>
     </div>
 {% endblock %}

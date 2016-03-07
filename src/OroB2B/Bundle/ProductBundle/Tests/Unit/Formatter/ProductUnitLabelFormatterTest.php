@@ -93,20 +93,23 @@ class ProductUnitLabelFormatterTest extends \PHPUnit_Framework_TestCase
             (new ProductUnit())->setCode('item'),
         ];
 
-        $this->translator->expects($this->exactly(2))
-            ->method('trans')
-            ->will($this->returnValueMap([
-                ['orob2b.product_unit.kg.label.full', [], null, null, '_KG'],
-                ['orob2b.product_unit.kg.label.full_plural', [], null, null, '_KG_PLURAL'],
-                ['orob2b.product_unit.item.label.full', [], null, null, '_ITEM'],
-                ['orob2b.product_unit.item.label.full_plural', [], null, null, '_ITEM_PLURAL'],
-                ['orob2b.product_unit.kg.label.short', [], null, null, '_KG_SHORT'],
-                ['orob2b.product_unit.kg.label.short_plural', [], null, null, '_KG_SHORT_PLURAL'],
-                ['orob2b.product_unit.item.label.short', [], null, null, '_ITEM_SHORT'],
-                ['orob2b.product_unit.item.label.short_plural', [], null, null, '_ITEM_SHORT_PLURAL'],
-            ]));
+        $this->setUpTranslatorForChoices();
 
         $this->assertEquals($expected, $this->formatter->formatChoices($units, $isShort, $isPlural));
+    }
+
+    /**
+     * @param bool $isShort
+     * @param bool $isPlural
+     * @param array $expected
+     *
+     * @dataProvider formatChoicesProvider
+     */
+    public function testFormatChoicesByCodes($isShort, $isPlural, array $expected)
+    {
+        $this->setUpTranslatorForChoices();
+
+        $this->assertEquals($expected, $this->formatter->formatChoicesByCodes(['kg', 'item'], $isShort, $isPlural));
     }
 
     /**
@@ -148,5 +151,24 @@ class ProductUnitLabelFormatterTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
         ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function setUpTranslatorForChoices()
+    {
+        $this->translator->expects($this->exactly(2))
+            ->method('trans')
+            ->will($this->returnValueMap([
+                ['orob2b.product_unit.kg.label.full', [], null, null, '_KG'],
+                ['orob2b.product_unit.kg.label.full_plural', [], null, null, '_KG_PLURAL'],
+                ['orob2b.product_unit.item.label.full', [], null, null, '_ITEM'],
+                ['orob2b.product_unit.item.label.full_plural', [], null, null, '_ITEM_PLURAL'],
+                ['orob2b.product_unit.kg.label.short', [], null, null, '_KG_SHORT'],
+                ['orob2b.product_unit.kg.label.short_plural', [], null, null, '_KG_SHORT_PLURAL'],
+                ['orob2b.product_unit.item.label.short', [], null, null, '_ITEM_SHORT'],
+                ['orob2b.product_unit.item.label.short_plural', [], null, null, '_ITEM_SHORT_PLURAL'],
+            ]));
     }
 }

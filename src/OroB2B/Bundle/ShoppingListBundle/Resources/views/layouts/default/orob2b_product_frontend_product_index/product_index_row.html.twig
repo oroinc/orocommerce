@@ -1,26 +1,6 @@
-{% block block_attributes_raw_id -%}
-    {{ ' ' }}{% spaceless %}
-        {% if attr.class is defined %}
-            {% set attr = attr|merge({
-                class: attr.class|replace({'{{ class_prefix }}': class_prefix})
-            }) %}
-        {% endif %}
-        {% for attrname, attrvalue in attr %}
-            {% if attrname is same as('title') %}
-                {{ attrname }}="{{ attrvalue|block_text(translation_domain) }}"
-            {% elseif attrname is same as('id') %}
-                {{- attrname }}="{{ attrvalue|raw -}}"
-            {% else %}
-                {{ attrname }}="{{ attrvalue }}"
-            {% endif %}
-        {% endfor %}
-    {% endspaceless %}
-{%- endblock %}
-
 {% block _add_to_shopping_list_form_start_widget %}
     {% set attr = attr|merge({
         'id': form.vars.id ~ '-product-id-<%= model.id %>',
-        'block_attributes': 'block_attributes_raw_id'
     }) %}
     {{ block('form_start_widget') }}
 {% endblock %}
@@ -40,7 +20,7 @@
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " product-item__qty product-item__qty_<%= themeOptions.view %>"
     }) %}
-    <div {{ block('block_attributes_raw_class') }}>
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}

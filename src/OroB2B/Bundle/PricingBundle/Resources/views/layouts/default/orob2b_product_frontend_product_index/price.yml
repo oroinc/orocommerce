@@ -6,3 +6,6 @@ layout:
             id: product_grid_row_price
             parentId: product_grid_row_secondary_content_first_container
             blockType: block
+            options:
+                vars:
+                    attr_renderer: 'block_attributes_underscore'

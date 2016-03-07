@@ -10,15 +10,16 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class FrontendProductUnitDatagridListener
 {
+    const PRODUCT_UNITS_COLUMN_NAME = 'units';
+    const PRODUCT_UNITS_SEPARATOR = '{sep}';
+
     /**
      * @var TranslatorInterface
      */
@@ -55,13 +56,45 @@ class FrontendProductUnitDatagridListener
     public function onBuildBefore(BuildBefore $event)
     {
         $config = $event->getConfig();
-        $path = '[columns]';
-        $select = $config->offsetGetByPath($path);
-        $select['units'] = [
-            'label' => $this->translator->trans('orob2b.product.productunit.entity_label'),
+        $this->addConfigElement($config, '[columns]', [
+            'label' => $this->translator->trans('orob2b.shoppinglist.lineitem.unit.label'),
             'frontend_type' => PropertyInterface::TYPE_ARRAY,
-        ];
-        $config->offsetSetByPath($path, $select);
+        ], self::PRODUCT_UNITS_COLUMN_NAME);
+
+        $unitPrecisionsAlias = $this->getJoinAlias('unitPrecisions');
+        $unitAlias = $this->getJoinAlias('unit');
+        $select = sprintf(
+            'GROUP_CONCAT(%s.code SEPARATOR %s) as %s',
+            $unitAlias,
+            (new Expr())->literal(self::PRODUCT_UNITS_SEPARATOR),
+            $this->getSelectAlias()
+        );
+        $this->addConfigElement($config, '[source][query][select]', $select);
+        $this->addConfigElement($config, '[source][query][join][left]', [
+            'join' => 'product.unitPrecisions',
+            'alias' => $unitPrecisionsAlias,
+        ]);
+        $this->addConfigElement($config, '[source][query][join][left]', [
+            'join' => sprintf('%s.unit', $unitPrecisionsAlias),
+            'alias' => $unitAlias,
+        ]);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getSelectAlias()
+    {
+        return 'shopping_list_form_units';
+    }
+
+    /**
+     * @param string $column
+     * @return string
+     */
+    protected function getJoinAlias($column)
+    {
+        return 'shopping_list_form_' . $column;
     }
 
     /**
@@ -71,24 +104,32 @@ class FrontendProductUnitDatagridListener
     {
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
-
-        /** @var ProductRepository $repository */
-        $repository = $this->doctrineHelper->getEntityRepository('OroB2BProductBundle:Product');
-        $products = $repository->getProductsWithUnits(array_map(function (ResultRecord $record) {
-            return $record->getValue('id');
-        }, $records));
-
-        $productsWithUnits = array_reduce($products, function ($result, Product $product) {
-            $unitPrecisions = $product->getUnitPrecisions();
-            $result[$product->getId()] = $unitPrecisions->map(function (ProductUnitPrecision $unitPrecision) {
-                return $unitPrecision->getUnit();
-            })->toArray();
-            return $result;
-        }, []);
-
         foreach ($records as $record) {
-            $productUnits = $productsWithUnits[$record->getValue('id')];
-            $record->addData(['units' => $this->productUnitLabelFormatter->formatChoices($productUnits)]);
+            $unitsString = $record->getValue(self::PRODUCT_UNITS_COLUMN_NAME);
+            if (!$unitsString) {
+                continue;
+            }
+            $productUnits = explode(self::PRODUCT_UNITS_SEPARATOR, $unitsString);
+            $record->addData([
+                self::PRODUCT_UNITS_COLUMN_NAME => $this->productUnitLabelFormatter->formatChoicesByCodes($productUnits)
+            ]);
         }
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     * @param string $path
+     * @param mixed $element
+     * @param mixed $key
+     */
+    protected function addConfigElement(DatagridConfiguration $config, $path, $element, $key = null)
+    {
+        $select = $config->offsetGetByPath($path);
+        if ($key) {
+            $select[$key] = $element;
+        } else {
+            $select[] = $element;
+        }
+        $config->offsetSetByPath($path, $select);
     }
 }
