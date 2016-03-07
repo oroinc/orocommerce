@@ -13,6 +13,7 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\OrderBundle\Provider\IdentifierAwareInterface;
 use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
 
 /**
@@ -48,7 +49,7 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
  * )
  * @ORM\HasLifecycleCallbacks()
  */
-class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterface
+class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterface, IdentifierAwareInterface
 {
     /**
      * @var int
@@ -398,5 +399,13 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
         $this->accountUser = $accountUser;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdentifier()
+    {
+        return $this->getId();
     }
 }

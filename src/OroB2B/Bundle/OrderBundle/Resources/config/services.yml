@@ -20,6 +20,7 @@ parameters:
     orob2b_order.provider.subtotal_line_item.class: OroB2B\Bundle\OrderBundle\Provider\SubtotalLineItemProvider
 
     orob2b_order.manager.source_entity.class: OroB2B\Bundle\OrderBundle\Entity\Manager\SourceEntityManager
+    orob2b_order.twig.order.class: OroB2B\Bundle\OrderBundle\Twig\OrderExtension
 
 services:
     orob2b_order.order.manager.api:
@@ -134,3 +135,10 @@ services:
             - @router
             - @oro_entity.doctrine_helper
             - @oro_entity.entity_class_name_helper
+
+    orob2b_order.twig.order:
+        class: %orob2b_order.twig.order.class%
+        arguments:
+            - @oro_entity.entity_class_name_provider
+        tags:
+            - { name: twig.extension }
