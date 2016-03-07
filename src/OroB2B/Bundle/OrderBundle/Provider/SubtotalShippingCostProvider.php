@@ -5,15 +5,14 @@ namespace OroB2B\Bundle\OrderBundle\Provider;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Model\Subtotal;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use OroB2B\Bundle\OrderBundle\SubtotalProcessor\SubtotalProviderInterface;
 
-class SubtotalLineItemProvider implements SubtotalProviderInterface
+class SubtotalShippingCostProvider implements SubtotalProviderInterface
 {
-    const TYPE = 'subtotal';
-    const NAME = 'orob2b_order.subtotal_lineitem';
+    const TYPE = 'shipping_cost';
+    const NAME = 'orob2b_order.subtotal_shipping_cost';
 
     /**
      * @var TranslatorInterface
@@ -51,41 +50,19 @@ class SubtotalLineItemProvider implements SubtotalProviderInterface
         $subtotal = new Subtotal();
 
         $subtotal->setType(self::TYPE);
-        $translation = sprintf('orob2b.order.subtotals.%s', $subtotal->getType());
+        $translation = 'orob2b.order.subtotals.' . self::TYPE;
         $subtotal->setLabel($this->translator->trans($translation));
-        $subtotal->setVisible(true);
 
         $subtotalAmount = 0.0;
-        foreach ($order->getLineItems() as $lineItem) {
-            if (!$lineItem->getPrice()) {
-                continue;
-            }
-            $rowTotal = $lineItem->getPrice()->getValue();
-            if ((int)$lineItem->getPriceType() === OrderLineItem::PRICE_TYPE_UNIT) {
-                $rowTotal *= $lineItem->getQuantity();
-            }
-            if ($order->getCurrency() !== $lineItem->getPrice()->getCurrency()) {
-                $rowTotal *= $this->getExchangeRate($lineItem->getPrice()->getCurrency(), $order->getCurrency());
-            }
-            $subtotalAmount += $rowTotal;
+        if ($order->getShippingCost()) {
+            $subtotalAmount = $order->getShippingCost()->getValue();
+            $subtotal->setVisible(true);
+        } else {
+            $subtotal->setVisible(false);
         }
-
-        $subtotal->setAmount(
-            $this->rounding->round($subtotalAmount)
-        );
-
+        $subtotal->setAmount($this->rounding->round($subtotalAmount));
         $subtotal->setCurrency($order->getCurrency());
 
         return $subtotal;
-    }
-
-    /**
-     * @param string $fromCurrency
-     * @param string $toCurrency
-     * @return float
-     */
-    protected function getExchangeRate($fromCurrency, $toCurrency)
-    {
-        return 1.0;
     }
 }
