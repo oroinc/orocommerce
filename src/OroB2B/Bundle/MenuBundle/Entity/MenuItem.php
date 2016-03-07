@@ -71,7 +71,7 @@ class MenuItem extends ExtendMenuItem
      * @var MenuItem
      *
      * @Gedmo\TreeParent
-     * @ORM\ManyToOne(targetEntity="MenuItem")
+     * @ORM\ManyToOne(targetEntity="MenuItem", inversedBy="children")
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $parent;
