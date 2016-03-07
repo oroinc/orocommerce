@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\SaleBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Util\ClassUtils;
 
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -112,7 +113,9 @@ class QuoteToOrderConverter
             ->setOrganization($quote->getOrganization())
             ->setPoNumber($quote->getPoNumber())
             ->setShipUntil($quote->getShipUntil())
-            ->setShippingAddress($orderShippingAddress);
+            ->setShippingAddress($orderShippingAddress)
+            ->setSourceEntityClass(ClassUtils::getClass($quote))
+            ->setSourceEntityId($quote->getId());
 
         return $order;
     }

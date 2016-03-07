@@ -158,7 +158,9 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             )
             ->setSubtotal($subtotalAmount)
             ->setTotal($totalAmount)
-            ->setShippingAddress($shippingAddress);
+            ->setShippingAddress($shippingAddress)
+            ->setSourceEntityClass('OroB2B\Bundle\SaleBundle\Entity\Quote')
+            ->setSourceEntityId(0);
 
         $this->assertCalculateSubtotalsCalled($subtotalAmount);
         $this->assertCalculateTotalsCalled($totalAmount);
@@ -205,7 +207,9 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             )
             ->setSubtotal($subtotalAmount)
             ->setTotal($totalAmount)
-            ->setShippingAddress($shippingAddress);
+            ->setShippingAddress($shippingAddress)
+            ->setSourceEntityClass('OroB2B\Bundle\SaleBundle\Entity\Quote')
+            ->setSourceEntityId(0);
 
         $this->assertCalculateSubtotalsCalled($subtotalAmount);
         $this->assertCalculateTotalsCalled($totalAmount);
@@ -241,7 +245,9 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             )
             ->setSubtotal($subtotalAmount)
             ->setTotal($totalAmount)
-            ->setShippingAddress($shippingAddress);
+            ->setShippingAddress($shippingAddress)
+            ->setSourceEntityClass('OroB2B\Bundle\SaleBundle\Entity\Quote')
+            ->setSourceEntityId(0);
 
         $offer = $this->createQuoteProductOffer(
             $unit,
@@ -293,7 +299,9 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
                 $this->createOrderLineItem($sku, $unit, $qty, OrderLineItem::PRICE_TYPE_UNIT, $price, self::CURRENCY)
             )
             ->setSubtotal($subtotalAmount)
-            ->setTotal($totalAmount);
+            ->setTotal($totalAmount)
+            ->setSourceEntityClass('OroB2B\Bundle\SaleBundle\Entity\Quote')
+            ->setSourceEntityId(0);
 
         $offer = $this->createQuoteProductOffer(
             $unit,
