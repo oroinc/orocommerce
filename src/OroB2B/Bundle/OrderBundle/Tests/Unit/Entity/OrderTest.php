@@ -41,7 +41,9 @@ class OrderTest extends \PHPUnit_Framework_TestCase
             ['account', new Account()],
             ['accountUser', new AccountUser()],
             ['website', new Website()],
-            ['shippingCost', new Price()]
+            ['shippingCost', new Price()],
+            ['sourceEntityClass', 'EntityClass'],
+            ['sourceEntityId', 1]
         ];
 
         $order = new Order();
