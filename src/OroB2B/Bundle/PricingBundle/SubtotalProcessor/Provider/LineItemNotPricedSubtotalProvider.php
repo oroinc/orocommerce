@@ -101,9 +101,11 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
                 $productsPriceCriteria =
                     $this->prepareProductsPriceCriteria($lineItem, $this->getBaseCurrency($entity));
                 $price = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria);
-                $priceValue = reset($price)->getValue();
-                $subtotalAmount += $priceValue * $lineItem->getQuantity();
-                $subtotal->setVisible(true);
+                if (reset($price)) {
+                    $priceValue = reset($price)->getValue();
+                    $subtotalAmount += $priceValue * $lineItem->getQuantity();
+                    $subtotal->setVisible(true);
+                }
             }
         }
 
