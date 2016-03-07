@@ -61,7 +61,6 @@ parameters:
     orob2b_pricing.event_listener.combined_price_list_queue.class: OroB2B\Bundle\PricingBundle\EventListener\CombinedPriceListQueueListener
     orob2b_pricing.event_subscriber.system_config.class: OroB2B\Bundle\PricingBundle\EventListener\PriceListSystemConfigSubscriber
 
-    orob2b_pricing.model.price_list_request_handler.abstract.class: OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler
     orob2b_pricing.model.price_list_request_handler.class: OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler
     orob2b_pricing.model.price_list_tree_handler.class: OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler
     orob2b_pricing.model.frontend_product_list_modifier.class: OroB2B\Bundle\PricingBundle\Model\FrontendProductListModifier
@@ -306,16 +305,17 @@ services:
     orob2b_pricing.event_listener.abstract_product_price_datagrid:
         class: %orob2b_pricing.event_listener.abstract_product_price_datagrid.class%
         abstract: true
-        arguments:
-            - @translator
-            - @oro_entity.doctrine_helper
-            - @orob2b_pricing.model.price_list_request_handler
+        calls:
+            - [setProductPriceClass, [%orob2b_pricing.entity.combined_product_price.class%]]
 
     orob2b_pricing.event_listener.product_price_datagrid:
         class: %orob2b_pricing.event_listener.product_price_datagrid.class%
         parent: orob2b_pricing.event_listener.abstract_product_price_datagrid
+        arguments:
+            - @translator
+            - @orob2b_pricing.model.price_list_request_handler
+            - @oro_entity.doctrine_helper
         calls:
-            - [setProductPriceClass, [%orob2b_pricing.entity.product_price.class%]]
             - [setProductUnitClass, [%orob2b_product.product_unit.class%]]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-grid, method: onBuildBefore }
@@ -324,9 +324,10 @@ services:
     orob2b_pricing.event_listener.frontend.product_price_datagrid:
         class: %orob2b_pricing.event_listener.frontend.product_price_datagrid.class%
         parent: orob2b_pricing.event_listener.abstract_product_price_datagrid
-        calls:
-            - [setProductPriceClass, [%orob2b_pricing.entity.combined_product_price.class%]]
-            - [setProductUnitClass, [%orob2b_product.product_unit.class%]]
+        arguments:
+            - @translator
+            - @orob2b_pricing.model.price_list_request_handler
+            - @oro_locale.formatter.number
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-products-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }

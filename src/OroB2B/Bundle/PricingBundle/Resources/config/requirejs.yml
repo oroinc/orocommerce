@@ -6,11 +6,14 @@ config:
         'orob2bpricing/js/app/components/products-prices-component': 'bundles/orob2bpricing/js/app/components/products-prices-component.js'
         'orob2bpricing/js/app/components/price-lists-errors-handler': 'bundles/orob2bpricing/js/app/components/price-lists-errors-handler.js'
         'orob2bpricing/js/app/components/subtotals-component': 'bundles/orob2bpricing/js/app/components/subtotals-component.js'
+        'orob2bpricing/js/app/components/totals-component': 'bundles/orob2bpricing/js/app/components/totals-component.js'
         'orob2bpricing/js/app/components/product-sidebar-component': 'bundles/orob2bpricing/js/app/components/product-sidebar-component.js'
 
         'orob2bpricing/js/app/modules/validator-constraints-module': 'bundles/orob2bpricing/js/app/modules/validator-constraints-module.js'
 
         'orob2bpricing/js/app/listener/subtotals-listener': 'bundles/orob2bpricing/js/app/listener/subtotals-listener.js'
+        'orob2bpricing/js/app/listener/totals-listener': 'bundles/orob2bpricing/js/app/listener/totals-listener.js'
+
         'orob2bpricing/js/app/listener/value-changing-listener': 'bundles/orob2bpricing/js/app/listener/value-changing-listener.js'
 
         'orob2bpricing/js/validator/unique-product-prices': 'bundles/orob2bpricing/js/validator/unique-product-prices.js'

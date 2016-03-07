@@ -59,18 +59,29 @@
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
-{% block _product_grid_row_sku_widget %}
+{% block _product_grid_row_sku_container_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " table borderless paddingless mb0-md mb0-sm"
+    class: attr.class|default('') ~ " table borderless paddingless mb0-md mb0-sm"
     }) %}
     <table {{ block('block_attributes') }}>
         <tbody>
-        <tr>
-            <td>Item #:</td>
-            <td><span class="red"><%= model.sku %></span></td>
-        </tr>
+        {{ block_widget(block) }}
         </tbody>
     </table>
+{% endblock %}
+
+{% block _product_grid_row_sku_widget %}
+    <tr>
+        <td>{{ 'orob2b.product.frontend.index.item'|trans }}</td>
+        <td><span class="red"><%= model.sku %></span></td>
+    </tr>
+{% endblock %}
+
+{% block _product_grid_row_mfg_widget %}
+    <tr>
+        <td>{{ 'orob2b.product.frontend.index.mfg'|trans }}</td>
+        <td><span class="red">1ABC13656</span></td>
+    </tr>
 {% endblock %}
 
 {% block _product_grid_row_description_widget %}
@@ -88,7 +99,7 @@
     }) %}
     <div {{ block('block_attributes') }}>
         <a href="#" class="view-product">
-            <span class="underlined">View Details</span><i class="icon-right-open-mini"></i>
+            <span class="underlined">{{ 'orob2b.product.frontend.index.view_details'|trans }}</span><i class="icon-right-open-mini"></i>
         </a>
     </div>
 {% endblock %}
@@ -110,14 +121,6 @@
 {% block _product_grid_row_specification_delivery_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " product__specification product__specification_delivery product__specification_<%= themeOptions.view %> not-implemented"
-    }) %}
-    <div {{ block('block_attributes') }}>
-    </div>
-{% endblock %}
-
-{% block _product_grid_row_mspr_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " product-item__mspr product-item__mspr_<%= themeOptions.view %>"
     }) %}
     <div {{ block('block_attributes') }}>
     </div>

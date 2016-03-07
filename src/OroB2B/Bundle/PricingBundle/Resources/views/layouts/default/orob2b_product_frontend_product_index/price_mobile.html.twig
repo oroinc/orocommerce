@@ -3,6 +3,8 @@
         class: attr.class|default('') ~ " product-item__price_mobile product-item__price_mobile_<%= themeOptions.view %>"
     }) %}
     <div {{ block('block_attributes') }}>
-        Your Price: <span class="fs16 blue"><%= model.price_column %></span>
+        <% if (model.price_column) { %>
+            {{ 'orob2b.pricing.frontend.pricelist.index.your_price'|trans }} <span class="fs16 blue"><%= model.price_column %></span> / <%= model.price_unit_column %>
+        <% } %>
     </div>
 {% endblock %}
