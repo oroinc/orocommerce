@@ -145,9 +145,7 @@
         <div class="pull-left">{{ form_widget(form.image) }}</div>
 
         {% for imageType in form.vars.imageTypes %}
-            {% for choiceType in form[imageType] %}
-                <div class="pull-left pull-left-extra">{{ form_widget(choiceType) }}</div>
-            {% endfor %}
+            <div class="pull-left pull-left-extra">{{ form_widget(form[imageType]) }}</div>
         {% endfor %}
 
 {% endblock %}

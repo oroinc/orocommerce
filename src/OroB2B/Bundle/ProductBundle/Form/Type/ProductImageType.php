@@ -13,23 +13,11 @@ use Oro\Component\Layout\Extension\Theme\Model\Theme;
 use Oro\Component\Layout\Extension\Theme\Model\ThemeManager;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
+use OroB2B\Bundle\ProductBundle\Form\DataTransformer\ProductImageTypesTransformer;
 
 class ProductImageType extends AbstractType
 {
     const NAME = 'orob2b_product_image';
-
-    const IMAGE_TYPE_MAIN = 'main';
-    const IMAGE_TYPE_ADDITIONAL = 'additional';
-    const IMAGE_TYPE_THUMBNAIL = 'thumbnail';
-
-    /**
-     * @var string[]
-     */
-    private static $imageTypes = [
-        self::IMAGE_TYPE_MAIN,
-        self::IMAGE_TYPE_ADDITIONAL,
-        self::IMAGE_TYPE_THUMBNAIL,
-    ];
 
     /**
      * @var Theme
@@ -52,14 +40,15 @@ class ProductImageType extends AbstractType
     {
         $builder->add('image', 'oro_image');
 
-        foreach (self::$imageTypes as $imageType) {
+        foreach ($this->getImageTypes() as $imageType => $config) {
+            $isRadioButton = $config['max_number'] === 1;
+
             $builder->add(
                 $imageType,
-                'choice',
+                $isRadioButton ? 'radio' : 'checkbox',
                 [
-                    'choices' => [$imageType => $this->defineLabelForImageType($imageType)],
-                    'multiple' => $this->defineMultipleOptionForImageType($imageType),
-                    'expanded' => true
+                    'label' => $config['label'],
+                    'value' => 1
                 ]
             );
         }
@@ -72,7 +61,7 @@ class ProductImageType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => 'OroB2B\Bundle\ProductBundle\Entity\ProductImage',
-            'image_types' => self::$imageTypes,
+            'image_types' => array_keys($this->getImageTypes()),
         ]);
 
         $resolver->setAllowedTypes('image_types', 'array');
@@ -95,35 +84,10 @@ class ProductImageType extends AbstractType
     }
 
     /**
-     * @param string $imageType
-     * @return bool
+     * @return string[]
      */
-    private function defineMultipleOptionForImageType($imageType)
+    private function getImageTypes()
     {
-        $imageTypeConfig = $this->getImageTypeConfig($imageType);
-
-        return $imageTypeConfig['max_number'] !== 1;
-    }
-
-    /**
-     * @param string $imageType
-     * @return mixed
-     */
-    private function defineLabelForImageType($imageType)
-    {
-        $imageTypeConfig = $this->getImageTypeConfig($imageType);
-
-        return $imageTypeConfig['label'];
-    }
-
-    /**
-     * @param string $imageType
-     * @return array
-     */
-    private function getImageTypeConfig($imageType)
-    {
-        $imagesConfig = $this->theme->getDataByKey('images');
-
-        return $imagesConfig['types'][$imageType];
+        return $this->theme->getDataByKey('images')['types'];
     }
 }

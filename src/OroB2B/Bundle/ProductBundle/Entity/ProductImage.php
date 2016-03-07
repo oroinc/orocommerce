@@ -97,4 +97,22 @@ class ProductImage extends ExtendProductImage
     {
         $this->types = $types;
     }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function __get($name)
+    {
+        return isset($this->types[$name]) && $this->types[$name];
+    }
+
+    /**
+     * @param string $name
+     * @param mixed $value
+     */
+    public function __set($name, $value)
+    {
+        $this->types[$name] = (bool) $value;
+    }
 }
