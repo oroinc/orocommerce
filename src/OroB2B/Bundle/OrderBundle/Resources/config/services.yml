@@ -15,6 +15,8 @@ parameters:
     orob2b_order.model.order_currency_handler.class: OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler
     orob2b_order.event_listener.form_view.class: OroB2B\Bundle\OrderBundle\EventListener\FormViewListener
 
+    orob2b_order.provider.subtotal_shipping_cost.class: OroB2B\Bundle\OrderBundle\Provider\SubtotalShippingCostProvider
+
 services:
     orob2b_order.order.manager.api:
         class: %orob2b_order.order.manager.api.class%
@@ -32,6 +34,14 @@ services:
             - @orob2b_order.order.entity.id_generator
         tags:
             - { name: doctrine.event_listener, event: postPersist }
+
+    orob2b_order.provider.subtotal_shipping_cost:
+        class: %orob2b_order.provider.subtotal_shipping_cost.class%
+        arguments:
+            - @translator
+            - @orob2b_pricing.rounding.price_rounding_service
+        tags:
+            - { name: orob2b_order.subtotal_provider, priority: 10 }
 
     orob2b_order.order.provider.order_address:
         class: %orob2b_order.order.provider.order_address.class%

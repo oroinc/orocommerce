@@ -11,7 +11,7 @@ use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
-class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
+class LineItemSubtotalProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var LineItemSubtotalProvider

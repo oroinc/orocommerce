@@ -80,6 +80,9 @@ class QuoteToOrderConverter
         }
 
         $this->orderCurrencyHandler->setOrderCurrency($order);
+        if ($quote->getShippingEstimate() !== null) {
+            $this->fillShippingCost($quote->getShippingEstimate(), $order);
+        }
         $this->fillSubtotals($order);
 
         if ($needFlush) {
@@ -202,5 +205,31 @@ class QuoteToOrderConverter
         if ($total) {
             $order->setTotal($total->getAmount());
         }
+    }
+
+    /**
+     * @param Price $shippingEstimate
+     * @param Order $order
+     */
+    protected function fillShippingCost(Price $shippingEstimate, Order $order)
+    {
+        $shippingCostAmount = $shippingEstimate->getValue();
+        $shippingEstimateCurrency = $shippingEstimate->getCurrency();
+        $orderCurrency = $order->getCurrency();
+        if ($orderCurrency !== $shippingEstimateCurrency) {
+            $shippingCostAmount *= $this->getExchangeRate($shippingEstimateCurrency, $orderCurrency);
+        }
+
+        $order->setShippingCost(Price::create($shippingCostAmount, $orderCurrency));
+    }
+
+    /**
+     * @param string $fromCurrency
+     * @param string $toCurrency
+     * @return float
+     */
+    protected function getExchangeRate($fromCurrency, $toCurrency)
+    {
+        return 1.0;
     }
 }
