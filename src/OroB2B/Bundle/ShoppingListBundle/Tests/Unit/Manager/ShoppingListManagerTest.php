@@ -10,10 +10,13 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -51,7 +54,10 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             $this->getManagerRegistry(),
             $tokenStorage,
             $this->getTranslator(),
-            $this->getRoundingService()
+            $this->getRoundingService(),
+            $this->getTotalProcessorProvider(),
+            $this->getLineItemNotPricedSubtotalProvider(),
+            $this->getLocaleSettings()
         );
     }
 
@@ -209,7 +215,10 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             $registry,
             $this->getTokenStorage($user),
             $this->getTranslator(),
-            $this->getRoundingService()
+            $this->getRoundingService(),
+            $this->getTotalProcessorProvider(),
+            $this->getLineItemNotPricedSubtotalProvider(),
+            $this->getLocaleSettings()
         );
 
         $this->assertEquals(
@@ -347,6 +356,49 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($entityManager);
 
         return $managerRegistry;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|TotalProcessorProvider
+     */
+    protected function getTotalProcessorProvider()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|TotalProcessorProvider $totalProcessorProvider */
+        $totalProcessorProvider =
+            $this->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        return $totalProcessorProvider;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|LineItemNotPricedSubtotalProvider
+     */
+    protected function getLineItemNotPricedSubtotalProvider()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemNotPricedSubtotalProvider $lineItemSubtotalProvider */
+        $lineItemSubtotalProvider =
+            $this->getMockBuilder(
+                'OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider'
+            )
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        return $lineItemSubtotalProvider;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|LocaleSettings
+     */
+    protected function getLocaleSettings()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|LocaleSettings $localSettings */
+        $localSettings = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        return $localSettings;
     }
 
     /**

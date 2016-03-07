@@ -66,6 +66,7 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements Subto
         $subtotal = new Subtotal();
         $subtotal->setLabel($this->translator->trans('orob2b.pricing.subtotals.subtotal.label'));
         $subtotal->setVisible(false);
+        $subtotal->setType(self::TYPE);
 
         $baseCurrency = $this->getBaseCurrency($entity);
         foreach ($entity->getLineItems() as $lineItem) {
