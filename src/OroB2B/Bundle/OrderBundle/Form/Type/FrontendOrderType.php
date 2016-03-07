@@ -90,7 +90,9 @@ class FrontendOrderType extends AbstractType
                     'cascade_validation' => true,
                     'options' => ['currency' => $order->getCurrency()]
                 ]
-            );
+            )
+            ->add('sourceEntityClass', 'hidden')
+            ->add('sourceEntityId', 'hidden');
 
         if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_BILLING)) {
             $builder->add(
