@@ -47,7 +47,7 @@ services:
             - @translator
             - @orob2b_product.service.quantity_rounding
             - @orob2b_pricing.subtotal_processor.total_processor_provider
-            - @orob2b_pricing.subtotal_processor.provider.subtotal_line_item
+            - @orob2b_pricing.subtotal_processor.provider.subtotal_line_item_not_priced
             - @oro_locale.settings
 
     orob2b_shopping_list.placeholder.filter:

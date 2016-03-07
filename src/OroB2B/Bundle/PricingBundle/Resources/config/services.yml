@@ -72,6 +72,7 @@ parameters:
     orob2b_pricing.subtotal_processor.subtotal_provider_registry.class: OroB2B\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry
     orob2b_pricing.subtotal_processor.total_processor_provider.class: OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider
     orob2b_pricing.subtotal_processor.provider.subtotal_line_item.class: OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider
+    orob2b_pricing.subtotal_processor.provider.subtotal_line_item_not_priced.class: OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider
 
 services:
     orob2b_pricing.acl.voter.product_list:
@@ -454,6 +455,14 @@ services:
 
     orob2b_pricing.subtotal_processor.provider.subtotal_line_item:
         class: %orob2b_pricing.subtotal_processor.provider.subtotal_line_item.class%
+        arguments:
+            - @translator
+            - @orob2b_pricing.rounding.price_rounding_service
+        tags:
+            - { name: orob2b_pricing.subtotal_provider, priority: 0 }
+
+    orob2b_pricing.subtotal_processor.provider.subtotal_line_item_not_priced:
+        class: %orob2b_pricing.subtotal_processor.provider.subtotal_line_item_not_priced.class%
         arguments:
             - @translator
             - @orob2b_pricing.rounding.price_rounding_service

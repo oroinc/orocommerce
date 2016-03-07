@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ShoppingListBundle\Manager;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -17,7 +18,6 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class ShoppingListManager
@@ -53,9 +53,9 @@ class ShoppingListManager
     protected $totalProvider;
 
     /**
-     * @var LineItemSubtotalProvider
+     * @var LineItemNotPricedSubtotalProvider
      */
-    protected $lineItemSubtotalProvider;
+    protected $lineItemNotPricedSubtotalProvider;
 
     /**
      * @var LocaleSettings
@@ -68,7 +68,7 @@ class ShoppingListManager
      * @param TranslatorInterface $translator
      * @param QuantityRoundingService $rounding
      * @param TotalProcessorProvider $totalProvider
-     * @param LineItemSubtotalProvider $lineItemSubtotalProvider
+     * @param LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider
      * @param LocaleSettings $localeSettings
      */
     public function __construct(
@@ -77,7 +77,7 @@ class ShoppingListManager
         TranslatorInterface $translator,
         QuantityRoundingService $rounding,
         TotalProcessorProvider $totalProvider,
-        LineItemSubtotalProvider $lineItemSubtotalProvider,
+        LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider,
         LocaleSettings $localeSettings
     ) {
         $this->managerRegistry = $managerRegistry;
@@ -85,7 +85,7 @@ class ShoppingListManager
         $this->translator = $translator;
         $this->rounding = $rounding;
         $this->totalProvider = $totalProvider;
-        $this->lineItemSubtotalProvider = $lineItemSubtotalProvider;
+        $this->lineItemNotPricedSubtotalProvider = $lineItemNotPricedSubtotalProvider;
         $this->localeSettings = $localeSettings;
     }
 
@@ -183,7 +183,7 @@ class ShoppingListManager
      */
     public function recalculateSubtotals(ShoppingList $shoppingList)
     {
-        $subtotal = $this->lineItemSubtotalProvider->getSubtotal($shoppingList);
+        $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotal($shoppingList);
         $total = $this->totalProvider->getTotal($shoppingList);
 
         if ($subtotal) {
