@@ -41,7 +41,7 @@ services:
             - @translator
             - @orob2b_pricing.rounding.price_rounding_service
         tags:
-            - { name: orob2b_order.subtotal_provider, priority: 10 }
+            - { name: orob2b_pricing.subtotal_provider, priority: 10 }
 
     orob2b_order.order.provider.order_address:
         class: %orob2b_order.order.provider.order_address.class%

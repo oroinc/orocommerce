@@ -64,7 +64,7 @@ class SubtotalShippingCostProviderTest extends \PHPUnit_Framework_TestCase
         $order->setShippingCost(Price::create($costAmount, $order->getCurrency()));
 
         $subtotal = $this->provider->getSubtotal($order);
-        $this->assertInstanceOf('OroB2B\Bundle\OrderBundle\Model\Subtotal', $subtotal);
+        $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
         $this->assertEquals(SubtotalShippingCostProvider::TYPE, $subtotal->getType());
         $this->assertEquals(ucfirst(SubtotalShippingCostProvider::TYPE), $subtotal->getLabel());
         $this->assertEquals($order->getCurrency(), $subtotal->getCurrency());

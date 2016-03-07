@@ -4,12 +4,19 @@ namespace OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model;
 
 class Subtotal
 {
-    const SUBTOTAL_TYPE = 'subtotal';
+    const OPERATION_ADD = 1;
+    const OPERATION_SUBTRACTION = 2;
+    const OPERATION_IGNORE = 3;
 
     /**
      * @var string
      */
-    protected $type = self::SUBTOTAL_TYPE;
+    protected $type;
+
+    /**
+     * @var string
+     */
+    protected $label;
 
     /**
      * @var float
@@ -22,9 +29,18 @@ class Subtotal
     protected $currency;
 
     /**
-     * @var string
+     * Type operation for calculate total
+     *
+     * @var integer
      */
-    protected $label;
+    protected $operation;
+
+    /**
+     * Visibility in total
+     *
+     * @var boolean
+     */
+    protected $visible;
 
     /**
      * @return string
@@ -37,11 +53,30 @@ class Subtotal
     /**
      * @param string $type
      *
-     * @return $this
+     * @return Subtotal
      */
     public function setType($type)
     {
         $this->type = $type;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLabel()
+    {
+        return $this->label;
+    }
+
+    /**
+     * @param string $label
+     *
+     * @return Subtotal
+     */
+    public function setLabel($label)
+    {
+        $this->label = $label;
         return $this;
     }
 
@@ -56,7 +91,7 @@ class Subtotal
     /**
      * @param float $amount
      *
-     * @return $this
+     * @return Subtotal
      */
     public function setAmount($amount)
     {
@@ -75,7 +110,7 @@ class Subtotal
     /**
      * @param string $currency
      *
-     * @return $this
+     * @return Subtotal
      */
     public function setCurrency($currency)
     {
@@ -84,20 +119,49 @@ class Subtotal
     }
 
     /**
-     * @return string
+     * Get operation type
+     *
+     * @return integer
      */
-    public function getLabel()
+    public function getOperation()
     {
-        return $this->label;
+        return $this->operation;
     }
 
     /**
-     * @param string $label
-     * @return $this
+     * Set operation type
+     *
+     * @param integer $operation
+     *
+     * @return Subtotal
      */
-    public function setLabel($label)
+    public function setOperation($operation)
     {
-        $this->label = $label;
+        $this->operation = $operation;
+
+        return $this;
+    }
+
+    /**
+     * Check visibility in total block
+     *
+     * @return boolean
+     */
+    public function isVisible()
+    {
+        return $this->visible;
+    }
+
+    /**
+     * Set operation type
+     *
+     * @param boolean $visible
+     *
+     * @return Subtotal
+     */
+    public function setVisible($visible)
+    {
+        $this->visible = $visible;
 
         return $this;
     }
@@ -112,6 +176,7 @@ class Subtotal
             'label' => $this->getLabel(),
             'amount' => $this->getAmount(),
             'currency' => $this->getCurrency(),
+            'visible' => $this->isVisible(),
         ];
     }
 }

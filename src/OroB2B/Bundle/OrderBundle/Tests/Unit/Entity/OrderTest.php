@@ -92,7 +92,6 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\DateTime', $order->getUpdatedAt());
     }
 
-
     public function testPostLoad()
     {
         $item = new Order();

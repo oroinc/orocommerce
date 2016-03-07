@@ -93,11 +93,13 @@ class LineItemSubtotalProvider implements SubtotalProviderInterface
         $subtotalAmount = 0.0;
         $subtotal = new Subtotal();
         $subtotal->setLabel($this->translator->trans('orob2b.pricing.subtotals.subtotal.label'));
+        $subtotal->setVisible(false);
 
         $baseCurrency = $this->getBaseCurrency($entity);
         foreach ($entity->getLineItems() as $lineItem) {
             if ($lineItem instanceof PriceAwareInterface && $lineItem->getPrice() instanceof Price) {
                 $subtotalAmount += $this->getRowTotal($lineItem, $baseCurrency);
+                $subtotal->setVisible(true);
             } elseif ($lineItem instanceof ProductHolderInterface
                 && $lineItem instanceof ProductUnitHolderInterface
                 && $lineItem instanceof QuantityAwareInterface
@@ -106,6 +108,7 @@ class LineItemSubtotalProvider implements SubtotalProviderInterface
                     $this->prepareProductsPriceCriteria($lineItem, $this->getBaseCurrency($entity));
                 $price = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria);
                 $subtotalAmount += reset($price)->getValue() * $lineItem->getQuantity();
+                $subtotal->setVisible(true);
             }
         }
 
