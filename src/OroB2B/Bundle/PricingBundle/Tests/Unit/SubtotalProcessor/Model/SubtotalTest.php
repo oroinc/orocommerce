@@ -1,9 +1,9 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Model;
+namespace OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Model;
 
-use OroB2B\Bundle\OrderBundle\Model\Subtotal;
-use OroB2B\Bundle\OrderBundle\Provider\SubtotalLineItemProvider;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 
 class SubtotalTest extends \PHPUnit_Framework_TestCase
 {
@@ -12,8 +12,8 @@ class SubtotalTest extends \PHPUnit_Framework_TestCase
         $subtotal = new Subtotal();
 
         $this->assertEquals(
-            SubtotalLineItemProvider::TYPE,
-            $subtotal->setType(SubtotalLineItemProvider::TYPE)->getType()
+            LineItemSubtotalProvider::TYPE,
+            $subtotal->setType(LineItemSubtotalProvider::TYPE)->getType()
         );
         $this->assertEquals('Subtotal', $subtotal->setLabel('Subtotal')->getLabel());
         $this->assertEquals('USD', $subtotal->setCurrency('USD')->getCurrency());

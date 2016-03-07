@@ -54,6 +54,6 @@ services:
     orob2b_invoice.event_listener.invoice_form_listener:
         class: OroB2B\Bundle\InvoiceBundle\EventListener\InvoiceFormListener
         arguments:
-            - @orob2b_pricing.provider.line_items_subtotal
+            - @orob2b_pricing.subtotal_processor.provider.subtotal_line_item
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.orob2b_invoice_type, method: beforeFlush}

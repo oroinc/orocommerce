@@ -5,9 +5,12 @@ namespace OroB2B\Bundle\ShoppingListBundle\Manager;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -15,6 +18,7 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class ShoppingListManager
 {
@@ -44,21 +48,45 @@ class ShoppingListManager
     protected $rounding;
 
     /**
+     * @var TotalProcessorProvider
+     */
+    protected $totalProvider;
+
+    /**
+     * @var LineItemNotPricedSubtotalProvider
+     */
+    protected $lineItemNotPricedSubtotalProvider;
+
+    /**
+     * @var LocaleSettings
+     */
+    protected $localeSettings;
+
+    /**
      * @param ManagerRegistry $managerRegistry
      * @param TokenStorageInterface $tokenStorage
      * @param TranslatorInterface $translator
      * @param QuantityRoundingService $rounding
+     * @param TotalProcessorProvider $totalProvider
+     * @param LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider
+     * @param LocaleSettings $localeSettings
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
         TokenStorageInterface $tokenStorage,
         TranslatorInterface $translator,
-        QuantityRoundingService $rounding
+        QuantityRoundingService $rounding,
+        TotalProcessorProvider $totalProvider,
+        LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider,
+        LocaleSettings $localeSettings
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->tokenStorage = $tokenStorage;
         $this->translator = $translator;
         $this->rounding = $rounding;
+        $this->totalProvider = $totalProvider;
+        $this->lineItemNotPricedSubtotalProvider = $lineItemNotPricedSubtotalProvider;
+        $this->localeSettings = $localeSettings;
     }
 
     /**
@@ -72,7 +100,8 @@ class ShoppingListManager
         $shoppingList
             ->setOrganization($this->getAccountUser()->getOrganization())
             ->setAccount($this->getAccountUser()->getAccount())
-            ->setAccountUser($this->getAccountUser());
+            ->setAccountUser($this->getAccountUser())
+            ->setCurrency($this->localeSettings->getCurrency());
 
         return $shoppingList;
     }
@@ -147,6 +176,25 @@ class ShoppingListManager
         if ($flush) {
             $em->flush();
         }
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     */
+    public function recalculateSubtotals(ShoppingList $shoppingList)
+    {
+        $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotal($shoppingList);
+        $total = $this->totalProvider->getTotal($shoppingList);
+
+        if ($subtotal) {
+            $shoppingList->setSubtotal($subtotal->getAmount());
+        }
+        if ($total) {
+            $shoppingList->setTotal($total->getAmount());
+        }
+        $em = $this->managerRegistry->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
+        $em->persist($shoppingList);
+        $em->flush();
     }
 
     /**

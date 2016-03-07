@@ -1,6 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\SubtotalProcessor;
+namespace OroB2B\Bundle\PricingBundle\SubtotalProcessor;
+
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 
 class SubtotalProviderRegistry
 {
@@ -10,6 +12,8 @@ class SubtotalProviderRegistry
     protected $providers = [];
 
     /**
+     * Add provider to regestry
+     *
      * @param SubtotalProviderInterface $provider
      */
     public function addProvider(SubtotalProviderInterface $provider)
@@ -18,6 +22,27 @@ class SubtotalProviderRegistry
     }
 
     /**
+     * Get supported provider list
+     *
+     * @param $entity
+     *
+     * @return SubtotalProviderInterface[]
+     */
+    public function getSupportedProviders($entity)
+    {
+        $providers = [];
+        foreach ($this->providers as $provider) {
+            if ($provider->isSupported($entity)) {
+                $providers[] = $provider;
+            }
+        }
+        return $providers;
+    }
+
+
+    /**
+     * Get all providers
+     *
      * @return SubtotalProviderInterface[]
      */
     public function getProviders()
@@ -26,6 +51,8 @@ class SubtotalProviderRegistry
     }
 
     /**
+     * Get provider by name
+     *
      * @param string $name
      *
      * @return null|SubtotalProviderInterface
@@ -40,6 +67,8 @@ class SubtotalProviderRegistry
     }
 
     /**
+     * Check available provider by name
+     *
      * @param string $name
      *
      * @return bool

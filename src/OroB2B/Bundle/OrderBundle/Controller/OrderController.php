@@ -38,8 +38,8 @@ class OrderController extends AbstractOrderController
      */
     public function viewAction(Order $order)
     {
-        $subtotals = $this->get('orob2b_order.provider.total')->getSubtotals($order);
-        $total = $this->get('orob2b_order.provider.total')->getTotal($order);
+        $subtotals = $this->getTotalProcessor()->getSubtotals($order);
+        $total = $this->getTotalProcessor()->getTotal($order);
 
         return [
             'entity' => $order,
@@ -142,8 +142,8 @@ class OrderController extends AbstractOrderController
             $form,
             $request,
             $this->getDoctrine()->getManagerForClass(ClassUtils::getClass($order)),
-            $this->get('orob2b_order.provider.total'),
-            $this->get('orob2b_order.provider.subtotal_line_item')
+            $this->getTotalProcessor(),
+            $this->get('orob2b_pricing.subtotal_processor.provider.subtotal_line_item')
         );
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
@@ -168,8 +168,8 @@ class OrderController extends AbstractOrderController
                     'form' => $form->createView(),
                     'entity' => $order,
                     'totals' => [
-                        'total' =>  $this->get('orob2b_order.provider.total')->getTotal($order),
-                        'subtotals' => $this->get('orob2b_order.provider.total')->getSubtotals($order)
+                        'total' =>  $this->getTotalProcessor()->getTotal($order),
+                        'subtotals' => $this->getTotalProcessor()->getSubtotals($order)
                     ],
                     'isWidgetContext' => (bool)$request->get('_wid', false),
                     'isShippingAddressGranted' => $this->getOrderAddressSecurityProvider()
@@ -189,5 +189,13 @@ class OrderController extends AbstractOrderController
     protected function getOrderHandler()
     {
         return $this->get('orob2b_order.model.order_request_handler');
+    }
+
+    /**
+     * @return \OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider
+     */
+    protected function getTotalProcessor()
+    {
+        return $this->get('orob2b_pricing.subtotal_processor.total_processor_provider');
     }
 }

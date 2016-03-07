@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Model;
+namespace OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-interface LineItemsAwareInterface
+interface LineItemsNotPricedAwareInterface
 {
     /**
      * @return ArrayCollection
