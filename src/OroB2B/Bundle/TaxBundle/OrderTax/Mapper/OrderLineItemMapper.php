@@ -10,16 +10,21 @@ class OrderLineItemMapper extends AbstractOrderMapper
     const PROCESSING_CLASS_NAME = 'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem';
 
     /**
-     * {@inheritdoc}
      * @param OrderLineItem $lineItem
+     *
+     * {@inheritdoc}
      */
     public function map($lineItem)
     {
+        $orderAddress = $this->getOrderAddress($lineItem->getOrder());
+
         $taxable = (new Taxable())
             ->setIdentifier($lineItem->getId())
             ->setClassName($this->getProcessingClassName())
             ->setQuantity($lineItem->getQuantity())
-            ->setDestination($this->getOrderAddress($lineItem->getOrder()));
+            ->setDestination($orderAddress)
+            ->setContext($this->getContext($lineItem))
+            ->setCurrency($lineItem->getCurrency());
 
         if ($lineItem->getPrice()) {
             $taxable->setPrice($lineItem->getPrice()->getValue());

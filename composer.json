@@ -11,22 +11,25 @@
     ],
     "repositories": [
         {
-            "type": "composer",
-            "url": "http://packagist.orocrm.com"
+            "type": "vcs",
+            "url": "https://github.com/orocrm/platform.git"
         },
         {
-            "type": "git",
-            "url": "https://github.com/nicholas-eden/math.git"
+            "type": "composer",
+            "url": "https://packagist.orocrm.com"
         }
     ],
     "require": {
-        "box/spout": "2.3.*",
-        "nicholas-eden/math": "0.6.*",
-        "oro/platform": "self.version",
-        "oro/platform-serialised-fields": "self.version"
+        "oro/platform": "1.x-dev",
+        "myclabs/deep-copy": "1.5.*"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.x-dev"
+        }
+    },
     "autoload": {
         "psr-0": {
             "Oro\\Component": "src/",

@@ -6,7 +6,6 @@ parameters:
     orob2b_order.order.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_order.order.listener.order_listener.class: OroB2B\Bundle\OrderBundle\EventListener\OrderListener
     orob2b_order.order.entity.id_generator.class: OroB2B\Bundle\OrderBundle\Doctrine\ORM\Id\SimpleEntityAwareGenerator
-    orob2b_order.provider.subtotals.class: OroB2B\Bundle\OrderBundle\Provider\SubtotalsProvider
 
     orob2b_order.order.provider.order_address.class: OroB2B\Bundle\OrderBundle\Provider\OrderAddressProvider
     orob2b_order.order.provider.order_address_security.class: OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider
@@ -15,6 +14,11 @@ parameters:
     orob2b_order.model.order_request_handler.class: OroB2B\Bundle\OrderBundle\Model\OrderRequestHandler
     orob2b_order.model.order_currency_handler.class: OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler
     orob2b_order.event_listener.form_view.class: OroB2B\Bundle\OrderBundle\EventListener\FormViewListener
+
+    orob2b_order.subtotal_provider.registry.class: OroB2B\Bundle\OrderBundle\SubtotalProcessor\SubtotalProviderRegistry
+    orob2b_order.provider.total.class: OroB2B\Bundle\OrderBundle\SubtotalProcessor\TotalProcessorProvider
+    orob2b_order.provider.subtotal_line_item.class: OroB2B\Bundle\OrderBundle\Provider\SubtotalLineItemProvider
+    orob2b_order.provider.subtotal_shipping_cost.class: OroB2B\Bundle\OrderBundle\Provider\SubtotalShippingCostProvider
 
 services:
     orob2b_order.order.manager.api:
@@ -34,11 +38,21 @@ services:
         tags:
             - { name: doctrine.event_listener, event: postPersist }
 
-    orob2b_order.provider.subtotals:
-        class: %orob2b_order.provider.subtotals.class%
+    orob2b_order.provider.subtotal_line_item:
+        class: %orob2b_order.provider.subtotal_line_item.class%
         arguments:
             - @translator
             - @orob2b_pricing.rounding.price_rounding_service
+        tags:
+            - { name: orob2b_order.subtotal_provider, priority: 0 }
+
+    orob2b_order.provider.subtotal_shipping_cost:
+        class: %orob2b_order.provider.subtotal_shipping_cost.class%
+        arguments:
+            - @translator
+            - @orob2b_pricing.rounding.price_rounding_service
+        tags:
+            - { name: orob2b_order.subtotal_provider, priority: 10 }
 
     orob2b_order.order.provider.order_address:
         class: %orob2b_order.order.provider.order_address.class%
@@ -109,3 +123,13 @@ services:
             - [setBackendSystemConfigurationPath, ['oro_b2b_order.backend_product_visibility']]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
+
+    orob2b_order.subtotal_provider.registry:
+        class: %orob2b_order.subtotal_provider.registry.class%
+
+    orob2b_order.provider.total:
+        class: %orob2b_order.provider.total.class%
+        arguments:
+            - @orob2b_order.subtotal_provider.registry
+            - @translator
+            - @orob2b_pricing.rounding.price_rounding_service

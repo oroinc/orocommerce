@@ -23,6 +23,7 @@ parameters:
     orob2b_pricing.datagrid.extension.product_selection_grid.class: OroB2B\Bundle\PricingBundle\Datagrid\ProductSelectionGridExtension
 
     orob2b_pricing.provider.currency.class: OroB2B\Bundle\PricingBundle\Provider\CurrencyProvider
+    orob2b_pricing.provider.user_currency.class: OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider
     orob2b_pricing.provider.product_price.class: OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider
     orob2b_pricing.provider.line_items_subtotal.class: OroB2B\Bundle\PricingBundle\Provider\LineItemsSubtotalProvider
     orob2b_pricing.provider.combined_price_list.class: OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider
@@ -119,6 +120,11 @@ services:
         arguments:
             - @doctrine
             - %orob2b_pricing.entity.product_price.class%
+
+    orob2b_pricing.provider.user_currency:
+        class: %orob2b_pricing.provider.user_currency.class%
+        arguments:
+            - @session
 
     orob2b_pricing.provider.abstract_product_price:
         class: %orob2b_pricing.provider.product_price.class%

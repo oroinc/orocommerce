@@ -8,6 +8,7 @@ use Symfony\Component\Security\Acl\Permission\BasicPermissionMap;
 use Symfony\Component\Security\Core\Util\ClassUtils;
 
 use Oro\Bundle\SecurityBundle\Acl\Domain\ObjectIdentityFactory;
+use Oro\Bundle\SecurityBundle\Acl\Extension\EntityAclExtension;
 use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
@@ -30,6 +31,11 @@ class AccountUserProvider
      * @var string
      */
     protected $accountUserClass;
+
+    /**
+     * @var array|EntityMaskBuilder[]
+     */
+    protected $maskBuilders = [];
 
     /**
      * @param SecurityFacade $securityFacade
@@ -68,7 +74,10 @@ class AccountUserProvider
      */
     public function isGrantedViewBasic($class)
     {
-        return $this->isGrantedEntityMask($class, EntityMaskBuilder::MASK_VIEW_BASIC);
+        return $this->isGrantedEntityMask(
+            $class,
+            $this->getMaskBuilderForPermission('VIEW')->getMask('MASK_VIEW_BASIC')
+        );
     }
 
     /**
@@ -77,7 +86,10 @@ class AccountUserProvider
      */
     public function isGrantedViewLocal($class)
     {
-        return $this->isGrantedEntityMask($class, EntityMaskBuilder::MASK_VIEW_LOCAL);
+        return $this->isGrantedEntityMask(
+            $class,
+            $this->getMaskBuilderForPermission('VIEW')->getMask('MASK_VIEW_LOCAL')
+        );
     }
 
     /**
@@ -86,7 +98,10 @@ class AccountUserProvider
      */
     public function isGrantedEditBasic($class)
     {
-        return $this->isGrantedEntityMask($class, EntityMaskBuilder::MASK_EDIT_BASIC);
+        return $this->isGrantedEntityMask(
+            $class,
+            $this->getMaskBuilderForPermission('EDIT')->getMask('MASK_EDIT_BASIC')
+        );
     }
 
     /**
@@ -95,7 +110,10 @@ class AccountUserProvider
      */
     public function isGrantedEditLocal($class)
     {
-        return $this->isGrantedEntityMask($class, EntityMaskBuilder::MASK_EDIT_LOCAL);
+        return $this->isGrantedEntityMask(
+            $class,
+            $this->getMaskBuilderForPermission('EDIT')->getMask('MASK_EDIT_LOCAL')
+        );
     }
 
     /**
@@ -156,7 +174,11 @@ class AccountUserProvider
             if (!$aces && $oid->getType() !== ObjectIdentityFactory::ROOT_IDENTITY_TYPE) {
                 $rootOid = $this->aclManager->getRootOid($oid);
 
-                return $this->isGrantedOidMask($rootOid, $class, EntityMaskBuilder::GROUP_SYSTEM);
+                return $this->isGrantedOidMask(
+                    $rootOid,
+                    $class,
+                    $this->getMaskBuilderForMask($requiredMask)->getMask('GROUP_SYSTEM')
+                );
             }
 
             foreach ($aces as $ace) {
@@ -187,5 +209,48 @@ class AccountUserProvider
         }
 
         return false;
+    }
+
+    /**
+     * @return EntityAclExtension
+     */
+    protected function getEntityAclExtension()
+    {
+        return $this->aclManager->getExtensionSelector()->select('entity:(root)');
+    }
+
+    /**
+     * @param string $permission
+     * @return EntityMaskBuilder
+     */
+    protected function getMaskBuilderForPermission($permission)
+    {
+        if (!array_key_exists($permission, $this->maskBuilders)) {
+            $this->maskBuilders[$permission] = $this->getEntityAclExtension()->getMaskBuilder($permission);
+        }
+
+        return $this->maskBuilders[$permission];
+    }
+
+    /**
+     * @param int $requiredMask
+     * @return EntityMaskBuilder
+     */
+    protected function getMaskBuilderForMask($requiredMask)
+    {
+        $extension = $this->getEntityAclExtension();
+
+        $serviceBits = $extension->getServiceBits($requiredMask);
+
+        /** @var EntityMaskBuilder[] $maskBuilders */
+        $maskBuilders = $extension->getAllMaskBuilders();
+
+        foreach ($maskBuilders as $maskBuilder) {
+            if ($serviceBits === $maskBuilder->getIdentity()) {
+                return $maskBuilder;
+            }
+        }
+
+        throw new \RuntimeException('MaskBuilder could not found.');
     }
 }
