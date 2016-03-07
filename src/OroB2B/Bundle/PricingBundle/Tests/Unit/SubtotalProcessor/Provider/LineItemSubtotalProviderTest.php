@@ -55,8 +55,8 @@ class LineItemSubtotalProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with(sprintf('orob2b.pricing.subtotals.%s.label', LineItemSubtotalProvider::TYPE))
-            ->willReturn(ucfirst(LineItemSubtotalProvider::TYPE));
+            ->with(LineItemSubtotalProvider::NAME . '.label')
+            ->willReturn('test');
 
         $entity = new EntityStub();
         $perUnitLineItem = new LineItemStub();
@@ -86,7 +86,7 @@ class LineItemSubtotalProviderTest extends \PHPUnit_Framework_TestCase
         $subtotal = $this->provider->getSubtotal($entity);
         $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
         $this->assertEquals(LineItemSubtotalProvider::TYPE, $subtotal->getType());
-        $this->assertEquals(ucfirst(LineItemSubtotalProvider::TYPE), $subtotal->getLabel());
+        $this->assertEquals('test', $subtotal->getLabel());
         $this->assertEquals($entity->getCurrency(), $subtotal->getCurrency());
         $this->assertInternalType('float', $subtotal->getAmount());
         $this->assertEquals(142.0, $subtotal->getAmount());

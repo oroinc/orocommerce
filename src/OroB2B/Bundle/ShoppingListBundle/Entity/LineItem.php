@@ -78,7 +78,7 @@ class LineItem extends ExtendLineItem implements
      *          }
      *      }
      * )
-     **/
+     */
     protected $product;
 
     /**
@@ -97,7 +97,7 @@ class LineItem extends ExtendLineItem implements
      *          }
      *      }
      * )
-     **/
+     */
     protected $shoppingList;
 
     /**
@@ -126,7 +126,7 @@ class LineItem extends ExtendLineItem implements
      *          }
      *      }
      * )
-     **/
+     */
     protected $unit;
 
     /**

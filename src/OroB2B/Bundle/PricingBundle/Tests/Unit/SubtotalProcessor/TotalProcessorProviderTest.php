@@ -168,9 +168,10 @@ class TotalProcessorProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param EntityStub $entity
      * @param int $runCount
      *
-     * @return EntityStub
+     * @return mixed
      */
     protected function prepareSubtotals($entity, $runCount = 1)
     {

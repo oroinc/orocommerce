@@ -157,6 +157,12 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('Notes Duplicated Notes', $resultingItem->getNotes());
     }
 
+    public function testRecalculateSubtotals()
+    {
+        $shoppingList = new ShoppingList();
+        $this->manager->recalculateSubtotals($shoppingList);
+    }
+
     public function testGetForCurrentUser()
     {
         $shoppingList = $this->manager->getForCurrentUser();

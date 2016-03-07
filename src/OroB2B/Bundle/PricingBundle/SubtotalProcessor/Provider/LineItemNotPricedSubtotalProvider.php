@@ -11,7 +11,6 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use OroB2B\Bundle\PricingBundle\Entity\QuantityAwareInterface;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
@@ -24,7 +23,7 @@ use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
     const TYPE = 'subtotal';
-    const NAME = 'orob2b_pricing.not_priced_subtotals';
+    const NAME = 'orob2b.pricing.subtotals.not_priced_subtotal';
 
     /** @var TranslatorInterface */
     protected $translator;
@@ -81,7 +80,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
     /**
      * Get line items subtotal
      *
-     * @param LineItemsAwareInterface $entity
+     * @param LineItemsNotPricedAwareInterface $entity
      *
      * @return Subtotal
      */
@@ -89,7 +88,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
     {
         $subtotalAmount = 0.0;
         $subtotal = new Subtotal();
-        $subtotal->setLabel($this->translator->trans('orob2b.pricing.subtotals.subtotal.label'));
+        $subtotal->setLabel($this->translator->trans(self::NAME . '.label'));
         $subtotal->setVisible(false);
         $subtotal->setType(self::TYPE);
 
@@ -102,7 +101,8 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
                 $productsPriceCriteria =
                     $this->prepareProductsPriceCriteria($lineItem, $this->getBaseCurrency($entity));
                 $price = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria);
-                $subtotalAmount += reset($price)->getValue() * $lineItem->getQuantity();
+                $priceValue = reset($price)->getValue();
+                $subtotalAmount += $priceValue * $lineItem->getQuantity();
                 $subtotal->setVisible(true);
             }
         }

@@ -17,7 +17,7 @@ use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 class LineItemSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
     const TYPE = 'subtotal';
-    const NAME = 'orob2b_pricing.subtotals';
+    const NAME = 'orob2b.pricing.subtotals.subtotal';
 
     /** @var TranslatorInterface */
     protected $translator;
@@ -64,7 +64,7 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements Subto
     {
         $subtotalAmount = 0.0;
         $subtotal = new Subtotal();
-        $subtotal->setLabel($this->translator->trans('orob2b.pricing.subtotals.subtotal.label'));
+        $subtotal->setLabel($this->translator->trans(self::NAME . '.label'));
         $subtotal->setVisible(false);
         $subtotal->setType(self::TYPE);
 
