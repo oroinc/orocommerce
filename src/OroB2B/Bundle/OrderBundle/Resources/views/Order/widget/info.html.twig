@@ -45,12 +45,11 @@
                     <i class="icon {{ oro_entity_config_value(oro_class_name(sourceEntity),'icon') }}"></i>
 
                     {% if routeSourceEntityView is not null and resource_granted('VIEW', sourceEntity) %}
-                        <a href="{{ routeSourceEntityView }}">{{ oro_class_name(sourceEntity) }}</a>
+                        <a href="{{ routeSourceEntityView }}">{{ oro_class_name(sourceEntity) ~ ' ' ~ sourceEntity.id }}</a>
                     {% else %}
-                        {{ oro_class_name(sourceEntity) }}
+                        {{ oro_class_name(sourceEntity) ~ ' ' ~ sourceEntity.id }}
                     {% endif %}
                 {% else %}
-                    <i class="icon {{ oro_entity_config_value(order.sourceEntityClass,'icon') }}"></i>
                     {{ order.sourceEntityClass|default('N/A') }}
                 {% endif %}
             {% endset %}
