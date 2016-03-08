@@ -128,10 +128,12 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         );
         $shippingAddress = $this->createShippingAddress();
 
+        $quoteShippingEstimateValue = 222.33;
         $quote = $this
             ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME)
             ->addQuoteProduct($quoteProduct1)
-            ->addQuoteProduct($quoteProduct2);
+            ->addQuoteProduct($quoteProduct2)
+            ->setShippingEstimate(Price::create($quoteShippingEstimateValue, self::CURRENCY));
 
         $order = $this
             ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME, true)
@@ -158,7 +160,8 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             )
             ->setSubtotal($subtotalAmount)
             ->setTotal($totalAmount)
-            ->setShippingAddress($shippingAddress);
+            ->setShippingAddress($shippingAddress)
+            ->setShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY));
 
         $this->assertCalculateSubtotalsCalled($subtotalAmount);
         $this->assertCalculateTotalsCalled($totalAmount);
@@ -184,9 +187,11 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
 
         $shippingAddress = $this->createShippingAddress();
 
+        $quoteShippingEstimateValue = 222.33;
         $quote = $this
             ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME)
-            ->addQuoteProduct($quoteProduct);
+            ->addQuoteProduct($quoteProduct)
+            ->setShippingEstimate(Price::create($quoteShippingEstimateValue, self::CURRENCY));
 
         $order = $this
             ->createMainEntity($accountName, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME, true)
@@ -205,7 +210,8 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             )
             ->setSubtotal($subtotalAmount)
             ->setTotal($totalAmount)
-            ->setShippingAddress($shippingAddress);
+            ->setShippingAddress($shippingAddress)
+            ->setShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY));
 
         $this->assertCalculateSubtotalsCalled($subtotalAmount);
         $this->assertCalculateTotalsCalled($totalAmount);
@@ -230,8 +236,10 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         $quoteProduct->setProduct((new Product())->setSku('test sku'));
         $shippingAddress = $this->createShippingAddress();
 
+        $quoteShippingEstimateValue = 222.33;
         $quote = $this
-            ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME);
+            ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME)
+            ->setShippingEstimate(Price::create($quoteShippingEstimateValue, self::CURRENCY));
 
         $order = $this
             ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME, true)
@@ -241,7 +249,8 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             )
             ->setSubtotal($subtotalAmount)
             ->setTotal($totalAmount)
-            ->setShippingAddress($shippingAddress);
+            ->setShippingAddress($shippingAddress)
+            ->setShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY));
 
         $offer = $this->createQuoteProductOffer(
             $unit,
@@ -285,6 +294,8 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             false,
             true
         );
+        $quoteShippingEstimateValue = 222.33;
+        $quote->setShippingEstimate(Price::create($quoteShippingEstimateValue, self::CURRENCY));
 
         $order = $this
             ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME, true)
@@ -293,7 +304,8 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
                 $this->createOrderLineItem($sku, $unit, $qty, OrderLineItem::PRICE_TYPE_UNIT, $price, self::CURRENCY)
             )
             ->setSubtotal($subtotalAmount)
-            ->setTotal($totalAmount);
+            ->setTotal($totalAmount)
+            ->setShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY));
 
         $offer = $this->createQuoteProductOffer(
             $unit,
