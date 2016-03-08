@@ -167,8 +167,8 @@ datagrid:
                 label: orob2b.product.sku.label
             name:
                 label: orob2b.product.names.label
-            inventoryStatusName:
-                label: orob2b.product.inventory_status.label
+            image:
+                label: orob2b.product.image.label
         properties:
             id: ~
             view_link:
@@ -191,10 +191,6 @@ datagrid:
                 name:
                     type:      string
                     data_name: name
-                inventoryStatusName:
-                    type:      enum
-                    data_name: inventoryStatusId
-                    enum_code: prod_inventory_status
         actions:
             view:
                 type:          navigate

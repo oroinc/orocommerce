@@ -1,5 +1,24 @@
 {% extends 'OroLayoutBundle:Layout:div_layout.html.twig' %}
 
+{% block block_attributes_raw_class -%}
+    {% spaceless %}
+        {% if attr.class is defined %}
+            {% set attr = attr|merge({
+            class: attr.class|replace({'{{ class_prefix }}': class_prefix})
+            }) %}
+        {% endif %}
+        {% for attrname, attrvalue in attr %}
+            {% if attrname is same as('title') %}
+                {{ attrname }}="{{ attrvalue|block_text(translation_domain) }}"
+            {% elseif attrname is same as('class') %}
+                {{- attrname }}="{{ attrvalue|raw -}}"
+            {% else %}
+                {{ attrname }}="{{ attrvalue }}"
+            {% endif %}
+        {% endfor %}
+    {% endspaceless %}
+{%- endblock %}
+
 {% block form_start_widget %}
     {% set attr = attr|merge({
     id: form.vars.id

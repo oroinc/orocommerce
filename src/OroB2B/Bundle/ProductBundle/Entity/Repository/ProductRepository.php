@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ProductBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -167,5 +168,20 @@ class ProductRepository extends EntityRepository
     {
         return $this->getFilterSkuQueryBuilder($skus)->select('product, product_names')
             ->innerJoin('product.names', 'product_names');
+    }
+
+    /**
+     * @param array $products
+     * @return Product[]
+     */
+    public function getProductsWithImage(array $products)
+    {
+        $qb = $this->createQueryBuilder('p');
+        return $qb->select('partial p.{id, image}, image')
+            ->innerJoin('p.image', 'image', Expr\Join::WITH, $qb->expr()->isNotNull('image.id'))
+            ->where($qb->expr()->in('p', ':products'))
+            ->setParameter('products', $products)
+            ->getQuery()
+            ->execute();
     }
 }

@@ -468,8 +468,6 @@ require(['jquery', 'lodash', 'slick', 'bootstrapDatepicker', 'raty', 'perfectScr
                             class: view
                         }
                     }));
-
-                    event.preventDefault();
                 });
             }
 
