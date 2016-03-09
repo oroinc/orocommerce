@@ -3,7 +3,7 @@ define(function(require) {
 
     var AddressView;
     var _ = require('underscore');
-    var BaseComponent = require('orob2border/js/app/views/address-view');
+    var BaseComponent = require('oroui/js/app/views/base/view');
 
     AddressView = BaseComponent.extend({
 
@@ -21,8 +21,6 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
-            AddressView.__super__.initialize.apply(this, options);
-
             this.addressSelector = this.$el.find(options.selectors.address);
             this.fieldsContainer = this.$el.find(options.selectors.fieldsContainer);
 
