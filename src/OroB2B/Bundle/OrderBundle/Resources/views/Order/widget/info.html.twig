@@ -46,10 +46,10 @@
 
                     {% if resource_granted('VIEW', sourceEntity) %}
                         <a href="{{ oro_entity_view_link(order.sourceEntityClass, order.sourceEntityId) }}">
-                            {{ sourceEntity|orob2b_order_get_title_source_document }}
+                            {{ sourceEntity|orob2b_order_format_source_document }}
                         </a>
                     {% else %}
-                        {{ sourceEntity|orob2b_order_get_title_source_document }}
+                        {{ sourceEntity|orob2b_order_format_source_document }}
                     {% endif %}
                 {% else %}
                     {{ order.sourceEntityClass|default('N/A') }}

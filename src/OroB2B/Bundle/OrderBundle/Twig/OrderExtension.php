@@ -28,8 +28,8 @@ class OrderExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFilter(
-                'orob2b_order_get_title_source_document',
-                [$this, 'getTitleSourceDocument'],
+                'orob2b_order_format_source_document',
+                [$this, 'formatSourceDocument'],
                 ['is_safe' => ['html']]
             )
         ];
@@ -40,7 +40,7 @@ class OrderExtension extends \Twig_Extension
      *
      * @return string
      */
-    public function getTitleSourceDocument($entity)
+    public function formatSourceDocument($entity)
     {
         return $this->sourceDocumentFormatter->format($entity);
     }
