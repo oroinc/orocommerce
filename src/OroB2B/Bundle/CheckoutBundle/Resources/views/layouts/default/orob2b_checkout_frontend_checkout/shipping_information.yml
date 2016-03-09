@@ -2,10 +2,38 @@ layout:
     actions:
         - @setBlockTheme:
             themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/shipping_information.html.twig'
-        - @add:
-            id: checkout_shipping_information
-            parentId: checkout_information
-            blockType: block
-
+        - @setFormTheme:
+            themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/shipping_information.html.twig'
+        - @addTree:
+            items:
+                checkout_shipping_information:
+                    blockType: container
+                checkout_shipping_form:
+                    blockType: container
+                    options:
+                        vars:
+                            form: { @value: $data.form }
+                checkout_shipping_form_start:
+                    blockType: form_start
+                    options:
+                        form: { @value: $data.form }
+                checkout_shipping_form_fields:
+                    blockType: form
+                    options:
+                        form: { @value: $data.form }
+                checkout_shipping_form_button:
+                    blockType: block
+                checkout_shipping_form_end:
+                    blockType: form_end
+                    options:
+                        form: { @value: $data.form }
+            tree:
+                checkout_information:
+                    checkout_shipping_information:
+                        checkout_shipping_form:
+                            checkout_shipping_form_start: ~
+                            checkout_shipping_form_fields: ~
+                            checkout_shipping_form_button: ~
+                            checkout_shipping_form_end: ~
     conditions:
         @eq: [$context.page, 2]

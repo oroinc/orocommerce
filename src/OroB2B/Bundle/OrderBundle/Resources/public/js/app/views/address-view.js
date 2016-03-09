@@ -61,7 +61,6 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
-            console.log('orob2border/js/app/views/address-view init');
             this.options = $.extend(true, {}, this.options, options || {});
 
             this.initLayout().done(_.bind(this.handleLayoutInit, this));

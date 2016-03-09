@@ -27,8 +27,6 @@ layout:
                     blockType: form_end
                     options:
                         form: { @value: $data.form }
-
-
             tree:
                 checkout_information:
                     checkout_billing_information:
