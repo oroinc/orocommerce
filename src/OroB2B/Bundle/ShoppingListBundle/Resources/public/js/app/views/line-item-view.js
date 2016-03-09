@@ -6,6 +6,7 @@ define(function(require) {
     var PricesComponent = require('orob2bpricing/js/app/components/products-prices-component');
     var ProductQuantityComponent = require('orob2bproduct/js/app/components/product-quantity-editable-component');
     var NumberFormatter = require('orolocale/js/formatter/number');
+    var mediator = require('oroui/js/mediator');
     var $ = require('jquery');
     var _ = require('underscore');
 
@@ -55,6 +56,7 @@ define(function(require) {
             };
 
             this.pricesComponent.loadLineItemsMatchedPrices([item], _.bind(this.updateMatchedPrice, this));
+            mediator.trigger('frontend:shopping-list-item-quantity:update', data);
         },
 
         updateMatchedPrice: function(matchedPrices) {
