@@ -1,3 +1,14 @@
 parameters:
+    orob2b_checkout.entity.checkout.class: OroB2B\Bundle\CheckoutBundle\Entity\Checkout
+    orob2b_checkout.entity.checkout_source.class: OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource
+
+    orob2b_checkout.layout.data_provider.transition_form.class: OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormDataProvider
 
 services:
+    orob2b_checkout.layout.data_provider.transition_form:
+        class: %orob2b_checkout.layout.data_provider.transition_form.class%
+        arguments:
+            - @oro_workflow.manager
+            - @form.factory
+        tags:
+            - { name: layout.data_provider, alias: orob2b_checkout_transition_form }
