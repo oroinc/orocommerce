@@ -2,13 +2,12 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\Form\PreloadedExtension;
 
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
@@ -21,13 +20,15 @@ use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemsCollectionType;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
+use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
+use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
+use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
+use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
-use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
 use OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type\Stub\EntityType as StubEntityType;
 
 class OrderTypeTest extends TypeTestCase
@@ -94,34 +95,13 @@ class OrderTypeTest extends TypeTestCase
         $this->assertEquals('orob2b_order_type', $this->type->getName());
     }
 
-    public function testSubmitValidData()
+    /**
+     * @dataProvider submitDataProvider
+     *
+     * @param $submitData
+     */
+    public function testSubmitValidData($submitData)
     {
-        $formData = array(
-            'sourceEntityClass'=> 'Class',
-            'sourceEntityId'=>'1',
-            'owner' => 1,
-            'accountUser' => 1,
-            'account' => 2,
-            'poNumber'  => '11',
-            'shipUntil' => null,
-            'lineItems' => [
-                [
-                    'productSku'=>'HLCU',
-                    'product' => 3,
-                    'freeFormProduct' => '',
-                    'quantity'=>39,
-                    'productUnit'=>'piece',
-                    'price' => [
-                        'value' =>26.5050,
-                        'currency' =>'USD',
-                    ],
-                    'priceType' => 10,
-                    'shipBy'=>'',
-                    'comment'=>''
-                ],
-            ],
-        );
-
         $order = new Order();
         $order->setSourceEntityClass('111111');
 
@@ -134,10 +114,43 @@ class OrderTypeTest extends TypeTestCase
 
         $form = $this->factory->create($this->type, null, $options);
 
-        $form->submit($formData);
+        $form->submit($submitData);
 
         $this->assertTrue($form->isSynchronized());
         $this->assertEquals($order, $form->getData());
+    }
+
+    public function submitDataProvider()
+    {
+        return [
+            'valid data' => [
+                'submitData' => [
+                    'sourceEntityClass'=> 'Class',
+                    'sourceEntityId'=>'1',
+                    'owner' => 1,
+                    'accountUser' => 1,
+                    'account' => 2,
+                    'poNumber'  => '11',
+                    'shipUntil' => null,
+                    'lineItems' => [
+                        [
+                            'productSku'=>'HLCU',
+                            'product' => 3,
+                            'freeFormProduct' => '',
+                            'quantity'=>39,
+                            'productUnit'=>'piece',
+                            'price' => [
+                                'value' =>26.5050,
+                                'currency' =>'USD',
+                            ],
+                            'priceType' => 10,
+                            'shipBy'=>'',
+                            'comment'=>''
+                        ],
+                    ],
+                ]
+            ]
+        ];
     }
 
     protected function getExtensions()
@@ -195,23 +208,25 @@ class OrderTypeTest extends TypeTestCase
 
         $OrderLineItemType= new OrderLineItemType($managerRegistry, $ProductUnitLabelFormatter);
         $OrderLineItemType->setDataClass('OroB2B\Bundle\OrderBundle\Entity\OrderLineItem');
+        $currencySelectionType      = new CurrencySelectionTypeStub();
 
         return [
             new PreloadedExtension(
                 [
-                    CollectionType::NAME                        => new CollectionType(),
-                    OroDateType::NAME                           => new OroDateType(),
-                    $priceType->getName()                       => $priceType,
-                    $entityType->getName()                      => $entityType,
-                    $userSelectType->getName()                  => $userSelectType,
-                    $productSelectType->getName()               => $productSelectType,
-                    $productUnitSelectionType->getName()        => $productUnitSelectionType,
-                    $accountSelectType->getName()               => $accountSelectType,
-                    $accountUserSelectType->getName()           => $accountUserSelectType,
-                    $priceListSelectType->getName()             => $priceListSelectType,
+                    CollectionType::NAME => new CollectionType(),
+                    OroDateType::NAME => new OroDateType(),
+                    $priceType->getName() => $priceType,
+                    $entityType->getName() => $entityType,
+                    $userSelectType->getName() => $userSelectType,
+                    $productSelectType->getName() => $productSelectType,
+                    $productUnitSelectionType->getName() => $productUnitSelectionType,
+                    $accountSelectType->getName() => $accountSelectType,
+                    $currencySelectionType->getName() => $currencySelectionType,
+                    $accountUserSelectType->getName() => $accountUserSelectType,
+                    $priceListSelectType->getName() => $priceListSelectType,
                     OrderLineItemsCollectionType::NAME => new OrderLineItemsCollectionType(),
                     OrderLineItemType::NAME => $OrderLineItemType,
-                    QuantityTypeTrait::$name                    => $this->getQuantityType(),
+                    QuantityTypeTrait::$name => $this->getQuantityType(),
                 ],
                 []
             ),
