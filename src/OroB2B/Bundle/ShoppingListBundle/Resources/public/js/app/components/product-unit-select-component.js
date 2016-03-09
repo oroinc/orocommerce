@@ -31,6 +31,7 @@ define(function(require) {
             for (var productCode in productUnits) {
                 select.append($('<option></option>').attr('value', productCode).text(productUnits[productCode]));
             }
+            select.inputWidget('refresh');
         }
     });
 

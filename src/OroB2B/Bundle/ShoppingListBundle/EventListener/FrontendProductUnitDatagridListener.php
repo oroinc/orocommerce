@@ -105,14 +105,13 @@ class FrontendProductUnitDatagridListener
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
         foreach ($records as $record) {
-            $unitsString = $record->getValue(self::PRODUCT_UNITS_COLUMN_NAME);
-            if (!$unitsString) {
-                continue;
+            $choices = [];
+            $unitsString = $record->getValue($this->getSelectAlias());
+            if ($unitsString) {
+                $productUnits = explode(self::PRODUCT_UNITS_SEPARATOR, $unitsString);
+                $choices = $this->productUnitLabelFormatter->formatChoicesByCodes($productUnits);
             }
-            $productUnits = explode(self::PRODUCT_UNITS_SEPARATOR, $unitsString);
-            $record->addData([
-                self::PRODUCT_UNITS_COLUMN_NAME => $this->productUnitLabelFormatter->formatChoicesByCodes($productUnits)
-            ]);
+            $record->addData([self::PRODUCT_UNITS_COLUMN_NAME => $choices]);
         }
     }
 
