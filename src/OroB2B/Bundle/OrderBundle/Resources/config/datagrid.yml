@@ -447,7 +447,6 @@ datagrid:
                     - order_item.productSku
                     - order_item.freeFormProduct
                     - order_item.quantity
-                    - order_item.shipBy
                     - order_item.comment
                 from:
                     - { table: %orob2b_order.entity.order_line_item.class%, alias: order_item }
@@ -465,8 +464,6 @@ datagrid:
             bind_parameters:
                 - order_id
         columns:
-            productSku:
-                label: orob2b.product.sku.label
             product:
                 label:         orob2b.product.entity_label
                 type:          twig

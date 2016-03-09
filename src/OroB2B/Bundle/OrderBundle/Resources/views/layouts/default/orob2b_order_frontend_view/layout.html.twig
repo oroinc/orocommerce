@@ -35,3 +35,8 @@
     {% import 'OroAddressBundle::macros.html.twig' as AddressMacro %}
     {{ AddressMacro.renderAddress(address) }}
 {% endblock %}
+
+{% block _order_container_with_title_widget %}
+    <div class="account-oq__order-info__title">{{ text|upper|raw }}</div>
+    {{ block_widget(block) }}
+{% endblock %}

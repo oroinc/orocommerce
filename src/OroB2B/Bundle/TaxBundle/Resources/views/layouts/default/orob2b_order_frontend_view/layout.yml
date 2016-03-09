@@ -4,8 +4,7 @@ layout:
             themes: 'OroB2BTaxBundle:layouts:default/orob2b_order_frontend_view/layout.html.twig'
         - @add:
             id: order_tax
-            parentId: order_container
-            siblingId: order_body
+            parentId: order_after_line_items_grid
             blockType: tax
             options:
                 result: {@value: $data.tax}

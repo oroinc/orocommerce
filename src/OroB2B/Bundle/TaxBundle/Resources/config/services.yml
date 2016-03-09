@@ -75,6 +75,9 @@ parameters:
     orob2b_tax.event.context_event_dispatcher.class: OroB2B\Bundle\TaxBundle\Event\ContextEventDispatcher
     orob2b_tax.event.resolver_event_connector.class: OroB2B\Bundle\TaxBundle\Event\ResolverEventConnector
 
+    orob2b_tax.layout.data_provider.tax.class: OroB2B\Bundle\TaxBundle\Layout\Provider\TaxDataProvider
+    orob2b_tax.layout.type.tax.class: OroB2B\Bundle\TaxBundle\Layout\Type\TaxType
+
 services:
     orob2b_tax.manager.product_tax_code.api:
         class: %orob2b_tax.manager.api.attribute.class%
@@ -508,13 +511,13 @@ services:
             - { name: doctrine.orm.entity_listener, entity: %orob2b_order.entity.order.class%, event: preRemove }
 
     orob2b_tax.layout.data_provider.tax:
-        class: OroB2B\Bundle\TaxBundle\Layout\Provider\TaxDataProvider
+        class: %orob2b_tax.layout.data_provider.tax.class%
         arguments:
             - @orob2b_tax.manager.tax_manager
         tags:
             - { name: layout.data_provider, alias: tax }
 
     orob2b_tax.layout.type.tax:
-        class: OroB2B\Bundle\TaxBundle\Layout\Type\TaxType
+        class: %orob2b_tax.layout.type.tax.class%
         tags:
              - { name: layout.block_type, alias: tax }

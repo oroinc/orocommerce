@@ -10,12 +10,21 @@ layout:
             id: content
             optionName: class_prefix
             optionValue: 'order'
+        - @add:
+            id: account_sidebar
+            parentId: sidebar_left
+            blockType: block
         - @addTree:
             items:
                 order_view_page:
                     blockType: container
                 order_container:
                     blockType: container
+                order_container_with_title:
+                    blockType: container
+                    options:
+                        vars:
+                            text: 'test123'
                 order_body:
                     blockType: container
                 order_body_column_left:
@@ -26,23 +35,20 @@ layout:
                     blockType: container
                     options:
                         block_prefixes: ['order_body_column']
+                order_after_line_items_grid:
+                        blockType: container
                 order_identifier:
                     blockType: text
                     options:
                         text: {@value: $data.order.identifier}
                         label: 'orob2b.order.identifier.label'
                         block_prefixes: ['order_body_column_element']
-                order_po_number:
-                    blockType: text
+                order_date:
+                    blockType: date
                     options:
-                        text: {@value: $data.order.poNumber}
-                        label: 'orob2b.order.po_number.label'
-                        block_prefixes: ['order_body_column_element']
-                order_currency:
-                    blockType: text
-                    options:
-                        text: {@value: $data.order.currency}
-                        label: 'orob2b.order.currency.label'
+                        date: {@value: $data.order.createdAt}
+                        dateType: 3
+                        label: 'orob2b.order.order_date.label'
                         block_prefixes: ['order_body_column_element']
                 order_subtotal:
                     blockType: currency
@@ -50,12 +56,6 @@ layout:
                         value: {@value: $data.order.subtotal}
                         currency: {@value: $data.order.currency}
                         label: 'orob2b.order.subtotal.label'
-                        block_prefixes: ['order_body_column_element']
-                order_ship_until:
-                    blockType: date
-                    options:
-                        date: {@value: $data.order.shipUntil}
-                        label: 'orob2b.order.ship_until.label'
                         block_prefixes: ['order_body_column_element']
                 order_customer_notes:
                     blockType: text
@@ -82,19 +82,31 @@ layout:
                     options:
                         grid_name: order-line-items-grid
                         grid_parameters: { order_id: {@value: $data.order.id} }
+                order_shipping_method:
+                    blockType: text
+                    options:
+                        text: {@value: 'USPS Ground - $19.75' }
+                        label: 'orob2b.order.shipping_method.label'
+                        block_prefixes: ['order_body_column_element']
+                order_payment:
+                    blockType: text
+                    options:
+                        text: {@value: 'Wells Fargo ************1234' }
+                        label: 'orob2b.order.payment.label'
+                        block_prefixes: ['order_body_column_element']
             tree:
                 content:
                     order_view_page:
                         order_container:
                             order_body:
-                                order_body_column_left:
-                                    order_identifier: ~
-                                    order_po_number: ~
-                                    order_currency: ~
-                                    order_subtotal: ~
-                                    order_ship_until: ~
-                                order_body_column_right:
-                                    order_billing_address: ~
-                                    order_shipping_address: ~
-                                    order_customer_notes: ~
+                                order_container_with_title:
+                                    order_body_column_left:
+                                        order_date: ~
+                                        order_billing_address: ~
+                                        order_shipping_address: ~
+
+                                    order_body_column_right:
+                                        order_shipping_method: ~
+                                        order_payment: ~
                             order_line_items_grid: ~
+                            order_after_line_items_grid: ~

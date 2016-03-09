@@ -54,15 +54,18 @@ class OrderController extends AbstractOrderController
      */
     public function viewAction(Order $order)
     {
+        $taxManager = $this->get('orob2b_tax.manager.tax_manager');
+        $taxManager->saveTax($order);
+
+        foreach ($order->getLineItems() as $item) {
+            $taxManager->saveTax($item);
+        }
+
         $subtotals = $this->get('orob2b_order.provider.total')->getSubtotals($order);
         $total = $this->get('orob2b_order.provider.total')->getTotal($order);
 
         return [
-            'entity' => $order,
-            'totals' => [
-                'total' => $total,
-                'subtotals' => $subtotals
-            ]
+            'data' => ['order' => $order],
         ];
     }
 
