@@ -31,8 +31,6 @@ class SourceDocumentFormatter
         $class = '';
         $identifier = '';
         if (!empty($sourceEntityClass)) {
-
-
             if (!empty($sourceEntityIdentifier)) {
                 $identifier = $sourceEntityIdentifier;
             }
