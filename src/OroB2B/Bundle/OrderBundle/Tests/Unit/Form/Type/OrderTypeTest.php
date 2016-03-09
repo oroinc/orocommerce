@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Test\TypeTestCase;
@@ -59,7 +61,7 @@ class OrderTypeTest extends TypeTestCase
             ->disableOriginalConstructor()->getMock();
         $this->paymentTermProvider = $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider')
             ->disableOriginalConstructor()->getMock();
-        $this->orderCurrencyHandler =  $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler')
+        $this->orderCurrencyHandler = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler')
             ->disableOriginalConstructor()->getMock();
 
         // create a type instance with the mocked dependencies
@@ -70,6 +72,7 @@ class OrderTypeTest extends TypeTestCase
             $this->orderCurrencyHandler
         );
 
+        $this->type->setDataClass('OroB2B\Bundle\OrderBundle\Entity\Order');
         parent::setUp();
     }
 
@@ -99,16 +102,14 @@ class OrderTypeTest extends TypeTestCase
      * @dataProvider submitDataProvider
      *
      * @param $submitData
+     * @param Order $expectedOrder
      */
-    public function testSubmitValidData($submitData)
+    public function testSubmitValidData($submitData, $expectedOrder)
     {
         $order = new Order();
-        $order->setSourceEntityClass('111111');
-
-        $this->type->setDataClass('OroB2B\Bundle\OrderBundle\Entity\Order');
-
-        $options = [];
-        $options['data'] = $order;
+        $options = [
+            'data' => $order
+        ];
 
         $this->orderCurrencyHandler->expects($this->any())->method('setOrderCurrency');
 
@@ -117,42 +118,73 @@ class OrderTypeTest extends TypeTestCase
         $form->submit($submitData);
 
         $this->assertTrue($form->isSynchronized());
-        $this->assertEquals($order, $form->getData());
+        $this->assertEquals($expectedOrder, $form->getData());
     }
 
+    /**
+     * @return array
+     */
     public function submitDataProvider()
     {
         return [
             'valid data' => [
                 'submitData' => [
-                    'sourceEntityClass'=> 'Class',
-                    'sourceEntityId'=>'1',
-                    'owner' => 1,
+                    'sourceEntityClass' => 'Class',
+                    'sourceEntityId' => '1',
                     'accountUser' => 1,
                     'account' => 2,
-                    'poNumber'  => '11',
+                    'poNumber' => '11',
                     'shipUntil' => null,
                     'lineItems' => [
                         [
-                            'productSku'=>'HLCU',
+                            'productSku' => 'HLCU',
                             'product' => 3,
                             'freeFormProduct' => '',
-                            'quantity'=>39,
-                            'productUnit'=>'piece',
+                            'quantity' => 39,
+                            'productUnit' => 'piece',
                             'price' => [
-                                'value' =>26.5050,
-                                'currency' =>'USD',
+                                'value' => 26.5050,
+                                'currency' => 'USD',
                             ],
                             'priceType' => 10,
-                            'shipBy'=>'',
-                            'comment'=>''
+                            'shipBy' => '',
+                            'comment' => ''
                         ],
                     ],
-                ]
+                ],
+                'expectedOrder' => $this->getOrder(
+                    [
+                        'sourceEntityClass' => 'Class',
+                        'sourceEntityId' => '1',
+                        'accountUser' => 1,
+                        'account' => 2,
+                        'poNumber' => '11',
+                        'shipUntil' => null,
+                        'lineItems' => [
+                            [
+                                'productSku' => 'HLCU',
+                                'product' => 3,
+                                'freeFormProduct' => '',
+                                'quantity' => 39,
+                                'productUnit' => 'piece',
+                                'price' => [
+                                    'value' => 26.5050,
+                                    'currency' => 'USD',
+                                ],
+                                'priceType' => 10,
+                                'shipBy' => '',
+                                'comment' => null
+                            ],
+                        ],
+                    ]
+                )
             ]
         ];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function getExtensions()
     {
         $userSelectType = new StubEntityType(
@@ -187,10 +219,10 @@ class OrderTypeTest extends TypeTestCase
             PriceListSelectType::NAME
         );
 
-        $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
-        $productSelectType          = new ProductSelectTypeStub();
-        $entityType                 = $this->prepareProductEntityType();
-        $priceType                  = $this->preparePriceType();
+        $productUnitSelectionType = $this->prepareProductUnitSelectionType();
+        $productSelectType = new ProductSelectTypeStub();
+        $entityType = $this->prepareProductEntityType();
+        $priceType = $this->preparePriceType();
 
         /** @var ProductUnitLabelFormatter $ProductUnitLabelFormatter */
         $ProductUnitLabelFormatter = $this
@@ -206,9 +238,9 @@ class OrderTypeTest extends TypeTestCase
         $repository->expects($this->any())->method('findBy')->willReturn([]);
         $managerRegistry->expects($this->any())->method('getRepository')->willReturn($repository);
 
-        $OrderLineItemType= new OrderLineItemType($managerRegistry, $ProductUnitLabelFormatter);
+        $OrderLineItemType = new OrderLineItemType($managerRegistry, $ProductUnitLabelFormatter);
         $OrderLineItemType->setDataClass('OroB2B\Bundle\OrderBundle\Entity\OrderLineItem');
-        $currencySelectionType      = new CurrencySelectionTypeStub();
+        $currencySelectionType = new CurrencySelectionTypeStub();
 
         return [
             new PreloadedExtension(
@@ -237,6 +269,7 @@ class OrderTypeTest extends TypeTestCase
      * @param string $className
      * @param int $id
      * @param string $primaryKey
+     *
      * @return object
      */
     protected function getEntity($className, $id, $primaryKey = 'id')
@@ -292,5 +325,86 @@ class OrderTypeTest extends TypeTestCase
     protected function preparePriceType()
     {
         return PriceTypeGenerator::createPriceType();
+    }
+
+    protected function getOrder($data)
+    {
+        $order = new Order();
+
+        if (isset($data['sourceEntityClass'])) {
+            $order->setSourceEntityClass($data['sourceEntityClass']);
+        }
+
+        if (isset($data['sourceEntityId'])) {
+            $order->setSourceEntityId($data['sourceEntityId']);
+        }
+
+        if (isset($data['poNumber'])) {
+            $order->setPoNumber($data['poNumber']);
+        }
+
+        if (isset($data['lineItems']) && count($data['lineItems']) > 0) {
+            foreach ($data['lineItems'] as $lineItem) {
+                $lineItem = $this->getLineItem($lineItem);
+                $order->addLineItem($lineItem);
+            }
+        }
+
+        if (isset($data['accountUser'])) {
+            $order->setAccountUser($this->getEntity(
+                'OroB2B\Bundle\AccountBundle\Entity\AccountUser',
+                $data['accountUser']
+            ));
+        }
+
+        if (isset($data['account'])) {
+            $order->setAccount(
+                $this->getEntity(
+                    'OroB2B\Bundle\AccountBundle\Entity\Account',
+                    $data['account']
+                )
+            );
+        }
+
+
+        return $order;
+    }
+
+    protected function getLineItem($data)
+    {
+        $lineItem = new OrderLineItem();
+
+        if (isset($data['productSku'])) {
+            $lineItem->setProductSku($data['productSku']);
+        }
+
+        if (isset($data['freeFormProduct'])) {
+            $lineItem->setFreeFormProduct($data['freeFormProduct']);
+        }
+
+        if (isset($data['quantity'])) {
+            $lineItem->setQuantity($data['quantity']);
+        }
+
+        if (isset($data['comment'])) {
+            $lineItem->setComment($data['comment']);
+        }
+
+        if (isset($data['priceType'])) {
+            $lineItem->setPriceType($data['priceType']);
+        }
+
+        if (isset($data['product'])) {
+            $lineItem->setProduct($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', $data['product']));
+        }
+
+        if (isset($data['price'])) {
+            $price = new Price();
+            $price->setCurrency($data['price']['currency']);
+            $price->setValue($data['price']['value']);
+            $lineItem->setPrice($price);
+        }
+
+        return $lineItem;
     }
 }
