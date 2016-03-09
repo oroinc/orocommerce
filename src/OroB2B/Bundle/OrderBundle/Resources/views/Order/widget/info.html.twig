@@ -44,8 +44,10 @@
                 {% if sourceEntity is not null %}
                     <i class="icon {{ oro_entity_config_value(order.sourceEntityClass,'icon') }}"></i>
 
-                    {% if routeSourceEntityView is not null and resource_granted('VIEW', sourceEntity) %}
-                        <a href="{{ routeSourceEntityView }}">{{ sourceEntity|orob2b_order_get_title_source_document }}</a>
+                    {% if resource_granted('VIEW', sourceEntity) %}
+                        <a href="{{ oro_entity_view_link(order.sourceEntityClass, order.sourceEntityId) }}">
+                            {{ sourceEntity|orob2b_order_get_title_source_document }}
+                        </a>
                     {% else %}
                         {{ sourceEntity|orob2b_order_get_title_source_document }}
                     {% endif %}

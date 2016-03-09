@@ -2,27 +2,23 @@
 
 namespace OroB2B\Bundle\OrderBundle\Twig;
 
-use Doctrine\Common\Util\ClassUtils;
-
-use Oro\Bundle\EntityBundle\Provider\ChainEntityClassNameProvider;
-
-use OroB2B\Bundle\OrderBundle\Provider\IdentifierAwareInterface;
+use OroB2B\Bundle\OrderBundle\Formatter\SourceDocumentFormatter;
 
 class OrderExtension extends \Twig_Extension
 {
     const NAME = 'orob2b_order_order';
 
     /**
-     * @var ChainEntityClassNameProvider
+     * @var SourceDocumentFormatter
      */
-    protected $chainEntityClassNameProvider;
+    protected $sourceDocumentFormatter;
 
     /**
-     * @param ChainEntityClassNameProvider $chainEntityClassNameProvider
+     * @param SourceDocumentFormatter $sourceDocumentFormatter
      */
-    public function __construct(ChainEntityClassNameProvider $chainEntityClassNameProvider)
+    public function __construct(SourceDocumentFormatter $sourceDocumentFormatter)
     {
-        $this->chainEntityClassNameProvider = $chainEntityClassNameProvider;
+        $this->sourceDocumentFormatter = $sourceDocumentFormatter;
     }
 
     /**
@@ -46,14 +42,7 @@ class OrderExtension extends \Twig_Extension
      */
     public function getTitleSourceDocument($entity)
     {
-        $identifier = '';
-        if ($entity instanceof IdentifierAwareInterface) {
-            $identifier = $entity->getIdentifier();
-        }
-
-        $class = $this->chainEntityClassNameProvider->getEntityClassName(ClassUtils::getClass($entity));
-
-        return sprintf('%s %s', $class, $identifier);
+        return $this->sourceDocumentFormatter->format($entity);
     }
 
     /**
