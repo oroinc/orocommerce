@@ -20,6 +20,7 @@ datagrid:
                     - paymentTerm.label as paymentTermLabel
                     - order1.sourceEntityClass
                     - order1.sourceEntityId
+                    - order1.sourceEntityIdentifier
                 from:
                     - { table: %orob2b_order.entity.order.class%, alias: order1 }
                 join:
@@ -29,10 +30,11 @@ datagrid:
             identifier:
                 label:         orob2b.order.identifier.label
             sourceEntityClass:
-                label:         orob2b.order.sourceDocument.label
+                label:         orob2b.order.source_document.label
                 type:          twig
                 frontend_type: html
                 template:      OroB2BOrderBundle:Order:Datagrid/sourceDocument.html.twig
+                renderable:    false
             poNumber:
                 label:         orob2b.order.po_number.label
             shipUntil:

@@ -42,19 +42,20 @@
 
             {% set sourceEntityBlock %}
                 {% if sourceEntity is not null %}
-                    <i class="icon {{ oro_entity_config_value(order.sourceEntityClass,'icon') }}"></i>
+                    <i class="icon {{ oro_entity_config_value(order.sourceEntityClass, 'icon') }}"></i>
 
                     {% if resource_granted('VIEW', sourceEntity) %}
                         <a href="{{ oro_entity_view_link(order.sourceEntityClass, order.sourceEntityId) }}">
-                            {{ sourceEntity|orob2b_order_format_source_document }}
+                            {{ order.sourceEntityClass|orob2b_order_format_source_document(order.sourceEntityId, order.sourceEntityIdentifier) }}
                         </a>
                     {% else %}
-                        {{ sourceEntity|orob2b_order_format_source_document }}
+                        {{ order.sourceEntityClass|orob2b_order_format_source_document(order.sourceEntityId, order.sourceEntityIdentifier) }}
                     {% endif %}
                 {% else %}
                     {{ order.sourceEntityClass|default('N/A') }}
                 {% endif %}
             {% endset %}
+
             {{ UI.renderHtmlProperty('orob2b.order.source_document.label'|trans, sourceEntityBlock) }}
         </div>
 
