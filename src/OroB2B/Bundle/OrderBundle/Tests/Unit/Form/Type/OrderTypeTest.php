@@ -169,7 +169,6 @@ class OrderTypeTest extends TypeTestCase
                                 'product' => 3,
                                 'freeFormProduct' => '',
                                 'quantity' => 39,
-//                                'productUnit' => 'piece',
                                 'price' => [
                                     'value' => 26.5050,
                                     'currency' => 'USD',
@@ -366,7 +365,7 @@ class OrderTypeTest extends TypeTestCase
         foreach ($data as $fieldName => $value) {
             if ($fieldName === 'product') {
                 $lineItem->setProduct($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', $value));
-            } else if ($fieldName === 'price') {
+            } elseif ($fieldName === 'price') {
                 $price = new Price();
                 $price->setCurrency($value['currency']);
                 $price->setValue($value['value']);
