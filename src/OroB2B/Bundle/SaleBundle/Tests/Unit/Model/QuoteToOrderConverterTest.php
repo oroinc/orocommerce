@@ -19,7 +19,8 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
 use OroB2B\Bundle\OrderBundle\Model\Subtotal;
-use OroB2B\Bundle\OrderBundle\Provider\SubtotalsProvider;
+use OroB2B\Bundle\OrderBundle\Provider\SubtotalLineItemProvider;
+use OroB2B\Bundle\OrderBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
@@ -42,8 +43,11 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|OrderCurrencyHandler */
     protected $orderCurrencyHandler;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|SubtotalsProvider */
-    protected $subtotalsProvider;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|TotalProcessorProvider */
+    protected $totalsProvider;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|SubtotalLineItemProvider */
+    protected $subTotalLineItemProvider;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
     protected $registry;
@@ -64,7 +68,13 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
                 }
             );
 
-        $this->subtotalsProvider = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Provider\SubtotalsProvider')
+        $this->totalsProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\OrderBundle\SubtotalProcessor\TotalProcessorProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->subTotalLineItemProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\OrderBundle\Provider\SubtotalLineItemProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -72,14 +82,21 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
 
         $this->converter = new QuoteToOrderConverter(
             $this->orderCurrencyHandler,
-            $this->subtotalsProvider,
+            $this->subTotalLineItemProvider,
+            $this->totalsProvider,
             $this->registry
         );
     }
 
     protected function tearDown()
     {
-        unset($this->orderCurrencyHandler, $this->subtotalsProvider, $this->registry, $this->converter);
+        unset(
+            $this->orderCurrencyHandler,
+            $this->subTotalLineItemProvider,
+            $this->registry,
+            $this->converter,
+            $this->totalsProvider
+        );
     }
 
     public function testConvertFromQuote()
@@ -97,6 +114,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         $pr2 = 555;
 
         $subtotalAmount = 10500.5;
+        $totalAmount = 20500.5;
 
         $quoteProduct1 = $this->createQuoteProduct($sku1);
         $quoteProduct1->addQuoteProductOffer(
@@ -110,10 +128,12 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         );
         $shippingAddress = $this->createShippingAddress();
 
+        $quoteShippingEstimateValue = 222.33;
         $quote = $this
             ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME)
             ->addQuoteProduct($quoteProduct1)
-            ->addQuoteProduct($quoteProduct2);
+            ->addQuoteProduct($quoteProduct2)
+            ->setShippingEstimate(Price::create($quoteShippingEstimateValue, self::CURRENCY));
 
         $order = $this
             ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME, true)
@@ -139,9 +159,12 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
                 )
             )
             ->setSubtotal($subtotalAmount)
-            ->setShippingAddress($shippingAddress);
+            ->setTotal($totalAmount)
+            ->setShippingAddress($shippingAddress)
+            ->setShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY));
 
         $this->assertCalculateSubtotalsCalled($subtotalAmount);
+        $this->assertCalculateTotalsCalled($totalAmount);
         $this->assertEquals($order, $this->converter->convert($quote));
     }
 
@@ -152,6 +175,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         $qty = 10;
         $pr = 10.5;
         $subtotalAmount = 1050.5;
+        $totalAmount = 2050.5;
 
         $accountName = 'acc';
         $accountUser = $this->createAccountUser($accountName);
@@ -163,9 +187,11 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
 
         $shippingAddress = $this->createShippingAddress();
 
+        $quoteShippingEstimateValue = 222.33;
         $quote = $this
             ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME)
-            ->addQuoteProduct($quoteProduct);
+            ->addQuoteProduct($quoteProduct)
+            ->setShippingEstimate(Price::create($quoteShippingEstimateValue, self::CURRENCY));
 
         $order = $this
             ->createMainEntity($accountName, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME, true)
@@ -183,9 +209,12 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
                 )
             )
             ->setSubtotal($subtotalAmount)
-            ->setShippingAddress($shippingAddress);
+            ->setTotal($totalAmount)
+            ->setShippingAddress($shippingAddress)
+            ->setShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY));
 
         $this->assertCalculateSubtotalsCalled($subtotalAmount);
+        $this->assertCalculateTotalsCalled($totalAmount);
         $this->assertEquals($order, $this->converter->convert($quote, $accountUser));
     }
 
@@ -201,13 +230,16 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         $qty = 55.5;
         $price = 555;
         $subtotalAmount = 25355.5;
+        $totalAmount = 55355.5;
 
         $quoteProduct = $this->createQuoteProduct($sku, true);
         $quoteProduct->setProduct((new Product())->setSku('test sku'));
         $shippingAddress = $this->createShippingAddress();
 
+        $quoteShippingEstimateValue = 222.33;
         $quote = $this
-            ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME);
+            ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME)
+            ->setShippingEstimate(Price::create($quoteShippingEstimateValue, self::CURRENCY));
 
         $order = $this
             ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME, true)
@@ -216,7 +248,9 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
                 $this->createOrderLineItem($sku, $unit, $qty, OrderLineItem::PRICE_TYPE_UNIT, $price, self::CURRENCY)
             )
             ->setSubtotal($subtotalAmount)
-            ->setShippingAddress($shippingAddress);
+            ->setTotal($totalAmount)
+            ->setShippingAddress($shippingAddress)
+            ->setShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY));
 
         $offer = $this->createQuoteProductOffer(
             $unit,
@@ -229,6 +263,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         $this->createQuoteProduct($sku, true)->addQuoteProductOffer($offer);
 
         $this->assertCalculateSubtotalsCalled($subtotalAmount);
+        $this->assertCalculateTotalsCalled($totalAmount);
 
         if ($needFlush) {
             $this->assertDoctrineCalled();
@@ -247,6 +282,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         $qty = 55.5;
         $price = 555;
         $subtotalAmount = 25355.5;
+        $totalAmount = 55355.5;
 
         $quoteProduct = $this->createQuoteProduct($sku, true);
         $quoteProduct->setProduct((new Product())->setSku('test sku'));
@@ -258,6 +294,8 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             false,
             true
         );
+        $quoteShippingEstimateValue = 222.33;
+        $quote->setShippingEstimate(Price::create($quoteShippingEstimateValue, self::CURRENCY));
 
         $order = $this
             ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME, true)
@@ -265,7 +303,9 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             ->addLineItem(
                 $this->createOrderLineItem($sku, $unit, $qty, OrderLineItem::PRICE_TYPE_UNIT, $price, self::CURRENCY)
             )
-            ->setSubtotal($subtotalAmount);
+            ->setSubtotal($subtotalAmount)
+            ->setTotal($totalAmount)
+            ->setShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY));
 
         $offer = $this->createQuoteProductOffer(
             $unit,
@@ -278,6 +318,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         $this->createQuoteProduct($sku, true)->addQuoteProductOffer($offer);
 
         $this->assertCalculateSubtotalsCalled($subtotalAmount);
+        $this->assertCalculateTotalsCalled($totalAmount);
 
         $this->assertEquals(
             $order,
@@ -302,11 +343,24 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
     protected function assertCalculateSubtotalsCalled($subtotalAmount)
     {
         $subtotal = new Subtotal();
-        $subtotal->setType(Subtotal::TYPE_SUBTOTAL)->setAmount($subtotalAmount);
+        $subtotal->setType(SubtotalLineItemProvider::TYPE)->setAmount($subtotalAmount);
 
-        $this->subtotalsProvider->expects($this->once())
-            ->method('getSubtotals')
-            ->willReturn(new ArrayCollection([$subtotal]));
+        $this->subTotalLineItemProvider->expects($this->once())
+            ->method('getSubtotal')
+            ->willReturn($subtotal);
+    }
+
+    /**
+     * @param float $totalAmount
+     */
+    protected function assertCalculateTotalsCalled($totalAmount)
+    {
+        $total = new Subtotal();
+        $total->setType(TotalProcessorProvider::TYPE)->setAmount($totalAmount);
+
+        $this->totalsProvider->expects($this->once())
+            ->method('getTotal')
+            ->willReturn($total);
     }
 
     /**

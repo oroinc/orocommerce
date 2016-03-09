@@ -7,13 +7,15 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
-use OroB2B\Bundle\OrderBundle\Provider\SubtotalsProvider;
+use OroB2B\Bundle\OrderBundle\Provider\SubtotalLineItemProvider;
+use OroB2B\Bundle\OrderBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
@@ -25,24 +27,29 @@ class QuoteToOrderConverter
     /** @var OrderCurrencyHandler */
     protected $orderCurrencyHandler;
 
-    /** @var SubtotalsProvider */
-    protected $subtotalsProvider;
+    /** @var SubtotalLineItemProvider */
+    protected $subtotalLineItemProvider;
 
     /** @var ManagerRegistry */
     protected $registry;
 
+    /** @var TotalProcessorProvider */
+    protected $totalProvider;
+
     /**
      * @param OrderCurrencyHandler $orderCurrencyHandler
-     * @param SubtotalsProvider $subtotalsProvider
+     * @param SubtotalLineItemProvider $subtotalLineItemProvider
      * @param ManagerRegistry $registry
      */
     public function __construct(
         OrderCurrencyHandler $orderCurrencyHandler,
-        SubtotalsProvider $subtotalsProvider,
+        SubtotalLineItemProvider $subtotalLineItemProvider,
+        TotalProcessorProvider $totalProvider,
         ManagerRegistry $registry
     ) {
         $this->orderCurrencyHandler = $orderCurrencyHandler;
-        $this->subtotalsProvider = $subtotalsProvider;
+        $this->subtotalLineItemProvider = $subtotalLineItemProvider;
+        $this->totalProvider = $totalProvider;
         $this->registry = $registry;
     }
 
@@ -76,6 +83,9 @@ class QuoteToOrderConverter
         }
 
         $this->orderCurrencyHandler->setOrderCurrency($order);
+        if ($quote->getShippingEstimate() !== null) {
+            $this->fillShippingCost($quote->getShippingEstimate(), $order);
+        }
         $this->fillSubtotals($order);
 
         if ($needFlush) {
@@ -189,14 +199,48 @@ class QuoteToOrderConverter
      */
     protected function fillSubtotals(Order $order)
     {
-        $subtotals = $this->subtotalsProvider->getSubtotals($order);
-
+        $subtotal = $this->subtotalLineItemProvider->getSubtotal($order);
+        $total = $this->totalProvider->getTotal($order);
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
-        foreach ($subtotals as $subtotal) {
+
+        if ($subtotal) {
             try {
                 $propertyAccessor->setValue($order, $subtotal->getType(), $subtotal->getAmount());
             } catch (NoSuchPropertyException $e) {
             }
         }
+
+        if ($total) {
+            try {
+                $propertyAccessor->setValue($order, $total->getType(), $total->getAmount());
+            } catch (NoSuchPropertyException $e) {
+            }
+        }
+    }
+
+    /**
+     * @param Price $shippingEstimate
+     * @param Order $order
+     */
+    protected function fillShippingCost(Price $shippingEstimate, Order $order)
+    {
+        $shippingCostAmount = $shippingEstimate->getValue();
+        $shippingEstimateCurrency = $shippingEstimate->getCurrency();
+        $orderCurrency = $order->getCurrency();
+        if ($orderCurrency !== $shippingEstimateCurrency) {
+            $shippingCostAmount *= $this->getExchangeRate($shippingEstimateCurrency, $orderCurrency);
+        }
+
+        $order->setShippingCost(Price::create($shippingCostAmount, $orderCurrency));
+    }
+
+    /**
+     * @param string $fromCurrency
+     * @param string $toCurrency
+     * @return float
+     */
+    protected function getExchangeRate($fromCurrency, $toCurrency)
+    {
+        return 1.0;
     }
 }

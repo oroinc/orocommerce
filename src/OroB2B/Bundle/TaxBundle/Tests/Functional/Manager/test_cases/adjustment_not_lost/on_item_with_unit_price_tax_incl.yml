@@ -11,6 +11,7 @@ databaseBefore:
         simple_order:
             poNumber: { property_value: simple_order }
             account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: { name: 'account.orphan' } }
+            currency: 'USD'
             shippingAddress:
                 class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
                 property_value:
@@ -106,6 +107,7 @@ expectedResult:
         excludingTax: '181.71'   # 20.19 * 9 = 181.71 (181.71 if count by items)
         taxAmount: '18.18'       # 2.02 * 9 = 18.18
         adjustment: '-0.0081'     # -0.0009 * 9
+        currency: 'USD'
     items:
         -
             row:
@@ -113,116 +115,135 @@ expectedResult:
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
                 adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
             unit:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
                 adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
         -
             row:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
                 adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
             unit:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
                 adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
         -
             row:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
                 adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
             unit:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
                 adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
         -
             row:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
                 adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
             unit:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
                 adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
+
         -
             row:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
                 adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
             unit:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
                 adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
         -
             row:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
                 adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
             unit:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
                 adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
         -
             row:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
                 adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
             unit:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
                 adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
         -
             row:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
                 adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
             unit:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
                 adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
         -
             row:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
                 adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
             unit:
                 includingTax: '22.21'
                 excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
                 taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
                 adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
     taxes:
-        - { tax: 'TAX1', rate: '0.1', taxableAmount: '181.72', taxAmount: '18.17' }
+        - { tax: 'TAX1', rate: '0.1', taxableAmount: '181.72', taxAmount: '18.17', currency: 'USD' }

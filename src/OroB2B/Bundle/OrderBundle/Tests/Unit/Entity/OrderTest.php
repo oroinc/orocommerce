@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
@@ -35,10 +36,12 @@ class OrderTest extends \PHPUnit_Framework_TestCase
             ['shipUntil', $now],
             ['currency', 'USD'],
             ['subtotal', 999.99],
+            ['total', 999.99],
             ['paymentTerm', new PaymentTerm()],
             ['account', new Account()],
             ['accountUser', new AccountUser()],
-            ['website', new Website()]
+            ['website', new Website()],
+            ['shippingCost', new Price()]
         ];
 
         $order = new Order();
@@ -87,5 +90,78 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $order = new Order();
         $order->preUpdate();
         $this->assertInstanceOf('\DateTime', $order->getUpdatedAt());
+    }
+
+
+    public function testPostLoad()
+    {
+        $item = new Order();
+
+        $this->assertNull($item->getShippingCost());
+
+        $value = 100;
+        $currency = 'EUR';
+        $this->setProperty($item, 'shippingCostAmount', $value);
+        $this->setProperty($item, 'currency', $currency);
+
+        $item->postLoad();
+
+        $this->assertEquals(Price::create($value, $currency), $item->getShippingCost());
+    }
+
+    public function testUpdateShippingCost()
+    {
+        $item = new Order();
+        $value = 1000;
+        $currency = 'EUR';
+        $item->setShippingCost(Price::create($value, $currency));
+
+        $item->updateShippingCost();
+
+        $this->assertEquals($value, $this->getProperty($item, 'shippingCostAmount'));
+    }
+
+    public function testSetShippingEstimate()
+    {
+        $value = 10;
+        $currency = 'USD';
+        $price = Price::create($value, $currency);
+
+        $item = new Order();
+        $item->setShippingCost($price);
+
+        $this->assertEquals($price, $item->getShippingCost());
+
+        $this->assertEquals($value, $this->getProperty($item, 'shippingCostAmount'));
+    }
+
+    /**
+     * @param object $object
+     * @param string $property
+     * @param mixed $value
+     *
+     * @return OrderTest
+     */
+    protected function setProperty($object, $property, $value)
+    {
+        $reflection = new \ReflectionProperty(get_class($object), $property);
+        $reflection->setAccessible(true);
+        $reflection->setValue($object, $value);
+
+        return $this;
+    }
+
+    /**
+     * @param object $object
+     * @param string $property
+     *
+     * @return mixed $value
+     */
+    protected function getProperty($object, $property)
+    {
+        $reflection = new \ReflectionProperty(get_class($object), $property);
+        $reflection->setAccessible(true);
+
+        return $reflection->getValue($object);
     }
 }

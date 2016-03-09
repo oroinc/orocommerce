@@ -8,6 +8,7 @@ databaseBefore:
         simple_order:
             poNumber: { property_value: simple_order }
             account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+            currency: 'USD'
             billingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
             shippingAddress:
                 class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
@@ -42,6 +43,7 @@ databaseBefore:
                             excludingTax: '95.94' # 15.99 * 6
                             taxAmount: '9.6' # 95.94 * 0.1
                             adjustment: '0.001'
+                            currency: 'USD'
                     unit:
                         class: 'OroB2B\Bundle\TaxBundle\Model\ResultElement'
                         property_value:
@@ -49,6 +51,7 @@ databaseBefore:
                             excludingTax: '15.99'
                             taxAmount: '1.6' # 15.99 * 0.1
                             adjustment: '0.001'
+                            currency: 'USD'
                     taxes:
                         -
                             class: 'OroB2B\Bundle\TaxBundle\Model\TaxResultElement'
@@ -57,16 +60,19 @@ databaseBefore:
                                 rate: '0.1'
                                 taxableAmount: '9.6'
                                 taxAmount: '1.6'
+                                currency: 'USD'
 expectedResult: # loaded from fixtures, values from simple_order_item_1 used to check database overrid
     row:
         includingTax: '105.54' # 95.94 + 9.594
         excludingTax: '95.94' # 15.99 * 6
         taxAmount: '9.6' # 95.94 * 0.1
         adjustment: '0.001'
+        currency: 'USD'
     unit:
         includingTax: '17.59' # 15.99 + 1.599
         excludingTax: '15.99'
         taxAmount: '1.6' # 15.99 * 0.1
         adjustment: '0.001'
+        currency: 'USD'
     taxes:
-        - { tax: 'TAX1', rate: '0.1', taxableAmount: '9.6', taxAmount: '1.6' }
+        - { tax: 'TAX1', rate: '0.1', taxableAmount: '9.6', taxAmount: '1.6', currency: 'USD' }

@@ -12,6 +12,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
@@ -52,6 +53,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHolderInterface, AccountOwnerAwareInterface
 {
@@ -236,6 +238,20 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
     protected $subtotal;
 
     /**
+     * @var float
+     *
+     * @ORM\Column(name="total", type="money", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $total;
+
+    /**
      * @var PaymentTerm
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm")
@@ -310,6 +326,18 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
      * )
      */
     protected $lineItems;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="shipping_cost_amount", type="money", nullable=true)
+     */
+    protected $shippingCostAmount;
+
+    /**
+     * @var Price
+     */
+    protected $shippingCost;
 
     /**
      * Constructor
@@ -617,6 +645,30 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
     }
 
     /**
+     * Set total
+     *
+     * @param float $total
+     *
+     * @return Order
+     */
+    public function setTotal($total)
+    {
+        $this->total = $total;
+
+        return $this;
+    }
+
+    /**
+     * Get total
+     *
+     * @return float
+     */
+    public function getTotal()
+    {
+        return $this->total;
+    }
+
+    /**
      * Set paymentTerm
      *
      * @param PaymentTerm|null $paymentTerm
@@ -762,5 +814,49 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
     public function getWebsite()
     {
         return $this->website;
+    }
+
+    /**
+     * Get shipping cost
+     *
+     * @return Price|null
+     */
+    public function getShippingCost()
+    {
+        return $this->shippingCost;
+    }
+
+    /**
+     * Set shipping cost
+     *
+     * @param Price $shippingCost
+     * @return $this
+     */
+    public function setShippingCost(Price $shippingCost = null)
+    {
+        $this->shippingCost = $shippingCost;
+
+        $this->updateShippingCost();
+
+        return $this;
+    }
+
+    /**
+     * @ORM\PostLoad
+     */
+    public function postLoad()
+    {
+        if (null !== $this->shippingCostAmount && null !== $this->currency) {
+            $this->shippingCost = Price::create($this->shippingCostAmount, $this->currency);
+        }
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updateShippingCost()
+    {
+        $this->shippingCostAmount = $this->shippingCost ? $this->shippingCost->getValue() : null;
     }
 }
