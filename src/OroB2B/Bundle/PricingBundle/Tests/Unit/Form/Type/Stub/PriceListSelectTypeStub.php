@@ -2,38 +2,34 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
 
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 
-class PriceListSelectTypeStub extends AbstractType
+class PriceListSelectTypeStub extends StubEntityType
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return PriceListSelectType::NAME;
-    }
+    use EntityTrait;
+
+    const PRICE_LIST_1 = 1;
+    const PRICE_LIST_2 = 2;
+    const PRICE_LIST_3 = 3;
 
     /**
-     * {@inheritdoc}
+     * PriceListSelectTypeStub constructor.
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function __construct()
     {
-        $resolver->setDefaults([
-            'class' => 'OroB2B\Bundle\PricingBundle\Entity\PriceList',
-            'property' => 'name',
-            'create_enabled' => false
-        ]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getParent()
-    {
-        return 'entity';
+        parent::__construct([
+            self::PRICE_LIST_1 => $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', [
+                'id' => self::PRICE_LIST_1
+            ]),
+            self::PRICE_LIST_2 => $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', [
+                'id' => self::PRICE_LIST_2
+            ]),
+            self::PRICE_LIST_3 => $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', [
+                'id' => self::PRICE_LIST_3
+            ])
+        ], PriceListSelectType::NAME);
     }
 }

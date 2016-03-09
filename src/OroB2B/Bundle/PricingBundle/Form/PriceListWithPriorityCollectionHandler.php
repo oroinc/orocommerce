@@ -14,11 +14,6 @@ use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 class PriceListWithPriorityCollectionHandler
 {
     /**
-     * @var bool
-     */
-    protected $hasChanges = false;
-
-    /**
      * @var DoctrineHelper
      */
     protected $doctrineHelper;
@@ -47,13 +42,13 @@ class PriceListWithPriorityCollectionHandler
      */
     public function handleChanges(array $submitted, array $existing, $targetEntity, Website $website)
     {
-        $this->removeDeleted($existing, $submitted);
-        $this->persistNew($existing, $submitted, $website, $targetEntity);
-        if (!$this->hasChanges && 0 !== count($existing)) {
-            $this->hasChanges = $this->checkCollectionUpdates($existing);
+        $hasChanges = $this->removeDeleted($existing, $submitted);
+        $hasChanges = $this->persistNew($existing, $submitted, $website, $targetEntity) || $hasChanges;
+        if (!$hasChanges && 0 !== count($existing)) {
+            $hasChanges = $this->checkCollectionUpdates($existing);
         }
 
-        return $this->hasChanges;
+        return $hasChanges;
     }
 
     /**
@@ -62,7 +57,7 @@ class PriceListWithPriorityCollectionHandler
      */
     protected function checkCollectionUpdates(array $existing)
     {
-        $manager = $this->doctrineHelper->getEntityManager(ClassUtils::getClass(current($existing)));
+        $manager = $this->doctrineHelper->getEntityManager(current($existing));
         $unitOfWork = $manager->getUnitOfWork();
         $unitOfWork->computeChangeSets();
 
@@ -78,20 +73,20 @@ class PriceListWithPriorityCollectionHandler
     /**
      * @param array|BasePriceListRelation[] $existing
      * @param array|BasePriceListRelation[] $submitted
+     * @return bool
      */
     protected function removeDeleted(array $existing, array $submitted)
     {
-        if (count($existing) === 0) {
-            return;
-        }
-
-        $manager = $this->doctrineHelper->getEntityManager(current($existing));
+        $hasChanges = false;
+        $manager = current($existing) ? $this->doctrineHelper->getEntityManager(current($existing)) : null;
         foreach ($existing as $relation) {
-            if (!in_array($relation, $submitted)) {
+            if (!in_array($relation, $submitted, true)) {
                 $manager->remove($relation);
-                $this->hasChanges = true;
+                $hasChanges = true;
             }
         }
+
+        return $hasChanges;
     }
 
     /**
@@ -112,22 +107,22 @@ class PriceListWithPriorityCollectionHandler
      * @param array|BasePriceListRelation[] $existing
      * @param array|BasePriceListRelation[] $submitted
      * @param Website $website
-     * @param $targetEntity
+     * @param object $targetEntity
+     * @return bool
      */
     protected function persistNew(array $existing, array $submitted, Website $website, $targetEntity)
     {
-        if (count($submitted) === 0) {
-            return;
-        }
-
-        $manager = $this->doctrineHelper->getEntityManager(current($submitted));
+        $hasChanges = false;
+        $manager = current($submitted) ? $this->doctrineHelper->getEntityManager(current($submitted)) : null;
         foreach ($submitted as $relation) {
-            if (!in_array($relation, $existing)) {
+            if (!in_array($relation, $existing, true)) {
                 $this->setTargetEntity($relation, $targetEntity);
                 $relation->setWebsite($website);
                 $manager->persist($relation);
-                $this->hasChanges = true;
+                $hasChanges = true;
             }
         }
+
+        return $hasChanges;
     }
 }

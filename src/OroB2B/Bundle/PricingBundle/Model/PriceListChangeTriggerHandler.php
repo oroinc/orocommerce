@@ -13,6 +13,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
 
 class PriceListChangeTriggerHandler
 {
@@ -34,11 +35,16 @@ class PriceListChangeTriggerHandler
     /**
      * @param ManagerRegistry $registry
      * @param EventDispatcherInterface $eventDispatcher
+     * @param InsertFromSelectQueryExecutor $insertFromSelectExecutor
      */
-    public function __construct(ManagerRegistry $registry, EventDispatcherInterface $eventDispatcher)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        EventDispatcherInterface $eventDispatcher,
+        InsertFromSelectQueryExecutor $insertFromSelectExecutor
+    ) {
         $this->registry = $registry;
         $this->eventDispatcher = $eventDispatcher;
+        $this->insertFromSelectQueryExecutor = $insertFromSelectExecutor;
     }
 
     /**
@@ -49,18 +55,20 @@ class PriceListChangeTriggerHandler
         $trigger = $this->createTrigger();
         $trigger->setWebsite($website);
         $this->getManager()->persist($trigger);
+        $this->triggerChangeListener();
     }
 
     /**
      * @param Account $account
      * @param Website $website
      */
-    public function handleAccountChange(Account $account, Website $website = null)
+    public function handleAccountChange(Account $account, Website $website)
     {
         $trigger = $this->createTrigger();
         $trigger->setAccount($account)
             ->setWebsite($website);
         $this->getManager()->persist($trigger);
+        $this->triggerChangeListener();
     }
 
     /**
@@ -73,18 +81,20 @@ class PriceListChangeTriggerHandler
         if ($andFlush) {
             $this->getManager()->flush();
         }
+        $this->triggerChangeListener();
     }
 
     /**
      * @param AccountGroup $accountGroup
      * @param Website $website
      */
-    public function handleAccountGroupChange(AccountGroup $accountGroup, Website $website = null)
+    public function handleAccountGroupChange(AccountGroup $accountGroup, Website $website)
     {
         $trigger = $this->createTrigger();
         $trigger->setAccountGroup($accountGroup)
             ->setWebsite($website);
         $this->getManager()->persist($trigger);
+        $this->triggerChangeListener();
     }
 
     /**
@@ -105,7 +115,14 @@ class PriceListChangeTriggerHandler
                     $websiteIds,
                     $this->insertFromSelectQueryExecutor
                 );
+            $this->triggerChangeListener();
         }
+    }
+
+    protected function triggerChangeListener()
+    {
+        $event = new PriceListQueueChangeEvent();
+        $this->eventDispatcher->dispatch(PriceListQueueChangeEvent::BEFORE_CHANGE, $event);
     }
 
     /**

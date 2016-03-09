@@ -8,6 +8,7 @@ use Symfony\Component\EventDispatcher\Event;
 class AccountGroupEvent extends Event
 {
     const PRE_REMOVE = 'orob2b_account.account_group.pre_remove';
+    const BEFORE_FLUSH = 'orob2b_account.account_group.before_flush';
 
     /**
      * @var  AccountGroup

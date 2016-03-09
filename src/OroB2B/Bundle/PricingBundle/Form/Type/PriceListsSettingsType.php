@@ -2,19 +2,23 @@
 
 namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
-use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 
 class PriceListsSettingsType extends AbstractType
 {
     const NAME = 'orob2b_pricing_price_lists_settings';
 
+    // fields
     const PRICE_LIST_COLLECTION_FIELD = 'priceListCollection';
     const FALLBACK_FIELD = 'fallback';
-    const PRICE_LIST_RELATION_CLASS = 'price_list_relation_class';
+
+    // options
     const FALLBACK_CHOICES = 'fallback_choices';
+    const PRICE_LIST_RELATION_CLASS = 'price_list_relation_class';
 
     /**
      * {@inheritdoc}
@@ -61,6 +65,7 @@ class PriceListsSettingsType extends AbstractType
             [
                 'render_as_widget' => true,
                 'label' => false,
+                'ownership_disabled' => true,
                 WebsiteScopedDataType::WEBSITE_OPTION => null
             ]
         );

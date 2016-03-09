@@ -34,7 +34,7 @@ class WebsiteScopedDataType extends AbstractType
     /**
      * @var string
      */
-    protected $websiteCLass;
+    protected $websiteCLass = 'OroB2B\Bundle\WebsiteBundle\Entity\Website';
 
     /**
      * {@inheritdoc}

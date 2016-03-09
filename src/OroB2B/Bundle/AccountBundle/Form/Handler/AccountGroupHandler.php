@@ -4,11 +4,13 @@ namespace OroB2B\Bundle\AccountBundle\Form\Handler;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\AccountBundle\Event\AccountGroupEvent;
 
 class AccountGroupHandler
 {
@@ -21,16 +23,25 @@ class AccountGroupHandler
     /** @var ObjectManager */
     protected $manager;
 
+    /** @var  EventDispatcherInterface */
+    protected $dispatcher;
+
     /**
      * @param FormInterface $form
      * @param Request $request
      * @param ObjectManager $manager
+     * @param EventDispatcherInterface $dispatcher
      */
-    public function __construct(FormInterface $form, Request $request, ObjectManager $manager)
-    {
+    public function __construct(
+        FormInterface $form,
+        Request $request,
+        ObjectManager $manager,
+        EventDispatcherInterface $dispatcher
+    ) {
         $this->form = $form;
         $this->request = $request;
         $this->manager = $manager;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -52,6 +63,8 @@ class AccountGroupHandler
                     $this->form->get('appendAccounts')->getData(),
                     $this->form->get('removeAccounts')->getData()
                 );
+                $event = new AccountGroupEvent($entity);
+                $this->dispatcher->dispatch(AccountGroupEvent::BEFORE_FLUSH, $event);
 
                 return true;
             }

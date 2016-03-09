@@ -98,11 +98,11 @@ class PriceListCollectionType extends AbstractType
     /**
      * Change data target when price lists swapped to avoid unique constraint failures
      *
-     * @param array $data
+     * @param array $submitted
      * @param FormInterface $form
      * @return array
      */
-    protected function reorderData(array $data, FormInterface $form)
+    protected function reorderData(array $submitted, FormInterface $form)
     {
         foreach ($form->all() as $child) {
             /** @var BasePriceListRelation $relation */
@@ -112,17 +112,17 @@ class PriceListCollectionType extends AbstractType
             }
             $name = $child->getName();
 
-            foreach ($data as $index => $item) {
+            foreach ($submitted as $index => $item) {
                 $id = (int)$item[PriceListSelectWithPriorityType::PRICE_LIST_FIELD];
                 if ($relation->getPriceList()->getId() === $id) {
-                    $temp = $data[$name];
-                    $data[$name] = $data[$index];
-                    $data[$index] = $temp;
+                    $temp = $submitted[$name];
+                    $submitted[$name] = $submitted[$index];
+                    $submitted[$index] = $temp;
                 }
             }
         }
 
-        return $data;
+        return $submitted;
     }
 
     /**
@@ -131,9 +131,8 @@ class PriceListCollectionType extends AbstractType
      */
     protected function isEmpty($item)
     {
-        return ($item instanceof PriceListAwareInterface && !$item->getPriceList() && !$item->getPriority())
-        || (is_array($item)
+        return is_array($item)
             && !$item[PriceListSelectWithPriorityType::PRICE_LIST_FIELD]
-            && !$item[PriceListSelectWithPriorityType::PRIORITY_FIELD]);
+            && !$item[PriceListSelectWithPriorityType::PRIORITY_FIELD];
     }
 }

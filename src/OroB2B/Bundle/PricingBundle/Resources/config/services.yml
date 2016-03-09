@@ -51,7 +51,6 @@ parameters:
     orob2b_pricing.event_listener.form_view.class: OroB2B\Bundle\PricingBundle\EventListener\FormViewListener
     orob2b_pricing.event_listener.website_form_view.class: OroB2B\Bundle\PricingBundle\EventListener\WebsiteFormViewListener
     orob2b_pricing.event_listener.datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\DatagridListener
-    orob2b_pricing.event_listener.account_group_changes.class: OroB2B\Bundle\PricingBundle\EventListener\AccountGroupChangesListener
     orob2b_pricing.event_listener.product_price_datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener
     orob2b_pricing.event_listener.frontend.product_price_datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener
     orob2b_pricing.event_listener.product_duplicate.class: OroB2B\Bundle\PricingBundle\EventListener\ProductDuplicateListener
@@ -272,19 +271,12 @@ services:
 #            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-grid, method: onBuildBeforeAccounts }
 #            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-groups-grid, method: onBuildBeforeAccountGroups }
 
-    orob2b_pricing.event_listener.account_group:
-        class: %orob2b_pricing.event_listener.account_group_changes.class%
-        arguments:
-            - @doctrine
-            - @orob2b_pricing.price_list_change_trigger_handler
-        tags:
-            - { name: kernel.event_listener, event: orob2b_account.account.on_account_group_change, method: onChangeGroupInAccount }
-
     orob2b_pricing.price_list_change_trigger_handler:
         class: %orob2b_pricing.price_list_change_trigger_handler.class%
         arguments:
             - @doctrine
             - @event_dispatcher
+            - @oro_entity.orm.insert_from_select_query_executor
 
     orob2b_pricing.event_listener.combined_price_list_queue:
         class: %orob2b_pricing.event_listener.combined_price_list_queue.class%
@@ -296,7 +288,6 @@ services:
             - { name: kernel.event_listener, event: kernel.terminate, method: onTerminate }
             - { name: kernel.event_listener, event: orob2b_pricing.price_list_collection.change_before, method: onQueueChanged }
             - { name: kernel.event_listener, event: orob2b_pricing.product_price.change, method: onProductPriceChanged }
-            - { name: kernel.event_listener, event: orob2b_pricing.price_list_collection.multi_change, method: onQueueChanged }
 
     orob2b_pricing.event_listener.product_price_datagrid:
         class: %orob2b_pricing.event_listener.product_price_datagrid.class%
@@ -457,3 +448,23 @@ services:
             - @orob2b_pricing.price_list_change_trigger_handler
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.orob2b_website_type, method: beforeFlush }
+
+    orob2b_pricing.entity_listener.account_group:
+        class: OroB2B\Bundle\PricingBundle\EventListener\AccountGroupListener
+        arguments:
+            - @orob2b_pricing.price_list_with_priority_collection.handler
+            - @oro_entity.doctrine_helper
+            - @orob2b_pricing.price_list_change_trigger_handler
+        tags:
+            - { name: kernel.event_listener, event: orob2b_account.account_group.before_flush, method: onPostSubmit }
+            - { name: kernel.event_listener, event: orob2b_account.account_group.pre_remove, method: onGroupRemove }
+
+    orob2b_pricing.entity_listener.account:
+        class: OroB2B\Bundle\PricingBundle\EventListener\AccountListener
+        arguments:
+            - @orob2b_pricing.price_list_with_priority_collection.handler
+            - @oro_entity.doctrine_helper
+            - @orob2b_pricing.price_list_change_trigger_handler
+        tags:
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.orob2b_account_type, method: onPostSubmit }
+            - { name: kernel.event_listener, event: orob2b_account.account.on_account_group_change, method: onAccountGroupChange }

@@ -4,46 +4,20 @@ namespace OroB2B\Bundle\PricingBundle\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountGroupType;
-use OroB2B\Bundle\PricingBundle\Form\PriceListWithPriorityCollectionHandler;
-use OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
 use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\PricingBundle\EventListener\AccountGroupListener;
 
 class AccountGroupFormExtension extends AbstractTypeExtension
 {
-    const PRICE_LISTS_BY_WEBSITES = 'priceListsByWebsites';
-
     /**
-     * @var PriceListWithPriorityCollectionHandler
+     * @var AccountGroupListener
      */
-    protected $collectionHandler;
-
-    /**
-     * @var DoctrineHelper
-     */
-    protected $doctrineHelper;
-
-    /**
-     * @var PriceListChangeTriggerHandler
-     */
-    protected $triggerHandler;
-
-    /**
-     * @var array
-     */
-    protected $existingRelations = [];
+    protected $listener;
 
     /**
      * @var string
@@ -51,26 +25,12 @@ class AccountGroupFormExtension extends AbstractTypeExtension
     protected $relationClass = 'OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup';
 
     /**
-     * @var string
+     * @param AccountGroupListener $listener
      */
-    protected $fallbackClass = 'OroB2B\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback';
-
-
-    /**
-     * @param PriceListWithPriorityCollectionHandler $collectionHandler
-     * @param DoctrineHelper $doctrineHelper
-     * @param PriceListChangeTriggerHandler $triggerHandler
-     */
-    public function __construct(
-        PriceListWithPriorityCollectionHandler $collectionHandler,
-        DoctrineHelper $doctrineHelper,
-        PriceListChangeTriggerHandler $triggerHandler
-    ) {
-        $this->collectionHandler = $collectionHandler;
-        $this->doctrineHelper = $doctrineHelper;
-        $this->triggerHandler = $triggerHandler;
+    public function __construct(AccountGroupListener $listener)
+    {
+        $this->listener = $listener;
     }
-
 
     /**
      * {@inheritdoc}
@@ -86,7 +46,7 @@ class AccountGroupFormExtension extends AbstractTypeExtension
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add(
-            self::PRICE_LISTS_BY_WEBSITES,
+            AccountGroupListener::PRICE_LISTS_BY_WEBSITES,
             WebsiteScopedDataType::NAME,
             [
                 'type' => PriceListsSettingsType::NAME,
@@ -101,59 +61,19 @@ class AccountGroupFormExtension extends AbstractTypeExtension
             ]
         );
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
-        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit']);
+        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this->listener, 'onPostSetData']);
     }
 
     /**
-     * @param FormEvent $event
+     * @param string $relationClass
      */
-    public function onPostSetData(FormEvent $event)
+    public function setRelationClass($relationClass)
     {
-        /** @var AccountGroup $accountGroup */
-        $accountGroup = $event->getForm()->getData();
-        if (!$accountGroup || !$accountGroup->getId()) {
-            return;
-        }
-
-        foreach ($event->getForm()->get(self::PRICE_LISTS_BY_WEBSITES)->all() as $form) {
-            $website = $form->getConfig()->getOption(WebsiteScopedDataType::WEBSITE_OPTION);
-            $existing = $this->getExistingRelations($accountGroup, $website);
-            $fallback = $this->getFallback($website, $accountGroup);
-            $form->get(PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD)->setData($existing);
-            $form->get(PriceListsSettingsType::FALLBACK_FIELD)->setData($fallback->getFallback());
-        }
+        $this->relationClass = $relationClass;
     }
 
     /**
-     * @param FormEvent $event
-     */
-    public function onPostSubmit(FormEvent $event)
-    {
-        $accountGroup = $event->getForm()->getData();
-        foreach ($event->getForm()->get(self::PRICE_LISTS_BY_WEBSITES)->all() as $form) {
-            $data = $form->getData();
-            $website = $form->getConfig()->getOption(WebsiteScopedDataType::WEBSITE_OPTION);
-            $existing = $this->getExistingRelations($accountGroup, $website);
-
-            $submitted = $data[PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD];
-            $hasChanges = $this->collectionHandler->handleChanges($submitted, $existing, $accountGroup, $website);
-
-            $fallback = $this->getFallback($website, $accountGroup) ?: $this->createFallback($accountGroup, $website);
-            $fallbackData = $form->get(PriceListsSettingsType::FALLBACK_FIELD)->getData();
-            if ($fallbackData !== $fallback->getFallback()) {
-                $fallback->setFallback($fallbackData);
-                $hasChanges = true;
-            }
-
-            if ($hasChanges) {
-                $this->triggerHandler->handleAccountGroupChange($accountGroup, $website);
-            }
-        }
-    }
-
-    /**
-     * {@inheritdoc}
+     * @return array
      */
     protected function getFallbackChoices()
     {
@@ -163,61 +83,5 @@ class AccountGroupFormExtension extends AbstractTypeExtension
             PriceListAccountGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY =>
                 'orob2b.pricing.fallback.current_account_group_only.label',
         ];
-    }
-
-
-    /**
-     * @param Website $website
-     * @param object $targetEntity
-     * @return PriceListAccountGroupFallback
-     */
-    protected function getFallback(Website $website, $targetEntity)
-    {
-        return $this->doctrineHelper->getEntityRepository($this->fallbackClass)
-            ->findOneBy(
-                [
-                    'accountGroup' => $targetEntity,
-                    'website' => $website,
-                ]
-            );
-    }
-
-    /**
-     * @param AccountGroup $accountGroup
-     * @param Website $website
-     * @return array|PriceListToAccountGroup[]
-     */
-    protected function getExistingRelations(AccountGroup $accountGroup, Website $website)
-    {
-        if (!$accountGroup->getId()) {
-            return [];
-        }
-
-        $key = spl_object_hash($accountGroup) . '_' . spl_object_hash($website);
-        if (!array_key_exists($key, $this->existingRelations)) {
-            /** @var PriceListToAccountGroupRepository $entityRepository */
-            $entityRepository = $this->doctrineHelper
-                ->getEntityRepository($this->relationClass);
-            $this->existingRelations[$key] = $entityRepository
-                ->getPriceLists($accountGroup, $website, PriceListCollectionType::DEFAULT_ORDER);
-        }
-
-        return $this->existingRelations[$key];
-    }
-
-    /**
-     * @param AccountGroup $accountGroup
-     * @param Website $website
-     * @return PriceListAccountGroupFallback
-     */
-    protected function createFallback(AccountGroup $accountGroup, Website $website)
-    {
-        $fallback = new PriceListAccountGroupFallback();
-        $fallback->setAccountGroup($accountGroup)
-            ->setWebsite($website);
-        $this->doctrineHelper->getEntityManager($fallback)
-            ->persist($fallback);
-
-        return $fallback;
     }
 }
