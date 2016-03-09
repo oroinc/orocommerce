@@ -2,9 +2,24 @@
 {% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
 {% import 'OroAddressBundle::macros.html.twig' as address %}
 
+{% set sourceEntityBlock %}
+  {% set sourceDocumenttitle = order.sourceEntityClass|orob2b_order_format_source_document(
+    order.sourceEntityId,
+    order.sourceEntityIdentifier
+  ) %}
+
+  <i class="icon {{ oro_entity_config_value(order.sourceEntityClass, 'icon') }}"></i>
+  {% if sourceEntity is not null and resource_granted('VIEW', sourceEntity) %}
+      <a href="{{ oro_entity_view_link(order.sourceEntityClass, order.sourceEntityId) }}">
+          {{ sourceDocumenttitle }}
+      </a>
+  {% else %}
+      {{ sourceDocumenttitle|default('N/A') }}
+  {% endif %}
+{% endset %}
+
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
-
         <div class="responsive-block">
             {{ UI.renderProperty('orob2b.order.identifier.label'|trans, order.identifier) }}
             {{ UI.renderProperty('orob2b.order.po_number.label'|trans, order.poNumber) }}
@@ -39,23 +54,6 @@
             {% endif %}
 
             {{ UI.renderProperty('orob2b.order.ship_until.label'|trans, order.shipUntil|oro_format_date) }}
-
-            {% set sourceEntityBlock %}
-                {% if sourceEntity is not null %}
-                    <i class="icon {{ oro_entity_config_value(order.sourceEntityClass, 'icon') }}"></i>
-
-                    {% if resource_granted('VIEW', sourceEntity) %}
-                        <a href="{{ oro_entity_view_link(order.sourceEntityClass, order.sourceEntityId) }}">
-                            {{ order.sourceEntityClass|orob2b_order_format_source_document(order.sourceEntityId, order.sourceEntityIdentifier) }}
-                        </a>
-                    {% else %}
-                        {{ order.sourceEntityClass|orob2b_order_format_source_document(order.sourceEntityId, order.sourceEntityIdentifier) }}
-                    {% endif %}
-                {% else %}
-                    {{ order.sourceEntityClass|default('N/A') }}
-                {% endif %}
-            {% endset %}
-
             {{ UI.renderHtmlProperty('orob2b.order.source_document.label'|trans, sourceEntityBlock) }}
         </div>
 
