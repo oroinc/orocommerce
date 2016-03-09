@@ -39,17 +39,3 @@
         {{ block_widget(block) }}
     </div>
 {% endblock %}
-
-{% block _form_actions_reset_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " btn theme-btn_sm btn_gray"
-    }) %}
-    {{ block('button_widget') }}
-{% endblock %}
-
-{% block _form_actions_create_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " btn theme-btn_sm btn_orange ml1-md"
-    }) %}
-    {{ block('button_widget') }}
-{% endblock %}

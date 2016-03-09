@@ -23,6 +23,7 @@ class QuickAddImportFromFileType extends AbstractType
                 'file',
                 [
                     'required' => true,
+                    'label' => false,
                     'constraints' => [
                         new File(
                             [

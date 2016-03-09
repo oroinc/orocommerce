@@ -1,3 +1,12 @@
+{% block _quick_add_form_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ ' hidden-form'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _quick_add_form_start_widget %}
     {% set pageComponentOptions = {
         'componentSelector': '#' ~ form.component.vars.id,
@@ -15,55 +24,70 @@
     {% set widgetOptions = {
         _wid: app.request.get('_wid')
     } %}
-    <div id="import-validation"
-         data-page-component-module="orob2bproduct/js/app/components/quick-add-import-validation-component"
-         data-page-component-options="{{ widgetOptions|json_encode }}">
+    {% set attr = {
+        id: 'import-validation',
+        'data-page-component-module': 'orob2bproduct/js/app/components/quick-add-import-validation-component',
+        'data-page-component-options': widgetOptions|json_encode,
+    }|merge(attr) %}
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block _quick_add_import_validation_items_table_widget %}
-    <table>
-        <thead>
-            <tr>
-                <th></th>
-                <th>{{ block_label(block) }}</th>
-            </tr>
-        </thead>
-        <tbody>{{ block_widget(block) }}</tbody>
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ ' table table-condensed table-hover'
+    }) %}
+    <table {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
     </table>
 {% endblock %}
 
+{% block _quick_add_import_validation_items_table_title_widget %}
+    <thead>
+        <tr>
+            <th></th>
+            <th><div class="pull-right">{{ block_widget(block) }}</div></th>
+        </tr>
+    </thead>
+{% endblock %}
+
 {% block _quick_add_import_validation_total_items_count_widget %}
-    <tr>
-        <td>{{ block_label(block) }}</td>
-        <td>{{ collection.count }}</td>
+    <tr {{ block('block_attributes') }}>
+        <td>{{ block_widget(block) }}</td>
+        <td><div class="pull-right">{{ collection.count }}</div></td>
     </tr>
 {% endblock %}
 
 {% block _quick_add_import_validation_valid_items_count_widget %}
-    <tr>
-        <td>{{ block_label(block) }}</td>
-        <td>{{ collection.validRows|length }}</td>
+    <tr {{ block('block_attributes') }}>
+        <td>{{ block_widget(block) }}</td>
+        <td><div class="pull-right">{{ collection.validRows|length }}</div></td>
     </tr>
 {% endblock %}
 
 {% block _quick_add_import_validation_invalid_items_count_widget %}
-    <tr>
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ ' error'
+    }) %}
+    <tr {{ block('block_attributes') }}>
         <td>
             {% if collection.invalidRows|length %}
-                <a href="javascript: void(0)" class="error-toggle">{{ block_label(block) }}</a>
+                <a href="javascript: void(0)" class="error-toggle">{{ block_widget(block) }}</a>
             {% else %}
-                {{ block_label(block) }}
+                {{ block_widget(block) }}
             {% endif %}
         </td>
-        <td>{{ collection.invalidRows|length }}</td>
+        <td><div class="pull-right">{{ collection.invalidRows|length }}</div></td>
     </tr>
 {% endblock %}
 
 {% block _quick_add_import_validation_invalid_items_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ ' import-errors'
+    }) %}
     {% if collection.invalidRows|length %}
-        <div class="import-errors">
+        <div {{ block('block_attributes') }}>
             <ol>
                 {% for invalidRow in collection.invalidRows %}
                     <li>
@@ -77,15 +101,18 @@
                     </li>
                 {% endfor %}
             </ol>
-            <div class="clearfix">
-                <div class="pull-right">
-                    <a href="javascript:void(0);" class="error-toggle">{{ 'Hide'|trans }}</a>
-                </div>
-            </div>
         </div>
     {% endif %}
 {% endblock %}
 
 {% block _quick_add_form_buttons_widget %}
-    {% placeholder orob2b_product_quick_add_buttons %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ ' clearfix'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <div class="pull-left">{{ block_widget(block) }}</div>
+        <fieldset class="{{ class_prefix }}-buttons">
+            {% placeholder orob2b_product_quick_add_buttons %}
+        </fieldset>
+    </div>
 {% endblock %}

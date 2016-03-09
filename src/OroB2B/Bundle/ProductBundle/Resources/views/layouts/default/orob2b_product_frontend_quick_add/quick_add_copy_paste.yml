@@ -18,12 +18,16 @@ layout:
                     blockType: form_end
                     options:
                         form: { @value: $data.orob2b_product_quick_add_copy_paste_form_provider }
-                quick_add_copy_paste_form_button:
+                quick_add_copy_paste_form_buttons:
+                    blockType: container
+                quick_add_copy_paste_form_submit:
                     blockType: button
                     options:
-                        type: input
+                        type: button
                         action: submit
                         text: orob2b.product.frontend.quick_add.continue.label
+                        vars:
+                            style: dark
                 quick_add_copy_paste_title:
                     blockType: text
                     options:
@@ -39,5 +43,6 @@ layout:
                         quick_add_copy_paste_title: ~
                         quick_add_copy_paste_description: ~
                         quick_add_copy_paste_form_fields: ~
-                        quick_add_copy_paste_form_button: ~
+                        quick_add_copy_paste_form_buttons:
+                            quick_add_copy_paste_form_submit: ~
                         quick_add_copy_paste_form_end: ~

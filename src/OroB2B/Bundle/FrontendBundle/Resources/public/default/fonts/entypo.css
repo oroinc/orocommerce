@@ -11,15 +11,13 @@
 }
 
 [class^="icon-"], [class*=" icon-"] {
-  font-family: entypo;
   font-style: normal;
-
-  /* font-size: 14px; */
-
   display: inline-block;
-  width: 1.1em;
-  margin-right: .1em;
   text-align: center;
+}
+
+[class^="icon-"]:before, [class*=" icon-"]:before {
+    margin-right: .3rem;
 }
 
 .the-icons li {

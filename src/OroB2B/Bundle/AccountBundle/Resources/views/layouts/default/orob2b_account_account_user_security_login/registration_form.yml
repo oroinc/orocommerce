@@ -28,6 +28,8 @@ layout:
                         type: input
                         action: submit
                         text: orob2b.account.accountuser.profile.create_an_account
+                        vars:
+                            style: auto
                 registration_form_end:
                     blockType: form_end
                     options:

@@ -34,11 +34,15 @@ layout:
                     options:
                         action: reset
                         text: orob2b.shoppinglist.create_new_form.cancel_label
+                        vars:
+                            style: auto
                 form_actions_create:
                     blockType: button
                     options:
                         action: submit
                         text: orob2b.shoppinglist.create_new_form.submit_label
+                        vars:
+                            style: auto
             tree:
                 widget_content:
                     form_errors: ~

@@ -2,16 +2,20 @@ layout:
     actions:
         - @setBlockTheme:
             themes: 'OroB2BProductBundle:layouts:default/orob2b_product_frontend_quick_add/quick_add.html.twig'
+        - @setFormTheme:
+            themes: 'OroB2BProductBundle:layouts:default/orob2b_product_frontend_quick_add/form.html.twig'
         - @setOption:
             id: page_title
             optionName: text
             optionValue: 'orob2b.product.frontend.quick_add.title'
+        - @setOption:
+            id: content
+            optionName: class_prefix
+            optionValue: 'quick-order'
         - @addTree:
             items:
                 quick_add:
                     blockType: container
-                    options:
-                        class_prefix: 'quick-order'
                 quick_add_form:
                     blockType: container
                 quick_add_form_start:
@@ -28,8 +32,6 @@ layout:
                         form: { @value: $data.orob2b_product_quick_add_form_provider }
                 quick_add_form_buttons:
                     blockType: block
-                quick_add_import_button:
-                    blockType: block
             tree:
                 content:
                     quick_add:
@@ -38,4 +40,7 @@ layout:
                             quick_add_form_fields: ~
                             quick_add_form_buttons: ~
                             quick_add_form_end: ~
-                            quick_add_import_button: ~
+        - @add:
+            id: quick_add_import_button
+            parentId: page_title_container
+            blockType: block

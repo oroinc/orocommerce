@@ -44,7 +44,6 @@ parameters:
 
     orob2b_product.autocomplete.product_visibility_limited.search_handler.class: OroB2B\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler
 
-
 services:
     orob2b_product.product.manager.api:
         class: %orob2b_product.product.manager.api.class%

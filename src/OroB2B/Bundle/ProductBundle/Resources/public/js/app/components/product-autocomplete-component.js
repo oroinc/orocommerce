@@ -16,7 +16,7 @@ define(function(require) {
                 product: {},
                 productBySkuRoute: 'orob2b_product_frontend_ajax_names_by_skus',
                 selectors: {
-                    row: '.fields-row',
+                    row: '.quick-order__form__row',
                     name: '.product-autocomplete-name',
                     error: '.product-autocomplete-error',
                     success: '.product-autocomplete-success'
@@ -90,7 +90,7 @@ define(function(require) {
         resetProduct: function() {
             this.product.sku = this.product.name = null;
 
-            this.$name.html('');
+            this.$name.hide().find('span').html('');
             this.$success.hide();
             this.$error.hide();
         },
@@ -98,7 +98,7 @@ define(function(require) {
         updateProduct: function() {
             if (this.product.sku) {
                 this.$el.val(this.product.sku);
-                this.$name.html(this.product.name);
+                this.$name.show().find('span').html(this.product.name);
                 this.$success.show();
             } else if (this.$el.val().length > 0) {
                 this.$error.show();
