@@ -1,4 +1,5 @@
 workflows:
+# TODO: Add options to store disabled steps options (disallow_shipping_address_edit, ...)
     b2b_flow_checkout:
         label: orob2b.checkout.workflow.b2b_flow_checkout.label
         entity: OroB2B\Bundle\CheckoutBundle\Entity\Checkout
@@ -269,7 +270,7 @@ workflows:
                             paymentTerm: ~
                             currency: ~
 
-                    # TODO Add order line items BB-2240
+# TODO Add order line items BB-2240
 #                    - @get_order_line_items:
 #                        attribute: $.result.lineItems
 #                        checkout: $checkout
@@ -292,6 +293,7 @@ workflows:
                                 conditions:
                                     @not_empty: $.result.customerShippingAddress
                                 parameters: [$.result.customerShippingAddress]
+# TODO: Add "allow remove" and "remove source entity" options and check them here BB-2316
                             - @remove_entity: $checkout.sourceEntity
                             - @remove_entity: $checkout
                             - @redirect:

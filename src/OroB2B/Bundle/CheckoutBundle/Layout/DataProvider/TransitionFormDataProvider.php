@@ -7,34 +7,35 @@ use Symfony\Component\Form\FormInterface;
 
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
-use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
+use Oro\Component\Layout\DataProviderInterface;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 
 class TransitionFormDataProvider extends AbstractServerRenderDataProvider
 {
     /**
-     * @var WorkflowManager
-     */
-    protected $workflowManager;
-
-    /**
      * @var FormFactoryInterface
      */
     protected $formFactory;
 
     /**
-     * @param WorkflowManager $workflowManager
+     * @var DataProviderInterface
+     */
+    protected $continueTransitionDataProvider;
+
+    /**
      * @param FormFactoryInterface $formFactory
      */
-    public function __construct(
-        WorkflowManager $workflowManager,
-        FormFactoryInterface $formFactory
-    ) {
-        $this->workflowManager = $workflowManager;
+    public function __construct(FormFactoryInterface $formFactory)
+    {
         $this->formFactory = $formFactory;
+    }
+
+    public function setContinueTransitionDataProvider(DataProviderInterface $continueTransitionDataProvider)
+    {
+        $this->continueTransitionDataProvider = $continueTransitionDataProvider;
     }
 
     /**
@@ -46,27 +47,10 @@ class TransitionFormDataProvider extends AbstractServerRenderDataProvider
         $checkout = $context->data()->get('checkout');
 
         $workflowItem = $checkout->getWorkflowItem();
-        $continueTransition = $this->getContinueTransition($workflowItem);
+        $continueTransition = $this->continueTransitionDataProvider->getData($context);
 
         if ($continueTransition) {
             return $this->getForm($continueTransition, $workflowItem)->createView();
-        }
-
-        return null;
-    }
-
-    /**
-     * @param WorkflowItem $workflowItem
-     * @return null|Transition
-     */
-    protected function getContinueTransition(WorkflowItem $workflowItem)
-    {
-        $transitions = $this->workflowManager->getTransitionsByWorkflowItem($workflowItem);
-        foreach ($transitions as $transition) {
-            $frontendOptions = $transition->getFrontendOptions();
-            if ($transition->hasForm() && !empty($frontendOptions['is_checkout_continue'])) {
-                return $transition;
-            }
         }
 
         return null;

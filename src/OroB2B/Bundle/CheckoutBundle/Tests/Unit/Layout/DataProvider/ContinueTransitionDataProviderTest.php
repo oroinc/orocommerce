@@ -4,26 +4,19 @@ namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
-use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
-use Oro\Component\Layout\ContextInterface;
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use Symfony\Component\Form\FormFactoryInterface;
-
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
+use Oro\Component\Layout\ContextInterface;
 
+use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
+use OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\ContinueTransitionDataProvider;
 use OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormDataProvider;
 
-class TransitionFormDataProviderTest extends \PHPUnit_Framework_TestCase
+class ContinueTransitionDataProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|WorkflowManager
      */
     protected $workflowManager;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FormFactoryInterface
-     */
-    protected $formFactory;
 
     /**
      * @var TransitionFormDataProvider
@@ -36,17 +29,13 @@ class TransitionFormDataProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->formFactory = $this->getMock('Symfony\Component\Form\FormFactoryInterface');
-
-        $this->dataProvider = new TransitionFormDataProvider($this->workflowManager, $this->formFactory);
+        $this->dataProvider = new ContinueTransitionDataProvider($this->workflowManager);
     }
 
     public function testGetData()
     {
-        $workflowData = new WorkflowData();
         $checkout = new Checkout();
         $workflowItem = new WorkflowItem();
-        $workflowItem->setData($workflowData);
         $checkout->setWorkflowItem($workflowItem);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|ContextInterface $context */
@@ -87,24 +76,6 @@ class TransitionFormDataProviderTest extends \PHPUnit_Framework_TestCase
             ->with($workflowItem)
             ->will($this->returnValue($transitions));
 
-        $formView = $this->getMock('Symfony\Component\Form\FormView');
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $form->expects($this->once())
-            ->method('createView')
-            ->will($this->returnValue($formView));
-        $this->formFactory->expects($this->once())
-            ->method('create')
-            ->with(
-                'transition_type',
-                $workflowData,
-                [
-                    'workflow_item' => $workflowItem,
-                    'transition_name' => 'transition3',
-                    'attribute_fields' => ['test' => null]
-                ]
-            )
-            ->will($this->returnValue($form));
-
-        $this->assertSame($formView, $this->dataProvider->getData($context));
+        $this->assertSame($continueTransition, $this->dataProvider->getData($context));
     }
 }
