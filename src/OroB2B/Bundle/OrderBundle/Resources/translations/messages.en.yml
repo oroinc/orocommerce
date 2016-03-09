@@ -29,6 +29,7 @@ orob2b:
         source_document.label: Source Document
         source_entity_class.label: Source Entity Class
         source_entity_id.label: Source Entity Id
+        source_entity_identifier.label: Source Entity Identifier
 
         orderaddress:
             entity_label: Order Address
