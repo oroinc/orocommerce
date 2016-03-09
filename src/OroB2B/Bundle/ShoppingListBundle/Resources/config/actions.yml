@@ -193,14 +193,6 @@ actions:
         functions:
             - @refresh_grid: shopping-list-line-items-grid
 
-    orob2b_shoppinglist_frontend_updatelineitem:
-        extends: orob2b_shoppinglist_updatelineitem_base
-        acl_resource: [EDIT, entity:commerce@OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
-        datagrids:
-            - frontend-shopping-list-line-items-grid
-        functions:
-            - @refresh_grid: frontend-shopping-list-line-items-grid
-
     orob2b_shoppinglist_frontend_action_request_quote:
         label: orob2b.frontend.shoppinglist.btn.request_quote_create_rfp
         applications: [frontend]

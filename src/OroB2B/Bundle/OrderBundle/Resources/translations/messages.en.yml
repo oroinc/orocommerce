@@ -11,11 +11,13 @@ orob2b:
         account_user.label: Account User
         organization.label: Organization
         currency.label: Currency
+        website.label: Website
         customer_notes.label: Customer Notes
         customer_notes.frontend.label: Notes
         po_number.label: PO Number
         ship_until.label: Do Not Ship Later Than
         subtotal.label: Subtotal
+        total.label: Total
         payment_term.label: Payment Term
         billing_address.label: Billing Address
         shipping_address.label: Shipping Address
@@ -43,6 +45,7 @@ orob2b:
             region_text.label: State
             street.label: Street
             street2.label: Street 2
+            from_external_source.label: Created from External Source
 
         orderlineitem:
             entity_label: 'Order Line Item'
@@ -103,6 +106,7 @@ orob2b:
             additional: Additional
             subtotals: Order Totals
             order_line_items: 'Line Items'
+            order_totals: Totals
 
         security:
             permission:
@@ -125,6 +129,7 @@ orob2b:
 
         subtotals:
             subtotal: Subtotal
+            total: Total
         sales_orders.label: 'Sales Orders'
 
         navigation:

@@ -172,7 +172,10 @@ define(function(require) {
                     }
                 });
                 self.unitSelector.find('option[value=""]').hide();
-                self.unitSelector.val((value !== null && units[value]) ? value : _.keys(units)[0]);
+                self.unitSelector.val(value);
+                if (self.unitSelector.val() === null) {
+                    self.unitSelector.val(_.keys(units)[0]);
+                }
             } else {
                 self.unitSelector.find('option[value=""]').show();
                 self.unitSelector.val('');
@@ -180,10 +183,13 @@ define(function(require) {
 
             this.unitSelector.trigger('change');
 
-            if (disabled) {
-                this.unitSelector.parent('.selector').addClass('disabled');
-            } else {
-                this.unitSelector.parent('.selector').removeClass('disabled');
+            var $unitSelectorContainer = this.unitSelector.inputWidget('getContainer');
+            if ($unitSelectorContainer) {
+                if (disabled) {
+                    $unitSelectorContainer.addClass('disabled');
+                } else {
+                    $unitSelectorContainer.removeClass('disabled');
+                }
             }
             this.unitSelector.trigger('value:changed');
         },

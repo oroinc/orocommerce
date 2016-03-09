@@ -36,6 +36,10 @@ class TotalResolver implements ResolverInterface
             return;
         }
 
+        if ($taxable->getResult()->isResultLocked()) {
+            return;
+        }
+
         $taxResults = [];
         $data = ResultElement::create(BigDecimal::zero(), BigDecimal::zero(), BigDecimal::zero(), BigDecimal::zero());
 
@@ -70,6 +74,7 @@ class TotalResolver implements ResolverInterface
         $result = $taxable->getResult();
         $result->offsetSet(Result::TOTAL, $data);
         $result->offsetSet(Result::TAXES, array_values($taxResults));
+        $result->lockResult();
     }
 
     /**

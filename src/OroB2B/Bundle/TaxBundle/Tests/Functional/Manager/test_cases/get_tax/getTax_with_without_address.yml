@@ -6,6 +6,7 @@ databaseBefore:
         simple_order:
             poNumber: { property_value: simple_order }
             account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: {} }
+            currency: 'USD'
             billingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
             shippingAddress: { class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
     'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem':
@@ -25,4 +26,5 @@ expectedResult:
         excludingTax: '113.25'
         taxAmount: '0'
         adjustment: '0'
+        currency: 'USD'
     taxes: []
