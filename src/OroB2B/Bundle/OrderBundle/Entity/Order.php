@@ -922,7 +922,7 @@ class Order extends ExtendOrder implements
      */
     public function setSourceEntityId($sourceEntityId)
     {
-        $this->sourceEntityId = $sourceEntityId;
+        $this->sourceEntityId = (int)$sourceEntityId;
 
         return $this;
     }

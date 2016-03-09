@@ -97,7 +97,8 @@ class PriceType extends AbstractType
             'default_currency' => null,
             'full_currency_list' => false,
             'currency_empty_value' => 'oro.currency.currency.form.choose',
-            'compact' => false
+            'compact' => false,
+            'validation_groups'=> ['Default']
         ]);
     }
 
