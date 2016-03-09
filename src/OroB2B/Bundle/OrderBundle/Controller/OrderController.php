@@ -64,18 +64,18 @@ class OrderController extends AbstractOrderController
     public function infoAction(Order $order)
     {
         $sourceEntity = null;
-        $routeSourceEntityView = null;
 
         if ($order->getSourceEntityClass() && $order->getSourceEntityId()) {
-            $sourceEntityManager = $this->get('orob2b_order.manager.source_entity');
-            $sourceEntity = $sourceEntityManager->getSourceEntity($order);
-            $routeSourceEntityView = $sourceEntityManager->getSourceEntityLink($order);
+            $sourceEntityManager = $this->get('oro_entity.doctrine_helper');
+            $sourceEntity = $sourceEntityManager->getEntity(
+                $order->getSourceEntityClass(),
+                $order->getSourceEntityId()
+            );
         }
 
         return [
             'order' => $order,
-            'sourceEntity' => $sourceEntity,
-            'routeSourceEntityView' => $routeSourceEntityView
+            'sourceEntity' => $sourceEntity
         ];
     }
 
