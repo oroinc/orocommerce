@@ -24,6 +24,21 @@
 
     {% set generalSectionBlocks = [{'data' : [shoppingListInformationWidget]}]%}
 
+    {% set subtotals %}
+        <div class="widget-content totals-container">
+            <div class="row-fluid form-horizontal">
+                <div class="responsive-block">
+                    {% for item in totals.subtotals %}
+                        {% if item.visible %}
+                            {{ UI.renderProperty(item.label, item.amount|oro_format_currency({'currency': item.currency})) }}
+                        {% endif %}
+                    {% endfor %}
+                    {{ UI.renderProperty(totals.total.label, totals.total.amount|oro_format_currency({'currency': totals.total.currency})) }}
+                </div>
+            </div>
+        </div>
+    {% endset %}
+
     {% set dataBlocks = [
         {
             'title': 'orob2b.shoppinglist.sections.general'|trans,
@@ -44,6 +59,11 @@
             ]
         }
     ]) %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'orob2b.shoppinglist.sections.subtotals'|trans,
+        'subblocks': [{'data' : [subtotals]}]
+    }]) %}
 
     {% set id = 'shopping-list-view' %}
     {% set data = {'dataBlocks': dataBlocks} %}

@@ -30,8 +30,15 @@ class ShoppingListController extends Controller
      */
     public function viewAction(ShoppingList $shoppingList)
     {
+        $subtotals = $this->getTotalProcessor()->getSubtotals($shoppingList);
+        $total = $this->getTotalProcessor()->getTotal($shoppingList);
+
         return [
-            'entity' => $shoppingList
+            'entity' => $shoppingList,
+            'totals' => [
+                'total' => $total,
+                'subtotals' => $subtotals
+            ]
         ];
     }
 
@@ -63,5 +70,13 @@ class ShoppingListController extends Controller
         return [
             'entity_class' => $this->container->getParameter('orob2b_shopping_list.entity.shopping_list.class')
         ];
+    }
+
+    /**
+     * @return \OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider
+     */
+    protected function getTotalProcessor()
+    {
+        return $this->get('orob2b_pricing.subtotal_processor.total_processor_provider');
     }
 }
