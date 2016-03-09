@@ -131,6 +131,7 @@ class OrderTypeTest extends TypeTestCase
                 'submitData' => [
                     'sourceEntityClass' => 'Class',
                     'sourceEntityId' => '1',
+                    'sourceEntityIdentifier' => '1',
                     'accountUser' => 1,
                     'account' => 2,
                     'poNumber' => '11',
@@ -156,6 +157,7 @@ class OrderTypeTest extends TypeTestCase
                     [
                         'sourceEntityClass' => 'Class',
                         'sourceEntityId' => '1',
+                        'sourceEntityIdentifier' => '1',
                         'accountUser' => 1,
                         'account' => 2,
                         'poNumber' => '11',
@@ -337,6 +339,10 @@ class OrderTypeTest extends TypeTestCase
 
         if (isset($data['sourceEntityId'])) {
             $order->setSourceEntityId($data['sourceEntityId']);
+        }
+
+        if (isset($data['sourceEntityIdentifier'])) {
+            $order->setSourceEntityIdentifier($data['sourceEntityIdentifier']);
         }
 
         if (isset($data['poNumber'])) {

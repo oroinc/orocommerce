@@ -17,5 +17,6 @@ class OroB2BOrderBundle implements Migration
         $table = $schema->getTable('orob2b_order');
         $table->addColumn('source_entity_class', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('source_entity_id', 'integer', ['notnull' => false]);
+        $table->addColumn('source_entity_identifier', 'string', ['notnull' => false, 'length' => 255]);
     }
 }
