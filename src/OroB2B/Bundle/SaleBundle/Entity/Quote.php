@@ -917,6 +917,6 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      */
     public function getIdentifier()
     {
-        return $this->getQId();
+        return $this->getPoNumber();
     }
 }

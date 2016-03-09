@@ -124,7 +124,8 @@ class OrderType extends AbstractType
                 ]
             )
             ->add('sourceEntityClass', 'hidden')
-            ->add('sourceEntityId', 'hidden');
+            ->add('sourceEntityId', 'hidden')
+            ->add('sourceEntityIdentifier', 'hidden');
 
         if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_BILLING)) {
             $builder
