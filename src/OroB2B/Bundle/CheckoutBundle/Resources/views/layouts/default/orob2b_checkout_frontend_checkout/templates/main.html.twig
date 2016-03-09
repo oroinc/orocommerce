@@ -1,32 +1,67 @@
 {% block _checkout_sidebar_widget %}
-    {% set page = 1 %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-sidebar"}) %}
     <aside class="sidebar sidebar_left">
         <div {{ block('block_attributes') }}>
-            {% set elements =
-            ['orob2b.checkout.workflow.b2b_flow_checkout.step.enter_billing_address.label',
-            'orob2b.checkout.workflow.b2b_flow_checkout.step.enter_shipping_address.label',
-            'orob2b.checkout.workflow.b2b_flow_checkout.step.enter_shipping_method.label',
-            'orob2b.checkout.workflow.b2b_flow_checkout.step.enter_payment.label',
-            'orob2b.checkout.workflow.b2b_flow_checkout.step.place_order.label'] %}
             <ul class="checkout-navigation">
-                {% for key, element in elements %}
-                    {% set page_num = key+1 %}
-                    <li>
-                        <a href="{{ path('orob2b_checkout_frontend_checkout', {'id' : checkout.id}) }}">
-                    <span class="badge badge_xmd badge_circle {{ page_num == page ?  'badge_orange':'badge_ll_gray' }}">
-                            {{ page_num }}
+                {% set isComplete = true %}
+                {% for key, step in steps %}
+                    {% set pageNum = key+1 %}
+                    {% set isCurrent = currentStep.name == step.name %}
+                    {% if isCurrent %}
+                        {% set isComplete = false %}
+                    {% endif %}
+                    <li {{ isComplete ? 'class="past-step"' : '' }}>
+                        {% set badgeClass = 'badge_ll_gray' %}
+                        {% if isComplete %}
+                            {% set badgeClass = 'badge_complete' %}
+                        {% elseif isCurrent %}
+                            {% set badgeClass = 'badge_orange' %}
+                        {% endif %}
+                        <span class="badge badge_xmd badge_circle {{ badgeClass }}">
+                            {% if isComplete %}
+                                <i class="icon-check"></i>
+                            {% else %}
+                                {{ pageNum }}
+                            {% endif %}
                         </span>
-                            <h3 class="checkout-navigation__title">
-                                {{ element|trans }}
-                            </h3>
-                        </a>
+                        <h3 class="checkout-navigation__title">{{ step.label|trans }}</h3>
+                        {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-navigation__content"}) %}
+                        <div {{ block('block_attributes') }}>
+                            {% set informationBlockId = step.name ~'_information' %}
+                            {{ block_widget(block.offsetGet(informationBlockId), {'checkout': checkout}) }}
+                        </div>
                     </li>
                 {% endfor %}
             </ul>
-            {{ block_widget(block) }}
         </div>
     </aside>
+{% endblock %}
+
+{% block _enter_billing_address_information_widget %}
+    {% if checkout.billingAddress %}
+        <div>{{ checkout.billingAddress|oro_format_address }}</div>
+    {% endif %}
+{% endblock %}
+
+{% block _enter_shipping_address_information_widget %}
+    {% if checkout.shippingAddress %}
+        <div>{{ checkout.shippingAddress|oro_format_address }}</div>
+    {% endif %}
+{% endblock %}
+
+{% block _enter_shipping_method_information_widget %}
+    {% if checkout.shippingMethod %}
+        <div>shipping method information</div>
+    {% endif %}
+{% endblock %}
+
+{% block _enter_payment_information_widget %}
+    {% if checkout.paymentMethod %}
+        <div>payment method information</div>
+    {% endif %}
+{% endblock %}
+
+{% block _place_order_information_widget %}
 {% endblock %}
 
 {% block _checkout_content_widget %}
