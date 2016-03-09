@@ -6,7 +6,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
@@ -16,13 +15,14 @@ class AjaxEntityTotalsController extends Controller
 {
     /**
      * @Route(
-     *      "/get-totals-for-entity/{entityId}/{entityClassName}",
+     *      "/get-totals-for-entity/{entityClassName}/{entityId}",
      *      name="orob2b_pricing_frontend_entity_totals",
      *      requirements={"entityId"="\d+"},
      *      defaults={"entityId"=0, "entityClassName"=""}
      * )
      *
-     * @param Request $request
+     * @param $entityId
+     * @param $entityClassName
      *
      * @return JsonResponse
      */
