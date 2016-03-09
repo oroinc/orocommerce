@@ -4,7 +4,9 @@ namespace OroB2B\Bundle\OrderBundle\Model;
 
 class Subtotal
 {
-    const TYPE_SUBTOTAL = 'subtotal';
+    const OPERATION_ADD = 1;
+    const OPERATION_SUBTRACTION = 2;
+    const OPERATION_IGNORE = 3;
 
     /**
      * @var string
@@ -25,6 +27,20 @@ class Subtotal
      * @var string
      */
     protected $currency;
+
+    /**
+     * Type operation for calculate total
+     *
+     * @var integer
+     */
+    protected $operation;
+
+    /**
+     * Visibility in total
+     *
+     * @var boolean
+     */
+    protected $visible;
 
     /**
      * @return string
@@ -103,6 +119,54 @@ class Subtotal
     }
 
     /**
+     * Get operation type
+     *
+     * @return integer
+     */
+    public function getOperation()
+    {
+        return $this->operation;
+    }
+
+    /**
+     * Set operation type
+     *
+     * @param integer $operation
+     *
+     * @return Subtotal
+     */
+    public function setOperation($operation)
+    {
+        $this->operation = $operation;
+
+        return $this;
+    }
+
+    /**
+     * Check visibility in total block
+     *
+     * @return boolean
+     */
+    public function isVisible()
+    {
+        return $this->visible;
+    }
+
+    /**
+     * Set operation type
+     *
+     * @param boolean $visible
+     *
+     * @return Subtotal
+     */
+    public function setVisible($visible)
+    {
+        $this->visible = $visible;
+
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function toArray()
@@ -112,6 +176,7 @@ class Subtotal
             'label' => $this->getLabel(),
             'amount' => $this->getAmount(),
             'currency' => $this->getCurrency(),
+            'visible' => $this->isVisible(),
         ];
     }
 }

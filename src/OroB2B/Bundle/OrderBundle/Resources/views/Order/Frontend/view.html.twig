@@ -99,6 +99,40 @@
             'title': 'orob2b.order.sections.order_line_items'|trans,
             'subblocks': [{'data' : [lineItems]}]
         }]) %}
+
+        {% set shippingInformation %}
+            {% if entity.shippingCost is not null %}
+                {{ UI.renderHtmlProperty('orob2b.order.shipping_cost.label'|trans,
+                entity.shippingCost.value|oro_format_currency({'currency': entity.shippingCost.currency})) }}
+            {% else %}
+                {{ UI.renderHtmlProperty('orob2b.order.shipping_cost.label'|trans, 'N/A'|trans) }}
+            {% endif %}
+        {% endset %}
+
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': 'orob2b.order.sections.shipping_information'|trans,
+            'subblocks': [{'data' : [shippingInformation]}]
+        }]) %}
+
+        {% set orderTotals %}
+            <div class="widget-content totals-container">
+                <div class="row-fluid form-horizontal">
+                    <div class="responsive-block">
+                        {% for item in totals.subtotals %}
+                            {% if item.visible %}
+                                {{ UI.renderProperty(item.label, item.amount|oro_format_currency({'currency': item.currency})) }}
+                            {% endif %}
+                        {% endfor %}
+                        {{ UI.renderProperty(totals.total.label, totals.total.amount|oro_format_currency({'currency': totals.total.currency})) }}
+                    </div>
+                </div>
+            </div>
+        {% endset %}
+
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': 'orob2b.order.sections.order_totals'|trans,
+            'subblocks': [{'data' : [orderTotals]}]
+        }]) %}
     {% endif %}
 
     {% set id = 'frontend-order-view' %}
