@@ -54,6 +54,7 @@ class CheckoutController extends Controller
         $page = $request->query->get('page', 1);
         $user = $this->getUser();
         $data = ['checkout' => $checkout, 'page' => $page];
+        $checkout->setAccountUser($user);
         if (in_array($page, [1, 2])) {
             $formBuilder = $this->createFormBuilder();
             $formBuilder->add(
@@ -64,6 +65,7 @@ class CheckoutController extends Controller
                     'required' => false,
                 ]
             );
+            $addressType = AddressType::TYPE_SHIPPING;
             if ($page == 1) {
                 $formBuilder->add(
                     'useAsShipAddress',
@@ -73,18 +75,18 @@ class CheckoutController extends Controller
                         'required' => false,
                     ]
                 );
+                $addressType = AddressType::TYPE_BILLING;
             }
-
-            $checkout->setAccountUser($user);
             $formBuilder->add(
                 'address',
                 CheckoutAddressType::NAME,
                 [
                     'object' => $checkout,
-                    'addressType' => AddressType::TYPE_BILLING,
+                    'addressType' => $addressType,
                     'isEditEnabled' => true
                 ]
             );
+
             $data['form'] = new FormAccessor($formBuilder->getForm());
         }
 

@@ -127,16 +127,22 @@ class OrderType extends AbstractType
         }
 
         if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_SHIPPING)) {
+            /** @var Order $object */
+            $object = $options['data'];
+            $isEditEnabled = true;
+            if ($object->getShippingAddress()) {
+                $isEditEnabled = !$object->getShippingAddress()->isFromExternalSource();
+            }
             $builder
                 ->add(
                     'shippingAddress',
                     OrderAddressType::NAME,
                     [
                         'label' => 'orob2b.order.shipping_address.label',
-                        'object' => $options['data'],
+                        'object' => $object,
                         'required' => false,
                         'addressType' => AddressType::TYPE_SHIPPING,
-                        'isEditEnabled' => true,
+                        'isEditEnabled' => $isEditEnabled,
                     ]
                 );
         }
