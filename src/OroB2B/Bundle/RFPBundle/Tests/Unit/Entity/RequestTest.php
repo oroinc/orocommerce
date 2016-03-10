@@ -107,4 +107,14 @@ class RequestTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(sprintf('%s: %s %s', $id, $firstName, $lastName), (string)$request);
     }
+
+    public function testGetIdentifier()
+    {
+        $poNumber = 'testNumber';
+        $request = new Request();
+        $request->setPoNumber($poNumber);
+
+        $this->assertInstanceOf('OroB2B\Bundle\OrderBundle\Provider\IdentifierAwareInterface', $request);
+        $this->assertEquals($poNumber, $request->getIdentifier());
+    }
 }
