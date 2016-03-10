@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\OrderBundle\EventListener\Order;
 
+use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Templating\EngineInterface;
 
@@ -14,12 +15,17 @@ class OrderAddressEventListener
     /** @var EngineInterface */
     protected $engine;
 
+    /** @var FormFactory */
+    protected $factory;
+
     /**
      * @param EngineInterface $engine
+     * @param FormFactory $factory
      */
-    public function __construct(EngineInterface $engine)
+    public function __construct(EngineInterface $engine, FormFactory $factory)
     {
         $this->engine = $engine;
+        $this->factory = $factory;
     }
 
     /**
@@ -28,11 +34,18 @@ class OrderAddressEventListener
     public function onOrderEvent(OrderEvent $event)
     {
         $orderForm = $event->getForm();
+        $newForm = $this->factory->createNamed(
+            $orderForm->getName(),
+            $orderForm->getConfig()->getType(),
+            $orderForm->getData(),
+            $orderForm->getConfig()->getOptions()
+        );
 
         foreach ([AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING] as $type) {
             $fieldName = sprintf('%sAddress', $type);
-            if ($orderForm->has($fieldName)) {
-                $view = $this->renderForm($orderForm->get($fieldName)->createView());
+            if ($newForm->has($fieldName)) {
+                $field = $newForm->get($fieldName);
+                $view = $this->renderForm($field->createView());
                 $event->getData()->offsetSet($fieldName, $view);
             }
         }

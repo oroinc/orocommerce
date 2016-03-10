@@ -34,14 +34,14 @@ class MatchingPriceEventListener
         $order = $event->getOrder();
 
         $lineItems = $order->getLineItems()->map(
-            function (OrderLineItem $orderLineItem) {
+            function (OrderLineItem $orderLineItem) use ($order) {
                 $product = $orderLineItem->getProduct();
 
                 return [
                     'product' => $product ? $product->getId() : null,
-                    'unit' => $orderLineItem->getProductUnitCode(),
+                    'unit' => $orderLineItem->getProductUnit() ? $orderLineItem->getProductUnit()->getCode() : null,
                     'qty' => $orderLineItem->getQuantity(),
-                    'currency' => $orderLineItem->getCurrency(),
+                    'currency' => $orderLineItem->getCurrency() ?: $order->getCurrency(),
                 ];
             }
         );

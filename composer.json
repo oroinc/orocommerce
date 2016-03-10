@@ -21,6 +21,9 @@
     ],
     "require": {
         "oro/platform": "1.x-dev",
+        "doctrine/doctrine-bundle": "1.6.2",
+        "box/spout": "2.3.*",
+        "nicholas-eden/math": "0.6.*",
         "myclabs/deep-copy": "1.5.*"
     },
     "minimum-stability": "dev",

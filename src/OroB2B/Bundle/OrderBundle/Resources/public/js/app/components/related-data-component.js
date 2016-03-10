@@ -2,6 +2,7 @@ define(function(require) {
     'use strict';
 
     var RelatedDataComponent;
+    var _ = require('underscore');
     var $ = require('jquery');
     var mediator = require('oroui/js/mediator');
     var BaseComponent = require('oroui/js/app/components/base/component');
@@ -21,6 +22,7 @@ define(function(require) {
             formName: '',
             selectors: {
                 account: 'input[name$="[account]"]',
+                accountUser: 'input[name$="[accountUser]"]',
                 website: 'select[name$="[website]"]'
             }
         },
@@ -32,7 +34,16 @@ define(function(require) {
             this.options = $.extend(true, {}, this.options, options || {});
             this.view = new FormView(this.options);
 
+            this.options._sourceElement
+                .on('change', this.options.selectors.accountUser, _.bind(this.onChangeAccountUser, this));
+
             mediator.on('entry-point:order:load', this.loadRelatedData, this);
+        },
+
+        onChangeAccountUser: function() {
+            mediator.trigger('order:load:related-data');
+
+            mediator.trigger('entry-point:order:trigger');
         },
 
         /**

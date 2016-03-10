@@ -4,7 +4,7 @@ define(function(require) {
     var LineItemAbstractView;
     var $ = require('jquery');
     var _ = require('underscore');
-    var TotalsListener = require('orob2bpricing/js/app/listener/totals-listener');
+    var mediator = require('oroui/js/mediator');
     var BaseView = require('oroui/js/app/views/base/view');
     var ProductUnitComponent = require('orob2bproduct/js/app/components/product-unit-component');
 
@@ -113,13 +113,18 @@ define(function(require) {
          * @param {jQuery|Array} $fields
          */
         subtotalFields: function($fields) {
-            TotalsListener.listen($fields);
+            _.each($fields, function(field) {
+                $(field).attr('data-entry-point-trigger', true);
+            });
+
+            mediator.trigger('entry-point:order:init');
         },
 
         removeRow: function() {
             this.$el.trigger('content:remove');
             this.remove();
-            TotalsListener.updateTotals();
+
+            mediator.trigger('entry-point:order:trigger');
         },
 
         resetData: function() {

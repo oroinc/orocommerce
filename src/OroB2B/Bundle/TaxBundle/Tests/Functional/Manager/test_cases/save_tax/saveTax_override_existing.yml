@@ -95,4 +95,4 @@ expectedResult:
         - { tax: 'TAX1', rate: '0.1', taxableAmount: '113.25', taxAmount: '11.33', currency: 'USD' }
 databaseAfter:
     'OroB2B\Bundle\TaxBundle\Entity\TaxValue':
-        - { entityClass: 'OroB2B\Bundle\OrderBundle\Entity\Order' }
+        - { entityClass: 'OroB2B\Bundle\OrderBundle\Entity\Order', entityId: { reference: 'simple_order' } }

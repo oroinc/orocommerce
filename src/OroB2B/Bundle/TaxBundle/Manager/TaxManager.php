@@ -2,16 +2,19 @@
 
 namespace OroB2B\Bundle\TaxBundle\Manager;
 
+use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
 use OroB2B\Bundle\TaxBundle\Event\TaxEventDispatcher;
+use OroB2B\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use OroB2B\Bundle\TaxBundle\Factory\TaxFactory;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
+use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use OroB2B\Bundle\TaxBundle\Transformer\TaxTransformerInterface;
 
 class TaxManager
 {
     /** @var TaxTransformerInterface[] */
-    private $transformers = [];
+    protected $transformers = [];
 
     /** @var TaxFactory */
     protected $taxFactory;
@@ -22,19 +25,25 @@ class TaxManager
     /** @var TaxValueManager */
     protected $taxValueManager;
 
+    /** @var TaxationSettingsProvider */
+    protected $settingsProvider;
+
     /**
      * @param TaxFactory $taxFactory
      * @param TaxEventDispatcher $eventDispatcher
      * @param TaxValueManager $taxValueManager
+     * @param TaxationSettingsProvider $settingsProvider
      */
     public function __construct(
         TaxFactory $taxFactory,
         TaxEventDispatcher $eventDispatcher,
-        TaxValueManager $taxValueManager
+        TaxValueManager $taxValueManager,
+        TaxationSettingsProvider $settingsProvider
     ) {
         $this->taxFactory = $taxFactory;
         $this->eventDispatcher = $eventDispatcher;
         $this->taxValueManager = $taxValueManager;
+        $this->settingsProvider = $settingsProvider;
     }
 
     /**
@@ -61,11 +70,15 @@ class TaxManager
     }
 
     /**
+     * Load tax and return Result by object
      * @param object $object
      * @return Result
+     * @throws TaxationDisabledException
      */
     public function loadTax($object)
     {
+        $this->throwExceptionIfTaxationDisabled();
+
         $taxable = $this->taxFactory->create($object);
         $transformer = $this->getTaxTransformer($taxable->getClassName());
 
@@ -75,12 +88,104 @@ class TaxManager
     }
 
     /**
+     * Calculate Result by object
+     *
      * @param object $object
      * @return Result
+     * @throws TaxationDisabledException
      */
     public function getTax($object)
     {
+        $this->throwExceptionIfTaxationDisabled();
+
         return $this->getTaxable($object)->getResult();
+    }
+
+    /**
+     * @param object $object
+     * @param bool $includeItems
+     * @return false|Result
+     * @throws TaxationDisabledException
+     */
+    public function saveTax($object, $includeItems = true)
+    {
+        $this->throwExceptionIfTaxationDisabled();
+
+        $taxable = $this->taxFactory->create($object);
+
+        if (!$taxable->getIdentifier()) {
+            return false;
+        }
+
+        $taxable = $this->getTaxable($object);
+
+        $this->saveTaxByTaxable($taxable);
+
+        if ($includeItems) {
+            foreach ($taxable->getItems() as $item) {
+                // TODO: When order exist and item hasn't ID. Exception here =(
+                $this->saveTaxByTaxable($item);
+            }
+        }
+
+        return $taxable->getResult();
+    }
+
+    /**
+     * Remove tax value assigned to object
+     *
+     * @param object $object
+     * @param bool $includeItems Remove object item taxes too
+     * @return bool
+     * @throws TaxationDisabledException
+     */
+    public function removeTax($object, $includeItems = true)
+    {
+        $this->throwExceptionIfTaxationDisabled();
+
+        $taxable = $this->taxFactory->create($object);
+
+        if ($includeItems) {
+            foreach ($taxable->getItems() as $item) {
+                $this->removeTaxValue($item->getClassName(), $item->getIdentifier());
+            }
+        }
+
+        return $this->removeTaxValue($taxable->getClassName(), $taxable->getIdentifier());
+    }
+
+    /**
+     * Create TaxValue instance based on object.
+     *
+     * @param object $object
+     * @return false|TaxValue
+     * @throws TaxationDisabledException
+     */
+    public function createTaxValue($object)
+    {
+        $this->throwExceptionIfTaxationDisabled();
+
+        $taxable = $this->getTaxable($object);
+        $result = $taxable->getResult();
+
+        $transformer = $this->getTaxTransformer($taxable->getClassName());
+        return $transformer->reverseTransform($result, $taxable);
+    }
+
+    /**
+     * @param string $className
+     * @param string $entityId
+     * @return bool
+     */
+    protected function removeTaxValue($className, $entityId)
+    {
+        $taxValue = $this->taxValueManager->findTaxValue($className, $entityId);
+
+        if (!$taxValue) {
+            return false;
+        }
+
+        return $this->taxValueManager->removeTaxValue($taxValue);
     }
 
     /**
@@ -104,64 +209,25 @@ class TaxManager
     }
 
     /**
-     * @param object $object
-     * @return Result|false
-     */
-    public function saveTax($object)
-    {
-        $taxable = $this->taxFactory->create($object);
-
-        if (!$taxable->getIdentifier()) {
-            return false;
-        }
-
-        $taxable = $this->getTaxable($object);
-        $result = $taxable->getResult();
-
-        $transformer = $this->getTaxTransformer($taxable->getClassName());
-        $taxValue = $transformer->reverseTransform($result, $taxable);
-
-        $this->taxValueManager->saveTaxValue($taxValue);
-
-        return $result;
-    }
-
-    /**
-     * @param $object
-     * @return Result|false
-     */
-    public function saveTaxWithItems($object)
-    {
-        $taxable = $this->taxFactory->create($object);
-
-        if (!$taxable->getIdentifier()) {
-            return false;
-        }
-
-        $taxable = $this->getTaxable($object);
-        $result = $taxable->getResult();
-
-        $transformer = $this->getTaxTransformer($taxable->getClassName());
-        $taxValue = $transformer->reverseTransform($result, $taxable);
-        $this->taxValueManager->saveTaxValue($taxValue);
-
-        $this->saveTaxItems($taxable);
-
-        return $result;
-    }
-
-    /**
      * @param Taxable $taxable
      */
-    protected function saveTaxItems(Taxable $taxable)
+    protected function saveTaxByTaxable(Taxable $taxable)
     {
-        foreach ($taxable->getItems() as $item) {
-            $itemResult = $item->getResult();
+        $itemResult = $taxable->getResult();
 
-            $itemTransformer = $this->getTaxTransformer($item->getClassName());
-            $taxItemValue = $itemTransformer->reverseTransform($itemResult, $item);
+        $itemTransformer = $this->getTaxTransformer($taxable->getClassName());
+        $taxItemValue = $itemTransformer->reverseTransform($itemResult, $taxable);
 
-            $this->taxValueManager->saveTaxValue($taxItemValue);
+        $this->taxValueManager->saveTaxValue($taxItemValue);
+    }
+
+    /**
+     * @throws TaxationDisabledException
+     */
+    protected function throwExceptionIfTaxationDisabled()
+    {
+        if (!$this->settingsProvider->isEnabled()) {
+            throw new TaxationDisabledException();
         }
     }
 }

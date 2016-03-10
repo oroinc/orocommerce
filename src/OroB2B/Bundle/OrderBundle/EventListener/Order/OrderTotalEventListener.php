@@ -3,10 +3,9 @@
 namespace OroB2B\Bundle\OrderBundle\EventListener\Order;
 
 use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
-use OroB2B\Bundle\OrderBundle\Model\Subtotal;
 use OroB2B\Bundle\OrderBundle\SubtotalProcessor\TotalProcessorProvider;
 
-class OrderSubtotalsEventListener
+class OrderTotalEventListener
 {
     /** @var TotalProcessorProvider */
     protected $provider;
@@ -26,15 +25,8 @@ class OrderSubtotalsEventListener
     {
         $order = $event->getOrder();
 
-        $subtotals = $this->provider->getSubtotals($order);
-        $subtotals = $subtotals
-            ->map(
-                function (Subtotal $subtotal) {
-                    return $subtotal->toArray();
-                }
-            )
-            ->toArray();
+        $total = $this->provider->getTotal($order)->toArray();
 
-        $event->getData()->offsetSet('subtotals', $subtotals);
+        $event->getData()->offsetSet('total', $total);
     }
 }

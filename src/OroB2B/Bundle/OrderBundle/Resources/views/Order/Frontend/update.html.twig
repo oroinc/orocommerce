@@ -54,10 +54,8 @@
 
     {% set subtotals %}
         {% include 'OroB2BPricingBundle:Totals:totals.html.twig' with {
-            options: {
-                url: path('orob2b_order_frontend_subtotals', {id: entity.id}),
-                selectors: {form: '#' ~ form.vars.id}
-                }
+            pageComponent: 'orob2border/js/app/components/subtotals-component',
+            options: { url: path('orob2b_order_frontend_entry_point', {id: entity.id}), selectors: {form: '#' ~ form.vars.id} }
         } only %}
     {% endset %}
 
