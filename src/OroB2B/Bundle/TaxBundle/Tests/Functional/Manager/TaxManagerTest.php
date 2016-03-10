@@ -114,10 +114,10 @@ class TaxManagerTest extends WebTestCase
     {
         $manager = $this->getContainer()->get('orob2b_tax.manager.tax_manager');
 
-        $this->compareResult($expectedResult, $manager->{$method}($object));
+        $this->compareResult($expectedResult, $manager->{$method}($object, true));
 
         // cache trigger
-        $this->compareResult($expectedResult, $manager->{$method}($object));
+        $this->compareResult($expectedResult, $manager->{$method}($object, true));
     }
 
     /**
@@ -125,6 +125,10 @@ class TaxManagerTest extends WebTestCase
      */
     protected function prepareDatabase(array $databaseBefore)
     {
+        // Disable taxation for load fixtures
+        $previousTaxEnableState = $this->configManager->get('orob2b_tax.tax_enable');
+        $this->configManager->set('orob2b_tax.tax_enable', false);
+
         foreach ($databaseBefore as $class => $items) {
             /** @var EntityManager $em */
             $em = $this->doctrine->getManagerForClass($class);
@@ -142,6 +146,9 @@ class TaxManagerTest extends WebTestCase
 
             $em->clear();
         }
+
+        // Restore previous taxation state after load fixtures
+        $this->configManager->set('orob2b_tax.tax_enable', $previousTaxEnableState);
     }
 
     /**
