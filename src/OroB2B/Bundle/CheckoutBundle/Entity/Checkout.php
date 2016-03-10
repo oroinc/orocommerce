@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField; // required by DatesAwareTrait
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -22,6 +22,8 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
+ * @todo Add currency field
+ * @todo Add remove settings field
  * @ORM\Table(name="orob2b_checkout")
  * @ORM\Entity
  * @Config(

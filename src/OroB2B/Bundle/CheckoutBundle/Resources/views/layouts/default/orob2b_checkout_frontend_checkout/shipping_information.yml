@@ -6,6 +6,11 @@ layout:
             id: checkout_shipping_information
             parentId: checkout_information
             blockType: block
+            options:
+                vars:
+                    checkout: { @value: $data.checkout }
+                    workflowStep: { @value: $data.workflowStep }
+                    form: { @value: $data.orob2b_checkout_transition_form }
 
     conditions:
         @eq: [$context.workflowStepName, 'enter_shipping_address']

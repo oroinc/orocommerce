@@ -6,6 +6,10 @@ layout:
             id: checkout_shipping_method
             parentId: checkout_information
             blockType: block
+            options:
+                vars:
+                    checkout: { @value: $data.checkout }
+                    workflowStep: { @value: $data.workflowStep }
 
     conditions:
         @eq: [$context.workflowStepName, 'enter_shipping_method']
