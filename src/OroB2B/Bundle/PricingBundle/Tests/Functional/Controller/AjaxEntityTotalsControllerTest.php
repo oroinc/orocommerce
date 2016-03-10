@@ -17,10 +17,7 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
 {
     protected function setUp()
     {
-        $this->initClient(
-            [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
-        );
+        $this->initClient([], $this->generateBasicAuthHeader());
 
         $this->loadFixtures(
             [
@@ -36,8 +33,8 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
 
         $params = [
-            'entityId' => $shoppingList->getId(),
-            'entityClassName' => ClassUtils::getClass($shoppingList)
+            'entityClassName' => ClassUtils::getClass($shoppingList),
+            'entityId' => $shoppingList->getId()
         ];
 
         $this->client->request('GET', $this->getUrl('orob2b_pricing_entity_totals', $params));
