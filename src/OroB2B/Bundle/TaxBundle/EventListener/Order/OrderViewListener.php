@@ -85,7 +85,7 @@ class OrderViewListener
         );
 
         $scrollData = $event->getScrollData();
-        $blockId = $scrollData->addBlock($this->translator->trans('orob2b.tax.result.label'), -15);
+        $blockId = $scrollData->addBlock($this->translator->trans('orob2b.tax.result.label'), -5);
         $subBlockId = $scrollData->addSubBlock($blockId);
         $scrollData->addSubBlockData($blockId, $subBlockId, $template);
     }
