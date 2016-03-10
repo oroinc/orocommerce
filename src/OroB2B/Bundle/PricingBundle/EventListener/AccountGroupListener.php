@@ -67,8 +67,6 @@ class AccountGroupListener extends AbstractPriceListCollectionAwareListener
         $fallback = new PriceListAccountGroupFallback();
         $fallback->setAccountGroup($targetEntity)
             ->setWebsite($website);
-        $this->doctrineHelper->getEntityManager($fallback)
-            ->persist($fallback);
 
         return $fallback;
     }

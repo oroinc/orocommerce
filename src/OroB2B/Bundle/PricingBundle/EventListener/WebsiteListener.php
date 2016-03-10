@@ -79,13 +79,13 @@ class WebsiteListener
             $fallback = new PriceListWebsiteFallback();
             $this->doctrineHelper->getEntityManager($fallback)->persist($fallback);
             $hasChanges = true;
-        } elseif (!$website->getId() || $fallback->getFallback() !== $submittedFallback) {
+        }
+        if ($fallback && $fallback->getFallback() !== $submittedFallback) {
+            $fallback->setWebsite($website);
+            $fallback->setFallback($submittedFallback);
+
             $hasChanges = true;
         }
-
-        $fallback->setWebsite($website);
-        $fallback->setFallback($submittedFallback);
-
         if ($hasChanges) {
             $this->changeTriggerHandler->handleWebsiteChange($website);
         }

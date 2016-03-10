@@ -106,6 +106,8 @@ abstract class AbstractPriceListCollectionAwareListener
 
             if (!$fallback && $fallbackData !== $this->getDefaultFallback()) {
                 $fallback = $this->createFallback($targetEntity, $website);
+                $this->doctrineHelper->getEntityManager($fallback)
+                    ->persist($fallback);
             }
 
             if ($fallback && $fallbackData !== $fallback->getFallback()) {
