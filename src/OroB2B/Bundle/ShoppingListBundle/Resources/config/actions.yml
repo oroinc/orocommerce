@@ -28,28 +28,45 @@ actions:
         button_options:
             icon: icon-briefcase
         functions:
-            - @assign_current_website: $.currentWebsite
-            - @assign_active_user: $.currentUser
-            - @create_entity:
+            - @find_entity:
                 class: OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource
                 attribute: $.checkoutSource
-                data:
+                where:
                     shoppingList: $.data
-            - @create_entity:
-                class: OroB2B\Bundle\CheckoutBundle\Entity\Checkout
-                attribute: $.checkout
-                flush: true
-                data:
-                    source: $.checkoutSource
-                    accountUser: $.currentUser
-                    account: $.currentUser.account
-                    owner: $.currentUser.account.owner
-                    organization: $.currentUser.account.organization
-                    website: $.currentWebsite
-            - @start_workflow:
-                name: b2b_flow_checkout
-                attribute: $.checkoutWorkflow
-                entity: $.checkout
+            - @tree:
+                conditions:
+                    @empty: $.checkoutSource
+                actions:
+                    - @assign_current_website: $.currentWebsite
+                    - @assign_active_user: $.currentUser
+                    - @create_entity:
+                        class: OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource
+                        attribute: $.checkoutSource
+                        data:
+                            shoppingList: $.data
+                    - @create_entity:
+                        class: OroB2B\Bundle\CheckoutBundle\Entity\Checkout
+                        attribute: $.checkout
+                        flush: true
+                        data:
+                            source: $.checkoutSource
+                            accountUser: $.currentUser
+                            account: $.currentUser.account
+                            owner: $.currentUser.account.owner
+                            organization: $.currentUser.account.organization
+                            website: $.currentWebsite
+                    - @start_workflow:
+                        name: b2b_flow_checkout
+                        attribute: $.checkoutWorkflow
+                        entity: $.checkout
+            - @find_entity:
+                conditions:
+                    @not_empty: $.checkoutSource
+                parameters:
+                    class: OroB2B\Bundle\CheckoutBundle\Entity\Checkout
+                    attribute: $.checkout
+                    where:
+                        source: $.checkoutSource
             - @redirect:
                 parameters:
                     route: orob2b_checkout_frontend_checkout

@@ -67,6 +67,7 @@ workflows:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.continue_to_shipping_address.label
                 step_to: enter_shipping_address
                 transition_definition: continue_to_shipping_address_definition
+                display_type: page
                 frontend_options:
                     is_checkout_continue: true
                 form_options:
@@ -89,6 +90,7 @@ workflows:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.continue_to_shipping_method.label
                 step_to: enter_shipping_method
                 transition_definition: continue_to_shipping_method_definition
+                display_type: page
                 frontend_options:
                     is_checkout_continue: true
                 form_options:
@@ -111,6 +113,7 @@ workflows:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.continue_to_payment.label
                 step_to: enter_payment
                 transition_definition: do_nothing
+                display_type: page
                 frontend_options:
                     is_checkout_continue: true
 
@@ -118,6 +121,7 @@ workflows:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.continue_to_place_order.label
                 step_to: place_order
                 transition_definition: do_nothing
+                display_type: page
                 frontend_options:
                     is_checkout_continue: true
 
@@ -145,6 +149,7 @@ workflows:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.place_order.label
                 step_to: place_order
                 transition_definition: place_order_definition
+                display_type: page
                 form_options:
                     attribute_fields:
                         po_number: ~
