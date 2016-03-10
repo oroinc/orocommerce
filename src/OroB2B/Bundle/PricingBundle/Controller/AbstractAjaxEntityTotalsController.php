@@ -11,11 +11,11 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 abstract class AbstractAjaxEntityTotalsController extends Controller
 {
     /**
-     * @param $entityId
-     * @param $entityClassName
+     * @param string $entityClassName
+     * @param integer $entityId
      * @return array
      */
-    protected function getTotals($entityId, $entityClassName)
+    protected function getTotals($entityClassName, $entityId)
     {
         $entityClass = $this->get('oro_entity.routing_helper')->resolveEntityClass($entityClassName);
 

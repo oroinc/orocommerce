@@ -18,14 +18,14 @@ class AjaxEntityTotalsController extends AbstractAjaxEntityTotalsController
      *      defaults={"entityId"=0, "entityClassName"=""}
      * )
      *
-     * @param $entityId
-     * @param $entityClassName
+     * @param string $entityClassName
+     * @param integer $entityId
      *
      * @return JsonResponse
      */
-    public function getEntityTotalsAction($entityId, $entityClassName)
+    public function getEntityTotalsAction($entityClassName, $entityId)
     {
-        $totals = $this->getTotals($entityId, $entityClassName);
+        $totals = $this->getTotals($entityClassName, $entityId);
 
         return new JsonResponse(
             $totals
