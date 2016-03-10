@@ -19,12 +19,10 @@ class CheckoutCompilerPass implements CompilerPassInterface
         $definition = $container->findDefinition('orob2b_checkout.data_provider.manager');
         $taggedServices = $container->findTaggedServiceIds('checkout.data_provider');
         foreach ($taggedServices as $id => $tags) {
-            foreach ($tags as $attributes) {
-                $definition->addMethodCall(
-                    'addProvider',
-                    [new Reference($id), $attributes["alias"]]
-                );
-            }
+            $definition->addMethodCall(
+                'addProvider',
+                [new Reference($id)]
+            );
         }
     }
 }

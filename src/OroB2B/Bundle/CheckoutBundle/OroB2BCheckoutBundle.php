@@ -2,9 +2,10 @@
 
 namespace OroB2B\Bundle\CheckoutBundle;
 
-use OroB2B\Bundle\CheckoutBundle\DependencyInjection\CheckoutCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
+
+use OroB2B\Bundle\CheckoutBundle\DependencyInjection\CheckoutCompilerPass;
 
 class OroB2BCheckoutBundle extends Bundle
 {

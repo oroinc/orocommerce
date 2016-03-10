@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
@@ -50,6 +51,7 @@ class FrontendProductPricesDataProvider
      */
     public function getProductsPrices(ShoppingList $shoppingList)
     {
+        /** @var AccountUser $accountUser */
         $accountUser = $this->securityFacade->getLoggedUser();
         if (!$accountUser) {
             return null;

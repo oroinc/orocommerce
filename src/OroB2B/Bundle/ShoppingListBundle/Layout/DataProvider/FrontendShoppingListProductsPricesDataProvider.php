@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Layout\DataProvider;
 
-use Doctrine\Common\Collections\Collection;
-
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\DataProviderInterface;
 

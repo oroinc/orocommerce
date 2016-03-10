@@ -2,13 +2,11 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\DataProvider;
 
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+
 use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
-
 use OroB2B\Component\Checkout\Model\DTO\EntitySummaryDTO;
 
 class ShoppingListDataProvider implements CheckoutDataProviderInterface
