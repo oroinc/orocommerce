@@ -1,4 +1,5 @@
 workflows:
+# TODO: Add options to store disabled steps options (disallow_shipping_address_edit, ...)
     b2b_flow_checkout:
         label: orob2b.checkout.workflow.b2b_flow_checkout.label
         entity: OroB2B\Bundle\CheckoutBundle\Entity\Checkout
@@ -66,6 +67,8 @@ workflows:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.continue_to_shipping_address.label
                 step_to: enter_shipping_address
                 transition_definition: continue_to_shipping_address_definition
+                frontend_options:
+                    is_checkout_continue: true
                 form_options:
                     attribute_fields:
                         billing_address:
@@ -86,6 +89,8 @@ workflows:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.continue_to_shipping_method.label
                 step_to: enter_shipping_method
                 transition_definition: continue_to_shipping_method_definition
+                frontend_options:
+                    is_checkout_continue: true
                 form_options:
                     attribute_fields:
                         shipping_address:
@@ -106,11 +111,15 @@ workflows:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.continue_to_payment.label
                 step_to: enter_payment
                 transition_definition: do_nothing
+                frontend_options:
+                    is_checkout_continue: true
 
             continue_to_place_order:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.continue_to_place_order.label
                 step_to: place_order
                 transition_definition: do_nothing
+                frontend_options:
+                    is_checkout_continue: true
 
             back_to_billing_address:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.back_to_billing_address.label
@@ -261,7 +270,7 @@ workflows:
                             paymentTerm: ~
                             currency: ~
 
-                    # TODO Add order line items BB-2240
+# TODO Add order line items BB-2240
 #                    - @get_order_line_items:
 #                        attribute: $.result.lineItems
 #                        checkout: $checkout
@@ -284,6 +293,7 @@ workflows:
                                 conditions:
                                     @not_empty: $.result.customerShippingAddress
                                 parameters: [$.result.customerShippingAddress]
+# TODO: Add "allow remove" and "remove source entity" options and check them here BB-2316
                             - @remove_entity: $checkout.sourceEntity
                             - @remove_entity: $checkout
                             - @redirect:
