@@ -8,6 +8,8 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+
 abstract class AbstractAjaxEntityTotalsController extends Controller
 {
     /**
@@ -44,7 +46,7 @@ abstract class AbstractAjaxEntityTotalsController extends Controller
         $subtotals = count($subtotals) === 1 ? [] : $subtotals;
 
         $callbackFunction = function ($value) {
-
+            /** @var Subtotal $value */
             return $value->toArray();
         };
         $totals = [
