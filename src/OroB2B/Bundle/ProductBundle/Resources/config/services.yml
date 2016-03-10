@@ -28,6 +28,7 @@ parameters:
 
     orob2b_product.validator.unique_variant_links.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator
     orob2b_product.validator.product_variant_field.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantFieldValidator
+    orob2b_product.validator.product_image_collection.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductImageCollectionValidator
 
     orob2b_product.component_processor.filter.class: OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter
     orob2b_product.component_processor.registry.class: OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry
@@ -137,11 +138,19 @@ services:
         parent: orob2b_product.storage.session_data_storage
 
     orob2b_product.validator.product_by_sku:
-            class: %orob2b_product.validator.product_by_sku.class%
-            arguments:
-                - @doctrine
-            tags:
-                - { name: validator.constraint_validator, alias: orob2b_product_product_by_sku_validator }
+        class: %orob2b_product.validator.product_by_sku.class%
+        arguments:
+            - @doctrine
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_product_product_by_sku_validator }
+
+    orob2b_product.validator.product_image_collection:
+        class: %orob2b_product.validator.product_image_collection.class%
+        arguments:
+            - @oro_layout.theme_manager
+            - @request_stack
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_product_image_collection_validator }
 
     orob2b_product.component_processor.filter:
         class: %orob2b_product.component_processor.filter.class%
@@ -211,6 +220,9 @@ services:
 
     orob2b_product.validator.unique_variant_links:
         class: %orob2b_product.validator.unique_variant_links.class%
+        arguments:
+            - @oro_layout.theme_manager
+            - @request_stack
         tags:
             - { name: validator.constraint_validator, alias: orob2b_product_unique_variant_links }
 

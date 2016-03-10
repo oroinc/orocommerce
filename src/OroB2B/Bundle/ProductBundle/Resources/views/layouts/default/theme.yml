@@ -9,7 +9,7 @@ data:
                 label: Additional
                 dimensions: ~
                 max_number: ~
-            thumbnail:
-                label: Thumbnail
+            listing:
+                label: Listing
                 dimensions: ~
-                max_number: ~
+                max_number: 2

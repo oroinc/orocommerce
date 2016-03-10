@@ -13,7 +13,6 @@ use Oro\Component\Layout\Extension\Theme\Model\Theme;
 use Oro\Component\Layout\Extension\Theme\Model\ThemeManager;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
-use OroB2B\Bundle\ProductBundle\Form\DataTransformer\ProductImageTypesTransformer;
 
 class ProductImageType extends AbstractType
 {
