@@ -9,6 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
@@ -108,6 +109,18 @@ class OrderType extends AbstractType
                     'add_label' => 'orob2b.order.orderlineitem.add_label',
                     'cascade_validation' => true,
                     'options' => ['currency' => $order->getCurrency()]
+                ]
+            )
+            ->add(
+                'shippingCost',
+                PriceType::NAME,
+                [
+                    'currency_empty_value' => null,
+                    'error_bubbling' => false,
+                    'required' => false,
+                    'label' => 'orob2b.order.shipping_cost.label',
+                    'validation_groups' => ['Optional'],
+                    'currencies_list' => [$order->getCurrency()]
                 ]
             );
 
