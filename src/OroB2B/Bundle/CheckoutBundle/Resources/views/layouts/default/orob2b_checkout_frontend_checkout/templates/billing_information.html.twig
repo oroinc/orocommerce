@@ -55,8 +55,8 @@
             {{ form_row(form.saveAddress) }}
             {{ form_row(form.useAsShipAddress) }}
 
-            {{ form_widget(form.address.id) }}
-            {{ form_widget(form.address.region_text, {'attr': {'class': 'hidden'}}) }}
+            {{ form_row(form.address.id) }}
+            {{ form_row(form.address.region_text) }}
         </div>
     </div>
 {%- endblock %}

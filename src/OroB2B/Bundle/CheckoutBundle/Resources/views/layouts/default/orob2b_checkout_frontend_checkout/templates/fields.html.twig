@@ -35,14 +35,6 @@
     {%- endif %}
 {%- endblock checkbox_label -%}
 
-{% block text_row -%}
-    {% set parentClass = parentClass|default('form__col_x12') %}
-    <div class="checkout__form__col {{ parentClass }}">
-        {{- form_label(form, label, {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) -}}
-        {{- form_widget(form, {'attr': attr}) -}}
-    </div>
-{%- endblock %}
-
 {% block _form_address_label_row %}
     <fieldset class="checkout__form__row">
         <div class="checkout__form__col form__col_x12">
@@ -125,7 +117,10 @@
 
 {% block _form_address_postalCode_row %}
     <fieldset class="checkout__form__row">
-        {{ form_row(form, {'attr': {'class' : 'input input_block input_md checkout__form__input', 'placeholder' : 'Zip'}, 'parentClass': 'col-zip'}) }}
+        <div class="checkout__form__col col-zip">
+            {{- form_label(form, label, {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) -}}
+            {{- form_widget(form, {'attr' : {'class': 'input input_md input_block checkout__form__input', 'placeholder' : 'Zip'}}) -}}
+        </div>
     </fieldset>
 {% endblock %}
 
@@ -147,4 +142,12 @@
 
 {% block _form_address_street2_row %}
     {{ form_widget(form, {'attr': {'class' : 'input input_md input_block checkout__form__input mb1-md mb1-sm', 'placeholder' : 'Enter your street address 2'}}) }}
+{% endblock %}
+
+{% block _form_address_region_text_row %}
+    {{ form_widget(form, {'attr': {'class': 'hidden'}}) }}
+{% endblock %}
+
+{% block _form_address_id_row %}
+    {{ form_widget(form) }}
 {% endblock %}
