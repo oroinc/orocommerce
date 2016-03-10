@@ -1,4 +1,6 @@
 {% if result is not empty and result|length %}
     {% import 'OroB2BTaxBundle::macros.html.twig' as TAX %}
-    {{ TAX.renderResult(result) }}
+    <div data-page-component-module="orob2btax/js/app/components/order-taxes-component">
+        {{ TAX.renderResult(result) }}
+    </div>
 {% endif %}

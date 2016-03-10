@@ -15,10 +15,10 @@
         {% for type, data in result if data.includingTax is defined %}
             <tr>
                 <td class="renderable">{{ 'orob2b.tax.result.%s'|format(type)|trans }}</td>
-                <td class="renderable">{{ data.includingTax }}</td>
-                <td class="renderable">{{ data.excludingTax }}</td>
-                <td class="renderable">{{ data.taxAmount }}</td>
-                <td class="renderable">{{ data.adjustment }}</td>
+                <td class="renderable" data-item-taxes-id="{{ type }}-including-tax">{{ data.includingTax }}</td>
+                <td class="renderable" data-item-taxes-id="{{ type }}-excluding-tax">{{ data.excludingTax }}</td>
+                <td class="renderable" data-item-taxes-id="{{ type }}-tax-amount">{{ data.taxAmount }}</td>
+                <td class="renderable" data-item-taxes-id="{{ type }}-adjustment">{{ data.adjustment }}</td>
             </tr>
         {% endfor %}
         </tbody>
