@@ -4,6 +4,7 @@ parameters:
 
     orob2b_checkout.layout.data_provider.transition_form.class: OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormDataProvider
     orob2b_checkout.layout.data_provider.continue_transition.class: OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\ContinueTransitionDataProvider
+    orob2b_checkout.layout.data_provider.checkout_steps.class: OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutStepsDataProvider
 
 services:
     orob2b_checkout.layout.data_provider.transition_form:
@@ -21,3 +22,10 @@ services:
             - @oro_workflow.manager
         tags:
             - { name: layout.data_provider, alias: orob2b_checkout_continue_transition }
+
+    orob2b_checkout.layout.data_provider.checkout_steps:
+        class: %orob2b_checkout.layout.data_provider.checkout_steps.class%
+        arguments:
+            - @oro_workflow.manager
+        tags:
+            - { name: layout.data_provider, alias: orob2b_checkout_steps }

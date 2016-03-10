@@ -7,10 +7,21 @@ layout:
                 checkout_container:
                     blockType: container
                 checkout_sidebar:
-                    blockType: block
+                    blockType: container
                     options:
                         vars:
-                            checkout: { @value: $data.checkout}
+                            checkout: { @value: $data.checkout }
+                            steps: { @value: $data.orob2b_checkout_steps }
+                enter_billing_address_information:
+                    blockType: block
+                enter_shipping_address_information:
+                    blockType: block
+                enter_shipping_method_information:
+                    blockType: block
+                enter_payment_information:
+                    blockType: block
+                place_order_information:
+                    blockType: block
                 checkout_content:
                     blockType: container
                     options:
@@ -33,4 +44,9 @@ layout:
                         checkout_information: ~
                         checkout_order_summary:
                             checkout_order_summary_table: ~
-                    checkout_sidebar: ~
+                    checkout_sidebar:
+                        enter_billing_address_information: ~
+                        enter_shipping_address_information: ~
+                        enter_shipping_method_information: ~
+                        enter_payment_information: ~
+                        place_order_information: ~
