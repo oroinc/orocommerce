@@ -8,7 +8,7 @@ use Oro\Component\Layout\ContextInterface;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 
-class ContinueTransitionDataProvider extends AbstractTransitionDataProvider
+class BackTransitionsDataProvider extends AbstractTransitionDataProvider
 {
     /**
      * {@inheritdoc}
@@ -18,30 +18,26 @@ class ContinueTransitionDataProvider extends AbstractTransitionDataProvider
         /** @var Checkout $checkout */
         $checkout = $context->data()->get('checkout');
 
-        $workflowItem = $checkout->getWorkflowItem();
-        $continueTransition = $this->getContinueTransition($workflowItem);
-
-        if ($continueTransition) {
-            return $this->getTransitionData($continueTransition, $workflowItem);
-        }
-
-        return null;
+        return  $this->getBackTransitions($checkout->getWorkflowItem());
     }
 
     /**
      * @param WorkflowItem $workflowItem
      * @return null|Transition
      */
-    protected function getContinueTransition(WorkflowItem $workflowItem)
+    protected function getBackTransitions(WorkflowItem $workflowItem)
     {
         $transitions = $this->workflowManager->getTransitionsByWorkflowItem($workflowItem);
+        $backTransitions = [];
         foreach ($transitions as $transition) {
             $frontendOptions = $transition->getFrontendOptions();
-            if ($transition->hasForm() && !empty($frontendOptions['is_checkout_continue'])) {
-                return $transition;
+            if (!empty($frontendOptions['is_checkout_back'])) {
+                $stepOrder = $transition->getStepTo()->getOrder();
+                $backTransitions[$stepOrder] = $this->getTransitionData($transition, $workflowItem);
             }
         }
+        ksort($backTransitions);
 
-        return null;
+        return array_values($backTransitions);
     }
 }

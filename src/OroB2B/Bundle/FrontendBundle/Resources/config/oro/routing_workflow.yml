@@ -1,0 +1,10 @@
+orob2b_frontend_workflow_api:
+    resource: "@OroB2BFrontendBundle/Controller/Api/Rest/FrontendWorkflowController.php"
+    type: rest
+    requirements:
+        version:  latest|v1
+        _format:  json
+    defaults:
+        version: latest
+    options:
+        frontend: true

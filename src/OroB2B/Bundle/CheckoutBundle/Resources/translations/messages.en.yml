@@ -48,8 +48,10 @@ orob2b:
                     back_to_payment.label: Edit Payment
                     transitions.back_to_payment.label: Edit Payment
                     place_order.label: Submit Order
+                    back.label: Back
 
                 form:
                     save_address.label: Save address
                     ship_to_this_address.label: Ship to this address
                     use_billing_address.label: Use billing address
+                    required.label: Required Field

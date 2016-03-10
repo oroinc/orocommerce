@@ -247,9 +247,11 @@
                     </tbody>
                 </table>
             </div>
-            <div class="checkout__form__back checkout__form__back_order-review">
-                <a href="#"><i class="icon-left-open-mini"></i>Back</a>
-            </div>
+            {% if block.checkout_back is defined %}
+                <div class="checkout__form__back checkout__form__back_order-review">
+                    {{ block_widget(block.checkout_back) }}
+                </div>
+            {% endif %}
         </form>
     </div>
 {% endblock %}

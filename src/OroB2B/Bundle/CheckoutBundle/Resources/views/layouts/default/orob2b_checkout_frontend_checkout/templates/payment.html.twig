@@ -107,16 +107,19 @@
             </fieldset>
 
             <fieldset class="checkout__form__row">
-                <div class="create-account__form__req-text"><sup>*</sup>Required Field</div>
-                <div class="create-account__form__col form__col_x12">
-                    <button type="submit" class="btn btn_orange btn_lg checkout__form__submit">
-                        Continue<i class="icon-right-open-mini va-m_md"></i>
-                    </button>
-                </div>
+                <div class="create-account__form__req-text"><sup>*</sup>{{ 'orob2b.checkout.workflow.b2b_flow_checkout.form.required.label'|trans }}</div>
+
+                {% if block.checkout_continue is defined %}
+                    <div class="create-account__form__col form__col_x12">
+                        {{ block_widget(block.checkout_continue) }}
+                    </div>
+                {% endif %}
             </fieldset>
-            <div class="checkout__form__back">
-                <a href="#"><i class="icon-left-open-mini"></i>Back</a>
-            </div>
+            {% if block.checkout_back is defined %}
+                <div class="checkout__form__back">
+                    {{ block_widget(block.checkout_back) }}
+                </div>
+            {% endif %}
         </form>
     </div>
 {% endblock %}

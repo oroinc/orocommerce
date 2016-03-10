@@ -5,11 +5,19 @@ layout:
         - @add:
             id: checkout_billing_information
             parentId: checkout_information
-            blockType: block
+            blockType: container
             options:
                 vars:
                     checkout: { @value: $data.checkout }
                     workflowStep: { @value: $data.workflowStep }
                     form: { @value: $data.orob2b_checkout_transition_form }
+        - @add:
+            id: checkout_continue
+            parentId: checkout_billing_information
+            blockType: checkout_transition_continue
+            options:
+                transitionData: { @value: $data.orob2b_checkout_continue_transition }
+                workflowItem: { @value: $data.checkout.workflowItem }
+
     conditions:
         @eq: [$context.workflowStepName, 'enter_billing_address']
