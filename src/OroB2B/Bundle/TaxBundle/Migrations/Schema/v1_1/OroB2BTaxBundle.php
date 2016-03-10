@@ -32,7 +32,7 @@ class OroB2BTaxBundle implements Migration
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('result', 'object', ['comment' => '(DC2Type:object)']);
         $table->addColumn('entity_class', 'string', ['length' => 255]);
-        $table->addColumn('entity_id', 'integer', []);
+        $table->addColumn('entity_id', 'integer', ['notnull' => false]);
         $table->addColumn('address', 'text', []);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
