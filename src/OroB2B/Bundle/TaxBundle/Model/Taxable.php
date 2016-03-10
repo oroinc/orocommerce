@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\TaxBundle\Model;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
+use OroB2B\Bundle\TaxBundle\DependencyInjection\OroB2BTaxExtension;
+
 class Taxable
 {
     const DIGITAL_PRODUCT = 'digital_product';
@@ -54,6 +56,11 @@ class Taxable
      * @var Result
      */
     protected $result;
+
+    /**
+     * @var string
+     */
+    protected $currency;
 
     /**
      * @var \ArrayObject
@@ -287,6 +294,25 @@ class Taxable
     public function addContext($keyName, $value)
     {
         $this->context->offsetSet($keyName, $value);
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * @param string $currency
+     * @return Taxable
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
 
         return $this;
     }

@@ -118,7 +118,8 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
                 ->setShipUntil(new \DateTime())
                 ->setCurrency($row['currency'])
                 ->setPoNumber($row['poNumber'])
-                ->setSubtotal($row['subtotal']);
+                ->setSubtotal($row['subtotal'])
+                ->setTotal($row['total']);
 
             if (!empty($row['customerNotes'])) {
                 $order->setCustomerNotes($row['customerNotes']);

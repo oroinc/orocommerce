@@ -54,9 +54,11 @@
     {% set id = 'order-edit' %}
 
     {% set subtotals %}
-        {% include 'OroB2BPricingBundle:Subtotals:subtotals.html.twig' with {
-            pageComponent: 'orob2border/js/app/components/subtotals-component',
-            options: { url: path('orob2b_order_entry_point', {id: entity.id}), selectors: {form: '#' ~ form.vars.id} }
+        {% include 'OroB2BPricingBundle:Totals:totals.html.twig' with {
+            options: {
+                url: path('orob2b_order_subtotals', {id: entity.id}),
+                selectors: {form: '#' ~ form.vars.id}
+            }
         } only %}
     {% endset %}
 
@@ -181,6 +183,29 @@
             }]
         }]) %}
     {% endif %}
+
+    {% set shippingInformation %}
+        {%  set options = {
+            view: 'orob2border/js/app/views/shipping-cost-view',
+            selectors: {
+                subtotalsFields: [
+                    '#' ~ form.shippingCost.value.vars.id
+                ]
+            }
+        } %}
+
+        <div data-page-component-module="oroui/js/app/components/view-component"
+             data-page-component-options="{{ options|json_encode }}">
+            {{ form_row(form.shippingCost) }}
+        </div>
+    {% endset %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'orob2b.order.sections.shipping_information'|trans,
+        'subblocks': [{
+            'data': [shippingInformation]
+        }]
+    }]) %}
 
     {% if form.paymentTerm is defined %}
         {% set paymentTerm %}

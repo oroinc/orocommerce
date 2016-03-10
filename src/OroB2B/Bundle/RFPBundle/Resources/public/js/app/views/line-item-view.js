@@ -205,12 +205,12 @@ define(function(require) {
                 $(select).addClass(self.options.syncClass);
 
                 if (!force) {
-                    $(widget).find('select').uniform('update');
+                    $(widget).find('select').inputWidget('refresh');
                 }
             });
 
             if (force) {
-                this.$el.find('select').uniform('update');
+                this.$el.find('select').inputWidget('refresh');
             }
         },
 
