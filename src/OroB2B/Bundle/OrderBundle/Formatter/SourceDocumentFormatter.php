@@ -20,9 +20,9 @@ class SourceDocumentFormatter
     }
 
     /**
-     * @param $sourceEntityClass
-     * @param $sourceEntityId
-     * @param $sourceEntityIdentifier
+     * @param string $sourceEntityClass
+     * @param integer $sourceEntityId
+     * @param string $sourceEntityIdentifier
      *
      * @return string
      */

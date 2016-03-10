@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Formatter;
 
 use Oro\Bundle\EntityBundle\Provider\ChainEntityClassNameProvider;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Formatter\SourceDocumentFormatter;
 
 class SourceDocumentFormatterTest extends \PHPUnit_Framework_TestCase
@@ -37,9 +36,9 @@ class SourceDocumentFormatterTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider getProvider
      *
-     * @param $sourceDocumentClass
-     * @param $sourceDocumentId
-     * @param $sourceDocumentIdentifier
+     * @param string $sourceDocumentClass
+     * @param integer $sourceDocumentId
+     * @param string $sourceDocumentIdentifier
      * @param $expectedFormat
      * @param $expectUseGetEntityClassName
      */
