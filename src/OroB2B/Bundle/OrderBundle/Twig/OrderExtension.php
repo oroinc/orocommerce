@@ -36,13 +36,15 @@ class OrderExtension extends \Twig_Extension
     }
 
     /**
-     * @param $entity
+     * @param string $sourceEntityClass
+     * @param int $sourceEntityId
+     * @param string $sourceEntityIdentifier
      *
      * @return string
      */
-    public function formatSourceDocument($entity)
+    public function formatSourceDocument($sourceEntityClass, $sourceEntityId, $sourceEntityIdentifier)
     {
-        return $this->sourceDocumentFormatter->format($entity);
+        return $this->sourceDocumentFormatter->format($sourceEntityClass, $sourceEntityId, $sourceEntityIdentifier);
     }
 
     /**

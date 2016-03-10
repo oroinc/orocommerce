@@ -2,13 +2,13 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
@@ -19,6 +19,7 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
+use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemsCollectionType;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
@@ -131,6 +132,7 @@ class OrderTypeTest extends TypeTestCase
                 'submitData' => [
                     'sourceEntityClass' => 'Class',
                     'sourceEntityId' => '1',
+                    'sourceEntityIdentifier' => '1',
                     'accountUser' => 1,
                     'account' => 2,
                     'poNumber' => '11',
@@ -156,6 +158,7 @@ class OrderTypeTest extends TypeTestCase
                     [
                         'sourceEntityClass' => 'Class',
                         'sourceEntityId' => '1',
+                        'sourceEntityIdentifier' => '1',
                         'accountUser' => 1,
                         'account' => 2,
                         'poNumber' => '11',
@@ -166,13 +169,11 @@ class OrderTypeTest extends TypeTestCase
                                 'product' => 3,
                                 'freeFormProduct' => '',
                                 'quantity' => 39,
-                                'productUnit' => 'piece',
                                 'price' => [
                                     'value' => 26.5050,
                                     'currency' => 'USD',
                                 ],
                                 'priceType' => 10,
-                                'shipBy' => '',
                                 'comment' => null
                             ],
                         ],
@@ -330,42 +331,29 @@ class OrderTypeTest extends TypeTestCase
     protected function getOrder($data)
     {
         $order = new Order();
-
-        if (isset($data['sourceEntityClass'])) {
-            $order->setSourceEntityClass($data['sourceEntityClass']);
-        }
-
-        if (isset($data['sourceEntityId'])) {
-            $order->setSourceEntityId($data['sourceEntityId']);
-        }
-
-        if (isset($data['poNumber'])) {
-            $order->setPoNumber($data['poNumber']);
-        }
-
-        if (isset($data['lineItems']) && count($data['lineItems']) > 0) {
-            foreach ($data['lineItems'] as $lineItem) {
-                $lineItem = $this->getLineItem($lineItem);
-                $order->addLineItem($lineItem);
+        $accessor = PropertyAccess::createPropertyAccessor();
+        foreach ($data as $fieldName => $value) {
+            if ($fieldName === 'lineItems') {
+                foreach ($value as $lineItem) {
+                    $lineItem = $this->getLineItem($lineItem);
+                    $order->addLineItem($lineItem);
+                }
+            } elseif ($fieldName === 'accountUser') {
+                $order->setAccountUser($this->getEntity(
+                    'OroB2B\Bundle\AccountBundle\Entity\AccountUser',
+                    $value
+                ));
+            } elseif ($fieldName === 'account') {
+                $order->setAccount(
+                    $this->getEntity(
+                        'OroB2B\Bundle\AccountBundle\Entity\Account',
+                        $value
+                    )
+                );
+            } else {
+                $accessor->setValue($order, $fieldName, $value);
             }
         }
-
-        if (isset($data['accountUser'])) {
-            $order->setAccountUser($this->getEntity(
-                'OroB2B\Bundle\AccountBundle\Entity\AccountUser',
-                $data['accountUser']
-            ));
-        }
-
-        if (isset($data['account'])) {
-            $order->setAccount(
-                $this->getEntity(
-                    'OroB2B\Bundle\AccountBundle\Entity\Account',
-                    $data['account']
-                )
-            );
-        }
-
 
         return $order;
     }
@@ -373,36 +361,18 @@ class OrderTypeTest extends TypeTestCase
     protected function getLineItem($data)
     {
         $lineItem = new OrderLineItem();
-
-        if (isset($data['productSku'])) {
-            $lineItem->setProductSku($data['productSku']);
-        }
-
-        if (isset($data['freeFormProduct'])) {
-            $lineItem->setFreeFormProduct($data['freeFormProduct']);
-        }
-
-        if (isset($data['quantity'])) {
-            $lineItem->setQuantity($data['quantity']);
-        }
-
-        if (isset($data['comment'])) {
-            $lineItem->setComment($data['comment']);
-        }
-
-        if (isset($data['priceType'])) {
-            $lineItem->setPriceType($data['priceType']);
-        }
-
-        if (isset($data['product'])) {
-            $lineItem->setProduct($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', $data['product']));
-        }
-
-        if (isset($data['price'])) {
-            $price = new Price();
-            $price->setCurrency($data['price']['currency']);
-            $price->setValue($data['price']['value']);
-            $lineItem->setPrice($price);
+        $accessor = PropertyAccess::createPropertyAccessor();
+        foreach ($data as $fieldName => $value) {
+            if ($fieldName === 'product') {
+                $lineItem->setProduct($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', $value));
+            } elseif ($fieldName === 'price') {
+                $price = new Price();
+                $price->setCurrency($value['currency']);
+                $price->setValue($value['value']);
+                $lineItem->setPrice($price);
+            } else {
+                $accessor->setValue($lineItem, $fieldName, $value);
+            }
         }
 
         return $lineItem;

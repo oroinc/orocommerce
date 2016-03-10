@@ -359,6 +359,13 @@ class Order extends ExtendOrder implements
     protected $sourceEntityId;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="source_entity_identifier", type="string", length=255, nullable=true)
+     */
+    protected $sourceEntityIdentifier;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -923,6 +930,26 @@ class Order extends ExtendOrder implements
     public function setSourceEntityId($sourceEntityId)
     {
         $this->sourceEntityId = (int)$sourceEntityId;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSourceEntityIdentifier()
+    {
+        return $this->sourceEntityIdentifier;
+    }
+
+    /**
+     * @param string|null $sourceEntityIdentifier
+     *
+     * @return $this
+     */
+    public function setSourceEntityIdentifier($sourceEntityIdentifier = null)
+    {
+        $this->sourceEntityIdentifier = $sourceEntityIdentifier;
 
         return $this;
     }
