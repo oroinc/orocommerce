@@ -41,7 +41,8 @@ class OrderTest extends \PHPUnit_Framework_TestCase
             ['account', new Account()],
             ['accountUser', new AccountUser()],
             ['website', new Website()],
-            ['shippingCost', new Price()]
+            ['shippingCost', new Price()],
+            ['totalDiscounts', new Price()],
         ];
 
         $order = new Order();
@@ -98,15 +99,18 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $item = new Order();
 
         $this->assertNull($item->getShippingCost());
+        $this->assertNull($item->getTotalDiscounts());
 
         $value = 100;
         $currency = 'EUR';
         $this->setProperty($item, 'shippingCostAmount', $value);
+        $this->setProperty($item, 'totalDiscountsAmount', $value);
         $this->setProperty($item, 'currency', $currency);
 
         $item->postLoad();
 
         $this->assertEquals(Price::create($value, $currency), $item->getShippingCost());
+        $this->assertEquals(Price::create($value, $currency), $item->getTotalDiscounts());
     }
 
     public function testUpdateShippingCost()
@@ -133,6 +137,32 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($price, $item->getShippingCost());
 
         $this->assertEquals($value, $this->getProperty($item, 'shippingCostAmount'));
+    }
+
+    public function testUpdateTotalDiscounts()
+    {
+        $item = new Order();
+        $value = 1000;
+        $currency = 'EUR';
+        $item->setTotalDiscounts(Price::create($value, $currency));
+
+        $item->updateTotalDiscounts();
+
+        $this->assertEquals($value, $this->getProperty($item, 'totalDiscountsAmount'));
+    }
+
+    public function testSetTotalDiscounts()
+    {
+        $value = 99;
+        $currency = 'EUR';
+        $price = Price::create($value, $currency);
+
+        $item = new Order();
+        $item->setTotalDiscounts($price);
+
+        $this->assertEquals($price, $item->getTotalDiscounts());
+
+        $this->assertEquals($value, $this->getProperty($item, 'totalDiscountsAmount'));
     }
 
     /**
