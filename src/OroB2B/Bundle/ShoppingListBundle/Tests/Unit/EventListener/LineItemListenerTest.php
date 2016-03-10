@@ -146,6 +146,7 @@ class LineItemListenerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param $deletedLineItems
+     *
      * @return array
      */
     protected function prepareLineItemListenerOnFlush($deletedLineItems)
@@ -174,7 +175,6 @@ class LineItemListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getScheduledEntityDeletions')
             ->will($this->returnValue($deletedLineItems));
 
-
         /** @var \PHPUnit_Framework_MockObject_MockObject|ServiceLink $shoppingListManagerLink */
         $shoppingListManagerLink = $this->getMockBuilder('Oro\Component\DependencyInjection\ServiceLink')
             ->disableOriginalConstructor()
@@ -187,6 +187,7 @@ class LineItemListenerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param int $expectedCount
+     *
      * @return PostFlushEventArgs|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function preparePostFlushEvent($expectedCount = 0)
