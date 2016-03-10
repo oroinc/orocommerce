@@ -340,6 +340,22 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
     protected $shippingCost;
 
     /**
+     * @var Collection|OrderLineItem[]
+     *
+     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\OrderBundle\Entity\OrderDiscount",
+     *      mappedBy="order", cascade={"ALL"}, orphanRemoval=true
+     * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $discounts;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -347,6 +363,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
         parent::__construct();
 
         $this->lineItems = new ArrayCollection();
+        $this->discounts = new ArrayCollection();
     }
 
     /**
@@ -859,4 +876,58 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
     {
         $this->shippingCostAmount = $this->shippingCost ? $this->shippingCost->getValue() : null;
     }
+
+    /**
+     * @param OrderDiscount $discount
+     *
+     * @return bool
+     */
+    public function hasDiscount(OrderDiscount $discount)
+    {
+        return $this->discounts->contains($discount);
+    }
+
+    /**
+     * Add line item
+     *
+     * @param OrderDiscount $discount
+     *
+     * @return Order
+     */
+    public function addDiscount(OrderDiscount $discount)
+    {
+        if (!$this->hasLineItem($discount)) {
+            $this->discounts[] = $discount;
+            $discount->setOrder($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove line item
+     *
+     * @param OrderDiscount $discount
+     *
+     * @return Order
+     */
+    public function removeDiscount(OrderDiscount $discount)
+    {
+        if ($this->hasLineItem($discount)) {
+            $this->discounts->removeElement($discount);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get orderProducts
+     *
+     * @return Collection|OrderDiscount[]
+     */
+    public function getDiscounts()
+    {
+        return $this->discounts;
+    }
+
 }
