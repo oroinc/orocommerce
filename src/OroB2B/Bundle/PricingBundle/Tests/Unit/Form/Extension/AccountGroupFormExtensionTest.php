@@ -37,7 +37,7 @@ class AccountGroupFormExtensionTest extends FormIntegrationTestCase
             ->getMock();
 
         $provider = new PriceListCollectionTypeExtensionsProvider();
-        $websiteScopedDataType = $this->getWebsiteScopedDataType();
+        $websiteScopedDataType = (new WebsiteScopedTypeMockProvider())->getWebsiteScopedDataType();
 
         $extensions = [
             new PreloadedExtension(
@@ -126,47 +126,5 @@ class AccountGroupFormExtensionTest extends FormIntegrationTestCase
         return $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', [
             'id' => $id
         ]);
-    }
-
-    /**
-     * @return WebsiteScopedDataType
-     */
-    protected function getWebsiteScopedDataType()
-    {
-        $website = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', ['id' => 1, 'name' => 'US']);
-
-        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $em->expects($this->any())
-            ->method('getReference')
-            ->with('OroB2B\Bundle\WebsiteBundle\Entity\Website', 1)
-            ->willReturn($website);
-
-        $repository = $this->getMockBuilder('OroB2B\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $repository->expects($this->any())
-            ->method('getAllWebsites')
-            ->willReturn([$website]);
-
-        /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry */
-        $registry = $this->getMockBuilder('\Doctrine\Common\Persistence\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $registry->expects($this->any())
-            ->method('getRepository')
-            ->with('OroB2B\Bundle\WebsiteBundle\Entity\Website')
-            ->willReturn($repository);
-
-        $registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->with('OroB2B\Bundle\WebsiteBundle\Entity\Website')
-            ->willReturn($em);
-
-        return new WebsiteScopedDataType($registry);
     }
 }
