@@ -40,6 +40,7 @@ datagrid:
                 type:          twig
                 frontend_type: html
                 template:      OroB2BShoppingListBundle:ShoppingList:Datagrid/subtotal.html.twig
+                renderable:    false
             total:
                 label:         orob2b.shoppinglist.total.label
                 type:          twig
@@ -93,6 +94,7 @@ datagrid:
                 subtotal:
                     type:      number
                     data_name: shopping_list.subtotal
+                    enabled:   false
                 total:
                     type:      number
                     data_name: shopping_list.total

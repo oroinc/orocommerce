@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller\Frontend;
+namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller;
 
 use Doctrine\Common\Util\ClassUtils;
 
@@ -17,10 +17,7 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
 {
     protected function setUp()
     {
-        $this->initClient(
-            [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
-        );
+        $this->initClient([], $this->generateBasicAuthHeader());
 
         $this->loadFixtures(
             [
@@ -40,7 +37,7 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
             'entityId' => $shoppingList->getId()
         ];
 
-        $this->client->request('GET', $this->getUrl('orob2b_pricing_frontend_entity_totals', $params));
+        $this->client->request('GET', $this->getUrl('orob2b_pricing_entity_totals', $params));
 
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);

@@ -81,9 +81,17 @@ class LoadLineItemDemoData extends AbstractFixture implements DependentFixtureIn
                     ->setProduct($product)
                     ->setQuantity(mt_rand(1, 25))
                     ->setUnit($product->getUnitPrecisions()->current()->getUnit());
+                $shoppingList->addLineItem($lineItem);
 
                 $manager->persist($lineItem);
             }
+            $subtotalProvider =
+                $this->container->get('orob2b_pricing.subtotal_processor.provider.subtotal_line_item_not_priced');
+            $subtotal = $subtotalProvider->getSubtotal($shoppingList);
+            $shoppingList->setSubtotal($subtotal->getAmount());
+            $totalProcessor = $this->container->get('orob2b_pricing.subtotal_processor.total_processor_provider');
+            $total = $totalProcessor->getTotal($shoppingList);
+            $shoppingList->setTotal($total->getAmount());
         }
 
         $manager->flush();

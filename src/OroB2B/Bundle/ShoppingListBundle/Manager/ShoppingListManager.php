@@ -180,8 +180,9 @@ class ShoppingListManager
 
     /**
      * @param ShoppingList $shoppingList
+     * @param bool|true $flush
      */
-    public function recalculateSubtotals(ShoppingList $shoppingList)
+    public function recalculateSubtotals(ShoppingList $shoppingList, $flush = true)
     {
         $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotal($shoppingList);
         $total = $this->totalProvider->getTotal($shoppingList);
@@ -194,7 +195,10 @@ class ShoppingListManager
         }
         $em = $this->managerRegistry->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
         $em->persist($shoppingList);
-        $em->flush();
+
+        if ($flush) {
+            $em->flush();
+        }
     }
 
     /**
