@@ -7,7 +7,8 @@ layout:
             parentId: checkout_information
             blockType: block
             options:
-                checkout: { @value: $data.checkout }
-                workflowStep: { @value: $data.workflowStep }
+                vars:
+                    checkout: { @value: $data.checkout }
+                    workflowStep: { @value: $data.workflowStep }
     conditions:
         @eq: [$context.workflowStepName, 'place_order']
