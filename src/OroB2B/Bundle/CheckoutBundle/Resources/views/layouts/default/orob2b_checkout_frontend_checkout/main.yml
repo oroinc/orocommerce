@@ -10,9 +10,8 @@ layout:
                     blockType: container
                     options:
                         vars:
-                            checkout: { @value: $data.orob2b_checkout_checkout.checkout }
-                            steps: { @value: $data.orob2b_checkout_checkout.steps }
-                            currentStep: { @value: $data.orob2b_checkout_checkout.currentStep }
+                            checkout: { @value: $data.checkout }
+                            steps: { @value: $data.orob2b_checkout_steps }
                 enter_billing_address_information:
                     blockType: block
                 enter_shipping_address_information:

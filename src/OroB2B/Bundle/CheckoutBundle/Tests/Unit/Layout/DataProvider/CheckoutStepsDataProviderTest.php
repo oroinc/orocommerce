@@ -2,20 +2,19 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Component\Layout\LayoutContext;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutDataProvider;
+use OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutStepsDataProvider;
 
-class CheckoutDataProviderTest extends \PHPUnit_Framework_TestCase
+class CheckoutStepsDataProviderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
     /**
-     * @var CheckoutDataProvider
+     * @var CheckoutStepsDataProvider
      */
     protected $provider;
 
@@ -31,18 +30,16 @@ class CheckoutDataProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->provider = new CheckoutDataProvider($this->workflowManager);
+        $this->provider = new CheckoutStepsDataProvider($this->workflowManager);
     }
 
     /**
      * @dataProvider getDataDataProvider
      * @param Checkout $checkout
-     * @param WorkflowStep $currentStep
      * @param bool $displayOrdered
-     * @param array $steps
      * @param array $expected
      */
-    public function testGetData(Checkout $checkout, $currentStep, $displayOrdered, array $steps, array $expected)
+    public function testGetData(Checkout $checkout, $displayOrdered, array $expected)
     {
         $workflowItem  = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Entity\WorkflowItem')
             ->disableOriginalConstructor()
@@ -68,7 +65,7 @@ class CheckoutDataProviderTest extends \PHPUnit_Framework_TestCase
                 ->getMock();
             $stepManager->expects($this->once())
                 ->method('getOrderedSteps')
-                ->willReturn($steps);
+                ->willReturn($expected);
             $workflow->expects($this->once())
                 ->method('getStepManager')
                 ->willReturn($stepManager);
@@ -76,12 +73,8 @@ class CheckoutDataProviderTest extends \PHPUnit_Framework_TestCase
             $workflow->expects($this->once())
                 ->method('getPassedStepsByWorkflowItem')
                 ->with($workflowItem)
-                ->willReturn($steps);
+                ->willReturn($expected);
         }
-
-        $workflowItem->expects($this->once())
-            ->method('getCurrentStep')
-            ->willReturn($currentStep);
 
         $checkout->setWorkflowItem($workflowItem);
 
@@ -103,32 +96,19 @@ class CheckoutDataProviderTest extends \PHPUnit_Framework_TestCase
     public function getDataDataProvider()
     {
         $checkout = $this->getEntity('OroB2B\Bundle\CheckoutBundle\Entity\Checkout', ['id' => 42]);
-        $currentStep = $this->getEntity('Oro\Bundle\WorkflowBundle\Entity\WorkflowStep', ['id' => 123]);
         $step1 = $this->getEntity('Oro\Bundle\WorkflowBundle\Model\Step', ['order' => 100]);
         $step2 = $this->getEntity('Oro\Bundle\WorkflowBundle\Model\Step', ['order' => 200]);
         $steps = [$step1, $step2];
         return [
             'displayOrdered' => [
                 'checkout' => $checkout,
-                'currentStep' => $currentStep,
                 'displayOrdered' => true,
-                'steps' => $steps,
-                'expected' => [
-                    'checkout' => $checkout,
-                    'steps' => $steps,
-                    'currentStep' => $currentStep
-                ]
+                'expected' => $steps
             ],
             'displayUnOrdered' => [
                 'checkout' => $checkout,
-                'currentStep' => $currentStep,
                 'displayOrdered' => false,
-                'steps' => $steps,
-                'expected' => [
-                    'checkout' => $checkout,
-                    'steps' => $steps,
-                    'currentStep' => $currentStep
-                ]
+                'expected' => $steps
             ],
         ];
     }

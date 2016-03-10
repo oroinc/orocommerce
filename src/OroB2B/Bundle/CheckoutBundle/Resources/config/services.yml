@@ -1,9 +1,9 @@
 parameters:
-    orob2b_checkout.layout.data_provider.checkout.class: OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutDataProvider
+    orob2b_checkout.layout.data_provider.checkout_steps.class: OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutStepsDataProvider
 services:
-    orob2b_checkout.layout.data_provider.account_user_checkouts:
-        class: %orob2b_checkout.layout.data_provider.checkout.class%
+    orob2b_checkout.layout.data_provider.checkout_steps:
+        class: %orob2b_checkout.layout.data_provider.checkout_steps.class%
         arguments:
             - @oro_workflow.manager
         tags:
-            - { name: layout.data_provider, alias: orob2b_checkout_checkout }
+            - { name: layout.data_provider, alias: orob2b_checkout_steps }

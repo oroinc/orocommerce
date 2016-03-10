@@ -3,6 +3,7 @@
     <aside class="sidebar sidebar_left">
         <div {{ block('block_attributes') }}>
             <ul class="checkout-navigation">
+                {% set currentStep = checkout.workflowStep %}
                 {% set isComplete = true %}
                 {% for key, step in steps %}
                     {% set pageNum = key+1 %}
@@ -25,11 +26,12 @@
                             {% endif %}
                         </span>
                         <h3 class="checkout-navigation__title">{{ step.label|trans }}</h3>
-                        {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-navigation__content"}) %}
-                        <div {{ block('block_attributes') }}>
-                            {% set informationBlockId = step.name ~'_information' %}
-                            {{ block_widget(block.offsetGet(informationBlockId), {'checkout': checkout}) }}
-                        </div>
+                        {% set informationBlockId = step.name ~'_information' %}
+                        {% if block[informationBlockId] is defined %}
+                            <div class="checkout-navigation__content">
+                                {{ block_widget(block.offsetGet(informationBlockId), {'checkout': checkout}) }}
+                            </div>
+                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>

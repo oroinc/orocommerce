@@ -8,7 +8,7 @@ use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 
-class CheckoutDataProvider extends AbstractServerRenderDataProvider
+class CheckoutStepsDataProvider extends AbstractServerRenderDataProvider
 {
     /**
      * @var WorkflowManager
@@ -40,12 +40,6 @@ class CheckoutDataProvider extends AbstractServerRenderDataProvider
             $steps = $workflow->getPassedStepsByWorkflowItem($workflowItem);
         }
 
-        $currentStep = $workflowItem->getCurrentStep();
-
-        return [
-            'checkout' => $checkout,
-            'steps' => $steps,
-            'currentStep' => $currentStep
-        ];
+        return $steps;
     }
 }
