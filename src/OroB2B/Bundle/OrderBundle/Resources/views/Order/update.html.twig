@@ -54,7 +54,7 @@
     {% set id = 'order-edit' %}
 
     {% set subtotals %}
-        {% include 'OroB2BPricingBundle:Subtotals:subtotals.html.twig' with {
+        {% include 'OroB2BPricingBundle:Totals:totals.html.twig' with {
             pageComponent: 'orob2border/js/app/components/subtotals-component',
             options: { url: path('orob2b_order_entry_point', {id: entity.id|default(0)}), selectors: {form: '#' ~ form.vars.id} }
         } only %}

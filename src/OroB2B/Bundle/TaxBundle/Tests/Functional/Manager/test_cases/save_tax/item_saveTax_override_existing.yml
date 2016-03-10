@@ -6,6 +6,7 @@ databaseBefore:
         simple_order:
             poNumber: { property_value: simple_order }
             account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: { name: 'account.orphan' } }
+            currency: 'USD'
             billingAddress:
                 class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
                 property_value:
@@ -44,6 +45,7 @@ databaseBefore:
                             excludingTax: '95.94' # 15.99 * 6
                             taxAmount: '9.6' # 95.94 * 0.1
                             adjustment: '0.001'
+                            currency: 'USD'
                     unit:
                         class: 'OroB2B\Bundle\TaxBundle\Model\ResultElement'
                         property_value:
@@ -51,6 +53,7 @@ databaseBefore:
                             excludingTax: '15.99'
                             taxAmount: '1.6' # 15.99 * 0.1
                             adjustment: '0.001'
+                            currency: 'USD'
                     taxes:
                         -
                             class: 'OroB2B\Bundle\TaxBundle\Model\ResultElement'
@@ -65,10 +68,12 @@ expectedResult: # values from simple_order_item_1 used to check database overrid
         excludingTax: '33.3'  # 5.55 * 6
         taxAmount: '3.33'     # 33.3 * 0.1
         adjustment: '0'
+        currency: 'USD'
     unit:
         includingTax: '6.11'  # 5.55 + 0.555
         excludingTax: '5.55'
         taxAmount: '0.56'     # 5.55 * 0.1
         adjustment: '-0.005'  # 0.555 - 0.56
+        currency: 'USD'
     taxes:
-        - { tax: 'TAX1', rate: '0.1', taxableAmount: '33.3', taxAmount: '3.33' }
+        - { tax: 'TAX1', rate: '0.1', taxableAmount: '33.3', taxAmount: '3.33', currency: 'USD' }

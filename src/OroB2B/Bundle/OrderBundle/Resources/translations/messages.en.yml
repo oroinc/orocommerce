@@ -17,6 +17,7 @@ orob2b:
         po_number.label: PO Number
         ship_until.label: Do Not Ship Later Than
         subtotal.label: Subtotal
+        total.label: Total
         payment_term.label: Payment Term
         billing_address.label: Billing Address
         shipping_address.label: Shipping Address
@@ -105,6 +106,7 @@ orob2b:
             additional: Additional
             subtotals: Order Totals
             order_line_items: 'Line Items'
+            order_totals: Totals
 
         security:
             permission:
@@ -127,6 +129,7 @@ orob2b:
 
         subtotals:
             subtotal: Subtotal
+            total: Total
         sales_orders.label: 'Sales Orders'
 
         navigation:

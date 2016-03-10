@@ -6,7 +6,6 @@ parameters:
     orob2b_order.order.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_order.order.listener.order_listener.class: OroB2B\Bundle\OrderBundle\EventListener\OrderListener
     orob2b_order.order.entity.id_generator.class: OroB2B\Bundle\OrderBundle\Doctrine\ORM\Id\SimpleEntityAwareGenerator
-    orob2b_order.provider.subtotals.class: OroB2B\Bundle\OrderBundle\Provider\SubtotalsProvider
 
     orob2b_order.order.provider.order_address.class: OroB2B\Bundle\OrderBundle\Provider\OrderAddressProvider
     orob2b_order.order.provider.order_address_security.class: OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider
@@ -21,6 +20,10 @@ parameters:
     orob2b_order.event_listener.order.payment_term.class: OroB2B\Bundle\OrderBundle\EventListener\Order\OrderPaymentTermEventListener
     orob2b_order.event_listener.order.matching_price.class: OroB2B\Bundle\OrderBundle\EventListener\Order\MatchingPriceEventListener
     orob2b_order.event_listener.order.tier_prices.class: OroB2B\Bundle\OrderBundle\EventListener\Order\TierPriceEventListener
+
+    orob2b_order.subtotal_provider.registry.class: OroB2B\Bundle\OrderBundle\SubtotalProcessor\SubtotalProviderRegistry
+    orob2b_order.provider.total.class: OroB2B\Bundle\OrderBundle\SubtotalProcessor\TotalProcessorProvider
+    orob2b_order.provider.subtotal_line_item.class: OroB2B\Bundle\OrderBundle\Provider\SubtotalLineItemProvider
 
 services:
     orob2b_order.order.manager.api:
@@ -40,11 +43,13 @@ services:
         tags:
             - { name: doctrine.event_listener, event: postPersist }
 
-    orob2b_order.provider.subtotals:
-        class: %orob2b_order.provider.subtotals.class%
+    orob2b_order.provider.subtotal_line_item:
+        class: %orob2b_order.provider.subtotal_line_item.class%
         arguments:
             - @translator
             - @orob2b_pricing.rounding.price_rounding_service
+        tags:
+            - { name: orob2b_order.subtotal_provider, priority: 0}
 
     orob2b_order.order.provider.order_address:
         class: %orob2b_order.order.provider.order_address.class%
@@ -119,7 +124,7 @@ services:
     orob2b_order.event_listener.order.subtotals:
         class: %orob2b_order.event_listener.order.subtotals.class%
         arguments:
-            - @orob2b_order.provider.subtotals
+            - @orob2b_order.provider.total
         tags:
             - { name: kernel.event_listener, event: orob2b_order.order, method: onOrderEvent }
 
@@ -153,3 +158,13 @@ services:
             - @orob2b_pricing.model.price_list_tree_handler
         tags:
             - { name: kernel.event_listener, event: orob2b_order.order, method: onOrderEvent }
+
+    orob2b_order.subtotal_provider.registry:
+        class: %orob2b_order.subtotal_provider.registry.class%
+
+    orob2b_order.provider.total:
+        class: %orob2b_order.provider.total.class%
+        arguments:
+            - @orob2b_order.subtotal_provider.registry
+            - @translator
+            - @orob2b_pricing.rounding.price_rounding_service

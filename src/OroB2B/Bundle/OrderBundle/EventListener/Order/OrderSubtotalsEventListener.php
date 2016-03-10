@@ -4,17 +4,17 @@ namespace OroB2B\Bundle\OrderBundle\EventListener\Order;
 
 use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
 use OroB2B\Bundle\OrderBundle\Model\Subtotal;
-use OroB2B\Bundle\OrderBundle\Provider\SubtotalsProvider;
+use OroB2B\Bundle\OrderBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class OrderSubtotalsEventListener
 {
-    /** @var SubtotalsProvider */
+    /** @var TotalProcessorProvider */
     protected $provider;
 
     /**
-     * @param SubtotalsProvider $provider
+     * @param TotalProcessorProvider $provider
      */
-    public function __construct(SubtotalsProvider $provider)
+    public function __construct(TotalProcessorProvider $provider)
     {
         $this->provider = $provider;
     }

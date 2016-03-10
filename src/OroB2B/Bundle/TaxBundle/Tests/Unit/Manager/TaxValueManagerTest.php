@@ -4,11 +4,15 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Manager;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+use OroB2B\Bundle\TaxBundle\Entity\Tax;
 use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
 use OroB2B\Bundle\TaxBundle\Manager\TaxValueManager;
 
 class TaxValueManagerTest extends \PHPUnit_Framework_TestCase
 {
+    const TAX_VALUE_CLASS = 'OroB2B\Bundle\TaxBundle\Entity\TaxValue';
+    const TAX_CLASS = 'OroB2B\Bundle\TaxBundle\Entity\Tax';
+
     /** @var  TaxValueManager */
     protected $manager;
 
@@ -23,8 +27,8 @@ class TaxValueManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->manager = new TaxValueManager(
             $this->doctrineHelper,
-            'OroB2B\Bundle\TaxBundle\Entity\TaxValue',
-            'OroB2B\Bundle\TaxBundle\Entity\Tax'
+            self::TAX_VALUE_CLASS,
+            self::TAX_CLASS
         );
     }
 
@@ -83,7 +87,10 @@ class TaxValueManagerTest extends \PHPUnit_Framework_TestCase
         $em = $this->getMock('Doctrine\ORM\EntityManagerInterface');
         $em->expects($this->once())->method('persist')->with($taxValue);
         $em->expects($this->once())->method('flush')->with($taxValue);
-        $this->doctrineHelper->expects($this->once())->method('getEntityManager')->willReturn($em);
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityManagerForClass')
+            ->with(self::TAX_VALUE_CLASS)
+            ->willReturn($em);
 
         $this->manager->saveTaxValue($taxValue);
     }
@@ -99,5 +106,94 @@ class TaxValueManagerTest extends \PHPUnit_Framework_TestCase
             ->with('OroB2B\Bundle\TaxBundle\Entity\Tax')->willReturn($repo);
 
         $this->manager->getTax($code);
+    }
+
+    public function testClear()
+    {
+        $class = 'stdClass';
+        $id = 1;
+        $cachedTaxValue = new TaxValue();
+        $notCachedTaxValue = new TaxValue();
+
+        $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+
+        $repository->expects($this->exactly(2))
+            ->method('findOneBy')
+            ->with(
+                $this->logicalAnd(
+                    $this->isType('array'),
+                    $this->contains($class),
+                    $this->contains($id)
+                )
+            )
+            ->willReturnOnConsecutiveCalls($cachedTaxValue, $notCachedTaxValue);
+
+        $this->doctrineHelper->expects($this->exactly(2))
+            ->method('getEntityRepositoryForClass')
+            ->willReturn($repository);
+
+        $this->assertSame($cachedTaxValue, $this->manager->getTaxValue($class, $id));
+        $this->assertSame($cachedTaxValue, $this->manager->getTaxValue($class, $id));
+        $this->manager->clear();
+        $this->assertSame($notCachedTaxValue, $this->manager->getTaxValue($class, $id));
+    }
+
+    /**
+     * @dataProvider removeTaxValueProvider
+     * @param bool $flush
+     * @param bool $contains
+     * @param bool $expectedResult
+     */
+    public function testRemoveTaxValue($flush, $contains, $expectedResult)
+    {
+        $taxValue = new TaxValue();
+
+        $taxValueEm = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $taxValueEm->expects($this->once())
+            ->method('contains')
+            ->with($taxValue)
+            ->willReturn($contains);
+
+        $taxValueEm->expects($contains ? $this->once() : $this->never())
+            ->method('remove')
+            ->with($taxValue);
+
+        $taxValueEm->expects($contains && $flush ? $this->once() : $this->never())
+            ->method('flush')
+            ->with($taxValue);
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityManagerForClass')
+            ->with(self::TAX_VALUE_CLASS)
+            ->willReturn($taxValueEm);
+
+        $this->assertEquals($expectedResult, $this->manager->removeTaxValue($taxValue, $flush));
+    }
+
+    /**
+     * @return array
+     */
+    public function removeTaxValueProvider()
+    {
+        return [
+            [
+                'flush' => true,
+                'contains' => false,
+                'expectedResult' => false
+            ],
+            [
+                'flush' => true,
+                'contains' => true,
+                'expectedResult' => true
+            ],
+            [
+                'flush' => false,
+                'contains' => true,
+                'expectedResult' => true
+            ]
+        ];
     }
 }
