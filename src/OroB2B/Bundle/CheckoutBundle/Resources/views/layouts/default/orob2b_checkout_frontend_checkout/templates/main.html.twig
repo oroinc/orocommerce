@@ -71,8 +71,9 @@
                             : <strong>{{ summary_data.total|oro_format_price }}</strong></span>
                     </div>
                 </div>
-                <a href="#" class="checkout-order-summary__header__edit-link"><i
-                            class="icon-pencil"></i>{{ 'orob2b.checkout.order_summary.edit_order'|trans }}</a>
+                <a href="#" class="checkout-order-summary__header__edit-link">
+                    <i class="icon-pencil"></i>
+                    {{ 'orob2b.checkout.order_summary.edit_order'|trans }}</a>
             </div>
 
             {{ block_widget(block) }}
@@ -100,7 +101,8 @@
                             <h3 class="product-item__title product-item__title_in-cart mb1-md">
                                 <a href="{{ path('orob2b_product_frontend_product_view', {'id':line_item.item.productId}) }}">{{ line_item.item.name }}</a>
                             </h3>
-                            <div>{{ 'orob2b.checkout.order_summary.item'|trans }} #: <span class="red">{{ line_item.item.item }}</span></div>
+                            <div>{{ 'orob2b.checkout.order_summary.item'|trans }} #: <span
+                                        class="red">{{ line_item.item.item }}</span></div>
                         </td>
                         <td class="text-center va-t_md">{{ line_item.quantity }}</td>
                         <td class="va-t_md text-right">
@@ -113,7 +115,8 @@
                                     </tr>
                                     <tr>
                                         <td>{{ 'orob2b.checkout.order_summary.total_price'|trans }}:</td>
-                                        <td><span class="fs16 blue">{{ line_item.price.total|oro_format_price }}</span></td>
+                                        <td><span class="fs16 blue">{{ line_item.price.total|oro_format_price }}</span>
+                                        </td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -131,8 +134,11 @@
                                     <td class="text-right">{{ summary_data.itemsCount }}</td>
                                 </tr>
                                 <tr>
-                                    <td><span class="fs18">{{ 'orob2b.checkout.order_summary.total_price'|trans }}</span></td>
-                                    <td class="text-right"><span class="fs18">{{ summary_data.total|oro_format_price }}</span></td>
+                                    <td>
+                                        <span class="fs18">{{ 'orob2b.checkout.order_summary.total_price'|trans }}</span>
+                                    </td>
+                                    <td class="text-right"><span
+                                                class="fs18">{{ summary_data.total|oro_format_price }}</span></td>
                                 </tr>
                                 </tbody>
                             </table>

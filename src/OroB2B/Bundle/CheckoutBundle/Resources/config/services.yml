@@ -1,7 +1,16 @@
 parameters:
     orob2b_checkout.data_provider.manager.class: OroB2B\Component\Checkout\DataProvider\CheckoutDataProviderManager
+    orob2b_checkout.layout.data_provider.summary.class: OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\SummaryDataProvider
+
 services:
     orob2b_checkout.data_provider.manager:
         class: %orob2b_checkout.data_provider.manager.class%
         arguments:
             - @doctrine
+
+    orob2b_checkout.layout.data_provider.summary:
+        class: %orob2b_checkout.layout.data_provider.summary.class%
+        arguments:
+            - @orob2b_checkout.data_provider.manager
+        tags:
+            - { name: layout.data_provider, alias: orob2b_checkout_summary }
