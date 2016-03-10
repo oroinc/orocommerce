@@ -85,11 +85,6 @@
     {% endset %}
 
     {% set dataBlocks = dataBlocks|merge([{
-        'title': 'orob2b.order.sections.order_line_items'|trans,
-        'subblocks': [{'data' : [lineItems]}]
-    }]) %}
-
-    {% set dataBlocks = dataBlocks|merge([{
         'title': 'orob2b.order.sections.shipping_information'|trans,
         'subblocks': [{'data' : [shippingInformation]}]
     }]) %}
