@@ -85,6 +85,11 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
             );
 
         $this->lineItem = $this->getMock('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem');
+        $shoppingList = $this->getMock('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList');
+
+        $this->lineItem->expects($this->any())
+            ->method('getShoppingList')
+            ->willReturn($shoppingList);
     }
 
     public function testProcessWrongMethod()
