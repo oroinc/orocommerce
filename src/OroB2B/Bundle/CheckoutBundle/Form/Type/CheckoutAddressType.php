@@ -9,7 +9,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 
 class CheckoutAddressType extends OrderAddressType
 {
-    const NAME = 'orob2b_checkout_address_type';
+    const NAME = 'orob2b_checkout_address';
 
     /**
      * {@inheritdoc}
@@ -42,7 +42,9 @@ class CheckoutAddressType extends OrderAddressType
                 );
             }
 
-            $builder->add('accountAddress', 'choice', $accountAddressOptions);
+            $builder->add('accountAddress', 'choice', $accountAddressOptions)
+                ->add('country', 'orob2b_country', array('required' => true, 'label' => 'oro.address.country.label'))
+                ->add('region', 'orob2b_region', array('required' => false, 'label' => 'oro.address.region.label'));
         }
     }
 

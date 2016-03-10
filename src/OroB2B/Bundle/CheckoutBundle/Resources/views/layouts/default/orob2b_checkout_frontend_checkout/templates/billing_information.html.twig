@@ -20,6 +20,7 @@
              view: 'orob2bcheckout/js/app/views/address-view',
              selectors: {
                  address: '#' ~ form.address.accountAddress.vars.id,
+                 region: '#' ~ form.address.region.vars.id,
                  fieldsContainer: '#checkout-address-fields-container'
              }
          }|json_encode }}">
@@ -45,7 +46,6 @@
             </fieldset>
 
             {{ form_row(form.address.city) }}
-
             <fieldset class="checkout__form__row">
                 {{ form_row(form.address.country) }}
                 {{ form_row(form.address.region) }}

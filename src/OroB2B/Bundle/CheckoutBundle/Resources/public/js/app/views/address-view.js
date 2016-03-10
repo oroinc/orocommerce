@@ -15,6 +15,11 @@ define(function(require) {
         /**
          * @property {jQuery.Element}
          */
+        regionSelector: null,
+
+        /**
+         * @property {jQuery.Element}
+         */
         fieldsContainer: null,
 
         /**
@@ -23,8 +28,10 @@ define(function(require) {
         initialize: function(options) {
             this.addressSelector = this.$el.find(options.selectors.address);
             this.fieldsContainer = this.$el.find(options.selectors.fieldsContainer);
+            this.regionSelector = this.$el.find(options.selectors.region);
 
             this.addressSelector.on('change', _.bind(this.onAddressChanged, this));
+            this.regionSelector.on('change', _.bind(this.onRegionListChanged, this));
         },
 
         onAddressChanged: function(e) {
@@ -34,6 +41,11 @@ define(function(require) {
                 this.fieldsContainer.addClass('hidden');
             }
 
+        },
+
+        onRegionListChanged: function(e) {
+            this.regionSelector.chosen("destroy");
+            this.regionSelector.chosen({disable_search_threshold: 10});
         }
     });
 

@@ -107,7 +107,7 @@
 {% endblock %}
 
 {% block _form_address_region_row %}
-    <div class="checkout__form__col col-state">
+    <div class="checkout__form__col">
         {{ form_label(form, 'State / Province', {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) }}
         <div class="checkout__form__select">
             {{ form_widget(form, {'attr': {'class' : 'checkout__form__label checkout__form__label_additional wsnr'}}) }}
@@ -150,4 +150,8 @@
 
 {% block _form_address_id_row %}
     {{ form_widget(form) }}
+{% endblock %}
+
+{% block orob2b_region_widget %}
+    {{ block('oro_region_widget') }}
 {% endblock %}
