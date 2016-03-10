@@ -1,0 +1,44 @@
+{% block _checkout_billing_form_button_widget -%}
+    <fieldset class="checkout__form__row">
+        <div class="create-account__form__req-text"><sup>*</sup>Required Field</div>
+        <div class="create-account__form__col form__col_x12">
+            <button type="submit" class="btn btn_orange btn_lg checkout__form__submit">
+                Continue<i class="icon-right-open-mini va-m_md"></i>
+            </button>
+        </div>
+    </fieldset>
+    <div class="checkout__form__back">
+        <a href="#"><i class="icon-left-open-mini"></i>Back</a>
+    </div>
+{%- endblock %}
+
+{% block checkbox_row -%}
+    <fieldset class="checkout__form__row">
+        <div class="checkout__form__col form__col_x12 mmb5-md mmb5-sm">
+            {{- form_label(form) -}}
+            {{- form_errors(form) -}}
+        </div>
+    </fieldset>
+{%- endblock checkbox_row %}
+
+{%- block checkbox_label -%}
+    {% if label is defined and label is not same as(false) %}
+        {%- if label is empty -%}
+            {% set label = id|humanize %}
+        {%- endif -%}
+        <label for="{{ id }}" class="checkbox_custom checkbox_custom_blue" data-checkbox>
+            {{- form_widget(form) -}}
+            <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
+            <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
+            <span class="checkbox_custom__text fs13">{{ label|block_text(translation_domain) }}</span>
+        </label>
+    {%- endif %}
+{%- endblock checkbox_label -%}
+
+{% block text_row -%}
+    {% set parentClass = parentClass|default('form__col_x12') %}
+    <div class="checkout__form__col {{ parentClass }}">
+        {{- form_label(form, label, {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) -}}
+        {{- form_widget(form, {'attr': attr}) -}}
+    </div>
+{%- endblock %}
