@@ -84,6 +84,14 @@ class AccountListener extends AbstractPriceListCollectionAwareListener
     /**
      * {@inheritdoc}
      */
+    protected function getDefaultFallback()
+    {
+        return PriceListAccountFallback::ACCOUNT_GROUP;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function handleCollectionChanges($targetEntity, Website $website)
     {
         $this->triggerHandler->handleAccountChange($targetEntity, $website);

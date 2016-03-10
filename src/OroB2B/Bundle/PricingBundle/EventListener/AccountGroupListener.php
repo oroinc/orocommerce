@@ -23,7 +23,7 @@ class AccountGroupListener extends AbstractPriceListCollectionAwareListener
      */
     public function onGroupRemove(AccountGroupEvent $event)
     {
-        $this->triggerHandler->handleAccountGroupRemove($event->getAccountGroup());
+        $this->triggerHandler->handleAccountGroupRemove($event->getData());
     }
 
     /**
@@ -71,6 +71,14 @@ class AccountGroupListener extends AbstractPriceListCollectionAwareListener
             ->persist($fallback);
 
         return $fallback;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getDefaultFallback()
+    {
+        return PriceListAccountGroupFallback::WEBSITE;
     }
 
     /**

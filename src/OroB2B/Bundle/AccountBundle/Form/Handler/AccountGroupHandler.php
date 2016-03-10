@@ -63,8 +63,6 @@ class AccountGroupHandler
                     $this->form->get('appendAccounts')->getData(),
                     $this->form->get('removeAccounts')->getData()
                 );
-                $event = new AccountGroupEvent($entity);
-                $this->dispatcher->dispatch(AccountGroupEvent::BEFORE_FLUSH, $event);
 
                 return true;
             }
@@ -84,6 +82,8 @@ class AccountGroupHandler
     {
         $this->setGroup($entity, $append);
         $this->removeFromGroup($entity, $remove);
+        $event = new AccountGroupEvent($entity, $this->form);
+        $this->dispatcher->dispatch(AccountGroupEvent::BEFORE_FLUSH, $event);
         $this->manager->persist($entity);
         $this->manager->flush();
     }

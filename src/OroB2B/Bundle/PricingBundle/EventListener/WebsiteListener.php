@@ -75,7 +75,7 @@ class WebsiteListener
 
         $fallback = $this->getFallback($website);
         $submittedFallback = $event->getForm()->get(WebsiteFormExtension::PRICE_LISTS_FALLBACK_FIELD)->getData();
-        if (!$fallback) {
+        if (!$fallback && $submittedFallback !== PriceListWebsiteFallback::CONFIG) {
             $fallback = new PriceListWebsiteFallback();
             $this->doctrineHelper->getEntityManager($fallback)->persist($fallback);
             $hasChanges = true;

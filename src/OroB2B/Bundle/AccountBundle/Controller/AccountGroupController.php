@@ -99,7 +99,8 @@ class AccountGroupController extends Controller
         $handler = new AccountGroupHandler(
             $form,
             $this->getRequest(),
-            $this->getDoctrine()->getManagerForClass(ClassUtils::getClass($group))
+            $this->getDoctrine()->getManagerForClass(ClassUtils::getClass($group)),
+            $this->get('event_dispatcher')
         );
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(

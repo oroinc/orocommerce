@@ -101,9 +101,14 @@ abstract class AbstractPriceListCollectionAwareListener
             $submitted = $data[PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD];
             $hasChanges = $this->collectionHandler->handleChanges($submitted, $existing, $targetEntity, $website);
 
-            $fallback = $this->getFallback($website, $targetEntity) ?: $this->createFallback($targetEntity, $website);
+            $fallback = $this->getFallback($website, $targetEntity);
             $fallbackData = $form->get(PriceListsSettingsType::FALLBACK_FIELD)->getData();
-            if ($fallbackData !== $fallback->getFallback()) {
+
+            if (!$fallback && $fallbackData !== $this->getDefaultFallback()) {
+                $fallback = $this->createFallback($targetEntity, $website);
+            }
+
+            if ($fallback && $fallbackData !== $fallback->getFallback()) {
                 $fallback->setFallback($fallbackData);
                 $hasChanges = true;
             }
@@ -185,6 +190,11 @@ abstract class AbstractPriceListCollectionAwareListener
      * @return PriceListFallback
      */
     abstract protected function createFallback($targetEntity, Website $website);
+
+    /**
+     * @return int
+     */
+    abstract protected function getDefaultFallback();
 
     /**
      * @return string
