@@ -4,22 +4,24 @@ namespace OroB2B\Bundle\ShoppingListBundle\EventListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
+use Oro\Component\DependencyInjection\ServiceLink;
+
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class LineItemListener
 {
     /**
-     * @var ShoppingListManager
+     * @var ServiceLink
      */
-    protected $shoppingListManager;
+    protected $shoppingListManagerLink;
 
     /**
-     * @param ShoppingListManager $shoppingListManager
+     * @param ServiceLink $shoppingListManagerLink
      */
-    public function __construct(ShoppingListManager $shoppingListManager)
+    public function __construct(ServiceLink $shoppingListManagerLink)
     {
-        $this->shoppingListManager = $shoppingListManager;
+        $this->shoppingListManagerLink = $shoppingListManagerLink;
     }
 
     /**
@@ -30,7 +32,15 @@ class LineItemListener
         /** @var LineItem $lineItem */
         $lineItem = $args->getEntity();
         if ($lineItem instanceof LineItem) {
-            $this->shoppingListManager->recalculateSubtotals($lineItem->getShoppingList());
+            $this->getShoppingListManager()->recalculateSubtotals($lineItem->getShoppingList());
         }
+    }
+
+    /**
+     * @return ShoppingListManager
+     */
+    protected function getShoppingListManager()
+    {
+        return $this->shoppingListManagerLink->getService();
     }
 }
