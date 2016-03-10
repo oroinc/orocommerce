@@ -36,8 +36,8 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
 
         $params = [
-            'entityId' => $shoppingList->getId(),
-            'entityClassName' => ClassUtils::getClass($shoppingList)
+            'entityClassName' => ClassUtils::getClass($shoppingList),
+            'entityId' => $shoppingList->getId()
         ];
 
         $this->client->request('GET', $this->getUrl('orob2b_pricing_frontend_entity_totals', $params));
