@@ -23,71 +23,39 @@
                  fieldsContainer: '#checkout-address-fields-container'
              }
          }|json_encode }}">
-        <fieldset class="checkout__form__row">
-            <div class="checkout__form__col form__col_x6">
-                {{ form_label(form.address.accountAddress, 'Address', {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) }}
-                <div class="checkout__form__select">
-                    {{ form_widget(form.address.accountAddress, {'attr' : {'class': 'input input_md'}}) }}
-                </div>
-            </div>
-        </fieldset>
+        {{ form_row(form.address.accountAddress) }}
         <div id="checkout-address-fields-container" class="{% if not form.address.id.vars.value %}hidden{% endif %}">
-            <fieldset class="checkout__form__row">
-                {{ form_row(form.address.label, {'attr' : {'class': 'input input_md', 'placeholder' : 'Enter address label'}}) }}
-            </fieldset>
+            {{ form_row(form.address.label) }}
 
             <fieldset class="checkout__form__row">
-                {{ form_row(form.address.namePrefix, {'attr' : {'class': 'input input_md', 'placeholder' : 'Enter your name prefix'}, 'parentClass': 'form__col_x6'}) }}
-                {{ form_row(form.address.middleName, {'attr': {'class': 'input input_md input_block checkout__form__input', 'placeholder' : 'Enter your middle name',}, 'parentClass': 'form__col_x6'}) }}
-                {{ form_row(form.address.firstName, {
-                    'attr': {
-                        'class': 'input input_md input_block checkout__form__input',
-                        'placeholder' : 'Enter your first name',
-                    },
-                    'parentClass': 'form__col_x6'
-                }) }}
-                {{ form_row(form.address.lastName, {'attr': {'class' : 'input input_md input_block checkout__form__input', 'placeholder' : 'Enter your last name'}, 'parentClass': 'form__col_x6'}) }}
-                {{ form_row(form.address.nameSuffix, {'attr': {'class' : 'input input_md input_block checkout__form__input', 'placeholder' : 'Enter your name suffix'}, 'parentClass': 'form__col_x6'}) }}
+                {{ form_row(form.address.namePrefix) }}
+                {{ form_row(form.address.middleName) }}
+                {{ form_row(form.address.firstName) }}
+                {{ form_row(form.address.lastName) }}
+                {{ form_row(form.address.nameSuffix) }}
             </fieldset>
 
-            <fieldset class="checkout__form__row">
-                {{ form_row(form.address.organization, {'attr': {'class' : 'input input_md input_block checkout__form__input', 'placeholder' : 'Enter your organization name'}}) }}
-            </fieldset>
+            {{ form_row(form.address.organization) }}
 
             <fieldset class="checkout__form__row">
                 <div class="checkout__form__col form__col_x12">
-                    {{ form_label(form.address.street, 'Street Address', {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) }}
-                    {{ form_widget(form.address.street, {'attr': {'class' : 'input input_md input_block checkout__form__input mb1-md mb1-sm', 'placeholder' : 'Enter your street address'}}) }}
-                    {{ form_widget(form.address.street2, {'attr': {'class' : 'input input_md input_block checkout__form__input', 'placeholder' : 'Enter your street address 2'}}) }}
+                    {{ form_row(form.address.street) }}
+                    {{ form_row(form.address.street2) }}
                 </div>
             </fieldset>
 
-            <fieldset class="checkout__form__row">
-                {{ form_row(form.address.city, {'attr': {'class' : 'input input_md input_block checkout__form__input mb1-md mb1-sm', 'placeholder' : 'Enter your city'}}) }}
-            </fieldset>
+            {{ form_row(form.address.city) }}
 
             <fieldset class="checkout__form__row">
-                <div class="checkout__form__col col-country">
-                    {{ form_label(form.address.country, 'Country', {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) }}
-                    <div class="checkout__form__select">
-                        {{ form_widget(form.address.country, {'attr': {'class' : 'checkout__form__label checkout__form__label_additional wsnr'}}) }}
-                    </div>
-                </div>
-                <div class="checkout__form__col col-state">
-                    {{ form_label(form.address.region, 'State / Province', {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) }}
-                    <div class="checkout__form__select">
-                        {{ form_widget(form.address.region, {'attr': {'class' : 'checkout__form__label checkout__form__label_additional wsnr'}}) }}
-                    </div>
-                </div>
+                {{ form_row(form.address.country) }}
+                {{ form_row(form.address.region) }}
             </fieldset>
 
-            {{ form_widget(form.address.region_text, {'attr': {'class': 'hidden'}}) }}
-            {{ form_widget(form.address.id) }}
-
-            <fieldset class="checkout__form__row">
-                {{ form_row(form.address.postalCode, {'attr': {'class' : 'input input_block input_md checkout__form__input', 'placeholder' : 'Zip'}, 'parentClass': 'col-zip'}) }}
-            </fieldset>
+            {{ form_row(form.address.postalCode) }}
             {{ form_row(form.saveAddress) }}
+
+            {{ form_widget(form.address.id) }}
+            {{ form_widget(form.address.region_text, {'attr': {'class': 'hidden'}}) }}
         </div>
     </div>
 {%- endblock %}
