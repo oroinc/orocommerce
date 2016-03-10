@@ -39,7 +39,7 @@ class ProductImageCollectionValidator extends ConstraintValidator
         $maxNumbers = [];
 
         foreach ($this->getImageTypes() as $imageType => $config) {
-            $maxNumbers[$imageType] = $config['max_number'] ?: MAX_ ;
+            $maxNumbers[$imageType] = $config['max_number'] ?: 99999 ;
         }
 
         $countImageTypes = [];
@@ -57,10 +57,14 @@ class ProductImageCollectionValidator extends ConstraintValidator
 
         foreach ($this->getImageTypes() as $imageType => $config) {
             if ($maxNumbers[$imageType] > 0 && $countImageTypes[$imageType] > $maxNumbers[$imageType]) {
-                $this->context->buildViolation($constraint->message)
-                    ->setParameter('%type%', $imageType)
-                    ->setParameter('%maxNumber%', $maxNumbers[$imageType])
-                    ->addViolation();
+                $this->context->addViolation(
+                    $constraint->message,
+                    [
+                        '%type%' =>  $imageType,
+                        '%maxNumber%' => $maxNumbers[$imageType]
+                    ]
+                );
+
             }
         }
     }
