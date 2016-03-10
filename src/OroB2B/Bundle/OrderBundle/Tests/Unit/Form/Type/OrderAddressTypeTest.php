@@ -279,7 +279,11 @@ class OrderAddressTypeTest extends AbstractAddressTypeTest
                 )
             );
 
-        $formOptions =  ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'object' => new Order(), 'isEditEnabled' => true,];
+        $formOptions =  [
+            'addressType' => AddressTypeEntity::TYPE_SHIPPING,
+            'object' => new Order(),
+            'isEditEnabled' => true,
+        ];
 
         $this->checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors, $formOptions);
     }
