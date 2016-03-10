@@ -3,8 +3,8 @@
 namespace OroB2B\Bundle\ShoppingListBundle\EventListener;
 
 use Doctrine\ORM\Event\OnFlushEventArgs;
-
 use Doctrine\ORM\Event\PostFlushEventArgs;
+
 use Oro\Component\DependencyInjection\ServiceLink;
 
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
