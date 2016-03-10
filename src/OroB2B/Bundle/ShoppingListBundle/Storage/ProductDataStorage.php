@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Storage;
 
 use Doctrine\Common\Util\ClassUtils;
+
 use OroB2B\Bundle\OrderBundle\Provider\IdentifierAwareInterface;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage as Storage;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;

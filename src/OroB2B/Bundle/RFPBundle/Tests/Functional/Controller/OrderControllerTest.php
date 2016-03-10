@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller;
 
 use Doctrine\Common\Util\ClassUtils;
+
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
