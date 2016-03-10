@@ -15,6 +15,7 @@ use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
 use OroB2B\Bundle\OrderBundle\Model\OrderRequestHandler;
@@ -192,7 +193,7 @@ class OrderController extends AbstractOrderController
     }
 
     /**
-     * @return \OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider
+     * @return TotalProcessorProvider
      */
     protected function getTotalProcessor()
     {
