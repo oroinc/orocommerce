@@ -16,7 +16,7 @@ orob2b:
         default.label: Default
         items.label: 'Item|Items'
         subtotal.label: Subtotal
-        total.label: Total
+        total.label: Grand Total
         currency.label: Currency
 
         btn:
