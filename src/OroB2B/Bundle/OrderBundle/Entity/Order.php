@@ -340,6 +340,18 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
     protected $shippingCost;
 
     /**
+     * @var float
+     *
+     * @ORM\Column(name="total_discounts_amount", type="money", nullable=true)
+     */
+    protected $totalDiscountsAmount;
+
+    /**
+     * @var Price
+     */
+    protected $totalDiscounts;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -849,6 +861,10 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
         if (null !== $this->shippingCostAmount && null !== $this->currency) {
             $this->shippingCost = Price::create($this->shippingCostAmount, $this->currency);
         }
+
+        if (null !== $this->totalDiscountsAmount && null !== $this->currency) {
+            $this->totalDiscounts = Price::create($this->totalDiscountsAmount, $this->currency);
+        }
     }
 
     /**
@@ -858,5 +874,39 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
     public function updateShippingCost()
     {
         $this->shippingCostAmount = $this->shippingCost ? $this->shippingCost->getValue() : null;
+    }
+
+    /**
+     * Get total discounts
+     *
+     * @return Price|null
+     */
+    public function getTotalDiscounts()
+    {
+        return $this->totalDiscounts;
+    }
+
+    /**
+     * Set total discounts
+     *
+     * @param Price $totalDiscounts
+     * @return $this
+     */
+    public function setTotalDiscounts(Price $totalDiscounts = null)
+    {
+        $this->totalDiscounts = $totalDiscounts;
+
+        $this->updateTotalDiscounts();
+
+        return $this;
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updateTotalDiscounts()
+    {
+        $this->totalDiscountsAmount = $this->totalDiscounts ? $this->totalDiscounts->getValue() : null;
     }
 }

@@ -57,7 +57,7 @@ class OroB2BOrderBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_4';
+        return 'v1_6';
     }
 
     /**
@@ -109,6 +109,11 @@ class OroB2BOrderBundleInstaller implements
         );
         $table->addColumn(
             'shipping_cost_amount',
+            'money',
+            ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
+        );
+        $table->addColumn(
+            'total_discounts_amount',
             'money',
             ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
