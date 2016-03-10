@@ -7,7 +7,6 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
-use OroB2B\Component\Checkout\Model\DTO\EntitySummaryDTO;
 
 class ShoppingListDataProvider implements CheckoutDataProviderInterface
 {
@@ -31,7 +30,7 @@ class ShoppingListDataProvider implements CheckoutDataProviderInterface
 
     /**
      * @param ShoppingList $shoppingList
-     * @return EntitySummaryDTO
+     * @return array
      */
     public function getData($shoppingList)
     {
@@ -63,9 +62,8 @@ class ShoppingListDataProvider implements CheckoutDataProviderInterface
         $totalPrice->setValue($generalTotal);
         $data['total'] = $totalPrice;
         $data['itemsCount'] = $items;
-        $head = ['Item', 'Quantity', 'Price'];
 
-        return new EntitySummaryDTO($head, $data);
+        return $data;
     }
 
     /**

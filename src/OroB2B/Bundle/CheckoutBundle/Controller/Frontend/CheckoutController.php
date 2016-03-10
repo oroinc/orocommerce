@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Controller\Frontend;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Util\ClassUtils;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -54,12 +55,12 @@ class CheckoutController extends Controller
             $checkout = new Checkout();
         }
         $page = $request->get('page', 1);
-        $checkoutSummaryData = $this->get('orob2b_checkout.data_provider.manager')->getData($checkout);
+        $data = $this->get('orob2b_checkout.data_provider.manager')->getData($checkout);
 
         return [
             'page' => $page,
             'data' =>
-                ['checkout' => $checkout, 'page' => $page, 'summary' => $checkoutSummaryData]
+                ['checkout' => $checkout, 'page' => $page, 'summary' => new ArrayCollection($data)]
         ];
     }
 }

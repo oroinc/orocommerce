@@ -2,13 +2,11 @@
 
 namespace OroB2B\Component\Checkout\DataProvider;
 
-use OroB2B\Component\Checkout\Model\DTO\EntitySummaryDTO;
-
 interface CheckoutDataProviderInterface
 {
     /**
      * @param object $entity
-     * @return EntitySummaryDTO
+     * @return array
      */
     public function getData($entity);
 

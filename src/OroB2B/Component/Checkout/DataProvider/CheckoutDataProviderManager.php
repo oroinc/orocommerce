@@ -5,7 +5,6 @@ namespace OroB2B\Component\Checkout\DataProvider;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Component\Checkout\Model\DTO\EntitySummaryDTO;
 
 class CheckoutDataProviderManager
 {
@@ -14,14 +13,14 @@ class CheckoutDataProviderManager
 
     // @TODO: Remove after Entity would be completed
     /** @var  ManagerRegistry */
-    protected $reg;
+    protected $registry;
 
     /**
-     * @param ManagerRegistry $reg
+     * @param ManagerRegistry $registry
      */
-    public function __construct(ManagerRegistry $reg)
+    public function __construct(ManagerRegistry $registry)
     {
-        $this->reg = $reg;
+        $this->registry = $registry;
     }
 
     /**
@@ -34,12 +33,12 @@ class CheckoutDataProviderManager
 
     /**
      * @param Checkout $checkout
-     * @return bool|EntitySummaryDTO
+     * @return bool|array
      */
     public function getData(Checkout $checkout)
     {
 //      @TODO: Remove after Entity would be completed
-        $entity = $this->reg->getRepository('OroB2BShoppingListBundle:ShoppingList')->findOneBy([]);
+        $entity = $this->registry->getRepository('OroB2BShoppingListBundle:ShoppingList')->findOneBy([]);
 //      @TODO: uncomment after Entity would be completed
 //      $entity = $checkout->getSourceEntity();
         foreach ($this->providers as $provider) {

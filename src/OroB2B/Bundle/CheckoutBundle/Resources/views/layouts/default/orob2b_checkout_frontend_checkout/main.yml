@@ -21,13 +21,13 @@ layout:
                     options:
                         visible: { @neq: [$context.page, 5] }
                         vars:
-                            summary_data: { @value: $data.summary.data}
+                            summary_data: { @value: $data.summary}
 
                 checkout_order_summary_table:
                     blockType: block
                     options:
                         vars:
-                            summary_data: { @value: $data.summary.data}
+                            summary_data: { @value: $data.summary}
             tree:
                 main:
                     checkout_content:
