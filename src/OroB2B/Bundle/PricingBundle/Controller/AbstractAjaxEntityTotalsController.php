@@ -8,7 +8,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
-class AbstractAjaxEntityTotalsController extends Controller
+abstract class AbstractAjaxEntityTotalsController extends Controller
 {
     /**
      * @param $entityId
@@ -44,12 +44,14 @@ class AbstractAjaxEntityTotalsController extends Controller
         $subtotals = count($subtotals) === 1 ? [] : $subtotals;
 
         $callbackFunction = function ($value) {
+
             return $value->toArray();
         };
         $totals = [
             'total' => $total,
             'subtotals' => array_map($callbackFunction, $subtotals)
         ];
+
         return $totals;
     }
 }
