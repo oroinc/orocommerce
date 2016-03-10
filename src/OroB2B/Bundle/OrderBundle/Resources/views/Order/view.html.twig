@@ -79,15 +79,15 @@
     {% endset %}
 
     {% set dataBlocks = dataBlocks|merge([{
-        'title': 'orob2b.order.sections.shipping_information'|trans,
+        'title': 'orob2b.order.sections.order_line_items'|trans,
         'priority': -150,
-        'subblocks': [{'data' : [shippingInformation]}]
+        'subblocks': [{'data' : [dataGrid.renderGrid('order-line-items-grid', { order_id: entity.id })]}]
     }]) %}
 
     {% set dataBlocks = dataBlocks|merge([{
-        'title': 'orob2b.order.sections.order_line_items'|trans,
+        'title': 'orob2b.order.sections.shipping_information'|trans,
         'priority': -100,
-        'subblocks': [{'data' : [dataGrid.renderGrid('order-line-items-grid', { order_id: entity.id })]}]
+        'subblocks': [{'data' : [shippingInformation]}]
     }]) %}
 
     {% set dataBlocks = dataBlocks|merge([{
