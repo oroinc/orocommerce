@@ -120,14 +120,16 @@ class AjaxLineItemControllerTest extends WebTestCase
                 'orob2b_shopping_list_add_products_to_new_massaction',
                 [
                     'gridName' => 'frontend-products-grid',
-                    'actionName' => 'orob2b_shoppinglist_frontend_addlineitemnew'
+                    'actionName' => 'orob2b_shoppinglist_frontend_addlineitemnew',
+                    '_widgetContainer' => 'dialog',
+                    '_wid' => 'test-uuid'
                 ]
             )
         );
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        $form = $crawler->selectButton('Save')->form();
+        $form = $crawler->selectButton('Create and Add')->form();
         $form['orob2b_shopping_list_type[label]'] = 'TestShoppingList';
 
         $this->client->request(
@@ -139,6 +141,7 @@ class AjaxLineItemControllerTest extends WebTestCase
                     'actionName' => 'orob2b_shoppinglist_frontend_addlineitemnew',
                     'inset' => 1,
                     'values' => $product->getId(),
+                    '_widgetContainer' => 'dialog',
                     '_wid' => 'test-uuid'
                 ]
             ),

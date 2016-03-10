@@ -98,8 +98,8 @@ parameters:
     orob2b.account.catalog.visibility.change_set.validatior.class: OroB2B\Bundle\AccountBundle\Validator\Constraints\VisibilityChangeSetValidator
 
     orob2b_account.provider.visibility_choices.class: OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider
-    orob2b_account.provider.sign_in.class: OroB2B\Bundle\AccountBundle\Provider\SignInDataProvider
-    orob2b_account.provider.frontend_account_user_registration_form.class: OroB2B\Bundle\AccountBundle\Provider\FrontendAccountUserRegistrationForm
+    orob2b_account.provider.sign_in.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\SignInProvider
+    orob2b_account.provider.frontend_account_user_registration_form.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRegistrationFormProvider
 
     orob2b_account.audit.discriminator_map_listener.class: OroB2B\Bundle\AccountBundle\Audit\DiscriminatorMapListener
 
@@ -141,6 +141,8 @@ parameters:
     orob2b_account.visibility.cache.product.cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\CacheBuilder
     orob2b_account.visibility.cache.product.category.cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\CacheBuilder
     orob2b_account.visibility.cache.cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\CompositeCacheBuilder
+
+    orob2b_account.doctrine.filters_listener.class: OroB2B\Bundle\AccountBundle\Doctrine\DoctrineFiltersListener
 
 services:
     orob2b_account.security.account_user_provider:
@@ -763,7 +765,7 @@ services:
         class: %orob2b_account.model.action.abstract_entity_aware_action.class%
         abstract: true
         arguments:
-            - @oro_workflow.context_accessor
+            - @oro_action.context_accessor
 
     orob2b_account.model.action.abstract_visibility_action:
         parent: orob2b_account.model.action.abstract_entity_aware_action
@@ -853,3 +855,11 @@ services:
             - @security.csrf.token_manager
         tags:
             - { name: layout.data_provider, alias: orob2b_account_sign_in }
+
+    orob2b_account.doctrine.filters_listener:
+        class: %orob2b_account.doctrine.filters_listener.class%
+        arguments:
+            - @doctrine
+            - @orob2b_frontend.request.frontend_helper
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onRequest }

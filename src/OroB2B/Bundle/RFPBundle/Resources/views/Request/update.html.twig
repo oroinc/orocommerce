@@ -29,15 +29,8 @@
     {% set id = 'request-edit' %}
 
     {% set lineItems %}
-        <div class="rfp-lineitems"
-             data-page-component-module="oroui/js/app/components/view-component"
-             data-page-component-options="{{ {
-                 view: 'orob2brfp/js/app/views/line-items-view'
-             }|json_encode }}"
-             data-layout="separate">
-            {{ form_widget(form.requestProducts) }}
-            {{ form_errors(form.requestProducts) }}
-        </div>
+        {{ form_widget(form.requestProducts) }}
+        {{ form_errors(form.requestProducts) }}
     {% endset %}
 
     {% set dataBlocks = [
@@ -96,7 +89,5 @@
         'dataBlocks': dataBlocks
     }%}
 
-    <div class="rfp-request-widget" data-page-component-module="orob2baccount/js/app/components/account-selection-component">
-        {{ parent() }}
-    </div>
+    {{ parent() }}
 {% endblock content_data %}

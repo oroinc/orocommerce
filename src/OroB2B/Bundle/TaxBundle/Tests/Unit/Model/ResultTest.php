@@ -121,4 +121,16 @@ class ResultTest extends \PHPUnit_Framework_TestCase
         $newResult = unserialize(serialize($result));
         $this->assertEquals([], $newResult->getTaxes());
     }
+
+    public function testLock()
+    {
+        $result = $this->createResultModel();
+        $this->assertFalse($result->isResultLocked());
+
+        $result->lockResult();
+        $this->assertTrue($result->isResultLocked());
+
+        $result->unlockResult();
+        $this->assertFalse($result->isResultLocked());
+    }
 }
