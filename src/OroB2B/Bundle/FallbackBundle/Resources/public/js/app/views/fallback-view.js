@@ -290,16 +290,20 @@ define(function(require) {
          * @param {Boolean} enable
          */
         enableDisableFallback: function($fallback, enable) {
-            var $fallbackContainer = $fallback.closest(this.options.selectors.itemFallback);
+            var $fallbackContainer = $fallback.inputWidget('getContainer');
 
             if (enable) {
                 $fallback.removeAttr('disabled');
 
-                $fallbackContainer.find('div.selector').removeClass('disabled');
+                if ($fallbackContainer) {
+                    $fallbackContainer.removeClass('disabled');
+                }
             } else {
                 $fallback.attr('disabled', 'disabled');
 
-                $fallbackContainer.find('div.selector').addClass('disabled');
+                if ($fallbackContainer) {
+                    $fallbackContainer.addClass('disabled');
+                }
             }
 
             $fallback.change();
@@ -440,9 +444,8 @@ define(function(require) {
          * Set fallback selector width depending of their content
          */
         fixFallbackWidth: function() {
-            this.$el.find(this.options.selectors.itemFallback)
-                .find('div.selector').width(this.options.fallbackWidth)
-                .find('span').width(this.options.fallbackWidth);
+            var $fallback = this.$el.find(this.options.selectors.itemFallback).find('select');
+            $fallback.inputWidget('setWidth', this.options.fallbackWidth);
         },
 
         /**
