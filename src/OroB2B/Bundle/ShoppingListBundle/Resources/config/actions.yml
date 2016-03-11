@@ -165,6 +165,10 @@ actions:
                 service: orob2b_shopping_list.shopping_list.manager
                 method: addLineItem
                 method_parameters: [$.lineItem, $.data, true, true]
+            - @call_service_method:
+                service: orob2b_shopping_list.shopping_list.manager
+                method: recalculateSubtotals
+                method_parameters: [$.data]
             - @refresh_grid: shopping-list-line-items-grid
             - @flash_message:
                 message: orob2b.shoppinglist.lineitem.flash.added
@@ -180,6 +184,7 @@ actions:
                 modal: true
         form_init:
             - @assign_value: [$.lineItem, $.data]
+            - @assign_value: [$.lineItem.shoppingList, $.data.shoppingList]
         functions:
             - @flash_message:
                 message: orob2b.shoppinglist.lineitem.flash.updated
@@ -191,6 +196,10 @@ actions:
         datagrids:
             - shopping-list-line-items-grid
         functions:
+            - @call_service_method:
+                service: orob2b_shopping_list.shopping_list.manager
+                method: recalculateSubtotals
+                method_parameters: [$.data.shoppingList]
             - @refresh_grid: shopping-list-line-items-grid
 
     orob2b_shoppinglist_frontend_action_request_quote:

@@ -5,19 +5,19 @@ namespace OroB2B\Bundle\InvoiceBundle\EventListener;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 
 use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
-use OroB2B\Bundle\PricingBundle\Provider\LineItemsSubtotalProvider;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 
 class InvoiceFormListener
 {
     /**
-     * @var LineItemsSubtotalProvider
+     * @var LineItemSubtotalProvider
      */
     protected $subtotalProvider;
 
     /**
-     * @param LineItemsSubtotalProvider $subtotalProvider
+     * @param LineItemSubtotalProvider $subtotalProvider
      */
-    public function __construct(LineItemsSubtotalProvider $subtotalProvider)
+    public function __construct(LineItemSubtotalProvider $subtotalProvider)
     {
         $this->subtotalProvider = $subtotalProvider;
     }

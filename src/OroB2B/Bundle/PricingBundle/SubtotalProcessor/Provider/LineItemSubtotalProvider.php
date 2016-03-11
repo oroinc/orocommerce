@@ -1,39 +1,56 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Provider;
+namespace OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use OroB2B\Bundle\PricingBundle\Entity\QuantityAwareInterface;
-use OroB2B\Bundle\PricingBundle\Model\LineItemsAwareInterface;
-use OroB2B\Bundle\PricingBundle\Model\LineItemsSubtotal;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
-class LineItemsSubtotalProvider
+class LineItemSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
-    /**
-     * @var TranslatorInterface
-     */
+    const TYPE = 'subtotal';
+    const NAME = 'orob2b.pricing.subtotals.subtotal';
+
+    /** @var TranslatorInterface */
     protected $translator;
 
-    /**
-     * @var RoundingServiceInterface
-     */
+    /** @var RoundingServiceInterface */
     protected $rounding;
 
     /**
      * @param TranslatorInterface $translator
      * @param RoundingServiceInterface $rounding
      */
-    public function __construct(TranslatorInterface $translator, RoundingServiceInterface $rounding)
-    {
+    public function __construct(
+        TranslatorInterface $translator,
+        RoundingServiceInterface $rounding
+    ) {
         $this->translator = $translator;
         $this->rounding = $rounding;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return self::NAME;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isSupported($entity)
+    {
+        return $entity instanceof LineItemsAwareInterface;
     }
 
     /**
@@ -41,26 +58,25 @@ class LineItemsSubtotalProvider
      *
      * @param LineItemsAwareInterface $entity
      *
-     * @return LineItemsSubtotal
+     * @return Subtotal
      */
-    public function getSubtotal(LineItemsAwareInterface $entity)
+    public function getSubtotal($entity)
     {
         $subtotalAmount = 0.0;
-        $subtotal = new LineItemsSubtotal();
-        $subtotal->setLabel($this->translator->trans('orob2b.pricing.lineitem.subtotal.label'));
+        $subtotal = new Subtotal();
+        $subtotal->setLabel($this->translator->trans(self::NAME . '.label'));
+        $subtotal->setVisible(false);
+        $subtotal->setType(self::TYPE);
 
         $baseCurrency = $this->getBaseCurrency($entity);
         foreach ($entity->getLineItems() as $lineItem) {
-            if (!$lineItem instanceof PriceAwareInterface || !$lineItem->getPrice() instanceof Price) {
-                continue;
+            if ($lineItem instanceof PriceAwareInterface && $lineItem->getPrice() instanceof Price) {
+                $subtotalAmount += $this->getRowTotal($lineItem, $baseCurrency);
+                $subtotal->setVisible(true);
             }
-
-            $subtotalAmount += $this->getRowTotal($lineItem, $baseCurrency);
         }
 
-        $subtotal->setAmount(
-            $this->rounding->round($subtotalAmount)
-        );
+        $subtotal->setAmount($this->rounding->round($subtotalAmount));
         $subtotal->setCurrency($baseCurrency);
 
         return $subtotal;
@@ -88,31 +104,5 @@ class LineItemsSubtotalProvider
         }
 
         return $rowTotal;
-    }
-
-    /**
-     * @param $entity
-     * @return string
-     */
-    protected function getBaseCurrency($entity)
-    {
-        if (!$entity instanceof CurrencyAwareInterface) {
-            return 'USD';
-        } else {
-            return $entity->getCurrency();
-        }
-    }
-
-    /**
-     * @param string $fromCurrency
-     * @param string $toCurrency
-     * @return float
-     */
-    protected function getExchangeRate($fromCurrency, $toCurrency)
-    {
-        /**
-         * TODO: Need to define currency exchange logic. BB-124
-         */
-        return 1.0;
     }
 }

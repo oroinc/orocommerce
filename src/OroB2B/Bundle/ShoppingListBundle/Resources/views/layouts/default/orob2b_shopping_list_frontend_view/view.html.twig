@@ -312,3 +312,18 @@
             <i class="fa icon-trash mmr5-md"></i> {{ 'orob2b.frontend.shoppinglist.btn.delete'|trans }}
         </button>
 {% endblock %}
+
+{% block _shopping_list_totals_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    <div class="order-checkout-widget__container-wrapper">
+        <div class="order-checkout-widget__container order-checkout-widget__container_lg" {{ UI.renderPageComponentAttributes({
+            module: 'orob2bpricing/js/app/components/frontend-entity-totals-component',
+            options: {
+                eventsName: ['frontend:item:delete', 'frontend:shopping-list-item-quantity:update'],
+                entityClassName: 'OroB2B\\Bundle\\ShoppingListBundle\\Entity\\ShoppingList',
+                entityId: shoppingList.id
+            }
+        }) }} data-container="totals">
+        </div>
+    </div>
+{% endblock %}

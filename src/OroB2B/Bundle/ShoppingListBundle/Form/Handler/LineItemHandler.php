@@ -94,6 +94,7 @@ class LineItemHandler
                     );
 
                     $manager->persist($lineItem);
+                    $this->shoppingListManager->recalculateSubtotals($lineItem->getShoppingList(), false);
                 }
 
                 $manager->flush();

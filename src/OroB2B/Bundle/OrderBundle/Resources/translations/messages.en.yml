@@ -131,9 +131,8 @@ orob2b:
                 manual: Enter address manually
 
         subtotals:
-            subtotal: Subtotal
             shipping_cost: Shipping Cost
-            total: Total
+
         sales_orders.label: 'Sales Orders'
 
         navigation:
