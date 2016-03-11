@@ -33,9 +33,8 @@ layout:
                     blockType: container
                     options:
                         visible: { @neq: [$context.workflowStepName, 'place_order'] }
-                    	vars:
+                        vars:
                             summary_data: { @value: $data.orob2b_checkout_summary}
-
                 checkout_order_summary_table:
                     blockType: block
                     options:
