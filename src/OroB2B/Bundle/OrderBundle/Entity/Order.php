@@ -361,6 +361,22 @@ class Order extends ExtendOrder implements
     protected $totalDiscounts;
 
     /**
+     * @var Collection|OrderDiscount[]
+     *
+     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\OrderBundle\Entity\OrderDiscount",
+     *      mappedBy="order", cascade={"ALL"}, orphanRemoval=true
+     * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $discounts;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -368,6 +384,7 @@ class Order extends ExtendOrder implements
         parent::__construct();
 
         $this->lineItems = new ArrayCollection();
+        $this->discounts = new ArrayCollection();
     }
 
     /**
@@ -917,5 +934,58 @@ class Order extends ExtendOrder implements
     public function updateTotalDiscounts()
     {
         $this->totalDiscountsAmount = $this->totalDiscounts ? $this->totalDiscounts->getValue() : null;
+    }
+
+    /**
+     * @param OrderDiscount $discount
+     *
+     * @return bool
+     */
+    public function hasDiscount(OrderDiscount $discount)
+    {
+        return $this->discounts->contains($discount);
+    }
+
+    /**
+     * Add line item
+     *
+     * @param OrderDiscount $discount
+     *
+     * @return Order
+     */
+    public function addDiscount(OrderDiscount $discount)
+    {
+        if (!$this->hasDiscount($discount)) {
+            $this->discounts[] = $discount;
+            $discount->setOrder($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove line item
+     *
+     * @param OrderDiscount $discount
+     *
+     * @return Order
+     */
+    public function removeDiscount(OrderDiscount $discount)
+    {
+        if ($this->hasDiscount($discount)) {
+            $this->discounts->removeElement($discount);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get orderProducts
+     *
+     * @return Collection|OrderDiscount[]
+     */
+    public function getDiscounts()
+    {
+        return $this->discounts;
     }
 }
