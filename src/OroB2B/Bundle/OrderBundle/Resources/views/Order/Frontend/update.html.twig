@@ -54,6 +54,21 @@
                 selectors: {form: '#' ~ form.vars.id}
                 }
         } only %}
+
+        <div class="order-checkout-widget__container-wrapper">
+            <div class="order-checkout-widget__container order-checkout-widget__container_lg" {{ UI.renderPageComponentAttributes({
+                module: 'orob2bpricing/js/app/components/frontend-entity-totals-component',
+                options: {
+                    eventsName: [
+                        'frontend:item:delete',
+                        'frontend:shopping-list-item-quantity:update'
+                    ],
+                    entityClassName: 'OroB2B\\Bundle\\OrderBundle\\Entity\\Order',
+                    entityId: form.vars.value.id
+                }
+            }) }} data-container="totals">
+            </div>
+        </div>
     {% endset %}
 
     {% set lineItems %}

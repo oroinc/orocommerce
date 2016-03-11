@@ -319,7 +319,10 @@
         <div class="order-checkout-widget__container order-checkout-widget__container_lg" {{ UI.renderPageComponentAttributes({
             module: 'orob2bpricing/js/app/components/frontend-entity-totals-component',
             options: {
-                eventsName: ['frontend:item:delete', 'frontend:shopping-list-item-quantity:update'],
+                eventsName: [
+                    'frontend:item:delete',
+                    'frontend:shopping-list-item-quantity:update'
+                ],
                 entityClassName: 'OroB2B\\Bundle\\ShoppingListBundle\\Entity\\ShoppingList',
                 entityId: shoppingList.id
             }
