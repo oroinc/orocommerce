@@ -171,9 +171,10 @@
                 <thead>
                 <tr>
                     <th></th>
-                    <th><span>Main</span></th>
-                    <th><span>Additional</span></th>
-                    <th><span>Thumbnail</span></th>
+                    {% for imageTypeConfig in form.vars.imageTypeConfigs %}
+                        <th><span>{{ imageTypeConfig.label|trans }}</span></th>
+                    {% endfor %}
+
                     {% if form.vars.allow_delete %}
                         <th></th>
                     {% endif %}
@@ -210,7 +211,7 @@
 
         <td><div class="pull-left">{{ form_widget(form.image) }}</div></td>
 
-        {% for imageType in form.vars.imageTypes %}
+        {% for imageType in form.vars.imageTypeConfigs|keys %}
             <td><div class="pull-left pull-left-extra">{{ form_widget(form[imageType]) }}</div></td>
         {% endfor %}
 

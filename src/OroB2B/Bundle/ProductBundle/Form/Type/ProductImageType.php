@@ -6,11 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Component\Layout\Extension\Theme\Model\Theme;
-use Oro\Component\Layout\Extension\Theme\Model\ThemeManager;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
 
@@ -19,27 +15,13 @@ class ProductImageType extends AbstractType
     const NAME = 'orob2b_product_image';
 
     /**
-     * @var Theme
-     */
-    private $theme;
-
-    /**
-     * @param ThemeManager $themeManager
-     * @param RequestStack $requestStack
-     */
-    public function __construct(ThemeManager $themeManager, RequestStack $requestStack)
-    {
-        $this->theme = $themeManager->getTheme($requestStack->getCurrentRequest()->attributes->get('_theme'));
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('image', 'oro_image');
 
-        foreach ($this->getImageTypes() as $imageType => $config) {
+        foreach ($options['image_type_configs'] as $imageType => $config) {
             $isRadioButton = $config['max_number'] === 1;
 
             $builder->add(
@@ -60,10 +42,12 @@ class ProductImageType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => 'OroB2B\Bundle\ProductBundle\Entity\ProductImage',
-            'image_types' => array_keys($this->getImageTypes()),
+            'image_type_configs' => [],
         ]);
 
-        $resolver->setAllowedTypes('image_types', 'array');
+        $resolver->setRequired('image_type_configs')
+                 ->setAllowedTypes('image_type_configs', 'array');
+
     }
 
     /**
@@ -71,7 +55,7 @@ class ProductImageType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['imageTypes'] = $options['image_types'];
+        $view->vars['imageTypeConfigs'] = $options['image_type_configs'];
     }
 
     /**
@@ -80,13 +64,5 @@ class ProductImageType extends AbstractType
     public function getName()
     {
         return self::NAME;
-    }
-
-    /**
-     * @return string[]
-     */
-    private function getImageTypes()
-    {
-        return $this->theme->getDataByKey('images')['types'];
     }
 }
