@@ -33,7 +33,7 @@ class SubtotalProviderPass implements CompilerPassInterface
             $providers[$priority][] = $serviceId;
         }
 
-        krsort($providers);
+        ksort($providers);
         $providers = call_user_func_array('array_merge', $providers);
 
         $registryDefinition = $container->getDefinition(self::REGISTRY_SERVICE);

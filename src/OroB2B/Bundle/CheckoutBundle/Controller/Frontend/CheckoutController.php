@@ -10,6 +10,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
+
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
@@ -24,16 +27,9 @@ class CheckoutController extends Controller
      * @Route(
      *     "/{id}",
      *     name="orob2b_checkout_frontend_checkout",
-     *     defaults={"id" = null},
      *     requirements={"id"="\d+"}
      * )
-     * @ParamConverter(
-     *     "checkout",
-     *     class="OroB2BCheckoutBundle:Checkout",
-     *     isOptional="true",
-     *     options={"id" = "id"}
-     *     )
-     * @Layout(vars={"page"})
+     * @Layout(vars={"workflowStepName", "workflowStepOrder","checkout"})
      * @Acl(
      *      id="orob2b_checkout_frontend_checkout",
      *      type="entity",
@@ -42,57 +38,22 @@ class CheckoutController extends Controller
      *      group_name="commerce"
      * )
      *
-     * @param Checkout|null $checkout
-     * @param Request $request
+     * @param Checkout $checkout
      * @return array
      */
-    public function checkoutAction(Request $request, Checkout $checkout = null)
+    public function checkoutAction(Checkout $checkout)
     {
-        if (!$checkout) {
-            $checkout = new Checkout();
-        }
-        $page = $request->query->get('page', 1);
-        $user = $this->getUser();
-        $data = ['checkout' => $checkout, 'page' => $page];
-        $checkout->setAccountUser($user);
-        if (in_array($page, [1, 2])) {
-            $formBuilder = $this->createFormBuilder();
-            $formBuilder->add(
-                'saveAddress',
-                'checkbox',
-                [
-                    'label' => 'Save Address',
-                    'required' => false,
-                ]
-            );
-            $addressType = AddressType::TYPE_SHIPPING;
-            if ($page == 1) {
-                $formBuilder->add(
-                    'useAsShipAddress',
-                    'checkbox',
-                    [
-                        'label' => 'Ship to this address',
-                        'required' => false,
-                    ]
-                );
-                $addressType = AddressType::TYPE_BILLING;
-            }
-            $formBuilder->add(
-                'address',
-                CheckoutAddressType::NAME,
-                [
-                    'object' => $checkout,
-                    'addressType' => $addressType,
-                    'isEditEnabled' => true
-                ]
-            );
-
-            $data['form'] = new FormAccessor($formBuilder->getForm());
-        }
+        $currentStep = $checkout->getWorkflowStep();
 
         return [
-            'page' => $page,
-            'data' => $data,
+            'workflowStepName' => $currentStep->getName(),
+            'workflowStepOrder' => $currentStep->getStepOrder(),
+            'checkout' => $checkout,
+            'data' =>
+                [
+                    'checkout' => $checkout,
+                    'workflowStep' => $currentStep
+                ]
         ];
     }
 }

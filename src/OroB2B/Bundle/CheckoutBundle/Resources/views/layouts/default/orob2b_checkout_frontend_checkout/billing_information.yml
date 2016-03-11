@@ -12,21 +12,23 @@ layout:
                     blockType: container
                     options:
                         vars:
-                            form: { @value: $data.form }
+                            checkout: { @value: $data.checkout }
+                            workflowStep: { @value: $data.workflowStep }
+                            form: { @value: $data.orob2b_checkout_transition_form }
                 checkout_billing_form_start:
                     blockType: form_start
                     options:
-                        form: { @value: $data.form }
+                        form: { @value: $data.orob2b_checkout_transition_form }
                 checkout_billing_form_fields:
                     blockType: form
                     options:
-                        form: { @value: $data.form }
+                        form: { @value: $data.orob2b_checkout_transition_form }
                 checkout_billing_form_button:
                     blockType: block
                 checkout_billing_form_end:
                     blockType: form_end
                     options:
-                        form: { @value: $data.form }
+                        form: { @value: $data.orob2b_checkout_transition_form }
             tree:
                 checkout_information:
                     checkout_billing_information:
@@ -36,4 +38,4 @@ layout:
                             checkout_billing_form_button: ~
                             checkout_billing_form_end: ~
     conditions:
-        @eq: [$context.page, 1]
+        @eq: [$context.workflowStepName, 'enter_billing_address']

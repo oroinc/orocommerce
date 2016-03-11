@@ -8,11 +8,10 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\OrderBundle\Model\Subtotal;
 use OroB2B\Bundle\OrderBundle\Provider\SubtotalLineItemProvider;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
-class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
+class SubtotalLineItemProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var SubtotalLineItemProvider
