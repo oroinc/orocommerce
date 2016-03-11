@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -25,6 +26,7 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -58,7 +60,8 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             $this->getRoundingService(),
             $this->getTotalProcessorProvider(),
             $this->getLineItemNotPricedSubtotalProvider(),
-            $this->getLocaleSettings()
+            $this->getLocaleSettings(),
+            $this->getWebsite()
         );
     }
 
@@ -209,7 +212,8 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             $this->getRoundingService(),
             $totalProcessorProvider,
             $lineItemSubtotalProvider,
-            $this->getLocaleSettings()
+            $this->getLocaleSettings(),
+            $this->getWebsite()
         );
 
         $shoppingList = new ShoppingList();
@@ -277,7 +281,8 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             $this->getRoundingService(),
             $this->getTotalProcessorProvider(),
             $this->getLineItemNotPricedSubtotalProvider(),
-            $this->getLocaleSettings()
+            $this->getLocaleSettings(),
+            $this->getWebsite()
         );
 
         $this->assertEquals(
@@ -458,6 +463,26 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         return $localSettings;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|WebsiteManager
+     */
+    protected function getWebsite()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|WebsiteManager $websiteManager */
+        $websiteManager = $this->getMockBuilder('OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $website = $this->getMockBuilder('OroB2B\Bundle\WebsiteBundle\Entity\Website')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $websiteManager->expects($this->any())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+
+        return $websiteManager;
     }
 
     /**
