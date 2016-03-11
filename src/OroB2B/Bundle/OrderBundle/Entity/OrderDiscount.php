@@ -9,7 +9,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Table("orob2b_order_discount")
- * @ORM\HasLifecycleCallbacks()
  * @Config(
  *       defaultValues={
  *          "entity"={
@@ -34,13 +33,6 @@ class OrderDiscount
      * @var string
      *
      * @ORM\Column(name="description", type="text", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $description;
 

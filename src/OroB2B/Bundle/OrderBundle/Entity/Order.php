@@ -352,7 +352,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
     protected $totalDiscounts;
 
     /**
-     * @var Collection|OrderLineItem[]
+     * @var Collection|OrderDiscount[]
      *
      * @ORM\OneToMany(targetEntity="OroB2B\Bundle\OrderBundle\Entity\OrderDiscount",
      *      mappedBy="order", cascade={"ALL"}, orphanRemoval=true
