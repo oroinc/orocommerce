@@ -132,6 +132,7 @@ orob2b:
 
         subtotals:
             shipping_cost: Shipping Cost
+            discount: Discount
 
         sales_orders.label: 'Sales Orders'
 

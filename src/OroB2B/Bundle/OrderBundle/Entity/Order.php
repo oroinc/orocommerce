@@ -18,6 +18,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\OrderBundle\Model\DiscountAwareInterface;
 use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
@@ -64,7 +65,8 @@ class Order extends ExtendOrder implements
     AccountOwnerAwareInterface,
     LineItemsAwareInterface,
     ShippingAwareInterface,
-    CurrencyAwareInterface
+    CurrencyAwareInterface,
+    DiscountAwareInterface
 {
     /**
      * @var integer
@@ -947,7 +949,7 @@ class Order extends ExtendOrder implements
     }
 
     /**
-     * Add line item
+     * Add discount
      *
      * @param OrderDiscount $discount
      *
@@ -964,7 +966,7 @@ class Order extends ExtendOrder implements
     }
 
     /**
-     * Remove line item
+     * Remove discount
      *
      * @param OrderDiscount $discount
      *
@@ -980,7 +982,7 @@ class Order extends ExtendOrder implements
     }
 
     /**
-     * Get orderProducts
+     * Get order discounts
      *
      * @return Collection|OrderDiscount[]
      */

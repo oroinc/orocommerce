@@ -48,7 +48,7 @@ class OroB2BOrderBundle implements Migration
     {
         $table = $schema->createTable('orob2b_order_discount');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('order_id', 'integer', ['notnull' => false]);
+        $table->addColumn('order_id', 'integer', ['notnull' => true]);
         $table->addColumn('description', 'text', ['notnull' => false]);
         $table->addColumn(
             'percent',
@@ -58,7 +58,7 @@ class OroB2BOrderBundle implements Migration
         $table->addColumn(
             'amount',
             'money',
-            ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
+            ['notnull' => true, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
         $table->addIndex(['order_id'], 'IDX_F9A53B6A8D9F6D38', []);
         $table->setPrimaryKey(['id']);
