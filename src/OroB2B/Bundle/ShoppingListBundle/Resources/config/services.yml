@@ -150,13 +150,3 @@ services:
         class: %orob2b_shopping_list.layout.block.type.shopping_list_selector.class%
         tags:
              - { name: layout.block_type, alias: shopping_list_selector }
-
-    orob2b_shopping_list.event_listener.frontend_product_unit_datagrid:
-        class: %orob2b_shopping_list.event_listener.frontend_product_unit_datagrid.class%
-        arguments:
-            - @translator
-            - @oro_entity.doctrine_helper
-            - @orob2b_product.formatter.product_unit_label
-        tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-products-grid, method: onBuildBefore }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }

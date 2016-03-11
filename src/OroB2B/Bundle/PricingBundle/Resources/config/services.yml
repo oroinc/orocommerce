@@ -328,6 +328,8 @@ services:
             - @translator
             - @orob2b_pricing.model.price_list_request_handler
             - @oro_locale.formatter.number
+            - @orob2b_product.formatter.product_unit_label
+            - @orob2b_pricing.provider.user_currency
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-products-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }
