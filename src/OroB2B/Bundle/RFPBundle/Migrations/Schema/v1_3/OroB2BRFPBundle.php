@@ -14,9 +14,6 @@ class OroB2BRFPBundle implements Migration
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        /** Table Modification */
-        $this->addDeletedAtColumn($schema);
-
         /** Tables generation **/
         $this->createOroRfpAssignedAccUsersTable($schema);
         $this->createOroRfpAssignedUsersTable($schema);
@@ -24,16 +21,6 @@ class OroB2BRFPBundle implements Migration
         /** Foreign keys generation **/
         $this->addOroRfpAssignedAccUsersForeignKeys($schema);
         $this->addOroRfpAssignedUsersForeignKeys($schema);
-    }
-
-    /**
-     * @param Schema $schema
-     * @throws \Doctrine\DBAL\Schema\SchemaException
-     */
-    protected function addDeletedAtColumn(Schema $schema)
-    {
-        $table = $schema->getTable('orob2b_rfp_request');
-        $table->addColumn('deleted_at', 'datetime', ['notnull' => false, 'comment' => '(DC2Type:datetime)']);
     }
 
     /**
