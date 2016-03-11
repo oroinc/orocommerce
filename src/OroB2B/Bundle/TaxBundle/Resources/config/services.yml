@@ -22,7 +22,7 @@ parameters:
     orob2b_tax.event_listener.config.digital_products.class: OroB2B\Bundle\TaxBundle\EventListener\Config\DigitalProductEventListener
 
     orob2b_tax.event_listener.tax_value.class: OroB2B\Bundle\TaxBundle\EventListener\TaxValueListener
-    orob2b_tax.event_listener.order_tax.class: OroB2B\Bundle\TaxBundle\EventListener\Order\OrderTaxListener
+    orob2b_tax.event_listener.entity_tax.class: OroB2B\Bundle\TaxBundle\EventListener\EntityTaxListener
     orob2b_tax.event_listener.grid.order_line_item.class: OroB2B\Bundle\TaxBundle\EventListener\Order\OrderLineItemGridListener
     orob2b_tax.event_listener.view.order.class: OroB2B\Bundle\TaxBundle\EventListener\Order\OrderViewListener
 
@@ -498,7 +498,7 @@ services:
             - { name: doctrine.orm.entity_listener, entity: %orob2b_tax.entity.tax_value.class%, event: postRemove }
 
     orob2b_tax.event_listener.order_tax:
-        class: %orob2b_tax.event_listener.order_tax.class%
+        class: %orob2b_tax.event_listener.entity_tax.class%
         arguments:
             - @orob2b_tax.manager.tax_manager
         tags:
@@ -506,3 +506,13 @@ services:
             - { name: doctrine.orm.entity_listener, entity: %orob2b_order.entity.order.class%, event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: %orob2b_order.entity.order.class%, event: preFlush }
             - { name: doctrine.orm.entity_listener, entity: %orob2b_order.entity.order.class%, event: preRemove }
+
+    orob2b_tax.event_listener.order_line_item_tax:
+        class: %orob2b_tax.event_listener.entity_tax.class%
+        arguments:
+            - @orob2b_tax.manager.tax_manager
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: %orob2b_order.entity.order_line_item.class%, event: prePersist }
+            - { name: doctrine.orm.entity_listener, entity: %orob2b_order.entity.order_line_item.class%, event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: %orob2b_order.entity.order_line_item.class%, event: preFlush }
+            - { name: doctrine.orm.entity_listener, entity: %orob2b_order.entity.order_line_item.class%, event: preRemove }

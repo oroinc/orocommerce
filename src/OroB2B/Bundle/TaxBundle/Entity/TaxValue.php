@@ -47,7 +47,7 @@ class TaxValue implements DatesAwareInterface
     /**
      * @var int
      *
-     * @ORM\Column(name="entity_id", type="integer")
+     * @ORM\Column(name="entity_id", type="integer", nullable=true)
      */
     protected $entityId;
 

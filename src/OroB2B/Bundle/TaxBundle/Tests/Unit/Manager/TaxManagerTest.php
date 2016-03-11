@@ -316,7 +316,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
             ->method('saveTaxValue')
             ->with($taxValue);
 
-        $this->manager->saveTax($entity);
+        $this->manager->saveTax($entity, true);
     }
 
     public function testSaveTaxWithItemsNewEntity()
@@ -429,7 +429,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
             ->withConsecutive($itemTaxValue, $taxValue)
             ->willReturn(true);
 
-        $this->assertTrue($this->manager->removeTax($entity));
+        $this->assertTrue($this->manager->removeTax($entity, true));
     }
 
     public function testCrateTaxValue()

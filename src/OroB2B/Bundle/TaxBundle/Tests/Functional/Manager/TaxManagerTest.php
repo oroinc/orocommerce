@@ -114,10 +114,10 @@ class TaxManagerTest extends WebTestCase
     {
         $manager = $this->getContainer()->get('orob2b_tax.manager.tax_manager');
 
-        $this->compareResult($expectedResult, $manager->{$method}($object));
+        $this->compareResult($expectedResult, $manager->{$method}($object, true));
 
         // cache trigger
-        $this->compareResult($expectedResult, $manager->{$method}($object));
+        $this->compareResult($expectedResult, $manager->{$method}($object, true));
     }
 
     /**

@@ -116,7 +116,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
     public function testSerializeWithoutItems()
     {
         $result = $this->createResultModel();
-        $result->offsetUnset(Result::TAXES);
+        $result->unsetOffset(Result::TAXES);
 
         $newResult = unserialize(serialize($result));
         $this->assertEquals([], $newResult->getItems());

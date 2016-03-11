@@ -1,7 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\EventListener\Order;
+namespace OroB2B\Bundle\TaxBundle\Tests\Unit\EventListener;
 
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
@@ -10,23 +11,25 @@ use Doctrine\ORM\Event\PreFlushEventArgs;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
 use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
-use OroB2B\Bundle\TaxBundle\EventListener\Order\OrderTaxListener;
+use OroB2B\Bundle\TaxBundle\EventListener\EntityTaxListener;
 
-class OrderTaxListenerTest extends \PHPUnit_Framework_TestCase
+class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
     /** @var TaxManager|\PHPUnit_Framework_MockObject_MockObject */
     protected $taxManager;
 
-    /** @var OrderTaxListener */
+    /** @var EntityTaxListener */
     protected $listener;
 
     /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject */
     protected $entityManager;
+
+    /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject */
+    protected $metadata;
 
     protected function setUp()
     {
@@ -38,7 +41,10 @@ class OrderTaxListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new OrderTaxListener($this->taxManager);
+        $this->metadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
+        $this->entityManager->expects($this->any())->method('getClassMetadata')->willReturn($this->metadata);
+
+        $this->listener = new EntityTaxListener($this->taxManager);
     }
 
     protected function tearDown()
@@ -65,6 +71,26 @@ class OrderTaxListenerTest extends \PHPUnit_Framework_TestCase
             ->method('persist')
             ->with($taxValue);
 
+        $this->metadata->expects($this->any())->method('getIdentifierValues')->willReturn([]);
+
+        $this->listener->prePersist($order, $event);
+
+        $this->assertEquals(0, $taxValue->getEntityId());
+    }
+
+    public function testPrePersistWithId()
+    {
+        $order = new Order();
+        $taxValue = new TaxValue();
+        $taxValue
+            ->setEntityClass(ClassUtils::getRealClass($order));
+
+        $event = new LifecycleEventArgs($order, $this->entityManager);
+
+        $this->taxManager->expects($this->never())->method('createTaxValue');
+
+        $this->metadata->expects($this->any())->method('getIdentifierValues')->willReturn([1]);
+
         $this->listener->prePersist($order, $event);
 
         $this->assertEquals(0, $taxValue->getEntityId());
@@ -73,14 +99,13 @@ class OrderTaxListenerTest extends \PHPUnit_Framework_TestCase
     public function testPreRemove()
     {
         $order = new Order();
-        $event = new LifecycleEventArgs($order, $this->entityManager);
 
         $this->taxManager
             ->expects($this->once())
             ->method('removeTax')
             ->with($order);
 
-        $this->listener->preRemove($order, $event);
+        $this->listener->preRemove($order);
     }
 
     public function testPostPersistWithoutTaxValue()
@@ -130,13 +155,13 @@ class OrderTaxListenerTest extends \PHPUnit_Framework_TestCase
 
         $uow->expects($this->once())
             ->method('scheduleExtraUpdate')
-            ->with($taxValue, [
-                'entityId' => [null, $orderId]
-            ]);
+            ->with($taxValue, ['entityId' => [null, $orderId]]);
 
         $this->entityManager->expects($this->once())
             ->method('getUnitOfWork')
             ->willReturn($uow);
+
+        $this->metadata->expects($this->any())->method('getIdentifierValues')->willReturn([$orderId]);
 
         $this->listener->postPersist($order, $event);
 
@@ -145,37 +170,17 @@ class OrderTaxListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testPreFlush()
     {
+        $orderId = 1;
         /** @var Order $order */
-        $order = $this->getEntity('\OroB2B\Bundle\OrderBundle\Entity\Order', ['id' => 1]);
-
-        $newLineItem = new OrderLineItem();
-        $order->addLineItem($newLineItem);
-
-        /** @var OrderLineItem $existsLineItem */
-        $existsLineItem = $this->getEntity('\OroB2B\Bundle\OrderBundle\Entity\OrderLineItem', ['id' => 100]);
-        $order->addLineItem($existsLineItem);
+        $order = $this->getEntity('\OroB2B\Bundle\OrderBundle\Entity\Order', ['id' => $orderId]);
 
         $event = new PreFlushEventArgs($this->entityManager);
 
-        $this->taxManager->expects($this->exactly(2))
-            ->method('saveTax')
-            ->withConsecutive(
-                [$order, false],
-                [$existsLineItem]
-            );
-
-        $newLineItemTaxValue = new TaxValue();
-        $newLineItemTaxValue
-            ->setEntityClass(ClassUtils::getRealClass($newLineItem));
-
         $this->taxManager->expects($this->once())
-            ->method('createTaxValue')
-            ->with($newLineItem)
-            ->willReturn($newLineItemTaxValue);
+            ->method('saveTax')
+            ->with($order, false);
 
-        $this->entityManager->expects($this->once())
-            ->method('persist')
-            ->with($newLineItemTaxValue);
+        $this->metadata->expects($this->any())->method('getIdentifierValues')->willReturn([$orderId]);
 
         $this->listener->preFlush($order, $event);
     }

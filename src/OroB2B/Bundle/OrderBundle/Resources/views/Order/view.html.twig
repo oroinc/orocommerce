@@ -49,16 +49,10 @@
         {
             'title': 'orob2b.order.sections.general'|trans,
             'class': 'active',
-            'priority': -20,
+            'priority': -200,
             'subblocks': generalSectionBlocks
         }
     ] %}
-
-    {% set dataBlocks = dataBlocks|merge([{
-        'title': 'orob2b.order.sections.order_line_items'|trans,
-        'priority': -10,
-        'subblocks': [{'data' : [dataGrid.renderGrid('order-line-items-grid', { order_id: entity.id })]}]
-    }]) %}
 
     {% set orderTotals %}
         <div class="widget-content totals-container">
@@ -78,26 +72,27 @@
     {% set shippingInformation %}
         {% if entity.shippingCost is not null %}
             {{ UI.renderHtmlProperty('orob2b.order.shipping_cost.label'|trans,
-                    entity.shippingCost.value|oro_format_currency({'currency': entity.shippingCost.currency})) }}
+            entity.shippingCost.value|oro_format_currency({'currency': entity.shippingCost.currency})) }}
         {% else %}
             {{ UI.renderHtmlProperty('orob2b.order.shipping_cost.label'|trans, 'N/A'|trans) }}
         {% endif %}
     {% endset %}
 
     {% set dataBlocks = dataBlocks|merge([{
-        'title': 'orob2b.order.sections.shipping_information'|trans,
-        'subblocks': [{'data' : [shippingInformation]}]
+        'title': 'orob2b.order.sections.order_line_items'|trans,
+        'priority': -150,
+        'subblocks': [{'data' : [dataGrid.renderGrid('order-line-items-grid', { order_id: entity.id })]}]
     }]) %}
 
-    {# @todo: https://magecore.atlassian.net/browse/BB-1752 #}
-    {% import 'OroB2BTaxBundle::macros.html.twig' as TAX %}
     {% set dataBlocks = dataBlocks|merge([{
-        'title': 'Taxes'|trans,
-        'subblocks': [{'data' : [TAX.renderResult(taxes)]}]
+        'title': 'orob2b.order.sections.shipping_information'|trans,
+        'priority': -100,
+        'subblocks': [{'data' : [shippingInformation]}]
     }]) %}
 
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'orob2b.order.sections.order_totals'|trans,
+        'priority': -50,
         'subblocks': [{'data' : [orderTotals]}]
     }]) %}
 
