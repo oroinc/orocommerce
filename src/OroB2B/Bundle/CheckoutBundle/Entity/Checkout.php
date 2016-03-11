@@ -11,9 +11,10 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField; // required b
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\User;
-
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowAwareInterface;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowAwareTrait;
+use Oro\Component\Layout\ContextItemInterface;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -57,7 +58,8 @@ class Checkout extends ExtendCheckout implements
     OrganizationAwareInterface,
     AccountOwnerAwareInterface,
     DatesAwareInterface,
-    WorkflowAwareInterface
+    WorkflowAwareInterface,
+    ContextItemInterface
 {
     use DatesAwareTrait;
     use WorkflowAwareTrait;
@@ -524,5 +526,13 @@ class Checkout extends ExtendCheckout implements
         $this->source = $source;
 
         return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function toString()
+    {
+        return $this->id;
     }
 }
