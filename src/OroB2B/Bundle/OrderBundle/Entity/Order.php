@@ -357,6 +357,13 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
      * @ORM\OneToMany(targetEntity="OroB2B\Bundle\OrderBundle\Entity\OrderDiscount",
      *      mappedBy="order", cascade={"ALL"}, orphanRemoval=true
      * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $discounts;
 
