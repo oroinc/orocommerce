@@ -20,7 +20,7 @@ class TransitionButtonType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setRequired(['transitionData', 'workflowItem']);
+        $resolver->setRequired(['transitionData', 'checkout']);
     }
 
     /**
@@ -29,7 +29,7 @@ class TransitionButtonType extends AbstractType
     public function buildView(BlockView $view, BlockInterface $block, array $options)
     {
         $view->vars['transitionData'] = $options['transitionData'];
-        $view->vars['workflowItem'] = $options['workflowItem'];
+        $view->vars['checkout'] = $options['checkout'];
     }
 
     /**

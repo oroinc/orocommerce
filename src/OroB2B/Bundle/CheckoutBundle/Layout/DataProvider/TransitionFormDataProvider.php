@@ -27,6 +27,11 @@ class TransitionFormDataProvider extends AbstractServerRenderDataProvider
     protected $continueTransitionDataProvider;
 
     /**
+     * @var FormInterface[]
+     */
+    protected $forms = [];
+
+    /**
      * @param FormFactoryInterface $formFactory
      */
     public function __construct(FormFactoryInterface $formFactory)
@@ -63,21 +68,26 @@ class TransitionFormDataProvider extends AbstractServerRenderDataProvider
      * @param WorkflowItem $workflowItem
      * @return FormInterface
      */
-    protected function getForm(TransitionData $transitionData, WorkflowItem $workflowItem)
+    public function getForm(TransitionData $transitionData, WorkflowItem $workflowItem)
     {
-        $transition = $transitionData->getTransition();
+        $key = $transitionData->getTransition()->getName() . ':' . $workflowItem->getId();
+        if (!array_key_exists($key, $this->forms) && $transitionData->getTransition()->hasForm()) {
+            $transition = $transitionData->getTransition();
 
-        return $this->formFactory->create(
-            $transition->getFormType(),
-            $workflowItem->getData(),
-            array_merge(
-                $transition->getFormOptions(),
-                [
-                    'workflow_item' => $workflowItem,
-                    'transition_name' => $transition->getName(),
-                    'disabled' => !$transitionData->isAllowed()
-                ]
-            )
-        );
+            $this->forms[$key] = $this->formFactory->create(
+                $transition->getFormType(),
+                $workflowItem->getData(),
+                array_merge(
+                    $transition->getFormOptions(),
+                    [
+                        'workflow_item' => $workflowItem,
+                        'transition_name' => $transition->getName(),
+                        'disabled' => !$transitionData->isAllowed()
+                    ]
+                )
+            );
+        }
+
+        return $this->forms[$key];
     }
 }

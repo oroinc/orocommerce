@@ -22,7 +22,14 @@
              }
          }|json_encode }}">
 
-        {{ form_start(form, {'action' : path('orob2b_checkout_frontend_checkout', {'page': 2, 'id': checkout.id}), 'attr' : {'class' : 'checkout__form'}}) }}
+        {{ form_start(form, {
+            'method': 'post',
+            'action': path('orob2b_checkout_frontend_checkout', {'id': checkout.id}),
+            'attr' : {
+                'class' : 'checkout__form',
+                'data-nohash': 'true'
+            }})
+        }}
             {{ form_errors(form) }}
             <fieldset class="checkout__form__row">
                 <div class="checkout__form__col form__col_x6">
@@ -148,6 +155,9 @@
                 </div>
                 {% endif %}
             </fieldset>
+
+            {{ form_widget(form._token) }}
         </form>
+        {{ oro_form_js_validation(form) }}
     </div>
 {% endblock %}

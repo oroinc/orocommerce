@@ -7,9 +7,15 @@ use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Component\Layout\ContextInterface;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
+use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
 
 class BackTransitionsDataProvider extends AbstractTransitionDataProvider
 {
+    /**
+     * @var array
+     */
+    protected $transitions = [];
+
     /**
      * {@inheritdoc}
      */
@@ -17,8 +23,13 @@ class BackTransitionsDataProvider extends AbstractTransitionDataProvider
     {
         /** @var Checkout $checkout */
         $checkout = $context->data()->get('checkout');
+        $workflowItem = $checkout->getWorkflowItem();
 
-        return  $this->getBackTransitions($checkout->getWorkflowItem());
+        if (!array_key_exists($workflowItem->getId(), $this->transitions)) {
+            $this->transitions[$workflowItem->getId()] = $this->getBackTransitions($workflowItem);
+        }
+
+        return $this->transitions[$workflowItem->getId()];
     }
 
     /**
@@ -28,6 +39,7 @@ class BackTransitionsDataProvider extends AbstractTransitionDataProvider
     protected function getBackTransitions(WorkflowItem $workflowItem)
     {
         $transitions = $this->workflowManager->getTransitionsByWorkflowItem($workflowItem);
+        /** @var TransitionData[] $backTransitions */
         $backTransitions = [];
         foreach ($transitions as $transition) {
             $frontendOptions = $transition->getFrontendOptions();
@@ -38,6 +50,11 @@ class BackTransitionsDataProvider extends AbstractTransitionDataProvider
         }
         ksort($backTransitions);
 
-        return array_values($backTransitions);
+        $transitions = [];
+        foreach ($backTransitions as $transitionData) {
+            $transitions[$transitionData->getTransition()->getStepTo()->getName()] = $transitionData;
+        }
+
+        return $transitions;
     }
 }

@@ -6,7 +6,14 @@
         </h2>
     </div>
     <div class="checkout__body">
-        <form action="#" class="checkout__form">
+        {{ form_start(form, {
+            'method': 'post',
+            'action': path('orob2b_checkout_frontend_checkout', {'id': checkout.id}),
+            'attr' : {
+                'class' : 'checkout__form',
+                'data-nohash': 'true'
+            }})
+        }}
             <fieldset class="checkout__form__row">
                 <div class="checkout__form__col form__col_x6">
                     <label for="billingAddress" class="checkout__form__label">Select a Shipping Address form your

@@ -1,17 +1,8 @@
-{% macro transitionAttrbiutes(transitionData, workflowItem) %}
+{% macro transitionAttrbiutes(transitionData, checkout) %}
+{% spaceless %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
     {# Simplified transitions handler specific for checkout logic #}
     {% set transition = transitionData.transition %}
-    {% set data = {
-        'enabled': transitionData.isAllowed,
-        'message': transition.message|nl2br,
-        'transition-url': path(
-            'orob2b_api_frontend_workflow_transit',
-            {
-                workflowItemId: workflowItem.id,
-                transitionName: transition.name
-            }
-        )
-    } %}
 
     {% if transitionData.errors %}
         {% set conditionMessages = [] %}
@@ -20,28 +11,64 @@
         {% endfor %}
     {% endif %}
 
-    {% for key, value in data %}
-        data-{{ key }}="{{ value|e('html_attr')|raw }}"
-    {% endfor %}
-    title="{{ transition.label|trans }}"
+    {{ UI.renderPageComponentAttributes({
+        module: 'orob2bcheckout/js/app/components/transition-button-component',
+        options: {
+            'enabled': transitionData.isAllowed,
+            'message': transition.message|nl2br,
+            'conditionMessages': conditionMessages,
+            'hasForm': transition.hasForm(),
+            'transitionUrl': path(
+                'orob2b_checkout_frontend_checkout',
+                {
+                    id: checkout.id,
+                    transition: transition.name
+                }
+            )
+    }
+    }) }}
+{% endspaceless %}
 {% endmacro %}
 
 {% block checkout_transition_back_widget %}
-    {% if transitionData is defined %}
-    <a href="#" {{ _self.transitionAttrbiutes(transitionData, workflowItem) }}>
+    {% if transitionData is defined and transitionData %}
+    {% set transitionUrl = path(
+        'orob2b_checkout_frontend_checkout',
+        {
+            id: checkout.id,
+            transition: transitionData.transition.name
+        })
+    %}
+    <a href="{{ transitionUrl }}" {{ _self.transitionAttrbiutes(transitionData, checkout) }}>
         <i class="icon-left-open-mini"></i>{{ 'orob2b.checkout.workflow.b2b_flow_checkout.transition.back.label'|trans }}
     </a>
     {% endif %}
 {% endblock %}
 
 {% block checkout_transition_continue_widget %}
-    {% if transitionData is defined %}
-    <button type="button" class="btn btn_orange btn_lg checkout__form__submit" {{ _self.transitionAttrbiutes(transitionData, workflowItem) }}>
+    {% if transitionData is defined and transitionData %}
+    <button type="submit" class="btn btn_orange btn_lg checkout__form__submit" {{ _self.transitionAttrbiutes(transitionData, checkout) }}>
         {{ transitionData.transition.label|trans }}<i class="icon-right-open-mini va-m_md"></i>
     </button>
     {% endif %}
 {% endblock %}
 
 {% block checkout_transition_step_edit_widget %}
-    STEP EDIT
+    {% if transitionData is defined and transitionData %}
+    {% set transitionUrl = path(
+        'orob2b_checkout_frontend_checkout',
+        {
+            id: checkout.id,
+            transition: transitionData.transition.name
+        })
+    %}
+    <a href="{{ transitionUrl }}" class="button-icon fs14 gray" {{ _self.transitionAttrbiutes(transitionData, checkout) }}>
+        <span class="ttip__wrap">
+          <i class="icon-pencil ttip__toggle"></i>
+          <span class="ttip">
+            <span class="ttip__content ttip__content_dark">{{ transitionData.transition.label|trans }}</span>
+          </span>
+        </span>
+    </a>
+    {% endif %}
 {% endblock %}

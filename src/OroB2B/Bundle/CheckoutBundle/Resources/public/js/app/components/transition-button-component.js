@@ -13,7 +13,8 @@ define(function(require) {
             transitionUrl: null,
             message: null,
             conditionMessages: [],
-            enabled: true
+            enabled: true,
+            hasForm: false
         },
 
         /**
@@ -28,18 +29,27 @@ define(function(require) {
             this.$el.on('click', _.bind(this.transit, this));
         },
 
-        transit: function() {
+        transit: function(e) {
+            e.preventDefault();
             if (!this.options.enabled || this.inProgress) {
                 return;
             }
 
-            // TODO: Allow checkout to save transition form and perform transition
-            // TODO: Use checkout transition form action as endpoint to submit form and perform transition
-            // TODO: If transition has no form - call API transit
-            // TODO: Add ability to replace this default handler with custom using frontend-options
             this.inProgress = true;
             mediator.execute('showLoading');
-            $.getJSON(this.options.transitionUrl)
+
+            var method = 'GET';
+            var data = null;
+            if (this.options.hasForm) {
+                method = 'POST';
+                data = this.$el.closest('form').serialize();
+            }
+
+            $.ajax({
+                    url: this.options.transitionUrl,
+                    method: method,
+                    data: data
+                })
                 .done(_.bind(this.onSuccess, this))
                 .fail(_.bind(this.onFail, this))
                 .always(
@@ -50,12 +60,17 @@ define(function(require) {
                 );
         },
 
-        onSuccess: function() {
-            
+        onSuccess: function(response) {
+            var $response = $(response);
+            $('[data-role="checkout-sidebar"]').html($response.find('[data-role="checkout-sidebar"]'));
+            $('[data-role="checkout-content"]').html($response.find('[data-role="checkout-content"]'));
+
+            // TODO: find a way how to initialize JS on loaded data
         },
 
         onFail: function() {
-
+            // TODO: improve errors handling
+            mediator.execute('showFlashMessage', 'error', 'Could not perform transition');
         }
     });
 

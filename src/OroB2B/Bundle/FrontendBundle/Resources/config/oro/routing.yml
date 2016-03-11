@@ -27,6 +27,3 @@ orob2b_frontend_datagrid_widget:
 
 orob2b_frontend_action:
     resource: @OroB2BFrontendBundle/Resources/config/oro/routing_action.yml
-
-orob2b_frontend_workflow:
-    resource: @OroB2BFrontendBundle/Resources/config/oro/routing_workflow.yml

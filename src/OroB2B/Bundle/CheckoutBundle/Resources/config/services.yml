@@ -67,7 +67,7 @@ services:
         tags:
             - { name: layout.block_type, alias: checkout_transition_continue }
 
-    orob2b_checkout.layout.block.type.transition_button.continue:
+    orob2b_checkout.layout.block.type.transition_button.edit:
         class: %orob2b_checkout.layout.block.type.transition_button.class%
         calls:
             - [setName, ['checkout_transition_step_edit']]

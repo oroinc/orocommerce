@@ -1,0 +1,51 @@
+{% block _checkout_sidebar_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-sidebar"}) %}
+    <div {{ block('block_attributes') }} data-role="checkout-sidebar">
+        <ul class="checkout-navigation">
+            {% set isComplete = true %}
+            {% for key, step in steps %}
+                {% set pageNum = key+1 %}
+                {% set isCurrent = currentStep.name == step.name %}
+                {% if isCurrent %}
+                    {% set isComplete = false %}
+                {% endif %}
+                <li {{ isComplete ? 'class="past-step"' : '' }}>
+                    {% set badgeClass = 'badge_ll_gray' %}
+                    {% if isComplete %}
+                        {% set badgeClass = 'badge_complete' %}
+                    {% elseif isCurrent %}
+                        {% set badgeClass = 'badge_orange' %}
+                    {% endif %}
+                    <span class="badge badge_xmd badge_circle {{ badgeClass }}">
+                        {% if isComplete %}
+                            <i class="icon-check"></i>
+                        {% else %}
+                            {{ pageNum }}
+                        {% endif %}
+                    </span>
+                    <h3 class="checkout-navigation__title">
+                        {{ step.label|trans }}
+                        {% if isComplete and editTransitions[step.name] is defined %}
+                            {% set editTransitionData = editTransitions[step.name] %}
+                            {% set editBlockId = step.name ~'_edit' %}
+                            {% if block[editBlockId] is defined %}
+                            {{ block_widget(blocks.offsetGet(editBlockId),
+                                {
+                                    'transitionData': editTransitionData,
+                                    'checkout': checkout
+                                }
+                            ) }}
+                            {% endif %}
+                        {% endif %}
+                    </h3>
+                    {% set informationBlockId = step.name ~'_information' %}
+                    {% if isComplete and block[informationBlockId] is defined %}
+                        <div class="checkout-navigation__content">
+                            {{ block_widget(block.offsetGet(informationBlockId), {'checkout': checkout}) }}
+                        </div>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

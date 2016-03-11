@@ -17,14 +17,14 @@ layout:
             blockType: checkout_transition_continue
             options:
                 transitionData: { @value: $data.orob2b_checkout_continue_transition }
-                workflowItem: { @value: $data.checkout.workflowItem }
+                checkout: { @value: $data.checkout }
         - @add:
             id: checkout_back
             parentId: checkout_shipping_information
             blockType: checkout_transition_back
             options:
                 transitionData: { @value: $data.orob2b_checkout_back_transition }
-                workflowItem: { @value: $data.checkout.workflowItem }
+                checkout: { @value: $data.checkout }
 
     conditions:
         @eq: [$context.workflowStepName, 'enter_shipping_address']
