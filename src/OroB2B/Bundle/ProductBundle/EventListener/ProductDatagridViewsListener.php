@@ -68,8 +68,6 @@ class ProductDatagridViewsListener
     public function onPreBuild(PreBuild $event)
     {
         $config = $event->getConfig();
-        $gridName = $config->getName();
-        $this->updateConfigByView($config, $this->themeHelper->getTheme($gridName));
 
         // add all product units
         $select = sprintf(
@@ -86,6 +84,10 @@ class ProductDatagridViewsListener
             '[properties]',
             [self::COLUMN_PRODUCT_UNITS => ['type' => 'field', 'frontend_type' => PropertyInterface::TYPE_ROW_ARRAY]]
         );
+
+        // add theme processing
+        $gridName = $config->getName();
+        $this->updateConfigByView($config, $this->themeHelper->getTheme($gridName));
     }
 
     /**
@@ -146,17 +148,31 @@ class ProductDatagridViewsListener
      */
     public function onResultAfter(OrmResultAfter $event)
     {
+        /** @var ResultRecord[] $records */
+        $records = $event->getRecords();
+
+        // handle product units
+        foreach ($records as $record) {
+            $units = [];
+            $concatenatedUnits = $record->getValue(self::COLUMN_PRODUCT_UNITS);
+            if ($concatenatedUnits) {
+                foreach (explode(self::DATA_SEPARATOR, $concatenatedUnits) as $unitCode) {
+                    $units[$unitCode] = $this->unitFormatter->format($unitCode);
+                }
+            }
+            $record->addData([self::COLUMN_PRODUCT_UNITS => $units]);
+        }
+
+        // handle views
         $gridName = $event->getDatagrid()->getName();
         $supportedViews = [DataGridThemeHelper::VIEW_GRID, DataGridThemeHelper::VIEW_TILES];
         if (!in_array($this->themeHelper->getTheme($gridName), $supportedViews, true)) {
             return;
         }
+
         /** @var ProductRepository $repository */
         $repository = $this->registry->getEntityManagerForClass('OroB2BProductBundle:Product')
             ->getRepository('OroB2BProductBundle:Product');
-
-        /** @var ResultRecord[] $records */
-        $records = $event->getRecords();
 
         /** @var Product[] $products */
         $products = $repository->getProductsWithImage(array_map(function (ResultRecord $record) {
@@ -177,14 +193,7 @@ class ProductDatagridViewsListener
                     break;
                 }
             }
-            $units = [];
-            $concatenatedUnits = $record->getValue(self::COLUMN_PRODUCT_UNITS);
-            if ($concatenatedUnits) {
-                foreach (explode(self::DATA_SEPARATOR, $concatenatedUnits) as $unitCode) {
-                    $units[$unitCode] = $this->unitFormatter->format($unitCode);
-                }
-            }
-            $record->addData(['image' => $imageUrl, self::COLUMN_PRODUCT_UNITS => $units]);
+            $record->addData(['image' => $imageUrl]);
         }
     }
 }
