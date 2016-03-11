@@ -979,5 +979,4 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
     {
         return $this->discounts;
     }
-
 }
