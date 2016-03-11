@@ -52,6 +52,7 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
         $this->assertEquals($data['total']['currency'], 'EUR');
 
         $this->assertArrayHasKey('subtotals', $data);
-        $this->assertEquals($data['subtotals'], []);
+        $this->assertEquals($data['total']['amount'], 282.43);
+        $this->assertEquals($data['total']['currency'], 'EUR');
     }
 }
