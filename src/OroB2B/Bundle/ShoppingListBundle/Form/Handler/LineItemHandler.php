@@ -94,11 +94,11 @@ class LineItemHandler
                     );
 
                     $manager->persist($lineItem);
-                    $this->shoppingListManager->recalculateSubtotals($lineItem->getShoppingList(), false);
                 }
 
                 $manager->flush();
                 $manager->commit();
+                $this->shoppingListManager->recalculateSubtotals($lineItem->getShoppingList());
 
                 return true;
             } else {
