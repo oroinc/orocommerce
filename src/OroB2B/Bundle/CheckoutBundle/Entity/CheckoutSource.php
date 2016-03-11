@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use OroB2B\Bundle\CheckoutBundle\Model\ExtendCheckoutSource;
+use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
  * @ORM\Entity
@@ -56,7 +57,7 @@ class CheckoutSource extends ExtendCheckoutSource
             if ($property->getName() !== 'id') {
                 $property->setAccessible(true);
                 $value = $property->getValue($this);
-                if ($value) {
+                if ($value instanceof CheckoutSourceEntityInterface) {
                     return $value;
                 }
             }

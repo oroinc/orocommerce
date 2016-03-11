@@ -2,16 +2,9 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Controller\Frontend;
 
-use Doctrine\Common\Util\ClassUtils;
-
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
@@ -26,16 +19,9 @@ class CheckoutController extends Controller
      * @Route(
      *     "/{id}",
      *     name="orob2b_checkout_frontend_checkout",
-     *     defaults={"id" = null},
      *     requirements={"id"="\d+"}
      * )
-     * @ParamConverter(
-     *     "checkout",
-     *     class="OroB2BCheckoutBundle:Checkout",
-     *     isOptional="true",
-     *     options={"id" = "id"}
-     *     )
-     * @Layout(vars={"page"})
+     * @Layout(vars={"workflowStepName", "workflowStepOrder"})
      * @Acl(
      *      id="orob2b_checkout_frontend_checkout",
      *      type="entity",
@@ -44,20 +30,21 @@ class CheckoutController extends Controller
      *      group_name="commerce"
      * )
      *
-     * @param Checkout|null $checkout
-     * @param Request $request
+     * @param Checkout $checkout
      * @return array
      */
-    public function checkoutAction(Request $request, Checkout $checkout = null)
+    public function checkoutAction(Checkout $checkout)
     {
-        if (!$checkout) {
-            $checkout = new Checkout();
-        }
-        $page = $request->get('page', 1);
+        $currentStep = $checkout->getWorkflowStep();
 
         return [
-            'page' => $page,
-            'data' => ['checkout' => $checkout, 'page' => $page]
+            'workflowStepName' => $currentStep->getName(),
+            'workflowStepOrder' => $currentStep->getStepOrder(),
+            'data' =>
+                [
+                    'checkout' => $checkout,
+                    'workflowStep' => $currentStep
+                ]
         ];
     }
 }
