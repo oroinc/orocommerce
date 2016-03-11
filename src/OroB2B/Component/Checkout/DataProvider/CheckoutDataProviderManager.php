@@ -11,18 +11,6 @@ class CheckoutDataProviderManager
     /** @var  CheckoutDataProviderInterface[] */
     protected $providers;
 
-    // @TODO: Remove after Entity would be completed
-    /** @var  ManagerRegistry */
-    protected $registry;
-
-    /**
-     * @param ManagerRegistry $registry
-     */
-    public function __construct(ManagerRegistry $registry)
-    {
-        $this->registry = $registry;
-    }
-
     /**
      * @param CheckoutDataProviderInterface $provider
      */
@@ -37,10 +25,7 @@ class CheckoutDataProviderManager
      */
     public function getData(Checkout $checkout)
     {
-//      @TODO: Remove after Entity would be completed
-        $entity = $this->registry->getRepository('OroB2BShoppingListBundle:ShoppingList')->findOneBy([]);
-//      @TODO: uncomment after Entity would be completed
-//      $entity = $checkout->getSourceEntity();
+        $entity = $checkout->getSourceEntity();
         foreach ($this->providers as $provider) {
             if ($provider->isEntitySupported($entity)) {
                 return $provider->getData($entity);

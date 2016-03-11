@@ -10,8 +10,6 @@ parameters:
 services:
     orob2b_checkout.data_provider.manager:
         class: %orob2b_checkout.data_provider.manager.class%
-        arguments:
-            - @doctrine
 
     orob2b_checkout.layout.data_provider.summary:
         class: %orob2b_checkout.layout.data_provider.summary.class%
