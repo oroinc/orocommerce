@@ -946,7 +946,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
      */
     public function addDiscount(OrderDiscount $discount)
     {
-        if (!$this->hasLineItem($discount)) {
+        if (!$this->hasDiscount($discount)) {
             $this->discounts[] = $discount;
             $discount->setOrder($this);
         }
@@ -963,7 +963,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
      */
     public function removeDiscount(OrderDiscount $discount)
     {
-        if ($this->hasLineItem($discount)) {
+        if ($this->hasDiscount($discount)) {
             $this->discounts->removeElement($discount);
         }
 

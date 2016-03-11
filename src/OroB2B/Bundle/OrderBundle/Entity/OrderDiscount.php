@@ -45,14 +45,14 @@ class OrderDiscount
     protected $description;
 
     /**
-     * @var string
+     * @var float
      *
-     * @ORM\Column(name="percent", type="decimal", precision=4, scale=2, nullable=true)
+     * @ORM\Column(name="percent", type="percent", nullable=true)
      */
     protected $percent;
 
     /**
-     * @var string
+     * @var float
      *
      * @ORM\Column(name="amount", type="money", nullable=true)
      */
@@ -103,7 +103,7 @@ class OrderDiscount
     /**
      * Set percent
      *
-     * @param string $percent
+     * @param float $percent
      *
      * @return OrderDiscount
      */
@@ -117,7 +117,7 @@ class OrderDiscount
     /**
      * Get percent
      *
-     * @return string
+     * @return float
      */
     public function getPercent()
     {
@@ -127,7 +127,7 @@ class OrderDiscount
     /**
      * Set amount
      *
-     * @param money $amount
+     * @param float $amount
      *
      * @return OrderDiscount
      */
@@ -141,7 +141,7 @@ class OrderDiscount
     /**
      * Get amount
      *
-     * @return money
+     * @return float
      */
     public function getAmount()
     {

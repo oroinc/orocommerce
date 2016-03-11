@@ -175,9 +175,13 @@ class OroB2BOrderBundleInstaller implements
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('order_id', 'integer', ['notnull' => false]);
         $table->addColumn('description', 'text', ['notnull' => false]);
-        $table->addColumn('percent', 'decimal', ['precision' => 4, 'scale' => 2]);
         $table->addColumn(
-            'total',
+            'percent',
+            'percent',
+            ['notnull' => false, 'precision' => 0, 'comment' => '(DC2Type:percent)']
+        );
+        $table->addColumn(
+            'amount',
             'money',
             ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
