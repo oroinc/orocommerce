@@ -61,7 +61,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             $this->getTotalProcessorProvider(),
             $this->getLineItemNotPricedSubtotalProvider(),
             $this->getLocaleSettings(),
-            $this->getWebsite()
+            $this->getWebsiteManager()
         );
     }
 
@@ -213,7 +213,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             $totalProcessorProvider,
             $lineItemSubtotalProvider,
             $this->getLocaleSettings(),
-            $this->getWebsite()
+            $this->getWebsiteManager()
         );
 
         $shoppingList = new ShoppingList();
@@ -282,7 +282,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             $this->getTotalProcessorProvider(),
             $this->getLineItemNotPricedSubtotalProvider(),
             $this->getLocaleSettings(),
-            $this->getWebsite()
+            $this->getWebsiteManager()
         );
 
         $this->assertEquals(
@@ -468,7 +468,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|WebsiteManager
      */
-    protected function getWebsite()
+    protected function getWebsiteManager()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|WebsiteManager $websiteManager */
         $websiteManager = $this->getMockBuilder('OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager')
