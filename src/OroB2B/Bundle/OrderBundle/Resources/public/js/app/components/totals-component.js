@@ -1,25 +1,25 @@
 define(function(require) {
     'use strict';
 
-    var SubtotalsComponent;
+    var TotalsComponent;
     var mediator = require('oroui/js/mediator');
-    var BaseComponent = require('orob2bpricing/js/app/components/subtotals-component');
+    var BaseComponent = require('orob2bpricing/js/app/components/totals-component');
 
     /**
      * @export orob2border/js/app/components/entry-point-component
-     * @extends orob2bpricing.app.components.SubtotalsComponent
-     * @class orob2border.app.components.SubtotalsComponent
+     * @extends orob2bpricing.app.components.TotalsComponent
+     * @class orob2border.app.components.TotalsComponent
      */
-    SubtotalsComponent = BaseComponent.extend({
+    TotalsComponent = BaseComponent.extend({
         /**
          * @inheritDoc
          */
         initialize: function(options) {
             mediator.on('entry-point:order:load:before', this.showLoadingMask, this);
-            mediator.on('entry-point:order:load', this.setSubtotals, this);
+            mediator.on('entry-point:order:load', this.setTotals, this);
             mediator.on('entry-point:order:load:after', this.hideLoadingMask, this);
 
-            SubtotalsComponent.__super__.initialize.call(this, options);
+            TotalsComponent.__super__.initialize.call(this, options);
         },
 
         initializeListeners: function() {
@@ -29,8 +29,8 @@ define(function(require) {
         /**
          * @param {Object} response
          */
-        setSubtotals: function(response) {
-            this.render(response.subtotals);
+        setTotals: function(response) {
+            this.render(response);
         },
 
         /**
@@ -49,12 +49,12 @@ define(function(require) {
             }
 
             mediator.off('entry-point:order:load:before', this.showLoadingMask, this);
-            mediator.off('entry-point:order:load', this.setSubtotals, this);
+            mediator.off('entry-point:order:load', this.setTotals, this);
             mediator.off('entry-point:order:load:after', this.hideLoadingMask, this);
 
-            SubtotalsComponent.__super__.dispose.call(this);
+            TotalsComponent.__super__.dispose.call(this);
         }
     });
 
-    return SubtotalsComponent;
+    return TotalsComponent;
 });
