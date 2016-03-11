@@ -595,7 +595,7 @@ services:
             - @oro_security.security_facade
 
     orob2b_account.api.account_user.delete.delete_data_by_handler:
-        class: Oro\Bundle\ApiBundle\Processor\Delete\DeleteDataByCustomProcessHandler
+        class: Oro\Bundle\ApiBundle\Processor\Delete\DeleteDataByCustomDeleteHandler
         arguments:
             - @oro_api.doctrine_helper
             - @orob2b_account.account_delete_handler
