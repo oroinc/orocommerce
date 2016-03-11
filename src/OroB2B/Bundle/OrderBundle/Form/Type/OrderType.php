@@ -131,9 +131,10 @@ class OrderType extends AbstractType
                     OrderAddressType::NAME,
                     [
                         'label' => 'orob2b.order.billing_address.label',
-                        'order' => $options['data'],
+                        'object' => $options['data'],
                         'required' => false,
                         'addressType' => AddressType::TYPE_BILLING,
+                        'isEditEnabled' => true,
                     ]
                 );
         }
@@ -145,10 +146,10 @@ class OrderType extends AbstractType
                     OrderAddressType::NAME,
                     [
                         'label' => 'orob2b.order.shipping_address.label',
-                        'order' => $options['data'],
+                        'object' => $options['data'],
                         'required' => false,
                         'addressType' => AddressType::TYPE_SHIPPING,
-                        'application' => OrderAddressType::APPLICATION_BACKEND
+                        'isEditEnabled' => true,
                     ]
                 );
         }

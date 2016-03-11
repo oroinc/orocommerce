@@ -6,6 +6,10 @@ layout:
             id: checkout_billing_information
             parentId: checkout_information
             blockType: block
-
+            options:
+                vars:
+                    checkout: { @value: $data.checkout }
+                    workflowStep: { @value: $data.workflowStep }
+                    form: { @value: $data.orob2b_checkout_transition_form }
     conditions:
-        @eq: [$context.page, 1]
+        @eq: [$context.workflowStepName, 'enter_billing_address']
