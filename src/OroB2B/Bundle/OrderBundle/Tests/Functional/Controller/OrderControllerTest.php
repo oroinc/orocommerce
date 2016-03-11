@@ -28,6 +28,16 @@ class OrderControllerTest extends WebTestCase
     protected $formatter;
 
     /**
+     * @var string
+     */
+    public static $shippingCostAmount = '999.9900';
+
+    /**
+     * @var string
+     */
+    public static $shippingCostCurrency = 'USD';
+
+    /**
      * @var array
      */
     protected $disabledAddressInputs = [
@@ -335,6 +345,84 @@ class OrderControllerTest extends WebTestCase
         foreach ($this->disabledAddressInputs as $input) {
             $crawler->filter('input[name="orob2b_order_type['. $addressType .']['. $input .']"][readonly="readonly"]');
         }
+    }
+
+    /**
+     * @depends testCreate
+     * @param int $id
+     */
+    public function testUpdateShippingCost($id)
+    {
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_update', ['id' => $id]));
+
+        /* @var $form Form */
+        $form = $crawler->selectButton('Save')->form();
+        $form['orob2b_order_type[shippingCost][value]'] = self::$shippingCostAmount;
+        $form['orob2b_order_type[shippingCost][currency]'] = self::$shippingCostCurrency;
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form);
+
+        $titleBlock = $crawler->filter('.responsive-section')->eq(2)->filter('.scrollspy-title')->html();
+        self::assertEquals('Shipping Information', $titleBlock);
+
+        $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->html();
+        self::assertEquals('$999.99', $value);
+
+        $result = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
+    }
+
+    /**
+     * @depends testCreate
+     * @param int $id
+     */
+    public function testUpdateShippingCostEmpty($id)
+    {
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_update', ['id' => $id]));
+
+        /* @var $form Form */
+        $form = $crawler->selectButton('Save')->form();
+        $form['orob2b_order_type[shippingCost][value]'] = '';
+        $form['orob2b_order_type[shippingCost][currency]'] = self::$shippingCostCurrency;
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form);
+
+        $titleBlock = $crawler->filter('.responsive-section')->eq(2)->filter('.scrollspy-title')->html();
+        self::assertEquals('Shipping Information', $titleBlock);
+
+        $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->html();
+        self::assertEquals('N/A', $value);
+
+        $result = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
+    }
+
+    /**
+     * @depends testCreate
+     * @param int $id
+     */
+    public function testUpdateShippingCostZero($id)
+    {
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_update', ['id' => $id]));
+
+        /* @var $form Form */
+        $form = $crawler->selectButton('Save')->form();
+        $form['orob2b_order_type[shippingCost][value]'] = '0';
+        $form['orob2b_order_type[shippingCost][currency]'] = self::$shippingCostCurrency;
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form);
+
+        $titleBlock = $crawler->filter('.responsive-section')->eq(2)->filter('.scrollspy-title')->html();
+        self::assertEquals('Shipping Information', $titleBlock);
+
+        $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->html();
+        self::assertEquals('$0.00', $value);
+
+        $result = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
     }
 
     /**
