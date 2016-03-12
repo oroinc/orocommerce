@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Event;
 
-
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
