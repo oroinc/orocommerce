@@ -1,7 +1,7 @@
 {% block _checkout_shipping_information_widget -%}
     <div class="checkout__head">
         <h2 class="checkout__title">
-            <span class="badge badge_md badge_circle badge_orange">2</span>
+            <span class="badge badge_md badge_circle badge_orange">1</span>
             {{ workflowStep.label|trans }}
         </h2>
     </div>
@@ -15,48 +15,70 @@
 {%- endblock %}
 
 {% block _checkout_shipping_form_fields_widget -%}
+    {{ form_start(form) }}
     <div data-page-component-module="oroui/js/app/components/view-component"
          data-page-component-options="{{ {
              view: 'orob2bcheckout/js/app/views/address-view',
              selectors: {
-                 address: '#' ~ form.address.accountAddress.vars.id,
-                 region: '#' ~ form.address.region.vars.id,
+                 address: '#' ~ form.shipping_address.accountAddress.vars.id,
+                 region: '#' ~ form.shipping_address.region.vars.id,
                  fieldsContainer: '#checkout-address-fields-container'
              }
          }|json_encode }}">
-        {{ form_row(form.address.accountAddress) }}
-        <div id="checkout-address-fields-container" class="{% if not form.address.id.vars.value %}hidden{% endif %}">
-            {{ form_row(form.address.label) }}
-
+        {{ form_row(form.shipping_address.accountAddress) }}
+        <div id="checkout-address-fields-container" class="{% if not form.shipping_address.id.vars.value %}hidden{% endif %}">
             <fieldset class="checkout__form__row">
-                {{ form_row(form.address.namePrefix) }}
-                {{ form_row(form.address.middleName) }}
-                {{ form_row(form.address.firstName) }}
-                {{ form_row(form.address.lastName) }}
-                {{ form_row(form.address.nameSuffix) }}
+                {{ form_row(form.shipping_address.label, {'attr': {'placeholder': 'Enter address label'}, 'parentClass': 'form__col_x12'}) }}
+            </fieldset>
+            <fieldset class="checkout__form__row">
+                {{ form_row(form.shipping_address.namePrefix, {'attr': {'placeholder': 'Enter your name prefix'}}) }}
+                {{ form_row(form.shipping_address.middleName, {'attr': {'placeholder': 'Enter your middle name'}}) }}
+                {{ form_row(form.shipping_address.firstName, {'attr': {'placeholder': 'Enter your first name'}}) }}
+                {{ form_row(form.shipping_address.lastName, {'attr': {'placeholder': 'Enter your last name'}}) }}
+                {{ form_row(form.shipping_address.nameSuffix, {'attr': {'placeholder': 'Enter your name sufix'}}) }}
+            </fieldset>
+            <fieldset class="checkout__form__row">
+                {{ form_row(form.shipping_address.organization, {'attr': {'placeholder': 'Enter your organization'}, 'parentClass': 'form__col_x12'}) }}
+            </fieldset>
+            <fieldset class="checkout__form__row">
+                {{ form_row(form.shipping_address.street, {'attr': {'placeholder': 'Enter address label'}}) }}
+                {{ form_row(form.shipping_address.street2, {'attr': {'placeholder': 'Enter address2 label'}}) }}
+            </fieldset>
+            <fieldset class="checkout__form__row">
+                {{ form_row(form.shipping_address.city, {'attr': {'placeholder': 'Enter address label'}, 'parentClass': 'form__col_x12'}) }}
+            </fieldset>
+            <fieldset class="checkout__form__row">
+                {{ form_row(form.shipping_address.country) }}
+                {{ form_row(form.shipping_address.region) }}
             </fieldset>
 
-            {{ form_row(form.address.organization) }}
-
             <fieldset class="checkout__form__row">
-                <div class="checkout__form__col form__col_x12">
-                    {{ form_row(form.address.street) }}
-                    {{ form_row(form.address.street2) }}
-                </div>
+                {{ form_row(form.shipping_address.postalCode, {'attr': {'placeholder': 'Zip'}, 'parentClass': 'col-zip'}) }}
+            </fieldset>
+            <fieldset class="checkout__form__row">
+                {{ form_row(form.save_shipping_address) }}
             </fieldset>
 
-            {{ form_row(form.address.city) }}
-
-            <fieldset class="checkout__form__row">
-                {{ form_row(form.address.country) }}
-                {{ form_row(form.address.region) }}
-            </fieldset>
-
-            {{ form_row(form.address.postalCode) }}
-            {{ form_row(form.saveAddress) }}
-
-            {{ form_row(form.address.id) }}
-            {{ form_row(form.address.region_text) }}
+            <div class="hidden">
+                {{ form_row(form.shipping_address.id) }}
+                {{ form_row(form.shipping_address.region_text) }}
+            </div>
         </div>
+
+    </div>
+    {{ form_end(form) }}
+{%- endblock %}
+
+{% block _checkout_shipping_form_button_widget -%}
+    <fieldset class="checkout__form__row">
+        <div class="create-account__form__req-text"><sup>*</sup>Required Field</div>
+        <div class="create-account__form__col form__col_x12">
+            <button type="submit" class="btn btn_orange btn_lg checkout__form__submit">
+                Continue<i class="icon-right-open-mini va-m_md"></i>
+            </button>
+        </div>
+    </fieldset>
+    <div class="checkout__form__back">
+        <a href="#"><i class="icon-left-open-mini"></i>Back</a>
     </div>
 {%- endblock %}

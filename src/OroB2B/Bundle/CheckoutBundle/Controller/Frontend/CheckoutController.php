@@ -3,20 +3,12 @@
 namespace OroB2B\Bundle\CheckoutBundle\Controller\Frontend;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
-
-use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
-
-use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
-use OroB2B\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 
 class CheckoutController extends Controller

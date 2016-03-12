@@ -4,10 +4,10 @@ namespace OroB2B\Bundle\CheckoutBundle\Form\Type;
 
 use Symfony\Component\Form\FormBuilderInterface;
 
-use OroB2B\Bundle\OrderBundle\Form\Type\OrderAddressType;
+use OroB2B\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 
-class CheckoutAddressType extends OrderAddressType
+class CheckoutAddressType extends AbstractOrderAddressType
 {
     const NAME = 'orob2b_checkout_address';
 
@@ -41,15 +41,26 @@ class CheckoutAddressType extends OrderAddressType
                     ['orob2b.order.form.address.manual']
                 );
             }
-
-            $builder->add('accountAddress', 'choice', $accountAddressOptions)
-                ->add('country', 'orob2b_country', array('required' => true, 'label' => 'oro.address.country.label'))
-                ->add('region', 'orob2b_region', array('required' => false, 'label' => 'oro.address.region.label'));
+            $builder
+                ->add('accountAddress', 'choice', $accountAddressOptions)
+                ->add('country', 'orob2b_country', ['required' => true, 'label' => 'oro.address.country.label'])
+                ->add('region', 'orob2b_region', ['required' => false, 'label' => 'oro.address.region.label']);
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getParent()
+    {
+        return 'oro_address';
     }
 }
