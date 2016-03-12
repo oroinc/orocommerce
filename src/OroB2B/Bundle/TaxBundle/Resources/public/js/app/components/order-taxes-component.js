@@ -43,7 +43,7 @@ define(function(require) {
 
             OrderTaxesComponent.__super__.initialize.call(this, options);
             this.$el = options._sourceElement;
-            this.appliedTaxesTemplate = _.template(this.$el.find(this.options.selectors.applied_taxes_template).text());
+            this.appliedTaxesTemplate = _.template(this.$el.parent().find(this.options.selectors.applied_taxes_template).text());
         },
 
         /**
