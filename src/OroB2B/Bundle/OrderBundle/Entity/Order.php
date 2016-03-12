@@ -777,6 +777,21 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
     }
 
     /**
+     * @param Collection|OrderLineItem[] $lineItems
+     * @return $this
+     */
+    public function setLineItems(Collection $lineItems)
+    {
+        foreach ($lineItems as $lineItem) {
+            $lineItem->setOrder($this);
+        }
+
+        $this->lineItems = $lineItems;
+
+        return $this;
+    }
+
+    /**
      * Get orderProducts
      *
      * @return Collection|OrderLineItem[]

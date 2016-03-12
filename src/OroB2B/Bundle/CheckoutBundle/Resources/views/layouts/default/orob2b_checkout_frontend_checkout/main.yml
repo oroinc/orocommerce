@@ -26,7 +26,7 @@ layout:
                     blockType: container
                     options:
                         vars:
-                            checkout: { @value: $data.checkout}
+                            checkout: { @value: $data.checkout }
                 checkout_information:
                     blockType: container
                 checkout_order_summary:
@@ -34,12 +34,16 @@ layout:
                     options:
                         visible: { @neq: [$context.workflowStepName, 'place_order'] }
                         vars:
-                            summary_data: { @value: $data.orob2b_checkout_summary}
+                            lineItemsCount: { @value: $data.orob2b_checkout_summary.lineItemsCount }
+                            totalPrice: { @value: $data.orob2b_checkout_summary.totalPrice }
                 checkout_order_summary_table:
                     blockType: block
                     options:
                         vars:
-                            summary_data: { @value: $data.orob2b_checkout_summary}
+                            lineItems: { @value: $data.orob2b_checkout_summary.lineItems }
+                            lineItemTotals: { @value: $data.orob2b_checkout_summary.lineItemTotals }
+                            lineItemsCount: { @value: $data.orob2b_checkout_summary.lineItemsCount }
+                            totalPrice: { @value: $data.orob2b_checkout_summary.totalPrice }
             tree:
                 main:
                     checkout_content:

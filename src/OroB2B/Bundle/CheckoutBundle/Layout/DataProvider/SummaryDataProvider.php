@@ -3,23 +3,37 @@
 namespace OroB2B\Bundle\CheckoutBundle\Layout\DataProvider;
 
 use Doctrine\Common\Collections\ArrayCollection;
+
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\DataProviderInterface;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 
+use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Component\Checkout\DataProvider\CheckoutDataProviderManager;
+use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 
 class SummaryDataProvider implements DataProviderInterface
 {
-    /** @var  CheckoutDataProviderManager */
-    protected $checkoutDataProviderManager;
+    /**
+     * @var CheckoutLineItemsManager
+     */
+    protected $checkoutLineItemsManager;
 
     /**
-     * @param CheckoutDataProviderManager $checkoutDataProviderManager
+     * @var UserCurrencyProvider
      */
-    public function __construct(CheckoutDataProviderManager $checkoutDataProviderManager)
-    {
-        $this->checkoutDataProviderManager = $checkoutDataProviderManager;
+    protected $currencyProvider;
+
+    /**
+     * @param CheckoutLineItemsManager $CheckoutLineItemsManager
+     * @param UserCurrencyProvider $currencyProvider
+     */
+    public function __construct(
+        CheckoutLineItemsManager $CheckoutLineItemsManager,
+        UserCurrencyProvider $currencyProvider
+    ) {
+        $this->checkoutLineItemsManager = $CheckoutLineItemsManager;
+        $this->currencyProvider = $currencyProvider;
     }
 
     /**
@@ -37,8 +51,33 @@ class SummaryDataProvider implements DataProviderInterface
     public function getData(ContextInterface $context)
     {
         /** @var Checkout $checkout */
-        $checkout = $context->get('checkout');
+        $checkout = $context->data()->get('checkout');
+        $lineItemTotals = [];
+        $generalTotal = 0;
+        $itemsCount = 0;
 
-        return new ArrayCollection($this->checkoutDataProviderManager->getData($checkout));
+        $orderLineItems = $this->checkoutLineItemsManager->getData($checkout);
+
+        foreach ($orderLineItems as $orderLineItem) {
+            $quantity = $orderLineItem->getQuantity();
+            $generalTotal += (float)$orderLineItem->getPrice()->getValue() * $quantity;
+            $itemsCount += $quantity;
+
+            $lineItemTotal = new Price();
+            $lineItemTotal->setValue($quantity * $orderLineItem->getPrice()->getValue());
+            $lineItemTotal->setCurrency($orderLineItem->getCurrency());
+            $lineItemTotals[$orderLineItem->getProductSku()] = $lineItemTotal;
+        }
+
+        $totalPrice = new Price();
+        $totalPrice->setValue($generalTotal);
+        $totalPrice->setCurrency($this->currencyProvider->getUserCurrency());
+
+        return [
+            'lineItemTotals' => $lineItemTotals,
+            'lineItems' => $orderLineItems,
+            'lineItemsCount' => $itemsCount,
+            'totalPrice' => $totalPrice
+        ];
     }
 }

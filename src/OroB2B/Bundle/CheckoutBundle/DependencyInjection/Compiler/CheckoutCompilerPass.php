@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\DependencyInjection;
+namespace OroB2B\Bundle\CheckoutBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -8,8 +8,8 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class CheckoutCompilerPass implements CompilerPassInterface
 {
-    const CHECKOUT_DATA_PROVIDER_MANAGER = 'orob2b_checkout.data_provider.manager';
-    const CHECKOUT_DATA_PROVIDER_TAG = 'checkout.data_provider';
+    const CHECKOUT_DATA_PROVIDER_MANAGER = 'orob2b_checkout.data_provider.manager.checkout_line_items';
+    const CHECKOUT_DATA_PROVIDER_TAG = 'checkout.data_provider.line_item';
 
     /**
      * {@inheritDoc}
@@ -19,7 +19,7 @@ class CheckoutCompilerPass implements CompilerPassInterface
         if (!$container->has(self::CHECKOUT_DATA_PROVIDER_MANAGER)) {
             return;
         }
-        $definition = $container->findDefinition(self::CHECKOUT_DATA_PROVIDER_MANAGER);
+        $definition = $container->getDefinition(self::CHECKOUT_DATA_PROVIDER_MANAGER);
         $taggedServices = $container->findTaggedServiceIds(self::CHECKOUT_DATA_PROVIDER_TAG);
         foreach ($taggedServices as $id => $tags) {
             $definition->addMethodCall(
