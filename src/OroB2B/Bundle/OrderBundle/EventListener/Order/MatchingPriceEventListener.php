@@ -10,6 +10,8 @@ use OroB2B\Bundle\PricingBundle\Provider\MatchingPriceProvider;
 
 class MatchingPriceEventListener
 {
+    const MATCHED_PRICES_KEY = 'matchedPrices';
+
     /** @var MatchingPriceProvider */
     protected $provider;
 
@@ -49,6 +51,6 @@ class MatchingPriceEventListener
         $priceList = $this->priceListTreeHandler->getPriceList($order->getAccount(), $order->getWebsite());
         $matchingPrices = $this->provider->getMatchingPrices($lineItems->toArray(), $priceList);
 
-        $event->getData()->offsetSet('matchedPrices', $matchingPrices);
+        $event->getData()->offsetSet(self::MATCHED_PRICES_KEY, $matchingPrices);
     }
 }

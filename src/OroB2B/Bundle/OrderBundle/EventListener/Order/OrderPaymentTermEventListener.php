@@ -7,6 +7,9 @@ use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 
 class OrderPaymentTermEventListener
 {
+    const ACCOUNT_PAYMENT_TERM_KEY = 'accountPaymentTerm';
+    const ACCOUNT_GROUP_PAYMENT_TERM_KEY = 'accountGroupPaymentTerm';
+
     /** @var PaymentTermProvider */
     protected $provider;
 
@@ -38,7 +41,7 @@ class OrderPaymentTermEventListener
             $accountGroupPaymentTerm = $paymentTerm ? $paymentTerm->getId() : null;
         }
 
-        $event->getData()->offsetSet('accountPaymentTerm', $accountPaymentTerm);
-        $event->getData()->offsetSet('accountGroupPaymentTerm', $accountGroupPaymentTerm);
+        $event->getData()->offsetSet(self::ACCOUNT_PAYMENT_TERM_KEY, $accountPaymentTerm);
+        $event->getData()->offsetSet(self::ACCOUNT_GROUP_PAYMENT_TERM_KEY, $accountGroupPaymentTerm);
     }
 }

@@ -8,6 +8,8 @@ use OroB2B\Bundle\OrderBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class OrderSubtotalsEventListener
 {
+    const SUBTOTALS_KEY = 'subtotals';
+
     /** @var TotalProcessorProvider */
     protected $provider;
 
@@ -35,6 +37,6 @@ class OrderSubtotalsEventListener
             )
             ->toArray();
 
-        $event->getData()->offsetSet('subtotals', $subtotals);
+        $event->getData()->offsetSet(self::SUBTOTALS_KEY, $subtotals);
     }
 }
