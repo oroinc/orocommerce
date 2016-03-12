@@ -97,7 +97,7 @@ class OrderLineItemHandler
         $billingAddress = $lineItem->getOrder()->getBillingAddress();
         $shippingAddress = $lineItem->getOrder()->getShippingAddress();
 
-        $address = $this->addressProvider->getAddressForTaxation($billingAddress, $shippingAddress);
+        $address = $this->addressProvider->getTaxationAddress($billingAddress, $shippingAddress);
 
         if (null === $address) {
             return false;
