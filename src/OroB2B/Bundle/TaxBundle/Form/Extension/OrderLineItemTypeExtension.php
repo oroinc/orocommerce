@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -114,12 +115,15 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(
-            [
-                'sections' => [
-                    'taxes' => ['data' => ['taxes' => []], 'order' => 50],
-                ],
-            ]
+        parent::configureOptions($resolver);
+
+        $resolver->setNormalizer(
+            'sections',
+            function (Options $options, array $sections) {
+                $sections['taxes'] = ['data' => ['taxes' => []], 'order' => 50];
+
+                return $sections;
+            }
         );
     }
 }

@@ -18,9 +18,20 @@ define(function(require) {
          */
         options: {
             selectors: {
-                item_taxes: 'td.order-line-item-taxes'
+                totals_taxes: '.totals-container td.order-line-item-taxes',
+                applied_taxes_template: '.applied-taxes-template'
             }
         },
+
+        /**
+         * @property {Object}
+         */
+        $el: null,
+
+        /**
+         * @property {Object}
+         */
+        appliedTaxesTemplate: null,
 
         /**
          * @inheritDoc
@@ -31,44 +42,40 @@ define(function(require) {
             mediator.on('entry-point:order:load:after', this.hideLoadingMask, this);
 
             OrderTaxesComponent.__super__.initialize.call(this, options);
-        },
-
-        initializeListeners: function() {
-            // disable parent listeners
+            this.$el = options._sourceElement;
+            this.appliedTaxesTemplate = _.template(this.$el.find(this.options.selectors.applied_taxes_template).text());
         },
 
         /**
          * @param {Object} response
          */
         setOrderTaxes: function(response) {
-            this.renderItems(response.taxesItems);
-            this.renderTotal(response.taxesTotal);
+            this.setTaxesData(this.$el.find('table').first(), response.taxesItems.shift());
         },
 
         /**
-         * @param {Array} taxesItems
+         * @param {Object} $table
+         * @param {Array} data
          */
-        renderItems: function(taxesItemsData) {
-            var itemsTaxesNodes = $(this.options.selectors.item_taxes);
-            _.each(itemsTaxesNodes, function(itemsTaxesNode) {
-                var node = $(itemsTaxesNode);
-                var data = taxesItemsData.shift();
-                node.find('[data-item-taxes-id="unit-including-tax"]').html(data.unit.includingTax);
-                node.find('[data-item-taxes-id="unit-excluding-tax"]').html(data.unit.excludingTax);
-                node.find('[data-item-taxes-id="unit-tax-amount"]').html(data.unit.taxAmount);
-                node.find('[data-item-taxes-id="unit-adjustment"]').html(data.unit.adjustment);
-                node.find('[data-item-taxes-id="row-including-tax"]').html(data.row.includingTax);
-                node.find('[data-item-taxes-id="row-excluding-tax"]').html(data.row.excludingTax);
-                node.find('[data-item-taxes-id="row-tax-amount"]').html(data.row.taxAmount);
-                node.find('[data-item-taxes-id="row-adjustment"]').html(data.row.adjustment);
-            }, this);
-        },
+        setTaxesData: function($table, data) {
+            if (data) {
+                $table.find('[data-taxes-id="unit-including-tax"]').html(data.unit.includingTax);
+                $table.find('[data-taxes-id="unit-excluding-tax"]').html(data.unit.excludingTax);
+                $table.find('[data-taxes-id="unit-tax-amount"]').html(data.unit.taxAmount);
+                $table.find('[data-taxes-id="unit-adjustment"]').html(data.unit.adjustment);
+                $table.find('[data-taxes-id="row-including-tax"]').html(data.row.includingTax);
+                $table.find('[data-taxes-id="row-excluding-tax"]').html(data.row.excludingTax);
+                $table.find('[data-taxes-id="row-tax-amount"]').html(data.row.taxAmount);
+                $table.find('[data-taxes-id="row-adjustment"]').html(data.row.adjustment);
 
-        /**
-         * @param {Object} taxesTotal
-         */
-        renderTotal: function(taxesTotalData) {
+                if ($table.next().attr('data-taxes-id') == 'applied-taxes') {
+                    $table.next().remove();
+                }
 
+                if (data.taxes) {
+                    $table.after(this.appliedTaxesTemplate({taxes: data.taxes}));
+                }
+            }
         },
 
         /**
