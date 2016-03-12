@@ -73,6 +73,7 @@ class OrderType extends AbstractType
 
     /**
      * {@inheritDoc}
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
