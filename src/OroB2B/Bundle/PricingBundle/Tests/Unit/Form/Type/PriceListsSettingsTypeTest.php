@@ -16,7 +16,7 @@ class PriceListsSettingsTypeTest extends FormIntegrationTestCase
     use EntityTrait;
 
     /**
-     * @var  PriceListsSettingsType|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListsSettingsType|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $priceListsSettingsType;
 

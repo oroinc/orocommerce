@@ -19,7 +19,7 @@ class PriceListSystemConfigSubscriber
     protected $converter;
 
     /**
-     * @var  boolean
+     * @var boolean
      */
     protected $isApplicable;
 

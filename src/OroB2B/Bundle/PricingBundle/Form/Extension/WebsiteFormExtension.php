@@ -22,7 +22,7 @@ class WebsiteFormExtension extends AbstractTypeExtension
     protected $priceListToWebsiteClass;
 
     /**
-     * @var  WebsiteListener
+     * @var WebsiteListener
      */
     protected $listener;
 

@@ -23,7 +23,7 @@ class AccountGroupHandler
     /** @var ObjectManager */
     protected $manager;
 
-    /** @var  EventDispatcherInterface */
+    /** @var EventDispatcherInterface */
     protected $dispatcher;
 
     /**

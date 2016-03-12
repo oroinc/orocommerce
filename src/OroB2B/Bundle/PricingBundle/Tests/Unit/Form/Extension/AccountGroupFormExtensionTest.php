@@ -64,8 +64,8 @@ class AccountGroupFormExtensionTest extends FormIntegrationTestCase
     public function testSubmit(array $submitted, array $expected)
     {
         $form = $this->factory->create(AccountGroupType::NAME, [], []);
-        $form->submit([AbstractPriceListCollectionAwareListener::PRICE_LISTS_BY_WEBSITES => $submitted]);
-        $data = $form->get(AccountGroupListener::PRICE_LISTS_BY_WEBSITES)->getData();
+        $form->submit([AbstractPriceListCollectionAwareListener::PRICE_LISTS_COLLECTION_FORM_FIELD_NAME => $submitted]);
+        $data = $form->get(AccountGroupListener::PRICE_LISTS_COLLECTION_FORM_FIELD_NAME)->getData();
         $this->assertTrue($form->isValid());
         $this->assertEquals($expected, $data);
     }

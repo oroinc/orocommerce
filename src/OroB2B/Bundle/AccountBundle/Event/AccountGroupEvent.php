@@ -2,9 +2,10 @@
 
 namespace OroB2B\Bundle\AccountBundle\Event;
 
-use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 
 use Symfony\Component\Form\FormInterface;
+
+use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 

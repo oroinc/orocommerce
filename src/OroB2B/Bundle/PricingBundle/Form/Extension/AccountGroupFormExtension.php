@@ -46,7 +46,7 @@ class AccountGroupFormExtension extends AbstractTypeExtension
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add(
-            AccountGroupListener::PRICE_LISTS_BY_WEBSITES,
+            AccountGroupListener::PRICE_LISTS_COLLECTION_FORM_FIELD_NAME,
             WebsiteScopedDataType::NAME,
             [
                 'type' => PriceListsSettingsType::NAME,

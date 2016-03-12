@@ -26,7 +26,7 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
     protected $changeTriggerHandler;
 
     /**
-     * @var  PriceListSystemConfigSubscriber
+     * @var PriceListSystemConfigSubscriber
      */
     protected $subscriber;
 

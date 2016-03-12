@@ -22,7 +22,7 @@ use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepositoryInterface;
 
 abstract class AbstractPriceListCollectionAwareListener
 {
-    const PRICE_LISTS_BY_WEBSITES = 'priceListsByWebsites';
+    const PRICE_LISTS_COLLECTION_FORM_FIELD_NAME = 'priceListsByWebsites';
 
     /**
      * @var PriceListWithPriorityCollectionHandler
@@ -76,7 +76,7 @@ abstract class AbstractPriceListCollectionAwareListener
             return;
         }
 
-        foreach ($event->getForm()->get(self::PRICE_LISTS_BY_WEBSITES)->all() as $form) {
+        foreach ($event->getForm()->get(self::PRICE_LISTS_COLLECTION_FORM_FIELD_NAME)->all() as $form) {
             $website = $form->getConfig()->getOption(WebsiteScopedDataType::WEBSITE_OPTION);
             $existing = $this->getExistingRelations($targetEntity, $website);
             $fallback = $this->getFallback($website, $targetEntity);
@@ -93,13 +93,14 @@ abstract class AbstractPriceListCollectionAwareListener
     public function onPostSubmit(AfterFormProcessEvent $event)
     {
         $targetEntity = $event->getForm()->getData();
-        foreach ($event->getForm()->get(self::PRICE_LISTS_BY_WEBSITES)->all() as $form) {
+        foreach ($event->getForm()->get(self::PRICE_LISTS_COLLECTION_FORM_FIELD_NAME)->all() as $form) {
             $data = $form->getData();
             $website = $form->getConfig()->getOption(WebsiteScopedDataType::WEBSITE_OPTION);
-            $existing = $this->getExistingRelations($targetEntity, $website);
+            $existingRelations = $this->getExistingRelations($targetEntity, $website);
 
             $submitted = $data[PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD];
-            $hasChanges = $this->collectionHandler->handleChanges($submitted, $existing, $targetEntity, $website);
+            $hasChanges = $this->collectionHandler
+                ->handleChanges($submitted, $existingRelations, $targetEntity, $website);
 
             $fallback = $this->getFallback($website, $targetEntity);
             $fallbackData = $form->get(PriceListsSettingsType::FALLBACK_FIELD)->getData();
