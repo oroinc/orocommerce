@@ -7,6 +7,8 @@ use Doctrine\ORM\Query\Expr;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 
+use OroB2B\Bundle\TaxBundle\Model\Result;
+use OroB2B\Bundle\TaxBundle\Model\ResultElement;
 use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class OrderLineItemGridListener
@@ -42,6 +44,28 @@ class OrderLineItemGridListener
      */
     public function onBuildBefore(BuildBefore $event)
     {
+        $this->prepareOnBuildBefore($event);
+        $configuration = $event->getConfig();
+
+        $this->addColumn($configuration);
+    }
+
+    /**
+     * @param BuildBefore $event
+     */
+    public function onBuildBeforeFrontend(BuildBefore $event)
+    {
+        $this->prepareOnBuildBefore($event);
+        $configuration = $event->getConfig();
+
+        $this->addColumnFrontend($configuration);
+    }
+
+    /**
+     * @param BuildBefore $event
+     */
+    protected function prepareOnBuildBefore(BuildBefore $event)
+    {
         if (!$this->taxationSettingsProvider->isEnabled()) {
             return;
         }
@@ -57,7 +81,6 @@ class OrderLineItemGridListener
 
         $this->addJoin($configuration);
         $this->addSelect($configuration);
-        $this->addColumn($configuration);
     }
 
     /**
@@ -106,7 +129,85 @@ class OrderLineItemGridListener
                 'label' => 'orob2b.tax.result.label',
                 'type' => 'twig',
                 'frontend_type' => 'html',
-                'template' => 'OroB2BTaxBundle::column.html.twig',
+                'template' => 'OroB2BTaxBundle::Order/Datagrid/column.html.twig',
+                'renderable' => false
+            ]
+        );
+    }
+
+    /**
+     * @param DatagridConfiguration $configuration
+     */
+    public function addColumnFrontend(DatagridConfiguration $configuration)
+    {
+        $configuration->offsetSetByPath(
+            sprintf('[columns][%s]', 'unitPriceIncludingTax'),
+            [
+                'label' => 'orob2b.tax.order_item_datagrid.unitPrice.includingTax.label',
+                'frontend_type' => 'string',
+                'data_name' => sprintf('[result][%s][%s]', Result::UNIT, ResultElement::INCLUDING_TAX),
+                'renderable' => false
+            ]
+        );
+
+        $configuration->offsetSetByPath(
+            sprintf('[columns][%s]', 'unitPriceExcludingTax'),
+            [
+                'label' => 'orob2b.tax.order_item_datagrid.unitPrice.excludingTax.label',
+                'frontend_type' => 'string',
+                'data_name' => sprintf('[result][%s][%s]', Result::UNIT, ResultElement::EXCLUDING_TAX),
+                'renderable' => false
+            ]
+        );
+
+        $configuration->offsetSetByPath(
+            sprintf('[columns][%s]', 'unitPriceTaxAmount'),
+            [
+                'label' => 'orob2b.tax.order_item_datagrid.unitPrice.taxAmount.label',
+                'frontend_type' => 'string',
+                'data_name' => sprintf('[result][%s][%s]', Result::UNIT, ResultElement::TAX_AMOUNT),
+                'renderable' => false
+            ]
+        );
+
+        $configuration->offsetSetByPath(
+            sprintf('[columns][%s]', 'rowTotalIncludingTax'),
+            [
+                'label' => 'orob2b.tax.order_item_datagrid.rowTotal.includingTax.label',
+                'frontend_type' => 'string',
+                'data_name' => sprintf('[result][%s][%s]', Result::ROW, ResultElement::INCLUDING_TAX),
+                'renderable' => false
+            ]
+        );
+
+        $configuration->offsetSetByPath(
+            sprintf('[columns][%s]', 'rowTotalExcludingTax'),
+            [
+                'label' => 'orob2b.tax.order_item_datagrid.rowTotal.excludingTax.label',
+                'frontend_type' => 'string',
+                'data_name' => sprintf('[result][%s][%s]', Result::ROW, ResultElement::EXCLUDING_TAX),
+                'renderable' => false
+            ]
+        );
+
+        $configuration->offsetSetByPath(
+            sprintf('[columns][%s]', 'rowTotalTaxAmount'),
+            [
+                'label' => 'orob2b.tax.order_item_datagrid.rowTotal.taxAmount.label',
+                'frontend_type' => 'string',
+                'data_name' => sprintf('[result][%s][%s]', Result::ROW, ResultElement::TAX_AMOUNT) ,
+                'renderable' => false
+            ]
+        );
+
+        $configuration->offsetSetByPath(
+            sprintf('[columns][%s]', 'result'),
+            [
+                'label' => 'orob2b.tax.result.label',
+                'type' => 'twig',
+                'frontend_type' => 'html',
+                'template' => 'OroB2BTaxBundle::Order/Datagrid/Frontend/column.html.twig',
+                'renderable' => false
             ]
         );
     }

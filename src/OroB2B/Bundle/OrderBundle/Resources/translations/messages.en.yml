@@ -29,6 +29,9 @@ orob2b:
         order_date.label: Order Date
         shipping_method.label: Shipping Method
         payment.label: Payment
+        frontend.order_information.title: 'Order Information'
+        frontend.ordered_items.title: 'Items Ordered'
+        frontend.order_list_link.text: '< Back to Orders List'
 
         orderaddress:
             entity_label: Order Address
@@ -87,6 +90,8 @@ orob2b:
 
             column:
                 product: 'Product'
+
+            frontend.order.view.label: Item#
 
         btn:
             add_seller_notes: 'Add Notes'

@@ -78,6 +78,8 @@ parameters:
     orob2b_tax.layout.data_provider.tax.class: OroB2B\Bundle\TaxBundle\Layout\Provider\TaxDataProvider
     orob2b_tax.layout.type.tax.class: OroB2B\Bundle\TaxBundle\Layout\Type\TaxType
 
+    orob2b_tax.provider.subtotal_tax.class: OroB2B\Bundle\TaxBundle\Provider\SubtotalTaxProvider
+
 services:
     orob2b_tax.manager.product_tax_code.api:
         class: %orob2b_tax.manager.api.attribute.class%
@@ -267,6 +269,7 @@ services:
             - %orob2b_tax.entity.tax_value.class%
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid-frontend, method: onBuildBeforeFrontend }
 
     orob2b_tax.event_listener.view.order:
         class: %orob2b_tax.event_listener.view.order.class%
@@ -521,3 +524,11 @@ services:
         class: %orob2b_tax.layout.type.tax.class%
         tags:
              - { name: layout.block_type, alias: tax }
+
+    orob2b_tax.provider.subtotal_tax:
+        class: %orob2b_tax.provider.subtotal_tax.class%
+        arguments:
+            - @translator
+            - @orob2b_tax.manager.tax_manager
+        tags:
+            - { name: orob2b_order.subtotal_provider, priority: 11 }
