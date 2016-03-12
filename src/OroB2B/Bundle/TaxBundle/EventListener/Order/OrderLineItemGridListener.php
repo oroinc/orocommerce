@@ -44,9 +44,12 @@ class OrderLineItemGridListener
      */
     public function onBuildBefore(BuildBefore $event)
     {
-        $this->prepareOnBuildBefore($event);
-        $configuration = $event->getConfig();
+        if (!$this->checkOnBefore($event)) {
+            return;
+        }
 
+        $configuration = $event->getConfig();
+        $this->prepareOnBuildBefore($configuration);
         $this->addColumn($configuration);
     }
 
@@ -55,32 +58,44 @@ class OrderLineItemGridListener
      */
     public function onBuildBeforeFrontend(BuildBefore $event)
     {
-        $this->prepareOnBuildBefore($event);
-        $configuration = $event->getConfig();
-
-        $this->addColumnFrontend($configuration);
-    }
-
-    /**
-     * @param BuildBefore $event
-     */
-    protected function prepareOnBuildBefore(BuildBefore $event)
-    {
-        if (!$this->taxationSettingsProvider->isEnabled()) {
+        if (!$this->checkOnBefore($event)) {
             return;
         }
 
         $configuration = $event->getConfig();
+        $this->prepareOnBuildBefore($configuration);
+        $this->addColumnFrontend($configuration);
+    }
+
+    /**
+     * @param DatagridConfiguration $configuration
+     */
+    protected function prepareOnBuildBefore(DatagridConfiguration $configuration)
+    {
+        $this->addJoin($configuration);
+        $this->addSelect($configuration);
+    }
+
+    /**
+     * @param BuildBefore $event
+     * @return bool
+     */
+    protected function checkOnBefore(BuildBefore $event)
+    {
+        $configuration = $event->getConfig();
+
+        if (!$this->taxationSettingsProvider->isEnabled()) {
+            return false;
+        }
 
         $fromParts = $configuration->offsetGetByPath('[source][query][from]', []);
         $this->fromPart = reset($fromParts);
 
         if (!isset($this->fromPart['table'], $this->fromPart['alias'])) {
-            return;
+            return false;
         }
 
-        $this->addJoin($configuration);
-        $this->addSelect($configuration);
+        return true;
     }
 
     /**
@@ -130,7 +145,6 @@ class OrderLineItemGridListener
                 'type' => 'twig',
                 'frontend_type' => 'html',
                 'template' => 'OroB2BTaxBundle::Order/Datagrid/column.html.twig',
-                'renderable' => false
             ]
         );
     }
