@@ -25,6 +25,7 @@ class OroB2BShoppingListBundle implements Migration
     protected function updateShoppingListTable(Schema $schema)
     {
         $table = $schema->getTable('orob2b_shopping_list');
+        $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->addColumn(
             'subtotal',
@@ -35,6 +36,12 @@ class OroB2BShoppingListBundle implements Migration
             'total',
             'money',
             ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_website'),
+            ['website_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
     }
 }
