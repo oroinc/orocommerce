@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\TaxBundle\EventListener\Order;
 use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
 use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
+use OroB2B\Bundle\TaxBundle\Model\Result;
 
 class OrderTaxesListener
 {
@@ -32,17 +33,17 @@ class OrderTaxesListener
         $order = $event->getOrder();
 
         $result = $this->taxManager->getTax($order);
-        $event->getData()->offsetSet('taxesTotal', $result->offsetGet('total')->getArrayCopy());
+        $event->getData()->offsetSet('taxesTotal', $result->offsetGet(Result::TOTAL)->getArrayCopy());
 
         $taxesItems = [];
         /** @var \ArrayObject $lineItem */
-        foreach ($result->offsetGet('items') as $lineItem) {
+        foreach ($result->offsetGet(Result::ITEMS) as $lineItem) {
             $taxesItem = [
-                'unit' => $lineItem->offsetGet('unit')->getArrayCopy(),
-                'row' => $lineItem->offsetGet('row')->getArrayCopy()
+                'unit' => $lineItem->offsetGet(Result::UNIT)->getArrayCopy(),
+                'row' => $lineItem->offsetGet(Result::ROW)->getArrayCopy()
             ];
 
-            $itemTaxes = $lineItem->offsetGet('taxes');
+            $itemTaxes = $lineItem->offsetGet(Result::TAXES);
             if (!empty($itemTaxes)) {
                 $taxes = [];
                 /** @var \ArrayObject $itemTax */
