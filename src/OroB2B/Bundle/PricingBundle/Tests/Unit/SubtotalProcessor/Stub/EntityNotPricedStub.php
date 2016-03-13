@@ -56,6 +56,7 @@ class EntityNotPricedStub implements
 
     /**
      * @param LineItemNotPricedStub $lineItem
+     *
      * @return EntityStub
      */
     public function addLineItem(LineItemNotPricedStub $lineItem)
@@ -75,6 +76,7 @@ class EntityNotPricedStub implements
 
     /**
      * @param string $currency
+     *
      * @return $this
      */
     public function setCurrency($currency)
@@ -84,11 +86,19 @@ class EntityNotPricedStub implements
         return $this;
     }
 
+    /**
+     * @return Account
+     */
     public function getAccount()
     {
         return $this->account;
     }
 
+    /**
+     * @param Account $account
+     *
+     * @return $this
+     */
     public function setAccount(Account $account)
     {
         $this->account = $account;
@@ -96,6 +106,9 @@ class EntityNotPricedStub implements
         return $this;
     }
 
+    /**
+     * @return Website
+     */
     public function getWebsite()
     {
         return $this->website;
