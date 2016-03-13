@@ -97,7 +97,6 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
         $manager->persist($shoppingList);
     }
 
-
     /**
      * @param EntityManager $manager
      * @param string $name
