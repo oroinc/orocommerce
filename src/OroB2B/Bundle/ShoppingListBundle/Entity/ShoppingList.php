@@ -469,6 +469,7 @@ class ShoppingList extends ExtendShoppingList implements
 
     /**
      * @param Website $website
+     *
      * @return $this
      */
     public function setWebsite(Website $website)
