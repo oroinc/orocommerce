@@ -8,3 +8,4 @@ config:
         'orob2border/js/app/views/line-item-abstract-view': 'bundles/orob2border/js/app/views/line-item-abstract-view.js'
         'orob2border/js/app/views/line-items-view': 'bundles/orob2border/js/app/views/line-items-view.js'
         'orob2border/js/app/views/payment-term-view': 'bundles/orob2border/js/app/views/payment-term-view.js'
+        'orob2border/js/app/views/shipping-cost-view': 'bundles/orob2border/js/app/views/shipping-cost-view.js'

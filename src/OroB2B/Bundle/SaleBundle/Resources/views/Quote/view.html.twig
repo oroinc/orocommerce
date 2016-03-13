@@ -130,6 +130,15 @@
         {% endif %}
     {% endset %}
 
+    {% set shippingInformation %}
+        {% if entity.shippingEstimate is not null %}
+            {{ UI.renderHtmlProperty('orob2b.sale.quote.shipping_estimate.label'|trans,
+            entity.shippingEstimate.value|oro_format_currency({'currency': entity.shippingEstimate.currency})) }}
+        {% else %}
+            {{ UI.renderHtmlProperty('orob2b.sale.quote.shipping_estimate.label'|trans, 'N/A'|trans) }}
+        {% endif %}
+    {% endset %}
+
     {% set id = 'quoteView' %}
 
     {% set dataBlocks = [{
@@ -148,6 +157,11 @@
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'orob2b.sale.quote.sections.shipping_address'|trans,
         'subblocks': [{'data' : [shippingAddress]}]
+    }]) %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'orob2b.sale.quote.sections.shipping_information'|trans,
+        'subblocks': [{'data' : [shippingInformation]}]
     }]) %}
 
     {% set data = {'dataBlocks': dataBlocks} %}

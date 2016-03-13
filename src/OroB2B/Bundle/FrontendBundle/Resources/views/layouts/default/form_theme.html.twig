@@ -22,14 +22,6 @@
     {{ parent() }}
 {% endblock %}
 
-{% block choice_widget_collapsed %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " no-uniform",
-        'data-chosen-selectbox': true
-    }) %}
-    {{ parent() }}
-{% endblock %}
-
 {%- block form_row -%}
     {% set class_prefix = form.vars.class_prefix is defined ?  form.vars.class_prefix : '' %}
     {% set attr = attr|merge({

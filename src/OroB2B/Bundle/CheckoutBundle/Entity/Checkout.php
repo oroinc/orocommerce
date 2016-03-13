@@ -7,13 +7,14 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField; // required by DatesAwareTrait
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\User;
-
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowAwareInterface;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowAwareTrait;
+use Oro\Component\Layout\ContextItemInterface;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -22,6 +23,8 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
+ * @todo Add currency field
+ * @todo Add remove settings field
  * @ORM\Table(name="orob2b_checkout")
  * @ORM\Entity
  * @Config(
@@ -42,6 +45,9 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"="commerce"
+ *          },
+ *          "workflow"={
+ *              "active_workflow"="b2b_flow_checkout"
  *          }
  *      }
  * )
@@ -52,7 +58,8 @@ class Checkout extends ExtendCheckout implements
     OrganizationAwareInterface,
     AccountOwnerAwareInterface,
     DatesAwareInterface,
-    WorkflowAwareInterface
+    WorkflowAwareInterface,
+    ContextItemInterface
 {
     use DatesAwareTrait;
     use WorkflowAwareTrait;
@@ -216,6 +223,10 @@ class Checkout extends ExtendCheckout implements
     public function setAccountUser(AccountUser $accountUser)
     {
         $this->accountUser = $accountUser;
+
+        if ($accountUser && $accountUser->getAccount()) {
+            $this->setAccount($accountUser->getAccount());
+        }
 
         return $this;
     }
@@ -515,5 +526,13 @@ class Checkout extends ExtendCheckout implements
         $this->source = $source;
 
         return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function toString()
+    {
+        return $this->id;
     }
 }

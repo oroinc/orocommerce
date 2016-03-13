@@ -2,15 +2,14 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Controller\Frontend;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
+use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 
@@ -22,16 +21,9 @@ class CheckoutController extends Controller
      * @Route(
      *     "/{id}",
      *     name="orob2b_checkout_frontend_checkout",
-     *     defaults={"id" = null},
      *     requirements={"id"="\d+"}
      * )
-     * @ParamConverter(
-     *     "checkout",
-     *     class="OroB2BCheckoutBundle:Checkout",
-     *     isOptional="true",
-     *     options={"id" = "id"}
-     *     )
-     * @Layout(vars={"page"})
+     * @Layout(vars={"workflowStepName", "workflowStepOrder","checkout"})
      * @Acl(
      *      id="orob2b_checkout_frontend_checkout",
      *      type="entity",
@@ -40,47 +32,22 @@ class CheckoutController extends Controller
      *      group_name="commerce"
      * )
      *
-     * @param Checkout|null $checkout
-     * @param Request $request
+     * @param Checkout $checkout
      * @return array
      */
-    public function checkoutAction(Request $request, Checkout $checkout = null)
+    public function checkoutAction(Checkout $checkout)
     {
-        if (!$checkout) {
-            $checkout = new Checkout();
-        }
-        $page = $request->query->get('page', 1);
+        $currentStep = $checkout->getWorkflowStep();
 
-        if ($page == 5) {
-            $formBuilder = $this->createFormBuilder();
-            $formBuilder->add('lastShip', 'text', array(
-                'label' => '',
-                'required' => false
-            ));
-            $formBuilder->add('poNumber', 'text', array(
-                'label' => ' ',
-                'required' => false
-            ));
-            $formBuilder->add('note', 'textarea', array(
-                'label' => ' ',
-                'required' => false
-            ));
-
-            $reviewForm = new FormAccessor($formBuilder->getForm());
-
-            return [
-                'page' => $page,
-                'data' => [
+        return [
+            'workflowStepName' => $currentStep->getName(),
+            'workflowStepOrder' => $currentStep->getStepOrder(),
+            'checkout' => $checkout,
+            'data' =>
+                [
                     'checkout' => $checkout,
-                    'page' => $page,
-                    'form' => $reviewForm,
+                    'workflowStep' => $currentStep
                 ]
-            ];
-        } else {
-            return [
-                'page' => $page,
-                'data' => ['checkout' => $checkout, 'page' => $page]
-            ];
-        }
+        ];
     }
 }

@@ -116,6 +116,7 @@ class QuoteType extends AbstractType
                     'error_bubbling' => false,
                     'required' => false,
                     'label' => 'orob2b.sale.quote.shipping_estimate.label',
+                    'validation_groups' => ['Optional']
                 ]
             )
         ;
