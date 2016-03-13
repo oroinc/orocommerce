@@ -16,6 +16,7 @@ class OrderDiscountTest extends \PHPUnit_Framework_TestCase
         $properties = [
             ['id', '123'],
             ['description', 'Description'],
+            ['type', 'test_type'],
             ['amount', 100],
             ['percent', 0.1],
             ['order', new Order()]
