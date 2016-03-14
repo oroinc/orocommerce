@@ -16,19 +16,17 @@ class OrderLineItemMapper extends AbstractOrderMapper
      */
     public function map($lineItem)
     {
-        $orderAddress = $this->getOrderAddress($lineItem->getOrder());
-
+        $order = $lineItem->getOrder();
         $taxable = (new Taxable())
             ->setIdentifier($lineItem->getId())
             ->setClassName($this->getProcessingClassName())
             ->setQuantity($lineItem->getQuantity())
-            ->setDestination($orderAddress)
+            ->setOrigin($this->addressProvider->getOriginAddress())
+            ->setDestination($this->getDestinationAddress($order))
+            ->setTaxationAddress($this->getTaxationAddress($order))
             ->setContext($this->getContext($lineItem))
+            ->setPrice($lineItem->getValue())
             ->setCurrency($lineItem->getCurrency());
-
-        if ($lineItem->getPrice()) {
-            $taxable->setPrice($lineItem->getPrice()->getValue());
-        }
 
         return $taxable;
     }

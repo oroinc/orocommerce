@@ -30,7 +30,7 @@ class TaxValueToResultTransformer implements TaxTransformerInterface
     public function reverseTransform(Result $result, Taxable $taxable)
     {
         $taxValue = $this->taxValueManager->getTaxValue($taxable->getClassName(), $taxable->getIdentifier());
-        $taxValue->setAddress((string)$taxable->getDestination());
+        $taxValue->setAddress((string)$taxable->getTaxationAddress());
 
         $taxValueResult = new Result($result->getArrayCopy());
         $taxValue->setResult($taxValueResult);
