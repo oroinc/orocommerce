@@ -12,10 +12,14 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
+use OroB2B\Bundle\OrderBundle\Provider\IdentifierAwareInterface;
 use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 /**
  * @ORM\Table(
@@ -53,7 +57,10 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
 class ShoppingList extends ExtendShoppingList implements
     OrganizationAwareInterface,
     LineItemsNotPricedAwareInterface,
-    CurrencyAwareInterface
+    CurrencyAwareInterface,
+    AccountOwnerAwareInterface,
+    WebsiteAwareInterface,
+    IdentifierAwareInterface
 {
     /**
      * @var int
@@ -143,6 +150,21 @@ class ShoppingList extends ExtendShoppingList implements
      * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $account;
+
+    /**
+     * @var Website
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $website;
 
     /**
      * @var ArrayCollection|LineItem[]
@@ -448,6 +470,26 @@ class ShoppingList extends ExtendShoppingList implements
     }
 
     /**
+     * @param Website $website
+     *
+     * @return $this
+     */
+    public function setWebsite(Website $website)
+    {
+        $this->website = $website;
+
+        return $this;
+    }
+
+    /**
+     * @return Website
+     */
+    public function getWebsite()
+    {
+        return $this->website;
+    }
+
+    /**
      * Set currency
      *
      * @param string $currency
@@ -517,5 +559,13 @@ class ShoppingList extends ExtendShoppingList implements
     public function getTotal()
     {
         return $this->total;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdentifier()
+    {
+        return $this->getId();
     }
 }

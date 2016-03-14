@@ -42,8 +42,6 @@ abstract class AbstractAjaxEntityTotalsController extends Controller
         $totalProvider = $this->get('orob2b_pricing.subtotal_processor.total_processor_provider');
         $total = $totalProvider->getTotal($entity)->toArray();
         $subtotals = $totalProvider->getSubtotals($entity)->getValues();
-        //if there is only one subtotal, it will be the same with total, so it should be ignored
-//        $subtotals = count($subtotals) === 1 ? [] : $subtotals;
 
         $callbackFunction = function ($value) {
             /** @var Subtotal $value */

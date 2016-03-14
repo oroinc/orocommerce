@@ -18,7 +18,7 @@ orob2b:
         subtotal.label: Subtotal
         total.label: Grand Total
         currency.label: Currency
-
+        website.label: Website
         btn:
             create_order: 'Create Order'
 

@@ -15,16 +15,17 @@ class OroB2BRFPBundle implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Table Modification */
-        $this->addDeletedAtColumn($schema);
+        $this->modifyRfpRequestTable($schema);
     }
 
     /**
      * @param Schema $schema
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
-    protected function addDeletedAtColumn(Schema $schema)
+    protected function modifyRfpRequestTable(Schema $schema)
     {
         $table = $schema->getTable('orob2b_rfp_request');
         $table->addColumn('deleted_at', 'datetime', ['notnull' => false, 'comment' => '(DC2Type:datetime)']);
+        $table->addColumn('cancellation_reason', 'text', ['notnull' => false]);
     }
 }
