@@ -42,8 +42,12 @@
     {% set subtotals %}
         {% include 'OroB2BPricingBundle:Totals:totals.html.twig' with {
             options: {
-                url: path('orob2b_order_subtotals', {id: entity.id}),
-                selectors: {form: '#' ~ form.vars.id}
+                selectors: {
+                    template: '#totals-template',
+                    form: '#' ~ form.vars.id
+                },
+                entityClassName: 'OroB2B\\Bundle\\OrderBundle\\Entity\\Order',
+                entityId: form.vars.value.id
             }
         } only %}
     {% endset %}

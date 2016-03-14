@@ -316,19 +316,20 @@
 {% endblock %}
 
 {% block _shopping_list_totals_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
     <div class="order-checkout-widget__container-wrapper">
-        <div class="order-checkout-widget__container order-checkout-widget__container_lg" {{ UI.renderPageComponentAttributes({
-            module: 'orob2bpricing/js/app/components/frontend-entity-totals-component',
+        {% include 'OroB2BPricingBundle:Totals/Frontend:totals.html.twig' with {
             options: {
-                eventsName: [
+                events: [
                     'frontend:item:delete',
                     'frontend:shopping-list-item-quantity:update'
                 ],
+                selectors: {
+                    template: '#frontend-totals-template'
+                },
                 entityClassName: 'OroB2B\\Bundle\\ShoppingListBundle\\Entity\\ShoppingList',
-                entityId: shoppingList.id
+                entityId: shoppingList.id,
+                skipMaskView: true
             }
-        }) }} data-container="totals">
-        </div>
+        } only %}
     </div>
 {% endblock %}

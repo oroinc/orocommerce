@@ -1,38 +1,35 @@
-<div
-    data-page-component-module="orob2bpricing/js/app/components/totals-component"
-    data-page-component-options="{{ options|json_encode }}">
-    <div class="totals-container"></div>
-
-    <script type="text/html" class="frontend-totals-template">
-        {% block subtotals_template %}
-
-            <table class="order-checkout-widget__table pull-right" >
-
-            </table>
-
-
-
+<script type="text/template" class="frontend-totals-template" id="frontend-totals-template">
+    {% block subtotals_template %}
+        <table class="order-checkout-widget__table pull-right" >
+            <tbody>
             <% if ('subtotals' in totals) { %>
                 <% _.each(totals.subtotals, function(subtotal) { %>
                     <% if (subtotal.visible) { %>
-                    <div class="control-group">
-                        <label class="control-label"><%= subtotal.label %></label>
-                        <div class="controls">
-                            <label class="control-label"><%= subtotal.formattedAmount %></label>
-                        </div>
-                    </div>
+                        <tr>
+                            <td><%= subtotal.label %></td>
+                            <td><%= subtotal.formattedAmount %></td>
+                        </tr>
                     <% } %>
                 <% }); %>
             <% } %>
 
             <% if ('total' in totals) { %>
-                <div class="control-group">
-                    <label class="control-label"><%= totals.total.label %></label>
-                    <div class="controls">
-                        <label class="control-label"><%= totals.total.formattedAmount %></label>
-                    </div>
-                </div>
-            <% } %>
-        {% endblock %}
-    </script>
+                <tr>
+                    <td class="order-checkout-widget__total">
+                        <span class="text-uppercase"><%= totals.total.label %></span>
+                    </td>
+                    <td class="order-checkout-widget__total">
+                        <span class="blue"><%= totals.total.formattedAmount %></span>
+                    </td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+    {% endblock %}
+</script>
+
+<div class="order-checkout-widget__container order-checkout-widget__container_lg"
+    data-page-component-module="orob2bpricing/js/app/components/totals-component"
+    data-page-component-options="{{ options|json_encode }}">
+    <div class="totals-container"></div>
 </div>

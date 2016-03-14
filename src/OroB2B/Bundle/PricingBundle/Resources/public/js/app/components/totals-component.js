@@ -4,6 +4,7 @@ define(function(require) {
     var TotalsComponent;
     var $ = require('jquery');
     var _ = require('underscore');
+    var routing = require('routing');
     var mediator = require('oroui/js/mediator');
     var NumberFormatter = require('orolocale/js/formatter/number');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
@@ -19,14 +20,16 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            url: '',
+            url: 'orob2b_pricing_frontend_entity_totals',
+            entityClassName: '',
+            entityId: 0,
             selectors: {
                 form: '',
                 template: '.totals-template',
                 subtotals: '.totals-container'
             },
-            method: 'POST',
-            events: []
+            events: [],
+            skipMaskView: false
         },
 
         /**
@@ -81,9 +84,8 @@ define(function(require) {
 
             this.$el = options._sourceElement;
             this.$form = $(this.options.selectors.form);
-            this.$method = this.options.method;
             this.$subtotals = this.$el.find(this.options.selectors.subtotals);
-            this.template = _.template(this.$el.find(this.options.selectors.template).text());
+            this.template = _.template($(this.options.selectors.template).text());
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
             this.eventName = 'total-target:changing';
 
@@ -104,7 +106,9 @@ define(function(require) {
          * Get and render subtotals
          */
         updateTotals: function(e) {
-            this.loadingMaskView.show();
+            if (!this.options.skipMaskView) {
+                this.loadingMaskView.show();
+            }
 
             if (this.getTotals.timeoutId) {
                 clearTimeout(this.getTotals.timeoutId);
@@ -136,28 +140,29 @@ define(function(require) {
          * @param {Function} callback
          */
         getTotals: function(callback) {
-            if (this.$method === 'GET') {
-                $.get(this.options.url, function (response) {
-                    callback(response);
-                });
-                return;
-            }
+            var self = this;
+
+            var params = {
+                entityClassName: this.options.entityClassName,
+                entityId: this.options.entityId
+            };
 
             var formData = this.$form.find(':input[data-ftid]').serialize();
-
-            if (formData === this.formData) {
-                callback();//nothing changed
-                return;
-            }
-
             this.formData = formData;
 
-            var self = this;
-            $.post(this.options.url, formData, function(response) {
-                if (formData === self.formData) {
-                    //data doesn't change after ajax call
-                    var totals = response || {};
-                    callback(totals);
+            $.ajax({
+                url: routing.generate(this.options.url, params),
+                type: 'GET',
+                success: function (response) {
+                    if (formData === self.formData) {
+                        //data doesn't change after ajax call
+                        var totals = response || {};
+                        callback(totals);
+                    }
+                    //self.updateTotalsContrainer(response);
+                },
+                error: function(response) {
+                    //callback(response);
                 }
             });
         },
