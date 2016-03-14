@@ -18,6 +18,11 @@ placeholders:
             window_bundle_js:
                 order: 200
 
+    scripts_before:
+        items:
+            template_datagrid_toolbar_frontend: ~
+            template_datagrid_grid_frontend: ~
+
     install_additional_configuration_fields:
         items:
             web_settings:
@@ -47,3 +52,17 @@ items:
         template: OroActivityListBundle:ActivityList:activities.html.twig
     web_settings:
         template: OroB2BFrontendBundle:InstallConfiguration:web.html.twig
+
+    # frontend grid
+    template_datagrid_toolbar_frontend:
+        template: OroB2BFrontendBundle:js:toolbar.html.twig
+        applicable: @orob2b_frontend.placeholder.filter->isFrontendRoute()
+    template_datagrid_grid_frontend:
+        template: OroB2BFrontendBundle:js:grid.html.twig
+        applicable: @orob2b_frontend.placeholder.filter->isFrontendRoute()
+
+    # backend grid only
+    template_datagrid_toolbar:
+        applicable: @orob2b_frontend.placeholder.filter->isBackendRoute()
+    template_datagrid_grid:
+        applicable: @orob2b_frontend.placeholder.filter->isBackendRoute()

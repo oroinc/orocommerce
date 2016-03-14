@@ -5,11 +5,14 @@ layout:
         - @setOption:
             id: page_title
             optionName: text
-            optionValue: 'orob2b.order.entity_label'
+            optionValue:
+                label: 'orob2b.order.navigation.view'
+                parameters:
+                    '%identifier%': { @value: $data.order.identifier }
         - @setOption:
             id: content
             optionName: class_prefix
-            optionValue: 'order'
+            optionValue: 'account'
         - @add:
             id: account_sidebar
             parentId: sidebar_left

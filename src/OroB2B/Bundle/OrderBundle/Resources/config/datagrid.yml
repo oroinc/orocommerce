@@ -507,3 +507,7 @@ datagrid:
                 frontend_type: date
             comment:
                 label: orob2b.order.orderlineitem.comment.label
+        options:
+            toolbarOptions:
+                placement:
+                    bottom: true
