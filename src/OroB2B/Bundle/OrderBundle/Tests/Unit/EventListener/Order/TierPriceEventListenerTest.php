@@ -2,22 +2,20 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\EventListener\Order;
 
-use OroB2B\Bundle\OrderBundle\EventListener\Order\TierPriceEventListener;
-use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceList;
 use OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
-use OroB2B\Bundle\OrderBundle\EventListener\Order\MatchingPriceEventListener;
+use OroB2B\Bundle\OrderBundle\EventListener\Order\TierPriceEventListener;
+use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 
 class TierPriceEventListenerTest extends \PHPUnit_Framework_TestCase
 {

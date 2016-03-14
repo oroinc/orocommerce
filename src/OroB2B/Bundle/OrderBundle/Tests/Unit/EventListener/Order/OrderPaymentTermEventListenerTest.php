@@ -7,10 +7,10 @@ use Symfony\Component\Form\FormInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
-use OroB2B\Bundle\OrderBundle\EventListener\Order\MatchingPriceEventListener;
 use OroB2B\Bundle\OrderBundle\EventListener\Order\OrderPaymentTermEventListener;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
@@ -19,7 +19,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
-    /** @var MatchingPriceEventListener */
+    /** @var OrderPaymentTermEventListener */
     protected $listener;
 
     /** @var PaymentTermProvider|\PHPUnit_Framework_MockObject_MockObject */
@@ -37,6 +37,32 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         unset($this->listener, $this->paymentTermProvider);
+    }
+
+    /**
+     * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
+     */
+    public function testThrowExceptionWhenAccountUserHasWrongAccount()
+    {
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+
+        /** @var Account $account1 */
+        $account1 = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 1]);
+
+        /** @var Account $account2 */
+        $account2 = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 2]);
+
+        $accountUser1 = new AccountUser();
+        $accountUser1->setAccount($account1);
+
+        $order = new Order();
+        $order
+            ->setAccount($account2)
+            ->setAccountUser($accountUser1);
+
+        $event = new OrderEvent($form, $order);
+        $this->listener->onOrderEvent($event);
     }
 
     /**
