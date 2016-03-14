@@ -70,5 +70,9 @@
         {% endif %}
 
         {{ block_widget(block) }}
+
+        <div class="hidden">
+            {{ form_rest(form) }}
+        </div>
     {{ form_end(form) }}
 {%- endblock %}

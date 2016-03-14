@@ -15,9 +15,11 @@ layout:
                     blockType: container
                     options:
                         vars:
+                            checkout: { @value: $data.checkout }
                             workflowStep: { @value: $data.workflowStep }
+                            form: { @value: $data.orob2b_checkout_transition_form }
                 checkout_billing_form_fields:
-                    blockType: block
+                    blockType: container
                     options:
                         vars:
                             checkout: { @value: $data.checkout }
