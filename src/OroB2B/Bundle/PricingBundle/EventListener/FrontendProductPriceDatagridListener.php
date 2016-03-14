@@ -100,6 +100,9 @@ class FrontendProductPriceDatagridListener extends AbstractProductPriceDatagridL
     {
         $config = $event->getConfig();
         $currency = $this->getCurrencies()[0];
+        if (!$currency) {
+            return;
+        }
 
         $pricesColumnName = $this->buildColumnName($currency);
         $separator = (new Expr())->literal(self::DATA_SEPARATOR);
@@ -113,7 +116,7 @@ class FrontendProductPriceDatagridListener extends AbstractProductPriceDatagridL
         $select = sprintf($selectPattern, $joinAlias, $separator, self::COLUMN_UNITS);
         $this->addConfigElement($config, '[source][query][select]', $select);
 
-        $selectPattern = 'min(%s.value) as %s';
+        $selectPattern = 'MIN(%s.value) as %s';
         $select = sprintf($selectPattern, $joinAlias, self::COLUMN_MINIMUM_PRICE);
         $this->addConfigElement($config, '[source][query][select]', $select);
 
