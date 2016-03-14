@@ -49,3 +49,27 @@
         </ul>
     </div>
 {% endblock %}
+
+{% block _enter_billing_address_information_widget %}
+    {% if checkout.billingAddress %}
+        <div>{{ checkout.billingAddress|oro_format_address }}</div>
+    {% endif %}
+{% endblock %}
+
+{% block _enter_shipping_address_information_widget %}
+    {% if checkout.shippingAddress %}
+        <div>{{ checkout.shippingAddress|oro_format_address }}</div>
+    {% endif %}
+{% endblock %}
+
+{% block _enter_shipping_method_information_widget %}
+    {% if checkout.shippingMethod %}
+        <div>shipping method information</div>
+    {% endif %}
+{% endblock %}
+
+{% block _enter_payment_information_widget %}
+    {% if checkout.paymentMethod %}
+        <div>payment method information</div>
+    {% endif %}
+{% endblock %}

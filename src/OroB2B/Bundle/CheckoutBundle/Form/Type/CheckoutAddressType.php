@@ -1,26 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Form\Type;
+namespace OroB2B\Bundle\CheckoutBundle\Form\Type;
 
 use Symfony\Component\Form\FormBuilderInterface;
 
+use OroB2B\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 
-class OrderAddressType extends AbstractOrderAddressType
+class CheckoutAddressType extends AbstractOrderAddressType
 {
-    const NAME = 'orob2b_order_address_type';
-
-    const APPLICATION_FRONTEND = 'frontend';
-    const APPLICATION_BACKEND = 'backend';
+    const NAME = 'orob2b_checkout_address';
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param string $type - address type
-     * @param AccountOwnerAwareInterface $entity
-     * @param bool $isManualEditGranted
-     * @param bool $isEditEnabled
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     protected function initAccountAddressField(
         FormBuilderInterface $builder,
@@ -37,7 +29,6 @@ class OrderAddressType extends AbstractOrderAddressType
                 'required' => false,
                 'mapped' => false,
                 'choices' => $this->getChoices($addresses),
-                'configs' => ['placeholder' => 'orob2b.order.form.address.choose'],
                 'attr' => [
                     'data-addresses' => json_encode($this->getPlainData($addresses)),
                     'data-default' => $this->getDefaultAddressKey($entity, $type, $addresses),
@@ -49,11 +40,20 @@ class OrderAddressType extends AbstractOrderAddressType
                     $accountAddressOptions['choices'],
                     ['orob2b.order.form.address.manual']
                 );
-                $accountAddressOptions['configs']['placeholder'] = 'orob2b.order.form.address.choose_or_create';
             }
-
-            $builder->add('accountAddress', 'genemu_jqueryselect2_choice', $accountAddressOptions);
+            $builder
+                ->add('accountAddress', 'choice', $accountAddressOptions)
+                ->add('country', 'orob2b_country', ['required' => true, 'label' => 'oro.address.country.label'])
+                ->add('region', 'orob2b_region', ['required' => false, 'label' => 'oro.address.region.label']);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return self::NAME;
     }
 
     /**
@@ -62,13 +62,5 @@ class OrderAddressType extends AbstractOrderAddressType
     public function getParent()
     {
         return 'oro_address';
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return self::NAME;
     }
 }

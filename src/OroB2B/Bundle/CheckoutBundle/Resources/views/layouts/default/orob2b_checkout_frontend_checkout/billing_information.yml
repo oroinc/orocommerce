@@ -2,6 +2,35 @@ layout:
     actions:
         - @setBlockTheme:
             themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/billing_information.html.twig'
+        - @setFormTheme:
+            themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/form_theme.html.twig'
+        - @addTree:
+            items:
+                checkout_billing_information:
+                    blockType: container
+                    options:
+                        vars:
+                            workflowStep: { @value: $data.workflowStep }
+                checkout_billing_form:
+                    blockType: container
+                    options:
+                        vars:
+                            checkout: { @value: $data.checkout }
+                            workflowStep: { @value: $data.workflowStep }
+                            form: { @value: $data.orob2b_checkout_transition_form }
+                checkout_billing_form_fields:
+                    blockType: block
+                    options:
+                        vars:
+                            form: { @value: $data.orob2b_checkout_transition_form }
+                checkout_billing_form_button:
+                    blockType: block
+            tree:
+                checkout_information:
+                    checkout_billing_information:
+                        checkout_billing_form:
+                            checkout_billing_form_fields: ~
+                            checkout_billing_form_button: ~
         - @add:
             id: checkout_billing_information
             parentId: checkout_information
@@ -18,6 +47,5 @@ layout:
             options:
                 transitionData: { @value: $data.orob2b_checkout_continue_transition }
                 checkout: { @value: $data.checkout }
-
     conditions:
         @eq: [$context.workflowStepName, 'enter_billing_address']
