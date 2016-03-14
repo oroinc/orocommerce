@@ -12,7 +12,6 @@ layout:
                     blockType: container
                     options:
                         vars:
-                            checkout: { @value: $data.checkout }
                             workflowStep: { @value: $data.workflowStep }
                 checkout_order_review_form_fields:
                     blockType: block
@@ -22,7 +21,7 @@ layout:
                             workflowStep: { @value: $data.workflowStep }
                             form: { @value: $data.orob2b_checkout_transition_form }
                 add_to_shopping_list_form_button:
-                    blockType: block
+                    blockType: container
                 checkout_continue:
                     blockType: checkout_transition_continue
                     options:
@@ -33,14 +32,14 @@ layout:
                     options:
                         transitionData: { @value: $data.orob2b_checkout_back_transition }
                         checkout: { @value: $data.checkout }
-    tree:
+            tree:
                 checkout_information:
                     checkout_order_review:
-                        checkout_continue: ~
-                        checkout_back: ~
                         checkout_order_review_form:
                             checkout_order_review_form_fields: ~
-                            add_to_shopping_list_form_button: ~
+                            add_to_shopping_list_form_button:
+                                checkout_continue: ~
+                                checkout_back: ~
 
     conditions:
         @eq: [$context.workflowStepName, 'place_order']
