@@ -72,7 +72,7 @@ workflows:
                 form_options:
                     attribute_fields:
                         billing_address:
-                            form_type: orob2b_order_address_type
+                            form_type: orob2b_checkout_address
                             options:
                                 object: $checkout
                                 isEditEnabled: true
@@ -93,8 +93,8 @@ workflows:
                     is_checkout_continue: true
                 form_options:
                     attribute_fields:
-                        shipping_address:
-                            form_type: orob2b_order_address_type
+                        billing_address:
+                            form_type: orob2b_checkout_address
                             options:
                                 object: $checkout
                                 isEditEnabled: true
@@ -145,6 +145,8 @@ workflows:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.place_order.label
                 step_to: place_order
                 transition_definition: place_order_definition
+                frontend_options:
+                    is_checkout_continue: true
                 form_options:
                     attribute_fields:
                         po_number: ~

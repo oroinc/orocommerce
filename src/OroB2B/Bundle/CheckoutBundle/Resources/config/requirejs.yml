@@ -1,0 +1,4 @@
+config:
+    paths:
+        'orob2bcheckout/js/app/views/address-view': 'bundles/orob2bcheckout/js/app/views/address-view.js'
+        'orob2bcheckout/js/app/components/clear-field-data-component': 'bundles/orob2bcheckout/js/app/components/clear-field-data-component.js'
