@@ -76,6 +76,8 @@ parameters:
     orob2b_tax.event.context_event_dispatcher.class: OroB2B\Bundle\TaxBundle\Event\ContextEventDispatcher
     orob2b_tax.event.resolver_event_connector.class: OroB2B\Bundle\TaxBundle\Event\ResolverEventConnector
 
+    orob2b_tax.provider.subtotal_tax.class: OroB2B\Bundle\TaxBundle\Provider\SubtotalTaxProvider
+
 services:
     orob2b_tax.manager.product_tax_code.api:
         class: %orob2b_tax.manager.api.attribute.class%
@@ -515,3 +517,11 @@ services:
             - { name: doctrine.orm.entity_listener, entity: %orob2b_order.entity.order.class%, event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: %orob2b_order.entity.order.class%, event: preFlush }
             - { name: doctrine.orm.entity_listener, entity: %orob2b_order.entity.order.class%, event: preRemove }
+
+    orob2b_tax.provider.subtotal_tax:
+        class: %orob2b_tax.provider.subtotal_tax.class%
+        arguments:
+            - @translator
+            - @orob2b_tax.manager.tax_manager
+        tags:
+            - { name: orob2b_order.subtotal_provider, priority: 11 }
