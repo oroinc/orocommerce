@@ -12,7 +12,7 @@
 
 {% block _checkout_order_review_form_fields_widget -%}
     {% set workflowItem = checkout.workflowItem %}
-    {{ form_start(form) }}
+    {{ form_start(form, {'attr': {'class': 'checkout__form'}}) }}
         <fieldset class="checkout__form__row"
             data-trigger-selector="#addShipDate"
             data-page-component-module="orob2bcheckout/js/app/components/clear-field-data-component">
@@ -68,5 +68,7 @@
             {% endif %}
             {{ form_row(form.remove_source, removeElementOptions) }}
         {% endif %}
+
+        {{ block_widget(block) }}
     {{ form_end(form) }}
 {%- endblock %}
