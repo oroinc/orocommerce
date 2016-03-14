@@ -107,7 +107,7 @@ class TaxManager
      * @return false|Result
      * @throws TaxationDisabledException
      */
-    public function saveTax($object, $includeItems = true)
+    public function saveTax($object, $includeItems = false)
     {
         $this->throwExceptionIfTaxationDisabled();
 
@@ -119,12 +119,11 @@ class TaxManager
 
         $taxable = $this->getTaxable($object);
 
-        $this->saveTaxByTaxable($taxable);
+        $this->saveTaxValueByTaxable($taxable);
 
         if ($includeItems) {
             foreach ($taxable->getItems() as $item) {
-                // TODO: When order exist and item hasn't ID. Exception here =(
-                $this->saveTaxByTaxable($item);
+                $this->saveTaxValueByTaxable($item);
             }
         }
 
@@ -139,7 +138,7 @@ class TaxManager
      * @return bool
      * @throws TaxationDisabledException
      */
-    public function removeTax($object, $includeItems = true)
+    public function removeTax($object, $includeItems = false)
     {
         $this->throwExceptionIfTaxationDisabled();
 
@@ -211,7 +210,7 @@ class TaxManager
     /**
      * @param Taxable $taxable
      */
-    protected function saveTaxByTaxable(Taxable $taxable)
+    protected function saveTaxValueByTaxable(Taxable $taxable)
     {
         $itemResult = $taxable->getResult();
 
