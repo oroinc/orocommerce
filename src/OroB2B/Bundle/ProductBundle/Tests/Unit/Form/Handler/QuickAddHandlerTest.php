@@ -2,10 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Handler;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
-
-use OroB2B\Bundle\ProductBundle\Model\QuickAddRow;
 use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -370,7 +366,8 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $fileForm = $this->getMockForAbstractClass('Symfony\Component\Form\FormInterface');
         $file = $this->getMockBuilder('Symfony\Component\HttpFoundation\File\UploadedFile')
-            ->disableOriginalConstructor()
+            ->enableOriginalConstructor()
+            ->setConstructorArgs([tempnam(sys_get_temp_dir(), ''), 'dummy'])
             ->getMock();
         $form->expects($this->once())
             ->method('get')
@@ -379,7 +376,6 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $fileForm->expects($this->once())
             ->method('getData')
             ->willReturn($file);
-        //@todo test try catch
 
         $collection = new QuickAddRowCollection();
         $this->quickAddRowCollectionBuilder->expects($this->once())
