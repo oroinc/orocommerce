@@ -70,7 +70,7 @@ final class Result extends AbstractResult
     public function serialize()
     {
         if ($this->offsetExists(self::ITEMS)) {
-            $this->offsetUnset(self::ITEMS);
+            $this->unsetOffset(self::ITEMS);
         }
 
         return parent::serialize();

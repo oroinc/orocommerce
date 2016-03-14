@@ -49,16 +49,10 @@
         {
             'title': 'orob2b.order.sections.general'|trans,
             'class': 'active',
-            'priority': -20,
+            'priority': -200,
             'subblocks': generalSectionBlocks
         }
     ] %}
-
-    {% set dataBlocks = dataBlocks|merge([{
-        'title': 'orob2b.order.sections.order_line_items'|trans,
-        'priority': -10,
-        'subblocks': [{'data' : [dataGrid.renderGrid('order-line-items-grid', { order_id: entity.id })]}]
-    }]) %}
 
     {% set orderTotals %}
         <div class="widget-content totals-container">
@@ -85,12 +79,20 @@
     {% endset %}
 
     {% set dataBlocks = dataBlocks|merge([{
+        'title': 'orob2b.order.sections.order_line_items'|trans,
+        'priority': -150,
+        'subblocks': [{'data' : [dataGrid.renderGrid('order-line-items-grid', { order_id: entity.id })]}]
+    }]) %}
+
+    {% set dataBlocks = dataBlocks|merge([{
         'title': 'orob2b.order.sections.shipping_information'|trans,
+        'priority': -100,
         'subblocks': [{'data' : [shippingInformation]}]
     }]) %}
 
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'orob2b.order.sections.order_totals'|trans,
+        'priority': -50,
         'subblocks': [{'data' : [orderTotals]}]
     }]) %}
 
