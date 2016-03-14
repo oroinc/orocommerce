@@ -32,7 +32,8 @@ class ContinueTransitionDataProvider extends AbstractTransitionDataProvider
      */
     public function getContinueTransition(WorkflowItem $workflowItem)
     {
-        if (!array_key_exists($workflowItem->getId(), $this->continueTransitions)) {
+        $cacheKey = $workflowItem->getId() . '_' . $workflowItem->getCurrentStep()->getId();
+        if (!array_key_exists($cacheKey, $this->continueTransitions)) {
             $continueTransition = null;
             $transitions = $this->workflowManager->getTransitionsByWorkflowItem($workflowItem);
             foreach ($transitions as $transition) {
@@ -42,9 +43,9 @@ class ContinueTransitionDataProvider extends AbstractTransitionDataProvider
                     break;
                 }
             }
-            $this->continueTransitions[$workflowItem->getId()] = $continueTransition;
+            $this->continueTransitions[$cacheKey] = $continueTransition;
         }
 
-        return $this->continueTransitions[$workflowItem->getId()];
+        return $this->continueTransitions[$cacheKey];
     }
 }

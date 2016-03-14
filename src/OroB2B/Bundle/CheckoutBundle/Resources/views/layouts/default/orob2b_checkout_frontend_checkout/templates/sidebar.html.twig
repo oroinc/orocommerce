@@ -29,16 +29,16 @@
                             {% set editTransitionData = editTransitions[step.name] %}
                             {% set editBlockId = step.name ~'_edit' %}
                             {% if block[editBlockId] is defined %}
-                            {{ block_widget(blocks.offsetGet(editBlockId),
-                                {
-                                    'transitionData': editTransitionData,
-                                    'checkout': checkout
-                                }
-                            ) }}
+                                {{ block_widget(blocks.offsetGet(editBlockId),
+                                    {
+                                        'transitionData': editTransitionData,
+                                        'checkout': checkout
+                                    }
+                                ) }}
                             {% endif %}
                         {% endif %}
                     </h3>
-                    {% set informationBlockId = step.name ~'_information' %}
+                    {% set informationBlockId = step.name ~ '_information' %}
                     {% if isComplete and block[informationBlockId] is defined %}
                         <div class="checkout-navigation__content">
                             {{ block_widget(block.offsetGet(informationBlockId), {'checkout': checkout}) }}
