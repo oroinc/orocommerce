@@ -2,6 +2,8 @@ layout:
     actions:
         - @setBlockTheme:
             themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/order_review.html.twig'
+        - @setFormTheme:
+            themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/form_theme.html.twig'
         - @addTree:
             items:
                 checkout_order_review:
