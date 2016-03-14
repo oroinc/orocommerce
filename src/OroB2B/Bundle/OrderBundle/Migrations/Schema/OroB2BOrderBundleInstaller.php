@@ -57,7 +57,7 @@ class OroB2BOrderBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_6';
+        return 'v1_3';
     }
 
     /**
