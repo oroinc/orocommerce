@@ -43,6 +43,10 @@ class OrderTest extends \PHPUnit_Framework_TestCase
             ['accountUser', new AccountUser()],
             ['website', new Website()],
             ['shippingCost', new Price()],
+            ['sourceEntityClass', 'EntityClass'],
+            ['sourceEntityIdentifier', 'source-identifier-test-01'],
+            ['sourceEntityId', 1],
+            ['shippingCost', new Price()],
             ['totalDiscounts', new Price()],
         ];
 

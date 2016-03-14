@@ -11,9 +11,10 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
-use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityNotPricedStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\LineItemNotPricedStub;
 
@@ -44,6 +45,11 @@ class LineItemNotPricedSubtotalProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected $doctrineHelper;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|PriceListTreeHandler
+     */
+    protected $priceListTreeHandler;
+
     protected function setUp()
     {
         $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
@@ -66,11 +72,16 @@ class LineItemNotPricedSubtotalProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->priceListTreeHandler = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->provider = new LineItemNotPricedSubtotalProvider(
             $this->translator,
             $this->roundingService,
             $this->productPriceProvider,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            $this->priceListTreeHandler
         );
     }
 

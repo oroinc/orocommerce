@@ -8,7 +8,9 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\PricingBundle\Entity\QuantityAwareInterface;
+use OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
@@ -19,6 +21,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
 use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
@@ -43,22 +46,28 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
     /** @var string */
     protected $productUnitClass;
 
+    /** @var PriceListTreeHandler */
+    protected $priceListTreeHandler;
+
     /**
      * @param TranslatorInterface $translator
      * @param RoundingServiceInterface $rounding
      * @param ProductPriceProvider $productPriceProvider
      * @param DoctrineHelper $doctrineHelper
+     * @param PriceListTreeHandler $priceListTreeHandler,
      */
     public function __construct(
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,
         ProductPriceProvider $productPriceProvider,
-        DoctrineHelper $doctrineHelper
+        DoctrineHelper $doctrineHelper,
+        PriceListTreeHandler $priceListTreeHandler
     ) {
         $this->translator = $translator;
         $this->rounding = $rounding;
         $this->productPriceProvider = $productPriceProvider;
         $this->doctrineHelper = $doctrineHelper;
+        $this->priceListTreeHandler = $priceListTreeHandler;
     }
 
     /**
@@ -80,7 +89,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
     /**
      * Get line items subtotal
      *
-     * @param LineItemsNotPricedAwareInterface $entity
+     * @param LineItemsNotPricedAwareInterface|AccountOwnerAwareInterface|WebsiteAwareInterface $entity
      *
      * @return Subtotal
      */
@@ -100,7 +109,8 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
             ) {
                 $productsPriceCriteria =
                     $this->prepareProductsPriceCriteria($lineItem, $this->getBaseCurrency($entity));
-                $price = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria);
+                $priceList = $this->priceListTreeHandler->getPriceList($entity->getAccount(), $entity->getWebsite());
+                $price = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $priceList);
                 if (reset($price)) {
                     $priceValue = reset($price)->getValue();
                     $subtotalAmount += $priceValue * $lineItem->getQuantity();
@@ -164,7 +174,6 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
     {
         return $this->getManagerForClass($class)->getReference($class, $id);
     }
-
 
     /**
      * @param string $class

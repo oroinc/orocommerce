@@ -62,10 +62,15 @@ class DoctrinePostFlushListenerTest extends \PHPUnit_Framework_TestCase
 
         $registry->expects($this->at(1))
             ->method('getManagerForClass')
+            ->with(ClassUtils::getClass($testEntity2))
+            ->willReturn($em1);
+
+        $registry->expects($this->at(2))
+            ->method('getManagerForClass')
             ->with(ClassUtils::getClass($testEntity3))
             ->willReturn($em2);
 
-        $registry->expects($this->at(2))
+        $registry->expects($this->at(3))
             ->method('getManagerForClass')
             ->with(ClassUtils::getClass($testEntity4))
             ->willReturn($em2);

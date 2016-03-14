@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityManager;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
 
-class LoadPriceListToAccountGroupGroupDemoData extends LoadBasePriceListRelationDemoData
+class LoadPriceListToAccountGroupDemoData extends LoadBasePriceListRelationDemoData
 {
     /**
      * {@inheritdoc}
