@@ -11,13 +11,18 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
-class AddCombinedPriceListsTables implements Migration
+class OroB2BPricingBundle implements Migration
 {
     /**
      * {@inheritdoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
+        $this->createOroB2BProductPriceChangeTriggerTable($schema);
+        $this->createOrob2BPriceListAccountFallbackTable($schema);
+        $this->createOrob2BPriceListAccGroupFallbackTable($schema);
+        $this->createOrob2BPriceListWebsiteFallbackTable($schema);
+        $this->createOroB2BPriceListChangeTriggerTable($schema);
         $this->createOroB2BPriceListCombinedTable($schema);
         $this->createOroB2BPriceProductCombinedTable($schema);
         $this->createOrob2BPlistCurrCombinedTable($schema);
@@ -26,12 +31,112 @@ class AddCombinedPriceListsTables implements Migration
         $this->createOrob2BCmbPriceListToWsTable($schema);
         $this->createOrob2BCmbPlToPlTable($schema);
 
+        $this->addOroB2BProductPriceChangeTriggerForeignKeys($schema);
+        $this->addOrob2BPriceListAccountFallbackForeignKeys($schema);
+        $this->addOrob2BPriceListAccGroupFallbackForeignKeys($schema);
+        $this->addOrob2BPriceListWebsiteFallbackForeignKeys($schema);
+        $this->addOroB2BPriceListChangeTriggerForeignKeys($schema);
         $this->addOroB2BPriceProductCombinedForeignKeys($schema);
         $this->addOrob2BPlistCurrCombinedForeignKeys($schema);
         $this->addOrob2BCmbPriceListToAccGrForeignKeys($schema);
         $this->addOrob2BCmbPriceListToWsForeignKeys($schema);
         $this->addOrob2BCmbPriceListToAccForeignKeys($schema);
         $this->addOrob2BCmbPlToPlForeignKeys($schema);
+
+        $this->addMergeAllowedTable($schema);
+    }
+
+    /**
+     * @param Schema $schema
+     * @throws \Doctrine\DBAL\Schema\SchemaException
+     */
+    protected function addMergeAllowedTable(Schema $schema)
+    {
+        $schema->getTable('orob2b_price_list_to_acc_group')
+            ->addColumn('merge_allowed', 'boolean', ['default' => true]);
+
+        $schema->getTable('orob2b_price_list_to_account')
+            ->addColumn('merge_allowed', 'boolean', ['default' => true]);
+
+        $schema->getTable('orob2b_price_list_to_website')
+            ->addColumn('merge_allowed', 'boolean', ['default' => true]);
+    }
+
+    /**
+     * Create orob2b_prod_price_ch_trigger table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BProductPriceChangeTriggerTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_prod_price_ch_trigger');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('price_list_id', 'integer', []);
+        $table->addColumn('product_id', 'integer', []);
+        $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['product_id', 'price_list_id'], 'orob2b_changed_product_price_list_unq');
+    }
+
+    /**
+     * Create orob2b_price_list_acc_fb table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BPriceListAccountFallbackTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_price_list_acc_fb');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('account_id', 'integer', []);
+        $table->addColumn('website_id', 'integer', []);
+        $table->addColumn('fallback', 'integer', []);
+        $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['account_id', 'website_id'], 'orob2b_price_list_acc_fb_unq');
+    }
+
+    /**
+     * Create orob2b_price_list_acc_gr_fb table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BPriceListAccGroupFallbackTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_price_list_acc_gr_fb');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('account_group_id', 'integer', []);
+        $table->addColumn('website_id', 'integer', []);
+        $table->addColumn('fallback', 'integer', []);
+        $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['account_group_id', 'website_id'], 'orob2b_price_list_acc_gr_fb_unq');
+    }
+
+    /**
+     * Create orob2b_price_list_website_fb table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BPriceListWebsiteFallbackTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_price_list_website_fb');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('website_id', 'integer', []);
+        $table->addColumn('fallback', 'integer', []);
+        $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['website_id'], 'orob2b_price_list_website_fb_unq');
+    }
+
+    /**
+     * Create orob2b_price_list_change_trigger table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BPriceListChangeTriggerTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_price_list_ch_trigger');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('account_group_id', 'integer', ['notnull' => false]);
+        $table->addColumn('website_id', 'integer', ['notnull' => false]);
+        $table->addColumn('account_id', 'integer', ['notnull' => false]);
+        $table->setPrimaryKey(['id']);
     }
 
     /**
@@ -152,6 +257,116 @@ class AddCombinedPriceListsTables implements Migration
         $table->addColumn('merge_allowed', 'boolean', []);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['combined_price_list_id', 'sort_order'], 'b2b_cmb_pl_to_pl_cmb_prod_sort_idx', []);
+    }
+
+    /**
+     * Add orob2b_prod_price_ch_trigger foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BProductPriceChangeTriggerForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_prod_price_ch_trigger');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_product'),
+            ['product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_price_list'),
+            ['price_list_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_price_list_account_fallback foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BPriceListAccountFallbackForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_price_list_acc_fb');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account'),
+            ['account_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_website'),
+            ['website_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * Add orob2b_price_list_acc_gr_fb foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BPriceListAccGroupFallbackForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_price_list_acc_gr_fb');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account_group'),
+            ['account_group_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_website'),
+            ['website_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * Add orob2b_price_list_website_fb foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BPriceListWebsiteFallbackForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_price_list_website_fb');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_website'),
+            ['website_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * Add orob2b_price_list_change_trigger foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BPriceListChangeTriggerForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_price_list_ch_trigger');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account_group'),
+            ['account_group_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_website'),
+            ['website_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account'),
+            ['account_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
     }
 
     /**
