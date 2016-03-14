@@ -75,7 +75,7 @@ class Order extends ExtendOrder implements
     LineItemsAwareInterface,
     ShippingAwareInterface,
     CurrencyAwareInterface,
-    IdentifierAwareInterface
+    IdentifierAwareInterface,
     DiscountAwareInterface
 {
     /**
