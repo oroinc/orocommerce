@@ -10,6 +10,7 @@ layout:
                 vars:
                     checkout: { @value: $data.checkout }
                     workflowStep: { @value: $data.workflowStep }
+                    form: { @value: $data.orob2b_checkout_transition_form }
 #        - @add:
 #            id: checkout_continue
 #            parentId: checkout_payment

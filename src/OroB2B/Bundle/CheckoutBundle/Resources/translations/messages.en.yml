@@ -47,6 +47,9 @@ orob2b:
             b2b_flow_checkout:
                 label: eCommerce Checkout
 
+                attribute:
+                    remove_source.label: Remove Source Entity
+
                 step:
                     enter_billing_address.label: Billing Information
                     enter_shipping_address.label: Shipping Information
