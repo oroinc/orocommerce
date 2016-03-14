@@ -12,7 +12,9 @@ use OroB2B\Component\Checkout\DataProvider\CheckoutDataProviderManager;
 
 class SummaryDataProvider extends AbstractServerRenderDataProvider
 {
-    /** @var  CheckoutDataProviderManager */
+    /**
+     * @var CheckoutDataProviderManager
+     */
     protected $checkoutDataProviderManager;
 
     /**
