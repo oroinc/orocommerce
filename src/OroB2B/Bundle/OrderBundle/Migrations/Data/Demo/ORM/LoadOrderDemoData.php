@@ -20,6 +20,7 @@ use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -55,7 +56,8 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
             'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
             'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
             'OroB2B\Bundle\PaymentBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData',
-            'OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData'
+            'OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData',
+            'OroB2B\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM\LoadShoppingListDemoData'
         ];
     }
 
@@ -70,6 +72,9 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         if (is_array($filePath)) {
             $filePath = current($filePath);
         }
+
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $manager->getRepository('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList')->findOneBy([]);
 
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
@@ -120,6 +125,11 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
                 ->setPoNumber($row['poNumber'])
                 ->setSubtotal($row['subtotal'])
                 ->setTotal($row['total']);
+
+            if ($row['sourceEntityClass'] === 'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList') {
+                $order->setSourceEntityClass($row['sourceEntityClass']);
+                $order->setSourceEntityId($shoppingList->getId());
+            }
 
             if (!empty($row['customerNotes'])) {
                 $order->setCustomerNotes($row['customerNotes']);
