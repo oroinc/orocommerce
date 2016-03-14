@@ -161,7 +161,9 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             ->setSubtotal($subtotalAmount)
             ->setTotal($totalAmount)
             ->setShippingAddress($shippingAddress)
-            ->setShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY));
+            ->setShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY))
+            ->setSourceEntityClass('OroB2B\Bundle\SaleBundle\Entity\Quote')
+            ->setSourceEntityId(0);
 
         $this->assertCalculateSubtotalsCalled($subtotalAmount);
         $this->assertCalculateTotalsCalled($totalAmount);
@@ -211,7 +213,9 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             ->setSubtotal($subtotalAmount)
             ->setTotal($totalAmount)
             ->setShippingAddress($shippingAddress)
-            ->setShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY));
+            ->setShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY))
+            ->setSourceEntityClass('OroB2B\Bundle\SaleBundle\Entity\Quote')
+            ->setSourceEntityId(0);
 
         $this->assertCalculateSubtotalsCalled($subtotalAmount);
         $this->assertCalculateTotalsCalled($totalAmount);
@@ -250,7 +254,9 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             ->setSubtotal($subtotalAmount)
             ->setTotal($totalAmount)
             ->setShippingAddress($shippingAddress)
-            ->setShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY));
+            ->setShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY))
+            ->setSourceEntityClass('OroB2B\Bundle\SaleBundle\Entity\Quote')
+            ->setSourceEntityId(0);
 
         $offer = $this->createQuoteProductOffer(
             $unit,
@@ -305,7 +311,9 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             )
             ->setSubtotal($subtotalAmount)
             ->setTotal($totalAmount)
-            ->setShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY));
+            ->setShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY))
+            ->setSourceEntityClass('OroB2B\Bundle\SaleBundle\Entity\Quote')
+            ->setSourceEntityId(0);
 
         $offer = $this->createQuoteProductOffer(
             $unit,

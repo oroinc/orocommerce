@@ -17,8 +17,9 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
+use OroB2B\Bundle\OrderBundle\Provider\IdentifierAwareInterface;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
+use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -63,7 +64,11 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
-class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHolderInterface, AccountOwnerAwareInterface
+class Order extends ExtendOrder implements
+    OrganizationAwareInterface,
+    EmailHolderInterface,
+    AccountOwnerAwareInterface,
+    IdentifierAwareInterface
 {
     /**
      * @var integer
@@ -346,6 +351,27 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
      * @var Price
      */
     protected $shippingCost;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="source_entity_class", type="string", length=255, nullable=true)
+     */
+    protected $sourceEntityClass;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="source_entity_id", type="integer", nullable=true )
+     */
+    protected $sourceEntityId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="source_entity_identifier", type="string", length=255, nullable=true)
+     */
+    protected $sourceEntityIdentifier;
 
     /**
      * Constructor
@@ -866,5 +892,73 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
     public function updateShippingCost()
     {
         $this->shippingCostAmount = $this->shippingCost ? $this->shippingCost->getValue() : null;
+    }
+
+    /**
+     * Get Source Entity Class
+     *
+     * @return string
+     */
+    public function getSourceEntityClass()
+    {
+        return $this->sourceEntityClass;
+    }
+
+    /**
+     * Set Source Entity Class
+     *
+     * @param string $sourceEntityClass
+     *
+     * @return $this
+     */
+    public function setSourceEntityClass($sourceEntityClass)
+    {
+        $this->sourceEntityClass = $sourceEntityClass;
+
+        return $this;
+    }
+
+    /**
+     * Get Source Entity Id
+     *
+     * @return string
+     */
+    public function getSourceEntityId()
+    {
+        return $this->sourceEntityId;
+    }
+
+    /**
+     * Set Source Entity Id
+     *
+     * @param integer $sourceEntityId
+     *
+     * @return $this
+     */
+    public function setSourceEntityId($sourceEntityId)
+    {
+        $this->sourceEntityId = (int)$sourceEntityId;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSourceEntityIdentifier()
+    {
+        return $this->sourceEntityIdentifier;
+    }
+
+    /**
+     * @param string|null $sourceEntityIdentifier
+     *
+     * @return $this
+     */
+    public function setSourceEntityIdentifier($sourceEntityIdentifier = null)
+    {
+        $this->sourceEntityIdentifier = $sourceEntityIdentifier;
+
+        return $this;
     }
 }
