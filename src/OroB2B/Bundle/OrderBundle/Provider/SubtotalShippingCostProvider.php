@@ -15,6 +15,7 @@ class SubtotalShippingCostProvider implements SubtotalProviderInterface
 {
     const TYPE = 'shipping_cost';
     const NAME = 'orob2b_order.subtotal_shipping_cost';
+    const CURRENCY_DEFAULT = 'USD';
 
     /**
      * @var TranslatorInterface
@@ -76,7 +77,7 @@ class SubtotalShippingCostProvider implements SubtotalProviderInterface
     protected function getBaseCurrency($entity)
     {
         if (!$entity instanceof CurrencyAwareInterface) {
-            return 'USD';
+            return self::CURRENCY_DEFAULT;
         } else {
             return $entity->getCurrency();
         }

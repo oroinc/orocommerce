@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\SaleBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
@@ -115,7 +116,10 @@ class QuoteToOrderConverter
             ->setOrganization($quote->getOrganization())
             ->setPoNumber($quote->getPoNumber())
             ->setShipUntil($quote->getShipUntil())
-            ->setShippingAddress($orderShippingAddress);
+            ->setShippingAddress($orderShippingAddress)
+            ->setSourceEntityClass(ClassUtils::getClass($quote))
+            ->setSourceEntityId($quote->getId())
+            ->setSourceEntityIdentifier($quote->getIdentifier());
 
         return $order;
     }

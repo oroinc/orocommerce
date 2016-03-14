@@ -19,6 +19,7 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class ShoppingListManager
 {
@@ -63,6 +64,11 @@ class ShoppingListManager
     protected $localeSettings;
 
     /**
+     * @var WebsiteManager
+     */
+    protected $websiteManager;
+
+    /**
      * @param ManagerRegistry $managerRegistry
      * @param TokenStorageInterface $tokenStorage
      * @param TranslatorInterface $translator
@@ -70,6 +76,7 @@ class ShoppingListManager
      * @param TotalProcessorProvider $totalProvider
      * @param LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider
      * @param LocaleSettings $localeSettings
+     * @param WebsiteManager $websiteManager
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
@@ -78,7 +85,8 @@ class ShoppingListManager
         QuantityRoundingService $rounding,
         TotalProcessorProvider $totalProvider,
         LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider,
-        LocaleSettings $localeSettings
+        LocaleSettings $localeSettings,
+        WebsiteManager $websiteManager
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->tokenStorage = $tokenStorage;
@@ -87,6 +95,7 @@ class ShoppingListManager
         $this->totalProvider = $totalProvider;
         $this->lineItemNotPricedSubtotalProvider = $lineItemNotPricedSubtotalProvider;
         $this->localeSettings = $localeSettings;
+        $this->websiteManager = $websiteManager;
     }
 
     /**
@@ -101,7 +110,8 @@ class ShoppingListManager
             ->setOrganization($this->getAccountUser()->getOrganization())
             ->setAccount($this->getAccountUser()->getAccount())
             ->setAccountUser($this->getAccountUser())
-            ->setCurrency($this->localeSettings->getCurrency());
+            ->setCurrency($this->localeSettings->getCurrency())
+            ->setWebsite($this->websiteManager->getCurrentWebsite());
 
         return $shoppingList;
     }

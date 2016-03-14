@@ -2,21 +2,16 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 
-use OroB2B\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
+use OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
 
-class PriceListSystemConfigSubscriber implements EventSubscriberInterface
+class PriceListSystemConfigSubscriber
 {
     /**
      * @var PriceListConfigConverter
@@ -24,33 +19,25 @@ class PriceListSystemConfigSubscriber implements EventSubscriberInterface
     protected $converter;
 
     /**
-     * @var  EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    /**
-     * @var  boolean
+     * @var boolean
      */
     protected $isApplicable;
 
-    /** @var  ManagerRegistry */
-    protected $registry;
+    /**
+     * @var PriceListChangeTriggerHandler
+     */
+    protected $triggerHandler;
 
     /**
-     * PriceListSystemConfigSubscriber constructor.
      * @param PriceListConfigConverter $converter
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param ManagerRegistry $registry
+     * @param PriceListChangeTriggerHandler $triggerHandler
      */
-    public function __construct(
-        PriceListConfigConverter $converter,
-        EventDispatcherInterface $eventDispatcher,
-        ManagerRegistry $registry
-    ) {
+    public function __construct(PriceListConfigConverter $converter, PriceListChangeTriggerHandler $triggerHandler)
+    {
         $this->converter = $converter;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->registry = $registry;
+        $this->triggerHandler = $triggerHandler;
     }
+
 
     /**
      * @param ConfigSettingsUpdateEvent $event
@@ -97,24 +84,8 @@ class PriceListSystemConfigSubscriber implements EventSubscriberInterface
     public function updateAfter(ConfigUpdateEvent $event)
     {
         if ($this->isApplicable && $event->getChangeSet()) {
-            $this->eventDispatcher->dispatch(
-                PriceListQueueChangeEvent::BEFORE_CHANGE,
-                new PriceListQueueChangeEvent()
-            );
-            $this->registry->getManager()->flush();
+            $this->triggerHandler->handleConfigChange();
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
-    {
-        return [
-            ConfigSettingsUpdateEvent::FORM_PRESET => 'formPreSet',
-            ConfigSettingsUpdateEvent::BEFORE_SAVE => 'beforeSave',
-            ConfigUpdateEvent::EVENT_NAME => 'updateAfter',
-        ];
     }
 
     /**

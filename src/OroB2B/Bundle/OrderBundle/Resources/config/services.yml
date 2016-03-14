@@ -18,6 +18,11 @@ parameters:
     orob2b_order.provider.subtotal_shipping_cost.class: OroB2B\Bundle\OrderBundle\Provider\SubtotalShippingCostProvider
     orob2b_order.provider.subtotal_discount.class: OroB2B\Bundle\OrderBundle\Provider\SubtotalDiscountProvider
 
+    orob2b_order.twig.order.class: OroB2B\Bundle\OrderBundle\Twig\OrderExtension
+
+    #formaters
+    orob2b_order.formatter.source_document.class: OroB2B\Bundle\OrderBundle\Formatter\SourceDocumentFormatter
+
 services:
     orob2b_order.order.manager.api:
         class: %orob2b_order.order.manager.api.class%
@@ -124,3 +129,15 @@ services:
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
 
+
+    orob2b_order.twig.order:
+        class: %orob2b_order.twig.order.class%
+        arguments:
+            - @orob2b_order.formatter.source_document
+        tags:
+            - { name: twig.extension }
+
+    orob2b_order.formatter.source_document:
+        class: %orob2b_order.formatter.source_document.class%
+        arguments:
+            - @oro_entity.entity_class_name_provider
