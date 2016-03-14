@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
@@ -9,7 +10,7 @@ use Oro\Component\Layout\ContextInterface;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\ContinueTransitionDataProvider;
-use OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormDataProvider;
+use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
 
 class ContinueTransitionDataProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -19,7 +20,7 @@ class ContinueTransitionDataProviderTest extends \PHPUnit_Framework_TestCase
     protected $workflowManager;
 
     /**
-     * @var TransitionFormDataProvider
+     * @var ContinueTransitionDataProvider
      */
     protected $dataProvider;
 
@@ -56,18 +57,13 @@ class ContinueTransitionDataProviderTest extends \PHPUnit_Framework_TestCase
         $transitionWithoutForm = new Transition();
         $transitionWithoutForm->setName('transition1');
 
-        $transitionWithFormNotContinue = new Transition();
-        $transitionWithFormNotContinue->setName('transition2');
-        $transitionWithFormNotContinue->setFormOptions(['attribute_fields' => ['test' => null]]);
-
         $continueTransition = new Transition();
         $continueTransition->setName('transition3');
-        $continueTransition->setFormOptions(['attribute_fields' => ['test' => null]]);
         $continueTransition->setFrontendOptions(['is_checkout_continue' => true]);
         $continueTransition->setFormType('transition_type');
+
         $transitions = [
             $transitionWithoutForm,
-            $transitionWithFormNotContinue,
             $continueTransition
         ];
 
@@ -75,7 +71,11 @@ class ContinueTransitionDataProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getTransitionsByWorkflowItem')
             ->with($workflowItem)
             ->will($this->returnValue($transitions));
+        $this->workflowManager->expects($this->any())
+            ->method('isTransitionAvailable')
+            ->willReturn(true);
 
-        $this->assertSame($continueTransition, $this->dataProvider->getData($context));
+        $expected = new TransitionData($continueTransition, true, new ArrayCollection());
+        $this->assertEquals($expected, $this->dataProvider->getData($context));
     }
 }

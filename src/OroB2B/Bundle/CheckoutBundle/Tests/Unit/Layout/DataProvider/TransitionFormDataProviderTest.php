@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
 use Symfony\Component\Form\FormFactoryInterface;
 
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
@@ -68,10 +70,11 @@ class TransitionFormDataProviderTest extends \PHPUnit_Framework_TestCase
         $continueTransition->setFormOptions(['attribute_fields' => ['test' => null]]);
         $continueTransition->setFormType('transition_type');
 
+        $transitionData = new TransitionData($continueTransition, true, new ArrayCollection());
         $this->continueTransitionDataProvider->expects($this->once())
             ->method('getData')
             ->with($context)
-            ->will($this->returnValue($continueTransition));
+            ->will($this->returnValue($transitionData));
 
         $formView = $this->getMock('Symfony\Component\Form\FormView');
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
@@ -87,6 +90,7 @@ class TransitionFormDataProviderTest extends \PHPUnit_Framework_TestCase
                     'workflow_item' => $workflowItem,
                     'transition_name' => 'transition3',
                     'attribute_fields' => ['test' => null],
+                    'disabled' => false
                 ]
             )
             ->will($this->returnValue($form));
