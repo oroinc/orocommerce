@@ -1,0 +1,4 @@
+{% set result = record.getValue('result') %}
+{% if result.unit is defined and result.unit.taxAmoumt is defined %}
+    {{ result.unit.taxAmoumt }}
+{% endif %}

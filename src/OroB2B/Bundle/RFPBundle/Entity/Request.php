@@ -16,6 +16,7 @@ use OroB2B\Bundle\AccountBundle\Doctrine\SoftDeleteableTrait;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
+use OroB2B\Bundle\OrderBundle\Provider\IdentifierAwareInterface;
 use OroB2B\Bundle\RFPBundle\Model\ExtendRequest;
 
 /**
@@ -51,7 +52,10 @@ use OroB2B\Bundle\RFPBundle\Model\ExtendRequest;
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class Request extends ExtendRequest implements AccountOwnerAwareInterface, SoftDeleteableInterface
+class Request extends ExtendRequest implements
+    AccountOwnerAwareInterface,
+    SoftDeleteableInterface,
+    IdentifierAwareInterface
 {
     use SoftDeleteableTrait;
 
@@ -839,5 +843,13 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface, SoftD
         $this->cancellationReason = $cancellationReason;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdentifier()
+    {
+        return $this->getPoNumber();
     }
 }

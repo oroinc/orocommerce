@@ -41,6 +41,19 @@ class OrderLineItemGridListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(['name' => 'order-line-items-grid'], $gridConfig->toArray());
     }
 
+    public function testOnBuildBeforeFrontendTaxesDisabled()
+    {
+        $gridConfig = DatagridConfiguration::create(['name' => 'order-line-items-grid']);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $dataGrid */
+        $dataGrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $event = new BuildBefore($dataGrid, $gridConfig);
+
+        $this->listener->onBuildBeforeFrontend($event);
+
+        $this->assertEquals(['name' => 'order-line-items-grid'], $gridConfig->toArray());
+    }
+
     public function testOnBuildBeforeWithoutFormPart()
     {
         $gridConfig = DatagridConfiguration::create(['name' => 'order-line-items-grid']);
@@ -52,6 +65,21 @@ class OrderLineItemGridListenerTest extends \PHPUnit_Framework_TestCase
         $this->settingsProvider->expects($this->once())->method('isEnabled')->willReturn(true);
 
         $this->listener->onBuildBefore($event);
+
+        $this->assertEquals(['name' => 'order-line-items-grid'], $gridConfig->toArray());
+    }
+
+    public function testOnBuildBeforeFrontendWithoutFormPart()
+    {
+        $gridConfig = DatagridConfiguration::create(['name' => 'order-line-items-grid']);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $dataGrid */
+        $dataGrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $event = new BuildBefore($dataGrid, $gridConfig);
+
+        $this->settingsProvider->expects($this->once())->method('isEnabled')->willReturn(true);
+
+        $this->listener->onBuildBeforeFrontend($event);
 
         $this->assertEquals(['name' => 'order-line-items-grid'], $gridConfig->toArray());
     }
@@ -96,7 +124,104 @@ class OrderLineItemGridListenerTest extends \PHPUnit_Framework_TestCase
                         'label' => 'orob2b.tax.result.label',
                         'type' => 'twig',
                         'frontend_type' => 'html',
-                        'template' => 'OroB2BTaxBundle::column.html.twig',
+                        'template' => 'OroB2BTaxBundle::Order/Datagrid/column.html.twig',
+                    ],
+                ],
+            ],
+            $gridConfig->toArray()
+        );
+    }
+
+    public function testOnBuildBeforeFrontend()
+    {
+        $gridConfig = DatagridConfiguration::create(['name' => 'order-line-items-grid-frontend']);
+        $from = ['alias' => 'orders', 'table' => 'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem'];
+        $gridConfig->offsetSetByPath('[source][query][from]', [$from]);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $dataGrid */
+        $dataGrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $event = new BuildBefore($dataGrid, $gridConfig);
+
+        $this->settingsProvider->expects($this->once())->method('isEnabled')->willReturn(true);
+
+        $this->listener->onBuildBeforeFrontend($event);
+
+        $this->assertEquals(
+            [
+                'name' => 'order-line-items-grid-frontend',
+                'source' => [
+                    'query' => [
+                        'from' => [$from],
+                        'join' => [
+                            'left' => [
+                                [
+                                    'join' => 'OroB2B\Bundle\TaxBundle\Entity\TaxValue',
+                                    'alias' => 'taxValue',
+                                    'conditionType' => 'WITH',
+                                    'condition' => 'taxValue.entityClass = ' .
+                                        '\'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem\' AND ' .
+                                        'taxValue.entityId = orders.id',
+                                ],
+                            ],
+                        ],
+                        'select' => ['taxValue.result'],
+                    ],
+                ],
+                'columns' => [
+                    'unitPriceIncludingTax' => [
+                        'label' => 'orob2b.tax.order_item_datagrid.unitPrice.includingTax.label',
+                        'type' => 'twig',
+                        'frontend_type' => 'html',
+                        'data_name' => 'result',
+                        'template' => 'OroB2BTaxBundle:Order:Datagrid/Frontend/Property/unitIncludingTax.html.twig',
+                        'renderable' => false
+                    ],
+                    'unitPriceExcludingTax' => [
+                        'label' => 'orob2b.tax.order_item_datagrid.unitPrice.excludingTax.label',
+                        'type' => 'twig',
+                        'frontend_type' => 'html',
+                        'data_name' => 'result',
+                        'template' => 'OroB2BTaxBundle:Order:Datagrid/Frontend/Property/unitExcludingTax.html.twig',
+                        'renderable' => false
+                    ],
+                    'unitPriceTaxAmount' => [
+                        'label' => 'orob2b.tax.order_item_datagrid.unitPrice.taxAmount.label',
+                        'type' => 'twig',
+                        'frontend_type' => 'html',
+                        'data_name' => 'result',
+                        'template' => 'OroB2BTaxBundle:Order:Datagrid/Frontend/Property/unitTaxAmount.html.twig',
+                        'renderable' => false
+                    ],
+                    'rowTotalIncludingTax' => [
+                        'label' => 'orob2b.tax.order_item_datagrid.rowTotal.includingTax.label',
+                        'type' => 'twig',
+                        'frontend_type' => 'html',
+                        'data_name' => 'result',
+                        'template' => 'OroB2BTaxBundle:Order:Datagrid/Frontend/Property/rowIncludingTax.html.twig',
+                        'renderable' => false
+                    ],
+                    'rowTotalExcludingTax' => [
+                        'label' => 'orob2b.tax.order_item_datagrid.rowTotal.excludingTax.label',
+                        'type' => 'twig',
+                        'frontend_type' => 'html',
+                        'data_name' => 'result',
+                        'template' => 'OroB2BTaxBundle:Order:Datagrid/Frontend/Property/rowExcludingTax.html.twig',
+                        'renderable' => false
+                    ],
+                    'rowTotalTaxAmount' => [
+                        'label' => 'orob2b.tax.order_item_datagrid.rowTotal.taxAmount.label',
+                        'type' => 'twig',
+                        'frontend_type' => 'html',
+                        'data_name' => 'result',
+                        'template' => 'OroB2BTaxBundle:Order:Datagrid/Frontend/Property/rowTaxAmount.html.twig',
+                        'renderable' => false
+                    ],
+                    'result' => [
+                        'label' => 'orob2b.tax.result.label',
+                        'type' => 'twig',
+                        'frontend_type' => 'html',
+                        'template' => 'OroB2BTaxBundle::Order/Datagrid/Frontend/column.html.twig',
+                        'renderable' => false
                     ],
                 ],
             ],
