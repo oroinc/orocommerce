@@ -320,8 +320,8 @@ require(['jquery', 'lodash', 'slick', 'bootstrapDatepicker', 'raty', 'perfectScr
                 });
             }
 
-                function heroSliderInit() {
-                    var $hero = $('[data-hero-slider]');
+            function heroSliderInit() {
+                var $hero = $('[data-hero-slider]');
 
                 if ($hero.length) {
                     $hero.slick({
@@ -549,8 +549,8 @@ require(['jquery', 'lodash', 'slick', 'bootstrapDatepicker', 'raty', 'perfectScr
                 });
             }
 
-                function datepickerInit() {
-                    var $datepicker = $('.input_datepicker');
+            function datepickerInit() {
+                var $datepicker = $('.input_datepicker');
 
                 if ($datepicker.length) {
                     $datepicker.datepicker({
@@ -559,8 +559,8 @@ require(['jquery', 'lodash', 'slick', 'bootstrapDatepicker', 'raty', 'perfectScr
                 }
             }
 
-                function datepickerSetDateBindingInit() {
-                    var $datepicker = $('.input_datepicker');
+            function datepickerSetDateBindingInit() {
+                var $datepicker = $('.input_datepicker');
 
                 $datepicker.on('changeDate', function(event) {
                     $(this).prev().addClass('date-applied');
