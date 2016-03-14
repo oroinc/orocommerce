@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller;
 
+use Doctrine\Common\Util\ClassUtils;
+
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
@@ -43,7 +45,6 @@ class OrderControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 302);
 
         $crawler = $this->client->followRedirect();
-        $d = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertStringStartsWith(
             $this->getUrl('orob2b_order_create'),
@@ -67,5 +68,20 @@ class OrderControllerTest extends WebTestCase
                 $this->assertNotEmpty($nodes->count());
             }
         }
+
+        $this->assertEquals(
+            $request->getId(),
+            $crawler->filter('[data-ftid=orob2b_order_type_sourceEntityId]')->attr('value')
+        );
+
+        $this->assertEquals(
+            $request->getIdentifier(),
+            $crawler->filter('[data-ftid=orob2b_order_type_sourceEntityIdentifier]')->attr('value')
+        );
+
+        $this->assertEquals(
+            ClassUtils::getClass($request),
+            $crawler->filter('[data-ftid=orob2b_order_type_sourceEntityClass]')->attr('value')
+        );
     }
 }
