@@ -35,6 +35,9 @@ class OroB2BOrderBundle implements Migration
             'money',
             ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
+        $table->addColumn('source_entity_class', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('source_entity_id', 'integer', ['notnull' => false]);
+        $table->addColumn('source_entity_identifier', 'string', ['notnull' => false, 'length' => 255]);
     }
 
     /**
