@@ -4,8 +4,6 @@ namespace OroB2B\Bundle\TaxBundle\Model;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
-use OroB2B\Bundle\TaxBundle\DependencyInjection\OroB2BTaxExtension;
-
 class Taxable
 {
     const DIGITAL_PRODUCT = 'digital_product';
@@ -31,6 +29,11 @@ class Taxable
      * @var AbstractAddress
      */
     protected $destination;
+
+    /**
+     * @var AbstractAddress
+     */
+    protected $taxationAddress;
 
     /**
      * @var int
@@ -84,7 +87,7 @@ class Taxable
 
     /**
      * @param int $identifier
-     * @return $this
+     * @return Taxable
      */
     public function setIdentifier($identifier)
     {
@@ -103,9 +106,9 @@ class Taxable
 
     /**
      * @param AbstractAddress $origin
-     * @return $this
+     * @return Taxable
      */
-    public function setOrigin($origin)
+    public function setOrigin(AbstractAddress $origin = null)
     {
         $this->origin = $origin;
 
@@ -122,9 +125,9 @@ class Taxable
 
     /**
      * @param AbstractAddress $destination
-     * @return $this
+     * @return Taxable
      */
-    public function setDestination($destination)
+    public function setDestination(AbstractAddress $destination = null)
     {
         $this->destination = $destination;
 
@@ -141,7 +144,7 @@ class Taxable
 
     /**
      * @param int $quantity
-     * @return $this
+     * @return Taxable
      */
     public function setQuantity($quantity)
     {
@@ -160,7 +163,7 @@ class Taxable
 
     /**
      * @param string $price
-     * @return $this
+     * @return Taxable
      */
     public function setPrice($price)
     {
@@ -179,7 +182,7 @@ class Taxable
 
     /**
      * @param string $amount
-     * @return $this
+     * @return Taxable
      */
     public function setAmount($amount)
     {
@@ -200,7 +203,7 @@ class Taxable
 
     /**
      * @param \SplObjectStorage $items
-     * @return $this
+     * @return Taxable
      */
     public function setItems(\SplObjectStorage $items)
     {
@@ -211,7 +214,7 @@ class Taxable
 
     /**
      * @param Taxable $item
-     * @return $this
+     * @return Taxable
      */
     public function addItem(Taxable $item)
     {
@@ -224,7 +227,7 @@ class Taxable
 
     /**
      * @param Taxable $item
-     * @return $this
+     * @return Taxable
      */
     public function removeItem(Taxable $item)
     {
@@ -264,7 +267,7 @@ class Taxable
 
     /**
      * @param Result $result
-     * @return $this
+     * @return Taxable
      */
     public function setResult(Result $result)
     {
@@ -277,7 +280,7 @@ class Taxable
 
     /**
      * @param \ArrayObject $arrayObject
-     * @return $this
+     * @return Taxable
      */
     public function setContext(\ArrayObject $arrayObject)
     {
@@ -289,7 +292,7 @@ class Taxable
     /**
      * @param string $keyName
      * @param mixed  $value
-     * @return $this
+     * @return Taxable
      */
     public function addContext($keyName, $value)
     {
@@ -336,5 +339,44 @@ class Taxable
         }
 
         return null;
+    }
+
+    /**
+     * @return AbstractAddress
+     */
+    public function getTaxationAddress()
+    {
+        return $this->taxationAddress;
+    }
+
+    /**
+     * @param AbstractAddress $taxationAddress
+     * @return Taxable
+     */
+    public function setTaxationAddress(AbstractAddress $taxationAddress = null)
+    {
+        $this->taxationAddress = $taxationAddress;
+
+        return $this;
+    }
+
+    /**
+     * @return Taxable
+     */
+    public function makeDestinationAddressTaxable()
+    {
+        $this->taxationAddress = $this->destination;
+
+        return $this;
+    }
+
+    /**
+     * @return Taxable
+     */
+    public function makeOriginAddressTaxable()
+    {
+        $this->taxationAddress = $this->origin;
+
+        return $this;
     }
 }

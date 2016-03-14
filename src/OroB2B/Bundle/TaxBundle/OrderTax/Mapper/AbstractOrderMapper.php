@@ -35,11 +35,20 @@ abstract class AbstractOrderMapper implements TaxMapperInterface
 
     /**
      * @param Order $order
-     * @return AbstractAddress
+     * @return AbstractAddress Billing, shipping or origin address according to exclusions
      */
-    public function getOrderAddress(Order $order)
+    public function getTaxationAddress(Order $order)
     {
-        return $this->addressProvider->getAddressForTaxation($order->getBillingAddress(), $order->getShippingAddress());
+        return $this->addressProvider->getTaxationAddress($order->getBillingAddress(), $order->getShippingAddress());
+    }
+
+    /**
+     * @param Order $order
+     * @return AbstractAddress Billing or shipping address
+     */
+    public function getDestinationAddress(Order $order)
+    {
+        return $this->addressProvider->getDestinationAddress($order->getBillingAddress(), $order->getShippingAddress());
     }
 
     /**
