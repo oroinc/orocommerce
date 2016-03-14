@@ -8,6 +8,10 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 
 class CheckoutLineItemsConverter
 {
+    /**
+     * @param array $data
+     * @return ArrayCollection
+     */
     public function convert(array $data)
     {
         $result = new ArrayCollection();

@@ -8,10 +8,14 @@ use OroB2B\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
 
 class CheckoutLineItemDataProvider implements CheckoutDataProviderInterface
 {
-    /** @var  FrontendProductPricesDataProvider */
+    /**
+     * @var FrontendProductPricesDataProvider
+     */
     protected $frontendProductPricesDataProvider;
 
-    /** @var  UserCurrencyProvider */
+    /**
+     * @var UserCurrencyProvider
+     */
     protected $currencyProvider;
 
     /**

@@ -72,6 +72,8 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
         $checkout = new Checkout();
         $checkout->setSource($checkoutSource);
 
+        $expected = false;
+
         if ($withDataProvider) {
             /** @var CheckoutDataProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider */
             $provider = $this->getMock('OroB2B\Component\Checkout\DataProvider\CheckoutDataProviderInterface');
@@ -104,23 +106,25 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
                     ->with($entity)
                     ->willReturn($data);
 
+                $expected = new ArrayCollection([
+                    (new OrderLineItem())->setProduct($product)
+                        ->setProductSku($product->getSku())
+                        ->setQuantity($quantity)
+                        ->setProductUnit($productUnit)
+                        ->setProductUnitCode($productUnit->getCode())
+                        ->setPrice($price)
+                ]);
                 $this->checkoutLineItemsConverter->expects($this->once())
                     ->method('convert')
                     ->with($data)
-                    ->willReturn(new ArrayCollection([
-                        (new OrderLineItem())->setProduct($product)
-                            ->setProductSku($product->getSku())
-                            ->setQuantity($quantity)
-                            ->setProductUnit($productUnit)
-                            ->setProductUnitCode($productUnit->getCode())
-                            ->setPrice($price)
-                    ]));
+                    ->willReturn($expected);
             }
 
             $this->checkoutLineItemsManager->addProvider($provider);
         }
 
-        $this->checkoutLineItemsManager->getData($checkout);
+        $result = $this->checkoutLineItemsManager->getData($checkout);
+        $this->assertEquals($expected, $result);
     }
 
     /**

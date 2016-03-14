@@ -22,7 +22,7 @@ services:
         class: %orob2b_checkout.layout.data_provider.summary.class%
         arguments:
             - @orob2b_checkout.data_provider.manager.checkout_line_items
-            - @orob2b_pricing.provider.user_currency
+            - @orob2b_pricing.provider.line_items_subtotal
         tags:
             - { name: layout.data_provider, alias: orob2b_checkout_summary }
 
