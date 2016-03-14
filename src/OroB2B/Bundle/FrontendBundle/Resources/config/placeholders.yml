@@ -22,6 +22,8 @@ placeholders:
         items:
             template_datagrid_toolbar_frontend: ~
             template_datagrid_grid_frontend: ~
+            template_datagrid_toolbar_pagination_input_frontend: ~
+            template_datagrid_toolbar_page_size_frontend: ~
 
     install_additional_configuration_fields:
         items:
@@ -60,9 +62,19 @@ items:
     template_datagrid_grid_frontend:
         template: OroB2BFrontendBundle:js:grid.html.twig
         applicable: @orob2b_frontend.placeholder.filter->isFrontendRoute()
+    template_datagrid_toolbar_pagination_input_frontend:
+        template: OroB2BFrontendBundle:js:pagination-input.html.twig
+        applicable: @orob2b_frontend.placeholder.filter->isFrontendRoute()
+    template_datagrid_toolbar_page_size_frontend:
+        template: OroB2BFrontendBundle:js:page-size.html.twig
+        applicable: @orob2b_frontend.placeholder.filter->isFrontendRoute()
 
     # backend grid only
     template_datagrid_toolbar:
         applicable: @orob2b_frontend.placeholder.filter->isBackendRoute()
     template_datagrid_grid:
+        applicable: @orob2b_frontend.placeholder.filter->isBackendRoute()
+    template_datagrid_toolbar_pagination_input:
+        applicable: @orob2b_frontend.placeholder.filter->isBackendRoute()
+    template_datagrid_toolbar_page_size:
         applicable: @orob2b_frontend.placeholder.filter->isBackendRoute()
