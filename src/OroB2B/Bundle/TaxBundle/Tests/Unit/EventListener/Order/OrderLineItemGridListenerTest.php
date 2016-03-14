@@ -170,38 +170,50 @@ class OrderLineItemGridListenerTest extends \PHPUnit_Framework_TestCase
                 'columns' => [
                     'unitPriceIncludingTax' => [
                         'label' => 'orob2b.tax.order_item_datagrid.unitPrice.includingTax.label',
-                        'frontend_type' => 'string',
-                        'data_name' => '[result][unit][includingTax]',
+                        'type' => 'twig',
+                        'frontend_type' => 'html',
+                        'data_name' => 'result',
+                        'template' => 'OroB2BTaxBundle:Order:Datagrid/Frontend/Property/unitIncludingTax.html.twig',
                         'renderable' => false
                     ],
                     'unitPriceExcludingTax' => [
                         'label' => 'orob2b.tax.order_item_datagrid.unitPrice.excludingTax.label',
-                        'frontend_type' => 'string',
-                        'data_name' => '[result][unit][excludingTax]',
+                        'type' => 'twig',
+                        'frontend_type' => 'html',
+                        'data_name' => 'result',
+                        'template' => 'OroB2BTaxBundle:Order:Datagrid/Frontend/Property/unitExcludingTax.html.twig',
                         'renderable' => false
                     ],
                     'unitPriceTaxAmount' => [
                         'label' => 'orob2b.tax.order_item_datagrid.unitPrice.taxAmount.label',
-                        'frontend_type' => 'string',
-                        'data_name' => '[result][unit][taxAmount]',
+                        'type' => 'twig',
+                        'frontend_type' => 'html',
+                        'data_name' => 'result',
+                        'template' => 'OroB2BTaxBundle:Order:Datagrid/Frontend/Property/unitTaxAmount.html.twig',
                         'renderable' => false
                     ],
                     'rowTotalIncludingTax' => [
                         'label' => 'orob2b.tax.order_item_datagrid.rowTotal.includingTax.label',
-                        'frontend_type' => 'string',
-                        'data_name' => '[result][row][includingTax]',
+                        'type' => 'twig',
+                        'frontend_type' => 'html',
+                        'data_name' => 'result',
+                        'template' => 'OroB2BTaxBundle:Order:Datagrid/Frontend/Property/rowIncludingTax.html.twig',
                         'renderable' => false
                     ],
                     'rowTotalExcludingTax' => [
                         'label' => 'orob2b.tax.order_item_datagrid.rowTotal.excludingTax.label',
-                        'frontend_type' => 'string',
-                        'data_name' => '[result][row][excludingTax]',
+                        'type' => 'twig',
+                        'frontend_type' => 'html',
+                        'data_name' => 'result',
+                        'template' => 'OroB2BTaxBundle:Order:Datagrid/Frontend/Property/rowExcludingTax.html.twig',
                         'renderable' => false
                     ],
                     'rowTotalTaxAmount' => [
                         'label' => 'orob2b.tax.order_item_datagrid.rowTotal.taxAmount.label',
-                        'frontend_type' => 'string',
-                        'data_name' => '[result][row][taxAmount]',
+                        'type' => 'twig',
+                        'frontend_type' => 'html',
+                        'data_name' => 'result',
+                        'template' => 'OroB2BTaxBundle:Order:Datagrid/Frontend/Property/rowTaxAmount.html.twig',
                         'renderable' => false
                     ],
                     'result' => [
