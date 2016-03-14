@@ -4,6 +4,9 @@ layout:
             themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/order_review.html.twig'
         - @setFormTheme:
             themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/form_theme.html.twig'
+        - @move:
+            id: checkout_order_summary_table
+            parentId: checkout_order_review_form_fields
         - @addTree:
             items:
                 checkout_order_review:
@@ -14,8 +17,9 @@ layout:
                         vars:
                             checkout: { @value: $data.checkout }
                             workflowStep: { @value: $data.workflowStep }
+                            form: { @value: $data.orob2b_checkout_transition_form }
                 checkout_order_review_form_fields:
-                    blockType: block
+                    blockType: container
                     options:
                         vars:
                             checkout: { @value: $data.checkout }
