@@ -71,6 +71,14 @@ actions:
                     - @call_method:
                         object: $.checkoutWorkflowItem.data
                         method: set
+                        method_parameters: ['disallow_billing_address_edit', true]
+                    - @call_method:
+                        object: $.checkoutWorkflowItem.data
+                        method: set
+                        method_parameters: ['disallow_shipping_address_edit', true]
+                    - @call_method:
+                        object: $.checkoutWorkflowItem.data
+                        method: set
                         method_parameters: ['remove_source', true]
                     - @call_method:
                         object: $.checkoutWorkflowItem.data

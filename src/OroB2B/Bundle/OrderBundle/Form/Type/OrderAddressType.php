@@ -114,7 +114,7 @@ class OrderAddressType extends AbstractType
         $isManualEditGranted = $this->orderAddressSecurityProvider->isManualEditGranted($options['addressType']);
 
         foreach ($view->children as $child) {
-            $child->vars['disabled'] = !$isManualEditGranted;
+            $child->vars['disabled'] = !$isManualEditGranted || $options['disabled'];
             $child->vars['required'] = false;
             unset(
                 $child->vars['attr']['data-validation'],
@@ -135,10 +135,12 @@ class OrderAddressType extends AbstractType
     {
         $resolver
             ->setRequired(['object', 'addressType'])
-            ->setDefaults([
-                'data_class' => $this->dataClass,
-                'isEditEnabled' => false,
-            ])
+            ->setDefaults(
+                [
+                    'data_class' => $this->dataClass,
+                    'isEditEnabled' => false,
+                ]
+            )
             ->setAllowedValues('addressType', [AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING])
             ->setAllowedTypes('object', 'OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface');
     }
