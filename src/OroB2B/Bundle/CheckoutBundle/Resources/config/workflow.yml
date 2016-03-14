@@ -145,6 +145,8 @@ workflows:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.place_order.label
                 step_to: place_order
                 transition_definition: place_order_definition
+                frontend_options:
+                    is_checkout_continue: true
                 form_options:
                     attribute_fields:
                         po_number: ~
