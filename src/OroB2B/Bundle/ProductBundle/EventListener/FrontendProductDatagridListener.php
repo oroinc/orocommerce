@@ -18,7 +18,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
-class ProductDatagridViewsListener
+class FrontendProductDatagridListener
 {
     const COLUMN_PRODUCT_UNITS = 'product_units';
 

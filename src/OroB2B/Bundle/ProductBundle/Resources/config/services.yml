@@ -42,7 +42,7 @@ parameters:
 
     orob2b_product.autocomplete.product_visibility_limited.search_handler.class: OroB2B\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler
     orob2b_product.datagrid_theme_helper.class: OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper
-    orob2b_product.event_listener.datagrid_views.class: OroB2B\Bundle\ProductBundle\EventListener\ProductDatagridViewsListener
+    orob2b_product.event_listener.frontend_product_datagrid.class: OroB2B\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener
     orob2b_product.layout.data_provider.frontend_datagrid_row_view.class: OroB2B\Bundle\ProductBundle\Layout\DataProvider\FrontendDatagridRowViewProvider
 
 services:
@@ -305,8 +305,8 @@ services:
         arguments:
             - @request_stack
 
-    orob2b_product.event_listener.datagrid_views:
-        class: %orob2b_product.event_listener.datagrid_views.class%
+    orob2b_product.event_listener.frontend_product_datagrid:
+        class: %orob2b_product.event_listener.frontend_product_datagrid.class%
         arguments:
             - @orob2b_product.datagrid_theme_helper
             - @doctrine
