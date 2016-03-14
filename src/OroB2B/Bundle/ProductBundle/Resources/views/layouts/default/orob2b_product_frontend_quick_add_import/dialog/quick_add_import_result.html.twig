@@ -53,6 +53,12 @@
     </thead>
 {% endblock %}
 
+{% block _quick_add_import_validation_items_table_body_widget %}
+    <tbody>
+        {{ block_widget(block) }}
+    </tbody>
+{% endblock %}
+
 {% block _quick_add_import_validation_total_items_count_widget %}
     <tr {{ block('block_attributes') }}>
         <td>{{ block_widget(block) }}</td>

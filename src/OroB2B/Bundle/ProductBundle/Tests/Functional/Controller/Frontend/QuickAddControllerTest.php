@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
@@ -66,6 +67,7 @@ abstract class QuickAddControllerTest extends WebTestCase
         $this->assertContains(htmlentities('Paste your order'), $crawler->html());
 
         $form = $crawler->selectButton('Verify Order')->form();
+        $this->updateFormActionToDialog($form);
         $form['orob2b_product_quick_add_copy_paste[copyPaste]'] = implode(PHP_EOL, $example);
 
         $crawler = $this->client->submit($form);
@@ -75,6 +77,7 @@ abstract class QuickAddControllerTest extends WebTestCase
 
         //test result form actions (create rfp, create order, add to shopping list)
         $resultForm = $crawler->selectButton('Cancel')->form();
+        $this->updateFormActionToDialog($resultForm);
         $resultForm['orob2b_product_quick_add[component]'] = $processorName;
         $this->client->submit($resultForm);
         $response = $this->client->getResponse();
@@ -102,17 +105,25 @@ abstract class QuickAddControllerTest extends WebTestCase
      *
      * @dataProvider importFromFileProvider
      */
-    public function atestImportFromFileAction($file, $expectedValidationResult, $formErrorMessage = null)
+    public function testImportFromFileAction($file, $expectedValidationResult, $formErrorMessage = null)
     {
         $this->client->request('GET', $this->getUrl('orob2b_product_frontend_quick_add'));
         $response = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($response, 200);
-        $this->assertContains('Import From File', $response->getContent());
+        $this->assertContains('Import Excel .CSV File', $response->getContent());
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_frontend_quick_add_import'));
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl(
+                'orob2b_product_frontend_quick_add_import',
+                ['_widgetContainer' => 'dialog']
+            )
+        );
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
+
         $form = $crawler->selectButton('Upload')->form();
+        $this->updateFormActionToDialog($form);
 
         if (file_exists($file)) {
             $form['orob2b_product_quick_add_import_from_file[file]']->upload($file);
@@ -216,7 +227,7 @@ abstract class QuickAddControllerTest extends WebTestCase
      */
     private function parseTargetUrl($content)
     {
-        $pattern = '/data-page-component-options\s*=\s*"(.+)"/';
+        $pattern = '/data-page-component-options\s*=\s*"([^"]+)"/';
         $this->assertRegExp($pattern, $content);
         preg_match($pattern, $content, $matches);
 
@@ -224,5 +235,17 @@ abstract class QuickAddControllerTest extends WebTestCase
         $this->assertArrayHasKey('targetUrl', $parsedOptions);
 
         return stripslashes($parsedOptions['targetUrl']);
+    }
+
+    /**
+     * @param Form $form
+     */
+    protected function updateFormActionToDialog(Form $form)
+    {
+        /** TODO Change after BAP-1813 */
+        $form->getFormNode()->setAttribute(
+            'action',
+            $form->getFormNode()->getAttribute('action') . '?_widgetContainer=dialog'
+        );
     }
 }

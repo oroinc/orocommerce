@@ -20,6 +20,8 @@ layout:
                     blockType: text
                     options:
                         text: 'orob2b.product.frontend.quick_add.import_validation.number_of_items'
+                quick_add_import_validation_items_table_body:
+                    blockType: container
                 quick_add_import_validation_total_items_count:
                     blockType: text
                     options:
@@ -73,9 +75,10 @@ layout:
                     quick_add_import_validation:
                         quick_add_import_validation_items_table:
                             quick_add_import_validation_items_table_title: ~
-                            quick_add_import_validation_total_items_count: ~
-                            quick_add_import_validation_valid_items_count: ~
-                            quick_add_import_validation_invalid_items_count: ~
+                            quick_add_import_validation_items_table_body:
+                                quick_add_import_validation_total_items_count: ~
+                                quick_add_import_validation_valid_items_count: ~
+                                quick_add_import_validation_invalid_items_count: ~
                         quick_add_import_validation_invalid_items: ~
                         quick_add_form:
                             quick_add_form_start: ~
