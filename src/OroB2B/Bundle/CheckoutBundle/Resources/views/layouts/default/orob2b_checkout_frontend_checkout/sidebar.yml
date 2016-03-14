@@ -1,0 +1,32 @@
+layout:
+    actions:
+        - @setBlockTheme:
+            themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/sidebar.html.twig'
+        - @addTree:
+            items:
+                checkout_container:
+                    blockType: container
+                checkout_sidebar:
+                    blockType: container
+                    options:
+                        vars:
+                            checkout: { @value: $data.checkout }
+                            steps: { @value: $data.orob2b_checkout_steps }
+                enter_billing_address_information:
+                    blockType: block
+                enter_shipping_address_information:
+                    blockType: block
+                enter_shipping_method_information:
+                    blockType: block
+                enter_payment_information:
+                    blockType: block
+                place_order_information:
+                    blockType: block
+            tree:
+                sidebar_left:
+                    checkout_sidebar:
+                        enter_billing_address_information: ~
+                        enter_shipping_address_information: ~
+                        enter_shipping_method_information: ~
+                        enter_payment_information: ~
+                        place_order_information: ~

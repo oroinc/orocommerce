@@ -1,0 +1,3 @@
+config:
+    paths:
+        'orob2bcheckout/js/app/views/address-view': 'bundles/orob2bcheckout/js/app/views/address-view.js'
