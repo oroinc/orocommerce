@@ -2,9 +2,11 @@
 
 namespace OroB2B\Bundle\TaxBundle\EventListener\Order;
 
-use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
-use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
+
+use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
+use OroB2B\Bundle\TaxBundle\Model\ResultElement;
+use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 
 class OrderTaxesListener
@@ -33,7 +35,11 @@ class OrderTaxesListener
         $order = $event->getOrder();
 
         $result = $this->taxManager->getTax($order);
-        $event->getData()->offsetSet('taxesTotal', $result->offsetGet(Result::TOTAL)->getArrayCopy());
+        $subtotals = $event->getData()->offsetGet('subtotals');
+        if (is_array($subtotals) && isset($subtotals['tax']) && isset($subtotals['tax']['amount'])) {
+            $subtotals['tax']['amount'] = $result->offsetGet(Result::TOTAL)->offsetGet(ResultElement::TAX_AMOUNT);
+            $event->getData()->offsetSet('subtotals', $subtotals);
+        }
 
         $taxesItems = [];
         /** @var \ArrayObject $lineItem */

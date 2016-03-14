@@ -54,6 +54,7 @@ class SubtotalTaxProvider implements SubtotalProviderInterface
             $tax = $this->taxManager->loadTax($order);
             $subtotal->setAmount($tax->getTotal()->getTaxAmount());
             $subtotal->setCurrency($tax->getTotal()->getCurrency());
+            $subtotal->setVisible(true);
         } catch (TaxationDisabledException $e) {
             $subtotal->setVisible(false);
         }

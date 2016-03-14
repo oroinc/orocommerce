@@ -8,6 +8,8 @@ orob2b.tax:
     taxcode.label: 'Tax Code'
     taxcode.accountgroup.label: 'Account Group Tax Code'
 
+    subtotals.tax: 'Tax'
+
     form:
         choose: 'Choose a tax'
         tooltip.zip_codes: 'If you want to type only one zip code, you can fill any field in the row'

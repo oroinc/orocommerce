@@ -18,7 +18,6 @@ define(function(require) {
          */
         options: {
             selectors: {
-                totals_taxes: '.totals-container td.order-line-item-taxes',
                 applied_taxes_template: '.applied-taxes-template'
             }
         },
@@ -51,6 +50,7 @@ define(function(require) {
          */
         setOrderTaxes: function(response) {
             this.setTaxesData(this.$el.find('table').first(), response.taxesItems.shift());
+            mediator.trigger('line-items-totals:update');
         },
 
         /**

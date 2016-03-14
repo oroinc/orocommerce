@@ -58,6 +58,7 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
     {
         $order = new Order();
         $data = new \ArrayObject();
+        $data->offsetSet('subtotals', ['tax' => ['amount' => 0]]);
 
         $this->taxManager->expects($this->once())
             ->method('getTax')
@@ -71,7 +72,7 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
         $this->event->expects($this->once())
             ->method('getOrder')
             ->willReturn($order);
-        $this->event->expects($this->exactly(2))
+        $this->event->expects($this->exactly(3))
             ->method('getData')
             ->willReturn($data);
 
@@ -102,11 +103,10 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
             [
                 $result,
                 [
-                    'taxesTotal' => [
-                        'includingTax' => 55,
-                        'excludingTax' => 50,
-                        'taxAmount' => 5,
-                        'adjustment' => 0
+                    'subtotals' => [
+                        'tax' => [
+                            'amount' => 5
+                        ],
                     ],
                     'taxesItems' => [
                         [
