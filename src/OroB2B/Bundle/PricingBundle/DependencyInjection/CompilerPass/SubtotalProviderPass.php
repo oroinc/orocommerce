@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\DependencyInjection\CompilerPass;
+namespace OroB2B\Bundle\PricingBundle\DependencyInjection\CompilerPass;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -8,8 +8,8 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class SubtotalProviderPass implements CompilerPassInterface
 {
-    const REGISTRY_SERVICE = 'orob2b_order.subtotal_provider.registry';
-    const TAG = 'orob2b_order.subtotal_provider';
+    const REGISTRY_SERVICE = 'orob2b_pricing.subtotal_processor.subtotal_provider_registry';
+    const TAG = 'orob2b_pricing.subtotal_provider';
     const PRIORITY = 'priority';
 
     /**
