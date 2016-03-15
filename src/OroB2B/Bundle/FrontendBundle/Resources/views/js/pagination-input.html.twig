@@ -10,8 +10,10 @@
                         data-grid-pagination-trigger-input
                 <% if (disabled) { %>disabled="disabled"<% } %>/>
             <% } else { %>
-                <button class="oro-pagination__pager__<%= handle.direction %><% if (disabled) { %> disabled<% } %><% if (handle.className) { %> <%= handle.className %><% } %>"
-                        data-grid-pagination-trigger>
+                <button class="oro-pagination__pager__<%= handle.direction %><% if (handle.className) { %> <%= handle.className %><% } %>"
+                        data-grid-pagination-trigger data-grid-pagination-direction="<%= handle.direction %>"
+                        <% if (disabled) { %> disabled<% } %>
+                        <% if (handle.className) { %> <%= handle.className %><% } %>>
                     <i class="icon-<%= handle.arrow %>-open"></i>
                 </button>
             <% } %>
