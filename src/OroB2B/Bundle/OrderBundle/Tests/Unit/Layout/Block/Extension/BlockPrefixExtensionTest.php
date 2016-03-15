@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Layout\Extension;
+namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Layout\Block\Extension;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -8,7 +8,7 @@ use Oro\Component\Layout\Block\Type\BaseType;
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\BlockView;
 
-use OroB2B\Bundle\OrderBundle\Layout\Extension\BlockPrefixExtension;
+use OroB2B\Bundle\OrderBundle\Layout\Block\Extension\BlockPrefixExtension;
 
 class BlockPrefixExtensionTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Provider;
+namespace OroB2B\Bundle\TaxBundle\Tests\Unit\OrderTax\Provider;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -9,7 +9,7 @@ use OroB2B\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
 use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
-use OroB2B\Bundle\TaxBundle\Provider\SubtotalTaxProvider;
+use OroB2B\Bundle\TaxBundle\OrderTax\Provider\SubtotalTaxProvider;
 
 class SubtotalTaxProviderTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Layout\Extension;
+namespace OroB2B\Bundle\OrderBundle\Layout\Block\Extension;
 
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 

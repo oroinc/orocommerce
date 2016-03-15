@@ -25,11 +25,11 @@ parameters:
     #formaters
     orob2b_order.formatter.source_document.class: OroB2B\Bundle\OrderBundle\Formatter\SourceDocumentFormatter
 
-    orob2b_order.layout.block_type.date.class: OroB2B\Bundle\OrderBundle\Layout\Type\DateType
-    orob2b_order.layout.block_type.currency.class: OroB2B\Bundle\OrderBundle\Layout\Type\CurrencyType
-    orob2b_order.layout.block_type.address.class: OroB2B\Bundle\OrderBundle\Layout\Type\AddressType
-    orob2b_order.layout.block_type_extension.block_prefixes.class: OroB2B\Bundle\OrderBundle\Layout\Extension\BlockPrefixExtension
-    orob2b_order.layout.block_type.order_total.class: OroB2B\Bundle\OrderBundle\Layout\Type\OrderTotalType
+    orob2b_order.layout.block_type.date.class: OroB2B\Bundle\OrderBundle\Layout\Block\Type\DateType
+    orob2b_order.layout.block_type.currency.class: OroB2B\Bundle\OrderBundle\Layout\Block\Type\CurrencyType
+    orob2b_order.layout.block_type.address.class: OroB2B\Bundle\OrderBundle\Layout\Block\Type\AddressType
+    orob2b_order.layout.block_type_extension.block_prefixes.class: OroB2B\Bundle\OrderBundle\Layout\Block\Extension\BlockPrefixExtension
+    orob2b_order.layout.block_type.order_total.class: OroB2B\Bundle\OrderBundle\Layout\Block\Type\OrderTotalType
 
 services:
     orob2b_order.order.manager.api:
@@ -178,6 +178,6 @@ services:
             - { name: layout.block_type_extension, alias: block }
 
     orob2b_order.layout.block_type.order_total:
-            class: %orob2b_order.layout.block_type.order_total.class%
-            tags:
-                 - { name: layout.block_type, alias: order_total }
+        class: %orob2b_order.layout.block_type.order_total.class%
+        tags:
+             - { name: layout.block_type, alias: order_total }

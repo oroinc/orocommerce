@@ -78,7 +78,7 @@ parameters:
     orob2b_tax.layout.data_provider.tax.class: OroB2B\Bundle\TaxBundle\Layout\Provider\TaxDataProvider
     orob2b_tax.layout.type.tax.class: OroB2B\Bundle\TaxBundle\Layout\Type\TaxType
 
-    orob2b_tax.provider.subtotal_tax.class: OroB2B\Bundle\TaxBundle\Provider\SubtotalTaxProvider
+    orob2b_tax.provider.subtotal_tax.class: OroB2B\Bundle\TaxBundle\OrderTax\Provider\SubtotalTaxProvider
 
 services:
     orob2b_tax.manager.product_tax_code.api:

@@ -1,4 +1,4 @@
 {% set result = record.getValue('result') %}
-{% if result.unit is defined and result.unit.taxAmoumt is defined %}
-    {{ result.unit.taxAmoumt }}
+{% if result.unit is defined and result.unit.taxAmount is defined %}
+    {{ result.unit.taxAmount|oro_format_currency({currency: result.unit.currency}) }}
 {% endif %}

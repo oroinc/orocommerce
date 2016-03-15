@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Provider;
+namespace OroB2B\Bundle\TaxBundle\OrderTax\Provider;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
