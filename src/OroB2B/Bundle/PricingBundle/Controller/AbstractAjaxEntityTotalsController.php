@@ -45,7 +45,7 @@ abstract class AbstractAjaxEntityTotalsController extends Controller
             if (!$isGranted) {
                 throw new AccessDeniedException();
             }
-        } else if (in_array($method, ['POST', 'PUT'])) {
+        } elseif (in_array($method, ['POST', 'PUT'])) {
             if ($entityId) {
                 /** @var OroEntityManager $entityManager */
                 $entityManager = $this->getDoctrine()->getManager();
