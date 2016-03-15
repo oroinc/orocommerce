@@ -71,7 +71,7 @@ class LineItemsSubtotalProvider
      * @param string $baseCurrency
      * @return float|int
      */
-    protected function getRowTotal(PriceAwareInterface $lineItem, $baseCurrency)
+    public function getRowTotal(PriceAwareInterface $lineItem, $baseCurrency)
     {
         $rowTotal = $lineItem->getPrice()->getValue();
         $rowCurrency = $lineItem->getPrice()->getCurrency();
