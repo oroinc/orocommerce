@@ -10,9 +10,7 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        options: {
-
-        },
+        options: {},
 
         /**
          * @inheritDoc

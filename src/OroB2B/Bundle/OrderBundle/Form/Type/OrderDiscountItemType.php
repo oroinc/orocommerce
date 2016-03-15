@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\OrderBundle\Form\Type;
 
 use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
+
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormView;
