@@ -285,7 +285,7 @@ class OrderControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertViewPage($crawler, ['Notes', self::ORDER_PO_NUMBER_UPDATED]);
+        $this->assertViewPage($crawler, ['Notes']);
     }
 
     /**
