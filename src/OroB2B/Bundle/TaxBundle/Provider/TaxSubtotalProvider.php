@@ -1,24 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\OrderTax\Provider;
+namespace OroB2B\Bundle\TaxBundle\Provider;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use OroB2B\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Model\Subtotal;
-use OroB2B\Bundle\OrderBundle\SubtotalProcessor\SubtotalProviderInterface;
 
-class SubtotalTaxProvider implements SubtotalProviderInterface
+class TaxSubtotalProvider implements SubtotalProviderInterface
 {
     const TYPE = 'tax';
     const NAME = 'orob2b_tax.subtotal_tax';
-
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
 
     /**
      * @var TaxManager
@@ -26,12 +18,20 @@ class SubtotalTaxProvider implements SubtotalProviderInterface
     protected $taxManager;
 
     /**
-     * @param TranslatorInterface $translator
+     * @var TaxationSettingsProvider
      */
-    public function __construct(TranslatorInterface $translator, TaxManager $taxManager)
-    {
-        $this->translator = $translator;
+    protected $taxationSettingsProvider;
+
+    /**
+     * @param TaxManager $taxManager
+     * @param TaxationSettingsProvider $taxationSettingsProvider
+     */
+    public function __construct(
+        TaxManager $taxManager,
+        TaxationSettingsProvider $taxationSettingsProvider
+    ) {
         $this->taxManager = $taxManager;
+        $this->taxationSettingsProvider = $taxationSettingsProvider;
     }
 
     /**
@@ -45,13 +45,13 @@ class SubtotalTaxProvider implements SubtotalProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getSubtotal(Order $order)
+    public function getSubtotal($order)
     {
         $subtotal = new Subtotal();
 
         $subtotal->setType(self::TYPE);
         $label = 'orob2b.tax.subtotals.' . self::TYPE;
-        $subtotal->setLabel($this->translator->trans($label));
+        $subtotal->setLabel($label);
 
         try {
             $tax = $this->taxManager->loadTax($order);
@@ -64,5 +64,11 @@ class SubtotalTaxProvider implements SubtotalProviderInterface
         }
 
         return $subtotal;
+    }
+
+    /** {@inheritdoc} */
+    public function isSupported($entity)
+    {
+        return $this->taxationSettingsProvider->isEnabled();
     }
 }

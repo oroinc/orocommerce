@@ -78,7 +78,7 @@ parameters:
     orob2b_tax.layout.data_provider.tax.class: OroB2B\Bundle\TaxBundle\Layout\Provider\TaxDataProvider
     orob2b_tax.layout.type.tax.class: OroB2B\Bundle\TaxBundle\Layout\Type\TaxType
 
-    orob2b_tax.provider.subtotal_tax.class: OroB2B\Bundle\TaxBundle\OrderTax\Provider\SubtotalTaxProvider
+    orob2b_tax.provider.tax_subtotal.class: OroB2B\Bundle\TaxBundle\Provider\TaxSubtotalProvider
 
 services:
     orob2b_tax.manager.product_tax_code.api:
@@ -525,10 +525,10 @@ services:
         tags:
              - { name: layout.block_type, alias: tax }
 
-    orob2b_tax.provider.subtotal_tax:
-        class: %orob2b_tax.provider.subtotal_tax.class%
+    orob2b_tax.provider.tax_subtotal:
+        class: %orob2b_tax.provider.tax_subtotal.class%
         arguments:
-            - @translator
             - @orob2b_tax.manager.tax_manager
+            - @orob2b_tax.provider.taxation_settings_provider
         tags:
-            - { name: orob2b_order.subtotal_provider, priority: 11 }
+            - { name: orob2b_pricing.subtotal_provider, priority: 20 }
