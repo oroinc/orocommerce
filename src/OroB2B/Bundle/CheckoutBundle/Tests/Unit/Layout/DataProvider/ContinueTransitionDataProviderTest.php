@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
@@ -29,6 +30,8 @@ class ContinueTransitionDataProviderTest extends AbstractTransitionDataProviderT
     {
         $checkout = new Checkout();
         $workflowItem = new WorkflowItem();
+        $step = new WorkflowStep();
+        $workflowItem->setCurrentStep($step);
         $checkout->setWorkflowItem($workflowItem);
         $context = $this->prepareContext($checkout);
 
