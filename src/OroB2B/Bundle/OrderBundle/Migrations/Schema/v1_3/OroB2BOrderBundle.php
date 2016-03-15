@@ -50,6 +50,7 @@ class OroB2BOrderBundle implements Migration
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('order_id', 'integer', ['notnull' => false]);
         $table->addColumn('description', 'text', ['notnull' => false]);
+        $table->addColumn('type', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn(
             'percent',
             'percent',
