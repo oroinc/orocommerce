@@ -21,9 +21,9 @@
         }}
             {{ block_widget(block) }}
             <div class="hidden">
-                {{ form_rest(form) }}
+                {{ form_widget(form._token) }}
             </div>
-        {{ form_end(form) }}
+        </form>
     </div>
 {%- endblock %}
 

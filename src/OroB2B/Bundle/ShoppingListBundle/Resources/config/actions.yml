@@ -58,28 +58,22 @@ actions:
                             owner: $.currentUser.account.owner
                             organization: $.currentUser.account.organization
                             website: $.currentWebsite
-                    - @find_entity:
-                        attribute: $.checkoutWorkflowItem
-                        class: Oro\Bundle\WorkflowBundle\Entity\WorkflowItem
-                        where:
-                            workflowName: b2b_flow_checkout
-                            entityId: $.checkout.id
                     - @call_method:
-                        object: $.checkoutWorkflowItem.data
+                        object: $.checkout.workflowItem.data
                         method: set
                         method_parameters: ['allow_source_remove', true]
                     - @call_method:
-                        object: $.checkoutWorkflowItem.data
+                        object: $.checkout.workflowItem.data
                         method: set
                         method_parameters: ['remove_source', true]
                     - @call_method:
-                        object: $.checkoutWorkflowItem.data
+                        object: $.checkout.workflowItem.data
                         method: set
                         method_parameters: ['source_remove_label', $.sourceRemoveLabel]
                     - @call_method:
-                        object: $.checkoutWorkflowItem
+                        object: $.checkout.workflowItem
                         method: setUpdated
-                    - @flush_entity: $.checkoutWorkflowItem
+                    - @flush_entity: $.checkout.workflowItem
             - @find_entity:
                 conditions:
                     @not_empty: $.checkoutSource
