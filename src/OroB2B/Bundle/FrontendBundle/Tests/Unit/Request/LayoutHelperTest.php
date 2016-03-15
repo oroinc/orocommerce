@@ -7,7 +7,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use OroB2B\Bundle\FrontendBundle\Request\LayoutHelper;
 
-
 class LayoutHelperTest extends \PHPUnit_Framework_TestCase
 {
     /**

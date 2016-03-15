@@ -45,12 +45,12 @@
             <table class="order-checkout-widget__table pull-right">
                 {% for subtotal in subtotals %}
                 <tr>
-                    <td>{{ subtotal.label|trans }}</td>
+                    <td>{{ subtotal.label }}</td>
                     <td>{{ subtotal.amount|oro_format_currency({'currency': subtotal.currency}) }}</td>
                 </tr>
                 {% endfor %}
                 <tr>
-                    <td class="order-checkout-widget__total"><span class="text-uppercase">{{ total.label|trans }}</span></td>
+                    <td class="order-checkout-widget__total"><span class="text-uppercase">{{ total.label }}</span></td>
                     <td class="order-checkout-widget__total"><span class="blue">{{ total.amount|oro_format_currency({'currency': total.currency}) }}</span></td>
                 </tr>
             </table>

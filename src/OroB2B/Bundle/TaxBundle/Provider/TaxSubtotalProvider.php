@@ -2,9 +2,12 @@
 
 namespace OroB2B\Bundle\TaxBundle\Provider;
 
+use Symfony\Component\Translation\TranslatorInterface;
+
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use OroB2B\Bundle\TaxBundle\Exception\TaxationDisabledException;
+use OroB2B\Bundle\TaxBundle\Factory\TaxFactory;
 use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
 
 class TaxSubtotalProvider implements SubtotalProviderInterface
@@ -13,25 +16,30 @@ class TaxSubtotalProvider implements SubtotalProviderInterface
     const NAME = 'orob2b_tax.subtotal_tax';
 
     /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
      * @var TaxManager
      */
     protected $taxManager;
 
     /**
-     * @var TaxationSettingsProvider
+     * @var TaxFactory
      */
-    protected $taxationSettingsProvider;
+    protected $taxFactory;
 
     /**
+     * @param TranslatorInterface $translator
      * @param TaxManager $taxManager
-     * @param TaxationSettingsProvider $taxationSettingsProvider
+     * @param TaxFactory $taxFactory
      */
-    public function __construct(
-        TaxManager $taxManager,
-        TaxationSettingsProvider $taxationSettingsProvider
-    ) {
+    public function __construct(TranslatorInterface $translator, TaxManager $taxManager, TaxFactory $taxFactory)
+    {
+        $this->translator = $translator;
         $this->taxManager = $taxManager;
-        $this->taxationSettingsProvider = $taxationSettingsProvider;
+        $this->taxFactory = $taxFactory;
     }
 
     /**
@@ -51,7 +59,7 @@ class TaxSubtotalProvider implements SubtotalProviderInterface
 
         $subtotal->setType(self::TYPE);
         $label = 'orob2b.tax.subtotals.' . self::TYPE;
-        $subtotal->setLabel($label);
+        $subtotal->setLabel($this->translator->trans($label));
 
         try {
             $tax = $this->taxManager->loadTax($order);
@@ -69,6 +77,6 @@ class TaxSubtotalProvider implements SubtotalProviderInterface
     /** {@inheritdoc} */
     public function isSupported($entity)
     {
-        return $this->taxationSettingsProvider->isEnabled();
+        return $this->taxFactory->supports($entity);
     }
 }
