@@ -83,7 +83,9 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
                 }
             );
 
-        $this->quickAddFormProvider = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddFormProvider')
+        $this->quickAddFormProvider = $this->getMockBuilder(
+            'OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddFormProvider'
+        )
             ->disableOriginalConstructor()
             ->getMock();
         $this->quickAddImportFormProvider = $this->getMockBuilder(
