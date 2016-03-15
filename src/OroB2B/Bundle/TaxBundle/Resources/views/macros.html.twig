@@ -7,43 +7,51 @@
                 <th class="renderable">{{ 'orob2b.tax.result.includingTax'|trans }}</th>
                 <th class="renderable">{{ 'orob2b.tax.result.excludingTax'|trans }}</th>
                 <th class="renderable">{{ 'orob2b.tax.result.taxAmount'|trans }}</th>
-                <th class="renderable">{{ 'orob2b.tax.result.adjustment'|trans }}</th>
             </tr>
             </thead>
             <tbody>
             {% for type, data in result if data.includingTax is defined %}
                 <tr>
                     <td class="renderable">{{ 'orob2b.tax.result.%s'|format(type)|trans }}</td>
-                    <td class="renderable">{{ data.includingTax }}</td>
-                    <td class="renderable">{{ data.excludingTax }}</td>
-                    <td class="renderable">{{ data.taxAmount }}</td>
-                    <td class="renderable">{{ data.adjustment }}</td>
+                    <td class="renderable">{{ data.includingTax|oro_format_currency({currency: data.currency}) }}</td>
+                    <td class="renderable">{{ data.excludingTax|oro_format_currency({currency: data.currency}) }}</td>
+                    <td class="renderable">{{ data.taxAmount|oro_format_currency({currency: data.currency}) }}</td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
 
-        {% if result.taxes is defined and result.taxes|length %}
-            <table class="grid table-hover table table-bordered table-condensed tax-result-grid">
-                <thead>
+        {{ _self._renderTaxes(result.taxes) }}
+    {% endif %}
+{% endmacro %}
+
+{% macro renderResultFrontend(result) %}
+    {% if result is defined and result|length %}
+        {{ _self._renderTaxes(result.taxes) }}
+    {% endif %}
+{% endmacro %}
+
+{% macro _renderTaxes(taxes) %}
+    {% if taxes is defined and taxes|length %}
+        <table class="grid table-hover table table-bordered table-condensed tax-result-grid">
+            <thead>
+            <tr>
+                <th class="renderable">{{ 'orob2b.tax.result.tax'|trans }}</th>
+                <th class="renderable">{{ 'orob2b.tax.result.rate'|trans }}</th>
+                <th class="renderable">{{ 'orob2b.tax.result.taxableAmount'|trans }}</th>
+                <th class="renderable">{{ 'orob2b.tax.result.taxAmount'|trans }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for tax in taxes %}
                 <tr>
-                    <th class="renderable">{{ 'orob2b.tax.result.tax'|trans }}</th>
-                    <th class="renderable">{{ 'orob2b.tax.result.rate'|trans }}</th>
-                    <th class="renderable">{{ 'orob2b.tax.result.taxableAmount'|trans }}</th>
-                    <th class="renderable">{{ 'orob2b.tax.result.taxAmount'|trans }}</th>
+                    <td class="renderable">{{ tax.tax }}</td>
+                    <td class="renderable">{{ tax.rate|oro_format_percent }}</td>
+                    <td class="renderable">{{ tax.taxableAmount|oro_format_currency({currency: tax.currency}) }}</td>
+                    <td class="renderable">{{ tax.taxAmount|oro_format_currency({currency: tax.currency}) }}</td>
                 </tr>
-                </thead>
-                <tbody>
-                {% for tax in result.taxes %}
-                    <tr>
-                        <td class="renderable">{{ tax.tax }}</td>
-                        <td class="renderable">{{ tax.rate|oro_format_percent }}</td>
-                        <td class="renderable">{{ tax.taxableAmount }}</td>
-                        <td class="renderable">{{ tax.taxAmount }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
     {% endif %}
 {% endmacro %}

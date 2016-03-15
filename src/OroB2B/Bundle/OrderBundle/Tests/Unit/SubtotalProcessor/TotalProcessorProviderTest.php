@@ -14,7 +14,7 @@ use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use OroB2B\Bundle\OrderBundle\SubtotalProcessor\SubtotalProviderRegistry;
 use OroB2B\Bundle\OrderBundle\SubtotalProcessor\TotalProcessorProvider;
 
-class TotalProviderProviderTest extends \PHPUnit_Framework_TestCase
+class TotalProcessorProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|SubtotalProviderRegistry

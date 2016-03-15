@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Layout\Type;
+namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Layout\Block\Type;
 
 use Oro\Bundle\LayoutBundle\Tests\Unit\BlockTypeTestCase;
 use Oro\Component\Layout\Block\Type\BaseType;
 use Oro\Component\Layout\LayoutFactoryBuilderInterface;
 
-use OroB2B\Bundle\OrderBundle\Layout\Type\CurrencyType;
+use OroB2B\Bundle\OrderBundle\Layout\Block\Type\CurrencyType;
 
 class CurrencyTypeTest extends BlockTypeTestCase
 {
