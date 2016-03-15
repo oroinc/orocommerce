@@ -32,12 +32,12 @@ class QuickAddHandler
     protected $quickAddFormProvider;
 
     /**
-     * @var \OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddImportFormProvider
+     * @var QuickAddImportFormProvider
      */
     protected $quickAddImportFormProvider;
 
     /**
-     * @var \OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddCopyPasteFormProvider
+     * @var QuickAddCopyPasteFormProvider
      */
     protected $quickAddCopyPasteFormProvider;
 
@@ -60,7 +60,7 @@ class QuickAddHandler
     protected $translator;
 
     /**
-     * @param \OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddFormProvider $quickAddFormProvider
+     * @param QuickAddFormProvider $quickAddFormProvider
      * @param QuickAddImportFormProvider $quickAddImportFormProvider
      * @param QuickAddCopyPasteFormProvider $quickAddCopyPasteFormProvider
      * @param QuickAddRowCollectionBuilder $quickAddRowCollectionBuilder

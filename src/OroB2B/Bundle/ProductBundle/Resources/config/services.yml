@@ -168,7 +168,16 @@ services:
             - [setComponentProcessorFilter, [@orob2b_product.component_processor.filter]]
         abstract: true
 
-
+    orob2b_product.form_handler.quick_add:
+        class: %orob2b_product.form_handler.quick_add.class%
+        arguments:
+            - @orob2b_product.provider.quick_add_form_provider
+            - @orob2b_product.provider.quick_add_import_form_provider
+            - @orob2b_product.provider.quick_add_copy_paste_form_provider
+            - @orob2b_product.model.builder.quick_add_row_collection
+            - @orob2b_product.component_processor.registry
+            - @router
+            - @translator
 
     orob2b_product.event_listener.product_grid_widget:
         class: %orob2b_product.event_listener.product_grid_widget.class%
@@ -183,6 +192,27 @@ services:
             - @orob2b_product.component_processor.registry
         tags:
             - { name: oro_menu.builder, alias: frontend_menu }
+
+    orob2b_product.provider.quick_add_form_provider:
+        class: %orob2b_product.provider.quick_add_form_provider.class%
+        arguments:
+            - @form.factory
+        tags:
+            - { name: layout.data_provider, alias: orob2b_product_quick_add_form_provider }
+
+    orob2b_product.provider.quick_add_import_form_provider:
+        class: %orob2b_product.provider.quick_add_import_form_provider.class%
+        arguments:
+            - @form.factory
+        tags:
+            - { name: layout.data_provider, alias: orob2b_product_quick_add_import_form_provider }
+
+    orob2b_product.provider.quick_add_copy_paste_form_provider:
+        class: %orob2b_product.provider.quick_add_copy_paste_form_provider.class%
+        arguments:
+            - @form.factory
+        tags:
+            - { name: layout.data_provider, alias: orob2b_product_quick_add_copy_paste_form_provider }
 
     orob2b_product.provider.custom_field_provider:
         class: %orob2b_product.provider.custom_field_provider.class%
