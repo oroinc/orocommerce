@@ -1,0 +1,78 @@
+define(function(require) {
+    'use strict';
+
+    var DiscountItemView;
+    var $ = require('jquery');
+    var _ = require('underscore');
+    var TotalsListener = require('orob2bpricing/js/app/listener/totals-listener');
+    var BaseView = require('oroui/js/app/views/base/view');
+
+    DiscountItemView = BaseView.extend({
+        /**
+         * @property {Object}
+         */
+        options: {
+            valueInput: '[data-ftid$=value]',
+            typeInput: '[data-ftid$=type]',
+            percentInput: '[data-ftid$=percent]',
+            amountInput: '[data-ftid$=amount]'
+        },
+
+        /**
+         * @property {jQuery.Element}
+         */
+        $valueInputElement: null,
+
+        /**
+         * @property {jQuery.Element}
+         */
+        $typeInputElement: null,
+
+        /**
+         * @property {jQuery.Element}
+         */
+        $percentInputElement: null,
+
+        /**
+         * @property {jQuery.Element}
+         */
+        $amountInputElement: null,
+
+        /**
+         * @inheritDoc
+         */
+        initialize: function(options) {
+            this.options = $.extend(true, {}, this.options, options || {});
+
+            this.$valueInputElement = this.$el.find(this.options.valueInput);
+            this.$typeInputElement = this.$el.find(this.options.typeInput);
+            this.$percentInputElement = this.$el.find(this.options.percentInput);
+            this.$amountInputElement = this.$el.find(this.options.amountInput);
+
+            this.delegate('click', '.removeDiscountItem', this.removeRow);
+            this.$el.on('change', this.options.valueInput, _.bind(this.onValueInputChange, this));
+            this.$el.on('change', this.options.typeInput, _.bind(this.onValueInputChange, this));
+        },
+
+        /**
+         * @param {jQuery.Event} e
+         */
+        onValueInputChange: function(e) {
+            var value = this.$valueInputElement.val();
+
+            if (this.$typeInputElement.val() == this.options.percentTypeValue) {
+                this.$percentInputElement.val(value);
+            } else {
+                this.$amountInputElement.val(value);
+            }
+        },
+
+        removeRow: function() {
+            this.$el.trigger('content:remove');
+            this.remove();
+            TotalsListener.updateTotals();
+        }
+    });
+
+    return DiscountItemView;
+});

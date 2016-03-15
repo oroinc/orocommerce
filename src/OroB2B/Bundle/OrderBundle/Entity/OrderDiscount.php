@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\OrderBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
@@ -20,6 +21,9 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  */
 class OrderDiscount
 {
+    const TYPE_AMOUNT = 'orob2b_order_discount_item_type_amount';
+    const TYPE_PERCENT = 'orob2b_order_discount_item_type_percent';
+
     /**
      * @var integer
      *
@@ -51,12 +55,24 @@ class OrderDiscount
     protected $amount;
 
     /**
+     * @var Price
+     */
+    protected $amountPrice;
+
+    /**
      * @var Order
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\OrderBundle\Entity\Order", inversedBy="discounts")
      * @ORM\JoinColumn(name="order_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $order;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="type", type="string", length=255, nullable=true)
+     */
+    protected $type;
 
     /**
      * Get id
@@ -162,5 +178,52 @@ class OrderDiscount
     public function getOrder()
     {
         return $this->order;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)($this->getAmount() . ' (' . $this->getOrder()->getCurrency() . ')');
+    }
+
+    /**
+     * @return Price
+     */
+    public function getAmountPrice()
+    {
+        if ($this->amountPrice === null) {
+            $this->amountPrice = Price::create($this->getAmount(), $this->getOrder()->getCurrency());
+        }
+        return $this->amountPrice;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return $this
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getValue()
+    {
+        return $this->getType() == self::TYPE_PERCENT ? $this->getPercent() : $this->getAmount();
     }
 }

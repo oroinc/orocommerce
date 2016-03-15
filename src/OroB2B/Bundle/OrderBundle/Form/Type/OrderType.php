@@ -123,6 +123,15 @@ class OrderType extends AbstractType
                     'currencies_list' => [$order->getCurrency()]
                 ]
             )
+            ->add(
+                'discounts',
+                OrderDiscountItemsCollectionType::NAME,
+                [
+                    'add_label' => 'orob2b.order.discountitem.add_label',
+                    'cascade_validation' => true,
+                    'options' => ['currency' => $order->getCurrency()]
+                ]
+            )
             ->add('sourceEntityClass', 'hidden')
             ->add('sourceEntityId', 'hidden')
             ->add('sourceEntityIdentifier', 'hidden');

@@ -236,6 +236,26 @@
         }] ) %}
     {% endif %}
 
+    {% set discountItems %}
+        <div class="order-discount-items"
+             data-page-component-module="oroui/js/app/components/view-component"
+             data-page-component-options="{{ {
+                 view: 'orob2border/js/app/views/discount-items-view',
+             }|json_encode }}"
+             data-layout="separate">
+            {{ form_widget(form.discounts) }}
+            {{ form_errors(form.discounts) }}
+        </div>
+    {% endset %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'orob2b.order.sections.discounts'|trans,
+        'class': 'active',
+        'subblocks': [{
+            'data': [discountItems]
+        }]
+    }]) %}
+
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'orob2b.order.sections.subtotals'|trans,
         'class': 'active',

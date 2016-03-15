@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Controller;
 
+use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
@@ -108,6 +109,22 @@ class OrderControllerTest extends WebTestCase
                 'shipBy' => $date
             ],
         ];
+        $discountItems = [
+            [
+                'value' => '11',
+                'percent' => '11',
+                'amount' => '11.11',
+                'type' => OrderDiscount::TYPE_PERCENT,
+                'description' => 'some test description'
+            ],
+            [
+                'value' => '22.22',
+                'percent' => '22',
+                'amount' => '22.22',
+                'type' => OrderDiscount::TYPE_AMOUNT,
+                'description' => 'some other test description'
+            ]
+        ];
         $submittedData = [
             'input_action' => 'save_and_stay',
             'orob2b_order_type' => [
@@ -116,7 +133,8 @@ class OrderControllerTest extends WebTestCase
                 'account' => $orderAccount->getId(),
                 'poNumber' => self::ORDER_PO_NUMBER,
                 'website' => $website->getId(),
-                'lineItems' => $lineItems
+                'lineItems' => $lineItems,
+                'discounts' => $discountItems,
             ]
         ];
 
@@ -152,6 +170,29 @@ class OrderControllerTest extends WebTestCase
 
         $this->assertEquals($expectedLineItems, $actualLineItems);
 
+        $actualDiscountItems = $this->getActualDiscountItems($crawler, count($discountItems));
+
+        $expectedDiscountItems = [
+            [
+                'value' => '11',
+                'percent' => '11',
+                'amount' => '11.1100',
+                'type' => '%',
+                'description' => 'some test description'
+            ],
+            [
+                'value' => '22.2200',
+                'percent' => '22',
+                'amount' => '22.2200',
+                'type' => 'USD',
+                'description' => 'some other test description'
+            ]
+        ];
+
+        foreach ($actualDiscountItems as $item) {
+            $this->assertContains($item, $expectedDiscountItems);
+        }
+
         $response = $this->client->requestGrid(
             'orders-grid',
             [
@@ -169,7 +210,7 @@ class OrderControllerTest extends WebTestCase
      * @depends testCreate
      * @param int $id
      */
-    public function testUpdateLineItems($id)
+    public function testUpdateDiscountAndLineItems($id)
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_update', ['id' => $id]));
 
@@ -210,6 +251,24 @@ class OrderControllerTest extends WebTestCase
                 'shipBy' => $date
             ]
         ];
+
+        $discountItems = [
+            [
+                'value' => '33',
+                'percent' => '33',
+                'amount' => '33.33',
+                'type' => OrderDiscount::TYPE_PERCENT,
+                'description' => 'some test description 333'
+            ],
+            [
+                'value' => '44.44',
+                'percent' => '44',
+                'amount' => '44.44',
+                'type' => OrderDiscount::TYPE_AMOUNT,
+                'description' => 'some other test description 444'
+            ]
+        ];
+
         $submittedData = [
             'input_action' => 'save_and_stay',
             'orob2b_order_type' => [
@@ -218,6 +277,7 @@ class OrderControllerTest extends WebTestCase
                 'account' => $orderAccount->getId(),
                 'poNumber' => self::ORDER_PO_NUMBER_UPDATED,
                 'lineItems' => $lineItems,
+                'discounts' => $discountItems,
                 'website' => $website->getId()
             ]
         ];
@@ -263,6 +323,27 @@ class OrderControllerTest extends WebTestCase
         ];
 
         $this->assertEquals($expectedLineItems, $actualLineItems);
+
+        $actualDiscountItems = $this->getActualDiscountItems($crawler, count($discountItems));
+
+        $expectedDiscountItems = [
+            [
+                'value' => '33',
+                'percent' => '33',
+                'amount' => '33.3300',
+                'type' => '%',
+                'description' => 'some test description 333'
+            ],
+            [
+                'value' => '44.4400',
+                'percent' => '44',
+                'amount' => '44.4400',
+                'type' => 'USD',
+                'description' => 'some other test description 444'
+            ]
+        ];
+
+        $this->assertEquals($expectedDiscountItems, $actualDiscountItems);
     }
 
     /**
@@ -484,6 +565,35 @@ class OrderControllerTest extends WebTestCase
                     ->filter('input[name="orob2b_order_type[lineItems]['. $i .'][priceType]"]')
                     ->extract('value')[0],
                 'shipBy' => $crawler->filter('input[name="orob2b_order_type[lineItems]['. $i .'][shipBy]"]')
+                    ->extract('value')[0]
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param Crawler $crawler
+     * @param int $count
+     * @return array
+     */
+    protected function getActualDiscountItems(Crawler $crawler, $count)
+    {
+        $result = [];
+
+        for ($i = 0; $i < $count; $i++) {
+            $result[] = [
+                'value' => $crawler->filter('input[name="orob2b_order_type[discounts]['. $i .'][value]"]')
+                    ->extract('value')[0],
+                'percent' => $crawler
+                    ->filter('input[name="orob2b_order_type[discounts]['. $i .'][percent]"]')
+                    ->extract('value')[0],
+                'amount' => $crawler->filter('input[name="orob2b_order_type[discounts]['. $i .'][amount]"]')
+                    ->extract('value')[0],
+                'type' => $crawler
+                    ->filter('select[name="orob2b_order_type[discounts]['. $i .'][type]"] :selected')
+                    ->html(),
+                'description' => $crawler->filter('input[name="orob2b_order_type[discounts]['. $i .'][description]"]')
                     ->extract('value')[0]
             ];
         }
