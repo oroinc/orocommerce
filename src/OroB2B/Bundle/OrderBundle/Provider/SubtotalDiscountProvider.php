@@ -2,12 +2,12 @@
 
 namespace OroB2B\Bundle\OrderBundle\Provider;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Model\DiscountAwareInterface;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;

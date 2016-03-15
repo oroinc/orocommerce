@@ -152,6 +152,9 @@ class TotalProcessorProvider
         } elseif ($operation === Subtotal::OPERATION_SUBTRACTION) {
             $totalAmount -= $rowTotal;
         }
+        if ($totalAmount < 0) {
+            $totalAmount = 0.0;
+        }
 
         return $totalAmount;
     }
