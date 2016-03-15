@@ -199,6 +199,8 @@ services:
             - @oro_entity_config.provider.extend
             - @oro_entity_config.provider.entity
 
+    orob2b_product.provider.product_status_provider:
+        class: %orob2b_product.provider.product_status_provider.class%
 
     orob2b_product.provider.quick_add_form_provider:
         class: %orob2b_product.provider.quick_add_form_provider.class%
@@ -220,9 +222,6 @@ services:
             - @form.factory
         tags:
             - { name: layout.data_provider, alias: orob2b_product_quick_add_copy_paste_form_provider }
-
-    orob2b_product.provider.product_status_provider:
-        class: %orob2b_product.provider.product_status_provider.class%
 
     orob2b_product.event_listener.product_variant_custom_fields_datagrid:
         class: %orob2b_product.event_listener.product_variant_custom_fields_datagrid.class%
