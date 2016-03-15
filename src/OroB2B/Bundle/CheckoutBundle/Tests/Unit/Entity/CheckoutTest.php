@@ -42,4 +42,14 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
         $entity = new Checkout();
         $this->assertPropertyAccessors($entity, $properties);
     }
+
+    public function testSetAccountUser()
+    {
+        $account = new Account();
+        $accountUser = new AccountUser();
+        $accountUser->setAccount($account);
+        $entity = new Checkout();
+        $entity->setAccountUser($accountUser);
+        $this->assertSame($account, $entity->getAccount());
+    }
 }
