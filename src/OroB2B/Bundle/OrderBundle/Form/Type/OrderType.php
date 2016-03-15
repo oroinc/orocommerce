@@ -123,7 +123,10 @@ class OrderType extends AbstractType
                     'validation_groups' => ['Optional'],
                     'currencies_list' => [$order->getCurrency()]
                 ]
-            );
+            )
+            ->add('sourceEntityClass', 'hidden')
+            ->add('sourceEntityId', 'hidden')
+            ->add('sourceEntityIdentifier', 'hidden');
 
         if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_BILLING)) {
             $builder

@@ -2,10 +2,13 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -18,6 +21,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 class OrderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
+    use EntityTrait;
 
     public function testProperties()
     {
@@ -41,12 +45,31 @@ class OrderTest extends \PHPUnit_Framework_TestCase
             ['account', new Account()],
             ['accountUser', new AccountUser()],
             ['website', new Website()],
-            ['shippingCost', new Price()]
+            ['shippingCost', new Price()],
+            ['sourceEntityClass', 'EntityClass'],
+            ['sourceEntityIdentifier', 'source-identifier-test-01'],
+            ['sourceEntityId', 1]
         ];
 
         $order = new Order();
         $this->assertPropertyAccessors($order, $properties);
         $this->assertPropertyCollection($order, 'lineItems', new OrderLineItem());
+    }
+
+    public function testLineItemsSetter()
+    {
+        $lineItems = new ArrayCollection([new OrderLineItem()]);
+
+        /** @var Order $order */
+        $order = $this->getEntity('OroB2B\Bundle\OrderBundle\Entity\Order', ['id' => 42]);
+        $order->setLineItems($lineItems);
+
+        $result = $order->getLineItems();
+
+        $this->assertEquals($lineItems, $result);
+        foreach ($result as $lineItem) {
+            $this->assertEquals($lineItem->getOrder()->getId(), $order->getId());
+        }
     }
 
     public function testGetEmail()
@@ -91,7 +114,6 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $order->preUpdate();
         $this->assertInstanceOf('\DateTime', $order->getUpdatedAt());
     }
-
 
     public function testPostLoad()
     {

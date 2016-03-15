@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Storage;
 
+use Doctrine\Common\Util\ClassUtils;
+
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
@@ -66,6 +68,8 @@ class ProductDataStorageTest extends \PHPUnit_Framework_TestCase
             ->setUnit($productUnit);
 
         $shoppingList = new ShoppingList();
+
+        $this->setId($shoppingList, 1);
         $shoppingList
             ->setAccount($account)
             ->setAccountUser($accountUser)
@@ -77,7 +81,10 @@ class ProductDataStorageTest extends \PHPUnit_Framework_TestCase
                 [
                     Storage::ENTITY_DATA_KEY => [
                         'account' => $accountId,
-                        'accountUser' => $accountUserId
+                        'accountUser' => $accountUserId,
+                        'sourceEntityId' => 1,
+                        'sourceEntityClass' => ClassUtils::getClass($shoppingList),
+                        'sourceEntityIdentifier' => 1
                     ],
                     Storage::ENTITY_ITEMS_DATA_KEY => [
                         [
@@ -92,5 +99,18 @@ class ProductDataStorageTest extends \PHPUnit_Framework_TestCase
             );
 
         $this->productDataStorage->saveToStorage($shoppingList);
+    }
+
+    /**
+     * @param mixed $obj
+     * @param mixed $val
+     */
+    protected function setId($obj, $val)
+    {
+        $class = new \ReflectionClass($obj);
+        $prop  = $class->getProperty('id');
+        $prop->setAccessible(true);
+
+        $prop->setValue($obj, $val);
     }
 }

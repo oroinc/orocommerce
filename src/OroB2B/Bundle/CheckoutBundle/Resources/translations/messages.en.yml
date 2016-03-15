@@ -46,6 +46,7 @@ orob2b:
             subtotal: Subtotal
             edit_order: Edit Order
             item: Item
+            sku: SKU
             quantity : Quantity
             price : Price
             price_per_item: Price per item

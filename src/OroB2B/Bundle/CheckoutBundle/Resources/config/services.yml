@@ -1,4 +1,6 @@
 parameters:
+    orob2b_checkout.data_provider.manager.checkout_line_items.class: OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager
+    orob2b_checkout.data_provider.converter.checkout_line_items.class: OroB2B\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter
     orob2b_checkout.entity.checkout.class: OroB2B\Bundle\CheckoutBundle\Entity\Checkout
     orob2b_checkout.entity.checkout_source.class: OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource
 
@@ -11,6 +13,7 @@ parameters:
     orob2b_checkout.layout.data_provider.back_transitions.class: OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\BackTransitionsDataProvider
     orob2b_checkout.layout.data_provider.back_transition.class: OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\BackTransitionDataProvider
 
+    orob2b_checkout.model.action.get_order_line_items.class: OroB2B\Bundle\CheckoutBundle\Model\Action\GetOrderLineItems
     orob2b_checkout.layout.block.type.transition_button.class: OroB2B\Bundle\CheckoutBundle\Layout\Block\Type\TransitionButtonType
 services:
     # Data Providers
@@ -21,11 +24,19 @@ services:
 
     orob2b_checkout.data_provider.manager:
         class: %orob2b_checkout.data_provider.manager.class%
+    orob2b_checkout.data_provider.converter.checkout_line_items:
+        class: %orob2b_checkout.data_provider.converter.checkout_line_items.class%
+
+    orob2b_checkout.data_provider.manager.checkout_line_items:
+        class: %orob2b_checkout.data_provider.manager.checkout_line_items.class%
+        arguments:
+            - @orob2b_checkout.data_provider.converter.checkout_line_items
 
     orob2b_checkout.layout.data_provider.summary:
         class: %orob2b_checkout.layout.data_provider.summary.class%
         arguments:
-            - @orob2b_checkout.data_provider.manager
+            - @orob2b_checkout.data_provider.manager.checkout_line_items
+            - @orob2b_pricing.provider.line_items_subtotal
         tags:
             - { name: layout.data_provider, alias: orob2b_checkout_summary }
 
@@ -85,3 +96,11 @@ services:
             - [setName, ['checkout_transition_step_edit']]
         tags:
             - { name: layout.block_type, alias: checkout_transition_step_edit }
+
+    orob2b_checkout.model.action.get_order_line_items:
+        class: %orob2b_checkout.model.action.get_order_line_items.class%
+        arguments:
+            - @oro_action.context_accessor
+            - @orob2b_checkout.data_provider.manager.checkout_line_items
+        tags:
+            - { name: oro_workflow.action, alias: get_order_line_items }

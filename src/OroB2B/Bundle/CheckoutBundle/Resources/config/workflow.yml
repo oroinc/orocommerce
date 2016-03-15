@@ -291,16 +291,14 @@ workflows:
                             shipUntil: $checkout.shipUntil
                             paymentTerm: ~
                             currency: ~
-
-# TODO Add order line items BB-2240
-#                    - @get_order_line_items:
-#                        attribute: $.result.lineItems
-#                        checkout: $checkout
-#                    - @call_method:
-#                        object: $.result.order
-#                        method: setLineItems
-#                        method_parameters:
-#                            - $.result.lineItems
+                    - @get_order_line_items:
+                        attribute: $.result.lineItems
+                        checkout: $checkout
+                    - @call_method:
+                        object: $.result.order
+                        method: setLineItems
+                        method_parameters:
+                            - $.result.lineItems
                     - @flush_entity: $.result.order
 
                     - @tree:
