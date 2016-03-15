@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Model\Action;
 
-use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
 use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -10,11 +9,12 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
 use Oro\Bundle\ActionBundle\Exception\InvalidParameterException;
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Model\ContextAccessor;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
@@ -134,6 +134,7 @@ class StartCheckout extends AbstractAction
             $checkout->setOwner($account->getOwner());
             $checkout->setOrganization($account->getOrganization());
             $this->addWorkflowItemDataSettings($context, $checkout);
+            $this->addCheckoutProperties($context, $checkout);
             $checkoutEntityManager->persist($checkout);
             $checkoutEntityManager->flush();
             $this->workflowManager->startWorkflow(self::WORKFLOW_NAME, $checkout);
@@ -149,18 +150,32 @@ class StartCheckout extends AbstractAction
     }
 
     /**
-     * @param array $context
+     * @param mixed $context
      * @param Checkout $checkout
      * @throws WorkflowException
      */
     protected function addWorkflowItemDataSettings($context, Checkout $checkout)
     {
-        $defaultSettings = ['allow_source_remove' => true, 'remove_source' => true, 'source_remove_label' =>];
-        if (array_key_exists($context, 'settings') && count($context['settings'])) {
-            $settings = $context['settings'];
+        if ($this->contextAccessor->hasValue($context, $this->options['settings'])) {
+            $settings = $this->contextAccessor->getValue($context, $this->options['settings']);
             $workflowData = $checkout->getWorkflowItem()->getData();
             foreach ($settings as $key => $setting) {
                 $workflowData->set($key, $setting);
+            }
+        }
+    }
+
+    /**
+     * @param mixed $context
+     * @param Checkout $checkout
+     */
+    protected function addCheckoutProperties($context, Checkout $checkout)
+    {
+        if ($this->contextAccessor->hasValue($context, $this->options['data'])) {
+            /** @var array $data */
+            $data = $this->contextAccessor->getValue($context, $this->options['data']);
+            foreach ($data as $property => $value) {
+                $this->propertyAccessor->setValue($checkout, $property, $value);
             }
         }
     }

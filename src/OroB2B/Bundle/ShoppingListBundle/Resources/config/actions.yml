@@ -28,78 +28,17 @@ actions:
         button_options:
             icon: icon-briefcase
         functions:
-            - @find_entity:
-                class: OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource
-                attribute: $.checkoutSource
-                where:
-                    shoppingList: $.data
-            - @tree:
-                conditions:
-                    @empty: $.checkoutSource
-                actions:
-                    - @assign_current_website: $.currentWebsite
-                    - @assign_active_user: $.currentUser
-                    - @translate:
-                        attribute: $.sourceRemoveLabel
-                        id: orob2b.frontend.shoppinglist.workflow.remove_source.label
-                    - @create_entity:
-                        class: OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource
-                        attribute: $.checkoutSource
-                        data:
-                            shoppingList: $.data
-                    - @create_entity:
-                        class: OroB2B\Bundle\CheckoutBundle\Entity\Checkout
-                        attribute: $.checkout
-                        flush: true
-                        data:
-                            source: $.checkoutSource
-                            accountUser: $.currentUser
-                            account: $.currentUser.account
-                            owner: $.currentUser.account.owner
-                            organization: $.currentUser.account.organization
-                            website: $.currentWebsite
-                    - @find_entity:
-                        attribute: $.checkoutWorkflowItem
-                        class: Oro\Bundle\WorkflowBundle\Entity\WorkflowItem
-                        where:
-                            workflowName: b2b_flow_checkout
-                            entityId: $.checkout.id
-                    - @call_method:
-                        object: $.checkoutWorkflowItem.data
-                        method: set
-                        method_parameters: ['allow_source_remove', true]
-                    - @call_method:
-                        object: $.checkoutWorkflowItem.data
-                        method: set
-                        method_parameters: ['disallow_billing_address_edit', false]
-                    - @call_method:
-                        object: $.checkoutWorkflowItem.data
-                        method: set
-                        method_parameters: ['disallow_shipping_address_edit', false]
-                    - @call_method:
-                        object: $.checkoutWorkflowItem.data
-                        method: set
-                        method_parameters: ['remove_source', true]
-                    - @call_method:
-                        object: $.checkoutWorkflowItem.data
-                        method: set
-                        method_parameters: ['source_remove_label', $.sourceRemoveLabel]
-                    - @call_method:
-                        object: $.checkoutWorkflowItem
-                        method: setUpdated
-                    - @flush_entity: $.checkoutWorkflowItem
-            - @find_entity:
-                conditions:
-                    @not_empty: $.checkoutSource
-                parameters:
-                    class: OroB2B\Bundle\CheckoutBundle\Entity\Checkout
-                    attribute: $.checkout
-                    where:
-                        source: $.checkoutSource
-            - @redirect:
-                parameters:
-                    route: orob2b_checkout_frontend_checkout
-                    route_parameters: {id: $.checkout.id}
+            @start_checkout:
+                source: 'shoppingList'
+                sourceData: $.data
+                data:
+                    poNumber: 123
+                settings:
+                    allow_source_remove: true
+                    disallow_billing_address_edit: false
+                    disallow_shipping_address_edit: false
+                    remove_source: true
+                    source_remove_label: $.sourceRemoveLabel
 
     orob2b_shoppinglist_frontend_products_add_to_shoppinglist_base:
         label: orob2b.shoppinglist.product.add_to_shopping_list.label
