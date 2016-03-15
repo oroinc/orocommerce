@@ -2,6 +2,9 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
+use OroB2B\Bundle\OrderBundle\Form\Type\OrderDiscountItemsCollectionType;
+use OroB2B\Bundle\OrderBundle\Form\Type\OrderDiscountItemType;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Test\TypeTestCase;
@@ -258,7 +261,9 @@ class OrderTypeTest extends TypeTestCase
                     $accountUserSelectType->getName() => $accountUserSelectType,
                     $priceListSelectType->getName() => $priceListSelectType,
                     OrderLineItemsCollectionType::NAME => new OrderLineItemsCollectionType(),
+                    OrderDiscountItemsCollectionType::NAME => new OrderDiscountItemsCollectionType(),
                     OrderLineItemType::NAME => $OrderLineItemType,
+                    OrderDiscountItemType::NAME => new OrderDiscountItemType(),
                     QuantityTypeTrait::$name => $this->getQuantityType(),
                 ],
                 []

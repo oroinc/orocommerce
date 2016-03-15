@@ -189,7 +189,9 @@ class OrderControllerTest extends WebTestCase
             ]
         ];
 
-        $this->assertEquals($expectedDiscountItems, $actualDiscountItems);
+        foreach ($actualDiscountItems as $item) {
+            $this->assertContains($item, $expectedDiscountItems);
+        }
 
         $response = $this->client->requestGrid(
             'orders-grid',
