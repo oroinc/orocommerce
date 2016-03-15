@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Model\Action;
 
+use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
 use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -65,6 +66,7 @@ class StartCheckout extends AbstractAction
      * @param ManagerRegistry $registry
      * @param WebsiteManager $websiteManager
      * @param TokenStorageInterface $tokenStorage
+     * @param PropertyAccessor $propertyAccessor
      * @param WorkflowManager $workflowManager
      * @param RouterInterface $router
      */
@@ -73,6 +75,7 @@ class StartCheckout extends AbstractAction
         ManagerRegistry $registry,
         WebsiteManager $websiteManager,
         TokenStorageInterface $tokenStorage,
+        PropertyAccessor $propertyAccessor,
         WorkflowManager $workflowManager,
         RouterInterface $router
     ) {
@@ -82,6 +85,7 @@ class StartCheckout extends AbstractAction
         $this->tokenStorage = $tokenStorage;
         $this->workflowManager = $workflowManager;
         $this->router = $router;
+        $this->propertyAccessor = $propertyAccessor;
     }
 
     /**
@@ -129,11 +133,10 @@ class StartCheckout extends AbstractAction
             $checkout->setAccount($account);
             $checkout->setOwner($account->getOwner());
             $checkout->setOrganization($account->getOrganization());
-            $checkout->getWorkflowItem()->getData()->set('');
-            $this->workflowManager->startWorkflow(self::WORKFLOW_NAME, $checkout);
+            $this->addWorkflowItemDataSettings($context, $checkout);
             $checkoutEntityManager->persist($checkout);
             $checkoutEntityManager->flush();
-
+            $this->workflowManager->startWorkflow(self::WORKFLOW_NAME, $checkout);
         } else {
             $checkout = $checkoutEntityManager
                 ->getRepository('OroB2BCheckoutBundle:Checkout')
@@ -143,5 +146,22 @@ class StartCheckout extends AbstractAction
         $url = $this->router->generate('orob2b_checkout_frontend_checkout', ['id' => $checkout->getId()]);
         $urlProperty = new PropertyPath('result.redirectUrl');
         $this->contextAccessor->setValue($context, $urlProperty, $url);
+    }
+
+    /**
+     * @param array $context
+     * @param Checkout $checkout
+     * @throws WorkflowException
+     */
+    protected function addWorkflowItemDataSettings($context, Checkout $checkout)
+    {
+        $defaultSettings = ['allow_source_remove' => true, 'remove_source' => true, 'source_remove_label' =>];
+        if (array_key_exists($context, 'settings') && count($context['settings'])) {
+            $settings = $context['settings'];
+            $workflowData = $checkout->getWorkflowItem()->getData();
+            foreach ($settings as $key => $setting) {
+                $workflowData->set($key, $setting);
+            }
+        }
     }
 }

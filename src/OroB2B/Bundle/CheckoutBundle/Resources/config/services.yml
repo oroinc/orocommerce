@@ -67,5 +67,6 @@ services:
             - @security.token_storage
             - @property_accessor
             - @oro_workflow.manager
+            - @router
         tags:
             - { name: oro_workflow.action, alias: start_checkout }
