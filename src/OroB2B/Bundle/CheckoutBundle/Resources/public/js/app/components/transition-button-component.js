@@ -62,10 +62,10 @@ define(function(require) {
 
         onSuccess: function(response) {
             var $response = $(response);
-            $('[data-role="checkout-sidebar"]').html($response.find('[data-role="checkout-sidebar"]'));
-            $('[data-role="checkout-content"]').html($response.find('[data-role="checkout-content"]'));
+            $('[data-role="checkout-sidebar"]').html($response.find('[data-role="checkout-sidebar"]').html());
+            $('[data-role="checkout-content"]').html($response.find('[data-role="checkout-content"]').html());
 
-            // TODO: find a way how to initialize JS on loaded data
+            mediator.trigger('checkout-content:updated');
         },
 
         onFail: function() {

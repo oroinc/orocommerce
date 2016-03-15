@@ -1,6 +1,11 @@
 {% block _checkout_sidebar_widget %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-sidebar"}) %}
-    <div {{ block('block_attributes') }} data-role="checkout-sidebar">
+    <div {{ block('block_attributes') }}
+        data-role="checkout-sidebar"
+        data-page-component-module="oroui/js/app/components/view-component"
+        data-page-component-options="{{ {
+            view: 'orob2bcheckout/js/app/views/checkout-content-view',
+        }|json_encode }}">
         <ul class="checkout-navigation">
             {% set isComplete = true %}
             {% for key, step in steps %}
