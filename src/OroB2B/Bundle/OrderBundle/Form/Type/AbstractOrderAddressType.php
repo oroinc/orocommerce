@@ -110,7 +110,7 @@ abstract class AbstractOrderAddressType extends AbstractType
         $isManualEditGranted = $this->orderAddressSecurityProvider->isManualEditGranted($options['addressType']);
 
         foreach ($view->children as $child) {
-            $child->vars['disabled'] = !$isManualEditGranted;
+            $child->vars['disabled'] = !$isManualEditGranted || $options['disabled'];
             $child->vars['required'] = false;
             unset(
                 $child->vars['attr']['data-validation'],

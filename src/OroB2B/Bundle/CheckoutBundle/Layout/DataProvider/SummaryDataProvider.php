@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\CheckoutBundle\Layout\DataProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
+use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\DataProviderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -15,7 +16,7 @@ use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\PricingBundle\Provider\LineItemsSubtotalProvider;
 
-class SummaryDataProvider implements DataProviderInterface
+class SummaryDataProvider extends AbstractServerRenderDataProvider
 {
     /**
      * @var CheckoutLineItemsManager
@@ -37,14 +38,6 @@ class SummaryDataProvider implements DataProviderInterface
     ) {
         $this->checkoutLineItemsManager = $CheckoutLineItemsManager;
         $this->lineItemsSubtotalProvider = $ineItemsSubtotalProvider;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getIdentifier()
-    {
-        throw new \BadMethodCallException('Not implemented yet');
     }
 
     /**
