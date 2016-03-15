@@ -33,3 +33,15 @@ orob2b_product_price_frontend_ajax:
     prefix:       /productprice
     options:
         frontend: true
+
+orob2b_entity_totals_ajax:
+    resource:     "@OroB2BPricingBundle/Controller/AjaxEntityTotalsController.php"
+    type:         annotation
+    prefix:       /entitytotals
+
+orob2b_entity_totals_frontend_ajax:
+    resource:     "@OroB2BPricingBundle/Controller/Frontend/AjaxEntityTotalsController.php"
+    type:         annotation
+    prefix:       /entitytotals
+    options:
+        frontend: true

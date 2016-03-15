@@ -41,7 +41,7 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
         );
         $this->testPriceListConfigs = $this->createConfigs(2);
         foreach ($this->testPriceListConfigs as $config) {
-            $this->testPriceLists[$config->getPriceList()->getId()] = $config->getPriceList();
+            $this->testPriceLists[$config->getPriceList()->getId()] = $config->getPriceList()->setName('');
         }
 
         parent::setUp();

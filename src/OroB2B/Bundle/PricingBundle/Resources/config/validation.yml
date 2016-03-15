@@ -43,15 +43,6 @@ OroB2B\Bundle\PricingBundle\Entity\ProductPrice:
             - NotBlank:
                 message: 'orob2b.product.productunit.invalid'
 
-OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite:
-    properties:
-        priority:
-            - NotBlank: ~
-            - Type:
-                type: integer
-        priceList:
-            - NotBlank: ~
-
 OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig:
     properties:
         priority:

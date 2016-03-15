@@ -19,6 +19,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 class WebsiteScopedDataType extends AbstractType
 {
     const NAME = 'orob2b_website_scoped_data_type';
+    const WEBSITE_OPTION = 'website';
 
     /**
      * @var ManagerRegistry
@@ -33,7 +34,7 @@ class WebsiteScopedDataType extends AbstractType
     /**
      * @var string
      */
-    protected $websiteCLass;
+    protected $websiteCLass = 'OroB2B\Bundle\WebsiteBundle\Entity\Website';
 
     /**
      * {@inheritdoc}
@@ -83,7 +84,7 @@ class WebsiteScopedDataType extends AbstractType
         $options['options']['ownership_disabled'] = true;
 
         foreach ($loadedWebsites as $website) {
-            $options['options']['website'] = $website;
+            $options['options'][self::WEBSITE_OPTION] = $website;
             $builder->add(
                 $website->getId(),
                 $options['type'],
@@ -112,10 +113,14 @@ class WebsiteScopedDataType extends AbstractType
             return;
         }
         foreach ($data as $websiteId => $value) {
+            if ($form->has($websiteId)) {
+                continue;
+            }
+
             /** @var EntityManager $em */
             $em = $this->registry->getManagerForClass($this->websiteCLass);
 
-            $formOptions['options']['website'] = $em
+            $formOptions['options'][self::WEBSITE_OPTION] = $em
                 ->getReference($this->websiteCLass, $websiteId);
 
             $form->add(
@@ -147,7 +152,7 @@ class WebsiteScopedDataType extends AbstractType
                 $formOptions['options']['data'] = $value;
             }
 
-            $formOptions['options']['website'] = $em->getReference($this->websiteCLass, $websiteId);
+            $formOptions['options'][self::WEBSITE_OPTION] = $em->getReference($this->websiteCLass, $websiteId);
 
             $form->add(
                 $websiteId,
