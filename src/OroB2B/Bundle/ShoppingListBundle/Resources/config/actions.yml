@@ -28,7 +28,7 @@ actions:
         button_options:
             icon: icon-briefcase
         functions:
-            @start_checkout:
+            - @start_checkout:
                 source: 'shoppingList'
                 sourceData: $.data
                 data:
