@@ -6,44 +6,13 @@ layout:
             themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/form_theme.html.twig'
         - @move:
             id: checkout_order_summary_table
-            parentId: checkout_order_review_form_fields
-        - @addTree:
-            items:
-                checkout_order_review:
-                    blockType: container
-                checkout_order_review_form:
-                    blockType: container
-                    options:
-                        vars:
-                            workflowStep: { @value: $data.workflowStep }
-                            form: { @value: $data.orob2b_checkout_transition_form }
-                checkout_order_review_form_fields:
-                    blockType: container
-                    options:
-                        vars:
-                            checkout: { @value: $data.checkout }
-                            workflowStep: { @value: $data.workflowStep }
-                            form: { @value: $data.orob2b_checkout_transition_form }
-                add_to_shopping_list_form_button:
-                    blockType: container
-                checkout_continue:
-                    blockType: checkout_transition_continue
-                    options:
-                        transitionData: { @value: $data.orob2b_checkout_continue_transition }
-                        checkout: { @value: $data.checkout }
-                checkout_back:
-                    blockType: checkout_transition_back
-                    options:
-                        transitionData: { @value: $data.orob2b_checkout_back_transition }
-                        checkout: { @value: $data.checkout }
-            tree:
-                checkout_information:
-                    checkout_order_review:
-                        checkout_order_review_form:
-                            checkout_order_review_form_fields: ~
-                            add_to_shopping_list_form_button:
-                                checkout_continue: ~
-                                checkout_back: ~
+            parentId: checkout_form_fields
+        - @setOption:
+            id: checkout_information
+            optionName: vars
+            optionValue:
+                workflowStep: { @value: $data.workflowStep }
+                stepOrder: 5
 
     conditions:
         @eq: [$context.workflowStepName, 'place_order']

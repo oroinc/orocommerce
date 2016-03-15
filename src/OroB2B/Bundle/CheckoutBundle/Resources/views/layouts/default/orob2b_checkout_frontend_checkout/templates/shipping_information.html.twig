@@ -1,33 +1,4 @@
-{% block _checkout_shipping_information_widget -%}
-    <div class="checkout__head">
-        <h2 class="checkout__title">
-            <span class="badge badge_md badge_circle badge_orange">2</span>
-            {{ workflowStep.label|trans }}
-        </h2>
-    </div>
-    {{ block_widget(block) }}
-{%- endblock %}
-
-{% block _checkout_shipping_form_widget -%}
-    <div class="checkout__body">
-        {{ form_errors(form) }}
-        {{ form_start(form, {
-            'method': 'post',
-            'action': path('orob2b_checkout_frontend_checkout', {'id': checkout.id}),
-            'attr' : {
-                'class' : 'checkout__form',
-                'data-nohash': 'true'
-            }})
-        }}
-            {{ block_widget(block) }}
-            <div class="hidden">
-                {{ form_widget(form._token) }}
-            </div>
-        </form>
-    </div>
-{%- endblock %}
-
-{% block _checkout_shipping_form_fields_widget -%}
+{% block _checkout_form_fields_widget -%}
     <div data-page-component-module="oroui/js/app/components/view-component"
          data-page-component-options="{{ {
              view: 'orob2bcheckout/js/app/views/address-view',
@@ -76,23 +47,5 @@
                 {{ form_widget(form.shipping_address.region_text) }}
             </fieldset>
         </div>
-
     </div>
-{%- endblock %}
-
-{% block _checkout_shipping_form_button_widget -%}
-    <fieldset class="checkout__form__row">
-        <div class="create-account__form__req-text"><sup>*</sup>{{ 'orob2b.checkout.workflow.b2b_flow_checkout.form.required.label'|trans }}</div>
-
-        {% if block.checkout_continue is defined %}
-            <div class="create-account__form__col form__col_x12">
-                {{ block_widget(block.checkout_continue) }}
-            </div>
-        {% endif %}
-    </fieldset>
-    {% if block.checkout_back is defined %}
-        <div class="checkout__form__back">
-            {{ block_widget(block.checkout_back) }}
-        </div>
-    {% endif %}
 {%- endblock %}

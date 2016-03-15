@@ -4,46 +4,12 @@ layout:
             themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/shipping_information.html.twig'
         - @setFormTheme:
             themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/form_theme.html.twig'
-        - @addTree:
-            items:
-                checkout_shipping_information:
-                    blockType: container
-                    options:
-                        vars:
-                            workflowStep: { @value: $data.workflowStep }
-                checkout_shipping_form:
-                    blockType: container
-                    options:
-                        vars:
-                            checkout: { @value: $data.checkout }
-                            workflowStep: { @value: $data.workflowStep }
-                            form: { @value: $data.orob2b_checkout_transition_form }
-                checkout_shipping_form_fields:
-                    blockType: container
-                    options:
-                        vars:
-                            checkout: { @value: $data.checkout }
-                            form: { @value: $data.orob2b_checkout_transition_form }
-                checkout_shipping_form_button:
-                    blockType: container
-                checkout_continue:
-                    blockType: checkout_transition_continue
-                    options:
-                        transitionData: { @value: $data.orob2b_checkout_continue_transition }
-                        checkout: { @value: $data.checkout }
-                checkout_back:
-                    blockType: checkout_transition_back
-                    options:
-                        transitionData: { @value: $data.orob2b_checkout_back_transition }
-                        checkout: { @value: $data.checkout }
-            tree:
-                checkout_information:
-                    checkout_shipping_information:
-                        checkout_shipping_form:
-                            checkout_shipping_form_fields: ~
-                            checkout_shipping_form_button:
-                                checkout_continue: ~
-                                checkout_back: ~
+        - @setOption:
+            id: checkout_information
+            optionName: vars
+            optionValue:
+                workflowStep: { @value: $data.workflowStep }
+                stepOrder: 2
 
     conditions:
         @eq: [$context.workflowStepName, 'enter_shipping_address']

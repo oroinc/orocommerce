@@ -57,7 +57,10 @@ class TransitionFormDataProvider extends AbstractServerRenderDataProvider
         $transitionData = $this->continueTransitionDataProvider->getData($context);
 
         if ($transitionData) {
-            return $this->getForm($transitionData, $workflowItem)->createView();
+            $form = $this->getForm($transitionData, $workflowItem);
+            if ($form) {
+                return $form->createView();
+            }
         }
 
         return null;
@@ -71,21 +74,25 @@ class TransitionFormDataProvider extends AbstractServerRenderDataProvider
     public function getForm(TransitionData $transitionData, WorkflowItem $workflowItem)
     {
         $key = $transitionData->getTransition()->getName() . ':' . $workflowItem->getId();
-        if (!array_key_exists($key, $this->forms) && $transitionData->getTransition()->hasForm()) {
-            $transition = $transitionData->getTransition();
+        if ($transitionData->getTransition()->hasForm()) {
+            if (!array_key_exists($key, $this->forms)) {
+                $transition = $transitionData->getTransition();
 
-            $this->forms[$key] = $this->formFactory->create(
-                $transition->getFormType(),
-                $workflowItem->getData(),
-                array_merge(
-                    $transition->getFormOptions(),
-                    [
-                        'workflow_item' => $workflowItem,
-                        'transition_name' => $transition->getName(),
-                        'disabled' => !$transitionData->isAllowed()
-                    ]
-                )
-            );
+                $this->forms[$key] = $this->formFactory->create(
+                    $transition->getFormType(),
+                    $workflowItem->getData(),
+                    array_merge(
+                        $transition->getFormOptions(),
+                        [
+                            'workflow_item' => $workflowItem,
+                            'transition_name' => $transition->getName(),
+                            'disabled' => !$transitionData->isAllowed()
+                        ]
+                    )
+                );
+            }
+        } else {
+            $this->forms[$key] = null;
         }
 
         return $this->forms[$key];

@@ -2,28 +2,12 @@ layout:
     actions:
         - @setBlockTheme:
             themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/shipping_method.html.twig'
-        - @add:
-            id: checkout_shipping_method
-            parentId: checkout_information
-            blockType: container
-            options:
-                vars:
-                    checkout: { @value: $data.checkout }
-                    workflowStep: { @value: $data.workflowStep }
-        - @add:
-            id: checkout_continue
-            parentId: checkout_shipping_method
-            blockType: checkout_transition_continue
-            options:
-                transitionData: { @value: $data.orob2b_checkout_continue_transition }
-                checkout: { @value: $data.checkout }
-        - @add:
-            id: checkout_back
-            parentId: checkout_shipping_method
-            blockType: checkout_transition_back
-            options:
-                transitionData: { @value: $data.orob2b_checkout_back_transition }
-                checkout: { @value: $data.checkout }
+        - @setOption:
+            id: checkout_information
+            optionName: vars
+            optionValue:
+                workflowStep: { @value: $data.workflowStep }
+                stepOrder: 3
 
     conditions:
         @eq: [$context.workflowStepName, 'enter_shipping_method']

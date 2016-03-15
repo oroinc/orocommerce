@@ -1,78 +1,83 @@
-{% block _checkout_order_review_form_widget -%}
-    <div class="checkout__head">
-        <h2 class="checkout__title">
-            <span class="badge badge_md badge_circle badge_orange">5</span>
-            {{ workflowStep.label|trans }}
-        </h2>
-    </div>
-    <div class="checkout__body">
-        {{ block_widget(block) }}
-    </div>
+{% block _checkout_form_fields_widget -%}
+    {% set workflowItem = checkout.workflowItem %}
+    <fieldset class="checkout__form__row"
+        data-trigger-selector="#addShipDate"
+        data-page-component-module="orob2bcheckout/js/app/components/clear-field-data-component">
+        <div class="checkout__form__col form__col_x12 mmb5-md mmb5-sm">
+            <label for="addShipDate" class="checkbox_custom checkbox_custom_blue" data-checkbox>
+                <input type="checkbox" name="addShipDate" id="addShipDate" />
+                <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
+                <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
+                <span class="checkbox_custom__text fs13">{{ "orob2b.checkout.order_review.shipping_date"|trans }}</span>
+            </label>
+            <div class="form-input form-input_datepicker mmt9-md mmt9-sm">
+                <span class="form-input_datepicker_icon gray fs22"><i class="icon-calendar"></i></span>
+                {{ form_widget(form.ship_until, {'attr': {'class': 'input input_sm input_block input_datepicker', 'placeholder': 'orob2b.checkout.order_review.shipping_date_placeholder'|trans }}) }}
+            </div>
+        </div>
+    </fieldset>
+    <fieldset class="checkout__form__row"
+        data-trigger-selector="#addPoNumber"
+        data-page-component-module="orob2bcheckout/js/app/components/clear-field-data-component">
+        <div class="checkout__form__col form__col_x6 mmb5-md mmb5-sm">
+            <label for="addPoNumber" class="checkbox_custom checkbox_custom_blue" data-checkbox>
+                <input type="checkbox" name="addPoNumber" id="addPoNumber" checked="checked" />
+                <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
+                <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
+                <span class="checkbox_custom__text fs13">{{ "orob2b.checkout.order_review.po_number"|trans }}</span>
+            </label>
+            <div class="checkout__form__optional-ref-number">
+                {{ form_widget(form.po_number, {'attr': {'placeholder': 'orob2b.checkout.order_review.po_number_placeholder'|trans}}) }}
+            </div>
+        </div>
+    </fieldset>
+    <fieldset class="checkout__form__row"
+        data-trigger-selector="#addNote"
+        data-page-component-module="orob2bcheckout/js/app/components/clear-field-data-component">
+        <div class="checkout__form__col form__col_x6 mmb5-md mmb5-sm">
+            <label for="addNote" class="checkbox_custom checkbox_custom_blue" data-checkbox>
+                <input type="checkbox" name="addNote" id="addNote" checked="checked" />
+                <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
+                <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
+                <span class="checkbox_custom__text fs13">{{ "orob2b.checkout.order_review.note"|trans }}</span>
+            </label>
+            <div class="checkout__form__order-note">
+                {{ form_widget(form.customer_notes, {'attr': {'class': 'input input_md input_block checkout__form__input', 'placeholder': 'orob2b.checkout.order_review.note_placeholder'|trans}}) }}
+            </div>
+        </div>
+    </fieldset>
+
+    {% if workflowItem.data.get('allow_source_remove') %}
+        {% set removeElementOptions = {} %}
+        {% set removeLabel = workflowItem.data.get('source_remove_label') %}
+        {% if removeLabel %}
+            {% set removeElementOptions = removeElementOptions|merge({label: removeLabel}) %}
+        {% endif %}
+        {{ form_row(form.remove_source, removeElementOptions) }}
+    {% endif %}
+
+    {{ block_widget(block) }}
 {%- endblock %}
 
-{% block _checkout_order_review_form_fields_widget -%}
-    {% set workflowItem = checkout.workflowItem %}
-    {{ form_start(form, {'attr': {'class': 'checkout__form'}}) }}
-        <fieldset class="checkout__form__row"
-            data-trigger-selector="#addShipDate"
-            data-page-component-module="orob2bcheckout/js/app/components/clear-field-data-component">
-            <div class="checkout__form__col form__col_x12 mmb5-md mmb5-sm">
-                <label for="addShipDate" class="checkbox_custom checkbox_custom_blue" data-checkbox>
-                    <input type="checkbox" name="addShipDate" id="addShipDate" />
-                    <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
-                    <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
-                    <span class="checkbox_custom__text fs13">{{ "orob2b.checkout.order_review.shipping_date"|trans }}</span>
-                </label>
-                <div class="form-input form-input_datepicker mmt9-md mmt9-sm">
-                    <span class="form-input_datepicker_icon gray fs22"><i class="icon-calendar"></i></span>
-                    {{ form_widget(form.ship_until, {'attr': {'class': 'input input_sm input_block input_datepicker', 'placeholder': 'orob2b.checkout.order_review.shipping_date_placeholder'|trans }}) }}
-                </div>
-            </div>
-        </fieldset>
-        <fieldset class="checkout__form__row"
-            data-trigger-selector="#addPoNumber"
-            data-page-component-module="orob2bcheckout/js/app/components/clear-field-data-component">
-            <div class="checkout__form__col form__col_x6 mmb5-md mmb5-sm">
-                <label for="addPoNumber" class="checkbox_custom checkbox_custom_blue" data-checkbox>
-                    <input type="checkbox" name="addPoNumber" id="addPoNumber" checked="checked" />
-                    <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
-                    <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
-                    <span class="checkbox_custom__text fs13">{{ "orob2b.checkout.order_review.po_number"|trans }}</span>
-                </label>
-                <div class="checkout__form__optional-ref-number">
-                    {{ form_widget(form.po_number, {'attr': {'placeholder': 'orob2b.checkout.order_review.po_number_placeholder'|trans}}) }}
-                </div>
-            </div>
-        </fieldset>
-        <fieldset class="checkout__form__row"
-            data-trigger-selector="#addNote"
-            data-page-component-module="orob2bcheckout/js/app/components/clear-field-data-component">
-            <div class="checkout__form__col form__col_x6 mmb5-md mmb5-sm">
-                <label for="addNote" class="checkbox_custom checkbox_custom_blue" data-checkbox>
-                    <input type="checkbox" name="addNote" id="addNote" checked="checked" />
-                    <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
-                    <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
-                    <span class="checkbox_custom__text fs13">{{ "orob2b.checkout.order_review.note"|trans }}</span>
-                </label>
-                <div class="checkout__form__order-note">
-                    {{ form_widget(form.customer_notes, {'attr': {'class': 'input input_md input_block checkout__form__input', 'placeholder': 'orob2b.checkout.order_review.note_placeholder'|trans}}) }}
-                </div>
-            </div>
-        </fieldset>
+{% block _checkout_button_continue_widget %}
+    {% if transitionData is defined and transitionData %}
+        {% import 'OroB2BCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
+        <button type="submit" class="btn btn_xlg btn_orange checkout__submit-btn" {{ _layout.transitionAttrbiutes(transitionData, checkout) }}>
+            {{ transitionData.transition.label|trans }}
+        </button>
+    {% endif %}
+{% endblock %}
 
-        {% if workflowItem.data.get('allow_source_remove') %}
-            {% set removeElementOptions = {} %}
-            {% set removeLabel = workflowItem.data.get('source_remove_label') %}
-            {% if removeLabel %}
-                {% set removeElementOptions = removeElementOptions|merge({label: removeLabel}) %}
-            {% endif %}
-            {{ form_row(form.remove_source, removeElementOptions) }}
-        {% endif %}
-
-        {{ block_widget(block) }}
-
-        <div class="hidden">
-            {{ form_rest(form) }}
-        </div>
-    {{ form_end(form) }}
+{% block _checkout_form_buttons_widget -%}
+    {% if block.checkout_button_continue is defined %}
+    <div class="order-checkout-widget order-checkout-widget_block text-right">
+        {{ block_widget(block.checkout_button_continue) }}
+    </div>
+    {% endif %}
+    {% if block.checkout_button_back is defined %}
+    <div class="checkout__form__back checkout__form__back_order-review">
+        {{ block_widget(block.checkout_button_back) }}
+    </div>
+    {% endif %}
+    {{ block_widget(block) }}
 {%- endblock %}
