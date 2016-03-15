@@ -2,8 +2,8 @@
 
 namespace OroB2B\Bundle\OrderBundle\EventListener\Order;
 
-use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Templating\EngineInterface;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
@@ -15,14 +15,14 @@ class OrderAddressEventListener
     /** @var EngineInterface */
     protected $engine;
 
-    /** @var FormFactory */
+    /** @var FormFactoryInterface */
     protected $factory;
 
     /**
      * @param EngineInterface $engine
-     * @param FormFactory $factory
+     * @param FormFactoryInterface $factory
      */
-    public function __construct(EngineInterface $engine, FormFactory $factory)
+    public function __construct(EngineInterface $engine, FormFactoryInterface $factory)
     {
         $this->engine = $engine;
         $this->factory = $factory;

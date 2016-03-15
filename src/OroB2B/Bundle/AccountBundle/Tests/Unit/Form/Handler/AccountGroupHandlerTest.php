@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Handler;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -34,6 +35,11 @@ class AccountGroupHandlerTest extends \PHPUnit_Framework_TestCase
     protected $manager;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|EventDispatcherInterface
+     */
+    protected $dispatcher;
+
+    /**
      * @var AccountGroup
      */
     protected $entity;
@@ -48,8 +54,12 @@ class AccountGroupHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->dispatcher = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->entity  = new AccountGroup();
-        $this->handler = new AccountGroupHandler($this->form, $this->request, $this->manager);
+        $this->handler = new AccountGroupHandler($this->form, $this->request, $this->manager, $this->dispatcher);
     }
 
     public function testProcessValidData()

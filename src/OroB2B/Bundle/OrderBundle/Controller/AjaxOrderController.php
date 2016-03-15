@@ -32,7 +32,10 @@ class AjaxOrderController extends Controller
         }
 
         $form = $this->getType($order);
-        $form->handleRequest($request);
+
+        $submittedData = $request->get(OrderType::NAME);
+
+        $form->submit($submittedData);
 
         $event = new OrderEvent($form, $form->getData());
         $this->get('event_dispatcher')->dispatch(OrderEvent::NAME, $event);

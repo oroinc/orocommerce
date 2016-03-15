@@ -16,6 +16,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\OrderBundle\Provider\IdentifierAwareInterface;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -56,7 +57,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
-class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHolderInterface
+class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHolderInterface, IdentifierAwareInterface
 {
     /**
      * @var int
@@ -909,5 +910,13 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
     {
         $this->shippingEstimateAmount = $this->shippingEstimate ? $this->shippingEstimate->getValue() : null;
         $this->shippingEstimateCurrency = $this->shippingEstimate ? $this->shippingEstimate->getCurrency() : null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdentifier()
+    {
+        return $this->getPoNumber();
     }
 }

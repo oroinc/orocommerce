@@ -9,6 +9,8 @@ use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 
 class TierPriceEventListener
 {
+    const TIER_PRICES_KEY = 'tierPrices';
+
     /** @var ProductPriceProvider */
     protected $productPriceProvider;
 
@@ -52,6 +54,6 @@ class TierPriceEventListener
             $order->getCurrency()
         );
 
-        $event->getData()->offsetSet('tierPrices', $prices);
+        $event->getData()->offsetSet(self::TIER_PRICES_KEY, $prices);
     }
 }

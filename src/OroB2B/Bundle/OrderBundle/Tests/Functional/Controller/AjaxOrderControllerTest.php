@@ -101,7 +101,6 @@ class AjaxOrderControllerTest extends WebTestCase
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\JsonResponse', $response);
 
         $result = $this->getJsonResponseContent($response, 200);
-        $this->assertCount(4, $result);
         $this->assertArrayHasKey('billingAddress', $result);
         $this->assertArrayHasKey('shippingAddress', $result);
         $this->assertArrayHasKey('accountPaymentTerm', $result);
