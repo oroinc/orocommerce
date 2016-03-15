@@ -25,7 +25,7 @@ class SummaryDataProvider implements DataProviderInterface
     /**
      * @var LineItemsSubtotalProvider
      */
-    protected $ineItemsSubtotalProvider;
+    protected $lineItemsSubtotalProvider;
 
     /**
      * @param CheckoutLineItemsManager $CheckoutLineItemsManager
@@ -36,7 +36,7 @@ class SummaryDataProvider implements DataProviderInterface
         LineItemsSubtotalProvider $ineItemsSubtotalProvider
     ) {
         $this->checkoutLineItemsManager = $CheckoutLineItemsManager;
-        $this->ineItemsSubtotalProvider = $ineItemsSubtotalProvider;
+        $this->lineItemsSubtotalProvider = $ineItemsSubtotalProvider;
     }
 
     /**
@@ -75,7 +75,7 @@ class SummaryDataProvider implements DataProviderInterface
     {
         $order = new Order();
         $order->setLineItems($orderLineItems);
-        $generalTotal = $this->ineItemsSubtotalProvider->getSubtotal($order);
+        $generalTotal = $this->lineItemsSubtotalProvider->getSubtotal($order);
         unset($order);
 
         $totalPrice = new Price();
@@ -95,7 +95,7 @@ class SummaryDataProvider implements DataProviderInterface
         foreach ($orderLineItems as $orderLineItem) {
             $lineItemTotal = new Price();
             $lineItemTotal->setValue(
-                $this->ineItemsSubtotalProvider->getRowTotal($orderLineItem, $orderLineItem->getCurrency())
+                $this->lineItemsSubtotalProvider->getRowTotal($orderLineItem, $orderLineItem->getCurrency())
             );
             $lineItemTotal->setCurrency($orderLineItem->getCurrency());
 
