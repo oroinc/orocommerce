@@ -70,6 +70,6 @@ class AjaxOrderControllerTest extends WebTestCase
         $data = json_decode($result->getContent(), true);
 
         $this->assertArrayHasKey('subtotals', $data);
-        $this->assertArrayHasKey('subtotal', $data['subtotals']);
+        $this->assertArrayHasKey(0, $data['subtotals']);
     }
 }
