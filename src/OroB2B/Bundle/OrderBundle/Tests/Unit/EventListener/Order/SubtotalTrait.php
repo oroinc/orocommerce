@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\EventListener\Order;
 
-use OroB2B\Bundle\OrderBundle\Model\Subtotal;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 
 trait SubtotalTrait
 {

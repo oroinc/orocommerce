@@ -7,10 +7,10 @@ use Symfony\Component\Form\FormInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Model\Subtotal;
 use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
-use OroB2B\Bundle\OrderBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\OrderBundle\EventListener\Order\OrderSubtotalsEventListener;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class OrderSubtotalsEventListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,7 +25,7 @@ class OrderSubtotalsEventListenerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->totalProcessorProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\OrderBundle\SubtotalProcessor\TotalProcessorProvider')
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
             ->disableOriginalConstructor()
             ->getMock();
 

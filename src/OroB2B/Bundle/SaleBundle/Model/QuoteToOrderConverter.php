@@ -3,20 +3,19 @@
 namespace OroB2B\Bundle\SaleBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
-use Symfony\Component\PropertyAccess\PropertyAccess;
+use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteAddress;
+
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
+use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
-use OroB2B\Bundle\OrderBundle\Provider\SubtotalLineItemProvider;
-use OroB2B\Bundle\OrderBundle\SubtotalProcessor\TotalProcessorProvider;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteAddress;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
 class QuoteToOrderConverter
@@ -27,8 +26,8 @@ class QuoteToOrderConverter
     /** @var OrderCurrencyHandler */
     protected $orderCurrencyHandler;
 
-    /** @var SubtotalLineItemProvider */
-    protected $subtotalLineItemProvider;
+    /** @var LineItemSubtotalProvider */
+    protected $lineItemSubtotalProvider;
 
     /** @var ManagerRegistry */
     protected $registry;
@@ -38,17 +37,18 @@ class QuoteToOrderConverter
 
     /**
      * @param OrderCurrencyHandler $orderCurrencyHandler
-     * @param SubtotalLineItemProvider $subtotalLineItemProvider
+     * @param LineItemSubtotalProvider $lineItemSubtotalProvider
+     * @param TotalProcessorProvider $totalProvider,
      * @param ManagerRegistry $registry
      */
     public function __construct(
         OrderCurrencyHandler $orderCurrencyHandler,
-        SubtotalLineItemProvider $subtotalLineItemProvider,
+        LineItemSubtotalProvider $lineItemSubtotalProvider,
         TotalProcessorProvider $totalProvider,
         ManagerRegistry $registry
     ) {
         $this->orderCurrencyHandler = $orderCurrencyHandler;
-        $this->subtotalLineItemProvider = $subtotalLineItemProvider;
+        $this->lineItemSubtotalProvider = $lineItemSubtotalProvider;
         $this->totalProvider = $totalProvider;
         $this->registry = $registry;
     }
@@ -116,7 +116,10 @@ class QuoteToOrderConverter
             ->setOrganization($quote->getOrganization())
             ->setPoNumber($quote->getPoNumber())
             ->setShipUntil($quote->getShipUntil())
-            ->setShippingAddress($orderShippingAddress);
+            ->setShippingAddress($orderShippingAddress)
+            ->setSourceEntityClass(ClassUtils::getClass($quote))
+            ->setSourceEntityId($quote->getId())
+            ->setSourceEntityIdentifier($quote->getIdentifier());
 
         return $order;
     }
@@ -199,22 +202,14 @@ class QuoteToOrderConverter
      */
     protected function fillSubtotals(Order $order)
     {
-        $subtotal = $this->subtotalLineItemProvider->getSubtotal($order);
+        $subtotal = $this->lineItemSubtotalProvider->getSubtotal($order);
         $total = $this->totalProvider->getTotal($order);
-        $propertyAccessor = PropertyAccess::createPropertyAccessor();
 
         if ($subtotal) {
-            try {
-                $propertyAccessor->setValue($order, $subtotal->getType(), $subtotal->getAmount());
-            } catch (NoSuchPropertyException $e) {
-            }
+            $order->setSubtotal($subtotal->getAmount());
         }
-
         if ($total) {
-            try {
-                $propertyAccessor->setValue($order, $total->getType(), $total->getAmount());
-            } catch (NoSuchPropertyException $e) {
-            }
+            $order->setTotal($total->getAmount());
         }
     }
 

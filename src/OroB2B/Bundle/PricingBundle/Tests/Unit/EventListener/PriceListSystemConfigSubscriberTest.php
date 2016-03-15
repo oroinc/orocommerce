@@ -2,52 +2,49 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 
-use OroB2B\Bundle\PricingBundle\Event\PriceListQueueChangeEvent;
 use OroB2B\Bundle\PricingBundle\EventListener\PriceListSystemConfigSubscriber;
 use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\SystemConfig\ConfigsGeneratorTrait;
+use OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler;
 
 class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
 {
     use ConfigsGeneratorTrait;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|PriceListConfigConverter $converter */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|PriceListConfigConverter
+     */
     protected $converterMock;
 
-    /** @var  EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
-    protected $eventDispatcher;
+    /**
+     * @var PriceListChangeTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $changeTriggerHandler;
 
-    /** @var  PriceListSystemConfigSubscriber */
+    /**
+     * @var PriceListSystemConfigSubscriber
+     */
     protected $subscriber;
-
-    /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
-    protected $registry;
 
     public function setUp()
     {
-        /** @var PriceListConfigConverter|\PHPUnit_Framework_MockObject_MockObject $converterMock */
         $this->converterMock = $this
             ->getMockBuilder('OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
-        /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry */
-        $this->registry = $this->getMockBuilder('\Doctrine\Common\Persistence\ManagerRegistry')
+
+        $this->changeTriggerHandler = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListChangeTriggerHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->subscriber = new PriceListSystemConfigSubscriber(
             $this->converterMock,
-            $this->eventDispatcher,
-            $this->registry
+            $this->changeTriggerHandler
         );
     }
 
@@ -140,20 +137,13 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $this->subscriber->beforeSave($event);
         if ($dispatch) {
-            $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-                ->disableOriginalConstructor()
-                ->getMock();
-            $em->expects($this->once())->method('flush');
-            $this->registry->expects($this->once())->method('getManager')->willReturn($em);
-            $this->eventDispatcher
+            $this->changeTriggerHandler
                 ->expects($this->once())
-                ->method('dispatch')
-                ->with(PriceListQueueChangeEvent::BEFORE_CHANGE, new PriceListQueueChangeEvent());
+                ->method('handleConfigChange');
         } else {
-            $this->registry->expects($this->never())->method('getManager');
-            $this->eventDispatcher
+            $this->changeTriggerHandler
                 ->expects($this->never())
-                ->method('dispatch');
+                ->method('handleConfigChange');
         }
         $this->subscriber->updateAfter(new ConfigUpdateEvent($changeSet));
     }
@@ -184,22 +174,10 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function testUpdateAfterWithNotApplicable()
     {
-        $this->eventDispatcher
+        $this->changeTriggerHandler
             ->expects($this->never())
-            ->method('dispatch');
+            ->method('handleConfigChange');
         $this->subscriber->updateAfter(new ConfigUpdateEvent([]));
-    }
-
-    public function testGetSubscribedEvents()
-    {
-        $this->assertEquals(
-            [
-                ConfigSettingsUpdateEvent::FORM_PRESET => 'formPreSet',
-                ConfigSettingsUpdateEvent::BEFORE_SAVE => 'beforeSave',
-                ConfigUpdateEvent::EVENT_NAME => 'updateAfter',
-            ],
-            $this->subscriber->getSubscribedEvents()
-        );
     }
 
     /**
