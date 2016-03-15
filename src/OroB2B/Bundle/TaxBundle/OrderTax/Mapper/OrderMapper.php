@@ -14,8 +14,6 @@ use OroB2B\Bundle\TaxBundle\Model\Taxable;
 
 class OrderMapper extends AbstractOrderMapper
 {
-    const PROCESSING_CLASS_NAME = 'OroB2B\Bundle\OrderBundle\Entity\Order';
-
     /**
      * @var OrderLineItemMapper
      */
@@ -38,14 +36,6 @@ class OrderMapper extends AbstractOrderMapper
             ->setCurrency($order->getCurrency());
 
         return $taxable;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getProcessingClassName()
-    {
-        return self::PROCESSING_CLASS_NAME;
     }
 
     /**

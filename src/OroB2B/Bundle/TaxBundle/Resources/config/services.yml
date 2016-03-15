@@ -76,7 +76,7 @@ parameters:
     orob2b_tax.event.resolver_event_connector.class: OroB2B\Bundle\TaxBundle\Event\ResolverEventConnector
 
     orob2b_tax.layout.data_provider.tax.class: OroB2B\Bundle\TaxBundle\Layout\Provider\TaxDataProvider
-    orob2b_tax.layout.type.tax.class: OroB2B\Bundle\TaxBundle\Layout\Type\TaxType
+    orob2b_tax.layout.type.tax.class: OroB2B\Bundle\TaxBundle\Layout\Block\Type\TaxType
 
     orob2b_tax.provider.tax_subtotal.class: OroB2B\Bundle\TaxBundle\Provider\TaxSubtotalProvider
 
@@ -342,6 +342,7 @@ services:
         arguments:
             - @orob2b_tax.event.context_event_dispatcher
             - @orob2b_tax.provider.taxation_address_provider
+            - %orob2b_order.entity.order.class%
         calls:
             - [setOrderLineItemMapper, [@orob2b_tax.order_tax.mapper.order_line_item_mapper]]
         tags:
@@ -352,6 +353,7 @@ services:
         arguments:
             - @orob2b_tax.event.context_event_dispatcher
             - @orob2b_tax.provider.taxation_address_provider
+            - %orob2b_order.entity.order_line_item.class%
         tags:
             - { name: orob2b_tax.tax_mapper }
 

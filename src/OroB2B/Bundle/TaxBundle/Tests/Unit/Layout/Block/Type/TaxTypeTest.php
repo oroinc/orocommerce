@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Layout\Type;
+namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Layout\Block\Type;
 
 use Oro\Bundle\LayoutBundle\Tests\Unit\BlockTypeTestCase;
 use Oro\Component\Layout\Block\Type\BaseType;
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\LayoutFactoryBuilderInterface;
 
-use OroB2B\Bundle\TaxBundle\Layout\Type\TaxType;
+use OroB2B\Bundle\TaxBundle\Layout\Block\Type\TaxType;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 
 class TaxTypeTest extends BlockTypeTestCase

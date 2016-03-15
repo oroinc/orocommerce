@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Layout\Type;
+namespace OroB2B\Bundle\TaxBundle\Layout\Block\Type;
 
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 

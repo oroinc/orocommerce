@@ -7,8 +7,6 @@ use OroB2B\Bundle\TaxBundle\Model\Taxable;
 
 class OrderLineItemMapper extends AbstractOrderMapper
 {
-    const PROCESSING_CLASS_NAME = 'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem';
-
     /**
      * @param OrderLineItem $lineItem
      *
@@ -31,13 +29,5 @@ class OrderLineItemMapper extends AbstractOrderMapper
         }
 
         return $taxable;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getProcessingClassName()
-    {
-        return self::PROCESSING_CLASS_NAME;
     }
 }
