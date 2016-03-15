@@ -31,7 +31,6 @@
                 {{ form_row(form.billing_address.city, {'attr': {'placeholder': 'Enter address label'}, 'parentClass': 'form__col_x12'}) }}
                 </fieldset>
             <fieldset class="checkout__form__row">
-                {#{{ dump(form.billing_address.country.vars) }}#}
                 {{ form_row(form.billing_address.country) }}
                 {{ form_row(form.billing_address.region) }}
             </fieldset>
