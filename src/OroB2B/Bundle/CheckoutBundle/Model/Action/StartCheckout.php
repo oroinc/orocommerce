@@ -145,8 +145,7 @@ class StartCheckout extends AbstractAction
         }
 
         $url = $this->router->generate('orob2b_checkout_frontend_checkout', ['id' => $checkout->getId()]);
-        $urlProperty = new PropertyPath('result.redirectUrl');
-        $this->contextAccessor->setValue($context, $urlProperty, $url);
+        $this->contextAccessor->setValue($context, new PropertyPath('redirectUrl'), $url);
     }
 
     /**

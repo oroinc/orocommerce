@@ -70,3 +70,4 @@ services:
             - @router
         tags:
             - { name: oro_workflow.action, alias: start_checkout }
+            - { name: oro_action.function, alias: start_checkout }

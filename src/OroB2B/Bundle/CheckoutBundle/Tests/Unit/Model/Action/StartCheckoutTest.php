@@ -86,7 +86,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
     {
         return [
             '1' => [
-                'context' => [
+                'options' => [
                     'source' => 'shoppingList',
                     'sourceData' => new ShoppingList(),
                     'data' => [
