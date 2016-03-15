@@ -30,6 +30,7 @@ orob2b:
         source_entity_class.label: Source Entity Class
         source_entity_id.label: Source Entity Id
         source_entity_identifier.label: Source Entity Identifier
+        discount.label: Discount
         total_discounts_amount.label: Total Discounts Amount
         discounts.label: Discounts
 
@@ -147,7 +148,6 @@ orob2b:
 
         subtotals:
             shipping_cost: Shipping Cost
-            discount: Discount
 
         sales_orders.label: 'Sales Orders'
 
