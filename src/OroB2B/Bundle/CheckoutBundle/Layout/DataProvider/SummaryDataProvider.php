@@ -7,13 +7,13 @@ use Doctrine\Common\Collections\Collection;
 
 use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
-use Oro\Component\Layout\DataProviderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 
 class SummaryDataProvider extends AbstractServerRenderDataProvider
 {
@@ -23,20 +23,20 @@ class SummaryDataProvider extends AbstractServerRenderDataProvider
     protected $checkoutLineItemsManager;
 
     /**
-     * @var LineItemsSubtotalProvider
+     * @var LineItemSubtotalProvider
      */
-    protected $lineItemsSubtotalProvider;
+    protected $lineItemSubtotalProvider;
 
     /**
-     * @param CheckoutLineItemsManager $CheckoutLineItemsManager
-     * @param LineItemsSubtotalProvider $ineItemsSubtotalProvider
+     * @param CheckoutLineItemsManager $checkoutLineItemsManager
+     * @param LineItemSubtotalProvider $lineItemsSubtotalProvider
      */
     public function __construct(
-        CheckoutLineItemsManager $CheckoutLineItemsManager,
-        LineItemsSubtotalProvider $ineItemsSubtotalProvider
+        CheckoutLineItemsManager $checkoutLineItemsManager,
+        LineItemSubtotalProvider $lineItemsSubtotalProvider
     ) {
-        $this->checkoutLineItemsManager = $CheckoutLineItemsManager;
-        $this->lineItemsSubtotalProvider = $ineItemsSubtotalProvider;
+        $this->checkoutLineItemsManager = $checkoutLineItemsManager;
+        $this->lineItemSubtotalProvider = $lineItemsSubtotalProvider;
     }
 
     /**
@@ -67,7 +67,7 @@ class SummaryDataProvider extends AbstractServerRenderDataProvider
     {
         $order = new Order();
         $order->setLineItems($orderLineItems);
-        $generalTotal = $this->lineItemsSubtotalProvider->getSubtotal($order);
+        $generalTotal = $this->lineItemSubtotalProvider->getSubtotal($order);
         unset($order);
 
         $totalPrice = new Price();
@@ -87,7 +87,7 @@ class SummaryDataProvider extends AbstractServerRenderDataProvider
         foreach ($orderLineItems as $orderLineItem) {
             $lineItemTotal = new Price();
             $lineItemTotal->setValue(
-                $this->lineItemsSubtotalProvider->getRowTotal($orderLineItem, $orderLineItem->getCurrency())
+                $this->lineItemSubtotalProvider->getRowTotal($orderLineItem, $orderLineItem->getCurrency())
             );
             $lineItemTotal->setCurrency($orderLineItem->getCurrency());
 

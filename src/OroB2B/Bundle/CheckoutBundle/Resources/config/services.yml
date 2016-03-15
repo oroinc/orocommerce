@@ -36,7 +36,7 @@ services:
         class: %orob2b_checkout.layout.data_provider.summary.class%
         arguments:
             - @orob2b_checkout.data_provider.manager.checkout_line_items
-            - @orob2b_pricing.provider.line_items_subtotal
+            - @orob2b_pricing.subtotal_processor.provider.subtotal_line_item
         tags:
             - { name: layout.data_provider, alias: orob2b_checkout_summary }
 
