@@ -15,10 +15,10 @@ use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
 use OroB2B\Bundle\ProductBundle\Form\Handler\QuickAddHandler;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
-use OroB2B\Bundle\ProductBundle\Provider\QuickAddFormProvider;
+use OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddFormProvider;
 use OroB2B\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
-use OroB2B\Bundle\ProductBundle\Provider\QuickAddCopyPasteFormProvider;
-use OroB2B\Bundle\ProductBundle\Provider\QuickAddImportFormProvider;
+use OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddCopyPasteFormProvider;
+use OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddImportFormProvider;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
@@ -83,16 +83,16 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
                 }
             );
 
-        $this->quickAddFormProvider = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Provider\QuickAddFormProvider')
+        $this->quickAddFormProvider = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddFormProvider')
             ->disableOriginalConstructor()
             ->getMock();
         $this->quickAddImportFormProvider = $this->getMockBuilder(
-            'OroB2B\Bundle\ProductBundle\Provider\QuickAddImportFormProvider'
+            'OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddImportFormProvider'
         )
             ->disableOriginalConstructor()
             ->getMock();
         $this->quickAddCopyPasteFormProvider = $this->getMockBuilder(
-            'OroB2B\Bundle\ProductBundle\Provider\QuickAddCopyPasteFormProvider'
+            'OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddCopyPasteFormProvider'
         )
             ->disableOriginalConstructor()
             ->getMock();

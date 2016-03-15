@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Provider;
+namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Layout\DataProvider;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Layout\LayoutContext;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
-use OroB2B\Bundle\ProductBundle\Provider\QuickAddCopyPasteFormProvider;
+use OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddCopyPasteFormProvider;
 
 class QuickAddCopyPasteFormProviderTest extends WebTestCase
 {
