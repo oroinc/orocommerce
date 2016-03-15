@@ -42,6 +42,7 @@
     {% set subtotals %}
         {% include 'OroB2BPricingBundle:Totals:totals.html.twig' with {
             options: {
+                url: 'orob2b_pricing_entity_totals',
                 selectors: {
                     template: '#totals-template',
                     form: '#' ~ form.vars.id

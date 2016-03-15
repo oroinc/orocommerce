@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Controller\Frontend;
 
+use Doctrine\Common\Util\ClassUtils;
+use OroB2B\Bundle\OrderBundle\Entity\Order;
 use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -34,7 +36,7 @@ class AjaxOrderControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertSubtotals($crawler);
+        $this->assertTotals($crawler);
     }
 
     public function testSubtotals()
@@ -48,18 +50,25 @@ class AjaxOrderControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertSubtotals($crawler, $order->getId());
+        $this->assertTotals($crawler, $order->getId());
     }
 
     /**
      * @param Crawler $crawler
      * @param null|int $id
      */
-    protected function assertSubtotals(Crawler $crawler, $id = null)
+    protected function assertTotals(Crawler $crawler, $id = null)
     {
         $form = $crawler->selectButton('Save and Close')->form();
 
-        $form->getFormNode()->setAttribute('action', $this->getUrl('orob2b_order_frontend_subtotals', ['id' => $id]));
+        $form->getFormNode()->setAttribute(
+            'action',
+            $this->getUrl('orob2b_pricing_frontend_entity_totals', [
+                'entityId' => $id,
+                'entityClassName' => ClassUtils::getClass(new Order())
+            ])
+        );
+
 
         $this->client->submit($form);
 
@@ -70,6 +79,6 @@ class AjaxOrderControllerTest extends WebTestCase
         $data = json_decode($result->getContent(), true);
 
         $this->assertArrayHasKey('subtotals', $data);
-        $this->assertArrayHasKey('subtotal', $data['subtotals']);
+        $this->assertArrayHasKey('total', $data);
     }
 }

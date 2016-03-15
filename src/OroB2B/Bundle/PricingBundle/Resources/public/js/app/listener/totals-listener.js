@@ -18,6 +18,7 @@ define(function (require) {
          * @param {jQuery|Array} $fields
          */
         listen: function ($fields) {
+            debugger;
             ValueChangingListener.listen('total-target:changing', $fields);
             _.each($fields, _.bind(function (field) {
                 $(field).change(_.bind(this.updateTotals, this));

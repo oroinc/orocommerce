@@ -5,6 +5,10 @@ parameters:
 
     orob2b_order.order.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_order.order.listener.order_listener.class: OroB2B\Bundle\OrderBundle\EventListener\OrderListener
+
+    orob2b_order.order.listener.total_calculate_listener.class: OroB2B\Bundle\OrderBundle\EventListener\TotalCalculateListener
+
+
     orob2b_order.order.entity.id_generator.class: OroB2B\Bundle\OrderBundle\Doctrine\ORM\Id\SimpleEntityAwareGenerator
 
     orob2b_order.order.provider.order_address.class: OroB2B\Bundle\OrderBundle\Provider\OrderAddressProvider
@@ -113,3 +117,9 @@ services:
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
 
+    orob2b_order.order.listener.total_calculate_listener:
+        class: %orob2b_order.order.listener.total_calculate_listener.class%
+        arguments:
+            - @form.factory
+        tags:
+            - { name: kernel.event_listener, event: orob2b_pricing.total_calculate_before_event, method: onBeforeTotalCalculate }

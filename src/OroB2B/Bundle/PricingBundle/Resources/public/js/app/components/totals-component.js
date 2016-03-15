@@ -20,7 +20,7 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            url: 'orob2b_pricing_frontend_entity_totals',
+            url: 'orob2b_pricing_entity_totals',
             entityClassName: '',
             entityId: 0,
             selectors: {
@@ -144,27 +144,37 @@ define(function(require) {
 
             var params = {
                 entityClassName: this.options.entityClassName,
-                entityId: this.options.entityId
+                entityId: this.options.entityId ? this.options.entityId : 0
             };
 
             var formData = this.$form.find(':input[data-ftid]').serialize();
             this.formData = formData;
 
-            $.ajax({
-                url: routing.generate(this.options.url, params),
-                type: 'GET',
-                success: function (response) {
+            if (formData) {
+                $.post(routing.generate(this.options.url, params), formData, function(response) {
                     if (formData === self.formData) {
                         //data doesn't change after ajax call
                         var totals = response || {};
                         callback(totals);
                     }
-                    //self.updateTotalsContrainer(response);
-                },
-                error: function(response) {
-                    //callback(response);
-                }
-            });
+                });
+            } else {
+                $.ajax({
+                    url: routing.generate(this.options.url, params),
+                    type: 'GET',
+                    success: function (response) {
+                        if (formData === self.formData) {
+                            //data doesn't change after ajax call
+                            var totals = response || {};
+                            callback(totals);
+                        }
+                        //self.updateTotalsContrainer(response);
+                    },
+                    error: function (response) {
+                        //callback(response);
+                    }
+                });
+            }
         },
 
         /**

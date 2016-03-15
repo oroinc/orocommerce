@@ -48,11 +48,16 @@
     {% set id = 'invoice-edit' %}
 
     {% set subtotals %}
-        {% include 'OroB2BPricingBundle:Subtotals:subtotals.html.twig' with {
-        options: {
-            url: path('orob2b_invoice_subtotal', {id: entity.id}),
-            selectors: {form: '#' ~ form.vars.id},
-        }
+        {% include 'OroB2BPricingBundle:Totals:totals.html.twig' with {
+            options: {
+                url: 'orob2b_pricing_entity_totals',
+                selectors: {
+                    template: '#totals-template',
+                    form: '#' ~ form.vars.id
+                },
+                entityClassName: 'OroB2B\\Bundle\\InvoiceBundle\\Entity\\Invoice',
+                entityId: form.vars.value.id
+            }
         } only %}
     {% endset %}
 

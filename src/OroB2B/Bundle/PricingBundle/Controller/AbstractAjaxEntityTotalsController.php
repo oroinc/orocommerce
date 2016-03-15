@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Controller;
 
+use OroB2B\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -19,25 +20,66 @@ abstract class AbstractAjaxEntityTotalsController extends Controller
      */
     protected function getTotals($entityClassName, $entityId)
     {
+        $request = $this->get('request_stack')->getCurrentRequest();
+
+        $method = $request->getMethod();
         $entityClass = $this->get('oro_entity.routing_helper')->resolveEntityClass($entityClassName);
 
         if (!class_exists($entityClass)) {
             throw $this->createNotFoundException();
         }
 
-        /** @var OroEntityManager $entityManager */
-        $entityManager = $this->getDoctrine()->getManager();
-        $entity = $entityManager->getRepository($entityClass)->find($entityId);
+        $entity = null;
+        if ($method === 'GET') {
+            /** @var OroEntityManager $entityManager */
+            $entityManager = $this->getDoctrine()->getManager();
+            $entity = $entityManager->getRepository($entityClass)->find($entityId);
 
-        if (!$entity) {
-            throw $this->createNotFoundException();
+            if (!$entity) {
+                throw $this->createNotFoundException();
+            }
+
+            /** @var SecurityFacade $securityFacade */
+            $securityFacade = $this->get('oro_security.security_facade');
+            $isGranted = $securityFacade->isGranted('VIEW', $entity);
+            if (!$isGranted) {
+                throw new AccessDeniedException();
+            }
+        } else if (in_array($method, ['POST', 'PUT'])) {
+            if ($entityId) {
+                /** @var OroEntityManager $entityManager */
+                $entityManager = $this->getDoctrine()->getManager();
+                $entity = $entityManager->getRepository($entityClass)->find($entityId);
+
+                if (!$entity) {
+                    throw $this->createNotFoundException();
+                }
+            } else {
+                $entity = new $entityClass();
+            }
+
+            $event = new TotalCalculateBeforeEvent($entity, $request);
+
+            $eventDispatcher = $this->get('event_dispatcher');
+            $entity = $eventDispatcher->dispatch(TotalCalculateBeforeEvent::NAME, $event);
+            $entity = $entity->getEntity();
+            /** @var SecurityFacade $securityFacade */
+//            $securityFacade = $this->get('oro_security.security_facade');
+//            $isGranted = $securityFacade->isGranted('EDIT', $entity);
+//            if (!$isGranted) {
+//                throw new AccessDeniedException();
+//            }
+
         }
-        /** @var SecurityFacade $securityFacade */
-        $securityFacade = $this->get('oro_security.security_facade');
-        $isGranted = $securityFacade->isGranted('VIEW', $entity);
-        if (!$isGranted) {
-            throw new AccessDeniedException();
-        }
+
+//        /** @var OroEntityManager $entityManager */
+//        $entityManager = $this->getDoctrine()->getManager();
+//        $entity = $entityManager->getRepository($entityClass)->find($entityId);
+//
+//        if (!$entity) {
+//            throw $this->createNotFoundException();
+//        }
+
 
         $totalProvider = $this->get('orob2b_pricing.subtotal_processor.total_processor_provider');
         $total = $totalProvider->getTotal($entity)->toArray();
