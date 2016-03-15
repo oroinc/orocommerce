@@ -1,5 +1,4 @@
 workflows:
-# TODO: Add options to store disabled steps options (disallow_shipping_address_edit, ...)
     b2b_flow_checkout:
         label: orob2b.checkout.workflow.b2b_flow_checkout.label
         entity: OroB2B\Bundle\CheckoutBundle\Entity\Checkout
@@ -195,7 +194,7 @@ workflows:
                         conditions:
                             @equal: [$checkout.shipToBillingAddress, true]
                         parameters: [$.result.shippingAddress, $checkout.billingAddress]
-                    
+
                     # Save billing address if required
                     - @tree:
                         conditions:
@@ -316,9 +315,9 @@ workflows:
                             - @remove_entity:
                                 conditions:
                                     @and:
-                                        - @equal: [$.allow_source_remove, true]
-                                        - @and: [$.remove_source, true]
-                                properties: [$checkout.sourceEntity]
+                                        - @equal: [$.data.allow_source_remove, true]
+                                        - @equal: [$.data.remove_source, true]
+                                parameters: [$checkout.sourceEntity]
                             - @remove_entity: $checkout
                             - @redirect:
                                 route: orob2b_order_frontend_success

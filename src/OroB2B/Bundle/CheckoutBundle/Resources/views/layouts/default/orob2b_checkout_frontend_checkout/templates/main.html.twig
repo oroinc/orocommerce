@@ -28,7 +28,8 @@
                 'action': path('orob2b_checkout_frontend_checkout', {'id': checkout.id}),
                 'attr' : {
                     'class' : 'checkout__form',
-                    'data-nohash': 'true'
+                    'data-nohash': 'true',
+                    'id': form.vars.id
                 }})
             }}
             {{ block_widget(block) }}
@@ -36,8 +37,11 @@
                 {{ form_widget(form._token) }}
             </div>
         </form>
+        {{ oro_form_js_validation(form) }}
         {% else %}
+            <form method="post" action="">
             {{ block_widget(block) }}
+            </form>
         {% endif %}
     </div>
 {%- endblock %}

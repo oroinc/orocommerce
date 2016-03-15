@@ -61,11 +61,15 @@ define(function(require) {
         },
 
         onSuccess: function(response) {
-            var $response = $(response);
-            $('[data-role="checkout-sidebar"]').html($response.find('[data-role="checkout-sidebar"]'));
-            $('[data-role="checkout-content"]').html($response.find('[data-role="checkout-content"]'));
+            if (response.hasOwnProperty('redirectUrl')) {
+                mediator.execute('redirectTo', {url: response.redirectUrl});
+            } else {
+                var $response = $(response);
+                $('[data-role="checkout-sidebar"]').html($response.find('[data-role="checkout-sidebar"]'));
+                $('[data-role="checkout-content"]').html($response.find('[data-role="checkout-content"]'));
 
-            // TODO: find a way how to initialize JS on loaded data
+                // TODO: find a way how to initialize JS on loaded data
+            }
         },
 
         onFail: function() {

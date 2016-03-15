@@ -6,7 +6,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
@@ -42,12 +44,20 @@ class CheckoutController extends Controller
      *
      * @param Checkout $checkout
      * @param Request $request
-     * @return array
+     * @return array|Response
      */
     public function checkoutAction(Checkout $checkout, Request $request)
     {
         $workflowItem = $this->handleTransition($checkout, $request);
         $currentStep = $workflowItem->getCurrentStep();
+
+        if ($workflowItem->getResult()->has('redirectUrl')) {
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse(['redirectUrl' => $workflowItem->getResult()->get('redirectUrl')]);
+            } else {
+                return $this->redirect($workflowItem->getResult()->get('redirectUrl'));
+            }
+        }
 
         return [
             'workflowStepName' => $currentStep->getName(),
