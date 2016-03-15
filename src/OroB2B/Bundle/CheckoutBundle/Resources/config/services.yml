@@ -8,6 +8,7 @@ parameters:
     orob2b_checkout.layout.data_provider.checkout_steps.class: OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutStepsDataProvider
     orob2b_checkout.layout.data_provider.summary.class: OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\SummaryDataProvider
     orob2b_checkout.model.action.get_order_line_items.class: OroB2B\Bundle\CheckoutBundle\Model\Action\GetOrderLineItems
+    orob2b_checkout.model.action.start_checkout.class: OroB2B\Bundle\CheckoutBundle\Model\Action\StartCheckout
 
 services:
     orob2b_checkout.data_provider.converter.checkout_line_items:
@@ -56,3 +57,15 @@ services:
             - @orob2b_checkout.data_provider.manager.checkout_line_items
         tags:
             - { name: oro_workflow.action, alias: get_order_line_items }
+
+    orob2b_checkout.model.action.start_checkout:
+        class: %orob2b_checkout.model.action.start_checkout.class%
+        arguments:
+            - @oro_action.context_accessor
+            - @doctrine
+            - @orob2b_website.manager
+            - @security.token_storage
+            - @property_accessor
+            - @oro_workflow.manager
+        tags:
+            - { name: oro_workflow.action, alias: start_checkout }
