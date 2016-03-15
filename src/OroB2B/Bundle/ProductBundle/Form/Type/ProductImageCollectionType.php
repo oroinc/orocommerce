@@ -81,7 +81,7 @@ class ProductImageCollectionType extends AbstractType
         $configs = [];
         $themes = $themeManager->getAllThemes();
         foreach ($themes as $theme) {
-            $configs += $this->collectThemeImageTypeConfigs($theme);
+            $configs = array_merge($configs, $this->collectThemeImageTypeConfigs($theme));
         }
         return $configs;
     }
