@@ -147,8 +147,7 @@ services:
     orob2b_product.validator.product_image_collection:
         class: %orob2b_product.validator.product_image_collection.class%
         arguments:
-            - @oro_layout.theme_manager
-            - @request_stack
+            - @oro_layout.provider.image_config
         tags:
             - { name: validator.constraint_validator, alias: orob2b_product_image_collection_validator }
 

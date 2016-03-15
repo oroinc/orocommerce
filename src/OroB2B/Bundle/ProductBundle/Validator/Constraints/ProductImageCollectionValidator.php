@@ -2,12 +2,10 @@
 
 namespace OroB2B\Bundle\ProductBundle\Validator\Constraints;
 
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-use Oro\Component\Layout\Extension\Theme\Model\Theme;
-use Oro\Component\Layout\Extension\Theme\Model\ThemeManager;
+use Oro\Bundle\LayoutBundle\Provider\ImageTypeConfigProvider;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
 
@@ -15,17 +13,16 @@ class ProductImageCollectionValidator extends ConstraintValidator
 {
     const ALIAS = 'orob2b_product_image_collection_validator';
     /**
-     * @var Theme
+     * @var ImageTypeConfigProvider
      */
-    private $theme;
+    protected $imageTypeConfigProvider;
 
     /**
-     * @param ThemeManager $themeManager
-     * @param RequestStack $requestStack
+     * @param ImageTypeConfigProvider $imageTypeConfigProvider
      */
-    public function __construct(ThemeManager $themeManager, RequestStack $requestStack)
+    public function __construct(ImageTypeConfigProvider $imageTypeConfigProvider)
     {
-        $this->theme = $themeManager->getTheme($requestStack->getCurrentRequest()->attributes->get('_theme'));
+        $this->imageTypeConfigProvider = $imageTypeConfigProvider;
     }
 
     /**
@@ -37,16 +34,17 @@ class ProductImageCollectionValidator extends ConstraintValidator
     public function validate($value, Constraint $constraint)
     {
         $maxNumbers = [];
+        $imageTypeConfigs = $this->imageTypeConfigProvider->getConfigs();
 
-        foreach ($this->getImageTypes() as $imageType => $config) {
-            $maxNumbers[$imageType] = $config['max_number'] ?: 99999 ;
+        foreach ($imageTypeConfigs as $imageType => $config) {
+            $maxNumbers[$imageType] = (int) $config['max_number'];
         }
 
         $countImageTypes = [];
 
         foreach ($value as $productImage) {
             $types = $productImage->getTypes();
-            foreach ($this->getImageTypes() as $imageType => $config) {
+            foreach ($imageTypeConfigs as $imageType => $config) {
                 if (isset($types[$imageType]) && $types[$imageType]) {
                     isset($countImageTypes[$imageType])
                         ? $countImageTypes[$imageType]++
@@ -55,7 +53,7 @@ class ProductImageCollectionValidator extends ConstraintValidator
             }
         }
 
-        foreach ($this->getImageTypes() as $imageType => $config) {
+        foreach ($imageTypeConfigs as $imageType => $config) {
             if ($maxNumbers[$imageType] > 0 && $countImageTypes[$imageType] > $maxNumbers[$imageType]) {
                 $this->context->addViolation(
                     $constraint->message,
@@ -67,13 +65,5 @@ class ProductImageCollectionValidator extends ConstraintValidator
 
             }
         }
-    }
-
-    /**
-     * @return string[]
-     */
-    private function getImageTypes()
-    {
-        return $this->theme->getDataByKey('images')['types'];
     }
 }
