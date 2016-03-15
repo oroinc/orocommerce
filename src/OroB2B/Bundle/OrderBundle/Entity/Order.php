@@ -19,6 +19,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
+use OroB2B\Bundle\PricingBundle\Model\LineItemsAwareInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -63,7 +64,11 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
-class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHolderInterface, AccountOwnerAwareInterface
+class Order extends ExtendOrder implements
+    OrganizationAwareInterface,
+    EmailHolderInterface,
+    AccountOwnerAwareInterface,
+    LineItemsAwareInterface
 {
     /**
      * @var integer
@@ -780,6 +785,21 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
         if ($this->hasLineItem($lineItem)) {
             $this->lineItems->removeElement($lineItem);
         }
+
+        return $this;
+    }
+
+    /**
+     * @param Collection|OrderLineItem[] $lineItems
+     * @return $this
+     */
+    public function setLineItems(Collection $lineItems)
+    {
+        foreach ($lineItems as $lineItem) {
+            $lineItem->setOrder($this);
+        }
+
+        $this->lineItems = $lineItems;
 
         return $this;
     }

@@ -24,6 +24,14 @@ class CheckoutStepsDataProvider extends AbstractServerRenderDataProvider
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getIdentifier()
+    {
+        throw new \BadMethodCallException('Not implemented yet');
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getData(ContextInterface $context)
