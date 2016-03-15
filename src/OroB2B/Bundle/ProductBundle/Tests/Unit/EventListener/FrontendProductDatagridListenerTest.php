@@ -14,14 +14,15 @@ use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 
 use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
-use OroB2B\Bundle\ProductBundle\EventListener\ProductDatagridViewsListener;
+use OroB2B\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener;
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
-class ProductDatagridViewsListenerTest extends \PHPUnit_Framework_TestCase
+class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ProductDatagridViewsListener
+     * @var FrontendProductDatagridListener
      */
     protected $listener;
 
@@ -40,6 +41,11 @@ class ProductDatagridViewsListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected $attachmentManager;
 
+    /**
+     * @var ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $unitFormatter;
+
     public function setUp()
     {
         $this->themeHelper = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper')
@@ -51,10 +57,14 @@ class ProductDatagridViewsListenerTest extends \PHPUnit_Framework_TestCase
         $this->attachmentManager = $this->getMockBuilder('Oro\Bundle\AttachmentBundle\Manager\AttachmentManager')
             ->disableOriginalConstructor()->getMock();
 
-        $this->listener = new ProductDatagridViewsListener(
+        $this->unitFormatter = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
+            ->disableOriginalConstructor()->getMock();
+
+        $this->listener = new FrontendProductDatagridListener(
             $this->themeHelper,
             $this->doctrine,
-            $this->attachmentManager
+            $this->attachmentManager,
+            $this->unitFormatter
         );
     }
 
@@ -84,22 +94,50 @@ class ProductDatagridViewsListenerTest extends \PHPUnit_Framework_TestCase
     public function onPreBuildDataProvider()
     {
         return [
-            [
+            'list' => [
                 DataGridThemeHelper::VIEW_LIST,
-                ['name' => 'grid-name']
+                [
+                    'name' => 'grid-name',
+                    'source' => [
+                        'query' => [
+                            'select' => [
+                                'GROUP_CONCAT(unit_precisions.unit SEPARATOR \'{sep}\') as product_units',
+                            ],
+                            'join' => [
+                                'left' => [
+                                    [
+                                        'join' => 'product.unitPrecisions',
+                                        'alias' => 'unit_precisions'
+                                    ]
+                                ],
+                            ],
+                        ],
+                    ],
+                    'properties' => [
+                        'product_units' => [
+                            'type' => 'field',
+                            'frontend_type' => 'row_array',
+                        ]
+                    ],
+                ],
             ],
-            [
+            'grid' => [
                 DataGridThemeHelper::VIEW_GRID,
                 [
                     'name' => 'grid-name',
                     'source' => [
                         'query' => [
                             'select' => [
+                                'GROUP_CONCAT(unit_precisions.unit SEPARATOR \'{sep}\') as product_units',
                                 'productImage.filename as image',
                                 'productDescriptions.string as description'
                             ],
                             'join' => [
                                 'left' => [
+                                    [
+                                        'join' => 'product.unitPrecisions',
+                                        'alias' => 'unit_precisions'
+                                    ],
                                     [
                                         'join' => 'product.image',
                                         'alias' => 'productImage'
@@ -115,20 +153,31 @@ class ProductDatagridViewsListenerTest extends \PHPUnit_Framework_TestCase
                                 ]
                             ]
                         ]
-                    ]
+                    ],
+                    'properties' => [
+                        'product_units' => [
+                            'type' => 'field',
+                            'frontend_type' => 'row_array',
+                        ]
+                    ],
                 ]
             ],
-            [
+            'tiles' => [
                 DataGridThemeHelper::VIEW_TILES,
                 [
                     'name' => 'grid-name',
                     'source' => [
                         'query' => [
                             'select' => [
+                                'GROUP_CONCAT(unit_precisions.unit SEPARATOR \'{sep}\') as product_units',
                                 'productImage.filename as image',
                             ],
                             'join' => [
                                 'left' => [
+                                    [
+                                        'join' => 'product.unitPrecisions',
+                                        'alias' => 'unit_precisions'
+                                    ],
                                     [
                                         'join' => 'product.image',
                                         'alias' => 'productImage'
@@ -136,7 +185,13 @@ class ProductDatagridViewsListenerTest extends \PHPUnit_Framework_TestCase
                                 ]
                             ]
                         ]
-                    ]
+                    ],
+                    'properties' => [
+                        'product_units' => [
+                            'type' => 'field',
+                            'frontend_type' => 'row_array',
+                        ]
+                    ],
                 ]
             ],
         ];
@@ -300,8 +355,9 @@ class ProductDatagridViewsListenerTest extends \PHPUnit_Framework_TestCase
         /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Event\OrmResultAfter')
             ->disableOriginalConstructor()->getMock();
-        $event->expects($this->never())
-            ->method('getRecords');
+        $event->expects($this->once())
+            ->method('getRecords')
+            ->willReturn([]);
 
         /** @var Datagrid|\PHPUnit_Framework_MockObject_MockObject $datagrid */
         $datagrid = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\Datagrid')
