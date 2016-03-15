@@ -30,6 +30,17 @@ orob2b:
         source_entity_class.label: Source Entity Class
         source_entity_id.label: Source Entity Id
         source_entity_identifier.label: Source Entity Identifier
+        total_discounts_amount.label: Total Discounts Amount
+        discounts.label: Discounts
+
+        orderdiscount:
+            entity_label: Order Discount
+            entity_plural_label: Order Discounts
+            id.label: ID
+            amount.label: Amount
+            description.label: Description
+            percent.label: Percent
+            order.label: Order
 
         orderaddress:
             entity_label: Order Address
