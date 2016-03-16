@@ -62,22 +62,19 @@
 {% block _checkout_button_continue_widget %}
     {% if transitionData is defined and transitionData %}
         {% import 'OroB2BCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
-        <button type="submit" class="btn btn_xlg btn_orange checkout__submit-btn" {{ _layout.transitionAttrbiutes(transitionData, checkout) }}>
-            {{ transitionData.transition.label|trans }}
-        </button>
+        <div class="order-checkout-widget order-checkout-widget_block text-right">
+            <button type="submit" class="btn btn_xlg btn_orange checkout__submit-btn" {{ _layout.transitionAttrbiutes(transitionData, checkout) }}>
+                {{ transitionData.transition.label|trans }}
+            </button>
+        </div>
     {% endif %}
 {% endblock %}
 
-{% block _checkout_form_buttons_widget -%}
-    {% if block.checkout_button_continue is defined %}
-    <div class="order-checkout-widget order-checkout-widget_block text-right">
-        {{ block_widget(block.checkout_button_continue) }}
-    </div>
+{% block _checkout_button_back_widget %}
+    {% if transitionData is defined and transitionData %}
+        {% import 'OroB2BCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
+        <div class="checkout__form__back checkout__form__back_order-review">
+            {{ block_widget(block) }}
+        </div>
     {% endif %}
-    {% if block.checkout_button_back is defined %}
-    <div class="checkout__form__back checkout__form__back_order-review">
-        {{ block_widget(block.checkout_button_back) }}
-    </div>
-    {% endif %}
-    {{ block_widget(block) }}
-{%- endblock %}
+{% endblock %}
