@@ -136,50 +136,9 @@ class OrderType extends AbstractType
             ->add('sourceEntityId', 'hidden')
             ->add('sourceEntityIdentifier', 'hidden');
 
-        if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_BILLING)) {
-            $builder
-                ->add(
-                    'billingAddress',
-                    OrderAddressType::NAME,
-                    [
-                        'label' => 'orob2b.order.billing_address.label',
-                        'order' => $options['data'],
-                        'required' => false,
-                        'addressType' => AddressType::TYPE_BILLING,
-                    ]
-                );
-        }
-
-        if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_SHIPPING)) {
-            $builder
-                ->add(
-                    'shippingAddress',
-                    OrderAddressType::NAME,
-                    [
-                        'label' => 'orob2b.order.shipping_address.label',
-                        'order' => $options['data'],
-                        'required' => false,
-                        'addressType' => AddressType::TYPE_SHIPPING,
-                        'application' => OrderAddressType::APPLICATION_BACKEND
-                    ]
-                );
-        }
-
-        if ($this->isOverridePaymentTermGranted()) {
-            $builder
-                ->add(
-                    'paymentTerm',
-                    PaymentTermSelectType::NAME,
-                    [
-                        'label' => 'orob2b.order.payment_term.label',
-                        'required' => false,
-                        'attr' => [
-                            'data-account-payment-term' => $this->getAccountPaymentTermId($order),
-                            'data-account-group-payment-term' => $this->getAccountGroupPaymentTermId($order),
-                        ],
-                    ]
-                );
-        }
+        $this->addBillingAddress($builder, $order, $options);
+        $this->addShippingAddress($builder, $order, $options);
+        $this->addPaymentTerm($builder, $order);
     }
 
     /**
@@ -257,5 +216,73 @@ class OrderType extends AbstractType
     public function setWebsiteClass($websiteClass)
     {
         $this->websiteClass = $websiteClass;
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param Order $order
+     */
+    protected function addPaymentTerm(FormBuilderInterface $builder, Order $order)
+    {
+        if ($this->isOverridePaymentTermGranted()) {
+            $builder
+                ->add(
+                    'paymentTerm',
+                    PaymentTermSelectType::NAME,
+                    [
+                        'label' => 'orob2b.order.payment_term.label',
+                        'required' => false,
+                        'attr' => [
+                            'data-account-payment-term' => $this->getAccountPaymentTermId($order),
+                            'data-account-group-payment-term' => $this->getAccountGroupPaymentTermId($order),
+                        ],
+                    ]
+                );
+        }
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param Order $order
+     * @param array $options
+     */
+    protected function addBillingAddress(FormBuilderInterface $builder, Order $order, $options)
+    {
+        if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_BILLING)) {
+            $builder
+                ->add(
+                    'billingAddress',
+                    OrderAddressType::NAME,
+                    [
+                        'label' => 'orob2b.order.billing_address.label',
+                        'order' => $options['data'],
+                        'required' => false,
+                        'addressType' => AddressType::TYPE_BILLING,
+                    ]
+                );
+        }
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param Order $order
+     * @param array $options
+     */
+    protected function addShippingAddress(FormBuilderInterface $builder, Order $order, $options)
+    {
+        if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_SHIPPING)) {
+            $builder
+                ->add(
+                    'shippingAddress',
+                    OrderAddressType::NAME,
+                    [
+                        'label' => 'orob2b.order.shipping_address.label',
+                        'order' => $options['data'],
+                        'required' => false,
+                        'addressType' => AddressType::TYPE_SHIPPING,
+                        'application' => OrderAddressType::APPLICATION_BACKEND
+                    ]
+                );
+        }
     }
 }

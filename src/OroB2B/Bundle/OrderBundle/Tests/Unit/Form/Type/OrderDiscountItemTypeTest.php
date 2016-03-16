@@ -2,13 +2,14 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
-use OroB2B\Bundle\OrderBundle\Form\Type\OrderDiscountItemType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
+use OroB2B\Bundle\OrderBundle\Form\Type\OrderDiscountItemType;
 
 class OrderDiscountItemTypeTest extends FormIntegrationTestCase
 {

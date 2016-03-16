@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\OrderBundle\Form\Type;
 
-use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
-
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormView;
@@ -11,6 +9,8 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
 
 class OrderDiscountItemType extends AbstractType
 {
