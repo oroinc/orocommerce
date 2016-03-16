@@ -37,7 +37,20 @@ actions:
                 conditions:
                     @empty: $.checkoutSource
                 actions:
-                    - @assign_current_website: $.currentWebsite
+                    - @assign_url:
+                        attribute: $.editLink
+                        route: orob2b_shopping_list_frontend_view
+                        route_parameters: { 'id': $.data.id }
+                    - @assign_value: [$.currentWebsite, $.data.website]
+                    - @assign_value: [$.currency, $.data.currency]
+                    - @assign_current_website:
+                        conditions:
+                            @empty: $.currentWebsite
+                        parameters: [$.currentWebsite]
+                    - @assign_user_currency:
+                        conditions:
+                            @empty: $.currency
+                        parameters: [$.currency]
                     - @assign_active_user: $.currentUser
                     - @translate:
                         attribute: $.sourceRemoveLabel
@@ -58,6 +71,7 @@ actions:
                             owner: $.currentUser.account.owner
                             organization: $.currentUser.account.organization
                             website: $.currentWebsite
+                            currency: $.currency
                     - @call_method:
                         object: $.checkout.workflowItem.data
                         method: set
@@ -70,6 +84,10 @@ actions:
                         object: $.checkout.workflowItem.data
                         method: set
                         method_parameters: ['source_remove_label', $.sourceRemoveLabel]
+                    - @call_method:
+                        object: $.checkout.workflowItem.data
+                        method: set
+                        method_parameters: ['edit_order_link', $.editLink]
                     - @call_method:
                         object: $.checkout.workflowItem
                         method: setUpdated

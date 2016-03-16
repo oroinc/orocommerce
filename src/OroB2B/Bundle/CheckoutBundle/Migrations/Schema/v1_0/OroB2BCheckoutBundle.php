@@ -62,13 +62,12 @@ class OroB2BCheckoutBundle implements Migration
         $table->addColumn('save_shipping_address', 'boolean', []);
         $table->addColumn('po_number', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('customer_notes', 'text', ['notnull' => false]);
+        $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->addColumn('ship_until', 'date', ['notnull' => false, 'comment' => '(DC2Type:date)']);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addColumn('serialized_data', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->addUniqueIndex(['billing_address_id'], 'uniq_e56b559d79d0c0e4');
         $table->addUniqueIndex(['source_id'], 'uniq_e56b559d953c1c61');
-        $table->addIndex(['user_owner_id'], 'idx_e56b559d9eb185f9', []);
         $table->addUniqueIndex(['workflow_item_id'], 'uniq_e56b559d1023c4ee');
         $table->addUniqueIndex(['shipping_address_id'], 'uniq_e56b559d4d4cff2b');
         $table->setPrimaryKey(['id']);
