@@ -22,13 +22,13 @@ class TotalCalculateListener
     }
 
     /**
-     * @param TotalCalculateBeforeEvent $args
+     * @param TotalCalculateBeforeEvent $event
      */
-    public function onBeforeTotalCalculate(TotalCalculateBeforeEvent $args)
+    public function onBeforeTotalCalculate(TotalCalculateBeforeEvent $event)
     {
         /** @var Order $entity */
-        $entity = $args->getEntity();
-        $request = $args->getRequest();
+        $entity = $event->getEntity();
+        $request = $event->getRequest();
 
         if ($entity instanceof Order) {
             $form = $this->formFactory->create(OrderType::NAME, $entity);
