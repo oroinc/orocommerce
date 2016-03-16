@@ -8,6 +8,16 @@
     </div>
     <div class="checkout__body">
         {{ block_widget(block) }}
+        {% if workflowItem.data.get('allow_source_remove') %}
+            {% set removeElementOptions = {} %}
+            {% set removeLabel = workflowItem.data.get('source_remove_label') %}
+            {% if removeLabel %}
+                {% set removeElementOptions = removeElementOptions|merge({label: removeLabel}) %}
+            {% endif %}
+            {{ form_row(form.remove_source, removeElementOptions) }}
+        {% endif %}
+        {{ block_widget(block) }}
+        {{ form_end(form) }}
     </div>
 {%- endblock %}
 
@@ -59,14 +69,4 @@
             </div>
         </div>
     </fieldset>
-    {% if workflowItem.data.get('allow_source_remove') %}
-        {% set removeElementOptions = {} %}
-        {% set removeLabel = workflowItem.data.get('source_remove_label') %}
-        {% if removeLabel %}
-            {% set removeElementOptions = removeElementOptions|merge({label: removeLabel}) %}
-        {% endif %}
-        {{ form_row(form.remove_source, removeElementOptions) }}
-    {% endif %}
-    {{ block_widget(block) }}
-    {{ form_end(form) }}
 {%- endblock %}
