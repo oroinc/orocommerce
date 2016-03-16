@@ -14,7 +14,6 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
 use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
-
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 
 class OrderLineItemTypeExtension extends AbstractTypeExtension
@@ -76,7 +75,7 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
                 [
                     'required' => false,
                     'mapped' => false,
-                    'label' => 'orob2b.order.orderlineitem.taxes.label'
+                    'label' => 'orob2b.tax.result.label'
                 ]
             )
             ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);

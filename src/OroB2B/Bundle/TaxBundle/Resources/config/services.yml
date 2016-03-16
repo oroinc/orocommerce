@@ -534,4 +534,4 @@ services:
             - @translator
             - @orob2b_tax.manager.tax_manager
         tags:
-            - { name: orob2b_order.subtotal_provider, priority: 11 }
+            - { name: orob2b_pricing.subtotal_provider, priority: 20 }

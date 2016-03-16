@@ -44,11 +44,6 @@
         'subblocks': [{'data' : [dataGrid.renderGrid('order-line-items-grid', { order_id: entity.id })]}]
     }]) %}
 
-    {% set dataBlocks = dataBlocks|merge([{
-        'title': 'orob2b.order.sections.order_line_items'|trans,
-        'subblocks': [{'data' : [lineItems]}]
-    }]) %}
-
     {% set shippingInformation %}
         {% if entity.shippingCost is not null %}
             {{ UI.renderHtmlProperty('orob2b.order.shipping_cost.label'|trans,

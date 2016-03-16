@@ -6,8 +6,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 use OroB2B\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Model\Subtotal;
-use OroB2B\Bundle\OrderBundle\SubtotalProcessor\SubtotalProviderInterface;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 
 class SubtotalTaxProvider implements SubtotalProviderInterface
 {
@@ -43,21 +43,37 @@ class SubtotalTaxProvider implements SubtotalProviderInterface
 
     /**
      * {@inheritdoc}
+     * @param Order $order
      */
-    public function getSubtotal(Order $order)
+    public function getSubtotal($order)
     {
         $subtotal = new Subtotal();
         $subtotal->setType(self::TYPE);
+
         $label = 'orob2b.tax.subtotals.' . self::TYPE;
         $subtotal->setLabel($this->translator->trans($label));
+
         try {
-            $tax = $this->taxManager->loadTax($order);
+            $tax = $this->taxManager->getTax($order);
             $subtotal->setAmount($tax->getTotal()->getTaxAmount());
             $subtotal->setCurrency($tax->getTotal()->getCurrency());
             $subtotal->setVisible(true);
         } catch (TaxationDisabledException $e) {
             $subtotal->setVisible(false);
         }
+
         return $subtotal;
+    }
+
+    /**
+     * Check to support provider entity
+     *
+     * @param $entity
+     *
+     * @return boolean
+     */
+    public function isSupported($entity)
+    {
+        return $entity instanceof Order;
     }
 }

@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\TaxBundle\OrderTax\Mapper;
 
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Selectable;
 use Doctrine\Common\Util\ClassUtils;
 
@@ -57,11 +56,7 @@ class OrderMapper extends AbstractOrderMapper
     {
         $storage = new \SplObjectStorage();
 
-        $criteria = Criteria::create();
-        $criteria->orderBy(['id' => Criteria::ASC]);
-
         $lineItems
-            ->matching($criteria)
             ->map(
                 function (OrderLineItem $item) use ($storage) {
                     $storage->attach($this->orderLineItemMapper->map($item));

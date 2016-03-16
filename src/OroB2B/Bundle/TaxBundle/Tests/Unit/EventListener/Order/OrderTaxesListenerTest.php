@@ -45,7 +45,7 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        unset($this->listener, $this->taxManager, $this->event);
+        unset($this->listener, $this->taxManager, $this->event, $this->numberFormatter);
     }
 
     /**
@@ -58,7 +58,6 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
     {
         $order = new Order();
         $data = new \ArrayObject();
-        $data->offsetSet('subtotals', ['tax' => ['amount' => 0]]);
 
         $this->taxManager->expects($this->once())
             ->method('getTax')
@@ -72,11 +71,12 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
         $this->event->expects($this->once())
             ->method('getOrder')
             ->willReturn($order);
-        $this->event->expects($this->exactly(3))
+
+        $this->event->expects($this->once())
             ->method('getData')
             ->willReturn($data);
 
-        $this->listener->OnOrderEvent($this->event);
+        $this->listener->onOrderEvent($this->event);
 
         $this->assertEquals($data->getArrayCopy(), $expectedResult);
     }
@@ -103,11 +103,6 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
             [
                 $result,
                 [
-                    'subtotals' => [
-                        'tax' => [
-                            'amount' => 5
-                        ],
-                    ],
                     'taxesItems' => [
                         [
                             'unit' => [

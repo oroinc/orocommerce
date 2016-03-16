@@ -74,8 +74,6 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildForm()
     {
-        $extension = $this->extension;
-
         $this->taxationSettingsProvider->expects($this->once())
             ->method('isEnabled')
             ->willReturn(true);
@@ -90,16 +88,16 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
                 [
                     'required' => false,
                     'mapped' => false,
-                    'label' => 'orob2b.order.orderlineitem.taxes.label'
+                    'label' => 'orob2b.tax.result.label'
                 ]
             )
             ->willReturn($builder);
 
         $builder->expects($this->once())
             ->method('addEventListener')
-            ->with(FormEvents::POST_SET_DATA, [$extension, 'onPostSetData']);
+            ->with(FormEvents::POST_SET_DATA, [$this->extension, 'onPostSetData']);
 
-        $extension->buildForm($builder, []);
+        $this->extension->buildForm($builder, []);
     }
 
     public function testOnPostSetDataDisabledProvider()
@@ -180,11 +178,13 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testConfigureOptions()
     {
-        $optionsResolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
-        $optionsResolver->expects($this->once())
-            ->method('setNormalizer');
+        $resolver = new OptionsResolver();
+        $resolver->setDefault('sections', []);
+        $this->extension->configureOptions($resolver);
+        $options = $resolver->resolve();
 
-        $this->extension->configureOptions($optionsResolver);
+        $this->assertArrayHasKey('sections', $options);
+        $this->assertArrayHasKey('taxes', $options['sections']);
     }
 
     /**
@@ -207,5 +207,21 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
             ->willReturn($data);
 
         return new FormEvent($mainForm, $data);
+    }
+
+    public function testOnBuildFormWithDisabledTaxes()
+    {
+        $this->taxationSettingsProvider->expects($this->once())
+            ->method('isEnabled')
+            ->willReturn(false);
+
+        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
+        $builder->expects($this->never())
+            ->method('add');
+
+        $builder->expects($this->never())
+            ->method('addEventListener');
+
+        $this->extension->buildForm($builder, []);
     }
 }

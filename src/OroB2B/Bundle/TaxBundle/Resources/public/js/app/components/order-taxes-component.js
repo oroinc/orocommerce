@@ -33,6 +33,11 @@ define(function(require) {
         appliedTaxesTemplate: null,
 
         /**
+         * @property string
+         */
+        lineItemDataAttr: 'data-tax-item',
+
+        /**
          * @inheritDoc
          */
         initialize: function(options) {
@@ -42,6 +47,7 @@ define(function(require) {
 
             OrderTaxesComponent.__super__.initialize.call(this, options);
             this.$el = options._sourceElement;
+            this.$el.attr(this.lineItemDataAttr, $.find('[' + this.lineItemDataAttr + ']').length);
             this.appliedTaxesTemplate = _.template(this.$el.parent().find(this.options.selectors.applied_taxes_template).text());
         },
 
@@ -49,8 +55,8 @@ define(function(require) {
          * @param {Object} response
          */
         setOrderTaxes: function(response) {
-            this.setTaxesData(this.$el.find('table').first(), response.taxesItems.shift());
-            mediator.trigger('line-items-totals:update');
+            var itemId = this.$el.attr(this.lineItemDataAttr);
+            this.setTaxesData(this.$el.find('table').first(), response.taxesItems[itemId]);
         },
 
         /**
