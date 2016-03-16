@@ -18,6 +18,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\OrderBundle\Model\DiscountAwareInterface;
 use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use OroB2B\Bundle\OrderBundle\Provider\IdentifierAwareInterface;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
@@ -64,8 +65,11 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  * )
  * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Order extends ExtendOrder implements
     OrganizationAwareInterface,
@@ -74,7 +78,8 @@ class Order extends ExtendOrder implements
     LineItemsAwareInterface,
     ShippingAwareInterface,
     CurrencyAwareInterface,
-    IdentifierAwareInterface
+    IdentifierAwareInterface,
+    DiscountAwareInterface
 {
     /**
      * @var integer
@@ -1046,7 +1051,7 @@ class Order extends ExtendOrder implements
     }
 
     /**
-     * Add line item
+     * Add discount
      *
      * @param OrderDiscount $discount
      *
@@ -1063,7 +1068,7 @@ class Order extends ExtendOrder implements
     }
 
     /**
-     * Remove line item
+     * Remove discount
      *
      * @param OrderDiscount $discount
      *
@@ -1079,7 +1084,7 @@ class Order extends ExtendOrder implements
     }
 
     /**
-     * Get orderProducts
+     * Get order discounts
      *
      * @return Collection|OrderDiscount[]
      */

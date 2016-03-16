@@ -50,7 +50,7 @@ class OrderDiscount
     /**
      * @var float
      *
-     * @ORM\Column(name="amount", type="money", nullable=true)
+     * @ORM\Column(name="amount", type="money", nullable=false)
      */
     protected $amount;
 
