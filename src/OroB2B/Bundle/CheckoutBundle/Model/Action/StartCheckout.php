@@ -306,6 +306,12 @@ class StartCheckout extends AbstractAction
             }
         }
 
+        if ($data) {
+            foreach ($data as &$value) {
+                $value = $this->contextAccessor->getValue($context, $value);
+            }
+        }
+
         return $data;
     }
 }
