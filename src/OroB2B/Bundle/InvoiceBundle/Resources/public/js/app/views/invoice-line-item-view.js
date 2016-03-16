@@ -74,7 +74,6 @@ define(function (require) {
         },
 
         initSubtotalListener: function () {
-            debugger;
             TotalsListener.listen([
                 this.fieldsByName.product,
                 this.fieldsByName.quantity,
