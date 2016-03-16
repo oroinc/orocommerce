@@ -4,6 +4,9 @@ namespace OroB2B\Bundle\OrderBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
@@ -127,34 +130,13 @@ class OrderType extends AbstractType
             ->add('sourceEntityId', 'hidden')
             ->add('sourceEntityIdentifier', 'hidden');
 
-        if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_BILLING)) {
-            $builder
-                ->add(
-                    'billingAddress',
-                    OrderAddressType::NAME,
-                    [
-                        'label' => 'orob2b.order.billing_address.label',
-                        'order' => $options['data'],
-                        'required' => false,
-                        'addressType' => AddressType::TYPE_BILLING,
-                    ]
-                );
-        }
-
-        if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_SHIPPING)) {
-            $builder
-                ->add(
-                    'shippingAddress',
-                    OrderAddressType::NAME,
-                    [
-                        'label' => 'orob2b.order.shipping_address.label',
-                        'order' => $options['data'],
-                        'required' => false,
-                        'addressType' => AddressType::TYPE_SHIPPING,
-                        'application' => OrderAddressType::APPLICATION_BACKEND
-                    ]
-                );
-        }
+        $this->addAddresses($builder, $order);
+        $builder->addEventListener(
+            FormEvents::SUBMIT,
+            function (FormEvent $event) {
+                $this->addAddresses($event->getForm(), $event->getData());
+            }
+        );
 
         if ($this->isOverridePaymentTermGranted()) {
             $builder
@@ -170,6 +152,33 @@ class OrderType extends AbstractType
                         ],
                     ]
                 );
+        }
+    }
+
+    /**
+     * @param FormBuilderInterface|FormInterface $form
+     * @param Order $order
+     */
+    protected function addAddresses($form, Order $order)
+    {
+        if (!$form instanceof FormInterface && !$form instanceof FormBuilderInterface) {
+            throw new \InvalidArgumentException('Invalid form');
+        }
+
+        foreach ([AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING] as $type) {
+            if ($this->orderAddressSecurityProvider->isAddressGranted($order, $type)) {
+                $form
+                    ->add(
+                        sprintf('%sAddress', $type),
+                        OrderAddressType::NAME,
+                        [
+                            'label' => sprintf('orob2b.order.%s_address.label', $type),
+                            'order' => $order,
+                            'required' => false,
+                            'addressType' => $type,
+                        ]
+                    );
+            }
         }
     }
 

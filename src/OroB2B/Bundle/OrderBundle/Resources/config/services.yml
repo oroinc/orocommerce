@@ -143,7 +143,6 @@ services:
         class: %orob2b_order.event_listener.order.address.class%
         arguments:
             - @templating
-            - @form.factory
         tags:
             - { name: kernel.event_listener, event: orob2b_order.order, method: onOrderEvent }
 
