@@ -37,10 +37,10 @@
                     'id': form.vars.id
                 }})
             }}
-            {{ block_widget(block) }}
             <div class="hidden">
                 {{ form_widget(form._token) }}
             </div>
+            {{ block_widget(block) }}
         </form>
         {{ oro_form_js_validation(form) }}
         {% else %}
