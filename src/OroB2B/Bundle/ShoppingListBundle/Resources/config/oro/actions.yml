@@ -11,7 +11,7 @@ operations:
         action_groups:
             -
                 name: orob2b_shoppinglist_createorder
-                arguments_mapping:
+                parameters_mapping:
                     data: $.data
 
     orob2b_shoppinglist_frontend_createorder:
@@ -26,7 +26,7 @@ operations:
         action_groups:
             -
                 name: orob2b_shoppinglist_frontend_createorder
-                arguments_mapping:
+                parameters_mapping:
                     data: $.data
 
     orob2b_shoppinglist_frontend_products_add_to_shoppinglist_base:
@@ -94,7 +94,7 @@ operations:
         action_groups:
             -
                 name: orob2b_shoppinglist_frontend_addlineitem
-                arguments_mapping:
+                parameters_mapping:
                     data: $.data
                     line_item: $.lineItem
                     form: $.form
@@ -150,7 +150,7 @@ operations:
         action_groups:
             -
                 name: orob2b_shoppinglist_addlineitem
-                arguments_mapping:
+                parameters_mapping:
                     data: $.data
                     line_item: $.lineItem
 
@@ -186,12 +186,12 @@ operations:
         action_groups:
             -
                 name: orob2b_shoppinglist_frontend_request_quote
-                arguments_mapping:
+                parameters_mapping:
                     data: $.data
 
 action_groups:
     orob2b_shoppinglist_createorder:
-        arguments:
+        parameters:
             data:
                 type: OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList
         acl_resource: orob2b_order_create
@@ -206,7 +206,7 @@ action_groups:
                     route_parameters: {'storage': true}
 
     orob2b_shoppinglist_frontend_createorder:
-        arguments:
+        parameters:
             data:
                 type: OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList
         acl_resource: orob2b_order_frontend_create
@@ -221,7 +221,7 @@ action_groups:
                     route_parameters: {'storage': true}
 
     orob2b_shoppinglist_frontend_addlineitem:
-        arguments:
+        parameters:
             data:
                 type: OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList
             line_item:
@@ -243,7 +243,7 @@ action_groups:
             - @refresh_grid: frontend-products-grid
 
     orob2b_shoppinglist_addlineitem:
-        arguments:
+        parameters:
             data:
                 type: OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList
             line_item:
@@ -268,7 +268,7 @@ action_groups:
             - @refresh_grid: shopping-list-line-items-grid
 
     orob2b_shoppinglist_frontend_request_quote:
-        arguments:
+        parameters:
             data:
                 type: OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList
         acl_resource: orob2b_rfp_frontend_request_create

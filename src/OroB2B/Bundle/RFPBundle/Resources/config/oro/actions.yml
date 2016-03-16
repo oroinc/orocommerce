@@ -34,7 +34,7 @@ operations:
         action_groups:
             -
                 name: orob2b_rfp_change_status
-                arguments_mapping:
+                parameters_mapping:
                     data: $.data
                     request_status: $.request_status
 
@@ -78,7 +78,7 @@ operations:
         action_groups:
             -
                 name: orob2b_rfp_cancel
-                arguments_mapping:
+                parameters_mapping:
                     data: $.data
                     cancellation_reason: $.cancellation_reason
                     cancelled_status_name: $.cancelledStatusName
@@ -100,7 +100,7 @@ operations:
         action_groups:
             -
                 name: orob2b_rfp_create_quote
-                arguments_mapping:
+                parameters_mapping:
                     data: $.data
 
     orob2b_rfp_frontend_request_a_quote:
@@ -163,7 +163,7 @@ operations:
         action_groups:
             -
                 name: orob2b_rfp_edit
-                arguments_mapping:
+                parameters_mapping:
                     data: $.data
 
     orob2b_rfp_resubmit:
@@ -210,7 +210,7 @@ operations:
         action_groups:
             -
                 name: orob2b_rfp_resubmit
-                arguments_mapping:
+                parameters_mapping:
                     data: $.data
 
     orob2b_rfp_delete:
@@ -238,13 +238,13 @@ operations:
         action_groups:
             -
                 name: orob2b_rfp_delete
-                arguments_mapping:
+                parameters_mapping:
                     data: $.data
                     deleted_status_name: $.deleted_status_name
 
 action_groups:
     orob2b_rfp_change_status:
-        arguments:
+        parameters:
             data:
                 type: OroB2B\Bundle\RFPBundle\Entity\Request
             request_status:
@@ -255,7 +255,7 @@ action_groups:
             - @format_string:
                 attribute: $.message
                 string: 'New status: %%status%% <p></p> %%note%%'
-                arguments:
+                parameters:
                     status: $request_status.label
                     note: $.request_note
             - @create_entity:
@@ -270,7 +270,7 @@ action_groups:
                 type: 'info'
 
     orob2b_rfp_cancel:
-        arguments:
+        parameters:
             data:
                 type: OroB2B\Bundle\RFPBundle\Entity\Request
             cancellation_reason:
@@ -297,7 +297,7 @@ action_groups:
                 type: 'info'
 
     orob2b_rfp_create_quote:
-        arguments:
+        parameters:
             data:
                 type: OroB2B\Bundle\RFPBundle\Entity\Request
         acl_resource: orob2b_sale_quote_create
@@ -314,7 +314,7 @@ action_groups:
                     route_parameters: {'storage': true}
 
     orob2b_rfp_edit:
-        arguments:
+        parameters:
             data:
                 type: OroB2B\Bundle\RFPBundle\Entity\Request
         acl_resource: orob2b_rfp_request_update
@@ -328,7 +328,7 @@ action_groups:
                     id: $data.id
 
     orob2b_rfp_resubmit:
-        arguments:
+        parameters:
             data:
                 type: OroB2B\Bundle\RFPBundle\Entity\Request
         acl_resource: orob2b_rfp_request_update
@@ -343,7 +343,7 @@ action_groups:
                     id: $data.id
 
     orob2b_rfp_delete:
-        arguments:
+        parameters:
             data:
                 type: OroB2B\Bundle\RFPBundle\Entity\Request
             deleted_status_name:

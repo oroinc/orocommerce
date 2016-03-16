@@ -43,13 +43,13 @@ operations:
         action_groups:
             -
                 name: orob2b_pricing_add_product_price
-                arguments_mapping:
+                parameters_mapping:
                     data: $.data
                     price: $.price
 
 action_groups:
     orob2b_pricing_add_product_price:
-        arguments:
+        parameters:
             data:
                 type: OroB2B\Bundle\PricingBundle\Entity\PriceList
             price:

@@ -15,7 +15,7 @@ operations:
         action_groups:
             -
                 name: orob2b_account_accountuser_disable
-                arguments_mapping:
+                parameters_mapping:
                     data: $.data
 
     orob2b_account_accountuser_enable:
@@ -34,7 +34,7 @@ operations:
         action_groups:
             -
                 name: orob2b_account_accountuser_enable
-                arguments_mapping:
+                parameters_mapping:
                     data: $.data
 
     orob2b_account_frontend_accountuser_disable:
@@ -57,7 +57,7 @@ operations:
         action_groups:
             -
                 name: orob2b_account_frontend_accountuser_disable
-                arguments_mapping:
+                parameters_mapping:
                     data: $.data
                     current_user: $.currentUser
 
@@ -81,7 +81,7 @@ operations:
         action_groups:
             -
                 name: orob2b_account_frontend_accountuser_enable
-                arguments_mapping:
+                parameters_mapping:
                     data: $.data
                     current_user: $.currentUser
 
@@ -100,7 +100,7 @@ operations:
         action_groups:
             -
                 name: orob2b_account_accountuser_confirm
-                arguments_mapping:
+                parameters_mapping:
                     data: $.data
 
     orob2b_account_accountuser_sendconfirmation:
@@ -118,12 +118,12 @@ operations:
         action_groups:
             -
                 name: orob2b_account_accountuser_sendconfirmation
-                arguments_mapping:
+                parameters_mapping:
                     data: $.data
 
 action_groups:
     orob2b_account_accountuser_disable:
-        arguments:
+        parameters:
             data:
                 type: OroB2B\Bundle\AccountBundle\Entity\AccountUser
         acl_resource: [EDIT, $data]
@@ -140,7 +140,7 @@ action_groups:
                 type: 'success'
 
     orob2b_account_accountuser_enable:
-        arguments:
+        parameters:
             data:
                 type: OroB2B\Bundle\AccountBundle\Entity\AccountUser
         acl_resource: [EDIT, $data]
@@ -157,7 +157,7 @@ action_groups:
                 type: 'success'
 
     orob2b_account_frontend_accountuser_disable:
-        arguments:
+        parameters:
             data:
                 type: OroB2B\Bundle\AccountBundle\Entity\AccountUser
             current_user:
@@ -178,7 +178,7 @@ action_groups:
                 type: 'success'
 
     orob2b_account_frontend_accountuser_enable:
-        arguments:
+        parameters:
             data:
                 type: OroB2B\Bundle\AccountBundle\Entity\AccountUser
             current_user:
@@ -200,7 +200,7 @@ action_groups:
                 type: 'success'
 
     orob2b_account_accountuser_confirm:
-        arguments:
+        parameters:
             data:
                 type: OroB2B\Bundle\AccountBundle\Entity\AccountUser
         acl_resource: [EDIT, $data]
@@ -220,7 +220,7 @@ action_groups:
                 type: 'success'
 
     orob2b_account_accountuser_sendconfirmation:
-        arguments:
+        parameters:
             data:
                 type: OroB2B\Bundle\AccountBundle\Entity\AccountUser
         acl_resource: [EDIT, $data]

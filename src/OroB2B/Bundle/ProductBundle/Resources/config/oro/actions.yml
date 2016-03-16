@@ -13,12 +13,12 @@ operations:
         action_groups:
             -
                 name: orob2b_product_duplicate
-                arguments_mapping:
+                parameters_mapping:
                     data: $.data
 
 action_groups:
     orob2b_product_duplicate:
-        arguments:
+        parameters:
             data:
                 type: OroB2B\Bundle\ProductBundle\Entity\Product
         acl_resource: orob2b_product_create

@@ -17,7 +17,7 @@ operations:
         action_groups:
             -
                 name: orob2b_sale_expire_quote
-                arguments_mapping:
+                parameters_mapping:
                     data: $.data
 
     orob2b_sale_notify_customer_by_email:
@@ -69,7 +69,7 @@ operations:
         action_groups:
             -
                 name: orob2b_sale_notify_customer_by_email
-                arguments_mapping:
+                parameters_mapping:
                     data: $.data
                     email: $.email
 
@@ -89,7 +89,7 @@ operations:
         action_groups:
             -
                 name: orob2b_sale_frontend_quote_accept_and_submit_to_order
-                arguments_mapping:
+                parameters_mapping:
                     data: $.data
 
     orob2b_sale_frontend_quote_accept_and_submit_to_order_from_widget:
@@ -133,13 +133,13 @@ operations:
         action_groups:
             -
                 name: orob2b_sale_frontend_quote_accept_and_submit_to_order_from_widget
-                arguments_mapping:
+                parameters_mapping:
                     data: $.data
                     quote_to_order: $.quote_to_order
 
 action_groups:
     orob2b_sale_expire_quote:
-        arguments:
+        parameters:
             data:
                 type: OroB2B\Bundle\SaleBundle\Entity\Quote
         conditions:
@@ -156,7 +156,7 @@ action_groups:
                 route: 'orob2b_sale_quote_index'
 
     orob2b_sale_notify_customer_by_email:
-        arguments:
+        parameters:
             data:
                 type: OroB2B\Bundle\SaleBundle\Entity\Quote
             email:
@@ -169,7 +169,7 @@ action_groups:
                 method_parameters: [$email, $data]
 
     orob2b_sale_frontend_quote_accept_and_submit_to_order:
-        arguments:
+        parameters:
             data:
                 type: OroB2B\Bundle\SaleBundle\Entity\Quote
         acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\OrderBundle\Entity\Order]
@@ -193,7 +193,7 @@ action_groups:
                     route_parameters: {id: $.order.id}
 
     orob2b_sale_frontend_quote_accept_and_submit_to_order_from_widget:
-        arguments:
+        parameters:
             data:
                 type: OroB2B\Bundle\SaleBundle\Entity\Quote
         acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\OrderBundle\Entity\Order]
@@ -217,7 +217,7 @@ action_groups:
                     route_parameters: {id: $.order.id}
 
     orob2b_sale_send_no_quote_alert:
-        arguments:
+        parameters:
             data:
                 type: OroB2B\Bundle\RFPBundle\Entity\Request
         actions:
