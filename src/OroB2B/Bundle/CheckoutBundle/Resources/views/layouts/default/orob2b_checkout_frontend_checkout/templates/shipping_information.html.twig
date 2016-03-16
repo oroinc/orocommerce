@@ -10,7 +10,7 @@
          }|json_encode }}">
         {{ form_row(form.shipping_address.accountAddress) }}
         {% set hasCustomAddress = false %}
-        {% if form.shipping_address.id.vars.value and form.shipping_address.accountAddress.vars.value %}
+        {% if form.shipping_address.id.vars.value and form.billing_address.accountAddress.vars.value %}
             {% set hasCustomAddress = true %}
         {% endif %}
         <div id="checkout-address-fields-container" class="{% if not hasCustomAddress %}hidden{% endif %}">
