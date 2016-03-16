@@ -9,6 +9,8 @@ use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 
 use OroB2B\Bundle\PricingBundle\EventListener\FrontendProductPriceDatagridListener;
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 
 class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatagridListenerTest
 {
@@ -22,10 +24,28 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
      */
     protected $numberFormatter;
 
+    /**
+     * @var ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $unitFormatter;
+
+    /**
+     * @var UserCurrencyProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $currencyProvider;
+
     public function setUp()
     {
         $this->numberFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\NumberFormatter')
-            ->disableOriginalConstructor()->getMock();
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->unitFormatter = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->currencyProvider = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         parent::setUp();
     }
 
@@ -37,7 +57,9 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
         return new FrontendProductPriceDatagridListener(
             $this->translator,
             $this->priceListRequestHandler,
-            $this->numberFormatter
+            $this->numberFormatter,
+            $this->unitFormatter,
+            $this->currencyProvider
         );
     }
 
@@ -51,42 +73,38 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
             ->method('getPriceListByAccount')
             ->willReturn($this->getPriceList($priceListId));
 
-        $this->priceListRequestHandler
+        $this->currencyProvider
             ->expects($this->any())
-            ->method('getPriceListSelectedCurrencies')
-            ->willReturn($priceCurrencies);
+            ->method('getUserCurrency')
+            ->willReturn(reset($priceCurrencies));
     }
 
     /**
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     *
      * @return array
      */
     public function onBuildBeforeDataProvider()
     {
         return [
-            'no request' => [],
-            'no price list id' => [
-                'priceCurrencies' => ['USD'],
-            ],
             'no currencies' => [
                 'priceListId' => 1,
+                'priceCurrencies' => [],
             ],
             'valid currencies' => [
                 'priceListId' => 1,
-                'priceCurrencies' => ['EUR', 'USD'],
+                'priceCurrencies' => ['EUR'],
                 'expectedConfig' => [
                     'columns' => [
-                        'price_column' => [
+                        'minimum_price' => [
                             'label' => 'orob2b.pricing.productprice.price_in_EUR.trans',
                         ],
-                        'price_unit_column' => [
-                            'label' => 'orob2b.product.productunit.entity_label.trans',
-                        ],
+                    ],
+                    'properties' => [
+                        'prices' => ['type' => 'field', 'frontend_type' => 'row_array'],
+                        'price_units' => null,
                     ],
                     'filters' => [
                         'columns' => [
-                            'price_column' => [
+                            'prices' => [
                                 'type' => 'product-price',
                                 'data_name' => 'EUR'
                             ],
@@ -94,8 +112,8 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
                     ],
                     'sorters' => [
                         'columns' => [
-                            'price_column' => [
-                                'data_name' => 'price_column',
+                            'minimum_price' => [
+                                'data_name' => 'minimum_price',
                                 'type' => PropertyInterface::TYPE_CURRENCY,
                             ],
                         ]
@@ -103,19 +121,20 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
                     'source' => [
                         'query' => [
                             'select' => [
-                                'min(price_column_table.value) as price_column',
-                                'IDENTITY(price_column_table.unit) as price_unit_column',
+                                'GROUP_CONCAT(prices_table.value SEPARATOR \'{sep}\') as prices',
+                                'GROUP_CONCAT(prices_table.unit SEPARATOR \'{sep}\') as price_units',
+                                'MIN(prices_table.value) as minimum_price',
                             ],
                             'join' => [
                                 'left' => [
                                     [
                                         'join' => 'OroB2BPricingBundle:ProductPrice',
-                                        'alias' => 'price_column_table',
+                                        'alias' => 'prices_table',
                                         'conditionType' => 'WITH',
-                                        'condition' => 'price_column_table.product = product.id ' .
-                                            'AND price_column_table.currency = \'EUR\' ' .
-                                            'AND price_column_table.priceList = 1 ' .
-                                            'AND price_column_table.quantity = 1',
+                                        'condition' => 'prices_table.product = product.id ' .
+                                            'AND prices_table.currency = \'EUR\' ' .
+                                            'AND prices_table.priceList = 1 ' .
+                                            'AND prices_table.quantity = 1',
                                     ],
                                 ],
                             ],
@@ -127,32 +146,41 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
     }
 
     /**
+     * @param string $priceCurrency
      * @param int|null $priceListId
-     * @param array $priceCurrencies
      * @param array $sourceResults
      * @param array $expectedResults
      * @dataProvider onResultAfterDataProvider
      */
     public function testOnResultAfter(
+        $priceCurrency,
         $priceListId = null,
-        array $priceCurrencies = [],
         array $sourceResults = [],
         array $expectedResults = []
     ) {
-        $currency = reset($priceCurrencies);
         $sourceResultRecords = [];
         foreach ($sourceResults as $sourceResult) {
             $sourceResultRecords[] = new ResultRecord($sourceResult);
         }
 
-        $this->setUpPriceListRequestHandler($priceListId, $priceCurrencies);
+        $this->setUpPriceListRequestHandler($priceListId, [$priceCurrency]);
 
-        foreach ($sourceResults as $key => $sourceResult) {
-            $this->numberFormatter->expects($this->at($key))
-                ->method('formatCurrency')
-                ->with($sourceResult['price_column'], $currency)
-                ->willReturn($currency . $sourceResult['price_column']);
-        }
+        $this->numberFormatter->expects($this->any())
+            ->method('formatCurrency')
+            ->willReturnCallback(
+                function ($price, $currency) {
+                    return $currency . $price;
+                }
+            );
+
+        $this->unitFormatter->expects($this->any())
+            ->method('format')
+            ->willReturnCallback(
+                function ($unit) {
+                    return $unit . '-formatted';
+                }
+            );
+
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
@@ -175,42 +203,72 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
     public function onResultAfterDataProvider()
     {
         return [
-            'no request' => [],
             'no price list id' => [
-                'priceCurrencies' => ['USD'],
+                'priceCurrency' => 'USD',
             ],
-            'no currencies' => [
+            'with price list' => [
+                'priceCurrency' => 'USD',
                 'priceListId' => 1,
             ],
             'valid data' => [
+                'priceCurrency' => 'EUR',
                 'priceListId' => 1,
-                'priceCurrencies' => ['EUR', 'USD'],
                 'sourceResults' => [
                     [
                         'id' => 2,
-                        'name' => 'second',
-                        'price_column' => 20.000,
-                        'price_unit_column' => 'box',
+                        'prices' => '20.000{sep}21.000',
+                        'price_units' => 'item{sep}piece',
                     ],
                     [
                         'id' => 3,
-                        'name' => 'third',
-                        'price_column' => 1.000,
-                        'price_unit_column' => 'litre',
+                        'prices' => '1.000{sep}2.000',
+                        'price_units' => 'box{sep}liter',
                     ],
                 ],
                 'expectedResults' => [
                     [
                         'id' => 2,
-                        'name' => 'second',
-                        'price_column' => 'EUR20',
-                        'price_unit_column' => 'box',
+                        'prices' => [
+                            'item' => [
+                                'price' => 20,
+                                'currency' => 'EUR',
+                                'formatted_price' => 'EUR20',
+                                'unit' => 'item',
+                                'formatted_unit' => 'item-formatted',
+
+                            ],
+                            'piece' => [
+                                'price' => 21,
+                                'currency' => 'EUR',
+                                'formatted_price' => 'EUR21',
+                                'unit' => 'piece',
+                                'formatted_unit' => 'piece-formatted',
+
+                            ],
+                        ],
+                        'price_units' => null,
                     ],
                     [
                         'id' => 3,
-                        'name' => 'third',
-                        'price_column' => 'EUR1',
-                        'price_unit_column' => 'litre',
+                        'prices' => [
+                            'box' => [
+                                'price' => 1,
+                                'currency' => 'EUR',
+                                'formatted_price' => 'EUR1',
+                                'unit' => 'box',
+                                'formatted_unit' => 'box-formatted',
+
+                            ],
+                            'liter' => [
+                                'price' => 2,
+                                'currency' => 'EUR',
+                                'formatted_price' => 'EUR2',
+                                'unit' => 'liter',
+                                'formatted_unit' => 'liter-formatted',
+
+                            ],
+                        ],
+                        'price_units' => null,
                     ],
                 ],
             ],

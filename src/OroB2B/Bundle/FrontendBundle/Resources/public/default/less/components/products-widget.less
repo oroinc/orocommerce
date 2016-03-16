@@ -706,6 +706,10 @@
       display: none;
     }
   }
+
+  .product-item__price_block {
+    display: inline-table;
+  }
 }
 
 .product-item__price_mobile {
@@ -826,9 +830,7 @@
       }
     }
 
-    .btn {
-      @gutter: 60px;
-      width: calc(~"100% - @{gutter}");
+    .btn_has-dropdown {
       margin-top: 1.5rem;
 
       @media (max-width: 1235px) {
@@ -838,6 +840,12 @@
 
     @media (max-width: 991px) {
       display: none;
+    }
+  }
+
+  &.product-item__qty_list-view {
+    .product-item__qty__current-grid {
+      margin-top: 1rem;
     }
   }
 
@@ -857,6 +865,12 @@
 
       @media (min-width: 992px) {
         margin-top: 0;
+      }
+    }
+
+    .add-product-from-view-component {
+      .btn_has-dropdown {
+        margin-top: 1.5rem;
       }
     }
   }
@@ -910,6 +924,10 @@
 
   &.oro-more-info-toggler_list-view {
     display: none;
+  }
+
+  &.oro-more-info-toggler_gallery-view {
+    margin-bottom: 1rem;
   }
 
   &.oro-more-info-toggler_no-image-view {

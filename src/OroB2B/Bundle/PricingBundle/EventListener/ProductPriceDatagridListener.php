@@ -164,6 +164,14 @@ class ProductPriceDatagridListener extends AbstractProductPriceDatagridListener
     }
 
     /**
+     * @return array
+     */
+    protected function getCurrencies()
+    {
+        return $this->priceListRequestHandler->getPriceListSelectedCurrencies($this->getPriceList());
+    }
+
+    /**
      * @param string $currency
      * @param bool $renderable
      * @param ProductUnit|null $unit

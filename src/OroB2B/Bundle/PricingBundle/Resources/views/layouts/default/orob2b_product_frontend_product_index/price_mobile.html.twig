@@ -2,9 +2,14 @@
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " product-item__price_mobile product-item__price_mobile_<%= themeOptions.view %>"
     }) %}
-    <div {{ block('block_attributes_raw_class') }}>
-        <% if (model.price_column) { %>
-            {{ 'orob2b.pricing.frontend.pricelist.index.your_price'|trans }} <span class="fs16 blue"><%= model.price_column %></span> / <%= model.price_unit_column %>
+    <div {{ block('block_attributes') }}>
+        <% if (!_.isEmpty(model.prices)) { %>
+            {{ 'orob2b.pricing.frontend.pricelist.index.your_price'|trans }}
+            <div class="product-item__price_block">
+                <% _.each(model.prices, function(price, forField) { %>
+                    <div><span class="fs16 blue"><%= price.formatted_price %></span> / <%= price.formatted_unit %></div>
+                <% }) %>
+            </div>
         <% } %>
     </div>
 {% endblock %}

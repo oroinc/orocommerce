@@ -2,11 +2,11 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
+use Symfony\Component\Translation\TranslatorInterface;
+
 use Doctrine\ORM\Query\Expr;
 
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
@@ -94,10 +94,7 @@ abstract class AbstractProductPriceDatagridListener
     /**
      * @return array
      */
-    protected function getCurrencies()
-    {
-        return $this->priceListRequestHandler->getPriceListSelectedCurrencies($this->getPriceList());
-    }
+    abstract protected function getCurrencies();
 
     /**
      * @param ProductPrice[] $prices
