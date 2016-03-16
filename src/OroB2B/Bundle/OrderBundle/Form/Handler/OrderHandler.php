@@ -4,13 +4,14 @@ namespace OroB2B\Bundle\OrderBundle\Form\Handler;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 
 class OrderHandler
