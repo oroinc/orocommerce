@@ -6,16 +6,17 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
+use Oro\Bundle\WorkflowBundle\Model\Step;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\ContinueTransitionDataProvider;
+use OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\BackTransitionsDataProvider;
 use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
 
-class ContinueTransitionDataProviderTest extends AbstractTransitionDataProviderTest
+class BackTransitionsDataProviderTest extends AbstractTransitionDataProviderTest
 {
     /**
-     * @var ContinueTransitionDataProvider
+     * @var BackTransitionsDataProvider
      */
     protected $dataProvider;
 
@@ -23,7 +24,7 @@ class ContinueTransitionDataProviderTest extends AbstractTransitionDataProviderT
     {
         parent::setUp();
 
-        $this->dataProvider = new ContinueTransitionDataProvider($this->workflowManager);
+        $this->dataProvider = new BackTransitionsDataProvider($this->workflowManager);
     }
 
     public function testGetData()
@@ -35,17 +36,20 @@ class ContinueTransitionDataProviderTest extends AbstractTransitionDataProviderT
         $checkout->setWorkflowItem($workflowItem);
         $context = $this->prepareContext($checkout);
 
-        $transitionWithoutForm = new Transition();
-        $transitionWithoutForm->setName('transition1');
+        $transition = new Transition();
+        $transition->setName('transition1');
 
-        $continueTransition = new Transition();
-        $continueTransition->setName('transition3');
-        $continueTransition->setFrontendOptions(['is_checkout_continue' => true]);
-        $continueTransition->setFormType('transition_type');
+        $step = new Step();
+        $step->setName('to_step');
+        $step->setOrder(10);
+        $backTransition = new Transition();
+        $backTransition->setName('transition3');
+        $backTransition->setFrontendOptions(['is_checkout_back' => true]);
+        $backTransition->setStepTo($step);
 
         $transitions = [
-            $transitionWithoutForm,
-            $continueTransition
+            $transition,
+            $backTransition
         ];
 
         $this->workflowManager->expects($this->once())
@@ -53,7 +57,7 @@ class ContinueTransitionDataProviderTest extends AbstractTransitionDataProviderT
             ->with($workflowItem)
             ->will($this->returnValue($transitions));
 
-        $expected = new TransitionData($continueTransition, true, new ArrayCollection());
+        $expected = [$step->getName() => new TransitionData($backTransition, true, new ArrayCollection())];
         $this->assertEquals($expected, $this->dataProvider->getData($context));
     }
 }

@@ -27,7 +27,7 @@ class SummaryDataProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @var LineItemSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $lineItemsSubtotalProvider;
+    protected $lineItemSubtotalProvider;
 
     /**
      * @var SummaryDataProvider
@@ -41,14 +41,14 @@ class SummaryDataProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->lineItemsSubtotalProvider = $this
+        $this->lineItemSubtotalProvider = $this
             ->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->provider = new SummaryDataProvider(
             $this->checkoutLineItemsManager,
-            $this->lineItemsSubtotalProvider
+            $this->lineItemSubtotalProvider
         );
     }
 
@@ -78,7 +78,7 @@ class SummaryDataProviderTest extends \PHPUnit_Framework_TestCase
         $generalTotal->setAmount('600');
         $generalTotal->setCurrency('USD');
 
-        $this->lineItemsSubtotalProvider->expects($this->once())
+        $this->lineItemSubtotalProvider->expects($this->once())
             ->method('getSubtotal')
             ->willReturn($generalTotal);
 
@@ -86,7 +86,7 @@ class SummaryDataProviderTest extends \PHPUnit_Framework_TestCase
         for ($i = 0; $i < count($expected['lineItemTotals']); $i++) {
             /** @var Price $total */
             $total = array_shift($lineItemTotals);
-            $this->lineItemsSubtotalProvider->expects($this->at($i))
+            $this->lineItemSubtotalProvider->expects($this->at($i))
                 ->method('getRowTotal')
                 ->willReturn($total->getValue());
         }

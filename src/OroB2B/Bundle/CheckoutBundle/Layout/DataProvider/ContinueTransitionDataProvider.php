@@ -3,28 +3,18 @@
 namespace OroB2B\Bundle\CheckoutBundle\Layout\DataProvider;
 
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
-use Oro\Bundle\WorkflowBundle\Model\Transition;
-use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
-use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
+use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
 
-class ContinueTransitionDataProvider extends AbstractServerRenderDataProvider
+class ContinueTransitionDataProvider extends AbstractTransitionDataProvider
 {
     /**
-     * @var WorkflowManager
+     * @var array
      */
-    protected $workflowManager;
-
-    /**
-     * @param WorkflowManager $workflowManager
-     */
-    public function __construct(WorkflowManager $workflowManager)
-    {
-        $this->workflowManager = $workflowManager;
-    }
-
+    protected $continueTransitions = [];
+    
     /**
      * {@inheritdoc}
      */
@@ -33,23 +23,29 @@ class ContinueTransitionDataProvider extends AbstractServerRenderDataProvider
         /** @var Checkout $checkout */
         $checkout = $context->data()->get('checkout');
 
-        return  $this->getContinueTransition($checkout->getWorkflowItem());
+        return $this->getContinueTransition($checkout->getWorkflowItem());
     }
 
     /**
      * @param WorkflowItem $workflowItem
-     * @return null|Transition
+     * @return null|TransitionData
      */
-    protected function getContinueTransition(WorkflowItem $workflowItem)
+    public function getContinueTransition(WorkflowItem $workflowItem)
     {
-        $transitions = $this->workflowManager->getTransitionsByWorkflowItem($workflowItem);
-        foreach ($transitions as $transition) {
-            $frontendOptions = $transition->getFrontendOptions();
-            if ($transition->hasForm() && !empty($frontendOptions['is_checkout_continue'])) {
-                return $transition;
+        $cacheKey = $workflowItem->getId() . '_' . $workflowItem->getCurrentStep()->getId();
+        if (!array_key_exists($cacheKey, $this->continueTransitions)) {
+            $continueTransition = null;
+            $transitions = $this->workflowManager->getTransitionsByWorkflowItem($workflowItem);
+            foreach ($transitions as $transition) {
+                $frontendOptions = $transition->getFrontendOptions();
+                if (!empty($frontendOptions['is_checkout_continue'])) {
+                    $continueTransition = $this->getTransitionData($transition, $workflowItem);
+                    break;
+                }
             }
+            $this->continueTransitions[$cacheKey] = $continueTransition;
         }
 
-        return null;
+        return $this->continueTransitions[$cacheKey];
     }
 }

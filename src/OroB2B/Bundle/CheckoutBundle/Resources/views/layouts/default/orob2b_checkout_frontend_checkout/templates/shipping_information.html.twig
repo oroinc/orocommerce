@@ -1,21 +1,4 @@
-{% block _checkout_shipping_information_widget -%}
-    <div class="checkout__head">
-        <h2 class="checkout__title">
-            <span class="badge badge_md badge_circle badge_orange">1</span>
-            {{ workflowStep.label|trans }}
-        </h2>
-    </div>
-    {{ block_widget(block) }}
-{%- endblock %}
-
-{% block _checkout_shipping_form_widget -%}
-    <div class="checkout__body">
-        {{ block_widget(block) }}
-    </div>
-{%- endblock %}
-
-{% block _checkout_shipping_form_fields_widget -%}
-    {{ form_start(form) }}
+{% block _checkout_form_fields_widget -%}
     <div data-page-component-module="oroui/js/app/components/view-component"
          data-page-component-options="{{ {
              view: 'orob2bcheckout/js/app/views/address-view',
@@ -63,26 +46,10 @@
                 {{ form_row(form.save_shipping_address) }}
             </fieldset>
 
-            <div class="hidden">
-                {{ form_row(form.shipping_address.id) }}
-                {{ form_row(form.shipping_address.region_text) }}
-            </div>
+            <fieldset class="hidden">
+                {{ form_widget(form.shipping_address.id) }}
+                {{ form_widget(form.shipping_address.region_text) }}
+            </fieldset>
         </div>
-
-    </div>
-    {{ form_end(form) }}
-{%- endblock %}
-
-{% block _checkout_shipping_form_button_widget -%}
-    <fieldset class="checkout__form__row">
-        <div class="create-account__form__req-text"><sup>*</sup>Required Field</div>
-        <div class="create-account__form__col form__col_x12">
-            <button type="submit" class="btn btn_orange btn_lg checkout__form__submit">
-                Continue<i class="icon-right-open-mini va-m_md"></i>
-            </button>
-        </div>
-    </fieldset>
-    <div class="checkout__form__back">
-        <a href="#"><i class="icon-left-open-mini"></i>Back</a>
     </div>
 {%- endblock %}
