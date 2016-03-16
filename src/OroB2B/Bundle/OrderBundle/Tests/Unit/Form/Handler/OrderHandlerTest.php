@@ -10,6 +10,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use OroB2B\Bundle\OrderBundle\Form\Handler\OrderHandler;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
+use OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
@@ -21,6 +22,9 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemSubtotalProvider */
     protected $lineItemSubtotalProvider;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|DiscountSubtotalProvider */
+    protected $discountSubtotalProvider;
 
     /** @var OrderHandler */
     protected $handler;
@@ -59,6 +63,11 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->discountSubtotalProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->entity = new Order();
 
         $this->handler = new OrderHandler(
@@ -66,7 +75,8 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
             $this->request,
             $this->manager,
             $this->totalsProvider,
-            $this->lineItemSubtotalProvider
+            $this->lineItemSubtotalProvider,
+            $this->discountSubtotalProvider
         );
     }
 

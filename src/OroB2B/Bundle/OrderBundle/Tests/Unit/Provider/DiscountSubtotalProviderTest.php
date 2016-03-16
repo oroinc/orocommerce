@@ -2,21 +2,20 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Provider;
 
-use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Provider\SubtotalDiscountProvider;
+use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
+use OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
-class SubtotalDiscountProviderTest extends \PHPUnit_Framework_TestCase
+class DiscountSubtotalProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var SubtotalDiscountProvider
+     * @var DiscountSubtotalProvider
      */
     protected $provider;
 
@@ -67,7 +66,7 @@ class SubtotalDiscountProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->provider = new SubtotalDiscountProvider(
+        $this->provider = new DiscountSubtotalProvider(
             $this->translator,
             $this->roundingService,
             $this->lineItemSubtotal,
@@ -84,8 +83,8 @@ class SubtotalDiscountProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->translator->expects($this->never())
             ->method('trans')
-            ->with('orob2b.order.subtotals.' . SubtotalDiscountProvider::TYPE)
-            ->willReturn(ucfirst(SubtotalDiscountProvider::TYPE));
+            ->with('orob2b.order.subtotals.' . DiscountSubtotalProvider::TYPE)
+            ->willReturn(ucfirst(DiscountSubtotalProvider::TYPE));
 
         $order = new Order();
         $currency = 'USD';
@@ -99,8 +98,8 @@ class SubtotalDiscountProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->translator->expects($this->exactly(3))
             ->method('trans')
-            ->with('orob2b.order.subtotals.' . SubtotalDiscountProvider::TYPE)
-            ->willReturn(ucfirst(SubtotalDiscountProvider::TYPE));
+            ->with('orob2b.order.subtotals.' . DiscountSubtotalProvider::TYPE)
+            ->willReturn(ucfirst(DiscountSubtotalProvider::TYPE));
         $subtotalMock =  $this->getMock('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal');
         $this->lineItemSubtotal->expects($this->once())
             ->method('getSubtotal')
@@ -131,7 +130,7 @@ class SubtotalDiscountProviderTest extends \PHPUnit_Framework_TestCase
         $threadDiscountSubtotal = $subtotal[2];
         $this->assertCount(3, $subtotal);
         $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $firstDiscountSubtotal);
-        $this->assertEquals(SubtotalDiscountProvider::TYPE, $firstDiscountSubtotal->getType());
+        $this->assertEquals(DiscountSubtotalProvider::TYPE, $firstDiscountSubtotal->getType());
         $this->assertEquals($description . ' (Discount)', $firstDiscountSubtotal->getLabel());
         $this->assertEquals('Discount', $secondDiscountSubtotal->getLabel());
         $this->assertEquals($order->getCurrency(), $firstDiscountSubtotal->getCurrency());
@@ -145,8 +144,8 @@ class SubtotalDiscountProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with('orob2b.order.subtotals.' . SubtotalDiscountProvider::TYPE)
-            ->willReturn(ucfirst(SubtotalDiscountProvider::TYPE));
+            ->with('orob2b.order.subtotals.' . DiscountSubtotalProvider::TYPE)
+            ->willReturn(ucfirst(DiscountSubtotalProvider::TYPE));
 
         $accountUser = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountUser');
         $this->securityFacade->expects($this->once())
@@ -166,7 +165,7 @@ class SubtotalDiscountProviderTest extends \PHPUnit_Framework_TestCase
         $discountSubtotal = $subtotal[0];
         $this->assertCount(1, $subtotal);
         $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $discountSubtotal);
-        $this->assertEquals(SubtotalDiscountProvider::TYPE, $discountSubtotal->getType());
+        $this->assertEquals(DiscountSubtotalProvider::TYPE, $discountSubtotal->getType());
         $this->assertEquals($description, $discountSubtotal->getLabel());
         $this->assertEquals($order->getCurrency(), $discountSubtotal->getCurrency());
         $this->assertInternalType('float', $discountSubtotal->getAmount());
@@ -189,6 +188,6 @@ class SubtotalDiscountProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetName()
     {
-        $this->assertEquals(SubtotalDiscountProvider::NAME, $this->provider->getName());
+        $this->assertEquals(DiscountSubtotalProvider::NAME, $this->provider->getName());
     }
 }

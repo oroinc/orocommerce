@@ -15,8 +15,8 @@ parameters:
     orob2b_order.model.order_currency_handler.class: OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler
     orob2b_order.event_listener.form_view.class: OroB2B\Bundle\OrderBundle\EventListener\FormViewListener
 
-    orob2b_order.provider.subtotal_shipping_cost.class: OroB2B\Bundle\OrderBundle\Provider\SubtotalShippingCostProvider
-    orob2b_order.provider.subtotal_discount.class: OroB2B\Bundle\OrderBundle\Provider\SubtotalDiscountProvider
+    orob2b_order.provider.shipping_cost_subtotal.class: OroB2B\Bundle\OrderBundle\Provider\ShippingCostSubtotalProvider
+    orob2b_order.provider.discount_subtotal.class: OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider
 
     orob2b_order.twig.order.class: OroB2B\Bundle\OrderBundle\Twig\OrderExtension
 
@@ -43,16 +43,16 @@ services:
         tags:
             - { name: doctrine.event_listener, event: postPersist }
 
-    orob2b_order.provider.subtotal_shipping_cost:
-        class: %orob2b_order.provider.subtotal_shipping_cost.class%
+    orob2b_order.provider.shipping_cost_subtotal:
+        class: %orob2b_order.provider.shipping_cost_subtotal.class%
         arguments:
             - @translator
             - @orob2b_pricing.rounding.price_rounding_service
         tags:
             - { name: orob2b_pricing.subtotal_provider, priority: 20 }
 
-    orob2b_order.provider.subtotal_discount:
-        class: %orob2b_order.provider.subtotal_discount.class%
+    orob2b_order.provider.discount_subtotal:
+        class: %orob2b_order.provider.discount_subtotal.class%
         arguments:
             - @translator
             - @orob2b_pricing.rounding.price_rounding_service

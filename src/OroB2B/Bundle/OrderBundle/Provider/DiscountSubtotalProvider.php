@@ -16,7 +16,7 @@ use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 
-class SubtotalDiscountProvider implements SubtotalProviderInterface
+class DiscountSubtotalProvider implements SubtotalProviderInterface
 {
     const TYPE = 'discount';
     const NAME = 'orob2b_order.subtotal_discount_cost';
