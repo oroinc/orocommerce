@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\OrderBundle\EventListener\Order;
 
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Templating\EngineInterface;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
@@ -15,17 +14,12 @@ class OrderAddressEventListener
     /** @var EngineInterface */
     protected $engine;
 
-    /** @var FormFactoryInterface */
-    protected $factory;
-
     /**
      * @param EngineInterface $engine
-     * @param FormFactoryInterface $factory
      */
-    public function __construct(EngineInterface $engine, FormFactoryInterface $factory)
+    public function __construct(EngineInterface $engine)
     {
         $this->engine = $engine;
-        $this->factory = $factory;
     }
 
     /**
@@ -34,17 +28,10 @@ class OrderAddressEventListener
     public function onOrderEvent(OrderEvent $event)
     {
         $orderForm = $event->getForm();
-        $newForm = $this->factory->createNamed(
-            $orderForm->getName(),
-            $orderForm->getConfig()->getType(),
-            $orderForm->getData(),
-            $orderForm->getConfig()->getOptions()
-        );
-
         foreach ([AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING] as $type) {
             $fieldName = sprintf('%sAddress', $type);
-            if ($newForm->has($fieldName)) {
-                $field = $newForm->get($fieldName);
+            if ($orderForm->has($fieldName)) {
+                $field = $orderForm->get($fieldName);
                 $view = $this->renderForm($field->createView());
                 $event->getData()->offsetSet($fieldName, $view);
             }
