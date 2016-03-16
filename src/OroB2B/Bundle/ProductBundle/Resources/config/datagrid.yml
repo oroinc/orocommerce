@@ -142,6 +142,10 @@ datagrid:
         options:
             entityHint:        product
             entity_pagination: true
+            displayOptions:
+                selector: '.catalog__filter-controls__item_display-options'
+            requireJSModules:
+                - orob2bproduct/js/app/datagrid/frontend-product-display-options-builder
         source:
             type:         orm
             query:
