@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Controller;
 
-use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
@@ -14,6 +13,7 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
 
 /**
  * @dbIsolation
