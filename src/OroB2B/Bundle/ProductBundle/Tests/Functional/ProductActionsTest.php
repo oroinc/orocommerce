@@ -29,7 +29,7 @@ class ProductActionsTest extends WebTestCase
 
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
-        $this->executeAction($product, 'orob2b_product_duplicate_action');
+        $this->executeAction($product, 'orob2b_product_duplicate');
 
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);

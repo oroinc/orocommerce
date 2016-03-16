@@ -1,5 +1,5 @@
-actions:
-    orob2b_product_duplicate_action:
+operations:
+    orob2b_product_duplicate:
         label: orob2b.product.ui.duplicate
         applications: [backend]
         routes:
@@ -10,11 +10,23 @@ actions:
         order: 10
         button_options:
             icon: icon-copy
-        functions:
+        action_groups:
+            -
+                name: orob2b_product_duplicate
+                arguments_mapping:
+                    data: $.data
+
+action_groups:
+    orob2b_product_duplicate:
+        arguments:
+            data:
+                type: OroB2B\Bundle\ProductBundle\Entity\Product
+        acl_resource: orob2b_product_create
+        actions:
             - @call_service_method:
                 service: orob2b_product.service.duplicator
                 method: duplicate
-                method_parameters: [$.data]
+                method_parameters: [$data]
                 attribute: $.productCopy
             - @redirect:
                 parameters:
