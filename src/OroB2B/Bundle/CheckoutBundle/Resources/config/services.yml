@@ -4,7 +4,6 @@ parameters:
     orob2b_checkout.entity.checkout.class: OroB2B\Bundle\CheckoutBundle\Entity\Checkout
     orob2b_checkout.entity.checkout_source.class: OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource
 
-    orob2b_checkout.data_provider.manager.class: OroB2B\Component\Checkout\DataProvider\CheckoutDataProviderManager
     orob2b_checkout.layout.data_provider.summary.class: OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\SummaryDataProvider
     orob2b_checkout.layout.data_provider.abstract_transition.class: OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\AbstractTransitionDataProvider
     orob2b_checkout.layout.data_provider.transition_form.class: OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormDataProvider
@@ -22,8 +21,6 @@ services:
         arguments:
             - @oro_workflow.manager
 
-    orob2b_checkout.data_provider.manager:
-        class: %orob2b_checkout.data_provider.manager.class%
     orob2b_checkout.data_provider.converter.checkout_line_items:
         class: %orob2b_checkout.data_provider.converter.checkout_line_items.class%
 

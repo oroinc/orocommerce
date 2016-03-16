@@ -39,6 +39,9 @@ class TransitionFormDataProvider extends AbstractServerRenderDataProvider
         $this->formFactory = $formFactory;
     }
 
+    /**
+     * @param DataProviderInterface $continueTransitionDataProvider
+     */
     public function setContinueTransitionDataProvider(DataProviderInterface $continueTransitionDataProvider)
     {
         $this->continueTransitionDataProvider = $continueTransitionDataProvider;
