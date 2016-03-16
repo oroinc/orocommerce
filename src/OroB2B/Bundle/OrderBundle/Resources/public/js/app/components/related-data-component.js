@@ -18,8 +18,6 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            relatedDataRoute: '',
-            formName: '',
             selectors: {
                 account: 'input[name$="[account]"]',
                 accountUser: 'input[name$="[accountUser]"]',
