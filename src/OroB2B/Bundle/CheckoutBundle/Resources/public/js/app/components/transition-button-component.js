@@ -8,13 +8,18 @@ define(function(require) {
     var _ = require('underscore');
 
     var TransitionButtonComponent;
-    TransitionButtonComponent = BaseComponent.extend(/** @exports TransitionButtonComponent.prototype */{
+
+    TransitionButtonComponent = BaseComponent.extend({
         defaults: {
             transitionUrl: null,
             message: null,
             conditionMessages: [],
             enabled: true,
-            hasForm: false
+            hasForm: false,
+            selectors: {
+                checkoutSidebar: '[data-role="checkout-sidebar"]',
+                checkoutContent: '[data-role="checkout-content"]'
+            }
         },
 
         /**
@@ -65,8 +70,10 @@ define(function(require) {
                 mediator.execute('redirectTo', {url: response.redirectUrl});
             } else {
                 var $response = $(response);
-                $('[data-role="checkout-sidebar"]').html($response.find('[data-role="checkout-sidebar"]').html());
-                $('[data-role="checkout-content"]').html($response.find('[data-role="checkout-content"]').html());
+                $(this.defaults.selectors.checkoutSidebar)
+                    .html($response.find(this.defaults.selectors.checkoutSidebar).html());
+                $(this.defaults.selectors.checkoutContent)
+                    .html($response.find(this.defaults.selectors.checkoutContent).html());
 
                 mediator.trigger('checkout-content:updated');
             }
