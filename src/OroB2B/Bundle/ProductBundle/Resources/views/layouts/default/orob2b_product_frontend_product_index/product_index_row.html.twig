@@ -14,12 +14,19 @@
         class: attr.class|default('') ~ " product-item__image-holder product-item__image-holder_<%= themeOptions.view %>"
     }) %}
     <div {{ block('block_attributes') }}>
-        <a href="#" class="view-product"><img src="<% if (model.image) { %><%= model.image %><% } else { %>
-            {%- image '@OroB2BProductBundle/Resources/public/default/images/no_image.png' %}{{ asset_url }}"{% endimage -%}
-        <% } %>" alt=""/></a>
-        <div data-toggle="modal" data-target="#product1" class="product-item__quick-view-btn">
-            <span class="btn btn-dark btn_sm">Quick View</span>
-        </div>
+        {% image '@OroB2BProductBundle/Resources/public/default/images/no_image.png' %}{% set noImageUrl = asset_url %}{% endimage %}
+        <a href="javascript:void(0)" class="view-product" style="background-image: url('<% if (model.image) { %><%= model.image %><% } else { %>{{ noImageUrl }}<% } %>')"></a>
+    </div>
+{% endblock %}
+
+{% block _product_grid_row_quick_view_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " product-item__quick-view-btn",
+        'data-toggle': 'modal',
+        'data-target': '#product',
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <span class="btn btn-dark btn_sm">Quick View</span>
     </div>
 {% endblock %}
 
@@ -28,7 +35,7 @@
         class: attr.class|default('') ~ " product-item__title product-item__title_<%= themeOptions.view %>"
     }) %}
     <h3 {{ block('block_attributes') }}>
-        <a href="#" class="view-product"><%= model.name %></a>
+        <a href="javascript:void(0)" class="view-product"><%= model.name %></a>
     </h3>
 {% endblock %}
 
@@ -98,7 +105,7 @@
         class: attr.class|default('') ~ " product__view-details-link product__view-details-link_<%= themeOptions.view %>"
     }) %}
     <div {{ block('block_attributes') }}>
-        <a href="#" class="view-product">
+        <a href="javascript:void(0)" class="view-product">
             <span class="underlined">{{ 'orob2b.product.frontend.index.view_details'|trans }}</span><i class="icon-right-open-mini"></i>
         </a>
     </div>
