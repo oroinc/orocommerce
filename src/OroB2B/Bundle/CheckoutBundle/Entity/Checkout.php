@@ -23,8 +23,6 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
- * @todo Add currency field
- * @todo Add remove settings field
  * @ORM\Table(name="orob2b_checkout")
  * @ORM\Entity
  * @Config(
@@ -172,9 +170,16 @@ class Checkout extends ExtendCheckout implements
     protected $website;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="currency", type="string", length=3, nullable=true)
+     */
+    protected $currency;
+
+    /**
      * @var CheckoutSource
      *
-     * @ORM\OneToOne(targetEntity="OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity="OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource", cascade={"persist", "remove"})
      * @ORM\JoinColumn(name="source_id", referencedColumnName="id", nullable=false)
      */
     protected $source;
@@ -534,5 +539,24 @@ class Checkout extends ExtendCheckout implements
     public function toString()
     {
         return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * @param string $currency
+     * @return Checkout
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
+
+        return $this;
     }
 }

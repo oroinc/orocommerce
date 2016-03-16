@@ -1,5 +1,4 @@
 workflows:
-# TODO: Add options to store disabled steps options (disallow_shipping_address_edit, ...)
     b2b_flow_checkout:
         label: orob2b.checkout.workflow.b2b_flow_checkout.label
         entity: OroB2B\Bundle\CheckoutBundle\Entity\Checkout
@@ -24,7 +23,18 @@ workflows:
                 property_path: checkout.shipUntil
             customer_notes:
                 property_path: checkout.customerNotes
-
+            allow_source_remove:
+                type: boolean
+                label: Allow source entity removal
+            remove_source:
+                type: boolean
+                label: orob2b.checkout.workflow.b2b_flow_checkout.attribute.remove_source.label
+            source_remove_label:
+                type: string
+                label: Label for remove source
+            edit_order_link:
+                type: string
+                label: Edit Order Link
         steps:
             enter_billing_address:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.step.enter_billing_address.label
@@ -67,6 +77,7 @@ workflows:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.continue_to_shipping_address.label
                 step_to: enter_shipping_address
                 transition_definition: continue_to_shipping_address_definition
+                display_type: page
                 frontend_options:
                     is_checkout_continue: true
                 form_options:
@@ -89,11 +100,12 @@ workflows:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.continue_to_shipping_method.label
                 step_to: enter_shipping_method
                 transition_definition: continue_to_shipping_method_definition
+                display_type: page
                 frontend_options:
                     is_checkout_continue: true
                 form_options:
                     attribute_fields:
-                        billing_address:
+                        shipping_address:
                             form_type: orob2b_checkout_address
                             options:
                                 object: $checkout
@@ -125,30 +137,40 @@ workflows:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.back_to_billing_address.label
                 step_to: enter_billing_address
                 transition_definition: do_nothing
+                frontend_options:
+                    is_checkout_back: true
 
             back_to_shipping_address:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.back_to_shipping_address.label
                 step_to: enter_shipping_address
                 transition_definition: do_nothing
+                frontend_options:
+                    is_checkout_back: true
 
             back_to_shipping_method:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.back_to_shipping_method.label
                 step_to: enter_shipping_method
                 transition_definition: do_nothing
+                frontend_options:
+                    is_checkout_back: true
 
             back_to_payment:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.back_to_payment.label
                 step_to: enter_payment
                 transition_definition: do_nothing
+                frontend_options:
+                    is_checkout_back: true
 
             place_order:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.place_order.label
                 step_to: place_order
                 transition_definition: place_order_definition
+                display_type: page
                 frontend_options:
                     is_checkout_continue: true
                 form_options:
                     attribute_fields:
+                        remove_source: ~
                         po_number: ~
                         ship_until: ~
                         customer_notes:
@@ -175,7 +197,7 @@ workflows:
                         conditions:
                             @equal: [$checkout.shipToBillingAddress, true]
                         parameters: [$.result.shippingAddress, $checkout.billingAddress]
-                    
+
                     # Save billing address if required
                     - @tree:
                         conditions:
@@ -260,6 +282,7 @@ workflows:
                         class: OroB2B\Bundle\OrderBundle\Entity\Order
                         data:
                             website: $checkout.website
+                            currency: $checkout.currency
                             owner: $checkout.owner
                             organization: $checkout.organization
                             account: $checkout.account
@@ -270,7 +293,6 @@ workflows:
                             customerNotes: $checkout.customerNotes
                             shipUntil: $checkout.shipUntil
                             paymentTerm: ~
-                            currency: ~
                     - @get_order_line_items:
                         attribute: $.result.lineItems
                         checkout: $checkout
@@ -293,8 +315,12 @@ workflows:
                                 conditions:
                                     @not_empty: $.result.customerShippingAddress
                                 parameters: [$.result.customerShippingAddress]
-# TODO: Add "allow remove" and "remove source entity" options and check them here BB-2316
-                            - @remove_entity: $checkout.sourceEntity
+                            - @remove_entity:
+                                conditions:
+                                    @and:
+                                        - @equal: [$.data.allow_source_remove, true]
+                                        - @equal: [$.data.remove_source, true]
+                                parameters: [$checkout.sourceEntity]
                             - @remove_entity: $checkout
                             - @redirect:
                                 route: orob2b_order_frontend_success

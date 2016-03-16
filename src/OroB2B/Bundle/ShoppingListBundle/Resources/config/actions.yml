@@ -37,8 +37,24 @@ actions:
                 conditions:
                     @empty: $.checkoutSource
                 actions:
-                    - @assign_current_website: $.currentWebsite
+                    - @assign_url:
+                        attribute: $.editLink
+                        route: orob2b_shopping_list_frontend_view
+                        route_parameters: { 'id': $.data.id }
+                    - @assign_value: [$.currentWebsite, $.data.website]
+                    - @assign_value: [$.currency, $.data.currency]
+                    - @assign_current_website:
+                        conditions:
+                            @empty: $.currentWebsite
+                        parameters: [$.currentWebsite]
+                    - @assign_user_currency:
+                        conditions:
+                            @empty: $.currency
+                        parameters: [$.currency]
                     - @assign_active_user: $.currentUser
+                    - @translate:
+                        attribute: $.sourceRemoveLabel
+                        id: orob2b.frontend.shoppinglist.workflow.remove_source.label
                     - @create_entity:
                         class: OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource
                         attribute: $.checkoutSource
@@ -55,10 +71,27 @@ actions:
                             owner: $.currentUser.account.owner
                             organization: $.currentUser.account.organization
                             website: $.currentWebsite
-                    - @start_workflow:
-                        name: b2b_flow_checkout
-                        attribute: $.checkoutWorkflow
-                        entity: $.checkout
+                            currency: $.currency
+                    - @call_method:
+                        object: $.checkout.workflowItem.data
+                        method: set
+                        method_parameters: ['allow_source_remove', true]
+                    - @call_method:
+                        object: $.checkout.workflowItem.data
+                        method: set
+                        method_parameters: ['remove_source', true]
+                    - @call_method:
+                        object: $.checkout.workflowItem.data
+                        method: set
+                        method_parameters: ['source_remove_label', $.sourceRemoveLabel]
+                    - @call_method:
+                        object: $.checkout.workflowItem.data
+                        method: set
+                        method_parameters: ['edit_order_link', $.editLink]
+                    - @call_method:
+                        object: $.checkout.workflowItem
+                        method: setUpdated
+                    - @flush_entity: $.checkout.workflowItem
             - @find_entity:
                 conditions:
                     @not_empty: $.checkoutSource

@@ -6,7 +6,7 @@ use Oro\Bundle\ActionBundle\Exception\InvalidParameterException;
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Model\ContextAccessor;
 
-use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\checkoutLineItemsManager;
+use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 
 class GetOrderLineItems extends AbstractAction
@@ -22,17 +22,17 @@ class GetOrderLineItems extends AbstractAction
     protected $options;
 
     /**
-     * @var checkoutLineItemsManager
+     * @var CheckoutLineItemsManager
      */
     protected $checkoutLineItemsManager;
 
     /**
      * @param ContextAccessor $contextAccessor
-     * @param checkoutLineItemsManager $checkoutLineItemsManager
+     * @param CheckoutLineItemsManager $checkoutLineItemsManager
      */
     public function __construct(
         ContextAccessor $contextAccessor,
-        checkoutLineItemsManager $checkoutLineItemsManager
+        CheckoutLineItemsManager $checkoutLineItemsManager
     ) {
         parent::__construct($contextAccessor);
 

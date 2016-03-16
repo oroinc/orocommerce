@@ -6,12 +6,13 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
-use Oro\Bundle\WorkflowBundle\Model\Transition;
+
 use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\DataProviderInterface;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
+use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
 
 class TransitionFormDataProvider extends AbstractServerRenderDataProvider
 {
@@ -26,6 +27,11 @@ class TransitionFormDataProvider extends AbstractServerRenderDataProvider
     protected $continueTransitionDataProvider;
 
     /**
+     * @var FormInterface[]
+     */
+    protected $forms = [];
+
+    /**
      * @param FormFactoryInterface $formFactory
      */
     public function __construct(FormFactoryInterface $formFactory)
@@ -33,6 +39,9 @@ class TransitionFormDataProvider extends AbstractServerRenderDataProvider
         $this->formFactory = $formFactory;
     }
 
+    /**
+     * @param DataProviderInterface $continueTransitionDataProvider
+     */
     public function setContinueTransitionDataProvider(DataProviderInterface $continueTransitionDataProvider)
     {
         $this->continueTransitionDataProvider = $continueTransitionDataProvider;
@@ -47,32 +56,48 @@ class TransitionFormDataProvider extends AbstractServerRenderDataProvider
         $checkout = $context->data()->get('checkout');
 
         $workflowItem = $checkout->getWorkflowItem();
-        $continueTransition = $this->continueTransitionDataProvider->getData($context);
+        /** @var TransitionData $continueTransitionData */
+        $transitionData = $this->continueTransitionDataProvider->getData($context);
 
-        if ($continueTransition) {
-            return $this->getForm($continueTransition, $workflowItem)->createView();
+        if ($transitionData) {
+            $form = $this->getForm($transitionData, $workflowItem);
+            if ($form) {
+                return $form->createView();
+            }
         }
 
         return null;
     }
 
     /**
-     * @param Transition $transition
+     * @param TransitionData $transitionData
      * @param WorkflowItem $workflowItem
      * @return FormInterface
      */
-    protected function getForm(Transition $transition, WorkflowItem $workflowItem)
+    public function getForm(TransitionData $transitionData, WorkflowItem $workflowItem)
     {
-        return $this->formFactory->create(
-            $transition->getFormType(),
-            $workflowItem->getData(),
-            array_merge(
-                $transition->getFormOptions(),
-                array(
-                    'workflow_item' => $workflowItem,
-                    'transition_name' => $transition->getName()
-                )
-            )
-        );
+        $key = $transitionData->getTransition()->getName() . ':' . $workflowItem->getId();
+        if ($transitionData->getTransition()->hasForm()) {
+            if (!array_key_exists($key, $this->forms)) {
+                $transition = $transitionData->getTransition();
+
+                $this->forms[$key] = $this->formFactory->create(
+                    $transition->getFormType(),
+                    $workflowItem->getData(),
+                    array_merge(
+                        $transition->getFormOptions(),
+                        [
+                            'workflow_item' => $workflowItem,
+                            'transition_name' => $transition->getName(),
+                            'disabled' => !$transitionData->isAllowed()
+                        ]
+                    )
+                );
+            }
+        } else {
+            $this->forms[$key] = null;
+        }
+
+        return $this->forms[$key];
     }
 }

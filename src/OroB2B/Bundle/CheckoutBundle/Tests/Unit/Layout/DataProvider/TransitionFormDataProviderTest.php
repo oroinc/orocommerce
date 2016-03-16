@@ -2,19 +2,24 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Symfony\Component\Form\FormFactoryInterface;
 
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
-use Oro\Component\Layout\ContextInterface;
+
 use Oro\Component\Layout\DataProviderInterface;
 
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormDataProvider;
+use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
 
 class TransitionFormDataProviderTest extends \PHPUnit_Framework_TestCase
 {
+    use CheckoutAwareContextTrait;
+
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|DataProviderInterface
      */
@@ -29,7 +34,6 @@ class TransitionFormDataProviderTest extends \PHPUnit_Framework_TestCase
      * @var TransitionFormDataProvider
      */
     protected $dataProvider;
-
 
     protected function setUp()
     {
@@ -48,30 +52,18 @@ class TransitionFormDataProviderTest extends \PHPUnit_Framework_TestCase
         $workflowItem->setData($workflowData);
         $checkout->setWorkflowItem($workflowItem);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ContextInterface $context */
-        $context = $this->getMock('Oro\Component\Layout\ContextInterface');
-
-        $data = $this->getMockBuilder('Oro\Component\Layout\ContextDataCollection')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $data->expects($this->once())
-            ->method('get')
-            ->with('checkout')
-            ->will($this->returnValue($checkout));
-        $context->expects($this->once())
-            ->method('data')
-            ->will($this->returnValue($data));
+        $context = $this->prepareContext($checkout);
 
         $continueTransition = new Transition();
         $continueTransition->setName('transition3');
         $continueTransition->setFormOptions(['attribute_fields' => ['test' => null]]);
         $continueTransition->setFormType('transition_type');
 
+        $transitionData = new TransitionData($continueTransition, true, new ArrayCollection());
         $this->continueTransitionDataProvider->expects($this->once())
             ->method('getData')
             ->with($context)
-            ->will($this->returnValue($continueTransition));
+            ->will($this->returnValue($transitionData));
 
         $formView = $this->getMock('Symfony\Component\Form\FormView');
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
@@ -87,6 +79,7 @@ class TransitionFormDataProviderTest extends \PHPUnit_Framework_TestCase
                     'workflow_item' => $workflowItem,
                     'transition_name' => 'transition3',
                     'attribute_fields' => ['test' => null],
+                    'disabled' => false
                 ]
             )
             ->will($this->returnValue($form));
