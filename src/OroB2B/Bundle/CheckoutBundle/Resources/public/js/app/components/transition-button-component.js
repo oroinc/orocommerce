@@ -75,7 +75,7 @@ define(function(require) {
             if (response.hasOwnProperty('redirectUrl')) {
                 mediator.execute('redirectTo', {url: response.redirectUrl});
             } else {
-                var $response = $(response);
+                var $response = $('<div/>').html(response).contents();
                 $(this.defaults.selectors.checkoutSidebar)
                     .html($response.find(this.defaults.selectors.checkoutSidebar).html());
                 $(this.defaults.selectors.checkoutContent)
