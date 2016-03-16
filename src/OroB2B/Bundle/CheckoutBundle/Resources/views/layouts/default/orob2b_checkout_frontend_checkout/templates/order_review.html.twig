@@ -12,6 +12,7 @@
 {%- endblock %}
 
 {% block _checkout_order_review_form_fields_widget -%}
+    {% set workflowItem = checkout.workflowItem %}
     {{ form_start(form, {'attr': {'class': 'checkout__form'}}) }}
     <fieldset class="checkout__form__row"
               data-trigger-selector="#addShipDate"
