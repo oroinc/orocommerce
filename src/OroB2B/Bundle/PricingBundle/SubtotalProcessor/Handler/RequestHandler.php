@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\PricingBundle\SubtotalProcessor\Handler;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher;
 
 use Oro\Bundle\EntityBundle\ORM\Registry;
 use Oro\Bundle\EntityBundle\Exception\EntityNotFoundException;
@@ -20,7 +20,7 @@ class RequestHandler
     /** @var TotalProcessorProvider */
     protected $totalProvider;
 
-    /** @var ContainerAwareEventDispatcher */
+    /** @var EventDispatcherInterface */
     protected $eventDispatcher;
 
     /** @var SecurityFacade */
@@ -37,7 +37,7 @@ class RequestHandler
 
     /**
      * @param TotalProcessorProvider $totalProvider
-     * @param ContainerAwareEventDispatcher $eventDispatcher
+     * @param EventDispatcherInterface $eventDispatcher
      * @param SecurityFacade $securityFacade
      * @param RequestStack $requestStack
      * @param EntityRoutingHelper $entityRoutingHelper
@@ -45,7 +45,7 @@ class RequestHandler
      */
     public function __construct(
         TotalProcessorProvider $totalProvider,
-        ContainerAwareEventDispatcher $eventDispatcher,
+        EventDispatcherInterface $eventDispatcher,
         SecurityFacade $securityFacade,
         RequestStack $requestStack,
         EntityRoutingHelper $entityRoutingHelper,
@@ -95,7 +95,6 @@ class RequestHandler
             $this->hasAccessEdit($entity);
         } else {
             $entity = new $entityClassName();
-            $this->hasAccessCreate($entity);
         }
 
         $event = $this->dispatchPreCalculateTotalEvent($entity);

@@ -20,7 +20,7 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            url: 'orob2b_pricing_entity_totals',
+            route: '',
             entityClassName: '',
             entityId: 0,
             selectors: {
@@ -78,7 +78,7 @@ define(function(require) {
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
 
-            if (this.options.url.length === 0) {
+            if (this.options.route.length === 0) {
                 return;
             }
 
@@ -151,7 +151,7 @@ define(function(require) {
             this.formData = formData;
 
             if (formData) {
-                $.post(routing.generate(this.options.url, params), formData, function(response) {
+                $.post(routing.generate(this.options.route, params), formData, function(response) {
                     if (formData === self.formData) {
                         //data doesn't change after ajax call
                         var totals = response || {};
@@ -160,7 +160,7 @@ define(function(require) {
                 });
             } else {
                 $.ajax({
-                    url: routing.generate(this.options.url, params),
+                    url: routing.generate(this.options.route, params),
                     type: 'GET',
                     success: function (response) {
                         if (formData === self.formData) {

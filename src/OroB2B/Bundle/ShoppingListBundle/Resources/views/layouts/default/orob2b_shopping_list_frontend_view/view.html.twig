@@ -319,6 +319,7 @@
     <div class="order-checkout-widget__container-wrapper">
         {% include 'OroB2BPricingBundle:Totals/Frontend:totals.html.twig' with {
             options: {
+                route: 'orob2b_pricing_frontend_entity_totals',
                 events: [
                     'frontend:item:delete',
                     'frontend:shopping-list-item-quantity:update'
