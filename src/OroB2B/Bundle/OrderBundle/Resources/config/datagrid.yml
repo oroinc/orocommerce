@@ -438,6 +438,7 @@ datagrid:
                     - order_item.productSku
                     - order_item.freeFormProduct
                     - order_item.quantity
+                    - order_item.shipBy
                     - order_item.comment
                 from:
                     - { table: %orob2b_order.entity.order_line_item.class%, alias: order_item }
