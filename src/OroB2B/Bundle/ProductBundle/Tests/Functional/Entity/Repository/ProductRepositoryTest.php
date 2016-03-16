@@ -10,7 +10,6 @@ use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData as
 
 /**
  * @dbIsolation
- * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class ProductRepositoryTest extends WebTestCase
 {
@@ -24,7 +23,7 @@ class ProductRepositoryTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
 
         $this->loadFixtures([
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
+            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
             'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductImageData',
         ]);
 
