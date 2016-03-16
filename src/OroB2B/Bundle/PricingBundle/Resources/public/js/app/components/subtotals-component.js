@@ -80,18 +80,29 @@ define(function(require) {
             this.eventName = 'subtotal-target:changing';
 
             this.updateSubtotals();
+            this.initializeListeners();
+        },
 
+        initializeListeners: function() {
             mediator.on('line-items-subtotals:update', this.updateSubtotals, this);
             mediator.on('update:account', this.updateSubtotals, this);
             mediator.on('update:website', this.updateSubtotals, this);
             mediator.on('update:currency', this.updateSubtotals, this);
         },
 
+        showLoadingMask: function() {
+            this.loadingMaskView.show();
+        },
+
+        hideLoadingMask: function() {
+            this.loadingMaskView.hide();
+        },
+
         /**
          * Get and render subtotals
          */
         updateSubtotals: function(e) {
-            this.loadingMaskView.show();
+            this.showLoadingMask();
 
             if (this.getSubtotals.timeoutId) {
                 clearTimeout(this.getSubtotals.timeoutId);
@@ -107,7 +118,7 @@ define(function(require) {
                     $.when.apply($, promises).done(_.bind(this.updateSubtotals, this, e));
                 } else {
                     this.getSubtotals(_.bind(function(subtotals) {
-                        this.loadingMaskView.hide();
+                        this.hideLoadingMask();
                         if (!subtotals) {
                             return;
                         }

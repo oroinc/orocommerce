@@ -88,7 +88,10 @@ define(function(require) {
             this.eventName = 'total-target:changing';
 
             this.updateTotals();
+            this.initializeListeners();
+        },
 
+        initializeListeners: function() {
             mediator.on('line-items-totals:update', this.updateTotals, this);
             mediator.on('update:account', this.updateTotals, this);
             mediator.on('update:website', this.updateTotals, this);
@@ -100,11 +103,19 @@ define(function(require) {
             });
         },
 
+        showLoadingMask: function() {
+            this.loadingMaskView.show();
+        },
+
+        hideLoadingMask: function() {
+            this.loadingMaskView.hide();
+        },
+
         /**
          * Get and render subtotals
          */
         updateTotals: function(e) {
-            this.loadingMaskView.show();
+            this.showLoadingMask();
 
             if (this.getTotals.timeoutId) {
                 clearTimeout(this.getTotals.timeoutId);
@@ -120,7 +131,7 @@ define(function(require) {
                     $.when.apply($, promises).done(_.bind(this.updateTotals, this, e));
                 } else {
                     this.getTotals(_.bind(function(subtotals) {
-                        this.loadingMaskView.hide();
+                        this.hideLoadingMask();
                         if (!subtotals) {
                             return;
                         }

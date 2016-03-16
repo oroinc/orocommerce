@@ -4,7 +4,7 @@ define(function(require) {
     var LineItemsView;
     var $ = require('jquery');
     var _ = require('underscore');
-    var ProductsPricesComponent = require('orob2bpricing/js/app/components/products-prices-component');
+    var ProductsPricesComponent = require('orob2border/js/app/components/products-prices-component');
     var BaseView = require('oroui/js/app/views/base/view');
 
     /**
@@ -19,8 +19,6 @@ define(function(require) {
         options: {
             tierPrices: null,
             matchedPrices: {},
-            tierPricesRoute: '',
-            matchedPricesRoute: '',
             currency: null,
             account: null,
             website: null
@@ -58,9 +56,7 @@ define(function(require) {
                 matchedPrices: this.options.matchedPrices,
                 currency: this.options.currency,
                 account: this.options.account,
-                website: this.options.website,
-                tierPricesRoute: this.options.tierPricesRoute,
-                matchedPricesRoute: this.options.matchedPricesRoute
+                website: this.options.website
             }));
         }
     });
