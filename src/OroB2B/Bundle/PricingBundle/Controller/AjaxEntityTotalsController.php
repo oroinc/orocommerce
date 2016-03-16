@@ -5,25 +5,68 @@ namespace OroB2B\Bundle\PricingBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class AjaxEntityTotalsController extends AbstractAjaxEntityTotalsController
+use Oro\Bundle\EntityBundle\Exception\EntityNotFoundException;
+
+class AjaxEntityTotalsController extends Controller
 {
     /**
      * @Route(
      *      "/get-totals-for-entity/{entityClassName}/{entityId}",
      *      name="orob2b_pricing_entity_totals",
+     *      requirements={"entityId"="\d+"},
      *      defaults={"entityId"=0, "entityClassName"=""}
      * )
-     * @Method({"GET", "POST", "PUT"})
+     *
+     * @Method({"GET"})
+     *
      * @param string $entityClassName
      * @param integer $entityId
      *
      * @return JsonResponse
      */
-    public function entityTotalsAction($entityClassName, $entityId)
+    public function getEntityTotalsAction($entityClassName, $entityId)
     {
-        $totals = $this->getTotals($entityClassName, $entityId);
+        $totals = [];
+
+        try {
+            $totalRequestHandler = $this->get('orob2b_pricing.subtotal_processor.handler.request_handler');
+            $totals = $totalRequestHandler->getTotals($entityClassName, $entityId);
+        } catch (EntityNotFoundException $e) {
+            $this->createNotFoundException();
+        }
+
+        return new JsonResponse(
+            $totals
+        );
+    }
+
+    /**
+     * @Route(
+     *      "/recalculate-totals-for-entity/{entityClassName}/{entityId}",
+     *      name="orob2b_pricing_recalculate_entity_totals",
+     *      defaults={"entityId"=0, "entityClassName"=""}
+     * )
+     *
+     * @Method({"POST"})
+     *
+     * @param string $entityClassName
+     * @param integer $entityId
+     *
+     * @return JsonResponse
+     */
+    public function recalculateTotalsAction($entityClassName, $entityId)
+    {
+        $totals = [];
+
+        try {
+            $totalRequestHandler = $this->get('orob2b_pricing.subtotal_processor.handler.request_handler');
+            $totals = $totalRequestHandler->recalculateTotals($entityClassName, $entityId);
+        } catch (EntityNotFoundException $e) {
+            $this->createNotFoundException();
+        }
 
         return new JsonResponse(
             $totals

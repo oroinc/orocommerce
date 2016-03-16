@@ -9,14 +9,10 @@ class TotalCalculateBeforeEvent extends Event
 {
     const NAME = 'orob2b_pricing.total_calculate_before_event';
 
-    /**
-     * @var object
-     */
+    /** @var object */
     protected $entity;
 
-    /**
-     * @var Request|null
-     */
+    /** @var Request|null */
     protected $request;
 
     /**

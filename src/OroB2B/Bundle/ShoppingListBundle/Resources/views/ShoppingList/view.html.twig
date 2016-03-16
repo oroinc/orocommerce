@@ -29,15 +29,15 @@
     {% set subtotals %}
         {% include 'OroB2BPricingBundle:Totals:totals.html.twig' with {
             options: {
-                url: path('orob2b_pricing_entity_totals',
-                    { entityClassName: oro_class_name(entity), entityId: entity.id }
-                ),
+                url: 'orob2b_pricing_entity_totals',
                 method: 'GET',
                 events: [
                     'datagrid:doRefresh:shopping-list-line-items-grid',
                     'datagrid:afterRemoveRow:shopping-list-line-items-grid',
                     'datagrid:afterMassRemoveRow:shopping-list-line-items-grid'
-                ]
+                ],
+                entityClassName: oro_class_name(entity),
+                entityId: entity.id
             }
         } only %}
     {% endset %}

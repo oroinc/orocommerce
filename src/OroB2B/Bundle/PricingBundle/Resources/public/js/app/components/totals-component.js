@@ -168,7 +168,6 @@ define(function(require) {
                             var totals = response || {};
                             callback(totals);
                         }
-                        //self.updateTotalsContrainer(response);
                     },
                     error: function (response) {
                         //callback(response);
