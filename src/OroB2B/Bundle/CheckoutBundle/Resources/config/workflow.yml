@@ -26,6 +26,12 @@ workflows:
             allow_source_remove:
                 type: boolean
                 label: Allow source entity removal
+            disallow_billing_address_edit:
+                type: boolean
+                label: Disallow billing address edit
+            disallow_shipping_address_edit:
+                type: boolean
+                label: Disallow shipping address edit
             remove_source:
                 type: boolean
                 label: orob2b.checkout.workflow.b2b_flow_checkout.attribute.remove_source.label
@@ -89,6 +95,7 @@ workflows:
                                 isEditEnabled: true
                                 addressType: 'billing'
                                 required: true
+                                disabled: $disallow_billing_address_edit
                         save_billing_address:
                             options:
                                 label: orob2b.checkout.workflow.b2b_flow_checkout.form.save_address.label
@@ -112,6 +119,7 @@ workflows:
                                 isEditEnabled: true
                                 addressType: 'shipping'
                                 required: true
+                                disabled: $disallow_shipping_address_edit
                         save_shipping_address:
                             options:
                                 label: orob2b.checkout.workflow.b2b_flow_checkout.form.save_address.label
