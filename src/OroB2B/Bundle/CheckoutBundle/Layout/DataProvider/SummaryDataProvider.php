@@ -13,7 +13,7 @@ use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\PricingBundle\Provider\LineItemsSubtotalProvider;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 
 class SummaryDataProvider implements DataProviderInterface
 {
@@ -23,17 +23,17 @@ class SummaryDataProvider implements DataProviderInterface
     protected $checkoutLineItemsManager;
 
     /**
-     * @var LineItemsSubtotalProvider
+     * @var LineItemSubtotalProvider
      */
     protected $lineItemsSubtotalProvider;
 
     /**
      * @param CheckoutLineItemsManager $CheckoutLineItemsManager
-     * @param LineItemsSubtotalProvider $ineItemsSubtotalProvider
+     * @param LineItemSubtotalProvider $ineItemsSubtotalProvider
      */
     public function __construct(
         CheckoutLineItemsManager $CheckoutLineItemsManager,
-        LineItemsSubtotalProvider $ineItemsSubtotalProvider
+        LineItemSubtotalProvider $ineItemsSubtotalProvider
     ) {
         $this->checkoutLineItemsManager = $CheckoutLineItemsManager;
         $this->lineItemsSubtotalProvider = $ineItemsSubtotalProvider;
