@@ -22,6 +22,8 @@ parameters:
 
     orob2b_order.twig.order.class: OroB2B\Bundle\OrderBundle\Twig\OrderExtension
 
+    orob2b_order.entity.order_discount_item.class: OroB2B\Bundle\OrderBundle\Entity\OrderDiscount
+
     #formaters
     orob2b_order.formatter.source_document.class: OroB2B\Bundle\OrderBundle\Formatter\SourceDocumentFormatter
 

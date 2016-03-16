@@ -23,6 +23,8 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemsCollectionType;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
+use OroB2B\Bundle\OrderBundle\Form\Type\OrderDiscountItemsCollectionType;
+use OroB2B\Bundle\OrderBundle\Form\Type\OrderDiscountItemType;
 use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
@@ -258,7 +260,9 @@ class OrderTypeTest extends TypeTestCase
                     $accountUserSelectType->getName() => $accountUserSelectType,
                     $priceListSelectType->getName() => $priceListSelectType,
                     OrderLineItemsCollectionType::NAME => new OrderLineItemsCollectionType(),
+                    OrderDiscountItemsCollectionType::NAME => new OrderDiscountItemsCollectionType(),
                     OrderLineItemType::NAME => $OrderLineItemType,
+                    OrderDiscountItemType::NAME => new OrderDiscountItemType(),
                     QuantityTypeTrait::$name => $this->getQuantityType(),
                 ],
                 []
