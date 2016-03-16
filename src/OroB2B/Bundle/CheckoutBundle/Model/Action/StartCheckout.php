@@ -2,33 +2,64 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Model\Action;
 
-use Symfony\Component\PropertyAccess\PropertyPath;
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
 
-use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
-use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+
 use Oro\Bundle\ActionBundle\Exception\InvalidParameterException;
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
+
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Model\ContextAccessor;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
+use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
+/**
+ * Start checkout process on frontend
+ *
+ * Usage:
+ *
+ * @start_checkout:
+ *     source_name: shoppingList
+ *     source_entity: $.data
+ *     data:
+ *         currency: $.currency
+ *     settings:
+ *          allow_source_remove: false
+ *
+ * source_name (required) is name of corresponding extended relation added to CheckoutSource
+ * source_entity (required) is a source entity
+ * settings (optional) are to WorkflowItem data and are used during checkout process
+ * data (optional) is passed as properties of Checkout entity
+ */
 class StartCheckout extends AbstractAction
 {
-    const SOURCE = 'source';
-    const SOURCE_DATA = 'sourceData';
-    const WORKFLOW_NAME = 'b2b_flow_checkout';
+    const SOURCE_FIELD_KEY = 'source_name';
+    const SOURCE_ENTITY_KEY = 'source_entity';
+    const CHECKOUT_DATA_KEY = 'data';
+    const SETTINGS_KEY = 'settings';
 
     /**
      * @var ManagerRegistry
      */
     protected $registry;
+
+    /**
+     * @var string
+     */
+    protected $checkoutClass;
+
+    /**
+     * @var string
+     */
+    protected $checkoutRoute;
 
     /**
      * @var array
@@ -46,46 +77,51 @@ class StartCheckout extends AbstractAction
     protected $tokenStorage;
 
     /**
+     * @var UserCurrencyProvider
+     */
+    protected $currencyProvider;
+
+    /**
      * @var PropertyAccessor
      */
     private $propertyAccessor;
 
     /**
-     * @var WorkflowManager
+     * @var AbstractAction
      */
-    protected $workflowManager;
+    protected $redirect;
 
     /**
-     * @var RouterInterface
+     * @var EntityManager
      */
-    protected $router;
+    protected $em;
 
     /**
-     * StartCheckout constructor.
      * @param ContextAccessor $contextAccessor
      * @param ManagerRegistry $registry
      * @param WebsiteManager $websiteManager
+     * @param UserCurrencyProvider $currencyProvider
      * @param TokenStorageInterface $tokenStorage
      * @param PropertyAccessor $propertyAccessor
-     * @param WorkflowManager $workflowManager
-     * @param RouterInterface $router
+     * @param AbstractAction $redirect
      */
     public function __construct(
         ContextAccessor $contextAccessor,
         ManagerRegistry $registry,
         WebsiteManager $websiteManager,
+        UserCurrencyProvider $currencyProvider,
         TokenStorageInterface $tokenStorage,
         PropertyAccessor $propertyAccessor,
-        WorkflowManager $workflowManager,
-        RouterInterface $router
+        AbstractAction $redirect
     ) {
         parent::__construct($contextAccessor);
+
         $this->registry = $registry;
         $this->websiteManager = $websiteManager;
+        $this->currencyProvider = $currencyProvider;
         $this->tokenStorage = $tokenStorage;
-        $this->workflowManager = $workflowManager;
-        $this->router = $router;
         $this->propertyAccessor = $propertyAccessor;
+        $this->redirect = $redirect;
     }
 
     /**
@@ -93,11 +129,11 @@ class StartCheckout extends AbstractAction
      */
     public function initialize(array $options)
     {
-        if (empty($options[self::SOURCE])) {
+        if (empty($options[self::SOURCE_FIELD_KEY])) {
             throw new InvalidParameterException('Source parameter is required');
         }
 
-        if (empty($options[self::SOURCE_DATA])) {
+        if (empty($options[self::SOURCE_ENTITY_KEY])) {
             throw new InvalidParameterException('Attribute name parameter is required');
         }
 
@@ -107,75 +143,169 @@ class StartCheckout extends AbstractAction
     }
 
     /**
+     * @param string $checkoutClass
+     * @return StartCheckout
+     */
+    public function setCheckoutClass($checkoutClass)
+    {
+        $this->checkoutClass = $checkoutClass;
+
+        return $this;
+    }
+
+    /**
+     * @param string $checkoutRoute
+     * @return StartCheckout
+     */
+    public function setCheckoutRoute($checkoutRoute)
+    {
+        $this->checkoutRoute = $checkoutRoute;
+
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function executeAction($context)
     {
-        /** @var string $sourceFieldName */
-        $sourceFieldName = $this->contextAccessor->getValue($context, $this->options[self::SOURCE]);
-        /** @var object $sourceEntity */
-        $sourceEntity = $this->contextAccessor->getValue($context, $this->options[self::SOURCE_DATA]);
-        $checkoutEntityManager = $this->registry->getManagerForClass('OroB2BCheckoutBundle:Checkout');
-        $checkoutSource = $this->registry
-            ->getManagerForClass('OroB2BCheckoutBundle:CheckoutSource')
-            ->getRepository('OroB2BCheckoutBundle:CheckoutSource')
+        $em = $this->getEntityManager();
+
+        $sourceFieldName = $this->contextAccessor->getValue($context, $this->options[self::SOURCE_FIELD_KEY]);
+        /** @var CheckoutSourceEntityInterface $sourceEntity */
+        $sourceEntity = $this->contextAccessor->getValue($context, $this->options[self::SOURCE_ENTITY_KEY]);
+
+        $checkoutSource = $em->getRepository('OroB2BCheckoutBundle:CheckoutSource')
             ->findOneBy([$sourceFieldName => $sourceEntity]);
-        if (!$checkoutSource) {
-            /** @var AccountUser $user */
-            $user = $this->tokenStorage->getToken()->getUser();
-            $checkoutSource = new CheckoutSource();
-            $this->propertyAccessor->setValue($checkoutSource, $sourceFieldName, $sourceEntity);
-            $checkout = new Checkout();
-            $checkout->setSource($checkoutSource);
-            $checkout->setAccountUser($user);
-            $checkout->setWebsite($this->websiteManager->getCurrentWebsite());
-            $account = $user->getAccount();
-            $checkout->setAccount($account);
-            $checkout->setOwner($account->getOwner());
-            $checkout->setOrganization($account->getOrganization());
-            $this->addWorkflowItemDataSettings($context, $checkout);
-            $this->addCheckoutProperties($context, $checkout);
-            $checkoutEntityManager->persist($checkout);
-            $checkoutEntityManager->flush();
-            $this->workflowManager->startWorkflow(self::WORKFLOW_NAME, $checkout);
-        } else {
-            $checkout = $checkoutEntityManager
-                ->getRepository('OroB2BCheckoutBundle:Checkout')
+
+        if ($checkoutSource) {
+            $checkout = $em->getRepository('OroB2BCheckoutBundle:Checkout')
                 ->findOneBy(['source' => $checkoutSource]);
+
+        } else {
+            $checkoutSource = $this->createCheckoutSource($sourceFieldName, $sourceEntity);
+            $checkout = $this->createCheckout($context, $checkoutSource);
+            $em->persist($checkout);
+            $em->flush($checkout);
+
+            $this->addWorkflowItemDataSettings($context, $checkout->getWorkflowItem());
+            $em->flush($checkout->getWorkflowItem());
         }
 
-        $url = $this->router->generate('orob2b_checkout_frontend_checkout', ['id' => $checkout->getId()]);
-        $this->contextAccessor->setValue($context, new PropertyPath('redirectUrl'), $url);
+        $this->redirect->initialize(
+            [
+                'route' => $this->checkoutRoute,
+                'route_parameters' => ['id' => $checkout->getId()]
+            ]
+        );
+        $this->redirect->execute($context);
     }
 
     /**
      * @param mixed $context
-     * @param Checkout $checkout
-     * @throws WorkflowException
+     * @param WorkflowItem $workflowItem
      */
-    protected function addWorkflowItemDataSettings($context, Checkout $checkout)
+    protected function addWorkflowItemDataSettings($context, WorkflowItem $workflowItem)
     {
-        if ($this->contextAccessor->hasValue($context, $this->options['settings'])) {
-            $settings = $this->contextAccessor->getValue($context, $this->options['settings']);
-            $workflowData = $checkout->getWorkflowItem()->getData();
+        $settings = $this->getOptionFromContext($context, self::SETTINGS_KEY, []);
+
+        if (is_array($settings) && $settings) {
+            $workflowData = $workflowItem->getData();
             foreach ($settings as $key => $setting) {
                 $workflowData->set($key, $setting);
             }
+            $workflowItem->setUpdated();
         }
+    }
+
+    /**
+     * @param string $sourceFieldName
+     * @param CheckoutSourceEntityInterface $sourceEntity
+     * @return CheckoutSource
+     */
+    protected function createCheckoutSource($sourceFieldName, CheckoutSourceEntityInterface $sourceEntity)
+    {
+        $checkoutSource = new CheckoutSource();
+        $this->propertyAccessor->setValue($checkoutSource, $sourceFieldName, $sourceEntity);
+
+        return $checkoutSource;
+    }
+
+    /**
+     * @param mixed $context
+     * @param CheckoutSource $checkoutSource
+     * @return Checkout
+     */
+    protected function createCheckout($context, CheckoutSource $checkoutSource)
+    {
+        /** @var AccountUser $user */
+        $user = $this->tokenStorage->getToken()->getUser();
+        $account = $user->getAccount();
+        $owner = $account->getOwner();
+        $organization = $account->getOrganization();
+        $defaultData = [
+            'accountUser' => $user,
+            'account' => $account,
+            'owner' => $owner,
+            'organization' => $organization,
+            'website' => $this->websiteManager->getCurrentWebsite(),
+            'currency' => $this->currencyProvider->getUserCurrency()
+        ];
+
+        $checkout = new Checkout();
+        $checkout->setSource($checkoutSource);
+
+        $this->setCheckoutData($context, $checkout, $defaultData);
+
+        return $checkout;
     }
 
     /**
      * @param mixed $context
      * @param Checkout $checkout
+     * @param array $defaultData
      */
-    protected function addCheckoutProperties($context, Checkout $checkout)
+    protected function setCheckoutData($context, Checkout $checkout, array $defaultData)
     {
-        if ($this->contextAccessor->hasValue($context, $this->options['data'])) {
-            /** @var array $data */
-            $data = $this->contextAccessor->getValue($context, $this->options['data']);
-            foreach ($data as $property => $value) {
+        $data = $this->getOptionFromContext($context, self::CHECKOUT_DATA_KEY, []);
+        $data = array_merge($defaultData, $data);
+
+        foreach ($data as $property => $value) {
+            if ($this->propertyAccessor->isWritable($checkout, $property)) {
                 $this->propertyAccessor->setValue($checkout, $property, $value);
             }
         }
+    }
+
+    /**
+     * @return EntityManager
+     */
+    protected function getEntityManager()
+    {
+        if (!$this->em) {
+            $this->em = $this->registry->getManagerForClass($this->checkoutClass);
+        }
+
+        return $this->em;
+    }
+
+    /**
+     * @param mixed $context
+     * @param string $key
+     * @param null|mixed $default
+     * @return array|mixed
+     */
+    protected function getOptionFromContext($context, $key, $default = null)
+    {
+        $data = $default;
+        if (array_key_exists($key, $this->options)) {
+            if ($this->contextAccessor->hasValue($context, $this->options[$key])) {
+                $data = $this->contextAccessor->getValue($context, $this->options[$key]);
+            } else {
+                $data = $this->options[$key];
+            }
+        }
+
+        return $data;
     }
 }

@@ -105,14 +105,16 @@ services:
 
     orob2b_checkout.model.action.start_checkout:
         class: %orob2b_checkout.model.action.start_checkout.class%
+        calls:
+            - [setCheckoutClass, [%orob2b_checkout.entity.checkout.class%]]
+            - [setCheckoutRoute, ['orob2b_checkout_frontend_checkout']]
         arguments:
             - @oro_action.context_accessor
             - @doctrine
             - @orob2b_website.manager
+            - @orob2b_pricing.provider.user_currency
             - @security.token_storage
             - @property_accessor
-            - @oro_workflow.manager
-            - @router
+            - @oro_action.function.redirect
         tags:
-            - { name: oro_workflow.action, alias: start_checkout }
             - { name: oro_action.function, alias: start_checkout }
