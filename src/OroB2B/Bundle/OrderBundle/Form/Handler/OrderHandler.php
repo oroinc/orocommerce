@@ -94,7 +94,7 @@ class OrderHandler
         if ($subtotal) {
             $order->setSubtotal($subtotal->getAmount());
         }
-        if ($discountSubtotals) {
+        if (count($discountSubtotals) > 0) {
             $discountSubtotalAmount = new Price();
             foreach ($discountSubtotals as $discount) {
                 $newAmount = $discount->getAmount() + (float) $discountSubtotalAmount->getValue();
