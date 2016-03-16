@@ -97,10 +97,17 @@ class SubtotalDiscountProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetDiscountSubtotal()
     {
-        $this->translator->expects($this->exactly(2))
+        $this->translator->expects($this->exactly(3))
             ->method('trans')
             ->with('orob2b.order.subtotals.' . SubtotalDiscountProvider::TYPE)
             ->willReturn(ucfirst(SubtotalDiscountProvider::TYPE));
+        $subtotalMock =  $this->getMock('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal');
+        $this->lineItemSubtotal->expects($this->once())
+            ->method('getSubtotal')
+            ->willReturn($subtotalMock);
+        $subtotalMock->expects($this->once())
+            ->method('getAmount')
+            ->willReturn(1000);
 
         $order = new Order();
         $discount1 = new OrderDiscount();
@@ -109,15 +116,20 @@ class SubtotalDiscountProviderTest extends \PHPUnit_Framework_TestCase
         $discount1->setDescription($description);
         $discount2 = new OrderDiscount();
         $discount2->setAmount(100);
+        $discount3 = new OrderDiscount();
+        $discount3->setPercent(10);
+        $discount3->setType(OrderDiscount::TYPE_PERCENT);
         $currency = 'USD';
         $order->setCurrency($currency);
         $order->addDiscount($discount1);
         $order->addDiscount($discount2);
+        $order->addDiscount($discount3);
 
         $subtotal = $this->provider->getSubtotal($order);
         $firstDiscountSubtotal = $subtotal[0];
         $secondDiscountSubtotal = $subtotal[1];
-        $this->assertCount(2, $subtotal);
+        $threadDiscountSubtotal = $subtotal[2];
+        $this->assertCount(3, $subtotal);
         $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $firstDiscountSubtotal);
         $this->assertEquals(SubtotalDiscountProvider::TYPE, $firstDiscountSubtotal->getType());
         $this->assertEquals($description . ' (Discount)', $firstDiscountSubtotal->getLabel());
@@ -126,6 +138,7 @@ class SubtotalDiscountProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertInternalType('float', $firstDiscountSubtotal->getAmount());
         $this->assertEquals(150, $firstDiscountSubtotal->getAmount());
         $this->assertEquals(100, $secondDiscountSubtotal->getAmount());
+        $this->assertEquals(100, $threadDiscountSubtotal->getAmount());
     }
 
     public function testGetDiscountSubtotalFrontendUser()
