@@ -15,7 +15,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use OroB2B\Bundle\TaxBundle\Form\Extension\AbstractTaxExtension;
 
-abstract class AbstractTaxExtensionText extends \PHPUnit_Framework_TestCase
+abstract class AbstractTaxExtensionTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
