@@ -4,6 +4,8 @@ layout:
             themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/main.html.twig'
         - @addTree:
             items:
+                checkout_widget_content:
+                    blockType: container
                 checkout_content:
                     blockType: container
                     options:
@@ -43,11 +45,15 @@ layout:
                             lineItemTotals: { @value: $data.orob2b_checkout_summary.lineItemTotals }
                             lineItemsCount: { @value: $data.orob2b_checkout_summary.lineItemsCount }
                             totalPrice: { @value: $data.orob2b_checkout_summary.totalPrice }
+                body:
+                    blockType: body
             tree:
-                content:
-                    checkout_content:
-                        checkout_information:
-                            checkout_form:
-                                checkout_form_fields: ~
-                        checkout_order_summary:
-                            checkout_order_summary_table: ~
+                root:
+                    body:
+                        checkout_widget_content:
+                            checkout_content:
+                                checkout_information:
+                                    checkout_form:
+                                        checkout_form_fields: ~
+                                checkout_order_summary:
+                                    checkout_order_summary_table: ~

@@ -8,8 +8,7 @@ define(function(require) {
     var _ = require('underscore');
 
     var TransitionButtonComponent;
-
-    TransitionButtonComponent = BaseComponent.extend({
+    TransitionButtonComponent = BaseComponent.extend(/** @exports TransitionButtonComponent.prototype */{
         defaults: {
             transitionUrl: null,
             message: null,
@@ -50,8 +49,15 @@ define(function(require) {
                 data = this.$el.closest('form').serialize();
             }
 
+            var url = this.options.transitionUrl;
+            var widgetParameters = "_widgetContainer=ajax_widget&_wid=ajax_checkout";
+
+            url = (-1 !== _.indexOf(url, '?'))
+                ? url + '&' + widgetParameters
+                : url + '?' + widgetParameters;
+
             $.ajax({
-                    url: this.options.transitionUrl,
+                    url: url,
                     method: method,
                     data: data
                 })

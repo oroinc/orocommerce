@@ -52,3 +52,5 @@ layout:
                         enter_shipping_address_edit: ~
                         enter_shipping_method_edit: ~
                         enter_payment_edit: ~
+    conditions:
+        @eq: [$context.ajax, false]
