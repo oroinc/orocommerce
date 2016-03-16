@@ -41,7 +41,10 @@ class OrderTest extends \PHPUnit_Framework_TestCase
             ['account', new Account()],
             ['accountUser', new AccountUser()],
             ['website', new Website()],
-            ['shippingCost', new Price()]
+            ['shippingCost', new Price()],
+            ['sourceEntityClass', 'EntityClass'],
+            ['sourceEntityIdentifier', 'source-identifier-test-01'],
+            ['sourceEntityId', 1]
         ];
 
         $order = new Order();
@@ -91,7 +94,6 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $order->preUpdate();
         $this->assertInstanceOf('\DateTime', $order->getUpdatedAt());
     }
-
 
     public function testPostLoad()
     {

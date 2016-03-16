@@ -134,6 +134,7 @@ class ShoppingListLineItemHandler
         $lineItem->setShoppingList($shoppingList);
 
         $this->shoppingListManager->addLineItem($lineItem, $shoppingList);
+        $this->shoppingListManager->recalculateSubtotals($shoppingList);
     }
 
     /**

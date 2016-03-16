@@ -185,11 +185,13 @@
                                 </div>
                                 <div class="product__select inline va-m_md">
                                     <select data-chosen-selectbox class="input input_block input_sm" name="product_unit" required>
-                                        {% for unit in productsUnits[lineItem.product.id] %}
-                                        <option value="{{ unit }}" {% if unit == lineItem.unit.code %}selected="selected"{% endif %}>{{ unit|orob2b_format_product_unit_label}}</option>
-                                        {% endfor %}
-                                        {% if lineItem.unit.code not in productsUnits[lineItem.product.id] %}
-                                            <option value="{{ lineItem.unit.code }}" selected="selected" disabled="disabled">{{ lineItem.unit.code|orob2b_format_product_unit_label}}</option>
+                                        {% if productsUnits[lineItem.product.id] is defined %}
+                                            {% for unit in productsUnits[lineItem.product.id] %}
+                                            <option value="{{ unit }}" {% if unit == lineItem.unit.code %}selected="selected"{% endif %}>{{ unit|orob2b_format_product_unit_label}}</option>
+                                            {% endfor %}
+                                            {% if lineItem.unit.code not in productsUnits[lineItem.product.id] %}
+                                                <option value="{{ lineItem.unit.code }}" selected="selected" disabled="disabled">{{ lineItem.unit.code|orob2b_format_product_unit_label}}</option>
+                                            {% endif %}
                                         {% endif %}
                                     </select>
                                 </div>
@@ -311,4 +313,19 @@
         }) }} >
             <i class="fa icon-trash mmr5-md"></i> {{ 'orob2b.frontend.shoppinglist.btn.delete'|trans }}
         </button>
+{% endblock %}
+
+{% block _shopping_list_totals_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    <div class="order-checkout-widget__container-wrapper">
+        <div class="order-checkout-widget__container order-checkout-widget__container_lg" {{ UI.renderPageComponentAttributes({
+            module: 'orob2bpricing/js/app/components/frontend-entity-totals-component',
+            options: {
+                eventsName: ['frontend:item:delete', 'frontend:shopping-list-item-quantity:update'],
+                entityClassName: 'OroB2B\\Bundle\\ShoppingListBundle\\Entity\\ShoppingList',
+                entityId: shoppingList.id
+            }
+        }) }} data-container="totals">
+        </div>
+    </div>
 {% endblock %}

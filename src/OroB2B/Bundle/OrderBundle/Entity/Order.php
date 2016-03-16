@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
@@ -17,8 +18,11 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
+use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
+use OroB2B\Bundle\OrderBundle\Provider\IdentifierAwareInterface;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
+use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -27,6 +31,14 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  * @Config(
  *      routeName="orob2b_order_index",
  *      routeView="orob2b_order_view",
+ *      routeCreate="orob2b_order_create",
+ *      routeUpdate="orob2b_order_update",
+ *      routeDelete="orob2b_api_delete_order",
+ *      routeCommerceName="orob2b_order_frontend_index",
+ *      routeCommerceView="orob2b_order_frontend_view",
+ *      routeCommerceCreate="orob2b_order_frontend_create",
+ *      routeCommerceUpdate="orob2b_order_frontend_update",
+ *      routeCommerceDelete="orob2b_order_frontend_delete",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-briefcase"
@@ -55,7 +67,14 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
-class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHolderInterface, AccountOwnerAwareInterface
+class Order extends ExtendOrder implements
+    OrganizationAwareInterface,
+    EmailHolderInterface,
+    AccountOwnerAwareInterface,
+    LineItemsAwareInterface,
+    ShippingAwareInterface,
+    CurrencyAwareInterface,
+    IdentifierAwareInterface
 {
     /**
      * @var integer
@@ -338,6 +357,27 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
      * @var Price
      */
     protected $shippingCost;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="source_entity_class", type="string", length=255, nullable=true)
+     */
+    protected $sourceEntityClass;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="source_entity_id", type="integer", nullable=true )
+     */
+    protected $sourceEntityId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="source_entity_identifier", type="string", length=255, nullable=true)
+     */
+    protected $sourceEntityIdentifier;
 
     /**
      * Constructor
@@ -858,5 +898,73 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
     public function updateShippingCost()
     {
         $this->shippingCostAmount = $this->shippingCost ? $this->shippingCost->getValue() : null;
+    }
+
+    /**
+     * Get Source Entity Class
+     *
+     * @return string
+     */
+    public function getSourceEntityClass()
+    {
+        return $this->sourceEntityClass;
+    }
+
+    /**
+     * Set Source Entity Class
+     *
+     * @param string $sourceEntityClass
+     *
+     * @return $this
+     */
+    public function setSourceEntityClass($sourceEntityClass)
+    {
+        $this->sourceEntityClass = $sourceEntityClass;
+
+        return $this;
+    }
+
+    /**
+     * Get Source Entity Id
+     *
+     * @return string
+     */
+    public function getSourceEntityId()
+    {
+        return $this->sourceEntityId;
+    }
+
+    /**
+     * Set Source Entity Id
+     *
+     * @param integer $sourceEntityId
+     *
+     * @return $this
+     */
+    public function setSourceEntityId($sourceEntityId)
+    {
+        $this->sourceEntityId = (int)$sourceEntityId;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSourceEntityIdentifier()
+    {
+        return $this->sourceEntityIdentifier;
+    }
+
+    /**
+     * @param string|null $sourceEntityIdentifier
+     *
+     * @return $this
+     */
+    public function setSourceEntityIdentifier($sourceEntityIdentifier = null)
+    {
+        $this->sourceEntityIdentifier = $sourceEntityIdentifier;
+
+        return $this;
     }
 }
