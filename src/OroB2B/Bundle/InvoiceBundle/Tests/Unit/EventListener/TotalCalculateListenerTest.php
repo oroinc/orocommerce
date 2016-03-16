@@ -11,14 +11,10 @@ use OroB2B\Bundle\InvoiceBundle\EventListener\TotalCalculateListener;
 
 class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FormFactory
-     */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|FormFactory */
     protected $formFactory;
 
-    /**
-     * @var TotalCalculateListener
-     */
+    /** @var TotalCalculateListener */
     protected $listener;
 
     /**
@@ -33,52 +29,58 @@ class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     *
+     * @dataProvider getDataProvider
+     *
+     * @param object $entity
+     * @param int $createFormAmount
+     * @param int $executeSubmitAmount
+     */
+    public function testOnBeforeTotalCalculate($entity, $createFormAmount, $executeSubmitAmount)
+    {
+        $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $form = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Form\Type\OrderType')
+            ->setMethods(['submit'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $form->expects($this->exactly($executeSubmitAmount))->method('submit');
+
+        $this->formFactory->expects($this->exactly($createFormAmount))->method('create')->willReturn($form);
+
+        $event = new TotalCalculateBeforeEvent($entity, $request);
+
+        $this->listener->onBeforeTotalCalculate($event);
+    }
+
+    /**
+     * @return array
+     */
+    public function getDataProvider()
+    {
+        return [
+            'supportedClass' => [
+                'entity' => new Invoice(),
+                'createFormAmount' => 1,
+                'executeSubmitAmount' => 1
+            ],
+            'unSupportedClass'=>[
+                'entity' => new InvoiceLineItem(),
+                'createFormAmount' => 0,
+                'executeSubmitAmount' => 0
+            ]
+
+        ];
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function tearDown()
     {
         unset($this->formFactory, $this->listener);
-    }
-
-    public function testOnBeforeTotalCalculate()
-    {
-        $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $form = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Form\Type\OrderType')
-            ->setMethods(['submit'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $form->expects($this->once())->method('submit');
-
-        $this->formFactory->expects($this->once())->method('create')->willReturn($form);
-
-        $entity = new Invoice();
-        $event = new TotalCalculateBeforeEvent($entity, $request);
-
-        $this->listener->onBeforeTotalCalculate($event);
-    }
-
-    public function testUnSupportedEntity()
-    {
-        $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $form = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Form\Type\OrderType')
-            ->setMethods(['submit'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $form->expects($this->never())->method('submit');
-
-        $this->formFactory->expects($this->never())->method('create')->willReturn($form);
-
-        $entity = new InvoiceLineItem();
-        $event = new TotalCalculateBeforeEvent($entity, $request);
-
-        $this->listener->onBeforeTotalCalculate($event);
     }
 }

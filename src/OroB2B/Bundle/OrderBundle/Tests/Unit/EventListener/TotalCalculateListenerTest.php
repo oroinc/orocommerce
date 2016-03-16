@@ -11,14 +11,10 @@ use OroB2B\Bundle\OrderBundle\EventListener\TotalCalculateListener;
 
 class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FormFactory
-     */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|FormFactory */
     protected $formFactory;
 
-    /**
-     * @var TotalCalculateListener
-     */
+    /** @var TotalCalculateListener */
     protected $listener;
 
     /**
