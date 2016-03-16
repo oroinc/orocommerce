@@ -3,12 +3,13 @@
 namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Controller\Frontend;
 
 use Doctrine\Common\Util\ClassUtils;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
+
 use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
+use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 
 /**

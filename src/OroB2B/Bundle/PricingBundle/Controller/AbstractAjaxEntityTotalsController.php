@@ -2,13 +2,13 @@
 
 namespace OroB2B\Bundle\PricingBundle\Controller;
 
-use OroB2B\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
+use OroB2B\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 
 abstract class AbstractAjaxEntityTotalsController extends Controller
@@ -16,6 +16,7 @@ abstract class AbstractAjaxEntityTotalsController extends Controller
     /**
      * @param string $entityClassName
      * @param integer $entityId
+     *
      * @return array
      */
     protected function getTotals($entityClassName, $entityId)
@@ -71,15 +72,6 @@ abstract class AbstractAjaxEntityTotalsController extends Controller
 //            }
 
         }
-
-//        /** @var OroEntityManager $entityManager */
-//        $entityManager = $this->getDoctrine()->getManager();
-//        $entity = $entityManager->getRepository($entityClass)->find($entityId);
-//
-//        if (!$entity) {
-//            throw $this->createNotFoundException();
-//        }
-
 
         $totalProvider = $this->get('orob2b_pricing.subtotal_processor.total_processor_provider');
         $total = $totalProvider->getTotal($entity)->toArray();

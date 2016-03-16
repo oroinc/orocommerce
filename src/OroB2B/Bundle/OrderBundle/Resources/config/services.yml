@@ -5,9 +5,7 @@ parameters:
 
     orob2b_order.order.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_order.order.listener.order_listener.class: OroB2B\Bundle\OrderBundle\EventListener\OrderListener
-
     orob2b_order.order.listener.total_calculate_listener.class: OroB2B\Bundle\OrderBundle\EventListener\TotalCalculateListener
-
 
     orob2b_order.order.entity.id_generator.class: OroB2B\Bundle\OrderBundle\Doctrine\ORM\Id\SimpleEntityAwareGenerator
 

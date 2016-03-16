@@ -2,13 +2,11 @@
 
 namespace OroB2B\Bundle\OrderBundle\EventListener;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Symfony\Component\Form\FormFactory;
 
-use OroB2B\Bundle\OrderBundle\Doctrine\ORM\Id\EntityAwareGeneratorInterface;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
 use OroB2B\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
-use Symfony\Component\Form\FormFactory;
 
 class TotalCalculateListener
 {
