@@ -146,6 +146,16 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
         $subtotal->setType(LineItemSubtotalProvider::TYPE);
         $subtotal->setAmount($subtotalAmount);
 
+        $discountSubtotal = new Subtotal();
+        $discountSubtotalAmount = 42;
+        $discountSubtotal->setType(DiscountSubtotalProvider::TYPE);
+        $discountSubtotal->setAmount($discountSubtotalAmount);
+
+        $discountSubtotal2 = new Subtotal();
+        $discountSubtotalAmount2 = -40;
+        $discountSubtotal2->setType(DiscountSubtotalProvider::TYPE);
+        $discountSubtotal2->setAmount($discountSubtotalAmount2);
+
         $total = new Subtotal();
         $totalAmount = 90;
         $total->setType(TotalProcessorProvider::TYPE);
@@ -155,6 +165,9 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getSubtotal')
             ->willReturn($subtotal);
 
+        $this->discountSubtotalProvider->expects($this->any())
+            ->method('getSubtotal')
+            ->willReturn([$discountSubtotal, $discountSubtotal2]);
 
         $this->totalsProvider->expects($this->any())
             ->method('getTotal')
@@ -181,6 +194,10 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
 
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
         $this->assertEquals($subtotalAmount, $propertyAccessor->getValue($this->entity, $subtotal->getType()));
+        $this->assertEquals(
+            (float) $discountSubtotalAmount + $discountSubtotalAmount2,
+            $this->entity->getTotalDiscounts()->getValue()
+        );
         $this->assertEquals($totalAmount, $propertyAccessor->getValue($this->entity, $total->getType()));
     }
 }
