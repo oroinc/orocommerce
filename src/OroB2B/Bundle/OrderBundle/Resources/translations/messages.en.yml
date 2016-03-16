@@ -33,6 +33,7 @@ orob2b:
         discount.label: Discount
         total_discounts_amount.label: Total Discounts Amount
         discounts.label: Discounts
+        discountitem.add_label: Add Discount
 
         orderdiscount:
             entity_label: Order Discount
@@ -42,6 +43,7 @@ orob2b:
             description.label: Description
             percent.label: Percent
             order.label: Order
+            type.label: Order Discount Type
 
         orderaddress:
             entity_label: Order Address
@@ -101,6 +103,13 @@ orob2b:
             column:
                 product: 'Product'
 
+        orderdiscountitem:
+            columns:
+                title: Discount
+                description: Description
+            types:
+                percent: %
+
         btn:
             add_seller_notes: 'Add Notes'
             remove_seller_notes: 'Remove Seller Notes'
@@ -126,6 +135,7 @@ orob2b:
             order_line_items: 'Line Items'
             order_totals: Totals
             shipping_information: Shipping Information
+            discounts: Discounts
 
         security:
             permission:
