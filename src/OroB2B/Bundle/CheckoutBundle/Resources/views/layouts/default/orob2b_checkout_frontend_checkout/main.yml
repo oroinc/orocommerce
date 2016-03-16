@@ -28,19 +28,6 @@ layout:
                         vars:
                             checkout: { @value: $data.checkout }
                             form: { @value: $data.orob2b_checkout_transition_form }
-                checkout_form_buttons:
-                    blockType: container
-                checkout_button_continue:
-                    blockType: checkout_transition_continue
-                    options:
-                        transitionData: { @value: $data.orob2b_checkout_continue_transition }
-                        checkout: { @value: $data.checkout }
-                checkout_button_back:
-                    blockType: checkout_transition_back
-                    options:
-                        transitionData: { @value: $data.orob2b_checkout_back_transition }
-                        checkout: { @value: $data.checkout }
-
                 checkout_order_summary:
                     blockType: container
                     options:
@@ -62,8 +49,5 @@ layout:
                         checkout_information:
                             checkout_form:
                                 checkout_form_fields: ~
-                                checkout_form_buttons:
-                                    checkout_button_continue: ~
-                                    checkout_button_back: ~
                         checkout_order_summary:
                             checkout_order_summary_table: ~
