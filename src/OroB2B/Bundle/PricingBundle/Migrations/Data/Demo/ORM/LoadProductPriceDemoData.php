@@ -120,7 +120,6 @@ class LoadProductPriceDemoData extends AbstractFixture implements ContainerAware
         fclose($handler);
 
         $manager->flush();
-        $this->container->get('orob2b_pricing.builder.combined_price_list_builder')->build(true);
     }
 
     /**

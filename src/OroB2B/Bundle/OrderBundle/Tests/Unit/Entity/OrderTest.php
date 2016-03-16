@@ -11,6 +11,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
+use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -42,12 +43,17 @@ class OrderTest extends \PHPUnit_Framework_TestCase
             ['accountUser', new AccountUser()],
             ['website', new Website()],
             ['shippingCost', new Price()],
+            ['sourceEntityClass', 'EntityClass'],
+            ['sourceEntityIdentifier', 'source-identifier-test-01'],
+            ['sourceEntityId', 1],
+            ['shippingCost', new Price()],
             ['totalDiscounts', new Price()],
         ];
 
         $order = new Order();
         $this->assertPropertyAccessors($order, $properties);
         $this->assertPropertyCollection($order, 'lineItems', new OrderLineItem());
+        $this->assertPropertyCollection($order, 'discounts', new OrderDiscount());
     }
 
     public function testGetEmail()

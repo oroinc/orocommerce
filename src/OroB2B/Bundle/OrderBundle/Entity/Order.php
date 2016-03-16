@@ -18,7 +18,9 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\OrderBundle\Model\DiscountAwareInterface;
 use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
+use OroB2B\Bundle\OrderBundle\Provider\IdentifierAwareInterface;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
@@ -63,8 +65,11 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  * )
  * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Order extends ExtendOrder implements
     OrganizationAwareInterface,
@@ -72,7 +77,9 @@ class Order extends ExtendOrder implements
     AccountOwnerAwareInterface,
     LineItemsAwareInterface,
     ShippingAwareInterface,
-    CurrencyAwareInterface
+    CurrencyAwareInterface,
+    IdentifierAwareInterface,
+    DiscountAwareInterface
 {
     /**
      * @var integer
@@ -357,6 +364,27 @@ class Order extends ExtendOrder implements
     protected $shippingCost;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="source_entity_class", type="string", length=255, nullable=true)
+     */
+    protected $sourceEntityClass;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="source_entity_id", type="integer", nullable=true )
+     */
+    protected $sourceEntityId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="source_entity_identifier", type="string", length=255, nullable=true)
+     */
+    protected $sourceEntityIdentifier;
+
+    /**
      * @var float
      *
      * @ORM\Column(name="total_discounts_amount", type="money", nullable=true)
@@ -369,6 +397,22 @@ class Order extends ExtendOrder implements
     protected $totalDiscounts;
 
     /**
+     * @var Collection|OrderDiscount[]
+     *
+     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\OrderBundle\Entity\OrderDiscount",
+     *      mappedBy="order", cascade={"ALL"}, orphanRemoval=true
+     * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $discounts;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -376,6 +420,7 @@ class Order extends ExtendOrder implements
         parent::__construct();
 
         $this->lineItems = new ArrayCollection();
+        $this->discounts = new ArrayCollection();
     }
 
     /**
@@ -894,6 +939,74 @@ class Order extends ExtendOrder implements
     }
 
     /**
+     * Get Source Entity Class
+     *
+     * @return string
+     */
+    public function getSourceEntityClass()
+    {
+        return $this->sourceEntityClass;
+    }
+
+    /**
+     * Set Source Entity Class
+     *
+     * @param string $sourceEntityClass
+     *
+     * @return $this
+     */
+    public function setSourceEntityClass($sourceEntityClass)
+    {
+        $this->sourceEntityClass = $sourceEntityClass;
+
+        return $this;
+    }
+
+    /**
+     * Get Source Entity Id
+     *
+     * @return string
+     */
+    public function getSourceEntityId()
+    {
+        return $this->sourceEntityId;
+    }
+
+    /**
+     * Set Source Entity Id
+     *
+     * @param integer $sourceEntityId
+     *
+     * @return $this
+     */
+    public function setSourceEntityId($sourceEntityId)
+    {
+        $this->sourceEntityId = (int)$sourceEntityId;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSourceEntityIdentifier()
+    {
+        return $this->sourceEntityIdentifier;
+    }
+
+    /**
+     * @param string|null $sourceEntityIdentifier
+     *
+     * @return $this
+     */
+    public function setSourceEntityIdentifier($sourceEntityIdentifier = null)
+    {
+        $this->sourceEntityIdentifier = $sourceEntityIdentifier;
+
+        return $this;
+    }
+
+    /**
      * Get total discounts
      *
      * @return Price|null
@@ -925,5 +1038,58 @@ class Order extends ExtendOrder implements
     public function updateTotalDiscounts()
     {
         $this->totalDiscountsAmount = $this->totalDiscounts ? $this->totalDiscounts->getValue() : null;
+    }
+
+    /**
+     * @param OrderDiscount $discount
+     *
+     * @return bool
+     */
+    public function hasDiscount(OrderDiscount $discount)
+    {
+        return $this->discounts->contains($discount);
+    }
+
+    /**
+     * Add discount
+     *
+     * @param OrderDiscount $discount
+     *
+     * @return Order
+     */
+    public function addDiscount(OrderDiscount $discount)
+    {
+        if (!$this->hasDiscount($discount)) {
+            $this->discounts[] = $discount;
+            $discount->setOrder($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove discount
+     *
+     * @param OrderDiscount $discount
+     *
+     * @return Order
+     */
+    public function removeDiscount(OrderDiscount $discount)
+    {
+        if ($this->hasDiscount($discount)) {
+            $this->discounts->removeElement($discount);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get order discounts
+     *
+     * @return Collection|OrderDiscount[]
+     */
+    public function getDiscounts()
+    {
+        return $this->discounts;
     }
 }
