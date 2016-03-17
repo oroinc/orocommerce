@@ -228,6 +228,9 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
         $this->requestHandler->recalculateTotals($entityClassName, $entityId);
     }
 
+    /**
+     * Init totalProvider
+     */
     protected function prepareTotal()
     {
         $total = new Subtotal();
@@ -250,10 +253,11 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->totalProvider->expects($this->once())->method('getTotal')->willReturn($total);
         $this->totalProvider->expects($this->once())->method('getSubtotals')->willReturn($subtotals);
-
     }
 
-
+    /**
+     * @return array
+     */
     protected function getExpectedTotal()
     {
         return [
@@ -277,6 +281,11 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @param $returnEntity
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
     protected function initRepository($returnEntity)
     {
         $repository = $this->getMockBuilder('\Doctrine\Common\Persistence\ObjectRepository')
@@ -286,6 +295,11 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
         return $repository;
     }
 
+    /**
+     * @param $repository
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
     protected function initManager($repository)
     {
         $manager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
