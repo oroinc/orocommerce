@@ -39,6 +39,7 @@ layout:
                     blockType: block
                     options:
                         vars:
+                            workflowStep: { @value: $data.workflowStep }
                             lineItems: { @value: $data.orob2b_checkout_summary.lineItems }
                             lineItemTotals: { @value: $data.orob2b_checkout_summary.lineItemTotals }
                             lineItemsCount: { @value: $data.orob2b_checkout_summary.lineItemsCount }

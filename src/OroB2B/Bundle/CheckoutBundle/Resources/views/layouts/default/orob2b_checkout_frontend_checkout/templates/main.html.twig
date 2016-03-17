@@ -121,6 +121,11 @@
                 </tr>
             {% endfor %}
             <tr>
+                {% if workflowStep.name == 'place_order' %}
+                    <td class="va-t_md hidden-xs">
+                        <a href="#"><i class="icon-pencil"></i>Edit your Order List</a>
+                    </td>
+                {% endif %}
                 <td colspan="3" class="va-t_md text-right">
                     <div class="checkout-order-summary__price-table">
                         <table class="table">
