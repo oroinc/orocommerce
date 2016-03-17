@@ -268,6 +268,12 @@ class StartCheckout extends AbstractAction
     protected function setCheckoutData($context, Checkout $checkout, array $defaultData)
     {
         $data = $this->getOptionFromContext($context, self::CHECKOUT_DATA_KEY, []);
+        $data = array_filter(
+            $data,
+            function ($element) {
+                return $element !== null;
+            }
+        );
         $data = array_merge($defaultData, $data);
 
         foreach ($data as $property => $value) {
@@ -299,11 +305,7 @@ class StartCheckout extends AbstractAction
     {
         $data = $default;
         if (array_key_exists($key, $this->options)) {
-            if ($this->contextAccessor->hasValue($context, $this->options[$key])) {
-                $data = $this->contextAccessor->getValue($context, $this->options[$key]);
-            } else {
-                $data = $this->options[$key];
-            }
+            $data = $this->contextAccessor->getValue($context, $this->options[$key]);
         }
 
         if ($data) {
