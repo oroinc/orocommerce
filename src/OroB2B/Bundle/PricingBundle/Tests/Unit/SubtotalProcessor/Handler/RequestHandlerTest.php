@@ -93,7 +93,6 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
         $event = new TotalCalculateBeforeEvent($entity, $request);
 
         $this->eventDispatcher->expects($this->once())->method('dispatch')->willReturn($event);

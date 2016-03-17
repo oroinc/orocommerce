@@ -6,10 +6,10 @@ define(function(require) {
     var _ = require('underscore');
     var routing = require('routing');
     var mediator = require('oroui/js/mediator');
+    var messenger =  require('oroui/js/messenger');
     var NumberFormatter = require('orolocale/js/formatter/number');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var BaseComponent = require('oroui/js/app/components/base/component');
-
     /**
      * @export orob2bpricing/js/app/components/totals-component
      * @extends oroui.app.components.base.Component
@@ -171,8 +171,8 @@ define(function(require) {
                             mediator.trigger('total:updated', totals);
                         }
                     },
-                    error: function (response) {
-                        //callback(response);
+                    error: function(jqXHR) {
+                        messenger.showErrorMessage(__('Sorry, unexpected error was occurred'), jqXHR.responseJSON);
                     }
                 });
             }
