@@ -20,6 +20,7 @@ class DiscountSubtotalProvider implements SubtotalProviderInterface
 {
     const TYPE = 'discount';
     const NAME = 'orob2b_order.subtotal_discount_cost';
+    const CURRENCY_DEFAULT = 'USD';
 
     /** @var TranslatorInterface */
     protected $translator;
@@ -104,7 +105,7 @@ class DiscountSubtotalProvider implements SubtotalProviderInterface
     protected function getBaseCurrency($entity)
     {
         if (!$entity instanceof CurrencyAwareInterface) {
-            return 'USD';
+            return self::CURRENCY_DEFAULT;
         } else {
             return $entity->getCurrency();
         }
