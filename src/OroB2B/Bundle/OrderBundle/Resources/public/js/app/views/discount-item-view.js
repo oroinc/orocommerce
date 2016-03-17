@@ -64,7 +64,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * Doing something after loading child components
          */
         handleLayoutInit: function() {
             this.$form = this.$el.closest('form');

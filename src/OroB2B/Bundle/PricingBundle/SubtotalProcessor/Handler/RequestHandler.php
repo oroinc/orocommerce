@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\PricingBundle\SubtotalProcessor\Handler;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\EntityBundle\ORM\Registry;
 use Oro\Bundle\EntityBundle\Exception\EntityNotFoundException;
@@ -55,6 +54,8 @@ class RequestHandler
     }
 
     /**
+     * Calculate total with subtotals for entity
+     *
      * @param string $entityClassName
      * @param int|null $entityId
      * @param Request|null $request - can be used data from request for dynamic recalculate for form data
@@ -105,6 +106,8 @@ class RequestHandler
     }
 
     /**
+     * Dispatch event TotalCalculateBeforeEvent to fill entity
+     *
      * @param object $entity
      * @param Request $request
      *
