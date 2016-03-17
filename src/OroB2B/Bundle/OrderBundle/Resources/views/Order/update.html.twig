@@ -174,12 +174,7 @@
 
     {% set shippingInformation %}
         {%  set options = {
-            view: 'orob2border/js/app/views/shipping-cost-view',
-            selectors: {
-                subtotalsFields: [
-                    '#' ~ form.shippingCost.value.vars.id
-                ]
-            }
+            view: 'orob2border/js/app/views/shipping-cost-view'
         } %}
 
         <div data-page-component-module="oroui/js/app/components/view-component"
