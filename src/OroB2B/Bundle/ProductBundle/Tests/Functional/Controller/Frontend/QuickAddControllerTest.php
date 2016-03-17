@@ -49,16 +49,14 @@ abstract class QuickAddControllerTest extends WebTestCase
             LoadProductData::PRODUCT_2 . ",     2",
             LoadProductData::PRODUCT_3 . "\t3",
             "not-existing-product\t  4",
-            "malformed-line"
         ];
 
         $expectedValidationResult = [
-            self::VALIDATION_TOTAL_ROWS => 5,
+            self::VALIDATION_TOTAL_ROWS => 4,
             self::VALIDATION_VALID_ROWS => 3,
-            self::VALIDATION_ERROR_ROWS => 2,
+            self::VALIDATION_ERROR_ROWS => 1,
             self::VALIDATION_ERRORS => [
                 sprintf(self::VALIDATION_ERROR_NOT_FOUND, 'not-existing-product'),
-                sprintf(self::VALIDATION_ERROR_MALFORMED, 5)
             ]
         ];
 
