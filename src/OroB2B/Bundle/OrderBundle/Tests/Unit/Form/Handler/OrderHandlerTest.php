@@ -17,15 +17,6 @@ use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class OrderHandlerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|TotalProcessorProvider */
-    protected $totalsProvider;
-
-    /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemSubtotalProvider */
-    protected $lineItemSubtotalProvider;
-
-    /** @var \PHPUnit_Framework_MockObject_MockObject|DiscountSubtotalProvider */
-    protected $discountSubtotalProvider;
-
     /** @var OrderHandler */
     protected $handler;
 
@@ -53,30 +44,12 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->totalsProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->lineItemSubtotalProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->discountSubtotalProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->entity = new Order();
 
         $this->handler = new OrderHandler(
             $this->form,
             $this->request,
-            $this->manager,
-            $this->totalsProvider,
-            $this->lineItemSubtotalProvider,
-            $this->discountSubtotalProvider
+            $this->manager
         );
     }
 
