@@ -11,6 +11,7 @@ parameters:
     orob2b_checkout.layout.data_provider.checkout_steps.class: OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutStepsDataProvider
     orob2b_checkout.layout.data_provider.back_transitions.class: OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\BackTransitionsDataProvider
     orob2b_checkout.layout.data_provider.back_transition.class: OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\BackTransitionDataProvider
+    orob2b_checkout.model.action.start_checkout.class: OroB2B\Bundle\CheckoutBundle\Model\Action\StartCheckout
 
     orob2b_checkout.model.action.get_order_line_items.class: OroB2B\Bundle\CheckoutBundle\Model\Action\GetOrderLineItems
     orob2b_checkout.layout.block.type.transition_button.class: OroB2B\Bundle\CheckoutBundle\Layout\Block\Type\TransitionButtonType
@@ -101,3 +102,19 @@ services:
             - @orob2b_checkout.data_provider.manager.checkout_line_items
         tags:
             - { name: oro_workflow.action, alias: get_order_line_items }
+
+    orob2b_checkout.model.action.start_checkout:
+        class: %orob2b_checkout.model.action.start_checkout.class%
+        calls:
+            - [setCheckoutClass, [%orob2b_checkout.entity.checkout.class%]]
+            - [setCheckoutRoute, ['orob2b_checkout_frontend_checkout']]
+        arguments:
+            - @oro_action.context_accessor
+            - @doctrine
+            - @orob2b_website.manager
+            - @orob2b_pricing.provider.user_currency
+            - @security.token_storage
+            - @property_accessor
+            - @oro_action.function.redirect
+        tags:
+            - { name: oro_action.function, alias: start_checkout }

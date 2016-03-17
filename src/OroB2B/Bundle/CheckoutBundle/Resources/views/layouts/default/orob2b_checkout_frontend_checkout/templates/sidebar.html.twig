@@ -30,17 +30,14 @@
                     </span>
                     <h3 class="checkout-navigation__title">
                         {{ step.label|trans }}
-                        {% if isComplete and editTransitions[step.name] is defined %}
+                        {% if isComplete and editTransitions[step.name] is defined and block.step_edit_button is defined %}
                             {% set editTransitionData = editTransitions[step.name] %}
-                            {% set editBlockId = step.name ~'_edit' %}
-                            {% if block[editBlockId] is defined %}
-                                {{ block_widget(blocks.offsetGet(editBlockId),
-                                    {
-                                        'transitionData': editTransitionData,
-                                        'checkout': checkout
-                                    }
-                                ) }}
-                            {% endif %}
+                            {{ block_widget(block.step_edit_button,
+                                {
+                                    'transitionData': editTransitionData,
+                                    'checkout': checkout
+                                }
+                            ) }}
                         {% endif %}
                     </h3>
                     {% set informationBlockId = step.name ~ '_information' %}

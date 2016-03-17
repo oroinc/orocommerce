@@ -35,6 +35,7 @@ layout:
                         vars:
                             lineItemsCount: { @value: $data.orob2b_checkout_summary.lineItemsCount }
                             totalPrice: { @value: $data.orob2b_checkout_summary.totalPrice }
+                            checkout: { @value: $data.checkout }
                 checkout_order_summary_table:
                     blockType: block
                     options:
