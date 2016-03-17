@@ -149,7 +149,7 @@ class RequestHandler
     }
 
     /**
-     * @param string $entityClassName
+     * @param $entityClassName
      *
      * @throws EntityNotFoundException
      */
