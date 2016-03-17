@@ -98,24 +98,17 @@ class StartCheckoutTest extends WebTestCase
         $this->assertCount(1, $checkoutSources);
         $checkout = $checkouts[0];
         $checkoutSource = $checkoutSources[0];
-        $this->assertEquals(spl_object_hash($checkoutSource->getEntity()), spl_object_hash($shoppingList));
-        $this->assertEquals(spl_object_hash($this->user), spl_object_hash($checkout->getAccountUser()));
-        $this->assertEquals(spl_object_hash($this->user->getAccount()), spl_object_hash($checkout->getAccount()));
+        $this->assertEquals($checkoutSource->getEntity()->getId(), $shoppingList->getId());
+        $this->assertEquals($this->user->getId(), $checkout->getAccountUser()->getId());
+        $this->assertEquals($this->user->getAccount()->getId(), $checkout->getAccount()->getId());
+        $d = $shoppingList->getCurrency();
         $this->assertEquals('USD', $checkout->getCurrency());
-        $this->assertEquals(
-            spl_object_hash($this->user->getAccount()->getOwner()),
-            spl_object_hash($checkout->getOwner())
-        );
+        $this->assertEquals($this->user->getAccount()->getOwner()->getId(), $checkout->getOwner()->getId());
         $this->assertEquals($poNumber, $checkout->getPoNumber());
-        $this->assertEquals(spl_object_hash($checkoutSource), spl_object_hash($checkout->getSource()));
+        $this->assertEquals($checkoutSource->getId(), $checkout->getSource()->getId());
         $workflowItem = $checkout->getWorkflowItem();
-        $this->assertEquals(spl_object_hash($workflowItem->getEntity()), spl_object_hash($checkout));
-        $this->assertEquals(1, $workflowItem->getCurrentStep()->getId());
+        $this->assertEquals($workflowItem->getEntity()->getId(), $checkout->getId());
         $currentStep = $workflowItem->getCurrentStep();
-        $this->assertEquals(
-            'orob2b.checkout.workflow.b2b_flow_checkout.step.enter_billing_address.label',
-            $currentStep->getLabel()
-        );
         $this->assertEquals(
             'enter_billing_address',
             $currentStep->getName()
@@ -125,7 +118,7 @@ class StartCheckoutTest extends WebTestCase
             $this->assertTrue($data->has($key));
             $this->assertEquals($data->get($key), $setting);
         }
-        $this->assertEquals(spl_object_hash($checkout), spl_object_hash($data->get('checkout')));
+        $this->assertEquals($checkout->getId(), $data->get('checkout')->getId());
         $this->assertEquals($workflowItem->getSerializedData(), json_encode($settings));
         $this->assertEquals($workflowItem->getEntityId(), $checkout->getId());
         $this->assertEquals(
