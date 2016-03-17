@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Handler;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\EntityBundle\ORM\Registry;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
@@ -122,9 +121,9 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Security\Core\Exception\AccessDeniedException
+     * @expectedException \Symfony\Component\Security\Core\Exception\AccessDeniedException
      */
-    public function testRecalculateTotalsNoAccessEdit()
+    public function testRecalculateTotalsNoAccessView()
     {
         $entityClassName = 'OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub';
         $entityId = 1;
