@@ -67,7 +67,7 @@ class RequestHandler
 
         if ($entityId) {
             $entity = $this->getExistEntity($entityClassName, $entityId);
-            $this->hasAccessEdit($entity);
+            $this->hasAccessView($entity);
         } else {
             $entity = new $entityClassName();
         }
@@ -84,8 +84,8 @@ class RequestHandler
     }
 
     /**
-     * @param $total
-     * @param $subtotals
+     * @param array $total
+     * @param Subtotal[] $subtotals
      *
      * @return array
      */
@@ -119,8 +119,8 @@ class RequestHandler
     }
 
     /**
-     * @param $entityClass
-     * @param $entityId
+     * @param string  $entityClass
+     * @param int $entityId
      *
      * @return object
      * @throws EntityNotFoundException
@@ -138,7 +138,7 @@ class RequestHandler
     }
 
     /**
-     * @param $entity
+     * @param object $entity
      */
     protected function hasAccessView($entity)
     {
@@ -149,18 +149,7 @@ class RequestHandler
     }
 
     /**
-     * @param $entity
-     */
-    protected function hasAccessEdit($entity)
-    {
-        $isGranted = $this->securityFacade->isGranted('EDIT', $entity);
-        if (!$isGranted) {
-            throw new AccessDeniedException();
-        }
-    }
-
-    /**
-     * @param $entityClassName
+     * @param string $entityClassName
      *
      * @throws EntityNotFoundException
      */

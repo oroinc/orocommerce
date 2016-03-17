@@ -27,9 +27,6 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade */
     protected $securityFacade;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|RequestStack */
-    protected $requestStack;
-
     /** @var  \PHPUnit_Framework_MockObject_MockObject|EntityRoutingHelper */
     protected $entityRoutingHelper;
 
@@ -53,10 +50,6 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
             $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
                 ->disableOriginalConstructor()->getMock();
 
-        $this->requestStack =
-            $this->getMockBuilder('Symfony\Component\HttpFoundation\RequestStack')
-                ->disableOriginalConstructor()->getMock();
-
         $this->entityRoutingHelper =
             $this->getMockBuilder('Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper')
                 ->disableOriginalConstructor()->getMock();
@@ -69,88 +62,9 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
             $this->totalProvider,
             $this->eventDispatcher,
             $this->securityFacade,
-            $this->requestStack,
             $this->entityRoutingHelper,
             $this->doctrine
         );
-    }
-
-    /**
-     * @dataProvider getTotalsProvider
-     * @expectedException Oro\Bundle\EntityBundle\Exception\EntityNotFoundException
-     *
-     * @param string $entityClassName
-     * @param int $entityId
-     */
-    public function testGetExistEntity($entityClassName, $entityId)
-    {
-        $this->entityRoutingHelper->expects($this->once())->method('resolveEntityClass')->willReturn($entityClassName);
-
-        if ($entityClassName && $entityId === null) {
-            $repository = $this->initRepository(null);
-            $manager = $this->initManager($repository);
-
-            $this->doctrine->expects($this->once())->method('getManager')->willReturn($manager);
-        }
-
-        $this->requestHandler->getTotals($entityClassName, $entityId);
-    }
-
-    /**
-     * @return array
-     */
-    public function getTotalsProvider()
-    {
-        return [
-            'empty Class Name' => [
-                'entityClassName' => '',
-                'entityId' => null
-            ],
-            'No empty Class Name and EntityId' => [
-                'entityClassName' => 'OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub',
-                'entityId' => null
-            ]
-        ];
-    }
-
-    /**
-     * @expectedException Symfony\Component\Security\Core\Exception\AccessDeniedException
-     */
-    public function testGetTotalsNoAccessView()
-    {
-        $entityClassName = 'OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub';
-        $entityId = 1;
-
-        $this->entityRoutingHelper->expects($this->once())->method('resolveEntityClass')->willReturn($entityClassName);
-
-        $repository = $this->initRepository(new $entityClassName());
-        $manager = $this->initManager($repository);
-
-        $this->doctrine->expects($this->once())->method('getManager')->willReturn($manager);
-
-        $this->securityFacade->expects($this->once())->method('isGranted')->willReturn(false);
-
-        $this->requestHandler->getTotals($entityClassName, $entityId);
-    }
-
-    public function testGetTotals()
-    {
-        $entityClassName = 'OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub';
-        $entityId = 1;
-
-        $this->entityRoutingHelper->expects($this->once())->method('resolveEntityClass')->willReturn($entityClassName);
-
-        $repository = $this->initRepository(new $entityClassName());
-        $manager = $this->initManager($repository);
-
-        $this->doctrine->expects($this->once())->method('getManager')->willReturn($manager);
-        $this->securityFacade->expects($this->once())->method('isGranted')->willReturn(true);
-
-        $this->prepareTotal();
-        $totals = $this->requestHandler->getTotals($entityClassName, $entityId);
-        $expectedTotals = $this->getExpectedTotal();
-
-        self::assertEquals($expectedTotals, $totals);
     }
 
     /**
@@ -185,7 +99,7 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
         $this->eventDispatcher->expects($this->once())->method('dispatch')->willReturn($event);
 
         $this->prepareTotal();
-        $totals = $this->requestHandler->recalculateTotals($entityClassName, $entityId);
+        $totals = $this->requestHandler->recalculateTotals($entityClassName, $entityId, $request);
         $expectedTotals = $this->getExpectedTotal();
 
         self::assertEquals($expectedTotals, $totals);
