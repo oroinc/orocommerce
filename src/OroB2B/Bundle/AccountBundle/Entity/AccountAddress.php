@@ -73,10 +73,48 @@ class AccountAddress extends ExtendAccountAddress
     protected $types;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="phone_number", type="string", length=255, nullable=true)
+     * @ConfigField(
+     *  defaultValues={
+     *      "dataaudit"={"auditable"=true},
+     *      "importexport"={
+     *          "order"=90
+     *      }
+     *  }
+     * )
+     */
+    protected $phoneNumber;
+
+    /**
      * {@inheritdoc}
      */
     protected function createAddressToAddressTypeEntity()
     {
         return new AccountAddressToAddressType();
+    }
+
+    /**
+     * Set phone number
+     *
+     * @param string $phoneNumber
+     *
+     * @return AccountAddress
+     */
+    public function setPhoneNumber($phoneNumber)
+    {
+        $this->phoneNumber = $phoneNumber;
+
+        return $this;
+    }
+    /**
+     * Get phone number
+     *
+     * @return string
+     */
+    public function getPhoneNumber()
+    {
+        return $this->phoneNumber;
     }
 }

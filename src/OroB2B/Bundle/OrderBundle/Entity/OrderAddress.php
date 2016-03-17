@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\OrderBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
@@ -55,6 +56,21 @@ class OrderAddress extends ExtendOrderAddress
      * @ORM\Column(name="from_external_source", type="boolean", options={"default"=false})
      */
     protected $fromExternalSource = false;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="phone_number", type="string", length=255, nullable=true)
+     * @ConfigField(
+     *  defaultValues={
+     *      "dataaudit"={"auditable"=true},
+     *      "importexport"={
+     *          "order"=90
+     *      }
+     *  }
+     * )
+     */
+    protected $phoneNumber;
 
     /**
      * Set accountAddress
@@ -121,5 +137,28 @@ class OrderAddress extends ExtendOrderAddress
         $this->fromExternalSource = (bool)$fromExternalSource;
 
         return $this;
+    }
+
+    /**
+     * Set phone number
+     *
+     * @param string $phoneNumber
+     *
+     * @return OrderAddress
+     */
+    public function setPhoneNumber($phoneNumber)
+    {
+        $this->phoneNumber = $phoneNumber;
+
+        return $this;
+    }
+    /**
+     * Get phone number
+     *
+     * @return string
+     */
+    public function getPhoneNumber()
+    {
+        return $this->phoneNumber;
     }
 }
