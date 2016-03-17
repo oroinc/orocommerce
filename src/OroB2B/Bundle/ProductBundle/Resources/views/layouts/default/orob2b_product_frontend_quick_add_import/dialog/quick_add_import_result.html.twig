@@ -28,6 +28,7 @@
         id: 'import-validation',
         'data-page-component-module': 'orob2bproduct/js/app/components/quick-add-import-validation-component',
         'data-page-component-options': widgetOptions|json_encode,
+        'class': 'validation-info'
     }|merge(attr) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -50,6 +51,12 @@
             <th><div class="pull-right">{{ block_widget(block) }}</div></th>
         </tr>
     </thead>
+{% endblock %}
+
+{% block _quick_add_import_validation_items_table_body_widget %}
+    <tbody>
+        {{ block_widget(block) }}
+    </tbody>
 {% endblock %}
 
 {% block _quick_add_import_validation_total_items_count_widget %}

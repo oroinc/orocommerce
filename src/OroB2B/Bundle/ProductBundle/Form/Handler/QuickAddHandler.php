@@ -19,9 +19,9 @@ use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
 use OroB2B\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
 use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
-use OroB2B\Bundle\ProductBundle\Provider\QuickAddCopyPasteFormProvider;
-use OroB2B\Bundle\ProductBundle\Provider\QuickAddFormProvider;
-use OroB2B\Bundle\ProductBundle\Provider\QuickAddImportFormProvider;
+use OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddCopyPasteFormProvider;
+use OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddFormProvider;
+use OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddImportFormProvider;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class QuickAddHandler

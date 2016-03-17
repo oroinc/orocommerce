@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Provider;
+namespace OroB2B\Bundle\ProductBundle\Layout\DataProvider;
 
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -10,9 +10,9 @@ use Oro\Component\Layout\ContextInterface;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAction;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
+use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
 
-class QuickAddImportFormProvider implements DataProviderInterface
+class QuickAddCopyPasteFormProvider implements DataProviderInterface
 {
     /**
      * @var FormAccessor
@@ -42,7 +42,7 @@ class QuickAddImportFormProvider implements DataProviderInterface
      */
     public function getIdentifier()
     {
-        return 'orob2b_product_quick_add_import_form_provider';
+        return 'orob2b_product_quick_add_copy_paste_form_provider';
     }
 
     /**
@@ -53,7 +53,7 @@ class QuickAddImportFormProvider implements DataProviderInterface
         if (!$this->data) {
             $this->data = new FormAccessor(
                 $this->getForm(),
-                FormAction::createByRoute('orob2b_product_frontend_quick_add_import')
+                FormAction::createByRoute('orob2b_product_frontend_quick_add_copy_paste')
             );
         }
         return $this->data;
@@ -66,7 +66,7 @@ class QuickAddImportFormProvider implements DataProviderInterface
     public function getForm(array $options = [])
     {
         if (!$this->form) {
-            $this->form = $this->formFactory->create(QuickAddImportFromFileType::NAME, null, $options);
+            $this->form = $this->formFactory->create(QuickAddCopyPasteType::NAME, null, $options);
         }
         return $this->form;
     }

@@ -4,7 +4,8 @@ orob2b:
         entity_plural_label: Products
         entity_description: Represents product information
         id.label: Id
-        sku.label: "Item #"
+        sku.label: SKU
+        item_number.label: "Item #"
         sku.placeholder: "Enter Item Number"
         quantity.label: Qty
         quantity.placeholder: "Qty #"

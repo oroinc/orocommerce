@@ -2,6 +2,8 @@ layout:
     actions:
         - @setBlockTheme:
             themes: 'OroB2BProductBundle:layouts:default/orob2b_product_frontend_quick_add/quick_add_copy_paste.html.twig'
+        - @setFormTheme:
+            themes: 'OroB2BProductBundle:layouts:default/orob2b_product_frontend_quick_add/form.html.twig'
         - @addTree:
             items:
                 quick_add_copy_paste_form:

@@ -43,7 +43,7 @@
             <div class="grid">
                 <fieldset class="{{ class_prefix }}__form__row {{ class_prefix }}__form__row__head">
                     <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col_item">
-                        <label>{{ 'orob2b.product.sku.label'|trans }}</label>
+                        <label>{{ 'orob2b.product.item_number.label'|trans }}</label>
                     </div>
                     <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col_qty">
                         <label>{{ 'orob2b.product.quantity.label'|trans }}</label>
@@ -75,5 +75,22 @@
                 </div>
             </fieldset>
         {% endif %}
+    {% endspaceless %}
+{% endblock %}
+
+{% block orob2b_product_quick_add_copy_paste_widget %}
+    {% spaceless %}
+        <div {{ block('widget_container_attributes') }}>
+            <fieldset class="{{ class_prefix }}__form__row fields-row">
+                <div class="{{ class_prefix }}__form__col form__col_x12">
+                    {% set copyPasteAttr = form.copyPaste.vars.attr|merge({'class': (form.copyPaste.vars.attr.class is defined ? form.copyPaste.vars.attr.class ~ ' ' : '') ~ 'form-field-copyPaste' }) %}
+                    {{ form_widget(form.copyPaste, {'attr': copyPasteAttr}) }}
+                    <div class="fields-row-error">
+                        {{ form_errors(form.copyPaste) }}
+                    </div>
+                </div>
+            </fieldset>
+            {{ form_rest(form) }}
+        </div>
     {% endspaceless %}
 {% endblock %}
