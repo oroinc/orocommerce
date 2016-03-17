@@ -64,7 +64,7 @@ class AjaxOrderControllerTest extends WebTestCase
 
         $form->getFormNode()->setAttribute(
             'action',
-            $this->getUrl('orob2b_pricing_frontend_entity_totals', [
+            $this->getUrl('orob2b_pricing_frontend_recalculate_entity_totals', [
                 'entityId' => $id,
                 'entityClassName' => ClassUtils::getClass(new Order())
             ])
