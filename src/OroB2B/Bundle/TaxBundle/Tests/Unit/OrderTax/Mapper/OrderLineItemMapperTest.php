@@ -55,7 +55,11 @@ class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
             ->method('dispatch')
             ->willReturn(new \ArrayObject([self::CONTEXT_KEY => self::CONTEXT_VALUE]));
 
-        $this->mapper = new OrderLineItemMapper($this->eventDispatcher, $this->addressProvider);
+        $this->mapper = new OrderLineItemMapper(
+            $this->eventDispatcher,
+            $this->addressProvider,
+            'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem'
+        );
     }
 
     protected function tearDown()

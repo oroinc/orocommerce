@@ -12,6 +12,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
@@ -46,8 +47,8 @@ class OrderController extends AbstractOrderController
 
     /**
      * @Route("/view/{id}", name="orob2b_order_frontend_view", requirements={"id"="\d+"})
-     * @Template("OroB2BOrderBundle:Order/Frontend:view.html.twig")
      * @AclAncestor("orob2b_order_frontend_view")
+     * @Layout()
      *
      * @param Order $order
      * @return array
@@ -58,11 +59,7 @@ class OrderController extends AbstractOrderController
         $total = $this->getTotalProcessor()->getTotal($order);
 
         return [
-            'entity' => $order,
-            'totals' => [
-                'total' => $total,
-                'subtotals' => $subtotals
-            ]
+            'data' => ['order' => $order, 'total' => $total, 'subtotals' => $subtotals]
         ];
     }
 

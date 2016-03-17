@@ -143,4 +143,14 @@ orob2b.tax:
         rate: Rate
         taxableAmount: Taxable Amount
 
+    order_item_datagrid:
+        unitPrice:
+            includingTax.label: Unit Price (Including Tax)
+            excludingTax.label: Unit Price (Excluding Tax)
+            taxAmount.label: Unit Price (Tax Amount)
+        rowTotal:
+            includingTax.label: Row Total (Including Tax)
+            excludingTax.label: Row Total (Excluding Tax)
+            taxAmount.label: Row Total (Tax Amount)
+
 orob2b.order.orderlineitem.taxes.label: Taxes
