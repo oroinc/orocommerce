@@ -77,3 +77,20 @@
         {% endif %}
     {% endspaceless %}
 {% endblock %}
+
+{% block orob2b_product_quick_add_copy_paste_widget %}
+    {% spaceless %}
+        <div {{ block('widget_container_attributes') }}>
+            <fieldset class="{{ class_prefix }}__form__row fields-row">
+                <div class="{{ class_prefix }}__form__col form__col_x12">
+                    {% set copyPasteAttr = form.copyPaste.vars.attr|merge({'class': (form.copyPaste.vars.attr.class is defined ? form.copyPaste.vars.attr.class ~ ' ' : '') ~ 'form-field-copyPaste' }) %}
+                    {{ form_widget(form.copyPaste, {'attr': copyPasteAttr}) }}
+                    <div class="fields-row-error">
+                        {{ form_errors(form.copyPaste) }}
+                    </div>
+                </div>
+            </fieldset>
+            {{ form_rest(form) }}
+        </div>
+    {% endspaceless %}
+{% endblock %}
