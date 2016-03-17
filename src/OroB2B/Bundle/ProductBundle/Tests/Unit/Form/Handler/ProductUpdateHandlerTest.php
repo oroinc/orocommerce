@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;
+use Oro\Bundle\ActionBundle\Model\ActionGroup;
 use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Route\Router;
@@ -180,13 +181,21 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('trans')
             ->with('orob2b.product.controller.product.saved_and_duplicated.message')
             ->will($this->returnValue($savedAndDuplicatedMessage));
-        $this->actionGroupRegistry->expects($this->once())
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ActionGroup $actionGroup */
+        $actionGroup = $this->getMockBuilder('Oro\Bundle\ActionBundle\Model\ActionGroup')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $actionGroup->expects($this->once())
             ->method('execute')
-            ->with(
-                'orob2b_product_duplicate',
-                new ActionData(['data' => $entity])
-            )
+            ->with(new ActionData(['data' => (object)['data' => $entity]]))
             ->willReturn(new ActionData(['redirectUrl' => 'generated_redirect_url']));
+
+        $this->actionGroupRegistry->expects($this->once())
+            ->method('findByName')
+            ->with('orob2b_product_duplicate')
+            ->willReturn($actionGroup);
 
         $result = $this->handler->handleUpdate(
             $entity,

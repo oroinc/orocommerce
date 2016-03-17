@@ -74,7 +74,7 @@ class ProductUpdateHandler extends UpdateHandler
             $this->session->getFlashBag()->set('success', $saveMessage);
             $actionData = new ActionData();
             if ($actionGroup = $this->actionGroupRegistry->findByName('orob2b_product_duplicate')) {
-                $actionData = $actionGroup->execute(new ActionData(['data' => $entity]));
+                $actionData = $actionGroup->execute(new ActionData(['data' => (object)['data' => $entity]]));
             }
 
             if ($actionData->getRedirectUrl()) {
