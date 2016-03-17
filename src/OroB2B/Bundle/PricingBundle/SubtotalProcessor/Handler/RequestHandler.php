@@ -55,6 +55,8 @@ class RequestHandler
     }
 
     /**
+     * Calculate total with subtotals for entity
+     *
      * @param string $entityClassName
      * @param int|null $entityId
      * @param Request|null $request - can be used data from request for dynamic recalculate for form data
@@ -105,6 +107,8 @@ class RequestHandler
     }
 
     /**
+     * Dispatch event TotalCalculateBeforeEvent to fill entity
+     *
      * @param object $entity
      * @param Request $request
      *
