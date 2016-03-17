@@ -19,6 +19,9 @@ services:
             - @orob2b_order.order.provider.order_address_security
             - @orob2b_payment.provider.payment_term
             - @orob2b_order.model.order_currency_handler
+            - @orob2b_pricing.subtotal_processor.total_processor_provider
+            - @orob2b_pricing.subtotal_processor.provider.subtotal_line_item
+            - @orob2b_order.provider.discount_subtotal
         tags:
             - { name: form.type, alias: orob2b_order_type }
         calls:
@@ -33,6 +36,9 @@ services:
             - @orob2b_payment.provider.payment_term
             - @orob2b_pricing.provider.combined_product_price
             - @orob2b_order.model.order_currency_handler
+            - @orob2b_pricing.subtotal_processor.total_processor_provider
+            - @orob2b_pricing.subtotal_processor.provider.subtotal_line_item
+            - @orob2b_order.provider.discount_subtotal
         tags:
             - { name: form.type, alias: orob2b_order_frontend_type }
         calls:
