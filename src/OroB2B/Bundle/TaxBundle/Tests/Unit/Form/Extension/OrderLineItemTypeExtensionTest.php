@@ -2,10 +2,8 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Extension;
 
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -20,19 +18,14 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
     use EntityTrait;
 
     /**
-     * @var TaxationSettingsProvider
+     * @var TaxationSettingsProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $taxationSettingsProvider;
 
     /**
-     * @var TaxManager
+     * @var TaxManager|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $taxManager;
-
-    /**
-     * @var \Twig_Environment
-     */
-    protected $twig;
 
     /**
      * @var OrderLineItemTypeExtension
@@ -57,8 +50,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->extension = new OrderLineItemTypeExtension(
             $this->taxationSettingsProvider,
-            $this->taxManager,
-            $this->twig
+            $this->taxManager
         );
     }
 
@@ -84,78 +76,50 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'taxes',
-                null,
+                'hidden',
                 [
                     'required' => false,
                     'mapped' => false,
-                    'label' => 'orob2b.tax.result.label'
                 ]
             )
             ->willReturn($builder);
 
-        $builder->expects($this->once())
-            ->method('addEventListener')
-            ->with(FormEvents::POST_SET_DATA, [$this->extension, 'onPostSetData']);
-
         $this->extension->buildForm($builder, []);
     }
 
-    public function testOnPostSetDataDisabledProvider()
+    public function testFinishViewDisabledProvider()
     {
         $this->taxationSettingsProvider->expects($this->once())
             ->method('isEnabled')
             ->willReturn(false);
 
-        $event = $this->createEvent('Data');
+        $this->taxManager->expects($this->never())->method('getTax');
 
-        $this->taxManager->expects($this->never())
-            ->method('getTax');
-
-        $this->extension->onPostSetData($event);
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $view = new FormView();
+        $this->extension->finishView($view, $form, []);
     }
 
-    public function testOnPostSetDataEmptyForm()
+    public function testFinishViewEmptyForm()
     {
         $this->taxationSettingsProvider->expects($this->once())
             ->method('isEnabled')
             ->willReturn(true);
 
-        $event = $this->createEvent();
-
-        $this->taxManager->expects($this->never())
-            ->method('getTax');
+        $this->taxManager->expects($this->never())->method('getTax');
 
 
-        $this->extension->onPostSetData($event);
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form->expects($this->once())->method('getData')->willReturn(null);
+        $view = new FormView();
+        $this->extension->finishView($view, $form, []);
     }
 
-    public function testOnPostSetDataEmptyTaxes()
+    public function testFinishView()
     {
         $this->taxationSettingsProvider->expects($this->once())
             ->method('isEnabled')
             ->willReturn(true);
-
-        $event = $this->createEvent('Data');
-
-        $result = new \ArrayObject();
-
-        $this->taxManager->expects($this->once())
-            ->method('getTax')
-            ->willReturn($result);
-
-        $this->twig->expects($this->never())
-            ->method('render');
-
-        $this->extension->onPostSetData($event);
-    }
-
-    public function testOnPostSetDataAllOk()
-    {
-        $this->taxationSettingsProvider->expects($this->once())
-            ->method('isEnabled')
-            ->willReturn(true);
-
-        $event = $this->createEvent('Data');
 
         $result = new \ArrayObject();
         $result->offsetSet('Key', 'Result');
@@ -164,16 +128,14 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('getTax')
             ->willReturn($result);
 
-        $this->twig->expects($this->once())
-            ->method('render')
-            ->willReturn('Text');
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form->expects($this->once())->method('getData')->willReturn(new \stdClass());
+        $view = new FormView();
+        $this->extension->finishView($view, $form, []);
 
-        $taxesForm = $event->getForm()->get('taxes');
-        $taxesForm->expects($this->once())
-            ->method('setData')
-            ->with('Text');
-
-        $this->extension->onPostSetData($event);
+        $this->assertArrayHasKey('taxes', $view->children);
+        $this->assertArrayHasKey('result', $view->children['taxes']->vars);
+        $this->assertEquals($result, $view->children['taxes']->vars['result']);
     }
 
     public function testConfigureOptions()
@@ -187,28 +149,6 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('taxes', $options['sections']);
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return FormEvent
-     */
-    protected function createEvent($data = null)
-    {
-        $taxesForm = $this->getMock('Symfony\Component\Form\FormInterface');
-
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $mainForm */
-        $mainForm = $this->getMock('Symfony\Component\Form\FormInterface');
-        $mainForm->expects($this->any())
-            ->method('get')
-            ->with('taxes')
-            ->willReturn($taxesForm);
-        $mainForm->expects($this->any())
-            ->method('getData')
-            ->willReturn($data);
-
-        return new FormEvent($mainForm, $data);
-    }
-
     public function testOnBuildFormWithDisabledTaxes()
     {
         $this->taxationSettingsProvider->expects($this->once())
@@ -216,11 +156,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
             ->willReturn(false);
 
         $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
-        $builder->expects($this->never())
-            ->method('add');
-
-        $builder->expects($this->never())
-            ->method('addEventListener');
+        $builder->expects($this->never())->method('add');
 
         $this->extension->buildForm($builder, []);
     }

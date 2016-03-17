@@ -142,3 +142,5 @@ orob2b.tax:
         tax: Tax
         rate: Rate
         taxableAmount: Taxable Amount
+
+orob2b.order.orderlineitem.taxes.label: Taxes

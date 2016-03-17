@@ -132,5 +132,56 @@
 {% block _tax_calculation_orob2b_tax___origin_address_value_postal_code_row %}<div class="control-group">{{ _self.tax_address_block(form, use_parent_scope_value) }}</div>{% endblock %}
 
 {% block _orob2b_order_type_lineItems_entry_taxes_widget %}
-    {{ value|raw }}
+    <div data-page-component-module="orob2btax/js/app/components/order-taxes-component"
+         data-page-component-options="{{ {data: result|default({})}|json_encode }}">
+        {% set tableClass = tableClass|default('well') %}
+        <script type="text/html" id="line-item-taxes-template">
+            <% if (!_.isEmpty(unit) || !_.isEmpty(row)) { %>
+            <table class="table table-striped table-condensed {{ tableClass }}">
+                <thead>
+                <tr>
+                    <th class="renderable"></th>
+                    <th class="renderable">{{ 'orob2b.tax.result.includingTax'|trans }}</th>
+                    <th class="renderable">{{ 'orob2b.tax.result.excludingTax'|trans }}</th>
+                    <th class="renderable">{{ 'orob2b.tax.result.taxAmount'|trans }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% _.each({unit: unit, row: row}, function(tax, key) { %>
+                <tr>
+                    <td class="renderable"><%= key %></td>
+                    <td class="renderable"><%= tax.includingTax %></td>
+                    <td class="renderable"><%= tax.excludingTax %></td>
+                    <td class="renderable"><%= tax.taxAmount %></td>
+                </tr>
+                <% }); %>
+                </tbody>
+            </table>
+            <% } %>
+
+            <% if (!_.isEmpty(taxes)) { %>
+            <table class="table table-striped table-condensed {{ tableClass }}" data-taxes-id="applied-taxes">
+                <thead>
+                <tr>
+                    <th class="renderable">{{ 'orob2b.tax.result.tax'|trans }}</th>
+                    <th class="renderable">{{ 'orob2b.tax.result.rate'|trans }}</th>
+                    <th class="renderable">{{ 'orob2b.tax.result.taxableAmount'|trans }}</th>
+                    <th class="renderable">{{ 'orob2b.tax.result.taxAmount'|trans }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% _.each(taxes, function(tax) { %>
+                <tr>
+                    <td class="renderable"><%= tax.tax %></td>
+                    <td class="renderable"><%= tax.rate %></td>
+                    <td class="renderable"><%= tax.taxableAmount %></td>
+                    <td class="renderable"><%= tax.taxAmount %></td>
+                </tr>
+                <% }); %>
+                </tbody>
+            </table>
+            <% } %>
+        </script>
+        <div data-table-container></div>
+    </div>
 {% endblock %}

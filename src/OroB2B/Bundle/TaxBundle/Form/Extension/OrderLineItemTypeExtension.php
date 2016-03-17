@@ -4,13 +4,10 @@ namespace OroB2B\Bundle\TaxBundle\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\HttpFoundation\RequestStack;
-
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
 use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
@@ -24,31 +21,16 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
     /** @var TaxManager */
     protected $taxManager;
 
-    /** @var RequestStack */
-    protected $requestStack;
-
-    /** @var DoctrineHelper */
-    protected $doctrineHelper;
-
-    /** @var string */
-    protected $entityClass;
-
-    /** @var \Twig_Environment  */
-    protected $twig;
-
     /**
      * @param TaxationSettingsProvider $taxationSettingsProvider
      * @param TaxManager $taxManager
-     * @param \Twig_Environment $twig
      */
     public function __construct(
         TaxationSettingsProvider $taxationSettingsProvider,
-        TaxManager $taxManager,
-        \Twig_Environment $twig
+        TaxManager $taxManager
     ) {
         $this->taxationSettingsProvider = $taxationSettingsProvider;
         $this->taxManager = $taxManager;
-        $this->twig = $twig;
     }
 
     /**
@@ -68,50 +50,25 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
             return;
         }
 
-        $builder
-            ->add(
-                'taxes',
-                null,
-                [
-                    'required' => false,
-                    'mapped' => false,
-                    'label' => 'orob2b.tax.result.label'
-                ]
-            )
-            ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
+        $builder->add('taxes', 'hidden', ['required' => false, 'mapped' => false]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onPostSetData(FormEvent $event)
+    /** {@inheritdoc} */
+    public function finishView(FormView $view, FormInterface $form, array $options)
     {
         if (!$this->taxationSettingsProvider->isEnabled()) {
             return;
         }
 
-        $entity = $event->getForm()->getData();
-
-        if (empty($entity)) {
+        $entity = $form->getData();
+        if (!$entity) {
             return;
         }
 
-        $result = $this->taxManager->getTax($entity);
-        if (!$result->count()) {
-            return;
-        }
-
-        $template = $this->twig->render(
-            'OroB2BTaxBundle:Order:order_line_item_taxes.html.twig',
-            ['result' => $result]
-        );
-
-        $event->getForm()->get('taxes')->setData($template);
+        $view->children['taxes']->vars['result'] = $this->taxManager->getTax($entity);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    /** {@inheritdoc} */
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);

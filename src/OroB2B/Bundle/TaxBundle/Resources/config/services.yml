@@ -284,7 +284,7 @@ services:
         class: %orob2b_tax.event_listener.order.taxes.class%
         arguments:
             - @orob2b_tax.manager.tax_manager
-            - @oro_locale.formatter.number
+            - @orob2b_tax.provider.taxation_settings_provider
         tags:
             - { name: kernel.event_listener, event: orob2b_order.order, method: onOrderEvent }
 

@@ -6,6 +6,8 @@ define(function(require) {
     var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
     var BaseComponent = require('oroui/js/app/components/base/component');
+    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    var NumberFormatter = require('orolocale/js/formatter/number');
 
     /**
      * @export orob2btax/js/app/components/order-taxes-component
@@ -18,14 +20,13 @@ define(function(require) {
          */
         options: {
             selectors: {
-                applied_taxes_template: '.applied-taxes-template'
-            }
+                applied_taxes_template: '#line-item-taxes-template',
+                tableContainer: '[data-table-container]',
+                lineItemDataAttr: 'data-tax-item',
+                lineItemDataAttrSelector: '[data-tax-item]'
+            },
+            data: null
         },
-
-        /**
-         * @property {Object}
-         */
-        $el: null,
 
         /**
          * @property {Object}
@@ -33,55 +34,98 @@ define(function(require) {
         appliedTaxesTemplate: null,
 
         /**
-         * @property string
+         * @property {Object}
          */
-        lineItemDataAttr: 'data-tax-item',
+        emptyData: {
+            unit: {},
+            row: {},
+            taxes: {}
+        },
+
+        /**
+         * @property {LoadingMaskView}
+         */
+        loadingMaskView: null,
+
+        /**
+         * @property {Jquery.Element}
+         */
+        $tableContainer: null,
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
+            this.options = _.defaults(options || {}, this.options);
+            this.options._sourceElement
+                .attr(
+                    this.options.selectors.lineItemDataAttr,
+                    $.find(this.options.selectors.lineItemDataAttrSelector).length
+                );
+
             mediator.on('entry-point:order:load:before', this.showLoadingMask, this);
             mediator.on('entry-point:order:load', this.setOrderTaxes, this);
             mediator.on('entry-point:order:load:after', this.hideLoadingMask, this);
 
-            OrderTaxesComponent.__super__.initialize.call(this, options);
-            this.$el = options._sourceElement;
-            this.$el.attr(this.lineItemDataAttr, $.find('[' + this.lineItemDataAttr + ']').length);
-            this.appliedTaxesTemplate = _.template(this.$el.parent().find(this.options.selectors.applied_taxes_template).text());
+            this.appliedTaxesTemplate = _.template(
+                this.options._sourceElement.find(this.options.selectors.applied_taxes_template).html()
+            );
+
+            this.$tableContainer = this.options._sourceElement.find(this.options.selectors.tableContainer);
+
+            this.loadingMaskView = new LoadingMaskView({container: this.options._sourceElement});
+
+            this.render(this.options.data);
+        },
+
+        showLoadingMask: function() {
+            this.loadingMaskView.show();
+        },
+
+        hideLoadingMask: function() {
+            this.loadingMaskView.hide();
+        },
+
+        render: function(data) {
+            var taxData = _.defaults(data, this.emptyData);
+            taxData.row = this.formatItem(taxData.row);
+            taxData.unit = this.formatItem(taxData.unit);
+            taxData.taxes = _.map(taxData.taxes, _.bind(this.formatTax, this));
+
+            this.$tableContainer.html(this.appliedTaxesTemplate(taxData));
+        },
+
+        formatItem: function(item) {
+            return {
+                includingTax: NumberFormatter.formatCurrency(item.includingTax, item.currency),
+                excludingTax: NumberFormatter.formatCurrency(item.excludingTax, item.currency),
+                taxAmount: NumberFormatter.formatCurrency(item.taxAmount, item.currency)
+            };
+        },
+
+        formatTax: function(item) {
+            return {
+                tax: item.tax,
+                taxAmount: NumberFormatter.formatCurrency(item.taxAmount, item.currency),
+                taxableAmount: NumberFormatter.formatCurrency(item.taxableAmount, item.currency),
+                rate: NumberFormatter.formatPercent(item.rate)
+            };
         },
 
         /**
          * @param {Object} response
          */
         setOrderTaxes: function(response) {
-            var itemId = this.$el.attr(this.lineItemDataAttr);
-            this.setTaxesData(this.$el.find('table').first(), response.taxesItems[itemId]);
-        },
+            var data = _.defaults(response, {taxesItems: {}});
+            var itemId =  this.options._sourceElement.attr(this.options.selectors.lineItemDataAttr);
 
-        /**
-         * @param {Object} $table
-         * @param {Array} data
-         */
-        setTaxesData: function($table, data) {
-            if (data) {
-                $table.find('[data-taxes-id="unit-including-tax"]').html(data.unit.includingTax);
-                $table.find('[data-taxes-id="unit-excluding-tax"]').html(data.unit.excludingTax);
-                $table.find('[data-taxes-id="unit-tax-amount"]').html(data.unit.taxAmount);
-                $table.find('[data-taxes-id="unit-adjustment"]').html(data.unit.adjustment);
-                $table.find('[data-taxes-id="row-including-tax"]').html(data.row.includingTax);
-                $table.find('[data-taxes-id="row-excluding-tax"]').html(data.row.excludingTax);
-                $table.find('[data-taxes-id="row-tax-amount"]').html(data.row.taxAmount);
-                $table.find('[data-taxes-id="row-adjustment"]').html(data.row.adjustment);
-
-                if ($table.next().attr('data-taxes-id') == 'applied-taxes') {
-                    $table.next().remove();
-                }
-
-                if (data.taxes) {
-                    $table.after(this.appliedTaxesTemplate({taxes: data.taxes}));
-                }
+            if (!_.has(data.taxesItems, itemId)) {
+                return;
             }
+
+            var itemData = _.defaults(response.taxesItems[itemId], this.emptyData);
+
+            this.render(itemData);
         },
 
         /**

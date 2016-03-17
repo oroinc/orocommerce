@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\EventListener\Order;
 
-use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
-
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
@@ -11,6 +9,7 @@ use OroB2B\Bundle\TaxBundle\Model\TaxResultElement;
 use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
 use OroB2B\Bundle\TaxBundle\EventListener\Order\OrderTaxesListener;
 use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
+use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,8 +22,8 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
     /** @var OrderEvent|\PHPUnit_Framework_MockObject_MockObject  */
     protected $event;
 
-    /** @var NumberFormatter */
-    protected $numberFormatter;
+    /** @var TaxationSettingsProvider|\PHPUnit_Framework_MockObject_MockObject */
+    protected $taxationSettingsProvider;
 
     protected function setUp()
     {
@@ -36,11 +35,12 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->numberFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\NumberFormatter')
+        $this->taxationSettingsProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new OrderTaxesListener($this->taxManager, $this->numberFormatter);
+        $this->listener = new OrderTaxesListener($this->taxManager, $this->taxationSettingsProvider);
     }
 
     protected function tearDown()
@@ -64,9 +64,9 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
             ->with($order)
             ->willReturn($result);
 
-        $this->numberFormatter->expects($this->any())
-            ->method('formatPercent')
-            ->willReturn('10%');
+        $this->taxationSettingsProvider->expects($this->once())
+            ->method('isEnabled')
+            ->willReturn(true);
 
         $this->event->expects($this->once())
             ->method('getOrder')
@@ -79,6 +79,18 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onOrderEvent($this->event);
 
         $this->assertEquals($data->getArrayCopy(), $expectedResult);
+    }
+
+    public function testOnOrderEventTaxationDisabled()
+    {
+        $this->taxManager->expects($this->never())->method($this->anything());
+        $this->event->expects($this->never())->method($this->anything());
+
+        $this->taxationSettingsProvider->expects($this->once())
+            ->method('isEnabled')
+            ->willReturn(false);
+
+        $this->listener->onOrderEvent($this->event);
     }
 
     /**
@@ -120,9 +132,9 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
                             'taxes' => [
                                 [
                                     'tax' => 'TAX',
-                                    'rate' => '10%',
-                                    'taxableAmount' => 50,
-                                    'taxAmount' => 5,
+                                    'rate' => '0.1',
+                                    'taxableAmount' => '50',
+                                    'taxAmount' => '5',
                                     'currency' => 'USD'
                                 ]
                             ]
