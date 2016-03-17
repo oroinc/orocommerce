@@ -88,7 +88,7 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
         $this->translator = $this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->actionGroupRegistry = $this->getMockBuilder('Oro\Bundle\ActionBundle\Model\actionGroupRegistry')
+        $this->actionGroupRegistry = $this->getMockBuilder('Oro\Bundle\ActionBundle\Model\ActionGroupRegistry')
             ->disableOriginalConstructor()
             ->getMock();
         $this->entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
