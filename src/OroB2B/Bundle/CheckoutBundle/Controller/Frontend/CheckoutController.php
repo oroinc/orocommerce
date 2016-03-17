@@ -66,7 +66,7 @@ class CheckoutController extends Controller
                 [
                     'checkout' => $checkout,
                     'workflowStep' => $currentStep
-                ],
+                ]
         ];
     }
 

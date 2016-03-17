@@ -50,12 +50,9 @@ define(function(require) {
             }
 
             var url = this.options.transitionUrl;
-            var widgetParameters = "_widgetContainer=ajax_widget&_wid=ajax_checkout";
+            var widgetParameters = '_widgetContainer=ajax_widget&_wid=ajax_checkout';
 
-            url = (-1 !== _.indexOf(url, '?'))
-                ? url + '&' + widgetParameters
-                : url + '?' + widgetParameters;
-
+            url += (-1 !== _.indexOf(url, '?') ? '&' : '?') + widgetParameters;
             $.ajax({
                     url: url,
                     method: method,
