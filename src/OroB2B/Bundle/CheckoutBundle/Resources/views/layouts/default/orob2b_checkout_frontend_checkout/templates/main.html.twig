@@ -53,6 +53,7 @@
 
 {% block _checkout_order_summary_widget %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-order-summary"}) %}
+    {% set workfowItem = checkout.workflowItem %}
     <div{{ block('block_attributes') }}>
         <div class="checkout-order-summary__tab" data-tab="">
             <div class="checkout-order-summary__header">
@@ -69,11 +70,14 @@
                         <span>{{ 'orob2b.checkout.order_summary.subtotal'|trans }}: <strong>{{ totalPrice|oro_format_price }}</strong></span>
                     </div>
                 </div>
-                <a href="#" class="checkout-order-summary__header__edit-link">
+                {% set editLink = workfowItem.data.get('edit_order_link') %}
+                {% if editLink %}
+                <a href="{{ editLink }}" class="checkout-order-summary__header__edit-link">
                     <i class="icon-pencil"></i>
-                    {{ 'orob2b.checkout.order_summary.edit_order'|trans }}</a>
+                    {{ 'orob2b.checkout.order_summary.edit_order'|trans }}
+                </a>
+                {% endif %}
             </div>
-
             {{ block_widget(block) }}
         </div>
     </div>
