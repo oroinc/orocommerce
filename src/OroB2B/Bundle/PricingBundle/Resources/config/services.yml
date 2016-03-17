@@ -512,6 +512,5 @@ services:
             - @orob2b_pricing.subtotal_processor.total_processor_provider
             - @event_dispatcher
             - @oro_security.security_facade
-            - @request_stack
             - @oro_entity.routing_helper
             - @doctrine

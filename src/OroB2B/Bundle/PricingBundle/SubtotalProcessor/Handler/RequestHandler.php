@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PricingBundle\SubtotalProcessor\Handler;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -26,9 +27,6 @@ class RequestHandler
     /** @var SecurityFacade */
     protected $securityFacade;
 
-    /** @var RequestStack */
-    protected $requestStack;
-
     /** @var  EntityRoutingHelper */
     protected $entityRoutingHelper;
 
@@ -39,7 +37,6 @@ class RequestHandler
      * @param TotalProcessorProvider $totalProvider
      * @param EventDispatcherInterface $eventDispatcher
      * @param SecurityFacade $securityFacade
-     * @param RequestStack $requestStack
      * @param EntityRoutingHelper $entityRoutingHelper
      * @param Registry $doctrine
      */
@@ -47,46 +44,24 @@ class RequestHandler
         TotalProcessorProvider $totalProvider,
         EventDispatcherInterface $eventDispatcher,
         SecurityFacade $securityFacade,
-        RequestStack $requestStack,
         EntityRoutingHelper $entityRoutingHelper,
         Registry $doctrine
     ) {
         $this->totalProvider = $totalProvider;
         $this->eventDispatcher = $eventDispatcher;
         $this->securityFacade = $securityFacade;
-        $this->requestStack = $requestStack;
         $this->entityRoutingHelper = $entityRoutingHelper;
         $this->doctrine = $doctrine;
     }
 
     /**
      * @param string $entityClassName
-     * @param integer $entityId
+     * @param int|null $entityId
+     * @param Request|null $request - can be used data from request for dynamic recalculate for form data
      *
      * @return array
      */
-    public function getTotals($entityClassName, $entityId)
-    {
-        $this->existClassName($entityClassName);
-
-        $entity = $this->getExistEntity($entityClassName, $entityId);
-        $this->hasAccessView($entity);
-
-        $total = $this->totalProvider->getTotal($entity)->toArray();
-        $subtotals = $this->totalProvider->getSubtotals($entity)->getValues();
-
-        $totals = $this->prepareResponse($total, $subtotals);
-
-        return $totals;
-    }
-
-    /**
-     * @param $entityClassName
-     * @param $entityId
-     *
-     * @return array
-     */
-    public function recalculateTotals($entityClassName, $entityId)
+    public function recalculateTotals($entityClassName, $entityId, $request = null)
     {
         $this->existClassName($entityClassName);
 
@@ -97,14 +72,15 @@ class RequestHandler
             $entity = new $entityClassName();
         }
 
-        $event = $this->dispatchPreCalculateTotalEvent($entity);
-        $entity = $event->getEntity();
+        if ($request) {
+            $event = $this->dispatchPreCalculateTotalEvent($entity, $request);
+            $entity = $event->getEntity();
+        }
 
         $total = $this->totalProvider->getTotal($entity)->toArray();
         $subtotals = $this->totalProvider->getSubtotals($entity)->getValues();
-        $totals = $this->prepareResponse($total, $subtotals);
 
-        return $totals;
+        return $this->prepareResponse($total, $subtotals);
     }
 
     /**
@@ -129,14 +105,14 @@ class RequestHandler
     }
 
     /**
-     * @param $entity
+     * @param object $entity
+     * @param Request $request
      *
      * @return TotalCalculateBeforeEvent
      */
-    protected function dispatchPreCalculateTotalEvent($entity)
+    protected function dispatchPreCalculateTotalEvent($entity, $request)
     {
-        $event = new TotalCalculateBeforeEvent($entity, $this->requestStack->getCurrentRequest());
-
+        $event = new TotalCalculateBeforeEvent($entity, $request);
         $event = $this->eventDispatcher->dispatch(TotalCalculateBeforeEvent::NAME, $event);
 
         return $event;

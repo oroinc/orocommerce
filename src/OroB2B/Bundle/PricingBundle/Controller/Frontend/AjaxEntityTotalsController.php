@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 use Oro\Bundle\EntityBundle\Exception\EntityNotFoundException;
+use Symfony\Component\HttpFoundation\Request;
 
 class AjaxEntityTotalsController extends Controller
 {
@@ -33,7 +34,7 @@ class AjaxEntityTotalsController extends Controller
 
         try {
             $totalRequestHandler = $this->get('orob2b_pricing.subtotal_processor.handler.request_handler');
-            $totals = $totalRequestHandler->getTotals($entityClassName, $entityId);
+            $totals = $totalRequestHandler->recalculateTotals($entityClassName, $entityId);
         } catch (EntityNotFoundException $e) {
             $this->createNotFoundException();
         }
@@ -52,18 +53,19 @@ class AjaxEntityTotalsController extends Controller
      *
      * @Method({"POST"})
      *
+     * @param Request $request
      * @param string $entityClassName
      * @param integer $entityId
      *
      * @return JsonResponse
      */
-    public function recalculateTotalsAction($entityClassName, $entityId)
+    public function recalculateTotalsAction(Request $request, $entityClassName, $entityId)
     {
         $totals = [];
 
         try {
             $totalRequestHandler = $this->get('orob2b_pricing.subtotal_processor.handler.request_handler');
-            $totals = $totalRequestHandler->recalculateTotals($entityClassName, $entityId);
+            $totals = $totalRequestHandler->recalculateTotals($entityClassName, $entityId, $request);
         } catch (EntityNotFoundException $e) {
             $this->createNotFoundException();
         }
