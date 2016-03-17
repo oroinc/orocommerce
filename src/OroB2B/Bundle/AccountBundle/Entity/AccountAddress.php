@@ -75,17 +75,16 @@ class AccountAddress extends ExtendAccountAddress
     /**
      * @var string
      *
-     * @ORM\Column(name="phone_number", type="string", length=255, nullable=true)
+     * @ORM\Column(name="phone", type="string", length=255, nullable=true)
      * @ConfigField(
      *  defaultValues={
-     *      "dataaudit"={"auditable"=true},
-     *      "importexport"={
-     *          "order"=90
+     *      "entity"={
+     *          "contact_information"="phone"
      *      }
      *  }
      * )
      */
-    protected $phoneNumber;
+    protected $phone;
 
     /**
      * {@inheritdoc}
@@ -98,13 +97,13 @@ class AccountAddress extends ExtendAccountAddress
     /**
      * Set phone number
      *
-     * @param string $phoneNumber
+     * @param string $phone
      *
      * @return AccountAddress
      */
-    public function setPhoneNumber($phoneNumber)
+    public function setPhone($phone)
     {
-        $this->phoneNumber = $phoneNumber;
+        $this->phone = $phone;
 
         return $this;
     }
@@ -113,8 +112,8 @@ class AccountAddress extends ExtendAccountAddress
      *
      * @return string
      */
-    public function getPhoneNumber()
+    public function getPhone()
     {
-        return $this->phoneNumber;
+        return $this->phone;
     }
 }

@@ -27,6 +27,6 @@ class OroB2BSaleBundle implements Migration
     protected function alterAddressTable(Schema $schema)
     {
         $table = $schema->getTable('orob2b_quote_address');
-        $table->addColumn('phone_number', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('phone', 'string', ['notnull' => false, 'length' => 255]);
     }
 }

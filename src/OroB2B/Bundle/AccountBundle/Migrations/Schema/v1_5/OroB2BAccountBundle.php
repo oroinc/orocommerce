@@ -33,7 +33,7 @@ class OroB2BAccountBundle implements Migration
     protected function alterAccountAddressTable(Schema $schema)
     {
         $table = $schema->getTable(self::ORO_B2B_ACCOUNT_ADDRESS_TABLE_NAME);
-        $table->addColumn('phone_number', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('phone', 'string', ['notnull' => false, 'length' => 255]);
     }
 
     /**
@@ -44,6 +44,6 @@ class OroB2BAccountBundle implements Migration
     protected function alterAccountUserAddressTable(Schema $schema)
     {
         $table = $schema->getTable(self::ORO_B2B_ACCOUNT_USER_ADDRESS_TABLE_NAME);
-        $table->addColumn('phone_number', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('phone', 'string', ['notnull' => false, 'length' => 255]);
     }
 }
