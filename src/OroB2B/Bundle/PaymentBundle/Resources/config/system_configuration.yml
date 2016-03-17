@@ -1,0 +1,206 @@
+oro_system_configuration:
+    groups:
+        payment:
+            title: orob2b.payment.system_configuration.groups.payment.title
+        payflow_gateway:
+            title: orob2b.payment.system_configuration.groups.payflow_gateway.title
+        payflow_gateway_settings:
+            title: orob2b.payment.system_configuration.groups.payflow_gateway_settings.title
+        payflow_gateway_proxy:
+            title: orob2b.payment.system_configuration.groups.proxy.title
+        paypal_payments_pro:
+            title: orob2b.payment.system_configuration.groups.paypal_payments_pro.title
+        paypal_payments_pro_settings:
+            title: orob2b.payment.system_configuration.groups.paypal_payments_pro_settings.title
+        paypal_payments_pro_proxy:
+            title: orob2b.payment.system_configuration.groups.proxy.title
+
+    fields:
+        # Payflow Gateway
+        orob2b_payment.payflow_gateway_enabled:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 100
+            options:
+                label: orob2b.payment.system_configuration.fields.enabled.label
+
+        orob2b_payment.payflow_gateway_email:
+            data_type: string
+            type: text
+            priority: 90
+            options:
+                label: orob2b.payment.system_configuration.fields.payflow_gateway.email.label
+
+        orob2b_payment.payflow_gateway_partner:
+            data_type: string
+            type: text
+            priority: 80
+            options:
+                label: orob2b.payment.system_configuration.fields.payflow_gateway.partner.label
+
+        orob2b_payment.payflow_gateway_user:
+            data_type: string
+            type: text
+            priority: 70
+            options:
+                label: orob2b.payment.system_configuration.fields.payflow_gateway.user.label
+
+        orob2b_payment.payflow_gateway_vendor:
+            data_type: string
+            type: text
+            priority: 60
+            options:
+                label: orob2b.payment.system_configuration.fields.payflow_gateway.vendor.label
+
+        orob2b_payment.payflow_gateway_password:
+            data_type: string
+            type: text
+            priority: 50
+            options:
+                label: orob2b.payment.system_configuration.fields.payflow_gateway.password.label
+
+        orob2b_payment.payflow_gateway_test_mode:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 40
+            options:
+                label: orob2b.payment.system_configuration.fields.test_mode.label
+
+        orob2b_payment.payflow_gateway_use_proxy:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 100
+            options:
+                label: orob2b.payment.system_configuration.fields.use_proxy.label
+
+        orob2b_payment.payflow_gateway_proxy_host:
+            data_type: string
+            type: text
+            priority: 90
+            options:
+                label: orob2b.payment.system_configuration.fields.proxy_host.label
+
+        orob2b_payment.payflow_gateway_proxy_port:
+            data_type: integer
+            type: integer
+            priority: 80
+            options:
+                label: orob2b.payment.system_configuration.fields.proxy_port.label
+
+
+        # PayPal Payments Pro
+        orob2b_payment.paypal_payments_pro_enabled:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 100
+            options:
+                label: orob2b.payment.system_configuration.fields.enabled.label
+
+        orob2b_payment.paypal_payments_pro_email:
+            data_type: string
+            type: text
+            priority: 90
+            options:
+                label: orob2b.payment.system_configuration.fields.paypal_payments_pro.email.label
+
+        orob2b_payment.paypal_payments_pro_partner:
+            data_type: string
+            type: text
+            priority: 80
+            options:
+                label: orob2b.payment.system_configuration.fields.paypal_payments_pro.partner.label
+
+        orob2b_payment.paypal_payments_pro_user:
+            data_type: string
+            type: text
+            priority: 70
+            options:
+                label: orob2b.payment.system_configuration.fields.paypal_payments_pro.user.label
+
+        orob2b_payment.paypal_payments_pro_vendor:
+            data_type: string
+            type: text
+            priority: 60
+            options:
+                label: orob2b.payment.system_configuration.fields.paypal_payments_pro.vendor.label
+
+        orob2b_payment.paypal_payments_pro_password:
+            data_type: string
+            type: text
+            priority: 50
+            options:
+                label: orob2b.payment.system_configuration.fields.paypal_payments_pro.password.label
+
+        orob2b_payment.paypal_payments_pro_test_mode:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 40
+            options:
+                label: orob2b.payment.system_configuration.fields.test_mode.label
+
+        orob2b_payment.paypal_payments_pro_use_proxy:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 100
+            options:
+                label: orob2b.payment.system_configuration.fields.use_proxy.label
+
+        orob2b_payment.paypal_payments_pro_proxy_host:
+            data_type: string
+            type: text
+            priority: 90
+            options:
+                label: orob2b.payment.system_configuration.fields.proxy_host.label
+
+        orob2b_payment.paypal_payments_pro_proxy_port:
+            data_type: integer
+            type: integer
+            priority: 80
+            options:
+                label: orob2b.payment.system_configuration.fields.proxy_port.label
+
+    tree:
+        system_configuration:
+            commerce:
+                children:
+                    payment:
+                        priority: 400
+                        children:
+                            payflow_gateway:
+                                priority: 100
+                                children:
+                                    payflow_gateway_settings:
+                                        priority: 100
+                                        children:
+                                            - orob2b_payment.payflow_gateway_enabled
+                                            - orob2b_payment.payflow_gateway_email
+                                            - orob2b_payment.payflow_gateway_partner
+                                            - orob2b_payment.payflow_gateway_user
+                                            - orob2b_payment.payflow_gateway_vendor
+                                            - orob2b_payment.payflow_gateway_password
+                                            - orob2b_payment.payflow_gateway_test_mode
+                                    payflow_gateway_proxy:
+                                        priority: 90
+                                        children:
+                                            - orob2b_payment.payflow_gateway_use_proxy
+                                            - orob2b_payment.payflow_gateway_proxy_host
+                                            - orob2b_payment.payflow_gateway_proxy_port
+                            paypal_payments_pro:
+                                priority: 90
+                                children:
+                                    paypal_payments_pro_settings:
+                                        priority: 100
+                                        children:
+                                            - orob2b_payment.paypal_payments_pro_enabled
+                                            - orob2b_payment.paypal_payments_pro_email
+                                            - orob2b_payment.paypal_payments_pro_partner
+                                            - orob2b_payment.paypal_payments_pro_user
+                                            - orob2b_payment.paypal_payments_pro_vendor
+                                            - orob2b_payment.paypal_payments_pro_password
+                                            - orob2b_payment.paypal_payments_pro_test_mode
+                                    paypal_payments_pro_proxy:
+                                        priority: 90
+                                        children:
+                                            - orob2b_payment.paypal_payments_pro_use_proxy
+                                            - orob2b_payment.paypal_payments_pro_proxy_host
+                                            - orob2b_payment.paypal_payments_pro_proxy_port

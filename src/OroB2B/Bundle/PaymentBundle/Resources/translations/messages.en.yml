@@ -31,3 +31,31 @@ orob2b:
 
         sections:
             general_information: General information
+
+        system_configuration:
+            groups:
+                payment.title: 'Payment'
+                payflow_gateway.title: 'Payflow Gateway'
+                payflow_gateway_settings.title: 'Payflow Gateway Settings'
+                paypal_payments_pro.title: 'PayPal Payments Pro'
+                paypal_payments_pro_settings.title: 'PayPal Payments Pro Settings'
+                proxy.title: 'Proxy Settings'
+            fields:
+                test_mode.label: 'Test Mode'
+                enabled.label: 'Enabled'
+                payflow_gateway:
+                    email.label: 'Email'
+                    partner.label: 'Partner'
+                    user.label: 'User'
+                    vendor.label: 'Vendor'
+                    password.label: 'Password'
+                paypal_payments_pro:
+                    email.label: 'Email'
+                    partner.label: 'Partner'
+                    user.label: 'User'
+                    vendor.label: 'Vendor'
+                    password.label: 'Password'
+                use_proxy.label: 'Use Proxy'
+                proxy_host.label: 'Proxy Host'
+                proxy_port.label: 'Proxy Port'
+
