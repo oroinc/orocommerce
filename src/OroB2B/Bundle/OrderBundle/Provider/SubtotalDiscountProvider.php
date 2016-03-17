@@ -8,8 +8,10 @@ use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
 use OroB2B\Bundle\OrderBundle\Model\DiscountAwareInterface;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
@@ -58,7 +60,8 @@ class SubtotalDiscountProvider implements SubtotalProviderInterface
     }
 
     /**
-     * @param DiscountAwareInterface $entity
+     * @param DiscountAwareInterface|LineItemsAwareInterface $entity
+     *
      * @return Subtotal[]
      */
     public function getSubtotal($entity)
@@ -83,7 +86,7 @@ class SubtotalDiscountProvider implements SubtotalProviderInterface
             $subtotal->setVisible(true);
             $subtotal->setOperation(Subtotal::OPERATION_SUBTRACTION);
 
-            $subtotalAmount = $discount->getAmount();
+            $subtotalAmount = $this->getSubtotalAmount($discount, $entity);
 
             $subtotal->setAmount($this->rounding->round($subtotalAmount));
             $subtotal->setCurrency($this->getBaseCurrency($entity));
@@ -95,6 +98,7 @@ class SubtotalDiscountProvider implements SubtotalProviderInterface
 
     /**
      * @param $entity
+     *
      * @return string
      */
     protected function getBaseCurrency($entity)
@@ -124,5 +128,23 @@ class SubtotalDiscountProvider implements SubtotalProviderInterface
         }
 
         return false;
+    }
+
+    /**
+     * @param $discount OrderDiscount
+     * @param $entity LineItemsAwareInterface
+     *
+     * @return float
+     */
+    protected function getSubtotalAmount($discount, $entity)
+    {
+        if ($discount->getType() === OrderDiscount::TYPE_PERCENT) {
+            $lineItemSubtotal = $this->lineItemSubtotal->getSubtotal($entity);
+            $subtotalAmount = $lineItemSubtotal->getAmount() / 100 * $discount->getPercent();
+        } else {
+            $subtotalAmount = $discount->getAmount();
+        }
+
+        return $subtotalAmount;
     }
 }
