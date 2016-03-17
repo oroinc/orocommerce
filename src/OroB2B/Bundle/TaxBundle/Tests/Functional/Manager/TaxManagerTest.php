@@ -33,7 +33,7 @@ class TaxManagerTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient();
+        $this->initClient([], [], true);
 
         $this->loadFixtures(
             [
@@ -50,7 +50,6 @@ class TaxManagerTest extends WebTestCase
     protected function tearDown()
     {
         $this->configManager->reload();
-        $this->resetClient();
 
         parent::tearDown();
     }
