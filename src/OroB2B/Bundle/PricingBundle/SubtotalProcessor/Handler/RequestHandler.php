@@ -160,17 +160,6 @@ class RequestHandler
     }
 
     /**
-     * @param $entity
-     */
-    protected function hasAccessCreate($entity)
-    {
-        $isGranted = $this->securityFacade->isGranted('CREATE', $entity);
-        if (!$isGranted) {
-            throw new AccessDeniedException();
-        }
-    }
-
-    /**
      * @param $entityClassName
      *
      * @throws EntityNotFoundException

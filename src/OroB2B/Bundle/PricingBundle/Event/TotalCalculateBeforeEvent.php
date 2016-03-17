@@ -13,14 +13,14 @@ class TotalCalculateBeforeEvent extends Event
     /** @var object */
     protected $entity;
 
-    /** @var Request|null */
+    /** @var Request */
     protected $request;
 
     /**
      * @param $entity
-     * @param Request|null $request
+     * @param Request $request
      */
-    public function __construct($entity, Request $request = null)
+    public function __construct($entity, Request $request)
     {
         $this->entity = $entity;
         $this->request = $request;
@@ -35,10 +35,10 @@ class TotalCalculateBeforeEvent extends Event
     }
 
     /**
-     * @return null|Request
+     * @return Request
      */
     public function getRequest()
     {
-        return$this->request;
+        return $this->request;
     }
 }

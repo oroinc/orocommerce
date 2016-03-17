@@ -21,8 +21,6 @@ class AjaxEntityTotalsController extends Controller
      *      defaults={"entityId"=0, "entityClassName"=""}
      * )
      *
-     * @Method({"GET"})
-     *
      * @param string $entityClassName
      * @param integer $entityId
      *
