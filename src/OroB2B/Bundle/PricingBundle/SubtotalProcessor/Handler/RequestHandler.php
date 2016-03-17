@@ -67,7 +67,7 @@ class RequestHandler
 
         if ($entityId) {
             $entity = $this->getExistEntity($entityClassName, $entityId);
-            $this->hasAccessEdit($entity);
+            $this->hasAccessView($entity);
         } else {
             $entity = new $entityClassName();
         }
@@ -143,17 +143,6 @@ class RequestHandler
     protected function hasAccessView($entity)
     {
         $isGranted = $this->securityFacade->isGranted('VIEW', $entity);
-        if (!$isGranted) {
-            throw new AccessDeniedException();
-        }
-    }
-
-    /**
-     * @param $entity
-     */
-    protected function hasAccessEdit($entity)
-    {
-        $isGranted = $this->securityFacade->isGranted('EDIT', $entity);
         if (!$isGranted) {
             throw new AccessDeniedException();
         }
