@@ -120,26 +120,13 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
 
     public function textDataProvider()
     {
-        $commaSeparated = <<<TEXT
-HSSUC, 1
-HSTUC, 2.55
-HCCM, 3,
-SKU1,10.0112
-SKU2,asd
-SKU3,
-TEXT;
-        $tabsSeparated = <<<TEXT
-HSSUC\t1
-HSTUC\t2.55
-HCCM\t3\t
-SKU1\t10.0112
-SKU2\tasd
-SKU3\t
-TEXT;
+        $commaSeparated = ['HSSUC, 1', 'HSTUC, 2.55', 'HCCM, 3,', 'SKU1,10.0112', 'SKU2,asd', 'SKU3,'];
+
+        $tabsSeparated = ["HSSUC\t1", "HSTUC\t2.55", "HCCM\t3\t", "SKU1\t10.0112", "SKU2\tasd", "SKU3\t"];
 
         return [
-            'comma separated' => [$commaSeparated],
-            'tabs separated' => [$tabsSeparated]
+            'comma separated' => [implode(PHP_EOL, $commaSeparated)],
+            'tabs separated' => [implode(PHP_EOL, $tabsSeparated)],
         ];
     }
 
