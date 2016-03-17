@@ -50,7 +50,7 @@ define(function(require) {
             }
 
             var url = this.options.transitionUrl;
-            var widgetParameters = '_widgetContainer=ajax_widget&_wid=ajax_checkout';
+            var widgetParameters = '_widgetContainer=ajax&_wid=ajax_checkout';
 
             url += (-1 !== _.indexOf(url, '?') ? '&' : '?') + widgetParameters;
             $.ajax({
@@ -72,7 +72,7 @@ define(function(require) {
             if (response.hasOwnProperty('redirectUrl')) {
                 mediator.execute('redirectTo', {url: response.redirectUrl});
             } else {
-                var $response = $('<div/>').html(response).contents();
+                var $response = $('<div/>').html(response);
                 $(this.defaults.selectors.checkoutSidebar)
                     .html($response.find(this.defaults.selectors.checkoutSidebar).html());
                 $(this.defaults.selectors.checkoutContent)

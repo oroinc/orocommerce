@@ -53,4 +53,4 @@ layout:
                         checkout_order_summary:
                             checkout_order_summary_table: ~
     conditions:
-        @eq: [$context.ajax, false]
+        @empty: [$context.widgetContainer]

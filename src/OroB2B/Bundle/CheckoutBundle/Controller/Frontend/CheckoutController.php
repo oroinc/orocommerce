@@ -33,7 +33,7 @@ class CheckoutController extends Controller
      *     name="orob2b_checkout_frontend_checkout",
      *     requirements={"id"="\d+"}
      * )
-     * @Layout(vars={"workflowStepName", "ajax"})
+     * @Layout(vars={"workflowStepName", "widgetContainer"})
      * @Acl(
      *      id="orob2b_checkout_frontend_checkout",
      *      type="entity",
@@ -61,7 +61,7 @@ class CheckoutController extends Controller
 
         return [
             'workflowStepName' => $currentStep->getName(),
-            'ajax' => $request->isXmlHttpRequest(),
+            'widgetContainer' => $request->query->get('_widgetContainer'),
             'data' =>
                 [
                     'checkout' => $checkout,

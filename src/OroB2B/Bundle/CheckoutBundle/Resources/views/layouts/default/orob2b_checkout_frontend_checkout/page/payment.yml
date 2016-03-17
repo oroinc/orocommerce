@@ -12,4 +12,4 @@ layout:
     conditions:
         @and:
             - @eq: [$context.workflowStepName, 'enter_payment']
-            - @eq: [$context.ajax, false]
+            - @empty: [$context.widgetContainer]

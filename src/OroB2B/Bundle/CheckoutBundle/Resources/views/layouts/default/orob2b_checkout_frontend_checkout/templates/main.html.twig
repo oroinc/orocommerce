@@ -51,33 +51,6 @@
     </div>
 {%- endblock %}
 
-{% block _checkout_form_buttons_widget -%}
-    <fieldset class="checkout__form__row">
-        <div class="create-account__form__req-text"><sup>*</sup>
-            {{ 'orob2b.checkout.workflow.b2b_flow_checkout.form.required.label'|trans }}
-        </div>
-
-        {% if block.checkout_button_continue is defined %}
-            <div class="create-account__form__col form__col_x12">
-                {{ block_widget(block.checkout_button_continue) }}
-            </div>
-        {% endif %}
-    </fieldset>
-    {% if block.checkout_button_back is defined %}
-        <div class="checkout__form__back">
-            {{ block_widget(block.checkout_button_back) }}
-        </div>
-    {% endif %}
-    {{ block_widget(block) }}
-{%- endblock %}
-
-{% block _checkout_widget_content_widget -%}
-    {#<{{ block_widget(block) }}#}
-    <div class="test">
-        Test
-    </div>
-{%- endblock %}
-
 {% block _checkout_order_summary_widget %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-order-summary"}) %}
     {% set workfowItem = checkout.workflowItem %}

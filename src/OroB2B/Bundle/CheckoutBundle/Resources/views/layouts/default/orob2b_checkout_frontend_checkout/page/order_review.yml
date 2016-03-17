@@ -40,4 +40,4 @@ layout:
     conditions:
         @and:
             - @eq: [$context.workflowStepName, 'place_order']
-            - @eq: [$context.ajax, false]
+            - @empty: [$context.widgetContainer]
