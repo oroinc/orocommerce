@@ -34,7 +34,7 @@ class QuoteAddressTest extends AbstractTest
             ['nameSuffix', 'Name suffix'],
             ['created', $now],
             ['updated', $now],
-            ['phoneNumber', '11111111111']
+            ['phone', '11111111111']
         ];
 
         static::assertPropertyAccessors(new QuoteAddress(), $properties);
