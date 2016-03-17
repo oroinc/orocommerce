@@ -2,7 +2,10 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Functional\Model\Action;
 
+use Symfony\Bridge\Doctrine\ManagerRegistry;
+
 use Escape\WSSEAuthenticationBundle\Security\Core\Authentication\Token\Token;
+
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -11,7 +14,6 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\CheckoutBundle\Model\Action\StartCheckout;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 /**
  * @dbIsolation
@@ -51,24 +53,19 @@ class StartCheckoutTest extends WebTestCase
 
     public function testFirstExecute()
     {
-        $checkouts = $this->registry->getRepository('OroB2BCheckoutBundle:Checkout')->findAll();
-        $checkoutSources = $this->registry->getRepository('OroB2BCheckoutBundle:CheckoutSource')->findAll();
-        $this->assertCount(0, $checkouts);
-        $this->assertCount(0, $checkoutSources);
+        $this->checkRecordsInDatabase(0);
         $data = $this->getData();
         $this->action->initialize($data['options']);
         $this->action->execute($data['context']);
         $this->checkData($data['shoppingList'], $data['poNumber'], $data['settings'], $data['context']);
     }
 
+    /**
+     * @depends testFirstExecute
+     */
     public function testSecondExecute()
     {
-        /** @var ManagerRegistry $registry */
-        $registry = $this->getContainer()->get('doctrine');
-        $checkouts = $registry->getRepository('OroB2BCheckoutBundle:Checkout')->findAll();
-        $checkoutSources = $registry->getRepository('OroB2BCheckoutBundle:CheckoutSource')->findAll();
-        $this->assertCount(1, $checkouts);
-        $this->assertCount(1, $checkoutSources);
+        $this->checkRecordsInDatabase(1);
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         $this->action->initialize(
@@ -77,16 +74,17 @@ class StartCheckoutTest extends WebTestCase
                 StartCheckout::SOURCE_ENTITY_KEY => $shoppingList
             ]
         );
-        $this->action->execute(new ActionData(['data' => $shoppingList]));
+        $context = new ActionData(['data' => $shoppingList]);
+        $this->action->execute($context);
         $data = $this->getData();
-        $this->checkData($data['shoppingList'], $data['poNumber'], $data['settings'], $data['context']);
+        $this->checkData($data['shoppingList'], $data['poNumber'], $data['settings'], $context);
     }
 
     /**
-     * @param $shoppingList
-     * @param $poNumber
-     * @param $settings
-     * @param $context
+     * @param ShoppingList $shoppingList
+     * @param integer $poNumber
+     * @param array $settings
+     * @param ActionData $context
      */
     protected function checkData(
         ShoppingList $shoppingList,
@@ -171,5 +169,16 @@ class StartCheckoutTest extends WebTestCase
             'settings' => $settings,
             'options' => $options
         ];
+    }
+
+    /**
+     * @param integer $count
+     */
+    protected function checkRecordsInDatabase($count)
+    {
+        $checkouts = $this->registry->getRepository('OroB2BCheckoutBundle:Checkout')->findAll();
+        $checkoutSources = $this->registry->getRepository('OroB2BCheckoutBundle:CheckoutSource')->findAll();
+        $this->assertCount($count, $checkouts);
+        $this->assertCount($count, $checkoutSources);
     }
 }
