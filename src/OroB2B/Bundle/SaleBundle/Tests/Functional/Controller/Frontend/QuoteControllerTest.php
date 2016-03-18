@@ -215,7 +215,7 @@ class QuoteControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $controls = $crawler->filter('.account-oq__order-info__control, .account-page-title');
+        $controls = $crawler->filter('.account-oq__order-info__control, .page-title');
 
         $this->assertSameSize($expectedData['columns'], $controls);
 
