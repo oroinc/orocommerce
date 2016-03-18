@@ -3,7 +3,6 @@ define(function(require) {
 
     var ImageTypeRadioControlComponent;
     var BaseComponent = require('oroui/js/app/components/base/component');
-    var $ = require('jquery');
     var _ = require('underscore');
 
     ImageTypeRadioControlComponent = BaseComponent.extend({
@@ -16,16 +15,17 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
-            //@TODO radio control
-
             this.options = _.defaults(options || {}, this.options);
-
-            var imageTypeRadioSelector = 'input[name*="orob2b_product[images]"][type=radio]:checked';
 
             var $form = this.options._sourceElement.closest('form');
 
-            $form.on('change', imageTypeRadioSelector, function(e) {
-                $form.find(imageTypeRadioSelector).not(this).prop('checked', false);
+            var allRadiosWithImageTypeSelector = 'input[type=radio][data-image-type]:checked';
+
+            $form.on('change', allRadiosWithImageTypeSelector, function() {
+                var currentType = this.dataset.imageType;
+                var withCurrentTypeSelector = 'input[type=radio][data-image-type="' + currentType + '"]:checked';
+
+                $form.find(withCurrentTypeSelector).not(this).prop('checked', false);
             });
         }
     });
