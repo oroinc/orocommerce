@@ -14,4 +14,4 @@ layout:
     conditions:
         @and:
             - @eq: [$context.workflowStepName, 'enter_billing_address']
-            - @empty: [$context.widgetContainer]
+            - @empty: [$context.widget_container]

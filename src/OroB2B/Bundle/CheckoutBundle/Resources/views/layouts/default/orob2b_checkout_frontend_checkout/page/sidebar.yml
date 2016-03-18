@@ -53,4 +53,4 @@ layout:
                         enter_shipping_method_edit: ~
                         enter_payment_edit: ~
     conditions:
-        @empty: [$context.widgetContainer]
+        @empty: [$context.widget_container]

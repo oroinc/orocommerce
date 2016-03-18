@@ -12,4 +12,4 @@ layout:
     conditions:
         @and:
             - @eq: [$context.workflowStepName, 'enter_shipping_method']
-            - @empty: [$context.widgetContainer]
+            - @empty: [$context.widget_container]

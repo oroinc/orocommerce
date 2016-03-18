@@ -27,4 +27,4 @@ layout:
     conditions:
         @and:
             - @neq: [$context.workflowStepName, 'place_order']
-            - @empty: [$context.widgetContainer]
+            - @empty: [$context.widget_container]
