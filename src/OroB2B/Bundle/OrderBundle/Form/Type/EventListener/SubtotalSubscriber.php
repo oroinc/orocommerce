@@ -47,17 +47,17 @@ class SubtotalSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            FormEvents::POST_SUBMIT   => 'addPostSubmitEventListener'
+            FormEvents::POST_SUBMIT   => 'postSubmitEventListener'
         ];
     }
 
     /**
      * @param FormEvent $event
      */
-    public function addPostSubmitEventListener(FormEvent $event)
+    public function postSubmitEventListener(FormEvent $event)
     {
         $data = $event->getData();
-        if ($data !== null && $data instanceof Order) {
+        if ($data instanceof Order) {
             $this->fillSubtotals($data);
             $this->fillDiscounts($data);
             $this->fillTotal($data);
@@ -79,6 +79,8 @@ class SubtotalSubscriber implements EventSubscriberInterface
                     $discount->setPercent($this->calculatePercent($subtotal, $discount));
                 }
             }
+        } else {
+            $order->setSubtotal(0.0);
         }
     }
 
@@ -89,14 +91,14 @@ class SubtotalSubscriber implements EventSubscriberInterface
     {
         $discountSubtotals = $this->discountSubtotalProvider->getSubtotal($order);
 
+        $discountSubtotalAmount = new Price();
         if (count($discountSubtotals) > 0) {
-            $discountSubtotalAmount = new Price();
             foreach ($discountSubtotals as $discount) {
                 $newAmount = $discount->getAmount() + (float) $discountSubtotalAmount->getValue();
                 $discountSubtotalAmount->setValue($newAmount);
             }
-            $order->setTotalDiscounts($discountSubtotalAmount);
         }
+        $order->setTotalDiscounts($discountSubtotalAmount);
     }
 
     /**
@@ -107,6 +109,8 @@ class SubtotalSubscriber implements EventSubscriberInterface
         $total = $this->totalProvider->getTotal($order);
         if ($total) {
             $order->setTotal($total->getAmount());
+        } else {
+            $order->setTotal(0.0);
         }
     }
 
