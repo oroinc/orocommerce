@@ -35,7 +35,7 @@ class OrderAddressTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->constraint = new OrderAddress(['validation_groups' => ['Default', 'AbstractAddress', 'Frontend']]);
+        $this->constraint = new OrderAddress(['validationGroups' => ['Default', 'AbstractAddress', 'Frontend']]);
         $this->validator = $this->getMock('Symfony\Component\Validator\Validator\ValidatorInterface');
         /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
         $this->context = $this->getMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
@@ -50,7 +50,8 @@ class OrderAddressTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
-     * @expectedExceptionMessage Expected argument of type "OroB2B\Bundle\OrderBundle\Validator\Constraints\ConstraintByValidationGroups"
+     * @expectedExceptionMessage
+     * Expected argument of type "OroB2B\Bundle\OrderBundle\Validator\Constraints\ConstraintByValidationGroups"
      */
     public function testValidateException()
     {
