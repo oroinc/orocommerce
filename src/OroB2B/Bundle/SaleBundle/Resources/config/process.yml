@@ -20,10 +20,10 @@ definitions:
                 array: $.quotes
                 value: $.quote
                 actions:
-                    - @run_action:
-                        action: orob2b_sale_expire_quote_action
-                        entity_class: OroB2B\Bundle\SaleBundle\Entity\Quote
-                        entity_id: $.quote.id
+                    - @run_action_group:
+                        action_group: orob2b_sale_expire_quote_action
+                        parameters_mapping:
+                            data: $.quote
 
     send_no_quote_alert:
         label:   'Send alerts about Requests Without Quote'
@@ -39,7 +39,7 @@ definitions:
                 array: $.requests
                 value: $.request
                 actions:
-                    - @run_action:
-                        action: orob2b_sale_send_no_quote_alert
-                        entity_class: OroB2B\Bundle\RFPBundle\Entity\Request
-                        entity_id: $.request.id
+                    - @run_action_group:
+                        action_group: orob2b_sale_send_no_quote_alert
+                        parameters_mapping:
+                            data: $.request
