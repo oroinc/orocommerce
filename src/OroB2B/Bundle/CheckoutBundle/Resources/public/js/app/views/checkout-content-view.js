@@ -11,11 +11,16 @@ define(function (require) {
          * @inheritDoc
          */
         initialize: function () {
-            mediator.on('checkout-content:updated', _.bind(this._onContentUpdated, this))
+            mediator.on('checkout-content:updated', _.bind(this._onContentUpdated, this));
+            mediator.on('checkout-content:before-update', _.bind(this._onBeforeContentUpdate, this));
         },
 
         _onContentUpdated: function () {
             this.initLayout();
+        },
+
+        _onBeforeContentUpdate: function () {
+            this.disposePageComponents();
         },
 
         /**
@@ -27,6 +32,7 @@ define(function (require) {
             }
 
             mediator.off('checkout-content:updated', _.bind(this._onContentUpdated, this));
+            mediator.off('checkout-content:before-update', _.bind(this._onBeforeContentUpdate, this));
 
             CheckoutContentView.__super__.dispose.call(this);
         }

@@ -1,3 +1,4 @@
+
 {% block _login_page_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}_half-cols"
@@ -108,12 +109,9 @@
 {% endblock %}
 
 {% block _login_form_submit_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " btn btn_orange btn_lg {{ class_prefix }}__form__submit"
-    }) %}
     <fieldset class="{{ class_prefix }}__form__row mt1-sm">
         <div class="{{ class_prefix }}__form__col form__col_x12">
-            {{ block('button_widget') }}
+            {{ block_widget(block) }}
         </div>
     </fieldset>
 {% endblock %}

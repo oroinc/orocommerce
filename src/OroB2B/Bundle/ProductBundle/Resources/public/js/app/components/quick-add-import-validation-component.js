@@ -14,8 +14,8 @@ define(function(require) {
         options: {
             _wid: '',
             containerSelector: '#import-validation',
-            cancelButtonSelector: '.cancel-action',
-            backButtonSelector: '.back-action',
+            cancelButtonSelector: 'button:reset',
+            navigateButtonSelector: 'button[data-url]',
             errorToggleSelector: '.error-toggle',
             errorVisibleClass: 'errors-visible'
         },
@@ -33,7 +33,7 @@ define(function(require) {
             this.$container = $(this.options.containerSelector);
 
             this.$container.find(this.options.errorToggleSelector).on('click', _.bind(this.toggleErrors, this));
-            this.$container.find(this.options.backButtonSelector).on('click', _.bind(this.backAction, this));
+            this.$container.find(this.options.navigateButtonSelector).on('click', _.bind(this.navigateAction, this));
             this.$container.find(this.options.cancelButtonSelector).on('click', _.bind(this.cancelAction, this));
         },
 
@@ -42,7 +42,7 @@ define(function(require) {
             this.$container.toggleClass(this.options.errorVisibleClass);
         },
 
-        backAction: function(e) {
+        navigateAction: function(e) {
             var url = $(e.target).attr('data-url');
             widgetManager.getWidgetInstance(this.options._wid, _.bind(this.loadUrl, url));
         },
