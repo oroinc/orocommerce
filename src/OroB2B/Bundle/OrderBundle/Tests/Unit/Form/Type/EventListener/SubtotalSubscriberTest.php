@@ -2,10 +2,16 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type\EventListener;
 
+use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Symfony\Component\Form\FormEvents;
+
+use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
 use OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class SubtotalSubscriberTest extends \PHPUnit_Framework_TestCase
 {
@@ -48,124 +54,124 @@ class SubtotalSubscriberTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-//    public function testProcessUnsupportedRequest()
-//    {
-//        $this->request->setMethod('GET');
-//
-//        $this->form->expects($this->never())
-//            ->method('submit');
-//
-//        $this->assertFalse($this->handler->process($this->entity));
-//    }
-//
-//    /**
-//     * @dataProvider supportedMethods
-//     * @param string $method
-//     * @param boolean $isValid
-//     * @param boolean $isProcessed
-//     */
-//    public function testProcessSupportedRequest($method, $isValid, $isProcessed)
-//    {
-//        $subtotal = new Subtotal();
-//        $amount = 42;
-//        $subtotal->setType(LineItemSubtotalProvider::TYPE);
-//        $subtotal->setAmount($amount);
-//
-////        $this->totalsProvider->expects($this->any())
-////            ->method('getSubtotal')
-////            ->willReturn($subtotal);
-//
-//        $this->form->expects($this->any())
-//            ->method('isValid')
-//            ->will($this->returnValue($isValid));
-//
-//        $this->request->setMethod($method);
-//
-//        $this->form->expects($this->once())
-//            ->method('submit')
-//            ->with($this->request);
-//
-//        $this->assertEquals($isProcessed, $this->handler->process($this->entity));
-//    }
-//
-//    /**
-//     * @return array
-//     */
-//    public function supportedMethods()
-//    {
-//        return [
-//            'post valid' => [
-//                'method' => 'POST',
-//                'isValid' => true,
-//                'isProcessed' => true
-//            ],
-//            'invalid' => [
-//                'method' => 'POST',
-//                'isValid' => false,
-//                'isProcessed' => false
-//            ],
-//        ];
-//    }
-//
-//    public function testProcessValidData()
-//    {
-//        $subtotal = new Subtotal();
-//        $subtotalAmount = 42;
-//        $subtotal->setType(LineItemSubtotalProvider::TYPE);
-//        $subtotal->setAmount($subtotalAmount);
-//
-//        $discountSubtotal = new Subtotal();
-//        $discountSubtotalAmount = 42;
-//        $discountSubtotal->setType(DiscountSubtotalProvider::TYPE);
-//        $discountSubtotal->setAmount($discountSubtotalAmount);
-//
-//        $discountSubtotal2 = new Subtotal();
-//        $discountSubtotalAmount2 = -40;
-//        $discountSubtotal2->setType(DiscountSubtotalProvider::TYPE);
-//        $discountSubtotal2->setAmount($discountSubtotalAmount2);
-//
-//        $total = new Subtotal();
-//        $totalAmount = 90;
-//        $total->setType(TotalProcessorProvider::TYPE);
-//        $total->setAmount($totalAmount);
-//
-//        $this->lineItemSubtotalProvider->expects($this->any())
-//            ->method('getSubtotal')
-//            ->willReturn($subtotal);
-//
-//        $this->discountSubtotalProvider->expects($this->any())
-//            ->method('getSubtotal')
-//            ->willReturn([$discountSubtotal, $discountSubtotal2]);
-//
-//        $this->totalsProvider->expects($this->any())
-//            ->method('getTotal')
-//            ->willReturn($total);
-//
-//        $this->request->setMethod('POST');
-//
-//        $this->form->expects($this->once())
-//            ->method('submit')
-//            ->with($this->request);
-//
-//        $this->form->expects($this->once())
-//            ->method('isValid')
-//            ->will($this->returnValue(true));
-//
-//        $this->manager->expects($this->once())
-//            ->method('persist')
-//            ->with($this->entity);
-//
-//        $this->manager->expects($this->once())
-//            ->method('flush');
-//
-//        $this->assertTrue($this->handler->process($this->entity));
-//
-//        $propertyAccessor = PropertyAccess::createPropertyAccessor();
-//        $this->assertEquals($subtotalAmount, $propertyAccessor->getValue($this->entity, $subtotal->getType()));
-//        $this->assertEquals(
-//            (float) $discountSubtotalAmount + $discountSubtotalAmount2,
-//            $this->entity->getTotalDiscounts()->getValue()
-//        );
-//        $this->assertEquals($totalAmount, $propertyAccessor->getValue($this->entity, $total->getType()));
-//    }
+    public function testGetSubscribedEvents()
+    {
+        $this->assertEquals(
+            [
+                FormEvents::POST_SUBMIT   => 'postSubmitEventListener'
+            ],
+            SubtotalSubscriber::getSubscribedEvents()
+        );
+    }
+
+    public function testPostSubmitEventListenerOnNotOrder()
+    {
+        $event = $this->getMockBuilder(
+            'Symfony\Component\Form\FormEvent'
+        )
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $event->expects($this->once())
+            ->method('getData');
+
+        $event->expects($this->never())
+            ->method('setData');
+
+        $this->subscriber->postSubmitEventListener($event);
+    }
+
+    public function testPostSubmitEventListenerOnOrderEmptyTotals()
+    {
+        $order = $this->prepareOrder();
+        $event = $this->prepareEvent($order);
+
+        $this->subscriber->postSubmitEventListener($event);
+        $this->assertEquals(0, $order->getTotal());
+        $this->assertEquals(0, $order->getSubtotal());
+        $this->assertEquals(0, $order->getTotalDiscounts()->getValue());
+    }
+
+    public function testPostSubmitEventListenerOnOrder()
+    {
+        $order = $this->prepareOrder();
+        $event = $this->prepareEvent($order);
+        $this->prepareProviders();
+
+        $this->subscriber->postSubmitEventListener($event);
+        $this->assertEquals(90, $order->getTotal());
+        $this->assertEquals(42, $order->getSubtotal());
+        $this->assertEquals(2, $order->getTotalDiscounts()->getValue());
+        $discounts = $order->getDiscounts();
+        $this->assertEquals(10.00, $discounts[0]->getPercent());
+    }
+
+    public function prepareProviders()
+    {
+        $subtotal = new Subtotal();
+        $subtotalAmount = 42;
+        $subtotal->setType(LineItemSubtotalProvider::TYPE);
+        $subtotal->setAmount($subtotalAmount);
+
+        $discountSubtotal = new Subtotal();
+        $discountSubtotalAmount = 42;
+        $discountSubtotal->setType(DiscountSubtotalProvider::TYPE);
+        $discountSubtotal->setAmount($discountSubtotalAmount);
+
+        $discountSubtotal2 = new Subtotal();
+        $discountSubtotalAmount2 = -40;
+        $discountSubtotal2->setType(DiscountSubtotalProvider::TYPE);
+        $discountSubtotal2->setAmount($discountSubtotalAmount2);
+
+        $total = new Subtotal();
+        $totalAmount = 90;
+        $total->setType(TotalProcessorProvider::TYPE);
+        $total->setAmount($totalAmount);
+
+        $this->lineItemSubtotalProvider->expects($this->any())
+            ->method('getSubtotal')
+            ->willReturn($subtotal);
+
+        $this->discountSubtotalProvider->expects($this->any())
+            ->method('getSubtotal')
+            ->willReturn([$discountSubtotal, $discountSubtotal2]);
+
+        $this->totalProvider->expects($this->any())
+            ->method('getTotal')
+            ->willReturn($total);
+    }
+
+    /**
+     * @return Order
+     */
+    protected function prepareOrder()
+    {
+        $order = new Order();
+        $discount1 = new OrderDiscount();
+        $discount1->setType(OrderDiscount::TYPE_AMOUNT);
+        $discount1->setAmount(4.2);
+        $order->addDiscount($discount1);
+
+        return $order;
+    }
+
+    /**
+     * @param $order
+     * @return \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\Form\FormEvent
+     */
+    protected function prepareEvent($order)
+    {
+        $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $event->expects($this->once())
+            ->method('getData')
+            ->willReturn($order);
+
+        $event->expects($this->once())
+            ->method('setData');
+
+        return $event;
+    }
 }
