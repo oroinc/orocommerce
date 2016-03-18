@@ -22,6 +22,7 @@
         <div class="checkout__form__col form__col_x12">
             {{- form_label(form, label, {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) -}}
             {{- form_widget(form, {'attr' : {'class': 'input input_md input_block checkout__form__input', 'placeholder' : 'Enter your city'}}) -}}
+            {{- form_errors(form) -}}
         </div>
     </fieldset>
 {% endblock %}
@@ -31,6 +32,7 @@
     <div class="checkout__form__col {{ parentClass|default('form__col_x6') }}">
         {{- form_label(form, label, {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) -}}
         {{- form_widget(form, {'attr' : attr}) -}}
+        {{- form_errors(form) -}}
     </div>
 {% endblock %}
 
@@ -40,6 +42,7 @@
         <div class="checkout__form__select">
             {{ form_widget(form, {'attr': {'class' : 'checkout__form__label checkout__form__label_additional wsnr'}}) }}
         </div>
+        {{- form_errors(form) -}}
     </div>
 {% endblock %}
 
@@ -49,6 +52,7 @@
         <div class="checkout__form__select">
             {{ form_widget(form, {'attr': {'class' : 'checkout__form__label checkout__form__label_additional wsnr'}}) }}
         </div>
+        {{- form_errors(form) -}}
     </div>
 {% endblock %}
 {% block _oro_workflow_transition_billing_address_row %}
@@ -58,6 +62,7 @@
             <div class="checkout__form__select">
                 {{ form_widget(form, {'attr' : {'class': 'input input_md'}}) }}
             </div>
+            {{- form_errors(form) -}}
         </div>
     </fieldset>
 {% endblock %}

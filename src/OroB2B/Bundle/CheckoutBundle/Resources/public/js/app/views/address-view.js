@@ -32,6 +32,10 @@ define(function(require) {
 
             this.addressSelector.on('change', _.bind(this.onAddressChanged, this));
             this.regionSelector.on('change', _.bind(this.onRegionListChanged, this));
+
+            if (this.fieldsContainer.find('.notification_error').length) {
+                this.fieldsContainer.removeClass('hidden');
+            }
         },
 
         onAddressChanged: function(e) {

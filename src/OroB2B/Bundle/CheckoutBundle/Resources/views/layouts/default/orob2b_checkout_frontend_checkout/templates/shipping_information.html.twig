@@ -10,8 +10,10 @@
          }|json_encode }}">
         {{ form_row(form.shipping_address.accountAddress) }}
         {% set hasCustomAddress = false %}
-        {% if form.shipping_address.id.vars.value and form.shipping_address.accountAddress.vars.value %}
-            {% set hasCustomAddress = true %}
+        {% if form.shipping_address.id.vars.value %}
+            {% if not form.shipping_address.accountAddress.vars.value and form.shipping_address.accountAddress.vars.value %}
+                {% set hasCustomAddress = true %}
+            {% endif %}
         {% endif %}
         <div id="checkout-address-fields-container" class="{% if not hasCustomAddress %}hidden{% endif %}">
             <fieldset class="checkout__form__row">
