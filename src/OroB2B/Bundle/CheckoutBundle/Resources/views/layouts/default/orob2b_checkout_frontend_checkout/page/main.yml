@@ -52,3 +52,5 @@ layout:
                                 checkout_form_fields: ~
                         checkout_order_summary:
                             checkout_order_summary_table: ~
+    conditions:
+        @empty: [$context.widget_container]

@@ -33,3 +33,5 @@ layout:
                         enter_shipping_method_information: ~
                         enter_payment_information: ~
                         step_edit_button: ~
+    conditions:
+        @empty: [$context.widget_container]

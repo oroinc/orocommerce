@@ -8,8 +8,7 @@ define(function(require) {
     var _ = require('underscore');
 
     var TransitionButtonComponent;
-
-    TransitionButtonComponent = BaseComponent.extend({
+    TransitionButtonComponent = BaseComponent.extend(/** @exports TransitionButtonComponent.prototype */{
         defaults: {
             transitionUrl: null,
             message: null,
@@ -50,8 +49,12 @@ define(function(require) {
                 data = this.$el.closest('form').serialize();
             }
 
+            var url = this.options.transitionUrl;
+            var widgetParameters = '_widgetContainer=ajax&_wid=ajax_checkout';
+
+            url += (-1 !== _.indexOf(url, '?') ? '&' : '?') + widgetParameters;
             $.ajax({
-                    url: this.options.transitionUrl,
+                    url: url,
                     method: method,
                     data: data
                 })
@@ -67,7 +70,7 @@ define(function(require) {
             if (response.hasOwnProperty('redirectUrl')) {
                 mediator.execute('redirectTo', {url: response.redirectUrl});
             } else {
-                var $response = $(response);
+                var $response = $('<div/>').html(response);
                 mediator.trigger('checkout-content:before-update');
 
                 var $sidebar = $(this.defaults.selectors.checkoutSidebar);
