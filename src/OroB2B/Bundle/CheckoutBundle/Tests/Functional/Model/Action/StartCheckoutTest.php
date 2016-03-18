@@ -11,6 +11,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\CheckoutBundle\Model\Action\StartCheckout;
+use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
@@ -19,13 +20,19 @@ use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingL
  */
 class StartCheckoutTest extends WebTestCase
 {
-    /** @var  AccountUser */
+    /**
+     * @var AccountUser
+     */
     protected $user;
 
-    /** @var ManagerRegistry */
+    /**
+     * @var ManagerRegistry
+     */
     protected $registry;
 
-    /** @var  StartCheckout */
+    /**
+     * @var StartCheckout
+     */
     protected $action;
 
     public function setUp()
@@ -40,84 +47,77 @@ class StartCheckoutTest extends WebTestCase
                 'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists',
             ]
         );
+
         $this->registry = $this->getContainer()->get('doctrine');
         $this->user = $this->registry
             ->getRepository('OroB2BAccountBundle:AccountUser')
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
         $token = new UsernamePasswordToken($this->user, false, 'key');
         $this->client->getContainer()->get('security.token_storage')->setToken($token);
+
         $this->action = $this->client->getContainer()->get('orob2b_checkout.model.action.start_checkout');
     }
 
-    public function testFirstExecute()
+    public function testExecute()
     {
-        $this->checkRecordsInDatabase(0);
         $data = $this->getData();
+
         $this->action->initialize($data['options']);
+
+        $this->assertCount(0, $this->getCheckouts());
         $this->action->execute($data['context']);
-        $this->checkData($data['shoppingList'], $data['poNumber'], $data['settings'], $data['context']);
-    }
-
-    /**
-     * @depends testFirstExecute
-     */
-    public function testSecondExecute()
-    {
-        $this->checkRecordsInDatabase(1);
-        /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
-        $this->action->initialize(
-            [
-                StartCheckout::SOURCE_FIELD_KEY => 'shoppingList',
-                StartCheckout::SOURCE_ENTITY_KEY => $shoppingList
-            ]
-        );
-        $context = new ActionData(['data' => $shoppingList]);
-        $this->action->execute($context);
-        $data = $this->getData();
-        $this->checkData($data['shoppingList'], $data['poNumber'], $data['settings'], $context);
-    }
-
-    /**
-     * @param ShoppingList $shoppingList
-     * @param integer $poNumber
-     * @param array $settings
-     * @param ActionData $context
-     */
-    protected function checkData(
-        ShoppingList $shoppingList,
-        $poNumber,
-        array $settings,
-        ActionData $context
-    ) {
-        $checkouts = $this->registry->getRepository('OroB2BCheckoutBundle:Checkout')->findAll();
-        $checkoutSources = $this->registry->getRepository('OroB2BCheckoutBundle:CheckoutSource')->findAll();
+        $checkouts = $this->getCheckouts();
         $this->assertCount(1, $checkouts);
-        $this->assertCount(1, $checkoutSources);
-        $checkout = $checkouts[0];
-        $checkoutSource = $checkoutSources[0];
+        $this->assertData($data, $checkouts[0]);
+
+        $this->action->execute($data['context']);
+        $this->assertCount(1, $checkouts);
+        $this->assertData($data, $checkouts[0]);
+    }
+
+    /**
+     * @param array $data
+     * @param Checkout $checkout
+     */
+    protected function assertData(array $data, Checkout $checkout)
+    {
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $data['shoppingList'];
+        $options = $data['options'];
+        /** @var ActionData $context */
+        $context = $data['context'];
+        $checkoutSource = $checkout->getSource();
+
+        $this->assertNotEmpty($checkoutSource);
+        $this->assertNotEmpty($checkoutSource->getEntity());
         $this->assertEquals($checkoutSource->getEntity()->getId(), $shoppingList->getId());
+
+        // Check that checkout created correctly
         $this->assertEquals($this->user->getId(), $checkout->getAccountUser()->getId());
         $this->assertEquals($this->user->getAccount()->getId(), $checkout->getAccount()->getId());
-        $this->assertEquals('USD', $checkout->getCurrency());
         $this->assertEquals($this->user->getAccount()->getOwner()->getId(), $checkout->getOwner()->getId());
-        $this->assertEquals($poNumber, $checkout->getPoNumber());
         $this->assertEquals($checkoutSource->getId(), $checkout->getSource()->getId());
+
+        foreach ($options[StartCheckout::CHECKOUT_DATA_KEY] as $property => $value) {
+            $this->assertAttributeEquals($value, $property, $checkout);
+        }
+
+        // Check that checkout is started and step is correct
         $workflowItem = $checkout->getWorkflowItem();
         $this->assertEquals($workflowItem->getEntity()->getId(), $checkout->getId());
-        $currentStep = $workflowItem->getCurrentStep();
         $this->assertEquals(
-            'enter_billing_address',
-            $currentStep->getName()
+            $workflowItem->getDefinition()->getStartStep()->getName(),
+            $workflowItem->getCurrentStep()->getName()
         );
+
+        // Check that workflow item filled correctly
         $data = $workflowItem->getData();
-        foreach ($settings as $key => $setting) {
-            $this->assertTrue($data->has($key));
+        foreach ($options[StartCheckout::SETTINGS_KEY] as $key => $setting) {
+            $this->assertTrue($data->has($key), sprintf('Settings key %s was not set', $key));
             $this->assertEquals($data->get($key), $setting);
         }
-        $this->assertEquals($checkout->getId(), $data->get('checkout')->getId());
-        $this->assertEquals($workflowItem->getSerializedData(), json_encode($settings));
-        $this->assertEquals($workflowItem->getEntityId(), $checkout->getId());
+
+        // Check redirection
         $this->assertEquals(
             $context->offsetGet('redirectUrl'),
             $this->client->getContainer()->get('router')->generate(
@@ -136,39 +136,31 @@ class StartCheckoutTest extends WebTestCase
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         $context = new ActionData(['data' => $shoppingList]);
 
-        $poNumber = 123;
-        $settings = [
-            'allow_source_remove' => true,
-            'disallow_billing_address_edit' => false,
-            'disallow_shipping_address_edit' => false,
-            'remove_source' => true
-        ];
-        $options = [
-            StartCheckout::SOURCE_FIELD_KEY => 'shoppingList',
-            StartCheckout::SOURCE_ENTITY_KEY => $shoppingList,
-            StartCheckout::CHECKOUT_DATA_KEY => [
-                'poNumber' => $poNumber
-            ],
-            StartCheckout::SETTINGS_KEY => $settings
-        ];
-
         return [
             'shoppingList' => $shoppingList,
             'context' => $context,
-            'poNumber' => $poNumber,
-            'settings' => $settings,
-            'options' => $options
+            'options' => [
+                StartCheckout::SOURCE_FIELD_KEY => 'shoppingList',
+                StartCheckout::SOURCE_ENTITY_KEY => $shoppingList,
+                StartCheckout::CHECKOUT_DATA_KEY => [
+                    'poNumber' => 'PO#123',
+                    'currency' => 'EUR'
+                ],
+                StartCheckout::SETTINGS_KEY => [
+                    'allow_source_remove' => true,
+                    'disallow_billing_address_edit' => false,
+                    'disallow_shipping_address_edit' => false,
+                    'remove_source' => true
+                ]
+            ]
         ];
     }
 
     /**
-     * @param integer $count
+     * @return array|Checkout[]
      */
-    protected function checkRecordsInDatabase($count)
+    protected function getCheckouts()
     {
-        $checkouts = $this->registry->getRepository('OroB2BCheckoutBundle:Checkout')->findAll();
-        $checkoutSources = $this->registry->getRepository('OroB2BCheckoutBundle:CheckoutSource')->findAll();
-        $this->assertCount($count, $checkouts);
-        $this->assertCount($count, $checkoutSources);
+        return $this->registry->getRepository('OroB2BCheckoutBundle:Checkout')->findAll();
     }
 }
