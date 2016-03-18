@@ -24,6 +24,7 @@ class ShoppingListRepository extends EntityRepository
             ->where('list.accountUser = :accountUser')
             ->andWhere('list.current = true')
             ->setParameter('accountUser', $accountUser)
+            ->setMaxResults(1)
             ->getQuery()->getOneOrNullResult();
     }
 
