@@ -65,15 +65,8 @@ class StartCheckoutTest extends WebTestCase
         $this->action->initialize($data['options']);
 
         $this->assertCount(0, $this->getCheckouts());
-        $this->action->execute($data['context']);
-        $checkouts = $this->getCheckouts();
-        $this->assertCount(1, $checkouts);
-        $this->assertData($data, $checkouts[0]);
-
-        $this->action->execute($data['context']);
-        $checkouts = $this->getCheckouts();
-        $this->assertCount(1, $checkouts);
-        $this->assertData($data, $checkouts[0]);
+        $this->assertExecution($data);
+        $this->assertExecution($data);
     }
 
     /**
@@ -163,5 +156,16 @@ class StartCheckoutTest extends WebTestCase
     protected function getCheckouts()
     {
         return $this->registry->getRepository('OroB2BCheckoutBundle:Checkout')->findAll();
+    }
+
+    /**
+     * @param array $data
+     */
+    protected function assertExecution(array $data)
+    {
+        $this->action->execute($data['context']);
+        $checkouts = $this->getCheckouts();
+        $this->assertCount(1, $checkouts);
+        $this->assertData($data, $checkouts[0]);
     }
 }
