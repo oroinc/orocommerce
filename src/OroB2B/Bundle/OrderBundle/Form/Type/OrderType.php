@@ -141,7 +141,8 @@ class OrderType extends AbstractType
                 'hidden',
                 [
                     'mapped' => false,
-                    'constraints' => [new Range(//range should be used, because this type also is implemented with JS
+                    //range should be used, because this type also is implemented with JS
+                    'constraints' => [new Range(
                         [
                             'min' => PHP_INT_MAX * (-1), //use some big negative number
                             'max' => $order->getSubtotal(),
