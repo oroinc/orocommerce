@@ -182,6 +182,7 @@ class OrderType extends AbstractType
             [
                 'data_class' => $this->dataClass,
                 'intention' => 'order',
+                'cascade_validation' => true
             ]
         );
     }
