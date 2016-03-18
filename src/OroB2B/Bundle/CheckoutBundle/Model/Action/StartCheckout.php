@@ -243,13 +243,14 @@ class StartCheckout extends AbstractAction
         $account = $user->getAccount();
         $owner = $account->getOwner();
         $organization = $account->getOrganization();
+        $currency = $checkoutSource->getEntity()->getCurrency() ?: $this->currencyProvider->getUserCurrency();
         $defaultData = [
             'accountUser' => $user,
             'account' => $account,
             'owner' => $owner,
             'organization' => $organization,
             'website' => $this->websiteManager->getCurrentWebsite(),
-            'currency' => $this->currencyProvider->getUserCurrency()
+            'currency' => $currency
         ];
 
         $checkout = new Checkout();
