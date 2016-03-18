@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
 use Doctrine\Common\Collections\Criteria;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -15,6 +16,7 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 use OroB2B\Bundle\PricingBundle\Validator\Constraints\UniquePriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListAwareInterface;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 
 class PriceListCollectionType extends AbstractType
 {
@@ -80,14 +82,47 @@ class PriceListCollectionType extends AbstractType
     {
         $data = [];
         $submitted = $event->getData() ?: [];
-        foreach ($submitted as $i => $item) {
+        foreach ($submitted as $index => $item) {
             if ($this->isEmpty($item)) {
-                $event->getForm()->remove($i);
+                $event->getForm()->remove($index);
             } else {
-                $data[$i] = $item;
+                $data[$index] = $item;
             }
         }
+
+        $data = $this->reorderData($data, $event->getForm());
+
         $event->setData($data);
+    }
+
+    /**
+     * Change data target when price lists swapped to avoid unique constraint failures
+     *
+     * @param array $submitted
+     * @param FormInterface $form
+     * @return array
+     */
+    protected function reorderData(array $submitted, FormInterface $form)
+    {
+        foreach ($form->all() as $child) {
+            /** @var BasePriceListRelation $relation */
+            $relation = $child->getData();
+            if (!$relation) {
+                continue;
+            }
+            $name = $child->getName();
+
+            foreach ($submitted as $index => $item) {
+                $id = (int)$item[PriceListSelectWithPriorityType::PRICE_LIST_FIELD];
+                if ($relation->getPriceList()->getId() === $id) {
+                    $temp = $submitted[$name];
+                    $submitted[$name] = $submitted[$index];
+                    $submitted[$index] = $temp;
+                }
+            }
+        }
+
+        return $submitted;
     }
 
     /**
@@ -96,7 +131,8 @@ class PriceListCollectionType extends AbstractType
      */
     protected function isEmpty($item)
     {
-        return ($item instanceof PriceListAwareInterface && !$item->getPriceList() && !$item->getPriority())
-            || (is_array($item) && !$item['priceList'] && !$item['priority']);
+        return is_array($item)
+            && !$item[PriceListSelectWithPriorityType::PRICE_LIST_FIELD]
+            && !$item[PriceListSelectWithPriorityType::PRIORITY_FIELD];
     }
 }
