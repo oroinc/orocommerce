@@ -7,10 +7,14 @@ layout:
                 product_grid_row_template:
                     blockType: container
                 product_grid_row_image_holder:
-                    blockType: block
+                    blockType: container
                     options:
                         vars:
                             attr_renderer: 'block_attributes_underscore'
+                product_grid_row_quick_view:
+                    blockType: block
+                    options:
+                        visible: false
                 product_grid_row_title:
                     blockType: block
                     options:
@@ -81,7 +85,8 @@ layout:
             tree:
                 scripts_before:
                     product_grid_row_template:
-                        product_grid_row_image_holder: ~
+                        product_grid_row_image_holder:
+                            product_grid_row_quick_view: ~
                         product_grid_row_title: ~
                         product_grid_row_primary_content_container:
                             product_grid_row_number: ~

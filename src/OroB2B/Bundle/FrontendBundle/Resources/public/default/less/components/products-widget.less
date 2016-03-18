@@ -32,7 +32,7 @@
 
   &.products__list_gallery-view {
     font-size: 0;
-    margin: 3rem -1.5rem 0;
+    margin-top: 3rem;
 
     @media (max-width: 991px) {
       margin: 2rem -1.5rem 0;
@@ -186,6 +186,12 @@
 .product-item__image-holder {
   position: relative;
 
+  &:before {
+    content: "";
+    padding-top: 100%;
+    float: left;
+  }
+
   &.product-item__image-holder_gallery-view {
     display: block;
     overflow: hidden;
@@ -195,9 +201,18 @@
 
     a {
       display: block;
-      position: relative;
-      overflow: hidden;
-      max-height: 24.9rem;
+      position: absolute;
+      top: -5%;
+      left: -5%;
+      bottom: -5%;
+      right: -5%;
+      background-position: 50%;
+      background-size: cover;
+      background-repeat: no-repeat;
+      -moz-transition: all 0.5s ease-out;
+      -o-transition: all 0.5s ease-out;
+      -webkit-transition: all 0.5s ease-out;
+      transition: all 0.5s ease-out;
       .bordered(.1rem, solid, transparent);
     }
 
@@ -242,9 +257,18 @@
 
     a {
       display: block;
-      position: relative;
-      overflow: hidden;
-      max-height: 24.9rem;
+      position: absolute;
+      top: -5%;
+      left: -5%;
+      bottom: -5%;
+      right: -5%;
+      background-position: 50%;
+      background-size: cover;
+      background-repeat: no-repeat;
+      -moz-transition: all 0.5s ease-out;
+      -o-transition: all 0.5s ease-out;
+      -webkit-transition: all 0.5s ease-out;
+      transition: all 0.5s ease-out;
       .bordered(.1rem, solid, transparent);
     }
 
