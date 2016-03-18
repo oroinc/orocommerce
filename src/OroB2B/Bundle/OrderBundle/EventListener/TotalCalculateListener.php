@@ -32,7 +32,7 @@ class TotalCalculateListener
 
         if ($entity instanceof Order) {
             $form = $this->formFactory->create(OrderType::NAME, $entity);
-            $form->submit($request, false);
+            $form->submit($request);
         }
     }
 }
