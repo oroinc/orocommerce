@@ -3,8 +3,7 @@
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Functional\Model\Action;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
-
-use Escape\WSSEAuthenticationBundle\Security\Core\Authentication\Token\Token;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
@@ -45,8 +44,7 @@ class StartCheckoutTest extends WebTestCase
         $this->user = $this->registry
             ->getRepository('OroB2BAccountBundle:AccountUser')
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
-        $token = new Token();
-        $token->setUser($this->user);
+        $token = new UsernamePasswordToken($this->user, false, 'key');
         $this->client->getContainer()->get('security.token_storage')->setToken($token);
         $this->action = $this->client->getContainer()->get('orob2b_checkout.model.action.start_checkout');
     }
@@ -101,7 +99,6 @@ class StartCheckoutTest extends WebTestCase
         $this->assertEquals($checkoutSource->getEntity()->getId(), $shoppingList->getId());
         $this->assertEquals($this->user->getId(), $checkout->getAccountUser()->getId());
         $this->assertEquals($this->user->getAccount()->getId(), $checkout->getAccount()->getId());
-        $d = $shoppingList->getCurrency();
         $this->assertEquals('USD', $checkout->getCurrency());
         $this->assertEquals($this->user->getAccount()->getOwner()->getId(), $checkout->getOwner()->getId());
         $this->assertEquals($poNumber, $checkout->getPoNumber());
