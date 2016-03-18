@@ -17,15 +17,15 @@ define(function(require) {
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
-            var $form = this.options._sourceElement.closest('form');
+            var form = this.options._sourceElement.closest('form');
 
             var allRadiosWithImageTypeSelector = 'input[type=radio][data-image-type]:checked';
 
-            $form.on('change', allRadiosWithImageTypeSelector, function() {
+            form.on('change', allRadiosWithImageTypeSelector, function() {
                 var currentType = this.dataset.imageType;
                 var withCurrentTypeSelector = 'input[type=radio][data-image-type="' + currentType + '"]:checked';
 
-                $form.find(withCurrentTypeSelector).not(this).prop('checked', false);
+                form.find(withCurrentTypeSelector).not(this).prop('checked', false);
             });
         }
     });
