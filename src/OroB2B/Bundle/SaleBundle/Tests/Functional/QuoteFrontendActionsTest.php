@@ -51,9 +51,9 @@ class QuoteFrontendActionsTest extends WebTestCase
         $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_api_frontend_action_execute_actions',
+                'orob2b_api_frontend_action_execute_operations',
                 [
-                    'actionName' => 'orob2b_sale_frontend_quote_accept_and_submit_to_order',
+                    'operationName' => 'orob2b_sale_frontend_quote_accept_and_submit_to_order',
                     'route' => 'orob2b_sale_quote_frontend_view',
                     'entityId' => $quote->getId(),
                     'entityClass' => 'OroB2B\Bundle\SaleBundle\Entity\Quote'
@@ -115,7 +115,7 @@ class QuoteFrontendActionsTest extends WebTestCase
             $this->getUrl(
                 'orob2b_frontend_action_widget_form',
                 [
-                    'actionName' => 'orob2b_sale_frontend_quote_accept_and_submit_to_order_from_widget',
+                    'operationName' => 'orob2b_sale_frontend_quote_accept_and_submit_to_order_from_widget',
                     'route' => 'orob2b_sale_quote_frontend_view',
                     'entityId' => $quote->getId(),
                     'entityClass' => 'OroB2B\Bundle\SaleBundle\Entity\Quote'

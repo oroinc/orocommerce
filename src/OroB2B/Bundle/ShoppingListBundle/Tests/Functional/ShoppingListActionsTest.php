@@ -38,7 +38,7 @@ class ShoppingListActionsTest extends ActionTestCase
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         $this->assertFalse($shoppingList->getLineItems()->isEmpty());
 
-        $this->executeAction($shoppingList, 'orob2b_shoppinglist_action_createorder');
+        $this->executeOperation($shoppingList, 'orob2b_shoppinglist_createorder');
 
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
 
@@ -138,12 +138,12 @@ class ShoppingListActionsTest extends ActionTestCase
 
     /**
      * @param ShoppingList $shoppingList
-     * @param string $actionName
+     * @param string $operationName
      */
-    protected function executeAction(ShoppingList $shoppingList, $actionName)
+    protected function executeOperation(ShoppingList $shoppingList, $operationName)
     {
-        $this->assertExecuteAction(
-            $actionName,
+        $this->assertExecuteOperation(
+            $operationName,
             $shoppingList->getId(),
             'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList',
             ['route' => 'orob2b_shopping_list_view']

@@ -58,7 +58,7 @@ class ProductPriceTest extends WebTestCase
             $this->getUrl(
                 'oro_action_widget_form',
                 [
-                    'actionName' => 'orob2b_pricing_add_product_price',
+                    'operationName' => 'orob2b_pricing_add_product_price',
                     'route' => 'orob2b_pricing_price_list_view',
                     'entityId' => $priceList->getId(),
                     'entityClass' => 'OroB2B\Bundle\PricingBundle\Entity\PriceList'
