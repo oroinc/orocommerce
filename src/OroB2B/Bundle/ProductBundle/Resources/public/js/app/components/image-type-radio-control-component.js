@@ -18,7 +18,6 @@ define(function(require) {
             this.options = _.defaults(options || {}, this.options);
 
             var form = this.options._sourceElement.closest('form');
-
             var allRadiosWithImageTypeSelector = 'input[type=radio][data-image-type]:checked';
 
             form.on('change', allRadiosWithImageTypeSelector, function() {
