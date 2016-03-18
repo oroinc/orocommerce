@@ -31,8 +31,11 @@ class TotalCalculateListener
         $request = $event->getRequest();
 
         if ($entity instanceof Order) {
+            $entity->resetDiscounts();
+            $entity->resetLineItems();
             $form = $this->formFactory->create(OrderType::NAME, $entity);
-            $form->submit($request);
+
+            $form->submit($request, false);
         }
     }
 }
