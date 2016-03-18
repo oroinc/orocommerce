@@ -133,14 +133,6 @@
   margin-bottom: 10px;
 }
 
-table.discount-item-value td {
-  border: none;
-  vertical-align: top;
-}
-
-table.discount-item-value td.discount-item-value-calculated {
-  padding-top: 12px;
-}
 td.order-discount-item-remove {
   text-align: right;
 }
@@ -152,5 +144,28 @@ td.order-discount-item-remove {
 
   .add-list-item {
     margin-top: 10px;
+  }
+}
+
+.order-discount-items {
+  .discounts-sum-error {
+    .validation-failed {
+      margin-top: 10px;
+    }
+  }
+}
+
+.oro-discount-collection {
+  .table {
+    width: auto;
+  }
+  td.discount-item-value-calculated {
+    padding-top: 12px;
+  }
+}
+
+.discount-item-value-type {
+  select {
+    width: 80px;
   }
 }

@@ -143,7 +143,9 @@ define(function(require) {
             this.$amountInputElement.val(discountAmount);
             this.$percentInputElement.val(percent);
 
-            if (!_.isEmpty(valueDataValidation.Range)) {
+            if (this.$typeInputElement.val() != this.options.percentTypeValue
+                && !_.isEmpty(valueDataValidation.Range)
+            ) {
                 valueDataValidation.Range.max = total;
             }
 
