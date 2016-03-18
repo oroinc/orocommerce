@@ -38,6 +38,12 @@ class ProductControllerTest extends WebTestCase
 
     public function testIndexDatagridViews()
     {
+        // default view is DataGridThemeHelper::VIEW_GRID
+        $response = $this->requestFrontendGrid('frontend-products-grid');
+        $result = $this->getJsonResponseContent($response, 200);
+        $this->assertArrayHasKey('image', $result['data'][0]);
+        $this->assertArrayHasKey('description', $result['data'][0]);
+
         $response = $this->requestFrontendGrid(
             'frontend-products-grid',
             [
@@ -47,6 +53,7 @@ class ProductControllerTest extends WebTestCase
 
         $result = $this->getJsonResponseContent($response, 200);
         $this->assertArrayNotHasKey('image', $result['data'][0]);
+        $this->assertArrayNotHasKey('description', $result['data'][0]);
 
         $response = $this->requestFrontendGrid(
             'frontend-products-grid',
@@ -68,6 +75,13 @@ class ProductControllerTest extends WebTestCase
 
         $result = $this->getJsonResponseContent($response, 200);
         $this->assertArrayHasKey('image', $result['data'][0]);
+        $this->assertArrayNotHasKey('description', $result['data'][0]);
+
+        // view saves to session so current view is DataGridThemeHelper::VIEW_TILES
+        $response = $this->requestFrontendGrid('frontend-products-grid');
+        $result = $this->getJsonResponseContent($response, 200);
+        $this->assertArrayHasKey('image', $result['data'][0]);
+        $this->assertArrayNotHasKey('description', $result['data'][0]);
     }
 
     public function testViewProduct()

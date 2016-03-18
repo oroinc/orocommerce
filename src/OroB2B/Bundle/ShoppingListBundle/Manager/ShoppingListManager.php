@@ -194,7 +194,6 @@ class ShoppingListManager
      */
     public function recalculateSubtotals(ShoppingList $shoppingList, $flush = true)
     {
-        $shoppingList->setCurrency($this->localeSettings->getCurrency());
         $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotal($shoppingList);
         $total = $this->totalProvider->getTotal($shoppingList);
 
