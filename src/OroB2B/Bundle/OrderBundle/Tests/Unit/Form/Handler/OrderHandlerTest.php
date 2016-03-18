@@ -6,14 +6,9 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use OroB2B\Bundle\OrderBundle\Form\Handler\OrderHandler;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class OrderHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -71,15 +66,6 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testProcessSupportedRequest($method, $isValid, $isProcessed)
     {
-        $subtotal = new Subtotal();
-        $amount = 42;
-        $subtotal->setType(LineItemSubtotalProvider::TYPE);
-        $subtotal->setAmount($amount);
-
-        $this->totalsProvider->expects($this->any())
-            ->method('getSubtotal')
-            ->willReturn($subtotal);
-
         $this->form->expects($this->any())
             ->method('isValid')
             ->will($this->returnValue($isValid));
@@ -114,38 +100,6 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessValidData()
     {
-        $subtotal = new Subtotal();
-        $subtotalAmount = 42;
-        $subtotal->setType(LineItemSubtotalProvider::TYPE);
-        $subtotal->setAmount($subtotalAmount);
-
-        $discountSubtotal = new Subtotal();
-        $discountSubtotalAmount = 42;
-        $discountSubtotal->setType(DiscountSubtotalProvider::TYPE);
-        $discountSubtotal->setAmount($discountSubtotalAmount);
-
-        $discountSubtotal2 = new Subtotal();
-        $discountSubtotalAmount2 = -40;
-        $discountSubtotal2->setType(DiscountSubtotalProvider::TYPE);
-        $discountSubtotal2->setAmount($discountSubtotalAmount2);
-
-        $total = new Subtotal();
-        $totalAmount = 90;
-        $total->setType(TotalProcessorProvider::TYPE);
-        $total->setAmount($totalAmount);
-
-        $this->lineItemSubtotalProvider->expects($this->any())
-            ->method('getSubtotal')
-            ->willReturn($subtotal);
-
-        $this->discountSubtotalProvider->expects($this->any())
-            ->method('getSubtotal')
-            ->willReturn([$discountSubtotal, $discountSubtotal2]);
-
-        $this->totalsProvider->expects($this->any())
-            ->method('getTotal')
-            ->willReturn($total);
-
         $this->request->setMethod('POST');
 
         $this->form->expects($this->once())
@@ -164,13 +118,5 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('flush');
 
         $this->assertTrue($this->handler->process($this->entity));
-
-        $propertyAccessor = PropertyAccess::createPropertyAccessor();
-        $this->assertEquals($subtotalAmount, $propertyAccessor->getValue($this->entity, $subtotal->getType()));
-        $this->assertEquals(
-            (float) $discountSubtotalAmount + $discountSubtotalAmount2,
-            $this->entity->getTotalDiscounts()->getValue()
-        );
-        $this->assertEquals($totalAmount, $propertyAccessor->getValue($this->entity, $total->getType()));
     }
 }

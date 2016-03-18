@@ -169,6 +169,9 @@ class OrderTypeTest extends TypeTestCase
                     'account' => 2,
                     'poNumber' => '11',
                     'shipUntil' => null,
+                    'subtotal' => 0.0,
+                    'total' => 0.0,
+                    'totalDiscounts' => 0.0,
                     'lineItems' => [
                         [
                             'productSku' => 'HLCU',
@@ -195,6 +198,9 @@ class OrderTypeTest extends TypeTestCase
                         'account' => 2,
                         'poNumber' => '11',
                         'shipUntil' => null,
+                        'subtotal' => 0.0,
+                        'total' => 0.0,
+                        'totalDiscounts' => new Price(),
                         'lineItems' => [
                             [
                                 'productSku' => 'HLCU',
