@@ -1,17 +1,16 @@
+{% extends 'OroUIBundle:layouts:base/dialog/dialog.html.twig' %}
+
 {% block _widget_content_widget %}
     {% set pageComponentOptions = {
-        '_wid': app.request.get('_wid'),
-        'savedId': savedId|default(null)
+        savedId: savedId|default(null),
+        message: 'orob2b.shoppinglist.flash.success'
     } %}
     {% set attr = {
         'data-page-component-module': 'orob2bfrontend/js/app/components/widget-form-component',
-        'data-page-component-options': pageComponentOptions|merge({message: 'orob2b.shoppinglist.flash.success'})|json_encode
     }|merge(attr)|merge({
-        class: attr.class|default('') ~ " widget-content"
+        'data-page-component-options': pageComponentOptions|merge(attr['data-page-component-options']|default({})),
     }) %}
-    <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
+    {{ parent() }}
 {% endblock %}
 
 {% block _form_errors_widget %}
@@ -39,18 +38,4 @@
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
-{% endblock %}
-
-{% block _form_actions_reset_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " btn theme-btn_sm btn_gray"
-    }) %}
-    {{ block('button_widget') }}
-{% endblock %}
-
-{% block _form_actions_create_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " btn theme-btn_sm btn_orange ml1-md"
-    }) %}
-    {{ block('button_widget') }}
 {% endblock %}
