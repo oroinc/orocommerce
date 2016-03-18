@@ -8,8 +8,7 @@ define(function(require) {
     var _ = require('underscore');
 
     var TransitionButtonComponent;
-
-    TransitionButtonComponent = BaseComponent.extend({
+    TransitionButtonComponent = BaseComponent.extend(/** @exports TransitionButtonComponent.prototype */{
         defaults: {
             transitionUrl: null,
             message: null,
@@ -50,30 +49,35 @@ define(function(require) {
                 data = this.$el.closest('form').serialize();
             }
 
+            var url = this.options.transitionUrl;
+            var widgetParameters = '_widgetContainer=ajax&_wid=ajax_checkout';
+
+            url += (-1 !== _.indexOf(url, '?') ? '&' : '?') + widgetParameters;
             $.ajax({
-                    url: this.options.transitionUrl,
+                    url: url,
                     method: method,
                     data: data
                 })
                 .done(_.bind(this.onSuccess, this))
                 .fail(_.bind(this.onFail, this))
-                .always(
-                    _.bind(function() {
-                        mediator.execute('hideLoading');
-                        this.inProgress = false;
-                    }, this)
-                );
+                .always(function() {
+                    mediator.execute('hideLoading');
+                });
         },
 
         onSuccess: function(response) {
+            this.inProgress = false;
             if (response.hasOwnProperty('redirectUrl')) {
                 mediator.execute('redirectTo', {url: response.redirectUrl});
             } else {
-                var $response = $(response);
-                $(this.defaults.selectors.checkoutSidebar)
-                    .html($response.find(this.defaults.selectors.checkoutSidebar).html());
-                $(this.defaults.selectors.checkoutContent)
-                    .html($response.find(this.defaults.selectors.checkoutContent).html());
+                var $response = $('<div/>').html(response);
+                mediator.trigger('checkout-content:before-update');
+
+                var $sidebar = $(this.defaults.selectors.checkoutSidebar);
+                $sidebar.html($response.find(this.defaults.selectors.checkoutSidebar).html());
+
+                var $content = $(this.defaults.selectors.checkoutContent);
+                $content.html($response.find(this.defaults.selectors.checkoutContent).html());
 
                 mediator.trigger('checkout-content:updated');
             }
@@ -81,7 +85,21 @@ define(function(require) {
 
         onFail: function() {
             // TODO: improve errors handling
+            this.inProgress = false;
             mediator.execute('showFlashMessage', 'error', 'Could not perform transition');
+        },
+
+        /**
+         * @inheritDoc
+         */
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            this.$el.off('click', _.bind(this.transit, this));
+
+            TransitionButtonComponent.__super__.dispose.call(this);
         }
     });
 

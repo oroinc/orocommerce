@@ -111,9 +111,10 @@ class QuickAddRowCollectionBuilder
         $collection = new QuickAddRowCollection();
         $lineNumber = 1;
 
+        $text = trim($text);
         if ($text) {
             foreach (explode(PHP_EOL, $text) as $line) {
-                $data = preg_split('/\t|\,/', $line);
+                $data = preg_split('/(\t|\,|\ )+/', $line);
                 $collection->add(
                     new QuickAddRow(
                         $lineNumber++,

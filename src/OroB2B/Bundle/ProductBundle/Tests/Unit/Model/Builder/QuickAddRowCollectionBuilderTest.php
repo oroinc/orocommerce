@@ -127,6 +127,8 @@ HCCM, 3,
 SKU1,10.0112
 SKU2,asd
 SKU3,
+
+
 TEXT;
         $tabsSeparated = <<<TEXT
 HSSUC\t1
@@ -135,11 +137,21 @@ HCCM\t3\t
 SKU1\t10.0112
 SKU2\tasd
 SKU3\t
+
+TEXT;
+        $spaceSeparated = <<<TEXT
+HSSUC 1
+HSTUC 2.55
+HCCM 3
+SKU1 10.0112
+SKU2 asd
+SKU3
 TEXT;
 
         return [
             'comma separated' => [$commaSeparated],
-            'tabs separated' => [$tabsSeparated]
+            'tabs separated' => [$tabsSeparated],
+            'space separated' => [$spaceSeparated],
         ];
     }
 
