@@ -80,7 +80,6 @@ class OrderType extends AbstractType
         /** @var Order $order */
         $order = $options['data'];
         $this->orderCurrencyHandler->setOrderCurrency($order);
-        $maxValue = pow(10, 18) - 1;
 
         $builder
             ->add('account', AccountSelectType::NAME, ['label' => 'orob2b.order.account.label', 'required' => true])
@@ -153,38 +152,12 @@ class OrderType extends AbstractType
                     'data' => $order->getTotalDiscounts() ? $order->getTotalDiscounts()->getValue() : 0
                 ]
             )
-            ->add(
-                'subtotalValidation',
-                'hidden',
-                [
-                    'mapped' => false,
-                    'constraints' => [new Range(
-                        [
-                            'min' => 0,
-                            'max' => $maxValue
-                        ]
-                    )],
-                    'data' => $order->getSubtotal()
-                ]
-            )
-            ->add(
-                'totalValidation',
-                'hidden',
-                [
-                    'mapped' => false,
-                    'constraints' => [new Range(
-                        [
-                            'min' => 0,
-                            'max' => $maxValue
-                        ]
-                    )],
-                    'data' => $order->getTotal()
-                ]
-            )
+
             ->add('sourceEntityClass', 'hidden')
             ->add('sourceEntityId', 'hidden')
             ->add('sourceEntityIdentifier', 'hidden');
 
+        $this->addTotalsValidationFields($builder, $order);
         $this->addBillingAddress($builder, $order, $options);
         $this->addShippingAddress($builder, $order, $options);
         $this->addPaymentTerm($builder, $order);
@@ -333,5 +306,42 @@ class OrderType extends AbstractType
                     ]
                 );
         }
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param Order $order
+     */
+    protected function addTotalsValidationFields(FormBuilderInterface $builder, Order $order)
+    {
+        $maxValue = pow(10, 18) - 1;
+        $builder->add(
+            'subtotalValidation',
+            'hidden',
+            [
+                'mapped' => false,
+                'constraints' => [new Range(
+                    [
+                        'min' => 0,
+                        'max' => $maxValue
+                    ]
+                )],
+                'data' => $order->getSubtotal()
+            ]
+        )
+        ->add(
+            'totalValidation',
+            'hidden',
+            [
+                'mapped' => false,
+                'constraints' => [new Range(
+                    [
+                        'min' => 0,
+                        'max' => $maxValue
+                    ]
+                )],
+                'data' => $order->getTotal()
+            ]
+        );
     }
 }
