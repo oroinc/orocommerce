@@ -253,7 +253,7 @@ action_groups:
             - @call_service_method:
                 service: orob2b_shopping_list.shopping_list.manager
                 method: addLineItem
-                method_parameters: [$lineItem, $data, true, true]
+                method_parameters: [$line_item, $data, true, true]
             - @refresh_grid: shopping-list-line-items-grid
             - @flash_message:
                 message: orob2b.shoppinglist.lineitem.flash.added

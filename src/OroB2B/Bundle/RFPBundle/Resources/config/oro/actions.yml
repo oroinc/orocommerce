@@ -37,6 +37,7 @@ operations:
                 parameters_mapping:
                     data: $.data
                     request_status: $.request_status
+                    request_note: $.request_note
 
     orob2b_rfp_cancel:
         label: orob2b.rfp.request.cancel.label
@@ -249,15 +250,18 @@ action_groups:
                 type: OroB2B\Bundle\RFPBundle\Entity\Request
             request_status:
                 type: OroB2B\Bundle\RFPBundle\Entity\RequestStatus
+            request_note:
+                type: string
+                required: false
         actions:
             - @assign_value: [$data.status, $request_status]
             - @flush_entity: $data
             - @format_string:
                 attribute: $.message
                 string: 'New status: %%status%% <p></p> %%note%%'
-                parameters:
+                arguments:
                     status: $request_status.label
-                    note: $.request_note
+                    note: $request_note
             - @create_entity:
                 class: Oro\Bundle\NoteBundle\Entity\Note
                 attribute: $.note
