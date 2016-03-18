@@ -3,10 +3,14 @@
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
@@ -54,6 +58,9 @@ class OrderTypeTest extends TypeTestCase
 
     /** @var OrderType */
     private $type;
+
+    /** @var ValidatorInterface  */
+    private $validator;
 
     protected function setUp()
     {
@@ -110,6 +117,8 @@ class OrderTypeTest extends TypeTestCase
     public function testSubmitValidData($submitData, $expectedOrder)
     {
         $order = new Order();
+        $order->setTotalDiscounts(Price::create(99, 'USD'));
+
         $options = [
             'data' => $order
         ];
@@ -161,6 +170,7 @@ class OrderTypeTest extends TypeTestCase
                         'sourceEntityClass' => 'Class',
                         'sourceEntityId' => '1',
                         'sourceEntityIdentifier' => '1',
+                        'totalDiscounts' => Price::create(99, 'USD'),
                         'accountUser' => 1,
                         'account' => 2,
                         'poNumber' => '11',
@@ -245,6 +255,14 @@ class OrderTypeTest extends TypeTestCase
         $OrderLineItemType->setDataClass('OroB2B\Bundle\OrderBundle\Entity\OrderLineItem');
         $currencySelectionType = new CurrencySelectionTypeStub();
 
+        $this->validator = $this->getMock(
+            'Symfony\Component\Validator\Validator\ValidatorInterface'
+        );
+        $this->validator
+            ->method('validate')
+            ->will($this->returnValue(new ConstraintViolationList()));
+
+
         return [
             new PreloadedExtension(
                 [
@@ -267,6 +285,7 @@ class OrderTypeTest extends TypeTestCase
                 ],
                 []
             ),
+            new ValidatorExtension(Validation::createValidator())
         ];
     }
 

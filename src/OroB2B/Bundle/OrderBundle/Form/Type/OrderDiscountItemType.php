@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\OrderBundle\Form\Type;
 
+use OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormView;
@@ -9,8 +10,11 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Type;
+use Symfony\Component\Validator\Constraints\Range;
 
 use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 
 class OrderDiscountItemType extends AbstractType
 {
@@ -34,7 +38,7 @@ class OrderDiscountItemType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setRequired(['currency']);
+        $resolver->setRequired(['currency', 'total']);
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
@@ -52,6 +56,8 @@ class OrderDiscountItemType extends AbstractType
             [
                 'view' => 'orob2border/js/app/views/discount-item-view',
                 'percentTypeValue' => OrderDiscount::TYPE_PERCENT,
+                'totalType' => LineItemSubtotalProvider::TYPE,
+                'discountType' => DiscountSubtotalProvider::TYPE,
             ]
         );
     }
@@ -89,7 +95,22 @@ class OrderDiscountItemType extends AbstractType
                 ]
             )
             ->add('percent', 'hidden')
-            ->add('amount', 'hidden');
+            ->add(
+                'amount',
+                'hidden',
+                [
+                    'constraints' => [
+                        new Range(//range should be used, because this type also is implemented with JS
+                            [
+                                'min' => PHP_INT_MAX * (-1), //use some big negative number
+                                'max' => $options['total'],
+                                'maxMessage' => 'orob2b.order.discounts.item.error.label'
+                            ]
+                        ),
+                        new Type(['type' => 'numeric'])
+                    ]
+                ]
+            );
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetData']);
     }
@@ -121,7 +142,7 @@ class OrderDiscountItemType extends AbstractType
         $form = $event->getForm();
         $data = $event->getData();
         if ($data && $form->has('value')) {
-            $form->get('value')->setData($data->getValue());
+            $form->get('value')->setData((double)$data->getValue());
         }
     }
 

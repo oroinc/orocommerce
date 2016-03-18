@@ -128,6 +128,9 @@ define(function(require) {
                         if (!subtotals) {
                             return;
                         }
+
+                        mediator.trigger('totals:update', subtotals);
+
                         this.render(subtotals);
                     }, this));
                 }

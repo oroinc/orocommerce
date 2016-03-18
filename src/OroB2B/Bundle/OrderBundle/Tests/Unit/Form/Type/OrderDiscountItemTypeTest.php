@@ -4,12 +4,16 @@ namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Validation;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderDiscountItemType;
+use OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 
 class OrderDiscountItemTypeTest extends FormIntegrationTestCase
 {
@@ -60,16 +64,20 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
     {
         $expectedOptions = [
             'currency' => 'USD',
+            'total' => 99,
             'data_class' => 'OroB2B\Bundle\OrderBundle\Entity\OrderDiscount',
             'intention' => 'order_discount_item',
             'page_component' => 'oroui/js/app/components/view-component',
             'page_component_options' => [
                 'view' => 'orob2border/js/app/views/discount-item-view',
                 'percentTypeValue' => OrderDiscount::TYPE_PERCENT,
+                'totalType' => LineItemSubtotalProvider::TYPE,
+                'discountType' => DiscountSubtotalProvider::TYPE,
             ],
         ];
         $resolver = new OptionsResolver();
         $resolver->setDefault('currency', 'USD');
+        $resolver->setDefault('total', 99);
         $this->formType->configureOptions($resolver);
 
         $resolvedOptions = $resolver->resolve();
@@ -85,7 +93,7 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
 
         $data = new OrderDiscount();
 
-        $form = $this->factory->create($this->formType, $data, ['currency' => 'USD']);
+        $form = $this->factory->create($this->formType, $data, ['currency' => 'USD', 'total' => 99]);
 
         $submittedData = [
             'value' => '10',
@@ -104,5 +112,13 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
+    {
+        return [new ValidatorExtension(Validation::createValidator())];
     }
 }

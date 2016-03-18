@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\OrderBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Range;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
@@ -129,7 +130,25 @@ class OrderType extends AbstractType
                 [
                     'add_label' => 'orob2b.order.discountitem.add_label',
                     'cascade_validation' => true,
-                    'options' => ['currency' => $order->getCurrency()]
+                    'options' => [
+                        'currency' => $order->getCurrency(),
+                        'total' => $order->getSubtotal(),
+                    ]
+                ]
+            )
+            ->add(
+                'discountsSum',
+                'hidden',
+                [
+                    'mapped' => false,
+                    'constraints' => [new Range(//range should be used, because this type also is implemented with JS
+                        [
+                            'min' => PHP_INT_MAX * (-1), //use some big negative number
+                            'max' => $order->getSubtotal(),
+                            'maxMessage' => 'orob2b.order.discounts.sum.error.label'
+                        ]
+                    )],
+                    'data' => $order->getTotalDiscounts() ? $order->getTotalDiscounts()->getValue() : 0
                 ]
             )
             ->add('sourceEntityClass', 'hidden')

@@ -272,16 +272,15 @@
             <tr>
                 <td>
                     {{ form_widget(form.value) }}
-                    {{ form_widget(form.percent) }}
-                    {{ form_widget(form.amount) }}
+                    <span data-validation-ignore="">{{ form_widget(form.percent) }}</span>
+                    <span data-validation-ignore="">{{ form_widget(form.amount) }}</span>
                 </td>
                 <td class="discount-item-value-type">
                     {{ form_widget(form.type) }}
                 </td>
-                <td valign="middle">
+                <td class="discount-item-value-calculated">
                     {% if (form.vars.value is not empty) %}
-                        <span class="discount-item-value-amount">{{ form.vars.value.amountPrice|oro_format_price }}</span>
-                         (<span class="discount-item-value-percent">{{ form.vars.value.percent|number_format }}</span>%)
+                        {{ form.vars.value.amountPrice|oro_format_price }} ({{ form.vars.value.percent|number_format }}%)
                     {% endif %}
                 </td>
             </tr>

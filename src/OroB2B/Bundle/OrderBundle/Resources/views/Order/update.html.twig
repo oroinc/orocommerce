@@ -237,14 +237,19 @@
     {% endif %}
 
     {% set discountItems %}
+        {% set discountType = constant('OroB2B\\Bundle\\OrderBundle\\Provider\\DiscountSubtotalProvider::TYPE') %}
+        {% set totalType = constant('OroB2B\\Bundle\\PricingBundle\\SubtotalProcessor\\Provider\\LineItemSubtotalProvider::TYPE') %}
         <div class="order-discount-items"
              data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
                  view: 'orob2border/js/app/views/discount-items-view',
+                 discountType: discountType,
+                 totalType: totalType,
              }|json_encode }}"
              data-layout="separate">
             {{ form_widget(form.discounts) }}
             {{ form_errors(form.discounts) }}
+            {{ form_row(form.discountsSum) }}
         </div>
     {% endset %}
 
