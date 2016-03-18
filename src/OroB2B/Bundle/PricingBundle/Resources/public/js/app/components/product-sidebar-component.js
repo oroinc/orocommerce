@@ -1,6 +1,6 @@
 /*jslint nomen:true*/
 /*global define*/
-define(function(require) {
+define(function (require) {
     'use strict';
 
     var ProductSidebarComponent;
@@ -25,8 +25,13 @@ define(function(require) {
             routeName: 'orob2b_pricing_price_list_currency_list',
             routingParams: {},
             currencyTemplate: '<input type="checkbox" id="<%- id %>" value="<%- value %>">' +
-                '<label for="<%- id %>"><%- text %></label>'
+            '<label for="<%- id %>"><%- text %></label>'
         },
+
+        /**
+         * @property {Object}
+         */
+        currenciesState: {},
 
         /**
          * @property {jQuery.Element}
@@ -41,7 +46,7 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        initialize: function(options) {
+        initialize: function (options) {
             this.options = _.defaults(options || {}, this.options);
 
             this.loadingMaskView = new LoadingMaskView({container: this.options._sourceElement});
@@ -53,7 +58,7 @@ define(function(require) {
                 .on('change', this.options.showTierPricesSelector, _.bind(this.onShowTierPricesChange, this));
         },
 
-        onPriceListChange: function(e) {
+        onPriceListChange: function (e) {
             var value = e.target.value;
             var routeParams = $.extend({}, this.options.routingParams, {'id': value});
 
@@ -63,7 +68,7 @@ define(function(require) {
                 success: $.proxy(this._success, this),
                 complete: $.proxy(this._complete, this),
                 error: _.bind(
-                    function(jqXHR) {
+                    function (jqXHR) {
                         messenger.showErrorMessage(__(this.options.errorMessage), jqXHR.responseJSON);
                     },
                     this
@@ -71,21 +76,27 @@ define(function(require) {
             });
         },
 
-        onCurrenciesChange: function() {
+        onCurrenciesChange: function () {
             this.triggerSidebarChanged(true);
         },
 
-        onShowTierPricesChange: function() {
+        onShowTierPricesChange: function () {
             this.triggerSidebarChanged(false);
         },
 
         /**
          * @param {Boolean} widgetReload
          */
-        triggerSidebarChanged: function(widgetReload) {
-            var currencies = _.map($(this.options.currenciesSelector + ' input:checked'), function(input) {
-                return $(input).val();
-            });
+        triggerSidebarChanged: function (widgetReload) {
+            var currencies = [];
+            _.each($(this.options.currenciesSelector + ' input'), function (input) {
+                var checked = input.checked;
+                var value = $(input).val();
+                if (checked) {
+                    currencies.push(value);
+                }
+                this.currenciesState[value] = checked
+            }, this);
 
             if (_.isEmpty(currencies)) {
                 currencies = false;
@@ -106,7 +117,7 @@ define(function(require) {
         /**
          * @private
          */
-        _beforeSend: function() {
+        _beforeSend: function () {
             this.loadingMaskView.show();
         },
 
@@ -115,35 +126,52 @@ define(function(require) {
          *
          * @private
          */
-        _success: function(data) {
+        _success: function (data) {
             var html = [];
             var index = 0;
             var template = _.template(this.options.currencyTemplate);
+            if (!this._hasActiveCurrencies(data)) {
+                this.currenciesState = {};
+            }
 
-            _.each(data, function(value, key) {
+            _.each(data, function (value, key) {
+                var checked = 'checked';
+                if (this.currenciesState.hasOwnProperty(key) && !this.currenciesState[key]) {
+                    checked = '';
+                }
                 html[index] = template({
                     value: key,
                     text: key,
                     ftid: index,
-                    uid: _.uniqueId('ocs')
+                    uid: _.uniqueId('ocs'),
+                    checked: checked
                 });
 
                 index++;
-            });
+            }, this);
 
             this.currenciesContainer.html(html.join(''));
 
-            this.triggerSidebarChanged(true);
+            this.triggerSidebarChanged(false);
+        },
+
+        _hasActiveCurrencies: function (data) {
+            for (var key in this.currenciesState) {
+                if (this.currenciesState.hasOwnProperty(key) && data.hasOwnProperty(key) && this.currenciesState[key]) {
+                    return true;
+                }
+            }
+            return false;
         },
 
         /**
          * @private
          */
-        _complete: function() {
+        _complete: function () {
             this.loadingMaskView.hide();
         },
 
-        dispose: function() {
+        dispose: function () {
             if (this.disposed) {
                 return;
             }
