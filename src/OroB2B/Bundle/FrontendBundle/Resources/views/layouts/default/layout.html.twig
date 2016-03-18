@@ -2,7 +2,7 @@
 
 {% block form_start_widget %}
     {% set attr = attr|merge({
-    id: form.vars.id
+        id: form.vars.id
     }) %}
     {{ parent() }}
 {% endblock %}
@@ -19,7 +19,7 @@
     <ul{{ block('block_attributes') }}>
         {% for action in actions %}
             <li>
-                <a {{ _layout.get_action_attributes(dialogRoute, executionRoute, action, entityClass, entityId) }}>
+                <a {{ _layout.get_action_attributes(action, entityClass, entityId) }}>
                     {% if action.icon is not empty %}
                         <i class="{{ action.icon }} {{ action.buttonOptions.iCss|default('') }}"></i>
                     {% endif %}
@@ -43,7 +43,7 @@
         <div{{ block('block_attributes') }}>
             {% set action = actions|first %}
             {% set primaryButtonCss = 'direct-link ' ~ action.buttonOptions.class|default('') ~ " "  ~ params.buttonOptions.aCss|default('') %}
-            <a {{ _layout.get_action_attributes(dialogRoute, executionRoute, action, entityClass, entityId, primaryButtonCss) }}>
+            <a {{ _layout.get_action_attributes(action, entityClass, entityId, primaryButtonCss) }}>
                 {{ action.label|trim }}
             </a>
 
@@ -55,7 +55,7 @@
             <ul class="dropdown-menu">
                 {% for action in actions|slice(1) %}
                 <li>
-                    <a {{ _layout.get_action_attributes(dialogRoute, executionRoute, action, entityClass, entityId, '') }}>
+                    <a {{ _layout.get_action_attributes(action, entityClass, entityId, '') }}>
                         {{ action.label|trim }}
                     </a>
                 </li>
@@ -64,4 +64,23 @@
             {% endif %}
         </div>
     {% endif %}
+{% endblock %}
+
+{% block button_widget %}
+    {% if style|default('') == 'auto' %}
+        {% if action == 'submit' %}
+            {% set style = 'orange' %}
+        {% else %}
+            {% set style = action == 'reset' ? 'dark' : 'gray' %}
+        {% endif %}
+    {% endif %}
+    {% if style is not defined %}
+        {% set add_class = '' %}
+    {% else %}
+        {% set add_class = ' btn theme-btn btn-' ~ style %}
+    {% endif %}
+    {% set attr = attr|merge({
+    class: attr.class|default('') ~ add_class
+    }) %}
+    {{ parent() }}
 {% endblock %}

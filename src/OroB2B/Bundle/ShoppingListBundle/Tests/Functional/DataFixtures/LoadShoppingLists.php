@@ -58,6 +58,7 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
         $shoppingList->setLabel($name . '_label');
         $shoppingList->setNotes($name . '_notes');
         $shoppingList->setCurrent($isCurrent);
+        $shoppingList->setCurrency('EUR');
 
         $manager->persist($shoppingList);
         $this->addReference($name, $shoppingList);
