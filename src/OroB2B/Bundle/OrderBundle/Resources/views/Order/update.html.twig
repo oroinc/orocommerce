@@ -40,6 +40,8 @@
     {% set id = 'order-edit' %}
 
     {% set subtotals %}
+        {{ form_row(form.subtotalValidation) }}
+        {{ form_row(form.totalValidation) }}
         {% include 'OroB2BPricingBundle:Totals:totals.html.twig' with {
             options: {
                 route: 'orob2b_pricing_recalculate_entity_totals',
@@ -71,6 +73,7 @@
     {% endset %}
 
     {% set lineItems %}
+        {% set subtotalType = constant('OroB2B\\Bundle\\PricingBundle\\SubtotalProcessor\\Provider\\LineItemSubtotalProvider::TYPE') %}
         <div class="order-line-items"
              data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
@@ -81,7 +84,8 @@
                  matchedPricesRoute: 'orob2b_pricing_matching_price',
                  currency: entity.currency,
                  account: entity.account is null ? null : entity.account.id,
-                 account: entity.website is null ? null : entity.website.id
+                 account: entity.website is null ? null : entity.website.id,
+                 subtotalType: subtotalType
              }|json_encode }}"
              data-layout="separate">
             {{ form_widget(form.lineItems) }}

@@ -80,6 +80,7 @@ class OrderType extends AbstractType
         /** @var Order $order */
         $order = $options['data'];
         $this->orderCurrencyHandler->setOrderCurrency($order);
+        $maxValue = pow(10, 18) - 1;
 
         $builder
             ->add('account', AccountSelectType::NAME, ['label' => 'orob2b.order.account.label', 'required' => true])
@@ -150,6 +151,34 @@ class OrderType extends AbstractType
                         ]
                     )],
                     'data' => $order->getTotalDiscounts() ? $order->getTotalDiscounts()->getValue() : 0
+                ]
+            )
+            ->add(
+                'subtotalValidation',
+                'hidden',
+                [
+                    'mapped' => false,
+                    'constraints' => [new Range(
+                        [
+                            'min' => 0,
+                            'max' => $maxValue
+                        ]
+                    )],
+                    'data' => $order->getSubtotal()
+                ]
+            )
+            ->add(
+                'totalValidation',
+                'hidden',
+                [
+                    'mapped' => false,
+                    'constraints' => [new Range(
+                        [
+                            'min' => 0,
+                            'max' => $maxValue
+                        ]
+                    )],
+                    'data' => $order->getTotal()
                 ]
             )
             ->add('sourceEntityClass', 'hidden')
