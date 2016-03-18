@@ -16,6 +16,8 @@ layout:
                     blockType: container
                 sidebar_left:
                     blockType: container
+                page_title_container:
+                    blockType: container
                 page_title:
                     blockType: text
                     options:

@@ -1,25 +1,24 @@
-{% block _wrapper_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " wrapper"
-    }) %}
-    <div{{ block('block_attributes') }}>
+{% block root_widget %}
+    {% if not oro_is_hash_navigation() %}
+        <!DOCTYPE {{ doctype|default('html') }}>
+        <html>
         {{ block_widget(block) }}
-    </div>
+        </html>
+    {% else %}
+        {% include 'OroNavigationBundle:HashNav:hashNavAjax.html.twig'
+        with {
+        'data': {
+        'content': block_widget(blocks.content),
+        }
+        }
+        %}
+    {% endif %}
 {% endblock %}
 
 {% block _header_widget %}
     <header{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </header>
-{% endblock %}
-
-{% block _main_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " main"
-    }) %}
-    <main{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </main>
 {% endblock %}
 
 {% block _require_js_config_widget %}
@@ -64,6 +63,24 @@
     </script>
 {% endblock %}
 
+{% block _wrapper_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " wrapper"
+    }) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _main_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " main"
+    }) %}
+    <main{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </main>
+{% endblock %}
+
 {% block _content_widget %}
     {% set visibleSidebarChildren = [] %}
     {% for child in blocks.sidebar_left.children %}
@@ -86,15 +103,18 @@
     </div>
 {% endblock %}
 
-{% block _page_title_widget %}
-    {% if text %}
-        {% if class_prefix %}
-            {% set attr = attr|merge({
-                class: attr.class|default('') ~ " {{ class_prefix }}-page-title"
-            }) %}
-        {% endif %}
-        <h1{{ block('block_attributes') }}>{{ block_widget(block) }}</h1>
+{% block _page_title_container_widget %}
+    {% set content = block_widget(block)|trim %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " page-title " ~ (class_prefix ? " {{ class_prefix }}-page-title")
+    }) %}
+    {% if content|length %}
+        <h1{{ block('block_attributes') }}>{{ content|raw }}</h1>
     {% endif %}
+{% endblock %}
+
+{% block _page_title_widget %}
+    {{ block_widget(block) }}
 {% endblock %}
 
 {% block _sidebar_left_widget %}
