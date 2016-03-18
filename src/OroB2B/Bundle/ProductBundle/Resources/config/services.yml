@@ -304,6 +304,7 @@ services:
         class: %orob2b_product.datagrid_theme_helper.class%
         arguments:
             - @request_stack
+            - @session
 
     orob2b_product.event_listener.frontend_product_datagrid:
         class: %orob2b_product.event_listener.frontend_product_datagrid.class%

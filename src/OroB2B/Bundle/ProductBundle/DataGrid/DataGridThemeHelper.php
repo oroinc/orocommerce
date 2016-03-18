@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ProductBundle\DataGrid;
 
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class DataGridThemeHelper
 {
@@ -12,17 +13,26 @@ class DataGridThemeHelper
     const VIEW_GRID = 'list-view';
     const VIEW_TILES = 'gallery-view';
 
+    const SESSION_KEY = 'frontend-product-grid-view';
+
     /**
      * @var RequestStack
      */
     protected $requestStack;
 
     /**
-     * @param RequestStack $requestStack
+     * @var SessionInterface
      */
-    public function __construct(RequestStack $requestStack)
+    protected $session;
+
+    /**
+     * @param RequestStack $requestStack
+     * @param SessionInterface $session
+     */
+    public function __construct(RequestStack $requestStack, SessionInterface $session)
     {
         $this->requestStack = $requestStack;
+        $this->session = $session;
     }
 
     /**
@@ -36,13 +46,15 @@ class DataGridThemeHelper
         if (!$request) {
             return $this->getDefaultView();
         }
+        $viewName = $this->getDefaultView();
         $gridParams = $request->query->get($gridName);
-
         if (is_array($gridParams) && array_key_exists(self::GRID_THEME_PARAM_NAME, $gridParams)) {
-            return $gridParams[self::GRID_THEME_PARAM_NAME];
-        } else {
-            return $this->getDefaultView();
+            $viewName = $gridParams[self::GRID_THEME_PARAM_NAME];
+            $this->session->set(self::SESSION_KEY, $viewName);
+        } elseif ($this->session->has(self::SESSION_KEY)) {
+            $viewName = $this->session->get(self::SESSION_KEY);
         }
+        return $viewName;
     }
 
     /**
