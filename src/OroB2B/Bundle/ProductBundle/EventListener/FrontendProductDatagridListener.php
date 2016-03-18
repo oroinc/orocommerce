@@ -104,7 +104,7 @@ class FrontendProductDatagridListener
                 $updates = [
                     '[source][query][select]' => [
                         'productImage.filename as image',
-                        'productDescriptions.string as description'
+                        'productDescriptions.text as description'
                     ],
                     '[source][query][join][left]' => [
                         [
