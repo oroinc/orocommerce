@@ -55,8 +55,8 @@ class RFPActionsTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $form = $crawler->selectButton('Update Request')->form();
-        $form['oro_action[request_status]'] = $status->getId();
-        $form['oro_action[request_note]'] = 'Test Request Note';
+        $form['oro_action_operation[request_status]'] = $status->getId();
+        $form['oro_action_operation[request_note]'] = 'Test Request Note';
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);

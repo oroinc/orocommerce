@@ -77,10 +77,10 @@ class ShoppingListActionsTest extends ActionTestCase
 
         $form = $crawler->selectButton('Save')->form(
             [
-                'oro_action[lineItem][product]' => $product->getId(),
-                'oro_action[lineItem][quantity]' => 22.2,
-                'oro_action[lineItem][notes]' => 'test_notes',
-                'oro_action[lineItem][unit]' => $unit->getCode()
+                'oro_action_operation[lineItem][product]' => $product->getId(),
+                'oro_action_operation[lineItem][quantity]' => 22.2,
+                'oro_action_operation[lineItem][notes]' => 'test_notes',
+                'oro_action_operation[lineItem][unit]' => $unit->getCode()
             ]
         );
 
@@ -102,10 +102,10 @@ class ShoppingListActionsTest extends ActionTestCase
 
         $form = $crawler->selectButton('Save')->form(
             [
-                'oro_action[lineItem][product]' => $lineItem->getProduct()->getId(),
-                'oro_action[lineItem][quantity]' => 100,
-                'oro_action[lineItem][notes]' => 'test_notes',
-                'oro_action[lineItem][unit]' => $lineItem->getUnit()->getCode()
+                'oro_action_operation[lineItem][product]' => $lineItem->getProduct()->getId(),
+                'oro_action_operation[lineItem][quantity]' => 100,
+                'oro_action_operation[lineItem][notes]' => 'test_notes',
+                'oro_action_operation[lineItem][unit]' => $lineItem->getUnit()->getCode()
             ]
         );
 
@@ -127,9 +127,9 @@ class ShoppingListActionsTest extends ActionTestCase
 
         $form = $crawler->selectButton('Save')->form(
             [
-                'oro_action[lineItem][quantity]' => 33.3,
-                'oro_action[lineItem][unit]' => $unit->getCode(),
-                'oro_action[lineItem][notes]' => 'Updated test notes',
+                'oro_action_operation[lineItem][quantity]' => 33.3,
+                'oro_action_operation[lineItem][unit]' => $unit->getCode(),
+                'oro_action_operation[lineItem][notes]' => 'Updated test notes',
             ]
         );
 
