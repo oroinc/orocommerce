@@ -16,6 +16,7 @@ use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use OroB2B\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -46,6 +47,11 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected $unitFormatter;
 
+    /**
+     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $translator;
+
     public function setUp()
     {
         $this->themeHelper = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper')
@@ -60,11 +66,24 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->unitFormatter = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
             ->disableOriginalConstructor()->getMock();
 
+        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->with($this->isType('string'))
+            ->willReturnCallback(
+                function ($id, array $params = []) {
+                    $id = str_replace(array_keys($params), array_values($params), $id);
+
+                    return $id . '.trans';
+                }
+            );
+
         $this->listener = new FrontendProductDatagridListener(
             $this->themeHelper,
             $this->doctrine,
             $this->attachmentManager,
-            $this->unitFormatter
+            $this->unitFormatter,
+            $this->translator
         );
     }
 
@@ -131,7 +150,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                             'select' => [
                                 'GROUP_CONCAT(unit_precisions.unit SEPARATOR \'{sep}\') as product_units',
                                 'productImage.filename as image',
-                                'productDescriptions.string as description'
+                                'productDescriptions.text as description'
                             ],
                             'join' => [
                                 'left' => [
@@ -161,6 +180,10 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                             'frontend_type' => 'row_array',
                         ]
                     ],
+                    'columns' => [
+                        'image' => ['label' => 'orob2b.product.image.label.trans'],
+                        'description' => ['label' => 'orob2b.product.descriptions.label.trans'],
+                    ]
                 ]
             ],
             'tiles' => [
@@ -193,6 +216,9 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                             'frontend_type' => 'row_array',
                         ]
                     ],
+                    'columns' => [
+                        'image' => ['label' => 'orob2b.product.image.label.trans'],
+                    ]
                 ]
             ],
         ];
