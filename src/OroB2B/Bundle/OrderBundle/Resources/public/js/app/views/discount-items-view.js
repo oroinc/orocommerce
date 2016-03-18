@@ -7,6 +7,11 @@ define(function(require) {
     var mediator = require('oroui/js/mediator');
     var BaseView = require('oroui/js/app/views/base/view');
 
+    /**
+     * @export orob2border/js/app/views/discount-items-view
+     * @extends oroui.app.views.base.View
+     * @class orob2border.app.views.DiscountItemsView
+     */
     DiscountItemsView = BaseView.extend({
         /**
          * @property {Object}
@@ -50,11 +55,11 @@ define(function(require) {
 
             var self = this;
             _.each(subtotals.subtotals, function(subtotal) {
-                if (subtotal.type == self.options.discountType) {
+                if (subtotal.type === self.options.discountType) {
                     discountsSum += subtotal.amount;
                 }
 
-                if (subtotal.type == self.options.totalType) {
+                if (subtotal.type === self.options.totalType) {
                     total = subtotal.amount;
                 }
             });

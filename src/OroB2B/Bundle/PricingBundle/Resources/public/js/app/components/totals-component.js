@@ -170,8 +170,6 @@ define(function(require) {
                             //data doesn't change after ajax call
                             var totals = response || {};
                             callback(totals);
-
-                            mediator.trigger('total:updated', totals);
                         }
                     },
                     error: function(jqXHR) {

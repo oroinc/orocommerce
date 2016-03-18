@@ -9,6 +9,11 @@ define(function(require) {
     var NumberFormatter = require('orolocale/js/formatter/number');
     var BaseView = require('oroui/js/app/views/base/view');
 
+    /**
+     * @export orob2border/js/app/views/discount-item-view
+     * @extends oroui.app.views.base.View
+     * @class orob2border.app.views.DiscountItemView
+     */
     DiscountItemView = BaseView.extend({
         /**
          * @property {Object}
@@ -118,11 +123,11 @@ define(function(require) {
 
             var self = this;
             _.each(subtotals.subtotals, function(subtotal) {
-                if (subtotal.type == self.options.totalType) {
+                if (subtotal.type === self.options.totalType) {
                     total = subtotal.amount;
                 }
 
-                if (subtotal.type == self.options.discountType) {
+                if (subtotal.type === self.options.discountType) {
                     currentIndex++;
                 }
 
@@ -131,7 +136,7 @@ define(function(require) {
                 }
             });
 
-            var percent = total > 0 ? (discountAmount/total).toFixed(4) * 100 : 0;
+            var percent = total > 0 ? (discountAmount / total * 100).toFixed(2) : 0;
             var formatedDiscountAmount = NumberFormatter.formatCurrency(discountAmount, this.options.currency);
             this.$el.find(this.options.valueCalculatedSelector).html(formatedDiscountAmount + ' (' + percent + '%)');
 
@@ -151,6 +156,7 @@ define(function(require) {
                 validator.element(this.$valueInputElement);
             }
         },
+
         /**
          * @inheritDoc
          */
