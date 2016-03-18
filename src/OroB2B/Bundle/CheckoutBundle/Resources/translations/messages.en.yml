@@ -56,6 +56,8 @@ orob2b:
             total_qty: Total QTY
 
         workflow:
+            view_options.label: View Options for this Order
+            unavailable_transition.message: Transition could not be performed because:
             b2b_flow_checkout:
                 label: eCommerce Checkout
 
