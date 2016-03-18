@@ -73,7 +73,7 @@
 {% block _checkout_button_back_widget %}
     {% if transitionData is defined and transitionData %}
         {% import 'OroB2BCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
-        <div class="checkout__form__back checkout__form__back_order-review">
+        <div class="checkout__form__back order-checkout-widget order-checkout-widget_block text-right">
             {{ block_widget(block) }}
         </div>
     {% endif %}
