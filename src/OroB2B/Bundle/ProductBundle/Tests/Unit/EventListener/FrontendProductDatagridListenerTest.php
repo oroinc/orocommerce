@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
@@ -16,7 +17,6 @@ use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use OroB2B\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use Symfony\Component\Translation\TranslatorInterface;
 
 class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
