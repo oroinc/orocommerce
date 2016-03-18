@@ -69,7 +69,7 @@ class ShoppingListActionsTest extends ActionTestCase
         /* @var $product2 Product */
         $product = $this->getReference('product.2');
 
-        $crawler = $this->assertActionForm(
+        $crawler = $this->assertOperationForm(
             'orob2b_shoppinglist_addlineitem',
             $shoppingList->getId(),
             get_class($shoppingList)
@@ -84,7 +84,7 @@ class ShoppingListActionsTest extends ActionTestCase
             ]
         );
 
-        $this->assertActionFormSubmitted($form, 'Line item has been added');
+        $this->assertOperationFormSubmitted($form, 'Line item has been added');
     }
 
     public function testLineItemCreateDuplicate()
@@ -94,7 +94,7 @@ class ShoppingListActionsTest extends ActionTestCase
 
         $shoppingList = $lineItem->getShoppingList();
 
-        $crawler = $this->assertActionForm(
+        $crawler = $this->assertOperationForm(
             'orob2b_shoppinglist_addlineitem',
             $shoppingList->getId(),
             get_class($shoppingList)
@@ -109,7 +109,7 @@ class ShoppingListActionsTest extends ActionTestCase
             ]
         );
 
-        $this->assertActionFormSubmitted($form, 'Line item has been added');
+        $this->assertOperationFormSubmitted($form, 'Line item has been added');
     }
 
     public function testLineItemUpdate()
@@ -119,7 +119,7 @@ class ShoppingListActionsTest extends ActionTestCase
         /** @var ProductUnit $unit */
         $unit = $this->getReference('product_unit.liter');
 
-        $crawler = $this->assertActionForm(
+        $crawler = $this->assertOperationForm(
             'orob2b_shoppinglist_updatelineitem',
             $lineItem->getId(),
             get_class($lineItem)
@@ -133,7 +133,7 @@ class ShoppingListActionsTest extends ActionTestCase
             ]
         );
 
-        $this->assertActionFormSubmitted($form, 'Line item has been updated');
+        $this->assertOperationFormSubmitted($form, 'Line item has been updated');
     }
 
     /**
