@@ -1,3 +1,20 @@
+{% block root_widget %}
+    {% if not oro_is_hash_navigation() %}
+        <!DOCTYPE {{ doctype|default('html') }}>
+        <html>
+        {{ block_widget(block) }}
+        </html>
+    {% else %}
+        {% include 'OroNavigationBundle:HashNav:hashNavAjax.html.twig'
+        with {
+        'data': {
+        'content': block_widget(blocks.content),
+        }
+        }
+        %}
+    {% endif %}
+{% endblock %}
+
 {% block _scripts_before_widget %}
     {% block scripts_before %}
         {% placeholder scripts_before %}
@@ -57,6 +74,7 @@
 {% block _require_modules_widget %}
     <script type="text/javascript">
         require(['oroui/js/app']);
+        require(['oroui/js/init-layout']);
     </script>
 {% endblock %}
 
@@ -106,15 +124,18 @@
     </div>
 {% endblock %}
 
-{% block _page_title_widget %}
-    {% if text %}
-        {% if class_prefix %}
-            {% set attr = attr|merge({
-                class: attr.class|default('') ~ " {{ class_prefix }}-page-title"
-            }) %}
-        {% endif %}
-        <h1{{ block('block_attributes') }}>{{ block_widget(block) }}</h1>
+{% block _page_title_container_widget %}
+    {% set content = block_widget(block)|trim %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " page-title " ~ (class_prefix ? " {{ class_prefix }}-page-title")
+    }) %}
+    {% if content|length %}
+        <h1{{ block('block_attributes') }}>{{ content|raw }}</h1>
     {% endif %}
+{% endblock %}
+
+{% block _page_title_widget %}
+    {{ block_widget(block) }}
 {% endblock %}
 
 {% block _sidebar_left_widget %}
