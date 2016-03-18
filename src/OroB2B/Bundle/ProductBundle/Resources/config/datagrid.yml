@@ -171,8 +171,6 @@ datagrid:
                 label: orob2b.product.sku.label
             name:
                 label: orob2b.product.names.label
-            image:
-                label: orob2b.product.image.label
         properties:
             id: ~
             view_link:

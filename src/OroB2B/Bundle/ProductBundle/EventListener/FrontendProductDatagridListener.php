@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ProductBundle\EventListener;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 use Doctrine\ORM\Query\Expr;
 
@@ -45,21 +46,29 @@ class FrontendProductDatagridListener
     protected $unitFormatter;
 
     /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
      * @param DataGridThemeHelper $themeHelper
      * @param RegistryInterface $registry
      * @param AttachmentManager $attachmentManager
      * @param ProductUnitLabelFormatter $unitFormatter
+     * @param TranslatorInterface $translator
      */
     public function __construct(
         DataGridThemeHelper $themeHelper,
         RegistryInterface $registry,
         AttachmentManager $attachmentManager,
-        ProductUnitLabelFormatter $unitFormatter
+        ProductUnitLabelFormatter $unitFormatter,
+        TranslatorInterface $translator
     ) {
         $this->themeHelper = $themeHelper;
         $this->registry = $registry;
         $this->attachmentManager = $attachmentManager;
         $this->unitFormatter = $unitFormatter;
+        $this->translator = $translator;
     }
 
     /**
@@ -101,45 +110,74 @@ class FrontendProductDatagridListener
                 // grid view same as default
                 break;
             case DataGridThemeHelper::VIEW_GRID:
-                $updates = [
-                    '[source][query][select]' => [
-                        'productImage.filename as image',
-                        'productDescriptions.text as description'
-                    ],
-                    '[source][query][join][left]' => [
-                        [
-                            'join' => 'product.image',
-                            'alias' => 'productImage',
-                        ]
-                    ],
-                    '[source][query][join][inner]' => [
-                        [
-                            'join' => 'product.descriptions',
-                            'alias' => 'productDescriptions',
-                            'conditionType' => 'WITH',
-                            'condition' => 'productDescriptions.locale IS NULL'
-                        ]
-                    ],
-                ];
+                $this->addImageToConfig($config);
+                $this->addDescriptionToConfig($config);
                 break;
             case DataGridThemeHelper::VIEW_TILES:
-                $updates = [
-                    '[source][query][select]' => [
-                        'productImage.filename as image',
-                    ],
-                    '[source][query][join][left]' => [
-                        [
-                            'join' => 'product.image',
-                            'alias' => 'productImage',
-                        ]
-                    ],
-                ];
+                $this->addImageToConfig($config);
                 break;
         }
-        if (isset($updates)) {
-            foreach ($updates as $path => $update) {
-                $config->offsetAddToArrayByPath($path, $update);
-            }
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     * @return array
+     */
+    protected function addImageToConfig(DatagridConfiguration $config)
+    {
+        $updates = [
+            '[source][query][select]' => [
+                'productImage.filename as image',
+            ],
+            '[source][query][join][left]' => [
+                [
+                    'join' => 'product.image',
+                    'alias' => 'productImage',
+                ]
+            ],
+            '[columns]' => [
+                'image' => [
+                    'label' => $this->translator->trans('orob2b.product.image.label'),
+                ]
+            ],
+        ];
+        $this->applyUpdatesToConfig($config, $updates);
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     */
+    protected function addDescriptionToConfig(DatagridConfiguration $config)
+    {
+        $updates = [
+            '[source][query][select]' => [
+                'productDescriptions.text as description'
+            ],
+            '[source][query][join][inner]' => [
+                [
+                    'join' => 'product.descriptions',
+                    'alias' => 'productDescriptions',
+                    'conditionType' => 'WITH',
+                    'condition' => 'productDescriptions.locale IS NULL'
+                ]
+            ],
+            '[columns]' => [
+                'description' => [
+                    'label' => $this->translator->trans('orob2b.product.descriptions.label'),
+                ]
+            ],
+        ];
+        $this->applyUpdatesToConfig($config, $updates);
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     * @param array $updates
+     */
+    protected function applyUpdatesToConfig(DatagridConfiguration $config, array $updates)
+    {
+        foreach ($updates as $path => $update) {
+            $config->offsetAddToArrayByPath($path, $update);
         }
     }
 
