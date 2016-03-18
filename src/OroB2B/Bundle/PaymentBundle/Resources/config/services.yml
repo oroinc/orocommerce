@@ -4,6 +4,7 @@ parameters:
     orob2b_payment.twig.delete_message_text_extension.class: OroB2B\Bundle\PaymentBundle\Twig\DeleteMessageTextExtension
     orob2b_payment.event_listener.form_view.class: OroB2B\Bundle\PaymentBundle\EventListener\FormViewListener
     orob2b_payment.event_listener.datagrid.class: OroB2B\Bundle\PaymentBundle\EventListener\DatagridListener
+    orob2b_payment.event_listener.config.paypal_encrypt.class: OroB2B\Bundle\PaymentBundle\EventListener\Config\PaypalConfigurationEncryptListener
     orob2b_payment.payment_term.delete_message_generator.class: OroB2B\Bundle\PaymentBundle\Twig\DeleteMessageTextGenerator
     orob2b_payment.extension.action.type.payment_delete.class: OroB2B\Bundle\PaymentBundle\Extension\Action\Actions\PaymentDeleteAction
     orob2b_payment.provider.payment_term.class: OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider
@@ -59,6 +60,15 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-grid, method: onBuildBeforeAccounts }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-groups-grid, method: onBuildBeforeAccountGroups }
+
+    orob2b_payment.event_listener.config.paypal_encrypt:
+        class: %orob2b_payment.event_listener.config.paypal_encrypt.class%
+        arguments:
+            - @oro_security.encoder.mcrypt
+        tags:
+            - { name: kernel.event_listener, event: oro_config.load_config, method: loadConfig }
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
 
     orob2b_payment.extension.action.type.payment_delete:
         class: %orob2b_payment.extension.action.type.payment_delete.class%

@@ -54,10 +54,11 @@ oro_system_configuration:
 
         orob2b_payment.payflow_gateway_password:
             data_type: string
-            type: text
+            type: password
             priority: 50
             options:
                 label: orob2b.payment.system_configuration.fields.payflow_gateway.password.label
+                always_empty: false
 
         orob2b_payment.payflow_gateway_test_mode:
             data_type: boolean
@@ -81,11 +82,17 @@ oro_system_configuration:
                 label: orob2b.payment.system_configuration.fields.proxy_host.label
 
         orob2b_payment.payflow_gateway_proxy_port:
-            data_type: integer
-            type: integer
+            data_type: string
+            type: text
             priority: 80
             options:
                 label: orob2b.payment.system_configuration.fields.proxy_port.label
+                constraints:
+                    - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+                    - GreaterThan:
+                        value: 0
+                    - LessThanOrEqual:
+                        value: 65535
 
 
         # PayPal Payments Pro
@@ -126,10 +133,11 @@ oro_system_configuration:
 
         orob2b_payment.paypal_payments_pro_password:
             data_type: string
-            type: text
+            type: password
             priority: 50
             options:
                 label: orob2b.payment.system_configuration.fields.paypal_payments_pro.password.label
+                always_empty: false
 
         orob2b_payment.paypal_payments_pro_test_mode:
             data_type: boolean
@@ -153,11 +161,17 @@ oro_system_configuration:
                 label: orob2b.payment.system_configuration.fields.proxy_host.label
 
         orob2b_payment.paypal_payments_pro_proxy_port:
-            data_type: integer
-            type: integer
+            data_type: string
+            type: text
             priority: 80
             options:
                 label: orob2b.payment.system_configuration.fields.proxy_port.label
+                constraints:
+                    - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+                    - GreaterThan:
+                        value: 0
+                    - LessThanOrEqual:
+                        value: 65535
 
     tree:
         system_configuration:
