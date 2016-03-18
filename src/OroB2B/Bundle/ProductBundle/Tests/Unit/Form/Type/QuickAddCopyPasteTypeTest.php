@@ -71,11 +71,29 @@ class QuickAddCopyPasteTypeTest extends FormIntegrationTestCase
                 ],
                 'isValid' => false
             ],
-            'valid string' => [
+            'valid string with comma separator' => [
                 'data' => [
                     QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME => <<<TEXT
 ABC, 1
 DEF, 4.5
+TEXT
+                ],
+                'isValid' => true
+            ],
+            'valid string with tab separator' => [
+                'data' => [
+                    QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME => <<<TEXT
+ABC	1
+DEF	4.5
+TEXT
+                ],
+                'isValid' => true
+            ],
+            'valid string with space separator' => [
+                'data' => [
+                    QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME => <<<TEXT
+ABC 1
+DEF 4.5
 TEXT
                 ],
                 'isValid' => true
