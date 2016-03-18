@@ -71,6 +71,7 @@ class StartCheckoutTest extends WebTestCase
         $this->assertData($data, $checkouts[0]);
 
         $this->action->execute($data['context']);
+        $checkouts = $this->getCheckouts();
         $this->assertCount(1, $checkouts);
         $this->assertData($data, $checkouts[0]);
     }
