@@ -121,6 +121,6 @@ class SubtotalSubscriber implements EventSubscriberInterface
      */
     protected function calculatePercent($subtotal, $discount)
     {
-        return (int) ($discount->getAmount() / $subtotal->getAmount() * 100);
+        return (float) ($discount->getAmount() / $subtotal->getAmount() * 100);
     }
 }
