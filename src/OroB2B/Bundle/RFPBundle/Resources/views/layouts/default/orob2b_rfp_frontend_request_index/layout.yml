@@ -15,7 +15,7 @@ layout:
             parentId: content
             blockType: block
         - @add:
-            id: quotes
+            id: requests
             parentId: content
             blockType: datagrid
             options:
