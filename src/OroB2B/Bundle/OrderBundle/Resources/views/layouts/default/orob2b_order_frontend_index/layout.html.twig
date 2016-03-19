@@ -1,0 +1,13 @@
+{% block _create_order_button_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+        {% if resource_granted('orob2b_order_frontend_create') %}
+            <div class="text-right">
+                <div class="btn-group">
+                    {{ UI.addButton({
+                        'path': path('orob2b_order_frontend_create'),
+                        'entity_label': 'orob2b.order.entity_label'|trans
+                    }) }}
+                </div>
+            </div>
+        {% endif %}
+{% endblock %}
