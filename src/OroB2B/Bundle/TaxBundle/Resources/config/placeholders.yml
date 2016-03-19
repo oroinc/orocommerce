@@ -1,0 +1,9 @@
+placeholders:
+    orob2b_pricing_totals_before:
+        items:
+            orob2b_pricing_tax_totals: ~
+
+items:
+    orob2b_pricing_tax_totals:
+        template: OroB2BTaxBundle::placeholder.html.twig
+        applicable: @orob2b_tax.provider.taxation_settings_provider->isEnabled()

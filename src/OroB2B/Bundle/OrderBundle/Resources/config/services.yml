@@ -15,7 +15,6 @@ parameters:
     orob2b_order.model.order_currency_handler.class: OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler
     orob2b_order.event_listener.form_view.class: OroB2B\Bundle\OrderBundle\EventListener\FormViewListener
 
-    orob2b_order.event_listener.order.subtotals.class: OroB2B\Bundle\OrderBundle\EventListener\Order\OrderSubtotalsEventListener
     orob2b_order.event_listener.order.total.class: OroB2B\Bundle\OrderBundle\EventListener\Order\OrderTotalEventListener
     orob2b_order.event_listener.order.address.class: OroB2B\Bundle\OrderBundle\EventListener\Order\OrderAddressEventListener
     orob2b_order.event_listener.order.payment_term.class: OroB2B\Bundle\OrderBundle\EventListener\Order\OrderPaymentTermEventListener
@@ -130,13 +129,6 @@ services:
             - [setBackendSystemConfigurationPath, ['oro_b2b_order.backend_product_visibility']]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
-
-    orob2b_order.event_listener.order.subtotals:
-        class: %orob2b_order.event_listener.order.subtotals.class%
-        arguments:
-            - @orob2b_pricing.subtotal_processor.total_processor_provider
-        tags:
-            - { name: kernel.event_listener, event: orob2b_order.order, method: onOrderEvent }
 
     orob2b_order.event_listener.order.total:
         class: %orob2b_order.event_listener.order.total.class%

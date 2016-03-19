@@ -11,6 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
 use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use OroB2B\Bundle\TaxBundle\Provider\TaxSubtotalProvider;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 
 class OrderLineItemTypeExtension extends AbstractTypeExtension
@@ -21,16 +22,22 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
     /** @var TaxManager */
     protected $taxManager;
 
+    /** @var TaxSubtotalProvider */
+    protected $taxSubtotalProvider;
+
     /**
      * @param TaxationSettingsProvider $taxationSettingsProvider
      * @param TaxManager $taxManager
+     * @param TaxSubtotalProvider $taxSubtotalProvider
      */
     public function __construct(
         TaxationSettingsProvider $taxationSettingsProvider,
-        TaxManager $taxManager
+        TaxManager $taxManager,
+        TaxSubtotalProvider $taxSubtotalProvider
     ) {
         $this->taxationSettingsProvider = $taxationSettingsProvider;
         $this->taxManager = $taxManager;
+        $this->taxSubtotalProvider = $taxSubtotalProvider;
     }
 
     /**
@@ -49,6 +56,8 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
         if (!$this->taxationSettingsProvider->isEnabled()) {
             return;
         }
+
+        $this->taxSubtotalProvider->setEditMode(true);
 
         $builder->add('taxes', 'hidden', ['required' => false, 'mapped' => false]);
     }

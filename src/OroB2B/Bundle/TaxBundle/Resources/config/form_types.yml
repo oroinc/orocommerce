@@ -82,6 +82,7 @@ services:
         arguments:
             - @orob2b_tax.provider.taxation_settings_provider
             - @orob2b_tax.manager.tax_manager
+            - @orob2b_tax.provider.tax_subtotal
         tags:
             - { name: form.type_extension, alias: orob2b_order_line_item }
 

@@ -47,31 +47,9 @@ class OrderLineItemGridListener
         }
 
         $configuration = $event->getConfig();
-        $this->prepareOnBuildBefore($configuration);
-        $this->addColumn($configuration);
-    }
-
-    /**
-     * @param BuildBefore $event
-     */
-    public function onBuildBeforeFrontend(BuildBefore $event)
-    {
-        if (!$this->checkOnBefore($event)) {
-            return;
-        }
-
-        $configuration = $event->getConfig();
-        $this->prepareOnBuildBefore($configuration);
-        $this->addColumnFrontend($configuration);
-    }
-
-    /**
-     * @param DatagridConfiguration $configuration
-     */
-    protected function prepareOnBuildBefore(DatagridConfiguration $configuration)
-    {
         $this->addJoin($configuration);
         $this->addSelect($configuration);
+        $this->addColumn($configuration);
     }
 
     /**
@@ -134,23 +112,7 @@ class OrderLineItemGridListener
     /**
      * @param DatagridConfiguration $configuration
      */
-    protected function addColumn(DatagridConfiguration $configuration)
-    {
-        $configuration->offsetSetByPath(
-            sprintf('[columns][%s]', 'result'),
-            [
-                'label' => 'orob2b.tax.result.label',
-                'type' => 'twig',
-                'frontend_type' => 'html',
-                'template' => 'OroB2BTaxBundle::Order/Datagrid/column.html.twig',
-            ]
-        );
-    }
-
-    /**
-     * @param DatagridConfiguration $configuration
-     */
-    public function addColumnFrontend(DatagridConfiguration $configuration)
+    public function addColumn(DatagridConfiguration $configuration)
     {
         $configuration->offsetSetByPath(
             sprintf('[columns][%s]', 'unitPriceIncludingTax'),
@@ -159,7 +121,7 @@ class OrderLineItemGridListener
                 'type' => 'twig',
                 'frontend_type' => 'html',
                 'data_name' => 'result',
-                'template' => 'OroB2BTaxBundle:Order:Datagrid/Frontend/Property/unitIncludingTax.html.twig',
+                'template' => 'OroB2BTaxBundle:Order:Datagrid/Property/unitIncludingTax.html.twig',
                 'renderable' => false
             ]
         );
@@ -171,7 +133,7 @@ class OrderLineItemGridListener
                 'type' => 'twig',
                 'frontend_type' => 'html',
                 'data_name' => 'result',
-                'template' => 'OroB2BTaxBundle:Order:Datagrid/Frontend/Property/unitExcludingTax.html.twig',
+                'template' => 'OroB2BTaxBundle:Order:Datagrid/Property/unitExcludingTax.html.twig',
                 'renderable' => false
             ]
         );
@@ -183,7 +145,7 @@ class OrderLineItemGridListener
                 'type' => 'twig',
                 'frontend_type' => 'html',
                 'data_name' => 'result',
-                'template' => 'OroB2BTaxBundle:Order:Datagrid/Frontend/Property/unitTaxAmount.html.twig',
+                'template' => 'OroB2BTaxBundle:Order:Datagrid/Property/unitTaxAmount.html.twig',
                 'renderable' => false
             ]
         );
@@ -195,7 +157,7 @@ class OrderLineItemGridListener
                 'type' => 'twig',
                 'frontend_type' => 'html',
                 'data_name' => 'result',
-                'template' => 'OroB2BTaxBundle:Order:Datagrid/Frontend/Property/rowIncludingTax.html.twig',
+                'template' => 'OroB2BTaxBundle:Order:Datagrid/Property/rowIncludingTax.html.twig',
                 'renderable' => false
             ]
         );
@@ -207,7 +169,7 @@ class OrderLineItemGridListener
                 'type' => 'twig',
                 'frontend_type' => 'html',
                 'data_name' => 'result',
-                'template' => 'OroB2BTaxBundle:Order:Datagrid/Frontend/Property/rowExcludingTax.html.twig',
+                'template' => 'OroB2BTaxBundle:Order:Datagrid/Property/rowExcludingTax.html.twig',
                 'renderable' => false
             ]
         );
@@ -219,7 +181,7 @@ class OrderLineItemGridListener
                 'type' => 'twig',
                 'frontend_type' => 'html',
                 'data_name' => 'result',
-                'template' => 'OroB2BTaxBundle:Order:Datagrid/Frontend/Property/rowTaxAmount.html.twig',
+                'template' => 'OroB2BTaxBundle:Order:Datagrid/Property/rowTaxAmount.html.twig',
                 'renderable' => false
             ]
         );
@@ -230,7 +192,7 @@ class OrderLineItemGridListener
                 'label' => 'orob2b.tax.result.label',
                 'type' => 'twig',
                 'frontend_type' => 'html',
-                'template' => 'OroB2BTaxBundle::Order/Datagrid/Frontend/column.html.twig',
+                'template' => 'OroB2BTaxBundle::Order/Datagrid/column.html.twig',
                 'renderable' => false
             ]
         );

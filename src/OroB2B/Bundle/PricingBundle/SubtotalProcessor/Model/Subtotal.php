@@ -43,6 +43,13 @@ class Subtotal
     protected $visible;
 
     /**
+     * Extra data
+     *
+     * @var array
+     */
+    protected $data;
+
+    /**
      * @return string
      */
     public function getType()
@@ -166,6 +173,23 @@ class Subtotal
         return $this;
     }
 
+
+    /**
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
+     * @param array $data
+     */
+    public function setData(array $data)
+    {
+        $this->data = $data;
+    }
+
     /**
      * @return array
      */
@@ -177,6 +201,7 @@ class Subtotal
             'amount' => $this->getAmount(),
             'currency' => $this->getCurrency(),
             'visible' => $this->isVisible(),
+            'data' => $this->getData(),
         ];
     }
 }

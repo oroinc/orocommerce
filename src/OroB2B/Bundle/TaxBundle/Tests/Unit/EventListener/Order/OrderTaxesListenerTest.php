@@ -115,7 +115,7 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
             [
                 $result,
                 [
-                    'taxesItems' => [
+                    'taxItems' => [
                         [
                             'unit' => [
                                 'includingTax' => 11,

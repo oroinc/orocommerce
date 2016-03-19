@@ -61,6 +61,9 @@ define(function(require) {
 
             mediator.off('entry-point:order:load', this.loadRelatedData, this);
 
+            this.options._sourceElement
+                .off('change', this.options.selectors.accountUser, _.bind(this.onChangeAccountUser, this));
+
             RelatedDataComponent.__super__.dispose.call(this);
         }
     });

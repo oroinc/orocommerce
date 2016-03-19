@@ -36,18 +36,10 @@
     ] %}
 
     {% set orderTotals %}
-        <div class="widget-content totals-container">
-            <div class="row-fluid form-horizontal">
-                <div class="responsive-block">
-                    {% for item in totals.subtotals %}
-                        {% if item.visible %}
-                            {{ UI.renderProperty(item.label, item.amount|oro_format_currency({'currency': item.currency})) }}
-                        {% endif %}
-                    {% endfor %}
-                    {{ UI.renderProperty(totals.total.label, totals.total.amount|oro_format_currency({'currency': totals.total.currency})) }}
-                </div>
-            </div>
-        </div>
+        {% include 'OroB2BPricingBundle:Totals:totals.html.twig' with {
+            pageComponent: 'orob2border/js/app/components/totals-component',
+            options: {totals: totals}
+        } only %}
     {% endset %}
 
     {% set shippingInformation %}

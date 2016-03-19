@@ -37,7 +37,7 @@ class OrderTaxesListener
 
         $order = $event->getOrder();
         $result = $this->taxManager->getTax($order);
-        $taxesItems = array_map(
+        $taxItems = array_map(
             function (Result $lineItem) {
                 return [
                     'unit' => $lineItem->getUnit()->getArrayCopy(),
@@ -53,6 +53,7 @@ class OrderTaxesListener
             $result->getItems()
         );
 
-        $event->getData()->offsetSet('taxesItems', $taxesItems);
+        $event->getData()->offsetSet('taxItems', $taxItems);
+        $event->getData()->offsetSet('taxItems', $taxItems);
     }
 }

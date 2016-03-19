@@ -26,8 +26,14 @@ define(function(require) {
                 after: 'entry-point:order:load:after',
                 trigger: 'entry-point:order:trigger',
                 init: 'entry-point:order:init'
-            }
+            },
+            triggerTimeout: 1500
         },
+
+        /**
+         * @property {Number}
+         */
+        timeoutId: null,
 
         /**
          * @inheritDoc
@@ -47,11 +53,39 @@ define(function(require) {
         },
 
         listenerOff: function() {
-            this.options._sourceElement.off('change', '[data-entry-point-trigger]');
+            this.options._sourceElement
+                .off('change', '[data-entry-point-trigger]')
+                .off('keyup', '[data-entry-point-trigger]');
         },
 
         listenerOn: function() {
-            this.options._sourceElement.on('change', '[data-entry-point-trigger]', _.bind(this.callEntryPoint, this));
+            var callback = _.bind(this.callEntryPoint, this);
+
+            var changeCallback = _.bind(function() {
+                if (this.timeoutId) {
+                    callback.call(this);
+                }
+
+                this.clearTimeout();
+            }, this);
+
+            var keyUpCallback = _.bind(function() {
+                this.clearTimeout();
+
+                this.timeoutId = setTimeout(_.bind(callback, this), this.options.triggerTimeout);
+            }, this);
+
+            this.options._sourceElement
+                .on('change', '[data-entry-point-trigger]', changeCallback)
+                .on('keyup', '[data-entry-point-trigger]', keyUpCallback);
+        },
+
+        clearTimeout: function() {
+            if (this.timeoutId) {
+                clearTimeout(this.timeoutId);
+
+                this.timeoutId = null;
+            }
         },
 
         callEntryPoint: function() {
@@ -67,11 +101,13 @@ define(function(require) {
                 success: function(response) {
                     mediator.trigger(self.options.events.load, response);
                     mediator.trigger(self.options.events.after);
+                    self.clearTimeout();
                     self.listenerOn();
                 },
                 error: function() {
                     mediator.trigger(self.options.events.load, {});
                     mediator.trigger(self.options.events.after);
+                    self.clearTimeout();
                     self.listenerOn();
                 }
             });
@@ -101,6 +137,8 @@ define(function(require) {
 
             mediator.off(this.options.events.init, this.initializeListener, this);
             mediator.off(this.options.events.trigger, this.callEntryPoint, this);
+
+            this.listenerOff();
 
             EntryPointComponent.__super__.dispose.call(this);
         }

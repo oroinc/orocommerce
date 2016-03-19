@@ -3,10 +3,12 @@ define(function(require) {
 
     var TotalsComponent;
     var mediator = require('oroui/js/mediator');
+    var _ = require('underscore');
     var BaseComponent = require('orob2bpricing/js/app/components/totals-component');
+    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
 
     /**
-     * @export orob2border/js/app/components/entry-point-component
+     * @export orob2border/js/app/components/totals-component
      * @extends orob2bpricing.app.components.TotalsComponent
      * @class orob2border.app.components.TotalsComponent
      */
@@ -15,28 +17,34 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
+            this.options = _.defaults(options || {}, this.options);
+
             mediator.on('entry-point:order:load:before', this.showLoadingMask, this);
             mediator.on('entry-point:order:load', this.setTotals, this);
             mediator.on('entry-point:order:load:after', this.hideLoadingMask, this);
 
-            TotalsComponent.__super__.initialize.call(this, options);
-        },
+            this.$subtotals = this.options._sourceElement.find(this.options.selectors.subtotals);
+            this.template = _.template(this.options._sourceElement.find(this.options.selectors.template).text());
+            this.loadingMaskView = new LoadingMaskView({container: this.options._sourceElement});
 
-        initializeListeners: function() {
-            // disable parent listeners
-        },
-
-        /**
-         * @param {Object} response
-         */
-        setTotals: function(response) {
-            this.render(response);
+            this.setTotals(options);
         },
 
         /**
-         * @param {Object} e
+         * @param {Object} data
          */
-        updateSubtotals: function(e) {
+        setTotals: function(data) {
+            var totals = _.defaults(data, {totals: {total: {}, subtotals: {}}}).totals;
+
+            mediator.trigger('entry-point:order:trigger:totals', totals);
+
+            this.render(totals);
+        },
+
+        /**
+         * @inheritDoc
+         */
+        updateTotals: function() {
             mediator.trigger('entry-point:order:trigger');
         },
 

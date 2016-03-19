@@ -7,7 +7,7 @@ use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class OrderTotalEventListener
 {
-    const TOTAL_KEY = 'total';
+    const TOTALS_KEY = 'totals';
 
     /** @var TotalProcessorProvider */
     protected $provider;
@@ -27,8 +27,8 @@ class OrderTotalEventListener
     {
         $order = $event->getOrder();
 
-        $total = $this->provider->getTotal($order)->toArray();
+        $totals = $this->provider->getTotals($order);
 
-        $event->getData()->offsetSet(self::TOTAL_KEY, $total);
+        $event->getData()->offsetSet(self::TOTALS_KEY, $totals);
     }
 }
