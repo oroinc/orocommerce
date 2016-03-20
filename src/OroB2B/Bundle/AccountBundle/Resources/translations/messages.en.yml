@@ -377,6 +377,8 @@ orob2b.account:
                 GLOBAL: 'Not supported'
                 SYSTEM: 'System'
                 NONE: 'None'
+        account_user:
+            role.entity_plural_label: Account User Roles
 
     account_typed_address_with_default_type:
         choice.default_text: 'Default %type_name%'
