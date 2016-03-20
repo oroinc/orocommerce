@@ -1,0 +1,13 @@
+{% block _create_account_user_button_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% if resource_granted('orob2b_account_frontend_account_user_create') %}
+        <div class="text-right">
+            <div class="btn-group">
+                {{ UI.addButton({
+                    'path': path('orob2b_account_frontend_account_user_create'),
+                    'entity_label': 'orob2b.account.accountuser.entity_label'|trans
+                }) }}
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
