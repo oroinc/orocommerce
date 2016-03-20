@@ -8,23 +8,23 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\LayoutBundle\Provider\ImageTypeConfigProvider;
+use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 
 class ProductImageCollectionType extends AbstractType
 {
     const NAME = 'orob2b_product_image_collection';
 
     /**
-     * @var ImageTypeConfigProvider
+     * @var ImageTypeProvider
      */
-    protected $imageTypeConfigProvider;
+    protected $imageTypeProvider;
 
     /**
-     * @param ImageTypeConfigProvider $imageTypeConfigProvider
+     * @param ImageTypeProvider $imageTypeProvider
      */
-    public function __construct(ImageTypeConfigProvider $imageTypeConfigProvider)
+    public function __construct(ImageTypeProvider $imageTypeProvider)
     {
-        $this->imageTypeConfigProvider = $imageTypeConfigProvider;
+        $this->imageTypeProvider = $imageTypeProvider;
     }
 
     /**
@@ -32,17 +32,17 @@ class ProductImageCollectionType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $imageTypeConfigs = $this->imageTypeConfigProvider->getConfigs();
+        $imageTypes = $this->imageTypeProvider->getImageTypes();
 
         $resolver->setDefaults([
             'type' => ProductImageType::NAME,
             'options' => [
-                'image_type_configs' => $imageTypeConfigs
+                'image_types' => $imageTypes
             ],
-            'image_type_configs' => $imageTypeConfigs,
+            'image_types' => $imageTypes,
         ]);
 
-        $resolver->setAllowedTypes('image_type_configs', 'array');
+        $resolver->setAllowedTypes('image_types', 'array');
     }
 
     /**
@@ -50,7 +50,7 @@ class ProductImageCollectionType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['imageTypeConfigs'] = $options['image_type_configs'];
+        $view->vars['imageTypes'] = $options['image_types'];
     }
 
     /**

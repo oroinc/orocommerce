@@ -9,7 +9,7 @@ class ProductImageCollection extends Constraint
     /**
      * @var string
      */
-    public $message = 'You cannot choose more than %maxNumber% images with type %type%';
+    public $message = 'You cannot choose more than %maxNumber% images with type "%type%"';
 
     /**
      * {@inheritDoc}

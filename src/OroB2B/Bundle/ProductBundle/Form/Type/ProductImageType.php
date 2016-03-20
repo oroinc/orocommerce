@@ -8,6 +8,8 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Oro\Component\Layout\Extension\Theme\Model\ThemeImageType;
+
 use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
 
 class ProductImageType extends AbstractType
@@ -21,15 +23,16 @@ class ProductImageType extends AbstractType
     {
         $builder->add('image', 'oro_image');
 
-        foreach ($options['image_type_configs'] as $imageType => $config) {
-            $isRadioButton = $config['max_number'] === 1;
+        /** @var ThemeImageType $imageType */
+        foreach ($options['image_types'] as $imageType) {
+            $isRadioButton = $imageType->getMaxNumber() === 1;
 
             $builder->add(
-                $imageType,
+                $imageType->getName(),
                 $isRadioButton ? 'radio' : 'checkbox',
                 [
-                    'label' => $config['label'],
-                    'value' => 1
+                    'label' => $imageType->getLabel(),
+                    'value' => 1,
                 ]
             );
         }
@@ -42,11 +45,11 @@ class ProductImageType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => 'OroB2B\Bundle\ProductBundle\Entity\ProductImage',
-            'image_type_configs' => [],
+            'image_types' => [],
         ]);
 
-        $resolver->setRequired('image_type_configs')
-                 ->setAllowedTypes('image_type_configs', 'array');
+        $resolver->setRequired('image_types')
+            ->setAllowedTypes('image_types', 'array');
 
     }
 
@@ -55,7 +58,7 @@ class ProductImageType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['imageTypeConfigs'] = $options['image_type_configs'];
+        $view->vars['imageTypes'] = $options['image_types'];
     }
 
     /**

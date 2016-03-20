@@ -171,8 +171,8 @@
                     <thead>
                     <tr>
                         <th></th>
-                        {% for imageTypeConfig in form.vars.imageTypeConfigs %}
-                            <th><span>{{ imageTypeConfig.label|trans }}</span></th>
+                        {% for imageType in form.vars.imageTypes %}
+                            <th><span>{{ imageType.label|trans }}</span></th>
                         {% endfor %}
 
                         {% if form.vars.allow_delete %}
@@ -212,7 +212,7 @@
 
         <td><div class="pull-left">{{ form_widget(form.image) }}</div></td>
 
-        {% for imageType in form.vars.imageTypeConfigs|keys %}
+        {% for imageType in form.vars.imageTypes|keys %}
             <td><div class="pull-left pull-left-extra">{{ form_widget(form[imageType], { attr: {'data-image-type': imageType} }) }}</div></td>
         {% endfor %}
 
