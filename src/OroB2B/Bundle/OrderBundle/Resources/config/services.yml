@@ -149,5 +149,6 @@ services:
         class: %orob2b_order.order.listener.total_calculate_listener.class%
         arguments:
             - @form.factory
+            - @oro_action.helper.applications
         tags:
             - { name: kernel.event_listener, event: orob2b_pricing.total_calculate_before_event, method: onBeforeTotalCalculate }

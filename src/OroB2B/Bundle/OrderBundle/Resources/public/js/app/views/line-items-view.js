@@ -87,8 +87,11 @@ define(function(require) {
             $total.val(totalAmount);
 
             var validator = $subtotal.closest('form').validate();
-            validator.element($subtotal);
-            validator.element($total);
+
+            if (validator) {
+                validator.element($subtotal);
+                validator.element($total);
+            }
         },
 
         /**
