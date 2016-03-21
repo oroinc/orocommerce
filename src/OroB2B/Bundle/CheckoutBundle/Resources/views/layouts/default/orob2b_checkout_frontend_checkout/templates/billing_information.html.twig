@@ -12,7 +12,7 @@
 
         {% set hasCustomAddress = false %}
         {% if form.billing_address.id.vars.value %}
-            {% set hasCustomAddress = not form.billing_address.accountAddress.vars.value and not form.billing_address.accountAddress.vars.value %}
+            {% set hasCustomAddress = not form.billing_address.vars.value.accountUserAddress and not form.billing_address.vars.value.accountAddress %}
         {% endif %}
         <div id="checkout-address-fields-container" class="{% if not hasCustomAddress %}hidden{% endif %}">
             <fieldset class="checkout__form__row">
