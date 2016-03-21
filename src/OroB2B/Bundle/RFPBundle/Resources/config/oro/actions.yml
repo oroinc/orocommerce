@@ -31,13 +31,16 @@ operations:
             title: orob2b.rfp.widget.change_status_title
             options:
                 width: 550
-        action_groups:
-            -
-                name: orob2b_rfp_change_status
+        actions:
+            - @run_action_group:
+                action_group: orob2b_rfp_change_status
                 parameters_mapping:
                     data: $.data
                     request_status: $.request_status
                     request_note: $.request_note
+            - @flash_message:
+                message: orob2b.rfp.message.request_status_changed
+                type: 'info'
 
     orob2b_rfp_cancel:
         label: orob2b.rfp.request.cancel.label
@@ -76,14 +79,17 @@ operations:
                 - @not_empty: $status
                 - @not_equal: [$status.name, $.cancelledStatusName]
                 - @not_equal: [$status.name, $.deletedStatusName]
-        action_groups:
-            -
-                name: orob2b_rfp_cancel
+        actions:
+            - @run_action_group:
+                action_group: orob2b_rfp_cancel
                 parameters_mapping:
                     data: $.data
                     cancellation_reason: $.cancellation_reason
                     cancelled_status_name: $.cancelledStatusName
                     deleted_status_name: $.deletedStatusName
+            - @flash_message:
+                message: 'orob2b.rfp.request.cancellation_success.label'
+                type: 'info'
 
     orob2b_rfp_create_quote:
         label: orob2b.rfp.btn.create_quote
@@ -97,10 +103,9 @@ operations:
             class: icons-holder-text no-hash btn
         preconditions:
             @equal: [$status.draft, false]
-
-        action_groups:
-            -
-                name: orob2b_rfp_create_quote
+        actions:
+            - @run_action_group:
+                action_group: orob2b_rfp_create_quote
                 parameters_mapping:
                     data: $.data
 
@@ -160,12 +165,14 @@ operations:
         frontend_options:
             template: OroB2BRFPBundle:Action:rfpEditForm.html.twig
             show_dialog: false
-
-        action_groups:
-            -
-                name: orob2b_rfp_edit
-                parameters_mapping:
-                    data: $.data
+        actions:
+            - @flash_message:
+                message: orob2b.rfp.action.request.updated.message
+                type: 'success'
+            - @redirect:
+                route: 'orob2b_rfp_request_view'
+                route_parameters:
+                    id: $.data.id
 
     orob2b_rfp_resubmit:
         extends: orob2b_rfp_base_edit
@@ -207,12 +214,19 @@ operations:
                 where:
                     name: $.openStatusName
             - @assign_value: [$.data, $.entityCopy]
-
-        action_groups:
-            -
-                name: orob2b_rfp_resubmit
+        actions:
+            - @run_action_group:
+                attribute: $.result
+                action_group: orob2b_rfp_resubmit
                 parameters_mapping:
                     data: $.data
+            - @flash_message:
+                message: orob2b.rfp.action.request.resubmited.message
+                type: 'success'
+            - @redirect:
+                route: 'orob2b_rfp_request_view'
+                route_parameters:
+                    id: $.result.data.data.id
 
     orob2b_rfp_delete:
         label: orob2b.rfp.btn.delete
@@ -235,10 +249,9 @@ operations:
             @and:
                 - @not_empty: $status
                 - @not_equal: [$status.name, $.deleted_status_name]
-
-        action_groups:
-            -
-                name: orob2b_rfp_delete
+        actions:
+            - @run_action_group:
+                action_group: orob2b_rfp_delete
                 parameters_mapping:
                     data: $.data
                     deleted_status_name: $.deleted_status_name
@@ -269,9 +282,6 @@ action_groups:
                     target: $data
                     message: $.message
                 flush: true
-            - @flash_message:
-                message: orob2b.rfp.message.request_status_changed
-                type: 'info'
 
     orob2b_rfp_cancel:
         parameters:
@@ -296,9 +306,6 @@ action_groups:
                     name: $cancelled_status_name
             - @assign_value: [$data.cancellationReason, $cancellation_reason]
             - @flush_entity: $data
-            - @flash_message:
-                message: 'orob2b.rfp.request.cancellation_success.label'
-                type: 'info'
 
     orob2b_rfp_create_quote:
         parameters:
@@ -317,20 +324,6 @@ action_groups:
                     route: orob2b_sale_quote_create
                     route_parameters: {'storage': true}
 
-    orob2b_rfp_edit:
-        parameters:
-            data:
-                type: OroB2B\Bundle\RFPBundle\Entity\Request
-        acl_resource: orob2b_rfp_request_update
-        actions:
-            - @flash_message:
-                message: orob2b.rfp.action.request.updated.message
-                type: 'success'
-            - @redirect:
-                route: 'orob2b_rfp_request_view'
-                route_parameters:
-                    id: $data.id
-
     orob2b_rfp_resubmit:
         parameters:
             data:
@@ -338,13 +331,6 @@ action_groups:
         acl_resource: orob2b_rfp_request_update
         actions:
             - @flush_entity: $data
-            - @flash_message:
-                message: orob2b.rfp.action.request.resubmited.message
-                type: 'success'
-            - @redirect:
-                route: 'orob2b_rfp_request_view'
-                route_parameters:
-                    id: $data.id
 
     orob2b_rfp_delete:
         parameters:

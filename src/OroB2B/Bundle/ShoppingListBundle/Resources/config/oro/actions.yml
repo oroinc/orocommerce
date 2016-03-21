@@ -8,9 +8,9 @@ operations:
         order: 10
         button_options:
             icon: icon-briefcase
-        action_groups:
-            -
-                name: orob2b_shoppinglist_createorder
+        actions:
+            - @run_action_group:
+                action_group: orob2b_shoppinglist_createorder
                 parameters_mapping:
                     data: $.data
 
@@ -23,9 +23,9 @@ operations:
         order: 10
         button_options:
             icon: icon-briefcase
-        action_groups:
-            -
-                name: orob2b_shoppinglist_frontend_createorder
+        actions:
+            - @run_action_group:
+                action_group: orob2b_shoppinglist_frontend_createorder
                 parameters_mapping:
                     data: $.data
 
@@ -91,13 +91,16 @@ operations:
                 method: prepareLineItemWithProduct
                 method_parameters: [$.currentUser, $.data]
                 attribute: $.lineItem
-        action_groups:
-            -
-                name: orob2b_shoppinglist_frontend_addlineitem
+        actions:
+            - @run_action_group:
+                attribute: $.result
+                action_group: orob2b_shoppinglist_frontend_addlineitem
                 parameters_mapping:
                     data: $.data
                     line_item: $.lineItem
                     form: $.form
+            - @flash_message: { message: $.result.successMessage, type: success }
+            - @refresh_grid: frontend-products-grid
 
     orob2b_shoppinglist_lineitem_base:
         label: ' '
@@ -147,12 +150,16 @@ operations:
             - @assign_value: [$.lineItem.shoppingList, $.data]
             - @assign_value: [$.lineItem.accountUser, $.data.accountUser]
             - @assign_value: [$.lineItem.organization, $.data.organization]
-        action_groups:
-            -
-                name: orob2b_shoppinglist_addlineitem
+        actions:
+            - @run_action_group:
+                action_group: orob2b_shoppinglist_addlineitem
                 parameters_mapping:
                     data: $.data
                     line_item: $.lineItem
+            - @refresh_grid: shopping-list-line-items-grid
+            - @flash_message:
+                message: orob2b.shoppinglist.lineitem.flash.added
+                type: 'success'
 
     orob2b_shoppinglist_updatelineitem_base:
         extends: orob2b_shoppinglist_lineitem_base
@@ -170,9 +177,11 @@ operations:
         acl_resource: [EDIT, entity:OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
         datagrids:
             - shopping-list-line-items-grid
-        action_groups:
-            -
-                name: orob2b_shoppinglist_updatelineitem
+        actions:
+            - @flash_message:
+                message: orob2b.shoppinglist.lineitem.flash.updated
+                type: 'success'
+            - @refresh_grid: shopping-list-line-items-grid
 
     orob2b_shoppinglist_frontend_request_quote:
         label: orob2b.frontend.shoppinglist.btn.request_quote_create_rfp
@@ -183,9 +192,9 @@ operations:
         order: 20
         button_options:
             icon: icon-briefcase
-        action_groups:
-            -
-                name: orob2b_shoppinglist_frontend_request_quote
+        actions:
+            - @run_action_group:
+                action_group: orob2b_shoppinglist_frontend_request_quote
                 parameters_mapping:
                     data: $.data
 
@@ -239,8 +248,6 @@ action_groups:
                 method: getSuccessMessage
                 method_parameters: [$lineItem.shoppingList.id, 1, orob2b.shoppinglist.lineitem.flash.added]
                 attribute: $.successMessage
-            - @flash_message: { message: $.successMessage, type: success }
-            - @refresh_grid: frontend-products-grid
 
     orob2b_shoppinglist_addlineitem:
         parameters:
@@ -254,18 +261,6 @@ action_groups:
                 service: orob2b_shopping_list.shopping_list.manager
                 method: addLineItem
                 method_parameters: [$line_item, $data, true, true]
-            - @refresh_grid: shopping-list-line-items-grid
-            - @flash_message:
-                message: orob2b.shoppinglist.lineitem.flash.added
-                type: 'success'
-
-    orob2b_shoppinglist_updatelineitem:
-        acl_resource: [EDIT, entity:OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
-        actions:
-            - @flash_message:
-                message: orob2b.shoppinglist.lineitem.flash.updated
-                type: 'success'
-            - @refresh_grid: shopping-list-line-items-grid
 
     orob2b_shoppinglist_frontend_request_quote:
         parameters:

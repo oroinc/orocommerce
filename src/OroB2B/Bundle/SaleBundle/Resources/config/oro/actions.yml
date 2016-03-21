@@ -14,11 +14,19 @@ operations:
             confirmation: orob2b.sale.quote.actions.quote_expire_confirm
         preconditions:
             @equal: [$expired, false]
-        action_groups:
-            -
-                name: orob2b_sale_expire_quote
+        actions:
+            - @run_action_group:
+                attribute: $.result
+                action_group: orob2b_sale_expire_quote
                 parameters_mapping:
                     data: $.data
+            - @flash_message:
+                message: orob2b.sale.quote.message.quote.expire.success
+                type: 'info'
+                message_parameters:
+                    id: $.result.data.data.id
+            - @redirect:
+                route: 'orob2b_sale_quote_index'
 
     orob2b_sale_notify_customer_by_email:
         label: orob2b.sale.quote.notify_customer.by_email.link.text
@@ -66,13 +74,12 @@ operations:
                 method: get
                 method_parameters: ['oro_email.append_signature']
 
-        action_groups:
-            -
-                name: orob2b_sale_notify_customer_by_email
+        actions:
+            - @run_action_group:
+                action_group: orob2b_sale_notify_customer_by_email
                 parameters_mapping:
                     data: $.data
                     email: $.email
-
 
     orob2b_sale_frontend_quote_accept_and_submit_to_order:
         label: orob2b.frontend.sale.btn.accept_quote_create_order
@@ -86,11 +93,21 @@ operations:
             class: quota-accept-btn
         preconditions:
 #            @equal: [false, $hasOfferVariants]
-        action_groups:
-            -
-                name: orob2b_sale_frontend_quote_accept_and_submit_to_order
+        actions:
+            - @run_action_group:
+                attribute: $.result
+                action_group: orob2b_sale_frontend_quote_accept_and_submit_to_order
                 parameters_mapping:
                     data: $.data
+            - @flash_message:
+                message: orob2b.frontend.sale.message.quote.create_order.success
+                type: 'success'
+            - @redirect:
+                constraints:
+                    @acl_resource: orob2b_order_frontend_view
+                parameters:
+                    route: 'orob2b_order_frontend_view'
+                    route_parameters: {id: $.result.order.id}
 
     orob2b_sale_frontend_quote_accept_and_submit_to_order_from_widget:
         label: orob2b.frontend.sale.btn.widget_accept_quote_create_order
@@ -130,12 +147,22 @@ operations:
         form_init:
             - @assign_value: [$.quote_to_order, $.data]
 
-        action_groups:
-            -
-                name: orob2b_sale_frontend_quote_accept_and_submit_to_order_from_widget
+        actions:
+            - @run_action_group:
+                attribute: $.result
+                action_group: orob2b_sale_frontend_quote_accept_and_submit_to_order_from_widget
                 parameters_mapping:
                     data: $.data
                     quote_to_order: $.quote_to_order
+            - @flash_message:
+                message: orob2b.frontend.sale.message.quote.create_order.success
+                type: 'success'
+            - @redirect:
+                constraints:
+                    @acl_resource: orob2b_order_frontend_view
+                parameters:
+                    route: 'orob2b_order_frontend_view'
+                    route_parameters: {id: $.result.order.id}
 
 action_groups:
     orob2b_sale_expire_quote:
@@ -147,13 +174,6 @@ action_groups:
         actions:
             - @assign_value: [$data.expired, true]
             - @flush_entity: $data
-            - @flash_message:
-                message: orob2b.sale.quote.message.quote.expire.success
-                type: 'info'
-                message_parameters:
-                    id: $data.id
-            - @redirect:
-                route: 'orob2b_sale_quote_index'
 
     orob2b_sale_notify_customer_by_email:
         parameters:
@@ -182,15 +202,6 @@ action_groups:
                 method: convert
                 method_parameters: [$data, $.user, null, true]
                 attribute: $.order
-            - @flash_message:
-                message: orob2b.frontend.sale.message.quote.create_order.success
-                type: 'success'
-            - @redirect:
-                constraints:
-                    @acl_resource: orob2b_order_frontend_view
-                parameters:
-                    route: 'orob2b_order_frontend_view'
-                    route_parameters: {id: $.order.id}
 
     orob2b_sale_frontend_quote_accept_and_submit_to_order_from_widget:
         parameters:
@@ -206,15 +217,6 @@ action_groups:
                 method: convert
                 method_parameters: [$data, $.user, $quote_to_order, true]
                 attribute: $.order
-            - @flash_message:
-                message: orob2b.frontend.sale.message.quote.create_order.success
-                type: 'success'
-            - @redirect:
-                constraints:
-                    @acl_resource: orob2b_order_frontend_view
-                parameters:
-                    route: 'orob2b_order_frontend_view'
-                    route_parameters: {id: $.order.id}
 
     orob2b_sale_send_no_quote_alert:
         parameters:

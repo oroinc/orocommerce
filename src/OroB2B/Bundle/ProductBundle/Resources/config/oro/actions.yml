@@ -10,11 +10,28 @@ operations:
         order: 10
         button_options:
             icon: icon-copy
-        action_groups:
-            -
-                name: orob2b_product_duplicate
+        actions:
+            - @run_action_group:
+                attribute: $.result
+                action_group: orob2b_product_duplicate
                 parameters_mapping:
                     data: $.data
+            - @redirect:
+                parameters:
+                    route: orob2b_product_view
+                    route_parameters:
+                        id: $.result.productCopy.id
+            - @call_service_method:
+                attribute: $.hasSuccessMessage
+                service: session.flash_bag
+                method: has
+                method_parameters: ['success']
+            - @flash_message:
+                conditions:
+                    @equal: [$.hasSuccessMessage, false]
+                parameters:
+                    message: orob2b.product.controller.product.duplicated.message
+                    type: 'success'
 
 action_groups:
     orob2b_product_duplicate:
@@ -28,19 +45,3 @@ action_groups:
                 method: duplicate
                 method_parameters: [$data]
                 attribute: $.productCopy
-            - @redirect:
-                parameters:
-                    route: orob2b_product_view
-                    route_parameters:
-                        id: $.productCopy.id
-            - @call_service_method:
-                attribute: $.hasSuccessMessage
-                service: session.flash_bag
-                method: has
-                method_parameters: ['success']
-            - @flash_message:
-                conditions:
-                    @equal: [$.hasSuccessMessage, false]
-                parameters:
-                    message: orob2b.product.controller.product.duplicated.message
-                    type: 'success'
