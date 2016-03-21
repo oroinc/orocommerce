@@ -52,7 +52,7 @@ class PaypalConfigurationEncryptListener
                 continue;
             }
 
-            $settings[$configKey]['value'] = $this->encoder->encryptData($settings[$configKey]['value']);
+            $settings[$configKey]['value'] = $this->encoder->encryptData($setting['value']);
         }
 
         $event->setSettings($settings);
