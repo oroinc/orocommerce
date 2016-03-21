@@ -48,6 +48,7 @@ layout:
                             lineItemTotals: { @value: $data.orob2b_checkout_summary.lineItemTotals }
                             lineItemsCount: { @value: $data.orob2b_checkout_summary.lineItemsCount }
                             totalPrice: { @value: $data.orob2b_checkout_summary.totalPrice }
+                            subtotals: { @value: $data.orob2b_checkout_summary.subtotals }
                 body:
                     blockType: body
             tree:
