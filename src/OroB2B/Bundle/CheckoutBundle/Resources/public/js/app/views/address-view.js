@@ -32,7 +32,8 @@ define(function (require) {
 
             this.addressSelector.on('change', _.bind(this.onAddressChanged, this));
             this.regionSelector.on('change', _.bind(this.onRegionListChanged, this));
-            this.addressSelector.val(this.addressSelector.data('default')).change();
+            this.addressSelector.val(this.addressSelector.data('default'));
+            this.addressSelector.trigger("chosen:updated");
         },
 
         onAddressChanged: function (e) {
