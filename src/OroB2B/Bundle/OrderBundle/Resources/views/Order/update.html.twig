@@ -42,7 +42,7 @@
     {% set subtotals %}
         {{ form_row(form.subtotalValidation) }}
         {{ form_row(form.totalValidation) }}
-        {% include 'OroB2BPricingBundle:Totals:totals.html.twig' with {
+        {% include 'OroB2BPricingBundle:Totals:totalsEntityEditPage.html.twig' with {
             options: {
                 route: 'orob2b_pricing_recalculate_entity_totals',
                 selectors: {

@@ -47,8 +47,8 @@
 {% block content_data %}
     {% set id = 'invoice-edit' %}
 
-    {% set subtotals %}
-        {% include 'OroB2BPricingBundle:Totals:totals.html.twig' with {
+    {% set totals %}
+        {% include 'OroB2BPricingBundle:Totals:totalsEntityEditPage.html.twig' with {
             options: {
                 route: 'orob2b_pricing_recalculate_entity_totals',
                 selectors: {
@@ -131,10 +131,10 @@
     ] %}
 
     {% set dataBlocks = dataBlocks|merge([{
-            'title': 'orob2b.invoice.sections.subtotals'|trans,
+            'title': 'orob2b.invoice.sections.totals'|trans,
             'class': 'active',
             'subblocks': [{
-                'data': [subtotals]
+                'data': [totals]
             }]
         }])
     %}

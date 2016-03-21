@@ -39,7 +39,7 @@
     {% set id = 'frontend-order-edit' %}
 
     {% set subtotals %}
-        {% include 'OroB2BPricingBundle:Totals/Frontend:totals.html.twig' with {
+        {% include 'OroB2BPricingBundle:Totals/Frontend:totalsEntityEditPage.html.twig' with {
             options: {
                 route: 'orob2b_pricing_frontend_recalculate_entity_totals',
                 selectors: {

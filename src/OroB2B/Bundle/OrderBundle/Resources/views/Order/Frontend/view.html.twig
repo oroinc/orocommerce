@@ -96,18 +96,9 @@
         }]) %}
 
         {% set orderTotals %}
-            {% include 'OroB2BPricingBundle:Totals/Frontend:totals.html.twig' with {
-                options: {
-                        route: 'orob2b_pricing_frontend_entity_totals',
-                        selectors: {
-                            template: '#frontend-totals-template'
-                        },
-                        entityClassName: 'OroB2B\\Bundle\\OrderBundle\\Entity\\Order',
-                        entityId: entity.id,
-                        data: totals
-                    }
-                } only
-            %}
+            {% include 'OroB2BPricingBundle:Totals/Frontend:totalsEntityViewPage.html.twig' with {
+                totals: totals
+            } only %}
         {% endset %}
 
         {% set dataBlocks = dataBlocks|merge([{
