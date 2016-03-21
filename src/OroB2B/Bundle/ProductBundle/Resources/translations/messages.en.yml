@@ -5,7 +5,10 @@ orob2b:
         entity_description: Represents product information
         id.label: Id
         sku.label: SKU
-        quantity.label: Quantity
+        item_number.label: "Item #"
+        sku.placeholder: "Enter Item Number"
+        quantity.label: Qty
+        quantity.placeholder: "Qty #"
         has_variants.label: Has Variants
         variant_fields.label: Variant Fields
         inventory_status.label: Inventory Status
@@ -32,7 +35,7 @@ orob2b:
         form:
             choose: Choose Product...
             product_required: Please select a product first...
-        form.add_row: Add rows
+        form.add_row: Add More Rows
 
         productunit:
             entity_label: Product Unit
@@ -115,16 +118,16 @@ orob2b:
 
         frontend:
             quick_add:
-                title: Quick Order Form
+                title: Quick Order
                 description: Quick add products to order, RFQ or shopping cart
                 copy_paste:
-                    title: 'Copy & Paste'
-                    description: 'Format: Item # [TAB or COMMA] Quantity'
-                    placeholder: 'Formatting Example: SKU-AAA,3'
+                    title: 'Paste your order'
+                    description: 'Copy and paste your order with the item # and the QTY separated by tabs.'
+                    placeholder: 'Copy and paste your order.'
                     continue:
                         label: Continue
                 import_from_file:
-                    title: Import From File
+                    title: Import Excel .CSV File
                     description: 'Import From File description'
                 import_validation:
                     title: Import validation results
@@ -137,7 +140,7 @@ orob2b:
                         invalid_format: 'Row #%index% has invalid format.'
 
 
-                continue.label: Continue
+                continue.label: Verify Order
                 messages:
                     not_added_products: '{1} Product %sku% can’t be added.|]1,Inf]Products %sku% can’t be added.'
                     component_not_accessible: Can't process request, component not accessible
