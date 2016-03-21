@@ -51,7 +51,6 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
     public function testProcessUnsupportedRequest()
     {
         $this->request->setMethod('GET');
-
         $this->form->expects($this->never())
             ->method('submit');
 
