@@ -94,6 +94,7 @@ workflows:
                                 object: $checkout
                                 isEditEnabled: true
                                 addressType: 'billing'
+                                required: true
                                 constraints:
                                     - Valid: ~
                                     - OroB2B\Bundle\OrderBundle\Validator\Constraints\OrderAddress:
@@ -102,8 +103,6 @@ workflows:
                         save_billing_address:
                             options:
                                 label: orob2b.checkout.workflow.b2b_flow_checkout.form.save_address.label
-                                constraints:
-                                    - NotBlank: ~
                         ship_to_billing_address:
                             options:
                                 label: orob2b.checkout.workflow.b2b_flow_checkout.form.ship_to_this_address.label
@@ -123,6 +122,7 @@ workflows:
                                 object: $checkout
                                 isEditEnabled: true
                                 addressType: 'shipping'
+                                required: true
                                 disabled: $disallow_shipping_address_edit
                                 constraints:
                                     - Valid: ~
