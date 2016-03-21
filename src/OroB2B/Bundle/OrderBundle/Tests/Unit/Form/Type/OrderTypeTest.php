@@ -31,7 +31,10 @@ use OroB2B\Bundle\OrderBundle\Form\Type\OrderDiscountItemsCollectionType;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderDiscountItemType;
 use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
+use OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
@@ -59,6 +62,15 @@ class OrderTypeTest extends TypeTestCase
     /** @var OrderType */
     private $type;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|TotalProcessorProvider */
+    protected $totalsProvider;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemSubtotalProvider */
+    protected $lineItemSubtotalProvider;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|DiscountSubtotalProvider */
+    protected $discountSubtotalProvider;
+
     /** @var ValidatorInterface  */
     private $validator;
 
@@ -74,12 +86,30 @@ class OrderTypeTest extends TypeTestCase
         $this->orderCurrencyHandler = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler')
             ->disableOriginalConstructor()->getMock();
 
+        $this->totalsProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->lineItemSubtotalProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->discountSubtotalProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         // create a type instance with the mocked dependencies
         $this->type = new OrderType(
             $this->securityFacade,
             $this->orderAddressSecurityProvider,
             $this->paymentTermProvider,
-            $this->orderCurrencyHandler
+            $this->orderCurrencyHandler,
+            $this->totalsProvider,
+            $this->lineItemSubtotalProvider,
+            $this->discountSubtotalProvider
         );
 
         $this->type->setDataClass('OroB2B\Bundle\OrderBundle\Entity\Order');
@@ -148,6 +178,9 @@ class OrderTypeTest extends TypeTestCase
                     'account' => 2,
                     'poNumber' => '11',
                     'shipUntil' => null,
+                    'subtotal' => 0.0,
+                    'total' => 0.0,
+                    'totalDiscounts' => 0.0,
                     'lineItems' => [
                         [
                             'productSku' => 'HLCU',
@@ -175,6 +208,9 @@ class OrderTypeTest extends TypeTestCase
                         'account' => 2,
                         'poNumber' => '11',
                         'shipUntil' => null,
+                        'subtotal' => 0.0,
+                        'total' => 0.0,
+                        'totalDiscounts' => new Price(),
                         'lineItems' => [
                             [
                                 'productSku' => 'HLCU',

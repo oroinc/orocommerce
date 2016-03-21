@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\OrderBundle\Form\Type;
 
+use OroB2B\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -17,59 +18,68 @@ use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
+use OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class OrderType extends AbstractType
 {
     const NAME = 'orob2b_order_type';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $dataClass;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $websiteClass = 'OroB2B\Bundle\WebsiteBundle\Entity\Website';
 
-    /**
-     * @var OrderAddressSecurityProvider
-     */
+    /** @var OrderAddressSecurityProvider */
     protected $orderAddressSecurityProvider;
 
-    /**
-     * @var PaymentTermProvider
-     */
+    /** @var PaymentTermProvider */
     protected $paymentTermProvider;
 
-    /**
-     * @var SecurityFacade
-     */
+    /** @var SecurityFacade */
     protected $securityFacade;
 
-    /**
-     * @var OrderCurrencyHandler
-     */
+    /** @var OrderCurrencyHandler */
     protected $orderCurrencyHandler;
+
+    /** @var TotalProcessorProvider */
+    protected $totalProvider;
+
+    /** @var LineItemSubtotalProvider */
+    protected $lineItemSubtotalProvider;
+
+    /** @var DiscountSubtotalProvider */
+    protected $discountSubtotalProvider;
 
     /**
      * @param SecurityFacade $securityFacade
      * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
      * @param PaymentTermProvider $paymentTermProvider
      * @param OrderCurrencyHandler $orderCurrencyHandler
+     * @param TotalProcessorProvider $totalProvider
+     * @param LineItemSubtotalProvider $lineItemSubtotalProvider
+     * @param DiscountSubtotalProvider $discountSubtotalProvider
      */
     public function __construct(
         SecurityFacade $securityFacade,
         OrderAddressSecurityProvider $orderAddressSecurityProvider,
         PaymentTermProvider $paymentTermProvider,
-        OrderCurrencyHandler $orderCurrencyHandler
+        OrderCurrencyHandler $orderCurrencyHandler,
+        TotalProcessorProvider $totalProvider,
+        LineItemSubtotalProvider $lineItemSubtotalProvider,
+        DiscountSubtotalProvider $discountSubtotalProvider
     ) {
         $this->securityFacade = $securityFacade;
         $this->orderAddressSecurityProvider = $orderAddressSecurityProvider;
         $this->paymentTermProvider = $paymentTermProvider;
         $this->orderCurrencyHandler = $orderCurrencyHandler;
+        $this->totalProvider = $totalProvider;
+        $this->lineItemSubtotalProvider = $lineItemSubtotalProvider;
+        $this->discountSubtotalProvider = $discountSubtotalProvider;
     }
 
     /**
@@ -161,6 +171,14 @@ class OrderType extends AbstractType
         $this->addBillingAddress($builder, $order, $options);
         $this->addShippingAddress($builder, $order, $options);
         $this->addPaymentTerm($builder, $order);
+
+        $builder->addEventSubscriber(
+            new SubtotalSubscriber(
+                $this->totalProvider,
+                $this->lineItemSubtotalProvider,
+                $this->discountSubtotalProvider
+            )
+        );
     }
 
     /**
