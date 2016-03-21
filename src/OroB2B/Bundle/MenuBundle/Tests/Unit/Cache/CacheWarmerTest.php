@@ -12,7 +12,9 @@ class CacheWarmerTest extends \PHPUnit_Framework_TestCase
 {
     const ENTITY_CLASS = 'FooBundle:BarEntity';
 
-    /** @var CacheWarmer */
+    /**
+     * @var CacheWarmer
+     */
     protected $warmer;
 
     /**
