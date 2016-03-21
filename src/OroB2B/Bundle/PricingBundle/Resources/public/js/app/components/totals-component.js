@@ -185,7 +185,6 @@ define(function(require) {
                     subtotal.formattedAmount = NumberFormatter.formatCurrency(subtotal.amount, subtotal.currency);
                 });
 
-
                 totals.total.formattedAmount = NumberFormatter.formatCurrency(totals.total.amount, totals.total.currency);
             }
 
