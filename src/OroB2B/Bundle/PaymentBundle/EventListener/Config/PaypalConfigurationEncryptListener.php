@@ -2,8 +2,8 @@
 
 namespace OroB2B\Bundle\PaymentBundle\EventListener\Config;
 
-use Oro\Bundle\ConfigBundle\Event\LoadConfigEvent;
 use Oro\Bundle\SecurityBundle\Encoder\Mcrypt;
+use Oro\Bundle\ConfigBundle\Event\LoadConfigEvent;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 
@@ -12,8 +12,6 @@ use OroB2B\Bundle\PaymentBundle\DependencyInjection\OroB2BPaymentExtension;
 
 class PaypalConfigurationEncryptListener
 {
-    const PASSWORD_PLACEHOLDER = '*******';
-
     /** @var MCrypt */
     protected $encoder;
 
@@ -48,38 +46,13 @@ class PaypalConfigurationEncryptListener
     public function beforeSave(ConfigSettingsUpdateEvent $event)
     {
         $settings = $event->getSettings();
-        $configManager = $event->getConfigManager();
 
         foreach ($settings as $configKey => $setting) {
             if (!$this->isRequiredEncrypt($configKey)) {
                 continue;
             }
 
-            $value = $settings[$configKey]['value'];
-
-            if ($value === self::PASSWORD_PLACEHOLDER && $this->isRequiredHide($configKey)) {
-                $settings[$configKey]['value'] = $configManager->get($configKey);
-            } else {
-                $settings[$configKey]['value'] = $this->encoder->encryptData($value);
-            }
-        }
-
-        $event->setSettings($settings);
-    }
-
-    /**
-     * @param ConfigSettingsUpdateEvent $event
-     */
-    public function formPreSet(ConfigSettingsUpdateEvent $event)
-    {
-        $settings = $event->getSettings();
-
-        foreach ($settings as $configKey => $setting) {
-            if (!$this->isRequiredHide($configKey, ConfigManager::SECTION_VIEW_SEPARATOR)) {
-                continue;
-            }
-
-            $settings[$configKey]['value'] = self::PASSWORD_PLACEHOLDER;
+            $settings[$configKey]['value'] = $this->encoder->encryptData($settings[$configKey]['value']);
         }
 
         $event->setSettings($settings);
@@ -101,29 +74,12 @@ class PaypalConfigurationEncryptListener
     }
 
     /**
-     * @param string $configFullKey Config model name
-     * @param string $separator
-     * @return bool
-     */
-    protected function isRequiredHide($configFullKey, $separator = ConfigManager::SECTION_MODEL_SEPARATOR)
-    {
-        list($extensionAlias, $configKey) = $this->parseConfigKey($configFullKey, $separator);
-
-        if ($extensionAlias !== OroB2BPaymentExtension::ALIAS) {
-            return false;
-        }
-
-        return in_array($configKey, $this->getConfigKeysToHide());
-    }
-
-    /**
      * @param $configFullKey
-     * @param string $separator
      * @return array An array with 2 elements: [extensionAlias, configKey]
      */
-    protected function parseConfigKey($configFullKey, $separator = ConfigManager::SECTION_MODEL_SEPARATOR)
+    protected function parseConfigKey($configFullKey)
     {
-        return explode($separator, $configFullKey, 2);
+        return explode(ConfigManager::SECTION_MODEL_SEPARATOR, $configFullKey, 2);
     }
 
     /**
@@ -185,18 +141,6 @@ class PaypalConfigurationEncryptListener
 //            Configuration::PAYPAL_PAYMENTS_PRO_USE_PROXY_KEY,
             Configuration::PAYPAL_PAYMENTS_PRO_PROXY_HOST_KEY,
             Configuration::PAYPAL_PAYMENTS_PRO_PROXY_PORT_KEY,
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    protected function getConfigKeysToHide()
-    {
-        return [
-            // Hide password values
-            Configuration::PAYFLOW_GATEWAY_PASSWORD_KEY,
-            Configuration::PAYPAL_PAYMENTS_PRO_PASSWORD_KEY,
         ];
     }
 }

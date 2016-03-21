@@ -54,11 +54,10 @@ oro_system_configuration:
 
         orob2b_payment.payflow_gateway_password:
             data_type: string
-            type: password
+            type: orob2b_payment_paypal_password_type
             priority: 50
             options:
                 label: orob2b.payment.system_configuration.fields.payflow_gateway.password.label
-                always_empty: false
 
         orob2b_payment.payflow_gateway_test_mode:
             data_type: boolean
@@ -133,11 +132,10 @@ oro_system_configuration:
 
         orob2b_payment.paypal_payments_pro_password:
             data_type: string
-            type: password
+            type: orob2b_payment_paypal_password_type
             priority: 50
             options:
                 label: orob2b.payment.system_configuration.fields.paypal_payments_pro.password.label
-                always_empty: false
 
         orob2b_payment.paypal_payments_pro_test_mode:
             data_type: boolean
