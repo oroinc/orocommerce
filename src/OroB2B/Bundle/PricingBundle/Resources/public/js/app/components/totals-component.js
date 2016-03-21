@@ -91,11 +91,6 @@ define(function(require) {
 
             this.render(this.options.data);
 
-            mediator.on('line-items-totals:update', this.updateTotals, this);
-            mediator.on('update:account', this.updateTotals, this);
-            mediator.on('update:website', this.updateTotals, this);
-            mediator.on('update:currency', this.updateTotals, this);
-
             var self = this;
             _.each(this.options.events, function(event) {
                 mediator.on(event, self.updateTotals, self);
@@ -207,10 +202,6 @@ define(function(require) {
                 return;
             }
 
-            mediator.off('line-items-totals:update', this.updateTotals, this);
-            mediator.off('update:account', this.updateTotals, this);
-            mediator.off('update:website', this.updateTotals, this);
-            mediator.off('update:currency', this.updateTotals, this);
             var self = this;
             _.each(this.options.events, function(event) {
                 mediator.off(event, self.updateTotals, self);

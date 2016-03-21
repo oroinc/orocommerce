@@ -46,6 +46,12 @@
                     template: '#frontend-totals-template',
                     form: '#' ~ form.vars.id
                 },
+                events: [
+                    'line-items-totals:update',
+                    'update:account',
+                    'update:website',
+                    'update:currency'
+                ],
                 entityClassName: 'OroB2B\\Bundle\\OrderBundle\\Entity\\Order',
                 entityId: form.vars.value.id,
                 data: totals
