@@ -1,4 +1,4 @@
-define(function (require) {
+define(function(require) {
     'use strict';
 
     var AddressView;
@@ -25,7 +25,7 @@ define(function (require) {
         /**
          * @inheritDoc
          */
-        initialize: function (options) {
+        initialize: function(options) {
             this.addressSelector = this.$el.find(options.selectors.address);
             this.fieldsContainer = this.$el.find(options.selectors.fieldsContainer);
             this.regionSelector = this.$el.find(options.selectors.region);
@@ -34,7 +34,7 @@ define(function (require) {
             this.regionSelector.on('change', _.bind(this.onRegionListChanged, this));
         },
 
-        onAddressChanged: function (e) {
+        onAddressChanged: function(e) {
             if (this.addressSelector.val() == 0) {
                 this.fieldsContainer.removeClass('hidden');
             } else {
@@ -43,7 +43,7 @@ define(function (require) {
 
         },
 
-        onRegionListChanged: function (e) {
+        onRegionListChanged: function(e) {
             this.regionSelector.chosen("destroy");
             this.regionSelector.chosen({disable_search_threshold: 10});
         }
