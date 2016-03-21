@@ -66,17 +66,33 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testProcessSupportedRequest($method, $isValid, $isProcessed)
     {
+        $this->request->setMethod($method);
         $this->form->expects($this->any())
             ->method('isValid')
             ->will($this->returnValue($isValid));
-
-        $this->request->setMethod($method);
-
         $this->form->expects($this->once())
             ->method('submit')
             ->with($this->request);
 
         $this->assertEquals($isProcessed, $this->handler->process($this->entity));
+    }
+
+    public function testProcessValidData()
+    {
+        $this->request->setMethod('POST');
+        $this->form->expects($this->once())
+            ->method('submit')
+            ->with($this->request);
+        $this->form->expects($this->once())
+            ->method('isValid')
+            ->will($this->returnValue(true));
+        $this->manager->expects($this->once())
+            ->method('persist')
+            ->with($this->entity);
+        $this->manager->expects($this->once())
+            ->method('flush');
+
+        $this->assertTrue($this->handler->process($this->entity));
     }
 
     /**
@@ -96,27 +112,5 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
                 'isProcessed' => false
             ],
         ];
-    }
-
-    public function testProcessValidData()
-    {
-        $this->request->setMethod('POST');
-
-        $this->form->expects($this->once())
-            ->method('submit')
-            ->with($this->request);
-
-        $this->form->expects($this->once())
-            ->method('isValid')
-            ->will($this->returnValue(true));
-
-        $this->manager->expects($this->once())
-            ->method('persist')
-            ->with($this->entity);
-
-        $this->manager->expects($this->once())
-            ->method('flush');
-
-        $this->assertTrue($this->handler->process($this->entity));
     }
 }
