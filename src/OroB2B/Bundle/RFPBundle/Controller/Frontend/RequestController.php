@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
+use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
@@ -87,7 +88,7 @@ class RequestController extends Controller
      *      group_name="commerce"
      * )
      * @Route("/create", name="orob2b_rfp_frontend_request_create")
-     * @Template("OroB2BRFPBundle:Request/Frontend:update.html.twig")
+     * @Layout
      *
      * @return array
      */
@@ -106,7 +107,7 @@ class RequestController extends Controller
             ;
         }
 
-        return $this->update($rfpRequest);
+        return ['data' => $this->update($rfpRequest)];
     }
 
     /**

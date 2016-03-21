@@ -16,6 +16,9 @@ parameters:
     orob2b_rfp.factory.duplicator_factory.class: OroB2B\Bundle\RFPBundle\Factory\DuplicatorFactory
     orob2b_rfp.factory.duplicator_filter_factory.class: OroB2B\Component\Duplicator\Filter\FilterFactory
     orob2b_rfp.factory.duplicator_matcher_factory.class: OroB2B\Component\Duplicator\Matcher\MatcherFactory
+
+    orob2b_rfp.layout.data_provider.request_form.class: OroB2B\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider
+
 services:
     orob2b_rfp.datagrid.action_permission_provider:
         class: %orob2b_rfp.datagrid.action_permission_provider.class%
@@ -151,3 +154,10 @@ services:
             - DeepCopy\Matcher\PropertyTypeMatcher
         tags:
             - { name: orob2b_rfp.duplicate.matcher_type }
+
+    orob2b_rfp.layout.data_provider.request_form:
+        class: %orob2b_rfp.layout.data_provider.request_form.class%
+        arguments:
+            - @form.factory
+        tags:
+            - { name: layout.data_provider, alias: orob2b_rfp_request_form }
