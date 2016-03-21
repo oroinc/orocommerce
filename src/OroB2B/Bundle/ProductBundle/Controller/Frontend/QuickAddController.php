@@ -2,138 +2,88 @@
 
 namespace OroB2B\Bundle\ProductBundle\Controller\Frontend;
 
-use Box\Spout\Common\Exception\UnsupportedTypeException;
-
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
-use OroB2B\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
+use Oro\Bundle\LayoutBundle\Annotation\Layout;
 
 class QuickAddController extends Controller
 {
     /**
      * @Route("/", name="orob2b_product_frontend_quick_add")
-     * @Template("OroB2BProductBundle:QuickAdd\Frontend:add.html.twig")
+     * @Layout
      *
      * @param Request $request
      * @return array|Response
      */
     public function addAction(Request $request)
     {
-        $result = $this->get('orob2b_product.form_handler.quick_add')->process($request);
+        $response = $this->get('orob2b_product.form_handler.quick_add')->process(
+            $request,
+            'orob2b_product_frontend_quick_add'
+        );
 
-        /** @var FormInterface $form */
-        $form = $result['form'];
-        /** @var Response|null $response */
-        $response = $result['response'];
-
-        $copyPasteForm = $this->createForm(QuickAddCopyPasteType::NAME);
-
-        return $response ?: ['form' => $form->createView(), 'copyPasteForm' => $copyPasteForm->createView()];
+        return $response ?: [];
     }
 
     /**
      * @Route("/import/", name="orob2b_product_frontend_quick_add_import")
-     * @Template("OroB2BProductBundle:QuickAdd\Frontend:import.html.twig")
+     * @Layout(vars={"import_step"})
      *
      * @param Request $request
      * @return array|Response
      */
     public function importAction(Request $request)
     {
-        $form = $this->createForm(QuickAddImportFromFileType::NAME)->handleRequest($request);
-
-        if ($form->isValid()) {
-            $file = $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->getData();
-            try {
-                $collection = $this->getQuickAddRowCollectionBuilder()->buildFromFile($file);
-            } catch (UnsupportedTypeException $e) {
-                $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->addError(new FormError(
-                    $this->get('translator')->trans(
-                        'orob2b.product.frontend.quick_add.invalid_file_type',
-                        [],
-                        'validators'
-                    )
-                ));
-
-                return [
-                    'form' => $form->createView()
-                ];
-            }
-
-            $resultForm = $this->createForm(QuickAddType::NAME, $collection->getFormData());
-
-            return $this->render(
-                'OroB2BProductBundle:QuickAdd\Frontend:validationResult.html.twig',
-                [
-                    'result' => $collection,
-                    'form' => $resultForm->createView(),
-                    'backToUrl' => $request->getUri()
-                ]
-            );
-        }
-
+        $collection = $this->get('orob2b_product.form_handler.quick_add')->processImport($request);
         return [
-            'form' => $form->createView()
+            'import_step' => $collection === null ? 'form' : 'result',
+            'data' => [
+                'collection' => $collection,
+                'backToUrl' => $request->getUri(),
+            ]
         ];
     }
 
     /**
-     * @Route("/validation/result/", name="orob2b_product_frontend_quick_add_validation_result")
-     * @Template("OroB2BProductBundle:QuickAdd\Frontend:validationRedirectResult.html.twig")
-     *
-     * @param Request $request
-     * @return array
-     */
-    public function validationResultAction(Request $request)
-    {
-        $result = $this->get('orob2b_product.form_handler.quick_add')->process($request);
-        $response = $result['response'];
-
-        if (!$response instanceof RedirectResponse) {
-            return ['targetUrl' => $this->generateUrl('orob2b_product_frontend_quick_add')];
-        }
-
-        return ['targetUrl' => $response->getTargetUrl()];
-    }
-
-    /**
      * @Route("/copy-paste/", name="orob2b_product_frontend_quick_add_copy_paste")
-     * @Template("OroB2BProductBundle:QuickAdd\Frontend:validationResult.html.twig")
+     * @Layout(vars={"import_step"})
      *
      * @param Request $request
      * @return array
      */
     public function copyPasteAction(Request $request)
     {
-        $copyPasteForm = $this->createForm(QuickAddCopyPasteType::NAME)->handleRequest($request);
-        $copyPasteText = $copyPasteForm->get(QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME)->getData();
-
-        $collection = $this->getQuickAddRowCollectionBuilder()->buildFromCopyPasteText($copyPasteText);
-
-        $resultForm = $this->createForm(QuickAddType::NAME, $collection->getFormData());
-
+        $collection = $this->get('orob2b_product.form_handler.quick_add')->processCopyPaste($request);
         return [
-            'result' => $collection,
-            'form' => $resultForm->createView()
+            'import_step' => $collection === null ? 'form' : 'result',
+            'data' => [
+                'collection' => $collection,
+            ]
         ];
     }
 
     /**
-     * @return QuickAddRowCollectionBuilder
+     * @Route("/validation/result/", name="orob2b_product_frontend_quick_add_validation_result")
+     * @Layout(action="redirect", vars={"targetUrl"})
+     *
+     * @param Request $request
+     * @return array
      */
-    private function getQuickAddRowCollectionBuilder()
+    public function validationResultAction(Request $request)
     {
-        return $this->get('orob2b_product.model.builder.quick_add_row_collection');
+        $response = $this->get('orob2b_product.form_handler.quick_add')->process(
+            $request,
+            'orob2b_product_frontend_quick_add'
+        );
+
+        if (!$response instanceof RedirectResponse) {
+            return ['targetUrl' => $this->generateUrl('orob2b_product_frontend_quick_add')];
+        }
+
+        return ['targetUrl' => $response->getTargetUrl()];
     }
 }
