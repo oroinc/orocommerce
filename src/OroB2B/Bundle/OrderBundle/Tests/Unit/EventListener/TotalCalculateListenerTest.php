@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\OrderBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\Form\FormFactory;
 
+use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
+
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
@@ -13,6 +15,9 @@ class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \PHPUnit_Framework_MockObject_MockObject|FormFactory */
     protected $formFactory;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ApplicationsHelper */
+    protected $applicationsHelper;
 
     /** @var TotalCalculateListener */
     protected $listener;
@@ -25,7 +30,10 @@ class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
         $this->formFactory = $this->getMockBuilder('Symfony\Component\Form\FormFactory')
             ->disableOriginalConstructor()->getMock();
 
-        $this->listener = new TotalCalculateListener($this->formFactory);
+        $this->applicationsHelper = $this->getMockBuilder('Oro\Bundle\ActionBundle\Helper\ApplicationsHelper')
+            ->disableOriginalConstructor()->getMock();
+
+        $this->listener = new TotalCalculateListener($this->formFactory, $this->applicationsHelper);
     }
 
     /**
@@ -36,8 +44,16 @@ class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
         unset($this->formFactory, $this->listener);
     }
 
-    public function testOnBeforeTotalCalculate()
+    /**
+     * @dataProvider testOnBeforeTotalCalculateProvider
+     *
+     * @param $application
+     * @param $expected
+     */
+    public function testOnBeforeTotalCalculate($application, $expected)
     {
+        $this->applicationsHelper->expects($this->once())->method('getCurrentApplication')->willReturn($application);
+
         $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
             ->disableOriginalConstructor()
             ->getMock();
@@ -50,6 +66,53 @@ class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
         $form->expects($this->once())->method('submit');
 
         $this->formFactory->expects($this->once())->method('create')->willReturn($form);
+
+        $entity = $this->getMock('OroB2B\Bundle\OrderBundle\Entity\Order');
+
+        if ($expected['resetDiscounts']) {
+            $entity->expects($this->once())->method('resetDiscounts');
+        } else {
+            $entity->expects($this->never())->method('resetDiscounts');
+        }
+        $event = new TotalCalculateBeforeEvent($entity, $request);
+
+        $this->listener->onBeforeTotalCalculate($event);
+    }
+
+    public function testOnBeforeTotalCalculateProvider()
+    {
+        return [
+            'application frontend' => [
+                'application' => 'frontend',
+                'expected' => [
+                    'resetDiscounts' => false
+                ]
+
+            ],
+            'application backend' => [
+                'application' => 'backend',
+                'expected' => [
+                    'resetDiscounts' => true
+                ]
+            ]
+        ];
+    }
+
+    public function testOnBeforeTotalCalculateUnexpectedApplication()
+    {
+        $application  = 'unexpected application';
+        $this->applicationsHelper->expects($this->once())->method('getCurrentApplication')->willReturn($application);
+
+        $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $form = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Form\Type\OrderType')
+            ->setMethods(['submit'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $form->expects($this->never())->method('submit');
 
         $entity = new Order();
         $event = new TotalCalculateBeforeEvent($entity, $request);
