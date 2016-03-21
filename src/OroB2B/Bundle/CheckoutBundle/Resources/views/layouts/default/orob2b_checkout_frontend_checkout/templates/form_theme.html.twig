@@ -36,18 +36,18 @@
 
 {% block orob2b_country_row %}
     <div class="checkout__form__col col-country">
-        {{ form_label(form, 'Country', {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) }}
+        {{ form_label(form, 'Country', {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional wsnr'}}) }}
         <div class="checkout__form__select">
-            {{ form_widget(form, {'attr': {'class' : 'checkout__form__label checkout__form__label_additional wsnr'}}) }}
+            {{ form_widget(form) }}
         </div>
     </div>
 {% endblock %}
 
 {% block orob2b_region_row %}
     <div class="checkout__form__col">
-        {{ form_label(form, 'State / Province', {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) }}
+        {{ form_label(form, 'State / Province', {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional wsnr'}}) }}
         <div class="checkout__form__select">
-            {{ form_widget(form, {'attr': {'class' : 'checkout__form__label checkout__form__label_additional wsnr'}}) }}
+            {{ form_widget(form) }}
         </div>
     </div>
 {% endblock %}

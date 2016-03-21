@@ -33,7 +33,6 @@ class CheckoutAddressType extends AbstractOrderAddressType
                     'data-addresses' => json_encode($this->getPlainData($addresses)),
                     'data-default' => $defaultKey,
                 ],
-                'data' => $defaultKey
             ];
 
             if ($isManualEditGranted) {
