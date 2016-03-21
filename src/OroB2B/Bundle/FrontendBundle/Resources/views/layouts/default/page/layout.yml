@@ -35,7 +35,8 @@ layout:
                         notification: ~
                         main:
                             content:
-                                page_title: ~
+                                page_title_container:
+                                    page_title: ~
                             sidebar_left: ~
                         footer: ~
                     scripts: ~
