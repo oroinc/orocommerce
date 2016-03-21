@@ -1092,4 +1092,28 @@ class Order extends ExtendOrder implements
     {
         return $this->discounts;
     }
+
+    /**
+     * Reset order discounts
+     *
+     * @return Order
+     */
+    public function resetDiscounts()
+    {
+        $this->discounts = new ArrayCollection();
+
+        return $this;
+    }
+
+    /**
+     * Reset order line items
+     *
+     * @return Order
+     */
+    public function resetLineItems()
+    {
+        $this->lineItems = new ArrayCollection();
+
+        return $this;
+    }
 }

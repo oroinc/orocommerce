@@ -243,7 +243,7 @@ class OrderControllerTest extends WebTestCase
             ],
             [
                 'value' => '44.4400',
-                'percent' => '44',
+                'percent' => '21.161904761905',
                 'amount' => '44.4400',
                 'type' => 'USD',
                 'description' => 'some other test description 444'
@@ -545,7 +545,7 @@ class OrderControllerTest extends WebTestCase
             ],
             [
                 'value' => '22.2200',
-                'percent' => '22',
+                'percent' => '2.2220',
                 'amount' => '22.2200',
                 'type' => 'USD',
                 'description' => 'some other test description'
