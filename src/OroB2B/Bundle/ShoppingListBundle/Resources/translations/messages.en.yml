@@ -135,4 +135,4 @@ orob2b:
                 create_order: 'Create Order'
                 delete: 'Delete Shooping List'
             workflow:
-                remove_source.label: Remove Shopping List
+                remove_source.label: Clear the shopping list

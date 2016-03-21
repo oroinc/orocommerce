@@ -4,19 +4,10 @@
     {# Simplified transitions handler specific for checkout logic #}
     {% set transition = transitionData.transition %}
 
-    {% if transitionData.errors %}
-        {% set conditionMessages = [] %}
-        {% for error in transitionData.errors %}
-            {% set conditionMessages = conditionMessages|merge([error.message|trans(error.parameters)]) %}
-        {% endfor %}
-    {% endif %}
-
     {{ UI.renderPageComponentAttributes({
         module: 'orob2bcheckout/js/app/components/transition-button-component',
         options: {
             'enabled': transitionData.isAllowed,
-            'message': transition.message|nl2br,
-            'conditionMessages': conditionMessages,
             'hasForm': transition.hasForm(),
             'transitionUrl': path(
                 'orob2b_checkout_frontend_checkout',
@@ -30,6 +21,35 @@
 {% endspaceless %}
 {% endmacro %}
 
+{% macro conditionMessagesStart(transitionData) %}
+    {% set hasErrors = transitionData.errors|length > 0 %}
+    {% if hasErrors %}
+        <span class="ttip__wrap"><span class="ttip__toggle">
+    {% endif %}
+{% endmacro %}
+
+{% macro conditionMessagesEnd(transitionData) %}
+    {% set hasErrors = transitionData.errors|length > 0 %}
+    {% if hasErrors %}
+        </span>
+          <span class="ttip">
+            <span class="ttip__content ttip__content_dark">
+                {{ _self.transitionConditionMessages(transitionData) }}
+            </span>
+          </span>
+        </span>
+    {% endif %}
+{% endmacro %}
+
+{% macro transitionConditionMessages(transitionData) %}
+    <div>{{ 'orob2b.checkout.workflow.unavailable_transition.message'|trans }}</div>
+    <ul>
+        {% for error in transitionData.errors %}
+            <li>{{ error.message|trans(error.parameters) }}</li>
+        {% endfor %}
+    </ul>
+{% endmacro %}
+
 {% block checkout_transition_back_widget %}
     {% if transitionData is defined and transitionData %}
     {% set transitionUrl = path(
@@ -40,16 +60,20 @@
         })
     %}
     <a href="{{ transitionUrl }}" {{ _self.transitionAttrbiutes(transitionData, checkout) }}>
+        {{ _self.conditionMessagesStart(transitionData) }}
         <i class="icon-left-open-mini"></i>{{ 'orob2b.checkout.workflow.b2b_flow_checkout.transition.back.label'|trans }}
+        {{ _self.conditionMessagesEnd(transitionData) }}
     </a>
     {% endif %}
 {% endblock %}
 
 {% block checkout_transition_continue_widget %}
     {% if transitionData is defined and transitionData %}
-    <button type="submit" class="btn btn_orange btn_lg checkout__form__submit" {{ _self.transitionAttrbiutes(transitionData, checkout) }}>
+    {{ _self.conditionMessagesStart(transitionData) }}
+    <button type="submit" class="btn {% if transitionData.isAllowed %}btn_orange{% endif %} btn_lg checkout__form__submit" {{ _self.transitionAttrbiutes(transitionData, checkout) }}>
         {{ transitionData.transition.label|trans }}<i class="icon-right-open-mini va-m_md"></i>
     </button>
+    {{ _self.conditionMessagesEnd(transitionData) }}
     {% endif %}
 {% endblock %}
 
@@ -66,7 +90,13 @@
         <span class="ttip__wrap">
           <i class="icon-pencil ttip__toggle"></i>
           <span class="ttip">
-            <span class="ttip__content ttip__content_dark">{{ transitionData.transition.label|trans }}</span>
+            <span class="ttip__content ttip__content_dark">
+                {% if transitionData.errors|length > 0 %}
+                    {{ _self.transitionConditionMessages(transitionData) }}
+                {% else %}
+                    {{ transitionData.transition.label|trans }}
+                {% endif %}
+            </span>
           </span>
         </span>
     </a>
