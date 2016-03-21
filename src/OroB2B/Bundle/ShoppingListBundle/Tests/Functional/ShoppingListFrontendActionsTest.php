@@ -39,7 +39,7 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         $this->assertFalse($shoppingList->getLineItems()->isEmpty());
 
-        $this->executeAction($shoppingList, 'orob2b_shoppinglist_frontend_action_createorder');
+        $this->executeAction($shoppingList, 'orob2b_shoppinglist_frontend_createorder');
 
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
 
@@ -70,7 +70,7 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         $this->assertFalse($shoppingList->getLineItems()->isEmpty());
 
-        $this->executeAction($shoppingList, 'orob2b_shoppinglist_frontend_action_request_quote');
+        $this->executeAction($shoppingList, 'orob2b_shoppinglist_frontend_request_quote');
 
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
 

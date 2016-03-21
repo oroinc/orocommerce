@@ -24,7 +24,7 @@ abstract class AbstractAccountUserActionsTest extends WebTestCase
         $this->getObjectManager()->flush();
         $this->getObjectManager()->clear();
 
-        $this->executeAction($user, 'orob2b_account_action_accountuser_confirm');
+        $this->executeAction($user, 'orob2b_account_accountuser_confirm');
 
         /** @var MessageDataCollector $collector */
         $collector = $this->client->getProfile()->getCollector('swiftmailer');
@@ -67,7 +67,7 @@ abstract class AbstractAccountUserActionsTest extends WebTestCase
         $this->getObjectManager()->flush();
         $this->getObjectManager()->clear();
 
-        $this->executeAction($user, 'orob2b_account_action_accountuser_sendconfirmation');
+        $this->executeAction($user, 'orob2b_account_accountuser_sendconfirmation');
 
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);

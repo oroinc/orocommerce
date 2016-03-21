@@ -38,7 +38,7 @@ class ShoppingListActionsTest extends ActionTestCase
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         $this->assertFalse($shoppingList->getLineItems()->isEmpty());
 
-        $this->executeAction($shoppingList, 'orob2b_shoppinglist_action_createorder');
+        $this->executeAction($shoppingList, 'orob2b_shoppinglist_createorder');
 
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
 
