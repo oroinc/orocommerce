@@ -1,24 +1,30 @@
 <script type="text/template" class="totals-template" id="totals-template">
     {% block subtotals_template %}
-        <% if ('subtotals' in totals) { %>
-            <% _.each(totals.subtotals, function(subtotal) { %>
-                <% if (subtotal.visible) { %>
-                    <div class="control-group">
-                        <label class="control-label"><%= subtotal.label %></label>
-                        <div class="controls">
-                            <label class="control-label"><%= subtotal.formattedAmount %></label>
+        <% if (totals) { %>
+            <% if ('subtotals' in totals) { %>
+                <% _.each(totals.subtotals, function(subtotal) { %>
+                    <% if (subtotal.visible) { %>
+                        <div class="control-group">
+                            <label class="control-label"><%= subtotal.label %></label>
+                            <div class="controls">
+                                <label class="control-label"><%= subtotal.formattedAmount %></label>
+                            </div>
                         </div>
-                    </div>
-                <% } %>
-            <% }); %>
-        <% } %>
+                    <% } %>
+                <% }); %>
+            <% } %>
 
-        <% if ('total' in totals) { %>
-            <div class="control-group">
-                <label class="control-label"><%= totals.total.label %></label>
-                <div class="controls">
-                    <label class="control-label"><%= totals.total.formattedAmount %></label>
+            <% if ('total' in totals) { %>
+                <div class="control-group">
+                    <label class="control-label"><%= totals.total.label %></label>
+                    <div class="controls">
+                        <label class="control-label"><%= totals.total.formattedAmount %></label>
+                    </div>
                 </div>
+            <% } %>
+        <% } else { %>
+            <div class="no-data">
+                <span>{{ "orob2b.pricing.subtotals.no_data.label"|trans|raw }}</span>
             </div>
         <% } %>
     {% endblock %}

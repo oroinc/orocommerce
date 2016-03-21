@@ -2,7 +2,7 @@
     {% block subtotals_template %}
         <table class="order-checkout-widget__table pull-right" >
             <tbody>
-            <% if ('subtotals' in totals) { %>
+            <% if (totals && 'subtotals' in totals) { %>
                 <% _.each(totals.subtotals, function(subtotal) { %>
                     <% if (subtotal.visible) { %>
                         <tr>
@@ -13,7 +13,7 @@
                 <% }); %>
             <% } %>
 
-            <% if ('total' in totals) { %>
+            <% if (totals && 'total' in totals) { %>
                 <tr>
                     <td class="order-checkout-widget__total">
                         <span class="text-uppercase"><%= totals.total.label %></span>

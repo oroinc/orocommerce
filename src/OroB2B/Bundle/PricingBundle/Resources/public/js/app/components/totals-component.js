@@ -89,7 +89,7 @@ define(function(require) {
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
             this.eventName = 'total-target:changing';
 
-            this.updateTotals();
+            this.render(this.options.data);
 
             mediator.on('line-items-totals:update', this.updateTotals, this);
             mediator.on('update:account', this.updateTotals, this);
@@ -185,11 +185,14 @@ define(function(require) {
          * @param {Object} totals
          */
         render: function(totals) {
-            _.each(totals.subtotals, function(subtotal) {
-                subtotal.formattedAmount = NumberFormatter.formatCurrency(subtotal.amount, subtotal.currency);
-            });
+            if (totals) {
+                _.each(totals.subtotals, function (subtotal) {
+                    subtotal.formattedAmount = NumberFormatter.formatCurrency(subtotal.amount, subtotal.currency);
+                });
 
-            totals.total.formattedAmount = NumberFormatter.formatCurrency(totals.total.amount, totals.total.currency);
+
+                totals.total.formattedAmount = NumberFormatter.formatCurrency(totals.total.amount, totals.total.currency);
+            }
 
             this.$subtotals.html(this.template({
                 totals: totals

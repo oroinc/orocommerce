@@ -56,7 +56,8 @@
                     form: '#' ~ form.vars.id
                 },
                 entityClassName: 'OroB2B\\Bundle\\InvoiceBundle\\Entity\\Invoice',
-                entityId: form.vars.value.id
+                entityId: form.vars.value.id,
+                data: totals
             }
         } only %}
     {% endset %}
