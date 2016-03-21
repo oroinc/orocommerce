@@ -8,49 +8,14 @@
                 </label>
             </div>
         </div>
-        <div class="collapse" id="order-taxes-totals-table">
+        <% var collapseIn = _.defaults(item.data.in, true); %>
+        <div class="collapse<%= collapseIn ? ' in' : '' %>" id="order-taxes-totals-table">
             <div class="controls">
-                <% if (!_.isEmpty(item.data.total)) { %>
-                <table class="table table-striped table-condensed table-bordered table-hover">
-                    <thead>
-                    <tr>
-                        <th class="renderable">{{ 'orob2b.tax.result.includingTax'|trans }}</th>
-                        <th class="renderable">{{ 'orob2b.tax.result.excludingTax'|trans }}</th>
-                        <th class="renderable">{{ 'orob2b.tax.result.taxAmount'|trans }}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td class="renderable"><%= item.data.total.includingTax %></td>
-                        <td class="renderable"><%= item.data.total.excludingTax %></td>
-                        <td class="renderable"><%= item.data.total.taxAmount %></td>
-                    </tr>
-                    </tbody>
-                </table>
-                <% } %>
-
-                <% if (!_.isEmpty(item.data.taxes)) { %>
-                <table class="table table-striped table-condensed table-bordered table-hover">
-                    <thead>
-                    <tr>
-                        <th class="renderable">{{ 'orob2b.tax.result.tax'|trans }}</th>
-                        <th class="renderable">{{ 'orob2b.tax.result.rate'|trans }}</th>
-                        <th class="renderable">{{ 'orob2b.tax.result.taxableAmount'|trans }}</th>
-                        <th class="renderable">{{ 'orob2b.tax.result.taxAmount'|trans }}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <% _.each(item.data.taxes, function(tax) { %>
-                    <tr>
-                        <td class="renderable"><%= tax.tax %></td>
-                        <td class="renderable"><%= tax.rate %></td>
-                        <td class="renderable"><%= tax.taxableAmount %></td>
-                        <td class="renderable"><%= tax.taxAmount %></td>
-                    </tr>
-                    <% }); %>
-                    </tbody>
-                </table>
-                <% } %>
+                {% import 'OroB2BTaxBundle::macros.html.twig' as TAX %}
+                <% var total = _.defaults(item.data.total, {}) %>
+                {{ TAX.renderJsItems() }}
+                <% var taxes = _.defaults(item.data.taxes, {}) || {} %>
+                {{ TAX.renderJsTaxes() }}
             </div>
         </div>
     </script>

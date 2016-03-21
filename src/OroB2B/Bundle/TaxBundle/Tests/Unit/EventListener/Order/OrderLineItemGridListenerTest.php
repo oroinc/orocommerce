@@ -169,7 +169,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit_Framework_TestCase
                 ],
                 'columns' => [
                     'unitPriceIncludingTax' => [
-                        'label' => 'orob2b.tax.order_item_datagrid.unitPrice.includingTax.label',
+                        'label' => 'orob2b.tax.order_line_item.unitPrice.includingTax.label',
                         'type' => 'twig',
                         'frontend_type' => 'html',
                         'data_name' => 'result',
@@ -177,7 +177,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit_Framework_TestCase
                         'renderable' => false
                     ],
                     'unitPriceExcludingTax' => [
-                        'label' => 'orob2b.tax.order_item_datagrid.unitPrice.excludingTax.label',
+                        'label' => 'orob2b.tax.order_line_item.unitPrice.excludingTax.label',
                         'type' => 'twig',
                         'frontend_type' => 'html',
                         'data_name' => 'result',
@@ -185,7 +185,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit_Framework_TestCase
                         'renderable' => false
                     ],
                     'unitPriceTaxAmount' => [
-                        'label' => 'orob2b.tax.order_item_datagrid.unitPrice.taxAmount.label',
+                        'label' => 'orob2b.tax.order_line_item.unitPrice.taxAmount.label',
                         'type' => 'twig',
                         'frontend_type' => 'html',
                         'data_name' => 'result',
@@ -193,7 +193,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit_Framework_TestCase
                         'renderable' => false
                     ],
                     'rowTotalIncludingTax' => [
-                        'label' => 'orob2b.tax.order_item_datagrid.rowTotal.includingTax.label',
+                        'label' => 'orob2b.tax.order_line_item.rowTotal.includingTax.label',
                         'type' => 'twig',
                         'frontend_type' => 'html',
                         'data_name' => 'result',
@@ -201,7 +201,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit_Framework_TestCase
                         'renderable' => false
                     ],
                     'rowTotalExcludingTax' => [
-                        'label' => 'orob2b.tax.order_item_datagrid.rowTotal.excludingTax.label',
+                        'label' => 'orob2b.tax.order_line_item.rowTotal.excludingTax.label',
                         'type' => 'twig',
                         'frontend_type' => 'html',
                         'data_name' => 'result',
@@ -209,7 +209,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit_Framework_TestCase
                         'renderable' => false
                     ],
                     'rowTotalTaxAmount' => [
-                        'label' => 'orob2b.tax.order_item_datagrid.rowTotal.taxAmount.label',
+                        'label' => 'orob2b.tax.order_line_item.rowTotal.taxAmount.label',
                         'type' => 'twig',
                         'frontend_type' => 'html',
                         'data_name' => 'result',

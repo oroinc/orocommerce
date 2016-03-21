@@ -48,7 +48,7 @@ define(function(require) {
         loadingMaskView: null,
 
         /**
-         * @property {Jquery.Element}
+         * @property {jQuery.Element}
          */
         $tableContainer: null,
 

@@ -54,6 +54,5 @@ class OrderTaxesListener
         );
 
         $event->getData()->offsetSet('taxItems', $taxItems);
-        $event->getData()->offsetSet('taxItems', $taxItems);
     }
 }

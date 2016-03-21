@@ -3,6 +3,7 @@ define(function(require) {
 
     var OrderTaxesComponent;
     var _ = require('underscore');
+    var $ = require('jquery');
     var mediator = require('oroui/js/mediator');
     var BaseComponent = require('oroui/js/app/components/base/component');
     var TaxFormatter = require('orob2btax/js/formatter/tax');
@@ -18,7 +19,8 @@ define(function(require) {
          */
         options: {
             selectors: {
-                totalsTemplate: '#order-taxes-totals-template'
+                totalsTemplate: '#order-taxes-totals-template',
+                collapseSelector: '#order-taxes-totals-table'
             }
         },
 
@@ -48,6 +50,8 @@ define(function(require) {
                 totals.subtotals.tax.data.taxes,
                 _.bind(TaxFormatter.formatTax, this)
             );
+
+            totals.subtotals.tax.data.in = $(this.options.selectors.collapseSelector).hasClass('in');
             totals.subtotals.tax.template = this.totalsTemplate;
         },
 

@@ -16,6 +16,8 @@ use OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 
 class OrderLineItemTypeExtension extends AbstractTypeExtension
 {
+    const BASE_ORDER = 50;
+
     /** @var TaxationSettingsProvider */
     protected $taxationSettingsProvider;
 
@@ -58,8 +60,6 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
         }
 
         $this->taxSubtotalProvider->setEditMode(true);
-
-        $builder->add('taxes', 'hidden', ['required' => false, 'mapped' => false]);
     }
 
     /** {@inheritdoc} */
@@ -74,18 +74,33 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
             return;
         }
 
-        $view->children['taxes']->vars['result'] = $this->taxManager->getTax($entity);
+
+        $view->vars['result'] = $this->taxManager->getTax($entity);
     }
 
     /** {@inheritdoc} */
     public function configureOptions(OptionsResolver $resolver)
     {
-        parent::configureOptions($resolver);
-
         $resolver->setNormalizer(
             'sections',
             function (Options $options, array $sections) {
-                $sections['taxes'] = ['data' => ['taxes' => []], 'order' => 50];
+                $sectionNames = [
+                    'unitPriceIncludingTax' => 'orob2b.tax.order_line_item.unitPrice.includingTax.label',
+                    'unitPriceExcludingTax' => 'orob2b.tax.order_line_item.unitPrice.excludingTax.label',
+                    'unitPriceTaxAmount' => 'orob2b.tax.order_line_item.unitPrice.taxAmount.label',
+                    'rowTotalIncludingTax' => 'orob2b.tax.order_line_item.rowTotal.includingTax.label',
+                    'rowTotalExcludingTax' => 'orob2b.tax.order_line_item.rowTotal.excludingTax.label',
+                    'rowTotalTaxAmount' => 'orob2b.tax.order_line_item.rowTotal.taxAmount.label',
+                    'taxes' => 'orob2b.tax.order_line_item.taxes.label',
+                ];
+
+                $order = self::BASE_ORDER;
+                foreach ($sectionNames as $sectionName => $label) {
+                    $sections[$sectionName] = [
+                        'order' => $order++,
+                        'label' => $label,
+                    ];
+                }
 
                 return $sections;
             }
