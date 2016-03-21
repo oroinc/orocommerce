@@ -2,123 +2,187 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\Handler;
 
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
+use Box\Spout\Common\Exception\UnsupportedTypeException;
+
+use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
+use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
+use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
 use OroB2B\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
+use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
+use OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddCopyPasteFormProvider;
+use OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddFormProvider;
+use OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddImportFormProvider;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class QuickAddHandler
 {
     /**
-     * @var TranslatorInterface
+     * @var QuickAddFormProvider
      */
-    protected $translator;
+    protected $quickAddFormProvider;
 
     /**
-     * @var FormFactoryInterface
+     * @var QuickAddImportFormProvider
      */
-    protected $formFactory;
+    protected $quickAddImportFormProvider;
+
+    /**
+     * @var QuickAddCopyPasteFormProvider
+     */
+    protected $quickAddCopyPasteFormProvider;
+
+    /**
+     * @var QuickAddRowCollectionBuilder
+     */
+    protected $quickAddRowCollectionBuilder;
 
     /**
      * @var ComponentProcessorRegistry
      */
     protected $componentRegistry;
 
-    /**
-     * @var QuickAddRowCollectionBuilder
-     */
-    protected $collectionBuilder;
+    /** @var UrlGeneratorInterface */
+    protected $router;
 
     /**
-     * @param TranslatorInterface $translator
-     * @param FormFactoryInterface $formFactory
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
+     * @param QuickAddFormProvider $quickAddFormProvider
+     * @param QuickAddImportFormProvider $quickAddImportFormProvider
+     * @param QuickAddCopyPasteFormProvider $quickAddCopyPasteFormProvider
+     * @param QuickAddRowCollectionBuilder $quickAddRowCollectionBuilder
      * @param ComponentProcessorRegistry $componentRegistry
-     * @param QuickAddRowCollectionBuilder $collectionBuilder
+     * @param UrlGeneratorInterface $router
+     * @param TranslatorInterface $translator
      */
     public function __construct(
-        TranslatorInterface $translator,
-        FormFactoryInterface $formFactory,
+        QuickAddFormProvider $quickAddFormProvider,
+        QuickAddImportFormProvider $quickAddImportFormProvider,
+        QuickAddCopyPasteFormProvider $quickAddCopyPasteFormProvider,
+        QuickAddRowCollectionBuilder $quickAddRowCollectionBuilder,
         ComponentProcessorRegistry $componentRegistry,
-        QuickAddRowCollectionBuilder $collectionBuilder
+        UrlGeneratorInterface $router,
+        TranslatorInterface $translator
     ) {
-        $this->translator = $translator;
-        $this->formFactory = $formFactory;
+        $this->quickAddFormProvider = $quickAddFormProvider;
+        $this->quickAddImportFormProvider = $quickAddImportFormProvider;
+        $this->quickAddCopyPasteFormProvider = $quickAddCopyPasteFormProvider;
+        $this->quickAddRowCollectionBuilder = $quickAddRowCollectionBuilder;
         $this->componentRegistry = $componentRegistry;
-        $this->collectionBuilder = $collectionBuilder;
+        $this->router = $router;
+        $this->translator = $translator;
     }
 
     /**
      * @param Request $request
-     * @return array ['form' => FormInterface, 'response' => Response|null]
+     * @param string $successDefaultRoute
+     * @return Response|null
      */
-    public function process(Request $request)
+    public function process(Request $request, $successDefaultRoute)
     {
         $response = null;
-        $formOptions = [];
+        if (!$request->isMethod(Request::METHOD_POST)) {
+            return $response;
+        }
 
         $processor = $this->getProcessor($this->getComponentName($request));
+
+        $options = [];
+        $collection = $this->quickAddRowCollectionBuilder->buildFromRequest($request);
+        $options['products'] = $collection->getProducts();
         if ($processor) {
-            $formOptions['validation_required'] = $processor->isValidationRequired();
+            $options['validation_required'] = $processor->isValidationRequired();
         }
 
-        if ($request->isMethod(Request::METHOD_POST)) {
-            $collection = $this->collectionBuilder->buildFromRequest($request);
-            $formOptions['products'] = $collection->getProducts();
-        }
+        $form = $this->quickAddFormProvider->getForm([], $options);
+        $form->submit($request);
 
-        $form = $this->createQuickAddForm($formOptions);
-        if ($request->isMethod(Request::METHOD_POST)) {
-            $form->submit($request);
-            if ($processor && $processor->isAllowed()) {
-                if ($form->isValid()) {
-                    $products = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
-                    $products = is_array($products) ? $products : [];
-
-                    $additionalData = $request->get(
-                        QuickAddType::NAME . '[' . QuickAddType::ADDITIONAL_FIELD_NAME . ']',
-                        null,
-                        true
-                    );
-
-                    $response = $processor->process(
-                        [
-                            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
-                            ProductDataStorage::ADDITIONAL_DATA_KEY => $additionalData
-                        ],
-                        $request
-                    );
-                    if (!$response) {
-                        // reset form
-                        $form = $this->createQuickAddForm($formOptions);
-                    }
-                }
-            } else {
-                /** @var Session $session */
-                $session = $request->getSession();
-                $session->getFlashBag()->add(
-                    'error',
-                    $this->translator->trans('orob2b.product.frontend.quick_add.messages.component_not_accessible')
-                );
+        if (!$processor || !$processor->isAllowed()) {
+            /** @var Session $session */
+            $session = $request->getSession();
+            $session->getFlashBag()->add(
+                'error',
+                $this->translator->trans('orob2b.product.frontend.quick_add.messages.component_not_accessible')
+            );
+        } elseif ($form->isValid()) {
+            $products = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
+            $additionalData = $request->get(
+                QuickAddType::NAME . '[' . QuickAddType::ADDITIONAL_FIELD_NAME . ']',
+                null,
+                true
+            );
+            $response = $processor->process(
+                [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
+                    ProductDataStorage::ADDITIONAL_DATA_KEY => $additionalData,
+                ],
+                $request
+            );
+            if (!$response) {
+                $response = new RedirectResponse($this->router->generate($successDefaultRoute));
             }
         }
 
-        return ['form' => $form, 'response' => $response];
+        return $response;
     }
 
     /**
-     * @param array $options
-     * @return FormInterface
+     * @param Request $request
+     * @return QuickAddRowCollection|null
      */
-    protected function createQuickAddForm(array $options = [])
+    public function processImport(Request $request)
     {
-        return $this->formFactory->create(QuickAddType::NAME, null, $options);
+        $form = $this->quickAddImportFormProvider->getForm()->handleRequest($request);
+        $collection = null;
+
+        if ($form->isValid()) {
+            $file = $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->getData();
+            try {
+                $collection = $this->quickAddRowCollectionBuilder->buildFromFile($file);
+                $this->quickAddFormProvider->getForm($collection->getFormData());
+            } catch (UnsupportedTypeException $e) {
+                $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->addError(new FormError(
+                    $this->translator->trans(
+                        'orob2b.product.frontend.quick_add.invalid_file_type',
+                        [],
+                        'validators'
+                    )
+                ));
+            }
+        }
+
+        return $collection;
+    }
+
+    /**
+     * @param Request $request
+     * @return QuickAddRowCollection|null
+     */
+    public function processCopyPaste(Request $request)
+    {
+        $form = $this->quickAddCopyPasteFormProvider->getForm()->handleRequest($request);
+        $collection = null;
+
+        if ($form->isValid()) {
+            $copyPasteText = $form->get(QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME)->getData();
+            $collection = $this->quickAddRowCollectionBuilder->buildFromCopyPasteText($copyPasteText);
+            $this->quickAddFormProvider->getForm($collection->getFormData());
+        }
+
+        return $collection;
     }
 
     /**
