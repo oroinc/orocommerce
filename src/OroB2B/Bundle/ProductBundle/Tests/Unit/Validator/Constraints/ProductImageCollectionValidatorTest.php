@@ -15,7 +15,6 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
 use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductImageCollection;
 use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductImageCollectionValidator;
 
-
 class ProductImageCollectionValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -61,7 +60,7 @@ class ProductImageCollectionValidatorTest extends \PHPUnit_Framework_TestCase
             $this->prepareProductImage(['main' => false])
         ]);
 
-        $this->context->addViolation(Argument::cetera())->shouldNotBeCalled();
+        $this->context->buildViolation(Argument::cetera())->shouldNotBeCalled();
 
         $this->validator->validate($collection, $this->constraint);
     }
@@ -73,13 +72,15 @@ class ProductImageCollectionValidatorTest extends \PHPUnit_Framework_TestCase
             $this->prepareProductImage(['main' => true])
         ]);
 
-        $this->context->addViolation(
+        $builder = $this->prophesize('Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
+
+        $this->context->buildViolation(
             $this->constraint->message,
             [
-                'type' => 'main',
-                'maxNumber' => 1
+                '%type%' => 'main',
+                '%maxNumber%' => 1
             ]
-        )->shouldBeCalled();
+        )->willReturn($builder->reveal());
 
         $this->validator->validate($collection, $this->constraint);
     }

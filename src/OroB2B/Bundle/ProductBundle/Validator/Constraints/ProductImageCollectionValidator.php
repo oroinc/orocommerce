@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\Collection;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 
@@ -19,6 +20,11 @@ class ProductImageCollectionValidator extends ConstraintValidator
      * @var ImageTypeProvider
      */
     protected $imageTypeProvider;
+
+    /**
+     * @var ExecutionContextInterface
+     */
+    protected $context;
 
     /**
      * @param ImageTypeProvider $imageTypeProvider
@@ -47,13 +53,12 @@ class ProductImageCollectionValidator extends ConstraintValidator
                 isset($imagesByTypeCounter[$imageTypeName]) &&
                 $imagesByTypeCounter[$imageTypeName] > $maxNumberByType[$imageTypeName]
             ) {
-                $this->context->addViolation(
-                    $constraint->message,
-                    [
+                $this->context
+                    ->buildViolation($constraint->message, [
                         '%type%' => $imageTypeName,
                         '%maxNumber%' => $maxNumberByType[$imageTypeName]
-                    ]
-                );
+                    ])
+                    ->addViolation();
             }
         }
     }

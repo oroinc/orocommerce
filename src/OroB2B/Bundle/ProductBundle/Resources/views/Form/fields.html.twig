@@ -165,6 +165,7 @@
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'image-collection oro-item-collection grid-container' }) %}
         {% set id = id ~ '_collection' %}
         {% set prototype_name = form.vars.prototype_name %}
+
         <div class="row-oro" data-page-component-module="orob2bproduct/js/app/components/image-type-radio-control-component">
             <div {{ block('widget_container_attributes') }}>
                 <table class="grid table-hover table table-bordered table-condensedo">
