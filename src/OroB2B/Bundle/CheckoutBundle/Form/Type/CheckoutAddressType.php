@@ -23,7 +23,7 @@ class CheckoutAddressType extends AbstractOrderAddressType
     ) {
         if ($isEditEnabled) {
             $addresses = $this->orderAddressManager->getGroupedAddresses($entity, $type);
-
+            $defaultKey = $this->getDefaultAddressKey($entity, $type, $addresses);
             $accountAddressOptions = [
                 'label' => false,
                 'required' => false,
@@ -31,8 +31,9 @@ class CheckoutAddressType extends AbstractOrderAddressType
                 'choices' => $this->getChoices($addresses),
                 'attr' => [
                     'data-addresses' => json_encode($this->getPlainData($addresses)),
-                    'data-default' => $this->getDefaultAddressKey($entity, $type, $addresses),
+                    'data-default' => $defaultKey,
                 ],
+                'data' => $defaultKey
             ];
 
             if ($isManualEditGranted) {
