@@ -69,6 +69,6 @@ class CacheWarmerTest extends \PHPUnit_Framework_TestCase
 
     public function testIsOptional()
     {
-        $this->assertFalse($this->warmer->isOptional());
+        $this->assertTrue($this->warmer->isOptional());
     }
 }

@@ -10,9 +10,6 @@ use OroB2B\Bundle\MenuBundle\Entity\MenuItem;
 use OroB2B\Bundle\MenuBundle\Entity\Repository\MenuItemRepository;
 use OroB2B\Bundle\MenuBundle\Menu\DatabaseMenuProvider;
 
-/**
- * {@inheritDoc}
- */
 class CacheWarmer implements CacheWarmerInterface
 {
     /**
@@ -25,7 +22,9 @@ class CacheWarmer implements CacheWarmerInterface
      */
     protected $entityClass;
 
-    /** @var DatabaseMenuProvider */
+    /**
+     * @var DatabaseMenuProvider
+     */
     protected $menuProvider;
 
     /**
@@ -47,7 +46,7 @@ class CacheWarmer implements CacheWarmerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function warmUp($cacheDir)
     {
@@ -58,7 +57,7 @@ class CacheWarmer implements CacheWarmerInterface
     }
 
     /**
-     * {inheritdoc}
+     * {@inheritDoc}
      */
     public function isOptional()
     {
