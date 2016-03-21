@@ -44,16 +44,16 @@ class OrderTotalEventListenerTest extends \PHPUnit_Framework_TestCase
         $total = $this->getSubtotal('type', 'label', 100, 'USD', true);
 
         $this->totalProcessorProvider->expects($this->once())
-            ->method('getTotal')
+            ->method('getTotals')
             ->with($order)
-            ->willReturn($total);
+            ->willReturn($total->toArray());
 
         $event = new OrderEvent($form, $order);
         $this->listener->onOrderEvent($event);
 
         $actualData = $event->getData()->getArrayCopy();
 
-        $this->assertArrayHasKey(OrderTotalEventListener::TOTAL_KEY, $actualData);
-        $this->assertEquals($total->toArray(), $actualData[OrderTotalEventListener::TOTAL_KEY]);
+        $this->assertArrayHasKey(OrderTotalEventListener::TOTALS_KEY, $actualData);
+        $this->assertEquals($total->toArray(), $actualData[OrderTotalEventListener::TOTALS_KEY]);
     }
 }

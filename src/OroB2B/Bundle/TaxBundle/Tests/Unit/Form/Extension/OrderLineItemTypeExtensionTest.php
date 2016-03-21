@@ -12,6 +12,7 @@ use OroB2B\Bundle\TaxBundle\Form\Extension\OrderLineItemTypeExtension;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
 use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use OroB2B\Bundle\TaxBundle\Provider\TaxSubtotalProvider;
 
 class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,6 +27,11 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
      * @var TaxManager|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $taxManager;
+
+    /**
+     * @var TaxSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $taxSubtotalProvider;
 
     /**
      * @var OrderLineItemTypeExtension
@@ -44,13 +50,14 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->twig = $this->getMockBuilder('\Twig_Environment')
+        $this->taxSubtotalProvider = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Provider\TaxSubtotalProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->extension = new OrderLineItemTypeExtension(
             $this->taxationSettingsProvider,
-            $this->taxManager
+            $this->taxManager,
+            $this->taxSubtotalProvider
         );
     }
 
@@ -72,17 +79,9 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
 
         /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
         $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
-        $builder->expects($this->once())
-            ->method('add')
-            ->with(
-                'taxes',
-                'hidden',
-                [
-                    'required' => false,
-                    'mapped' => false,
-                ]
-            )
-            ->willReturn($builder);
+        $builder->expects($this->never())->method($this->anything());
+
+        $this->taxSubtotalProvider->expects($this->once())->method('setEditMode')->with(true);
 
         $this->extension->buildForm($builder, []);
     }
@@ -133,9 +132,8 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
         $view = new FormView();
         $this->extension->finishView($view, $form, []);
 
-        $this->assertArrayHasKey('taxes', $view->children);
-        $this->assertArrayHasKey('result', $view->children['taxes']->vars);
-        $this->assertEquals($result, $view->children['taxes']->vars['result']);
+        $this->assertArrayHasKey('result', $view->vars);
+        $this->assertEquals($result, $view->vars['result']);
     }
 
     public function testConfigureOptions()
@@ -146,6 +144,12 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
         $options = $resolver->resolve();
 
         $this->assertArrayHasKey('sections', $options);
+        $this->assertArrayHasKey('unitPriceIncludingTax', $options['sections']);
+        $this->assertArrayHasKey('unitPriceExcludingTax', $options['sections']);
+        $this->assertArrayHasKey('unitPriceTaxAmount', $options['sections']);
+        $this->assertArrayHasKey('rowTotalIncludingTax', $options['sections']);
+        $this->assertArrayHasKey('rowTotalExcludingTax', $options['sections']);
+        $this->assertArrayHasKey('rowTotalTaxAmount', $options['sections']);
         $this->assertArrayHasKey('taxes', $options['sections']);
     }
 

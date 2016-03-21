@@ -184,10 +184,14 @@ class Subtotal
 
     /**
      * @param array $data
+     *
+     * @return Subtotal
      */
     public function setData(array $data)
     {
         $this->data = $data;
+
+        return $this;
     }
 
     /**

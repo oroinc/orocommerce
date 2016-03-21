@@ -187,12 +187,13 @@ class OrderLineItemGridListener
         );
 
         $configuration->offsetSetByPath(
-            sprintf('[columns][%s]', 'result'),
+            sprintf('[columns][%s]', 'taxes'),
             [
-                'label' => 'orob2b.tax.result.label',
+                'label' => 'orob2b.tax.order_line_item.taxes.label',
                 'type' => 'twig',
                 'frontend_type' => 'html',
-                'template' => 'OroB2BTaxBundle::Order/Datagrid/column.html.twig',
+                'data_name' => 'result',
+                'template' => 'OroB2BTaxBundle::Order/Datagrid/taxes.html.twig',
                 'renderable' => false
             ]
         );
