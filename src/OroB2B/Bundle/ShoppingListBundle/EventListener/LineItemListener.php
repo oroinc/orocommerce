@@ -38,9 +38,20 @@ class LineItemListener
     public function onFlush(OnFlushEventArgs $event)
     {
         $uow = $event->getEntityManager()->getUnitOfWork();
-        foreach ($uow->getScheduledEntityDeletions() as $entity) {
+        $scheduledEntityDeletions = $uow->getScheduledEntityDeletions();
+        foreach ($scheduledEntityDeletions as $entity) {
             if ($entity instanceof LineItem && $entity->getShoppingList()) {
-                $this->addShoppingList($entity->getShoppingList());
+                $shoppingList = $entity->getShoppingList();
+                $shoppingListScheduledToDelete =
+                    array_filter(
+                        $scheduledEntityDeletions,
+                        function ($entity) use ($shoppingList) {
+                            return $entity instanceof ShoppingList && $shoppingList->getId() === $entity->getId();
+                        }
+                    );
+                if (count($shoppingListScheduledToDelete) === 0) {
+                    $this->addShoppingList($shoppingList);
+                }
             }
         }
     }
