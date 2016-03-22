@@ -59,14 +59,13 @@ class SummaryDataProvider extends AbstractServerRenderDataProvider
         $orderLineItems = $this->checkoutLineItemsManager->getData($checkout);
         $lineItemTotals = $this->getOrderLineItemsTotals($orderLineItems);
 
-        $arr = [
+        return [
             'lineItemTotals' => $lineItemTotals,
             'lineItems' => $orderLineItems,
             'lineItemsCount' => $orderLineItems->count(),
             'subtotals' => $this->totalsProvider->getSubtotals($checkout),
             'totalPrice' => $this->totalsProvider->getTotal($checkout)
         ];
-        return $arr;
     }
 
     /**
