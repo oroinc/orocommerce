@@ -10,6 +10,10 @@ placeholders:
     order_edit_section_rowTotalTaxAmount_after: { items: { order_edit_section_rowTotalTaxAmount_after_item: ~ } }
     order_edit_section_taxes_after: { items: { order_edit_section_taxes_after_item: ~ } }
 
+    scripts_before:
+        items:
+            order_taxes_totals_template: ~
+
 items:
     orob2b_pricing_tax_totals:
         template: OroB2BTaxBundle::placeholder.html.twig
@@ -34,4 +38,7 @@ items:
         applicable: @orob2b_tax.provider.taxation_settings_provider->isEnabled()
     order_edit_section_taxes_after_item:
         template: OroB2BTaxBundle:Order:Form/taxes.html.twig
+        applicable: @orob2b_tax.provider.taxation_settings_provider->isEnabled()
+    order_taxes_totals_template:
+        template: OroB2BTaxBundle::script.html.twig
         applicable: @orob2b_tax.provider.taxation_settings_provider->isEnabled()

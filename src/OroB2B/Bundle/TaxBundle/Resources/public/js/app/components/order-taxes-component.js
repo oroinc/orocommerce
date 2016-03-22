@@ -37,7 +37,7 @@ define(function(require) {
 
             mediator.on('entry-point:order:trigger:totals', this.appendTaxResult, this);
 
-            this.totalsTemplate = this.options._sourceElement.find(this.options.selectors.totalsTemplate).html();
+            this.totalsTemplate = $(this.options.selectors.totalsTemplate).html();
         },
 
         appendTaxResult: function(totals) {

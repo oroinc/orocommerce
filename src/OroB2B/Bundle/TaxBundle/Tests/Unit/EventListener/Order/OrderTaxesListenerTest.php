@@ -147,11 +147,15 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function orderEventAddMatchedPricesDataProvider()
     {
         $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 1]);
+        $invalidProduct = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product');
         $productUnit = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'set']);
+        $invalidProductUnit = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit');
 
         return [
             'empty prices' => [],
@@ -162,6 +166,101 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
                         ->setProductUnit($productUnit)
                         ->setCurrency('USD')
                         ->setQuantity('3'),
+                ],
+                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
+                [null],
+            ],
+            'without product' => [
+                [
+                    (new OrderLineItem())
+                        ->setProductUnit($productUnit)
+                        ->setCurrency('USD')
+                        ->setQuantity('3'),
+                ],
+                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
+                [null],
+            ],
+            'invalid product' => [
+                [
+                    (new OrderLineItem())
+                        ->setProduct($invalidProduct)
+                        ->setProductUnit($productUnit)
+                        ->setCurrency('USD')
+                        ->setQuantity('3'),
+                ],
+                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
+                [null],
+            ],
+            'without productUnit' => [
+                [
+                    (new OrderLineItem())
+                        ->setProduct($product)
+                        ->setCurrency('USD')
+                        ->setQuantity('3'),
+                ],
+                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
+                [null],
+            ],
+            'invalid productUnit' => [
+                [
+                    (new OrderLineItem())
+                        ->setProduct($product)
+                        ->setProductUnit($invalidProductUnit)
+                        ->setCurrency('USD')
+                        ->setQuantity('3'),
+                ],
+                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
+                [null],
+            ],
+            'without currency' => [
+                [
+                    (new OrderLineItem())
+                        ->setProduct($product)
+                        ->setProduct($product)
+                        ->setQuantity('3'),
+                ],
+                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
+                [null],
+            ],
+            'invalid currency' => [
+                [
+                    (new OrderLineItem())
+                        ->setProduct($product)
+                        ->setProduct($product)
+                        ->setQuantity('3')
+                        ->setCurrency(''),
+                ],
+                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
+                [null],
+            ],
+            'without quantity' => [
+                [
+                    (new OrderLineItem())
+                        ->setProduct($product)
+                        ->setProduct($product)
+                        ->setCurrency('USD'),
+                ],
+                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
+                [null],
+            ],
+            'invalid quantity #1' => [
+                [
+                    (new OrderLineItem())
+                        ->setProduct($product)
+                        ->setProduct($product)
+                        ->setQuantity('string')
+                        ->setCurrency('USD'),
+                ],
+                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
+                [null],
+            ],
+            'invalid quantity #2' => [
+                [
+                    (new OrderLineItem())
+                        ->setProduct($product)
+                        ->setProduct($product)
+                        ->setQuantity(-2)
+                        ->setCurrency('USD'),
                 ],
                 ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
                 [null],

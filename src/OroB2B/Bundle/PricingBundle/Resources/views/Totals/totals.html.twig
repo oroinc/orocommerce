@@ -2,19 +2,7 @@
 
 {% set pageComponent = pageComponent|default('orob2bpricing/js/app/components/totals-component') %}
 <div data-page-component-module="{{ pageComponent }}" data-page-component-options="{{ options|json_encode }}">
-
-    <div class="totals-container"></div>
-    <script type="text/html" class="totals-template">
-        {% block subtotals_template %}
-            <div class="control-group">
-                <label class="control-label"><%= item.label %></label>
-                <div class="controls">
-                    <label class="control-label"><%= item.formattedAmount %></label>
-                </div>
-            </div>
-        {% endblock %}
-    </script>
-
+    <div class="totals-container" data-totals-container></div>
     {% placeholder orob2b_pricing_totals %}
 </div>
 

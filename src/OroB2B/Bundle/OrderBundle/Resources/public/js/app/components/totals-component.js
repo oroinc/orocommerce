@@ -4,6 +4,7 @@ define(function(require) {
     var TotalsComponent;
     var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
+    var $ = require('jquery');
     var BaseComponent = require('orob2bpricing/js/app/components/totals-component');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
 
@@ -24,7 +25,7 @@ define(function(require) {
             mediator.on('entry-point:order:load:after', this.hideLoadingMask, this);
 
             this.$subtotals = this.options._sourceElement.find(this.options.selectors.subtotals);
-            this.template = _.template(this.options._sourceElement.find(this.options.selectors.template).text());
+            this.template = _.template($(this.options.selectors.template).text());
             this.loadingMaskView = new LoadingMaskView({container: this.options._sourceElement});
 
             this.setTotals(options);

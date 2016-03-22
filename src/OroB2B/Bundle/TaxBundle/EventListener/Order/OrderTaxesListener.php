@@ -79,14 +79,27 @@ class OrderTaxesListener
             return;
         }
 
-        $order->getLineItems()->map(
+        $lineItems = $order->getLineItems()->toArray();
+        array_walk(
+            $lineItems,
             function (OrderLineItem $orderLineItem) use ($matchedPrices) {
-                $productPriceCriteria = new ProductPriceCriteria(
-                    $orderLineItem->getProduct(),
-                    $orderLineItem->getProductUnit(),
-                    $orderLineItem->getQuantity(),
-                    $orderLineItem->getCurrency() ?: $orderLineItem->getOrder()->getCurrency()
-                );
+                $product = $orderLineItem->getProduct();
+                $productUnit = $orderLineItem->getProductUnit();
+
+                if (!$product || !$productUnit) {
+                    return;
+                }
+
+                try {
+                    $productPriceCriteria = new ProductPriceCriteria(
+                        $product,
+                        $productUnit,
+                        $orderLineItem->getQuantity(),
+                        $orderLineItem->getCurrency() ?: $orderLineItem->getOrder()->getCurrency()
+                    );
+                } catch (\InvalidArgumentException $e) {
+                    return;
+                }
 
                 $identifier = $productPriceCriteria->getIdentifier();
                 if (array_key_exists($identifier, $matchedPrices)) {

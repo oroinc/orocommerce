@@ -23,8 +23,8 @@ define(function(require) {
             url: '',
             selectors: {
                 form: '',
-                template: '.totals-template',
-                subtotals: '.totals-container'
+                template: '#totals-template',
+                subtotals: '[data-totals-container]'
             },
             method: 'POST',
             events: []
@@ -89,7 +89,7 @@ define(function(require) {
             this.$form = $(this.options.selectors.form);
             this.$method = this.options.method;
             this.$subtotals = this.$el.find(this.options.selectors.subtotals);
-            this.template = _.template(this.$el.find(this.options.selectors.template).text());
+            this.template = _.template($(this.options.selectors.template).text());
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
             this.eventName = 'total-target:changing';
 

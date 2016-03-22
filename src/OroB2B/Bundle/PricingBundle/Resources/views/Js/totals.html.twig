@@ -1,0 +1,10 @@
+<script type="text/html" id="totals-template">
+    {% block subtotals_template %}
+        <div class="control-group">
+            <label class="control-label"><%= item.label %></label>
+            <div class="controls">
+                <label class="control-label"><%= item.formattedAmount %></label>
+            </div>
+        </div>
+    {% endblock %}
+</script>
