@@ -259,7 +259,7 @@
              }|json_encode }}"
              data-layout="separate">
             {{ form_widget(form.discounts) }}
-            {{ form_errors(form.discounts) }}
+            <div class="discounts-sum-error">{{ form_errors(form.discounts) }}</div>
             <div class="discounts-sum-error">{{ form_row(form.discountsSum) }}</div>
         </div>
     {% endset %}
