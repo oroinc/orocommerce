@@ -144,6 +144,7 @@ class QuoteType extends AbstractType
         $resolver->setDefaults([
             'data_class'    => $this->dataClass,
             'intention'     => 'sale_quote',
+            'cascade_validation' => true,
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
         ]);
     }

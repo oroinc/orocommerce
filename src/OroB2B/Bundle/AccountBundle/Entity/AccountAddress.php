@@ -107,6 +107,7 @@ class AccountAddress extends ExtendAccountAddress
 
         return $this;
     }
+
     /**
      * Get phone number
      *

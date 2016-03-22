@@ -151,6 +151,7 @@ class OrderAddress extends ExtendOrderAddress
 
         return $this;
     }
+
     /**
      * Get phone number
      *
