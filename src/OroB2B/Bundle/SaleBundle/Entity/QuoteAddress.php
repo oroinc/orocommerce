@@ -125,6 +125,7 @@ class QuoteAddress extends ExtendQuoteAddress
 
         return $this;
     }
+
     /**
      * Get phone number
      *

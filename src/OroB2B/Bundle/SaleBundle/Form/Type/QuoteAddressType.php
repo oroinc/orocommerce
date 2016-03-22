@@ -90,6 +90,7 @@ class QuoteAddressType extends AbstractType
         }
 
         $builder->add('accountAddress', 'genemu_jqueryselect2_choice', $accountAddressOptions);
+        $builder->add('phone', 'text');
 
         $builder->addEventListener(
             FormEvents::SUBMIT,
