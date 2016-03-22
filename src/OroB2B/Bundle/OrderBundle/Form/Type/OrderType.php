@@ -165,19 +165,25 @@ class OrderType extends AbstractType
             throw new \InvalidArgumentException('Invalid form');
         }
 
-        foreach ([AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING] as $type) {
+        $addressTypes = [
+            AddressType::TYPE_BILLING => null,
+            AddressType::TYPE_SHIPPING => OrderAddressType::APPLICATION_BACKEND,
+        ];
+
+        foreach ($addressTypes as $type => $application) {
             if ($this->orderAddressSecurityProvider->isAddressGranted($order, $type)) {
-                $form
-                    ->add(
-                        sprintf('%sAddress', $type),
-                        OrderAddressType::NAME,
-                        [
-                            'label' => sprintf('orob2b.order.%s_address.label', $type),
-                            'order' => $order,
-                            'required' => false,
-                            'addressType' => $type,
-                        ]
-                    );
+                $options = [
+                    'label' => sprintf('orob2b.order.%s_address.label', $type),
+                    'order' => $order,
+                    'required' => false,
+                    'addressType' => $type,
+                ];
+
+                if ($application) {
+                    $options['application'] = $application;
+                }
+
+                $form->add(sprintf('%sAddress', $type), OrderAddressType::NAME, $options);
             }
         }
     }

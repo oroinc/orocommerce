@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\TaxBundle\EventListener\Order;
 
+use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
 use OroB2B\Bundle\OrderBundle\EventListener\Order\MatchingPriceEventListener;
@@ -39,10 +40,9 @@ class OrderTaxesListener
         }
 
         $order = $event->getOrder();
+        $data = $event->getData();
 
-        if (!$order->getId()) {
-            $this->addPriceToNewOrderLineItems($event);
-        }
+        $this->addMatchedPriceToOrderLineItems($order, $data);
 
         $result = $this->taxManager->getTax($order);
         $taxItems = array_map(
@@ -61,21 +61,23 @@ class OrderTaxesListener
             $result->getItems()
         );
 
-        $event->getData()->offsetSet('taxItems', $taxItems);
+        $data->offsetSet('taxItems', $taxItems);
     }
 
     /**
-     * @param OrderEvent $event
+     * @param Order $order
+     * @param \ArrayAccess $data
      */
-    protected function addPriceToNewOrderLineItems(OrderEvent $event)
+    protected function addMatchedPriceToOrderLineItems(Order $order, \ArrayAccess $data)
     {
-        if (!$event->getData()->offsetExists(MatchingPriceEventListener::MATCHED_PRICES_KEY)) {
+        if (!$data->offsetExists(MatchingPriceEventListener::MATCHED_PRICES_KEY)) {
             return;
         }
 
-        $order = $event->getOrder();
-
-        $matchedPrices = $event->getData()->offsetGet(MatchingPriceEventListener::MATCHED_PRICES_KEY);
+        $matchedPrices = $data->offsetGet(MatchingPriceEventListener::MATCHED_PRICES_KEY);
+        if (!$matchedPrices) {
+            return;
+        }
 
         $order->getLineItems()->map(
             function (OrderLineItem $orderLineItem) use ($matchedPrices) {
