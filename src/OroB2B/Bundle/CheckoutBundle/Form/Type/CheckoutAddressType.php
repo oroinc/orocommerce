@@ -4,8 +4,11 @@ namespace OroB2B\Bundle\CheckoutBundle\Form\Type;
 
 use Symfony\Component\Form\FormBuilderInterface;
 
-use OroB2B\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType;
+use Oro\Bundle\AddressBundle\Entity\AddressType;
+
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
+use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
+use OroB2B\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType;
 
 class CheckoutAddressType extends AbstractOrderAddressType
 {
@@ -24,6 +27,11 @@ class CheckoutAddressType extends AbstractOrderAddressType
         if ($isEditEnabled) {
             $addresses = $this->orderAddressManager->getGroupedAddresses($entity, $type);
             $defaultKey = $this->getDefaultAddressKey($entity, $type, $addresses);
+            $selectedKey = $this->getSelectedAddress($entity, $type);
+            if (!$selectedKey) {
+                $selectedKey = $defaultKey;
+            }
+
             $accountAddressOptions = [
                 'label' => false,
                 'required' => false,
@@ -33,7 +41,7 @@ class CheckoutAddressType extends AbstractOrderAddressType
                     'data-addresses' => json_encode($this->getPlainData($addresses)),
                     'data-default' => $defaultKey,
                 ],
-                'data' => $defaultKey
+                'data' => $selectedKey
             ];
 
             if ($isManualEditGranted) {
@@ -63,5 +71,38 @@ class CheckoutAddressType extends AbstractOrderAddressType
     public function getParent()
     {
         return 'oro_address';
+    }
+
+    /**
+     * @param Checkout $entity
+     * @param string $type
+     * @return null|string
+     */
+    protected function getSelectedAddress(Checkout $entity, $type)
+    {
+        $selectedKey = null;
+        if ($type == AddressType::TYPE_BILLING) {
+            $checkoutAddress = $entity->getBillingAddress();
+            if ($checkoutAddress) {
+                if ($checkoutAddress->getAccountAddress()) {
+                    $selectedKey = $this->orderAddressManager->getIdentifier($checkoutAddress->getAccountAddress());
+                }
+                if ($entity->getBillingAddress()->getAccountUserAddress()) {
+                    $selectedKey = $this->orderAddressManager->getIdentifier($checkoutAddress->getAccountUserAddress());
+                }
+            }
+        } elseif ($type == AddressType::TYPE_SHIPPING) {
+            $checkoutAddress = $entity->getShippingAddress();
+            if ($checkoutAddress) {
+                if ($checkoutAddress->getAccountAddress()) {
+                    $selectedKey = $this->orderAddressManager->getIdentifier($checkoutAddress->getAccountAddress());
+                }
+                if ($checkoutAddress->getAccountUserAddress()) {
+                    $selectedKey = $this->orderAddressManager->getIdentifier($checkoutAddress->getAccountUserAddress());
+                }
+            }
+        }
+
+        return $selectedKey;
     }
 }
