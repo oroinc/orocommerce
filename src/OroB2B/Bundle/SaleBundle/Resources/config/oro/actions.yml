@@ -24,7 +24,7 @@ operations:
                 message: orob2b.sale.quote.message.quote.expire.success
                 type: 'info'
                 message_parameters:
-                    id: $.result.data.data.id
+                    id: $.result.data.id
             - @redirect:
                 route: 'orob2b_sale_quote_index'
 
@@ -170,10 +170,10 @@ action_groups:
             data:
                 type: OroB2B\Bundle\SaleBundle\Entity\Quote
         conditions:
-            @equal: [$data.expired, false]
+            @equal: [$.data.expired, false]
         actions:
-            - @assign_value: [$data.expired, true]
-            - @flush_entity: $data
+            - @assign_value: [$.data.expired, true]
+            - @flush_entity: $.data
 
     orob2b_sale_notify_customer_by_email:
         parameters:
@@ -186,7 +186,7 @@ action_groups:
             - @call_service_method:
                 service: orob2b_sale.helper.notification
                 method: send
-                method_parameters: [$email, $data]
+                method_parameters: [$.email, $.data]
 
     orob2b_sale_frontend_quote_accept_and_submit_to_order:
         parameters:
@@ -194,28 +194,30 @@ action_groups:
                 type: OroB2B\Bundle\SaleBundle\Entity\Quote
         acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\OrderBundle\Entity\Order]
         conditions:
-#            @equal: [false, $data.hasOfferVariants]
+#            @equal: [false, $.data.hasOfferVariants]
         actions:
             - @get_active_user: $.user
             - @call_service_method:
                 service: orob2b_sale.service.quote_to_order_converter
                 method: convert
-                method_parameters: [$data, $.user, null, true]
+                method_parameters: [$.data, $.user, null, true]
                 attribute: $.order
 
     orob2b_sale_frontend_quote_accept_and_submit_to_order_from_widget:
         parameters:
             data:
                 type: OroB2B\Bundle\SaleBundle\Entity\Quote
+            quote_to_order:
+                type: array
         acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\OrderBundle\Entity\Order]
         conditions:
-#            @equal: [true, $data.hasOfferVariants]
+#            @equal: [true, $.data.hasOfferVariants]
         actions:
             - @get_active_user: $.user
             - @call_service_method:
                 service: orob2b_sale.service.quote_to_order_converter
                 method: convert
-                method_parameters: [$data, $.user, $quote_to_order, true]
+                method_parameters: [$.data, $.user, $.quote_to_order, true]
                 attribute: $.order
 
     orob2b_sale_send_no_quote_alert:
@@ -224,32 +226,32 @@ action_groups:
                 type: OroB2B\Bundle\RFPBundle\Entity\Request
         actions:
             - @foreach:
-                array: $data.accountUser.salesRepresentatives
+                array: $.data.accountUser.salesRepresentatives
                 value: $.saleRep
                 actions:
                     - @send_email_template:
                         conditions:
-                            @not_empty: $data.accountUser.owner
+                            @not_empty: $.data.accountUser.owner
                         parameters:
-                            from: $data.accountUser.owner.email
+                            from: $.data.accountUser.owner.email
                             to: $.saleRep.email
                             template: 'request_no_quote_alert'
-                            entity: $data
+                            entity: $.data
             - @call_method:
-                object: $data.accountUser.salesRepresentatives
+                object: $.data.accountUser.salesRepresentatives
                 method: toArray
                 attribute: $.accountUserSalesReps
             - @foreach:
-                array: $data.account.salesRepresentatives
+                array: $.data.account.salesRepresentatives
                 value: $.saleRep
                 actions:
                     - @send_email_template:
                         conditions:
                             @and:
-                                - @not_empty: $data.accountUser.owner
+                                - @not_empty: $.data.accountUser.owner
                                 - @not_in: [$.saleRep, $.accountUserSalesReps]
                         parameters:
-                            from: $data.accountUser.owner.email
+                            from: $.data.accountUser.owner.email
                             to: $.saleRep.email
                             template: 'request_no_quote_alert'
-                            entity: $data
+                            entity: $.data

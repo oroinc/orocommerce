@@ -64,9 +64,9 @@ action_groups:
                 class: OroB2B\Bundle\PricingBundle\Entity\ProductPrice
                 attribute: $.newPrice
                 data:
-                    product: $price.product
-                    priceList: $data
-                    quantity: $price.quantity
-                    unit: $price.unit
-                    price: $price.price
+                    product: $.price.product
+                    priceList: $.data
+                    quantity: $.price.quantity
+                    unit: $.price.unit
+                    price: $.price.price
                 flush: true

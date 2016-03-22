@@ -16,11 +16,7 @@ operations:
                 action_group: orob2b_product_duplicate
                 parameters_mapping:
                     data: $.data
-            - @redirect:
-                parameters:
-                    route: orob2b_product_view
-                    route_parameters:
-                        id: $.result.productCopy.id
+                    do_redirect: true
             - @call_service_method:
                 attribute: $.hasSuccessMessage
                 service: session.flash_bag
@@ -38,10 +34,20 @@ action_groups:
         parameters:
             data:
                 type: OroB2B\Bundle\ProductBundle\Entity\Product
+            do_redirect:
+                type: boolean
+                default: false
         acl_resource: orob2b_product_create
         actions:
             - @call_service_method:
                 service: orob2b_product.service.duplicator
                 method: duplicate
-                method_parameters: [$data]
+                method_parameters: [$.data]
                 attribute: $.productCopy
+            - @redirect:
+                conditions:
+                    @equal: [$.do_redirect, true]
+                parameters:
+                    route: orob2b_product_view
+                    route_parameters:
+                        id: $.productCopy.id

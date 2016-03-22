@@ -215,18 +215,14 @@ operations:
                     name: $.openStatusName
             - @assign_value: [$.data, $.entityCopy]
         actions:
-            - @run_action_group:
-                attribute: $.result
-                action_group: orob2b_rfp_resubmit
-                parameters_mapping:
-                    data: $.data
+            - @flush_entity: $.data
             - @flash_message:
                 message: orob2b.rfp.action.request.resubmited.message
                 type: 'success'
             - @redirect:
                 route: 'orob2b_rfp_request_view'
                 route_parameters:
-                    id: $.result.data.data.id
+                    id: $.result.data.id
 
     orob2b_rfp_delete:
         label: orob2b.rfp.btn.delete
@@ -267,19 +263,19 @@ action_groups:
                 type: string
                 required: false
         actions:
-            - @assign_value: [$data.status, $request_status]
-            - @flush_entity: $data
+            - @assign_value: [$.data.status, $.request_status]
+            - @flush_entity: $.data
             - @format_string:
                 attribute: $.message
                 string: 'New status: %%status%% <p></p> %%note%%'
                 arguments:
-                    status: $request_status.label
-                    note: $request_note
+                    status: $.request_status.label
+                    note: $.request_note
             - @create_entity:
                 class: Oro\Bundle\NoteBundle\Entity\Note
                 attribute: $.note
                 data:
-                    target: $data
+                    target: $.data
                     message: $.message
                 flush: true
 
@@ -295,17 +291,17 @@ action_groups:
                 type: string
         conditions:
             @and:
-                - @not_empty: $data.status
-                - @not_equal: [$data.status.name, $cancelled_status_name]
-                - @not_equal: [$data.status.name, $deleted_status_name]
+                - @not_empty: $.data.status
+                - @not_equal: [$.data.status.name, $.cancelled_status_name]
+                - @not_equal: [$.data.status.name, $.deleted_status_name]
         actions:
             - @find_entity:
                 class: OroB2B\Bundle\RFPBundle\Entity\RequestStatus
-                attribute: $data.status
+                attribute: $.data.status
                 where:
-                    name: $cancelled_status_name
-            - @assign_value: [$data.cancellationReason, $cancellation_reason]
-            - @flush_entity: $data
+                    name: $.cancelled_status_name
+            - @assign_value: [$.data.cancellationReason, $.cancellation_reason]
+            - @flush_entity: $.data
 
     orob2b_rfp_create_quote:
         parameters:
@@ -313,24 +309,16 @@ action_groups:
                 type: OroB2B\Bundle\RFPBundle\Entity\Request
         acl_resource: orob2b_sale_quote_create
         conditions:
-            @equal: [$data.status.draft, false]
+            @equal: [$.data.status.draft, false]
         actions:
             - @call_service_method:
                 service: orob2b_rfp.service.request_to_quote_data_storage
                 method: saveToStorage
-                method_parameters: [$data]
+                method_parameters: [$.data]
             - @redirect:
                 parameters:
                     route: orob2b_sale_quote_create
                     route_parameters: {'storage': true}
-
-    orob2b_rfp_resubmit:
-        parameters:
-            data:
-                type: OroB2B\Bundle\RFPBundle\Entity\Request
-        acl_resource: orob2b_rfp_request_update
-        actions:
-            - @flush_entity: $data
 
     orob2b_rfp_delete:
         parameters:
@@ -340,14 +328,14 @@ action_groups:
                 type: string
         conditions:
             @and:
-                - @not_empty: $data.status
-                - @not_equal: [$data.status.name, $deleted_status_name]
+                - @not_empty: $.data.status
+                - @not_equal: [$.data.status.name, $.deleted_status_name]
         actions:
             - @find_entity:
                 class: OroB2B\Bundle\RFPBundle\Entity\RequestStatus
-                attribute: $data.status
+                attribute: $.data.status
                 where:
-                    name: $deleted_status_name
+                    name: $.deleted_status_name
             - @create_datetime:
-                attribute: $data.deletedAt
-            - @flush_entity: $data
+                attribute: $.data.deletedAt
+            - @flush_entity: $.data
