@@ -54,7 +54,7 @@ class PaypalPasswordSubscriberTest extends \PHPUnit_Framework_TestCase
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
 
         $form
-            ->expects($placeholderPresent ? $this->once() : $this->never())
+            ->expects($this->once())
             ->method('getParent')
             ->willReturn($parentForm);
 
