@@ -5,6 +5,7 @@
              selectors: {
                  address: '#' ~ form.billing_address.accountAddress.vars.id,
                  region: '#' ~ form.billing_address.region.vars.id,
+                 shipToBillingCheckbox: '#' ~ form.ship_to_billing_address.vars.id,
                  fieldsContainer: '#checkout-address-fields-container'
              }
          }|json_encode }}">
