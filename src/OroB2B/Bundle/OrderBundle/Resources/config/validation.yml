@@ -56,15 +56,6 @@ OroB2B\Bundle\OrderBundle\Entity\OrderLineItem:
 
 OroB2B\Bundle\OrderBundle\Entity\OrderAddress:
     properties:
-        street:
-            - NotBlank: ~
-        city:
-            - NotBlank: ~
-        postalCode:
-            - NotBlank: ~
         phone:
             - Length:
                 max: 255
-    constraints:
-        - Callback:
-            methods: [isRegionValid]
