@@ -51,5 +51,9 @@
                 {{ form_widget(form.shipping_address.region_text) }}
             </fieldset>
         </div>
+
+        <fieldset class="checkout__form__row">
+            {{ form_row(form.ship_to_billing_address) }}
+        </fieldset>
     </div>
 {%- endblock %}
