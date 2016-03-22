@@ -9,10 +9,14 @@ operations:
         button_options:
             icon: icon-briefcase
         actions:
-            - @run_action_group:
-                action_group: orob2b_shoppinglist_createorder
-                parameters_mapping:
-                    data: $.data
+            - @call_service_method:
+                service: orob2b_shopping_list.service.product_data_storage
+                method: saveToStorage
+                method_parameters: [$.data]
+            - @redirect:
+                parameters:
+                    route: orob2b_order_create
+                    route_parameters: {'storage': true}
 
     orob2b_shoppinglist_frontend_createorder:
         label: orob2b.frontend.shoppinglist.btn.create_order
@@ -24,10 +28,14 @@ operations:
         button_options:
             icon: icon-briefcase
         actions:
-            - @run_action_group:
-                action_group: orob2b_shoppinglist_frontend_createorder
-                parameters_mapping:
-                    data: $.data
+            - @call_service_method:
+                service: orob2b_shopping_list.service.product_data_storage
+                method: saveToStorage
+                method_parameters: [$.data]
+            - @redirect:
+                parameters:
+                    route: orob2b_order_frontend_create
+                    route_parameters: {'storage': true}
 
     orob2b_shoppinglist_frontend_products_add_to_shoppinglist_base:
         label: orob2b.shoppinglist.product.add_to_shopping_list.label
@@ -190,42 +198,16 @@ operations:
         button_options:
             icon: icon-briefcase
         actions:
-            - @run_action_group:
-                action_group: orob2b_shoppinglist_frontend_request_quote
-                parameters_mapping:
-                    data: $.data
+            - @call_service_method:
+                service: orob2b_shopping_list.service.product_data_storage
+                method: saveToStorage
+                method_parameters: [$.data]
+            - @redirect:
+                parameters:
+                    route: orob2b_rfp_frontend_request_create
+                    route_parameters: {'storage': true}
 
 action_groups:
-    orob2b_shoppinglist_createorder:
-        parameters:
-            data:
-                type: OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList
-        acl_resource: orob2b_order_create
-        actions:
-            - @call_service_method:
-                service: orob2b_shopping_list.service.product_data_storage
-                method: saveToStorage
-                method_parameters: [$.data]
-            - @redirect:
-                parameters:
-                    route: orob2b_order_create
-                    route_parameters: {'storage': true}
-
-    orob2b_shoppinglist_frontend_createorder:
-        parameters:
-            data:
-                type: OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList
-        acl_resource: orob2b_order_frontend_create
-        actions:
-            - @call_service_method:
-                service: orob2b_shopping_list.service.product_data_storage
-                method: saveToStorage
-                method_parameters: [$.data]
-            - @redirect:
-                parameters:
-                    route: orob2b_order_frontend_create
-                    route_parameters: {'storage': true}
-
     orob2b_shoppinglist_frontend_addlineitem:
         parameters:
             data:
@@ -258,18 +240,3 @@ action_groups:
                 service: orob2b_shopping_list.shopping_list.manager
                 method: addLineItem
                 method_parameters: [$.line_item, $.data, true, true]
-
-    orob2b_shoppinglist_frontend_request_quote:
-        parameters:
-            data:
-                type: OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList
-        acl_resource: orob2b_rfp_frontend_request_create
-        actions:
-            - @call_service_method:
-                service: orob2b_shopping_list.service.product_data_storage
-                method: saveToStorage
-                method_parameters: [$.data]
-            - @redirect:
-                parameters:
-                    route: orob2b_rfp_frontend_request_create
-                    route_parameters: {'storage': true}

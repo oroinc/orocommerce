@@ -104,10 +104,14 @@ operations:
         preconditions:
             @equal: [$status.draft, false]
         actions:
-            - @run_action_group:
-                action_group: orob2b_rfp_create_quote
-                parameters_mapping:
-                    data: $.data
+            - @call_service_method:
+                service: orob2b_rfp.service.request_to_quote_data_storage
+                method: saveToStorage
+                method_parameters: [$.data]
+            - @redirect:
+                parameters:
+                    route: orob2b_sale_quote_create
+                    route_parameters: {'storage': true}
 
     orob2b_rfp_frontend_request_a_quote:
         label: orob2b.rfp.btn.add_to_rfp
@@ -302,23 +306,6 @@ action_groups:
                     name: $.cancelled_status_name
             - @assign_value: [$.data.cancellationReason, $.cancellation_reason]
             - @flush_entity: $.data
-
-    orob2b_rfp_create_quote:
-        parameters:
-            data:
-                type: OroB2B\Bundle\RFPBundle\Entity\Request
-        acl_resource: orob2b_sale_quote_create
-        conditions:
-            @equal: [$.data.status.draft, false]
-        actions:
-            - @call_service_method:
-                service: orob2b_rfp.service.request_to_quote_data_storage
-                method: saveToStorage
-                method_parameters: [$.data]
-            - @redirect:
-                parameters:
-                    route: orob2b_sale_quote_create
-                    route_parameters: {'storage': true}
 
     orob2b_rfp_delete:
         parameters:
