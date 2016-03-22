@@ -16,14 +16,10 @@ use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class LineItemListenerTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var ShoppingList
-     */
+    /** @var ShoppingList */
     protected $shoppingList;
 
-    /**
-     * @var LineItem
-     */
+    /** @var LineItem */
     protected $lineItem;
 
     public function setUp()
@@ -101,6 +97,17 @@ class LineItemListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnFlushUnsupportedEntity()
     {
         $deletedLineItems = [new \stdClass()];
+
+        list($onFlushEventArgs, $listener) = $this->prepareLineItemListenerOnFlush($deletedLineItems);
+
+        $this->assertEmpty($listener->getShoppingLists());
+        $listener->onFlush($onFlushEventArgs);
+        $this->assertEmpty($listener->getShoppingLists());
+    }
+
+    public function testOnFlushSkippOnRemoveShoppingListEntity()
+    {
+        $deletedLineItems = [$this->lineItem, $this->shoppingList];
 
         list($onFlushEventArgs, $listener) = $this->prepareLineItemListenerOnFlush($deletedLineItems);
 
