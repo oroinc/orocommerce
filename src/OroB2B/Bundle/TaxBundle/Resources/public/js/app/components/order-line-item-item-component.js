@@ -44,7 +44,7 @@ define(function(require) {
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
             var attr = this.getAttribute();
-            this.options._sourceElement.attr(attr, $.find('[' + attr + ']').length);
+            this.options._sourceElement.attr(attr, $('[' + attr + ']').length);
 
             this.template = _.template(
                 this.options._sourceElement.find(this.getTemplateName()).html()
@@ -53,6 +53,14 @@ define(function(require) {
             this.$valueContainer = this.options._sourceElement.find(this.options.selectors.valueContainer);
 
             mediator.on('entry-point:order:load', this.setItemValue, this);
+            mediator.on('entry-point:order:load:before', this.initializeAttribute, this);
+        },
+
+        initializeAttribute: function() {
+            var attr = this.getAttribute();
+            $('[' + attr + ']').each(function(index) {
+                $(this).attr(attr, index);
+            });
         },
 
         getAttribute: function() {
@@ -101,6 +109,7 @@ define(function(require) {
             }
 
             mediator.off('entry-point:order:load', this.setItemValue, this);
+            mediator.off('entry-point:order:load:before', this.initializeAttribute, this);
 
             OrderLineItemItemComponent.__super__.dispose.call(this);
         }

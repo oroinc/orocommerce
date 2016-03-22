@@ -60,9 +60,10 @@ define(function(require) {
             this.options._sourceElement
                 .attr(
                     this.options.selectors.lineItemDataAttr,
-                    $.find(this.options.selectors.lineItemDataAttrSelector).length
+                    $(this.options.selectors.lineItemDataAttrSelector).length
                 );
 
+            mediator.on('entry-point:order:load:before', this.initializeAttribute, this);
             mediator.on('entry-point:order:load:before', this.showLoadingMask, this);
             mediator.on('entry-point:order:load', this.setOrderTaxes, this);
             mediator.on('entry-point:order:load:after', this.hideLoadingMask, this);
@@ -76,6 +77,13 @@ define(function(require) {
             this.loadingMaskView = new LoadingMaskView({container: this.options._sourceElement});
 
             this.render(this.options.result);
+        },
+
+        initializeAttribute: function() {
+            var self = this;
+            $(this.options.selectors.lineItemDataAttrSelector).each(function(index) {
+                $(this).attr(self.options.selectors.lineItemDataAttr, index);
+            });
         },
 
         showLoadingMask: function() {
@@ -120,6 +128,7 @@ define(function(require) {
             }
 
             mediator.off('entry-point:order:load:before', this.showLoadingMask, this);
+            mediator.off('entry-point:order:load:before', this.initializeAttribute, this);
             mediator.off('entry-point:order:load', this.setOrderTaxes, this);
             mediator.off('entry-point:order:load:after', this.hideLoadingMask, this);
 

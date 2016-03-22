@@ -135,7 +135,7 @@ services:
         arguments:
             - @orob2b_pricing.subtotal_processor.total_processor_provider
         tags:
-            - { name: kernel.event_listener, event: orob2b_order.order, method: onOrderEvent }
+            - { name: kernel.event_listener, event: orob2b_order.order, method: onOrderEvent, priority: -255 }
 
     orob2b_order.event_listener.order.address:
         class: %orob2b_order.event_listener.order.address.class%
