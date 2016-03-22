@@ -42,15 +42,22 @@
     {% set subtotals %}
         {{ form_row(form.subtotalValidation) }}
         {{ form_row(form.totalValidation) }}
-        {% include 'OroB2BPricingBundle:Totals:totals.html.twig' with {
+        {% include 'OroB2BPricingBundle:Totals:totalsEntityEditPage.html.twig' with {
             options: {
                 route: 'orob2b_pricing_recalculate_entity_totals',
                 selectors: {
                     template: '#totals-template',
                     form: '#' ~ form.vars.id
                 },
+                events: [
+                    'line-items-totals:update',
+                    'update:account',
+                    'update:website',
+                    'update:currency'
+                ],
                 entityClassName: 'OroB2B\\Bundle\\OrderBundle\\Entity\\Order',
-                entityId: form.vars.value.id
+                entityId: form.vars.value.id,
+                data: totals
             }
         } only %}
     {% endset %}

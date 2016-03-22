@@ -14,6 +14,7 @@ use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
 use OroB2B\Bundle\InvoiceBundle\Form\Type\InvoiceType;
 use OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -144,6 +145,7 @@ class InvoiceController extends Controller
                 return [
                     'form' => $form->createView(),
                     'entity' => $invoice,
+                    'totals' => $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($invoice),
                     'isWidgetContext' => (bool)$request->get('_wid', false),
                     'tierPrices' => $this->getTierPrices($invoice),
                     'matchedPrices' => $this->getMatchedPrices($invoice),
@@ -222,5 +224,13 @@ class InvoiceController extends Controller
         }
 
         return $matchedPrices;
+    }
+
+    /**
+     * @return TotalProcessorProvider
+     */
+    protected function getTotalProcessor()
+    {
+        return $this->get('orob2b_pricing.subtotal_processor.total_processor_provider');
     }
 }

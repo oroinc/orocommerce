@@ -1,8 +1,8 @@
 <script type="text/template" class="frontend-totals-template" id="frontend-totals-template">
-    {% block subtotals_template %}
+    {% block totals_forntend_entity_edit_page_template %}
         <table class="order-checkout-widget__table pull-right" >
             <tbody>
-            <% if ('subtotals' in totals) { %>
+            <% if (totals && 'subtotals' in totals) { %>
                 <% _.each(totals.subtotals, function(subtotal) { %>
                     <% if (subtotal.visible) { %>
                         <tr>
@@ -13,7 +13,7 @@
                 <% }); %>
             <% } %>
 
-            <% if ('total' in totals) { %>
+            <% if (totals && 'total' in totals) { %>
                 <tr>
                     <td class="order-checkout-widget__total">
                         <span class="text-uppercase"><%= totals.total.label %></span>

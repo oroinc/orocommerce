@@ -51,6 +51,31 @@ class TotalProcessorProvider
     }
 
     /**
+     * Calculate and return total with subtotals converted to Array
+     *
+     * @param $entity
+     *
+     * @return array
+     */
+    public function getTotalWithSubtotalsAsArray($entity)
+    {
+        $total = $this->getTotal($entity)->toArray();
+        $subtotals = $this->getSubtotals($entity)->getValues();
+
+        $callbackFunction = function ($value) {
+            /** @var Subtotal $value */
+            return $value->toArray();
+        };
+
+        $totals = [
+            'total' => $total,
+            'subtotals' => array_map($callbackFunction, $subtotals)
+        ];
+
+        return $totals;
+    }
+
+    /**
      * Calculate and return total based on all subtotals
      *
      * @param $entity
@@ -108,6 +133,7 @@ class TotalProcessorProvider
 
     /**
      * @param $entity
+     *
      * @return string
      */
     protected function getBaseCurrency($entity)
