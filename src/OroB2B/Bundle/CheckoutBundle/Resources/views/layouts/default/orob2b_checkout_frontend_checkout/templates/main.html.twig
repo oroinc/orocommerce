@@ -67,7 +67,7 @@
                     <h3 class="checkout-order-summary__header__title">{{ 'orob2b.checkout.order_summary.label'|trans }}</h3>
                     <div class="checkout-order-summary__header__desc">
                         <span class="mr1-md mr1-sm"><strong>{{ lineItemsCount }}</strong> {{ 'orob2b.checkout.order_summary.items'|trans }}</span>
-                        <span>{{ 'orob2b.checkout.order_summary.subtotal'|trans }}: <strong>{{ totalPrice.totalPrice|oro_format_price }}</strong></span>
+                        <span>{{ 'orob2b.checkout.order_summary.subtotal'|trans }}: <strong>{{ generalTotal.totalPrice|oro_format_price }}</strong></span>
                     </div>
                 </div>
                 {% set editLink = workfowItem.data.get('edit_order_link') %}
@@ -115,7 +115,7 @@
                                     <td>{{ line_item.price|oro_format_price }}</td>
                                 </tr>
                                 <tr>
-                                    <td><span class="text-uppercase">{{ 'orob2b.checkout.order_summary.total_price'|trans }}</span></td>
+                                    <td><span>{{ 'orob2b.checkout.order_summary.total_price'|trans }}</span></td>
                                     <td><span class="fs16 blue">{{ lineItemTotals[line_item.productSku]|oro_format_price }}</span>
                                     </td>
                                 </tr>
@@ -147,8 +147,8 @@
                                 </tr>
                                 {% endfor %}
                                 <tr>
-                                    <td><span class="fs18 text-uppercase">{{ totalPrice.label }}</span></td>
-                                    <td class="text-right"><span class="fs18">{{ totalPrice.totalPrice|oro_format_price }}</span></td>
+                                    <td><span class="fs18 text-uppercase">{{ generalTotal.label }}</span></td>
+                                    <td class="text-right"><span class="fs18">{{ generalTotal.totalPrice|oro_format_price }}</span></td>
                                 </tr>
                             </tbody>
                         </table>

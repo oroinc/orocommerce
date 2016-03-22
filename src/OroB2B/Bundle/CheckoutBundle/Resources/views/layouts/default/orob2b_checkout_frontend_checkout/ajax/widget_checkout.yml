@@ -36,7 +36,7 @@ layout:
                         visible: { @neq: [$context.workflowStepName, 'place_order'] }
                         vars:
                             lineItemsCount: { @value: $data.orob2b_checkout_summary.lineItemsCount }
-                            totalPrice: { @value: $data.orob2b_checkout_summary.totalPrice }
+                            generalTotal: { @value: $data.orob2b_checkout_summary.generalTotal }
                             checkout: { @value: $data.checkout }
                 checkout_order_summary_table:
                     blockType: block
@@ -47,7 +47,7 @@ layout:
                             lineItems: { @value: $data.orob2b_checkout_summary.lineItems }
                             lineItemTotals: { @value: $data.orob2b_checkout_summary.lineItemTotals }
                             lineItemsCount: { @value: $data.orob2b_checkout_summary.lineItemsCount }
-                            totalPrice: { @value: $data.orob2b_checkout_summary.totalPrice }
+                            generalTotal: { @value: $data.orob2b_checkout_summary.generalTotal }
                             subtotals: { @value: $data.orob2b_checkout_summary.subtotals }
                 body:
                     blockType: body

@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 interface LineItemsAwareInterface
 {
     /**
-     * @return ArrayCollection|array
+     * @return ArrayCollection
      */
     public function getLineItems();
 }

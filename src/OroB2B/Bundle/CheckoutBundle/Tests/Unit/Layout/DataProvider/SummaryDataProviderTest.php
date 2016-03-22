@@ -164,7 +164,7 @@ class SummaryDataProviderTest extends \PHPUnit_Framework_TestCase
                     ],
                     'lineItems' => $LineItems,
                     'lineItemsCount' => 2,
-                    'totalPrice' => $totalPrice,
+                    'generalTotal' => $totalPrice,
                     'subtotals' => [$totalPrice]
                 ],
                 'totalPrice' => $totalPrice,

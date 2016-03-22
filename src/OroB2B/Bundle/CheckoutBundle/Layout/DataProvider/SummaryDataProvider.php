@@ -64,7 +64,7 @@ class SummaryDataProvider extends AbstractServerRenderDataProvider
             'lineItems' => $orderLineItems,
             'lineItemsCount' => $orderLineItems->count(),
             'subtotals' => $this->totalsProvider->getSubtotals($checkout),
-            'totalPrice' => $this->totalsProvider->getTotal($checkout)
+            'generalTotal' => $this->totalsProvider->getTotal($checkout)
         ];
     }
 
