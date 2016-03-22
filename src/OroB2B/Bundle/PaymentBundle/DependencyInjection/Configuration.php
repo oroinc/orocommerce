@@ -9,8 +9,16 @@ use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 
 class Configuration implements ConfigurationInterface
 {
+    const CARD_VISA = 'visa';
+    const CARD_MASTERCARD = 'mastercard';
+    const CARD_DISCOVER = 'discover';
+    const CARD_AMERICAN_EXPRESS = 'american_express';
+
+    const PAYMENT_ACTION_AUTHORIZATION = 'authorization';
+    const PAYMENT_ACTION_SALE = 'sale';
+
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function getConfigTreeBuilder()
@@ -22,6 +30,7 @@ class Configuration implements ConfigurationInterface
         SettingsBuilder::append(
             $rootNode,
             [
+                // General
                 'merchant_country' => [
                     'type' => 'text',
                     'value' => ''
@@ -50,9 +59,8 @@ class Configuration implements ConfigurationInterface
                 ],
                 'paypal_payments_pro_allowed_cc_types' => [
                     'type' => 'array',
-                    'value' => ['visa', 'mastercard']
+                    'value' => [self::CARD_VISA, self::CARD_MASTERCARD]
                 ],
-
                 'paypal_payments_pro_partner' => [
                     'type' => 'text',
                     'value' => ''
@@ -71,13 +79,12 @@ class Configuration implements ConfigurationInterface
                 ],
                 'paypal_payments_pro_payment_action' => [
                     'type' => 'text',
-                    'value' => 'authorization'
+                    'value' => self::PAYMENT_ACTION_AUTHORIZATION
                 ],
                 'paypal_payments_pro_test_mode' => [
                     'type' => 'boolean',
                     'value' => false
                 ],
-
                 'paypal_payments_pro_use_proxy' => [
                     'type' => 'boolean',
                     'value' => false
@@ -130,9 +137,8 @@ class Configuration implements ConfigurationInterface
                 ],
                 'payflow_gateway_allowed_cc_types' => [
                     'type' => 'array',
-                    'value' => ['visa', 'mastercard']
+                    'value' => [self::CARD_VISA, self::CARD_MASTERCARD]
                 ],
-
                 'payflow_gateway_partner' => [
                     'type' => 'text',
                     'value' => ''
@@ -151,13 +157,12 @@ class Configuration implements ConfigurationInterface
                 ],
                 'payflow_gateway_payment_action' => [
                     'type' => 'text',
-                    'value' => 'authorization'
+                    'value' => self::PAYMENT_ACTION_AUTHORIZATION
                 ],
                 'payflow_gateway_test_mode' => [
                     'type' => 'boolean',
                     'value' => false
                 ],
-
                 'payflow_gateway_use_proxy' => [
                     'type' => 'boolean',
                     'value' => false
