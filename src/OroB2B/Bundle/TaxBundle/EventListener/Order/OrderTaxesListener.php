@@ -83,44 +83,65 @@ class OrderTaxesListener
         array_walk(
             $lineItems,
             function (OrderLineItem $orderLineItem) use ($matchedPrices) {
-                $product = $orderLineItem->getProduct();
-                $productUnit = $orderLineItem->getProductUnit();
-
-                if (!$product || !$productUnit) {
-                    return;
-                }
-
-                try {
-                    $productPriceCriteria = new ProductPriceCriteria(
-                        $product,
-                        $productUnit,
-                        $orderLineItem->getQuantity(),
-                        $orderLineItem->getCurrency() ?: $orderLineItem->getOrder()->getCurrency()
-                    );
-                } catch (\InvalidArgumentException $e) {
+                $productPriceCriteria = $this->createProductPriceCriteria($orderLineItem);
+                if (!$productPriceCriteria) {
                     return;
                 }
 
                 $identifier = $productPriceCriteria->getIdentifier();
                 if (array_key_exists($identifier, $matchedPrices)) {
-                    $hasChanges = false;
-
-                    if (!empty($matchedPrices[$identifier]['currency'])) {
-                        $orderLineItem->setCurrency((string)$matchedPrices[$identifier]['currency']);
-
-                        $hasChanges = true;
-                    }
-                    if (!empty($matchedPrices[$identifier]['value'])) {
-                        $orderLineItem->setValue((string)$matchedPrices[$identifier]['value']);
-
-                        $hasChanges = true;
-                    }
-
-                    if ($hasChanges) {
-                        $orderLineItem->postLoad();
-                    }
+                    $this->fillOrderLineItemData($orderLineItem, $matchedPrices[$identifier]);
                 }
             }
         );
+    }
+
+    /**
+     * @param OrderLineItem $orderLineItem
+     * @param array $matchedPrice
+     */
+    protected function fillOrderLineItemData(OrderLineItem $orderLineItem, array $matchedPrice = [])
+    {
+        $hasChanges = false;
+
+        if (!empty($matchedPrice['currency'])) {
+            $orderLineItem->setCurrency((string)$matchedPrice['currency']);
+
+            $hasChanges = true;
+        }
+        if (!empty($matchedPrice['value'])) {
+            $orderLineItem->setValue((string)$matchedPrice['value']);
+
+            $hasChanges = true;
+        }
+
+        if ($hasChanges) {
+            $orderLineItem->postLoad();
+        }
+    }
+
+    /**
+     * @param OrderLineItem $orderLineItem
+     * @return null|ProductPriceCriteria
+     */
+    protected function createProductPriceCriteria(OrderLineItem $orderLineItem)
+    {
+        $product = $orderLineItem->getProduct();
+        $productUnit = $orderLineItem->getProductUnit();
+
+        if (!$product || !$productUnit) {
+            return null;
+        }
+
+        try {
+            return new ProductPriceCriteria(
+                $product,
+                $productUnit,
+                $orderLineItem->getQuantity(),
+                $orderLineItem->getCurrency() ?: $orderLineItem->getOrder()->getCurrency()
+            );
+        } catch (\InvalidArgumentException $e) {
+            return null;
+        }
     }
 }
