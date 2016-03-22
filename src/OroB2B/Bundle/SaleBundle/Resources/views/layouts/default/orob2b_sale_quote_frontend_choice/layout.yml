@@ -1,0 +1,17 @@
+layout:
+    actions:
+        - @setBlockTheme:
+            themes: 'OroB2BSaleBundle:layouts:default/orob2b_sale_quote_frontend_choice/layout.html.twig'
+
+        - @addTree:
+            items:
+                quote_choice_page:
+                    blockType: block
+                    options:
+                        vars:
+                            form:
+                                @value: $data.form
+
+            tree:
+                content:
+                    quote_choice_page: ~

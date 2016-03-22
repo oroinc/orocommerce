@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\SaleBundle\Controller\Frontend;
 
+use Oro\Bundle\ActionBundle\Model\ActionData;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteToOrderType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -72,6 +74,40 @@ class QuoteController extends Controller
     {
         return [
             'entity' => $quote
+        ];
+    }
+
+    /**
+     * @Route("/choice/{id}", name="orob2b_sale_quote_frontend_choice", requirements={"id"="\d+"})
+     * @Layout()
+     * @Acl(
+     *      id="orob2b_sale_quote_frontend_choice",
+     *      type="entity",
+     *      class="OroB2BSaleBundle:Quote",
+     *      permission="ACCOUNT_VIEW",
+     *      group_name="commerce"
+     * )
+     * @ParamConverter("quote", options={"repository_method" = "getQuote"})
+     *
+     * @param Quote $quote
+     * @return array
+     */
+    public function choiceAction(Quote $quote)
+    {
+        $form = $this->createForm(QuoteToOrderType::NAME, $quote);
+        $form->handleRequest();
+        if ($form->isValid()) {
+            $this->get('doctrine')->getManagerForClass('OroB2BSaleBundle:Quote')->flush();
+            $action = $this->container->get('orob2b_checkout.model.action.start_checkout');
+            $action->initialize([]);
+            $action->execute(new ActionData(['data' => $quote]));
+        }
+
+        return [
+            'data' => [
+                'quote' => $quote,
+                'form' => $form->createView()
+            ]
         ];
     }
 }
