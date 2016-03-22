@@ -4,17 +4,11 @@ namespace OroB2B\Bundle\PaymentBundle\EventListener;
 
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PaypalPasswordSubscriber implements EventSubscriberInterface
 {
     const PASSWORD_PLACEHOLDER = '**********';
-
-    /**
-     * @var FormInterface
-     */
-    protected $parent;
 
     /**
      * {@inheritdoc}
@@ -42,9 +36,9 @@ class PaypalPasswordSubscriber implements EventSubscriberInterface
     {
         $data = $event->getData();
         $form = $event->getForm();
-        if ($data === self::PASSWORD_PLACEHOLDER) {
-            $this->parent = $form->getParent();
-            $this->parent->remove($form->getName());
+        $parent = $form->getParent();
+        if ($parent && $data === self::PASSWORD_PLACEHOLDER) {
+            $parent->remove($form->getName());
         }
     }
 }

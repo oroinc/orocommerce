@@ -34,8 +34,9 @@ class PaypalPasswordSubscriberTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider preSubmitProvider
      * @param bool $placeholderPresent
+     * @dataProvider preSubmitProvider
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function testPreSubmit($placeholderPresent)
     {
@@ -87,7 +88,7 @@ class PaypalPasswordSubscriberTest extends \PHPUnit_Framework_TestCase
     public function testGetSubscribedEvents()
     {
         $subscribedEvents = $this->subscriber->getSubscribedEvents();
-        $this->assertArraySubset([FormEvents::PRE_SET_DATA => 'preSetData'], $subscribedEvents);
-        $this->assertArraySubset([FormEvents::PRE_SUBMIT => 'preSubmit'], $subscribedEvents);
+        $this->assertEquals('preSetData', $subscribedEvents[FormEvents::PRE_SET_DATA]);
+        $this->assertEquals('preSubmit', $subscribedEvents[FormEvents::PRE_SUBMIT]);
     }
 }

@@ -19,8 +19,6 @@ class PaypalPasswordType extends PasswordType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        parent::buildForm($builder, $options);
-
         $builder
             ->addEventSubscriber(new PaypalPasswordSubscriber());
 
