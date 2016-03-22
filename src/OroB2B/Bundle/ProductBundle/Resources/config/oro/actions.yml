@@ -10,29 +10,13 @@ operations:
         order: 10
         button_options:
             icon: icon-copy
-        action_groups:
-            -
-                name: orob2b_product_duplicate
+        actions:
+            - @run_action_group:
+                attribute: $.result
+                action_group: orob2b_product_duplicate
                 parameters_mapping:
                     data: $.data
-
-action_groups:
-    orob2b_product_duplicate:
-        parameters:
-            data:
-                type: OroB2B\Bundle\ProductBundle\Entity\Product
-        acl_resource: orob2b_product_create
-        actions:
-            - @call_service_method:
-                service: orob2b_product.service.duplicator
-                method: duplicate
-                method_parameters: [$data]
-                attribute: $.productCopy
-            - @redirect:
-                parameters:
-                    route: orob2b_product_view
-                    route_parameters:
-                        id: $.productCopy.id
+                    do_redirect: true
             - @call_service_method:
                 attribute: $.hasSuccessMessage
                 service: session.flash_bag
@@ -44,3 +28,26 @@ action_groups:
                 parameters:
                     message: orob2b.product.controller.product.duplicated.message
                     type: 'success'
+
+action_groups:
+    orob2b_product_duplicate:
+        parameters:
+            data:
+                type: OroB2B\Bundle\ProductBundle\Entity\Product
+            do_redirect:
+                type: boolean
+                default: false
+        acl_resource: orob2b_product_create
+        actions:
+            - @call_service_method:
+                service: orob2b_product.service.duplicator
+                method: duplicate
+                method_parameters: [$.data]
+                attribute: $.productCopy
+            - @redirect:
+                conditions:
+                    @equal: [$.do_redirect, true]
+                parameters:
+                    route: orob2b_product_view
+                    route_parameters:
+                        id: $.productCopy.id

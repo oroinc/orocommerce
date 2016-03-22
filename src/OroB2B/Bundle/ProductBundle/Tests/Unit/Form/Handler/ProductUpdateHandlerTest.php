@@ -189,7 +189,7 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
 
         $actionGroup->expects($this->once())
             ->method('execute')
-            ->with(new ActionData(['data' => (object)['data' => $entity]]))
+            ->with(new ActionData(['data' => $entity, 'do_redirect' => true]))
             ->willReturn(new ActionData(['redirectUrl' => 'generated_redirect_url']));
 
         $this->actionGroupRegistry->expects($this->once())

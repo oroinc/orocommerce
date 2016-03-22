@@ -40,12 +40,16 @@ operations:
                 attribute: $.price
             - @assign_value: [$.price.priceList, $.data]
 
-        action_groups:
-            -
-                name: orob2b_pricing_add_product_price
+        actions:
+            - @run_action_group:
+                action_group: orob2b_pricing_add_product_price
                 parameters_mapping:
                     data: $.data
                     price: $.price
+            - @refresh_grid: price-list-product-prices-grid
+            - @flash_message:
+                message: orob2b.pricing.productprice.save.success
+                type: 'success'
 
 action_groups:
     orob2b_pricing_add_product_price:
@@ -60,13 +64,9 @@ action_groups:
                 class: OroB2B\Bundle\PricingBundle\Entity\ProductPrice
                 attribute: $.newPrice
                 data:
-                    product: $price.product
-                    priceList: $data
-                    quantity: $price.quantity
-                    unit: $price.unit
-                    price: $price.price
+                    product: $.price.product
+                    priceList: $.data
+                    quantity: $.price.quantity
+                    unit: $.price.unit
+                    price: $.price.price
                 flush: true
-            - @refresh_grid: price-list-product-prices-grid
-            - @flash_message:
-                message: orob2b.pricing.productprice.save.success
-                type: 'success'

@@ -12,11 +12,15 @@ operations:
         acl_resource: [EDIT, $.data]
         preconditions:
             @equal: [$enabled, true]
-        action_groups:
-            -
-                name: orob2b_account_accountuser_disable
+        actions:
+            - @run_action_group:
+                action_group: orob2b_account_accountuser_set_enabled
                 parameters_mapping:
                     data: $.data
+                    value: false
+            - @flash_message:
+                message: orob2b.account.controller.accountuser.disabled.message
+                type: 'success'
 
     orob2b_account_accountuser_enable:
         label: orob2b.account.action.account_user.enable
@@ -31,11 +35,15 @@ operations:
         acl_resource: [EDIT, $.data]
         preconditions:
             @equal: [$enabled, false]
-        action_groups:
-            -
-                name: orob2b_account_accountuser_enable
+        actions:
+            - @run_action_group:
+                action_group: orob2b_account_accountuser_set_enabled
                 parameters_mapping:
                     data: $.data
+                    value: true
+            - @flash_message:
+                message: orob2b.account.controller.accountuser.enabled.message
+                type: 'success'
 
     orob2b_account_frontend_accountuser_disable:
         label: orob2b.account.action.account_user.disable
@@ -54,12 +62,16 @@ operations:
             @and:
                 - @equal: [$enabled, true]
                 - @not_equal: [$id, $.currentUser.id]
-        action_groups:
-            -
-                name: orob2b_account_frontend_accountuser_disable
+        actions:
+            - @run_action_group:
+                action_group: orob2b_account_frontend_accountuser_set_enabled
                 parameters_mapping:
                     data: $.data
+                    value: false
                     current_user: $.currentUser
+            - @flash_message:
+                message: orob2b.account.controller.accountuser.disabled.message
+                type: 'success'
 
     orob2b_account_frontend_accountuser_enable:
         label: orob2b.account.action.account_user.enable
@@ -78,12 +90,16 @@ operations:
             @and:
                 - @equal: [$enabled, false]
                 - @not_equal: [$id, $.currentUser.id]
-        action_groups:
-            -
-                name: orob2b_account_frontend_accountuser_enable
+        actions:
+            - @run_action_group:
+                action_group: orob2b_account_frontend_accountuser_set_enabled
                 parameters_mapping:
                     data: $.data
+                    value: true
                     current_user: $.currentUser
+            - @flash_message:
+                message: orob2b.account.controller.accountuser.enabled.message
+                type: 'success'
 
     orob2b_account_accountuser_confirm:
         label: orob2b.account.action.account_user.confirm
@@ -97,11 +113,14 @@ operations:
         acl_resource: [EDIT, $.data]
         preconditions:
             @equal: [$confirmed, false]
-        action_groups:
-            -
-                name: orob2b_account_accountuser_confirm
+        actions:
+            - @run_action_group:
+                action_group: orob2b_account_accountuser_confirm
                 parameters_mapping:
                     data: $.data
+            - @flash_message:
+                message: orob2b.account.controller.accountuser.confirmed.message
+                type: 'success'
 
     orob2b_account_accountuser_sendconfirmation:
         label: orob2b.account.action.account_user.send_confirmation
@@ -115,122 +134,78 @@ operations:
         acl_resource: [EDIT, $.data]
         preconditions:
             @equal: [$confirmed, false]
-        action_groups:
-            -
-                name: orob2b_account_accountuser_sendconfirmation
+        actions:
+            - @run_action_group:
+                action_group: orob2b_account_accountuser_sendconfirmation
                 parameters_mapping:
                     data: $.data
+            - @flash_message:
+                message: orob2b.account.controller.accountuser.confirmation_sent.message
+                type: 'success'
 
 action_groups:
-    orob2b_account_accountuser_disable:
+    orob2b_account_accountuser_set_enabled:
         parameters:
             data:
                 type: OroB2B\Bundle\AccountBundle\Entity\AccountUser
-        acl_resource: [EDIT, $data]
+            value:
+                type: boolean
+        acl_resource: [EDIT, $.data]
         conditions:
-            @equal: [$data.enabled, true]
+            @not_equal: [$.data.enabled, $.value]
         actions:
-            - @assign_value: [$data.enabled, false]
+            - @assign_value: [$.data.enabled, $.value]
             - @call_service_method:
                 service: orob2b_account_user.manager
                 method: updateUser
-                method_parameters: [$data]
-            - @flash_message:
-                message: orob2b.account.controller.accountuser.disabled.message
-                type: 'success'
+                method_parameters: [$.data]
 
-    orob2b_account_accountuser_enable:
+    orob2b_account_frontend_accountuser_set_enabled:
         parameters:
             data:
                 type: OroB2B\Bundle\AccountBundle\Entity\AccountUser
-        acl_resource: [EDIT, $data]
-        conditions:
-            @equal: [$data.enabled, false]
-        actions:
-            - @assign_value: [$data.enabled, true]
-            - @call_service_method:
-                service: orob2b_account_user.manager
-                method: updateUser
-                method_parameters: [$data]
-            - @flash_message:
-                message: orob2b.account.controller.accountuser.enabled.message
-                type: 'success'
-
-    orob2b_account_frontend_accountuser_disable:
-        parameters:
-            data:
-                type: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+            value:
+                type: boolean
             current_user:
                 type: Symfony\Component\Security\Core\User\UserInterface
         acl_resource: [EDIT, $.data]
         conditions:
             @and:
-                - @equal: [$data.enabled, true]
-                - @not_equal: [$data.id, $current_user.id]
+                - @not_equal: [$.data.enabled, $.value]
+                - @not_equal: [$.data.id, $.current_user.id]
         actions:
-            - @assign_value: [$data.enabled, false]
+            - @assign_value: [$.data.enabled, $.value]
             - @call_service_method:
                 service: orob2b_account_user.manager
                 method: updateUser
-                method_parameters: [$data]
-            - @flash_message:
-                message: orob2b.account.controller.accountuser.disabled.message
-                type: 'success'
-
-    orob2b_account_frontend_accountuser_enable:
-        parameters:
-            data:
-                type: OroB2B\Bundle\AccountBundle\Entity\AccountUser
-            current_user:
-                type: Symfony\Component\Security\Core\User\UserInterface
-
-        acl_resource: [EDIT, $data]
-        conditions:
-            @and:
-                - @equal: [$data.enabled, false]
-                - @not_equal: [$data.id, $current_user.id]
-        actions:
-            - @assign_value: [$data.enabled, true]
-            - @call_service_method:
-                service: orob2b_account_user.manager
-                method: updateUser
-                method_parameters: [$data]
-            - @flash_message:
-                message: orob2b.account.controller.accountuser.enabled.message
-                type: 'success'
+                method_parameters: [$.data]
 
     orob2b_account_accountuser_confirm:
         parameters:
             data:
                 type: OroB2B\Bundle\AccountBundle\Entity\AccountUser
-        acl_resource: [EDIT, $data]
+        acl_resource: [EDIT, $.data]
         conditions:
-            @equal: [$data.confirmed, false]
+            @equal: [$.data.confirmed, false]
         actions:
             - @call_service_method:
                 service: orob2b_account_user.manager
                 method: confirmRegistration
-                method_parameters: [$data]
+                method_parameters: [$.data]
             - @call_service_method:
                 service: orob2b_account_user.manager
                 method: updateUser
-                method_parameters: [$data]
-            - @flash_message:
-                message: orob2b.account.controller.accountuser.confirmed.message
-                type: 'success'
+                method_parameters: [$.data]
 
     orob2b_account_accountuser_sendconfirmation:
         parameters:
             data:
                 type: OroB2B\Bundle\AccountBundle\Entity\AccountUser
-        acl_resource: [EDIT, $data]
+        acl_resource: [EDIT, $.data]
         conditions:
-            @equal: [$data.confirmed, false]
+            @equal: [$.data.confirmed, false]
         actions:
             - @call_service_method:
                 service: orob2b_account_user.manager
                 method: sendConfirmationEmail
-                method_parameters: [$data]
-            - @flash_message:
-                message: orob2b.account.controller.accountuser.confirmation_sent.message
-                type: 'success'
+                method_parameters: [$.data]
