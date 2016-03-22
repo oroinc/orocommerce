@@ -159,3 +159,14 @@ services:
             - @knp_menu.matcher
         tags:
              - { name: layout.block_type, alias: menu }
+
+    orob2b_menu.cache.warmer:
+        public: false
+        class: OroB2B\Bundle\MenuBundle\Cache\CacheWarmer
+        arguments:
+            - @oro_entity.doctrine_helper
+            - @orob2b_menu.menu_provider
+        calls:
+            - [setEntityClass, [%orob2b_menu.entity.menu_item.class%]]
+        tags:
+            - { name: kernel.cache_warmer}
