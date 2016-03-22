@@ -2,13 +2,12 @@ layout:
     actions:
         - @setBlockTheme:
             themes: 'OroB2BShoppingListBundle:layouts:default/orob2b_shopping_list_frontend_create/dialog/create.html.twig'
+        - @setOption:
+            id: widget_content
+            optionName: 'vars.savedId'
+            optionValue: { @value: $data.savedId }
         - @addTree:
             items:
-                widget_content:
-                    blockType: container
-                    options:
-                        vars:
-                            savedId: { @value: $data.savedId }
                 form_errors:
                     blockType: block
                     options:
@@ -35,19 +34,22 @@ layout:
                     options:
                         action: reset
                         text: orob2b.shoppinglist.create_new_form.cancel_label
+                        vars:
+                            style: auto
                 form_actions_create:
                     blockType: button
                     options:
                         action: submit
                         text: orob2b.shoppinglist.create_new_form.submit_label
+                        vars:
+                            style: auto
             tree:
-                root:
-                    widget_content:
-                        form_errors: ~
-                        form_start: ~
-                        form_fields: ~
-                        form_comment: ~
-                        form_actions:
-                            form_actions_reset: ~
-                            form_actions_create: ~
-                        form_end: ~
+                widget_content:
+                    form_errors: ~
+                    form_start: ~
+                    form_fields: ~
+                    form_comment: ~
+                    form_actions:
+                        form_actions_reset: ~
+                        form_actions_create: ~
+                    form_end: ~
