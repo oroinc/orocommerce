@@ -20,6 +20,8 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\CheckoutBundle\Model\ExtendCheckout;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -57,7 +59,8 @@ class Checkout extends ExtendCheckout implements
     AccountOwnerAwareInterface,
     DatesAwareInterface,
     WorkflowAwareInterface,
-    ContextItemInterface
+    ContextItemInterface,
+    LineItemsNotPricedAwareInterface
 {
     use DatesAwareTrait;
     use WorkflowAwareTrait;
@@ -558,5 +561,16 @@ class Checkout extends ExtendCheckout implements
         $this->currency = $currency;
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLineItems()
+    {
+        /** @var LineItemsNotPricedAwareInterface|LineItemsAwareInterface $sourceEntity */
+        $sourceEntity = $this->getSourceEntity();
+        return $sourceEntity && ($sourceEntity instanceof LineItemsNotPricedAwareInterface
+            || $sourceEntity instanceof LineItemsAwareInterface) ? $sourceEntity->getLineItems() : [];
     }
 }

@@ -33,7 +33,7 @@
             </fieldset>
             <fieldset class="checkout__form__row">
                 {{ form_row(form.billing_address.city, {'attr': {'placeholder': 'Enter address label'}, 'parentClass': 'form__col_x12'}) }}
-                </fieldset>
+            </fieldset>
             <fieldset class="checkout__form__row">
                 {{ form_row(form.billing_address.country) }}
                 {{ form_row(form.billing_address.region) }}
@@ -45,12 +45,13 @@
             <fieldset class="checkout__form__row">
                 {{ form_row(form.save_billing_address) }}
             </fieldset>
+
             <fieldset class="hidden">
                 {{ form_widget(form.billing_address.id) }}
                 {{ form_widget(form.billing_address.region_text) }}
             </fieldset>
         </div>
-        {{ form_errors(form) }}
+
         <fieldset class="checkout__form__row">
             {{ form_row(form.ship_to_billing_address) }}
         </fieldset>

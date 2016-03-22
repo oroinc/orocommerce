@@ -13,6 +13,7 @@ parameters:
     orob2b_order.manager.order_address.class: OroB2B\Bundle\OrderBundle\Model\OrderAddressManager
     orob2b_order.model.order_request_handler.class: OroB2B\Bundle\OrderBundle\Model\OrderRequestHandler
     orob2b_order.model.order_currency_handler.class: OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler
+    orob2b_order.model.order_totals_handler.class: OroB2B\Bundle\OrderBundle\Model\OrderTotalsHandler
     orob2b_order.event_listener.form_view.class: OroB2B\Bundle\OrderBundle\EventListener\FormViewListener
 
     orob2b_order.provider.subtotal_shipping_cost.class: OroB2B\Bundle\OrderBundle\Provider\SubtotalShippingCostProvider
@@ -89,6 +90,12 @@ services:
         class: %orob2b_order.model.order_currency_handler.class%
         arguments:
             - @oro_locale.settings
+
+    orob2b_order.model.order_totals_handler:
+        class: %orob2b_order.model.order_totals_handler.class%
+        arguments:
+            - @orob2b_pricing.subtotal_processor.total_processor_provider
+            - @orob2b_pricing.subtotal_processor.provider.subtotal_line_item
 
     orob2b_order.event_listener.form_view:
         class: %orob2b_order.event_listener.form_view.class%

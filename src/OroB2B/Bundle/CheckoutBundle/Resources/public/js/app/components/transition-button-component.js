@@ -11,8 +11,6 @@ define(function(require) {
     TransitionButtonComponent = BaseComponent.extend(/** @exports TransitionButtonComponent.prototype */{
         defaults: {
             transitionUrl: null,
-            message: null,
-            conditionMessages: [],
             enabled: true,
             hasForm: false,
             selectors: {
@@ -84,7 +82,6 @@ define(function(require) {
         },
 
         onFail: function() {
-            // TODO: improve errors handling
             this.inProgress = false;
             mediator.execute('showFlashMessage', 'error', 'Could not perform transition');
         },
