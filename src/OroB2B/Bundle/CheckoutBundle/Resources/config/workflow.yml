@@ -309,6 +309,11 @@ workflows:
                         method: setLineItems
                         method_parameters:
                             - $.result.lineItems
+                    - @call_service_method:
+                        service: orob2b_order.model.order_totals_handler
+                        method: fillSubtotals
+                        method_parameters:
+                            - $.result.order
                     - @flush_entity: $.result.order
 
                     - @tree:

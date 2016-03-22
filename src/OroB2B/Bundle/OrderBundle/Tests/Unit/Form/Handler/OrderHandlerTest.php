@@ -6,22 +6,13 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use OroB2B\Bundle\OrderBundle\Form\Handler\OrderHandler;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use OroB2B\Bundle\OrderBundle\Model\OrderTotalsHandler;
 
 class OrderHandlerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|TotalProcessorProvider */
-    protected $totalsProvider;
-
-    /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemSubtotalProvider */
-    protected $lineItemSubtotalProvider;
-
     /** @var OrderHandler */
     protected $handler;
 
@@ -37,6 +28,9 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var Order */
     protected $entity;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|OrderTotalsHandler */
+    protected $orderTotalsHandler;
+
     protected function setUp()
     {
         $this->form = $this->getMockBuilder('Symfony\Component\Form\Form')
@@ -49,13 +43,8 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->totalsProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->lineItemSubtotalProvider = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider')
+        $this->orderTotalsHandler = $this
+            ->getMockBuilder('OroB2B\Bundle\OrderBundle\Model\OrderTotalsHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -65,8 +54,7 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
             $this->form,
             $this->request,
             $this->manager,
-            $this->totalsProvider,
-            $this->lineItemSubtotalProvider
+            $this->orderTotalsHandler
         );
     }
 
@@ -88,14 +76,9 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testProcessSupportedRequest($method, $isValid, $isProcessed)
     {
-        $subtotal = new Subtotal();
-        $amount = 42;
-        $subtotal->setType(LineItemSubtotalProvider::TYPE);
-        $subtotal->setAmount($amount);
-
-        $this->totalsProvider->expects($this->any())
-            ->method('getSubtotal')
-            ->willReturn($subtotal);
+        $this->orderTotalsHandler->expects($this->exactly((int)$isProcessed))
+            ->method('fillSubtotals')
+            ->with($this->entity);
 
         $this->form->expects($this->any())
             ->method('isValid')
@@ -131,24 +114,9 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessValidData()
     {
-        $subtotal = new Subtotal();
-        $subtotalAmount = 42;
-        $subtotal->setType(LineItemSubtotalProvider::TYPE);
-        $subtotal->setAmount($subtotalAmount);
-
-        $total = new Subtotal();
-        $totalAmount = 90;
-        $total->setType(TotalProcessorProvider::TYPE);
-        $total->setAmount($totalAmount);
-
-        $this->lineItemSubtotalProvider->expects($this->any())
-            ->method('getSubtotal')
-            ->willReturn($subtotal);
-
-
-        $this->totalsProvider->expects($this->any())
-            ->method('getTotal')
-            ->willReturn($total);
+        $this->orderTotalsHandler->expects($this->once())
+            ->method('fillSubtotals')
+            ->with($this->entity);
 
         $this->request->setMethod('POST');
 
@@ -168,9 +136,5 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('flush');
 
         $this->assertTrue($this->handler->process($this->entity));
-
-        $propertyAccessor = PropertyAccess::createPropertyAccessor();
-        $this->assertEquals($subtotalAmount, $propertyAccessor->getValue($this->entity, $subtotal->getType()));
-        $this->assertEquals($totalAmount, $propertyAccessor->getValue($this->entity, $total->getType()));
     }
 }

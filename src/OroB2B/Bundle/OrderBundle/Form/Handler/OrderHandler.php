@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
+use OroB2B\Bundle\OrderBundle\Model\OrderTotalsHandler;
 
 class OrderHandler
 {
@@ -32,21 +33,18 @@ class OrderHandler
      * @param FormInterface $form
      * @param Request $request
      * @param ObjectManager $manager
-     * @param TotalProcessorProvider $totalProvider
-     * @param LineItemSubtotalProvider $lineItemSubtotalProvider
+     * @param OrderTotalsHandler $orderTotalsHandler
      */
     public function __construct(
         FormInterface $form,
         Request $request,
         ObjectManager $manager,
-        TotalProcessorProvider $totalProvider,
-        LineItemSubtotalProvider $lineItemSubtotalProvider
+        OrderTotalsHandler $orderTotalsHandler
     ) {
         $this->form    = $form;
         $this->request = $request;
         $this->manager = $manager;
-        $this->totalProvider = $totalProvider;
-        $this->lineItemSubtotalProvider = $lineItemSubtotalProvider;
+        $this->orderTotalsHandler = $orderTotalsHandler;
     }
 
     /**
@@ -62,7 +60,7 @@ class OrderHandler
         if ($this->request->isMethod('POST')) {
             $this->form->submit($this->request);
             if ($this->form->isValid()) {
-                $this->fillSubtotals($entity);
+                $this->orderTotalsHandler->fillSubtotals($entity);
 
                 $this->manager->persist($entity);
                 $this->manager->flush();
@@ -72,21 +70,5 @@ class OrderHandler
         }
 
         return false;
-    }
-
-    /**
-     * @param Order $order
-     */
-    protected function fillSubtotals(Order $order)
-    {
-        $subtotal = $this->lineItemSubtotalProvider->getSubtotal($order);
-        $total = $this->totalProvider->getTotal($order);
-
-        if ($subtotal) {
-            $order->setSubtotal($subtotal->getAmount());
-        }
-        if ($total) {
-            $order->setTotal($total->getAmount());
-        }
     }
 }
