@@ -15,19 +15,13 @@ use OroB2B\Bundle\RFPBundle\Form\Type\RequestType;
 
 class RFPFormProvider extends AbstractServerRenderDataProvider
 {
-    /**
-     * @var FormAccessor[]
-     */
+    /** @var FormAccessor[] */
     protected $data = [];
 
-    /**
-     * @var FormInterface[]
-     */
+    /** @var FormInterface[] */
     protected $form = [];
 
-    /**
-     * @var FormFactoryInterface
-     */
+    /** @var FormFactoryInterface */
     protected $formFactory;
 
     /**

@@ -17,6 +17,7 @@ parameters:
     orob2b_rfp.factory.duplicator_filter_factory.class: OroB2B\Component\Duplicator\Filter\FilterFactory
     orob2b_rfp.factory.duplicator_matcher_factory.class: OroB2B\Component\Duplicator\Matcher\MatcherFactory
 
+    # layout data providers
     orob2b_rfp.layout.data_provider.request_form.class: OroB2B\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider
 
 services:
