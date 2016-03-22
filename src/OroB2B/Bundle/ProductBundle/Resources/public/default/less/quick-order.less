@@ -189,6 +189,12 @@
             width: 100%;
             float: none;
         }
+
+        .btn-group:first-child {
+            .action-button {
+                background: @theme-middle-gray-color;
+            }
+        }
     }
 
     .form-field-copyPaste {
@@ -339,7 +345,8 @@
 }
 /*END QUICK ORDER*/
 
-.quick-order-buttons, .quick-order-import-validation-buttons {
+.quick-order-buttons,
+.quick-order-import-validation-buttons {
     float: right;
     margin: 0;
 
@@ -424,9 +431,15 @@
         border-radius: 4px;
         padding: 0 2.9rem;
         line-height: 4.7rem;
-        background: #626365;
-        color: #fff;
+        background: @theme-middle-gray-color;
+        color: @base-white-color;
         margin: 0 1rem 0 0;
+    }
+
+    .widget-content {
+        .action-button {
+            background-color: @theme-dark-gray-color;
+        }
     }
 }
 

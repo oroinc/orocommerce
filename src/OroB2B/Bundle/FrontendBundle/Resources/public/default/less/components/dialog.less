@@ -1,4 +1,19 @@
-.ui-dialog .ui-dialog-content {
-  overflow: auto;
-  height: calc(~"100% - 177px") !important;
+.ui-dialog {
+  .ui-dialog-content {
+    overflow: auto;
+    height: calc(~"100% - 177px") !important;
+  }
+
+  &.wrapper-virtual-margin {
+    .ui-dialog-content {
+      overflow: visible;
+    }
+
+    .quick-order-import-validation {
+      margin-bottom: -26rem;
+      padding-bottom: 30rem;
+
+      overflow: hidden;
+    }
+  }
 }

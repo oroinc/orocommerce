@@ -14,8 +14,9 @@ define(function(require) {
             options.dialogOptions = {
                 'modal': true,
                 'resizable': false,
-                'width': 730,
-                'autoResize': true
+                'width': 820,
+                'autoResize': true,
+                'dialogClass': 'wrapper-virtual-margin'
             };
 
             QuickAddImportWidget.__super__.initialize.apply(this, arguments);
