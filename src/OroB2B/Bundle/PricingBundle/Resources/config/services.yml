@@ -61,6 +61,7 @@ parameters:
     orob2b_pricing.model.price_list_request_handler.class: OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler
     orob2b_pricing.model.price_list_tree_handler.class: OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler
     orob2b_pricing.model.frontend_product_list_modifier.class: OroB2B\Bundle\PricingBundle\Model\FrontendProductListModifier
+    orob2b_pricing.model.assign_user_currency.class: OroB2B\Bundle\PricingBundle\Model\AssignUserCurrencyAction
     orob2b_pricing.system_config.class: OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig
     orob2b_pricing.system_config_convereter.class: OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter
 
@@ -360,6 +361,15 @@ services:
             - @oro_config.global
         calls:
             - [setPriceListClass, [%orob2b_pricing.entity.combined_price_list.class%]]
+
+    orob2b_pricing.model.assign_user_currency:
+        class: %orob2b_pricing.model.assign_user_currency.class%
+        arguments:
+            - @oro_action.context_accessor
+            - @orob2b_pricing.provider.user_currency
+        tags:
+            - { name: oro_workflow.action, alias: assign_user_currency }
+            - { name: oro_action.function, alias: assign_user_currency }
 
     orob2b_pricing.filter.product_price:
             class: %orob2b_pricing.filter.product_price.class%

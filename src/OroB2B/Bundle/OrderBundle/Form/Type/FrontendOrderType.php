@@ -100,7 +100,7 @@ class FrontendOrderType extends AbstractType
                 OrderAddressType::NAME,
                 [
                     'label' => 'orob2b.order.billing_address.label',
-                    'order' => $options['data'],
+                    'object' => $options['data'],
                     'required' => false,
                     'addressType' => AddressType::TYPE_BILLING,
                 ]
@@ -108,15 +108,21 @@ class FrontendOrderType extends AbstractType
         }
 
         if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_SHIPPING)) {
+            /** @var Order $object */
+            $object = $options['data'];
+            $isEditEnabled = true;
+            if ($object->getShippingAddress()) {
+                $isEditEnabled = !$object->getShippingAddress()->isFromExternalSource();
+            }
             $builder->add(
                 'shippingAddress',
                 OrderAddressType::NAME,
                 [
                     'label' => 'orob2b.order.shipping_address.label',
-                    'order' => $options['data'],
+                    'object' => $object,
                     'required' => false,
                     'addressType' => AddressType::TYPE_SHIPPING,
-                    'application' => OrderAddressType::APPLICATION_FRONTEND
+                    'isEditEnabled' => $isEditEnabled
                 ]
             );
         }

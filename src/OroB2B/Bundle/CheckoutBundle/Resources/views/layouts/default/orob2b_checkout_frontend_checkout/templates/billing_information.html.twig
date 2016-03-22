@@ -1,0 +1,55 @@
+{% block _checkout_form_fields_widget -%}
+    <div data-page-component-module="oroui/js/app/components/view-component"
+         data-page-component-options="{{ {
+             view: 'orob2bcheckout/js/app/views/address-view',
+             selectors: {
+                 address: '#' ~ form.billing_address.accountAddress.vars.id,
+                 region: '#' ~ form.billing_address.region.vars.id,
+                 fieldsContainer: '#checkout-address-fields-container'
+             }
+         }|json_encode }}">
+        {{ form_row(form.billing_address.accountAddress) }}
+        <div id="checkout-address-fields-container" class="{% if not form.billing_address.id.vars.value %}hidden{% endif %}">
+            <fieldset class="checkout__form__row">
+                {{ form_row(form.billing_address.label, {'attr': {'placeholder': 'Enter address label'}, 'parentClass': 'form__col_x12'}) }}
+            </fieldset>
+            <fieldset class="checkout__form__row">
+                {{ form_row(form.billing_address.namePrefix, {'attr': {'placeholder': 'Enter your name prefix'}}) }}
+                {{ form_row(form.billing_address.middleName, {'attr': {'placeholder': 'Enter your middle name'}}) }}
+                {{ form_row(form.billing_address.firstName, {'attr': {'placeholder': 'Enter your first name'}}) }}
+                {{ form_row(form.billing_address.lastName, {'attr': {'placeholder': 'Enter your last name'}}) }}
+                {{ form_row(form.billing_address.nameSuffix, {'attr': {'placeholder': 'Enter your name sufix'}}) }}
+            </fieldset>
+            <fieldset class="checkout__form__row">
+                {{ form_row(form.billing_address.organization, {'attr': {'placeholder': 'Enter your organization'}, 'parentClass': 'form__col_x12'}) }}
+            </fieldset>
+            <fieldset class="checkout__form__row">
+                {{ form_row(form.billing_address.street, {'attr': {'placeholder': 'Enter address label'}}) }}
+                {{ form_row(form.billing_address.street2, {'attr': {'placeholder': 'Enter address2 label'}}) }}
+            </fieldset>
+            <fieldset class="checkout__form__row">
+                {{ form_row(form.billing_address.city, {'attr': {'placeholder': 'Enter address label'}, 'parentClass': 'form__col_x12'}) }}
+            </fieldset>
+            <fieldset class="checkout__form__row">
+                {{ form_row(form.billing_address.country) }}
+                {{ form_row(form.billing_address.region) }}
+            </fieldset>
+
+            <fieldset class="checkout__form__row">
+                {{ form_row(form.billing_address.postalCode, {'attr': {'placeholder': 'Zip'}, 'parentClass': 'col-zip'}) }}
+            </fieldset>
+            <fieldset class="checkout__form__row">
+                {{ form_row(form.save_billing_address) }}
+            </fieldset>
+
+            <fieldset class="hidden">
+                {{ form_widget(form.billing_address.id) }}
+                {{ form_widget(form.billing_address.region_text) }}
+            </fieldset>
+        </div>
+
+        <fieldset class="checkout__form__row">
+            {{ form_row(form.ship_to_billing_address) }}
+        </fieldset>
+    </div>
+{%- endblock %}

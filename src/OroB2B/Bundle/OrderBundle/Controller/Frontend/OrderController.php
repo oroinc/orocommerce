@@ -14,6 +14,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\LayoutBundle\Annotation\Layout;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
@@ -128,6 +129,31 @@ class OrderController extends AbstractOrderController
     }
 
     /**
+     * Success order
+     *
+     * @Route("/success/{id}", name="orob2b_order_frontend_success", requirements={"id"="\d+"})
+     * @Layout()
+     * @Acl(
+     *      id="orob2b_order_view",
+     *      type="entity",
+     *      class="OroB2BOrderBundle:Order",
+     *      permission="EDIT"
+     * )
+     *
+     * @param Order $order
+     *
+     * @return array
+     */
+    public function successAction(Order $order)
+    {
+        return [
+            'data' => [
+                'order' => $order,
+            ],
+        ];
+    }
+
+    /**
      * @param Order $order
      * @param Request $request
      *
@@ -166,8 +192,7 @@ class OrderController extends AbstractOrderController
             $form,
             $request,
             $this->getDoctrine()->getManagerForClass(ClassUtils::getClass($order)),
-            $this->get('orob2b_pricing.subtotal_processor.total_processor_provider'),
-            $this->get('orob2b_pricing.subtotal_processor.provider.subtotal_line_item')
+            $this->get('orob2b_order.model.order_totals_handler')
         );
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(

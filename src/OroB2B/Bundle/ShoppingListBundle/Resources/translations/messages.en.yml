@@ -134,3 +134,5 @@ orob2b:
                 request_quote_create_rfp: 'Request a Quote'
                 create_order: 'Create Order'
                 delete: 'Delete Shooping List'
+            workflow:
+                remove_source.label: Clear the shopping list
