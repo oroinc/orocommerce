@@ -15,13 +15,11 @@ class PaypalPasswordType extends PasswordType
     const NAME = 'orob2b_payment_paypal_password_type';
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->addEventSubscriber(new PaypalPasswordSubscriber());
-
+        $builder->addEventSubscriber(new PaypalPasswordSubscriber());
     }
 
     /**

@@ -28,7 +28,6 @@ class ParentPaypalPasswordTypeStub extends AbstractType
         $builder->add($this->passwordFormBuilder);
     }
 
-
     /**
      * {@inheritdoc}
      */

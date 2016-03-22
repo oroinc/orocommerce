@@ -2,12 +2,12 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\PaymentBundle\EventListener\PaypalPasswordSubscriber;
-use OroB2B\Bundle\PaymentBundle\Form\Type\PaypalPasswordType;
-
-use OroB2B\Bundle\PaymentBundle\Tests\Unit\Form\Type\Stub\ParentPaypalPasswordTypeStub;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use OroB2B\Bundle\PaymentBundle\Form\Type\PaypalPasswordType;
+use OroB2B\Bundle\PaymentBundle\EventListener\PaypalPasswordSubscriber;
+use OroB2B\Bundle\PaymentBundle\Tests\Unit\Form\Type\Stub\ParentPaypalPasswordTypeStub;
 
 class PaypalPasswordTermTypeTest extends FormIntegrationTestCase
 {
