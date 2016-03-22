@@ -112,7 +112,7 @@ class RequestController extends Controller
 
     /**
      * @Route("/update/{id}", name="orob2b_rfp_frontend_request_update", requirements={"id"="\d+"})
-     * @Template("OroB2BRFPBundle:Request/Frontend:update.html.twig")
+     * @Layout
      * @Acl(
      *      id="orob2b_rfp_frontend_request_update",
      *      type="entity",
@@ -126,7 +126,7 @@ class RequestController extends Controller
      */
     public function updateAction(RFPRequest $rfpRequest)
     {
-        return $this->update($rfpRequest);
+        return ['data' => $this->update($rfpRequest)];
     }
 
     /**

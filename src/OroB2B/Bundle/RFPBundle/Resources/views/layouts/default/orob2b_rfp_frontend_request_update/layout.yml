@@ -8,6 +8,8 @@ layout:
             optionName: title
             optionValue:
                 label: 'orob2b.frontend.rfp.request.head_title.label'
+                parameters:
+                    id: { @value: $data.entity.id }
 
         - @setOption:
             id: page_title
@@ -18,7 +20,10 @@ layout:
             id: page_title
             optionName: text
             optionValue:
-                label: 'orob2b.frontend.rfp.request.create_title.label'
+                label: 'orob2b.frontend.rfp.request.edit_title.label'
+                parameters:
+                    id: { @value: $data.entity.id }
+
         - @add:
             id: account_sidebar
             parentId: sidebar_left
