@@ -22,10 +22,17 @@ define(['underscore', 'orolocale/js/formatter/number', 'orolocale/js/locale-sett
                  * @param {Object} item
                  */
                 formatItem: function(item) {
+                    var localItem = _.defaults(item || {}, {
+                        includingTax: 0,
+                        excludingTax: 0,
+                        taxAmount: 0,
+                        currency: localeSettings.defaults.currency
+                    });
+
                     return {
-                        includingTax: formatElement(item.includingTax, item.currency),
-                        excludingTax: formatElement(item.excludingTax, item.currency),
-                        taxAmount: formatElement(item.taxAmount, item.currency)
+                        includingTax: formatElement(localItem.includingTax, localItem.currency),
+                        excludingTax: formatElement(localItem.excludingTax, localItem.currency),
+                        taxAmount: formatElement(localItem.taxAmount, localItem.currency)
                     };
                 },
 
@@ -33,11 +40,18 @@ define(['underscore', 'orolocale/js/formatter/number', 'orolocale/js/locale-sett
                  * @param {Object} item
                  */
                 formatTax: function(item) {
+                    var localItem = _.defaults(item || {}, {
+                        taxAmount: 0,
+                        taxableAmount: 0,
+                        rate: 0,
+                        currency: localeSettings.defaults.currency
+                    });
+
                     return {
                         tax: item.tax,
-                        taxAmount: formatElement(item.taxAmount, item.currency),
-                        taxableAmount: formatElement(item.taxableAmount, item.currency),
-                        rate: NumberFormatter.formatPercent(item.rate)
+                        taxAmount: formatElement(localItem.taxAmount, localItem.currency),
+                        taxableAmount: formatElement(localItem.taxableAmount, localItem.currency),
+                        rate: NumberFormatter.formatPercent(localItem.rate)
                     };
                 },
 

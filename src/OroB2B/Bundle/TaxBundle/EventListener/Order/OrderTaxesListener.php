@@ -2,10 +2,13 @@
 
 namespace OroB2B\Bundle\TaxBundle\EventListener\Order;
 
+use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
+use OroB2B\Bundle\OrderBundle\EventListener\Order\MatchingPriceEventListener;
+use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
-use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\AbstractResultElement;
+use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class OrderTaxesListener
@@ -36,6 +39,11 @@ class OrderTaxesListener
         }
 
         $order = $event->getOrder();
+
+        if (!$order->getId()) {
+            $this->addPriceToNewOrderLineItems($event);
+        }
+
         $result = $this->taxManager->getTax($order);
         $taxItems = array_map(
             function (Result $lineItem) {
@@ -54,5 +62,50 @@ class OrderTaxesListener
         );
 
         $event->getData()->offsetSet('taxItems', $taxItems);
+    }
+
+    /**
+     * @param OrderEvent $event
+     */
+    protected function addPriceToNewOrderLineItems(OrderEvent $event)
+    {
+        if (!$event->getData()->offsetExists(MatchingPriceEventListener::MATCHED_PRICES_KEY)) {
+            return;
+        }
+
+        $order = $event->getOrder();
+
+        $matchedPrices = $event->getData()->offsetGet(MatchingPriceEventListener::MATCHED_PRICES_KEY);
+
+        $order->getLineItems()->map(
+            function (OrderLineItem $orderLineItem) use ($matchedPrices) {
+                $productPriceCriteria = new ProductPriceCriteria(
+                    $orderLineItem->getProduct(),
+                    $orderLineItem->getProductUnit(),
+                    $orderLineItem->getQuantity(),
+                    $orderLineItem->getCurrency() ?: $orderLineItem->getOrder()->getCurrency()
+                );
+
+                $identifier = $productPriceCriteria->getIdentifier();
+                if (array_key_exists($identifier, $matchedPrices)) {
+                    $hasChanges = false;
+
+                    if (!empty($matchedPrices[$identifier]['currency'])) {
+                        $orderLineItem->setCurrency((string)$matchedPrices[$identifier]['currency']);
+
+                        $hasChanges = true;
+                    }
+                    if (!empty($matchedPrices[$identifier]['value'])) {
+                        $orderLineItem->setValue((string)$matchedPrices[$identifier]['value']);
+
+                        $hasChanges = true;
+                    }
+
+                    if ($hasChanges) {
+                        $orderLineItem->postLoad();
+                    }
+                }
+            }
+        );
     }
 }

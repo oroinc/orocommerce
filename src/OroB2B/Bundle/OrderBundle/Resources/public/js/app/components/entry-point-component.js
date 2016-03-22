@@ -61,8 +61,8 @@ define(function(require) {
         listenerOn: function() {
             var callback = _.bind(this.callEntryPoint, this);
 
-            var changeCallback = _.bind(function() {
-                if (this.timeoutId) {
+            var changeCallback = _.bind(function(e) {
+                if (this.timeoutId || $(e.target).is('select')) {
                     callback.call(this);
                 }
 
