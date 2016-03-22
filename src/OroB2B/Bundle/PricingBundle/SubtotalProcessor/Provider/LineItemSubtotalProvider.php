@@ -62,6 +62,10 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements Subto
      */
     public function getSubtotal($entity)
     {
+        if (!$entity instanceof LineItemsAwareInterface) {
+            return null;
+        }
+
         $subtotalAmount = 0.0;
         $subtotal = new Subtotal();
         $subtotal->setLabel($this->translator->trans(self::NAME . '.label'));

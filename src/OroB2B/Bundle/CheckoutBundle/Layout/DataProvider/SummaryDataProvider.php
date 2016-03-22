@@ -11,9 +11,9 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class SummaryDataProvider extends AbstractServerRenderDataProvider
 {
@@ -28,14 +28,22 @@ class SummaryDataProvider extends AbstractServerRenderDataProvider
     protected $lineItemSubtotalProvider;
 
     /**
+     * @var TotalProcessorProvider
+     */
+    protected $totalsProvider;
+
+    /**
      * @param CheckoutLineItemsManager $checkoutLineItemsManager
      * @param LineItemSubtotalProvider $lineItemsSubtotalProvider
+     * @param TotalProcessorProvider $totalsProvider
      */
     public function __construct(
         CheckoutLineItemsManager $checkoutLineItemsManager,
-        LineItemSubtotalProvider $lineItemsSubtotalProvider
+        LineItemSubtotalProvider $lineItemsSubtotalProvider,
+        TotalProcessorProvider $totalsProvider
     ) {
         $this->checkoutLineItemsManager = $checkoutLineItemsManager;
+        $this->totalsProvider = $totalsProvider;
         $this->lineItemSubtotalProvider = $lineItemsSubtotalProvider;
     }
 
@@ -55,26 +63,9 @@ class SummaryDataProvider extends AbstractServerRenderDataProvider
             'lineItemTotals' => $lineItemTotals,
             'lineItems' => $orderLineItems,
             'lineItemsCount' => $orderLineItems->count(),
-            'totalPrice' => $this->getTotalPrice($orderLineItems)
+            'subtotals' => $this->totalsProvider->getSubtotals($checkout),
+            'generalTotal' => $this->totalsProvider->getTotal($checkout)
         ];
-    }
-
-    /**
-     * @param $orderLineItems
-     * @return Price
-     */
-    protected function getTotalPrice($orderLineItems)
-    {
-        $order = new Order();
-        $order->setLineItems($orderLineItems);
-        $generalTotal = $this->lineItemSubtotalProvider->getSubtotal($order);
-        unset($order);
-
-        $totalPrice = new Price();
-        $totalPrice->setValue($generalTotal->getAmount());
-        $totalPrice->setCurrency($generalTotal->getCurrency());
-
-        return $totalPrice;
     }
 
     /**

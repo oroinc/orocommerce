@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+
 class Subtotal
 {
     const OPERATION_ADD = 1;
@@ -178,5 +180,13 @@ class Subtotal
             'currency' => $this->getCurrency(),
             'visible' => $this->isVisible(),
         ];
+    }
+
+    /**
+     * @return Price
+     */
+    public function getTotalPrice()
+    {
+        return (new Price())->setCurrency($this->getCurrency())->setValue($this->getAmount());
     }
 }
