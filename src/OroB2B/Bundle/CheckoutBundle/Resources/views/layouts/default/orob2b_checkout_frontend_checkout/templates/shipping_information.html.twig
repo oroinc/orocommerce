@@ -1,4 +1,5 @@
 {% block _checkout_form_fields_widget -%}
+    {% set workflowItem = checkout.workflowItem %}
     <div data-page-component-module="oroui/js/app/components/view-component"
          data-page-component-options="{{ {
              view: 'orob2bcheckout/js/app/views/address-view',
@@ -52,8 +53,10 @@
             </fieldset>
         </div>
 
+        {% if workflowItem.data.get('billing_address_has_shipping') %}
         <fieldset class="checkout__form__row">
             {{ form_row(form.ship_to_billing_address) }}
         </fieldset>
+        {% endif %}
     </div>
 {%- endblock %}
