@@ -45,7 +45,7 @@ class RFPActionsTest extends WebTestCase
             $this->getUrl(
                 'oro_action_widget_form',
                 [
-                    'actionName' => 'orob2b_rfp_change_status_action',
+                    'actionName' => 'orob2b_rfp_change_status',
                     'entityClass' => 'OroB2B\Bundle\RFPBundle\Entity\Request',
                     'entityId' => $request->getId()
                 ]

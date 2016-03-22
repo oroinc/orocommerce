@@ -1,5 +1,5 @@
-actions:
-    orob2b_order_frontend_create_order_action:
+operations:
+    orob2b_order_frontend_create_order:
         label: orob2b.order.btn.create_order
         applications: [frontend]
         routes:
@@ -16,7 +16,7 @@ actions:
             page_component_options:
                 component_name: '[name$="[component]"]'
                 component_additional: '[name$="[additional]"]'
-        prefunctions:
+        preactions:
             - @call_service_method:
                 service: orob2b_order.processor.quick_add
                 method: isAllowed

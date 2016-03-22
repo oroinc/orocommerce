@@ -28,7 +28,7 @@ class AccountUserActionsTest extends AbstractAccountUserActionsTest
      */
     protected function getAccountUserEnableActionName()
     {
-        return 'orob2b_account_action_accountuser_enable';
+        return 'orob2b_account_accountuser_enable';
     }
 
     /**
@@ -36,7 +36,7 @@ class AccountUserActionsTest extends AbstractAccountUserActionsTest
      */
     protected function getAccountUserDisableActionName()
     {
-        return 'orob2b_account_action_accountuser_disable';
+        return 'orob2b_account_accountuser_disable';
     }
 
     /**
