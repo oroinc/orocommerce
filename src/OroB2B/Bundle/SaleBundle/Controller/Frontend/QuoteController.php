@@ -2,10 +2,9 @@
 
 namespace OroB2B\Bundle\SaleBundle\Controller\Frontend;
 
-use Oro\Bundle\ActionBundle\Model\ActionData;
-use OroB2B\Bundle\CheckoutBundle\Model\Action\StartCheckout;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteToOrderType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -14,9 +13,10 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\ActionBundle\Model\ActionData;
 
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteToOrderType;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use Symfony\Component\HttpFoundation\Request;
 
 class QuoteController extends Controller
 {
@@ -100,10 +100,22 @@ class QuoteController extends Controller
         $form = $this->createForm(QuoteToOrderType::NAME, $quote);
         $form->handleRequest($request);
         if ($form->isValid()) {
-            $this->container->get('oro_action.manager')->execute(
+            $actionData = $this->container->get('oro_action.manager')->execute(
                 'orob2b_sale_frontend_quote_accept_and_submit_to_order',
-                new ActionData(['data' => $form->getData()])
+                new ActionData([
+                    'quote' => $quote,
+                    'selectedItems' => $form->getData()
+                ])
             );
+
+            $redirectUrl = $actionData->getRedirectUrl();
+            if ($redirectUrl) {
+                if ($request->isXmlHttpRequest()) {
+                    return new JsonResponse(['redirectUrl' => $redirectUrl]);
+                } else {
+                    return $this->redirect($redirectUrl);
+                }
+            }
         }
 
         return [
