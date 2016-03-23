@@ -1,20 +1,22 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Migrations\Schema\v1_3;
+namespace OroB2B\Bundle\SaleBundle\Migrations\Schema\v1_7;
 
 use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroB2BOrderBundle implements Migration
+class OroB2BSaleBundle implements Migration
 {
     /**
      * {@inheritdoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
+        /** Tables update **/
         $this->alterAddressTable($schema);
+
     }
 
     /**
@@ -24,7 +26,7 @@ class OroB2BOrderBundle implements Migration
      */
     protected function alterAddressTable(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_order_address');
+        $table = $schema->getTable('orob2b_quote_address');
         $table->addColumn('phone', 'string', ['notnull' => false, 'length' => 255]);
     }
 }
