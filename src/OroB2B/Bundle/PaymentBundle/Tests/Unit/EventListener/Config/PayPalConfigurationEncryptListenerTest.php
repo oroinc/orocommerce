@@ -4,14 +4,14 @@ namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\EventListener\Config;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
-use Oro\Bundle\ConfigBundle\Event\LoadConfigEvent;
+use Oro\Bundle\ConfigBundle\Event\ConfigGetEvent;
 use Oro\Bundle\SecurityBundle\Encoder\Mcrypt;
 
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\OroB2BPaymentExtension;
-use OroB2B\Bundle\PaymentBundle\EventListener\Config\PaypalConfigurationEncryptListener;
+use OroB2B\Bundle\PaymentBundle\EventListener\Config\PayPalConfigurationEncryptListener;
 
-class PaypalConfigurationEncryptListenerTest extends \PHPUnit_Framework_TestCase
+class PayPalConfigurationEncryptListenerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
     protected $configManager;
@@ -19,7 +19,7 @@ class PaypalConfigurationEncryptListenerTest extends \PHPUnit_Framework_TestCase
     /** @var Mcrypt|\PHPUnit_Framework_MockObject_MockObject */
     protected $encoder;
 
-    /** @var PaypalConfigurationEncryptListener */
+    /** @var PayPalConfigurationEncryptListener */
     protected $listener;
 
     protected function setUp()
@@ -32,7 +32,7 @@ class PaypalConfigurationEncryptListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new PaypalConfigurationEncryptListener($this->encoder);
+        $this->listener = new PayPalConfigurationEncryptListener($this->encoder);
     }
 
     protected function tearDown()
@@ -93,7 +93,7 @@ class PaypalConfigurationEncryptListenerTest extends \PHPUnit_Framework_TestCase
                 }
             );
 
-        $event = new LoadConfigEvent($this->configManager, $key, $value, $full);
+        $event = new ConfigGetEvent($this->configManager, $key, $value, $full);
 
         $this->listener->loadConfig($event);
         $this->assertEquals($expectedValue, $event->getValue());

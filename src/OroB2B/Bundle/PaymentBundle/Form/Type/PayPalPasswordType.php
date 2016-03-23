@@ -4,22 +4,41 @@ namespace OroB2B\Bundle\PaymentBundle\Form\Type;
 
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\PaymentBundle\EventListener\PaypalPasswordSubscriber;
-
-class PaypalPasswordType extends PasswordType
+class PayPalPasswordType extends PasswordType
 {
     const NAME = 'orob2b_payment_paypal_password_type';
+
+    const PASSWORD_PLACEHOLDER = '*';
 
     /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addEventSubscriber(new PaypalPasswordSubscriber());
+        $builder->addEventListener(
+            FormEvents::PRE_SUBMIT,
+            function (FormEvent $event) {
+                $data = $event->getData();
+                if ($data === $this->getPlaceholder($data)) {
+                    $event->setData($event->getForm()->getData());
+                }
+            }
+        );
+    }
+
+    /**
+     * @param string $data
+     * @return string
+     */
+    protected function getPlaceholder($data)
+    {
+        return str_repeat(self::PASSWORD_PLACEHOLDER, strlen((string)$data));
     }
 
     /**
@@ -27,7 +46,7 @@ class PaypalPasswordType extends PasswordType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        // parent call isn't required
+        $view->vars['value'] = $this->getPlaceholder($form->getData());
     }
 
     /**

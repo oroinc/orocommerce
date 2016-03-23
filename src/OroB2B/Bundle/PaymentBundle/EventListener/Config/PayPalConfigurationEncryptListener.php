@@ -3,14 +3,14 @@
 namespace OroB2B\Bundle\PaymentBundle\EventListener\Config;
 
 use Oro\Bundle\SecurityBundle\Encoder\Mcrypt;
-use Oro\Bundle\ConfigBundle\Event\LoadConfigEvent;
+use Oro\Bundle\ConfigBundle\Event\ConfigGetEvent;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\OroB2BPaymentExtension;
 
-class PaypalConfigurationEncryptListener
+class PayPalConfigurationEncryptListener
 {
     /** @var MCrypt */
     protected $encoder;
@@ -24,9 +24,9 @@ class PaypalConfigurationEncryptListener
     }
 
     /**
-     * @param LoadConfigEvent $event
+     * @param ConfigGetEvent $event
      */
-    public function loadConfig(LoadConfigEvent $event)
+    public function loadConfig(ConfigGetEvent $event)
     {
         $key = $event->getKey();
 
@@ -70,25 +70,25 @@ class PaypalConfigurationEncryptListener
             return false;
         }
 
-        return in_array($configKey, $this->getConfigKeysToEncrypt());
+        return in_array($configKey, $this->getConfigKeysToEncrypt(), true);
     }
 
     /**
-     * @param $configFullKey
+     * @param string $configFullKey
      * @return array An array with 2 elements: [extensionAlias, configKey]
      */
     protected function parseConfigKey($configFullKey)
     {
-        return explode(ConfigManager::SECTION_MODEL_SEPARATOR, $configFullKey, 2);
+        return explode(ConfigManager::SECTION_MODEL_SEPARATOR, (string)$configFullKey, 2);
     }
 
     /**
      * Get direct value of config
      *
-     * @param LoadConfigEvent $event
+     * @param ConfigGetEvent $event
      * @return mixed
      */
-    protected function getDirectValueFromEvent(LoadConfigEvent $event)
+    protected function getDirectValueFromEvent(ConfigGetEvent $event)
     {
         $eventValue = $event->getValue();
 
@@ -98,10 +98,10 @@ class PaypalConfigurationEncryptListener
     /**
      * Set direct value to event
      *
-     * @param LoadConfigEvent $event
+     * @param ConfigGetEvent $event
      * @param mixed $value
      */
-    protected function setDirectValueToEvent(LoadConfigEvent $event, $value)
+    protected function setDirectValueToEvent(ConfigGetEvent $event, $value)
     {
         $eventValue = $event->getValue();
         if ($event->isFull()) {
