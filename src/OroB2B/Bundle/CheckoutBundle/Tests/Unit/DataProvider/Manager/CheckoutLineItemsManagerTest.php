@@ -80,7 +80,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
 
             if ($isEntitySupported) {
                 $provider->expects($this->once())
-                    ->method('isEntitySupported')
+                    ->method('isTransformDataSupported')
                     ->with($entity)
                     ->willReturn(true);
 
