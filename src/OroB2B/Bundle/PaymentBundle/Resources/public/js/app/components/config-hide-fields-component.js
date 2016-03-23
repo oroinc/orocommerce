@@ -39,6 +39,19 @@ define(function(require) {
             this.$el.on('change', _.bind(this.updateDependentFields, this));
         },
 
+        /**
+         * @inheritDoc
+         */
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            this.$el.off('change', _.bind(this.updateDependentFields, this));
+
+            BaseComponent.__super__.dispose.call(this);
+        },
+
         updateDependentFields: function() {
             var id = this.$el.data('dependency-id');
             var value = this.$el.val();

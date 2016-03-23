@@ -137,8 +137,6 @@ oro_system_configuration:
             options:
                 label: orob2b.payment.system_configuration.fields.payment_action.label
                 required: true
-                constraints:
-                    - NotBlank: ~
                 choice_translation_domain: messages
                 choices:
                     authorization: orob2b.payment.system_configuration.fields.payment_action.authorization
@@ -313,8 +311,6 @@ oro_system_configuration:
             options:
                 label: orob2b.payment.system_configuration.fields.payment_action.label
                 required: true
-                constraints:
-                    - NotBlank: ~
                 choice_translation_domain: messages
                 choices:
                     authorization: orob2b.payment.system_configuration.fields.payment_action.authorization
