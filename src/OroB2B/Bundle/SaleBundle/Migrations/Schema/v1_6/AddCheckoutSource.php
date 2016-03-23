@@ -41,7 +41,7 @@ class AddCheckoutSource implements Migration, ExtendExtensionAwareInterface
                 'id',
                 [
                     ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
-                    'entity' => ['label' => 'orob2b.salse.quote.entity_label'],
+                    'entity' => ['label' => 'orob2b.sale.quote.entity_label'],
                     'extend' => [
                         'is_extend' => true,
                         'owner' => ExtendScope::OWNER_CUSTOM
