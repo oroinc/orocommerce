@@ -106,13 +106,13 @@ class PayPalConfigurationEncryptListenerTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'full with encryptable value' => [
-                'key' => $this->getFullConfigKey(Configuration::PAYFLOW_GATEWAY_EMAIL_KEY),
+                'key' => $this->getFullConfigKey(Configuration::PAYFLOW_GATEWAY_PARTNER_KEY),
                 'value' => ['value' => 'email@example.com'],
                 'full' => true,
                 'expectedValue' => ['value' => 'encrypted_email@example.com']
             ],
             'non-full with encryptable value' => [
-                'key' => $this->getFullConfigKey(Configuration::PAYFLOW_GATEWAY_EMAIL_KEY),
+                'key' => $this->getFullConfigKey(Configuration::PAYFLOW_GATEWAY_PARTNER_KEY),
                 'value' => 'email@example.com',
                 'full' => false,
                 'expectedValue' => 'encrypted_email@example.com'
