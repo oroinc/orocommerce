@@ -148,6 +148,9 @@ orob2b:
                 entity_label: 'Request For Quote'
                 entity_label_short: 'Request'
                 entity_plural_label: 'Requests For Quote'
+                head_title.label: 'Requests For Quote #id - Requests For Quote'
+                create_title.label: 'Create Requests For Quote'
+                edit_title.label: 'Requests For Quote #id'
                 id.label: 'RFQ #'
                 first_name.label: 'First Name'
                 last_name.label: 'Last Name'
@@ -161,5 +164,7 @@ orob2b:
                 po_number.label: 'PO Number'
                 ship_until.label: 'Do Not Ship Later Than'
                 assigned_account_users.label: 'Assigned To'
+                create_form.cancel.label: 'Reset'
+                create_form.submit.label: 'Save'
 
 orob2b.order.orderlineitem.offers.label: 'Requested QTY and price'
