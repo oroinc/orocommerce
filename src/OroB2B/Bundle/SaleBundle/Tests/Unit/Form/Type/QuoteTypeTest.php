@@ -78,7 +78,6 @@ class QuoteTypeTest extends AbstractTest
                 [
                     'data_class'    => 'OroB2B\Bundle\SaleBundle\Entity\Quote',
                     'intention'     => 'sale_quote',
-                    'cascade_validation' => true,
                     'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
                 ]
             );

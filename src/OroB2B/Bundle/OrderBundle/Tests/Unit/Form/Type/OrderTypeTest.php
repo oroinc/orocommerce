@@ -86,8 +86,7 @@ class OrderTypeTest extends TypeTestCase
             ->with(
                 [
                     'data_class' => 'Order',
-                    'intention' => 'order',
-                    'cascade_validation' => 1
+                    'intention' => 'order'
                 ]
             );
 

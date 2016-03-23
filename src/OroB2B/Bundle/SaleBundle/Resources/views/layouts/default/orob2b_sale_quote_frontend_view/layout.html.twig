@@ -113,6 +113,8 @@
                                         {% set address = address|merge([quote.shippingAddress.postalCode]) %}
                                     {% endif %}
                                     {{ address|join(', ') }}
+                                    <br/>
+                                    {{ quote.shippingAddress.phone }}
                                 </td>
                             </tr>
                         {% else %}
