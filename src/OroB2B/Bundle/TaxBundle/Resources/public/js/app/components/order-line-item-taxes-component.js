@@ -68,9 +68,7 @@ define(function(require) {
             mediator.on('entry-point:order:load', this.setOrderTaxes, this);
             mediator.on('entry-point:order:load:after', this.hideLoadingMask, this);
 
-            this.appliedTaxesTemplate = _.template(
-                this.options._sourceElement.find(this.options.selectors.appliedTaxesTemplate).html()
-            );
+            this.appliedTaxesTemplate = _.template($(this.options.selectors.appliedTaxesTemplate).html());
 
             this.$tableContainer = this.options._sourceElement.find(this.options.selectors.tableContainer);
 

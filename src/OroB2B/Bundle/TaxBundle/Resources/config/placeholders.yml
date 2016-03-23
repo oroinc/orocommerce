@@ -13,6 +13,8 @@ placeholders:
     scripts_before:
         items:
             order_taxes_totals_template: ~
+            order_taxes_item_taxes_template: ~
+            order_taxes_item_items_template: ~
 
 items:
     orob2b_pricing_tax_totals:
@@ -40,5 +42,11 @@ items:
         template: OroB2BTaxBundle:Order:Form/taxes.html.twig
         applicable: @orob2b_tax.provider.taxation_settings_provider->isEnabled()
     order_taxes_totals_template:
-        template: OroB2BTaxBundle::script.html.twig
+        template: OroB2BTaxBundle:Js:totals.html.twig
+        applicable: @orob2b_tax.provider.taxation_settings_provider->isEnabled()
+    order_taxes_item_taxes_template:
+        template: OroB2BTaxBundle:Js:item_taxes.html.twig
+        applicable: @orob2b_tax.provider.taxation_settings_provider->isEnabled()
+    order_taxes_item_items_template:
+        template: OroB2BTaxBundle:Js:item_items.html.twig
         applicable: @orob2b_tax.provider.taxation_settings_provider->isEnabled()

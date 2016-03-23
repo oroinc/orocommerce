@@ -46,9 +46,7 @@ define(function(require) {
             var attr = this.getAttribute();
             this.options._sourceElement.attr(attr, $('[' + attr + ']').length);
 
-            this.template = _.template(
-                this.options._sourceElement.find(this.getTemplateName()).html()
-            );
+            this.template = _.template($(this.getTemplateName()).html());
 
             this.$valueContainer = this.options._sourceElement.find(this.options.selectors.valueContainer);
 

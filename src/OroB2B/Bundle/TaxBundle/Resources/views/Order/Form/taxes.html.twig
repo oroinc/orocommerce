@@ -1,9 +1,5 @@
 {% set result = form.vars.result|default({}) %}
-{% import 'OroB2BTaxBundle::macros.html.twig' as TAX %}
 <div data-page-component-module="orob2btax/js/app/components/order-line-item-taxes-component"
      data-page-component-options="{{ {result: result|default({})}|json_encode }}">
-    <script type="text/html" id="line-item-taxes-template">
-        {{ TAX.renderJsTaxes() }}
-    </script>
     <div data-table-container></div>
 </div>
