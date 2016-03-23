@@ -2,13 +2,11 @@
 
 namespace OroB2B\Bundle\PaymentBundle\EventListener\Config;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\OroB2BPaymentExtension;
 
-class PaypalSelectedCountriesListener
+class PayPalSelectedCountriesListener
 {
     /**
      * @param ConfigSettingsUpdateEvent $event
@@ -40,24 +38,16 @@ class PaypalSelectedCountriesListener
      */
     protected function handle($settings, $allowedCountriesConfigKey, $selectedCountriesConfigKey)
     {
-        $allowedCountriesKey = $this->getFullConfigKey($allowedCountriesConfigKey);
-        $selectedCountriesKey = $this->getFullConfigKey($selectedCountriesConfigKey);
+        $allowedCountriesKey = Configuration::getFullConfigKey($allowedCountriesConfigKey);
+        $selectedCountriesKey = Configuration::getFullConfigKey($selectedCountriesConfigKey);
 
         if (array_key_exists($allowedCountriesKey, $settings) &&
+            array_key_exists($selectedCountriesKey, $settings) &&
             $settings[$allowedCountriesKey]['value'] === Configuration::ALLOWED_COUNTRIES_ALL
         ) {
             $settings[$selectedCountriesKey]['use_parent_scope_value'] = true;
         }
 
         return $settings;
-    }
-
-    /**
-     * @param string $configKey
-     * @return string
-     */
-    protected function getFullConfigKey($configKey)
-    {
-        return OroB2BPaymentExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $configKey;
     }
 }

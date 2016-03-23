@@ -49,7 +49,7 @@ define(function(require) {
 
             this.$el.off('change', _.bind(this.updateDependentFields, this));
 
-            BaseComponent.__super__.dispose.call(this);
+            ConfigHideFieldsComponent.__super__.dispose.call(this);
         },
 
         updateDependentFields: function() {
