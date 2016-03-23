@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
@@ -38,7 +39,8 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
             ['account', new Account()],
             ['accountUser', new AccountUser()],
             ['website', new Website()],
-            ['source', new CheckoutSource()]
+            ['source', new CheckoutSource()],
+            ['shippingEstimate', Price::create(2, 'USD')],
         ];
 
         $entity = new Checkout();
@@ -106,5 +108,62 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
                 'source' => '\OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface',
             ]
         ];
+    }
+
+    public function testPostLoad()
+    {
+        $item = new Checkout();
+
+        $this->assertNull($item->getShippingEstimate());
+
+        $value = 1;
+        $currency = 'USD';
+        $this->setProperty($item, 'shippingEstimateAmount', $value)
+            ->setProperty($item, 'shippingEstimateCurrency', $currency);
+
+        $item->postLoad();
+
+        $this->assertEquals(Price::create($value, $currency), $item->getShippingEstimate());
+    }
+
+    public function testUpdateShippingEstimate()
+    {
+        $item = new Checkout();
+        $value = 1;
+        $currency = 'USD';
+        $item->setShippingEstimate(Price::create($value, $currency));
+
+        $item->updateShippingEstimate();
+
+        $this->assertEquals($value, $this->getProperty($item, 'shippingEstimateAmount'));
+        $this->assertEquals($currency, $this->getProperty($item, 'shippingEstimateCurrency'));
+    }
+
+    /**
+     * @param object $object
+     * @param string $property
+     * @param mixed $value
+     * @return CheckoutTest
+     */
+    protected function setProperty($object, $property, $value)
+    {
+        $reflection = new \ReflectionProperty(get_class($object), $property);
+        $reflection->setAccessible(true);
+        $reflection->setValue($object, $value);
+
+        return $this;
+    }
+
+    /**
+     * @param object $object
+     * @param string $property
+     * @return mixed $value
+     */
+    protected function getProperty($object, $property)
+    {
+        $reflection = new \ReflectionProperty(get_class($object), $property);
+        $reflection->setAccessible(true);
+
+        return $reflection->getValue($object);
     }
 }

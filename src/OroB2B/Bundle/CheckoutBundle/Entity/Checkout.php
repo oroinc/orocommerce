@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\CheckoutBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -27,6 +28,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 /**
  * @ORM\Table(name="orob2b_checkout")
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks()
  * @Config(
  *      defaultValues={
  *          "entity"={
@@ -196,6 +198,25 @@ class Checkout extends ExtendCheckout implements
      * @var
      */
     protected $paymentMethod;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="shipping_estimate_amount", type="money", nullable=true)
+     */
+    protected $shippingEstimateAmount;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="shipping_estimate_currency", type="string", nullable=true, length=3)
+     */
+    protected $shippingEstimateCurrency;
+
+    /**
+     * @var Price
+     */
+    protected $shippingEstimate;
 
     /**
      * @return Account
@@ -572,5 +593,50 @@ class Checkout extends ExtendCheckout implements
         $sourceEntity = $this->getSourceEntity();
         return $sourceEntity && ($sourceEntity instanceof LineItemsNotPricedAwareInterface
             || $sourceEntity instanceof LineItemsAwareInterface) ? $sourceEntity->getLineItems() : [];
+    }
+
+    /**
+     * Get shipping estimate
+     *
+     * @return Price|null
+     */
+    public function getShippingEstimate()
+    {
+        return $this->shippingEstimate;
+    }
+
+    /**
+     * Set shipping estimate
+     *
+     * @param Price $shippingEstimate
+     * @return $this
+     */
+    public function setShippingEstimate($shippingEstimate = null)
+    {
+        $this->shippingEstimate = $shippingEstimate;
+
+        $this->updateShippingEstimate();
+
+        return $this;
+    }
+
+    /**
+     * @ORM\PostLoad
+     */
+    public function postLoad()
+    {
+        if (null !== $this->shippingEstimateAmount && null !== $this->shippingEstimateCurrency) {
+            $this->shippingEstimate = Price::create($this->shippingEstimateAmount, $this->shippingEstimateCurrency);
+        }
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updateShippingEstimate()
+    {
+        $this->shippingEstimateAmount = $this->shippingEstimate ? $this->shippingEstimate->getValue() : null;
+        $this->shippingEstimateCurrency = $this->shippingEstimate ? $this->shippingEstimate->getCurrency() : null;
     }
 }
