@@ -3,13 +3,14 @@
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use OroB2B\Bundle\TaxBundle\Form\Extension\OrderLineItemTypeExtension;
+use OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemType;
+use OroB2B\Bundle\TaxBundle\Form\Extension\OrderLineItemTypeExtension;
 use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
 use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use OroB2B\Bundle\TaxBundle\Provider\TaxSubtotalProvider;
@@ -38,6 +39,8 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected $extension;
 
+    /** @var SectionProvider|\PHPUnit_Framework_MockObject_MockObject */
+    protected $sectionProvider;
 
     protected function setUp()
     {
@@ -54,10 +57,13 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->sectionProvider = $this->getMock('OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider');
+
         $this->extension = new OrderLineItemTypeExtension(
             $this->taxationSettingsProvider,
             $this->taxManager,
-            $this->taxSubtotalProvider
+            $this->taxSubtotalProvider,
+            $this->sectionProvider
         );
     }
 
@@ -136,21 +142,44 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($result, $view->vars['result']);
     }
 
-    public function testConfigureOptions()
+    public function testBuildView()
     {
-        $resolver = new OptionsResolver();
-        $resolver->setDefault('sections', []);
-        $this->extension->configureOptions($resolver);
-        $options = $resolver->resolve();
+        $this->sectionProvider->expects($this->once())->method('addSections')
+            ->with(
+                $this->logicalAnd(
+                    $this->isType('string'),
+                    $this->equalTo($this->extension->getExtendedType())
+                ),
+                $this->logicalAnd(
+                    $this->isType('array'),
+                    $this->arrayHasKey('unitPriceIncludingTax'),
+                    $this->arrayHasKey('unitPriceExcludingTax'),
+                    $this->arrayHasKey('unitPriceTaxAmount'),
+                    $this->arrayHasKey('rowTotalIncludingTax'),
+                    $this->arrayHasKey('rowTotalExcludingTax'),
+                    $this->arrayHasKey('rowTotalTaxAmount'),
+                    $this->arrayHasKey('taxes')
+                )
+            );
 
-        $this->assertArrayHasKey('sections', $options);
-        $this->assertArrayHasKey('unitPriceIncludingTax', $options['sections']);
-        $this->assertArrayHasKey('unitPriceExcludingTax', $options['sections']);
-        $this->assertArrayHasKey('unitPriceTaxAmount', $options['sections']);
-        $this->assertArrayHasKey('rowTotalIncludingTax', $options['sections']);
-        $this->assertArrayHasKey('rowTotalExcludingTax', $options['sections']);
-        $this->assertArrayHasKey('rowTotalTaxAmount', $options['sections']);
-        $this->assertArrayHasKey('taxes', $options['sections']);
+        $this->taxationSettingsProvider->expects($this->once())->method('isEnabled')->willReturn(true);
+
+        $view = new FormView();
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $this->extension->buildView($view, $form, []);
+    }
+
+    public function testBuildViewTaxDisabled()
+    {
+        $this->sectionProvider->expects($this->never())->method($this->anything());
+
+        $this->taxationSettingsProvider->expects($this->once())->method('isEnabled')->willReturn(false);
+
+        $view = new FormView();
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $this->extension->buildView($view, $form, []);
     }
 
     public function testOnBuildFormWithDisabledTaxes()

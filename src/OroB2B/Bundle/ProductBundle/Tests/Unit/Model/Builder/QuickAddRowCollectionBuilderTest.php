@@ -96,6 +96,10 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testBuildFromFile(UploadedFile $file)
     {
+        if (extension_loaded('xdebug')) {
+            $this->markTestSkipped("PHP Fatal error:  Maximum function nesting level of '256' reached, aborting!");
+        }
+
         $this->prepareProductRepository();
         $this->assertValidCollection($this->builder->buildFromFile($file));
     }

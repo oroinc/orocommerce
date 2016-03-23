@@ -134,7 +134,7 @@ abstract class AbstractOrderLineItemType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $this->sectionProvider->addSections(
+        $this->getSectionProvider()->addSections(
             $this->getName(),
             [
                 'quantity' => ['data' => ['quantity' => [], 'productUnit' => []], 'order' => 10],
@@ -162,7 +162,7 @@ abstract class AbstractOrderLineItemType extends AbstractType
     /** {@inheritdoc} */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['sections'] = $this->sectionProvider->getSections($this->getName());
+        $view->vars['sections'] = $this->getSectionProvider()->getSections($this->getName());
     }
 
     /**

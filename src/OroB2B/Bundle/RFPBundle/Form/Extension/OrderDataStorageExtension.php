@@ -63,18 +63,10 @@ class OrderDataStorageExtension extends AbstractTypeExtension
             $actual = is_object($this->sectionProvider) ?
                 get_class($this->sectionProvider) : gettype($this->sectionProvider);
 
-            throw new \InvalidArgumentException(sprintf('SectionProvider expected %s, %s given', $className, $actual));
+            throw new \InvalidArgumentException(sprintf('"%s" expected, "%s" given', $className, $actual));
         }
 
         $this->sectionProvider = $sectionProvider;
-    }
-
-    /**
-     * @return \OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider
-     */
-    public function getSectionProvider()
-    {
-        return $this->sectionProvider;
     }
 
     /** {@inheritdoc} */

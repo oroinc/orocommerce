@@ -31,6 +31,10 @@ class SectionProvider
      */
     public function getSections($formName)
     {
+        if (!array_key_exists($formName, $this->sections)) {
+            return new ArrayCollection();
+        }
+
         $sections = new ArrayCollection($this->sections[(string)$formName]);
 
         $criteria = Criteria::create();
