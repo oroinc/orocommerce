@@ -8,7 +8,7 @@ use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\OroB2BPaymentExtension;
 
-class PaypalSelectedCountriesListener
+class PayPalSelectedCountriesListener
 {
     /**
      * @param ConfigSettingsUpdateEvent $event
