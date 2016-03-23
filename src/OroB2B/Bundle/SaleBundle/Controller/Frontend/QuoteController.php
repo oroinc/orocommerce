@@ -100,17 +100,15 @@ class QuoteController extends Controller
         $form = $this->createForm(QuoteToOrderType::NAME, $quote);
         $form->handleRequest($request);
         if ($form->isValid()) {
-            $this->get('doctrine')->getManagerForClass('OroB2BSaleBundle:Quote')->flush();
-            $action = $this->container->get('orob2b_checkout.model.action.start_checkout');
-            $action->initialize(
-                [StartCheckout::SOURCE_FIELD_KEY => 'quote', StartCheckout::SOURCE_ENTITY_KEY => $quote]
+            $this->container->get('oro_action.manager')->execute(
+                'orob2b_sale_frontend_quote_accept_and_submit_to_order',
+                new ActionData(['data' => $form->getData()])
             );
-            $action->execute(new ActionData(['data' => $quote]));
         }
 
         return [
             'data' => [
-                'quote' => $quote,
+                'data' => $quote,
                 'form' => $form->createView()
             ]
         ];
