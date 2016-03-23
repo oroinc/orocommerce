@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PaymentBundle\DependencyInjection;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 
 class Configuration implements ConfigurationInterface
@@ -240,5 +241,14 @@ class Configuration implements ConfigurationInterface
         );
 
         return $treeBuilder;
+    }
+
+    /**
+     * @param $key
+     * @return string
+     */
+    public static function getFullConfigKey($key)
+    {
+        return OroB2BPaymentExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $key;
     }
 }
