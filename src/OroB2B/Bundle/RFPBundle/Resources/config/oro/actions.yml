@@ -326,3 +326,16 @@ action_groups:
             - @create_datetime:
                 attribute: $.data.deletedAt
             - @flush_entity: $.data
+
+    orob2b_rfp_frontend_request_create:
+        label: orob2b.frontend.rfp.request.create.label
+        enabled: true
+        applications: [frontend]
+        routes:
+            - orob2b_rfp_frontend_request_index
+        acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\RFPBundle\Entity\Request]
+        order: 10
+        actions:
+            - @redirect:
+                parameters:
+                    route: orob2b_rfp_frontend_request_create
