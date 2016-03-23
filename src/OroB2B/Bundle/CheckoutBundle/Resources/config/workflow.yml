@@ -44,6 +44,9 @@ workflows:
             edit_order_link:
                 type: string
                 label: Edit Order Link
+            source_options:
+                type: array
+                label: ' '
         steps:
             enter_billing_address:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.step.enter_billing_address.label

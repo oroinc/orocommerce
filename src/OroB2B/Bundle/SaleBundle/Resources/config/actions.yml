@@ -117,20 +117,19 @@ actions:
         label: ' '
         enabled: true
         functions:
-#            - @assign_url:
-#                attribute: $.editLink
-#                route: orob2b_sale_quote_frontend_choice
-#                route_parameters: { 'id': $.data[quote].id }
+            - @assign_url:
+                attribute: $.editLink
+                route: orob2b_sale_quote_frontend_choice
+                route_parameters: { 'id': $.quote.id }
             - @translate:
                 attribute: $.sourceRemoveLabel
                 id: orob2b.frontend.shoppinglist.quote.remove_source.label
             - @start_checkout:
                 source_name: 'quote'
-                source_entity: $.data.quote
-                data:
-                    source_options: $.data.selectedItems
+                source_entity: $.quote
                 settings:
                     allow_source_remove: false
                     remove_source: true
                     source_remove_label: $.sourceRemoveLabel
                     edit_order_link: $.editLink
+                    source_options: $.selectedItems
