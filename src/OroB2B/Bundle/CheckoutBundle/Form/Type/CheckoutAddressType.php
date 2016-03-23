@@ -34,7 +34,6 @@ class CheckoutAddressType extends AbstractOrderAddressType
                     'data-addresses-types' => json_encode($this->orderAddressManager->getAddressTypes($addresses)),
                     'data-default' => $defaultKey,
                 ],
-                'data' => $defaultKey
             ];
 
             if ($isManualEditGranted) {

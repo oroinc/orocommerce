@@ -12,6 +12,7 @@ use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use OroB2B\Bundle\CheckoutBundle\Layout\DataProvider\SummaryDataProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 
@@ -30,6 +31,11 @@ class SummaryDataProviderTest extends \PHPUnit_Framework_TestCase
     protected $lineItemSubtotalProvider;
 
     /**
+     * @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $totalProcessorProvider;
+
+    /**
      * @var SummaryDataProvider
      */
     protected $provider;
@@ -46,9 +52,15 @@ class SummaryDataProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->totalProcessorProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->provider = new SummaryDataProvider(
             $this->checkoutLineItemsManager,
-            $this->lineItemSubtotalProvider
+            $this->lineItemSubtotalProvider,
+            $this->totalProcessorProvider
         );
     }
 
@@ -64,8 +76,10 @@ class SummaryDataProviderTest extends \PHPUnit_Framework_TestCase
      * @dataProvider getDataDataProvider
      * @param ArrayCollection $LineItems
      * @param array $expected
+     * @param Subtotal $totalPrice
+     * @param Subtotal[] $subtotals
      */
-    public function testGetData(ArrayCollection $LineItems, array $expected)
+    public function testGetData(ArrayCollection $LineItems, array $expected, Subtotal $totalPrice, array $subtotals)
     {
         $checkout = $this->getEntity('OroB2B\Bundle\CheckoutBundle\Entity\Checkout', ['id' => 42]);
 
@@ -78,9 +92,15 @@ class SummaryDataProviderTest extends \PHPUnit_Framework_TestCase
         $generalTotal->setAmount('600');
         $generalTotal->setCurrency('USD');
 
-        $this->lineItemSubtotalProvider->expects($this->once())
-            ->method('getSubtotal')
-            ->willReturn($generalTotal);
+        $this->totalProcessorProvider
+            ->expects($this->once())
+            ->method('getTotal')
+            ->willReturn($totalPrice);
+
+        $this->totalProcessorProvider
+            ->expects($this->once())
+            ->method('getSubtotals')
+            ->willReturn($subtotals);
 
         $lineItemTotals = $expected['lineItemTotals'];
         for ($i = 0; $i < count($expected['lineItemTotals']); $i++) {
@@ -128,9 +148,9 @@ class SummaryDataProviderTest extends \PHPUnit_Framework_TestCase
         $lineItem2Total->setValue(100);
         $lineItem2Total->setCurrency('USD');
 
-        $totalPrice = new Price();
+        $totalPrice = new Subtotal();
         $totalPriceValue = (float)$lineItem1Total->getValue() + (float)$lineItem2Total->getValue();
-        $totalPrice->setValue($totalPriceValue);
+        $totalPrice->setAmount($totalPriceValue);
         $totalPrice->setCurrency('USD');
 
         return [
@@ -144,8 +164,11 @@ class SummaryDataProviderTest extends \PHPUnit_Framework_TestCase
                     ],
                     'lineItems' => $LineItems,
                     'lineItemsCount' => 2,
-                    'totalPrice' => $totalPrice
-                ]
+                    'generalTotal' => $totalPrice,
+                    'subtotals' => [$totalPrice]
+                ],
+                'totalPrice' => $totalPrice,
+                'subtotals' => [$totalPrice]
             ]
         ];
     }

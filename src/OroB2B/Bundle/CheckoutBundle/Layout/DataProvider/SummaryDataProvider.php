@@ -11,9 +11,9 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class SummaryDataProvider extends AbstractServerRenderDataProvider
 {
@@ -28,6 +28,11 @@ class SummaryDataProvider extends AbstractServerRenderDataProvider
     protected $lineItemSubtotalProvider;
 
     /**
+     * @var TotalProcessorProvider
+     */
+    protected $totalsProvider;
+
+    /**
      * @var array
      */
     protected $summary = [];
@@ -35,12 +40,15 @@ class SummaryDataProvider extends AbstractServerRenderDataProvider
     /**
      * @param CheckoutLineItemsManager $checkoutLineItemsManager
      * @param LineItemSubtotalProvider $lineItemsSubtotalProvider
+     * @param TotalProcessorProvider $totalsProvider
      */
     public function __construct(
         CheckoutLineItemsManager $checkoutLineItemsManager,
-        LineItemSubtotalProvider $lineItemsSubtotalProvider
+        LineItemSubtotalProvider $lineItemsSubtotalProvider,
+        TotalProcessorProvider $totalsProvider
     ) {
         $this->checkoutLineItemsManager = $checkoutLineItemsManager;
+        $this->totalsProvider = $totalsProvider;
         $this->lineItemSubtotalProvider = $lineItemsSubtotalProvider;
     }
 
@@ -61,7 +69,8 @@ class SummaryDataProvider extends AbstractServerRenderDataProvider
                 'lineItemTotals' => $lineItemTotals,
                 'lineItems' => $orderLineItems,
                 'lineItemsCount' => $orderLineItems->count(),
-                'totalPrice' => $this->getTotalPrice($orderLineItems)
+                'subtotals' => $this->totalsProvider->getSubtotals($checkout),
+                'generalTotal' => $this->totalsProvider->getTotal($checkout)
             ];
         }
 
