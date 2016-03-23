@@ -181,8 +181,7 @@ class OrderType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
-                'intention' => 'order',
-                'cascade_validation' => true
+                'intention' => 'order'
             ]
         );
     }

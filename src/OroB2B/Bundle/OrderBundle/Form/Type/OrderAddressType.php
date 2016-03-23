@@ -114,8 +114,13 @@ class OrderAddressType extends AbstractType
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $isManualEditGranted = $this->orderAddressSecurityProvider->isManualEditGranted($options['addressType']);
+        $exceptKey = ['phone'];
 
-        foreach ($view->children as $child) {
+        foreach ($view->children as $key => $child) {
+            if (in_array($key, $exceptKey)) {
+                continue;
+            }
+
             $child->vars['disabled'] = !$isManualEditGranted;
             $child->vars['required'] = false;
             unset(
