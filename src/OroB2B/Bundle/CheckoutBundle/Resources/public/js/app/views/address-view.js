@@ -29,7 +29,7 @@ define(function(require) {
 
         onAddressChanged: function(e) {
             var selectedAddress = this.addressSelector.val();
-            if (selectedAddress === 0) {
+            if (selectedAddress === '0') {
                 if (this.checkTypes) {
                     this.shipToBillingContainer.removeClass('hidden');
                 }

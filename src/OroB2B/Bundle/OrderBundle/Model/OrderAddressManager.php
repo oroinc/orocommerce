@@ -98,7 +98,7 @@ class OrderAddressManager extends AbstractAddressManager
      */
     protected function getTypesMapping($typeEntity, $typeKey, array $addresses = [])
     {
-        $addresses = array_key_exists($typeKey, $addresses) ? $addresses[$typeKey] : [];
+        $addresses = array_key_exists($typeKey, $addresses) ? array_values($addresses[$typeKey]) : [];
 
         $mapping = [];
         if ($addresses) {
