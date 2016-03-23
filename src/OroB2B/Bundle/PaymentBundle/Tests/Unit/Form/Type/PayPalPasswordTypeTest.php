@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\PaymentBundle\Form\Type\PayPalPasswordType;
 
-class PayPalPasswordTermTypeTest extends FormIntegrationTestCase
+class PayPalPasswordTypeTest extends FormIntegrationTestCase
 {
     /** @var PayPalPasswordType */
     protected $formType;
