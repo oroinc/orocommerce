@@ -9,12 +9,17 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
+
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class ShoppingListManager
 {
@@ -44,21 +49,53 @@ class ShoppingListManager
     protected $rounding;
 
     /**
+     * @var TotalProcessorProvider
+     */
+    protected $totalProvider;
+
+    /**
+     * @var LineItemNotPricedSubtotalProvider
+     */
+    protected $lineItemNotPricedSubtotalProvider;
+
+    /**
+     * @var LocaleSettings
+     */
+    protected $localeSettings;
+
+    /**
+     * @var WebsiteManager
+     */
+    protected $websiteManager;
+
+    /**
      * @param ManagerRegistry $managerRegistry
      * @param TokenStorageInterface $tokenStorage
      * @param TranslatorInterface $translator
      * @param QuantityRoundingService $rounding
+     * @param TotalProcessorProvider $totalProvider
+     * @param LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider
+     * @param LocaleSettings $localeSettings
+     * @param WebsiteManager $websiteManager
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
         TokenStorageInterface $tokenStorage,
         TranslatorInterface $translator,
-        QuantityRoundingService $rounding
+        QuantityRoundingService $rounding,
+        TotalProcessorProvider $totalProvider,
+        LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider,
+        LocaleSettings $localeSettings,
+        WebsiteManager $websiteManager
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->tokenStorage = $tokenStorage;
         $this->translator = $translator;
         $this->rounding = $rounding;
+        $this->totalProvider = $totalProvider;
+        $this->lineItemNotPricedSubtotalProvider = $lineItemNotPricedSubtotalProvider;
+        $this->localeSettings = $localeSettings;
+        $this->websiteManager = $websiteManager;
     }
 
     /**
@@ -72,7 +109,9 @@ class ShoppingListManager
         $shoppingList
             ->setOrganization($this->getAccountUser()->getOrganization())
             ->setAccount($this->getAccountUser()->getAccount())
-            ->setAccountUser($this->getAccountUser());
+            ->setAccountUser($this->getAccountUser())
+            ->setCurrency($this->localeSettings->getCurrency())
+            ->setWebsite($this->websiteManager->getCurrentWebsite());
 
         return $shoppingList;
     }
@@ -143,6 +182,29 @@ class ShoppingListManager
             $shoppingList->addLineItem($lineItem);
             $em->persist($lineItem);
         }
+
+        if ($flush) {
+            $em->flush();
+        }
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @param bool|true $flush
+     */
+    public function recalculateSubtotals(ShoppingList $shoppingList, $flush = true)
+    {
+        $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotal($shoppingList);
+        $total = $this->totalProvider->getTotal($shoppingList);
+
+        if ($subtotal) {
+            $shoppingList->setSubtotal($subtotal->getAmount());
+        }
+        if ($total) {
+            $shoppingList->setTotal($total->getAmount());
+        }
+        $em = $this->managerRegistry->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
+        $em->persist($shoppingList);
 
         if ($flush) {
             $em->flush();

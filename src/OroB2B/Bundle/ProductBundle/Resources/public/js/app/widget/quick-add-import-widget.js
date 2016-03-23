@@ -14,9 +14,9 @@ define(function(require) {
             options.dialogOptions = {
                 'modal': true,
                 'resizable': false,
-                'width': 680,
-                'height': 350,
-                'autoResize': true
+                'width': 820,
+                'autoResize': true,
+                'dialogClass': 'ui-dialog-no-scroll'
             };
 
             QuickAddImportWidget.__super__.initialize.apply(this, arguments);

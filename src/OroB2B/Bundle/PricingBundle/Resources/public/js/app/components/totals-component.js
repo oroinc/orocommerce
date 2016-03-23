@@ -24,7 +24,9 @@ define(function(require) {
                 form: '',
                 template: '.totals-template',
                 subtotals: '.totals-container'
-            }
+            },
+            method: 'POST',
+            events: []
         },
 
         /**
@@ -36,6 +38,11 @@ define(function(require) {
          * @property {jQuery}
          */
         $form: null,
+
+        /**
+         * @property {jQuery}
+         */
+        $method: null,
 
         /**
          * @property {jQuery}
@@ -74,6 +81,7 @@ define(function(require) {
 
             this.$el = options._sourceElement;
             this.$form = $(this.options.selectors.form);
+            this.$method = this.options.method;
             this.$subtotals = this.$el.find(this.options.selectors.subtotals);
             this.template = _.template(this.$el.find(this.options.selectors.template).text());
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
@@ -85,6 +93,11 @@ define(function(require) {
             mediator.on('update:account', this.updateTotals, this);
             mediator.on('update:website', this.updateTotals, this);
             mediator.on('update:currency', this.updateTotals, this);
+
+            var self = this;
+            _.each(this.options.events, function(event) {
+                mediator.on(event, self.updateTotals, self);
+            });
         },
 
         /**
@@ -123,6 +136,13 @@ define(function(require) {
          * @param {Function} callback
          */
         getTotals: function(callback) {
+            if (this.$method === 'GET') {
+                $.get(this.options.url, function (response) {
+                    callback(response);
+                });
+                return;
+            }
+
             var formData = this.$form.find(':input[data-ftid]').serialize();
 
             if (formData === this.formData) {
@@ -171,6 +191,10 @@ define(function(require) {
             mediator.off('update:account', this.updateTotals, this);
             mediator.off('update:website', this.updateTotals, this);
             mediator.off('update:currency', this.updateTotals, this);
+            var self = this;
+            _.each(this.options.events, function(event) {
+                mediator.off(event, self.updateTotals, self);
+            });
             TotalsComponent.__super__.dispose.call(this);
         }
     });
