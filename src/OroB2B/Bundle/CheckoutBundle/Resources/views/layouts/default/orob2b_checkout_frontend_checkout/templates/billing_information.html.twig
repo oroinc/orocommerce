@@ -5,11 +5,12 @@
              selectors: {
                  address: '#' ~ form.billing_address.accountAddress.vars.id,
                  region: '#' ~ form.billing_address.region.vars.id,
+                 shipToBillingCheckbox: '#' ~ form.ship_to_billing_address.vars.id,
                  fieldsContainer: '#checkout-address-fields-container'
              }
          }|json_encode }}">
         {{ form_row(form.billing_address.accountAddress) }}
-        <div id="checkout-address-fields-container" class="{% if not form.billing_address.id.vars.value %}hidden{% endif %}">
+        <div id="checkout-address-fields-container" class="hidden">
             <fieldset class="checkout__form__row">
                 {{ form_row(form.billing_address.label, {'attr': {'placeholder': 'Enter address label'}, 'parentClass': 'form__col_x12'}) }}
             </fieldset>

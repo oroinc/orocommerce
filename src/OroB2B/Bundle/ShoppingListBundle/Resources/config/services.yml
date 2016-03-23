@@ -133,6 +133,7 @@ services:
         class: %orob2b_shopping_list.layout.data_provider.frontend_shopping_list_products_prices.class%
         arguments:
             - @orob2b_shopping_list.data_provider.frontend_product_prices
+            - @doctrine
         tags:
             - { name: layout.data_provider, alias: orob2b_shopping_list_products_prices }
 
@@ -169,5 +170,6 @@ services:
         class: %orob2b_shopping_list.data_provider.checkout_line_item.class%
         arguments:
              - @orob2b_shopping_list.data_provider.frontend_product_prices
+             - @doctrine
         tags:
              - { name: checkout.data_provider.line_item }

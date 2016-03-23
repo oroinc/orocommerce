@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Oro\Component\Layout\LayoutContext;
 
 use OroB2B\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider;
@@ -20,15 +22,22 @@ class FrontendShoppingListProductsPricesDataProviderTest extends \PHPUnit_Framew
      */
     protected $provider;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
+     */
+    protected $registry;
+
     public function setUp()
     {
         $this->frontendProductPricesDataProvider = $this
             ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
 
         $this->provider = new FrontendShoppingListProductsPricesDataProvider(
-            $this->frontendProductPricesDataProvider
+            $this->frontendProductPricesDataProvider,
+            $this->registry
         );
     }
 
@@ -61,10 +70,28 @@ class FrontendShoppingListProductsPricesDataProviderTest extends \PHPUnit_Framew
         $expected = null;
 
         if ($shoppingList) {
+            $lineItems = [];
+            $repo = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository')
+                ->disableOriginalConstructor()
+                ->getMock();
+            $repo->expects($this->once())
+                ->method('getItemsWithProductByShoppingList')
+                ->with($shoppingList)
+                ->will($this->returnValue($lineItems));
+
+            $em = $this->getMock('\Doctrine\Common\Persistence\ObjectManager');
+            $em->expects($this->once())
+                ->method('getRepository')
+                ->will($this->returnValue($repo));
+            $this->registry->expects($this->once())
+                ->method('getManagerForClass')
+                ->will($this->returnValue($em));
+
             $expected = 'expectedData';
             $this->frontendProductPricesDataProvider
                 ->expects($this->once())
                 ->method('getProductsPrices')
+                ->with($lineItems)
                 ->willReturn($expected);
         }
 

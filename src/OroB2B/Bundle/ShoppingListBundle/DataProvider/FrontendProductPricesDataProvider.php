@@ -11,7 +11,6 @@ use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class FrontendProductPricesDataProvider
 {
@@ -46,10 +45,10 @@ class FrontendProductPricesDataProvider
     }
 
     /**
-     * @param ShoppingList $shoppingList
+     * @param LineItem[] $lineItems
      * @return array|null
      */
-    public function getProductsPrices(ShoppingList $shoppingList)
+    public function getProductsPrices(array $lineItems)
     {
         /** @var AccountUser $accountUser */
         $accountUser = $this->securityFacade->getLoggedUser();
@@ -57,7 +56,6 @@ class FrontendProductPricesDataProvider
             return null;
         }
 
-        $lineItems = $shoppingList->getLineItems();
         $productsPriceCriteria = $this->getProductsPricesCriteria($lineItems);
 
         $prices = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria);
@@ -76,7 +74,7 @@ class FrontendProductPricesDataProvider
      * @param Collection|LineItem[] $lineItems
      * @return array
      */
-    protected function getProductsPricesCriteria(Collection $lineItems)
+    protected function getProductsPricesCriteria(array $lineItems)
     {
         $productsPricesCriteria = [];
         foreach ($lineItems as $lineItem) {
