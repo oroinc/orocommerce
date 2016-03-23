@@ -1,3 +1,5 @@
+{% extends 'form_div_layout.html.twig' %}
+
 {%- block checkbox_row -%}
     <fieldset class="checkout__form__row">
         <div class="checkout__form__col form__col_x12 mmb5-md mmb5-sm">
@@ -17,20 +19,12 @@
     </fieldset>
 {%- endblock checkbox_row -%}
 
-{% block _oro_workflow_transition_city_row %}
-    <fieldset class="checkout__form__row">
-        <div class="checkout__form__col form__col_x12">
-            {{- form_label(form, label, {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) -}}
-            {{- form_widget(form, {'attr' : {'class': 'input input_md input_block checkout__form__input', 'placeholder' : 'Enter your city'}}) -}}
-        </div>
-    </fieldset>
-{% endblock %}
-
 {% block text_row %}
     {% set attr = attr|merge({'class': 'input input_md input_block checkout__form__input'}) %}
     <div class="checkout__form__col {{ parentClass|default('form__col_x6') }}">
         {{- form_label(form, label, {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) -}}
         {{- form_widget(form, {'attr' : attr}) -}}
+        {{- form_errors(form) -}}
     </div>
 {% endblock %}
 
@@ -40,6 +34,7 @@
         <div class="checkout__form__select">
             {{ form_widget(form) }}
         </div>
+        {{- form_errors(form) -}}
     </div>
 {% endblock %}
 
@@ -49,41 +44,13 @@
         <div class="checkout__form__select">
             {{ form_widget(form) }}
         </div>
+        {{- form_errors(form) -}}
     </div>
-{% endblock %}
-{% block _oro_workflow_transition_billing_address_row %}
-    <fieldset class="checkout__form__row">
-        <div class="checkout__form__col form__col_x6">
-            {{ form_label(form, 'Address', {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) }}
-            <div class="checkout__form__select">
-                {{ form_widget(form, {'attr' : {'class': 'input input_md'}}) }}
-            </div>
-        </div>
-    </fieldset>
-{% endblock %}
-
-{% block _oro_workflow_transition_street_row %}
-    {{ form_label(form, 'Street Address', {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) }}
-    {{ form_widget(form, {'attr': {'class' : 'input input_md input_block checkout__form__input mb1-md mb1-sm', 'placeholder' : 'Enter your street address'}}) }}
-{% endblock %}
-
-{% block _oro_workflow_transition_street2_row %}
-    {{ form_widget(form, {'attr': {'class' : 'input input_md input_block checkout__form__input mb1-md mb1-sm', 'placeholder' : 'Enter your street address 2'}}) }}
-{% endblock %}
-
-{% block _oro_workflow_transition_region_text_row %}
-    {{ form_widget(form, {'attr': {'class': 'hidden'}}) }}
-{% endblock %}
-
-{% block _oro_workflow_transition_id_row %}
-    {{ form_widget(form) }}
 {% endblock %}
 
 {% block orob2b_region_widget %}
     {{ block('oro_region_widget') }}
 {% endblock %}
-
-{% extends 'form_div_layout.html.twig' %}
 
 {%- block form_label -%}
     {% set label_attr = label_attr|merge({

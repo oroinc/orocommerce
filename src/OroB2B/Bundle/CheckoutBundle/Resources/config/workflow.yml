@@ -98,6 +98,11 @@ workflows:
                                 isEditEnabled: true
                                 addressType: 'billing'
                                 required: true
+                                constraints:
+                                    - Valid: ~
+                                    - NotBlank: ~
+                                    - OroB2B\Bundle\OrderBundle\Validator\Constraints\OrderAddress:
+                                        validationGroups: ['Default', 'Frontend', 'PersonInfo']
                                 disabled: $disallow_billing_address_edit
                         save_billing_address:
                             options:
@@ -123,6 +128,11 @@ workflows:
                                 addressType: 'shipping'
                                 required: true
                                 disabled: $disallow_shipping_address_edit
+                                constraints:
+                                    - Valid: ~
+                                    - NotBlank: ~
+                                    - OroB2B\Bundle\OrderBundle\Validator\Constraints\OrderAddress:
+                                        validationGroups: ['Default', 'Frontend']
                         save_shipping_address:
                             options:
                                 label: orob2b.checkout.workflow.b2b_flow_checkout.form.save_address.label

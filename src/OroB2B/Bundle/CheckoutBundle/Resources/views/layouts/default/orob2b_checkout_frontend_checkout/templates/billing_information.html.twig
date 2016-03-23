@@ -10,7 +10,11 @@
              }
          }|json_encode }}">
         {{ form_row(form.billing_address.accountAddress) }}
-        <div id="checkout-address-fields-container" class="hidden">
+        {% set hasCustomAddress = false %}
+        {% if form.billing_address.id.vars.value %}
+            {% set hasCustomAddress = not form.billing_address.vars.value.accountUserAddress and not form.billing_address.vars.value.accountAddress %}
+        {% endif %}
+        <div id="checkout-address-fields-container" class="{% if not hasCustomAddress %}hidden{% endif %}">
             <fieldset class="checkout__form__row">
                 {{ form_row(form.billing_address.label, {'attr': {'placeholder': 'Enter address label'}, 'parentClass': 'form__col_x12'}) }}
             </fieldset>

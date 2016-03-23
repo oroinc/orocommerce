@@ -119,7 +119,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
 
         $formOptions = [
             'addressType' => AddressTypeEntity::TYPE_SHIPPING,
-            'object' => new Order(),
+            'object' => $this->getEntity(),
             'isEditEnabled' => true,
         ];
 
@@ -271,7 +271,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
 
         $formOptions =  [
             'addressType' => AddressTypeEntity::TYPE_SHIPPING,
-            'object' => new Order(),
+            'object' => $this->getEntity(),
             'isEditEnabled' => true,
         ];
 
@@ -336,7 +336,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
         $form = $this->factory->create(
             $this->formType,
             new OrderAddress(),
-            ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'object' => new Order(), 'isEditEnabled' => true]
+            ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'object' => $this->getEntity(), 'isEditEnabled' => true]
         );
 
         $this->formType->finishView($view, $form, ['addressType' => AddressTypeEntity::TYPE_SHIPPING]);
@@ -353,4 +353,6 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
         $this->assertFalse($view->offsetGet('accountAddress')->vars['disabled']);
         $this->assertFalse($view->offsetGet('accountAddress')->vars['required']);
     }
+
+    protected abstract function getEntity();
 }
