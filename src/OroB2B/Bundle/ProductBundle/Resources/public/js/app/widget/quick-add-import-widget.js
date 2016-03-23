@@ -16,7 +16,7 @@ define(function(require) {
                 'resizable': false,
                 'width': 820,
                 'autoResize': true,
-                'dialogClass': 'wrapper-virtual-margin'
+                'dialogClass': 'ui-dialog-no-scroll'
             };
 
             QuickAddImportWidget.__super__.initialize.apply(this, arguments);
