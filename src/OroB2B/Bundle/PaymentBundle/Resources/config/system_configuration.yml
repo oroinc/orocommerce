@@ -48,11 +48,13 @@ oro_system_configuration:
                 label: orob2b.payment.system_configuration.fields.label.label
 
         orob2b_payment.paypal_payments_pro_sort_order:
-            data_type: string
+            data_type: integer
             type: text
             priority: 80
             options:
                 label: orob2b.payment.system_configuration.fields.sort_order.label
+                constraints:
+                    - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
 
         orob2b_payment.paypal_payments_pro_allowed_countries:
             data_type: string
@@ -165,11 +167,17 @@ oro_system_configuration:
                 label: orob2b.payment.system_configuration.fields.proxy_host.label
 
         orob2b_payment.paypal_payments_pro_proxy_port:
-            data_type: string
+            data_type: integer
             type: text
             priority: 80
             options:
                 label: orob2b.payment.system_configuration.fields.proxy_port.label
+                constraints:
+                    - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+                    - GreaterThan:
+                        value: 0
+                    - LessThanOrEqual:
+                        value: 65535
 
         orob2b_payment.paypal_payments_pro_debug_mode:
             data_type: boolean
@@ -216,11 +224,13 @@ oro_system_configuration:
                 label: orob2b.payment.system_configuration.fields.label.label
 
         orob2b_payment.payflow_gateway_sort_order:
-            data_type: string
+            data_type: integer
             type: text
             priority: 80
             options:
                 label: orob2b.payment.system_configuration.fields.sort_order.label
+                constraints:
+                    - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
 
         orob2b_payment.payflow_gateway_allowed_countries:
             data_type: string
@@ -333,11 +343,17 @@ oro_system_configuration:
                 label: orob2b.payment.system_configuration.fields.proxy_host.label
 
         orob2b_payment.payflow_gateway_proxy_port:
-            data_type: string
+            data_type: integer
             type: text
             priority: 80
             options:
                 label: orob2b.payment.system_configuration.fields.proxy_port.label
+                constraints:
+                    - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+                    - GreaterThan:
+                        value: 0
+                    - LessThanOrEqual:
+                        value: 65535
 
         orob2b_payment.payflow_gateway_debug_mode:
             data_type: boolean
