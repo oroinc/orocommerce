@@ -124,6 +124,7 @@ datagrid:
                 select:
                     - product.id as productId
                     - product.sku as productSku
+                    - productNames.string as productName
                     - lineItem.id
                     - lineItem.quantity
                     - lineItem.notes
@@ -133,6 +134,11 @@ datagrid:
                 join:
                     inner:
                         - { join: lineItem.product, alias: product }
+                        -
+                            join: product.names
+                            alias: productNames
+                            conditionType: WITH
+                            condition: productNames.locale IS NULL
                 where:
                     and:
                         - IDENTITY(lineItem.shoppingList) = :shopping_list_id
@@ -141,6 +147,8 @@ datagrid:
         columns:
             productSku:
                 label:         orob2b.shoppinglist.lineitem.product_sku.label
+            productName:
+                label:         orob2b.shoppinglist.lineitem.product_name.label
             quantity:
                 label:         orob2b.shoppinglist.lineitem.quantity.label
             unitCode:
