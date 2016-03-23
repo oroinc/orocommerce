@@ -8,6 +8,7 @@ use Oro\Bundle\FormBundle\Form\Extension\RandomIdExtension;
 
 use OroB2B\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType;
 
+use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
 use OroB2B\Bundle\FrontendBundle\Form\Type\CountryType;
 use OroB2B\Bundle\FrontendBundle\Form\Type\RegionType;
 use OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type\AbstractOrderAddressTypeTest;
@@ -49,5 +50,13 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
             ],
             ['form' => [new RandomIdExtension()]]
         )]);
+    }
+
+    /**
+     * @return Checkout
+     */
+    protected function getEntity()
+    {
+        return new Checkout();
     }
 }
