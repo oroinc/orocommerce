@@ -6,12 +6,11 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
 use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use OroB2B\Bundle\TaxBundle\Provider\TaxSubtotalProvider;
+use OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 
 class OrderLineItemTypeExtension extends AbstractTypeExtension
@@ -27,19 +26,25 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
     /** @var TaxSubtotalProvider */
     protected $taxSubtotalProvider;
 
+    /** @var SectionProvider */
+    protected $sectionProvider;
+
     /**
      * @param TaxationSettingsProvider $taxationSettingsProvider
      * @param TaxManager $taxManager
      * @param TaxSubtotalProvider $taxSubtotalProvider
+     * @param SectionProvider $sectionProvider
      */
     public function __construct(
         TaxationSettingsProvider $taxationSettingsProvider,
         TaxManager $taxManager,
-        TaxSubtotalProvider $taxSubtotalProvider
+        TaxSubtotalProvider $taxSubtotalProvider,
+        SectionProvider $sectionProvider
     ) {
         $this->taxationSettingsProvider = $taxationSettingsProvider;
         $this->taxManager = $taxManager;
         $this->taxSubtotalProvider = $taxSubtotalProvider;
+        $this->sectionProvider = $sectionProvider;
     }
 
     /**
@@ -63,6 +68,35 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
     }
 
     /** {@inheritdoc} */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        if (!$this->taxationSettingsProvider->isEnabled()) {
+            return;
+        }
+
+        $sections = [];
+        $sectionNames = [
+            'unitPriceIncludingTax' => 'orob2b.tax.order_line_item.unitPrice.includingTax.label',
+            'unitPriceExcludingTax' => 'orob2b.tax.order_line_item.unitPrice.excludingTax.label',
+            'unitPriceTaxAmount' => 'orob2b.tax.order_line_item.unitPrice.taxAmount.label',
+            'rowTotalIncludingTax' => 'orob2b.tax.order_line_item.rowTotal.includingTax.label',
+            'rowTotalExcludingTax' => 'orob2b.tax.order_line_item.rowTotal.excludingTax.label',
+            'rowTotalTaxAmount' => 'orob2b.tax.order_line_item.rowTotal.taxAmount.label',
+            'taxes' => 'orob2b.tax.order_line_item.taxes.label',
+        ];
+
+        $order = self::BASE_ORDER;
+        foreach ($sectionNames as $sectionName => $label) {
+            $sections[$sectionName] = [
+                'order' => $order++,
+                'label' => $label,
+            ];
+        }
+
+        $this->sectionProvider->addSections($this->getExtendedType(), $sections);
+    }
+
+    /** {@inheritdoc} */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         if (!$this->taxationSettingsProvider->isEnabled()) {
@@ -74,36 +108,6 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
             return;
         }
 
-
         $view->vars['result'] = $this->taxManager->getTax($entity);
-    }
-
-    /** {@inheritdoc} */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setNormalizer(
-            'sections',
-            function (Options $options, array $sections) {
-                $sectionNames = [
-                    'unitPriceIncludingTax' => 'orob2b.tax.order_line_item.unitPrice.includingTax.label',
-                    'unitPriceExcludingTax' => 'orob2b.tax.order_line_item.unitPrice.excludingTax.label',
-                    'unitPriceTaxAmount' => 'orob2b.tax.order_line_item.unitPrice.taxAmount.label',
-                    'rowTotalIncludingTax' => 'orob2b.tax.order_line_item.rowTotal.includingTax.label',
-                    'rowTotalExcludingTax' => 'orob2b.tax.order_line_item.rowTotal.excludingTax.label',
-                    'rowTotalTaxAmount' => 'orob2b.tax.order_line_item.rowTotal.taxAmount.label',
-                    'taxes' => 'orob2b.tax.order_line_item.taxes.label',
-                ];
-
-                $order = self::BASE_ORDER;
-                foreach ($sectionNames as $sectionName => $label) {
-                    $sections[$sectionName] = [
-                        'order' => $order++,
-                        'label' => $label,
-                    ];
-                }
-
-                return $sections;
-            }
-        );
     }
 }
