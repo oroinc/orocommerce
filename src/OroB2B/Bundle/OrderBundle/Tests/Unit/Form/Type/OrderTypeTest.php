@@ -125,7 +125,7 @@ class OrderTypeTest extends TypeTestCase
             ->with(
                 [
                     'data_class' => 'Order',
-                    'intention' => 'order',
+                    'intention' => 'order'
                 ]
             );
 

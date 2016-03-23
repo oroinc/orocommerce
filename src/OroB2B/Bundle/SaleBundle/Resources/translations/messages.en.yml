@@ -173,6 +173,7 @@ orob2b:
             region_text.label: State
             street.label: Street
             street2.label: Street 2
+            phone.label: Phone
 
             no_exist: No shipping address found
         controller:
