@@ -48,7 +48,6 @@ class SubtotalSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            FormEvents::POST_SUBMIT => 'postSubmitEventListener',
             FormEvents::SUBMIT => 'onSubmitEventListener',
         ];
     }
@@ -60,37 +59,35 @@ class SubtotalSubscriber implements EventSubscriberInterface
     {
         $form = $event->getForm();
         if ($form->has('discountsSum')) {
-            $form->remove('discountsSum');
-            $data = $event->getData();
-            $subtotal = $this->lineItemSubtotalProvider->getSubtotal($data);
-            $form->add(
-                'discountsSum',
-                'hidden',
-                [
-                    'mapped' => false,
-                    'constraints' => [new Range(
-                        [
-                            'min' => PHP_INT_MAX * (-1), //use some big negative number
-                            'max' => $subtotal->getAmount(),
-                            'maxMessage' => 'orob2b.order.discounts.sum.error.label'
-                        ]
-                    )],
-                ]
-            );
-        }
-    }
 
-    /**
-     * @param FormEvent $event
-     */
-    public function postSubmitEventListener(FormEvent $event)
-    {
-        $data = $event->getData();
-        if ($data instanceof Order) {
-            $this->fillSubtotals($data);
-            $this->fillDiscounts($data);
-            $this->fillTotal($data);
-            $event->setData($data);
+            $data = $event->getData();
+            if ($data instanceof Order) {
+                $this->fillSubtotals($data);
+                $this->fillDiscounts($data);
+                $this->fillTotal($data);
+                $event->setData($data);
+
+                $form->remove('discountsSum');
+                $maxRange = $data->getSubtotal();
+                if ($data->getSubtotal() < $data->getTotalDiscounts()->getValue()) {
+                    $maxRange = 0;
+                }
+
+                $form->add(
+                    'discountsSum',
+                    'hidden',
+                    [
+                        'mapped' => false,
+                        'constraints' => [new Range(
+                            [
+                                'min' => PHP_INT_MAX * (-1), //use some big negative number
+                                'max' => $maxRange,
+                                'maxMessage' => 'orob2b.order.discounts.sum.error.label'
+                            ]
+                        )]
+                    ]
+                );
+            }
         }
     }
 

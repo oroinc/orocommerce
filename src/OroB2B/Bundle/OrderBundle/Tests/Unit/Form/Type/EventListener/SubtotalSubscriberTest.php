@@ -58,7 +58,6 @@ class SubtotalSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             [
-                FormEvents::POST_SUBMIT => 'postSubmitEventListener',
                 FormEvents::SUBMIT => 'onSubmitEventListener'
             ],
             SubtotalSubscriber::getSubscribedEvents()
@@ -72,6 +71,17 @@ class SubtotalSubscriberTest extends \PHPUnit_Framework_TestCase
         )
             ->disableOriginalConstructor()
             ->getMock();
+        $form = $this->getMockBuilder('Symfony\Component\Form\FormInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $event->expects($this->once())
+            ->method('getForm')
+            ->willReturn($form);
+
+        $form->expects($this->once())
+            ->method('has')
+            ->willReturn(true);
 
         $event->expects($this->once())
             ->method('getData');
@@ -79,7 +89,7 @@ class SubtotalSubscriberTest extends \PHPUnit_Framework_TestCase
         $event->expects($this->never())
             ->method('setData');
 
-        $this->subscriber->postSubmitEventListener($event);
+        $this->subscriber->onSubmitEventListener($event);
     }
 
     public function testPostSubmitEventListenerOnOrderEmptyTotals()
@@ -87,7 +97,7 @@ class SubtotalSubscriberTest extends \PHPUnit_Framework_TestCase
         $order = $this->prepareOrder();
         $event = $this->prepareEvent($order);
 
-        $this->subscriber->postSubmitEventListener($event);
+        $this->subscriber->onSubmitEventListener($event);
         $this->assertEquals(0, $order->getTotal());
         $this->assertEquals(0, $order->getSubtotal());
         $this->assertEquals(0, $order->getTotalDiscounts()->getValue());
@@ -99,7 +109,7 @@ class SubtotalSubscriberTest extends \PHPUnit_Framework_TestCase
         $event = $this->prepareEvent($order);
         $this->prepareProviders();
 
-        $this->subscriber->postSubmitEventListener($event);
+        $this->subscriber->onSubmitEventListener($event);
         $this->assertEquals(90, $order->getTotal());
         $this->assertEquals(42, $order->getSubtotal());
         $this->assertEquals(2, $order->getTotalDiscounts()->getValue());
@@ -165,6 +175,17 @@ class SubtotalSubscriberTest extends \PHPUnit_Framework_TestCase
         $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')
             ->disableOriginalConstructor()
             ->getMock();
+        $form = $this->getMockBuilder('Symfony\Component\Form\FormInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $event->expects($this->once())
+            ->method('getForm')
+            ->willReturn($form);
+
+        $form->expects($this->once())
+            ->method('has')
+            ->willReturn(true);
 
         $event->expects($this->once())
             ->method('getData')
