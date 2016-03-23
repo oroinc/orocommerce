@@ -41,6 +41,7 @@ define(function(require) {
                         this.shipToBillingContainer.removeClass('hidden');
                     } else {
                         this.shipToBillingCheckbox.prop('checked', false);
+                        this.shipToBillingCheckbox.trigger('change');
                         this.shipToBillingContainer.addClass('hidden');
                     }
                 }
