@@ -10,9 +10,11 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+use Oro\Bundle\MigrationBundle\Fixture\VersionedFixtureInterface;
+
 use OroB2B\Bundle\MenuBundle\Entity\Manager\MenuItemManager;
 
-class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterface
+class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterface, VersionedFixtureInterface
 {
     /**
      * @var MenuFactory
@@ -23,6 +25,14 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
      * @var MenuItemManager
      */
     protected $menuItemManager;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getVersion()
+    {
+        return '1.0';
+    }
 
     /**
      * {@inheritdoc}
@@ -82,9 +92,8 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
     protected function createMainMenu(ObjectManager $manager)
     {
         $item = $this->factory->createItem('main-menu');
-        $item->addChild('Store', ['uri' => '/account/product/']);
+        $item->addChild('Contact Us', ['uri' => '/contact-us']);
         $item->addChild('About', ['uri' => '/about']);
-        $item->addChild('Blog', ['uri' => '/blog']);
 
         $menuItem = $this->menuItemManager->createFromItem($item);
         $manager->persist($menuItem);
