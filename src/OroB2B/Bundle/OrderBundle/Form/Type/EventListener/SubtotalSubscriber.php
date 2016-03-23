@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\OrderBundle\Form\Type\EventListener;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Validator\Constraints\Range;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
@@ -47,8 +48,36 @@ class SubtotalSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            FormEvents::POST_SUBMIT   => 'postSubmitEventListener'
+            FormEvents::POST_SUBMIT => 'postSubmitEventListener',
+            FormEvents::SUBMIT => 'onSubmitEventListener',
         ];
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function onSubmitEventListener(FormEvent $event)
+    {
+        $form = $event->getForm();
+        if ($form->has('discountsSum')) {
+            $form->remove('discountsSum');
+            $data = $event->getData();
+            $subtotal = $this->lineItemSubtotalProvider->getSubtotal($data);
+            $form->add(
+                'discountsSum',
+                'hidden',
+                [
+                    'mapped' => false,
+                    'constraints' => [new Range(
+                        [
+                            'min' => PHP_INT_MAX * (-1), //use some big negative number
+                            'max' => $subtotal->getAmount(),
+                            'maxMessage' => 'orob2b.order.discounts.sum.error.label'
+                        ]
+                    )],
+                ]
+            );
+        }
     }
 
     /**

@@ -58,7 +58,8 @@ class SubtotalSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             [
-                FormEvents::POST_SUBMIT   => 'postSubmitEventListener'
+                FormEvents::POST_SUBMIT => 'postSubmitEventListener',
+                FormEvents::SUBMIT => 'onSubmitEventListener'
             ],
             SubtotalSubscriber::getSubscribedEvents()
         );

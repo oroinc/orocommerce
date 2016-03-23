@@ -142,7 +142,7 @@ class OrderType extends AbstractType
                     'cascade_validation' => true,
                     'options' => [
                         'currency' => $order->getCurrency(),
-                        'total' => $order->getSubtotal(),
+                        'total' => pow(10, 18) - 1,
                     ]
                 ]
             )
