@@ -39,6 +39,7 @@ class CheckoutAddressType extends AbstractOrderAddressType
                 'choices' => $this->getChoices($addresses),
                 'attr' => [
                     'data-addresses' => json_encode($this->getPlainData($addresses)),
+                    'data-addresses-types' => json_encode($this->orderAddressManager->getAddressTypes($addresses)),
                     'data-default' => $defaultKey,
                 ],
                 'data' => $selectedKey

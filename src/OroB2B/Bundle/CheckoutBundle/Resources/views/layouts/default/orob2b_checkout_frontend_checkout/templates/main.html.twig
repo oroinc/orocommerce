@@ -66,8 +66,8 @@
                     </div>
                     <h3 class="checkout-order-summary__header__title">{{ 'orob2b.checkout.order_summary.label'|trans }}</h3>
                     <div class="checkout-order-summary__header__desc">
-                        <span class="mr1-md mr1-sm"><strong>{{ lineItemsCount }}</strong> {{ 'orob2b.checkout.order_summary.items'|trans }}</span>
-                        <span>{{ 'orob2b.checkout.order_summary.subtotal'|trans }}: <strong>{{ generalTotal.totalPrice|oro_format_price }}</strong></span>
+                        <span class="mr1-md mr1-sm"><strong>{{ summary.lineItemsCount }}</strong> {{ 'orob2b.checkout.order_summary.items'|trans }}</span>
+                        <span>{{ 'orob2b.checkout.order_summary.subtotal'|trans }}: <strong>{{ summary.generalTotal.totalPrice|oro_format_price }}</strong></span>
                     </div>
                 </div>
                 {% set editLink = workfowItem.data.get('edit_order_link') %}
@@ -96,7 +96,7 @@
             </thead>
 
             <tbody>
-            {% for line_item in lineItems %}
+            {% for line_item in summary.lineItems %}
                 <tr>
                     <td class="va-t_md">
                         <h3 class="product-item__title product-item__title_in-cart mb1-md">
@@ -116,7 +116,7 @@
                                 </tr>
                                 <tr>
                                     <td><span>{{ 'orob2b.checkout.order_summary.total_price'|trans }}</span></td>
-                                    <td><span class="fs16 blue">{{ lineItemTotals[line_item.productSku]|oro_format_price }}</span>
+                                    <td><span class="fs16 blue">{{ summary.lineItemTotals[line_item.productSku]|oro_format_price }}</span>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -140,15 +140,15 @@
                     <div class="checkout-order-summary__price-table">
                         <table class="table">
                             <tbody>
-                                {% for total in subtotals %}
+                                {% for total in summary.subtotals %}
                                 <tr>
                                     <td>{{ total.label }}</td>
                                     <td class="text-right">{{ total.totalPrice|oro_format_price }}</td>
                                 </tr>
                                 {% endfor %}
                                 <tr>
-                                    <td><span class="fs18 text-uppercase">{{ generalTotal.label }}</span></td>
-                                    <td class="text-right"><span class="fs18">{{ generalTotal.totalPrice|oro_format_price }}</span></td>
+                                    <td><span class="fs18 text-uppercase">{{ summary.generalTotal.label }}</span></td>
+                                    <td class="text-right"><span class="fs18">{{ summary.generalTotal.totalPrice|oro_format_price }}</span></td>
                                 </tr>
                             </tbody>
                         </table>

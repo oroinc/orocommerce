@@ -33,6 +33,11 @@ class SummaryDataProvider extends AbstractServerRenderDataProvider
     protected $totalsProvider;
 
     /**
+     * @var array
+     */
+    protected $summary = [];
+
+    /**
      * @param CheckoutLineItemsManager $checkoutLineItemsManager
      * @param LineItemSubtotalProvider $lineItemsSubtotalProvider
      * @param TotalProcessorProvider $totalsProvider
@@ -56,16 +61,20 @@ class SummaryDataProvider extends AbstractServerRenderDataProvider
         /** @var Checkout $checkout */
         $checkout = $context->data()->get('checkout');
 
-        $orderLineItems = $this->checkoutLineItemsManager->getData($checkout);
-        $lineItemTotals = $this->getOrderLineItemsTotals($orderLineItems);
+        if (!array_key_exists($checkout->getId(), $this->summary)) {
+            $orderLineItems = $this->checkoutLineItemsManager->getData($checkout);
+            $lineItemTotals = $this->getOrderLineItemsTotals($orderLineItems);
 
-        return [
-            'lineItemTotals' => $lineItemTotals,
-            'lineItems' => $orderLineItems,
-            'lineItemsCount' => $orderLineItems->count(),
-            'subtotals' => $this->totalsProvider->getSubtotals($checkout),
-            'generalTotal' => $this->totalsProvider->getTotal($checkout)
-        ];
+            $this->summary[$checkout->getId()] = [
+                'lineItemTotals' => $lineItemTotals,
+                'lineItems' => $orderLineItems,
+                'lineItemsCount' => $orderLineItems->count(),
+                'subtotals' => $this->totalsProvider->getSubtotals($checkout),
+                'generalTotal' => $this->totalsProvider->getTotal($checkout)
+            ];
+        }
+
+        return $this->summary[$checkout->getId()];
     }
 
     /**
