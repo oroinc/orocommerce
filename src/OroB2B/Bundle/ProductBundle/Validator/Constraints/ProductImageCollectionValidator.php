@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Validator\Constraints;
 
 use Doctrine\Common\Collections\Collection;
 
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -22,16 +23,23 @@ class ProductImageCollectionValidator extends ConstraintValidator
     protected $imageTypeProvider;
 
     /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
      * @var ExecutionContextInterface
      */
     protected $context;
 
     /**
      * @param ImageTypeProvider $imageTypeProvider
+     * @param TranslatorInterface $translator
      */
-    public function __construct(ImageTypeProvider $imageTypeProvider)
+    public function __construct(ImageTypeProvider $imageTypeProvider, TranslatorInterface $translator)
     {
         $this->imageTypeProvider = $imageTypeProvider;
+        $this->translator = $translator;
     }
 
     /**
@@ -48,14 +56,13 @@ class ProductImageCollectionValidator extends ConstraintValidator
         foreach ($this->imageTypeProvider->getImageTypes() as $imageType) {
             $imageTypeName = $imageType->getName();
 
-            if (
-                $maxNumberByType[$imageTypeName] > 0 &&
+            if ($maxNumberByType[$imageTypeName] > 0 &&
                 isset($imagesByTypeCounter[$imageTypeName]) &&
                 $imagesByTypeCounter[$imageTypeName] > $maxNumberByType[$imageTypeName]
             ) {
                 $this->context
                     ->buildViolation($constraint->message, [
-                        '%type%' => $imageTypeName,
+                        '%type%' => $this->translator->trans($imageType->getLabel()),
                         '%maxNumber%' => $maxNumberByType[$imageTypeName]
                     ])
                     ->addViolation();

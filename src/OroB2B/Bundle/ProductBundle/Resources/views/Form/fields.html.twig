@@ -171,13 +171,13 @@
                 <table class="grid table-hover table table-bordered table-condensedo">
                     <thead>
                     <tr>
-                        <th></th>
+                        <th class="file"><span>{{ 'File'|trans }}</span></th>
                         {% for imageType in form.vars.imageTypes %}
-                            <th><span>{{ imageType.label|trans }}</span></th>
+                            <th class="text-center"><span>{{ imageType.label|trans }}</span></th>
                         {% endfor %}
 
                         {% if form.vars.allow_delete %}
-                            <th></th>
+                            <th class="remove"></th>
                         {% endif %}
                     </tr>
                     </thead>
@@ -197,13 +197,12 @@
                     {% endif %}
                     </tbody>
                 </table>
+                {% if allow_add %}
+                    <a class="btn add-list-item" data-container=".image-collection tbody" href="javascript: void(0);">
+                        <i class="icon-plus"></i>{{ 'Add Image'|trans }}
+                    </a>
+                {% endif %}
             </div>
-
-            {% if allow_add %}
-                <a style="margin-top: 8px;" class="btn add-list-item" data-container=".image-collection tbody" href="javascript: void(0);">
-                    <i class="icon-plus"></i>{{ 'Add Image'|trans }}
-                </a>
-            {% endif %}
         </div>
 
     {% endspaceless %}
@@ -211,12 +210,11 @@
 
 {% block orob2b_product_image_widget %}
 
-        <td><div class="pull-left">{{ form_widget(form.image) }}</div></td>
+        <td><div class="pull-left">{{ form_widget(form.image) }}{{ form_errors(form.image) }}</div></td>
 
         {% for imageType in form.vars.imageTypes|keys %}
-            <td><div class="pull-left pull-left-extra">{{ form_widget(form[imageType], { attr: {'data-image-type': imageType} }) }}</div></td>
+            <td class="text-center">{{ form_widget(form[imageType], { attr: {'data-image-type': imageType} }) }}</td>
         {% endfor %}
-
 
 {% endblock %}
 

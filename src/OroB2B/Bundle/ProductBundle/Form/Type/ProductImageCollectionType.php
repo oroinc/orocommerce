@@ -40,6 +40,9 @@ class ProductImageCollectionType extends AbstractType
                 'image_types' => $imageTypes
             ],
             'image_types' => $imageTypes,
+            'error_bubbling' => false,
+            'cascade_validation' => true,
+            'required' => false
         ]);
 
         $resolver->setAllowedTypes('image_types', 'array');

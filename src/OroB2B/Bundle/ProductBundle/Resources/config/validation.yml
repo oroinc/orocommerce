@@ -73,7 +73,5 @@ OroB2B\Bundle\ProductBundle\Entity\ProductImage:
         types:
             - Type:
                 type: array
-        image:
-            - NotBlank: ~
         product:
             - NotBlank: ~

@@ -107,10 +107,7 @@ class ProductType extends AbstractType
                 ['label' => 'orob2b.product.variant_fields.label']
             )->add(
                 'images',
-                ProductImageCollectionType::NAME,
-                [
-                    'error_bubbling' => false
-                ]
+                ProductImageCollectionType::NAME
             );
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener']);
