@@ -118,7 +118,7 @@ class OroB2BAccountBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_4';
+        return 'v1_5';
     }
 
     /**
@@ -461,6 +461,7 @@ class OroB2BAccountBundleInstaller implements
         $table->addColumn('middle_name', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('last_name', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('name_suffix', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('phone', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('created', 'datetime', []);
         $table->addColumn('updated', 'datetime', []);
         $table->addColumn('serialized_data', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
@@ -963,6 +964,7 @@ class OroB2BAccountBundleInstaller implements
         $table->addColumn('middle_name', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('last_name', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('name_suffix', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('phone', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('created', 'datetime', []);
         $table->addColumn('updated', 'datetime', []);
         $table->setPrimaryKey(['id']);
