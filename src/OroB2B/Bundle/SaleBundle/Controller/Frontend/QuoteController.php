@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\SaleBundle\Controller\Frontend;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;
+use OroB2B\Bundle\CheckoutBundle\Model\Action\StartCheckout;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteToOrderType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
@@ -15,6 +16,7 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use Symfony\Component\HttpFoundation\Request;
 
 class QuoteController extends Controller
 {
@@ -89,17 +91,20 @@ class QuoteController extends Controller
      * )
      * @ParamConverter("quote", options={"repository_method" = "getQuote"})
      *
+     * @param Request $request
      * @param Quote $quote
      * @return array
      */
-    public function choiceAction(Quote $quote)
+    public function choiceAction(Request $request, Quote $quote)
     {
         $form = $this->createForm(QuoteToOrderType::NAME, $quote);
-        $form->handleRequest();
+        $form->handleRequest($request);
         if ($form->isValid()) {
             $this->get('doctrine')->getManagerForClass('OroB2BSaleBundle:Quote')->flush();
             $action = $this->container->get('orob2b_checkout.model.action.start_checkout');
-            $action->initialize([]);
+            $action->initialize(
+                [StartCheckout::SOURCE_FIELD_KEY => 'quote', StartCheckout::SOURCE_ENTITY_KEY => $quote]
+            );
             $action->execute(new ActionData(['data' => $quote]));
         }
 
