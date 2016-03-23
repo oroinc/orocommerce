@@ -145,6 +145,7 @@ orob2b:
     frontend:
         rfp:
             request:
+                create.label: 'Create Request For Quote'
                 entity_label: 'Request For Quote'
                 entity_label_short: 'Request'
                 entity_plural_label: 'Requests For Quote'
