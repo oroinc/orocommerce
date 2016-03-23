@@ -78,24 +78,6 @@ class SummaryDataProvider extends AbstractServerRenderDataProvider
     }
 
     /**
-     * @param $orderLineItems
-     * @return Price
-     */
-    protected function getTotalPrice($orderLineItems)
-    {
-        $order = new Order();
-        $order->setLineItems($orderLineItems);
-        $generalTotal = $this->lineItemSubtotalProvider->getSubtotal($order);
-        unset($order);
-
-        $totalPrice = new Price();
-        $totalPrice->setValue($generalTotal->getAmount());
-        $totalPrice->setCurrency($generalTotal->getCurrency());
-
-        return $totalPrice;
-    }
-
-    /**
      * @param Collection|OrderLineItem[] $orderLineItems
      * @return array
      */
