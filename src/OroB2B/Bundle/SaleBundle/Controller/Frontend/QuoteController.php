@@ -100,12 +100,17 @@ class QuoteController extends Controller
         $form = $this->createForm(QuoteToOrderType::NAME, $quote);
         $form->handleRequest($request);
         if ($form->isValid()) {
+            $selectedItems = $this->container
+                ->get('orob2b_sale.service.quote_offer_converter')
+                ->toArray($form->getData());
             $actionData = $this->container->get('oro_action.manager')->execute(
                 'orob2b_sale_frontend_quote_accept_and_submit_to_order',
-                new ActionData([
-                    'quote' => $quote,
-                    'selectedItems' => $form->getData()
-                ])
+                new ActionData(
+                    [
+                        'quote' => $quote,
+                        'selectedItems' => $selectedItems
+                    ]
+                )
             );
 
             $redirectUrl = $actionData->getRedirectUrl();
