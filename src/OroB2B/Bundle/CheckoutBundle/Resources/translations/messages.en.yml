@@ -89,3 +89,20 @@ orob2b:
                     ship_to_this_address.label: Ship to this address
                     use_billing_address.label: Use billing address
                     required.label: Required Field
+
+                    placeholder:
+                        address:
+                            label: Enter address label
+                            organization: Enter your organization
+                            street: Enter street
+                            street2: Enter street 2
+                            city: Enter city
+                            zip: Zip
+                        name:
+                            prefix: Enter your name prefix
+                            first_name: Enter your first name
+                            middle_name: Enter your middle name
+                            last_name: Enter your last name
+                            sufix: Enter your name sufix
+
+

@@ -16,24 +16,34 @@
         {% endif %}
         <div id="checkout-address-fields-container" class="{% if not hasCustomAddress %}hidden{% endif %}">
             <fieldset class="checkout__form__row">
-                {{ form_row(form.billing_address.label, {'attr': {'placeholder': 'Enter address label'}, 'parentClass': 'form__col_x12'}) }}
+                {{ form_row(form.billing_address.label, {'attr': {'placeholder': 'orob2b.checkout.workflow.b2b_flow_checkout.form.placeholder.address.label'|trans}, 'parentClass': 'form__col_x12', 'class': 'input input_block input_md'}) }}
+            </fieldset>
+
+            <fieldset class="checkout__form__row">
+                <div class="checkout__form__col form__col_x8">
+                    {{- form_label(form.billing_address.namePrefix) -}}
+                    {{- form_widget(form.billing_address.namePrefix, {'attr': {'placeholder': 'orob2b.checkout.workflow.b2b_flow_checkout.form.placeholder.name.prefix'|trans}}) -}}
+                    {{- form_errors(form.billing_address.namePrefix) -}}
+                </div>
+            </fieldset>
+
+            <fieldset class="checkout__form__row">
+                {{ form_row(form.billing_address.firstName, {'attr': {'placeholder': 'orob2b.checkout.workflow.b2b_flow_checkout.form.placeholder.name.first_name'|trans}}) }}
+                {{ form_row(form.billing_address.middleName, {'attr': {'placeholder': 'orob2b.checkout.workflow.b2b_flow_checkout.form.placeholder.name.middle_name'|trans}}) }}
             </fieldset>
             <fieldset class="checkout__form__row">
-                {{ form_row(form.billing_address.namePrefix, {'attr': {'placeholder': 'Enter your name prefix'}}) }}
-                {{ form_row(form.billing_address.middleName, {'attr': {'placeholder': 'Enter your middle name'}}) }}
-                {{ form_row(form.billing_address.firstName, {'attr': {'placeholder': 'Enter your first name'}}) }}
-                {{ form_row(form.billing_address.lastName, {'attr': {'placeholder': 'Enter your last name'}}) }}
-                {{ form_row(form.billing_address.nameSuffix, {'attr': {'placeholder': 'Enter your name sufix'}}) }}
+                {{ form_row(form.billing_address.lastName, {'attr': {'placeholder': 'orob2b.checkout.workflow.b2b_flow_checkout.form.placeholder.name.last_name'|trans}}) }}
+                {{ form_row(form.billing_address.nameSuffix, {'attr': {'placeholder': 'orob2b.checkout.workflow.b2b_flow_checkout.form.placeholder.name.sufix'|trans}}) }}
             </fieldset>
             <fieldset class="checkout__form__row">
-                {{ form_row(form.billing_address.organization, {'attr': {'placeholder': 'Enter your organization'}, 'parentClass': 'form__col_x12'}) }}
+                {{ form_row(form.billing_address.organization, {'attr': {'placeholder': 'orob2b.checkout.workflow.b2b_flow_checkout.form.placeholder.address.organization'|trans}, 'parentClass': 'form__col_x12'}) }}
             </fieldset>
             <fieldset class="checkout__form__row">
-                {{ form_row(form.billing_address.street, {'attr': {'placeholder': 'Enter address label'}}) }}
-                {{ form_row(form.billing_address.street2, {'attr': {'placeholder': 'Enter address2 label'}}) }}
+                {{ form_row(form.billing_address.street, {'attr': {'placeholder': 'orob2b.checkout.workflow.b2b_flow_checkout.form.placeholder.address.street'|trans}}) }}
+                {{ form_row(form.billing_address.street2, {'attr': {'placeholder': 'orob2b.checkout.workflow.b2b_flow_checkout.form.placeholder.address.street2'|trans}}) }}
             </fieldset>
             <fieldset class="checkout__form__row">
-                {{ form_row(form.billing_address.city, {'attr': {'placeholder': 'Enter address label'}, 'parentClass': 'form__col_x12'}) }}
+                {{ form_row(form.billing_address.city, {'attr': {'placeholder': 'orob2b.checkout.workflow.b2b_flow_checkout.form.placeholder.address.city'|trans}, 'parentClass': 'form__col_x12'}) }}
             </fieldset>
             <fieldset class="checkout__form__row">
                 {{ form_row(form.billing_address.country) }}
@@ -41,7 +51,13 @@
             </fieldset>
 
             <fieldset class="checkout__form__row">
-                {{ form_row(form.billing_address.postalCode, {'attr': {'placeholder': 'Zip'}, 'parentClass': 'col-zip'}) }}
+                <div class="checkout__form__col col-zip">
+                    {{- form_label(form.billing_address.postalCode, form.billing_address.postalCode.vars.label, {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) -}}
+                    {{- form_widget(form.billing_address.postalCode, {'attr' : {'placeholder': 'orob2b.checkout.workflow.b2b_flow_checkout.form.placeholder.address.zip'|trans}}) -}}
+                </div>
+                <div class="checkout__form__col form__col_x8" style="clear: both">
+                {{- form_errors(form.billing_address.postalCode) -}}
+                </div>
             </fieldset>
             <fieldset class="checkout__form__row">
                 {{ form_row(form.save_billing_address) }}
