@@ -1,0 +1,39 @@
+
+{% block orob2b_payment_method_widget %}
+<form action="#" class="checkout__form">
+    {% for child in form.children %}
+        <div data-page-component-module="orob2bpayment/js/app/components/payment-method-selector-component">
+    <fieldset class="checkout__form__row">
+        {{ form_widget(child) }}
+    </fieldset>
+        </div>
+    {% endfor %}
+
+    <fieldset class="checkout__form__row">
+        <div class="create-account__form__req-text"><sup>*</sup>Required Field</div>
+        <div class="create-account__form__col form__col_x12">
+            <button type="submit" class="btn btn_orange btn_lg checkout__form__submit">
+                Continue<i class="icon-right-open-mini va-m_md"></i>
+            </button>
+        </div>
+    </fieldset>
+    <div class="checkout__form__back">
+        <a href="#"><i class="icon-left-open-mini"></i>Back</a>
+    </div>
+</form>
+{% endblock %}
+
+{% block _orob2b_payment_method_paymentMethod_entry_widget %}
+    <div class="checkout__form__radio" data-selector-role="item-container">
+        <label class="radio_custom radio_custom_blue" data-radio>
+            <input type="radio" name="paymentMethod" data-selector-role="radio" data-selector-id="{{ form.vars.name }}" />
+            <span class="checkbox_custom__text fs13">{{ form.vars.label }}</span>
+        </label>
+        <div class="checkout__form__payment-container" data-selector-role="form-container">
+            {{ form_widget(form.vars.subform) }}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block _orob2b_payment_method_paymentMethod_entry_label %}{% endblock %}
