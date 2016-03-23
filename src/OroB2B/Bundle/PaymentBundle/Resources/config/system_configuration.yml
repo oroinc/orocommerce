@@ -48,7 +48,7 @@ oro_system_configuration:
                 label: orob2b.payment.system_configuration.fields.label.label
 
         orob2b_payment.paypal_payments_pro_sort_order:
-            data_type: integer
+            data_type: string
             type: text
             priority: 80
             options:
@@ -125,7 +125,7 @@ oro_system_configuration:
 
         orob2b_payment.paypal_payments_pro_password:
             data_type: string
-            type: password
+            type: orob2b_payment_paypal_password_type
             priority: 70
             options:
                 label: orob2b.payment.system_configuration.fields.password.label
@@ -165,7 +165,7 @@ oro_system_configuration:
                 label: orob2b.payment.system_configuration.fields.proxy_host.label
 
         orob2b_payment.paypal_payments_pro_proxy_port:
-            data_type: integer
+            data_type: string
             type: text
             priority: 80
             options:
@@ -222,7 +222,7 @@ oro_system_configuration:
                 label: orob2b.payment.system_configuration.fields.label.label
 
         orob2b_payment.payflow_gateway_sort_order:
-            data_type: integer
+            data_type: string
             type: text
             priority: 80
             options:
@@ -299,7 +299,7 @@ oro_system_configuration:
 
         orob2b_payment.payflow_gateway_password:
             data_type: string
-            type: password
+            type: orob2b_payment_paypal_password_type
             priority: 70
             options:
                 label: orob2b.payment.system_configuration.fields.password.label
@@ -339,7 +339,7 @@ oro_system_configuration:
                 label: orob2b.payment.system_configuration.fields.proxy_host.label
 
         orob2b_payment.payflow_gateway_proxy_port:
-            data_type: integer
+            data_type: string
             type: text
             priority: 80
             options:

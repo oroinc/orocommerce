@@ -92,8 +92,8 @@ class Configuration implements ConfigurationInterface
                     'value' => 'Credit Card'
                 ],
                 self::PAYPAL_PAYMENTS_PRO_SORT_ORDER_KEY => [
-                    'type' => 'integer',
-                    'value' => 10
+                    'type' => 'string',
+                    'value' => '10'
                 ],
                 self::PAYPAL_PAYMENTS_PRO_ALLOWED_COUNTRIES_KEY => [
                     'type' => 'text',
@@ -140,7 +140,7 @@ class Configuration implements ConfigurationInterface
                     'value' => ''
                 ],
                 self::PAYPAL_PAYMENTS_PRO_PROXY_PORT_KEY => [
-                    'type' => 'integer',
+                    'type' => 'string',
                     'value' => ''
                 ],
                 self::PAYPAL_PAYMENTS_PRO_DEBUG_MODE_KEY => [
@@ -170,8 +170,8 @@ class Configuration implements ConfigurationInterface
                     'value' => 'Credit Card'
                 ],
                 self::PAYFLOW_GATEWAY_SORT_ORDER_KEY => [
-                    'type' => 'integer',
-                    'value' => 20
+                    'type' => 'string',
+                    'value' => '20'
                 ],
                 self::PAYFLOW_GATEWAY_ALLOWED_COUNTRIES_KEY => [
                     'type' => 'text',
@@ -218,7 +218,7 @@ class Configuration implements ConfigurationInterface
                     'value' => ''
                 ],
                 self::PAYFLOW_GATEWAY_PROXY_PORT_KEY => [
-                    'type' => 'integer',
+                    'type' => 'string',
                     'value' => ''
                 ],
                 self::PAYFLOW_GATEWAY_DEBUG_MODE_KEY => [
