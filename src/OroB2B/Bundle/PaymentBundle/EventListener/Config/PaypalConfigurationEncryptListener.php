@@ -121,20 +121,25 @@ class PaypalConfigurationEncryptListener
     protected function getConfigKeysToEncrypt()
     {
         return [
-            Configuration::PAYFLOW_GATEWAY_EMAIL_KEY,
-            Configuration::PAYFLOW_GATEWAY_PARTNER_KEY,
-            Configuration::PAYFLOW_GATEWAY_USER_KEY,
-            Configuration::PAYFLOW_GATEWAY_VENDOR_KEY,
-            Configuration::PAYFLOW_GATEWAY_PASSWORD_KEY,
-            Configuration::PAYFLOW_GATEWAY_PROXY_HOST_KEY,
-            Configuration::PAYFLOW_GATEWAY_PROXY_PORT_KEY,
-            Configuration::PAYPAL_PAYMENTS_PRO_EMAIL_KEY,
+            Configuration::PAYPAL_PAYMENTS_PRO_LABEL_KEY,
+            Configuration::PAYPAL_PAYMENTS_PRO_SORT_ORDER_KEY,
             Configuration::PAYPAL_PAYMENTS_PRO_PARTNER_KEY,
             Configuration::PAYPAL_PAYMENTS_PRO_USER_KEY,
             Configuration::PAYPAL_PAYMENTS_PRO_VENDOR_KEY,
             Configuration::PAYPAL_PAYMENTS_PRO_PASSWORD_KEY,
+            Configuration::PAYPAL_PAYMENTS_PRO_PAYMENT_ACTION_KEY,
             Configuration::PAYPAL_PAYMENTS_PRO_PROXY_HOST_KEY,
             Configuration::PAYPAL_PAYMENTS_PRO_PROXY_PORT_KEY,
+
+            Configuration::PAYFLOW_GATEWAY_LABEL_KEY,
+            Configuration::PAYFLOW_GATEWAY_SORT_ORDER_KEY,
+            Configuration::PAYFLOW_GATEWAY_PARTNER_KEY,
+            Configuration::PAYFLOW_GATEWAY_USER_KEY,
+            Configuration::PAYFLOW_GATEWAY_VENDOR_KEY,
+            Configuration::PAYFLOW_GATEWAY_PASSWORD_KEY,
+            Configuration::PAYFLOW_GATEWAY_PAYMENT_ACTION_KEY,
+            Configuration::PAYFLOW_GATEWAY_PROXY_HOST_KEY,
+            Configuration::PAYFLOW_GATEWAY_PROXY_PORT_KEY,
         ];
     }
 }
