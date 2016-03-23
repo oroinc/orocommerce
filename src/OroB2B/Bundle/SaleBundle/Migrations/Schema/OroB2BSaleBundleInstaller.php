@@ -8,6 +8,11 @@ use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
@@ -20,8 +25,14 @@ class OroB2BSaleBundleInstaller implements
     Installation,
     NoteExtensionAwareInterface,
     AttachmentExtensionAwareInterface,
-    ActivityExtensionAwareInterface
+    ActivityExtensionAwareInterface,
+    ExtendExtensionAwareInterface
 {
+    /**
+     * @var ExtendExtension
+     */
+    protected $extendExtension;
+
     /**
      * @var AttachmentExtension
      */
@@ -36,6 +47,14 @@ class OroB2BSaleBundleInstaller implements
      * @var ActivityExtension
      */
     protected $activityExtension;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setExtendExtension(ExtendExtension $extendExtension)
+    {
+        $this->extendExtension = $extendExtension;
+    }
 
     /**
      * {@inheritdoc}
@@ -95,6 +114,8 @@ class OroB2BSaleBundleInstaller implements
         $this->addNoteAssociations($schema, $this->noteExtension);
         $this->addAttachmentAssociations($schema, $this->attachmentExtension);
         $this->addActivityAssociations($schema, $this->activityExtension);
+
+        $this->addQuoteCheckoutSource($schema);
     }
 
     /**
@@ -516,5 +537,38 @@ class OroB2BSaleBundleInstaller implements
             ['iso2_code'],
             ['onUpdate' => null, 'onDelete' => null]
         );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addQuoteCheckoutSource(Schema $schema)
+    {
+        if (class_exists('OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource')) {
+            $this->extendExtension->addManyToOneRelation(
+                $schema,
+                'orob2b_checkout_source',
+                'quote',
+                'orob2b_sale_quote',
+                'id',
+                [
+                    ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                    'entity' => ['label' => 'orob2b.sale.quote.entity_label'],
+                    'extend' => [
+                        'is_extend' => true,
+                        'owner' => ExtendScope::OWNER_CUSTOM
+                    ],
+                    'datagrid' => [
+                        'is_visible' => false
+                    ],
+                    'form' => [
+                        'is_enabled' => false
+                    ],
+                    'view' => ['is_displayable' => false],
+                    'merge' => ['display' => false],
+                    'dataaudit' => ['auditable' => false]
+                ]
+            );
+        }
     }
 }
