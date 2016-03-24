@@ -112,14 +112,16 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
 
     public function testPostLoad()
     {
-        $item = new Checkout();
-
-        $this->assertNull($item->getShippingEstimate());
-
         $value = 1;
         $currency = 'USD';
-        $this->setProperty($item, 'shippingEstimateAmount', $value)
-            ->setProperty($item, 'shippingEstimateCurrency', $currency);
+
+        $item = $this->getEntity(
+            'OroB2B\Bundle\CheckoutBundle\Entity\Checkout',
+            [
+                'shippingEstimateAmount' => $value,
+                'shippingEstimateCurrency' => $currency
+            ]
+        );
 
         $item->postLoad();
 
@@ -135,35 +137,7 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
 
         $item->updateShippingEstimate();
 
-        $this->assertEquals($value, $this->getProperty($item, 'shippingEstimateAmount'));
-        $this->assertEquals($currency, $this->getProperty($item, 'shippingEstimateCurrency'));
-    }
-
-    /**
-     * @param object $object
-     * @param string $property
-     * @param mixed $value
-     * @return CheckoutTest
-     */
-    protected function setProperty($object, $property, $value)
-    {
-        $reflection = new \ReflectionProperty(get_class($object), $property);
-        $reflection->setAccessible(true);
-        $reflection->setValue($object, $value);
-
-        return $this;
-    }
-
-    /**
-     * @param object $object
-     * @param string $property
-     * @return mixed $value
-     */
-    protected function getProperty($object, $property)
-    {
-        $reflection = new \ReflectionProperty(get_class($object), $property);
-        $reflection->setAccessible(true);
-
-        return $reflection->getValue($object);
+        $this->assertEquals($value, $item->getShippingEstimate()->getValue());
+        $this->assertEquals($currency, $item->getShippingEstimate()->getCurrency());
     }
 }
