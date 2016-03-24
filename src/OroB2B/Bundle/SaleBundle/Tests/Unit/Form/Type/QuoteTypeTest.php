@@ -12,7 +12,10 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Bundle\UserBundle\Entity\User;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
@@ -107,14 +110,40 @@ class QuoteTypeTest extends AbstractTest
         $shipUntil = null
     ) {
         $quote = new Quote();
-        $quote->setOwner($this->getEntity('Oro\Bundle\UserBundle\Entity\User', $ownerId));
+
+        $organization = $this->getMockBuilder('Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface')->getMock();
+
+
+        /** @var User $owner */
+        $owner = $this->getEntity('Oro\Bundle\UserBundle\Entity\User', $ownerId);
+        $owner->setUsername('UserName')
+            ->setEmail('test@test.test')
+            ->setFirstName('First Name')
+            ->setLastName('Last Name')
+            ->setOrganization($organization);
+        $quote->setOwner($owner);
 
         if (null !== $accountUserId) {
-            $quote->setAccountUser($this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $accountUserId));
+            $account = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Account')->getMock();
+            $role = $this->getMockBuilder('Symfony\Component\Security\Core\Role\RoleInterface')->getMock();
+
+            /** @var AccountUser $accountUser */
+            $accountUser = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $accountUserId);
+            $accountUser->setEmail('test@test.test')
+                ->setFirstName('First Name')
+                ->setLastName('Last Name')
+                ->setUsername('test@test.test')
+                ->setAccount($account)
+                ->setRoles([$role])
+            ->setOrganization($organization);
+            $quote->setAccountUser($accountUser);
         }
 
         if (null !== $accountId) {
-            $quote->setAccount($this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', $accountId));
+            /** @var Account $account */
+            $account = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', $accountId);
+            $account->setName('Name');
+            $quote->setAccount($account);
         }
 
         foreach ($items as $item) {
