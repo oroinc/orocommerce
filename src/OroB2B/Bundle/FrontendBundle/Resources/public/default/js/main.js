@@ -36,8 +36,6 @@ require(['jquery', 'lodash', 'slick', 'bootstrapDatepicker', 'raty', 'perfectScr
                 productsSliderInit(); //Initing of products slider (slick slider)
                 moreInfoExpandBinding(); //More info button binding
                 pinClickBinding(); //Pin click binding
-                customCheckboxBinding(); //Custom checkbox click binding
-                customRadioBinding(); //Custom radio click binding
                 filterWidgetToggleBinding(); //Filter Widget toggle binding
                 datepickerInit(); //Initing of the datepicker
                 datepickerSetDateBindingInit();
@@ -484,49 +482,6 @@ require(['jquery', 'lodash', 'slick', 'bootstrapDatepicker', 'raty', 'perfectScr
                         $(pinContent).hide();
                     }
                 });
-            }
-
-            function customCheckboxBinding() {
-                var label = '[data-checkbox]',
-                    $checkbox = $(label).find('input');
-
-                $checkbox.on('change', function(event) {
-                    if ($(this).attr('checked') !== 'checked' || typeof $(this).attr('checked') === 'undefined') {
-                        $(this).attr('checked', true);
-                        $(this).parent().addClass('checked');
-
-                        toggleOrderPinContent(false);
-                    } else {
-                        $(this).attr('checked', false);
-                        $(this).parent().removeClass('checked');
-
-                        toggleOrderPinContent(true);
-                    }
-
-                    event.stopPropagation();
-                });
-            }
-
-            function customRadioBinding() {
-                var label = '[data-radio]',
-                    $radio = $(label).find('input[type="radio"]');
-
-                $radio.on('change', function(event) {
-                    var inputName = $(this).attr('name');
-
-                    if ($(this).attr('checked') !== 'checked' || typeof $(this).attr('checked') === 'undefined') {
-                        $(label).find('input[type="radio"][name="' + inputName + '"]').attr('checked', false);
-                        $('input[type="radio"][name="' + inputName + '"]').closest('label').removeClass('checked');
-
-                        $(this).attr('checked', true);
-                        $(this).parent().addClass('checked');
-                    }
-                });
-            }
-
-            function toggleOrderPinContent(value) {
-                var $content = $('[data-checkbox-triggered-content]');
-                value ? $content.hide() : $content.show();
             }
 
             function filterWidgetToggleBinding() {
