@@ -133,3 +133,18 @@ actions:
                     source_remove_label: $.sourceRemoveLabel
                     edit_order_link: $.editLink
                     source_options: $.selectedItems
+
+    orob2b_sale_frontend_quote_change:
+          label: orob2b.frontend.sale.btn.accept_quote_create_order
+          applications: [frontend]
+          routes:
+              - orob2b_sale_quote_frontend_view
+          order: 20
+          button_options:
+              icon: icon-edit
+              class:  quota-accept-btn
+          functions:
+              - @redirect:
+                   parameters:
+                       route: 'orob2b_sale_quote_frontend_choice'
+                       route_parameters: {id: $.data.id}
