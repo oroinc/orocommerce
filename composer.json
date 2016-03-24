@@ -17,11 +17,16 @@
         {
             "type": "composer",
             "url": "https://packagist.orocrm.com"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/nicholas-eden/math.git"
         }
     ],
     "require": {
         "oro/platform": "1.x-dev",
-        "myclabs/deep-copy": "1.5.*"
+        "myclabs/deep-copy": "1.5.*",
+        "nicholas-eden/math": "0.6.*"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
