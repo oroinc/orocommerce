@@ -12,9 +12,9 @@ define(function(require) {
          */
         options: {
             selectors: {
-                radio: '[data-selector-role="radio"]',
-                item_container: '[data-selector-role="item-container"]',
-                subform: '[data-selector-role="form-container"]'
+                radio: '[data-choice]',
+                item_container: '[data-item-container]',
+                subform: '[data-form-container]'
             }
         },
 
@@ -38,17 +38,14 @@ define(function(require) {
         updateForms: function() {
             var $radios = this.$el.find(this.options.selectors.radio);
             var $selected = $radios.filter(':checked');
-            console.log('event', $radios, $selected);
             _.each(
                 $radios,
                 function(item) {
                     var $item = $(item);
-                    if ($item.data('selector-id') == $selected.data('selector-id')) {
+                    if ($item.data('choice') == $selected.data('choice')) {
                         $item.closest(this.options.selectors.item_container).find(this.options.selectors.subform).show();
-                        console.log('show');
                     } else {
                         $item.closest(this.options.selectors.item_container).find(this.options.selectors.subform).hide();
-                        console.log('hide', $item, $selected);
                     }
                 },
                 this

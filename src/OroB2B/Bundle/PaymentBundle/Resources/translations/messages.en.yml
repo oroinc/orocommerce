@@ -31,3 +31,13 @@ orob2b:
 
         sections:
             general_information: General information
+
+        methods:
+            select_method: 'Select a Payment Method'
+            required_field: 'Required Field'
+            back: 'Back'
+            continue: 'Continue'
+            term_method.label: 'Payment Term'
+            credit_card_method:
+                label: 'Credit Card'
+                card_name.label: 'Card Name'

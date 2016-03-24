@@ -7,7 +7,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormFactory;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\PaymentBundle\Form\PaymentMethodTypeRegistry;
 
@@ -21,17 +22,25 @@ class PaymentMethodType extends AbstractType
     /** @var FormFactory */
     private $formFactory;
 
+    /** @var ConfigManager */
+    protected $configManager;
+
     /** @var array */
     private $paymentMethodTypes;
 
     /**
      * @param PaymentMethodTypeRegistry $registry
      * @param FormFactory $formFactory
+     * @param ConfigManager $configManager
      */
-    public function __construct(PaymentMethodTypeRegistry $registry, FormFactory $formFactory)
-    {
+    public function __construct(
+        PaymentMethodTypeRegistry $registry,
+        FormFactory $formFactory,
+        ConfigManager $configManager
+    ) {
         $this->registry = $registry;
         $this->formFactory = $formFactory;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -62,18 +71,6 @@ class PaymentMethodType extends AbstractType
             );
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults(
-            [
-                'intention' => 'payment_term',
-            ]
-        );
-    }
-
     /** {@inheritdoc} */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
@@ -81,6 +78,18 @@ class PaymentMethodType extends AbstractType
             /** @var FormInterface $subform */
             $subform = $this->formFactory->create($methodRadioView->vars['value']);
             $methodRadioView->vars['subform'] = $subform->createView();
+
+            $label = $this->configManager->get('oro_b2b_payment.' . $subform->getName() . '.label');
+
+            if (empty($label)) {
+                $label = $subform->getConfig()->getOption('label');
+            }
+
+            if (empty($label)) {
+                $label = 'orob2b.payment.methods.' . $subform->getName() . '.label';
+            }
+
+            $methodRadioView->vars['label'] = $label;
         }
     }
 
