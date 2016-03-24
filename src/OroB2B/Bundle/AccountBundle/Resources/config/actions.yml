@@ -70,6 +70,7 @@ actions:
                 service: orob2b_account_user.manager
                 method: updateUser
                 method_parameters: [$.data]
+            - @refresh_grid: frontend-account-account-user-grid
             - @flash_message:
                 message: orob2b.account.controller.accountuser.disabled.message
                 type: 'success'
@@ -99,6 +100,7 @@ actions:
                 service: orob2b_account_user.manager
                 method: updateUser
                 method_parameters: [$.data]
+            - @refresh_grid: frontend-account-account-user-grid
             - @flash_message:
                 message: orob2b.account.controller.accountuser.enabled.message
                 type: 'success'
