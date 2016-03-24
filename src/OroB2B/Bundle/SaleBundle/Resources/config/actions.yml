@@ -115,6 +115,7 @@ actions:
 
     orob2b_sale_frontend_quote_accept_and_submit_to_order:
         label: ' '
+        applications: [frontend]
         enabled: true
         functions:
             - @assign_url:
