@@ -36,8 +36,8 @@ class CheckoutAddressType extends AbstractOrderAddressType
             }
 
             $accountAddressOptions = [
-                'label' => false,
-                'required' => false,
+                'label' => sprintf('orob2b.checkout.form.address.select.%s.label', $type),
+                'required' => true,
                 'mapped' => false,
                 'choices' => $this->getChoices($addresses),
                 'attr' => [
@@ -51,13 +51,18 @@ class CheckoutAddressType extends AbstractOrderAddressType
             if ($isManualEditGranted) {
                 $accountAddressOptions['choices'] = array_merge(
                     $accountAddressOptions['choices'],
-                    [self::ENTER_MANUALLY => 'orob2b.order.form.address.manual']
+                    [self::ENTER_MANUALLY => 'orob2b.checkout.form.address.manual']
                 );
             }
             $builder
                 ->add('accountAddress', 'choice', $accountAddressOptions)
                 ->add('country', 'orob2b_country', ['required' => true, 'label' => 'oro.address.country.label'])
                 ->add('region', 'orob2b_region', ['required' => false, 'label' => 'oro.address.region.label']);
+
+            if ($type === AddressType::TYPE_BILLING) {
+                $builder->get('firstName')->setRequired(true);
+                $builder->get('lastName')->setRequired(true);
+            }
         }
     }
 
