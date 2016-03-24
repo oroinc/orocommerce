@@ -270,5 +270,4 @@ class PageTreeHandlerTest extends AbstractTreeHandlerTestCase
         }
         return $page;
     }
-
 }
