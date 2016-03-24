@@ -20,6 +20,7 @@ use OroB2B\Bundle\OrderBundle\Provider\IdentifierAwareInterface;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
  * @ORM\Table(name="orob2b_sale_quote")
@@ -57,7 +58,11 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
-class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHolderInterface, IdentifierAwareInterface
+class Quote extends ExtendQuote implements
+    AccountOwnerAwareInterface,
+    EmailHolderInterface,
+    IdentifierAwareInterface,
+    CheckoutSourceEntityInterface
 {
     /**
      * @var int
