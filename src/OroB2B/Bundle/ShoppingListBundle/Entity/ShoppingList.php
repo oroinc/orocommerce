@@ -558,4 +558,12 @@ class ShoppingList extends ExtendShoppingList implements
     {
         return $this->total;
     }
+
+    /**
+     * @return string
+     */
+    public function getIdentifier()
+    {
+        return $this->getId();
+    }
 }

@@ -842,4 +842,12 @@ class Request extends ExtendRequest implements
 
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getIdentifier()
+    {
+        return $this->getPoNumber();
+    }
 }

@@ -31,7 +31,7 @@ class ProductDataStorage
                 'account' => $shoppingList->getAccount()->getId(),
                 'sourceEntityId' => $shoppingList->getId(),
                 'sourceEntityClass' => ClassUtils::getClass($shoppingList),
-                'sourceEntityIdentifier' => $shoppingList->getId(),
+                'sourceEntityIdentifier' => $shoppingList->getIdentifier(),
             ],
         ];
 

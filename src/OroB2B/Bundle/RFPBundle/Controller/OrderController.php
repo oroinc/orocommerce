@@ -66,7 +66,7 @@ class OrderController extends Controller
 
         $data['sourceEntityId'] = $request->getId();
         $data['sourceEntityClass'] = ClassUtils::getClass($request);
-        $data['sourceEntityIdentifier'] = $request->getPoNumber();
+        $data['sourceEntityIdentifier'] = $request->getIdentifier();
 
         return $data;
     }
