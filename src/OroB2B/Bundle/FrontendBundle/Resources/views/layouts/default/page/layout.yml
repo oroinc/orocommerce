@@ -6,6 +6,9 @@ layout:
             items:
                 wrapper:
                     blockType: container
+                    options:
+                        attr:
+                          id: 'container'
                 header:
                     blockType: container
                 notification:

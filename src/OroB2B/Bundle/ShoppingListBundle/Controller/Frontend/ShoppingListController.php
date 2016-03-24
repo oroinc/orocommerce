@@ -81,13 +81,8 @@ class ShoppingListController extends Controller
      */
     public function createAction(Request $request)
     {
-        $shoppingList = new ShoppingList();
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->getUser();
-        $shoppingList
-            ->setOrganization($accountUser->getOrganization())
-            ->setAccount($accountUser->getAccount())
-            ->setAccountUser($accountUser);
+        $shoppingListManager = $this->get('orob2b_shopping_list.shopping_list.manager');
+        $shoppingList = $shoppingListManager->create();
 
         $response = $this->create($request, $shoppingList);
         if ($response instanceof Response) {

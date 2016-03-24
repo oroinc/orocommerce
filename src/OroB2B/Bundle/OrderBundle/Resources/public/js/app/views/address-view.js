@@ -114,7 +114,9 @@ define(function(require) {
         normalizeName: function(name) {
             name = name.split('_');
             for (var i = 1, iMax = name.length; i < iMax; i++) {
-                name[i] = name[i][0].toUpperCase() + name[i].substr(1);
+                if (name[i]) {
+                    name[i] = name[i][0].toUpperCase() + name[i].substr(1);
+                }
             }
             return name.join('');
         },

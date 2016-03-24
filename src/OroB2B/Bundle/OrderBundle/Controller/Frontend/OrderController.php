@@ -123,6 +123,31 @@ class OrderController extends AbstractOrderController
     }
 
     /**
+     * Success order
+     *
+     * @Route("/success/{id}", name="orob2b_order_frontend_success", requirements={"id"="\d+"})
+     * @Layout()
+     * @Acl(
+     *      id="orob2b_order_view",
+     *      type="entity",
+     *      class="OroB2BOrderBundle:Order",
+     *      permission="EDIT"
+     * )
+     *
+     * @param Order $order
+     *
+     * @return array
+     */
+    public function successAction(Order $order)
+    {
+        return [
+            'data' => [
+                'order' => $order,
+            ],
+        ];
+    }
+
+    /**
      * @param Order $order
      * @param Request $request
      *

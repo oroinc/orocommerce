@@ -2,10 +2,13 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -16,9 +19,14 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ */
 class OrderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
+    use EntityTrait;
 
     public function testProperties()
     {
@@ -54,6 +62,22 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $this->assertPropertyAccessors($order, $properties);
         $this->assertPropertyCollection($order, 'lineItems', new OrderLineItem());
         $this->assertPropertyCollection($order, 'discounts', new OrderDiscount());
+    }
+
+    public function testLineItemsSetter()
+    {
+        $lineItems = new ArrayCollection([new OrderLineItem()]);
+
+        /** @var Order $order */
+        $order = $this->getEntity('OroB2B\Bundle\OrderBundle\Entity\Order', ['id' => 42]);
+        $order->setLineItems($lineItems);
+
+        $result = $order->getLineItems();
+
+        $this->assertEquals($lineItems, $result);
+        foreach ($result as $lineItem) {
+            $this->assertEquals($lineItem->getOrder()->getId(), $order->getId());
+        }
     }
 
     public function testGetEmail()
