@@ -16,7 +16,6 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
-use OroB2B\Bundle\OrderBundle\Provider\IdentifierAwareInterface;
 use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
@@ -61,7 +60,6 @@ class ShoppingList extends ExtendShoppingList implements
     CurrencyAwareInterface,
     AccountOwnerAwareInterface,
     WebsiteAwareInterface,
-    IdentifierAwareInterface,
     CheckoutSourceEntityInterface
 {
     /**
