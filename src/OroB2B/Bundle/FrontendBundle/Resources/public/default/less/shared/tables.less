@@ -55,8 +55,20 @@
   tbody {
     td {
       padding: .6rem 1.2rem;
-      vertical-align: middle; 
-      border-top: .1rem solid @base-border-color;
+      vertical-align: middle;
+
+      &.decor-row {
+        padding: 30px 12px 20px;
+
+        &:before {
+          content: '';
+
+          display: block;
+          height: 1px;
+
+          background-color: @base-border-color;
+        }
+      }
     }
   }
 
@@ -322,31 +334,32 @@
       }
     }
 
-    tbody {
       tr {
 
         &.checked {
           background: @base-checked-item-in-cart-group;
         }
+      }
+    td {
+      padding: 1.8rem 1.2rem 0;
 
-        td {
-          padding: 1.5rem 1.2rem;
+      &.offset-top-s {
+        padding-top: 1rem;
+      }
 
-          @media (max-width: 991px) {
-            &:first-child{
-              padding-left: 1.5rem;  
-            }
-            
-          }
-
-          &.oro-grid-table__item__controls {
-            padding: 0;
-          }
-
-          &.account-recent__item__ship-by-date {
-            padding: 0;
-          }
+      @media (max-width: 991px) {
+        &:first-child{
+          padding-left: 1.5rem;
         }
+
+      }
+
+      &.oro-grid-table__item__controls {
+        padding: 0;
+      }
+
+      &.account-recent__item__ship-by-date {
+        padding: 0;
       }
     }
 
@@ -624,7 +637,7 @@
   &.table-block__header__item_bb_bf {
     background: transparent;
     border: 0;
-    border-bottom: .1rem solid -border-color;
+    border-bottom: .1rem solid @border-color;
   }
 
   &.table-block__header__item_indent {
