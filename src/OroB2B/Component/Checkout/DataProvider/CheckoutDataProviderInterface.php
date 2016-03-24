@@ -5,14 +5,15 @@ namespace OroB2B\Component\Checkout\DataProvider;
 interface CheckoutDataProviderInterface
 {
     /**
-     * @param object|array $transformData
+     * @param object|array $entity
+     * @param array $additionalData
      * @return array
      */
-    public function getData($transformData);
+    public function getData($entity, $additionalData);
 
     /**
      * @param object|array $transformData
      * @return boolean
      */
-    public function isTransformDataSupported($transformData);
+    public function isEntitySupported($transformData);
 }

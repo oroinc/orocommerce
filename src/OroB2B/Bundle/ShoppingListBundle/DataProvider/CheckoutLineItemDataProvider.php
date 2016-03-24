@@ -28,9 +28,10 @@ class CheckoutLineItemDataProvider implements CheckoutDataProviderInterface
 
     /**
      * @param ShoppingList $shoppingList
+     * @param array $additionalData
      * @return array
      */
-    public function getData($shoppingList)
+    public function getData($shoppingList, $additionalData)
     {
         $shoppingListPrices = $this->frontendProductPricesDataProvider->getProductsPrices($shoppingList);
 
@@ -52,8 +53,8 @@ class CheckoutLineItemDataProvider implements CheckoutDataProviderInterface
     /**
      * {@inheritDoc}
      */
-    public function isTransformDataSupported($transformData)
+    public function isEntitySupported($entity)
     {
-        return $transformData instanceof ShoppingList;
+        return $entity instanceof ShoppingList;
     }
 }

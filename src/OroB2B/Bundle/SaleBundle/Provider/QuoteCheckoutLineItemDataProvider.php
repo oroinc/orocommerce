@@ -2,46 +2,34 @@
 
 namespace OroB2B\Bundle\SaleBundle\Provider;
 
+use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use OroB2B\Bundle\SaleBundle\Model\QuoteOfferConverter;
 use OroB2B\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
 
 class QuoteCheckoutLineItemDataProvider implements CheckoutDataProviderInterface
 {
+    /** @var  QuoteOfferConverter */
+    protected $quoteOfferConverter;
+
     /**
-     * {@inheritdoc}
+     * @param QuoteOfferConverter $quoteOfferConverter
      */
-    public function getData($transformData)
+    public function __construct(QuoteOfferConverter $quoteOfferConverter)
     {
-        /** @var QuoteProductOffer[] $transformData */
-        return $this->isTransformDataSupported($transformData) ? $this->prepareData($transformData) : [];
+        $this->quoteOfferConverter = $quoteOfferConverter;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function isTransformDataSupported($transformData)
+    public function getData($entity, $additionalData)
     {
-        if (!is_array($transformData)) {
-            return false;
-        }
-
-        foreach ($transformData as $item) {
-            if (!$item instanceof QuoteProductOffer) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * @param QuoteProductOffer[] $data
-     * @return array
-     */
-    protected function prepareData(array $data)
-    {
+        $data = $this->quoteOfferConverter->toModel($additionalData);
         $result = [];
-        foreach ($data as $productOffer) {
+        foreach ($data as $offer) {
+            /** @var QuoteProductOffer $productOffer */
+            $productOffer = $offer[QuoteOfferConverter::OFFER];
             $result[] = [
                 'product' => $productOffer->getProduct(),
                 'productSku' => $productOffer->getProductSku(),
@@ -54,5 +42,13 @@ class QuoteCheckoutLineItemDataProvider implements CheckoutDataProviderInterface
         }
 
         return $result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isEntitySupported($entity)
+    {
+        return $entity instanceof Quote;
     }
 }

@@ -46,8 +46,10 @@ class CheckoutLineItemsManager
         $entity = $checkout->getSourceEntity();
 
         foreach ($this->providers as $provider) {
-            if ($provider->isTransformDataSupported($entity)) {
-                return $this->checkoutLineItemsConverter->convert($provider->getData($entity));
+            if ($provider->isEntitySupported($entity)) {
+                return $this->checkoutLineItemsConverter->convert(
+                    $provider->getData($entity, $checkout->getWorkflowItem()->getData()->get('source_options'))
+                );
             }
         }
 
