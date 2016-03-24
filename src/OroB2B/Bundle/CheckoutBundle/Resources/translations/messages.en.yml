@@ -16,6 +16,7 @@ orob2b:
         save_billing_address.label: Save Billing Address
         save_shipping_address.label: Save Shipping Address
         ship_to_billing_address.label: Ship to Billing Address
+        quoted_shipping_amount.label: Quoted shipping amount
         source.label: Source
         currency.label: Currency
         website.label: Website
