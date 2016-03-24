@@ -226,7 +226,7 @@ operations:
             - @redirect:
                 route: 'orob2b_rfp_request_view'
                 route_parameters:
-                    id: $.result.data.id
+                    id: $id
 
     orob2b_rfp_delete:
         label: orob2b.rfp.btn.delete

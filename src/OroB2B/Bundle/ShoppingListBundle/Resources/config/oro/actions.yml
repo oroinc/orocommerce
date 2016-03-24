@@ -101,13 +101,14 @@ operations:
                 attribute: $.lineItem
         actions:
             - @run_action_group:
-                attribute: $.result
+                attributes:
+                    success_message: $.successMessage
                 action_group: orob2b_shoppinglist_frontend_addlineitem
                 parameters_mapping:
                     data: $.data
                     line_item: $.lineItem
                     form: $.form
-            - @flash_message: { message: $.result.successMessage, type: success }
+            - @flash_message: { message: $.success_message, type: success }
             - @refresh_grid: frontend-products-grid
 
     orob2b_shoppinglist_lineitem_base:
