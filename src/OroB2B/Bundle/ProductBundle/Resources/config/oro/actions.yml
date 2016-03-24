@@ -12,7 +12,6 @@ operations:
             icon: icon-copy
         actions:
             - @run_action_group:
-                attribute: $.result
                 action_group: orob2b_product_duplicate
                 parameters_mapping:
                     data: $.data
