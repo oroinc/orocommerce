@@ -59,7 +59,9 @@
                 {% if removeLabel %}
                     {% set removeElementOptions = removeElementOptions|merge({label: removeLabel}) %}
                 {% endif %}
-                {{ form_row(form.remove_source, removeElementOptions) }}
+                <fieldset class="checkout__form__row">
+                    {{ form_row(form.remove_source, removeElementOptions) }}
+                </fieldset>
             {% endif %}
         </div>
     </div>
