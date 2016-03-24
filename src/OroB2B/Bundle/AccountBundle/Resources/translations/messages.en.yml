@@ -152,6 +152,7 @@ orob2b.account:
             disable: 'Disable'
             confirm: 'Confirm'
             send_confirmation: 'Resend Confirmation Email'
+            create: 'Create Account'
 
     sections:
         general: 'General Information'
@@ -379,6 +380,8 @@ orob2b.account:
                 GLOBAL: 'Not supported'
                 SYSTEM: 'System'
                 NONE: 'None'
+        account_user:
+            entity_plural_label: Account Users
 
     account_typed_address_with_default_type:
         choice.default_text: 'Default %type_name%'
