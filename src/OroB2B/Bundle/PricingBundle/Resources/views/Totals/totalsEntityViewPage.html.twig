@@ -1,0 +1,41 @@
+<div>
+    <div class="totals-container">
+        {% block totals_entity_view_page_template %}
+            {% if totals %}
+                {% if totals.subtotals is defined %}
+                    {% for subtotal in totals.subtotals %}
+                        {% if subtotal.visible  %}
+                            <div class="control-group">
+                                <label class="control-label">{{ subtotal.label }}</label>
+                                <div class="controls">
+                                    <label class="control-label">
+                                        {{ subtotal.amount|oro_format_currency({
+                                            'currency' : subtotal.currency
+                                        }) }}
+                                    </label>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+
+                {% if totals.total is defined %}
+                    <div class="control-group">
+                        <label class="control-label">{{ totals.total.label }}</label>
+                        <div class="controls">
+                            <label class="control-label">
+                                {{ totals.total.amount|oro_format_currency({
+                                    'currency' : totals.total.currency
+                                }) }}
+                            </label>
+                        </div>
+                    </div>
+                {% endif %}
+            {%  else %}
+                <div class="no-data">
+                    <span>{{ "orob2b.pricing.subtotals.no_data.label"|trans|raw }}</span>
+                </div>
+            {% endif %}
+        {% endblock %}
+    </div>
+</div>

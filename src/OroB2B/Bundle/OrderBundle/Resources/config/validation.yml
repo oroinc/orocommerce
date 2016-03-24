@@ -53,3 +53,19 @@ OroB2B\Bundle\OrderBundle\Entity\OrderLineItem:
         price:
             - NotBlank: ~
             - Valid: ~
+
+OroB2B\Bundle\OrderBundle\Entity\OrderAddress:
+    properties:
+        phone:
+            - Length:
+                max: 255
+
+OroB2B\Bundle\OrderBundle\Entity\OrderDiscount:
+    properties:
+        percent:
+            - NotBlank: ~
+            - Type:
+                type: numeric
+            - Range:
+                min: -100
+                max: 100

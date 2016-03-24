@@ -57,7 +57,7 @@ class OroB2BOrderBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_4';
     }
 
     /**
@@ -69,11 +69,13 @@ class OroB2BOrderBundleInstaller implements
         $this->createOroB2BOrderTable($schema);
         $this->createOroB2BOrderAddressTable($schema);
         $this->createOrob2BOrderLineItemTable($schema);
+        $this->createOrob2BOrderDiscountTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroB2BOrderForeignKeys($schema);
         $this->addOroB2BOrderAddressForeignKeys($schema);
         $this->addOrob2BOrderLineItemForeignKeys($schema);
+        $this->addOrob2BOrderDiscountForeignKeys($schema);
     }
 
     /**
@@ -109,6 +111,11 @@ class OroB2BOrderBundleInstaller implements
         );
         $table->addColumn(
             'shipping_cost_amount',
+            'money',
+            ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
+        );
+        $table->addColumn(
+            'total_discounts_amount',
             'money',
             ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
@@ -155,9 +162,35 @@ class OroB2BOrderBundleInstaller implements
         $table->addColumn('middle_name', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('last_name', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('name_suffix', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('phone', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('from_external_source', 'boolean', ['notnull' => true, 'default' => false]);
         $table->addColumn('created', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Create orob2b_order_discount table
+     * @param Schema $schema
+     */
+    protected function createOrob2BOrderDiscountTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_order_discount');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('order_id', 'integer', ['notnull' => true]);
+        $table->addColumn('description', 'text', ['notnull' => false]);
+        $table->addColumn('type', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn(
+            'percent',
+            'percent',
+            ['notnull' => false, 'precision' => 0, 'comment' => '(DC2Type:percent)']
+        );
+        $table->addColumn(
+            'amount',
+            'money',
+            ['notnull' => true, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
+        );
+        $table->addIndex(['order_id'], 'IDX_F9A53B6A8D9F6D38', []);
         $table->setPrimaryKey(['id']);
     }
 
@@ -305,6 +338,24 @@ class OroB2BOrderBundleInstaller implements
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_order'),
+            ['order_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * Add orob2b_order_discount foreign keys.
+     *
+     * @param Schema $schema
+     *
+     * @throws \Doctrine\DBAL\Schema\SchemaException
+     */
+    protected function addOrob2BOrderDiscountForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_order_discount');
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_order'),
             ['order_id'],
