@@ -46,6 +46,7 @@ class ProductImageType extends AbstractType
         $resolver->setDefaults([
             'data_class' => 'OroB2B\Bundle\ProductBundle\Entity\ProductImage',
             'image_types' => [],
+            'error_bubbling' => false
         ]);
 
         $resolver->setRequired('image_types')

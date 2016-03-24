@@ -210,7 +210,7 @@
 
 {% block orob2b_product_image_widget %}
 
-        <td><div class="pull-left">{{ form_widget(form.image) }}{{ form_errors(form.image) }}</div></td>
+        <td><div class="pull-left">{{ form_widget(form.image) }}{{ form_errors(form) }}</div></td>
 
         {% for imageType in form.vars.imageTypes|keys %}
             <td class="text-center">{{ form_widget(form[imageType], { attr: {'data-image-type': imageType} }) }}</td>

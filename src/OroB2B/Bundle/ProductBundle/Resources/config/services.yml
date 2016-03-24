@@ -28,6 +28,7 @@ parameters:
 
     orob2b_product.validator.unique_variant_links.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator
     orob2b_product.validator.product_variant_field.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantFieldValidator
+    orob2b_product.validator.product_image.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductImageValidator
     orob2b_product.validator.product_image_collection.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductImageCollectionValidator
 
     orob2b_product.component_processor.filter.class: OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter
@@ -143,6 +144,11 @@ services:
             - @doctrine
         tags:
             - { name: validator.constraint_validator, alias: orob2b_product_product_by_sku_validator }
+
+    orob2b_product.validator.product_image:
+        class: %orob2b_product.validator.product_image.class%
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_product_image_validator }
 
     orob2b_product.validator.product_image_collection:
         class: %orob2b_product.validator.product_image_collection.class%

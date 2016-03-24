@@ -29,6 +29,7 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
         variantLinks:
             - Valid: ~
         images:
+            - Valid: ~
             - OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductImageCollection: ~
 
 OroB2B\Bundle\ProductBundle\Entity\ProductUnit:
@@ -69,6 +70,8 @@ OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision:
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
 
 OroB2B\Bundle\ProductBundle\Entity\ProductImage:
+    constraints:
+        - OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductImage: ~
     properties:
         types:
             - Type:
