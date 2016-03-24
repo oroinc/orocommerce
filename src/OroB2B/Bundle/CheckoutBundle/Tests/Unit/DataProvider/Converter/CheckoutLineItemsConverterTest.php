@@ -64,11 +64,20 @@ class CheckoutLineItemsConverterTest extends \PHPUnit_Framework_TestCase
                 'expected' => new ArrayCollection([])
             ],
             [
+                'data' => [[]],
+                'expected' => new ArrayCollection([
+                    (new OrderLineItem())
+                    ->setFreeFormProduct('')
+                    ->setQuantity(1)
+                ])
+            ],
+            [
                 'data' => [
                     [
                         'product' => $product1,
                         'productSku' => $product1->getSku(),
                         'quantity' => $quantity,
+                        'freeFromProduct' => 'test1',
                         'productUnit' => $productUnit,
                         'productUnitCode' => $productUnit->getCode(),
                         'price' => $price
@@ -77,6 +86,7 @@ class CheckoutLineItemsConverterTest extends \PHPUnit_Framework_TestCase
                         'product' => $product2,
                         'productSku' => $product2->getSku(),
                         'quantity' => $quantity,
+                        'freeFromProduct' => 'test2',
                         'productUnit' => $productUnit,
                         'productUnitCode' => $productUnit->getCode(),
                         'price' => $price
@@ -89,12 +99,14 @@ class CheckoutLineItemsConverterTest extends \PHPUnit_Framework_TestCase
                         ->setQuantity($quantity)
                         ->setProductUnit($productUnit)
                         ->setProductUnitCode($productUnit->getCode())
+                        ->setFreeFormProduct('test1')
                         ->setPrice($price),
                     (new OrderLineItem())->setProduct($product2)
                         ->setProductSku($product2->getSku())
                         ->setQuantity($quantity)
                         ->setProductUnit($productUnit)
                         ->setProductUnitCode($productUnit->getCode())
+                        ->setFreeFormProduct('test2')
                         ->setPrice($price)
                 ])
             ],

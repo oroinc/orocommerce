@@ -100,7 +100,11 @@
                 <tr>
                     <td class="va-t_md">
                         <h3 class="product-item__title product-item__title_in-cart mb1-md">
-                            <a href="{{ path('orob2b_product_frontend_product_view', {'id':line_item.product.id}) }}">{{ line_item.product.defaultName }}</a>
+                            {% if line_item.product is not null %}
+                                <a href="{{ path('orob2b_product_frontend_product_view', {'id':line_item.product.id}) }}">{{ line_item.product.defaultName }}</a>
+                            {% else %}
+                                {{ line_item.freeFormProduct }}
+                            {% endif %}
                         </h3>
                         <div>{{ 'orob2b.checkout.order_summary.sku'|trans }} #: <span class="red">{{ line_item.product.sku }}</span></div>
                     </td>
