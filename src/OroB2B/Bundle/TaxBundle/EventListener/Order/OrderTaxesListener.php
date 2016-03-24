@@ -104,12 +104,12 @@ class OrderTaxesListener
     {
         $hasChanges = false;
 
-        if (!empty($matchedPrice['currency'])) {
+        if (null === $orderLineItem->getCurrency() && !empty($matchedPrice['currency'])) {
             $orderLineItem->setCurrency((string)$matchedPrice['currency']);
 
             $hasChanges = true;
         }
-        if (!empty($matchedPrice['value'])) {
+        if (null === $orderLineItem->getValue() && !empty($matchedPrice['value'])) {
             $orderLineItem->setValue((string)$matchedPrice['value']);
 
             $hasChanges = true;

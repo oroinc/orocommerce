@@ -18,11 +18,12 @@ class SectionProvider
      */
     public function addSections($formName, array $sections)
     {
-        if (!array_key_exists((string)$formName, $this->sections)) {
-            $this->sections[(string)$formName] = [];
+        $formName = (string)$formName;
+        if (!array_key_exists($formName, $this->sections)) {
+            $this->sections[$formName] = [];
         }
 
-        $this->sections[(string)$formName] = array_merge($this->sections[(string)$formName], $sections);
+        $this->sections[$formName] = array_merge($this->sections[$formName], $sections);
     }
 
     /**
@@ -31,11 +32,12 @@ class SectionProvider
      */
     public function getSections($formName)
     {
+        $formName = (string)$formName;
         if (!array_key_exists($formName, $this->sections)) {
             return new ArrayCollection();
         }
 
-        $sections = new ArrayCollection($this->sections[(string)$formName]);
+        $sections = new ArrayCollection($this->sections[$formName]);
 
         $criteria = Criteria::create();
         $criteria->orderBy(['order' => Criteria::ASC]);

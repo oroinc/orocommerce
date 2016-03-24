@@ -14,6 +14,11 @@ class SectionProviderTest extends \PHPUnit_Framework_TestCase
         $this->sectionProvider = new SectionProvider();
     }
 
+    protected function tearDown()
+    {
+        unset($this->sectionProvider);
+    }
+
     /**
      * @param array $sections
      * @param array $sectionsModifiers

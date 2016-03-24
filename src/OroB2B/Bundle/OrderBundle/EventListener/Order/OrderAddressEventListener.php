@@ -32,7 +32,10 @@ class OrderAddressEventListener
             $fieldName = sprintf('%sAddress', $type);
             if ($orderForm->has($fieldName)) {
                 $field = $orderForm->get($fieldName);
-                $view = $this->renderForm($field->createView());
+                // It require, because `createView` calls parent `createView` which `heavy`
+                $clonedField = clone $field;
+                $clonedField->setParent(null);
+                $view = $this->renderForm($clonedField->createView());
                 $event->getData()->offsetSet($fieldName, $view);
             }
         }
