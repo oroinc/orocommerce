@@ -72,8 +72,10 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements Subto
         foreach ($entity->getLineItems() as $lineItem) {
             if ($lineItem instanceof PriceAwareInterface && $lineItem->getPrice() instanceof Price) {
                 $subtotalAmount += $this->getRowTotal($lineItem, $baseCurrency);
-                $subtotal->setVisible(true);
             }
+        }
+        if ($subtotalAmount > 0) {
+            $subtotal->setVisible(true);
         }
 
         $subtotal->setAmount($this->rounding->round($subtotalAmount));

@@ -24,6 +24,32 @@ class SubtotalProviderRegistryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($providerMock, $registry->getProviderByName($name));
     }
 
+    public function testRegistryGetSupportedProviders()
+    {
+        $entity = new \stdClass();
+        $name = 'provider';
+        $providerMock1 = $this->getProviderMock($name);
+        $providerMock2 = $this->getProviderMock('provider2');
+        $providerMock1->expects($this->once())
+            ->method('isSupported')
+            ->willReturn(true);
+        $providerMock2->expects($this->once())
+            ->method('isSupported')
+            ->willReturn(false);
+
+        $registry = new SubtotalProviderRegistry();
+
+        $this->assertEmpty($registry->getSupportedProviders($entity));
+        $this->assertNull($registry->getProviderByName($name));
+
+        $registry->addProvider($providerMock1);
+        $registry->addProvider($providerMock2);
+
+        $this->assertCount(1, $registry->getSupportedProviders($entity));
+        $this->assertTrue($registry->hasProvider($name));
+        $this->assertEquals($providerMock1, $registry->getProviderByName($name));
+    }
+
     /**
      * @param string $name
      *
