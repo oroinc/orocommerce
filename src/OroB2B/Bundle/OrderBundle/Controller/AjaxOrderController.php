@@ -23,18 +23,6 @@ use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 class AjaxOrderController extends AbstractAjaxOrderController
 {
     /**
-     * @Route("/subtotals", name="orob2b_order_subtotals")
-     * @Method({"POST"})
-     * @AclAncestor("orob2b_order_update")
-     *
-     * {@inheritdoc}
-     */
-    public function subtotalsAction(Request $request)
-    {
-        return parent::subtotalsAction($request);
-    }
-
-    /**
      * Get order related data
      *
      * @Route("/related-data", name="orob2b_order_related_data")
