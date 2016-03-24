@@ -4,7 +4,10 @@
             {% if checkout.shippingEstimate %}
                 <div class="checkout__form__radio">
                     <label class="radio_custom radio_custom_blue checked" data-radio="">
-                        <span class="checkbox_custom__text fs13">{{ checkout.shippingEstimate|oro_format_price }}</span>
+                        <span class="checkbox_custom__text fs13">
+                            {{ 'orob2b.checkout.shipping_cost.label'|trans}}:
+                            {{ checkout.shippingEstimate|oro_format_price }}
+                        </span>
                     </label>
                 </div>
             {% else %}
