@@ -109,11 +109,13 @@ define(function(require) {
          */
         addProductToShoppingList: function(url, urlOptions, formData) {
             var self = this;
+            mediator.execute('showLoading');
             $.ajax({
                 type: 'POST',
                 url: routing.generate(url, urlOptions),
                 data: formData,
                 success: function(response) {
+                    mediator.execute('hideLoading');
                     if (response && response.message) {
                         mediator.execute(
                             'showFlashMessage', (response.hasOwnProperty('successful') ? 'success' : 'error'),
@@ -127,6 +129,7 @@ define(function(require) {
                     }
                 },
                 error: function(xhr) {
+                    mediator.execute('hideLoading');
                     Error.handle({}, xhr, {enforce: true});
                 }
             });

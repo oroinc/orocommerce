@@ -121,8 +121,12 @@ abstract class AbstractTest extends FormIntegrationTestCase
     {
         $quoteProductConstraint = new Constraints\QuoteProduct();
 
+        $UniqueEntity = $this->getMockBuilder('Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator')
+        ->disableOriginalConstructor()->getMock();
+
         return [
             $quoteProductConstraint->validatedBy() => new Constraints\QuoteProductValidator(),
+            'doctrine.orm.validator.unique' => $UniqueEntity
         ];
     }
 
@@ -306,7 +310,22 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function getAccountUser($id)
     {
-        return $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $id);
+        $organization = $this->getMockBuilder('Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface')->getMock();
+        $role = $this->getMockBuilder('Symfony\Component\Security\Core\Role\RoleInterface')->getMock();
+
+        $account = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Account')->getMock();
+
+        /** @var AccountUser $accountUser */
+        $accountUser = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $id);
+        $accountUser->setEmail('test@test.test')
+            ->setFirstName('First Name')
+            ->setLastName('Last Name')
+            ->setUsername('test@test.test')
+            ->setAccount($account)
+            ->setRoles([$role])
+            ->setOrganization($organization);
+
+        return $accountUser;
     }
 
     /**

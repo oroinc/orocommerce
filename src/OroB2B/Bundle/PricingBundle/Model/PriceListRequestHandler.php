@@ -271,7 +271,6 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
      */
     protected function getRequest()
     {
-        $request = $this->requestStack->getCurrentRequest();
-        return $request;
+        return $this->requestStack->getCurrentRequest();
     }
 }
