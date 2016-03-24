@@ -19,6 +19,10 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ */
 class OrderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
