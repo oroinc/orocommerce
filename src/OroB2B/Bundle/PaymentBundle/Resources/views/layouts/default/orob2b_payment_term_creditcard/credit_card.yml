@@ -1,0 +1,45 @@
+layout:
+    actions:
+        - @setBlockTheme:
+            themes: 'OroB2BPaymentBundle:layouts:default/orob2b_payment_term_creditcard/layout.html.twig'
+        - @setFormTheme:
+            themes: 'OroB2BPaymentBundle:layouts:default/orob2b_payment_term_creditcard/form.html.twig'
+        - @setOption:
+            id: page_title
+            optionName: text
+            optionValue: 'orob2b.product.frontend.quick_add.title'
+        - @setOption:
+            id: content
+            optionName: class_prefix
+            optionValue: 'checkout'
+        - @addTree:
+            items:
+                credit_card:
+                    blockType: container
+                credit_card_head:
+                    blockType: container
+                credit_card_footer:
+                    blockType: container
+                credit_card_form:
+                    blockType: container
+                credit_card_form_start:
+                    blockType: form_start
+                    options:
+                        form: { @value: $data.orob2b_payment_credit_card_form_provider }
+                credit_card_form_fields:
+                    blockType: form
+                    options:
+                        form: { @value: $data.orob2b_payment_credit_card_form_provider }
+                credit_card_form_end:
+                    blockType: form_end
+                    options:
+                        form: { @value: $data.orob2b_payment_credit_card_form_provider }
+            tree:
+                content:
+                    credit_card_head: ~
+                    credit_card:
+                        credit_card_form:
+                            credit_card_form_start: ~
+                            credit_card_form_fields: ~
+                            credit_card_form_end: ~
+                    credit_card_footer: ~

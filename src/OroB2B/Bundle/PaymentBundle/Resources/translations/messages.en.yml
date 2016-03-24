@@ -31,3 +31,9 @@ orob2b:
 
         sections:
             general_information: General information
+
+        credit_card:
+            card_number.label: Credit Card Number
+            expiration_date.label: Expiration Date
+            cvv2.label: Credit Card Verification Number
+

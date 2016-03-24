@@ -1,0 +1,56 @@
+<?php
+
+namespace OroB2B\Bundle\PaymentBundle\Form\Type;
+
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+class CreditCardExpirationDateType extends AbstractType
+{
+    const NAME = 'orob2b_payment_credit_card_expiration_date';
+    const YEAR_PERIOD = 10;
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder->remove('day');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(
+            [
+                'model_timezone' => 'UTC',
+                'view_timezone' => 'UTC',
+                'format' => 'dMMMMy',
+                'input' => 'array',
+                'years' => range(date('Y'), date('Y')+self::YEAR_PERIOD)
+            ]
+        );
+
+        $resolver->setAllowedValues(['input' => ['array']]);
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return self::NAME;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getParent()
+    {
+        return 'date';
+    }
+}

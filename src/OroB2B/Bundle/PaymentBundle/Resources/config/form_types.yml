@@ -15,6 +15,16 @@ services:
             - [setAccountClass, [%orob2b_account.entity.account.class%]]
             - [setAccountGroupClass, [%orob2b_account.entity.account_group.class%]]
 
+    orob2b_payment.form.type.credit_card:
+        class: OroB2B\Bundle\PaymentBundle\Form\Type\CreditCardType
+        tags:
+            - { name: form.type, alias: orob2b_payment_credit_card }
+
+    orob2b_payment.form.type.credit_card_expiration_date:
+            class: OroB2B\Bundle\PaymentBundle\Form\Type\CreditCardExpirationDateType
+            tags:
+                - { name: form.type, alias: orob2b_payment_credit_card_expiration_date }
+
     orob2b_payment.form.type.payment_term_select:
         class: %orob2b_payment.form.type.payment_term_select.class%
         tags:
