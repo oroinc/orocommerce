@@ -76,90 +76,6 @@ actions:
                 method: send
                 method_parameters: [$.email, $.data]
 
-    orob2b_sale_frontend_quote_accept_and_submit_to_order:
-        label: orob2b.frontend.sale.btn.accept_quote_create_order
-        applications: [frontend]
-        routes:
-            - orob2b_sale_quote_frontend_view
-        order: 20
-        acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\OrderBundle\Entity\Order]
-        button_options:
-            icon: icon-edit
-            class: quota-accept-btn
-        preconditions:
-#            @equal: [false, $hasOfferVariants]
-        functions:
-            - @get_active_user: $.user
-            - @call_service_method:
-                service: orob2b_sale.service.quote_to_order_converter
-                method: convert
-                method_parameters: [$.data, $.user, null, true]
-                attribute: $.order
-            - @flash_message:
-                message: orob2b.frontend.sale.message.quote.create_order.success
-                type: 'success'
-            - @redirect:
-                constraints:
-                    @acl_resource: orob2b_order_frontend_view
-                parameters:
-                    route: 'orob2b_order_frontend_view'
-                    route_parameters: {id: $.order.id}
-
-    orob2b_sale_frontend_quote_accept_and_submit_to_order_from_widget:
-        label: orob2b.frontend.sale.btn.widget_accept_quote_create_order
-        applications: [frontend]
-        routes:
-            - orob2b_sale_quote_frontend_view
-        order: 20
-        acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\OrderBundle\Entity\Order]
-
-        button_options:
-            icon: icon-edit
-            class: quota-accept-btn
-
-        frontend_options:
-            template: OroB2BSaleBundle:Action:quoteToOrder.html.twig
-            options:
-                modal: true,
-                resizable: true,
-                width: 1000
-                height: 500
-                allowMaximize: true
-                dblclick: maximize
-
-        preconditions:
-#            @equal: [true, $hasOfferVariants]
-
-        attributes:
-            quote_to_order:
-                label: ' '
-                type: array
-
-        form_options:
-            attribute_fields:
-                quote_to_order:
-                    form_type: orob2b_sale_quote_to_order
-
-        form_init:
-            - @assign_value: [$.quote_to_order, $.data]
-
-        functions:
-            - @get_active_user: $.user
-            - @call_service_method:
-                service: orob2b_sale.service.quote_to_order_converter
-                method: convert
-                method_parameters: [$.data, $.user, $.quote_to_order, true]
-                attribute: $.order
-            - @flash_message:
-                message: orob2b.frontend.sale.message.quote.create_order.success
-                type: 'success'
-            - @redirect:
-                constraints:
-                    @acl_resource: orob2b_order_frontend_view
-                parameters:
-                    route: 'orob2b_order_frontend_view'
-                    route_parameters: {id: $.order.id}
-
     orob2b_sale_send_no_quote_alert:
         label: orob2b.sale.quote.actions.send_no_quote_alert
         enabled: true
@@ -196,3 +112,80 @@ actions:
                             to: $.saleRep.email
                             template: 'request_no_quote_alert'
                             entity: $.data
+
+    orob2b_sale_frontend_quote_accept_and_submit_to_order:
+        label: ' '
+        applications: [frontend]
+        enabled: true
+        functions:
+            - @assign_url:
+                attribute: $.editLink
+                route: orob2b_sale_quote_frontend_choice
+                route_parameters: { 'id': $.quote.id }
+            - @translate:
+                attribute: $.sourceRemoveLabel
+                id: orob2b.frontend.shoppinglist.quote.remove_source.label
+            - @tree:
+                conditions:
+                    @not_empty: $.quote.shippingAddress
+                actions:
+                    - @create_entity:
+                        attribute: $.orderAddress
+                        class: OroB2B\Bundle\OrderBundle\Entity\OrderAddress
+                        data:
+                            accountAddress: $.quote.accountAddress
+                            accountUserAddress: $.quote.accountUserAddress
+                            organization: $.quote.organization
+                            label: $.quote.shippingAddress.label
+                            organization: $.quote.shippingAddress.organization
+                            street: $.quote.shippingAddress.street
+                            street2: $.quote.shippingAddress.street2
+                            city: $.quote.shippingAddress.city
+                            postalCode: $.quote.shippingAddress.postalCode
+                            country: $.quote.shippingAddress.country
+                            region: $.quote.shippingAddress.region
+                            regionText: $.quote.shippingAddress.regionText
+                            namePrefix: $.quote.shippingAddress.namePrefix
+                            firstName: $.quote.shippingAddress.firstName
+                            middleName: $.quote.shippingAddress.middleName
+                            lastName: $.quote.shippingAddress.lastName
+                            nameSuffix: $.quote.shippingAddress.nameSuffix
+                            fromExternalSource: true
+                    - @assign_value:
+                        parameters: [$.disallow_shipping_address_edit, true]
+            - @tree:
+                conditions:
+                      @empty: $.quote.shippingAddress
+                actions:
+                    - @create_entity:
+                        attribute: $.orderAddress
+                        class: OroB2B\Bundle\OrderBundle\Entity\OrderAddress
+                    - @assign_value:
+                        parameters: [$.disallow_shipping_address_edit, false]
+            - @start_checkout:
+                source_name: 'quote'
+                source_entity: $.quote
+                data:
+                    shippingAddress: $.orderAddress
+                settings:
+                    allow_source_remove: false
+                    remove_source: true
+                    source_remove_label: $.sourceRemoveLabel
+                    edit_order_link: $.editLink
+                    source_options: $.selectedItems
+                    disallow_shipping_address_edit: $.disallow_shipping_address_edit
+
+    orob2b_sale_frontend_quote_change:
+          label: orob2b.frontend.sale.btn.accept_quote_create_order
+          applications: [frontend]
+          routes:
+              - orob2b_sale_quote_frontend_view
+          order: 20
+          button_options:
+              icon: icon-edit
+              class:  quota-accept-btn
+          functions:
+              - @redirect:
+                   parameters:
+                       route: 'orob2b_sale_quote_frontend_choice'
+                       route_parameters: {id: $.data.id}
