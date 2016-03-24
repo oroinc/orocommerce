@@ -74,3 +74,6 @@ OroB2B\Bundle\OrderBundle\Entity\OrderAddress:
         lastName:
             - NotBlank:
                 groups: [ PersonInfo ]
+        phone:
+            - Length:
+                max: 255

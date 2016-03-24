@@ -189,7 +189,7 @@ class OrderType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
-                'intention' => 'order',
+                'intention' => 'order'
             ]
         );
     }

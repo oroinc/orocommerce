@@ -52,6 +52,7 @@ orob2b:
             street.label: Street
             street2.label: Street 2
             from_external_source.label: Created from External Source
+            phone.label: Phone
 
         orderlineitem:
             entity_label: 'Order Line Item'
