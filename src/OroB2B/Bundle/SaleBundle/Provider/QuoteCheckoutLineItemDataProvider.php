@@ -38,7 +38,7 @@ class QuoteCheckoutLineItemDataProvider implements CheckoutDataProviderInterface
      * @param QuoteProductOffer[] $data
      * @return array
      */
-    protected function prepareData($data)
+    protected function prepareData(array $data)
     {
         $result = [];
         foreach ($data as $productOffer) {
