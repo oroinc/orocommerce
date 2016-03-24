@@ -87,7 +87,7 @@ class ProductImage extends ExtendProductImage
      */
     public function getTypes()
     {
-        return $this->types;
+        return (array) $this->types;
     }
 
     /**
