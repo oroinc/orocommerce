@@ -105,5 +105,9 @@ orob2b:
                             middle_name: Enter your middle name
                             last_name: Enter your last name
                             sufix: Enter your name sufix
+        form:
+            address.manual: Enter address manually
+            address.select.billing.label: SELECT A BILLING ADDRESS FROM YOUR ACCOUNT
+            address.select.shipping.label: SELECT A SHIPPING ADDRESS FROM YOUR ACCOUNT
 
 

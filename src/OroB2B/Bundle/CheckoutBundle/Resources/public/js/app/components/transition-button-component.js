@@ -28,10 +28,19 @@ define(function(require) {
             this.inProgress = false;
 
             this.$el = options._sourceElement;
-            this.$el.on('click', _.bind(this.transit, this));
+            if (this.options.hasForm) {
+                this.$form = this.$el.closest('form');
+                this.$form.on('submit', _.bind(this.onSubmit, this));
+            } else {
+                this.$el.on('click', _.bind(this.transit, this));
+            }
         },
 
-        transit: function(e) {
+        onSubmit: function(e) {
+            this.transit(e, {method: 'POST', data: this.$form.serialize()});
+        },
+
+        transit: function(e, data) {
             e.preventDefault();
             if (!this.options.enabled || this.inProgress) {
                 return;
@@ -40,22 +49,13 @@ define(function(require) {
             this.inProgress = true;
             mediator.execute('showLoading');
 
-            var method = 'GET';
-            var data = null;
-            if (this.options.hasForm) {
-                method = 'POST';
-                data = this.$el.closest('form').serialize();
-            }
-
             var url = this.options.transitionUrl;
             var widgetParameters = '_widgetContainer=ajax&_wid=ajax_checkout';
-
             url += (-1 !== _.indexOf(url, '?') ? '&' : '?') + widgetParameters;
-            $.ajax({
-                    url: url,
-                    method: method,
-                    data: data
-                })
+
+            data = data || {method: 'GET'};
+            data.url = url;
+            $.ajax(data)
                 .done(_.bind(this.onSuccess, this))
                 .fail(_.bind(this.onFail, this))
                 .always(function() {
