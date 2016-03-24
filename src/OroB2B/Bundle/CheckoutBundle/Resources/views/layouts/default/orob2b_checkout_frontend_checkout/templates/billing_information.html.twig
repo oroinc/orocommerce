@@ -47,9 +47,11 @@
                 {{ form_widget(form.billing_address.region_text) }}
             </fieldset>
         </div>
-
-        <fieldset class="checkout__form__row">
-            {{ form_row(form.ship_to_billing_address) }}
-        </fieldset>
+        {% set workflowItem = checkout.workflowItem %}
+        {% if workflowItem.data.get('disallow_shipping_address_edit') == false %}
+            <fieldset class="checkout__form__row">
+                {{ form_row(form.ship_to_billing_address) }}
+            </fieldset>
+        {% endif %}
     </div>
 {%- endblock %}

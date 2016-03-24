@@ -115,6 +115,7 @@ actions:
 
     orob2b_sale_frontend_quote_accept_and_submit_to_order:
         label: ' '
+        applications: [frontend]
         enabled: true
         functions:
             - @assign_url:
@@ -124,15 +125,55 @@ actions:
             - @translate:
                 attribute: $.sourceRemoveLabel
                 id: orob2b.frontend.shoppinglist.quote.remove_source.label
+            - @tree:
+                conditions:
+                    @not_empty: $.quote.shippingAddress
+                actions:
+                    - @create_entity:
+                        attribute: $.orderAddress
+                        class: OroB2B\Bundle\OrderBundle\Entity\OrderAddress
+                        data:
+                            accountAddress: $.quote.accountAddress
+                            accountUserAddress: $.quote.accountUserAddress
+                            organization: $.quote.organization
+                            label: $.quote.shippingAddress.label
+                            organization: $.quote.shippingAddress.organization
+                            street: $.quote.shippingAddress.street
+                            street2: $.quote.shippingAddress.street2
+                            city: $.quote.shippingAddress.city
+                            postalCode: $.quote.shippingAddress.postalCode
+                            country: $.quote.shippingAddress.country
+                            region: $.quote.shippingAddress.region
+                            regionText: $.quote.shippingAddress.regionText
+                            namePrefix: $.quote.shippingAddress.namePrefix
+                            firstName: $.quote.shippingAddress.firstName
+                            middleName: $.quote.shippingAddress.middleName
+                            lastName: $.quote.shippingAddress.lastName
+                            nameSuffix: $.quote.shippingAddress.nameSuffix
+                            fromExternalSource: true
+                    - @assign_value:
+                        parameters: [$.disallow_shipping_address_edit, true]
+            - @tree:
+                conditions:
+                      @empty: $.quote.shippingAddress
+                actions:
+                    - @create_entity:
+                        attribute: $.orderAddress
+                        class: OroB2B\Bundle\OrderBundle\Entity\OrderAddress
+                    - @assign_value:
+                        parameters: [$.disallow_shipping_address_edit, false]
             - @start_checkout:
                 source_name: 'quote'
                 source_entity: $.quote
+                data:
+                    shippingAddress: $.orderAddress
                 settings:
                     allow_source_remove: false
                     remove_source: true
                     source_remove_label: $.sourceRemoveLabel
                     edit_order_link: $.editLink
                     source_options: $.selectedItems
+                    disallow_shipping_address_edit: $.disallow_shipping_address_edit
 
     orob2b_sale_frontend_quote_change:
           label: orob2b.frontend.sale.btn.accept_quote_create_order
