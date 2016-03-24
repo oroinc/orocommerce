@@ -42,6 +42,7 @@ use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type\Stub\EntityType as StubEntityType;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 
 class OrderTypeTest extends TypeTestCase
 {
@@ -157,6 +158,13 @@ class OrderTypeTest extends TypeTestCase
 
         $form = $this->factory->create($this->type, null, $options);
 
+        $subtotal = new Subtotal();
+        $subtotal->setAmount(99);
+        $this->lineItemSubtotalProvider
+            ->expects($this->any())
+            ->method('getSubtotal')
+            ->willReturn($subtotal);
+
         $form->submit($submitData);
 
         $this->assertTrue($form->isSynchronized());
@@ -208,7 +216,7 @@ class OrderTypeTest extends TypeTestCase
                         'account' => 2,
                         'poNumber' => '11',
                         'shipUntil' => null,
-                        'subtotal' => 0.0,
+                        'subtotal' => 99,
                         'total' => 0.0,
                         'totalDiscounts' => new Price(),
                         'lineItems' => [
