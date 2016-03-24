@@ -55,15 +55,9 @@ class OrderController extends AbstractOrderController
      */
     public function viewAction(Order $order)
     {
-        $subtotals = $this->getTotalProcessor()->getSubtotals($order);
-        $total = $this->getTotalProcessor()->getTotal($order);
-
         return [
             'entity' => $order,
-            'totals' => [
-                'total' => $total,
-                'subtotals' => $subtotals
-            ]
+            'totals' => $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($order)
         ];
     }
 
@@ -166,9 +160,7 @@ class OrderController extends AbstractOrderController
         $handler = new OrderHandler(
             $form,
             $request,
-            $this->getDoctrine()->getManagerForClass(ClassUtils::getClass($order)),
-            $this->get('orob2b_pricing.subtotal_processor.total_processor_provider'),
-            $this->get('orob2b_pricing.subtotal_processor.provider.subtotal_line_item')
+            $this->getDoctrine()->getManagerForClass(ClassUtils::getClass($order))
         );
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
@@ -192,10 +184,7 @@ class OrderController extends AbstractOrderController
                 return [
                     'form' => $form->createView(),
                     'entity' => $order,
-                    'totals' => [
-                        'total' =>  $this->getTotalProcessor()->getTotal($order),
-                        'subtotals' => $this->getTotalProcessor()->getSubtotals($order)
-                    ],
+                    'totals' => $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($order),
                     'isWidgetContext' => (bool)$request->get('_wid', false),
                     'isShippingAddressGranted' => $this->getOrderAddressSecurityProvider()
                         ->isAddressGranted($order, AddressType::TYPE_SHIPPING),

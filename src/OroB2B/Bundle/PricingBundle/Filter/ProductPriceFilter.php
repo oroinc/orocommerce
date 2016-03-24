@@ -62,16 +62,15 @@ class ProductPriceFilter extends NumberRangeFilter
             return false;
         }
 
-        $this->qbPrepare($ds, $data['unit']);
-
-        $joinAlias = $this->getJoinAlias();
+        $productPriceAlias = $ds->generateParameterName('product_price_' . $this->get('data_name'));
+        $this->qbPrepare($ds, $data['unit'], $productPriceAlias);
 
         $this->applyFilterToClause(
             $ds,
             $this->buildRangeComparisonExpr(
                 $ds,
                 $data['type'],
-                $joinAlias . '.value',
+                $productPriceAlias . '.value',
                 $data['value'],
                 $data['value_end']
             )
@@ -81,43 +80,35 @@ class ProductPriceFilter extends NumberRangeFilter
     }
 
     /**
-     * @return string
-     */
-    protected function getJoinAlias()
-    {
-        return 'product_price_' . $this->get('data_name');
-    }
-
-    /**
      * @param OrmFilterDatasourceAdapter $ds
      * @param string $unit
+     * @param string $productPriceAlias
      */
-    protected function qbPrepare(OrmFilterDatasourceAdapter $ds, $unit)
+    protected function qbPrepare(OrmFilterDatasourceAdapter $ds, $unit, $productPriceAlias)
     {
         $qb = $ds->getQueryBuilder();
 
         $rootAliasCollection = $qb->getRootAliases();
         $rootAlias = reset($rootAliasCollection);
-        $joinAlias = $this->getJoinAlias();
 
         $currency = $this->get('data_name');
 
         $qb->innerJoin(
             'OroB2BPricingBundle:ProductPrice',
-            $joinAlias,
+            $productPriceAlias,
             Join::WITH,
-            $rootAlias . '.id = IDENTITY(' . $joinAlias . '.product)'
+            sprintf('%s.id = IDENTITY(%s.product)', $rootAlias, $productPriceAlias)
         );
 
         $this->addEqExpr(
             $ds,
-            $joinAlias . '.priceList',
+            $productPriceAlias . '.priceList',
             $ds->generateParameterName('priceList'),
             $this->priceListRequestHandler->getPriceList()
         );
-        $this->addEqExpr($ds, $joinAlias . '.currency', $ds->generateParameterName('currency'), $currency);
-        $this->addEqExpr($ds, $joinAlias . '.quantity', $ds->generateParameterName('quantity'), 1);
-        $this->addEqExpr($ds, 'IDENTITY(' . $joinAlias . '.unit)', $ds->generateParameterName('unit'), $unit);
+        $this->addEqExpr($ds, $productPriceAlias . '.currency', $ds->generateParameterName('currency'), $currency);
+        $this->addEqExpr($ds, $productPriceAlias . '.quantity', $ds->generateParameterName('quantity'), 1);
+        $this->addEqExpr($ds, 'IDENTITY(' . $productPriceAlias . '.unit)', $ds->generateParameterName('unit'), $unit);
     }
 
     /**

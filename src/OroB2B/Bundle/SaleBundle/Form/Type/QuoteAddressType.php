@@ -90,6 +90,7 @@ class QuoteAddressType extends AbstractType
         }
 
         $builder->add('accountAddress', 'genemu_jqueryselect2_choice', $accountAddressOptions);
+        $builder->add('phone', 'text');
 
         $builder->addEventListener(
             FormEvents::SUBMIT,
@@ -130,8 +131,13 @@ class QuoteAddressType extends AbstractType
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $isManualEditGranted = $this->quoteAddressSecurityProvider->isManualEditGranted($options['addressType']);
+        $exceptKey = ['phone'];
 
-        foreach ($view->children as $child) {
+        foreach ($view->children as $key => $child) {
+            if (in_array($key, $exceptKey)) {
+                continue;
+            }
+
             $child->vars['disabled'] = !$isManualEditGranted;
             $child->vars['required'] = false;
             unset(
