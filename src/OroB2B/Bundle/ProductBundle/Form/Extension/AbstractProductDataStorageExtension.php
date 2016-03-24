@@ -13,6 +13,7 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+use OroB2B\Bundle\ProductBundle\Model\ProductRow;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
@@ -120,7 +121,7 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
 
     /**
      * @param $entity
-     * @param array $itemsData
+     * @param ProductRow[] $itemsData
      */
     protected function fillItemsData($entity, array $itemsData = [])
     {
@@ -129,8 +130,7 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
             if (!array_key_exists(ProductDataStorage::PRODUCT_SKU_KEY, $dataRow)) {
                 continue;
             }
-
-            $product = $repository->findOneBySku($dataRow[ProductDataStorage::PRODUCT_SKU_KEY]);
+            $product = $repository->findOneBySku($dataRow->productSku);
             if (!$product) {
                 continue;
             }
@@ -141,9 +141,9 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
 
     /**
      * @param object $entity
-     * @param array $data
+     * @param object|array $data
      */
-    protected function fillEntityData($entity, array $data = [])
+    protected function fillEntityData($entity, $data)
     {
         if (!$data) {
             return;
@@ -173,9 +173,9 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
     /**
      * @param Product $product
      * @param object $entity
-     * @param array $itemData
+     * @param ProductRow $itemData
      */
-    abstract protected function addItem(Product $product, $entity, array $itemData = []);
+    abstract protected function addItem(Product $product, $entity, ProductRow $itemData);
 
     /**
      * @return ProductRepository

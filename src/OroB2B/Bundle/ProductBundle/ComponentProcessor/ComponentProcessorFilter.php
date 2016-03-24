@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use OroB2B\Bundle\ProductBundle\Model\ProductRow;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class ComponentProcessorFilter implements ComponentProcessorFilterInterface
@@ -43,8 +44,9 @@ class ComponentProcessorFilter implements ComponentProcessorFilterInterface
     public function filterData(array $data, array $dataParameters)
     {
         $products = [];
+        /** @var ProductRow $product */
         foreach ($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] as $product) {
-            $products[strtoupper($product['productSku'])] = $product;
+            $products[strtoupper($product->productSku)] = $product;
         }
         $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] = [];
 
@@ -56,8 +58,8 @@ class ComponentProcessorFilter implements ComponentProcessorFilterInterface
         $queryBuilder = $this->productManager->restrictQueryBuilder($queryBuilder, $dataParameters);
 
         $filteredProducts = $queryBuilder->getQuery()->getResult();
-        foreach ($filteredProducts as $product) {
-            $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = $products[strtoupper($product['sku'])];
+        foreach ($filteredProducts as $filteredProduct) {
+            $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = $products[strtoupper($filteredProduct['sku'])];
         }
 
         return $data;

@@ -8,6 +8,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter;
 use OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use OroB2B\Bundle\ProductBundle\Model\ProductRow;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class ComponentProcessorFilterTest extends \PHPUnit_Framework_TestCase
@@ -112,9 +113,9 @@ class ComponentProcessorFilterTest extends \PHPUnit_Framework_TestCase
         $skus = ['visibleSku1', 'invisibleSku1', 'visibleSku2'];
         $data = [
             ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                ['productSku' => $skus[0]],
-                ['productSku' => $skus[1]],
-                ['productSku' => $skus[2]],
+                $this->createProductRow($skus[0]),
+                $this->createProductRow($skus[1]),
+                $this->createProductRow($skus[2]),
             ],
         ];
         $dataParameters = [];
@@ -165,4 +166,19 @@ class ComponentProcessorFilterTest extends \PHPUnit_Framework_TestCase
             $filteredData[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][1]
         );
     }
+
+    /**
+     * @param string $sku
+     * @param string $qty
+     * @return ProductRow
+     */
+    protected function createProductRow($sku, $qty = '')
+    {
+        $productRow = new ProductRow();
+        $productRow->productSku = $sku;
+        $productRow->productQuantity= $qty;
+
+        return $productRow;
+    }
+
 }

@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension;
 
+use OroB2B\Bundle\ProductBundle\Model\ProductRow;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class AbstractProductDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
@@ -28,14 +29,14 @@ class AbstractProductDataStorageExtensionTest extends AbstractProductDataStorage
         $this->entity->scalar = null;
 
         $sku = 'TEST';
+        $productRow = new ProductRow();
+        $productRow->productSku = $sku;
+        $productRow->productQuantity = 3;
         $product = $this->getProductEntity($sku);
         $data = [
             ProductDataStorage::ENTITY_DATA_KEY => ['product' => 1, 'scalar' => 1],
             ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                [
-                    ProductDataStorage::PRODUCT_SKU_KEY => $sku,
-                    ProductDataStorage::PRODUCT_QUANTITY_KEY => 3,
-                ],
+                $productRow,
             ],
         ];
 
