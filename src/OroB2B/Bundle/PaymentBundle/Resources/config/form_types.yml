@@ -3,6 +3,7 @@ parameters:
     orob2b_payment.form.type.payment_term_select.class: OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType
     orob2b_payment.form.type.payment_term_method.class: OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermMethodType
     orob2b_payment.form.type.payment_method.class: OroB2B\Bundle\PaymentBundle\Form\Type\PaymentMethodType
+    orob2b_payment.form.type.paypal_password.class: OroB2B\Bundle\PaymentBundle\Form\Type\PayPalPasswordType
     orob2b_payment.form.extension.account_type.class: OroB2B\Bundle\PaymentBundle\Form\Extension\AccountFormExtension
     orob2b_payment.form.extension.account_group_type.class: OroB2B\Bundle\PaymentBundle\Form\Extension\AccountGroupFormExtension
     orob2b_payment.form.extension.abstract.class: OroB2B\Bundle\PaymentBundle\Form\Extension\AbstractPaymentTermExtension
@@ -21,6 +22,11 @@ services:
         class: %orob2b_payment.form.type.payment_term_select.class%
         tags:
             - { name: form.type, alias: orob2b_payment_term_select }
+
+    orob2b_payment.form.type.paypal_password:
+        class: %orob2b_payment.form.type.paypal_password.class%
+        tags:
+            - { name: form.type, alias: orob2b_payment_paypal_password_type }
 
     orob2b_payment.form.extension.abstract:
         class: %orob2b_payment.form.extension.abstract.class%

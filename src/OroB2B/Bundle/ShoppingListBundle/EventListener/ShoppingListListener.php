@@ -33,7 +33,7 @@ class ShoppingListListener
 
         if ($shoppingList instanceof ShoppingList) {
             $shoppingList->setCurrent(true);
-            $em->getUnitOfWork()->scheduleForUpdate($shoppingList);
+            $em->flush($shoppingList);
         }
     }
 }

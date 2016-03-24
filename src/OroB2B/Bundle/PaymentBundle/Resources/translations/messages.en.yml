@@ -41,3 +41,48 @@ orob2b:
             credit_card_method:
                 label: 'Credit Card'
                 card_name.label: 'Card Name'
+
+        system_configuration:
+            groups:
+                payment.title: 'Payment'
+                general.title: 'General'
+                merchant_location.title: 'Merchant Location'
+                paypal_payments_pro.title: 'PayPal Payments Pro'
+                payflow_gateway.title: 'Payflow Gateway'
+                display_options.title: 'Display Options'
+                integration.title: 'Integration'
+                advansed_settings.title: 'Advansed Settings'
+            fields:
+                merchant_country.label: 'Merchant Country'
+
+                enabled.label: 'Enabled'
+                label.label: 'Label'
+                sort_order.label: 'Sort Order'
+                allowed_countries:
+                    label: 'Allowed Countries'
+                    all: 'All'
+                    selected: 'Selected'
+                selected_countries.label: 'Select Allowed Countries'
+                allowed_cc_types:
+                    label: 'Allowed Credit Card Types'
+                    visa: 'Visa'
+                    mastercard: 'Mastercard'
+                    discover: 'Discover'
+                    american_express: 'American Express'
+                partner.label: 'Partner'
+                user.label: 'User'
+                vendor.label: 'Vendor'
+                password.label: 'Password'
+                payment_action:
+                    label: 'Payment Action'
+                    authorization: 'Authorization'
+                    sale: 'Sale'
+                test_mode.label: 'Test Mode'
+
+                use_proxy.label: 'Use Proxy'
+                proxy_host.label: 'Proxy Host'
+                proxy_port.label: 'Proxy Port'
+                debug_mode.label: 'Debug Mode'
+                enable_ssl_verification.label: 'Enable SSL Verification'
+                require_cvv.label: 'Require CVV Entry'
+                validate_cvv.label: 'Validate CVV'
