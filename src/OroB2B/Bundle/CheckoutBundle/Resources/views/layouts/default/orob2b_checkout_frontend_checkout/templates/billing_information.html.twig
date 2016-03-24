@@ -65,8 +65,8 @@
                     {{- form_label(form.billing_address.postalCode, form.billing_address.postalCode.vars.label, {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) -}}
                     {{- form_widget(form.billing_address.postalCode, {'attr' : {'placeholder': 'orob2b.checkout.workflow.b2b_flow_checkout.form.placeholder.address.zip'|trans}}) -}}
                 </div>
-                <div class="checkout__form__col form__col_x8" style="clear: both">
-                {{- form_errors(form.billing_address.postalCode) -}}
+                <div class="checkout__form__col form__col_x8 col-zip-error">
+                    {{- form_errors(form.billing_address.postalCode) -}}
                 </div>
             </fieldset>
             <fieldset class="checkout__form__row">
