@@ -1,6 +1,7 @@
 parameters:
     orob2b_invoice.invoice.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_invoice.event_listener.orm.invoice_event_listener.class: OroB2B\Bundle\InvoiceBundle\EventListener\ORM\InvoiceEventListener
+    orob2b_invoice.event_listener.total_calculate_listener.class: OroB2B\Bundle\InvoiceBundle\EventListener\TotalCalculateListener
     orob2b_invoice.doctrine.orm.invoice_number_generator.class: OroB2B\Bundle\InvoiceBundle\Doctrine\ORM\SimpleInvoiceNumberGenerator
     orob2b_invoice.entity.invoice.class: OroB2B\Bundle\InvoiceBundle\Entity\Invoice
     orob2b_invoice.entity.invoice_line_item.class: OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem
@@ -57,3 +58,10 @@ services:
             - @orob2b_pricing.subtotal_processor.provider.subtotal_line_item
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.orob2b_invoice_type, method: beforeFlush}
+
+    orob2b_invoice.event_listener.total_calculate_listener:
+        class: %orob2b_invoice.event_listener.total_calculate_listener.class%
+        arguments:
+            - @form.factory
+        tags:
+            - { name: kernel.event_listener, event: orob2b_pricing.total_calculate_before_event, method: onBeforeTotalCalculate }

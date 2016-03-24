@@ -77,3 +77,13 @@ OroB2B\Bundle\OrderBundle\Entity\OrderAddress:
         phone:
             - Length:
                 max: 255
+
+OroB2B\Bundle\OrderBundle\Entity\OrderDiscount:
+    properties:
+        percent:
+            - NotBlank: ~
+            - Type:
+                type: numeric
+            - Range:
+                min: -100
+                max: 100

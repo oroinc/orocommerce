@@ -27,7 +27,7 @@ class OrderController extends AbstractOrderController
 {
     /**
      * @Route("/", name="orob2b_order_frontend_index")
-     * @Template("OroB2BOrderBundle:Order/Frontend:index.html.twig")
+     * @Layout(vars={"entity_class"})
      * @Acl(
      *      id="orob2b_order_frontend_view",
      *      type="entity",
@@ -55,15 +55,9 @@ class OrderController extends AbstractOrderController
      */
     public function viewAction(Order $order)
     {
-        $subtotals = $this->getTotalProcessor()->getSubtotals($order);
-        $total = $this->getTotalProcessor()->getTotal($order);
-
         return [
             'entity' => $order,
-            'totals' => [
-                'total' => $total,
-                'subtotals' => $subtotals
-            ]
+            'totals' => $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($order)
         ];
     }
 
@@ -191,8 +185,7 @@ class OrderController extends AbstractOrderController
         $handler = new OrderHandler(
             $form,
             $request,
-            $this->getDoctrine()->getManagerForClass(ClassUtils::getClass($order)),
-            $this->get('orob2b_order.model.order_totals_handler')
+            $this->getDoctrine()->getManagerForClass(ClassUtils::getClass($order))
         );
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
@@ -216,10 +209,7 @@ class OrderController extends AbstractOrderController
                 return [
                     'form' => $form->createView(),
                     'entity' => $order,
-                    'totals' => [
-                        'total' =>  $this->getTotalProcessor()->getTotal($order),
-                        'subtotals' => $this->getTotalProcessor()->getSubtotals($order)
-                    ],
+                    'totals' => $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($order),
                     'isWidgetContext' => (bool)$request->get('_wid', false),
                     'isShippingAddressGranted' => $this->getOrderAddressSecurityProvider()
                         ->isAddressGranted($order, AddressType::TYPE_SHIPPING),

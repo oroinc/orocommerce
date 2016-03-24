@@ -22,7 +22,7 @@ orob2b:
         sections:
             general: 'General information'
             invoice_line_items: 'Invoice items'
-            subtotals: 'Subtotals'
+            totals: 'Totals'
 
         widgets:
             invoice_information: 'Invoice Information'

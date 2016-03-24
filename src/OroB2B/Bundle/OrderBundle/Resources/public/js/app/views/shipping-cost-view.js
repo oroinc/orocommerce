@@ -8,9 +8,9 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
 
     /**
-     * @export orob2border/js/app/views/line-item-abstract-view
+     * @export orob2border/js/app/views/shipping-cost-view
      * @extends oroui.app.views.base.View
-     * @class orob2border.app.views.LineItemAbstractView
+     * @class orob2border.app.views.ShippingCostView
      */
     ShippingCostView = BaseView.extend({
         /**
@@ -53,9 +53,7 @@ define(function(require) {
                 this.fieldsByName[this.formFieldName(field)] = $(field);
             }, this));
 
-            this.subtotalFields([
-                this.fieldsByName.orob2bOrderTypeShippingCostValue
-            ]);
+            this.subtotalFields(this.fieldsByName);
         },
 
         /**

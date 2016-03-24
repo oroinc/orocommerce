@@ -11,7 +11,7 @@ use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 
-class SubtotalShippingCostProvider implements SubtotalProviderInterface
+class ShippingCostSubtotalProvider implements SubtotalProviderInterface
 {
     const TYPE = 'shipping_cost';
     const NAME = 'orob2b_order.subtotal_shipping_cost';
