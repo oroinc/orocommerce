@@ -1,0 +1,38 @@
+{% block _quick_access_container_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " middlebar__right hidden-sm hidden-xs"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _quick_access_menu_widget %}
+    {# TODO: render real menu #}
+    <ul class="navigation-widget__list navigation-widget__list_inline text-right not-implemented">
+        <li>
+            <a href="#">
+              <span class="badge badge_sm_xs badge_circled-corners badge_yellow navigation-widget__badge">
+                <i class="material-icons">assignment</i>
+              </span>
+                <span>Purchase Orders</span>
+            </a>
+        </li>
+        <li>
+            <a href="#">
+              <span class="badge badge_sm_xs badge_circled-corners badge_orange-light navigation-widget__badge">
+                <i class="material-icons">local_offer</i>
+              </span>
+                <span>Quotes</span>
+            </a>
+        </li>
+        <li>
+            <a href="#">
+              <span class="badge badge_sm_xs badge_circled-corners badge_orange navigation-widget__badge">
+                <i class="icon-flash"></i>
+              </span>
+                <span>Quick Order Form</span>
+            </a>
+        </li>
+    </ul>
+{% endblock %}

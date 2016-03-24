@@ -64,7 +64,9 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
         $item->addChild('My Account', ['uri' => '/account/dashboard']);
         $item->addChild('My Wishlist', ['uri' => '/wishlist/account/dashboard']);
         $item->addChild('Order History', ['uri' => '/account/order']);
-        $item->addChild('Sign Out', ['uri' => '/account/user/logout']);
+        $item->addChild('Sign Out', ['uri' => '/account/user/logout', 'extras' => [
+            'condition' => 'is_logged_in()'
+        ]]);
         $item->addChild('1-800-555-5555');
         $item->addChild('Live Chat');
 
