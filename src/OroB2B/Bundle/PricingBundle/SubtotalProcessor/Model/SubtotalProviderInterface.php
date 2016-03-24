@@ -16,7 +16,7 @@ interface SubtotalProviderInterface
      *
      * @param $entity
      *
-     * @return Subtotal
+     * @return Subtotal[]|Subtotal
      */
     public function getSubtotal($entity);
 
