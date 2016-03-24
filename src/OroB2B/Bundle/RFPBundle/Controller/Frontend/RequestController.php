@@ -12,6 +12,7 @@ use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\LayoutBundle\Annotation\Layout;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
@@ -45,7 +46,7 @@ class RequestController extends Controller
     /**
      * @AclAncestor("orob2b_rfp_frontend_request_view")
      * @Route("/", name="orob2b_rfp_frontend_request_index")
-     * @Template("OroB2BRFPBundle:Request/Frontend:index.html.twig")
+     * @Layout(vars={"entity_class"})
      * @return array
      */
     public function indexAction()
