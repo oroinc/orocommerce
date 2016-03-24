@@ -45,7 +45,7 @@
     {% if actionsCount > 0 %}
         {% import 'OroActionBundle:layouts/base:layout.html.twig' as _layout %}
         {% set hasVariants = actionsCount > 1 %}
-        {% set additionalCss = "btn btn-orange" %}
+        {% set additionalCss = "btn theme-btn btn-orange" %}
         {% if hasVariants %}
             {% set additionalCss = additionalCss ~ " btn_has-dropdown btn_has-dropdown_xlg" %}
         {% endif %}

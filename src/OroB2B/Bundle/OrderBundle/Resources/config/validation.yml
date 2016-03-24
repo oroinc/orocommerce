@@ -53,3 +53,9 @@ OroB2B\Bundle\OrderBundle\Entity\OrderLineItem:
         price:
             - NotBlank: ~
             - Valid: ~
+
+OroB2B\Bundle\OrderBundle\Entity\OrderAddress:
+    properties:
+        phone:
+            - Length:
+                max: 255
