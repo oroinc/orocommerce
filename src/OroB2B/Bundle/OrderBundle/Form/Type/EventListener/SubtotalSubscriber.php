@@ -58,14 +58,14 @@ class SubtotalSubscriber implements EventSubscriberInterface
     public function onSubmitEventListener(FormEvent $event)
     {
         $form = $event->getForm();
-        if ($form->has('discountsSum')) {
-            $data = $event->getData();
-            if ($data instanceof Order) {
-                $this->fillSubtotals($data);
-                $this->fillDiscounts($data);
-                $this->fillTotal($data);
-                $event->setData($data);
-
+        $data = $event->getData();
+        if ($data instanceof Order) {
+            $this->fillSubtotals($data);
+            $this->fillDiscounts($data);
+            $this->fillTotal($data);
+            $event->setData($data);
+            
+            if ($form->has('discountsSum')) {
                 $form->remove('discountsSum');
                 $form->add(
                     'discountsSum',

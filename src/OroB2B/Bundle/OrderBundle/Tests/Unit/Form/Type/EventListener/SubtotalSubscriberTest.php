@@ -79,9 +79,8 @@ class SubtotalSubscriberTest extends \PHPUnit_Framework_TestCase
             ->method('getForm')
             ->willReturn($form);
 
-        $form->expects($this->once())
-            ->method('has')
-            ->willReturn(true);
+        $form->expects($this->never())
+            ->method('has');
 
         $event->expects($this->once())
             ->method('getData');
