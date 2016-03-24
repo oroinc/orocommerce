@@ -19,7 +19,6 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
-use OroB2B\Bundle\OrderBundle\Provider\IdentifierAwareInterface;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
@@ -73,8 +72,7 @@ class Order extends ExtendOrder implements
     AccountOwnerAwareInterface,
     LineItemsAwareInterface,
     ShippingAwareInterface,
-    CurrencyAwareInterface,
-    IdentifierAwareInterface
+    CurrencyAwareInterface
 {
     /**
      * @var integer

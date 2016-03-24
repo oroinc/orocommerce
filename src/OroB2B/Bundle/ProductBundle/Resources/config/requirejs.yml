@@ -12,6 +12,7 @@ config:
         'orob2bproduct/js/app/components/quick-add-import-validation-component': 'bundles/orob2bproduct/js/app/components/quick-add-import-validation-component.js'
         'orob2bproduct/js/app/components/redirect-component': 'bundles/orob2bproduct/js/app/components/redirect-component.js'
         'orob2bproduct/js/app/components/product-quantity-editable-component': 'bundles/orob2bproduct/js/app/components/product-quantity-editable-component.js'
+        'orob2bproduct/js/app/datagrid/frontend-product-display-options-builder': 'bundles/orob2bproduct/js/app/datagrid/frontend-product-display-options-builder.js'
 
     shim:
         'tinymce/plugins/fullscreen/plugin.min':
