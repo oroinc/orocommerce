@@ -47,12 +47,24 @@
 {% block content_data %}
     {% set id = 'invoice-edit' %}
 
-    {% set subtotals %}
-        {% include 'OroB2BPricingBundle:Subtotals:subtotals.html.twig' with {
-        options: {
-            url: path('orob2b_invoice_subtotal', {id: entity.id}),
-            selectors: {form: '#' ~ form.vars.id},
-        }
+    {% set totals %}
+        {% include 'OroB2BPricingBundle:Totals:totalsEntityEditPage.html.twig' with {
+            options: {
+                route: 'orob2b_pricing_recalculate_entity_totals',
+                selectors: {
+                    template: '#totals-template',
+                    form: '#' ~ form.vars.id
+                },
+                events: [
+                    'line-items-totals:update',
+                    'update:account',
+                    'update:website',
+                    'update:currency'
+                ],
+                entityClassName: 'OroB2B\\Bundle\\InvoiceBundle\\Entity\\Invoice',
+                entityId: form.vars.value.id,
+                data: totals
+            }
         } only %}
     {% endset %}
 
@@ -119,10 +131,10 @@
     ] %}
 
     {% set dataBlocks = dataBlocks|merge([{
-            'title': 'orob2b.invoice.sections.subtotals'|trans,
+            'title': 'orob2b.invoice.sections.totals'|trans,
             'class': 'active',
             'subblocks': [{
-                'data': [subtotals]
+                'data': [totals]
             }]
         }])
     %}

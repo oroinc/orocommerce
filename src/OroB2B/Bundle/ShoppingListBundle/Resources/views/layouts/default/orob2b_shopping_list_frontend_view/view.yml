@@ -73,6 +73,8 @@ layout:
                         vars:
                             shoppingList:
                                 @value: $data.shoppingList
+                            totals:
+                                @value: $data.totals
                 shopping_list_combined_button:
                     blockType: action_combined_buttons
                     options:

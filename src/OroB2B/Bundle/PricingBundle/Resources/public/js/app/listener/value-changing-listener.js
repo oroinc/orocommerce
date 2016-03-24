@@ -8,7 +8,7 @@ define(function(require) {
 
     /**
      * @export orob2border/js/app/listener/value-changing-listener
-     * @class orob2border.app.listener.SubtotalsListener
+     * @class orob2border.app.listener.TotalsListener
      */
     ValueChangingListener = {
         /**

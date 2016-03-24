@@ -39,11 +39,23 @@
     {% set id = 'frontend-order-edit' %}
 
     {% set subtotals %}
-        {% include 'OroB2BPricingBundle:Totals:totals.html.twig' with {
+        {% include 'OroB2BPricingBundle:Totals/Frontend:totalsEntityEditPage.html.twig' with {
             options: {
-                url: path('orob2b_order_frontend_subtotals', {id: entity.id}),
-                selectors: {form: '#' ~ form.vars.id}
-                }
+                route: 'orob2b_pricing_frontend_recalculate_entity_totals',
+                selectors: {
+                    template: '#frontend-totals-template',
+                    form: '#' ~ form.vars.id
+                },
+                events: [
+                    'line-items-totals:update',
+                    'update:account',
+                    'update:website',
+                    'update:currency'
+                ],
+                entityClassName: 'OroB2B\\Bundle\\OrderBundle\\Entity\\Order',
+                entityId: form.vars.value.id,
+                data: totals
+            }
         } only %}
     {% endset %}
 
