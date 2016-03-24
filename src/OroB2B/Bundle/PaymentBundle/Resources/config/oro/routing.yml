@@ -3,6 +3,13 @@ orob2b_payment:
     type:         annotation
     prefix:       /payment/term
 
+orob2b_payment_frontend:
+    resource:     "@OroB2BPaymentBundle/Controller/Frontend/PaymentTermController.php"
+    type:         annotation
+    prefix:       /payment
+    options:
+        frontend: true
+
 oro_organziation_api:
     resource:     "@OroB2BPaymentBundle/Controller/Api/Rest/PaymentTermController.php"
     type:         rest

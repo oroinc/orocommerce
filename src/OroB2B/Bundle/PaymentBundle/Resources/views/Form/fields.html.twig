@@ -50,3 +50,12 @@
 {% block orob2b_payment_paypal_password_type_widget %}
     {{ block('password_widget') }}
 {% endblock %}
+
+{% block orob2b_payment_credit_card_expiration_date_widget -%}
+    <div class="{{ class_prefix }}__form__select {{ class_prefix }}__form__select_exp-month">
+        {{ form_widget(form.month) }}
+    </div>
+    <div class="{{ class_prefix }}__form__select {{ class_prefix }}__form__select_exp-day">
+        {{ form_widget(form.year) }}
+    </div>
+{%- endblock %}

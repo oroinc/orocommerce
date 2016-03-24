@@ -86,3 +86,8 @@ orob2b:
                 enable_ssl_verification.label: 'Enable SSL Verification'
                 require_cvv.label: 'Require CVV Entry'
                 validate_cvv.label: 'Validate CVV'
+
+        credit_card:
+            card_number.label: Credit Card Number
+            expiration_date.label: Expiration Date
+            cvv2.label: Credit Card Verification Number
