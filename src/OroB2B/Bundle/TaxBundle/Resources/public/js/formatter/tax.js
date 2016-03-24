@@ -22,12 +22,12 @@ define(['underscore', 'orolocale/js/formatter/number', 'orolocale/js/locale-sett
                  * @param {Object} item
                  */
                 formatItem: function(item) {
-                    var localItem = _.defaults(item || {}, {
+                    var localItem = _.extend({
                         includingTax: 0,
                         excludingTax: 0,
                         taxAmount: 0,
                         currency: localeSettings.defaults.currency
-                    });
+                    }, item);
 
                     return {
                         includingTax: formatElement(localItem.includingTax, localItem.currency),
@@ -40,15 +40,16 @@ define(['underscore', 'orolocale/js/formatter/number', 'orolocale/js/locale-sett
                  * @param {Object} item
                  */
                 formatTax: function(item) {
-                    var localItem = _.defaults(item || {}, {
+                    var localItem = _.extend({
                         taxAmount: 0,
                         taxableAmount: 0,
                         rate: 0,
+                        tax: '',
                         currency: localeSettings.defaults.currency
-                    });
+                    }, item);
 
                     return {
-                        tax: item.tax,
+                        tax: localItem.tax,
                         taxAmount: formatElement(localItem.taxAmount, localItem.currency),
                         taxableAmount: formatElement(localItem.taxableAmount, localItem.currency),
                         rate: NumberFormatter.formatPercent(localItem.rate)

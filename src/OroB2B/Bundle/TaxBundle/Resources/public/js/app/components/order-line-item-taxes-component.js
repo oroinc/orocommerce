@@ -96,7 +96,7 @@ define(function(require) {
             result = _.defaults(result, this.emptyData);
             result.row = TaxFormatter.formatItem(result.row);
             result.unit = TaxFormatter.formatItem(result.unit);
-            result.taxes = _.map(result.taxes, _.bind(TaxFormatter.formatTax, this));
+            result.taxes = _.map(result.taxes, TaxFormatter.formatTax);
 
             this.$tableContainer.html(this.appliedTaxesTemplate(result));
         },

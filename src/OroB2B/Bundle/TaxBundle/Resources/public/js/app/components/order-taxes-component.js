@@ -46,10 +46,7 @@ define(function(require) {
             }
 
             totals.subtotals.tax.data.total = TaxFormatter.formatItem(totals.subtotals.tax.data.total);
-            totals.subtotals.tax.data.taxes = _.map(
-                totals.subtotals.tax.data.taxes,
-                _.bind(TaxFormatter.formatTax, this)
-            );
+            totals.subtotals.tax.data.taxes = _.map(totals.subtotals.tax.data.taxes, TaxFormatter.formatTax);
 
             totals.subtotals.tax.data.in = $(this.options.selectors.collapseSelector).hasClass('in');
             totals.subtotals.tax.template = this.totalsTemplate;
