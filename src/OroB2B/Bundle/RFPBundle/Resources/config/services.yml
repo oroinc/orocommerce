@@ -12,7 +12,10 @@ parameters:
     orob2b_rfp.storage.offers_form_storage.class: OroB2B\Bundle\RFPBundle\Storage\OffersFormStorage
 
     orob2b_rfp.service.request_to_quote_data_storage.class: OroB2B\Bundle\RFPBundle\Storage\RequestToQuoteDataStorage
-
+    orob2b_rfp.duplicator_object_type.class: OroB2B\Component\Duplicator\ObjectType
+    orob2b_rfp.factory.duplicator_factory.class: OroB2B\Bundle\RFPBundle\Factory\DuplicatorFactory
+    orob2b_rfp.factory.duplicator_filter_factory.class: OroB2B\Component\Duplicator\Filter\FilterFactory
+    orob2b_rfp.factory.duplicator_matcher_factory.class: OroB2B\Component\Duplicator\Matcher\MatcherFactory
 services:
     orob2b_rfp.datagrid.action_permission_provider:
         class: %orob2b_rfp.datagrid.action_permission_provider.class%
@@ -64,3 +67,87 @@ services:
 
     orob2b_rfp.storage.offers_form_storage:
         class: %orob2b_rfp.storage.offers_form_storage.class%
+
+    orob2b_rfp.factory.duplicator_factory:
+        class: %orob2b_rfp.factory.duplicator_factory.class%
+        calls:
+            - [setFilterFactory, [@orob2b_rfp.factory.duplicator_filter_factory]]
+            - [setMatcherFactory, [@orob2b_rfp.factory.duplicator_matcher_factory]]
+
+    orob2b_rfp.factory.duplicator_filter_factory:
+        class: %orob2b_rfp.factory.duplicator_filter_factory.class%
+
+    orob2b_rfp.factory.duplicator_matcher_factory:
+        class: %orob2b_rfp.factory.duplicator_matcher_factory.class%
+
+    orob2b_rfp.duplicator_filter_type.set_null:
+        class: %orob2b_rfp.duplicator_object_type.class%
+        arguments:
+            - setNull
+            - DeepCopy\Filter\SetNullFilter
+        tags:
+            - { name: orob2b_rfp.duplicate.filter_type }
+
+    orob2b_rfp.duplicator_filter_type.keep:
+        class: %orob2b_rfp.duplicator_object_type.class%
+        arguments:
+            - keep
+            - DeepCopy\Filter\KeepFilter
+        tags:
+            - { name: orob2b_rfp.duplicate.filter_type }
+
+    orob2b_rfp.duplicator_filter_type.collection:
+        class: %orob2b_rfp.duplicator_object_type.class%
+        arguments:
+            - collection
+            - DeepCopy\Filter\Doctrine\DoctrineCollectionFilter
+        tags:
+            - { name: orob2b_rfp.duplicate.filter_type }
+
+    orob2b_rfp.duplicator_filter_type.empty_collection:
+        class: %orob2b_rfp.duplicator_object_type.class%
+        arguments:
+            - emptyCollection
+            - DeepCopy\Filter\Doctrine\DoctrineEmptyCollectionFilter
+        tags:
+            - { name: orob2b_rfp.duplicate.filter_type }
+
+    orob2b_rfp.duplicator_filter_type.replace_value:
+        class: %orob2b_rfp.duplicator_object_type.class%
+        arguments:
+            - replaceValue
+            - OroB2B\Component\Duplicator\Filter\ReplaceValueFilter
+        tags:
+            - { name: orob2b_rfp.duplicate.filter_type }
+
+    orob2b_rfp.duplicator_filter_type.shallow_copy:
+        class: %orob2b_rfp.duplicator_object_type.class%
+        arguments:
+            - shallowCopy
+            - OroB2B\Component\Duplicator\Filter\ShallowCopyFilter
+        tags:
+            - { name: orob2b_rfp.duplicate.filter_type }
+
+    orob2b_rfp.duplicator_matcher_type.property:
+        class: %orob2b_rfp.duplicator_object_type.class%
+        arguments:
+            - property
+            - DeepCopy\Matcher\PropertyMatcher
+        tags:
+            - { name: orob2b_rfp.duplicate.matcher_type }
+
+    orob2b_rfp.duplicator_mather_type.property_name:
+        class: %orob2b_rfp.duplicator_object_type.class%
+        arguments:
+            - propertyName
+            - DeepCopy\Matcher\PropertyNameMatcher
+        tags:
+            - { name: orob2b_rfp.duplicate.matcher_type }
+
+    orob2b_rfp.duplicator_matcher_type.property_type:
+        class: %orob2b_rfp.duplicator_object_type.class%
+        arguments:
+            - propertyType
+            - DeepCopy\Matcher\PropertyTypeMatcher
+        tags:
+            - { name: orob2b_rfp.duplicate.matcher_type }

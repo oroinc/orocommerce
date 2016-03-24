@@ -13,6 +13,8 @@
     {{ parent() }}
 {% endblock pageHeader %}
 
+{% block navButtons %}{% endblock navButtons %}
+
 {% block content_data %}
     {% set shoppingListInformationWidget %}
         {{ oro_widget_render({
@@ -23,6 +25,23 @@
     {% endset %}
 
     {% set generalSectionBlocks = [{'data' : [shoppingListInformationWidget]}]%}
+
+    {% set subtotals %}
+        {% include 'OroB2BPricingBundle:Totals:totalsEntityEditPage.html.twig' with {
+            options: {
+                route: 'orob2b_pricing_entity_totals',
+                method: 'GET',
+                events: [
+                    'datagrid:doRefresh:shopping-list-line-items-grid',
+                    'datagrid:afterRemoveRow:shopping-list-line-items-grid',
+                    'datagrid:afterMassRemoveRow:shopping-list-line-items-grid'
+                ],
+                entityClassName: oro_class_name(entity),
+                entityId: entity.id,
+                data: totals
+            }
+        } only %}
+    {% endset %}
 
     {% set dataBlocks = [
         {
@@ -44,6 +63,11 @@
             ]
         }
     ]) %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'orob2b.shoppinglist.sections.subtotals'|trans,
+        'subblocks': [{'data' : [subtotals]}]
+    }]) %}
 
     {% set id = 'shopping-list-view' %}
     {% set data = {'dataBlocks': dataBlocks} %}

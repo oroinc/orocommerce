@@ -18,6 +18,7 @@ use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 class LoadRequestData extends AbstractFixture implements DependentFixtureInterface
 {
     const FIRST_NAME = 'Grzegorz';
+    const FIRST_NAME_DELETED = 'John';
     const LAST_NAME = 'Brzeczyszczykiewicz';
     const EMAIL = 'test_request@example.com';
     const PO_NUMBER = 'CA1234USD';
@@ -30,6 +31,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
     const REQUEST6 = 'rfp.request.6';
     const REQUEST7 = 'rfp.request.7';
     const REQUEST8 = 'rfp.request.8';
+    const REQUEST9 = 'rfp.request.9';
 
     /**
      * @var array
@@ -127,6 +129,20 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'po_number' => self::PO_NUMBER,
             'ship_until' => true,
         ],
+        self::REQUEST9 => [
+            'first_name' => self::FIRST_NAME_DELETED,
+            'last_name' => self::LAST_NAME,
+            'email' => self::EMAIL,
+            'phone' => '2-(999)507-4625',
+            'company' => 'Google',
+            'role' => 'CEO',
+            'note' => self::REQUEST8,
+            'account' => LoadUserData::ACCOUNT1,
+            'accountUser' => LoadUserData::ACCOUNT1_USER3,
+            'po_number' => self::PO_NUMBER,
+            'ship_until' => true,
+            'deleted' => '-1 day'
+        ],
     ];
 
     /**
@@ -187,6 +203,10 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
 
             if (isset($rawRequest['po_number'])) {
                 $request->setPoNumber($rawRequest['po_number']);
+            }
+
+            if (isset($rawRequest['deleted'])) {
+                $request->setDeletedAt(new \DateTime($rawRequest['deleted']));
             }
 
             $manager->persist($request);

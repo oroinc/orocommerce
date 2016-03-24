@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\TaxBundle\Model;
 
+use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration;
+
 class TaxResultElement extends AbstractResultElement
 {
     const TAX = 'tax';
@@ -24,6 +26,9 @@ class TaxResultElement extends AbstractResultElement
         $resultElement->offsetSet(self::RATE, $rate);
         $resultElement->offsetSet(self::TAXABLE_AMOUNT, $taxableAmount);
         $resultElement->offsetSet(self::TAX_AMOUNT, $taxAmount);
+
+        /** todo: remove after BB-1752 or BB-2113 */
+        $resultElement->offsetSet(self::CURRENCY, Configuration::DEFAULT_CURRENCY);
 
         return $resultElement;
     }

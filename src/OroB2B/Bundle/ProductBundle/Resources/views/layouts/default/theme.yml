@@ -13,3 +13,7 @@ data:
                 label: Listing
                 dimensions: ~
                 max_number: 2
+    assets:
+        styles:
+            inputs:
+                - 'bundles/orob2bproduct/default/less/styles.less'

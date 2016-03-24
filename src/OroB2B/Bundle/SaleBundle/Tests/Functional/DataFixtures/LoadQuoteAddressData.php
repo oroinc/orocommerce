@@ -9,7 +9,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
+use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteAddress;
 
 class LoadQuoteAddressData extends BaseAbstractFixture implements DependentFixtureInterface
@@ -47,11 +47,12 @@ class LoadQuoteAddressData extends BaseAbstractFixture implements DependentFixtu
     public function load(ObjectManager $manager)
     {
         foreach ($this->addresses as $name => $address) {
-            /** @var Order $order */
-            $order = $this->getReference($address['quote']);
+            /** @var Quote $quote */
+            $quote = $this->getReference($address['quote']);
             $orderAddress = $this->createQuoteAddress($manager, $name, $address);
 
-            $order->setShippingAddress($orderAddress);
+            $quote->setShippingAddress($orderAddress);
+            $manager->persist($quote);
         }
 
         $manager->flush();

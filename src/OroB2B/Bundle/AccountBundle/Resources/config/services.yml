@@ -142,6 +142,8 @@ parameters:
     orob2b_account.visibility.cache.product.category.cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\CacheBuilder
     orob2b_account.visibility.cache.cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\CompositeCacheBuilder
 
+    orob2b_account.doctrine.filters_listener.class: OroB2B\Bundle\AccountBundle\Doctrine\DoctrineFiltersListener
+
 services:
     orob2b_account.security.account_user_provider:
         class: %orob2b_account.security.account_user_provider.class%
@@ -754,7 +756,7 @@ services:
         class: %orob2b_account.model.action.abstract_entity_aware_action.class%
         abstract: true
         arguments:
-            - @oro_workflow.context_accessor
+            - @oro_action.context_accessor
 
     orob2b_account.model.action.abstract_visibility_action:
         parent: orob2b_account.model.action.abstract_entity_aware_action
@@ -844,3 +846,11 @@ services:
             - @security.csrf.token_manager
         tags:
             - { name: layout.data_provider, alias: orob2b_account_sign_in }
+
+    orob2b_account.doctrine.filters_listener:
+        class: %orob2b_account.doctrine.filters_listener.class%
+        arguments:
+            - @doctrine
+            - @orob2b_frontend.request.frontend_helper
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onRequest }

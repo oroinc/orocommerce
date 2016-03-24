@@ -1,0 +1,77 @@
+layout:
+    actions:
+        - @setBlockTheme:
+            themes: 'OroB2BSaleBundle:layouts:default/orob2b_sale_quote_frontend_view/layout.html.twig'
+
+        - @setOption:
+            id: head
+            optionName: title
+            optionValue:
+                label: 'orob2b.frontend.sale.quote.head_title.label'
+                parameters:
+                    id: { @value: $data.quote.qid }
+
+        - @setOption:
+            id: page_title
+            optionName: class_prefix
+            optionValue: 'account'
+
+        - @setOption:
+            id: page_title
+            optionName: text
+            optionValue:
+                label: 'orob2b.frontend.sale.quote.title.label'
+                parameters:
+                    id: { @value: $data.quote.qid }
+
+        - @add:
+            id: account_sidebar
+            parentId: sidebar_left
+            blockType: block
+
+        - @addTree:
+            items:
+                quote_view_page:
+                    blockType: container
+                quote_view_top:
+                    blockType: block
+                    options:
+                        vars:
+                            quote: { @value: $data.quote }
+                quote_view_controls_list:
+                    blockType: block
+                quote_view_information:
+                    blockType: block
+                    options:
+                        vars:
+                            quote: { @value: $data.quote }
+                quote_view_line_items:
+                    blockType: block
+                    options:
+                        vars:
+                            quote: { @value: $data.quote }
+                quote_view_line_items_mobile:
+                    blockType: block
+                    options:
+                        vars:
+                            quote: { @value: $data.quote }
+                quote_view_accept_button:
+                    blockType: action_combined_buttons
+                    options:
+                        visible: { @not_empty: $data.quote.hasOfferVariants }
+                        actions:
+                            @value: $data.actions.all
+                        entity:
+                            @value: $data.quote
+                quote_view_accept_container:
+                    blockType: container
+            tree:
+                content:
+                    quote_view_page:
+                        quote_view_top: ~
+                        quote_view_controls_list: ~
+                        quote_view_information: ~
+                        quote_view_line_items: ~
+                        quote_view_line_items_mobile: ~
+                        quote_view_accept_container:
+                            quote_view_accept_button: ~

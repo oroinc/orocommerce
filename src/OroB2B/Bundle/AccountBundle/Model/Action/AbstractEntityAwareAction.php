@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\Model\Action;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
 use Oro\Bundle\WorkflowBundle\Model\ProcessData;
-use Oro\Bundle\WorkflowBundle\Model\Action\AbstractAction;
+use Oro\Component\Action\Action\AbstractAction;
 
 abstract class AbstractEntityAwareAction extends AbstractAction
 {

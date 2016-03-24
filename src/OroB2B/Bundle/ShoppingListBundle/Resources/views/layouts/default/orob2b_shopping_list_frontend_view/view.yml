@@ -66,6 +66,15 @@ layout:
                         vars:
                             shoppingList:
                                 @value: $data.shoppingList
+                shopping_list_totals:
+                    blockType: block
+                    options:
+                        visible: { @not_empty: $data.shoppingList }
+                        vars:
+                            shoppingList:
+                                @value: $data.shoppingList
+                            totals:
+                                @value: $data.totals
                 shopping_list_combined_button:
                     blockType: action_combined_buttons
                     options:
@@ -87,6 +96,7 @@ layout:
                         shopping_list_checkout_container:
                             shopping_list_button_container:
                                 shopping_list_delete_button: ~
+                            shopping_list_totals: ~
                             shopping_list_combined_button: ~
         - @add:
             id: shopping_list_selector

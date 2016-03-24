@@ -122,6 +122,19 @@ orob2b.pricing:
     lineitem:
         subtotal.label: 'Line items subtotal'
 
+    subtotals:
+        subtotal.label: Subtotal
+        not_priced_subtotal.label: Subtotal
+        total.label: Total
+        no_data.label: No data
+
+    frontend:
+        pricelist:
+            index:
+                your_price: 'Your Price:'
+                listed_price: 'Listed Price:'
+                msrp: 'MSRP:'
+
 oro:
     importexport:
         import:

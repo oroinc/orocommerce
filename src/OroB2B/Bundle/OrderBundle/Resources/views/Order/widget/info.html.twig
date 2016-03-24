@@ -2,6 +2,37 @@
 {% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
 {% import 'OroAddressBundle::macros.html.twig' as address %}
 
+{% set sourceEntityBlock %}
+  {% set sourceDocumenttitle = order.sourceEntityClass|orob2b_order_format_source_document(
+    order.sourceEntityId,
+    order.sourceEntityIdentifier
+  ) %}
+
+  <i class="icon {{ oro_entity_config_value(order.sourceEntityClass, 'icon') }}"></i>
+  {% if sourceEntity is not null and resource_granted('VIEW', sourceEntity) %}
+      <a href="{{ oro_entity_view_link(order.sourceEntityClass, order.sourceEntityId) }}">
+          {{ sourceDocumenttitle }}
+      </a>
+  {% else %}
+      {{ sourceDocumenttitle|default('N/A') }}
+  {% endif %}
+{% endset %}
+
+{% set billingAddressBlock %}
+    {{ address.renderAddress(order.billingAddress)}}
+    <div>
+        {{ order.billingAddress.phone|escape|nl2br }}
+    </div>
+{% endset %}
+
+{% set shippingAddressBlock %}
+    {{ address.renderAddress(order.shippingAddress)}}
+    <div>
+        {{ order.shippingAddress.phone|escape|nl2br }}
+    </div>
+{% endset %}
+
+
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
@@ -38,10 +69,12 @@
             {% endif %}
 
             {{ UI.renderProperty('orob2b.order.ship_until.label'|trans, order.shipUntil|oro_format_date) }}
+            {{ UI.renderHtmlProperty('orob2b.order.source_document.label'|trans, sourceEntityBlock) }}
         </div>
+
         <div class="responsive-block">
-            {{ UI.renderHtmlProperty('orob2b.order.billing_address.label'|trans, address.renderAddress(order.billingAddress)) }}
-            {{ UI.renderHtmlProperty('orob2b.order.shipping_address.label'|trans, address.renderAddress(order.shippingAddress)) }}
+            {{ UI.renderHtmlProperty('orob2b.order.billing_address.label'|trans, billingAddressBlock) }}
+            {{ UI.renderHtmlProperty('orob2b.order.shipping_address.label'|trans, shippingAddressBlock) }}
             {{ UI.renderHtmlProperty('orob2b.order.customer_notes.label'|trans, order.customerNotes) }}
         </div>
         <div class="responsive-block">

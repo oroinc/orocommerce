@@ -1,3 +1,0 @@
-orob2b_action_api:
-    resource: '@OroActionBundle/Controller/Api/Rest/ActionController.php'
-    type:     rest

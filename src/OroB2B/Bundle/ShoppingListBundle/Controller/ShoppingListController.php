@@ -10,6 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShoppingListController extends Controller
@@ -31,7 +32,8 @@ class ShoppingListController extends Controller
     public function viewAction(ShoppingList $shoppingList)
     {
         return [
-            'entity' => $shoppingList
+            'entity' => $shoppingList,
+            'totals' => $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($shoppingList)
         ];
     }
 
@@ -63,5 +65,13 @@ class ShoppingListController extends Controller
         return [
             'entity_class' => $this->container->getParameter('orob2b_shopping_list.entity.shopping_list.class')
         ];
+    }
+
+    /**
+     * @return TotalProcessorProvider
+     */
+    protected function getTotalProcessor()
+    {
+        return $this->get('orob2b_pricing.subtotal_processor.total_processor_provider');
     }
 }

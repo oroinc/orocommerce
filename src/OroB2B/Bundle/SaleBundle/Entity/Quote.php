@@ -910,4 +910,12 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
         $this->shippingEstimateAmount = $this->shippingEstimate ? $this->shippingEstimate->getValue() : null;
         $this->shippingEstimateCurrency = $this->shippingEstimate ? $this->shippingEstimate->getCurrency() : null;
     }
+
+    /**
+     * @return string
+     */
+    public function getIdentifier()
+    {
+        return $this->getPoNumber();
+    }
 }

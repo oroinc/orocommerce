@@ -10,6 +10,7 @@ databaseBefore:
         simple_order:
             poNumber: { property_value: simple_order }
             account: { class: 'OroB2B\Bundle\AccountBundle\Entity\Account', query: { name: 'account.orphan' } }
+            currency: 'USD'
             billingAddress:
                 class: 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress'
                 property_value:
@@ -59,6 +60,7 @@ expectedResult:
         excludingTax: '113.25'
         taxAmount: '22.65'
         adjustment: '0'
+        currency: 'USD'
     items:
         -
             unit:
@@ -66,25 +68,29 @@ expectedResult:
                 excludingTax: '15.99'
                 taxAmount: '3.2'      # 15.99 * 0.2
                 adjustment: '-0.002'
+                currency: 'USD'
             row:
                 includingTax: '95.94' # 79.95 + 15.99
                 excludingTax: '79.95' # 15.99 * 5
                 taxAmount: '15.99' # 79.95 * 0.2
                 adjustment: '0'
+                currency: 'USD'
             taxes:
-                - { tax: 'TAX2', rate: '0.2', taxable_amount: '79.95', tax_amount: '15.99' }
+                - { tax: 'TAX2', rate: '0.2', taxable_amount: '79.95', tax_amount: '15.99', currency: 'USD' }
         -
             unit:
                 includingTax: '6.66'  # 5.55 + 1.11
                 excludingTax: '5.55'
                 taxAmount: '1.11'     # 5.55 * 0.2
                 adjustment: '0'
+                currency: 'USD'
             row:
                 includingTax: '39.96' # 33.3 + 6.66
                 excludingTax: '33.3'
                 taxAmount: '6.66'     # 33.3 * 0.2
                 adjustment: '0'
+                currency: 'USD'
             taxes:
-                - { tax: 'TAX2', rate: '0.2', taxable_amount: '33.3', tax_amount: '6.66' }
+                - { tax: 'TAX2', rate: '0.2', taxable_amount: '33.3', tax_amount: '6.66', currency: 'USD' }
     taxes:
-        - { tax: 'TAX2', rate: '0.2', taxable_amount: '113.25', tax_amount: '22.65' }
+        - { tax: 'TAX2', rate: '0.2', taxable_amount: '113.25', tax_amount: '22.65', currency: 'USD' }

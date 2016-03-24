@@ -68,7 +68,7 @@ define(function (require) {
         },
 
         _handleRemoveItem: function () {
-            mediator.trigger('line-items-subtotals:update');
+            mediator.trigger('line-items-totals:update');
         },
 
         _setNextSortOrder: function ($lineItem) {

@@ -10,6 +10,12 @@
   }
 }
 
+.form-horizontal .totals-container .control-group .controls label.control-label,
+.totals-container .form-horizontal .control-group .controls .control-label {
+  width: 120px;
+  text-align: right;
+}
+
 .order-order-accountuser-select {
   .entity-select-btn {
     display: none;
@@ -60,7 +66,7 @@
   input[type="text"] {
     text-align: right;
     margin-right: 3px;
-    width: 80px !important;
+    width: 76px !important;
     float: left;
   }
 
@@ -68,7 +74,7 @@
     width: 80px !important;
   }
 
-  .selector {
+  .input-widget-select {
     float: left;
   }
 }
@@ -87,7 +93,7 @@
     width: 80px !important;
   }
 
-  .selector {
+  .input-widget-select {
     float: left;
   }
 
@@ -125,4 +131,41 @@
 .notes-widget-preview,
 .notes-widget-edit {
   margin-bottom: 10px;
+}
+
+td.order-discount-item-remove {
+  text-align: right;
+}
+
+.order-discount-items {
+  table.grid {
+    overflow: auto;
+  }
+
+  .add-list-item {
+    margin-top: 10px;
+  }
+}
+
+.order-discount-items {
+  .discounts-sum-error {
+    .validation-failed {
+      margin-top: 10px;
+    }
+  }
+}
+
+.oro-discount-collection {
+  .table {
+    width: auto;
+  }
+  td.discount-item-value-calculated {
+    padding-top: 12px;
+  }
+}
+
+.discount-item-value-type {
+  select {
+    width: 80px;
+  }
 }

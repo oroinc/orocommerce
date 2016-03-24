@@ -30,6 +30,7 @@ class OroB2BSaleBundle implements Migration
     {
         $table = $schema->getTable('orob2b_sale_quote');
         $table->addColumn('shipping_address_id', 'integer', ['notnull' => false]);
+        $table->addUniqueIndex(['shipping_address_id'], 'UNIQ_4F66B6F64D4CFF2B');
     }
 
     /**

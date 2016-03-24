@@ -183,10 +183,13 @@ define(function(require) {
 
             this.unitSelector.trigger('change');
 
-            if (disabled) {
-                this.unitSelector.parent('.selector').addClass('disabled');
-            } else {
-                this.unitSelector.parent('.selector').removeClass('disabled');
+            var $unitSelectorContainer = this.unitSelector.inputWidget('getContainer');
+            if ($unitSelectorContainer) {
+                if (disabled) {
+                    $unitSelectorContainer.addClass('disabled');
+                } else {
+                    $unitSelectorContainer.removeClass('disabled');
+                }
             }
             this.unitSelector.trigger('value:changed');
         },

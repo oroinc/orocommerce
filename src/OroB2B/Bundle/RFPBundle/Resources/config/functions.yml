@@ -1,0 +1,12 @@
+parameters:
+    orob2b_rfp.function.duplicate.class: OroB2B\Bundle\RFPBundle\Action\Duplicate
+services:
+    orob2b_rfp.function.duplicate:
+        class: %orob2b_rfp.function.duplicate.class%
+        arguments:
+            - @oro_action.context_accessor
+        calls:
+          - [setDuplicatorFactory, [@orob2b_rfp.factory.duplicator_factory]]
+        tags:
+            - { name: oro_action.function, alias: duplicate }
+            - { name: oro_workflow.action, alias: duplicate }
