@@ -64,7 +64,7 @@ class SubtotalSubscriberTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testPostSubmitEventListenerOnNotOrder()
+    public function testOnSubmitEventListenerOnNotOrder()
     {
         $event = $this->getMockBuilder(
             'Symfony\Component\Form\FormEvent'
@@ -92,7 +92,7 @@ class SubtotalSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->subscriber->onSubmitEventListener($event);
     }
 
-    public function testPostSubmitEventListenerOnOrderEmptyTotals()
+    public function testOnSubmitEventListenerOnOrderEmptyTotals()
     {
         $order = $this->prepareOrder();
         $event = $this->prepareEvent($order);
@@ -103,7 +103,7 @@ class SubtotalSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(0, $order->getTotalDiscounts()->getValue());
     }
 
-    public function testPostSubmitEventListenerOnOrder()
+    public function testOnSubmitEventListenerOnOrder()
     {
         $order = $this->prepareOrder();
         $event = $this->prepareEvent($order);
@@ -193,6 +193,18 @@ class SubtotalSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $event->expects($this->once())
             ->method('setData');
+
+        $subForm = $this->getMockBuilder('Symfony\Component\Form\FormInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+        
+        $subForm->expects($this->once())
+            ->method('submit')
+            ->willReturnSelf();
+
+        $form->expects($this->once())
+            ->method('get')
+            ->willReturn($subForm);
 
         return $event;
     }

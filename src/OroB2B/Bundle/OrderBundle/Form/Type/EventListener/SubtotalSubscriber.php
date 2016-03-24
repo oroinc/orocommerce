@@ -68,11 +68,6 @@ class SubtotalSubscriber implements EventSubscriberInterface
                 $event->setData($data);
 
                 $form->remove('discountsSum');
-                $maxRange = $data->getSubtotal();
-                if ($data->getSubtotal() < $data->getTotalDiscounts()->getValue()) {
-                    $maxRange = 0;
-                }
-
                 $form->add(
                     'discountsSum',
                     'hidden',
@@ -81,12 +76,14 @@ class SubtotalSubscriber implements EventSubscriberInterface
                         'constraints' => [new Range(
                             [
                                 'min' => PHP_INT_MAX * (-1), //use some big negative number
-                                'max' => $maxRange,
+                                'max' => $data->getSubtotal(),
                                 'maxMessage' => 'orob2b.order.discounts.sum.error.label'
                             ]
                         )]
                     ]
                 );
+                //submit with new max range value for correct validation
+                $form->get('discountsSum')->submit($data->getTotalDiscounts()->getValue());
             }
         }
     }
