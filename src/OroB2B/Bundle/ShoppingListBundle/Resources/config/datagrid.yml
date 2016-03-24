@@ -162,6 +162,8 @@ datagrid:
             columns:
                 productSku:
                     data_name: productSku
+                productName:
+                    data_name: productName
                 quantity:
                     data_name: lineItem.quantity
                 unitCode:
@@ -173,6 +175,9 @@ datagrid:
                 productSku:
                     type:      string
                     data_name: productSku
+                productName:
+                    type:      string
+                    data_name: productName
                 quantity:
                     type:      number
                     data_name: lineItem.quantity
