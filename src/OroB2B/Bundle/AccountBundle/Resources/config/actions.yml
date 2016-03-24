@@ -163,3 +163,16 @@ actions:
            - @redirect:
                parameters:
                    route: orob2b_account_frontend_account_user_create
+
+    orob2b_account_frontend_create_role_action:
+        label: orob2b.account.action.account_user_role.create
+        enabled: true
+        applications: [frontend]
+        routes:
+            - orob2b_account_frontend_account_user_role_index
+        acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\AccountBundle\Entity\AccountUserRole]
+        order: 10
+        functions:
+            - @redirect:
+                parameters:
+                    route: orob2b_account_frontend_account_user_role_create
