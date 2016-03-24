@@ -114,7 +114,6 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $request = new Request();
         $request->setPoNumber($poNumber);
 
-        $this->assertInstanceOf('OroB2B\Bundle\OrderBundle\Provider\IdentifierAwareInterface', $request);
         $this->assertEquals($poNumber, $request->getIdentifier());
     }
 }
