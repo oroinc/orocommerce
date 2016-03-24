@@ -197,7 +197,7 @@ class SubtotalSubscriberTest extends \PHPUnit_Framework_TestCase
         $subForm = $this->getMockBuilder('Symfony\Component\Form\FormInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        
+
         $subForm->expects($this->once())
             ->method('submit')
             ->willReturnSelf();

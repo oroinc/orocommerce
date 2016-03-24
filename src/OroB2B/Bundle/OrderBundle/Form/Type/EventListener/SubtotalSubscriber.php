@@ -59,7 +59,6 @@ class SubtotalSubscriber implements EventSubscriberInterface
     {
         $form = $event->getForm();
         if ($form->has('discountsSum')) {
-
             $data = $event->getData();
             if ($data instanceof Order) {
                 $this->fillSubtotals($data);
