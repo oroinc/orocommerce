@@ -170,3 +170,8 @@ orob2b:
             fields:
                 backend_product_visibility.title: 'Can Be Added to Orders'
                 frontend_product_visibility.title: 'Can Be Added to Orders'
+
+    frontend:
+        order:
+            entity_plural_label: Orders
+            create.label: 'Create Order'
