@@ -10,7 +10,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
-use OroB2B\Bundle\ProductBundle\Model\ProductRow;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter;
@@ -93,7 +92,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessWithoutRedirectRoute()
     {
-        $data = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [new ProductRow()]];
+        $data = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => ['param' => 42]];
         $this->componentProcessorFilter->expects($this->any())
             ->method('filterData')
             ->will($this->returnArgument(0));
@@ -113,7 +112,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
         $this->componentProcessorFilter->expects($this->any())
             ->method('filterData')
             ->will($this->returnArgument(0));
-        $data = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [new ProductRow()]];
+        $data = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => ['param' => 42]];
         $redirectRouteName = 'redirect_route';
         $redirectUrl = '/redirect/url';
         $expectedResponseContent = (new RedirectResponse($redirectUrl))->getContent();
@@ -230,15 +229,15 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
                 'scope' => 'test',
                 'data' => [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        $this->createProductRowBySku('sku01'),
-                        $this->createProductRowBySku('sku02'),
-                        $this->createProductRowBySku('sku02'),
-                        $this->createProductRowBySku('sku03'),
+                        ['productSku' => 'sku01'],
+                        ['productSku' => 'sku02'],
+                        ['productSku' => 'sku02'],
+                        ['productSku' => 'sku03'],
                     ],
                 ],
                 'allowedData' => [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        $this->createProductRowBySku('sku01'),
+                        ['productSku' => 'sku01'],
                     ],
                 ],
                 'errorMessageSkus' => 'sku02, sku03',
@@ -248,16 +247,16 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
                 'scope' => 'test',
                 'data' => [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        $this->createProductRowBySku('sku01'),
-                        $this->createProductRowBySku('sku01'),
-                        $this->createProductRowBySku('sku02'),
-                        $this->createProductRowBySku('sku03'),
+                        ['productSku' => 'sku01'],
+                        ['productSku' => 'sku01'],
+                        ['productSku' => 'sku02'],
+                        ['productSku' => 'sku03'],
                     ],
                 ],
                 'allowedData' => [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        $this->createProductRowBySku('sku01'),
-                        $this->createProductRowBySku('sku02'),
+                        ['productSku' => 'sku01'],
+                        ['productSku' => 'sku02'],
                     ],
                 ],
                 'errorMessageSkus' => 'sku03',
@@ -267,15 +266,15 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
                 'scope' => 'test',
                 'data' => [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        $this->createProductRowBySku('sku01'),
-                        $this->createProductRowBySku('sku02'),
-                        $this->createProductRowBySku('sku02'),
-                        $this->createProductRowBySku('sku03'),
+                        ['productSku' => 'sku01'],
+                        ['productSku' => 'sku02'],
+                        ['productSku' => 'sku02'],
+                        ['productSku' => 'sku03'],
                     ],
                 ],
                 'allowedData' => [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        $this->createProductRowBySku('sku01'),
+                        ['productSku' => 'sku01'],
                     ],
                 ],
                 'errorMessageSkus' => 'sku02, sku03',
@@ -284,16 +283,16 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
                 'scope' => 'test',
                 'data' => [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        $this->createProductRowBySku('sku01'),
-                        $this->createProductRowBySku('sku01'),
-                        $this->createProductRowBySku('sku02'),
-                        $this->createProductRowBySku('sku03'),
+                        ['productSku' => 'sku01'],
+                        ['productSku' => 'sku01'],
+                        ['productSku' => 'sku02'],
+                        ['productSku' => 'sku03'],
                     ],
                 ],
                 'allowedData' => [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        $this->createProductRowBySku('sku01'),
-                        $this->createProductRowBySku('sku02'),
+                        ['productSku' => 'sku01'],
+                        ['productSku' => 'sku02'],
                     ],
                 ],
                 'errorMessageSkus' => 'sku03',
@@ -343,10 +342,10 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
                 'scope' => 'test',
                 'data' => [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        $this->createProductRowBySku('sku01'),
-                        $this->createProductRowBySku('sku02'),
-                        $this->createProductRowBySku('sku03'),
-                        $this->createProductRowBySku('sku03'),
+                        ['productSku' => 'sku01'],
+                        ['productSku' => 'sku02'],
+                        ['productSku' => 'sku03'],
+                        ['productSku' => 'sku03'],
                     ],
                 ],
                 'errorMessageSkus' => 'sku01, sku02, sku03',
@@ -356,10 +355,10 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
                 'scope' => 'test',
                 'data' => [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        $this->createProductRowBySku('sku01'),
-                        $this->createProductRowBySku('sku02'),
-                        $this->createProductRowBySku('sku03'),
-                        $this->createProductRowBySku('sku03'),
+                        ['productSku' => 'sku01'],
+                        ['productSku' => 'sku02'],
+                        ['productSku' => 'sku03'],
+                        ['productSku' => 'sku03'],
                     ],
                 ],
                 'errorMessageSkus' => 'sku01, sku02, sku03',
@@ -400,10 +399,10 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
                 'scope' => 'test',
                 'data' => [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        $this->createProductRowBySku('sku01'),
-                        $this->createProductRowBySku('sku02'),
-                        $this->createProductRowBySku('sku02'),
-                        $this->createProductRowBySku('sku03'),
+                        ['productSku' => 'sku01'],
+                        ['productSku' => 'sku02'],
+                        ['productSku' => 'sku02'],
+                        ['productSku' => 'sku03'],
                     ],
                 ],
                 'isRedirectRoute' => true,
@@ -412,10 +411,10 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
                 'scope' => 'test',
                 'data' => [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        $this->createProductRowBySku('sku01'),
-                        $this->createProductRowBySku('sku01'),
-                        $this->createProductRowBySku('sku02'),
-                        $this->createProductRowBySku('sku03'),
+                        ['productSku' => 'sku01'],
+                        ['productSku' => 'sku01'],
+                        ['productSku' => 'sku02'],
+                        ['productSku' => 'sku03'],
                     ],
                 ],
             ],
@@ -485,16 +484,5 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->assertNotNull($response);
         $this->assertEquals($targetUrl, $response->getTargetUrl());
-    }
-
-    /**
-     * @param string $sku
-     * @return ProductRow
-     */
-    protected function createProductRowBySku($sku)
-    {
-        $productRow = new ProductRow();
-        $productRow->productSku = $sku;
-        return $productRow;
     }
 }

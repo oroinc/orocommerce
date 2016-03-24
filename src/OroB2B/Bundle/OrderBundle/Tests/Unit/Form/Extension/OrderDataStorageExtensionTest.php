@@ -10,7 +10,6 @@ use OroB2B\Bundle\OrderBundle\Form\Extension\OrderDataStorageExtension;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension\AbstractProductDataStorageExtensionTestCase;
-use OroB2B\Bundle\ProductBundle\Model\ProductRow;
 
 class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
 {
@@ -40,12 +39,12 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
     {
         $sku = 'TEST';
         $qty = 3;
-        $productRow = new ProductRow();
-        $productRow->productSku = $sku;
-        $productRow->productQuantity = $qty;
         $data = [
             ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                $productRow
+                [
+                    ProductDataStorage::PRODUCT_SKU_KEY => $sku,
+                    ProductDataStorage::PRODUCT_QUANTITY_KEY => $qty,
+                ],
             ]
         ];
         $this->entity = new Order();
@@ -77,12 +76,12 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
     {
         $sku = 'TEST';
         $qty = 3;
-        $productRow = new ProductRow();
-        $productRow->productSku = $sku;
-        $productRow->productQuantity = $qty;
         $data = [
             ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                $productRow
+                [
+                    ProductDataStorage::PRODUCT_SKU_KEY => $sku,
+                    ProductDataStorage::PRODUCT_QUANTITY_KEY => $qty,
+                ],
             ]
         ];
         $order = new Order();

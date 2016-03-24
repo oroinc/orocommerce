@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension\Stub;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Extension\AbstractProductDataStorageExtension;
-use OroB2B\Bundle\ProductBundle\Model\ProductRow;
 
 class ProductDataStorageExtensionStub extends AbstractProductDataStorageExtension
 {
@@ -14,7 +13,7 @@ class ProductDataStorageExtensionStub extends AbstractProductDataStorageExtensio
     /**
      * {@inheritdoc}
      */
-    protected function addItem(Product $product, $entity, ProductRow $itemData)
+    protected function addItem(Product $product, $entity, array $itemData = [])
     {
         $this->addItemCalled = true;
     }

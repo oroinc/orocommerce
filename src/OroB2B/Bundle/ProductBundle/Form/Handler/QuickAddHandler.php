@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
+use OroB2B\Bundle\ProductBundle\Model\ProductRow;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
@@ -119,6 +120,16 @@ class QuickAddHandler
             );
         } elseif ($form->isValid()) {
             $products = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
+            $products = array_map(
+                function (ProductRow $productRow) {
+                    return [
+                        'productSku' => $productRow->productSku,
+                        'productQuantity' => $productRow->productQuantity
+                    ];
+                },
+                $products
+            );
+
             $additionalData = $request->get(
                 QuickAddType::NAME . '[' . QuickAddType::ADDITIONAL_FIELD_NAME . ']',
                 null,
@@ -154,13 +165,15 @@ class QuickAddHandler
                 $collection = $this->quickAddRowCollectionBuilder->buildFromFile($file);
                 $this->quickAddFormProvider->getForm($collection->getFormData());
             } catch (UnsupportedTypeException $e) {
-                $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->addError(new FormError(
-                    $this->translator->trans(
-                        'orob2b.product.frontend.quick_add.invalid_file_type',
-                        [],
-                        'validators'
+                $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->addError(
+                    new FormError(
+                        $this->translator->trans(
+                            'orob2b.product.frontend.quick_add.invalid_file_type',
+                            [],
+                            'validators'
+                        )
                     )
-                ));
+                );
             }
         }
 

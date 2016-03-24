@@ -8,7 +8,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-use OroB2B\Bundle\ProductBundle\Model\ProductRow;
+use Oro\Component\PhpUtils\ArrayUtil;
+
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
@@ -60,26 +61,15 @@ class QuickAddProcessor implements ComponentProcessorInterface
             $shoppingListId = (int) $data[ProductDataStorage::ADDITIONAL_DATA_KEY] ? : null;
         }
 
-        /** @var ProductRow[] $data */
         $data = $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY];
 
         $shoppingList = $this->shoppingListLineItemHandler->getShoppingList($shoppingListId);
 
-        $productSkus = array_map(
-            function (ProductRow $productRow) {
-                return $productRow->productSku;
-            },
-            $data
-        );
+        $productSkus = ArrayUtil::arrayColumn($data, ProductDataStorage::PRODUCT_SKU_KEY);
         $productIds = $this->getProductRepository()->getProductsIdsBySku($productSkus);
         $productSkuQuantities = array_combine(
             $productSkus,
-            array_map(
-                function (ProductRow $productRow) {
-                    return $productRow->productQuantity;
-                },
-                $data
-            )
+            ArrayUtil::arrayColumn($data, ProductDataStorage::PRODUCT_QUANTITY_KEY)
         );
         $productIdsQuantities = array_combine($productIds, $productSkuQuantities);
 

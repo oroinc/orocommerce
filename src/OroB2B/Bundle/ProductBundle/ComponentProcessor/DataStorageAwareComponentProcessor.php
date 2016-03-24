@@ -10,7 +10,6 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
-use OroB2B\Bundle\ProductBundle\Model\ProductRow;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
@@ -202,8 +201,8 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
     protected function getProductSkus(array $data)
     {
         return array_map(
-            function (ProductRow $entityItem) {
-                return $entityItem->productSku;
+            function ($entityItem) {
+                return $entityItem['productSku'];
             },
             $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]
         );
