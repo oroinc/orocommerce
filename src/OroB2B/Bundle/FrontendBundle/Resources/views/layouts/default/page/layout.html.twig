@@ -36,7 +36,6 @@
                 'oroui/js/app': {routeLinks: ''},
                 'controllers/page-controller': {fullRedirect: true},
                 'oro/datagrid/cell/action-cell': {showCloseButton: false},
-                'oro/datagrid/cell/action-cell': {showCloseButton: true},
                 'orodatagrid/js/app/plugins/grid/column-manager-plugin': {icon: 'gear'},
                 'orodatagrid/js/datagrid/action-launcher': {iconHideText: false},
                 'oro/filter/abstract-filter': {
@@ -67,7 +66,8 @@
         require({
             appmodules: (requirejs.s.contexts._.config.appmodules || []).concat([
                 '/bundles/orob2bfrontend/default/js/app/modules/input-widgets.js',
-                '/bundles/orob2bfrontend/default/js/app/modules/action-manager.js'
+                '/bundles/orob2bfrontend/default/js/app/modules/action-manager.js',
+                '/bundles/orob2bfrontend/default/js/app/modules/delete-action.js'
             ])
         });
     </script>
