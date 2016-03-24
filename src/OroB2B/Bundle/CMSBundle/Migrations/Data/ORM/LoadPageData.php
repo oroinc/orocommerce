@@ -6,6 +6,9 @@ use OroB2B\Bundle\CMSBundle\Migrations\Data\AbstractLoadPageData;
 
 class LoadPageData extends AbstractLoadPageData
 {
+    const CONTENT_US_TITLE = 'Contact Us';
+    const ABOUT_TITLE = 'About';
+
     /**
      * {@inheritDoc}
      */
