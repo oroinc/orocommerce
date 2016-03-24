@@ -97,6 +97,9 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
                         'minimum_price' => [
                             'label' => 'orob2b.pricing.productprice.price_in_EUR.trans',
                         ],
+                        'prices'=> [
+                            'label' => 'orob2b.pricing.productprice.price_in_EUR.trans',
+                        ]
                     ],
                     'properties' => [
                         'prices' => ['type' => 'field', 'frontend_type' => 'row_array'],

@@ -142,6 +142,16 @@ class FrontendProductPriceDatagridListener extends AbstractProductPriceDatagridL
         );
         $this->addConfigElement(
             $config,
+            '[columns]',
+            [
+                'label' => $this->translator->trans('orob2b.pricing.productprice.price_in_%currency%', [
+                    '%currency%' => $currency
+                ]),
+            ],
+            'prices'
+        );
+        $this->addConfigElement(
+            $config,
             '[sorters][columns]',
             [
                 'data_name' => self::COLUMN_MINIMUM_PRICE,
