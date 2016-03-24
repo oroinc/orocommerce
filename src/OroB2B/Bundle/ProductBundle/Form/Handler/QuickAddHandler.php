@@ -171,7 +171,7 @@ class QuickAddHandler
                         [],
                         'validators'
                     )
-                );
+                ));
             }
         }
 
