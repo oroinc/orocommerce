@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\SaleBundle\Model;
 
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class QuoteOfferConverter

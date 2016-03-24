@@ -11,6 +11,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
+use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
@@ -58,13 +59,15 @@ class SummaryDataProvider extends AbstractServerRenderDataProvider
 
         $orderLineItems = $this->checkoutLineItemsManager->getData($checkout);
         $lineItemTotals = $this->getOrderLineItemsTotals($orderLineItems);
+        $order = new Order();
+        $order->setLineItems($orderLineItems);
 
         return [
             'lineItemTotals' => $lineItemTotals,
             'lineItems' => $orderLineItems,
             'lineItemsCount' => $orderLineItems->count(),
-            'subtotals' => $this->totalsProvider->getSubtotals($checkout),
-            'generalTotal' => $this->totalsProvider->getTotal($checkout)
+            'subtotals' => $this->totalsProvider->getSubtotals($order),
+            'generalTotal' => $this->totalsProvider->getTotal($order)
         ];
     }
 
