@@ -12,7 +12,6 @@ use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType;
 use OroB2B\Bundle\OrderBundle\Model\OrderAddressManager;
@@ -343,16 +342,10 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
 
         foreach (['country', 'city'] as $childName) {
             $this->assertTrue($view->offsetGet($childName)->vars['disabled']);
-            $this->assertFalse($view->offsetGet($childName)->vars['required']);
-
-            $this->assertArrayNotHasKey('data-validation', $view->offsetGet($childName)->vars['attr']);
-            $this->assertArrayNotHasKey('data-required', $view->offsetGet($childName)->vars['attr']);
-            $this->assertArrayNotHasKey('label_attr', $view->offsetGet($childName)->vars);
         }
 
         $this->assertFalse($view->offsetGet('accountAddress')->vars['disabled']);
-        $this->assertFalse($view->offsetGet('accountAddress')->vars['required']);
     }
 
-    protected abstract function getEntity();
+    abstract protected function getEntity();
 }

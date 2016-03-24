@@ -98,6 +98,7 @@ orob2b:
                             street2: Enter street 2
                             city: Enter city
                             zip: Zip
+                            phone: Enter phone number
                         name:
                             prefix: Enter your name prefix
                             first_name: Enter your first name

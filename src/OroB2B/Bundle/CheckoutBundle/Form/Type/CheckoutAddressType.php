@@ -58,6 +58,11 @@ class CheckoutAddressType extends AbstractOrderAddressType
                 ->add('accountAddress', 'choice', $accountAddressOptions)
                 ->add('country', 'orob2b_country', ['required' => true, 'label' => 'oro.address.country.label'])
                 ->add('region', 'orob2b_region', ['required' => false, 'label' => 'oro.address.region.label']);
+
+            if ($type === AddressType::TYPE_BILLING) {
+                $builder->get('firstName')->setRequired(true);
+                $builder->get('lastName')->setRequired(true);
+            }
         }
     }
 

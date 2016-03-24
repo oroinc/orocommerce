@@ -301,6 +301,7 @@ workflows:
                                     middleName: $checkout.billingAddress.middleName
                                     lastName: $checkout.billingAddress.lastName
                                     nameSuffix: $checkout.billingAddress.nameSuffix
+                                    phone: $checkout.billingAddress.phone
                             - @call_method:
                                 object: $.result.customerBillingAddress
                                 method: addType
@@ -345,6 +346,7 @@ workflows:
                                             middleName: $.result.shippingAddress.middleName
                                             lastName: $.result.shippingAddress.lastName
                                             nameSuffix: $.result.shippingAddress.nameSuffix
+                                            phone: $.result.shippingAddress.phone
                                     - @call_method:
                                         object: $.result.customerShippingAddress
                                         method: addType

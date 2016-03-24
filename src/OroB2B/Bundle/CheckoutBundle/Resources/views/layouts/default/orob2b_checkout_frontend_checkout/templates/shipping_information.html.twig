@@ -18,16 +18,36 @@
             <fieldset class="checkout__form__row">
                 {{ form_row(form.shipping_address.label, {'attr': {'placeholder': 'Enter address label'}, 'parentClass': 'form__col_x12'}) }}
             </fieldset>
+
             <fieldset class="checkout__form__row">
-                {{ form_row(form.shipping_address.namePrefix, {'attr': {'placeholder': 'Enter your name prefix'}}) }}
-                {{ form_row(form.shipping_address.middleName, {'attr': {'placeholder': 'Enter your middle name'}}) }}
-                {{ form_row(form.shipping_address.firstName, {'attr': {'placeholder': 'Enter your first name'}}) }}
-                {{ form_row(form.shipping_address.lastName, {'attr': {'placeholder': 'Enter your last name'}}) }}
-                {{ form_row(form.shipping_address.nameSuffix, {'attr': {'placeholder': 'Enter your name sufix'}}) }}
+                <div class="checkout__form__col form__col_x8">
+                    {{- form_label(form.shipping_address.namePrefix, form.shipping_address.namePrefix.vars.label, {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) -}}
+                    {{- form_widget(form.shipping_address.namePrefix, {'attr': {'placeholder': 'orob2b.checkout.workflow.b2b_flow_checkout.form.placeholder.name.prefix'|trans}}) -}}
+                    {{- form_errors(form.shipping_address.namePrefix) -}}
+                </div>
             </fieldset>
+
+            <fieldset class="checkout__form__row">
+                {{ form_row(form.shipping_address.firstName, {'attr': {'placeholder': 'orob2b.checkout.workflow.b2b_flow_checkout.form.placeholder.name.first_name'|trans}}) }}
+                {{ form_row(form.shipping_address.middleName, {'attr': {'placeholder': 'orob2b.checkout.workflow.b2b_flow_checkout.form.placeholder.name.middle_name'|trans}}) }}
+            </fieldset>
+            <fieldset class="checkout__form__row">
+                {{ form_row(form.shipping_address.lastName, {'attr': {'placeholder': 'orob2b.checkout.workflow.b2b_flow_checkout.form.placeholder.name.last_name'|trans}}) }}
+                {{ form_row(form.shipping_address.nameSuffix, {'attr': {'placeholder': 'orob2b.checkout.workflow.b2b_flow_checkout.form.placeholder.name.sufix'|trans}}) }}
+            </fieldset>
+
             <fieldset class="checkout__form__row">
                 {{ form_row(form.shipping_address.organization, {'attr': {'placeholder': 'Enter your organization'}, 'parentClass': 'form__col_x12'}) }}
             </fieldset>
+
+            <fieldset class="checkout__form__row">
+                <div class="checkout__form__col form__col_x6">
+                    {{- form_label(form.shipping_address.phone, form.shipping_address.phone.vars.label, {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) -}}
+                    {{- form_widget(form.shipping_address.phone, {'attr': {'placeholder': 'orob2b.checkout.workflow.b2b_flow_checkout.form.placeholder.phone.prefix'|trans}}) -}}
+                    {{- form_errors(form.shipping_address.phone) -}}
+                </div>
+            </fieldset>
+
             <fieldset class="checkout__form__row">
                 {{ form_row(form.shipping_address.street, {'attr': {'placeholder': 'Enter address label'}}) }}
                 {{ form_row(form.shipping_address.street2, {'attr': {'placeholder': 'Enter address2 label'}}) }}
@@ -41,8 +61,15 @@
             </fieldset>
 
             <fieldset class="checkout__form__row">
-                {{ form_row(form.shipping_address.postalCode, {'attr': {'placeholder': 'Zip'}, 'parentClass': 'col-zip'}) }}
+                <div class="checkout__form__col col-zip">
+                    {{- form_label(form.shipping_address.postalCode, form.shipping_address.postalCode.vars.label, {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) -}}
+                    {{- form_widget(form.shipping_address.postalCode, {'attr' : {'placeholder': 'orob2b.checkout.workflow.b2b_flow_checkout.form.placeholder.address.zip'|trans}}) -}}
+                </div>
+                <div class="checkout__form__col form__col_x8" style="clear: both">
+                    {{- form_errors(form.shipping_address.postalCode) -}}
+                </div>
             </fieldset>
+
             <fieldset class="checkout__form__row">
                 {{ form_row(form.save_shipping_address) }}
             </fieldset>
