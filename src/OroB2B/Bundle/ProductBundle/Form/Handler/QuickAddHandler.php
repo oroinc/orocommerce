@@ -165,13 +165,11 @@ class QuickAddHandler
                 $collection = $this->quickAddRowCollectionBuilder->buildFromFile($file);
                 $this->quickAddFormProvider->getForm($collection->getFormData());
             } catch (UnsupportedTypeException $e) {
-                $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->addError(
-                    new FormError(
-                        $this->translator->trans(
-                            'orob2b.product.frontend.quick_add.invalid_file_type',
-                            [],
-                            'validators'
-                        )
+                $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->addError(new FormError(
+                    $this->translator->trans(
+                        'orob2b.product.frontend.quick_add.invalid_file_type',
+                        [],
+                        'validators'
                     )
                 );
             }
