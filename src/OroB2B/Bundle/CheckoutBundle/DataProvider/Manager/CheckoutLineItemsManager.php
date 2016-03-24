@@ -46,7 +46,7 @@ class CheckoutLineItemsManager
         $entity = $checkout->getSourceEntity();
 
         foreach ($this->providers as $provider) {
-            if ($provider->isEntitySupported($entity)) {
+            if ($provider->isTransformDataSupported($entity)) {
                 return $this->checkoutLineItemsConverter->convert($provider->getData($entity));
             }
         }

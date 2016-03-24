@@ -52,8 +52,8 @@ class CheckoutLineItemDataProvider implements CheckoutDataProviderInterface
     /**
      * {@inheritDoc}
      */
-    public function isEntitySupported($entity)
+    public function isTransformDataSupported($transformData)
     {
-        return $entity instanceof ShoppingList;
+        return $transformData instanceof ShoppingList;
     }
 }
