@@ -32,20 +32,15 @@ class ProductImageCollectionType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $imageTypes = $this->imageTypeProvider->getImageTypes();
-
         $resolver->setDefaults([
             'type' => ProductImageType::NAME,
             'options' => [
-                'image_types' => $imageTypes
+                'image_types' => $this->imageTypeProvider->getImageTypes()
             ],
-            'image_types' => $imageTypes,
             'error_bubbling' => false,
             'cascade_validation' => true,
             'required' => false
         ]);
-
-        $resolver->setAllowedTypes('image_types', 'array');
     }
 
     /**
@@ -53,7 +48,7 @@ class ProductImageCollectionType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['imageTypes'] = $options['image_types'];
+        $view->vars['imageTypes'] = $options['options']['image_types'];
     }
 
     /**

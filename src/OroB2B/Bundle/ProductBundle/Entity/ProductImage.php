@@ -99,6 +99,15 @@ class ProductImage extends ExtendProductImage
     }
 
     /**
+     * @param string $type
+     * @return bool
+     */
+    public function hasType($type)
+    {
+        return isset($this->types[$type]) && $this->types[$type];
+    }
+
+    /**
      * @param string $name
      * @return bool
      */

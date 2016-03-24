@@ -11,6 +11,7 @@ parameters:
     orob2b_product.model.product_visibility_query_builder_modifier.class: OroB2B\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier
     orob2b_product.twig.product_unit_value.class: OroB2B\Bundle\ProductBundle\Twig\ProductUnitValueExtension
     orob2b_product.twig.product_unit_label.class: OroB2B\Bundle\ProductBundle\Twig\ProductUnitLabelExtension
+    orob2b_product.twig.product_image.class: OroB2B\Bundle\ProductBundle\Twig\ProductImageExtension
     orob2b_product.service.duplicator.class: OroB2B\Bundle\ProductBundle\Duplicator\ProductDuplicator
     orob2b_product.service.sku_incrementor.class: OroB2B\Bundle\ProductBundle\Duplicator\SkuIncrementor
     orob2b_product.service.product_update_handler.class: OroB2B\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler
@@ -83,6 +84,11 @@ services:
         class: %orob2b_product.twig.product_unit_label.class%
         arguments:
             - @orob2b_product.formatter.product_unit_label
+        tags:
+            - { name: twig.extension }
+
+    orob2b_product.twig.product_image:
+        class: %orob2b_product.twig.product_image.class%
         tags:
             - { name: twig.extension }
 
