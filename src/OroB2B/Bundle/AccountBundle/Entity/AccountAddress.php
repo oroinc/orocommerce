@@ -73,10 +73,48 @@ class AccountAddress extends ExtendAccountAddress
     protected $types;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="phone", type="string", length=255, nullable=true)
+     * @ConfigField(
+     *  defaultValues={
+     *      "entity"={
+     *          "contact_information"="phone"
+     *      }
+     *  }
+     * )
+     */
+    protected $phone;
+
+    /**
      * {@inheritdoc}
      */
     protected function createAddressToAddressTypeEntity()
     {
         return new AccountAddressToAddressType();
+    }
+
+    /**
+     * Set phone number
+     *
+     * @param string $phone
+     *
+     * @return AccountAddress
+     */
+    public function setPhone($phone)
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    /**
+     * Get phone number
+     *
+     * @return string
+     */
+    public function getPhone()
+    {
+        return $this->phone;
     }
 }

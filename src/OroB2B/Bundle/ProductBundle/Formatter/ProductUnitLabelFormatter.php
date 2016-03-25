@@ -29,7 +29,7 @@ class ProductUnitLabelFormatter
      */
     public function format($unitCode, $isShort = false, $isPlural = false)
     {
-        $labelForm = ($isShort ? 'short' : 'full') . ($isPlural ? '_plural': '');
+        $labelForm = ($isShort ? 'short' : 'full') . ($isPlural ? '_plural' : '');
 
         $translationKey = sprintf('orob2b.product_unit.%s.label.' . $labelForm, $unitCode);
 

@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Bundle\Tests\Unit\DependencyInjection;
 
-use OroB2B\Bundle\OrderBundle\DependencyInjection\Configuration;
+use OroB2B\Bundle\ShoppingListBundle\DependencyInjection\Configuration;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
