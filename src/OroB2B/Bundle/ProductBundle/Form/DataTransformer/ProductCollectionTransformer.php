@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Form\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
 
+use OroB2B\Bundle\ProductBundle\Model\ProductRow;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class ProductCollectionTransformer implements DataTransformerInterface
@@ -26,8 +27,8 @@ class ProductCollectionTransformer implements DataTransformerInterface
         }
 
         foreach ($value as $key => $product) {
-            if ($this->isFieldEmpty($product, ProductDataStorage::PRODUCT_SKU_KEY) &&
-                $this->isFieldEmpty($product, ProductDataStorage::PRODUCT_QUANTITY_KEY)
+            if (is_null($product) || ($this->isFieldEmpty($product, ProductDataStorage::PRODUCT_SKU_KEY) &&
+                    $this->isFieldEmpty($product, ProductDataStorage::PRODUCT_QUANTITY_KEY))
             ) {
                 // clear unused field
                 unset($value[$key]);
@@ -38,12 +39,12 @@ class ProductCollectionTransformer implements DataTransformerInterface
     }
 
     /**
-     * @param array $data
+     * @param ProductRow $data
      * @param string $field
      * @return bool
      */
-    protected function isFieldEmpty(array $data, $field)
+    protected function isFieldEmpty(ProductRow $data, $field)
     {
-        return !array_key_exists($field, $data) || $data[$field] === null || $data[$field] === '';
+        return $data->{$field} === null || $data->{$field} === '';
     }
 }

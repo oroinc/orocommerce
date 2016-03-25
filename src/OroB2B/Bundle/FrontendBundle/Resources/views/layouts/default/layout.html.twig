@@ -1,9 +1,19 @@
 {% extends 'OroLayoutBundle:Layout:div_layout.html.twig' %}
 
-{% block form_start_widget %}
-    {% set attr = attr|merge({
-        id: form.vars.id
+{% block block_attributes_underscore %}
+    {% set attributes = block('block_attributes_base')|replace({
+        '&lt;%': '<%',
+        '%&gt;': '%>'
     }) %}
+    {{ attributes|raw }}
+{%- endblock %}
+
+{% block form_start_widget %}
+    {% if attr.id is not defined %}
+        {% set attr = attr|merge({
+            id: form.vars.id
+        }) %}
+    {% endif %}
     {{ parent() }}
 {% endblock %}
 
@@ -35,7 +45,7 @@
     {% if actionsCount > 0 %}
         {% import 'OroActionBundle:layouts/base:layout.html.twig' as _layout %}
         {% set hasVariants = actionsCount > 1 %}
-        {% set additionalCss = "btn btn_orange" %}
+        {% set additionalCss = "btn theme-btn btn-orange" %}
         {% if hasVariants %}
             {% set additionalCss = additionalCss ~ " btn_has-dropdown btn_has-dropdown_xlg" %}
         {% endif %}

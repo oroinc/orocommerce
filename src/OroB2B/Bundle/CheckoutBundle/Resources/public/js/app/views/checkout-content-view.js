@@ -1,4 +1,4 @@
-define(function (require) {
+define(function(require) {
     'use strict';
 
     var CheckoutContentView;
@@ -10,16 +10,16 @@ define(function (require) {
         /**
          * @inheritDoc
          */
-        initialize: function () {
+        initialize: function() {
             mediator.on('checkout-content:updated', _.bind(this._onContentUpdated, this));
             mediator.on('checkout-content:before-update', _.bind(this._onBeforeContentUpdate, this));
         },
 
-        _onContentUpdated: function () {
+        _onContentUpdated: function() {
             this.initLayout();
         },
 
-        _onBeforeContentUpdate: function () {
+        _onBeforeContentUpdate: function() {
             this.disposePageComponents();
         },
 

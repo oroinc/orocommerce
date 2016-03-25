@@ -31,15 +31,9 @@ class ShoppingListController extends Controller
      */
     public function viewAction(ShoppingList $shoppingList)
     {
-        $subtotals = $this->getTotalProcessor()->getSubtotals($shoppingList);
-        $total = $this->getTotalProcessor()->getTotal($shoppingList);
-
         return [
             'entity' => $shoppingList,
-            'totals' => [
-                'total' => $total,
-                'subtotals' => $subtotals
-            ]
+            'totals' => $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($shoppingList)
         ];
     }
 
