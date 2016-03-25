@@ -1,0 +1,53 @@
+layout:
+    actions:
+        - @setBlockTheme:
+            themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_frontend_account_user_role_view/layout.html.twig'
+        - @setOption:
+            id: head
+            optionName: title
+            optionValue:
+                label: 'orob2b.account.frontend.account_user.role.entity_plural_label'
+        - @add:
+            id: account_sidebar
+            parentId: sidebar_left
+            blockType: block
+        - @addTree:
+            items:
+                account_user_role_view_container:
+                    blockType: container
+                account_user_role_title:
+                    blockType: block
+                    options:
+                        visible: { @not_empty: $data.role }
+                        vars:
+                            role: { @value: $data.role }
+                account_user_role_top_actions:
+                    blockType: action_combined_buttons
+                    options:
+                        visible: { @not_empty: $data.role }
+                        actions: { @value: $data.actions.all }
+                        entity: { @value: $data.role }
+                account_user_role_items:
+                    blockType: container
+                account_user_role_items_view_privileges:
+                    blockType: block
+                    options:
+                        visible: { @not_empty: $data.role }
+                        vars:
+                            role: { @value: $data.role }
+                            privileges: { @value: $data.orob2b_account_frontend_account_user_role_privileges }
+
+                account_user_role_items_view_users:
+                    blockType: datagrid
+                    options:
+                        grid_name: frontend-account-account-users-grid-view
+                        grid_parameters:
+                            role: {@value: $data.role.id}
+            tree:
+                content:
+                    account_user_role_view_container:
+                        account_user_role_title: ~
+                        account_user_role_top_actions: ~
+                        account_user_role_items:
+                            account_user_role_items_view_privileges: ~
+                            account_user_role_items_view_users: ~

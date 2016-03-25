@@ -155,6 +155,7 @@ orob2b.account:
 
         account_user_role:
             create: 'Create Account User Role'
+            edit: 'Edit Account User Role'
 
     sections:
         general: 'General Information'
