@@ -45,6 +45,7 @@ class StartCheckout extends AbstractAction
     const SOURCE_ENTITY_KEY = 'source_entity';
     const CHECKOUT_DATA_KEY = 'data';
     const SETTINGS_KEY = 'settings';
+    const FORCE = 'force';
 
     /**
      * @var ManagerRegistry
@@ -178,7 +179,10 @@ class StartCheckout extends AbstractAction
         $checkoutSource = $em->getRepository('OroB2BCheckoutBundle:CheckoutSource')
             ->findOneBy([$sourceFieldName => $sourceEntity]);
 
+        $newCheckout = true;
+
         if ($checkoutSource) {
+            $newCheckout = false;
             $checkout = $em->getRepository('OroB2BCheckoutBundle:Checkout')
                 ->findOneBy(['source' => $checkoutSource]);
 
@@ -187,7 +191,9 @@ class StartCheckout extends AbstractAction
             $checkout = $this->createCheckout($context, $checkoutSource);
             $em->persist($checkout);
             $em->flush($checkout);
+        }
 
+        if (!$newCheckout || $this->getOptionFromContext($context, self::FORCE, false)) {
             $this->addWorkflowItemDataSettings($context, $checkout->getWorkflowItem());
             $em->flush($checkout->getWorkflowItem());
         }
