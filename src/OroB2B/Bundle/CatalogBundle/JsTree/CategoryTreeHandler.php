@@ -2,16 +2,13 @@
 
 namespace OroB2B\Bundle\CatalogBundle\JsTree;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
-use OroB2B\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 use OroB2B\Component\Tree\Handler\AbstractTreeHandler;
-use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 
 class CategoryTreeHandler extends AbstractTreeHandler
 {
@@ -19,9 +16,9 @@ class CategoryTreeHandler extends AbstractTreeHandler
     protected $securityFacade;
 
     /**
-     * @var EventDispatcherInterface
+     * @var CategoryTreeProvider
      */
-    protected $eventDispatcher;
+    protected $categoryTreeProvider;
 
     /**
      * {@inheritdoc}
@@ -32,27 +29,24 @@ class CategoryTreeHandler extends AbstractTreeHandler
         $entityClass,
         ManagerRegistry $managerRegistry,
         SecurityFacade $securityFacade,
-        EventDispatcherInterface $eventDispatcher
+        CategoryTreeProvider $categoryTreeProvider
     ) {
         parent::__construct($entityClass, $managerRegistry);
 
         $this->securityFacade = $securityFacade;
-        $this->eventDispatcher = $eventDispatcher;
+        $this->categoryTreeProvider = $categoryTreeProvider;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getNodes($root, $includeRoot)
+    protected function getNodes($root, $includeRoot)
     {
-        /** @var CategoryRepository $repository */
-        $repository = $this->getEntityRepository();
-        $categories = $repository->getChildrenWithTitles($root, false, 'left', 'ASC', $includeRoot);
-        $event = new CategoryTreeCreateAfterEvent($categories);
-        $event->setUser($this->securityFacade->getLoggedUser());
-        $this->eventDispatcher->dispatch(CategoryTreeCreateAfterEvent::NAME, $event);
-
-        return $event->getCategories();
+        return $this->categoryTreeProvider->getCategories(
+            $this->securityFacade->getLoggedUser(),
+            $root,
+            $includeRoot
+        );
     }
 
     /**
