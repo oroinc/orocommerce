@@ -10,7 +10,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
-use OroB2B\Bundle\OrderBundle\Provider\IdentifierAwareInterface;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
@@ -67,10 +66,7 @@ class OrderController extends Controller
 
         $data['sourceEntityId'] = $request->getId();
         $data['sourceEntityClass'] = ClassUtils::getClass($request);
-
-        if ($request instanceof IdentifierAwareInterface) {
-            $data['sourceEntityIdentifier'] = $request->getIdentifier();
-        }
+        $data['sourceEntityIdentifier'] = $request->getIdentifier();
 
         return $data;
     }

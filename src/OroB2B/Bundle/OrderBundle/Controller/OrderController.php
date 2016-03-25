@@ -41,7 +41,7 @@ class OrderController extends AbstractOrderController
     {
         return [
             'entity' => $order,
-            'totals' => $this->getTotalProcessor()->getTotals($order),
+            'totals' => $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($order),
         ];
     }
 
@@ -145,9 +145,7 @@ class OrderController extends AbstractOrderController
         $handler = new OrderHandler(
             $form,
             $request,
-            $this->getDoctrine()->getManagerForClass(ClassUtils::getClass($order)),
-            $this->getTotalProcessor(),
-            $this->get('orob2b_pricing.subtotal_processor.provider.subtotal_line_item')
+            $this->getDoctrine()->getManagerForClass(ClassUtils::getClass($order))
         );
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
@@ -171,7 +169,7 @@ class OrderController extends AbstractOrderController
                 return [
                     'form' => $form->createView(),
                     'entity' => $order,
-                    'totals' => $this->getTotalProcessor()->getTotals($order),
+                    'totals' => $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($order),
                     'isWidgetContext' => (bool)$request->get('_wid', false),
                     'isShippingAddressGranted' => $this->getOrderAddressSecurityProvider()
                         ->isAddressGranted($order, AddressType::TYPE_SHIPPING),

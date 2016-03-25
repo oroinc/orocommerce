@@ -54,6 +54,27 @@ class TotalProcessorProvider
     }
 
     /**
+     * Calculate and return total with subtotals converted to Array
+     *
+     * @param $entity
+     *
+     * @return array
+     */
+    public function getTotalWithSubtotalsAsArray($entity)
+    {
+        return [
+            self::TYPE => $this->getTotal($entity)->toArray(),
+            self::SUBTOTALS => $this->getSubtotals($entity)
+                ->map(
+                    function (Subtotal $subtotal) {
+                        return $subtotal->toArray();
+                    }
+                )
+                ->toArray(),
+        ];
+    }
+
+    /**
      * Calculate and return total based on all subtotals
      *
      * @param $entity
@@ -75,7 +96,7 @@ class TotalProcessorProvider
             if ($this->getBaseCurrency($entity) !== $subtotal->getCurrency()) {
                 $rowTotal *= $this->getExchangeRate($subtotal->getCurrency(), $this->getBaseCurrency($entity));
             }
-            $totalAmount += $rowTotal;
+            $totalAmount = $this->calculateTotal($subtotal->getOperation(), $rowTotal, $totalAmount);
         }
         $total->setAmount($this->rounding->round($totalAmount));
         $total->setCurrency($this->getBaseCurrency($entity));
@@ -92,40 +113,26 @@ class TotalProcessorProvider
      */
     public function getSubtotals($entity)
     {
-        $subtotals = new ArrayCollection();
+        $subtotalCollection = new ArrayCollection();
         $hash = spl_object_hash($entity);
 
         if (!array_key_exists($hash, $this->subtotals)) {
             foreach ($this->subtotalProviderRegistry->getSupportedProviders($entity) as $provider) {
-                $subtotal = $provider->getSubtotal($entity);
-                $subtotals->set($subtotal->getType(), $subtotal);
+                $subtotals = $provider->getSubtotal($entity);
+                $subtotals = is_object($subtotals) ? [$subtotals] : (array) $subtotals;
+                foreach ($subtotals as $subtotal) {
+                    $subtotalCollection->add($subtotal);
+                }
             }
-            $this->subtotals[$hash] = $subtotals;
+            $this->subtotals[$hash] = $subtotalCollection;
         }
 
         return $this->subtotals[$hash];
     }
 
     /**
-     * @param object $entity
-     * @return array
-     */
-    public function getTotals($entity)
-    {
-        return [
-            self::TYPE => $this->getTotal($entity)->toArray(),
-            self::SUBTOTALS => $this->getSubtotals($entity)
-                ->map(
-                    function (Subtotal $subtotal) {
-                        return $subtotal->toArray();
-                    }
-                )
-                ->toArray(),
-        ];
-    }
-
-    /**
      * @param $entity
+     *
      * @return string
      */
     protected function getBaseCurrency($entity)
@@ -154,5 +161,26 @@ class TotalProcessorProvider
     protected function getExchangeRate($fromCurrency, $toCurrency)
     {
         return 1.0;
+    }
+
+    /**
+     * @param int $operation
+     * @param float $rowTotal
+     * @param float $totalAmount
+     *
+     * @return mixed
+     */
+    protected function calculateTotal($operation, $rowTotal, $totalAmount)
+    {
+        if ($operation === Subtotal::OPERATION_ADD) {
+            $totalAmount += $rowTotal;
+        } elseif ($operation === Subtotal::OPERATION_SUBTRACTION) {
+            $totalAmount -= $rowTotal;
+        }
+        if ($totalAmount < 0) {
+            $totalAmount = 0.0;
+        }
+
+        return $totalAmount;
     }
 }

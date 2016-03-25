@@ -4,7 +4,9 @@ define(function(require) {
     var TotalsComponent;
     var $ = require('jquery');
     var _ = require('underscore');
+    var routing = require('routing');
     var mediator = require('oroui/js/mediator');
+    var messenger =  require('oroui/js/messenger');
     var NumberFormatter = require('orolocale/js/formatter/number');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var BaseComponent = require('oroui/js/app/components/base/component');
@@ -20,14 +22,16 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            url: '',
+            route: '',
+            entityClassName: '',
+            entityId: 0,
             selectors: {
                 form: '',
                 template: '#totals-template',
                 subtotals: '[data-totals-container]'
             },
-            method: 'POST',
-            events: []
+            events: [],
+            skipMaskView: false
         },
 
         /**
@@ -81,13 +85,12 @@ define(function(require) {
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
 
-            if (this.options.url.length === 0) {
+            if (this.options.route.length === 0) {
                 return;
             }
 
             this.$el = options._sourceElement;
             this.$form = $(this.options.selectors.form);
-            this.$method = this.options.method;
             this.$subtotals = this.$el.find(this.options.selectors.subtotals);
             this.template = _.template($(this.options.selectors.template).text());
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
@@ -95,14 +98,11 @@ define(function(require) {
 
             this.updateTotals();
             this.initializeListeners();
+
+            this.render(this.options.data);
         },
 
         initializeListeners: function() {
-            mediator.on('line-items-totals:update', this.updateTotals, this);
-            mediator.on('update:account', this.updateTotals, this);
-            mediator.on('update:website', this.updateTotals, this);
-            mediator.on('update:currency', this.updateTotals, this);
-
             var self = this;
             _.each(this.options.events, function(event) {
                 mediator.on(event, self.updateTotals, self);
@@ -110,11 +110,15 @@ define(function(require) {
         },
 
         showLoadingMask: function() {
-            this.loadingMaskView.show();
+            if (!this.options.skipMaskView) {
+                this.loadingMaskView.show();
+            }
         },
 
         hideLoadingMask: function() {
-            this.loadingMaskView.hide();
+            if (this.loadingMaskView.isShown()) {
+                this.loadingMaskView.hide();
+            }
         },
 
         /**
@@ -141,6 +145,9 @@ define(function(require) {
                         if (!subtotals) {
                             return;
                         }
+
+                        mediator.trigger('totals:update', subtotals);
+
                         this.render(subtotals);
                     }, this));
                 }
@@ -153,30 +160,40 @@ define(function(require) {
          * @param {Function} callback
          */
         getTotals: function(callback) {
-            if (this.$method === 'GET') {
-                $.get(this.options.url, function (response) {
-                    callback(response);
-                });
-                return;
-            }
+            var self = this;
+
+            var params = {
+                entityClassName: this.options.entityClassName,
+                entityId: this.options.entityId ? this.options.entityId : 0
+            };
 
             var formData = this.$form.find(':input[data-ftid]').serialize();
-
-            if (formData === this.formData) {
-                callback();//nothing changed
-                return;
-            }
-
             this.formData = formData;
 
-            var self = this;
-            $.post(this.options.url, formData, function(response) {
-                if (formData === self.formData) {
-                    //data doesn't change after ajax call
-                    var totals = response || {};
-                    callback(totals);
-                }
-            });
+            if (formData) {
+                $.post(routing.generate(this.options.route, params), formData, function(response) {
+                    if (formData === self.formData) {
+                        //data doesn't change after ajax call
+                        var totals = response || {};
+                        callback(totals);
+                    }
+                });
+            } else {
+                $.ajax({
+                    url: routing.generate(this.options.route, params),
+                    type: 'GET',
+                    success: function (response) {
+                        if (formData === self.formData) {
+                            //data doesn't change after ajax call
+                            var totals = response || {};
+                            callback(totals);
+                        }
+                    },
+                    error: function(jqXHR) {
+                        messenger.showErrorMessage(__('Sorry, unexpected error was occurred'), jqXHR.responseJSON);
+                    }
+                });
+            }
         },
 
         /**
@@ -238,10 +255,6 @@ define(function(require) {
 
             delete this.items;
 
-            mediator.off('line-items-totals:update', this.updateTotals, this);
-            mediator.off('update:account', this.updateTotals, this);
-            mediator.off('update:website', this.updateTotals, this);
-            mediator.off('update:currency', this.updateTotals, this);
             var self = this;
             _.each(this.options.events, function(event) {
                 mediator.off(event, self.updateTotals, self);

@@ -27,7 +27,7 @@ class OrderTotalEventListener
     {
         $order = $event->getOrder();
 
-        $totals = $this->provider->getTotals($order);
+        $totals = $this->provider->getTotalWithSubtotalsAsArray($order);
 
         $event->getData()->offsetSet(self::TOTALS_KEY, $totals);
     }

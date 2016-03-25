@@ -7,7 +7,7 @@ define(function (require) {
     var BaseView = require('oroui/js/app/views/base/view');
     var ProductPricesComponent = require('orob2bpricing/js/app/components/product-prices-component');
     var ProductUnitComponent = require('orob2bproduct/js/app/components/product-unit-component');
-    var SubtotalsListener = require('orob2bpricing/js/app/listener/subtotals-listener');
+    var TotalsListener = require('orob2bpricing/js/app/listener/totals-listener');
     var NumberFormatter = require('orolocale/js/formatter/number');
     var mediator = require('oroui/js/mediator');
     var localeSettings = require('orolocale/js/locale-settings');
@@ -75,7 +75,7 @@ define(function (require) {
         },
 
         initSubtotalListener: function () {
-            SubtotalsListener.listen([
+            TotalsListener.listen([
                 this.fieldsByName.product,
                 this.fieldsByName.quantity,
                 this.fieldsByName.productUnit,

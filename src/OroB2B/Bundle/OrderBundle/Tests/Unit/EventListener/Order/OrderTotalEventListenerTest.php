@@ -44,7 +44,7 @@ class OrderTotalEventListenerTest extends \PHPUnit_Framework_TestCase
         $total = $this->getSubtotal('type', 'label', 100, 'USD', true);
 
         $this->totalProcessorProvider->expects($this->once())
-            ->method('getTotals')
+            ->method('getTotalWithSubtotalsAsArray')
             ->with($order)
             ->willReturn($total->toArray());
 

@@ -173,6 +173,7 @@ datagrid:
                     - order1.sourceEntityClass
                     - order1.sourceEntityId
                     - order1.sourceEntityIdentifier
+                    - order1.totalDiscountsAmount
                 join:
                     left:
                         - { join: order1.owner, alias: order_owner }
@@ -198,6 +199,11 @@ datagrid:
                 frontend_type: html
                 template:      OroB2BOrderBundle:Order:Datagrid/sourceDocument.html.twig
                 renderable:    false
+            totalDiscountsAmount:
+                label:         orob2b.order.discount.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BOrderBundle:Order:Datagrid/discount.html.twig
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -218,6 +224,8 @@ datagrid:
                     data_name: order1.poNumber
                 shipUntil:
                     data_name: order1.shipUntil
+                totalDiscountsAmount:
+                    data_name: order1.totalDiscountsAmount
                 createdAt:
                     data_name: order1.createdAt
                 updatedAt:
@@ -249,6 +257,9 @@ datagrid:
                 shipUntil:
                     type:      date
                     data_name: order1.shipUntil
+                totalDiscountsAmount:
+                    type:      number
+                    data_name: order1.totalDiscountsAmount
                 createdAt:
                     type:      datetime
                     data_name: order1.createdAt

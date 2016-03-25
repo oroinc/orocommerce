@@ -1,5 +1,5 @@
 <script type="text/html" id="totals-template">
-    {% block subtotals_template %}
+    {% block totals_entity_edit_page_template %}
         <div class="control-group">
             <label class="control-label"><%= item.label %></label>
             <div class="controls">
@@ -7,4 +7,10 @@
             </div>
         </div>
     {% endblock %}
+</script>
+
+<script type="text/html" id="totals-template-no-data">
+    <div class="no-data">
+        <span>{{ 'orob2b.pricing.subtotals.no_data.label'|trans|raw }}</span>
+    </div>
 </script>
