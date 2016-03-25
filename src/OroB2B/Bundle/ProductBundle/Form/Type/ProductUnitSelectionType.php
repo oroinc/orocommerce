@@ -180,7 +180,9 @@ class ProductUnitSelectionType extends AbstractProductAwareType
 
         $productUnit = $productUnitHolder->getProductUnit();
 
-        if (!$productUnit || ($product && !in_array($productUnit, $choices, true))) {
+        if ((!$productUnit && $productUnitHolder->getProductUnitCode())
+            || ($product && $productUnit && !in_array($productUnit, $choices, true))
+        ) {
             $emptyValueTitle = $this->translator->trans(
                 $options['empty_label'],
                 ['{title}' => $productUnitHolder->getProductUnitCode()]
