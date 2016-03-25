@@ -102,6 +102,8 @@ orob2b:
 
     frontend:
         shoppinglist:
+            quick_order:
+                default_label: Quick Order (%date%)
             selector:
                 sort_by.label: 'Sort By:'
                 last_updated.label: 'Last Updated'

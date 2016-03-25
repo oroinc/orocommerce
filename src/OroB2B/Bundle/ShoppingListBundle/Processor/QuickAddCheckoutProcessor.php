@@ -2,28 +2,103 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Processor;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Util\ClassUtils;
+use Doctrine\ORM\EntityManager;
+use Oro\Bundle\ActionBundle\Model\ActionData;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Bundle\ActionBundle\Model\ActionManager;
+use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
+
+use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
-use OroB2B\Bundle\ShoppingListBundle\Generator\MessageGenerator;
 
-class QuickAddProcessor extends AbstractShoppingListQuickAddProcessor
+class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
 {
-    const NAME = 'orob2b_shopping_list_quick_add_processor';
+    const NAME = 'orob2b_shopping_list_to_checkout_quick_add_processor';
 
     /**
-     * @var MessageGenerator
+     * @var ShoppingListManager
      */
-    protected $messageGenerator;
+    protected $shoppingListManager;
 
     /**
-     * @param MessageGenerator $messageGenerator
-     * @return QuickAddProcessor
+     * @var ActionManager
      */
-    public function setMessageGenerator(MessageGenerator $messageGenerator)
+    protected $actionManager;
+
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
+     * @var DateTimeFormatter
+     */
+    protected $dateFormatter;
+
+    /**
+     * @var string
+     */
+    protected $actionName;
+
+    /**
+     * @param ShoppingListManager $shoppingListManager
+     * @return QuickAddCheckoutProcessor
+     */
+    public function setShoppingListManager(ShoppingListManager $shoppingListManager)
     {
-        $this->messageGenerator = $messageGenerator;
+        $this->shoppingListManager = $shoppingListManager;
+
+        return $this;
+    }
+
+    /**
+     * @param ActionManager $actionManager
+     * @return QuickAddCheckoutProcessor
+     */
+    public function setActionManager(ActionManager $actionManager)
+    {
+        $this->actionManager = $actionManager;
+
+        return $this;
+    }
+
+    /**
+     * @param TranslatorInterface $translator
+     * @return QuickAddCheckoutProcessor
+     */
+    public function setTranslator(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+
+        return $this;
+    }
+
+    /**
+     * @param DateTimeFormatter $dateFormatter
+     * @return QuickAddCheckoutProcessor
+     */
+    public function setDateFormatter(DateTimeFormatter $dateFormatter)
+    {
+        $this->dateFormatter = $dateFormatter;
+
+        return $this;
+    }
+
+    /**
+     * @param string $actionName
+     * @return QuickAddCheckoutProcessor
+     */
+    public function setActionName($actionName)
+    {
+        $this->actionName = $actionName;
 
         return $this;
     }
@@ -36,27 +111,45 @@ class QuickAddProcessor extends AbstractShoppingListQuickAddProcessor
         if (empty($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]) ||
             !is_array($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY])
         ) {
-            return;
+            return null;
         }
 
-        $shoppingListId = null;
-        if (!empty($data[ProductDataStorage::ADDITIONAL_DATA_KEY])) {
-            $shoppingListId = (int)$data[ProductDataStorage::ADDITIONAL_DATA_KEY] ? : null;
-        }
-        $shoppingList = $this->shoppingListLineItemHandler->getShoppingList($shoppingListId);
+        $shoppingList = $this->shoppingListManager->create();
+        $shoppingList->setLabel($this->getShoppingListLabel());
+
+        /** @var EntityManager $em */
+        $em = $this->registry->getManagerForClass(ClassUtils::getClass($shoppingList));
+        $em->beginTransaction();
+        $em->persist($shoppingList);
+        $em->flush($shoppingList);
 
         /** @var Session $session */
         $session = $request->getSession();
-        $flashBag = $session->getFlashBag();
-
         if ($entitiesCount = $this->fillShoppingList($shoppingList, $data)) {
-            $flashBag->add(
-                'success',
-                $this->messageGenerator->getSuccessMessage($shoppingList->getId(), $entitiesCount)
-            );
+            $actionData = new ActionData(['data' => $shoppingList]);
+            $errors = new ArrayCollection([]);
+            $actionData = $this->actionManager->execute($this->actionName, $actionData, $errors);
+
+            if ($redirectUrl = $actionData->getRedirectUrl()) {
+                $em->commit();
+
+                return new RedirectResponse($redirectUrl);
+            } else {
+                if (!$errors->count()) {
+                    $errors->add($this->messageGenerator->getFailedMessage());
+                }
+
+                foreach ($errors as $error) {
+                    $session->getFlashBag()->add('error', $error);
+                }
+            }
         } else {
-            $flashBag->add('error', $this->messageGenerator->getFailedMessage());
+            $session->getFlashBag()->add('error', $this->messageGenerator->getFailedMessage());
         }
+
+        $em->rollback();
+
+        return null;
     }
 
     /**
@@ -65,5 +158,19 @@ class QuickAddProcessor extends AbstractShoppingListQuickAddProcessor
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getShoppingListLabel()
+    {
+        $date = new \DateTime('now', new \DateTimeZone('UTC'));
+        $formatterDate = $this->dateFormatter->format($date);
+
+        return $this->translator->trans(
+            'orob2b.frontend.shoppinglist.quick_order.default_label',
+            ['%date%' => $formatterDate]
+        );
     }
 }
