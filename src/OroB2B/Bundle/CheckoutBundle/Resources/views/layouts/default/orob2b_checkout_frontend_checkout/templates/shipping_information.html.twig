@@ -3,7 +3,7 @@
     {% if workflowItem.data.get('disallow_shipping_address_edit') %}
         <fieldset class="checkout__form__row">
             <div class="checkout__form__col form__col_x6">
-                {{ checkout.shippingAddress|oro_format_address }}
+                {{ checkout.shippingAddress|oro_format_address(null, '<br/>') }}
             </div>
         </fieldset>
     {% else %}
