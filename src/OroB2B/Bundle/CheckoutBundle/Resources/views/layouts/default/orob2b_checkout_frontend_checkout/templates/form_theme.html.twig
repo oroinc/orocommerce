@@ -8,8 +8,8 @@
         {%- endif -%}
         <label for="{{ id }}" class="checkbox_custom checkbox_custom_blue {% if form.vars.checked %}checked{% endif %}" data-checkbox>
             {{- form_widget(form) -}}
-            <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
-            <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
+            <i class="cf-check_box checkbox_checked fs18 mmr5-md"></i>
+            <i class="cf-check_box_outline_blank checkbox_not-checked fs18 mmr5-md"></i>
             <span class="checkbox_custom__text fs13">{{ label|block_text(translation_domain) }}</span>
         </label>
     {%- endif %}
