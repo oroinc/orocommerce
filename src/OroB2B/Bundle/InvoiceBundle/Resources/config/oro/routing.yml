@@ -3,12 +3,6 @@ orob2b_invoice:
     type:         annotation
     prefix:       /invoice
 
-orob2b_invoice_ajax:
-    resource:     "@OroB2BInvoiceBundle/Controller/AjaxInvoiceController.php"
-    type:         annotation
-    prefix:       /invoice
-
-
 orob2b_invoice_bundle_api:
     resource:     "@OroB2BInvoiceBundle/Resources/config/oro/routing_api.yml"
     prefix:       api/rest/{version}/

@@ -19,6 +19,7 @@ use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareI
 use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
+use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
  * @ORM\Table(
@@ -58,7 +59,8 @@ class ShoppingList extends ExtendShoppingList implements
     LineItemsNotPricedAwareInterface,
     CurrencyAwareInterface,
     AccountOwnerAwareInterface,
-    WebsiteAwareInterface
+    WebsiteAwareInterface,
+    CheckoutSourceEntityInterface
 {
     /**
      * @var int

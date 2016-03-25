@@ -25,7 +25,9 @@
     <script>
         require({
             config: {
-                'oro/datagrid/cell/action-cell': {showCloseButton: true},
+                'oroui/js/app': {routeLinks: ''},
+                'controllers/page-controller': {fullRedirect: true},
+                'oro/datagrid/cell/action-cell': {showCloseButton: false},
                 'orodatagrid/js/app/plugins/grid/column-manager-plugin': {icon: 'gear'},
                 'orodatagrid/js/datagrid/action-launcher': {iconHideText: false},
                 'oro/filter/abstract-filter': {
@@ -55,7 +57,8 @@
         });
         require({
             appmodules: (requirejs.s.contexts._.config.appmodules || []).concat([
-                '/bundles/orob2bfrontend/default/js/app/modules/input-widgets.js'
+                '/bundles/orob2bfrontend/default/js/app/modules/input-widgets.js',
+                '/bundles/orob2bfrontend/default/js/app/modules/action-manager.js'
             ])
         });
     </script>
@@ -93,7 +96,7 @@
     <div{{ block('block_attributes') }}>
         <div class="content__container">
             <div class="container-fluid">
-                <div class="content__inner" id="container">
+                <div class="content__inner">
                     {{ block_widget(block) }}
                 </div>
             </div>

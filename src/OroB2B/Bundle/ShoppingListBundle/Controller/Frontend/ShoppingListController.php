@@ -13,6 +13,7 @@ use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Handler\ShoppingListHandler;
@@ -54,7 +55,11 @@ class ShoppingListController extends Controller
         return [
             'data' => [
                 'shoppingList' => $shoppingList,
-            ]
+                'totals' => [
+                    'identifier' => 'totals',
+                    'data' => $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($shoppingList)
+                ]
+            ],
         ];
     }
 
@@ -76,13 +81,8 @@ class ShoppingListController extends Controller
      */
     public function createAction(Request $request)
     {
-        $shoppingList = new ShoppingList();
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->getUser();
-        $shoppingList
-            ->setOrganization($accountUser->getOrganization())
-            ->setAccount($accountUser->getAccount())
-            ->setAccountUser($accountUser);
+        $shoppingListManager = $this->get('orob2b_shopping_list.shopping_list.manager');
+        $shoppingList = $shoppingListManager->create();
 
         $response = $this->create($request, $shoppingList);
         if ($response instanceof Response) {
@@ -132,5 +132,13 @@ class ShoppingListController extends Controller
             $this->get('translator')->trans('orob2b.shoppinglist.controller.shopping_list.saved.message'),
             $handler
         );
+    }
+
+    /**
+     * @return TotalProcessorProvider
+     */
+    protected function getTotalProcessor()
+    {
+        return $this->get('orob2b_pricing.subtotal_processor.total_processor_provider');
     }
 }

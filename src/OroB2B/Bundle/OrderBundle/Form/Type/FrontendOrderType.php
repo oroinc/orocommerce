@@ -15,9 +15,13 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
+use OroB2B\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
+use OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 
@@ -43,25 +47,43 @@ class FrontendOrderType extends AbstractType
     /** @var OrderCurrencyHandler */
     protected $orderCurrencyHandler;
 
+    /** @var TotalProcessorProvider */
+    protected $totalProvider;
+
+    /** @var LineItemSubtotalProvider */
+    protected $lineItemSubtotalProvider;
+
+    /** @var DiscountSubtotalProvider */
+    protected $discountSubtotalProvider;
+
     /**
      * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
      * @param SecurityFacade $securityFacade
      * @param PaymentTermProvider $paymentTermProvider
      * @param ProductPriceProvider $productPriceProvider
      * @param OrderCurrencyHandler $orderCurrencyHandler
+     * @param TotalProcessorProvider $totalProvider
+     * @param LineItemSubtotalProvider $lineItemSubtotalProvider
+     * @param DiscountSubtotalProvider $discountSubtotalProvider
      */
     public function __construct(
         OrderAddressSecurityProvider $orderAddressSecurityProvider,
         SecurityFacade $securityFacade,
         PaymentTermProvider $paymentTermProvider,
         ProductPriceProvider $productPriceProvider,
-        OrderCurrencyHandler $orderCurrencyHandler
+        OrderCurrencyHandler $orderCurrencyHandler,
+        TotalProcessorProvider $totalProvider,
+        LineItemSubtotalProvider $lineItemSubtotalProvider,
+        DiscountSubtotalProvider $discountSubtotalProvider
     ) {
         $this->orderAddressSecurityProvider = $orderAddressSecurityProvider;
         $this->securityFacade = $securityFacade;
         $this->paymentTermProvider = $paymentTermProvider;
         $this->productPriceProvider = $productPriceProvider;
         $this->orderCurrencyHandler = $orderCurrencyHandler;
+        $this->totalProvider = $totalProvider;
+        $this->lineItemSubtotalProvider = $lineItemSubtotalProvider;
+        $this->discountSubtotalProvider = $discountSubtotalProvider;
     }
 
     /**
@@ -100,7 +122,7 @@ class FrontendOrderType extends AbstractType
                 OrderAddressType::NAME,
                 [
                     'label' => 'orob2b.order.billing_address.label',
-                    'order' => $options['data'],
+                    'object' => $options['data'],
                     'required' => false,
                     'addressType' => AddressType::TYPE_BILLING,
                 ]
@@ -108,20 +130,33 @@ class FrontendOrderType extends AbstractType
         }
 
         if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_SHIPPING)) {
+            /** @var Order $object */
+            $object = $options['data'];
+            $isEditEnabled = true;
+            if ($object->getShippingAddress()) {
+                $isEditEnabled = !$object->getShippingAddress()->isFromExternalSource();
+            }
             $builder->add(
                 'shippingAddress',
                 OrderAddressType::NAME,
                 [
                     'label' => 'orob2b.order.shipping_address.label',
-                    'order' => $options['data'],
+                    'object' => $object,
                     'required' => false,
                     'addressType' => AddressType::TYPE_SHIPPING,
-                    'application' => OrderAddressType::APPLICATION_FRONTEND
+                    'isEditEnabled' => $isEditEnabled
                 ]
             );
         }
 
         $builder->addEventListener(FormEvents::SUBMIT, [$this, 'updateLineItemPrices']);
+        $builder->addEventSubscriber(
+            new SubtotalSubscriber(
+                $this->totalProvider,
+                $this->lineItemSubtotalProvider,
+                $this->discountSubtotalProvider
+            )
+        );
     }
 
     /**

@@ -95,6 +95,10 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
      */
     public function getSubtotal($entity)
     {
+        if (!$entity instanceof LineItemsNotPricedAwareInterface) {
+            return null;
+        }
+
         $subtotalAmount = 0.0;
         $subtotal = new Subtotal();
         $subtotal->setLabel($this->translator->trans(self::NAME . '.label'));
