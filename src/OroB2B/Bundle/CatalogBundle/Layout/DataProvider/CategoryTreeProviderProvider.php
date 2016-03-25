@@ -9,7 +9,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 
-class CategoryTreeProviderDataProvider extends AbstractServerRenderDataProvider
+class CategoryTreeProviderProvider extends AbstractServerRenderDataProvider
 {
     /** @var array */
     protected $data;

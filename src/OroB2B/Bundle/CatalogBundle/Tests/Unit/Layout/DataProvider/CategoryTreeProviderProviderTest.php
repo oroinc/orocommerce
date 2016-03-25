@@ -6,15 +6,15 @@ use Oro\Component\Layout\LayoutContext;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Layout\DataProvider\CategoryTreeProviderDataProvider;
+use OroB2B\Bundle\CatalogBundle\Layout\DataProvider\CategoryTreeProviderProvider;
 use OroB2B\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 
-class CategoryTreeProviderDataProviderTest extends \PHPUnit_Framework_TestCase
+class CategoryTreeProviderProviderTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \PHPUnit_Framework_MockObject_MockObject|CategoryTreeProvider */
     protected $categoryTreeProvider;
 
-    /** @var CategoryTreeProviderDataProvider */
+    /** @var CategoryTreeProviderProvider */
     protected $provider;
 
     public function setUp()
@@ -23,7 +23,7 @@ class CategoryTreeProviderDataProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->provider = new CategoryTreeProviderDataProvider(
+        $this->provider = new CategoryTreeProviderProvider(
             $this->categoryTreeProvider
         );
     }
