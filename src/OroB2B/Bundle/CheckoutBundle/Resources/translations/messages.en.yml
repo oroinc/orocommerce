@@ -1,0 +1,113 @@
+orob2b:
+    checkout:
+        entity_label: Checkout
+        entity_plural_label: Checkouts
+        id.label: Id
+        owner.label: Owner
+        account.label: Account
+        account_user.label: Account User
+        organization.label: Organization
+        customer_notes.label: Customer Notes
+        customer_notes.frontend.label: Notes
+        po_number.label: PO Number
+        ship_until.label: Do Not Ship Later Than
+        billing_address.label: Billing Address
+        shipping_address.label: Shipping Address
+        save_billing_address.label: Save Billing Address
+        save_shipping_address.label: Save Shipping Address
+        ship_to_billing_address.label: Ship to Billing Address
+        source.label: Source
+        currency.label: Currency
+        website.label: Website
+        workflow_item.label: Workflow Item
+        workflow_step.label: Workflow Step
+
+        checkoutsource:
+            entity_label: Checkout Source
+            entity_plural_label: Checkout Sources
+            id.label: Id
+
+        billing_information: Billing Information
+        shipping_information: Shipping Information
+        shipping_method: Shipping Method
+        payment: Payment
+
+        order_review:
+            label: Order Review
+            shipping_date: Add last ship to this order
+            shipping_date_placeholder: Shipping Date
+            note: Add a note to the order
+            note_placeholder: Enter your note
+            po_number_placeholder: Add your po number
+            po_number: Add a po number (optional)
+
+        order_summary:
+            label: Order Summary
+            items: Items
+            subtotal: Subtotal
+            edit_order: Edit Order
+            edit_order_list: Edit your Order List
+            item: Item
+            sku: SKU
+            quantity : Quantity
+            price : Price
+            price_per_item: Price per item
+            total_price: Total Price
+            total_qty: Total QTY
+
+        workflow:
+            view_options.label: View Options for this Order
+            unavailable_transition.message: Transition could not be performed because:
+            b2b_flow_checkout:
+                label: eCommerce Checkout
+
+                attribute:
+                    remove_source.label: Remove Source Entity
+
+                step:
+                    enter_billing_address.label: Billing Information
+                    enter_shipping_address.label: Shipping Information
+                    enter_shipping_method.label: Shipping Method
+                    enter_payment.label: Payment
+                    place_order.label: Order Review
+
+                transition:
+                    continue_to_shipping_address.label: Continue
+                    continue_to_shipping_method.label: Continue
+                    continue_to_payment.label: Continue
+                    continue_to_place_order.label: Continue
+                    back_to_billing_address.label: Edit Billing Information
+                    back_to_shipping_address.label: Edit Shipping Information
+                    back_to_shipping_method.label: Edit Shipping Method
+                    back_to_payment.label: Edit Payment
+                    transitions.back_to_payment.label: Edit Payment
+                    place_order.label: Submit Order
+                    back.label: Back
+
+                form:
+                    save_address.label: Save address
+                    ship_to_this_address.label: Ship to this address
+                    use_billing_address.label: Use billing address
+                    required.label: Required Field
+
+                    placeholder:
+                        address:
+                            label: Enter address label
+                            organization: Enter your organization
+                            street: Enter street
+                            street2: Enter street 2
+                            city: Enter city
+                            zip: Zip
+                            phone: Enter phone number
+                        name:
+                            prefix: Enter your name prefix
+                            first_name: Enter your first name
+                            middle_name: Enter your middle name
+                            last_name: Enter your last name
+                            sufix: Enter your name sufix
+        form:
+            address.manual: Enter address manually
+            address.select.billing.label: SELECT A BILLING ADDRESS FROM YOUR ACCOUNT
+            address.select.shipping.label: SELECT A SHIPPING ADDRESS FROM YOUR ACCOUNT
+
+
