@@ -194,6 +194,7 @@ class StartCheckout extends AbstractAction
         }
 
         if ($newCheckout || $this->getOptionFromContext($context, self::FORCE, false)) {
+            $this->updateCheckoutData($context, $checkout);
             $this->addWorkflowItemDataSettings($context, $checkout->getWorkflowItem());
             $em->flush($checkout->getWorkflowItem());
         }
@@ -244,6 +245,19 @@ class StartCheckout extends AbstractAction
      */
     protected function createCheckout($context, CheckoutSource $checkoutSource)
     {
+        $checkout = new Checkout();
+        $checkout->setSource($checkoutSource);
+        $this->updateCheckoutData($context, $checkout);
+
+        return $checkout;
+    }
+
+    /**
+     * @param mixed $context
+     * @param Checkout $checkout
+     */
+    protected function updateCheckoutData($context, Checkout $checkout)
+    {
         /** @var AccountUser $user */
         $user = $this->tokenStorage->getToken()->getUser();
         $account = $user->getAccount();
@@ -257,13 +271,7 @@ class StartCheckout extends AbstractAction
             'website' => $this->websiteManager->getCurrentWebsite(),
             'currency' => $this->currencyProvider->getUserCurrency()
         ];
-
-        $checkout = new Checkout();
-        $checkout->setSource($checkoutSource);
-
         $this->setCheckoutData($context, $checkout, $defaultData);
-
-        return $checkout;
     }
 
     /**
