@@ -4,7 +4,7 @@ oro_system_configuration:
             title: orob2b.account.system_configuration.groups.account.title
         account_users:
             title: orob2b.account.system_configuration.groups.account_users.title
-            icon: 'icon-user'
+            icon: 'cf-user'
         account_users_registration:
             title: orob2b.account.system_configuration.groups.account_users_registration.title
             icon: 'icon-user-plus'

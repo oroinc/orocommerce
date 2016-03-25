@@ -54,7 +54,7 @@ oro_menu_config:
             label:           'orob2b.account.menu.customers_tab.label'
             uri:             '#'
             extras:
-                icon:        icon-user
+                icon:        cf-user
                 position:    200
 
         account_list:
