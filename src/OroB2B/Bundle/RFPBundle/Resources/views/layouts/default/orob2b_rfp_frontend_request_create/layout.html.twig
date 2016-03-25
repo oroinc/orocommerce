@@ -1,27 +1,27 @@
 {% block _rfp_page_widget %}
     {% set attr = attr|merge({
-    class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}_full"
+        class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}_full"
     }) %}
     <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
 {% block _rfp_form_container_widget %}
     {% set attr = attr|merge({
-    class: attr.class|default('') ~ " {{ class_prefix }}__form_container"
+        class: attr.class|default('') ~ " {{ class_prefix }}__form_container"
     }) %}
     <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
 {% block _rfp_page_title_widget %}
     {% set attr = attr|merge({
-    class: attr.class|default('') ~ " {{ class_prefix }}__title"
+        class: attr.class|default('') ~ " {{ class_prefix }}__title"
     }) %}
     <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
 {% block _rfp_form_start_widget %}
     {% set attr = attr|merge({
-    class: attr.class|default('') ~ " {{ class_prefix }}__form {{ class_prefix }}__form_register"
+        class: attr.class|default('') ~ " {{ class_prefix }}__form {{ class_prefix }}__form_register"
     }) %}
     {{ block('form_start_widget') }}
 {% endblock %}

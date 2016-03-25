@@ -29,7 +29,8 @@ layout:
                 rfp_page:
                     blockType: container
                     options:
-                        class_prefix: 'create-account'
+#                        class_prefix: 'create-account'
+                        class_prefix: 'create-frq'
 
                 rfp_form_container:
                     blockType: container
