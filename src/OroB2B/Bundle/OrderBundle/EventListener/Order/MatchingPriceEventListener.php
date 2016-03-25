@@ -2,30 +2,23 @@
 
 namespace OroB2B\Bundle\OrderBundle\EventListener\Order;
 
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
 
-use OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler;
-use OroB2B\Bundle\PricingBundle\Provider\MatchingPriceProvider;
+use OroB2B\Bundle\OrderBundle\Pricing\PriceMatcher;
 
 class MatchingPriceEventListener
 {
     const MATCHED_PRICES_KEY = 'matchedPrices';
 
-    /** @var MatchingPriceProvider */
-    protected $provider;
-
-    /** @var PriceListTreeHandler */
-    protected $priceListTreeHandler;
+    /** @var PriceMatcher */
+    protected $priceMatcher;
 
     /**
-     * @param MatchingPriceProvider $provider
-     * @param PriceListTreeHandler $priceListTreeHandler
+     * @param PriceMatcher $priceMatcher
      */
-    public function __construct(MatchingPriceProvider $provider, PriceListTreeHandler $priceListTreeHandler)
+    public function __construct(PriceMatcher $priceMatcher)
     {
-        $this->provider = $provider;
-        $this->priceListTreeHandler = $priceListTreeHandler;
+        $this->priceMatcher = $priceMatcher;
     }
 
     /**
@@ -35,21 +28,7 @@ class MatchingPriceEventListener
     {
         $order = $event->getOrder();
 
-        $lineItems = $order->getLineItems()->map(
-            function (OrderLineItem $orderLineItem) use ($order) {
-                $product = $orderLineItem->getProduct();
-
-                return [
-                    'product' => $product ? $product->getId() : null,
-                    'unit' => $orderLineItem->getProductUnit() ? $orderLineItem->getProductUnit()->getCode() : null,
-                    'qty' => $orderLineItem->getQuantity(),
-                    'currency' => $orderLineItem->getCurrency() ?: $order->getCurrency(),
-                ];
-            }
-        );
-
-        $priceList = $this->priceListTreeHandler->getPriceList($order->getAccount(), $order->getWebsite());
-        $matchingPrices = $this->provider->getMatchingPrices($lineItems->toArray(), $priceList);
+        $matchingPrices = $this->priceMatcher->getMatchingPrices($order);
 
         $event->getData()->offsetSet(self::MATCHED_PRICES_KEY, $matchingPrices);
     }

@@ -58,7 +58,7 @@ class OrderController extends AbstractOrderController
         return [
             'data' => array_merge(
                 ['order' => $order],
-                $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($order)
+                ['id' => 'totals', 'data' => $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($order)]
             ),
         ];
     }

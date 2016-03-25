@@ -24,7 +24,9 @@ define(function(require) {
             mediator.on('entry-point:order:load', this.setTotals, this);
             mediator.on('entry-point:order:load:after', this.hideLoadingMask, this);
 
-            this.$subtotals = this.options._sourceElement.find(this.options.selectors.subtotals);
+            mediator.on('line-items-totals:update', this.updateTotals, this);
+
+            this.$totals = this.options._sourceElement.find(this.options.selectors.totals);
             this.template = _.template($(this.options.selectors.template).text());
             this.loadingMaskView = new LoadingMaskView({container: this.options._sourceElement});
 
@@ -38,6 +40,8 @@ define(function(require) {
             var totals = _.defaults(data, {totals: {total: {}, subtotals: {}}}).totals;
 
             mediator.trigger('entry-point:order:trigger:totals', totals);
+
+            TotalsComponent.__super__.triggerTotalsUpdateEvent.call(this, data.totals);
 
             this.render(totals);
         },

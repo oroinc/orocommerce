@@ -28,7 +28,7 @@ define(function(require) {
             selectors: {
                 form: '',
                 template: '#totals-template',
-                subtotals: '[data-totals-container]'
+                totals: '[data-totals-container]'
             },
             events: [],
             skipMaskView: false
@@ -52,7 +52,7 @@ define(function(require) {
         /**
          * @property {jQuery}
          */
-        $subtotals: null,
+        $totals: null,
 
         /**
          * @property {Object}
@@ -91,7 +91,7 @@ define(function(require) {
 
             this.$el = options._sourceElement;
             this.$form = $(this.options.selectors.form);
-            this.$subtotals = this.$el.find(this.options.selectors.subtotals);
+            this.$totals = this.$el.find(this.options.selectors.totals);
             this.template = _.template($(this.options.selectors.template).text());
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
             this.eventName = 'total-target:changing';
@@ -122,7 +122,7 @@ define(function(require) {
         },
 
         /**
-         * Get and render subtotals
+         * Get and render totals
          */
         updateTotals: function(e) {
             this.showLoadingMask();
@@ -140,22 +140,27 @@ define(function(require) {
                 if (promises.length) {
                     $.when.apply($, promises).done(_.bind(this.updateTotals, this, e));
                 } else {
-                    this.getTotals(_.bind(function(subtotals) {
+                    this.getTotals(_.bind(function(totals) {
                         this.hideLoadingMask();
-                        if (!subtotals) {
-                            return;
-                        }
-
-                        mediator.trigger('totals:update', subtotals);
-
-                        this.render(subtotals);
+                        this.triggerTotalsUpdateEvent(totals);
+                        this.render(totals);
                     }, this));
                 }
             }, this), 100);
         },
 
         /**
-         * Get order subtotals
+         * @param {Object} totals
+         */
+        triggerTotalsUpdateEvent: function(totals)
+        {
+            if (!_.isUndefined(totals) && !_.isEmpty(totals)) {
+                mediator.trigger('totals:update', totals);
+            }
+        },
+
+        /**
+         * Get order totals
          *
          * @param {Function} callback
          */
@@ -208,7 +213,7 @@ define(function(require) {
 
             this.pushItem(totals.total);
 
-            this.$subtotals.html(_.filter(this.items).join(''));
+            this.$totals.html(_.filter(this.items).join(''));
 
             this.items = [];
         },

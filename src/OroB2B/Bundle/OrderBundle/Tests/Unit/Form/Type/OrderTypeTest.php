@@ -24,12 +24,14 @@ use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
+use OroB2B\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemsCollectionType;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderDiscountItemsCollectionType;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderDiscountItemType;
 use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
+use OroB2B\Bundle\OrderBundle\Pricing\PriceMatcher;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
@@ -72,6 +74,9 @@ class OrderTypeTest extends TypeTestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|DiscountSubtotalProvider */
     protected $discountSubtotalProvider;
 
+    /** @var PriceMatcher|\PHPUnit_Framework_MockObject_MockObject */
+    protected $priceMatcher;
+
     /** @var ValidatorInterface  */
     private $validator;
 
@@ -102,15 +107,22 @@ class OrderTypeTest extends TypeTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->priceMatcher = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Pricing\PriceMatcher')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         // create a type instance with the mocked dependencies
         $this->type = new OrderType(
             $this->securityFacade,
             $this->orderAddressSecurityProvider,
             $this->paymentTermProvider,
             $this->orderCurrencyHandler,
-            $this->totalsProvider,
-            $this->lineItemSubtotalProvider,
-            $this->discountSubtotalProvider
+            new SubtotalSubscriber(
+                $this->totalsProvider,
+                $this->lineItemSubtotalProvider,
+                $this->discountSubtotalProvider,
+                $this->priceMatcher
+            )
         );
 
         $this->type->setDataClass('OroB2B\Bundle\OrderBundle\Entity\Order');

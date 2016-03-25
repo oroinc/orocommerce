@@ -7,6 +7,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\EventListener\Order\MatchingPriceEventListener;
+use OroB2B\Bundle\OrderBundle\Pricing\PriceMatcher;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
 use OroB2B\Bundle\TaxBundle\Model\TaxResultElement;
@@ -28,6 +29,9 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
     /** @var OrderEvent|\PHPUnit_Framework_MockObject_MockObject */
     protected $event;
 
+    /** @var PriceMatcher|\PHPUnit_Framework_MockObject_MockObject */
+    protected $priceMatcher;
+
     /** @var TaxationSettingsProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $taxationSettingsProvider;
 
@@ -46,7 +50,15 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new OrderTaxesListener($this->taxManager, $this->taxationSettingsProvider);
+        $this->priceMatcher = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Pricing\PriceMatcher')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->listener = new OrderTaxesListener(
+            $this->taxManager,
+            $this->taxationSettingsProvider,
+            $this->priceMatcher
+        );
     }
 
     protected function tearDown()

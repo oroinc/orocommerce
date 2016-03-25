@@ -11,6 +11,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
+use OroB2B\Bundle\OrderBundle\Pricing\PriceMatcher;
 use OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
@@ -27,19 +28,25 @@ class SubtotalSubscriber implements EventSubscriberInterface
     /** @var DiscountSubtotalProvider */
     protected $discountSubtotalProvider;
 
+    /** @var PriceMatcher */
+    protected $priceMatcher;
+
     /**
      * @param TotalProcessorProvider $totalProvider
      * @param LineItemSubtotalProvider $lineItemSubtotalProvider
      * @param DiscountSubtotalProvider $discountSubtotalProvider
+     * @param PriceMatcher $priceMatcher
      */
     public function __construct(
         TotalProcessorProvider $totalProvider,
         LineItemSubtotalProvider $lineItemSubtotalProvider,
-        DiscountSubtotalProvider $discountSubtotalProvider
+        DiscountSubtotalProvider $discountSubtotalProvider,
+        PriceMatcher $priceMatcher
     ) {
         $this->totalProvider = $totalProvider;
         $this->lineItemSubtotalProvider = $lineItemSubtotalProvider;
         $this->discountSubtotalProvider = $discountSubtotalProvider;
+        $this->priceMatcher = $priceMatcher;
     }
 
     /**
@@ -60,6 +67,7 @@ class SubtotalSubscriber implements EventSubscriberInterface
         $form = $event->getForm();
         $data = $event->getData();
         if ($data instanceof Order) {
+            $this->priceMatcher->addMatchingPrices($data);
             $this->fillSubtotals($data);
             $this->fillDiscounts($data);
             $this->fillTotal($data);

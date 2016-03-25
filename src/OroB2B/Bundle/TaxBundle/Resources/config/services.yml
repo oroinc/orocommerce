@@ -275,6 +275,7 @@ services:
         arguments:
             - @orob2b_tax.manager.tax_manager
             - @orob2b_tax.provider.taxation_settings_provider
+            - @orob2b_order.pricing.price_matcher
         tags:
             - { name: kernel.event_listener, event: orob2b_order.order, method: onOrderEvent, priority: -128 }
 

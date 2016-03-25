@@ -41,6 +41,7 @@ parameters:
     orob2b_order.layout.block_type.order_total.class: OroB2B\Bundle\OrderBundle\Layout\Block\Type\OrderTotalType
 
     orob2b_order.validator.checkout_address.class: OroB2B\Bundle\OrderBundle\Validator\Constraints\OrderAddressValidator
+    orob2b_order.pricing.price_matcher.class: OroB2B\Bundle\OrderBundle\Pricing\PriceMatcher
 
 services:
     orob2b_order.order.manager.api:
@@ -178,8 +179,7 @@ services:
     orob2b_order.event_listener.order.matching_price:
         class: %orob2b_order.event_listener.order.matching_price.class%
         arguments:
-            - @orob2b_pricing.provider.matching_price
-            - @orob2b_pricing.model.price_list_tree_handler
+            - @orob2b_order.pricing.price_matcher
         tags:
             - { name: kernel.event_listener, event: orob2b_order.order, method: onOrderEvent }
 
@@ -243,3 +243,8 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: orob2b_order_address_validator }
 
+    orob2b_order.pricing.price_matcher:
+        class: %orob2b_order.pricing.price_matcher.class%
+        arguments:
+            - @orob2b_pricing.provider.matching_price
+            - @orob2b_pricing.model.price_list_tree_handler

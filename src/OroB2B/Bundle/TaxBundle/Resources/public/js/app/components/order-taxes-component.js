@@ -41,15 +41,19 @@ define(function(require) {
         },
 
         appendTaxResult: function(totals) {
-            if (_.isEmpty(totals.subtotals.tax)) {
-                return;
-            }
+            var subtotals = _.extend({subtotals: {}}, totals).subtotals;
+            _.map(_.where(subtotals, {type: 'tax'}), _.bind(this.prepareItem, this));
+        },
 
-            totals.subtotals.tax.data.total = TaxFormatter.formatItem(totals.subtotals.tax.data.total);
-            totals.subtotals.tax.data.taxes = _.map(totals.subtotals.tax.data.taxes, TaxFormatter.formatTax);
+        /**
+         * @param {Object} item
+         */
+        prepareItem: function(item) {
+            item.data.total = TaxFormatter.formatItem(item.data.total);
+            item.data.taxes = _.map(item.data.taxes, TaxFormatter.formatTax);
 
-            totals.subtotals.tax.data.in = $(this.options.selectors.collapseSelector).hasClass('in');
-            totals.subtotals.tax.template = this.totalsTemplate;
+            item.data.in = $(this.options.selectors.collapseSelector).hasClass('in');
+            item.template = this.totalsTemplate;
         },
 
         /**

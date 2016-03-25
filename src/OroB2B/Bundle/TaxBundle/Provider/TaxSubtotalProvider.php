@@ -73,7 +73,7 @@ class TaxSubtotalProvider implements SubtotalProviderInterface
             $subtotal->setAmount($tax->getTotal()->getTaxAmount());
             $subtotal->setCurrency($tax->getTotal()->getCurrency());
             $subtotal->setVisible(true);
-            $subtotal->setData($tax->getIterator()->getArrayCopy());
+            $subtotal->setData($tax->getArrayCopy());
         } catch (TaxationDisabledException $e) {
             $subtotal->setVisible(false);
         }

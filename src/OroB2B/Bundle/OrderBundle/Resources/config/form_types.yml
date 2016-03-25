@@ -11,6 +11,8 @@ parameters:
     orob2b_order.form.type.order_discount_item_collection.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderDiscountItemsCollectionType
     orob2b_order.form.type.order_discount_item.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderDiscountItemType
 
+    orob2b_order.form.type.event_listener.subtotals_subscriber.class: OroB2B\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber
+
 services:
     orob2b_order.form.type.order:
         class: %orob2b_order.form.type.order.class%
@@ -19,9 +21,7 @@ services:
             - @orob2b_order.order.provider.order_address_security
             - @orob2b_payment.provider.payment_term
             - @orob2b_order.model.order_currency_handler
-            - @orob2b_pricing.subtotal_processor.total_processor_provider
-            - @orob2b_pricing.subtotal_processor.provider.subtotal_line_item
-            - @orob2b_order.provider.discount_subtotal
+            - @orob2b_order.form.type.event_listener.subtotals_subscriber
         tags:
             - { name: form.type, alias: orob2b_order_type }
         calls:
@@ -36,9 +36,7 @@ services:
             - @orob2b_payment.provider.payment_term
             - @orob2b_pricing.provider.combined_product_price
             - @orob2b_order.model.order_currency_handler
-            - @orob2b_pricing.subtotal_processor.total_processor_provider
-            - @orob2b_pricing.subtotal_processor.provider.subtotal_line_item
-            - @orob2b_order.provider.discount_subtotal
+            - @orob2b_order.form.type.event_listener.subtotals_subscriber
         tags:
             - { name: form.type, alias: orob2b_order_frontend_type }
         calls:
@@ -117,3 +115,11 @@ services:
             - [setDataClass, [%orob2b_order.entity.order_discount_item.class%]]
         tags:
             - { name: form.type, alias: "orob2b_order_discount_item" }
+
+    orob2b_order.form.type.event_listener.subtotals_subscriber:
+        class: %orob2b_order.form.type.event_listener.subtotals_subscriber.class%
+        arguments:
+            - @orob2b_pricing.subtotal_processor.total_processor_provider
+            - @orob2b_pricing.subtotal_processor.provider.subtotal_line_item
+            - @orob2b_order.provider.discount_subtotal
+            - @orob2b_order.pricing.price_matcher
