@@ -2,7 +2,10 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\DataProvider;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
+use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Component\Checkout\DataProvider\AbstractCheckoutProvider;
 
@@ -19,30 +22,36 @@ class CheckoutLineItemDataProvider extends AbstractCheckoutProvider
     protected $currencyProvider;
 
     /**
+     * @var ManagerRegistry
+     */
+    protected $registry;
+
+    /**
      * @param FrontendProductPricesDataProvider $frontendProductPricesDataProvider
+     * @param ManagerRegistry $registry
      */
-    public function __construct(FrontendProductPricesDataProvider $frontendProductPricesDataProvider)
-    {
+    public function __construct(
+        FrontendProductPricesDataProvider $frontendProductPricesDataProvider,
+        ManagerRegistry $registry
+    ) {
         $this->frontendProductPricesDataProvider = $frontendProductPricesDataProvider;
+        $this->registry = $registry;
     }
 
     /**
-     * {@inheritDoc}
+     * @param ShoppingList $shoppingList
+     * @return array
      */
-    public function isEntitySupported($entity)
+    public function getData($shoppingList)
     {
-        return $entity instanceof ShoppingList;
-    }
+        /** @var LineItemRepository $repository */
+        $repository = $this->registry->getManagerForClass('OroB2BShoppingListBundle:LineItem')
+            ->getRepository('OroB2BShoppingListBundle:LineItem');
+        $lineItems = $repository->getItemsWithProductByShoppingList($shoppingList);
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function prepareData($entity, $additionalData)
-    {
-        $shoppingListPrices = $this->frontendProductPricesDataProvider->getProductsPrices($entity);
-
+        $shoppingListPrices = $this->frontendProductPricesDataProvider->getProductsPrices($lineItems);
         $data = [];
-        foreach ($entity->getLineItems() as $lineItem) {
+        foreach ($lineItems as $lineItem) {
             $data[] = [
                 'product' => $lineItem->getProduct(),
                 'productSku' => $lineItem->getProductSku(),
@@ -54,5 +63,13 @@ class CheckoutLineItemDataProvider extends AbstractCheckoutProvider
         }
 
         return $data;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isEntitySupported($entity)
+    {
+        return $entity instanceof ShoppingList;
     }
 }

@@ -34,6 +34,11 @@ class SummaryDataProvider extends AbstractServerRenderDataProvider
     protected $totalsProvider;
 
     /**
+     * @var array
+     */
+    protected $summary = [];
+
+    /**
      * @param CheckoutLineItemsManager $checkoutLineItemsManager
      * @param LineItemSubtotalProvider $lineItemsSubtotalProvider
      * @param TotalProcessorProvider $totalsProvider

@@ -1,3 +1,4 @@
+/** @lends ClearFieldData */
 define(function(require) {
     'use strict';
 
@@ -6,7 +7,7 @@ define(function(require) {
     var _ = require('underscore');
     var BaseComponent = require('oroui/js/app/components/base/component');
 
-    ClearFieldData = BaseComponent.extend({
+    ClearFieldData = BaseComponent.extend(/** @exports ClearFieldData.prototype */ {
         /**
          * @inheritDoc
          */
@@ -19,7 +20,7 @@ define(function(require) {
         },
         clear: function() {
             if (this.$trigger.attr('checked') !== 'checked') {
-                this.$el.find("input[type=text], textarea").val('');
+                this.$el.find('input[type=text], textarea').val('');
             }
         }
     });
