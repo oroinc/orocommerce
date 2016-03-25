@@ -4,12 +4,20 @@ namespace OroB2B\Bundle\ProductBundle\Migrations\Schema\v1_3;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroB2BProductBundle implements Migration, AttachmentExtensionAwareInterface
+class OroB2BProductBundle implements
+    Migration,
+    OrderedMigrationInterface,
+    AttachmentExtensionAwareInterface,
+    ContainerAwareInterface
 {
     const PRODUCT_TABLE_NAME = 'orob2b_product';
     const PRODUCT_IMAGE_TABLE_NAME = 'orob2b_product_image';
@@ -21,11 +29,24 @@ class OroB2BProductBundle implements Migration, AttachmentExtensionAwareInterfac
     protected $attachmentExtension;
 
     /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    /**
      * {@inheritdoc}
      */
     public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
     {
         $this->attachmentExtension = $attachmentExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
     }
 
     /**
@@ -57,5 +78,21 @@ class OroB2BProductBundle implements Migration, AttachmentExtensionAwareInterfac
             ],
             self::MAX_PRODUCT_IMAGE_SIZE_IN_MB
         );
+
+        //migrate old image field to product image with types
+        $queries->addPostQuery(new MigrateImageToProductImageQuery(
+            $this->container->get('oro_entity.doctrine_helper'),
+            $this->container->get('oro_layout.provider.image_type'),
+            $this->container->getParameter('orob2b_product.product.class'),
+            $this->container->getParameter('orob2b_product.product_image.class')
+        ));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 10;
     }
 }

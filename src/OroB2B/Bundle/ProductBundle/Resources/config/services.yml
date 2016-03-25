@@ -3,6 +3,7 @@ parameters:
     orob2b_product.product_unit.class: OroB2B\Bundle\ProductBundle\Entity\ProductUnit
     orob2b_product.product_unit_precision.class: OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision
     orob2b_product.product_variant_link.class: OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink
+    orob2b_product.product_image.class: OroB2B\Bundle\ProductBundle\Entity\ProductImage
     orob2b_product.product.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_product.service.quantity_rounding.class: OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService
     orob2b_product.service.abstract_rounding.class: OroB2B\Bundle\ProductBundle\Rounding\AbstractRoundingService
