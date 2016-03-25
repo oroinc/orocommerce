@@ -39,15 +39,14 @@ class CheckoutLineItemDataProvider extends AbstractCheckoutProvider
     }
 
     /**
-     * @param ShoppingList $shoppingList
-     * @return array
+     * {@inheritdoc}
      */
-    public function getData($shoppingList)
+    public function prepareData($entity, $additionalData)
     {
         /** @var LineItemRepository $repository */
         $repository = $this->registry->getManagerForClass('OroB2BShoppingListBundle:LineItem')
             ->getRepository('OroB2BShoppingListBundle:LineItem');
-        $lineItems = $repository->getItemsWithProductByShoppingList($shoppingList);
+        $lineItems = $repository->getItemsWithProductByShoppingList($entity);
 
         $shoppingListPrices = $this->frontendProductPricesDataProvider->getProductsPrices($lineItems);
         $data = [];
