@@ -30,6 +30,10 @@ parameters:
 
     orob2b_order.validator.checkout_address.class: OroB2B\Bundle\OrderBundle\Validator\Constraints\OrderAddressValidator
 
+    orob2b_order.order.total.total_helper.class: OroB2B\Bundle\OrderBundle\Total\TotalHelper
+
+    orob2b_order.form.subscriber.subtotal_subscriber.class: OroB2B\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber
+
 services:
     orob2b_order.order.manager.api:
         class: %orob2b_order.order.manager.api.class%
@@ -169,3 +173,15 @@ services:
             - @validator
         tags:
             - { name: validator.constraint_validator, alias: orob2b_order_address_validator }
+
+    orob2b_order.order.total.total_helper:
+        class: %orob2b_order.order.total.total_helper.class%
+        arguments:
+            - @orob2b_pricing.subtotal_processor.total_processor_provider
+            - @orob2b_pricing.subtotal_processor.provider.subtotal_line_item
+            - @orob2b_order.provider.discount_subtotal
+
+    orob2b_order.form.subscriber.subtotal_subscriber:
+        class: %orob2b_order.form.subscriber.subtotal_subscriber.class%
+        arguments:
+            - @orob2b_order.order.total.total_helper
