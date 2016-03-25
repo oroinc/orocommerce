@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\FrontendBundle\DependencyInjection;
 
+use Oro\Bundle\LocaleBundle\DependencyInjection\OroLocaleExtension;
+
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Config\FileLocator;
@@ -23,6 +25,8 @@ class OroB2BFrontendExtension extends Extension
         $loader->load('services.yml');
         $loader->load('form_type.yml');
 
+        $this->addPhoneToAddress($container);
+
         $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
     }
 
@@ -32,5 +36,19 @@ class OroB2BFrontendExtension extends Extension
     public function getAlias()
     {
         return self::ALIAS;
+    }
+
+
+    public function addPhoneToAddress(ContainerBuilder $container)
+    {
+        $formatAddressLocales = $container->getParameter(OroLocaleExtension::PARAMETER_ADDRESS_FORMATS);
+        foreach ($formatAddressLocales as &$locale) {
+            $locale['format'] .= "\n%%phone%%";
+        }
+        
+        $container->setParameter(
+            OroLocaleExtension::PARAMETER_ADDRESS_FORMATS,
+            $formatAddressLocales
+        );
     }
 }
