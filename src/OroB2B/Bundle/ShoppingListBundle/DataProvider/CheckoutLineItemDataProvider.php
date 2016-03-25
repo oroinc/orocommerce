@@ -4,9 +4,9 @@ namespace OroB2B\Bundle\ShoppingListBundle\DataProvider;
 
 use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
+use OroB2B\Component\Checkout\DataProvider\AbstractCheckoutProvider;
 
-class CheckoutLineItemDataProvider implements CheckoutDataProviderInterface
+class CheckoutLineItemDataProvider extends AbstractCheckoutProvider
 {
     /**
      * @var FrontendProductPricesDataProvider
@@ -27,16 +27,22 @@ class CheckoutLineItemDataProvider implements CheckoutDataProviderInterface
     }
 
     /**
-     * @param ShoppingList $shoppingList
-     * @param array $additionalData
-     * @return array
+     * {@inheritDoc}
      */
-    public function getData($shoppingList, $additionalData)
+    public function isEntitySupported($entity)
     {
-        $shoppingListPrices = $this->frontendProductPricesDataProvider->getProductsPrices($shoppingList);
+        return $entity instanceof ShoppingList;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function prepareData($entity, $additionalData)
+    {
+        $shoppingListPrices = $this->frontendProductPricesDataProvider->getProductsPrices($entity);
 
         $data = [];
-        foreach ($shoppingList->getLineItems() as $lineItem) {
+        foreach ($entity->getLineItems() as $lineItem) {
             $data[] = [
                 'product' => $lineItem->getProduct(),
                 'productSku' => $lineItem->getProductSku(),
@@ -48,13 +54,5 @@ class CheckoutLineItemDataProvider implements CheckoutDataProviderInterface
         }
 
         return $data;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isEntitySupported($entity)
-    {
-        return $entity instanceof ShoppingList;
     }
 }

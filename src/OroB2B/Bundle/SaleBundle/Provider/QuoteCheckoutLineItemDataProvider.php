@@ -5,9 +5,9 @@ namespace OroB2B\Bundle\SaleBundle\Provider;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Model\QuoteOfferConverter;
-use OroB2B\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
+use OroB2B\Component\Checkout\DataProvider\AbstractCheckoutProvider;
 
-class QuoteCheckoutLineItemDataProvider implements CheckoutDataProviderInterface
+class QuoteCheckoutLineItemDataProvider extends AbstractCheckoutProvider
 {
     /** @var  QuoteOfferConverter */
     protected $quoteOfferConverter;
@@ -20,10 +20,19 @@ class QuoteCheckoutLineItemDataProvider implements CheckoutDataProviderInterface
         $this->quoteOfferConverter = $quoteOfferConverter;
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isEntitySupported($entity)
+    {
+        return $entity instanceof Quote;
+    }
+
     /**
      * {@inheritdoc}
      */
-    public function getData($entity, $additionalData)
+    protected function prepareData($entity, $additionalData)
     {
         $data = $this->quoteOfferConverter->toModel($additionalData);
         $result = [];
@@ -42,13 +51,5 @@ class QuoteCheckoutLineItemDataProvider implements CheckoutDataProviderInterface
         }
 
         return $result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isEntitySupported($entity)
-    {
-        return $entity instanceof Quote;
     }
 }
