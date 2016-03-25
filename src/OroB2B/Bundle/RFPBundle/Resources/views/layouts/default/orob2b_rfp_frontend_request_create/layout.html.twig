@@ -33,17 +33,23 @@
     {{ form_row(form.phone) }}
     {{ form_row(form.company) }}
     {{ form_row(form.role) }}
-    {{ form_row(form.account) }}
-    {{ form_row(form.accountUser) }}
-    {{ form_row(form.status) }}
     {{ form_row(form.note) }}
     {{ form_row(form.poNumber) }}
     {{ form_row(form.shipUntil) }}
-    {{ form_row(form.assignedUsers) }}
+    {#{{ form_row(form.assignedUsers) }}#}
     {{ form_row(form.assignedAccountUsers) }}
 {% endblock %}
 
 {% block _rfp_form_lineitems_widget %}
+    {#<div class="rfp-lineitems"#}
+         {#data-page-component-module="oroui/js/app/components/view-component"#}
+         {#data-page-component-options="{{ {#}
+             {#view: 'orob2brfp/js/app/views/line-items-view'#}
+         {#}|json_encode }}"#}
+         {#data-layout="separate">#}
+        {#{{ form_widget(form.requestProducts) }}#}
+        {#{{ form_errors(form.requestProducts) }}#}
+    {#</div>#}
     {{ form_widget(form.requestProducts) }}
     {{ form_errors(form.requestProducts) }}
 {% endblock %}

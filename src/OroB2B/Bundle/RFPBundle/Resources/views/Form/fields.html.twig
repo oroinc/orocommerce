@@ -33,10 +33,10 @@
                     <tr>
                         <th><span>{{ 'orob2b.rfp.frontend.request.lineitem.product'|trans }}</span></th>
                         <th><span>{{ 'orob2b.rfp.frontend.request.lineitem.requested.label'|trans }}</span></th>
-                        <th><span>{{ 'orob2b.rfp.frontend.request.lineitem.notes'|trans }}</span></th>
                         <th></th>
                     </tr>
                 </thead>
+
                 <tbody data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
                 {% if form.children|length %}
                     {% for child in form.children %}
@@ -53,25 +53,59 @@
 {% endblock %}
 
 {% macro orob2b_rfp_request_lineitem_prototype(widget) %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
+        {% set id = widget.vars.id %}
     {% else %}
         {% set form = widget %}
         {% set name = widget.vars.full_name %}
+        {% set id = widget.vars.id %}
     {% endif %}
     {% set page_component_options = form.vars.page_component_options|merge(form.vars.componentOptions|default({})) %}
-    <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
-        class="rfp-lineitem"
-        data-page-component-module="{{ form.vars.page_component }}"
-        data-page-component-options="{{ page_component_options|json_encode }}"
-        >
-        {{ form_widget(form) }}
-        {{ form_errors(form) }}
-        <td class="rfp-lineitem-remove">
-            <button type="button" class="removeLineItem btn icons-holder"><i class="icon-remove"></i></button>
-        </td>
-    </tr>
+    <tbody class="line_item">
+        <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
+            class="rfp-lineitem"
+            data-page-component-module="{{ form.vars.page_component }}"
+            data-page-component-options="{{ page_component_options|json_encode }}"
+            >
+            {{ form_widget(form) }}
+            {{ form_errors(form) }}
+
+            <td class="rfp-lineitem-remove">
+                {#<button type="button" class="removeLineItem btn icons-holder"><i class="icon-remove"></i></button>#}
+                <button type="button" class="removeLineItem btn icons-holder">
+                    <i class="icon-remove"></i>
+                </button>
+            </td>
+        </tr>
+
+        <tr class="borderless t_paddingless">
+            {% set notes = form.comment %}
+            <td colspan="5">
+                <div class="checkbox_custom-wrapper" >
+                    <label for="{{ 'lineItem'~id }}" class="checkbox_custom checkbox_custom_blue
+                                    {% if notes is not empty %} checked {% endif %}" data-checkbox>
+                        <input type="checkbox" name="{{ 'lineItem'~id }}" id="{{ 'lineItem'~id }}"
+                               data-role="start-editing" {% if notes is not empty %} checked = "checked" {% endif %}">
+                        <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
+                        <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
+                        <span class="checkbox_custom__text fs13">{{ 'orob2b.frontend.shoppinglist.view.add_item_note.label'|trans }}</span>
+                    </label>
+
+                    <div class="form-input form-input_textarea" data-role="editor">
+                        {{ form_widget(form.comment) }}
+                        {{ form_errors(form.comment) }}
+                        {#<textarea class="input input_sm input_block" name="copy_paste_order" cols="30" rows="3" disabled="disabled"#}
+                                  {#placeholder="{{ 'orob2b.frontend.shoppinglist.view.add_item_note.placeholder'|trans }}"></textarea>#}
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+    </tbody>
 {% endmacro %}
 
 {% block orob2b_rfp_frontend_request_product_widget %}
@@ -86,12 +120,6 @@
     <td class="rfp-lineitem-requested">
         {{ form_widget(form.requestProductItems) }}
         {{ form_errors(form.requestProductItems) }}
-    </td>
-    <td class="rfp-lineitem-notes">
-        <div data-page-component-module="orob2border/js/app/components/notes-component" style="display: none;">
-            {{ form_widget(form.comment) }}
-            {{ form_errors(form.comment) }}
-        </div>
     </td>
 {% endblock %}
 

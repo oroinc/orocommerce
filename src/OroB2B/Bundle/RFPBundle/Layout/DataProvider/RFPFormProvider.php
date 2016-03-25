@@ -11,7 +11,7 @@ use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAction;
 
 use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestType;
+use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 
 class RFPFormProvider extends AbstractServerRenderDataProvider
 {

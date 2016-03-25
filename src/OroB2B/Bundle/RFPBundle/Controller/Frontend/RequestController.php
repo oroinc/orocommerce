@@ -13,7 +13,6 @@ use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\LayoutBundle\Annotation\Layout;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
@@ -108,7 +107,40 @@ class RequestController extends Controller
             ;
         }
 
-        return ['data' => $this->update($rfpRequest)];
+        $data = $this->update($rfpRequest);
+
+        return ['data' => $data];
+    }
+
+    /**
+     * @Acl(
+     *      id="orob2b_rfp_frontend_request_create",
+     *      type="entity",
+     *      class="OroB2BRFPBundle:Request",
+     *      permission="CREATE",
+     *      group_name="commerce"
+     * )
+     * @Route("/create1", name="orob2b_rfp_frontend_request_create1")
+     * @Template("OroB2BRFPBundle:Request/Frontend:update.html.twig")
+     *
+     * @return array
+     */
+    public function create1Action()
+    {
+        $rfpRequest = new RFPRequest();
+        $user = $this->getUser();
+        if ($user instanceof AccountUser) {
+            $rfpRequest
+                ->setAccountUser($user)
+                ->setAccount($user->getAccount())
+                ->setFirstName($user->getFirstName())
+                ->setLastName($user->getLastName())
+                ->setCompany($user->getAccount()->getName())
+                ->setEmail($user->getEmail())
+            ;
+        }
+
+        return $this->update($rfpRequest);
     }
 
     /**
