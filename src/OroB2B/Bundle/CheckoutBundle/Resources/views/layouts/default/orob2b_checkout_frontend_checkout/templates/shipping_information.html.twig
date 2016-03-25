@@ -1,7 +1,11 @@
 {% block _checkout_form_fields_widget -%}
     {% set workflowItem = checkout.workflowItem %}
     {% if workflowItem.data.get('disallow_shipping_address_edit') %}
-        <div>{{ checkout.shippingAddress|oro_format_address }}</div>
+        <fieldset class="checkout__form__row">
+            <div class="checkout__form__col form__col_x6">
+                {{ checkout.shippingAddress|oro_format_address }}
+            </div>
+        </fieldset>
     {% else %}
         <div data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
