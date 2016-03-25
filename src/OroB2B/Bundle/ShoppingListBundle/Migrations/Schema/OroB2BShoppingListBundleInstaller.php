@@ -4,11 +4,29 @@ namespace OroB2B\Bundle\ShoppingListBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroB2BShoppingListBundleInstaller implements Installation
+class OroB2BShoppingListBundleInstaller implements Installation, ExtendExtensionAwareInterface
 {
+    /**
+     * @var ExtendExtension
+     */
+    protected $extendExtension;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setExtendExtension(ExtendExtension $extendExtension)
+    {
+        $this->extendExtension = $extendExtension;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -29,6 +47,8 @@ class OroB2BShoppingListBundleInstaller implements Installation
         /** Foreign keys generation **/
         $this->addOrob2BShoppingListForeignKeys($schema);
         $this->addOrob2BShoppingListLineItemForeignKeys($schema);
+
+        $this->addShoppingListCheckoutSource($schema);
     }
 
     /**
@@ -159,5 +179,38 @@ class OroB2BShoppingListBundleInstaller implements Installation
             ['code'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addShoppingListCheckoutSource(Schema $schema)
+    {
+        if (class_exists('OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource')) {
+            $this->extendExtension->addManyToOneRelation(
+                $schema,
+                'orob2b_checkout_source',
+                'shoppingList',
+                'orob2b_shopping_list',
+                'id',
+                [
+                    ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                    'entity' => ['label' => 'orob2b.shoppinglist.entity_label'],
+                    'extend' => [
+                        'is_extend' => true,
+                        'owner' => ExtendScope::OWNER_CUSTOM
+                    ],
+                    'datagrid' => [
+                        'is_visible' => false
+                    ],
+                    'form' => [
+                        'is_enabled' => false
+                    ],
+                    'view' => ['is_displayable' => false],
+                    'merge' => ['display' => false],
+                    'dataaudit' => ['auditable' => false]
+                ]
+            );
+        }
     }
 }

@@ -1,0 +1,13 @@
+layout:
+    actions:
+        - @setBlockTheme:
+            themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/payment.html.twig'
+        - @setOption:
+            id: checkout_information
+            optionName: vars
+            optionValue:
+                workflowStep: { @value: $data.workflowStep }
+                stepOrder: 4
+
+    conditions:
+        @eq: [$context.workflowStepName, 'enter_payment']
