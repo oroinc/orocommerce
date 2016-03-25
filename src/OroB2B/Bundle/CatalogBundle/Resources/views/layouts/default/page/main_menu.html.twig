@@ -56,8 +56,8 @@
         </div>
         <!-- ENDTOP NAVIGATION SUBLIST -->
 
-        </li>
-        <li class="top-nav__list__item top-nav__list__item_has-sublist" data-dropdown-trigger>
+    </li>
+    <li class="top-nav__list__item top-nav__list__item_has-sublist" data-dropdown-trigger>
         <a href="#" class="top-nav__list__item__link">
             <span>Protective Wear</span><i class="icon-down-open-mini"></i>
         </a>
@@ -111,9 +111,63 @@
             </ul>
         </div>
         <!-- ENDTOP NAVIGATION SUBLIST -->
-        </li>
-        <li class="top-nav__list__item"><a href="#" class="top-nav__list__item__link"><span>Scrubs</span></a></li>
-        <li class="top-nav__list__item"><a href="#" class="top-nav__list__item__link"><span>Supplies</span></a></li>
-        <li class="top-nav__list__item"><a href="#" class="top-nav__list__item__link"><span>Men's</span></a></li>
-        <li class="top-nav__list__item"><a href="#" class="top-nav__list__item__link"><span>Women's</span></a></li>
+    </li>
+    <li class="top-nav__list__item"><a href="#" class="top-nav__list__item__link"><span>Scrubs</span></a></li>
+    <li class="top-nav__list__item"><a href="#" class="top-nav__list__item__link"><span>Supplies</span></a></li>
+    <li class="top-nav__list__item"><a href="#" class="top-nav__list__item__link"><span>Men's</span></a></li>
+    <li class="top-nav__list__item"><a href="#" class="top-nav__list__item__link"><span>Women's</span></a></li>
+
+    {% set categoriesData = [
+        {
+            'title': 'First',
+            'url': 'http://first/',
+            'children': [
+                {
+                    'title': 'First One',
+                    'url': 'http://first.one/',
+                    'children': []
+                },
+                {
+                    'title': 'First Two',
+                    'url': 'http://first.two/',
+                    'children': [
+                        {
+                            'title': 'First Two Deep',
+                            'url': 'http://first.two.deep/',
+                            'children': []
+                        },
+                    ]
+                },
+            ]
+        },
+        {
+            'title': 'Second',
+            'url': 'http://second/',
+            'children': []
+        },
+    ] %}
+
+    <ul>
+        {% for firstLevelCategory in categoriesData %}
+            <li>
+                <a href="{{ firstLevelCategory.url }}">{{ firstLevelCategory.title }}</a>
+                {% if firstLevelCategory.children %}
+                    <ul>
+                        {% for secondLevelCategory in firstLevelCategory.children %}
+                            <li>
+                                <a href="{{ secondLevelCategory.url }}">{{ secondLevelCategory.title }}</a>
+                                {% if secondLevelCategory.children %}
+                                    <ul>
+                                        {% for thirdLevelCategory in secondLevelCategory.children %}
+                                            <li><a href="{{ thirdLevelCategory.url }}">{{ thirdLevelCategory.title }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}
