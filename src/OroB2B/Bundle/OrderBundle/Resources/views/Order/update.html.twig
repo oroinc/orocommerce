@@ -40,10 +40,24 @@
     {% set id = 'order-edit' %}
 
     {% set subtotals %}
-        {% include 'OroB2BPricingBundle:Totals:totals.html.twig' with {
+        {{ form_row(form.subtotalValidation) }}
+        {{ form_row(form.totalValidation) }}
+        {% include 'OroB2BPricingBundle:Totals:totalsEntityEditPage.html.twig' with {
             options: {
-                url: path('orob2b_order_subtotals', {id: entity.id}),
-                selectors: {form: '#' ~ form.vars.id}
+                route: 'orob2b_pricing_recalculate_entity_totals',
+                selectors: {
+                    template: '#totals-template',
+                    form: '#' ~ form.vars.id
+                },
+                events: [
+                    'line-items-totals:update',
+                    'update:account',
+                    'update:website',
+                    'update:currency'
+                ],
+                entityClassName: 'OroB2B\\Bundle\\OrderBundle\\Entity\\Order',
+                entityId: form.vars.value.id,
+                data: totals
             }
         } only %}
     {% endset %}
@@ -66,6 +80,7 @@
     {% endset %}
 
     {% set lineItems %}
+        {% set subtotalType = constant('OroB2B\\Bundle\\PricingBundle\\SubtotalProcessor\\Provider\\LineItemSubtotalProvider::TYPE') %}
         <div class="order-line-items"
              data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
@@ -76,7 +91,8 @@
                  matchedPricesRoute: 'orob2b_pricing_matching_price',
                  currency: entity.currency,
                  account: entity.account is null ? null : entity.account.id,
-                 account: entity.website is null ? null : entity.website.id
+                 account: entity.website is null ? null : entity.website.id,
+                 subtotalType: subtotalType
              }|json_encode }}"
              data-layout="separate">
             {{ form_widget(form.lineItems) }}
@@ -174,12 +190,7 @@
 
     {% set shippingInformation %}
         {%  set options = {
-            view: 'orob2border/js/app/views/shipping-cost-view',
-            selectors: {
-                subtotalsFields: [
-                    '#' ~ form.shippingCost.value.vars.id
-                ]
-            }
+            view: 'orob2border/js/app/views/shipping-cost-view'
         } %}
 
         <div data-page-component-module="oroui/js/app/components/view-component"
@@ -235,6 +246,31 @@
             }]
         }] ) %}
     {% endif %}
+
+    {% set discountItems %}
+        {% set discountType = constant('OroB2B\\Bundle\\OrderBundle\\Provider\\DiscountSubtotalProvider::TYPE') %}
+        {% set totalType = constant('OroB2B\\Bundle\\PricingBundle\\SubtotalProcessor\\Provider\\LineItemSubtotalProvider::TYPE') %}
+        <div class="order-discount-items"
+             data-page-component-module="oroui/js/app/components/view-component"
+             data-page-component-options="{{ {
+                 view: 'orob2border/js/app/views/discount-items-view',
+                 discountType: discountType,
+                 totalType: totalType,
+             }|json_encode }}"
+             data-layout="separate">
+            {{ form_widget(form.discounts) }}
+            <div class="discounts-sum-error">{{ form_errors(form.discounts) }}</div>
+            <div class="discounts-sum-error">{{ form_row(form.discountsSum) }}</div>
+        </div>
+    {% endset %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'orob2b.order.sections.discounts'|trans,
+        'class': 'active',
+        'subblocks': [{
+            'data': [discountItems]
+        }]
+    }]) %}
 
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'orob2b.order.sections.subtotals'|trans,

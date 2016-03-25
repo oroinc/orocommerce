@@ -72,3 +72,9 @@ OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer:
         price:
             - NotBlank: ~
             - Valid: ~
+
+OroB2B\Bundle\SaleBundle\Entity\QuoteAddress:
+    properties:
+        phone:
+            - Length:
+                max: 255

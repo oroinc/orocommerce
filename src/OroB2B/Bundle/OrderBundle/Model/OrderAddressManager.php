@@ -7,6 +7,7 @@ use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
+use OroB2B\Bundle\AccountBundle\Entity\AbstractAddressToAddressType;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
@@ -67,5 +68,51 @@ class OrderAddressManager extends AbstractAddressManager
         }
 
         return $orderAddress;
+    }
+
+    /**
+     * @param array|OrderAddress[] $addresses
+     * @return array
+     */
+    public function getAddressTypes(array $addresses = [])
+    {
+        return array_merge(
+            $this->getTypesMapping(
+                'OroB2BAccountBundle:AccountAddressToAddressType',
+                self::ACCOUNT_LABEL,
+                $addresses
+            ),
+            $this->getTypesMapping(
+                'OroB2BAccountBundle:AccountUserAddressToAddressType',
+                self::ACCOUNT_USER_LABEL,
+                $addresses
+            )
+        );
+    }
+
+    /**
+     * @param string $typeEntity
+     * @param string $typeKey
+     * @param array $addresses
+     * @return array
+     */
+    protected function getTypesMapping($typeEntity, $typeKey, array $addresses = [])
+    {
+        $addresses = array_key_exists($typeKey, $addresses) ? array_values($addresses[$typeKey]) : [];
+
+        $mapping = [];
+        if ($addresses) {
+            /** @var AbstractAddressToAddressType[] $types */
+            $types = $this->registry
+                ->getManagerForClass($typeEntity)
+                ->getRepository($typeEntity)
+                ->findBy(['address' => $addresses]);
+
+            foreach ($types as $typeData) {
+                $mapping[$this->getIdentifier($typeData->getAddress())][] = $typeData->getType()->getName();
+            }
+        }
+
+        return $mapping;
     }
 }

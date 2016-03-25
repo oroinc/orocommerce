@@ -1,0 +1,48 @@
+{% block _product_grid_widget %}
+    {% set themeOptions = grid_render_parameters.themeOptions|default({}) %}
+    {% set grid_render_parameters = grid_render_parameters|merge({'themeOptions': themeOptions|merge({
+        'tagName': 'div',
+        'headerHide': true,
+        'rowTemplateSelector': '#template-grid-row',
+        'rowActionSelector': '.view-product',
+        'rowView': current_row_view,
+        'bodyClassName': 'grid-body products__list products__list_' ~ current_row_view,
+        'rowClassName': 'grid-row product-item product-item_' ~ current_row_view
+    })}) %}
+    {{ block('datagrid_widget') }}
+{% endblock %}
+
+{% block _grid_display_options_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " catalog__filter-controls__item catalog__filter-controls__item_display-options pull-right"
+    }) %}
+    <div{{ block('block_attributes') }}>
+        {% set row_view_key = constant('OroB2B\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::GRID_THEME_PARAM_NAME') %}
+        <span class="fs14 va-m_md mmr9-md mmr9-sm hidden-sm hidden-xs">Display:</span>
+        <div class="buttons-inline-group inline">
+            {% set row_view = constant('OroB2B\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_TILES') %}
+            <a href="{{ path('orob2b_product_frontend_product_index', {'frontend-products-grid': {(row_view_key): row_view}}) }}"
+                class="btn btn_transparent btn_bordered btn_squared {% if current_view == row_view %}current{% endif %}" data-catalog-view-trigger="gallery-view">
+                <span class="catalog-view-option">
+                    <i class="material-icons">apps</i>
+                </span>
+            </a>
+            {% set row_view = constant('OroB2B\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_GRID') %}
+            <a href="{{ path('orob2b_product_frontend_product_index', {'frontend-products-grid': {(row_view_key): row_view}}) }}"
+                class="btn btn_transparent btn_bordered btn_squared {% if current_view == row_view %}current{% endif %}"
+                data-catalog-view-trigger="list-view">
+                <span class="catalog-view-option">
+                  <i class="material-icons">view_list</i>
+                </span>
+            </a>
+            {% set row_view = constant('OroB2B\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_LIST') %}
+            <a href="{{ path('orob2b_product_frontend_product_index', {'frontend-products-grid': {(row_view_key): row_view}}) }}"
+                class="btn btn_transparent btn_bordered btn_squared {% if current_view == row_view %}current{% endif %}" data-catalog-view-trigger="no-image-view">
+                <span class="catalog-view-option">
+                  <i class="material-icons">view_headline</i>
+                </span>
+            </a>
+        </div>
+    </div>
+{% endblock %}
+
