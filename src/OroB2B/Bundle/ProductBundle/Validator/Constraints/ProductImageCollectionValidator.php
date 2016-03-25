@@ -81,11 +81,7 @@ class ProductImageCollectionValidator extends ConstraintValidator
         foreach ($productImages as $productImage) {
             $types = $productImage->getTypes();
 
-            foreach ($types as $type => $checked) {
-                if (!$checked) {
-                    continue;
-                }
-
+            foreach ($types as $type) {
                 if (isset($imagesByTypeCounter[$type])) {
                     $imagesByTypeCounter[$type]++;
                 } else {

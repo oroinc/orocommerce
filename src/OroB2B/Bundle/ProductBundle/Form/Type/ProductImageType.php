@@ -8,9 +8,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Oro\Component\Layout\Extension\Theme\Model\ThemeImageType;
-
 use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
+
+use OroB2B\Bundle\ProductBundle\Form\EventSubscriber\ProductImageTypesSubscriber;
 
 class ProductImageType extends AbstractType
 {
@@ -22,20 +22,9 @@ class ProductImageType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('image', 'oro_image');
+        $builder->add('types', 'hidden');
 
-        /** @var ThemeImageType $imageType */
-        foreach ($options['image_types'] as $imageType) {
-            $isRadioButton = $imageType->getMaxNumber() === 1;
-
-            $builder->add(
-                $imageType->getName(),
-                $isRadioButton ? 'radio' : 'checkbox',
-                [
-                    'label' => $imageType->getLabel(),
-                    'value' => 1,
-                ]
-            );
-        }
+        $builder->addEventSubscriber(new ProductImageTypesSubscriber($options['image_types']));
     }
 
     /**
@@ -46,10 +35,11 @@ class ProductImageType extends AbstractType
         $resolver->setDefaults([
             'data_class' => 'OroB2B\Bundle\ProductBundle\Entity\ProductImage',
             'image_types' => [],
-            'error_bubbling' => false
+            'error_bubbling' => false,
         ]);
 
-        $resolver->setRequired('image_types')
+        $resolver
+            ->setRequired('image_types')
             ->setAllowedTypes('image_types', 'array');
 
     }
