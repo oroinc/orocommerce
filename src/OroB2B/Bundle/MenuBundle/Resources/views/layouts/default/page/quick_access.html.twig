@@ -8,10 +8,9 @@
 {% endblock %}
 
 {% block _quick_access_menu_widget %}
-    {# TODO: render real menu #}
-    <ul class="navigation-widget__list navigation-widget__list_inline text-right not-implemented">
+    <ul class="navigation-widget__list navigation-widget__list_inline text-right">
         <li>
-            <a href="#">
+            <a href="{{ path('orob2b_order_frontend_index') }}">
               <span class="badge badge_sm_xs badge_circled-corners badge_yellow navigation-widget__badge">
                 <i class="material-icons">assignment</i>
               </span>
@@ -19,7 +18,7 @@
             </a>
         </li>
         <li>
-            <a href="#">
+            <a href="{{ path('orob2b_sale_quote_frontend_index') }}">
               <span class="badge badge_sm_xs badge_circled-corners badge_orange-light navigation-widget__badge">
                 <i class="material-icons">local_offer</i>
               </span>
@@ -27,7 +26,7 @@
             </a>
         </li>
         <li>
-            <a href="#">
+            <a href="{{ path('orob2b_product_frontend_quick_add') }}">
               <span class="badge badge_sm_xs badge_circled-corners badge_orange navigation-widget__badge">
                 <i class="icon-flash"></i>
               </span>
