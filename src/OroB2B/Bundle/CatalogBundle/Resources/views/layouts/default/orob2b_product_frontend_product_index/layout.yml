@@ -6,3 +6,6 @@ layout:
             id: category_sidebar
             parentId: sidebar_left
             blockType: block
+            options:
+                vars:
+                    categories: { @value: $data.category_tree.all }
