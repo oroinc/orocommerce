@@ -14,7 +14,6 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -65,15 +64,19 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider getDataDataProvider
-     * @param ShoppingList|null $shoppingList
      * @param ProductPriceCriteria $criteria
      * @param Price $price
      * @param AccountUser|null $accountUser
+     * @param array $lineItems
      */
-    public function testGetProductsPrices($shoppingList, ProductPriceCriteria $criteria, Price $price, $accountUser)
-    {
+    public function testGetProductsPrices(
+        ProductPriceCriteria $criteria,
+        Price $price,
+        AccountUser $accountUser = null,
+        array $lineItems = null
+    ) {
         $expected = null;
-        if ($shoppingList) {
+        if ($lineItems) {
             $this->securityFacade->expects($this->once())
                 ->method('getLoggedUser')
                 ->willReturn($accountUser);
@@ -94,7 +97,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
             }
         }
 
-        $result = $this->provider->getProductsPrices($shoppingList);
+        $result = $this->provider->getProductsPrices($lineItems);
         $this->assertEquals($expected, $result);
     }
 
@@ -120,21 +123,18 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
         $price->setValue('123');
         $price->setCurrency(self::TEST_CURRENCY);
 
-        $shoppingList = new ShoppingList();
-        $shoppingList->addLineItem($lineItem);
-
         return [
             'with account user' => [
-                'shoppingList' => $shoppingList,
                 'criteria' => $criteria,
                 'price' => $price,
-                'accountUser' => new AccountUser()
+                'accountUser' => new AccountUser(),
+                'lineItems' => [$lineItem]
             ],
             'without account user' => [
-                'shoppingList' => $shoppingList,
                 'criteria' => $criteria,
                 'price' => $price,
-                'accountUser' => null
+                'accountUser' => null,
+                'lineItems' => [$lineItem]
             ],
         ];
     }

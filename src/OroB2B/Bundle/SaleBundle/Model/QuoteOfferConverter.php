@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\SaleBundle\Model;
 
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
+use OroB2B\Bundle\SaleBundle\Entity\Repository\QuoteProductOfferRepository;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class QuoteOfferConverter
@@ -12,8 +13,15 @@ class QuoteOfferConverter
     const OFFER = 'offer';
     const QUANTITY = 'quantity';
 
-    /** @var ManagerRegistry */
+    /**
+     * @var ManagerRegistry
+     */
     protected $registry;
+
+    /**
+     * @var QuoteProductOfferRepository
+     */
+    protected $quoteProductOfferRepository;
 
     /**
      * @param ManagerRegistry $registry
@@ -32,7 +40,7 @@ class QuoteOfferConverter
         $result = [];
         foreach ($offers as $offer) {
             /** @var QuoteProductOffer $offerEntity */
-            $offerEntity = $offer['offer'];
+            $offerEntity = $offer[self::OFFER];
             $res[self::OFFER_ID] = $offerEntity->getId();
             $res[self::QUANTITY] = $offer[self::QUANTITY];
             $result[] = $res;
@@ -48,46 +56,33 @@ class QuoteOfferConverter
     public function toModel(array $offers)
     {
         $result = [];
-        $offerEntities = $this->registry
-            ->getManagerForClass('OroB2BSaleBundle:QuoteProductOffer')
-            ->getRepository('OroB2BSaleBundle:QuoteProductOffer')
-            ->getOffersByIds($this->getIds($offers));
-        foreach ($offers as $offer) {
-            $res[self::QUANTITY] = $offer[self::QUANTITY];
-            $res[self::OFFER] = $this->getOfferById($offer[self::OFFER_ID], $offerEntities);
-            $result[] = $res;
+        $ids = array_map(
+            function ($offer) {
+                return $offer[self::OFFER_ID];
+            },
+            $offers
+        );
+        $offerEntities = $this->getQuoteProductOfferRepository()
+            ->getOffersByIds($ids);
+        
+        foreach ($offerEntities as $offer) {
+            $result[] = [self::QUANTITY => $offer->getQuantity(), self::OFFER => $offer];
         }
 
         return $result;
     }
 
     /**
-     * @param array $offers
-     * @return integer[]
+     * @return QuoteProductOfferRepository
      */
-    protected function getIds(array $offers)
+    public function getQuoteProductOfferRepository()
     {
-        $result = [];
-        foreach ($offers as $offer) {
-            $result[] = $offer[self::OFFER_ID];
+        if ($this->quoteProductOfferRepository === null) {
+            $this->quoteProductOfferRepository = $this->registry
+                ->getManagerForClass('OroB2BSaleBundle:QuoteProductOffer')
+                ->getRepository('OroB2BSaleBundle:QuoteProductOffer');
         }
 
-        return $result;
-    }
-
-    /**
-     * @param integer $id
-     * @param QuoteProductOffer[] $offers
-     * @return QuoteProductOffer|null
-     */
-    protected function getOfferById($id, $offers)
-    {
-        foreach ($offers as $offer) {
-            if ($offer->getId() == $id) {
-                return $offer;
-            }
-        }
-
-        return null;
+        return $this->quoteProductOfferRepository;
     }
 }

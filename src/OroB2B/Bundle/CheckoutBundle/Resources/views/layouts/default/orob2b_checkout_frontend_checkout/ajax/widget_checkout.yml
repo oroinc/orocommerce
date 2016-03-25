@@ -35,8 +35,7 @@ layout:
                     options:
                         visible: { @neq: [$context.workflowStepName, 'place_order'] }
                         vars:
-                            lineItemsCount: { @value: $data.orob2b_checkout_summary.lineItemsCount }
-                            generalTotal: { @value: $data.orob2b_checkout_summary.generalTotal }
+                            summary: { @value: $data.orob2b_checkout_summary }
                             checkout: { @value: $data.checkout }
                 checkout_order_summary_table:
                     blockType: block
@@ -44,11 +43,7 @@ layout:
                         vars:
                             checkout: { @value: $data.checkout }
                             workflowStep: { @value: $data.workflowStep }
-                            lineItems: { @value: $data.orob2b_checkout_summary.lineItems }
-                            lineItemTotals: { @value: $data.orob2b_checkout_summary.lineItemTotals }
-                            lineItemsCount: { @value: $data.orob2b_checkout_summary.lineItemsCount }
-                            generalTotal: { @value: $data.orob2b_checkout_summary.generalTotal }
-                            subtotals: { @value: $data.orob2b_checkout_summary.subtotals }
+                            summary: { @value: $data.orob2b_checkout_summary }
                 body:
                     blockType: body
             tree:
