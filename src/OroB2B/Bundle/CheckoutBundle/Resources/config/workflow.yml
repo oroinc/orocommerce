@@ -35,6 +35,9 @@ workflows:
             disallow_shipping_address_edit:
                 type: boolean
                 label: Disallow shipping address edit
+            disallow_shipping_method_edit:
+                type: boolean
+                label: Disallow shipping method edit
             remove_source:
                 type: boolean
                 label: orob2b.checkout.workflow.b2b_flow_checkout.attribute.remove_source.label
@@ -125,7 +128,6 @@ workflows:
                                 isEditEnabled: true
                                 addressType: 'shipping'
                                 required: true
-                                disabled: $disallow_shipping_address_edit
                         save_shipping_address:
                             options:
                                 label: orob2b.checkout.workflow.b2b_flow_checkout.form.save_address.label

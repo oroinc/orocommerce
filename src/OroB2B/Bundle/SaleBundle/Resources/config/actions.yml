@@ -125,6 +125,14 @@ actions:
             - @translate:
                 attribute: $.sourceRemoveLabel
                 id: orob2b.frontend.shoppinglist.quote.remove_source.label
+            - @assign_value:
+                conditions:
+                   @empty: $.quote.shippingEstimate
+                parameters: [$.disallow_shipping_method_edit, false]
+            - @assign_value:
+                conditions:
+                   @not_empty: $.quote.shippingEstimate
+                parameters: [$.disallow_shipping_method_edit, true]
             - @tree:
                 conditions:
                     @not_empty: $.quote.shippingAddress
@@ -162,11 +170,14 @@ actions:
                         class: OroB2B\Bundle\OrderBundle\Entity\OrderAddress
                     - @assign_value:
                         parameters: [$.disallow_shipping_address_edit, false]
+            - @assign_value:
+                parameters: [$.shippingEstimate, $.quote.shippingEstimate]
             - @start_checkout:
                 source_name: 'quote'
                 source_entity: $.quote
                 data:
                     shippingAddress: $.orderAddress
+                    shippingEstimate: $.shippingEstimate
                 settings:
                     allow_source_remove: false
                     remove_source: true
@@ -174,6 +185,7 @@ actions:
                     edit_order_link: $.editLink
                     source_options: $.selectedItems
                     disallow_shipping_address_edit: $.disallow_shipping_address_edit
+                    disallow_shipping_method_edit: $.disallow_shipping_method_edit
 
     orob2b_sale_frontend_quote_change:
           label: orob2b.frontend.sale.btn.accept_quote_create_order
