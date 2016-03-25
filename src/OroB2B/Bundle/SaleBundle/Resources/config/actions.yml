@@ -175,6 +175,7 @@ actions:
             - @start_checkout:
                 source_name: 'quote'
                 source_entity: $.quote
+                force: true
                 data:
                     shippingAddress: $.orderAddress
                     shippingEstimate: $.shippingEstimate

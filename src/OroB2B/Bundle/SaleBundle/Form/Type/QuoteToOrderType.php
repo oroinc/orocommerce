@@ -7,6 +7,8 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
@@ -48,6 +50,15 @@ class QuoteToOrderType extends CollectionType
             throw new UnexpectedTypeException($data, 'Quote');
         }
         $event->setData($data->getQuoteProducts()->toArray());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+
+        $c = $view->children;
     }
 
     /**
