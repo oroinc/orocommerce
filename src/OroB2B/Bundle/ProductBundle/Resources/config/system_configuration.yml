@@ -4,7 +4,7 @@ oro_system_configuration:
             title: orob2b.product.system_configuration.groups.product.title
         product_inventory:
             title: orob2b.product.system_configuration.groups.product_inventory.title
-            icon: 'cf-list'
+            icon: 'icon-list'
         product_unit:
             title: orob2b.product.system_configuration.groups.product_unit.title
             icon: 'icon-briefcase'
