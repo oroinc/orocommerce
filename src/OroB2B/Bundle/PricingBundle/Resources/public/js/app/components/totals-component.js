@@ -8,6 +8,7 @@ define(function(require) {
     var NumberFormatter = require('orolocale/js/formatter/number');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var BaseComponent = require('oroui/js/app/components/base/component');
+    var localeSettings = require('orolocale/js/locale-settings');
 
     /**
      * @export orob2bpricing/js/app/components/totals-component
@@ -22,8 +23,8 @@ define(function(require) {
             url: '',
             selectors: {
                 form: '',
-                template: '.totals-template',
-                subtotals: '.totals-container'
+                template: '#totals-template',
+                subtotals: '[data-totals-container]'
             },
             method: 'POST',
             events: []
@@ -70,6 +71,11 @@ define(function(require) {
         loadingMaskView: null,
 
         /**
+         * @property {Array}
+         */
+        items: [],
+
+        /**
          * @inheritDoc
          */
         initialize: function(options) {
@@ -83,7 +89,7 @@ define(function(require) {
             this.$form = $(this.options.selectors.form);
             this.$method = this.options.method;
             this.$subtotals = this.$el.find(this.options.selectors.subtotals);
-            this.template = _.template(this.$el.find(this.options.selectors.template).text());
+            this.template = _.template($(this.options.selectors.template).text());
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
             this.eventName = 'total-target:changing';
 
@@ -179,15 +185,47 @@ define(function(require) {
          * @param {Object} totals
          */
         render: function(totals) {
-            _.each(totals.subtotals, function(subtotal) {
-                subtotal.formattedAmount = NumberFormatter.formatCurrency(subtotal.amount, subtotal.currency);
-            });
+            this.items = [];
 
-            totals.total.formattedAmount = NumberFormatter.formatCurrency(totals.total.amount, totals.total.currency);
+            _.each(totals.subtotals, _.bind(this.pushItem, this));
 
-            this.$subtotals.html(this.template({
-                totals: totals
-            }));
+            this.pushItem(totals.total);
+
+            this.$subtotals.html(_.filter(this.items).join(''));
+
+            this.items = [];
+        },
+
+        /**
+         * @param {Object} item
+         */
+        pushItem: function(item) {
+            var localItem = _.defaults(
+                item,
+                {
+                    amount: 0,
+                    currency: localeSettings.defaults.currency,
+                    visible: false,
+                    template: null,
+                    data: {}
+                }
+            );
+
+            if (localItem.visible === false) {
+                return;
+            }
+
+            item.formattedAmount = NumberFormatter.formatCurrency(item.amount, item.currency);
+
+            var renderedItem = null;
+
+            if (localItem.template) {
+                renderedItem = _.template(item.template)({item: item});
+            } else {
+                renderedItem = this.template({item: item});
+            }
+
+            this.items.push(renderedItem);
         },
 
         /**
@@ -197,6 +235,8 @@ define(function(require) {
             if (this.disposed) {
                 return;
             }
+
+            delete this.items;
 
             mediator.off('line-items-totals:update', this.updateTotals, this);
             mediator.off('update:account', this.updateTotals, this);

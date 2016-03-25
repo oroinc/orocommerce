@@ -168,7 +168,7 @@ class TotalProcessorProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param EntityStub $entity
+     * @param EntityStub|EntityWithoutCurrencyStub $entity
      * @param int $runCount
      *
      * @return mixed
@@ -224,6 +224,45 @@ class TotalProcessorProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($sub);
 
         return $entity;
+    }
+
+    public function testGetTotals()
+    {
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->with(sprintf('orob2b.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
+            ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
+
+        $entity = $this->prepareSubtotals(new EntityStub());
+
+        $totals = $this->provider->getTotals($entity);
+        $this->assertInternalType('array', $totals);
+        $this->assertArrayHasKey(TotalProcessorProvider::TYPE, $totals);
+        $this->assertEquals(
+            [
+                'type' => 'total',
+                'label' => 'Total',
+                'amount' => 142.0,
+                'currency' => 'USD',
+                'visible' => null,
+                'data' => null,
+            ],
+            $totals[TotalProcessorProvider::TYPE]
+        );
+        $this->assertArrayHasKey(TotalProcessorProvider::SUBTOTALS, $totals);
+        $this->assertEquals(
+            [
+                'subtotal' => [
+                    'type' => 'subtotal',
+                    'label' => 'Total',
+                    'amount' => 142.0,
+                    'currency' => 'USD',
+                    'visible' => null,
+                    'data' => null,
+                ],
+            ],
+            $totals[TotalProcessorProvider::SUBTOTALS]
+        );
     }
 
     public function testGetTotalInDefaultCurrency()

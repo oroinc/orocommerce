@@ -64,7 +64,11 @@ class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(TaxSubtotalProvider::NAME, $this->provider->getName());
     }
 
-    public function testGetSubtotal()
+    /**
+     * @param bool $editMode
+     * @dataProvider getSubtotalProvider
+     */
+    public function testGetSubtotal($editMode)
     {
         $total = new ResultElement();
         $total
@@ -75,8 +79,10 @@ class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
         $tax->offsetSet(Result::TOTAL, $total);
 
         $this->taxManager->expects($this->once())
-            ->method('loadTax')
+            ->method($editMode ? 'getTax' : 'loadTax')
             ->willReturn($tax);
+
+        $this->provider->setEditMode($editMode);
 
         $subtotal = $this->provider->getSubtotal(new Order());
 
@@ -86,6 +92,21 @@ class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($total->getCurrency(), $subtotal->getCurrency());
         $this->assertEquals($total->getTaxAmount(), $subtotal->getAmount());
         $this->assertTrue($subtotal->isVisible());
+    }
+
+    /**
+     * @return array
+     */
+    public function getSubtotalProvider()
+    {
+        return [
+            [
+                'editMode' => false,
+            ],
+            [
+                'editMode' => true,
+            ],
+        ];
     }
 
     public function testGetSubtotalWithException()
@@ -105,5 +126,14 @@ class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->taxFactory->expects($this->once())->method('supports')->willReturn(true);
         $this->assertTrue($this->provider->isSupported(new \stdClass()));
+    }
+
+    public function testEditMode()
+    {
+        $this->assertFalse($this->provider->isEditMode());
+        $this->provider->setEditMode(true);
+        $this->assertTrue($this->provider->isEditMode());
+        $this->provider->setEditMode(false);
+        $this->assertFalse($this->provider->isEditMode());
     }
 }

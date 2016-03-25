@@ -24,7 +24,6 @@ parameters:
     orob2b_tax.event_listener.tax_value.class: OroB2B\Bundle\TaxBundle\EventListener\TaxValueListener
     orob2b_tax.event_listener.entity_tax.class: OroB2B\Bundle\TaxBundle\EventListener\EntityTaxListener
     orob2b_tax.event_listener.grid.order_line_item.class: OroB2B\Bundle\TaxBundle\EventListener\Order\OrderLineItemGridListener
-    orob2b_tax.event_listener.view.order.class: OroB2B\Bundle\TaxBundle\EventListener\Order\OrderViewListener
     orob2b_tax.event_listener.order.taxes.class: OroB2B\Bundle\TaxBundle\EventListener\Order\OrderTaxesListener
 
     orob2b_tax.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
@@ -269,19 +268,7 @@ services:
             - %orob2b_tax.entity.tax_value.class%
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid, method: onBuildBefore }
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid-frontend, method: onBuildBeforeFrontend }
-
-    orob2b_tax.event_listener.view.order:
-        class: %orob2b_tax.event_listener.view.order.class%
-        arguments:
-            - @orob2b_tax.provider.taxation_settings_provider
-            - @orob2b_tax.manager.tax_manager
-            - @request_stack
-            - @oro_entity.doctrine_helper
-            - @translator
-            - %orob2b_order.entity.order.class%
-        tags:
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.order-view, method: onView }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid-frontend, method: onBuildBefore }
 
     orob2b_tax.event_listener.order.taxes:
         class: %orob2b_tax.event_listener.order.taxes.class%
@@ -289,7 +276,7 @@ services:
             - @orob2b_tax.manager.tax_manager
             - @orob2b_tax.provider.taxation_settings_provider
         tags:
-            - { name: kernel.event_listener, event: orob2b_order.order, method: onOrderEvent }
+            - { name: kernel.event_listener, event: orob2b_order.order, method: onOrderEvent, priority: -128 }
 
     orob2b_tax.provider.tax_provider_registry:
         class: %orob2b_tax.provider.tax_provider_registry.class%

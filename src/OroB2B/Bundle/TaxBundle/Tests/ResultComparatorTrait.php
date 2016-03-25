@@ -42,23 +42,19 @@ trait ResultComparatorTrait
 
     /**
      * @param Result|array $expected
-     * @param Result $actual
+     * @param Result|array $actual
      */
-    protected function compareResult($expected, Result $actual)
+    protected function compareResult($expected, $actual)
     {
-        foreach ($expected as $key => $expectedValue) {
-            $this->assertTrue($actual->offsetExists($key), $key);
-            $actualValue = $actual->offsetGet($key);
-
-            $this->assertEquals(
-                $this->extractScalarValues($expectedValue),
-                $this->extractScalarValues($actualValue),
-                $key
-            );
-        }
+        $expected = $this->extractScalarValues($expected);
+        $actual = $this->extractScalarValues($actual);
 
         if (!$expected) {
-            $this->assertEquals([], $actual->getArrayCopy());
+            $this->assertEquals([], $actual);
+
+            return;
         }
+
+        $this->assertEquals($expected, $expected);
     }
 }

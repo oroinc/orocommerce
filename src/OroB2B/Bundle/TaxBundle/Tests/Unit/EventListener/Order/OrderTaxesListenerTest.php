@@ -2,7 +2,11 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\EventListener\Order;
 
+use Oro\Component\Testing\Unit\EntityTrait;
+
 use OroB2B\Bundle\OrderBundle\Entity\Order;
+use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
+use OroB2B\Bundle\OrderBundle\EventListener\Order\MatchingPriceEventListener;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
 use OroB2B\Bundle\TaxBundle\Model\TaxResultElement;
@@ -13,13 +17,15 @@ use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /** @var OrderTaxesListener */
     protected $listener;
 
     /** @var TaxManager|\PHPUnit_Framework_MockObject_MockObject */
     protected $taxManager;
 
-    /** @var OrderEvent|\PHPUnit_Framework_MockObject_MockObject  */
+    /** @var OrderEvent|\PHPUnit_Framework_MockObject_MockObject */
     protected $event;
 
     /** @var TaxationSettingsProvider|\PHPUnit_Framework_MockObject_MockObject */
@@ -94,6 +100,189 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider orderEventAddMatchedPricesDataProvider
+     * @param array $orderLineItems
+     * @param array $matchedPrices
+     * @param array $expectedLineItemsPrices
+     */
+    public function testOnOrderEventAddMatchedPrices(
+        array $orderLineItems = [],
+        array $matchedPrices = [],
+        array $expectedLineItemsPrices = []
+    ) {
+        $order = new Order();
+        $data = new \ArrayObject();
+        $data->offsetSet(MatchingPriceEventListener::MATCHED_PRICES_KEY, $matchedPrices);
+
+        array_walk(
+            $orderLineItems,
+            function (OrderLineItem $orderLineItem) use ($order) {
+                $order->addLineItem($orderLineItem);
+            }
+        );
+
+        $this->event->expects($this->once())->method('getOrder')->willReturn($order);
+        $this->event->expects($this->once())->method('getData')->willReturn($data);
+
+        $this->taxationSettingsProvider->expects($this->once())->method('isEnabled')->willReturn(true);
+
+        $this->taxManager->expects($this->once())
+            ->method('getTax')
+            ->with(
+                $this->callback(
+                    function (Order $order) use ($expectedLineItemsPrices) {
+                        foreach ($order->getLineItems() as $key => $orderLineItem) {
+                            $this->assertArrayHasKey($key, $expectedLineItemsPrices);
+                            $this->assertEquals($expectedLineItemsPrices[$key], $orderLineItem->getValue());
+                        }
+
+                        return true;
+                    }
+                )
+            )
+            ->willReturn(new Result());
+
+        $this->listener->onOrderEvent($this->event);
+    }
+
+    /**
+     * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    public function orderEventAddMatchedPricesDataProvider()
+    {
+        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 1]);
+        $invalidProduct = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product');
+        $productUnit = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'set']);
+        $invalidProductUnit = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit');
+
+        return [
+            'empty prices' => [],
+            'no matched prices' => [
+                [
+                    (new OrderLineItem())
+                        ->setProduct($product)
+                        ->setProductUnit($productUnit)
+                        ->setCurrency('USD')
+                        ->setQuantity('3'),
+                ],
+                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
+                [null],
+            ],
+            'without product' => [
+                [
+                    (new OrderLineItem())
+                        ->setProductUnit($productUnit)
+                        ->setCurrency('USD')
+                        ->setQuantity('3'),
+                ],
+                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
+                [null],
+            ],
+            'invalid product' => [
+                [
+                    (new OrderLineItem())
+                        ->setProduct($invalidProduct)
+                        ->setProductUnit($productUnit)
+                        ->setCurrency('USD')
+                        ->setQuantity('3'),
+                ],
+                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
+                [null],
+            ],
+            'without productUnit' => [
+                [
+                    (new OrderLineItem())
+                        ->setProduct($product)
+                        ->setCurrency('USD')
+                        ->setQuantity('3'),
+                ],
+                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
+                [null],
+            ],
+            'invalid productUnit' => [
+                [
+                    (new OrderLineItem())
+                        ->setProduct($product)
+                        ->setProductUnit($invalidProductUnit)
+                        ->setCurrency('USD')
+                        ->setQuantity('3'),
+                ],
+                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
+                [null],
+            ],
+            'without currency' => [
+                [
+                    (new OrderLineItem())
+                        ->setProduct($product)
+                        ->setProduct($product)
+                        ->setQuantity('3'),
+                ],
+                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
+                [null],
+            ],
+            'invalid currency' => [
+                [
+                    (new OrderLineItem())
+                        ->setProduct($product)
+                        ->setProduct($product)
+                        ->setQuantity('3')
+                        ->setCurrency(''),
+                ],
+                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
+                [null],
+            ],
+            'without quantity' => [
+                [
+                    (new OrderLineItem())
+                        ->setProduct($product)
+                        ->setProduct($product)
+                        ->setCurrency('USD'),
+                ],
+                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
+                [null],
+            ],
+            'invalid quantity #1' => [
+                [
+                    (new OrderLineItem())
+                        ->setProduct($product)
+                        ->setProduct($product)
+                        ->setQuantity('string')
+                        ->setCurrency('USD'),
+                ],
+                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
+                [null],
+            ],
+            'invalid quantity #2' => [
+                [
+                    (new OrderLineItem())
+                        ->setProduct($product)
+                        ->setProduct($product)
+                        ->setQuantity(-2)
+                        ->setCurrency('USD'),
+                ],
+                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
+                [null],
+            ],
+            'one matched price' => [
+                [
+                    (new OrderLineItem())
+                        ->setProduct($product)
+                        ->setProductUnit($productUnit)
+                        ->setCurrency('USD')
+                        ->setQuantity('3'),
+                ],
+                [
+                    '1-set-2-USD' => ['currency' => 'USD', 'value' => 100],
+                    '1-set-3-USD' => ['currency' => 'USD', 'value' => 150],
+                ],
+                ['150'],
+            ],
+        ];
+    }
+
+    /**
      * @return array
      */
     public function onOrderEventDataProvider()
@@ -115,19 +304,19 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
             [
                 $result,
                 [
-                    'taxesItems' => [
+                    'taxItems' => [
                         [
                             'unit' => [
                                 'includingTax' => 11,
                                 'excludingTax' => 10,
                                 'taxAmount' => 1,
-                                'adjustment' => 0
+                                'adjustment' => 0,
                             ],
                             'row' => [
                                 'includingTax' => 55,
                                 'excludingTax' => 50,
                                 'taxAmount' => 5,
-                                'adjustment' => 0
+                                'adjustment' => 0,
                             ],
                             'taxes' => [
                                 [
@@ -135,13 +324,13 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
                                     'rate' => '0.1',
                                     'taxableAmount' => '50',
                                     'taxAmount' => '5',
-                                    'currency' => 'USD'
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                    'currency' => 'USD',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 }

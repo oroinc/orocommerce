@@ -2,13 +2,13 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\OrderTax\Mapper;
 
-use OroB2B\Bundle\TaxBundle\Event\ContextEventDispatcher;
-
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
+use OroB2B\Bundle\TaxBundle\Event\ContextEventDispatcher;
 use OroB2B\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper;
 use OroB2B\Bundle\TaxBundle\Provider\TaxationAddressProvider;
 
@@ -104,7 +104,8 @@ class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
             ->setQuantity($quantity)
             ->setOrder(new Order())
             ->setValue($priceValue)
-            ->setCurrency('USD');
+            ->setCurrency('USD')
+            ->setPrice(Price::create($priceValue, 'USD'));
 
         return $lineItem;
     }

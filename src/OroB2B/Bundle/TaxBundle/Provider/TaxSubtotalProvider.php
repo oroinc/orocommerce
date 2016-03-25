@@ -9,6 +9,7 @@ use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterfac
 use OroB2B\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use OroB2B\Bundle\TaxBundle\Factory\TaxFactory;
 use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
+use OroB2B\Bundle\TaxBundle\Model\Result;
 
 class TaxSubtotalProvider implements SubtotalProviderInterface
 {
@@ -29,6 +30,11 @@ class TaxSubtotalProvider implements SubtotalProviderInterface
      * @var TaxFactory
      */
     protected $taxFactory;
+
+    /**
+     * @var bool
+     */
+    protected $editMode = false;
 
     /**
      * @param TranslatorInterface $translator
@@ -53,7 +59,7 @@ class TaxSubtotalProvider implements SubtotalProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getSubtotal($order)
+    public function getSubtotal($entity)
     {
         $subtotal = new Subtotal();
 
@@ -62,11 +68,12 @@ class TaxSubtotalProvider implements SubtotalProviderInterface
         $subtotal->setLabel($this->translator->trans($label));
 
         try {
-            $tax = $this->taxManager->loadTax($order);
+            $tax = $this->getTax($entity);
 
             $subtotal->setAmount($tax->getTotal()->getTaxAmount());
             $subtotal->setCurrency($tax->getTotal()->getCurrency());
             $subtotal->setVisible(true);
+            $subtotal->setData($tax->getIterator()->getArrayCopy());
         } catch (TaxationDisabledException $e) {
             $subtotal->setVisible(false);
         }
@@ -74,9 +81,38 @@ class TaxSubtotalProvider implements SubtotalProviderInterface
         return $subtotal;
     }
 
+    /**
+     * @param object $entity
+     * @return Result
+     */
+    protected function getTax($entity)
+    {
+        if ($this->editMode) {
+            return $this->taxManager->getTax($entity);
+        }
+
+        return $this->taxManager->loadTax($entity);
+    }
+
     /** {@inheritdoc} */
     public function isSupported($entity)
     {
         return $this->taxFactory->supports($entity);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEditMode()
+    {
+        return $this->editMode;
+    }
+
+    /**
+     * @param bool $editMode
+     */
+    public function setEditMode($editMode)
+    {
+        $this->editMode = (bool)$editMode;
     }
 }
