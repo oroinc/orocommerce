@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\DataProvider\Manager;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 use OroB2B\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
@@ -39,7 +40,7 @@ class CheckoutLineItemsManager
 
     /**
      * @param Checkout $checkout
-     * @return bool|Collection|OrderLineItem[]
+     * @return Collection|OrderLineItem[]
      */
     public function getData(Checkout $checkout)
     {
@@ -53,6 +54,6 @@ class CheckoutLineItemsManager
             }
         }
 
-        return false;
+        return new ArrayCollection();
     }
 }

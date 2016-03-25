@@ -2,6 +2,20 @@
 {% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
 {% import 'OroAddressBundle::macros.html.twig' as address %}
 
+{% set billingAddressBlock %}
+    {{ address.renderAddress(order.billingAddress)}}
+    <div>
+        {{ order.billingAddress.phone|escape|nl2br }}
+    </div>
+{% endset %}
+
+{% set shippingAddressBlock %}
+    {{ address.renderAddress(order.shippingAddress)}}
+    <div>
+        {{ order.shippingAddress.phone|escape|nl2br }}
+    </div>
+{% endset %}
+
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
@@ -12,8 +26,8 @@
             {{ UI.renderProperty('orob2b.order.ship_until.label'|trans, order.shipUntil|oro_format_date) }}
         </div>
         <div class="responsive-block">
-            {{ UI.renderHtmlProperty('orob2b.order.billing_address.label'|trans, address.renderAddress(order.billingAddress)) }}
-            {{ UI.renderHtmlProperty('orob2b.order.shipping_address.label'|trans, address.renderAddress(order.shippingAddress)) }}
+            {{ UI.renderHtmlProperty('orob2b.order.billing_address.label'|trans, billingAddressBlock) }}
+            {{ UI.renderHtmlProperty('orob2b.order.shipping_address.label'|trans, shippingAddressBlock) }}
             {{ UI.renderHtmlProperty('orob2b.order.customer_notes.frontend.label'|trans, order.customerNotes) }}
         </div>
         <div class="responsive-block">

@@ -44,6 +44,11 @@ class Subtotal
      */
     protected $visible;
 
+    public function __construct()
+    {
+        $this->operation = self::OPERATION_ADD;
+    }
+
     /**
      * @return string
      */
@@ -60,6 +65,7 @@ class Subtotal
     public function setType($type)
     {
         $this->type = $type;
+
         return $this;
     }
 
@@ -79,6 +85,7 @@ class Subtotal
     public function setLabel($label)
     {
         $this->label = $label;
+
         return $this;
     }
 
@@ -98,6 +105,7 @@ class Subtotal
     public function setAmount($amount)
     {
         $this->amount = $amount;
+
         return $this;
     }
 
@@ -117,6 +125,7 @@ class Subtotal
     public function setCurrency($currency)
     {
         $this->currency = $currency;
+
         return $this;
     }
 

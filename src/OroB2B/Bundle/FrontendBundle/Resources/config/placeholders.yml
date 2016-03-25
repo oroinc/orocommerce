@@ -23,6 +23,11 @@ placeholders:
             web_settings:
                 order: 300
 
+    requirejs_config_extend:
+        items:
+            frontend_requirejs_config:
+                order: 100
+
 items:
     logo:
         template: OroB2BFrontendBundle:Organization:logo.html.twig
@@ -47,3 +52,6 @@ items:
         template: OroActivityListBundle:ActivityList:activities.html.twig
     web_settings:
         template: OroB2BFrontendBundle:InstallConfiguration:web.html.twig
+    frontend_requirejs_config:
+        applicable: @orob2b_frontend.placeholder.filter->isFrontendRoute()
+        template: OroB2BFrontendBundle::requirejs.config.js.twig

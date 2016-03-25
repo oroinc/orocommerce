@@ -1,95 +1,39 @@
+{% extends 'form_div_layout.html.twig' %}
+
 {%- block checkbox_row -%}
-    <fieldset class="checkout__form__row">
-        <div class="checkout__form__col form__col_x12 mmb5-md mmb5-sm">
-        {% if label is defined and label is not same as(false) %}
-            {%- if label is empty -%}
-                {% set label = id|humanize %}
-            {%- endif -%}
-            <label for="{{ id }}" class="checkbox_custom checkbox_custom_blue {% if form.vars.checked %}checked{% endif %}" data-checkbox>
-                {{- form_widget(form) -}}
-                <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
-                <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
-                <span class="checkbox_custom__text fs13">{{ label|block_text(translation_domain) }}</span>
-            </label>
-        {%- endif %}
-        {{- form_errors(form) -}}
-        </div>
-    </fieldset>
+    <div class="checkout__form__col form__col_x12 mmb5-md mmb5-sm">
+    {% if label is defined and label is not same as(false) %}
+        {%- if label is empty -%}
+            {% set label = id|humanize %}
+        {%- endif -%}
+        <label for="{{ id }}" class="checkbox_custom checkbox_custom_blue {% if form.vars.checked %}checked{% endif %}" data-checkbox>
+            {{- form_widget(form) -}}
+            <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
+            <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
+            <span class="checkbox_custom__text fs13">{{ label|block_text(translation_domain) }}</span>
+        </label>
+    {%- endif %}
+    {{- form_errors(form) -}}
+    </div>
 {%- endblock checkbox_row -%}
 
-{% block _oro_workflow_transition_city_row %}
-    <fieldset class="checkout__form__row">
-        <div class="checkout__form__col form__col_x12">
-            {{- form_label(form, label, {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) -}}
-            {{- form_widget(form, {'attr' : {'class': 'input input_md input_block checkout__form__input', 'placeholder' : 'Enter your city'}}) -}}
-        </div>
-    </fieldset>
-{% endblock %}
-
-{% block text_row %}
-    {% set attr = attr|merge({'class': 'input input_md input_block checkout__form__input'}) %}
-    <div class="checkout__form__col {{ parentClass|default('form__col_x6') }}">
-        {{- form_label(form, label, {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) -}}
-        {{- form_widget(form, {'attr' : attr}) -}}
+{% block orob2b_country_widget %}
+    <div class="checkout__form__select">
+        {{ form_widget(form) }}
     </div>
-{% endblock %}
-
-{% block orob2b_country_row %}
-    <div class="checkout__form__col col-country">
-        {{ form_label(form, 'Country', {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional wsnr'}}) }}
-        <div class="checkout__form__select">
-            {{ form_widget(form) }}
-        </div>
-    </div>
-{% endblock %}
-
-{% block orob2b_region_row %}
-    <div class="checkout__form__col">
-        {{ form_label(form, 'State / Province', {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional wsnr'}}) }}
-        <div class="checkout__form__select">
-            {{ form_widget(form) }}
-        </div>
-    </div>
-{% endblock %}
-{% block _oro_workflow_transition_billing_address_row %}
-    <fieldset class="checkout__form__row">
-        <div class="checkout__form__col form__col_x6">
-            {{ form_label(form, 'Address', {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) }}
-            <div class="checkout__form__select">
-                {{ form_widget(form, {'attr' : {'class': 'input input_md'}}) }}
-            </div>
-        </div>
-    </fieldset>
-{% endblock %}
-
-{% block _oro_workflow_transition_street_row %}
-    {{ form_label(form, 'Street Address', {'label_attr': {'class': 'checkout__form__label checkout__form__label_additional'}}) }}
-    {{ form_widget(form, {'attr': {'class' : 'input input_md input_block checkout__form__input mb1-md mb1-sm', 'placeholder' : 'Enter your street address'}}) }}
-{% endblock %}
-
-{% block _oro_workflow_transition_street2_row %}
-    {{ form_widget(form, {'attr': {'class' : 'input input_md input_block checkout__form__input mb1-md mb1-sm', 'placeholder' : 'Enter your street address 2'}}) }}
-{% endblock %}
-
-{% block _oro_workflow_transition_region_text_row %}
-    {{ form_widget(form, {'attr': {'class': 'hidden'}}) }}
-{% endblock %}
-
-{% block _oro_workflow_transition_id_row %}
-    {{ form_widget(form) }}
 {% endblock %}
 
 {% block orob2b_region_widget %}
-    {{ block('oro_region_widget') }}
+    <div class="checkout__form__select">
+        {{ block('oro_region_widget') }}
+    </div>
 {% endblock %}
-
-{% extends 'form_div_layout.html.twig' %}
 
 {%- block form_label -%}
     {% set label_attr = label_attr|merge({
         class: [
             label_attr.class|default(''),
-            "__form__label"
+            "checkout__form__label checkout__form__label_additional"
             ]|join(' ')
         })
     %}
@@ -101,30 +45,30 @@
     {% set attr = attr|merge({
         class: [
             attr.class|default(''),
-            "__form__input",
-            "input input_block input_md"
-            ]|join(' ')
-        })
+            'input input_md input_block checkout__form__input'
+        ]|join(' ')
+    })
+    %}
+    {{ parent() }}
+{% endblock %}
+
+{%- block choice_widget %}
+    {% set attr = attr|merge({
+        class: [
+            attr.class|default(''),
+            'input input_md input_block checkout__form__input'
+        ]|join(' ')
+    })
     %}
     {{ parent() }}
 {% endblock %}
 
 {%- block form_row -%}
-    {% set class_prefix = '' %}
-    {% set attr = attr|merge({
-        class: [
-            attr.class|default(''),
-            "form-field-" ~ form.vars.name,
-            ]|join(' ')
-        })
-    %}
-    <fieldset class="{{ class_prefix }}__form__row">
-        <div class="{{ class_prefix }}__form__col form__col_x12">
-            {{- form_label(form) -}}
-            {{- form_errors(form) -}}
-            {{- form_widget(form) -}}
-        </div>
-    </fieldset>
+    <div class="checkout__form__col {{ parentClass|default('form__col_x6') }}">
+        {{- form_label(form) -}}
+        {{- form_widget(form) -}}
+        {{- form_errors(form) -}}
+    </div>
 {%- endblock form_row -%}
 
 {% block widget_attributes %}

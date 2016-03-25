@@ -11,6 +11,19 @@
     .quick-order__copy-paste-description {
         margin-bottom: 1.5rem;
     }
+
+    .notification.notification_error {
+        font-size: 1.2rem;
+        color: #ab1a25;
+        padding: 0;
+        background: none;
+        margin-top: -15px !important;
+        margin-bottom: 10px;
+
+        .mml5-md {
+            margin-left: 0 !important;
+        }
+    }
 }
 
 .quick-order__tabs {
@@ -339,7 +352,8 @@
 }
 /*END QUICK ORDER*/
 
-.quick-order-buttons, .quick-order-import-validation-buttons {
+.quick-order-buttons,
+.quick-order-import-validation-buttons {
     float: right;
     margin: 0;
 
@@ -424,9 +438,15 @@
         border-radius: 4px;
         padding: 0 2.9rem;
         line-height: 4.7rem;
-        background: #626365;
-        color: #fff;
+        background: @theme-middle-gray-color;
+        color: @base-white-color;
         margin: 0 1rem 0 0;
+    }
+
+    .widget-content {
+        .action-button {
+            background-color: @theme-dark-gray-color;
+        }
     }
 }
 
@@ -466,6 +486,16 @@
     .hidden-form {
         .quick-order-import-validation__form__row {
             display: none;
+        }
+    }
+}
+.ui-dialog {
+    &.ui-dialog-no-scroll {
+        .quick-order-import-validation {
+            margin-bottom: -26rem;
+            padding-bottom: 30rem;
+
+            overflow: hidden;
         }
     }
 }

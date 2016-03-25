@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderAddressType;
 
 class OrderAddressTypeTest extends AbstractOrderAddressTypeTest
@@ -25,5 +26,13 @@ class OrderAddressTypeTest extends AbstractOrderAddressTypeTest
     public function testGetParent()
     {
         $this->assertEquals('oro_address', $this->formType->getParent());
+    }
+
+    /**
+     * @return Order
+     */
+    protected function getEntity()
+    {
+        return new Order();
     }
 }

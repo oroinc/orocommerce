@@ -35,12 +35,12 @@
     {% set attr = attr|merge({
         class: attr.class|default('') ~ 'row-oro add-products'
     }) %}
-    {{ form_errors(form) }}
     <div {{ block('block_attributes') }}>
         {{ form_widget(form.products) }}
     </div>
     {{ form_row(form.component) }}
     {{ form_row(form.additional) }}
+    {{ form_errors(form) }}
 {% endblock %}
 
 {% block _quick_add_form_buttons_widget %}
@@ -66,8 +66,9 @@
                     'title' : 'orob2b.product.frontend.quick_add.import_from_file.title'|trans,
                     'modal': true,
                     'resizable': false,
-                    'width': 730,
-                    'autoResize': true
+                    'width': 820,
+                    'autoResize': true,
+                    'dialogClass': 'ui-dialog-no-scroll'
                 }
             }
         }

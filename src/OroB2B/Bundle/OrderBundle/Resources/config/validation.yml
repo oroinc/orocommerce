@@ -53,3 +53,37 @@ OroB2B\Bundle\OrderBundle\Entity\OrderLineItem:
         price:
             - NotBlank: ~
             - Valid: ~
+
+OroB2B\Bundle\OrderBundle\Entity\OrderAddress:
+    properties:
+        street:
+            - NotBlank:
+                groups: [ Frontend ]
+        postalCode:
+            - NotBlank:
+                groups: [ Frontend ]
+        country:
+            - NotBlank:
+                groups: [ Frontend ]
+        region:
+            - NotBlank:
+                groups: [ Frontend ]
+        firstName:
+            - NotBlank:
+                groups: [ PersonInfo ]
+        lastName:
+            - NotBlank:
+                groups: [ PersonInfo ]
+        phone:
+            - Length:
+                max: 255
+
+OroB2B\Bundle\OrderBundle\Entity\OrderDiscount:
+    properties:
+        percent:
+            - NotBlank: ~
+            - Type:
+                type: numeric
+            - Range:
+                min: -100
+                max: 100

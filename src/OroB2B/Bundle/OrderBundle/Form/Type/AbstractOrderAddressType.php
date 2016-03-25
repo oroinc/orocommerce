@@ -69,6 +69,8 @@ abstract class AbstractOrderAddressType extends AbstractType
         $isManualEditGranted = $this->orderAddressSecurityProvider->isManualEditGranted($type);
         $this->initAccountAddressField($builder, $type, $order, $isManualEditGranted, $isEditEnabled);
 
+        $builder->add('phone', 'text');
+
         $builder->addEventListener(
             FormEvents::SUBMIT,
             function (FormEvent $event) use ($isManualEditGranted) {
@@ -111,12 +113,6 @@ abstract class AbstractOrderAddressType extends AbstractType
 
         foreach ($view->children as $child) {
             $child->vars['disabled'] = !$isManualEditGranted || $options['disabled'];
-            $child->vars['required'] = false;
-            unset(
-                $child->vars['attr']['data-validation'],
-                $child->vars['attr']['data-required'],
-                $child->vars['label_attr']['data-required']
-            );
         }
 
         if ($view->offsetExists('accountAddress')) {
