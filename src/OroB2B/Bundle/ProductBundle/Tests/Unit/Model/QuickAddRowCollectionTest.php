@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Model;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
+use OroB2B\Bundle\ProductBundle\Model\ProductRow;
 use OroB2B\Bundle\ProductBundle\Model\QuickAddRow;
 use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
@@ -98,12 +99,11 @@ class QuickAddRowCollectionTest extends \PHPUnit_Framework_TestCase
     public function testGetFormData()
     {
         $emptyFormData = [QuickAddType::PRODUCTS_FIELD_NAME => []];
-
+        $productRow = new ProductRow();
+        $productRow->productSku = self::SKU1;
+        $productRow->productQuantity = self::QUANTITY1;
         $expectedFormData = [
-            QuickAddType::PRODUCTS_FIELD_NAME => [[
-                ProductDataStorage::PRODUCT_SKU_KEY => self::SKU1,
-                ProductDataStorage::PRODUCT_QUANTITY_KEY => self::QUANTITY1
-            ]]
+            QuickAddType::PRODUCTS_FIELD_NAME => [$productRow]
         ];
 
         $products = [self::SKU1 =>  (new Product())->setSku(self::SKU1)];

@@ -31,6 +31,15 @@
   cursor: pointer;
 }
 
+.clearfix() {
+  &:before, &:after {
+    content: "";
+    display: block;
+    clear: both;
+    height: 0;
+  }
+}
+
 .input() {
   padding: 1.3rem 1.2rem; 
   .bordered(.1rem, solid, @base-border-color);

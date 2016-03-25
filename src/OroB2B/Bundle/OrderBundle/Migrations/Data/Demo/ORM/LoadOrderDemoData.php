@@ -158,6 +158,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
             ->setRegion($this->getRegionByIso2Code($manager, $address['region']))
             ->setStreet($address['street'])
             ->setPostalCode($address['postalCode']);
+        $orderAddress->setPhone('1234567890');
 
         $manager->persist($orderAddress);
 

@@ -415,6 +415,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
                 $shippingAddress->setNameSuffix('Suffix');
                 $shippingAddress->setRegion(null);
                 $shippingAddress->setCountry(null);
+                $shippingAddress->setPhone('21312312123');
                 $entity->setShippingAddress($shippingAddress);
             }
         }
@@ -549,6 +550,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         $shippingAddress->setNameSuffix('Suffix');
         $shippingAddress->setRegion(null);
         $shippingAddress->setCountry(null);
+        $shippingAddress->setPhone('21312312123');
 
         $shippingAddress->setFromExternalSource(true);
 

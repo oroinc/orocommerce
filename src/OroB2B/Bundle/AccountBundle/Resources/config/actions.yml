@@ -70,6 +70,7 @@ actions:
                 service: orob2b_account_user.manager
                 method: updateUser
                 method_parameters: [$.data]
+            - @refresh_grid: frontend-account-account-user-grid
             - @flash_message:
                 message: orob2b.account.controller.accountuser.disabled.message
                 type: 'success'
@@ -99,6 +100,7 @@ actions:
                 service: orob2b_account_user.manager
                 method: updateUser
                 method_parameters: [$.data]
+            - @refresh_grid: frontend-account-account-user-grid
             - @flash_message:
                 message: orob2b.account.controller.accountuser.enabled.message
                 type: 'success'
@@ -148,3 +150,29 @@ actions:
             - @flash_message:
                 message: orob2b.account.controller.accountuser.confirmation_sent.message
                 type: 'success'
+
+    orob2b_account_frontend_create_action:
+        label: orob2b.account.action.account_user.create
+        enabled: true
+        applications: [frontend]
+        routes:
+           - orob2b_account_frontend_account_user_index
+        acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\AccountBundle\Entity\AccountUser]
+        order: 10
+        functions:
+           - @redirect:
+               parameters:
+                   route: orob2b_account_frontend_account_user_create
+
+    orob2b_account_frontend_create_role_action:
+        label: orob2b.account.action.account_user_role.create
+        enabled: true
+        applications: [frontend]
+        routes:
+            - orob2b_account_frontend_account_user_role_index
+        acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\AccountBundle\Entity\AccountUserRole]
+        order: 10
+        functions:
+            - @redirect:
+                parameters:
+                    route: orob2b_account_frontend_account_user_role_create
