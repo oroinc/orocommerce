@@ -30,6 +30,20 @@ orob2b:
         source_entity_class.label: Source Entity Class
         source_entity_id.label: Source Entity Id
         source_entity_identifier.label: Source Entity Identifier
+        discount.label: Discount
+        total_discounts_amount.label: Total Discounts Amount
+        discounts.label: Discounts
+        discountitem.add_label: Add Discount
+
+        orderdiscount:
+            entity_label: Order Discount
+            entity_plural_label: Order Discounts
+            id.label: ID
+            amount.label: Amount
+            description.label: Description
+            percent.label: Percent
+            order.label: Order
+            type.label: Order Discount Type
 
         orderaddress:
             entity_label: Order Address
@@ -52,6 +66,7 @@ orob2b:
             street.label: Street
             street2.label: Street 2
             from_external_source.label: Created from External Source
+            phone.label: Phone
 
         orderlineitem:
             entity_label: 'Order Line Item'
@@ -89,6 +104,13 @@ orob2b:
             column:
                 product: 'Product'
 
+        orderdiscountitem:
+            columns:
+                title: Discount
+                description: Description
+            types:
+                percent: %
+
         btn:
             add_seller_notes: 'Add Notes'
             remove_seller_notes: 'Remove Seller Notes'
@@ -114,6 +136,7 @@ orob2b:
             order_line_items: 'Line Items'
             order_totals: Totals
             shipping_information: Shipping Information
+            discounts: Discounts
 
         security:
             permission:
@@ -136,6 +159,7 @@ orob2b:
 
         subtotals:
             shipping_cost: Shipping Cost
+            discount: Discount
 
         sales_orders.label: 'Sales Orders'
 
@@ -146,3 +170,14 @@ orob2b:
             fields:
                 backend_product_visibility.title: 'Can Be Added to Orders'
                 frontend_product_visibility.title: 'Can Be Added to Orders'
+
+        success:
+            thank_you: 'Thank You For Your Purchase!'
+            order_number: 'Your Order number is'
+            receive_email: 'You will receive an email with a confirmation and a link to your purchase order.'
+            done: 'Done'
+
+    frontend:
+        order:
+            entity_plural_label: Orders
+            create.label: 'Create Order'

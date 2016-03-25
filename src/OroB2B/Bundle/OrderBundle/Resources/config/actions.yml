@@ -23,3 +23,16 @@ actions:
                 attribute: $.isAllowed
         preconditions:
             @equal: [true, $.isAllowed]
+
+    orob2b_order_frontend_order_grid_create_action:
+        label: orob2b.frontend.order.create.label
+        enabled: true
+        applications: [frontend]
+        routes:
+            - orob2b_order_frontend_index
+        acl_resource: orob2b_order_frontend_create
+        order: 10
+        functions:
+            - @redirect:
+                parameters:
+                    route: orob2b_order_frontend_create

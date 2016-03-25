@@ -43,6 +43,9 @@ parameters:
     orob2b_product.menu.frontend.quick_add.class: OroB2B\Bundle\ProductBundle\Menu\Frontend\QuickAddMenuBuilder
 
     orob2b_product.autocomplete.product_visibility_limited.search_handler.class: OroB2B\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler
+    orob2b_product.datagrid_theme_helper.class: OroB2B\Bundle\ProductBundle\DataGrid\DataGridThemeHelper
+    orob2b_product.event_listener.frontend_product_datagrid.class: OroB2B\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener
+    orob2b_product.layout.data_provider.frontend_datagrid_row_view.class: OroB2B\Bundle\ProductBundle\Layout\DataProvider\FrontendDatagridRowViewProvider
 
 services:
     orob2b_product.product.manager.api:
@@ -317,3 +320,28 @@ services:
         class: %orob2b_product.model.builder.quick_add_row_collection.class%
         arguments:
             - @orob2b_product.repository.product
+
+    orob2b_product.datagrid_theme_helper:
+        class: %orob2b_product.datagrid_theme_helper.class%
+        arguments:
+            - @request_stack
+            - @session
+
+    orob2b_product.event_listener.frontend_product_datagrid:
+        class: %orob2b_product.event_listener.frontend_product_datagrid.class%
+        arguments:
+            - @orob2b_product.datagrid_theme_helper
+            - @doctrine
+            - @oro_attachment.manager
+            - @orob2b_product.formatter.product_unit_label
+            - @translator
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-products-grid, method: onPreBuild }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }
+
+    orob2b_product.layout.data_provider.frontend_datagrid_row_view:
+        class: %orob2b_product.layout.data_provider.frontend_datagrid_row_view.class%
+        arguments:
+            - @orob2b_product.datagrid_theme_helper
+        tags:
+            - { name: layout.data_provider, alias: orob2b_product_frontend_datagrid_row_view }
