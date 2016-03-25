@@ -163,8 +163,8 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
 
             /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject $token */
             $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-            $token->expects($this->once())->method('getUser')->willReturn($user);
-            $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($token);
+            $token->expects($this->any())->method('getUser')->willReturn($user);
+            $this->tokenStorage->expects($this->any())->method('getToken')->willReturn($token);
 
             $propertyAccessor = PropertyAccess::createPropertyAccessor();
             $this->propertyAccessor
