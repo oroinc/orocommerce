@@ -133,6 +133,7 @@ workflows:
                                 isEditEnabled: true
                                 addressType: 'shipping'
                                 required: true
+                                disabled: $disallow_shipping_address_edit
                                 constraints:
                                     - Valid: ~
                                     - NotBlank: ~
