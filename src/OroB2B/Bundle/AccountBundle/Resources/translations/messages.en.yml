@@ -153,6 +153,9 @@ orob2b.account:
             confirm: 'Confirm'
             send_confirmation: 'Resend Confirmation Email'
 
+        account_user_role:
+            create: 'Create Account User Role'
+
     sections:
         general: 'General Information'
         addresses: 'Addresses'
@@ -379,6 +382,8 @@ orob2b.account:
                 GLOBAL: 'Not supported'
                 SYSTEM: 'System'
                 NONE: 'None'
+        account_user:
+            role.entity_plural_label: Account User Roles
 
     account_typed_address_with_default_type:
         choice.default_text: 'Default %type_name%'

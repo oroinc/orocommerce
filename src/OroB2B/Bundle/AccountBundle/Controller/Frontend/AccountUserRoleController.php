@@ -11,6 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\LayoutBundle\Annotation\Layout;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 
@@ -18,7 +19,7 @@ class AccountUserRoleController extends Controller
 {
     /**
      * @Route("/", name="orob2b_account_frontend_account_user_role_index")
-     * @Template("OroB2BAccountBundle:AccountUserRole/Frontend:index.html.twig")
+     * @Layout(vars={"entity_class"})
      * @Acl(
      *      id="orob2b_account_frontend_account_user_role_index",
      *      type="entity",

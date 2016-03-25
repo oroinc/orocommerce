@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Model;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 
@@ -35,5 +36,15 @@ class SubtotalTest extends \PHPUnit_Framework_TestCase
             ],
             $subtotal->toArray()
         );
+    }
+
+    public function testGetTotalPrice()
+    {
+        $subtotal = new Subtotal();
+        $subtotal->setCurrency('USD')
+            ->setAmount(10);
+
+        $expected = (new Price())->setValue(10)->setCurrency('USD');
+        $this->assertEquals($expected, $subtotal->getTotalPrice());
     }
 }
