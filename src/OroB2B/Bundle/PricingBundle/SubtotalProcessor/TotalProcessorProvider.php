@@ -45,6 +45,9 @@ class TotalProcessorProvider
         $this->subtotals = [];
     }
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         return self::NAME;

@@ -56,6 +56,24 @@ OroB2B\Bundle\OrderBundle\Entity\OrderLineItem:
 
 OroB2B\Bundle\OrderBundle\Entity\OrderAddress:
     properties:
+        street:
+            - NotBlank:
+                groups: [ Frontend ]
+        postalCode:
+            - NotBlank:
+                groups: [ Frontend ]
+        country:
+            - NotBlank:
+                groups: [ Frontend ]
+        region:
+            - NotBlank:
+                groups: [ Frontend ]
+        firstName:
+            - NotBlank:
+                groups: [ PersonInfo ]
+        lastName:
+            - NotBlank:
+                groups: [ PersonInfo ]
         phone:
             - Length:
                 max: 255
