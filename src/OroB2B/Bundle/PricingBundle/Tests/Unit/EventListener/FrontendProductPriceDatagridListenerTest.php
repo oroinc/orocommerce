@@ -97,9 +97,6 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
                         'minimum_price' => [
                             'label' => 'orob2b.pricing.productprice.price_in_EUR.trans',
                         ],
-                        'prices'=> [
-                            'label' => 'orob2b.pricing.productprice.price_in_EUR.trans',
-                        ]
                     ],
                     'properties' => [
                         'prices' => ['type' => 'field', 'frontend_type' => 'row_array'],
@@ -107,7 +104,7 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
                     ],
                     'filters' => [
                         'columns' => [
-                            'prices' => [
+                            'minimum_price' => [
                                 'type' => 'product-price',
                                 'data_name' => 'EUR'
                             ],
@@ -124,20 +121,20 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
                     'source' => [
                         'query' => [
                             'select' => [
-                                'GROUP_CONCAT(prices_table.value SEPARATOR \'{sep}\') as prices',
-                                'GROUP_CONCAT(prices_table.unit SEPARATOR \'{sep}\') as price_units',
-                                'MIN(prices_table.value) as minimum_price',
+                                'GROUP_CONCAT(minimum_price_table.value SEPARATOR \'{sep}\') as prices',
+                                'GROUP_CONCAT(minimum_price_table.unit SEPARATOR \'{sep}\') as price_units',
+                                'MIN(minimum_price_table.value) as minimum_price',
                             ],
                             'join' => [
                                 'left' => [
                                     [
                                         'join' => 'OroB2BPricingBundle:ProductPrice',
-                                        'alias' => 'prices_table',
+                                        'alias' => 'minimum_price_table',
                                         'conditionType' => 'WITH',
-                                        'condition' => 'prices_table.product = product.id ' .
-                                            'AND prices_table.currency = \'EUR\' ' .
-                                            'AND prices_table.priceList = 1 ' .
-                                            'AND prices_table.quantity = 1',
+                                        'condition' => 'minimum_price_table.product = product.id ' .
+                                            'AND minimum_price_table.currency = \'EUR\' ' .
+                                            'AND minimum_price_table.priceList = 1 ' .
+                                            'AND minimum_price_table.quantity = 1',
                                     ],
                                 ],
                             ],
