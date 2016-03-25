@@ -6,7 +6,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class QuickAddRowCollection extends ArrayCollection
 {
@@ -116,10 +115,10 @@ class QuickAddRowCollection extends ArrayCollection
         $data = [QuickAddType::PRODUCTS_FIELD_NAME => []];
 
         foreach ($this->getValidRows() as $row) {
-            $data[QuickAddType::PRODUCTS_FIELD_NAME][] = [
-                ProductDataStorage::PRODUCT_SKU_KEY => $row->getSku(),
-                ProductDataStorage::PRODUCT_QUANTITY_KEY => $row->getQuantity()
-            ];
+            $productRow = new ProductRow();
+            $productRow->productSku = $row->getSku();
+            $productRow->productQuantity = $row->getQuantity();
+            $data[QuickAddType::PRODUCTS_FIELD_NAME][] = $productRow;
         }
 
         return $data;
