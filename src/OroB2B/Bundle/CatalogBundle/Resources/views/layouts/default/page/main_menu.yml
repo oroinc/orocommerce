@@ -1,0 +1,15 @@
+layout:
+    actions:
+        - @setBlockTheme:
+            themes: 'OroB2BCatalogBundle:layouts:default/page/main_menu.html.twig'
+        - @addTree:
+            items:
+                categories_main_menu:
+                    blockType: container
+                    siblingId: ~
+                    prepend: true
+            tree:
+                main_menu_container:
+                    categories_main_menu: ~
+    conditions:
+        @neq: [ $context.logged_user, null ]
