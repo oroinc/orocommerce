@@ -262,9 +262,11 @@
     {% set product = quoteProduct.productReplacement|default(quoteProduct.product) %}
     {% set offerChoiceName = 'offer_choice_%s'|format(name) %}
     {% set isQuantityValid = form.quantity.vars.valid %}
-
     {% set selectedOffer = null %}
-    {% set selectedOfferId = app.request.request.get(offerChoiceName) %}
+    {% if selectedOfferId is not defined %}
+        {% set selectedOfferId = app.request.request.get(offerChoiceName) %}
+    {% endif %}
+
     {% if selectedOfferId %}
         {% for offer in quoteProduct.quoteProductOffers %}
             {% if offer.id == selectedOfferId %}

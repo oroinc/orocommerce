@@ -28,7 +28,7 @@ class QuoteProductSelectedOffer
     /**
      * @var Quote
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="Quote", inversedBy="selectedOffers")
+     * @ORM\ManyToOne(targetEntity="Quote")
      * @ORM\JoinColumn(name="quote_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $quote;
@@ -36,7 +36,7 @@ class QuoteProductSelectedOffer
     /**
      * @var QuoteProductOffer
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="QuoteProductOffer", inversedBy="selectedOffers")
+     * @ORM\ManyToOne(targetEntity="QuoteProductOffer")
      * @ORM\JoinColumn(name="quote_product_offer", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $quoteProductOffer;

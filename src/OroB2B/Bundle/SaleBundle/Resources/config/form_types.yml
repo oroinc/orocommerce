@@ -86,6 +86,8 @@ services:
 
     orob2b_sale.form.type.quote_to_order:
         class: %orob2b_sale.form.type.orob2b_sale_quote_to_order.class%
+        arguments:
+            - @doctrine
         tags:
             - { name: form.type, alias: orob2b_sale_quote_to_order }
 
