@@ -11,7 +11,6 @@ parameters:
     orob2b_frontend.request.frontend_helper.class: OroB2B\Bundle\FrontendBundle\Request\FrontendHelper
     orob2b_frontend.form.type.extension.configuration.web.class: OroB2B\Bundle\FrontendBundle\Form\Extension\ConfigurationTypeExtension
     orob2b_frontend.form.type.install_configuration.web.class: OroB2B\Bundle\FrontendBundle\Form\Type\Configuration\WebType
-    orob2b_frontend.form.type.theme_select.class: OroB2B\Bundle\FrontendBundle\Form\Type\ThemeSelectType
 
 services:
     orob2b_frontend.listener.frontend_route_collection:
@@ -100,10 +99,3 @@ services:
         class: %orob2b_frontend.form.type.extension.configuration.web.class%
         tags:
             - { name: form.type_extension, alias: oro_installer_configuration }
-
-    orob2b_frontend.form.type.theme_select:
-        class: %orob2b_frontend.form.type.theme_select.class%
-        arguments:
-            - @oro_layout.theme_manager
-        tags:
-            - { name: form.type, alias: 'orob2b_frontend_theme_select' }

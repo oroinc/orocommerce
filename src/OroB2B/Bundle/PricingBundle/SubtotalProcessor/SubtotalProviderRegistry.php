@@ -12,7 +12,7 @@ class SubtotalProviderRegistry
     protected $providers = [];
 
     /**
-     * Add provider to regestry
+     * Add provider to registry
      *
      * @param SubtotalProviderInterface $provider
      */

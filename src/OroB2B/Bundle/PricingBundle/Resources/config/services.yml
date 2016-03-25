@@ -62,6 +62,7 @@ parameters:
     orob2b_pricing.model.price_list_request_handler.class: OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler
     orob2b_pricing.model.price_list_tree_handler.class: OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler
     orob2b_pricing.model.frontend_product_list_modifier.class: OroB2B\Bundle\PricingBundle\Model\FrontendProductListModifier
+    orob2b_pricing.model.assign_user_currency.class: OroB2B\Bundle\PricingBundle\Model\AssignUserCurrencyAction
     orob2b_pricing.system_config.class: OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig
     orob2b_pricing.system_config_convereter.class: OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter
 
@@ -78,6 +79,8 @@ parameters:
     orob2b_pricing.subtotal_processor.total_processor_provider.class: OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider
     orob2b_pricing.subtotal_processor.provider.subtotal_line_item.class: OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider
     orob2b_pricing.subtotal_processor.provider.subtotal_line_item_not_priced.class: OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider
+
+    orob2b_pricing.subtotal_processor.handler.request_handler.class: OroB2B\Bundle\PricingBundle\SubtotalProcessor\Handler\RequestHandler
 
 services:
     orob2b_pricing.acl.voter.product_list:
@@ -367,6 +370,15 @@ services:
         calls:
             - [setPriceListClass, [%orob2b_pricing.entity.combined_price_list.class%]]
 
+    orob2b_pricing.model.assign_user_currency:
+        class: %orob2b_pricing.model.assign_user_currency.class%
+        arguments:
+            - @oro_action.context_accessor
+            - @orob2b_pricing.provider.user_currency
+        tags:
+            - { name: oro_workflow.action, alias: assign_user_currency }
+            - { name: oro_action.function, alias: assign_user_currency }
+
     orob2b_pricing.filter.product_price:
             class: %orob2b_pricing.filter.product_price.class%
             arguments:
@@ -509,3 +521,12 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.orob2b_account_type, method: onPostSubmit }
             - { name: kernel.event_listener, event: orob2b_account.account.on_account_group_change, method: onAccountGroupChange }
+
+    orob2b_pricing.subtotal_processor.handler.request_handler:
+        class: %orob2b_pricing.subtotal_processor.handler.request_handler.class%
+        arguments:
+            - @orob2b_pricing.subtotal_processor.total_processor_provider
+            - @event_dispatcher
+            - @oro_security.security_facade
+            - @oro_entity.routing_helper
+            - @doctrine
