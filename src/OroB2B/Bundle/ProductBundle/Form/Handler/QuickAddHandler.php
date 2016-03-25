@@ -123,8 +123,8 @@ class QuickAddHandler
             $products = array_map(
                 function (ProductRow $productRow) {
                     return [
-                        'productSku' => $productRow->productSku,
-                        'productQuantity' => $productRow->productQuantity
+                        ProductDataStorage::PRODUCT_SKU_KEY => $productRow->productSku,
+                        ProductDataStorage::PRODUCT_QUANTITY_KEY => $productRow->productQuantity
                     ];
                 },
                 $products

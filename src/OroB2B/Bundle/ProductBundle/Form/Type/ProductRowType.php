@@ -14,8 +14,6 @@ class ProductRowType extends AbstractProductAwareType
 {
     const NAME = 'orob2b_product_row';
 
-    const PRODUCT_QUANTITY_FIELD_NAME = 'productQuantity';
-
     /**
      * {@inheritdoc}
      */

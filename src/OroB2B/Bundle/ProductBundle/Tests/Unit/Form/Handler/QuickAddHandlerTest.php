@@ -214,8 +214,8 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             QuickAddType::NAME,
             [
                 QuickAddType::PRODUCTS_FIELD_NAME => [
-                    ['productSku' => 'sku1'],
-                    ['productSku' => 'sku2'],
+                    [ProductDataStorage::PRODUCT_SKU_KEY => 'sku1'],
+                    [ProductDataStorage::PRODUCT_SKU_KEY => 'sku2'],
                 ],
                 QuickAddType::COMPONENT_FIELD_NAME => self::COMPONENT_NAME,
             ]
@@ -263,8 +263,8 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             $this->createProductRow('222', 234)
         ];
         $products = [
-            ['productSku' => '111', 'productQuantity' => 123],
-            ['productSku' => '222', 'productQuantity' => 234]
+            [ProductDataStorage::PRODUCT_SKU_KEY => '111', ProductDataStorage::PRODUCT_QUANTITY_KEY => 123],
+            [ProductDataStorage::PRODUCT_SKU_KEY => '222', ProductDataStorage::PRODUCT_QUANTITY_KEY => 234]
         ];
 
         $productsForm = $this->getMock('Symfony\Component\Form\FormInterface');
@@ -322,8 +322,8 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             $this->createProductRow('222', 234)
         ];
         $products = [
-            ['productSku' => '111', 'productQuantity' => 123],
-            ['productSku' => '222', 'productQuantity' => 234]
+            [ProductDataStorage::PRODUCT_SKU_KEY => '111', ProductDataStorage::PRODUCT_QUANTITY_KEY => 123],
+            [ProductDataStorage::PRODUCT_SKU_KEY => '222', ProductDataStorage::PRODUCT_QUANTITY_KEY => 234]
         ];
 
         $productsForm = $this->getMock('Symfony\Component\Form\FormInterface');

@@ -11,6 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 use OroB2B\Bundle\ProductBundle\Form\DataTransformer\ProductCollectionTransformer;
+use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class ProductRowCollectionType extends AbstractType
 {
@@ -40,9 +41,11 @@ class ProductRowCollectionType extends AbstractType
             }
 
             foreach ($products as $key => $product) {
-                if ($product['productSku'] !== '' && $product['productQuantity'] === '') {
+                if ($product[ProductDataStorage::PRODUCT_SKU_KEY] !== '' &&
+                    $product[ProductDataStorage::PRODUCT_QUANTITY_KEY] === ''
+                ) {
                     // default quantity
-                    $products[$key]['productQuantity'] = '1';
+                    $products[$key][ProductDataStorage::PRODUCT_QUANTITY_KEY] = '1';
                 }
             }
             $event->setData($products);
