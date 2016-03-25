@@ -7,22 +7,22 @@ use Oro\Component\Layout\AbstractServerRenderDataProvider;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
+use OroB2B\Bundle\CatalogBundle\Provider\CategoryTreeProvider as CategoryProvider;
 
-class CategoryTreeProviderProvider extends AbstractServerRenderDataProvider
+class CategoryTreeProvider extends AbstractServerRenderDataProvider
 {
     /** @var array */
     protected $data;
 
-    /** @var CategoryTreeProvider */
-    protected $categoryTreeProvider;
+    /** @var CategoryProvider */
+    protected $categoryProvider;
 
     /**
-     * @param CategoryTreeProvider $categoryTreeProvider
+     * @param CategoryProvider $categoryProvider
      */
-    public function __construct(CategoryTreeProvider $categoryTreeProvider)
+    public function __construct(CategoryProvider $categoryProvider)
     {
-        $this->categoryTreeProvider = $categoryTreeProvider;
+        $this->categoryProvider = $categoryProvider;
     }
 
     /**
@@ -35,7 +35,7 @@ class CategoryTreeProviderProvider extends AbstractServerRenderDataProvider
         $userId = $user ? $user->getId() : null;
 
         if (!$this->data[$userId]) {
-            $categories = $this->categoryTreeProvider->getCategories($user, null, null);
+            $categories = $this->categoryProvider->getCategories($user, null, null);
             $rootCategory = $this->findRootCategory($categories);
 
             $this->data[$userId] = [
