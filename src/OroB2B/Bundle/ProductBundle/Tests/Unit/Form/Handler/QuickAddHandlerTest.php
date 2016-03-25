@@ -22,6 +22,9 @@ use OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddCopyPasteFormProvide
 use OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddImportFormProvider;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 {
     const PRODUCT_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
