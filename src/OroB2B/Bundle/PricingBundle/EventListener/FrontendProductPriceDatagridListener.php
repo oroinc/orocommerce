@@ -18,6 +18,7 @@ use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class FrontendProductPriceDatagridListener extends AbstractProductPriceDatagridListener
 {
+    const COLUMN_PRICES = 'prices';
     const COLUMN_UNITS = 'price_units';
     const COLUMN_MINIMUM_PRICE = 'minimum_price';
 
@@ -67,7 +68,7 @@ class FrontendProductPriceDatagridListener extends AbstractProductPriceDatagridL
         $records = $event->getRecords();
 
         $currencyIsoCode = $this->getCurrencies()[0];
-        $priceColumn = $this->buildColumnName($currencyIsoCode);
+        $priceColumn = self::COLUMN_PRICES;
         foreach ($records as $record) {
             $resultPrices = [];
             $prices = $record->getValue($priceColumn);
@@ -104,20 +105,22 @@ class FrontendProductPriceDatagridListener extends AbstractProductPriceDatagridL
             return;
         }
 
-        $pricesColumnName = $this->buildColumnName($currency);
+        $pricesColumnName = self::COLUMN_PRICES;
+        $unitColumnName = self::COLUMN_UNITS;
+        $minimumPriceColumnName = $this->buildColumnName($currency);
+        $joinAlias = $this->buildJoinAlias($minimumPriceColumnName);
         $separator = (new Expr())->literal(self::DATA_SEPARATOR);
-        $joinAlias = $this->buildJoinAlias($pricesColumnName);
 
         $selectPattern = 'GROUP_CONCAT(%s.value SEPARATOR %s) as %s';
         $select = sprintf($selectPattern, $joinAlias, $separator, $pricesColumnName);
         $this->addConfigElement($config, '[source][query][select]', $select);
 
         $selectPattern = 'GROUP_CONCAT(%s.unit SEPARATOR %s) as %s';
-        $select = sprintf($selectPattern, $joinAlias, $separator, self::COLUMN_UNITS);
+        $select = sprintf($selectPattern, $joinAlias, $separator, $unitColumnName);
         $this->addConfigElement($config, '[source][query][select]', $select);
 
         $selectPattern = 'MIN(%s.value) as %s';
-        $select = sprintf($selectPattern, $joinAlias, self::COLUMN_MINIMUM_PRICE);
+        $select = sprintf($selectPattern, $joinAlias, $minimumPriceColumnName);
         $this->addConfigElement($config, '[source][query][select]', $select);
 
         $this->addConfigProductPriceJoin($config, $currency);
@@ -128,7 +131,7 @@ class FrontendProductPriceDatagridListener extends AbstractProductPriceDatagridL
             ['type' => 'field', 'frontend_type' => PropertyInterface::TYPE_ROW_ARRAY],
             $pricesColumnName
         );
-        $this->addConfigElement($config, '[properties]', null, self::COLUMN_UNITS);
+        $this->addConfigElement($config, '[properties]', null, $unitColumnName);
 
         $this->addConfigElement(
             $config,
@@ -136,28 +139,18 @@ class FrontendProductPriceDatagridListener extends AbstractProductPriceDatagridL
             [
                 'label' => $this->translator->trans('orob2b.pricing.productprice.price_in_%currency%', [
                     '%currency%' => $currency
-                ]),
+                ])
             ],
-            self::COLUMN_MINIMUM_PRICE
-        );
-        $this->addConfigElement(
-            $config,
-            '[columns]',
-            [
-                'label' => $this->translator->trans('orob2b.pricing.productprice.price_in_%currency%', [
-                    '%currency%' => $currency
-                ]),
-            ],
-            'prices'
+            $minimumPriceColumnName
         );
         $this->addConfigElement(
             $config,
             '[sorters][columns]',
             [
-                'data_name' => self::COLUMN_MINIMUM_PRICE,
+                'data_name' => $minimumPriceColumnName,
                 'type' => PropertyInterface::TYPE_CURRENCY,
             ],
-            self::COLUMN_MINIMUM_PRICE
+            $minimumPriceColumnName
         );
 
         $this->addConfigFilter($config, $currency);
@@ -168,7 +161,7 @@ class FrontendProductPriceDatagridListener extends AbstractProductPriceDatagridL
      */
     protected function buildColumnName($currencyIsoCode, $unitCode = null)
     {
-        return 'prices';
+        return self::COLUMN_MINIMUM_PRICE;
     }
 
     /**
