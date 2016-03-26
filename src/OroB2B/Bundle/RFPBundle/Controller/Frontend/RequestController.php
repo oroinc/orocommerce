@@ -109,6 +109,10 @@ class RequestController extends Controller
 
         $data = $this->update($rfpRequest);
 
+        if (!is_array($data) && $data->getStatusCode() ===  302) {
+            return $data;
+        }
+
         return ['data' => $data];
     }
 
