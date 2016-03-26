@@ -88,7 +88,7 @@ class QuoteToOrderType extends CollectionType
             $quote = $quoteProduct->getQuote();
             //TODO IMPROVE
             $selectedOffer = $em->getRepository('OroB2BSaleBundle:QuoteProductSelectedOffer')
-                ->findOneBy(['quote' => $quote]);
+                ->findOneBy(['quote' => $quote, 'quoteProductOffer' => $offer]);
             if (!$selectedOffer) {
                 $selectedOffer = new QuoteProductSelectedOffer($quote, $offer, $item['quantity']);
                 $em->persist($selectedOffer);

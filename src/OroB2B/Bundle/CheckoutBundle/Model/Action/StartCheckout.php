@@ -322,7 +322,7 @@ class StartCheckout extends AbstractAction
             $data = $this->contextAccessor->getValue($context, $this->options[$key]);
         }
 
-        if ($data) {
+        if ($data && is_array($data)) {
             foreach ($data as &$value) {
                 $value = $this->contextAccessor->getValue($context, $value);
             }
