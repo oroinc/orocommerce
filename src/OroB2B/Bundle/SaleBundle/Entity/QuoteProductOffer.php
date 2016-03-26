@@ -12,7 +12,7 @@ use OroB2B\Bundle\SaleBundle\Model\BaseQuoteProductItem;
  * QuoteProductOffer
  *
  * @ORM\Table(name="orob2b_sale_quote_prod_offer")
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\SaleBundle\Entity\Repository\QuoteProductOfferRepository")
+ * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  * @Config(
  *      defaultValues={

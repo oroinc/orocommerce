@@ -81,22 +81,27 @@ class QuoteToOrderType extends CollectionType
     public function postSubmit(FormEvent $event)
     {
         $em = $this->registry->getManagerForClass('OroB2BSaleBundle:QuoteProductSelectedOffer');
+        $selectedOffers = $em->getRepository('OroB2BSaleBundle:QuoteProductSelectedOffer')
+            ->getSavedOffersByQuote($this->quote);
         foreach ($event->getData() as $item) {
             /** @var QuoteProductOffer $offer */
             $offer = $item['offer'];
-            $quoteProduct = $offer->getQuoteProduct();
-            $quote = $quoteProduct->getQuote();
-            //TODO IMPROVE
-            $selectedOffer = $em->getRepository('OroB2BSaleBundle:QuoteProductSelectedOffer')
-                ->findOneBy(['quote' => $quote, 'quoteProductOffer' => $offer]);
+            $selectedOffer = null;
+            if (array_key_exists($offer->getId(), $selectedOffers)) {
+                $selectedOffer = $selectedOffers[$offer->getId()];
+            }
+            unset($selectedOffers[$offer->getId()]);
             if (!$selectedOffer) {
-                $selectedOffer = new QuoteProductSelectedOffer($quote, $offer, $item['quantity']);
+                $selectedOffer = new QuoteProductSelectedOffer($this->quote, $offer, $item['quantity']);
                 $em->persist($selectedOffer);
             } else {
-                $selectedOffer->setQuote($quote);
+                $selectedOffer->setQuote($this->quote);
                 $selectedOffer->setQuoteProductOffer($offer);
                 $selectedOffer->setQuantity($item['quantity']);
             }
+        }
+        foreach ($selectedOffers as $unusedItem) {
+            $em->remove($unusedItem);
         }
         $em->flush();
     }

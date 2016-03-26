@@ -10,7 +10,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  * SelectedOffers
  *
  * @ORM\Table(name="orob2b_sale_selected_offer")
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\SaleBundle\Entity\Repository\QuoteProductSelectedOfferRepository")
  * @Config(
  *      defaultValues={
  *          "entity"={

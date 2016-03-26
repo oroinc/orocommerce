@@ -62,9 +62,7 @@ class QuoteOfferConverter
             },
             $offers
         );
-        $offerEntities = $this->getQuoteProductOfferRepository()
-            ->getOffersByIds($ids);
-        
+        $offerEntities = $this->getQuoteProductOfferRepository()->findBy(['id' => $ids]);
         foreach ($offerEntities as $offer) {
             $result[] = [self::QUANTITY => $offer->getQuantity(), self::OFFER => $offer];
         }
