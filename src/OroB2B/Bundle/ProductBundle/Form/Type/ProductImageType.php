@@ -41,7 +41,6 @@ class ProductImageType extends AbstractType
         $resolver
             ->setRequired('image_types')
             ->setAllowedTypes('image_types', 'array');
-
     }
 
     /**

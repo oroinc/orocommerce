@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Prophecy\Argument;
 
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
@@ -28,6 +29,11 @@ class ProductImageCollectionValidatorTest extends \PHPUnit_Framework_TestCase
     protected $imageTypeProvider;
 
     /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
      * @var ExecutionContextInterface
      */
     protected $context;
@@ -39,6 +45,8 @@ class ProductImageCollectionValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        $this->translator = $this->prophesize('Symfony\Component\Translation\TranslatorInterface');
+
         $this->imageTypeProvider = $this->prophesize('Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider');
         $this->imageTypeProvider->getImageTypes()->willReturn(new ArrayCollection([
             new ThemeImageType('main', 'Main', [], 1),
@@ -49,7 +57,10 @@ class ProductImageCollectionValidatorTest extends \PHPUnit_Framework_TestCase
 
         $this->context = $this->prophesize('Symfony\Component\Validator\Context\ExecutionContextInterface');
 
-        $this->validator = new ProductImageCollectionValidator($this->imageTypeProvider->reveal());
+        $this->validator = new ProductImageCollectionValidator(
+            $this->imageTypeProvider->reveal(),
+            $this->translator->reveal()
+        );
         $this->validator->initialize($this->context->reveal());
     }
 
