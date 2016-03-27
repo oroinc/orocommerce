@@ -126,8 +126,8 @@ layout:
                 order_total:
                     blockType: order_total
                     options:
-                        total: {@value: $data.total}
-                        subtotals: {@value: $data.subtotals}
+                        total: {@value: $data.totals.total}
+                        subtotals: {@value: $data.totals.subtotals}
             tree:
                 content:
                     order_view_page:

@@ -71,10 +71,7 @@ class AjaxOrderControllerTest extends WebTestCase
 
         $this->assertArrayHasKey('totals', $data);
         $this->assertArrayHasKey('subtotals', $data['totals']);
+        $this->assertArrayHasKey(0, $data['totals']['subtotals']);
         $this->assertArrayHasKey('total', $data['totals']);
-        $this->assertArrayHasKey('subtotal', $data['totals']['subtotals']);
-        $this->assertArrayHasKey('subtotals', $data);
-        $this->assertArrayHasKey(0, $data['subtotals']);
-        $this->assertArrayHasKey('total', $data);
     }
 }

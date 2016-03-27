@@ -14,6 +14,9 @@ use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityWithoutCurrencyStub;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class TotalProcessorProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**

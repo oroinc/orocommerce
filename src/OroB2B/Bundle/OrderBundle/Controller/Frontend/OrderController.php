@@ -56,10 +56,10 @@ class OrderController extends AbstractOrderController
     public function viewAction(Order $order)
     {
         return [
-            'data' => array_merge(
-                ['order' => $order],
-                ['id' => 'totals', 'data' => $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($order)]
-            ),
+            'data' => [
+                'order' => $order,
+                'totals' => (object)$this->getTotalProcessor()->getTotalWithSubtotalsAsArray($order),
+            ],
         ];
     }
 
