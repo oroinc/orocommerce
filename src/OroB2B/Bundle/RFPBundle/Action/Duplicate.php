@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\RFPBundle\Action;
 
-use Oro\Bundle\ActionBundle\Exception\InvalidParameterException;
 use Oro\Component\Action\Action\ActionInterface;
 use Oro\Component\Action\Action\AbstractAction;
+use Oro\Component\Action\Exception\InvalidParameterException;
 
 use OroB2B\Bundle\RFPBundle\Factory\DuplicatorFactory;
 use OroB2B\Component\Duplicator\Duplicator;
