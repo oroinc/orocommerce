@@ -4,11 +4,11 @@ namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request;
 
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 
+// @codingStandardsIgnoreStart
 /**
- * @codingStandardsIgnoreStart
  * @link https://developer.paypal.com/docs/classic/payflow/integration-guide/#paypal-credit-card-transaction-request-parameters
- * @codingStandardsIgnoreEnd
  */
+// @codingStandardsIgnoreEnd
 class AuthorizationRequest extends AbstractRequest
 {
     /** {@inheritdoc} */

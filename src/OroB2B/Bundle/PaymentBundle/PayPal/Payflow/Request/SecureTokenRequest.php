@@ -24,6 +24,14 @@ class SecureTokenRequest extends AbstractRequest
         $this->addOption(new SecureToken());
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getOptions()
+    {
+        return array_merge(parent::getOptions(), $this->request->getOptions());
+    }
+
     /** {@inheritdoc} */
     public function getAction()
     {
