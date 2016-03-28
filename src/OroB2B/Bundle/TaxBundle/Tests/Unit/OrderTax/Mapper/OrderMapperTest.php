@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\OrderTax\Mapper;
 
-use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
@@ -56,7 +55,8 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->addressProvider->expects($this->any())->method('getAddressForTaxation')->willReturnArgument(1);
+        $this->addressProvider->expects($this->any())->method('getDestinationAddress')->willReturnArgument(0);
+        $this->addressProvider->expects($this->any())->method('getTaxationAddress')->willReturnArgument(1);
 
         $this->eventDispatcher = $this
             ->getMockBuilder('OroB2B\Bundle\TaxBundle\Event\ContextEventDispatcher')
@@ -68,7 +68,11 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
             ->method('dispatch')
             ->willReturn(new \ArrayObject([self::CONTEXT_KEY => self::CONTEXT_VALUE]));
 
-        $this->mapper = new OrderMapper($this->eventDispatcher, $this->addressProvider);
+        $this->mapper = new OrderMapper(
+            $this->eventDispatcher,
+            $this->addressProvider,
+            'OroB2B\Bundle\OrderBundle\Entity\Order'
+        );
         $this->mapper->setOrderLineItemMapper($this->orderLineItemMapper);
     }
 
@@ -93,7 +97,16 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
 
         $taxable = $this->mapper->map($order);
 
-        $this->assertTaxable($taxable, self::ORDER_ID, self::ORDER_SUBTOTAL, $order->getShippingAddress());
+        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Taxable', $taxable);
+        $this->assertEquals(self::ORDER_ID, $taxable->getIdentifier());
+        $this->assertEquals(1, $taxable->getQuantity());
+        $this->assertEquals(0, $taxable->getPrice());
+        $this->assertEquals(self::ORDER_SUBTOTAL, $taxable->getAmount());
+        $this->assertEquals($order->getShippingAddress(), $taxable->getTaxationAddress());
+        $this->assertEquals($order->getBillingAddress(), $taxable->getDestination());
+        $this->assertNull($taxable->getOrigin());
+        $this->assertEquals(self::CONTEXT_VALUE, $taxable->getContextValue(self::CONTEXT_KEY));
+        $this->assertNotEmpty($taxable->getItems());
         $this->assertCount(1, $taxable->getItems());
         $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Taxable', $taxable->getItems()->current());
     }
@@ -107,7 +120,11 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
      */
     protected function createOrder($id, $subtotal)
     {
-        $orderAddress = (new OrderAddress())
+        $billingAddress = (new OrderAddress())
+            ->setFirstName('FirstName')
+            ->setLastName('LastName')
+            ->setStreet('street');
+        $shippingAddress = (new OrderAddress())
             ->setFirstName('FirstName')
             ->setLastName('LastName')
             ->setStreet('street');
@@ -117,26 +134,9 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
         $order
             ->setSubtotal($subtotal)
             ->addLineItem(new OrderLineItem())
-            ->setShippingAddress($orderAddress);
+            ->setShippingAddress($shippingAddress)
+            ->setBillingAddress($billingAddress);
 
         return $order;
-    }
-
-    /**
-     * @param Taxable $taxable
-     * @param int $id
-     * @param float $subtotal
-     * @param AbstractAddress $destination
-     */
-    protected function assertTaxable($taxable, $id, $subtotal, $destination)
-    {
-        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Model\Taxable', $taxable);
-        $this->assertEquals($id, $taxable->getIdentifier());
-        $this->assertEquals(1, $taxable->getQuantity());
-        $this->assertEquals(0, $taxable->getPrice());
-        $this->assertEquals($subtotal, $taxable->getAmount());
-        $this->assertEquals($destination, $taxable->getDestination());
-        $this->assertEquals(self::CONTEXT_VALUE, $taxable->getContextValue(self::CONTEXT_KEY));
-        $this->assertNotEmpty($taxable->getItems());
     }
 }

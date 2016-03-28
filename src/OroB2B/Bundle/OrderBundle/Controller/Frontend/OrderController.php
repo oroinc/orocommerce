@@ -12,9 +12,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\LayoutBundle\Annotation\Layout;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
@@ -47,8 +47,8 @@ class OrderController extends AbstractOrderController
 
     /**
      * @Route("/view/{id}", name="orob2b_order_frontend_view", requirements={"id"="\d+"})
-     * @Template("OroB2BOrderBundle:Order/Frontend:view.html.twig")
      * @AclAncestor("orob2b_order_frontend_view")
+     * @Layout()
      *
      * @param Order $order
      * @return array
@@ -56,8 +56,10 @@ class OrderController extends AbstractOrderController
     public function viewAction(Order $order)
     {
         return [
-            'entity' => $order,
-            'totals' => $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($order)
+            'data' => [
+                'order' => $order,
+                'totals' => (object)$this->getTotalProcessor()->getTotalWithSubtotalsAsArray($order),
+            ],
         ];
     }
 
