@@ -8,7 +8,7 @@
 {% block _no_shopping_lists_widget %}
     {% if not shoppingList %}
         <div class="cart-list_empty">
-            <span class="badge badge_orange badge_xlg badge_circle"><i class="icon-basket"></i></span>
+            <span class="badge badge_orange badge_xlg badge_circle"><i class="cf-basket"></i></span>
             <span class="fs24 va-m_md">{{ 'orob2b.frontend.shoppinglist.view.not_have_available'|trans }}</span>
         </div>
     {% endif %}
@@ -278,7 +278,7 @@
     {% endif %}
     <div {{ block('block_attributes') }}>
           <span class="badge badge_orange badge_xlg badge_circle">
-            <i class="icon-basket"></i>
+            <i class="cf-basket"></i>
           </span>
         <span class="fs24 va-m_md">{{ 'orob2b.frontend.shoppinglist.view.empty'|trans }}</span>
     </div>

@@ -1,7 +1,7 @@
 {% block _checkout_form_fields_widget -%}
     {% set workflowItem = checkout.workflowItem %}
     <div class="oro-more-info-toggler">
-        <i class="icon-play" data-more-info-expand tabindex="0"></i>
+        <i class="cf-play" data-more-info-expand tabindex="0"></i>
         <a href="#" data-more-info-expand tabindex="0">
             {{ 'orob2b.checkout.workflow.view_options.label'|trans }}
         </a>
@@ -17,7 +17,7 @@
                         <span class="checkbox_custom__text fs13">{{ "orob2b.checkout.order_review.shipping_date"|trans }}</span>
                     </label>
                     <div class="form-input form-input_datepicker mmt9-md mmt9-sm">
-                        <span class="form-input_datepicker_icon gray fs22"><i class="icon-calendar"></i></span>
+                        <span class="form-input_datepicker_icon gray fs22"><i class="cf-calendar"></i></span>
                         {{ form_widget(form.ship_until, {'attr': {'class': 'input input_sm input_block input_datepicker', 'placeholder': 'orob2b.checkout.order_review.shipping_date_placeholder'|trans }}) }}
                     </div>
                 </div>
