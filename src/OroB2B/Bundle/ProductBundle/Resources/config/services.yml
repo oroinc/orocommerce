@@ -119,6 +119,7 @@ services:
         calls:
             - [setActionGroupRegistry, [@oro_action.action_group_registry]]
             - [setTranslator, [@translator]]
+            - [setRouter, [@router]]
 
     orob2b_product.storage.product_data_bag:
         class: %session.attribute_bag.class%

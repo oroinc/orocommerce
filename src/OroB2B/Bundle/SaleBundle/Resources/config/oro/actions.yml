@@ -16,7 +16,6 @@ operations:
             @equal: [$expired, false]
         actions:
             - @run_action_group:
-                attribute: $.result
                 action_group: orob2b_sale_expire_quote
                 parameters_mapping:
                     data: $.data
@@ -24,7 +23,7 @@ operations:
                 message: orob2b.sale.quote.message.quote.expire.success
                 type: 'info'
                 message_parameters:
-                    id: $.result.data.id
+                    id: $id
             - @redirect:
                 route: 'orob2b_sale_quote_index'
 
@@ -95,7 +94,8 @@ operations:
 #            @equal: [false, $hasOfferVariants]
         actions:
             - @run_action_group:
-                attribute: $.result
+                attributes:
+                    order_id: $.order.id
                 action_group: orob2b_sale_frontend_quote_accept_and_submit_to_order
                 parameters_mapping:
                     data: $.data
@@ -107,7 +107,7 @@ operations:
                     @acl_resource: orob2b_order_frontend_view
                 parameters:
                     route: 'orob2b_order_frontend_view'
-                    route_parameters: {id: $.result.order.id}
+                    route_parameters: {id: $.order_id}
 
     orob2b_sale_frontend_quote_accept_and_submit_to_order_from_widget:
         label: orob2b.frontend.sale.btn.widget_accept_quote_create_order
@@ -149,7 +149,8 @@ operations:
 
         actions:
             - @run_action_group:
-                attribute: $.result
+                attributes:
+                    order_id: $.order.id
                 action_group: orob2b_sale_frontend_quote_accept_and_submit_to_order_from_widget
                 parameters_mapping:
                     data: $.data
@@ -162,7 +163,7 @@ operations:
                     @acl_resource: orob2b_order_frontend_view
                 parameters:
                     route: 'orob2b_order_frontend_view'
-                    route_parameters: {id: $.result.order.id}
+                    route_parameters: {id: $.order_id}
 
 action_groups:
     orob2b_sale_expire_quote:
