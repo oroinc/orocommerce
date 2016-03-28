@@ -29,6 +29,9 @@ define(function(require) {
             mediator.once('entry-point:order:load', function(response) {
                 callback(response.matchedPrices || {});
             });
+            this.joinSubrequests(this.loadLineItemsMatchedPrices, items, callback, _.bind(function() {
+                mediator.trigger('entry-point:order:trigger');
+            }, this));
         },
 
         /**
