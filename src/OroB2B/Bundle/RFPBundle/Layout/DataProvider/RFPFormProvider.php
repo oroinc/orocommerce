@@ -42,7 +42,7 @@ class RFPFormProvider extends AbstractServerRenderDataProvider
 
         if (!isset($this->data[$requestId])) {
             if ($requestId) {
-                $action = FormAction::createByRoute('orob2b_rfp_frontend_request_view', ['id' => $requestId]);
+                $action = FormAction::createByRoute('orob2b_rfp_frontend_request_update', ['id' => $requestId]);
             } else {
                 $action = FormAction::createByRoute('orob2b_rfp_frontend_request_create');
             }

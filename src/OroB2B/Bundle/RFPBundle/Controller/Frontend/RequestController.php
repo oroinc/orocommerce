@@ -134,7 +134,13 @@ class RequestController extends Controller
      */
     public function updateAction(RFPRequest $rfpRequest)
     {
-        return ['data' => $this->update($rfpRequest)];
+        $data = $this->update($rfpRequest);
+
+        if (!is_array($data) && $data->getStatusCode() ===  302) {
+            return $data;
+        }
+
+        return ['data' => $data];
     }
 
     /**
@@ -196,7 +202,8 @@ class RequestController extends Controller
                 }
 
                 return [
-                    'backToUrl' => $url
+                    'backToUrl' => $url,
+                    'form' => $form->createView()
                 ];
             }
         );
