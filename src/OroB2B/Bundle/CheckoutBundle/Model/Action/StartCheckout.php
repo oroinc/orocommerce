@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\CheckoutBundle\Model\Action;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -98,6 +99,11 @@ class StartCheckout extends AbstractAction
     protected $em;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $dispatcher;
+
+    /**
      * @param ContextAccessor $contextAccessor
      * @param ManagerRegistry $registry
      * @param WebsiteManager $websiteManager
@@ -105,6 +111,7 @@ class StartCheckout extends AbstractAction
      * @param TokenStorageInterface $tokenStorage
      * @param PropertyAccessor $propertyAccessor
      * @param AbstractAction $redirect
+     * @param EventDispatcherInterface $dispatcher
      */
     public function __construct(
         ContextAccessor $contextAccessor,
@@ -113,7 +120,8 @@ class StartCheckout extends AbstractAction
         UserCurrencyProvider $currencyProvider,
         TokenStorageInterface $tokenStorage,
         PropertyAccessor $propertyAccessor,
-        AbstractAction $redirect
+        AbstractAction $redirect,
+        EventDispatcherInterface $dispatcher
     ) {
         parent::__construct($contextAccessor);
 
@@ -123,6 +131,7 @@ class StartCheckout extends AbstractAction
         $this->tokenStorage = $tokenStorage;
         $this->propertyAccessor = $propertyAccessor;
         $this->redirect = $redirect;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -245,6 +254,8 @@ class StartCheckout extends AbstractAction
      */
     protected function createCheckout($context, CheckoutSource $checkoutSource)
     {
+
+//        $this->dispatcher
         $checkout = new Checkout();
         $checkout->setSource($checkoutSource);
         $this->updateCheckoutData($context, $checkout);
