@@ -20,16 +20,21 @@ class OrderEvent extends Event
     /** @var \ArrayObject */
     protected $data;
 
+    /** @var array */
+    protected $submittedData = [];
+
     /**
      * @param FormInterface $form
      * @param Order $order
+     * @param array $submittedData
      */
-    public function __construct(FormInterface $form, Order $order)
+    public function __construct(FormInterface $form, Order $order, array $submittedData = [])
     {
         $this->form = $form;
         $this->order = $order;
 
         $this->data = new \ArrayObject();
+        $this->submittedData = $submittedData;
     }
 
     /**
@@ -54,5 +59,13 @@ class OrderEvent extends Event
     public function getForm()
     {
         return $this->form;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSubmittedData()
+    {
+        return $this->submittedData;
     }
 }

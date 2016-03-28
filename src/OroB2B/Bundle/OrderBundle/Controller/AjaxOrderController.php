@@ -37,7 +37,7 @@ class AjaxOrderController extends Controller
 
         $form->submit($submittedData);
 
-        $event = new OrderEvent($form, $form->getData());
+        $event = new OrderEvent($form, $form->getData(), $submittedData);
         $this->get('event_dispatcher')->dispatch(OrderEvent::NAME, $event);
 
         return new JsonResponse($event->getData());

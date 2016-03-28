@@ -37,14 +37,21 @@ class OrderAddressEventListener
         foreach ([AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING] as $type) {
             $fieldName = sprintf('%sAddress', $type);
             if ($orderForm->has($fieldName)) {
+                $orderFormName = $orderForm->getName();
                 $field = $orderForm->get($fieldName);
-                $newField = $this->formFactory->createNamed(
-                    $field->getName(),
-                    $field->getConfig()->getType()->getName(),
-                    $field->getData(),
-                    $field->getConfig()->getOptions()
-                );
-                $view = $this->renderForm($newField->createView());
+
+                $form = $this->formFactory
+                    ->createNamedBuilder($orderFormName)
+                    ->add(
+                        $fieldName,
+                        $field->getConfig()->getType()->getName(),
+                        $field->getConfig()->getOptions()
+                    )
+                    ->getForm();
+
+                $form->submit($event->getSubmittedData());
+
+                $view = $this->renderForm($form->get($fieldName)->createView());
                 $event->getData()->offsetSet($fieldName, $view);
             }
         }
