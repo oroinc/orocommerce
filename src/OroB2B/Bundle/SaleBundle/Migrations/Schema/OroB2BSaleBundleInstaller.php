@@ -101,7 +101,9 @@ class OroB2BSaleBundleInstaller implements
         $this->createOroB2BSaleQuoteProductTable($schema);
         $this->createOroB2BSaleQuoteProdOfferTable($schema);
         $this->createOroB2BSaleQuoteProdRequestTable($schema);
-        $this->createOroB2BSaleSelectedOfferTable($schema);
+
+        $this->createOroB2BSaleQuoteDemandTable($schema);
+        $this->createOroB2BSaleQuoteProductDemandTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroQuoteAssignedAccUsersForeignKeys($schema);
@@ -111,7 +113,7 @@ class OroB2BSaleBundleInstaller implements
         $this->addOroB2BSaleQuoteProdOfferForeignKeys($schema);
         $this->addOroB2BSaleQuoteProdRequestForeignKeys($schema);
         $this->addOroB2BQuoteAddressForeignKeys($schema);
-        $this->addOroB2BSaleSelectedOfferForeignKeys($schema);
+        $this->addOroB2BSaleQuoteProductDemandForeignKeys($schema);
 
         $this->addNoteAssociations($schema, $this->noteExtension);
         $this->addAttachmentAssociations($schema, $this->attachmentExtension);
@@ -260,20 +262,6 @@ class OroB2BSaleBundleInstaller implements
         ]);
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 255]);
         $table->setPrimaryKey(['id']);
-    }
-
-    /**
-     * Create orob2b_sale_selected_offer table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroB2BSaleSelectedOfferTable(Schema $schema)
-    {
-        $table = $schema->createTable('orob2b_sale_selected_offer');
-        $table->addColumn('quote_id', 'integer', []);
-        $table->addColumn('quote_product_offer', 'integer', []);
-        $table->addColumn('quantity', 'integer', []);
-        $table->setPrimaryKey(['quote_id', 'quote_product_offer']);
     }
 
     /**
@@ -557,28 +545,6 @@ class OroB2BSaleBundleInstaller implements
     }
 
     /**
-     * Add orob2b_sale_selected_offer foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOroB2BSaleSelectedOfferForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('orob2b_sale_selected_offer');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_sale_quote_prod_offer'),
-            ['quote_product_offer'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_sale_quote'),
-            ['quote_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-    }
-
-    /**
      * @param Schema $schema
      */
     protected function addQuoteCheckoutSource(Schema $schema)
@@ -587,8 +553,8 @@ class OroB2BSaleBundleInstaller implements
             $this->extendExtension->addManyToOneRelation(
                 $schema,
                 'orob2b_checkout_source',
-                'quote',
-                'orob2b_sale_quote',
+                'quoteDemand',
+                'orob2b_quote_demand',
                 'id',
                 [
                     ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
@@ -609,5 +575,50 @@ class OroB2BSaleBundleInstaller implements
                 ]
             );
         }
+    }
+
+    /**
+     * Create orob2b_quote_demand table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BSaleQuoteDemandTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_quote_demand');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('quote_id', 'integer', ['notnull' => false]);
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Create orob2b_quote_product_demand table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BSaleQuoteProductDemandTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_quote_product_demand');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('quote_demand_id', 'integer', ['notnull' => false]);
+        $table->addColumn('quote_product_offer', 'integer', ['notnull' => false]);
+        $table->addColumn('quantity', 'integer', []);
+        $table->setPrimaryKey(['id']);
+    }
+
+
+    /**
+     * Add orob2b_quote_product_demand foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BSaleQuoteProductDemandForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_quote_product_demand');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_quote_demand'),
+            ['quote_demand_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
     }
 }

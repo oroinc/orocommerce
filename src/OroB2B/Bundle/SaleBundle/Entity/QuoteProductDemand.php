@@ -9,8 +9,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 /**
  * SelectedOffers
  *
- * @ORM\Table(name="orob2b_sale_selected_offer")
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\SaleBundle\Entity\Repository\QuoteProductSelectedOfferRepository")
+ * @ORM\Table(name="orob2b_quote_product_demand")
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\SaleBundle\Entity\Repository\QuoteProductDemandRepository")
  * @Config(
  *      defaultValues={
  *          "entity"={
@@ -23,19 +23,26 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *      }
  * )
  */
-class QuoteProductSelectedOffer
+class QuoteProductDemand
 {
     /**
-     * @var Quote
+     * @var int
+     *
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="Quote")
-     * @ORM\JoinColumn(name="quote_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
-    protected $quote;
+    protected $id;
 
     /**
+     * @var Quote
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\SaleBundle\Entity\QuoteDemand")
+     * @ORM\JoinColumn(name="quote_demand_id", referencedColumnName="id", onDelete="CASCADE")
+     */
+    protected $quoteDemand;
+    
+    /**
      * @var QuoteProductOffer
-     * @ORM\Id
      * @ORM\ManyToOne(targetEntity="QuoteProductOffer")
      * @ORM\JoinColumn(name="quote_product_offer", referencedColumnName="id", onDelete="CASCADE")
      */
@@ -49,31 +56,15 @@ class QuoteProductSelectedOffer
 
     /**
      * SelectedOffer constructor.
-     * @param Quote $quote
+     * @param QuoteDemand $quoteDemand
      * @param QuoteProductOffer $quoteProductOffer
      * @param int $quantity
      */
-    public function __construct(Quote $quote, QuoteProductOffer $quoteProductOffer, $quantity)
+    public function __construct(QuoteDemand $quoteDemand, QuoteProductOffer $quoteProductOffer, $quantity)
     {
-        $this->quote = $quote;
+        $this->quoteDemand = $quoteDemand;
         $this->quoteProductOffer = $quoteProductOffer;
         $this->quantity = $quantity;
-    }
-
-    /**
-     * @return Quote
-     */
-    public function getQuote()
-    {
-        return $this->quote;
-    }
-
-    /**
-     * @param Quote $quote
-     */
-    public function setQuote($quote)
-    {
-        $this->quote = $quote;
     }
 
     /**
@@ -106,5 +97,21 @@ class QuoteProductSelectedOffer
     public function setQuantity($quantity)
     {
         $this->quantity = $quantity;
+    }
+
+    /**
+     * @return Quote
+     */
+    public function getQuoteDemand()
+    {
+        return $this->quoteDemand;
+    }
+
+    /**
+     * @param Quote $quoteDemand
+     */
+    public function setQuoteDemand($quoteDemand)
+    {
+        $this->quoteDemand = $quoteDemand;
     }
 }

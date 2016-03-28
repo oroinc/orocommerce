@@ -36,8 +36,8 @@ class AddCheckoutSource implements Migration, ExtendExtensionAwareInterface
             $this->extendExtension->addManyToOneRelation(
                 $schema,
                 'orob2b_checkout_source',
-                'quote',
-                'orob2b_sale_quote',
+                'quoteDemand',
+                'orob2b_quote_demand',
                 'id',
                 [
                     ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,

@@ -4,14 +4,14 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\SaleBundle\Entity\Repository\QuoteProductSelectedOfferRepository;
+use OroB2B\Bundle\SaleBundle\Entity\Repository\QuoteProductDemandRepository;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
-use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductSelectedOfferData;
+use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandData;
 
 /**
  * @dbIsolation
  */
-class QuoteProductSelectedOfferRepositoryTest extends WebTestCase
+class QuoteProductDemandRepositoryTest extends WebTestCase
 {
     /**
      * {@inheritdoc}
@@ -21,23 +21,23 @@ class QuoteProductSelectedOfferRepositoryTest extends WebTestCase
         $this->initClient();
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductSelectedOfferData',
+                'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandData',
             ]
         );
     }
 
     public function testGetSavedOffersByQuote()
     {
-        $class = 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductSelectedOffer';
-        /** @var QuoteProductSelectedOfferRepository $repository */
+        $class = 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand';
+        /** @var QuoteProductDemandRepository $repository */
         $repository = $this->getContainer()->get('doctrine')->getManagerForClass($class)
             ->getRepository($class);
 
         $savedOffers = $repository->getSavedOffersByQuote($this->getReference(LoadQuoteData::QUOTE1));
         $expectedResult = [];
-        $offer = $this->getReference(LoadQuoteProductSelectedOfferData::SELECTED_OFFER_1);
+        $offer = $this->getReference(LoadQuoteProductDemandData::SELECTED_OFFER_1);
         $expectedResult[$offer->getQuoteProductOffer()->getId()] = $offer;
-        $offer = $this->getReference(LoadQuoteProductSelectedOfferData::SELECTED_OFFER_2);
+        $offer = $this->getReference(LoadQuoteProductDemandData::SELECTED_OFFER_2);
         $expectedResult[$offer->getQuoteProductOffer()->getId()] = $offer;
         $this->assertSame($expectedResult, $savedOffers);
     }

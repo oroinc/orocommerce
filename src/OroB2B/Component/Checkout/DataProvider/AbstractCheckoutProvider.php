@@ -12,7 +12,7 @@ abstract class AbstractCheckoutProvider implements CheckoutDataProviderInterface
     /**
      * ${@inheritdoc}
      */
-    public function getData($entity, $additionalData)
+    public function getData($entity, $additionalData = [])
     {
         $cacheKey = $this->getCacheKey($entity, $additionalData);
         if (!isset($this->data[$cacheKey])) {

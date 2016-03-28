@@ -2,9 +2,7 @@
 
 namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductSelectedOffer;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -15,7 +13,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand;
 use OroB2B\Bundle\SaleBundle\Form\EventListener\QuoteToOrderResizeFormSubscriber;
 
 /**
@@ -31,9 +31,9 @@ class QuoteToOrderType extends CollectionType
     protected $registry;
 
     /**
-     * @var Quote
+     * @var QuoteDemand
      */
-    protected $quote;
+    protected $quoteDemand;
 
     /**
      * @param ManagerRegistry $registry
@@ -68,11 +68,11 @@ class QuoteToOrderType extends CollectionType
      */
     public function preSetData(FormEvent $event)
     {
-        $this->quote = $event->getData();
-        if (!$this->quote instanceof Quote) {
-            throw new UnexpectedTypeException($this->quote, 'Quote');
+        $this->quoteDemand = $event->getData();
+        if (!$this->quoteDemand instanceof QuoteDemand) {
+            throw new UnexpectedTypeException($this->quoteDemand, 'QuoteDemand');
         }
-        $event->setData($this->quote->getQuoteProducts()->toArray());
+        $event->setData($this->quoteDemand->getQuote()->getQuoteProducts()->toArray());
     }
 
     /**
@@ -80,9 +80,14 @@ class QuoteToOrderType extends CollectionType
      */
     public function postSubmit(FormEvent $event)
     {
-        $em = $this->registry->getManagerForClass('OroB2BSaleBundle:QuoteProductSelectedOffer');
-        $selectedOffers = $em->getRepository('OroB2BSaleBundle:QuoteProductSelectedOffer')
-            ->getSavedOffersByQuote($this->quote);
+        if (!$event->getForm()->isValid()) {
+            return;
+        }
+        $em = $this->registry->getManagerForClass('OroB2BSaleBundle:QuoteProductDemand');
+        $selectedOffers = [];
+        foreach ($this->quoteDemand->getDemandOffers() as $quoteProductDemand) {
+            $selectedOffers[$quoteProductDemand->getQuoteProductOffer()->getId()] = $quoteProductDemand;
+        }
         foreach ($event->getData() as $item) {
             /** @var QuoteProductOffer $offer */
             $offer = $item['offer'];
@@ -92,10 +97,10 @@ class QuoteToOrderType extends CollectionType
             }
             unset($selectedOffers[$offer->getId()]);
             if (!$selectedOffer) {
-                $selectedOffer = new QuoteProductSelectedOffer($this->quote, $offer, $item['quantity']);
+                $selectedOffer = new QuoteProductDemand($this->quoteDemand, $offer, $item['quantity']);
+                $this->quoteDemand->addDemandOffer($selectedOffer);
                 $em->persist($selectedOffer);
             } else {
-                $selectedOffer->setQuote($this->quote);
                 $selectedOffer->setQuoteProductOffer($offer);
                 $selectedOffer->setQuantity($item['quantity']);
             }
@@ -111,9 +116,9 @@ class QuoteToOrderType extends CollectionType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $em = $this->registry->getManagerForClass('OroB2BSaleBundle:QuoteProductSelectedOffer');
-        $selectedItems = $em->getRepository('OroB2BSaleBundle:QuoteProductSelectedOffer')
-            ->findBy(['quote' => $this->quote]);
+        $em = $this->registry->getManagerForClass('OroB2BSaleBundle:QuoteProductDemand');
+        $selectedItems = $em->getRepository('OroB2BSaleBundle:QuoteProductDemand')
+            ->findBy(['quoteDemand' => $this->quoteDemand]);
         if ($selectedItems) {
             foreach ($view->children as $view) {
                 /** @var QuoteProduct $quoteProduct */
@@ -131,7 +136,7 @@ class QuoteToOrderType extends CollectionType
 
     /**
      * @param QuoteProduct $quoteProduct
-     * @param QuoteProductSelectedOffer[] $selectedItems
+     * @param QuoteProductDemand[] $selectedItems
      * @return integer|null
      */
     protected function getSelectedId($quoteProduct, $selectedItems)

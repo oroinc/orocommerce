@@ -6,9 +6,9 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductSelectedOffer;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand;
 
-class LoadQuoteProductSelectedOfferData extends AbstractFixture implements FixtureInterface, DependentFixtureInterface
+class LoadQuoteProductDemandData extends AbstractFixture implements FixtureInterface, DependentFixtureInterface
 {
     const SELECTED_OFFER_1 = 'selected.offer.1';
     const SELECTED_OFFER_2 = 'selected.offer.2';
@@ -45,7 +45,7 @@ class LoadQuoteProductSelectedOfferData extends AbstractFixture implements Fixtu
     public function load(ObjectManager $manager)
     {
         foreach (self::$items as $key => $item) {
-            $selectedOffer = new QuoteProductSelectedOffer(
+            $selectedOffer = new QuoteProductDemand(
                 $this->getReference($item['quote']),
                 $this->getReference($item['offer']),
                 $item['quantity']

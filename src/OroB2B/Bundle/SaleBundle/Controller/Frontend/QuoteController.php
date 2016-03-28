@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\SaleBundle\Controller\Frontend;
 
+use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -92,23 +93,19 @@ class QuoteController extends Controller
      * @ParamConverter("quote", options={"repository_method" = "getQuote"})
      *
      * @param Request $request
-     * @param Quote $quote
+     * @param QuoteDemand $quoteDemand
      * @return array
      */
-    public function choiceAction(Request $request, Quote $quote)
+    public function choiceAction(Request $request, QuoteDemand $quoteDemand)
     {
-        $form = $this->createForm(QuoteToOrderType::NAME, $quote);
+        $form = $this->createForm(QuoteToOrderType::NAME, $quoteDemand);
         $form->handleRequest($request);
         if ($form->isValid()) {
-            $selectedItems = $this->container
-                ->get('orob2b_sale.service.quote_offer_converter')
-                ->toArray($form->getData());
             $actionData = $this->container->get('oro_action.manager')->execute(
                 'orob2b_sale_frontend_quote_accept_and_submit_to_order',
                 new ActionData(
                     [
-                        'quote' => $quote,
-                        'selectedItems' => $selectedItems
+                        'quoteDemand' => $quoteDemand
                     ]
                 )
             );
@@ -125,7 +122,7 @@ class QuoteController extends Controller
 
         return [
             'data' => [
-                'data' => $quote,
+                'data' => $quoteDemand,
                 'form' => $form->createView()
             ]
         ];

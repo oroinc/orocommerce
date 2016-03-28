@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\SaleBundle\Provider;
 
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Model\QuoteOfferConverter;
 use OroB2B\Component\Checkout\DataProvider\AbstractCheckoutProvider;
@@ -20,13 +20,12 @@ class QuoteCheckoutLineItemDataProvider extends AbstractCheckoutProvider
         $this->quoteOfferConverter = $quoteOfferConverter;
     }
 
-
     /**
      * {@inheritDoc}
      */
     public function isEntitySupported($entity)
     {
-        return $entity instanceof Quote;
+        return $entity instanceof QuoteDemand;
     }
 
     /**
@@ -34,17 +33,15 @@ class QuoteCheckoutLineItemDataProvider extends AbstractCheckoutProvider
      */
     protected function prepareData($entity, $additionalData)
     {
-        $data = $this->quoteOfferConverter->toModel($additionalData);
         $result = [];
-        foreach ($data as $offer) {
+        foreach ($entity->getDemandOffers() as $offer) {
             /** @var QuoteProductOffer $productOffer */
-            $productOffer = $offer[QuoteOfferConverter::OFFER];
+            $productOffer = $offer->getQuoteProductOffer();
             $result[] = [
                 'product' => $productOffer->getProduct(),
                 'productSku' => $productOffer->getProductSku(),
                 'quantity' => $productOffer->getQuantity(),
                 'productUnit' => $productOffer->getProductUnit(),
-                'freeFromProduct' => $productOffer->getQuoteProduct()->getFreeFormProduct(),
                 'productUnitCode' => $productOffer->getProductUnitCode(),
                 'price' => $productOffer->getPrice()
             ];
