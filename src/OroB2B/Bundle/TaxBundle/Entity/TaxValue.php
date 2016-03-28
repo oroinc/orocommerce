@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\TaxBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
@@ -40,18 +38,6 @@ class TaxValue implements DatesAwareInterface
     protected $result;
 
     /**
-     * @ORM\OneToMany(
-     *      targetEntity="OroB2B\Bundle\TaxBundle\Entity\TaxApply",
-     *      mappedBy="taxValue",
-     *      cascade={"persist", "remove"},
-     *      orphanRemoval=true
-     * )
-     *
-     * @var TaxApply[]|Collection
-     */
-    protected $appliedTaxes;
-
-    /**
      * @var string
      *
      * @ORM\Column(name="entity_class", type="string", length=255)
@@ -61,7 +47,7 @@ class TaxValue implements DatesAwareInterface
     /**
      * @var int
      *
-     * @ORM\Column(name="entity_id", type="integer")
+     * @ORM\Column(name="entity_id", type="integer", nullable=true)
      */
     protected $entityId;
 
@@ -74,7 +60,6 @@ class TaxValue implements DatesAwareInterface
 
     public function __construct()
     {
-        $this->appliedTaxes = new ArrayCollection();
         $this->result = new Result();
     }
 
@@ -146,47 +131,6 @@ class TaxValue implements DatesAwareInterface
     public function setEntityClass($entityClass)
     {
         $this->entityClass = $entityClass;
-
-        return $this;
-    }
-
-    /**
-     * Add appliedTax
-     *
-     * @param TaxApply $appliedTax
-     *
-     * @return $this
-     */
-    public function addAppliedTax(TaxApply $appliedTax)
-    {
-        if (!$this->appliedTaxes->contains($appliedTax)) {
-            $this->appliedTaxes->add($appliedTax);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get appliedTaxes
-     *
-     * @return TaxApply[]|Collection
-     */
-    public function getAppliedTaxes()
-    {
-        return $this->appliedTaxes;
-    }
-
-    /**
-     * Remove appliedTax
-     *
-     * @param TaxApply $appliedTax
-     * @return $this
-     */
-    public function removeAppliedTax(TaxApply $appliedTax)
-    {
-        if ($this->appliedTaxes->contains($appliedTax)) {
-            $this->appliedTaxes->removeElement($appliedTax);
-        }
 
         return $this;
     }

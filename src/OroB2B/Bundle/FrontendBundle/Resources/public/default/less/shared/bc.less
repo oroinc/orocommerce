@@ -1,0 +1,64 @@
+/* .after-table for bottom toolbar */
+[data-grid-toolbar="bottom"] {
+  .oro-oq__filter-controls {
+    &.oro-oq__filter-controls_on-details {
+      //&.after-table {
+        margin: 0;
+        padding-top: 1rem;
+        border-top: .1rem solid @base-border-color;
+        border-bottom: .1rem solid @base-border-color;
+
+        + .order-checkout-widget {
+          margin-top: 0;
+          border-top: 0;
+
+          @media (max-width: 991px) {
+            margin-top: 0;
+
+            .order-checkout-widget__container-wrapper {
+              margin-top: 0;
+            }
+          }
+        }
+      //}
+    }
+
+    //&.after-table {
+      padding-bottom: 1rem;
+
+      @media (max-width: 991px) {
+        border-bottom: .1rem solid @base-border-color;
+      }
+
+      .oro-oq__filter__item {
+
+        &:first-child {
+          flex-basis: 32rem;
+          flex-grow: 0;
+
+          @media (max-width: 1250px) {
+            display: none;
+          }
+        }
+
+        &:last-child {
+          flex-basis: auto;
+        }
+
+        &.oro-oq__filter__item_sort-select {
+          flex-basis: 17rem;
+        }
+      }
+
+      + .order-checkout-widget {
+        padding-top: 1.5rem;
+        margin-top: 0;
+        border-top: .1rem solid @base-border-color;
+
+        .order-builder-clear-btn {
+          top: 1.5rem;
+        }
+      }
+    //}
+  }
+}

@@ -7,8 +7,6 @@ use OroB2B\Bundle\TaxBundle\Model\Taxable;
 
 class OrderLineItemMapper extends AbstractOrderMapper
 {
-    const PROCESSING_CLASS_NAME = 'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem';
-
     /**
      * @param OrderLineItem $lineItem
      *
@@ -16,28 +14,18 @@ class OrderLineItemMapper extends AbstractOrderMapper
      */
     public function map($lineItem)
     {
-        $orderAddress = $this->getOrderAddress($lineItem->getOrder());
-
+        $order = $lineItem->getOrder();
         $taxable = (new Taxable())
             ->setIdentifier($lineItem->getId())
             ->setClassName($this->getProcessingClassName())
             ->setQuantity($lineItem->getQuantity())
-            ->setDestination($orderAddress)
+            ->setOrigin($this->addressProvider->getOriginAddress())
+            ->setDestination($this->getDestinationAddress($order))
+            ->setTaxationAddress($this->getTaxationAddress($order))
             ->setContext($this->getContext($lineItem))
-            ->setCurrency($lineItem->getCurrency());
-
-        if ($lineItem->getPrice()) {
-            $taxable->setPrice($lineItem->getPrice()->getValue());
-        }
+            ->setPrice($lineItem->getPrice() ? $lineItem->getPrice()->getValue() : null)
+            ->setCurrency($lineItem->getPrice() ? $lineItem->getPrice()->getCurrency() : null);
 
         return $taxable;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getProcessingClassName()
-    {
-        return self::PROCESSING_CLASS_NAME;
     }
 }

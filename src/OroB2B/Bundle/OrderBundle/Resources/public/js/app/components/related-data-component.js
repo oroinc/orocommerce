@@ -2,8 +2,8 @@ define(function(require) {
     'use strict';
 
     var RelatedDataComponent;
+    var _ = require('underscore');
     var $ = require('jquery');
-    var routing = require('routing');
     var mediator = require('oroui/js/mediator');
     var BaseComponent = require('oroui/js/app/components/base/component');
     var FormView = require('orob2bfrontend/js/app/views/form-view');
@@ -18,8 +18,11 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            relatedDataRoute: 'orob2b_order_related_data',
-            formName: ''
+            selectors: {
+                account: 'input[name$="[account]"]',
+                accountUser: 'input[name$="[accountUser]"]',
+                website: 'select[name$="[website]"]'
+            }
         },
 
         /**
@@ -29,39 +32,23 @@ define(function(require) {
             this.options = $.extend(true, {}, this.options, options || {});
             this.view = new FormView(this.options);
 
-            mediator.on('account-account-user:change', this.loadRelatedData, this);
+            this.options._sourceElement
+                .on('change', this.options.selectors.accountUser, _.bind(this.onChangeAccountUser, this));
+
+            mediator.on('entry-point:order:load', this.loadRelatedData, this);
+        },
+
+        onChangeAccountUser: function() {
+            mediator.trigger('order:load:related-data');
+
+            mediator.trigger('entry-point:order:trigger');
         },
 
         /**
-         * Load related to user data and trigger event
+         * @param {Object} response
          */
-        loadRelatedData: function(accountUser) {
-            var url = routing.generate(this.options.relatedDataRoute);
-            var data = {
-                account: accountUser.accountId,
-                accountUser: accountUser.accountUserId
-            };
-
-            var ajaxData = {};
-            if (this.options.formName) {
-                ajaxData[this.options.formName] = data;
-            } else {
-                ajaxData = data;
-            }
-
-            mediator.trigger('order:load:related-data');
-
-            $.ajax({
-                url: url,
-                type: 'GET',
-                data: ajaxData,
-                success: function(response) {
-                    mediator.trigger('order:loaded:related-data', response);
-                },
-                error: function() {
-                    mediator.trigger('order:loaded:related-data', {});
-                }
-            });
+        loadRelatedData: function(response) {
+            mediator.trigger('order:loaded:related-data', response);
         },
 
         /**
@@ -72,7 +59,10 @@ define(function(require) {
                 return;
             }
 
-            mediator.off('account-account-user:change', this.loadRelatedData, this);
+            mediator.off('entry-point:order:load', this.loadRelatedData, this);
+
+            this.options._sourceElement
+                .off('change', this.options.selectors.accountUser, _.bind(this.onChangeAccountUser, this));
 
             RelatedDataComponent.__super__.dispose.call(this);
         }

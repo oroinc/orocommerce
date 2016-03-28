@@ -114,20 +114,19 @@ class TotalResolver implements ResolverInterface
     {
         foreach ($taxableItemResult->getTaxes() as $appliedTax) {
             $taxCode = (string)$appliedTax->getTax();
-            $appliedTaxAmount = $appliedTax->getTaxAmount();
-            $appliedTaxableAmount = $appliedTax->getTaxableAmount();
+            $taxAmount = $appliedTax->getTaxAmount();
+            $taxableAmount = $appliedTax->getTaxableAmount();
             if (array_key_exists($taxCode, $taxResults)) {
-                $appliedTaxes = $taxResults[$taxCode];
-                $appliedTaxAmount = BigDecimal::of($appliedTaxes->getTaxAmount())->plus($appliedTaxAmount);
-                $appliedTaxableAmount = BigDecimal::of($appliedTaxes->getTaxableAmount())
-                    ->plus($appliedTaxableAmount);
+                $tax = $taxResults[$taxCode];
+                $taxAmount = BigDecimal::of($tax->getTaxAmount())->plus($taxAmount);
+                $taxableAmount = BigDecimal::of($tax->getTaxableAmount())->plus($taxableAmount);
             }
 
             $taxResults[$taxCode] = TaxResultElement::create(
                 $taxCode,
                 $appliedTax->getRate(),
-                $appliedTaxableAmount,
-                $appliedTaxAmount
+                $taxableAmount,
+                $taxAmount
             );
         }
 
