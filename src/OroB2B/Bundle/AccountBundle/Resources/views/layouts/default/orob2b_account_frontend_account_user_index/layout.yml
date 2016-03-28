@@ -1,0 +1,56 @@
+layout:
+    actions:
+        - @setBlockTheme:
+            themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_frontend_account_user_index/layout.html.twig'
+
+        - @setOption:
+            id: head
+            optionName: title
+            optionValue: 'orob2b.account.frontend.account_user.entity_plural_label'
+
+        - @setOption:
+            id: page_title
+            optionName: text
+            optionValue: 'orob2b.account.frontend.account_user.entity_plural_label'
+
+        - @setOption:
+            id: content
+            optionName: class_prefix
+            optionValue: 'account-users'
+
+        - @add:
+            id: create_account_user_button_top
+            parentId: content
+            blockType: action_combined_buttons
+            options:
+                actions:
+                    @value: $data.actions.all
+                entityClass:
+                    @value: 'OroB2B\Bundle\AccountBundle\Entity\AccountUser'
+
+        - @add:
+            id: create_account_user_button
+            parentId: content
+            blockType: block
+
+        - @add:
+            id: account_users
+            parentId: content
+            blockType: datagrid
+            options:
+                grid_name: frontend-account-account-user-grid
+
+        - @add:
+            id: create_account_user_button_bottom
+            parentId: content
+            blockType: action_combined_buttons
+            options:
+                actions:
+                    @value: $data.actions.all
+                entityClass:
+                    @value: 'OroB2B\Bundle\AccountBundle\Entity\AccountUser'
+
+        - @add:
+            id: account_sidebar
+            parentId: sidebar_left
+            blockType: block

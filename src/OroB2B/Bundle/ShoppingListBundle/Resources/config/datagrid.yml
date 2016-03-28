@@ -31,10 +31,10 @@ datagrid:
                 label:         orob2b.shoppinglist.label.label
             notes:
                 label:         orob2b.shoppinglist.notes.label
-            account_user:
-                label:         orob2b.shoppinglist.account_user.label
             account:
                 label:         orob2b.shoppinglist.account.label
+            account_user:
+                label:         orob2b.shoppinglist.account_user.label
             subtotal:
                 label:         orob2b.shoppinglist.subtotal.label
                 type:          twig
