@@ -117,7 +117,12 @@ class MenuTypeTest extends BaseBlockTypeTestCase
         $view = new BlockView($rootView);
         $block = $this->getMock('Oro\Component\Layout\BlockInterface');
         $menu = $this->getMock('Knp\Menu\ItemInterface');
-        $options = ['menu' => $menuName];
+        $options = [
+            'menu' => $menuName,
+            'child_attr' => [],
+            'link_attr' => [],
+            'label_attr' => [],
+        ];
 
         $this->provider->expects($this->once())
             ->method('has')
