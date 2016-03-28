@@ -27,6 +27,7 @@ parameters:
     orob2b_pricing.provider.product_price.class: OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider
     orob2b_pricing.provider.combined_price_list.class: OroB2B\Bundle\PricingBundle\Provider\CombinedPriceListProvider
     orob2b_pricing.provider.price_list_collection.class: OroB2B\Bundle\PricingBundle\Provider\PriceListCollectionProvider
+    orob2b_pricing.provider.matching_price.class: OroB2B\Bundle\PricingBundle\Provider\MatchingPriceProvider
 
     orob2b_pricing.resolver.combined_product_price_resolver.class: OroB2B\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver
 
@@ -72,6 +73,7 @@ parameters:
     orob2b_pricing.entity_listener.account_group.class: OroB2B\Bundle\PricingBundle\EventListener\AccountGroupListener
 
     orob2b_pricing.filter.product_price.class: OroB2B\Bundle\PricingBundle\Filter\ProductPriceFilter
+    orob2b_pricing.filter.frontend_product_price.class: OroB2B\Bundle\PricingBundle\Filter\FrontendProductPriceFilter
 
     orob2b_pricing.rounding.price_rounding_service.class: OroB2B\Bundle\PricingBundle\Rounding\PriceRoundingService
 
@@ -306,7 +308,7 @@ services:
         class: %orob2b_pricing.event_listener.abstract_product_price_datagrid.class%
         abstract: true
         calls:
-            - [setProductPriceClass, [%orob2b_pricing.entity.combined_product_price.class%]]
+            - [setProductPriceClass, [%orob2b_pricing.entity.product_price.class%]]
 
     orob2b_pricing.event_listener.product_price_datagrid:
         class: %orob2b_pricing.event_listener.product_price_datagrid.class%
@@ -330,6 +332,8 @@ services:
             - @oro_locale.formatter.number
             - @orob2b_product.formatter.product_unit_label
             - @orob2b_pricing.provider.user_currency
+        calls:
+            - [setProductPriceClass, [%orob2b_pricing.entity.combined_product_price.class%]]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-products-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }
@@ -380,14 +384,24 @@ services:
             - { name: oro_action.function, alias: assign_user_currency }
 
     orob2b_pricing.filter.product_price:
-            class: %orob2b_pricing.filter.product_price.class%
-            arguments:
-                - @form.factory
-                - @oro_filter.filter_utility
-                - @orob2b_product.formatter.product_unit_label
-                - @orob2b_pricing.model.price_list_request_handler
-            tags:
-                - { name: oro_filter.extension.orm_filter.filter, type: product-price }
+        class: %orob2b_pricing.filter.product_price.class%
+        arguments:
+            - @form.factory
+            - @oro_filter.filter_utility
+            - @orob2b_product.formatter.product_unit_label
+            - @orob2b_pricing.model.price_list_request_handler
+        calls:
+            - [setProductPriceClass, [%orob2b_pricing.entity.product_price.class%]]
+        tags:
+            - { name: oro_filter.extension.orm_filter.filter, type: product-price }
+
+    orob2b_pricing.filter.frontend_product_price:
+        class: %orob2b_pricing.filter.frontend_product_price.class%
+        parent: orob2b_pricing.filter.product_price
+        calls:
+            - [setProductPriceClass, [%orob2b_pricing.entity.combined_product_price.class%]]
+        tags:
+            - { name: oro_filter.extension.orm_filter.filter, type: frontend-product-price }
 
     orob2b_pricing.event_listener.product_duplicate:
         class: %orob2b_pricing.event_listener.product_duplicate.class%
@@ -454,6 +468,14 @@ services:
             - @event_dispatcher
         tags:
             - { name: doctrine.orm.entity_listener }
+
+    orob2b_pricing.provider.matching_price:
+        class: %orob2b_pricing.provider.matching_price.class%
+        arguments:
+            - @orob2b_pricing.provider.combined_product_price
+            - @oro_entity.doctrine_helper
+            - %orob2b_product.product.class%
+            - %orob2b_product.product_unit.class%
 
     orob2b_pricing.subtotal_processor.subtotal_provider_registry:
         class: %orob2b_pricing.subtotal_processor.subtotal_provider_registry.class%

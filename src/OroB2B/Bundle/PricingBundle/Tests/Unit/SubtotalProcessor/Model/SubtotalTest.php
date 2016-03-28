@@ -20,6 +20,7 @@ class SubtotalTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('USD', $subtotal->setCurrency('USD')->getCurrency());
         $this->assertEquals(999.99, $subtotal->setAmount(999.99)->getAmount());
         $this->assertEquals(true, $subtotal->setVisible(true)->isVisible());
+        $this->assertEquals(['some value'], $subtotal->setData(['some value'])->getData());
     }
 
     public function testToArray()
@@ -33,6 +34,7 @@ class SubtotalTest extends \PHPUnit_Framework_TestCase
                 'amount' => $subtotal->getAmount(),
                 'currency' => $subtotal->getCurrency(),
                 'visible' => $subtotal->isVisible(),
+                'data' => $subtotal->getData()
             ],
             $subtotal->toArray()
         );

@@ -1,0 +1,17 @@
+{% set showTierPrices = record.getValue('showTierPrices') %}
+{% if value and value|length > 0 %}
+    <table>
+        {% for key, price in value %}
+            <tr>
+                {% if showTierPrices %}
+                    <td class="renderable">
+                        <div class="text-right">{{ price.quantity }}:&nbsp;</div>
+                    </td>
+                {% endif %}
+                <td class="renderable">
+                    <div class="text-left">{{ price.price|oro_format_price }}</div>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}

@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
+use OroB2B\Bundle\TaxBundle\Model\Address;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\Taxable;
 
@@ -15,8 +16,9 @@ class TaxableTest extends \PHPUnit_Framework_TestCase
     {
         $properties = [
             ['identifier', 1],
-            ['origin', 'address'],
-            ['destination', 'address'],
+            ['origin', new Address()],
+            ['destination', new Address()],
+            ['taxationAddress', new Address()],
             ['quantity', 20],
             ['price', '10'],
             ['amount', '100'],
@@ -81,5 +83,39 @@ class TaxableTest extends \PHPUnit_Framework_TestCase
     protected function createTaxable()
     {
         return new Taxable();
+    }
+
+    public function testMakeDestinationAddressTaxable()
+    {
+        $taxable = $this->createTaxable();
+        $destination = new Address();
+        $taxable->setDestination($destination);
+
+        $this->assertNull($taxable->getOrigin());
+        $this->assertSame($destination, $taxable->getDestination());
+        $this->assertNull($taxable->getTaxationAddress());
+
+        $taxable->makeDestinationAddressTaxable();
+
+        $this->assertNull($taxable->getOrigin());
+        $this->assertSame($destination, $taxable->getDestination());
+        $this->assertSame($destination, $taxable->getTaxationAddress());
+    }
+
+    public function testMakeOriginAddressTaxable()
+    {
+        $taxable = $this->createTaxable();
+        $origin = new Address();
+        $taxable->setOrigin($origin);
+
+        $this->assertSame($origin, $taxable->getOrigin());
+        $this->assertNull($taxable->getDestination());
+        $this->assertNull($taxable->getTaxationAddress());
+
+        $taxable->makeOriginAddressTaxable();
+
+        $this->assertSame($origin, $taxable->getOrigin());
+        $this->assertNull($taxable->getDestination());
+        $this->assertSame($origin, $taxable->getOrigin());
     }
 }

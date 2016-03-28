@@ -6,9 +6,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider;
 use OroB2B\Bundle\ProductBundle\Storage\DataStorageInterface;
 use OroB2B\Bundle\RFPBundle\Form\Extension\OrderDataStorageExtension;
 use OroB2B\Bundle\RFPBundle\Storage\OffersFormStorage;
@@ -30,6 +31,9 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|OffersFormStorage */
     protected $formDataStorage;
 
+    /** @var SectionProvider|\PHPUnit_Framework_MockObject_MockObject */
+    protected $sectionProvider;
+
     protected function setUp()
     {
         $this->requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
@@ -39,11 +43,15 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->formDataStorage = $this->getMock('OroB2B\Bundle\RFPBundle\Storage\OffersFormStorage');
 
+        $this->sectionProvider = $this->getMock('OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider');
+
         $this->extension = new OrderDataStorageExtension(
             $this->requestStack,
             $this->sessionStorage,
             $this->formDataStorage
         );
+
+        $this->extension->setSectionProvider($this->sectionProvider);
     }
 
     public function testGetExtendedType()
@@ -52,43 +60,19 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('orob2b_order_line_item', $this->extension->getExtendedType());
     }
 
-    public function testConfigureOptionsWithoutRequest()
-    {
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn(null);
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
-        $resolver->expects($this->never())->method('setNormalizer');
-        $this->extension->configureOptions($resolver);
-    }
-
-    public function testConfigureOptionsWithRequestParam()
-    {
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
-        $request->expects($this->once())->method('get')->willReturn(null);
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
-        $resolver->expects($this->never())->method('setNormalizer');
-        $this->extension->configureOptions($resolver);
-    }
-
-    public function testConfigureOptions()
+    public function testBuildView()
     {
         $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
         $request->expects($this->once())->method('get')->willReturn(true);
         $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
-        $resolver = new OptionsResolver();
-        $resolver->setDefault('sections', []);
-        $this->extension->configureOptions($resolver);
-        $options = $resolver->resolve();
+        $this->sectionProvider->expects($this->atLeastOnce())->method('addSections')
+            ->with($this->extension->getExtendedType());
 
-        $this->assertArrayHasKey('sections', $options);
-        $this->assertArrayHasKey('offers', $options['sections']);
-        $this->assertArrayHasKey('data', $options['sections']['offers']);
-        $this->assertArrayHasKey('order', $options['sections']['offers']);
+        $view = new FormView();
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $this->extension->buildView($view, $form, []);
     }
 
     public function testBuildFormWithoutParent()
@@ -298,5 +282,20 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
         $property = new \ReflectionProperty(get_class($this->extension), 'offers');
         $property->setAccessible(true);
         $property->setValue($this->extension, $offers);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage "OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider" expected, "NULL" given
+     */
+    public function testSectionProviderInvalid()
+    {
+        $extension = new OrderDataStorageExtension(
+            $this->requestStack,
+            $this->sessionStorage,
+            $this->formDataStorage
+        );
+
+        $extension->setSectionProvider(new \stdClass());
     }
 }
