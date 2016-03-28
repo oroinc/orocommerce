@@ -195,7 +195,7 @@ class RequestController extends Controller
             },
             $this->get('translator')->trans('orob2b.rfp.controller.request.saved.message'),
             null,
-            function(RFPRequest $rfpRequest, FormInterface $form, Request $request) {
+            function (RFPRequest $rfpRequest, FormInterface $form, Request $request) {
                 $url = $request->getUri();
                 if ($request->headers->get('referer')) {
                     $url = $request->headers->get('referer');
