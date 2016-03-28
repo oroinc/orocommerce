@@ -135,7 +135,6 @@ actions:
                         data:
                             accountAddress: $.quote.accountAddress
                             accountUserAddress: $.quote.accountUserAddress
-                            organization: $.quote.organization
                             label: $.quote.shippingAddress.label
                             organization: $.quote.shippingAddress.organization
                             street: $.quote.shippingAddress.street
@@ -150,6 +149,7 @@ actions:
                             middleName: $.quote.shippingAddress.middleName
                             lastName: $.quote.shippingAddress.lastName
                             nameSuffix: $.quote.shippingAddress.nameSuffix
+                            phone: $.quote.shippingAddress.phone
                             fromExternalSource: true
                     - @assign_value:
                         parameters: [$.disallow_shipping_address_edit, true]
@@ -157,9 +157,7 @@ actions:
                 conditions:
                       @empty: $.quote.shippingAddress
                 actions:
-                    - @create_entity:
-                        attribute: $.orderAddress
-                        class: OroB2B\Bundle\OrderBundle\Entity\OrderAddress
+                    - @assign_value: [$.orderAddress, null]
                     - @assign_value:
                         parameters: [$.disallow_shipping_address_edit, false]
             - @start_checkout:
@@ -169,7 +167,7 @@ actions:
                     shippingAddress: $.orderAddress
                 settings:
                     allow_source_remove: false
-                    remove_source: true
+                    remove_source: false
                     source_remove_label: $.sourceRemoveLabel
                     edit_order_link: $.editLink
                     source_options: $.selectedItems

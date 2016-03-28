@@ -119,7 +119,7 @@ class QuoteToOrderConverter
             ->setShippingAddress($orderShippingAddress)
             ->setSourceEntityClass(ClassUtils::getClass($quote))
             ->setSourceEntityId($quote->getId())
-            ->setSourceEntityIdentifier($quote->getIdentifier());
+            ->setSourceEntityIdentifier($quote->getPoNumber());
 
         return $order;
     }
