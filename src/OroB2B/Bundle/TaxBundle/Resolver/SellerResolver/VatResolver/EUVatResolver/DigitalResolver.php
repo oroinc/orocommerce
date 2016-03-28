@@ -45,6 +45,8 @@ class DigitalResolver implements ResolverInterface
             foreach ($taxable->getItems() as $item) {
                 $this->resolver->resolve($item);
             }
+
+            $taxable->makeDestinationAddressTaxable();
         }
     }
 }

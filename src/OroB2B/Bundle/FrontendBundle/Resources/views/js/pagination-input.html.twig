@@ -1,0 +1,26 @@
+<script type="text/html" id="template-datagrid-toolbar-pagination-input">
+    <span><%= _.__('oro.datagrid.pagination.label') %>:</span>
+    <div class="oro-pagination__pager">
+        <% _.each(handles, function (handle) { %>
+            <% if (handle.type == "input") { %>
+                <input
+                        type="text"
+                        class="oro-pagination__pager__input"
+                        value="<%= state.firstPage == 0 ? state.currentPage + 1 : state.currentPage  %>"
+                        data-grid-pagination-trigger-input
+                <% if (disabled) { %>disabled="disabled"<% } %>/>
+            <% } else { %>
+                <button class="oro-pagination__pager__<%= handle.direction %><% if (handle.className) { %> <%= handle.className %><% } %>"
+                        data-grid-pagination-trigger data-grid-pagination-direction="<%= handle.direction %>"
+                        <% if (disabled) { %> disabled<% } %>
+                        <% if (handle.className) { %> <%= handle.className %><% } %>>
+                    <i class="cf-<%= handle.arrow %>-open"></i>
+                </button>
+            <% } %>
+        <% }); %>
+    </div>
+    <span class="hidden-sm hidden-xs">
+        <%= _.__('oro.datagrid.pagination.totalPages', {totalPages: state.totalPages || 1}) %>&nbsp;|
+        <%= _.__('oro.datagrid.pagination.totalRecords', {totalRecords: state.totalRecords}) %>
+    </span>
+</script>
