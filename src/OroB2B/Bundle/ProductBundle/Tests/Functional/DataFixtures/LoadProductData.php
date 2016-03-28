@@ -60,8 +60,7 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
 
         $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'product_fixture.yml';
 
-        $data = Yaml::parse($filePath);
-
+        $data = Yaml::parse(file_get_contents($filePath));
         foreach ($data as $item) {
             $product = new Product();
             $product
@@ -86,7 +85,6 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
             $manager->persist($product);
             $this->addReference($item['productCode'], $product);
         }
-
         $manager->flush();
     }
 
