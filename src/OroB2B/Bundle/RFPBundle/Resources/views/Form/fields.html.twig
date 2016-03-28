@@ -92,8 +92,8 @@
                                     {% if notes is not empty %} checked {% endif %}" data-checkbox>
                         <input type="checkbox" name="{{ 'lineItem'~id }}" id="{{ 'lineItem-'~prototype_name }}"
                                data-role="start-editing" {% if notes is not empty %} checked = "checked" {% endif %}">
-                        <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
-                        <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
+                        <i class="cf-check_box checkbox_checked fs18 mmr5-md"></i>
+                        <i class="cf-check_box_outline_blank checkbox_not-checked fs18 mmr5-md"></i>
                         <span class="checkbox_custom__text fs13">{{ 'orob2b.frontend.shoppinglist.view.add_item_note.label'|trans }}</span>
                     </label>
 

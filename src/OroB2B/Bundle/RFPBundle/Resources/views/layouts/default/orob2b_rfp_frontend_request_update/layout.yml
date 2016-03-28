@@ -62,7 +62,7 @@ layout:
                     options:
                         path: { @value: $data.backToUrl }
                         text: orob2b.frontend.rfp.request.create_form.back.label
-                        icon: left-open-mini
+                        icon: cf-left-open-mini
                         vars:
                             style: gray
                 rfp_form_actions_create:
