@@ -34,6 +34,7 @@ use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
 use OroB2B\Bundle\OrderBundle\Pricing\PriceMatcher;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
+use OroB2B\Bundle\OrderBundle\Total\TotalHelper;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
@@ -111,18 +112,19 @@ class OrderTypeTest extends TypeTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $totalHelper = new TotalHelper(
+            $this->totalsProvider,
+            $this->lineItemSubtotalProvider,
+            $this->discountSubtotalProvider
+        );
+
         // create a type instance with the mocked dependencies
         $this->type = new OrderType(
             $this->securityFacade,
             $this->orderAddressSecurityProvider,
             $this->paymentTermProvider,
             $this->orderCurrencyHandler,
-            new SubtotalSubscriber(
-                $this->totalsProvider,
-                $this->lineItemSubtotalProvider,
-                $this->discountSubtotalProvider,
-                $this->priceMatcher
-            )
+            new SubtotalSubscriber($totalHelper, $this->priceMatcher)
         );
 
         $this->type->setDataClass('OroB2B\Bundle\OrderBundle\Entity\Order');

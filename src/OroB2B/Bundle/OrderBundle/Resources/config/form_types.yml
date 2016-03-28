@@ -119,7 +119,5 @@ services:
     orob2b_order.form.type.event_listener.subtotals_subscriber:
         class: %orob2b_order.form.type.event_listener.subtotals_subscriber.class%
         arguments:
-            - @orob2b_pricing.subtotal_processor.total_processor_provider
-            - @orob2b_pricing.subtotal_processor.provider.subtotal_line_item
-            - @orob2b_order.provider.discount_subtotal
+            - @orob2b_order.order.total.total_helper
             - @orob2b_order.pricing.price_matcher

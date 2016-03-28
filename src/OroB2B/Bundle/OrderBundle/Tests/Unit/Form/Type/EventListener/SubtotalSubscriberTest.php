@@ -9,6 +9,7 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
 use OroB2B\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
 use OroB2B\Bundle\OrderBundle\Pricing\PriceMatcher;
 use OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
+use OroB2B\Bundle\OrderBundle\Total\TotalHelper;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
@@ -51,12 +52,13 @@ class SubtotalSubscriberTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->subscriber = new SubtotalSubscriber(
+        $totalHelper = new TotalHelper(
             $this->totalProvider,
             $this->lineItemSubtotalProvider,
             $this->discountSubtotalProvider,
             $this->priceMatcher
         );
+        $this->subscriber = new SubtotalSubscriber($totalHelper, $this->priceMatcher);
     }
 
     public function testGetSubscribedEvents()

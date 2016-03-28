@@ -43,6 +43,8 @@ parameters:
     orob2b_order.validator.checkout_address.class: OroB2B\Bundle\OrderBundle\Validator\Constraints\OrderAddressValidator
     orob2b_order.pricing.price_matcher.class: OroB2B\Bundle\OrderBundle\Pricing\PriceMatcher
 
+    orob2b_order.order.total.total_helper.class: OroB2B\Bundle\OrderBundle\Total\TotalHelper
+
 services:
     orob2b_order.order.manager.api:
         class: %orob2b_order.order.manager.api.class%
@@ -249,3 +251,10 @@ services:
         arguments:
             - @orob2b_pricing.provider.matching_price
             - @orob2b_pricing.model.price_list_tree_handler
+
+    orob2b_order.order.total.total_helper:
+        class: %orob2b_order.order.total.total_helper.class%
+        arguments:
+            - @orob2b_pricing.subtotal_processor.total_processor_provider
+            - @orob2b_pricing.subtotal_processor.provider.subtotal_line_item
+            - @orob2b_order.provider.discount_subtotal
