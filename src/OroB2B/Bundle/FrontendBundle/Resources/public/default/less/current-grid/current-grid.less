@@ -459,7 +459,7 @@
           cursor: move;
 
           .ui-sortable-handle {
-            font-family: 'Material Icons';
+            font-family: 'custom-font-icon';
             font-weight: normal;
             font-style: normal;
             font-size: 2rem;
@@ -481,7 +481,7 @@
             padding: 0;
 
             &:before {
-              content: "list";
+              content: "\e005";
             }
           }
         }
@@ -665,7 +665,7 @@
         opacity: 1;
         line-height: 1.8rem;
 
-        .material-icons {
+        [class^="cf-"] {
           font-size: 2rem;
         }
       }
@@ -1035,6 +1035,27 @@
 
         .chosen-container {
           margin: 0 0 1.5rem;
+        }
+      }
+
+      .number-range-filter {
+        vertical-align: top;
+        .filter-start {
+          display: inline-block;
+          input[type=text] {
+            width: 100px !important;
+            border-right-width: 1px !important;
+          }
+        }
+        .filter-end {
+          display: inline-block;
+          input[type=text] {
+            width: 100px !important;
+            border-left-width: 1px !important;
+          }
+        }
+        .filter-separator {
+          position: static;
         }
       }
     }
@@ -1407,3 +1428,20 @@
   }
 }
 
+.dropdown-menu__action-cell {
+  padding: 0;
+  margin: 0;
+  min-width: 100px;
+
+  .launcher-item {
+    float: none;
+    a {
+      padding: 5px 10px;
+      line-height: 18px;
+    }
+  }
+
+  .nav-pills > li + li {
+    margin: 0;
+  }
+}

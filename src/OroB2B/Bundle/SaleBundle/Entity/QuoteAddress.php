@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\SaleBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
@@ -48,6 +49,20 @@ class QuoteAddress extends ExtendQuoteAddress
      * @ORM\JoinColumn(name="account_user_address_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $accountUserAddress;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="phone", type="string", length=255, nullable=true)
+     * @ConfigField(
+     *  defaultValues={
+     *      "entity"={
+     *          "contact_information"="phone"
+     *      }
+     *  }
+     * )
+     */
+    protected $phone;
 
     /**
      * Set accountAddress
@@ -95,5 +110,29 @@ class QuoteAddress extends ExtendQuoteAddress
     public function getAccountUserAddress()
     {
         return $this->accountUserAddress;
+    }
+
+    /**
+     * Set phone number
+     *
+     * @param string $phone
+     *
+     * @return QuoteAddress
+     */
+    public function setPhone($phone)
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    /**
+     * Get phone number
+     *
+     * @return string
+     */
+    public function getPhone()
+    {
+        return $this->phone;
     }
 }

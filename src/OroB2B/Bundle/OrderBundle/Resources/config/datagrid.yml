@@ -173,6 +173,7 @@ datagrid:
                     - order1.sourceEntityClass
                     - order1.sourceEntityId
                     - order1.sourceEntityIdentifier
+                    - order1.totalDiscountsAmount
                 join:
                     left:
                         - { join: order1.owner, alias: order_owner }
@@ -198,6 +199,11 @@ datagrid:
                 frontend_type: html
                 template:      OroB2BOrderBundle:Order:Datagrid/sourceDocument.html.twig
                 renderable:    false
+            totalDiscountsAmount:
+                label:         orob2b.order.discount.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BOrderBundle:Order:Datagrid/discount.html.twig
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -218,6 +224,8 @@ datagrid:
                     data_name: order1.poNumber
                 shipUntil:
                     data_name: order1.shipUntil
+                totalDiscountsAmount:
+                    data_name: order1.totalDiscountsAmount
                 createdAt:
                     data_name: order1.createdAt
                 updatedAt:
@@ -249,6 +257,9 @@ datagrid:
                 shipUntil:
                     type:      date
                     data_name: order1.shipUntil
+                totalDiscountsAmount:
+                    type:      number
+                    data_name: order1.totalDiscountsAmount
                 createdAt:
                     type:      datetime
                     data_name: order1.createdAt
@@ -424,3 +435,82 @@ datagrid:
                 accountUserName:
                     type:      string
                     data_name: accountUserName
+
+    base-order-line-items-grid:
+        extended_entity_name: %orob2b_order.entity.order_line_item.class%
+        options:
+            entityHint: order_line_item
+        source:
+            type: orm
+            query:
+                select:
+                    - partial order_item.{ id, currency, value }
+                    - productNames.string as productName
+                    - order_item.productSku
+                    - order_item.freeFormProduct
+                    - order_item.quantity
+                    - order_item.shipBy
+                    - order_item.comment
+                from:
+                    - { table: %orob2b_order.entity.order_line_item.class%, alias: order_item }
+                join:
+                    left:
+                        - { join: order_item.product, alias: product }
+                        -
+                            join: product.names
+                            alias: productNames
+                            conditionType: WITH
+                            condition: productNames.locale IS NULL
+                where:
+                    and:
+                        - order_item.order = :order_id
+            bind_parameters:
+                - order_id
+
+    order-line-items-grid:
+        extends: base-order-line-items-grid
+        columns:
+            productSku:
+                label: orob2b.product.sku.label
+            product:
+                label:         orob2b.product.entity_label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BOrderBundle:Order:Datagrid/product.html.twig
+            quantity:
+                label: orob2b.order.orderlineitem.quantity.label
+            price:
+                label:         orob2b.order.orderlineitem.price.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BOrderBundle:Order:Datagrid/price.html.twig
+            shipBy:
+                label:         orob2b.order.orderlineitem.ship_by.label
+                frontend_type: date
+            comment:
+                label: orob2b.order.orderlineitem.comment.label
+
+    order-line-items-grid-frontend:
+        extends: base-order-line-items-grid
+        columns:
+            product:
+                label:         orob2b.product.entity_label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BOrderBundle:Order:Datagrid/frontendProduct.html.twig
+            quantity:
+                label: orob2b.order.orderlineitem.quantity.label
+            price:
+                label:         orob2b.order.orderlineitem.price.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BOrderBundle:Order:Datagrid/price.html.twig
+            shipBy:
+                label:         orob2b.order.orderlineitem.ship_by.label
+                frontend_type: date
+            comment:
+                label: orob2b.order.orderlineitem.comment.label
+        options:
+            toolbarOptions:
+                placement:
+                    bottom: true

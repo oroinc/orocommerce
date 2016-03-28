@@ -264,3 +264,16 @@ actions:
                     name: $.deletedStatusName
             - @create_datetime:
                 attribute: $deletedAt
+
+    orob2b_rfp_frontend_request_create_action:
+        label: orob2b.frontend.rfp.request.create.label
+        enabled: true
+        applications: [frontend]
+        routes:
+            - orob2b_rfp_frontend_request_index
+        acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\RFPBundle\Entity\Request]
+        order: 10
+        functions:
+            - @redirect:
+                parameters:
+                    route: orob2b_rfp_frontend_request_create

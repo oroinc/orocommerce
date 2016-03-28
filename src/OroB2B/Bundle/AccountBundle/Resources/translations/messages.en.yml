@@ -138,6 +138,7 @@ orob2b.account:
         street2.label:              Street 2
         types.label:                Types
         addresses_to_types.label:   Addresses to address types
+        phone.label:                Phone
 
         country_name.label:         Country name
         country_iso2_code.label:    Country ISO2 code
@@ -151,6 +152,10 @@ orob2b.account:
             disable: 'Disable'
             confirm: 'Confirm'
             send_confirmation: 'Resend Confirmation Email'
+            create: 'Create Account'
+
+        account_user_role:
+            create: 'Create Account User Role'
 
     sections:
         general: 'General Information'
@@ -187,6 +192,7 @@ orob2b.account:
         street2.label:       Street 2
         types.label:         Types
         addresses_to_types.label:   Addresses to address types
+        phone.label:         Phone
 
         country_name.label:      Country name
         country_iso2_code.label: Country ISO2 code
@@ -377,6 +383,9 @@ orob2b.account:
                 GLOBAL: 'Not supported'
                 SYSTEM: 'System'
                 NONE: 'None'
+        account_user:
+            role.entity_plural_label: Account User Roles
+            entity_plural_label: Account Users
 
     account_typed_address_with_default_type:
         choice.default_text: 'Default %type_name%'

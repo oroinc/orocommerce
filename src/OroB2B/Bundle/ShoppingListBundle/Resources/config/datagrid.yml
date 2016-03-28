@@ -31,10 +31,10 @@ datagrid:
                 label:         orob2b.shoppinglist.label.label
             notes:
                 label:         orob2b.shoppinglist.notes.label
-            account_user:
-                label:         orob2b.shoppinglist.account_user.label
             account:
                 label:         orob2b.shoppinglist.account.label
+            account_user:
+                label:         orob2b.shoppinglist.account_user.label
             subtotal:
                 label:         orob2b.shoppinglist.subtotal.label
                 type:          twig
@@ -124,6 +124,7 @@ datagrid:
                 select:
                     - product.id as productId
                     - product.sku as productSku
+                    - productNames.string as productName
                     - lineItem.id
                     - lineItem.quantity
                     - lineItem.notes
@@ -133,6 +134,11 @@ datagrid:
                 join:
                     inner:
                         - { join: lineItem.product, alias: product }
+                        -
+                            join: product.names
+                            alias: productNames
+                            conditionType: WITH
+                            condition: productNames.locale IS NULL
                 where:
                     and:
                         - IDENTITY(lineItem.shoppingList) = :shopping_list_id
@@ -141,6 +147,8 @@ datagrid:
         columns:
             productSku:
                 label:         orob2b.shoppinglist.lineitem.product_sku.label
+            productName:
+                label:         orob2b.shoppinglist.lineitem.product_name.label
             quantity:
                 label:         orob2b.shoppinglist.lineitem.quantity.label
             unitCode:
@@ -154,6 +162,8 @@ datagrid:
             columns:
                 productSku:
                     data_name: productSku
+                productName:
+                    data_name: productName
                 quantity:
                     data_name: lineItem.quantity
                 unitCode:
@@ -165,6 +175,9 @@ datagrid:
                 productSku:
                     type:      string
                     data_name: productSku
+                productName:
+                    type:      string
+                    data_name: productName
                 quantity:
                     type:      number
                     data_name: lineItem.quantity

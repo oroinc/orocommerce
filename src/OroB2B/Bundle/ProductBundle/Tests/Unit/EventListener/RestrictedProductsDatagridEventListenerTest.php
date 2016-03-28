@@ -98,7 +98,7 @@ class RestrictedProductsDatagridEventListenerTest extends \PHPUnit_Framework_Tes
 
         /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $dataGrid */
         $dataGrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
-        $dataGrid->expects($this->once())->method('getAcceptedDatasource')->willReturn($dataSource);
+        $dataGrid->expects($this->once())->method('getDatasource')->willReturn($dataSource);
 
         return new BuildAfter($dataGrid);
     }

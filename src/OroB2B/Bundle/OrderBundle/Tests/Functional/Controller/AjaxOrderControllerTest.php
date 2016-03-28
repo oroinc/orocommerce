@@ -35,7 +35,7 @@ class AjaxOrderControllerTest extends WebTestCase
             $this->getUrl('orob2b_order_create')
         );
 
-        $this->assertSubtotals($crawler);
+        $this->assertTotal($crawler);
     }
 
     public function testSubtotals()
@@ -47,18 +47,18 @@ class AjaxOrderControllerTest extends WebTestCase
             $this->getUrl('orob2b_order_update', ['id' => $order->getId()])
         );
 
-        $this->assertSubtotals($crawler, $order->getId());
+        $this->assertTotal($crawler, $order->getId());
     }
 
     /**
      * @param Crawler $crawler
      * @param null|int $id
      */
-    protected function assertSubtotals(Crawler $crawler, $id = null)
+    protected function assertTotal(Crawler $crawler, $id = null)
     {
         $form = $crawler->selectButton('Save and Close')->form();
 
-        $form->getFormNode()->setAttribute('action', $this->getUrl('orob2b_order_subtotals', ['id' => $id]));
+        $form->getFormNode()->setAttribute('action', $this->getUrl('orob2b_order_entry_point', ['id' => $id]));
 
         $this->client->submit($form);
 
@@ -68,8 +68,10 @@ class AjaxOrderControllerTest extends WebTestCase
 
         $data = json_decode($result->getContent(), true);
 
-        $this->assertArrayHasKey('subtotals', $data);
-        $this->assertArrayHasKey('subtotal', $data['subtotals']);
+        $this->assertArrayHasKey('totals', $data);
+        $this->assertArrayHasKey('subtotals', $data['totals']);
+        $this->assertArrayHasKey(0, $data['totals']['subtotals']);
+        $this->assertArrayHasKey('total', $data['totals']);
     }
 
     /**
@@ -88,7 +90,7 @@ class AjaxOrderControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_order_related_data'),
+            $this->getUrl('orob2b_order_entry_point'),
             [
                 OrderType::NAME => [
                     'account' => $accountEntity->getId(),
@@ -101,7 +103,6 @@ class AjaxOrderControllerTest extends WebTestCase
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\JsonResponse', $response);
 
         $result = $this->getJsonResponseContent($response, 200);
-        $this->assertCount(4, $result);
         $this->assertArrayHasKey('billingAddress', $result);
         $this->assertArrayHasKey('shippingAddress', $result);
         $this->assertArrayHasKey('accountPaymentTerm', $result);
@@ -135,7 +136,7 @@ class AjaxOrderControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_order_related_data'),
+            $this->getUrl('orob2b_order_entry_point'),
             [
                 OrderType::NAME => [
                     'account' => $accountUser1->getAccount()->getId(),

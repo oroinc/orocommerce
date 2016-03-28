@@ -57,7 +57,7 @@ class OrderControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertEquals('Orders', $crawler->filter('h1.oro-subtitle')->html());
+        $this->assertEquals('Orders', $crawler->filter('h1.orders-page-title')->html());
     }
 
     /**
@@ -285,7 +285,7 @@ class OrderControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertViewPage($crawler, ['Notes', self::ORDER_PO_NUMBER_UPDATED]);
+        $this->assertViewPage($crawler, ['Notes']);
     }
 
     /**

@@ -66,7 +66,8 @@ orob2b:
             entity_plural_label: Shopping List Line Items
             id.label: ID
             notes.label: Notes
-            product_sku.label: Product SKU
+            product_sku.label: SKU
+            product_name.label: Product
             quantity:
                 label: Quantity
                 enter: Enter a QTY
@@ -134,3 +135,5 @@ orob2b:
                 request_quote_create_rfp: 'Request a Quote'
                 create_order: 'Create Order'
                 delete: 'Delete Shooping List'
+            workflow:
+                remove_source.label: Clear the shopping list

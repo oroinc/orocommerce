@@ -42,7 +42,7 @@
     <div{{ block('block_attributes') }}>
         <div>
             <span class="notification__sign notification__sign_error">
-              <i class="icon-attention fs20"></i>
+              <i class="cf-attention fs20"></i>
             </span>
             <span>{{ block_widget(block) }}</span>
         </div>
@@ -100,8 +100,8 @@
         <div class="{{ class_prefix }}__form__col">
             <label{{ block('block_label_attributes') }}>
                 {{ block_widget(block) }}
-                <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
-                <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
+                <i class="cf-check_box checkbox_checked fs18 mmr5-md"></i>
+                <i class="cf-check_box_outline_blank checkbox_not-checked fs18 mmr5-md"></i>
                 <span class="checkbox_custom__text fs13">{{ label|block_text(translation_domain) }}</span>
             </label>
         </div>
