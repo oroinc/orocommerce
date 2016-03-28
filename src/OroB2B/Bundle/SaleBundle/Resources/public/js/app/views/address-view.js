@@ -26,6 +26,10 @@ define(function(require) {
             }
         },
 
+        events: {
+            'click [name="orob2b_sale_quote[shippingAddress][accountAddress]"]': 'addressFormChange',
+        },
+
         /**
          * @property {String}
          */
@@ -83,6 +87,13 @@ define(function(require) {
             this.useDefaultAddress = true;
             this.$fields = this.$el.find(':input[data-ftid]').filter(':not(' + this.options.selectors.address + ')');
             this.fieldsByName = {};
+        },
+
+        /**
+         * Loading form after on select address click
+         */
+        addressFormChange: function() {
+            var self = this;
             this.$fields.each(function() {
                 var $field = $(this);
                 if ($field.val().length > 0) {
@@ -198,11 +209,16 @@ define(function(require) {
 
             var $oldAddress = this.$address;
             this.setAddress($(address));
-
+            this.$fields.each(function() {
+                var $field = $(this);
+                $field.val('');
+                if ($field.data('select2')) {
+                    $field.data('selected-data', '').change();
+                }
+            });
             $oldAddress.parent().trigger('content:remove');
             $oldAddress.select2('destroy')
                 .replaceWith(this.$address);
-
             if (this.useDefaultAddress) {
                 this.$address.val(this.$address.data('default')).change();
             }
