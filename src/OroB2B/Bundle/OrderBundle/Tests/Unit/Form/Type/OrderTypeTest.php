@@ -2,11 +2,17 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use OroB2B\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
+use OroB2B\Bundle\OrderBundle\Total\TotalHelper;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
@@ -23,9 +29,14 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemsCollectionType;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
+use OroB2B\Bundle\OrderBundle\Form\Type\OrderDiscountItemsCollectionType;
+use OroB2B\Bundle\OrderBundle\Form\Type\OrderDiscountItemType;
 use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
+use OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
@@ -33,6 +44,7 @@ use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type\Stub\EntityType as StubEntityType;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 
 class OrderTypeTest extends TypeTestCase
 {
@@ -53,6 +65,18 @@ class OrderTypeTest extends TypeTestCase
     /** @var OrderType */
     private $type;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|TotalProcessorProvider */
+    protected $totalsProvider;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemSubtotalProvider */
+    protected $lineItemSubtotalProvider;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|DiscountSubtotalProvider */
+    protected $discountSubtotalProvider;
+
+    /** @var ValidatorInterface  */
+    private $validator;
+
     protected function setUp()
     {
         $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
@@ -65,12 +89,33 @@ class OrderTypeTest extends TypeTestCase
         $this->orderCurrencyHandler = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler')
             ->disableOriginalConstructor()->getMock();
 
+        $this->totalsProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->lineItemSubtotalProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->discountSubtotalProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $totalHelper = new TotalHelper(
+            $this->totalsProvider,
+            $this->lineItemSubtotalProvider,
+            $this->discountSubtotalProvider
+        );
         // create a type instance with the mocked dependencies
         $this->type = new OrderType(
             $this->securityFacade,
             $this->orderAddressSecurityProvider,
             $this->paymentTermProvider,
-            $this->orderCurrencyHandler
+            $this->orderCurrencyHandler,
+            new SubtotalSubscriber($totalHelper)
         );
 
         $this->type->setDataClass('OroB2B\Bundle\OrderBundle\Entity\Order');
@@ -86,7 +131,7 @@ class OrderTypeTest extends TypeTestCase
             ->with(
                 [
                     'data_class' => 'Order',
-                    'intention' => 'order',
+                    'intention' => 'order'
                 ]
             );
 
@@ -108,6 +153,8 @@ class OrderTypeTest extends TypeTestCase
     public function testSubmitValidData($submitData, $expectedOrder)
     {
         $order = new Order();
+        $order->setTotalDiscounts(Price::create(99, 'USD'));
+
         $options = [
             'data' => $order
         ];
@@ -115,6 +162,13 @@ class OrderTypeTest extends TypeTestCase
         $this->orderCurrencyHandler->expects($this->any())->method('setOrderCurrency');
 
         $form = $this->factory->create($this->type, null, $options);
+
+        $subtotal = new Subtotal();
+        $subtotal->setAmount(99);
+        $this->lineItemSubtotalProvider
+            ->expects($this->any())
+            ->method('getSubtotal')
+            ->willReturn($subtotal);
 
         $form->submit($submitData);
 
@@ -137,6 +191,9 @@ class OrderTypeTest extends TypeTestCase
                     'account' => 2,
                     'poNumber' => '11',
                     'shipUntil' => null,
+                    'subtotal' => 0.0,
+                    'total' => 0.0,
+                    'totalDiscounts' => 0.0,
                     'lineItems' => [
                         [
                             'productSku' => 'HLCU',
@@ -159,10 +216,14 @@ class OrderTypeTest extends TypeTestCase
                         'sourceEntityClass' => 'Class',
                         'sourceEntityId' => '1',
                         'sourceEntityIdentifier' => '1',
+                        'totalDiscounts' => Price::create(99, 'USD'),
                         'accountUser' => 1,
                         'account' => 2,
                         'poNumber' => '11',
                         'shipUntil' => null,
+                        'subtotal' => 99,
+                        'total' => 0.0,
+                        'totalDiscounts' => new Price(),
                         'lineItems' => [
                             [
                                 'productSku' => 'HLCU',
@@ -243,6 +304,14 @@ class OrderTypeTest extends TypeTestCase
         $OrderLineItemType->setDataClass('OroB2B\Bundle\OrderBundle\Entity\OrderLineItem');
         $currencySelectionType = new CurrencySelectionTypeStub();
 
+        $this->validator = $this->getMock(
+            'Symfony\Component\Validator\Validator\ValidatorInterface'
+        );
+        $this->validator
+            ->method('validate')
+            ->will($this->returnValue(new ConstraintViolationList()));
+
+
         return [
             new PreloadedExtension(
                 [
@@ -258,11 +327,14 @@ class OrderTypeTest extends TypeTestCase
                     $accountUserSelectType->getName() => $accountUserSelectType,
                     $priceListSelectType->getName() => $priceListSelectType,
                     OrderLineItemsCollectionType::NAME => new OrderLineItemsCollectionType(),
+                    OrderDiscountItemsCollectionType::NAME => new OrderDiscountItemsCollectionType(),
                     OrderLineItemType::NAME => $OrderLineItemType,
+                    OrderDiscountItemType::NAME => new OrderDiscountItemType(),
                     QuantityTypeTrait::$name => $this->getQuantityType(),
                 ],
                 []
             ),
+            new ValidatorExtension(Validation::createValidator())
         ];
     }
 

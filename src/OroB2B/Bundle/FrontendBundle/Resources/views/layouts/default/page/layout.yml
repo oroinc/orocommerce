@@ -4,27 +4,11 @@ layout:
             themes: 'OroB2BFrontendBundle:layouts:default/page/layout.html.twig'
         - @addTree:
             items:
-                head:
-                    blockType: head
-                    options:
-                        title: OroCommerce
-                meta_charset:
-                    blockType: meta
-                    options:
-                        charset: 'UTF-8'
-                meta_viewport:
-                    blockType: meta
-                    options:
-                        name: viewport
-                        content: 'width=device-width, initial-scale=1'
-                styles:
-                    blockType: style
-                    options:
-                        src: { @asset: $data.theme.data.assets.styles.output }
-                body:
-                    blockType: body
                 wrapper:
                     blockType: container
+                    options:
+                        attr:
+                          id: 'container'
                 header:
                     blockType: container
                 notification:
@@ -47,29 +31,24 @@ layout:
                     blockType: script
                     options:
                         content: 'require(["orob2bfrontend/default/js/main"])'
-                scripts_before:
-                    blockType: block
-                require_js:
-                    blockType: block
-                require_modules:
-                    blockType: block
             tree:
-                root:
-                    head:
-                        meta_charset: ~
-                        meta_viewport: ~
-                        styles: ~
-                        scripts_before: ~
-                        require_js: ~
-                        require_modules: ~
-                    body:
-                        wrapper:
-                            header: ~
-                            notification: ~
-                            main:
-                                content:
-                                    page_title_container:
-                                        page_title: ~
-                                sidebar_left: ~
-                            footer: ~
-                        scripts: ~
+                body:
+                    wrapper:
+                        header: ~
+                        notification: ~
+                        main:
+                            content:
+                                page_title_container:
+                                    page_title: ~
+                            sidebar_left: ~
+                        footer: ~
+                    scripts: ~
+        - @add:
+            id: require_js_config
+            parentId: require_js
+            blockType: block
+        - @replaceOption:
+            id: head
+            optionName: title
+            oldOptionValue: OroPlatform
+            newOptionValue: OroCommerce

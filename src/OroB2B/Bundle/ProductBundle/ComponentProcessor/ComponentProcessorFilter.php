@@ -44,7 +44,7 @@ class ComponentProcessorFilter implements ComponentProcessorFilterInterface
     {
         $products = [];
         foreach ($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] as $product) {
-            $products[strtoupper($product['productSku'])] = $product;
+            $products[strtoupper($product[ProductDataStorage::PRODUCT_SKU_KEY])] = $product;
         }
         $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] = [];
 

@@ -15,32 +15,24 @@
     {% endif %}
 {% endblock %}
 
-{% block _scripts_before_widget %}
-    {% block scripts_before %}
-        {% placeholder scripts_before %}
-    {% endblock %}
+{% block _header_widget %}
+    <header{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </header>
 {% endblock %}
 
-{% block _require_js_widget %}
-    {% set requirejs_config_extend %}
-        {%- placeholder requirejs_config_extend -%}
-    {% endset %}
-    {% include 'OroRequireJSBundle::scripts.html.twig' with {
-        compressed: not app.debug,
-        config_extend: requirejs_config_extend
-    } %}
-    {% placeholder scripts_after %}
+{% block _require_js_config_widget %}
     <script>
         require({
             config: {
                 'oroui/js/app': {routeLinks: ''},
                 'controllers/page-controller': {fullRedirect: true},
-                'oro/datagrid/cell/action-cell': {showCloseButton: true},
+                'oro/datagrid/cell/action-cell': {showCloseButton: false},
                 'orodatagrid/js/app/plugins/grid/column-manager-plugin': {icon: 'gear'},
                 'orodatagrid/js/datagrid/action-launcher': {iconHideText: false},
                 'oro/filter/abstract-filter': {
                     placeholder: null,
-                    labelPrefix: '{{ 'orob2b_frontend.filter.by'|trans  }} '
+                    labelPrefix: '{{ 'oro.ui.filter.by'|trans  }} '
                 },
                 'orofilter/js/filter-hint': {inline: false},
                 'orob2bshoppinglist/js/app/widget/shopping-list-widget': {
@@ -65,16 +57,12 @@
         });
         require({
             appmodules: (requirejs.s.contexts._.config.appmodules || []).concat([
-                '/bundles/orob2bfrontend/default/js/app/modules/input-widgets.js'
+                '/bundles/orob2bfrontend/default/js/app/modules/input-widgets.js',
+                '/bundles/orob2bfrontend/default/js/app/modules/action-manager.js',
+                '/bundles/orob2bfrontend/default/js/app/modules/delete-action.js',
+                '/bundles/orob2bfrontend/default/js/app/modules/select-filter.js'
             ])
         });
-    </script>
-{% endblock %}
-
-{% block _require_modules_widget %}
-    <script type="text/javascript">
-        require(['oroui/js/app']);
-        require(['oroui/js/init-layout']);
     </script>
 {% endblock %}
 
@@ -85,12 +73,6 @@
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
-{% endblock %}
-
-{% block _header_widget %}
-    <header{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </header>
 {% endblock %}
 
 {% block _main_widget %}
@@ -116,7 +98,7 @@
     <div{{ block('block_attributes') }}>
         <div class="content__container">
             <div class="container-fluid">
-                <div class="content__inner" id="container">
+                <div class="content__inner">
                     {{ block_widget(block) }}
                 </div>
             </div>

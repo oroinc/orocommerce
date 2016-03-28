@@ -2,6 +2,13 @@
 {% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
 {% import 'OroAddressBundle::macros.html.twig' as address %}
 
+{% set shippingAddressBlock %}
+    {{ address.renderAddress(entity..shippingAddress)}}
+    <div>
+        {{ entity.shippingAddress.phone|escape|nl2br }}
+    </div>
+{% endset %}
+
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
@@ -15,7 +22,7 @@
         </div>
         <div class="responsive-block">
             {{ entityConfig.renderDynamicFields(entity) }}
-            {{ UI.renderHtmlProperty('orob2b.sale.quote.sections.shipping_address'|trans, address.renderAddress(entity.shippingAddress)) }}
+            {{ UI.renderHtmlProperty('orob2b.sale.quote.sections.shipping_address'|trans, shippingAddressBlock) }}
         </div>
     </div>
 </div>

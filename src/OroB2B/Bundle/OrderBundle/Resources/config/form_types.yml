@@ -8,6 +8,9 @@ parameters:
 
     orob2b_order.form.type.extension.order_data_storage.class: OroB2B\Bundle\OrderBundle\Form\Extension\OrderDataStorageExtension
 
+    orob2b_order.form.type.order_discount_item_collection.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderDiscountItemsCollectionType
+    orob2b_order.form.type.order_discount_item.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderDiscountItemType
+
 services:
     orob2b_order.form.type.order:
         class: %orob2b_order.form.type.order.class%
@@ -16,6 +19,7 @@ services:
             - @orob2b_order.order.provider.order_address_security
             - @orob2b_payment.provider.payment_term
             - @orob2b_order.model.order_currency_handler
+            - @orob2b_order.form.subscriber.subtotal_subscriber
         tags:
             - { name: form.type, alias: orob2b_order_type }
         calls:
@@ -30,6 +34,7 @@ services:
             - @orob2b_payment.provider.payment_term
             - @orob2b_pricing.provider.combined_product_price
             - @orob2b_order.model.order_currency_handler
+            - @orob2b_order.form.subscriber.subtotal_subscriber
         tags:
             - { name: form.type, alias: orob2b_order_frontend_type }
         calls:
@@ -91,3 +96,15 @@ services:
             - [setExtendedType, [orob2b_order_type]]
         tags:
             - { name: form.type_extension, alias: orob2b_order_type }
+
+    orob2b_order.form.type.order_discount_item_collection:
+        class: %orob2b_order.form.type.order_discount_item_collection.class%
+        tags:
+            - { name: form.type, alias: "orob2b_order_discount_items_collection" }
+
+    orob2b_order.form.type.order_discount_item:
+        class: %orob2b_order.form.type.order_discount_item.class%
+        calls:
+            - [setDataClass, [%orob2b_order.entity.order_discount_item.class%]]
+        tags:
+            - { name: form.type, alias: "orob2b_order_discount_item" }

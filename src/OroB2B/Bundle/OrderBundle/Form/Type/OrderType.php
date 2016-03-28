@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\OrderBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Range;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
@@ -18,61 +19,58 @@ use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use OroB2B\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
 
 class OrderType extends AbstractType
 {
     const NAME = 'orob2b_order_type';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $dataClass;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $websiteClass = 'OroB2B\Bundle\WebsiteBundle\Entity\Website';
 
-    /**
-     * @var OrderAddressSecurityProvider
-     */
+    /** @var OrderAddressSecurityProvider */
     protected $orderAddressSecurityProvider;
 
-    /**
-     * @var PaymentTermProvider
-     */
+    /** @var PaymentTermProvider */
     protected $paymentTermProvider;
 
-    /**
-     * @var SecurityFacade
-     */
+    /** @var SecurityFacade */
     protected $securityFacade;
 
-    /**
-     * @var OrderCurrencyHandler
-     */
+    /** @var OrderCurrencyHandler */
     protected $orderCurrencyHandler;
 
+    /** @var SubtotalSubscriber  */
+    protected $subtotalSubscriber;
+
     /**
+     * OrderType constructor.
      * @param SecurityFacade $securityFacade
      * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
      * @param PaymentTermProvider $paymentTermProvider
      * @param OrderCurrencyHandler $orderCurrencyHandler
+     * @param SubtotalSubscriber $subtotalSubscriber
      */
     public function __construct(
         SecurityFacade $securityFacade,
         OrderAddressSecurityProvider $orderAddressSecurityProvider,
         PaymentTermProvider $paymentTermProvider,
-        OrderCurrencyHandler $orderCurrencyHandler
+        OrderCurrencyHandler $orderCurrencyHandler,
+        SubtotalSubscriber $subtotalSubscriber
     ) {
         $this->securityFacade = $securityFacade;
         $this->orderAddressSecurityProvider = $orderAddressSecurityProvider;
         $this->paymentTermProvider = $paymentTermProvider;
         $this->orderCurrencyHandler = $orderCurrencyHandler;
+        $this->subtotalSubscriber = $subtotalSubscriber;
     }
 
     /**
      * {@inheritDoc}
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -123,54 +121,45 @@ class OrderType extends AbstractType
                     'currencies_list' => [$order->getCurrency()]
                 ]
             )
+            ->add(
+                'discounts',
+                OrderDiscountItemsCollectionType::NAME,
+                [
+                    'add_label' => 'orob2b.order.discountitem.add_label',
+                    'cascade_validation' => true,
+                    'options' => [
+                        'currency' => $order->getCurrency(),
+                        'total' => pow(10, 18) - 1,
+                    ]
+                ]
+            )
+            ->add(
+                'discountsSum',
+                'hidden',
+                [
+                    'mapped' => false,
+                    //range should be used, because this type also is implemented with JS
+                    'constraints' => [new Range(
+                        [
+                            'min' => PHP_INT_MAX * (-1), //use some big negative number
+                            'max' => $order->getSubtotal(),
+                            'maxMessage' => 'orob2b.order.discounts.sum.error.label'
+                        ]
+                    )],
+                    'data' => $order->getTotalDiscounts() ? $order->getTotalDiscounts()->getValue() : 0
+                ]
+            )
+
             ->add('sourceEntityClass', 'hidden')
             ->add('sourceEntityId', 'hidden')
             ->add('sourceEntityIdentifier', 'hidden');
 
-        if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_BILLING)) {
-            $builder
-                ->add(
-                    'billingAddress',
-                    OrderAddressType::NAME,
-                    [
-                        'label' => 'orob2b.order.billing_address.label',
-                        'order' => $options['data'],
-                        'required' => false,
-                        'addressType' => AddressType::TYPE_BILLING,
-                    ]
-                );
-        }
+        $this->addTotalsValidationFields($builder, $order);
+        $this->addBillingAddress($builder, $order, $options);
+        $this->addShippingAddress($builder, $order, $options);
+        $this->addPaymentTerm($builder, $order);
 
-        if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_SHIPPING)) {
-            $builder
-                ->add(
-                    'shippingAddress',
-                    OrderAddressType::NAME,
-                    [
-                        'label' => 'orob2b.order.shipping_address.label',
-                        'order' => $options['data'],
-                        'required' => false,
-                        'addressType' => AddressType::TYPE_SHIPPING,
-                        'application' => OrderAddressType::APPLICATION_BACKEND
-                    ]
-                );
-        }
-
-        if ($this->isOverridePaymentTermGranted()) {
-            $builder
-                ->add(
-                    'paymentTerm',
-                    PaymentTermSelectType::NAME,
-                    [
-                        'label' => 'orob2b.order.payment_term.label',
-                        'required' => false,
-                        'attr' => [
-                            'data-account-payment-term' => $this->getAccountPaymentTermId($order),
-                            'data-account-group-payment-term' => $this->getAccountGroupPaymentTermId($order),
-                        ],
-                    ]
-                );
-        }
+        $builder->addEventSubscriber($this->subtotalSubscriber);
     }
 
     /**
@@ -181,7 +170,7 @@ class OrderType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
-                'intention' => 'order',
+                'intention' => 'order'
             ]
         );
     }
@@ -248,5 +237,111 @@ class OrderType extends AbstractType
     public function setWebsiteClass($websiteClass)
     {
         $this->websiteClass = $websiteClass;
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param Order $order
+     */
+    protected function addPaymentTerm(FormBuilderInterface $builder, Order $order)
+    {
+        if ($this->isOverridePaymentTermGranted()) {
+            $builder
+                ->add(
+                    'paymentTerm',
+                    PaymentTermSelectType::NAME,
+                    [
+                        'label' => 'orob2b.order.payment_term.label',
+                        'required' => false,
+                        'attr' => [
+                            'data-account-payment-term' => $this->getAccountPaymentTermId($order),
+                            'data-account-group-payment-term' => $this->getAccountGroupPaymentTermId($order),
+                        ],
+                    ]
+                );
+        }
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param Order $order
+     * @param array $options
+     */
+    protected function addBillingAddress(FormBuilderInterface $builder, Order $order, $options)
+    {
+        if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_BILLING)) {
+            $builder
+                ->add(
+                    'billingAddress',
+                    OrderAddressType::NAME,
+                    [
+                        'label' => 'orob2b.order.billing_address.label',
+                        'object' => $options['data'],
+                        'required' => false,
+                        'addressType' => AddressType::TYPE_BILLING,
+                        'isEditEnabled' => true
+                    ]
+                );
+        }
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param Order $order
+     * @param array $options
+     */
+    protected function addShippingAddress(FormBuilderInterface $builder, Order $order, $options)
+    {
+        if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_SHIPPING)) {
+            $builder
+                ->add(
+                    'shippingAddress',
+                    OrderAddressType::NAME,
+                    [
+                        'label' => 'orob2b.order.shipping_address.label',
+                        'object' => $options['data'],
+                        'required' => false,
+                        'addressType' => AddressType::TYPE_SHIPPING,
+                        'isEditEnabled' => true
+                    ]
+                );
+        }
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param Order $order
+     */
+    protected function addTotalsValidationFields(FormBuilderInterface $builder, Order $order)
+    {
+        $maxValue = pow(10, 18) - 1;
+        $builder->add(
+            'subtotalValidation',
+            'hidden',
+            [
+                'mapped' => false,
+                'constraints' => [new Range(
+                    [
+                        'min' => 0,
+                        'max' => $maxValue
+                    ]
+                )],
+                'data' => $order->getSubtotal()
+            ]
+        )
+        ->add(
+            'totalValidation',
+            'hidden',
+            [
+                'mapped' => false,
+                'constraints' => [new Range(
+                    [
+                        'min' => 0,
+                        'max' => $maxValue
+                    ]
+                )],
+                'data' => $order->getTotal()
+            ]
+        );
     }
 }

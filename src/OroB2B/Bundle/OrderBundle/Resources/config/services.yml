@@ -5,6 +5,8 @@ parameters:
 
     orob2b_order.order.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_order.order.listener.order_listener.class: OroB2B\Bundle\OrderBundle\EventListener\OrderListener
+    orob2b_order.order.listener.total_calculate_listener.class: OroB2B\Bundle\OrderBundle\EventListener\TotalCalculateListener
+
     orob2b_order.order.entity.id_generator.class: OroB2B\Bundle\OrderBundle\Doctrine\ORM\Id\SimpleEntityAwareGenerator
 
     orob2b_order.order.provider.order_address.class: OroB2B\Bundle\OrderBundle\Provider\OrderAddressProvider
@@ -13,14 +15,24 @@ parameters:
     orob2b_order.manager.order_address.class: OroB2B\Bundle\OrderBundle\Model\OrderAddressManager
     orob2b_order.model.order_request_handler.class: OroB2B\Bundle\OrderBundle\Model\OrderRequestHandler
     orob2b_order.model.order_currency_handler.class: OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler
+    orob2b_order.model.order_totals_handler.class: OroB2B\Bundle\OrderBundle\Model\OrderTotalsHandler
     orob2b_order.event_listener.form_view.class: OroB2B\Bundle\OrderBundle\EventListener\FormViewListener
 
-    orob2b_order.provider.subtotal_shipping_cost.class: OroB2B\Bundle\OrderBundle\Provider\SubtotalShippingCostProvider
+    orob2b_order.provider.shipping_cost_subtotal.class: OroB2B\Bundle\OrderBundle\Provider\ShippingCostSubtotalProvider
+    orob2b_order.provider.discount_subtotal.class: OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider
 
     orob2b_order.twig.order.class: OroB2B\Bundle\OrderBundle\Twig\OrderExtension
 
+    orob2b_order.entity.order_discount_item.class: OroB2B\Bundle\OrderBundle\Entity\OrderDiscount
+
     #formaters
     orob2b_order.formatter.source_document.class: OroB2B\Bundle\OrderBundle\Formatter\SourceDocumentFormatter
+
+    orob2b_order.validator.checkout_address.class: OroB2B\Bundle\OrderBundle\Validator\Constraints\OrderAddressValidator
+
+    orob2b_order.order.total.total_helper.class: OroB2B\Bundle\OrderBundle\Total\TotalHelper
+
+    orob2b_order.form.subscriber.subtotal_subscriber.class: OroB2B\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber
 
 services:
     orob2b_order.order.manager.api:
@@ -40,11 +52,21 @@ services:
         tags:
             - { name: doctrine.event_listener, event: postPersist }
 
-    orob2b_order.provider.subtotal_shipping_cost:
-        class: %orob2b_order.provider.subtotal_shipping_cost.class%
+    orob2b_order.provider.shipping_cost_subtotal:
+        class: %orob2b_order.provider.shipping_cost_subtotal.class%
         arguments:
             - @translator
             - @orob2b_pricing.rounding.price_rounding_service
+        tags:
+            - { name: orob2b_pricing.subtotal_provider, priority: 20 }
+
+    orob2b_order.provider.discount_subtotal:
+        class: %orob2b_order.provider.discount_subtotal.class%
+        arguments:
+            - @translator
+            - @orob2b_pricing.rounding.price_rounding_service
+            - @orob2b_pricing.subtotal_processor.provider.subtotal_line_item
+            - @oro_security.security_facade
         tags:
             - { name: orob2b_pricing.subtotal_provider, priority: 10 }
 
@@ -88,6 +110,12 @@ services:
         arguments:
             - @oro_locale.settings
 
+    orob2b_order.model.order_totals_handler:
+        class: %orob2b_order.model.order_totals_handler.class%
+        arguments:
+            - @orob2b_pricing.subtotal_processor.total_processor_provider
+            - @orob2b_pricing.subtotal_processor.provider.subtotal_line_item
+
     orob2b_order.event_listener.form_view:
         class: %orob2b_order.event_listener.form_view.class%
         arguments:
@@ -130,3 +158,30 @@ services:
         class: %orob2b_order.formatter.source_document.class%
         arguments:
             - @oro_entity.entity_class_name_provider
+
+    orob2b_order.order.listener.total_calculate_listener:
+        class: %orob2b_order.order.listener.total_calculate_listener.class%
+        arguments:
+            - @form.factory
+            - @oro_action.helper.applications
+        tags:
+            - { name: kernel.event_listener, event: orob2b_pricing.total_calculate_before_event, method: onBeforeTotalCalculate }
+
+    orob2b_order.validator.checkout_address:
+        class: %orob2b_order.validator.checkout_address.class%
+        arguments:
+            - @validator
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_order_address_validator }
+
+    orob2b_order.order.total.total_helper:
+        class: %orob2b_order.order.total.total_helper.class%
+        arguments:
+            - @orob2b_pricing.subtotal_processor.total_processor_provider
+            - @orob2b_pricing.subtotal_processor.provider.subtotal_line_item
+            - @orob2b_order.provider.discount_subtotal
+
+    orob2b_order.form.subscriber.subtotal_subscriber:
+        class: %orob2b_order.form.subscriber.subtotal_subscriber.class%
+        arguments:
+            - @orob2b_order.order.total.total_helper
