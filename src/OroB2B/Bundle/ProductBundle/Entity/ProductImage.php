@@ -104,6 +104,6 @@ class ProductImage extends ExtendProductImage
      */
     public function hasType($type)
     {
-        return in_array($type, $this->types);
+        return in_array($type, $this->getTypes());
     }
 }

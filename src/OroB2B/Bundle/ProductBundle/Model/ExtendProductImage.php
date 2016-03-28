@@ -4,11 +4,11 @@ namespace OroB2B\Bundle\ProductBundle\Model;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
 
 /**
  * @method File getImage()
- * @method Product setImage(File $image)
+ * @method ProductImage setImage(File $image)
  */
 class ExtendProductImage
 {

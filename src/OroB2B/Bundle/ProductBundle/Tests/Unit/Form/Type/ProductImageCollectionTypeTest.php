@@ -2,20 +2,19 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\AttachmentBundle\Entity\File;
-use Oro\Component\Layout\Extension\Theme\Model\ThemeImageType;
-use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\Validator\Validation;
 
+use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
+use Oro\Component\Layout\Extension\Theme\Model\ThemeImageType;
 
+use OroB2B\Bundle\ProductBundle\Entity\ProductImage;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductImageType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductImageCollectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
 
 class ProductImageCollectionTypeTest extends FormIntegrationTestCase
@@ -101,6 +100,9 @@ class ProductImageCollectionTypeTest extends FormIntegrationTestCase
         $productImage = new ProductImage();
         $productImage->setTypes(['main']);
 
+        $defaultProductImage = new StubProductImage();
+        $defaultProductImage->setTypes(['test']);
+
         return [
             'without submitted data' => [
                 'defaultData' => null,
@@ -117,6 +119,26 @@ class ProductImageCollectionTypeTest extends FormIntegrationTestCase
                     ]
                 ],
                 'expectedData' => [
+                    $productImage
+                ],
+                'options' => []
+            ],
+            'with default data' => [
+                'defaultData' => [
+                    $defaultProductImage
+                ],
+                'submittedData' => [
+                    [
+                        'image' => $file,
+                        'test' => 1
+                    ],
+                    [
+                        'image' => $file,
+                        'main' => 1
+                    ]
+                ],
+                'expectedData' => [
+                    $defaultProductImage,
                     $productImage
                 ],
                 'options' => []
