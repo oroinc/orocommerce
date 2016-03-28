@@ -94,7 +94,7 @@ operations:
 #            @equal: [false, $hasOfferVariants]
         actions:
             - @run_action_group:
-                attributes:
+                results:
                     order_id: $.order.id
                 action_group: orob2b_sale_frontend_quote_accept_and_submit_to_order
                 parameters_mapping:
@@ -149,7 +149,7 @@ operations:
 
         actions:
             - @run_action_group:
-                attributes:
+                results:
                     order_id: $.order.id
                 action_group: orob2b_sale_frontend_quote_accept_and_submit_to_order_from_widget
                 parameters_mapping:

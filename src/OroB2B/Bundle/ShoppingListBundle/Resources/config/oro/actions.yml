@@ -101,7 +101,7 @@ operations:
                 attribute: $.lineItem
         actions:
             - @run_action_group:
-                attributes:
+                results:
                     success_message: $.successMessage
                 action_group: orob2b_shoppinglist_frontend_addlineitem
                 parameters_mapping:
