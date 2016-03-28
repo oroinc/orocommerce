@@ -2,12 +2,12 @@
 
 namespace OroB2B\Bundle\FrontendBundle\DependencyInjection;
 
-use Oro\Bundle\LocaleBundle\DependencyInjection\OroLocaleExtension;
-
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Loader;
+
+use Oro\Bundle\LocaleBundle\DependencyInjection\OroLocaleExtension;
 
 class OroB2BFrontendExtension extends Extension
 {
