@@ -17,6 +17,10 @@
         {
             "type": "composer",
             "url": "https://packagist.orocrm.com"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/nicholas-eden/math.git"
         }
     ],
     "require": {
