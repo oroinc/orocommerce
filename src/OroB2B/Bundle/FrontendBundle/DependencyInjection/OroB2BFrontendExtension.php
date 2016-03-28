@@ -38,8 +38,12 @@ class OroB2BFrontendExtension extends Extension
         return self::ALIAS;
     }
 
-
-    public function addPhoneToAddress(ContainerBuilder $container)
+    /**
+     * Add phone to address format configuration to all locales
+     *
+     * @param ContainerBuilder $container
+     */
+    protected function addPhoneToAddress(ContainerBuilder $container)
     {
         $formatAddressLocales = $container->getParameter(OroLocaleExtension::PARAMETER_ADDRESS_FORMATS);
         foreach ($formatAddressLocales as &$locale) {
