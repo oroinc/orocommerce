@@ -29,7 +29,6 @@ layout:
                 rfp_page:
                     blockType: container
                     options:
-#                        class_prefix: 'create-account'
                         class_prefix: 'create-frq'
 
                 rfp_form_container:
@@ -53,13 +52,14 @@ layout:
                         form: { @value: $data.orob2b_rfp_request_form }
                 rfp_form_actions:
                     blockType: container
-                rfp_form_actions_reset:
-                    blockType: button
+                rfp_form_actions_back:
+                    blockType: link
                     options:
-                        action: reset
-                        text: orob2b.frontend.rfp.request.create_form.cancel.label
+                        path: { @value: $data.backToUrl }
+                        text: orob2b.frontend.rfp.request.create_form.back.label
+                        icon: left-open-mini
                         vars:
-                            style: auto
+                            style: gray
                 rfp_form_actions_create:
                     blockType: button
                     options:
@@ -67,6 +67,8 @@ layout:
                         text: orob2b.frontend.rfp.request.create_form.submit.label
                         vars:
                             style: auto
+                        attr:
+                            class: btn_xlg
             tree:
                 content:
                     rfp_page:
@@ -75,6 +77,6 @@ layout:
                             rfp_form_fields: ~
                             rfp_form_lineitems: ~
                             rfp_form_actions:
-                                rfp_form_actions_reset: ~
                                 rfp_form_actions_create: ~
+                                rfp_form_actions_back: ~
                             rfp_form_end: ~

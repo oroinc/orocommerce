@@ -3,7 +3,9 @@
 namespace OroB2B\Bundle\RFPBundle\Controller\Frontend;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -117,37 +119,6 @@ class RequestController extends Controller
     }
 
     /**
-     * @Acl(
-     *      id="orob2b_rfp_frontend_request_create",
-     *      type="entity",
-     *      class="OroB2BRFPBundle:Request",
-     *      permission="CREATE",
-     *      group_name="commerce"
-     * )
-     * @Route("/create1", name="orob2b_rfp_frontend_request_create1")
-     * @Template("OroB2BRFPBundle:Request/Frontend:update.html.twig")
-     *
-     * @return array
-     */
-    public function create1Action()
-    {
-        $rfpRequest = new RFPRequest();
-        $user = $this->getUser();
-        if ($user instanceof AccountUser) {
-            $rfpRequest
-                ->setAccountUser($user)
-                ->setAccount($user->getAccount())
-                ->setFirstName($user->getFirstName())
-                ->setLastName($user->getLastName())
-                ->setCompany($user->getAccount()->getName())
-                ->setEmail($user->getEmail())
-            ;
-        }
-
-        return $this->update($rfpRequest);
-    }
-
-    /**
      * @Route("/update/{id}", name="orob2b_rfp_frontend_request_update", requirements={"id"="\d+"})
      * @Layout
      * @Acl(
@@ -202,7 +173,6 @@ class RequestController extends Controller
                     'route'         => 'orob2b_rfp_frontend_request_create',
                     'parameters'    => [],
                 ];
-
             },
             function (RFPRequest $rfpRequest) use ($securityFacade) {
                 if ($securityFacade->isGranted('ACCOUNT_VIEW', $rfpRequest)) {
@@ -217,7 +187,18 @@ class RequestController extends Controller
                     'parameters'    => [],
                 ];
             },
-            $this->get('translator')->trans('orob2b.rfp.controller.request.saved.message')
+            $this->get('translator')->trans('orob2b.rfp.controller.request.saved.message'),
+            null,
+            function(RFPRequest $rfpRequest, FormInterface $form, Request $request) {
+                $url = $request->getUri();
+                if ($request->headers->get('referer')) {
+                    $url = $request->headers->get('referer');
+                }
+
+                return [
+                    'backToUrl' => $url
+                ];
+            }
         );
     }
 

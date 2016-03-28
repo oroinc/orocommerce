@@ -165,7 +165,7 @@ orob2b:
                 po_number.label: 'PO Number'
                 ship_until.label: 'Do Not Ship Later Than'
                 assigned_account_users.label: 'Assigned To'
-                create_form.cancel.label: 'Reset'
-                create_form.submit.label: 'Save'
+                create_form.back.label: 'Back'
+                create_form.submit.label: 'Submit Request For Quote'
 
 orob2b.order.orderlineitem.offers.label: 'Requested QTY and price'
