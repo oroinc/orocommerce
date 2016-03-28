@@ -55,7 +55,7 @@ class AccountUserRoleController extends Controller
     {
         return [
             'data' => [
-                'role' => $role
+                'entity' => $role
             ]
         ];
     }

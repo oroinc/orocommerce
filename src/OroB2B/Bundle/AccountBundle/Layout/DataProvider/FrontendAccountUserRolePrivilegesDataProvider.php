@@ -34,11 +34,11 @@ class FrontendAccountUserRolePrivilegesDataProvider implements DataProviderInter
      */
     public function getData(ContextInterface $context)
     {
-        if (!$context->data()->has('role')) {
+        if (!$context->data()->has('entity')) {
             return null;
         }
 
-        $role = $context->data()->get('role');
+        $role = $context->data()->get('entity');
 
         if (!$role instanceof AccountUserRole) {
             return null;
