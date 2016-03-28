@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\Handler;
 
+use Symfony\Bundle\FrameworkBundle\Routing\Router as SymfonyRouter;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -17,15 +18,14 @@ class ProductUpdateHandler extends UpdateHandler
 {
     const ACTION_SAVE_AND_DUPLICATE = 'save_and_duplicate';
 
-    /**
-     * @var ActionGroupRegistry
-     */
+    /** @var ActionGroupRegistry */
     private $actionGroupRegistry;
 
-    /**
-     * @var TranslatorInterface
-     */
+    /** @var TranslatorInterface */
     private $translator;
+
+    /** @var SymfonyRouter */
+    private $symfonyRouter;
 
     /**
      * @param ActionGroupRegistry $actionGroupRegistry
@@ -41,6 +41,14 @@ class ProductUpdateHandler extends UpdateHandler
     public function setTranslator(TranslatorInterface $translator)
     {
         $this->translator = $translator;
+    }
+
+    /**
+     * @param SymfonyRouter $symfonyRouter
+     */
+    public function setRouter(SymfonyRouter $symfonyRouter)
+    {
+        $this->symfonyRouter = $symfonyRouter;
     }
 
     /**
@@ -72,13 +80,14 @@ class ProductUpdateHandler extends UpdateHandler
         if ($result instanceof RedirectResponse && $this->isSaveAndDuplicateAction()) {
             $saveMessage = $this->translator->trans('orob2b.product.controller.product.saved_and_duplicated.message');
             $this->session->getFlashBag()->set('success', $saveMessage);
-            $actionData = new ActionData();
             if ($actionGroup = $this->actionGroupRegistry->findByName('orob2b_product_duplicate')) {
-                $actionData = $actionGroup->execute(new ActionData(['data' => $entity, 'do_redirect' => true]));
-            }
-
-            if ($actionData->getRedirectUrl()) {
-                return new RedirectResponse($actionData->getRedirectUrl());
+                $actionData = $actionGroup->execute(new ActionData(['data' => $entity]));
+                /** @var Product $productCopy */
+                if ($productCopy = $actionData->offsetGet('productCopy')) {
+                    return new RedirectResponse(
+                        $this->symfonyRouter->generate('orob2b_product_view', ['id' => $productCopy->getId()])
+                    );
+                }
             }
         }
 

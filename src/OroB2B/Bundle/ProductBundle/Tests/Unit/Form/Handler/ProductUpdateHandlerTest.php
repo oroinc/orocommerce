@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Handler;
 
 use Doctrine\ORM\EntityManager;
 
+use Symfony\Bundle\FrameworkBundle\Routing\Router as SymfonyRouter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -94,6 +95,14 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
         $this->entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
+        /** @var \PHPUnit_Framework_MockObject_MockObject|SymfonyRouter $symfonyRouter */
+        $symfonyRouter = $this->getMockBuilder('Symfony\Bundle\FrameworkBundle\Routing\Router')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $symfonyRouter
+            ->expects($this->any())
+            ->method('generate')
+            ->willReturn('generated_redirect_url');
 
         $this->handler = new ProductUpdateHandler(
             $this->request,
@@ -104,6 +113,7 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
         );
         $this->handler->setTranslator($this->translator);
         $this->handler->setActionGroupRegistry($this->actionGroupRegistry);
+        $this->handler->setRouter($symfonyRouter);
     }
 
     /**
@@ -189,8 +199,8 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
 
         $actionGroup->expects($this->once())
             ->method('execute')
-            ->with(new ActionData(['data' => $entity, 'do_redirect' => true]))
-            ->willReturn(new ActionData(['redirectUrl' => 'generated_redirect_url']));
+            ->with(new ActionData(['data' => $entity]))
+            ->willReturn(new ActionData(['productCopy' => $this->getProductMock()]));
 
         $this->actionGroupRegistry->expects($this->once())
             ->method('findByName')

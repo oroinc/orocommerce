@@ -63,7 +63,7 @@ class RFPActionsTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('widget.trigger(\'formSave\', []);', $crawler->html());
+        $this->assertContains('widget.trigger(\'formSave\', {"success":true});', $crawler->html());
 
         /** @var Request $requestUpdated */
         $requestUpdated = $this->getReference(LoadRequestData::REQUEST1);

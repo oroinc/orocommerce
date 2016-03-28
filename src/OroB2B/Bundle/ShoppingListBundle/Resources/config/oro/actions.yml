@@ -105,7 +105,6 @@ operations:
                     success_message: $.successMessage
                 action_group: orob2b_shoppinglist_frontend_addlineitem
                 parameters_mapping:
-                    data: $.data
                     line_item: $.lineItem
                     form: $.form
             - @flash_message: { message: $.success_message, type: success }
@@ -216,8 +215,6 @@ operations:
 action_groups:
     orob2b_shoppinglist_frontend_addlineitem:
         parameters:
-            data:
-                type: OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList
             line_item:
                 type: OroB2B\Bundle\ShoppingListBundle\Entity\LineItem
             form:
@@ -227,11 +224,11 @@ action_groups:
             - @call_service_method:
                 service: orob2b_shopping_list.handler.shopping_list_line_item
                 method: processLineItem
-                method_parameters: [$.lineItem, $.form]
+                method_parameters: [$.line_item, $.form]
             - @call_service_method:
                 service: orob2b_shopping_list.service.message_generator
                 method: getSuccessMessage
-                method_parameters: [$.lineItem.shoppingList.id, 1, orob2b.shoppinglist.lineitem.flash.added]
+                method_parameters: [$.line_item.shoppingList.id, 1, orob2b.shoppinglist.lineitem.flash.added]
                 attribute: $.successMessage
 
     orob2b_shoppinglist_addlineitem:
