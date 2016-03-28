@@ -55,4 +55,50 @@ class AlternativeCheckout extends ExtendAlternativeCheckout implements
     LineItemsNotPricedAwareInterface
 {
     use CheckoutTrait;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="allowed", type="boolean")
+     */
+    protected $allowed;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="allow_request_date", type="datetime")
+     */
+    protected $allowRequestDate;
+
+    /**
+     * @return boolean
+     */
+    public function isAllowed()
+    {
+        return $this->allowed;
+    }
+
+    /**
+     * @param boolean $allowed
+     */
+    public function setAllowed($allowed)
+    {
+        $this->allowed = $allowed;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getAllowRequestDate()
+    {
+        return $this->allowRequestDate;
+    }
+
+    /**
+     * @param \DateTime $allowRequestDate
+     */
+    public function setAllowRequestDate($allowRequestDate)
+    {
+        $this->allowRequestDate = $allowRequestDate;
+    }
 }
