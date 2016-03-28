@@ -11,7 +11,6 @@ use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
 use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use OroB2B\Bundle\TaxBundle\Provider\TaxSubtotalProvider;
 use OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider;
-use OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 
 class OrderLineItemTypeExtension extends AbstractTypeExtension
 {
@@ -29,22 +28,28 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
     /** @var SectionProvider */
     protected $sectionProvider;
 
+    /** @var string */
+    protected $extendedType;
+
     /**
      * @param TaxationSettingsProvider $taxationSettingsProvider
      * @param TaxManager $taxManager
      * @param TaxSubtotalProvider $taxSubtotalProvider
      * @param SectionProvider $sectionProvider
+     * @param string $extendedType
      */
     public function __construct(
         TaxationSettingsProvider $taxationSettingsProvider,
         TaxManager $taxManager,
         TaxSubtotalProvider $taxSubtotalProvider,
-        SectionProvider $sectionProvider
+        SectionProvider $sectionProvider,
+        $extendedType
     ) {
         $this->taxationSettingsProvider = $taxationSettingsProvider;
         $this->taxManager = $taxManager;
         $this->taxSubtotalProvider = $taxSubtotalProvider;
         $this->sectionProvider = $sectionProvider;
+        $this->extendedType = (string)$extendedType;
     }
 
     /**
@@ -52,7 +57,7 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return OrderLineItemType::NAME;
+        return $this->extendedType;
     }
 
     /**

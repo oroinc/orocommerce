@@ -28,6 +28,7 @@ define(function(require) {
 
             this.$totals = this.options._sourceElement.find(this.options.selectors.totals);
             this.template = _.template($(this.options.selectors.template).text());
+            this.noDataTemplate = _.template($(this.options.selectors.noDataTemplate).text());
             this.loadingMaskView = new LoadingMaskView({container: this.options._sourceElement});
 
             this.setTotals(options);

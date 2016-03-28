@@ -84,8 +84,20 @@ services:
             - @orob2b_tax.manager.tax_manager
             - @orob2b_tax.provider.tax_subtotal
             - @orob2b_order.form.section.provider
+            - 'orob2b_order_line_item'
         tags:
             - { name: form.type_extension, alias: orob2b_order_line_item }
+
+    orob2b_tax.form.extension.order_line_item.frontend:
+        class: %orob2b_tax.form.extension.order_line_item.class%
+        arguments:
+            - @orob2b_tax.provider.taxation_settings_provider
+            - @orob2b_tax.manager.tax_manager
+            - @orob2b_tax.provider.tax_subtotal
+            - @orob2b_order.form.section.provider
+            - 'orob2b_order_line_item_frontend'
+        tags:
+            - { name: form.type_extension, alias: orob2b_order_line_item_frontend }
 
     orob2b_tax.form.type.tax:
         class: %orob2b_tax.form.type.tax.class%

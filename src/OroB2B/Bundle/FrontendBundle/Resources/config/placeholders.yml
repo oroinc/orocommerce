@@ -20,8 +20,6 @@ placeholders:
 
     scripts_before:
         items:
-            template_datagrid_toolbar_frontend: ~
-            template_datagrid_grid_frontend: ~
             template_datagrid_toolbar_pagination_input_frontend: ~
             template_datagrid_toolbar_page_size_frontend: ~
 
@@ -64,25 +62,15 @@ items:
         template: OroB2BFrontendBundle::requirejs.config.js.twig
 
     # frontend grid
-    template_datagrid_toolbar_frontend:
-        template: OroB2BFrontendBundle:js:toolbar.html.twig
-        applicable: @orob2b_frontend.placeholder.layout_filter->isLayoutRoute()
-    template_datagrid_grid_frontend:
-        template: OroB2BFrontendBundle:js:grid.html.twig
-        applicable: @orob2b_frontend.placeholder.layout_filter->isLayoutRoute()
     template_datagrid_toolbar_pagination_input_frontend:
         template: OroB2BFrontendBundle:js:pagination-input.html.twig
-        applicable: @orob2b_frontend.placeholder.layout_filter->isLayoutRoute()
+        applicable: @oro_layout.helper->isLayoutRequest()
     template_datagrid_toolbar_page_size_frontend:
         template: OroB2BFrontendBundle:js:page-size.html.twig
-        applicable: @orob2b_frontend.placeholder.layout_filter->isLayoutRoute()
+        applicable: @oro_layout.helper->isLayoutRequest()
 
     # backend grid only
-    template_datagrid_toolbar:
-        applicable: @orob2b_frontend.placeholder.layout_filter->isSPARoute()
-    template_datagrid_grid:
-        applicable: @orob2b_frontend.placeholder.layout_filter->isSPARoute()
     template_datagrid_toolbar_pagination_input:
-        applicable: @orob2b_frontend.placeholder.layout_filter->isSPARoute()
+        applicable: @oro_layout.helper->isTemplateRequest()
     template_datagrid_toolbar_page_size:
-        applicable: @orob2b_frontend.placeholder.layout_filter->isSPARoute()
+        applicable: @oro_layout.helper->isTemplateRequest()

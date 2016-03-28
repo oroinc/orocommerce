@@ -28,6 +28,7 @@ define(function(require) {
             selectors: {
                 form: '',
                 template: '#totals-template',
+                noDataTemplate: '#totals-template-no-data',
                 totals: '[data-totals-container]'
             },
             events: [],
@@ -58,6 +59,11 @@ define(function(require) {
          * @property {Object}
          */
         template: null,
+
+        /**
+         * @property {Object}
+         */
+        noDataTemplate: null,
 
         /**
          * @property {String}
@@ -93,6 +99,7 @@ define(function(require) {
             this.$form = $(this.options.selectors.form);
             this.$totals = this.$el.find(this.options.selectors.totals);
             this.template = _.template($(this.options.selectors.template).text());
+            this.noDataTemplate = _.template($(this.options.selectors.noDataTemplate).text());
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
             this.eventName = 'total-target:changing';
 
@@ -213,7 +220,12 @@ define(function(require) {
 
             this.pushItem(totals.total);
 
-            this.$totals.html(_.filter(this.items).join(''));
+            var items = _.filter(this.items);
+            if (_.isEmpty(items)) {
+                items = this.noDataTemplate();
+            }
+
+            this.$totals.html(items.join(''));
 
             this.items = [];
         },

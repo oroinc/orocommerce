@@ -13,6 +13,10 @@ layout:
             id: content
             optionName: class_prefix
             optionValue: 'account'
+        - @setOption:
+            id: datagrid_toolbar
+            optionName: attr.class
+            optionValue: 'oro-oq__filter-controls oro-oq__filter-controls_on-details'
         - @add:
             id: account_sidebar
             parentId: sidebar_left

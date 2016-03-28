@@ -63,7 +63,8 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
             $this->taxationSettingsProvider,
             $this->taxManager,
             $this->taxSubtotalProvider,
-            $this->sectionProvider
+            $this->sectionProvider,
+            OrderLineItemType::NAME
         );
     }
 

@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\OrderBundle\EventListener\Order;
 
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Templating\EngineInterface;
 
@@ -14,12 +15,17 @@ class OrderAddressEventListener
     /** @var EngineInterface */
     protected $engine;
 
+    /** @var FormFactoryInterface */
+    protected $formFactory;
+
     /**
      * @param EngineInterface $engine
+     * @param FormFactoryInterface $formFactory
      */
-    public function __construct(EngineInterface $engine)
+    public function __construct(EngineInterface $engine, FormFactoryInterface $formFactory)
     {
         $this->engine = $engine;
+        $this->formFactory = $formFactory;
     }
 
     /**
@@ -32,10 +38,13 @@ class OrderAddressEventListener
             $fieldName = sprintf('%sAddress', $type);
             if ($orderForm->has($fieldName)) {
                 $field = $orderForm->get($fieldName);
-                // It requires, because `createView` calls parent `createView` which `heavy`
-                $clonedField = clone $field;
-                $clonedField->setParent(null);
-                $view = $this->renderForm($clonedField->createView());
+                $newField = $this->formFactory->createNamed(
+                    $field->getName(),
+                    $field->getConfig()->getType()->getName(),
+                    $field->getData(),
+                    $field->getConfig()->getOptions()
+                );
+                $view = $this->renderForm($newField->createView());
                 $event->getData()->offsetSet($fieldName, $view);
             }
         }

@@ -33,7 +33,7 @@ class AjaxOrderController extends Controller
 
         $form = $this->getType($order);
 
-        $submittedData = $request->get(OrderType::NAME);
+        $submittedData = $request->get($form->getName());
 
         $form->submit($submittedData);
 
