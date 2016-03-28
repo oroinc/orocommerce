@@ -61,7 +61,7 @@
     %}
     <a href="{{ transitionUrl }}" {{ _self.transitionAttrbiutes(transitionData, checkout) }}>
         {{ _self.conditionMessagesStart(transitionData) }}
-        <i class="icon-left-open-mini"></i>{{ 'orob2b.checkout.workflow.b2b_flow_checkout.transition.back.label'|trans }}
+        <i class="cf-left-open-mini"></i>{{ 'orob2b.checkout.workflow.b2b_flow_checkout.transition.back.label'|trans }}
         {{ _self.conditionMessagesEnd(transitionData) }}
     </a>
     {% endif %}
@@ -71,7 +71,7 @@
     {% if transitionData is defined and transitionData %}
     {{ _self.conditionMessagesStart(transitionData) }}
     <button type="submit" class="btn {% if transitionData.isAllowed %}btn_orange{% endif %} btn_lg checkout__form__submit" {{ _self.transitionAttrbiutes(transitionData, checkout) }}>
-        {{ transitionData.transition.label|trans }}<i class="icon-right-open-mini va-m_md"></i>
+        {{ transitionData.transition.label|trans }}<i class="cf-right-open-mini va-m_md"></i>
     </button>
     {{ _self.conditionMessagesEnd(transitionData) }}
     {% endif %}
@@ -88,7 +88,7 @@
     %}
     <a href="{{ transitionUrl }}" class="button-icon fs14 gray" {{ _self.transitionAttrbiutes(transitionData, checkout) }}>
         <span class="ttip__wrap">
-          <i class="icon-pencil ttip__toggle"></i>
+          <i class="cf-pencil ttip__toggle"></i>
           <span class="ttip">
             <span class="ttip__content ttip__content_dark">
                 {% if transitionData.errors|length > 0 %}

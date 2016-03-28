@@ -6,9 +6,9 @@
 
 {% block _quote_view_controls_list_widget %}
     <ul class="oro-order__controls-list">
-        <li><a href="#"><i class="icon-reply"></i>Share</a></li>
-        <li><a href="#"><i class="icon-print"></i>Print</a></li>
-        <li><a href="#"><i class="material-icons">insert_drive_file</i>Save PDF</a></li>
+        <li><a href="#"><i class="cf-reply"></i>Share</a></li>
+        <li><a href="#"><i class="cf-print"></i>Print</a></li>
+        <li><a href="#"><i class="cf-insert_drive_file"></i>Save PDF</a></li>
     </ul>
 {% endblock %}
 
@@ -178,7 +178,7 @@
                                     <div class="account-oq__order-item-more">
                                          <span data-oro-expand-widget>
                                             {% if (quoteProduct.commentAccount|length > maxChars) %}
-                                                <i class="icon-play" data-oro-expand-trigger></i>
+                                                <i class="cf-play" data-oro-expand-trigger></i>
                                             {% endif %}
                                             {{ 'orob2b.frontend.sale.quoteproduct.comment_account.label'|trans }}: <span data-oro-expand-container max-length="{{ maxChars }}">{{ quoteProduct.commentAccount }}</span>
                                         </span>
@@ -193,7 +193,7 @@
                                     <div class="account-oq__order-item-more">
                                         <span data-oro-expand-widget>
                                             {% if (quoteProduct.comment|length > maxChars) %}
-                                                <i class="icon-play" data-oro-expand-trigger></i>
+                                                <i class="cf-play" data-oro-expand-trigger></i>
                                             {% endif %}
                                             {{ 'orob2b.frontend.sale.quoteproduct.comment.label'|trans }}: <span data-oro-expand-container max-length="{{ maxChars }}">{{ quoteProduct.comment }}</span>
                                         </span>
@@ -211,7 +211,7 @@
 
                 <div class="order-checkout-widget order-checkout-widget_block text-right">
                     <div class="order-builder-clear-btn">
-                        <a href="{{ path('orob2b_sale_quote_frontend_index') }}"><i class="icon-left-open-mini"></i><span>{{ 'orob2b.frontend.sale.quote.sections.back.label'|trans }}</span></a>
+                        <a href="{{ path('orob2b_sale_quote_frontend_index') }}"><i class="cf-left-open-mini"></i><span>{{ 'orob2b.frontend.sale.quote.sections.back.label'|trans }}</span></a>
                     </div>
 
                     <div class="order-checkout-widget__container-wrapper">
@@ -297,7 +297,7 @@
                                     <div class="account-oq__order-item-more">
                                         <span data-oro-expand-widget>
                                             {% if (quoteProduct.commentAccount|length > maxChars) %}
-                                                <i class="icon-play" data-oro-expand-trigger></i>
+                                                <i class="cf-play" data-oro-expand-trigger></i>
                                             {% endif %}
                                             {{ 'orob2b.frontend.sale.quoteproduct.comment_account.label'|trans }}: <span data-oro-expand-container max-length="{{ maxChars }}">{{ quoteProduct.commentAccount }}</span>
                                         </span>
@@ -312,7 +312,7 @@
                                     <div class="account-oq__order-item-more">
                                         <span data-oro-expand-widget>
                                             {% if (quoteProduct.comment|length > maxChars) %}
-                                                <i class="icon-play" data-oro-expand-trigger></i>
+                                                <i class="cf-play" data-oro-expand-trigger></i>
                                             {% endif %}
                                             {{ 'orob2b.frontend.sale.quoteproduct.comment.label'|trans }}: <span data-oro-expand-container max-length="{{ maxChars }}">{{ quoteProduct.comment }}</span>
                                         </span>
@@ -351,7 +351,7 @@
                     </div>
                 </div>
 
-                <a href="{{ path('orob2b_sale_quote_frontend_index') }}"><i class="icon-left-open-mini"></i><span>{{ 'orob2b.frontend.sale.quote.sections.back.label'|trans }}</span></a>
+                <a href="{{ path('orob2b_sale_quote_frontend_index') }}"><i class="cf-left-open-mini"></i><span>{{ 'orob2b.frontend.sale.quote.sections.back.label'|trans }}</span></a>
             </div>
         </div>
     </div>
