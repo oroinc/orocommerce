@@ -3,16 +3,15 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Processor;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\ActionBundle\Model\ActionData;
+
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 

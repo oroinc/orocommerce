@@ -7,6 +7,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Oro\Component\PhpUtils\ArrayUtil;
+
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
@@ -51,6 +52,11 @@ abstract class AbstractShoppingListQuickAddProcessor implements ComponentProcess
         $this->messageGenerator = $messageGenerator;
     }
 
+    /**
+     * @param ShoppingList $shoppingList
+     * @param array $data
+     * @return bool|int
+     */
     protected function fillShoppingList(ShoppingList $shoppingList, array $data)
     {
         $data = $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY];
