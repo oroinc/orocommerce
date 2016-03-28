@@ -12,7 +12,7 @@ operations:
             icon: icon-copy
         actions:
             - @run_action_group:
-                attributes:
+                results:
                     product_copy_id: $.productCopy.id
                 action_group: orob2b_product_duplicate
                 parameters_mapping:
