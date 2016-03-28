@@ -60,9 +60,9 @@
                 <div data-tab-trigger="" data-allow-tab-toggle="true">
                     <div class="checkout-order-summary__header__icon-group">
                         <span class="badge badge_sm badge_orange badge_circled-corners mmr7-md mmr7-sm">
-                          <i class="icon-basket"></i>
+                          <i class="cf-basket"></i>
                         </span>
-                        <i class="icon-play"></i>
+                        <i class="cf-play"></i>
                     </div>
                     <h3 class="checkout-order-summary__header__title">{{ 'orob2b.checkout.order_summary.label'|trans }}</h3>
                     <div class="checkout-order-summary__header__desc">
@@ -73,7 +73,7 @@
                 {% set editLink = workfowItem.data.get('edit_order_link') %}
                 {% if editLink %}
                 <a href="{{ editLink }}" class="checkout-order-summary__header__edit-link">
-                    <i class="icon-pencil"></i>
+                    <i class="cf-pencil"></i>
                     {{ 'orob2b.checkout.order_summary.edit_order'|trans }}
                 </a>
                 {% endif %}
@@ -97,6 +97,10 @@
 
             <tbody>
             {% for line_item in summary.lineItems %}
+                {% set productSku = line_item.productSku %}
+                {% if line_item.product is not null %}
+                    {% set productSku = line_item.product.sku %}
+                {% endif %}
                 <tr>
                     <td class="va-t_md">
                         <h3 class="product-item__title product-item__title_in-cart mb1-md">
@@ -106,9 +110,7 @@
                                 {{ line_item.freeFormProduct }}
                             {% endif %}
                         </h3>
-                        {% if line_item.product is not null %}
-                            <div>{{ 'orob2b.checkout.order_summary.sku'|trans }} #: <span class="red">{{ line_item.product.sku }}</span></div>
-                        {% endif %}
+                        <div>{{ 'orob2b.checkout.order_summary.sku'|trans }} #: <span class="red">{{ productSku }}</span></div>
                     </td>
                     {% set quantity = line_item.quantity %}
                     <td class="text-center va-t_md">{{ quantity ? quantity|orob2b_format_short_product_unit_value(line_item.productUnit) : 'N/A'|trans }}</td>
@@ -122,8 +124,7 @@
                                 </tr>
                                 <tr>
                                     <td><span>{{ 'orob2b.checkout.order_summary.total_price'|trans }}</span></td>
-                                    <td><span class="fs16 blue">{{ summary.lineItemTotals[line_item.productSku]|oro_format_price }}</span>
-                                    </td>
+                                    <td><span class="fs16 blue">{{ summary.lineItemTotals[productSku]|oro_format_price }}</span></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -137,7 +138,7 @@
                 {% if hasEditList %}
                 <td class="va-t_md hidden-xs">
                     <a href="{{ editLink }}">
-                        <i class="icon-pencil"></i>
+                        <i class="cf-pencil"></i>
                         {{ 'orob2b.checkout.order_summary.edit_order_list'|trans }}
                     </a>
                 </td>

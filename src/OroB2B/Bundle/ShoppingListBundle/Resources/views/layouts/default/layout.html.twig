@@ -16,7 +16,7 @@
                 {% for shoppingList in shoppingLists %}
                     <li class="orders-list__item">
                         <a href="{{ path('orob2b_shopping_list_frontend_view', {'id' : shoppingList.id}) }}" class="orders-list__item__link {% if shoppingList.id == selectedShoppingList %} current {% endif %}">
-                            <span class='badge badge_sm badge_orange badge_circled-corners orders-list__item-indicator'><i class="icon-basket"></i></span>
+                            <span class='badge badge_sm badge_orange badge_circled-corners orders-list__item-indicator'><i class="cf-basket"></i></span>
                             <div class="orders-list__item__content">
                                 <h3 class="orders-list__item__title text-uppercase">{{ shoppingList.label }}</h3>
                                 {% set itemsCount = shoppingList.lineItems.count %}
@@ -30,7 +30,7 @@
                     </li>
                 {% endfor %}
             </ul>
-            {#<button class="btn btn-default btn-block not-implemented"><i class="material-icons material-icons_gray fs23">arrow_drop_down</i>{{ 'orob2b.frontend.shoppinglist.selector.show_more.label'|trans }}</button>#}
+            {#<button class="btn btn-default btn-block not-implemented"><i class="cf-arrow_drop_downcf--gray fs23"></i>{{ 'orob2b.frontend.shoppinglist.selector.show_more.label'|trans }}</button>#}
             <!-- END ORDERS TABS LIST -->
         </div>
     {% endif %}
