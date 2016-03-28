@@ -178,7 +178,8 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
                 'label' => 'Total',
                 'amount' => 100,
                 'currency' => 'USD',
-                'visible' => true
+                'visible' => true,
+                'data' => null
             ],
             'subtotals' => [
                 [
@@ -186,7 +187,8 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
                     'label' => 'Shipping Cost',
                     'amount' => 100,
                     'currency' => 'USD',
-                    'visible' => true
+                    'visible' => true,
+                    'data' => null
                 ]
 
             ]

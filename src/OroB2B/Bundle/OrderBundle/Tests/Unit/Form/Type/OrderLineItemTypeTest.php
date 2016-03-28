@@ -79,9 +79,16 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
             ->with(self::PRODUCT_UNIT_CLASS)
             ->will($this->returnValue($repository));
 
-        $this->formType = new OrderLineItemType($this->registry, $this->productUnitLabelFormatter);
+        $this->formType = $this->getFormType();
         $this->formType->setDataClass('OroB2B\Bundle\OrderBundle\Entity\OrderLineItem');
+        $this->formType->setSectionProvider($this->sectionProvider);
         $this->formType->setProductUnitClass(self::PRODUCT_UNIT_CLASS);
+    }
+
+    /** {@inheritdoc} */
+    public function getFormType()
+    {
+        return new OrderLineItemType($this->registry, $this->productUnitLabelFormatter);
     }
 
     public function testGetName()
@@ -164,6 +171,10 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
 
     public function testBuildView()
     {
+        $this->sectionProvider->expects($this->atLeastOnce())->method('addSections')
+            ->with($this->formType->getName(), $this->isType('array'))
+            ->willReturn($this->getExpectedSections());
+
         $this->assertDefaultBuildViewCalled();
     }
 
@@ -199,7 +210,6 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                 'view' => 'orob2border/js/app/views/line-item-view',
                 'freeFormUnits' => null,
             ],
-            'sections' => $this->getExpectedSections()->toArray()
         ];
     }
 }

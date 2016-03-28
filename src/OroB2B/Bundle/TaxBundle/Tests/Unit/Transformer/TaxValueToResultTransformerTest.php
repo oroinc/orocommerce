@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Transformer;
 
-use OroB2B\Bundle\TaxBundle\Entity\TaxApply;
 use OroB2B\Bundle\TaxBundle\Entity\TaxValue;
 use OroB2B\Bundle\TaxBundle\Manager\TaxValueManager;
 use OroB2B\Bundle\TaxBundle\Model\Result;
@@ -55,8 +54,7 @@ class TaxValueToResultTransformerTest extends \PHPUnit_Framework_TestCase
             ->setResult($this->createTaxResult())
             ->setAddress('1st street')
             ->setEntityId(1)
-            ->setEntityClass('\stdClass')
-            ->addAppliedTax(new TaxApply());
+            ->setEntityClass('\stdClass');
 
         $result = $this->taxValueToResultTransformer->transform($taxValue);
 
@@ -69,8 +67,6 @@ class TaxValueToResultTransformerTest extends \PHPUnit_Framework_TestCase
     public function testReverseTransform()
     {
         $taxValue = new TaxValue();
-        $appliedTax = new TaxApply();
-        $taxValue->addAppliedTax($appliedTax);
         $this->taxValueManager->expects($this->once())->method('getTaxValue')->willReturn($taxValue);
 
         $taxResult = $this->createTaxResult();
@@ -81,11 +77,7 @@ class TaxValueToResultTransformerTest extends \PHPUnit_Framework_TestCase
         $this->assertResult($taxValue->getResult());
 
         $this->assertInternalType('array', $taxValue->getResult()->getTaxes());
-        $this->assertCount(0, $taxValue->getResult()->getTaxes());
-
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $taxValue->getAppliedTaxes());
-        $this->assertCount(1, $taxValue->getAppliedTaxes());
-        $this->assertNotSame($appliedTax, $taxValue->getAppliedTaxes()->first());
+        $this->assertCount(1, $taxValue->getResult()->getTaxes());
     }
 
     /**

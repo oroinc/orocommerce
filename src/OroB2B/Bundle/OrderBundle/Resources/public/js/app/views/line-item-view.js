@@ -39,7 +39,6 @@ define(function(require) {
                 .find(':input[data-ftid="' + this.$form.attr('name') + '_currency"]');
 
             this.subtotalFields([
-                this.fieldsByName.product,
                 this.fieldsByName.quantity,
                 this.fieldsByName.productUnit,
                 this.fieldsByName.priceValue,

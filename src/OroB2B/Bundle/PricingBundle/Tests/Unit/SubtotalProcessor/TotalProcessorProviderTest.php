@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
@@ -13,9 +12,11 @@ use OroB2B\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityWithoutCurrencyStub;
-use OroB2B\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\LineItemStub;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class TotalProcessorProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -281,5 +282,53 @@ class TotalProcessorProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($subtotal2);
 
         return $entity;
+    }
+
+
+    public function testGetTotalWithSubtotalsAsArray()
+    {
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->with(sprintf('orob2b.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
+            ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
+
+        $entity = $this->prepareSubtotals(new EntityStub());
+
+        $totals = $this->provider->getTotalWithSubtotalsAsArray($entity);
+        $this->assertInternalType('array', $totals);
+        $this->assertArrayHasKey(TotalProcessorProvider::TYPE, $totals);
+        $this->assertEquals(
+            [
+                'type' => 'total',
+                'label' => 'Total',
+                'amount' => 182.0,
+                'currency' => 'USD',
+                'visible' => null,
+                'data' => null,
+            ],
+            $totals[TotalProcessorProvider::TYPE]
+        );
+        $this->assertArrayHasKey(TotalProcessorProvider::SUBTOTALS, $totals);
+        $this->assertEquals(
+            [
+                [
+                    'type' => 'subtotal',
+                    'label' => 'Total',
+                    'amount' => 142.0,
+                    'currency' => 'USD',
+                    'visible' => null,
+                    'data' => null,
+                ],
+                [
+                    'type' => 'subtotal',
+                    'label' => 'Total',
+                    'amount' => 40.0,
+                    'currency' => 'USD',
+                    'visible' => null,
+                    'data' => null,
+                ],
+            ],
+            $totals[TotalProcessorProvider::SUBTOTALS]
+        );
     }
 }

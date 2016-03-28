@@ -59,7 +59,6 @@ define(function(require) {
             FrontendLineItemView.__super__.handleLayoutInit.apply(this, arguments);
 
             this.subtotalFields([
-                this.fieldsByName.product,
                 this.fieldsByName.quantity,
                 this.fieldsByName.productUnit
             ]);
