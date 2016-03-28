@@ -16,6 +16,7 @@ class TotalProcessorProvider
     const NAME = 'orob2b_pricing.subtotal_total';
     const TYPE = 'total';
     const DEFAULT_CURRENCY = 'USD';
+    const SUBTOTALS = 'subtotals';
 
     /** @var SubtotalProviderRegistry */
     protected $subtotalProviderRegistry;
@@ -27,7 +28,7 @@ class TotalProcessorProvider
     protected $rounding;
 
     /** @var  [] */
-    protected $subtotals;
+    protected $subtotals = [];
 
     /**
      * @param SubtotalProviderRegistry $subtotalProviderRegistry
@@ -42,7 +43,6 @@ class TotalProcessorProvider
         $this->subtotalProviderRegistry = $subtotalProviderRegistry;
         $this->translator = $translator;
         $this->rounding = $rounding;
-        $this->subtotals = [];
     }
 
     /**
@@ -62,20 +62,16 @@ class TotalProcessorProvider
      */
     public function getTotalWithSubtotalsAsArray($entity)
     {
-        $total = $this->getTotal($entity)->toArray();
-        $subtotals = $this->getSubtotals($entity)->getValues();
-
-        $callbackFunction = function ($value) {
-            /** @var Subtotal $value */
-            return $value->toArray();
-        };
-
-        $totals = [
-            'total' => $total,
-            'subtotals' => array_map($callbackFunction, $subtotals)
+        return [
+            self::TYPE => $this->getTotal($entity)->toArray(),
+            self::SUBTOTALS => $this->getSubtotals($entity)
+                ->map(
+                    function (Subtotal $subtotal) {
+                        return $subtotal->toArray();
+                    }
+                )
+                ->toArray(),
         ];
-
-        return $totals;
     }
 
     /**
