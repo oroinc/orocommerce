@@ -28,9 +28,18 @@ class TaxFactory
     /**
      * @param object $object
      * @return Taxable
-     * @throws UnmappableArgumentException if Tax Mapper for $object can't be found
      */
     public function create($object)
+    {
+        return $this->getMapper($object)->map($object);
+    }
+
+    /**
+     * @param object $object
+     * @return TaxMapperInterface
+     * @throws UnmappableArgumentException if Tax Mapper for $object can't be found
+     */
+    protected function getMapper($object)
     {
         $objectClassName = ClassUtils::getClass($object);
         if (!array_key_exists($objectClassName, $this->mappers)) {
@@ -39,6 +48,22 @@ class TaxFactory
             );
         }
 
-        return $this->mappers[$objectClassName]->map($object);
+        return $this->mappers[$objectClassName];
+    }
+
+    /**
+     * @param object $object
+     * @return bool
+     */
+    public function supports($object)
+    {
+        try {
+            $this->getMapper($object);
+
+            return true;
+        } catch (UnmappableArgumentException $e) {
+        }
+
+        return false;
     }
 }

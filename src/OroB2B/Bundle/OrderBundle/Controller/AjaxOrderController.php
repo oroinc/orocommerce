@@ -2,132 +2,53 @@
 
 namespace OroB2B\Bundle\OrderBundle\Controller;
 
-use Symfony\Component\Form\FormView;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\AddressBundle\Entity\AddressType;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
-use OroB2B\Bundle\OrderBundle\Model\OrderRequestHandler;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use OroB2B\Bundle\OrderBundle\Event\OrderEvent;
 
-class AjaxOrderController extends AbstractAjaxOrderController
+class AjaxOrderController extends Controller
 {
     /**
-     * Get order related data
-     *
-     * @Route("/related-data", name="orob2b_order_related_data")
-     * @Method({"GET"})
+     * @Route("/entry-point/{id}", name="orob2b_order_entry_point", defaults={"id" = 0})
      * @AclAncestor("orob2b_order_update")
      *
+     * @param Request $request
+     * @param Order|null $order
      * @return JsonResponse
      */
-    public function getRelatedDataAction()
+    public function entryPointAction(Request $request, Order $order = null)
     {
-        $order = new Order();
-        $accountUser = $this->getOrderHandler()->getAccountUser();
-        $account = $this->getAccount($accountUser);
-
-        $order->setAccount($account);
-        $order->setAccountUser($accountUser);
-
-        $accountPaymentTerm = null;
-        if ($account) {
-            $accountPaymentTerm = $this->getPaymentTermProvider()->getAccountPaymentTerm($account);
-        }
-        $accountGroupPaymentTerm = null;
-        if ($account->getGroup()) {
-            $accountGroupPaymentTerm = $this->getPaymentTermProvider()
-                ->getAccountGroupPaymentTerm($account->getGroup());
+        if (!$order) {
+            $order = new Order();
         }
 
-        $orderForm = $this->createForm($this->getOrderFormTypeName(), $order);
+        $form = $this->getType($order);
 
-        return new JsonResponse(
-            [
-                'billingAddress' => $this->renderForm(
-                    $orderForm->get(AddressType::TYPE_BILLING . 'Address')->createView()
-                ),
-                'shippingAddress' => $this->renderForm(
-                    $orderForm->get(AddressType::TYPE_SHIPPING . 'Address')->createView()
-                ),
-                'accountPaymentTerm' => $accountPaymentTerm ? $accountPaymentTerm->getId() : null,
-                'accountGroupPaymentTerm' => $accountGroupPaymentTerm ? $accountGroupPaymentTerm->getId() : null,
-            ]
-        );
+        $submittedData = $request->get($form->getName());
+
+        $form->submit($submittedData);
+
+        $event = new OrderEvent($form, $form->getData(), $submittedData);
+        $this->get('event_dispatcher')->dispatch(OrderEvent::NAME, $event);
+
+        return new JsonResponse($event->getData());
     }
 
     /**
-     * @param FormView $formView
-     *
-     * @return string
+     * @param Order $order
+     * @return Form
      */
-    protected function renderForm(FormView $formView)
+    protected function getType(Order $order)
     {
-        return $this->renderView('OroB2BOrderBundle:Form:accountAddressSelector.html.twig', ['form' => $formView]);
-    }
-
-    /**
-     * @return PaymentTermProvider
-     */
-    protected function getPaymentTermProvider()
-    {
-        return $this->get('orob2b_payment.provider.payment_term');
-    }
-
-    /**
-     * @param AccountUser $accountUser
-     * @param Account $account
-     *
-     * @throws BadRequestHttpException
-     */
-    protected function validateRelation(AccountUser $accountUser, Account $account)
-    {
-        if ($accountUser && $accountUser->getAccount() && $accountUser->getAccount()->getId() !== $account->getId()) {
-            throw new BadRequestHttpException('AccountUser must belong to Account');
-        }
-    }
-
-    /**
-     * @return OrderRequestHandler
-     */
-    protected function getOrderHandler()
-    {
-        return $this->get('orob2b_order.model.order_request_handler');
-
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getOrderFormTypeName()
-    {
-        return OrderType::NAME;
-    }
-
-    /**
-     * @param AccountUser $accountUser
-     * @return null|Account
-     */
-    protected function getAccount(AccountUser $accountUser = null)
-    {
-        $account = $this->getOrderHandler()->getAccount();
-        if (!$account && $accountUser) {
-            $account = $accountUser->getAccount();
-        }
-        if ($account && $accountUser) {
-            $this->validateRelation($accountUser, $account);
-        }
-
-        return $account;
+        return $this->createForm(OrderType::NAME, $order);
     }
 }
