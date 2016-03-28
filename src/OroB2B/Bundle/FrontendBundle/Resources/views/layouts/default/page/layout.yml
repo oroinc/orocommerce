@@ -43,6 +43,30 @@ layout:
                             sidebar_left: ~
                         footer: ~
                     scripts: ~
+        - @move:
+            id: datagrid_toolbar_mass_actions
+            parentId: datagrid_toolbar
+            siblingId: datagrid_toolbar_sorting
+        - @move:
+            id: datagrid_toolbar_extra_actions
+            parentId: datagrid_toolbar
+            siblingId: datagrid_toolbar_mass_actions
+        - @move:
+            id: datagrid_toolbar_pagination
+            parentId: datagrid_toolbar
+            siblingId: datagrid_toolbar_extra_actions
+        - @move:
+            id: datagrid_toolbar_page_size
+            parentId: datagrid_toolbar
+            siblingId: datagrid_toolbar_pagination
+        - @move:
+            id: datagrid_toolbar_actions
+            parentId: datagrid_toolbar
+            siblingId: datagrid_toolbar_page_size
+        - @remove:
+            id: datagrid_toolbar_actions_container
+        - @remove:
+            id: datagrid_toolbar_tools_container
         - @add:
             id: require_js_config
             parentId: require_js
