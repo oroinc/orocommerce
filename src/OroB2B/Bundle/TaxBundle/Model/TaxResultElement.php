@@ -8,8 +8,8 @@ class TaxResultElement extends AbstractResultElement
 {
     const TAX = 'tax';
     const RATE = 'rate';
-    const TAXABLE_AMOUNT = 'taxable_amount';
-    const TAX_AMOUNT = 'tax_amount';
+    const TAXABLE_AMOUNT = 'taxableAmount';
+    const TAX_AMOUNT = 'taxAmount';
 
     /**
      * @param string $taxCode

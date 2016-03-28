@@ -8,6 +8,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Validator\Constraints\Range;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
+use OroB2B\Bundle\OrderBundle\Pricing\PriceMatcher;
 use OroB2B\Bundle\OrderBundle\Total\TotalHelper;
 
 class SubtotalSubscriber implements EventSubscriberInterface
@@ -15,13 +16,17 @@ class SubtotalSubscriber implements EventSubscriberInterface
     /** @var TotalHelper  */
     protected $totalHelper;
 
+    /** @var PriceMatcher */
+    protected $priceMatcher;
+
     /**
-     * SubtotalSubscriber constructor.
      * @param TotalHelper $totalHelper
+     * @param PriceMatcher $priceMatcher
      */
-    public function __construct(TotalHelper $totalHelper)
+    public function __construct(TotalHelper $totalHelper, PriceMatcher $priceMatcher)
     {
         $this->totalHelper = $totalHelper;
+        $this->priceMatcher = $priceMatcher;
     }
 
     /**
@@ -42,6 +47,7 @@ class SubtotalSubscriber implements EventSubscriberInterface
         $form = $event->getForm();
         $data = $event->getData();
         if ($data instanceof Order) {
+            $this->priceMatcher->addMatchingPrices($data);
             $this->totalHelper->fillSubtotals($data);
             $this->totalHelper->fillDiscounts($data);
             $this->totalHelper->fillTotal($data);

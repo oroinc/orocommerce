@@ -106,7 +106,7 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->addressProvider
             ->expects($this->any())
-            ->method('getAddressForTaxation')
+            ->method('getTaxationAddress')
             ->with($billingAddress, $shippingAddress)
             ->willReturnCallback(
                 function () {
@@ -211,7 +211,7 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         }
 
         $this->repository
-            ->expects($this->any())
+            ->expects($this->atLeastOnce())
             ->method('findOneByEntity')
             ->willReturnCallback(function ($type) {
                 switch ($type) {

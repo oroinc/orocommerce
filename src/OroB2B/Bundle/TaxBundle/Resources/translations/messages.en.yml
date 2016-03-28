@@ -8,6 +8,8 @@ orob2b.tax:
     taxcode.label: 'Tax Code'
     taxcode.accountgroup.label: 'Account Group Tax Code'
 
+    subtotals.tax: 'Tax'
+
     form:
         choose: 'Choose a tax'
         tooltip.zip_codes: 'If you want to type only one zip code, you can fill any field in the row'
@@ -123,3 +125,30 @@ orob2b.tax:
 
     providers:
         built_in.label: Built-In Table Rates
+
+    result:
+        unit: Unit Price
+        row: Row Total
+        total: Total
+        shipping: Shipping
+        taxes: Applied Taxes
+
+        includingTax: Including Tax
+        excludingTax: Excluding Tax
+        taxAmount: Tax Amount
+        adjustment: Adjustment
+
+        tax: Tax
+        rate: Rate
+        taxableAmount: Taxable Amount
+
+    order_line_item:
+        unitPrice:
+            includingTax.label: Unit Price (Including Tax)
+            excludingTax.label: Unit Price (Excluding Tax)
+            taxAmount.label: Unit Price (Tax Amount)
+        rowTotal:
+            includingTax.label: Row Total (Including Tax)
+            excludingTax.label: Row Total (Excluding Tax)
+            taxAmount.label: Row Total (Tax Amount)
+        taxes.label: Taxes
