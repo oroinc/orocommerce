@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use OroB2B\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
+use OroB2B\Bundle\OrderBundle\Total\TotalHelper;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -102,15 +104,18 @@ class OrderTypeTest extends TypeTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $totalHelper = new TotalHelper(
+            $this->totalsProvider,
+            $this->lineItemSubtotalProvider,
+            $this->discountSubtotalProvider
+        );
         // create a type instance with the mocked dependencies
         $this->type = new OrderType(
             $this->securityFacade,
             $this->orderAddressSecurityProvider,
             $this->paymentTermProvider,
             $this->orderCurrencyHandler,
-            $this->totalsProvider,
-            $this->lineItemSubtotalProvider,
-            $this->discountSubtotalProvider
+            new SubtotalSubscriber($totalHelper)
         );
 
         $this->type->setDataClass('OroB2B\Bundle\OrderBundle\Entity\Order');
