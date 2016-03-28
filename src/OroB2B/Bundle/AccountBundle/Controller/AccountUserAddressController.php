@@ -143,7 +143,8 @@ class AccountUserAddressController extends Controller
             'addressListUrl'         => $addressListUrl,
             'addressCreateUrl'       => $addressCreateUrl,
             'addressUpdateRouteName' => 'orob2b_account_account_user_address_update',
-            'currentAddresses'       => $currentAddresses
+            'currentAddresses'       => $currentAddresses,
+            'addressMap'             => ['phone' => 'phone']
         ];
     }
 }
