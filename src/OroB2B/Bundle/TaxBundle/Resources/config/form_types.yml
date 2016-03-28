@@ -16,6 +16,7 @@ parameters:
     orob2b_tax.form.extension.product_tax.class: OroB2B\Bundle\TaxBundle\Form\Extension\ProductTaxExtension
     orob2b_tax.form.extension.account_tax.class: OroB2B\Bundle\TaxBundle\Form\Extension\AccountTaxExtension
     orob2b_tax.form.extension.account_group_tax.class: OroB2B\Bundle\TaxBundle\Form\Extension\AccountGroupTaxExtension
+    orob2b_tax.form.extension.order_line_item.class: OroB2B\Bundle\TaxBundle\Form\Extension\OrderLineItemTypeExtension
 
     orob2b_tax.form.type.tax_provider_type.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxProviderType
     orob2b_tax.form.type.tax_base_exclusion.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxBaseExclusionType
@@ -75,6 +76,28 @@ services:
             - %orob2b_tax.entity.account_tax_code.class%
         tags:
             - { name: form.type_extension, alias: orob2b_account_group_type }
+
+    orob2b_tax.form.extension.order_line_item:
+        class: %orob2b_tax.form.extension.order_line_item.class%
+        arguments:
+            - @orob2b_tax.provider.taxation_settings_provider
+            - @orob2b_tax.manager.tax_manager
+            - @orob2b_tax.provider.tax_subtotal
+            - @orob2b_order.form.section.provider
+            - 'orob2b_order_line_item'
+        tags:
+            - { name: form.type_extension, alias: orob2b_order_line_item }
+
+    orob2b_tax.form.extension.order_line_item.frontend:
+        class: %orob2b_tax.form.extension.order_line_item.class%
+        arguments:
+            - @orob2b_tax.provider.taxation_settings_provider
+            - @orob2b_tax.manager.tax_manager
+            - @orob2b_tax.provider.tax_subtotal
+            - @orob2b_order.form.section.provider
+            - 'orob2b_order_line_item_frontend'
+        tags:
+            - { name: form.type_extension, alias: orob2b_order_line_item_frontend }
 
     orob2b_tax.form.type.tax:
         class: %orob2b_tax.form.type.tax.class%

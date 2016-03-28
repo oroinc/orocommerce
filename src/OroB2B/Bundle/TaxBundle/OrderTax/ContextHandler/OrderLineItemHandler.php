@@ -97,7 +97,7 @@ class OrderLineItemHandler
         $billingAddress = $lineItem->getOrder()->getBillingAddress();
         $shippingAddress = $lineItem->getOrder()->getShippingAddress();
 
-        $address = $this->addressProvider->getAddressForTaxation($billingAddress, $shippingAddress);
+        $address = $this->addressProvider->getTaxationAddress($billingAddress, $shippingAddress);
 
         if (null === $address) {
             return false;
@@ -112,7 +112,7 @@ class OrderLineItemHandler
      */
     protected function getProductTaxCode(OrderLineItem $lineItem)
     {
-        $cacheKey  = $this->getCacheTaxCodeKey(TaxCodeInterface::TYPE_PRODUCT, $lineItem->getId());
+        $cacheKey  = $this->getCacheTaxCodeKey(TaxCodeInterface::TYPE_PRODUCT, $lineItem);
         $cachedTaxCode = $this->getCachedTaxCode($cacheKey);
 
         if ($cachedTaxCode !== false) {
@@ -135,7 +135,7 @@ class OrderLineItemHandler
      */
     protected function getAccountTaxCode(OrderLineItem $lineItem)
     {
-        $cacheKey  = $this->getCacheTaxCodeKey(TaxCodeInterface::TYPE_ACCOUNT, $lineItem->getId());
+        $cacheKey  = $this->getCacheTaxCodeKey(TaxCodeInterface::TYPE_ACCOUNT, $lineItem);
         $cachedTaxCode = $this->getCachedTaxCode($cacheKey);
 
         if ($cachedTaxCode !== false) {
@@ -187,11 +187,13 @@ class OrderLineItemHandler
 
     /**
      * @param string $type
-     * @param int $id
+     * @param OrderLineItem $orderLineItem
      * @return string
      */
-    protected function getCacheTaxCodeKey($type, $id)
+    protected function getCacheTaxCodeKey($type, OrderLineItem $orderLineItem)
     {
+        $id = $orderLineItem->getId() ?: spl_object_hash($orderLineItem);
+
         return implode(':', [$type, $id]);
     }
 

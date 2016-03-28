@@ -9,7 +9,6 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Utils\FormUtils;
@@ -66,15 +65,6 @@ class FrontendOrderLineItemType extends AbstractOrderLineItemType
             'page_component_options',
             ['view' => 'orob2border/js/app/views/frontend-line-item-view']
         );
-
-        $resolver->setNormalizer(
-            'sections',
-            function (Options $options, array $sections) {
-                $sections['price'] = ['data' => ['price' => []], 'order' => 20];
-
-                return $sections;
-            }
-        );
     }
 
     /**
@@ -120,6 +110,11 @@ class FrontendOrderLineItemType extends AbstractOrderLineItemType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         parent::buildView($view, $form, $options);
+
+        $this->getSectionProvider()->addSections(
+            $this->getName(),
+            ['price' => ['data' => ['price' => []], 'order' => 20]]
+        );
 
         /** @var OrderLineItem $item */
         $item = $form->getData();

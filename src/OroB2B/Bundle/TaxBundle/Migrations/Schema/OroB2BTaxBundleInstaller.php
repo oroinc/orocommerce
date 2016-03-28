@@ -36,7 +36,6 @@ class OroB2BTaxBundleInstaller implements Installation
         $this->createOroB2BTaxRuleTable($schema);
         $this->createOroB2BTaxZipCodeTable($schema);
         $this->createOroB2BTaxValueTable($schema);
-        $this->createOroB2BTaxApplyTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroB2BTaxAccGrpTcAccGrpForeignKeys($schema);
@@ -45,7 +44,6 @@ class OroB2BTaxBundleInstaller implements Installation
         $this->addOroB2BTaxProdTaxCodeProdForeignKeys($schema);
         $this->addOroB2BTaxRuleForeignKeys($schema);
         $this->addOroB2BTaxZipCodeForeignKeys($schema);
-        $this->addOroB2BTaxApplyForeignKeys($schema);
     }
 
     /**
@@ -210,31 +208,12 @@ class OroB2BTaxBundleInstaller implements Installation
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('result', 'object', ['comment' => '(DC2Type:object)']);
         $table->addColumn('entity_class', 'string', ['length' => 255]);
-        $table->addColumn('entity_id', 'integer', []);
+        $table->addColumn('entity_id', 'integer', ['notnull' => false]);
         $table->addColumn('address', 'text', []);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['entity_class', 'entity_id'], 'orob2b_tax_value_class_id_idx');
-    }
-
-    /**
-     * Create orob2b_tax_apply table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroB2BTaxApplyTable(Schema $schema)
-    {
-        $table = $schema->createTable('orob2b_tax_apply');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('tax_id', 'integer', ['notnull' => false]);
-        $table->addColumn('tax_value_id', 'integer', ['notnull' => false]);
-        $table->addColumn('rate', 'percent', ['comment' => '(DC2Type:percent)']);
-        $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addColumn('tax_amount', 'float', []);
-        $table->addColumn('taxable_amount', 'float', []);
-        $table->setPrimaryKey(['id']);
     }
 
     /**
@@ -372,28 +351,6 @@ class OroB2BTaxBundleInstaller implements Installation
             ['tax_jurisdiction_id'],
             ['id'],
             ['onDelete' => null, 'onUpdate' => null]
-        );
-    }
-
-    /**
-     * Add orob2b_tax_apply foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOroB2BTaxApplyForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('orob2b_tax_apply');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_tax'),
-            ['tax_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'SET NULL']
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_tax_value'),
-            ['tax_value_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 }
