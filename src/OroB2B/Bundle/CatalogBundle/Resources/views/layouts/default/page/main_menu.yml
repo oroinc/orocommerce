@@ -5,9 +5,12 @@ layout:
         - @addTree:
             items:
                 categories_main_menu:
-                    blockType: container
+                    blockType: category_list
                     siblingId: ~
                     prepend: true
+                    options:
+                        categories: { @value: $data.category_tree.main }
+                        max_size: 4
             tree:
                 main_menu_container:
                     categories_main_menu: ~
