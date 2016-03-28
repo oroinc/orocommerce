@@ -100,7 +100,7 @@ class TaxValueManager
      * @param bool $flush
      * @return bool
      */
-    public function removeTaxValue(TaxValue $taxValue, $flush = true)
+    public function removeTaxValue(TaxValue $taxValue, $flush = false)
     {
         $em = $this->getTaxValueEntityManager();
 
