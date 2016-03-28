@@ -278,7 +278,7 @@ action_groups:
                 type: OroB2B\Bundle\RFPBundle\Entity\RequestStatus
             request_note:
                 type: string
-                default: null
+                default: ''
         actions:
             - @assign_value: [$.data.status, $.request_status]
             - @flush_entity: $.data
