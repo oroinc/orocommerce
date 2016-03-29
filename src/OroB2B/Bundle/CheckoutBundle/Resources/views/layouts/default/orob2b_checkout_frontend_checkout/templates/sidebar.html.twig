@@ -65,9 +65,12 @@
 {% endblock %}
 
 {% block _enter_shipping_method_information_widget %}
-    {#{% if checkout.shippingMethod %}#}
-        <div>Preferred shipping method</div>
-    {#{% endif %}#}
+    {% if checkout.shippingEstimate %}
+        <div>{{ 'orob2b.checkout.quoted_shipping_amount.label'|trans}}:
+            {{ checkout.shippingEstimate|oro_format_price }}</div>
+    {% else %}
+        <div>{{ 'orob2b.checkout.preferred_shipping_method.label'|trans}}</div>
+    {% endif %}
 {% endblock %}
 
 {% block _enter_payment_information_widget %}

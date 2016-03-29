@@ -9,17 +9,6 @@ use OroB2B\Component\Checkout\DataProvider\AbstractCheckoutProvider;
 
 class QuoteCheckoutLineItemDataProvider extends AbstractCheckoutProvider
 {
-    /** @var  QuoteOfferConverter */
-    protected $quoteOfferConverter;
-
-    /**
-     * @param QuoteOfferConverter $quoteOfferConverter
-     */
-    public function __construct(QuoteOfferConverter $quoteOfferConverter)
-    {
-        $this->quoteOfferConverter = $quoteOfferConverter;
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -29,7 +18,8 @@ class QuoteCheckoutLineItemDataProvider extends AbstractCheckoutProvider
     }
 
     /**
-     * {@inheritdoc}
+     * @param QuoteDemand $entity
+     * @return array
      */
     protected function prepareData($entity)
     {
@@ -43,7 +33,8 @@ class QuoteCheckoutLineItemDataProvider extends AbstractCheckoutProvider
                 'quantity' => $productOffer->getQuantity(),
                 'productUnit' => $productOffer->getProductUnit(),
                 'productUnitCode' => $productOffer->getProductUnitCode(),
-                'price' => $productOffer->getPrice()
+                'price' => $productOffer->getPrice(),
+                'fromExternalSource' => true,
             ];
         }
 

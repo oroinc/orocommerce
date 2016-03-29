@@ -25,11 +25,7 @@ use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-list-alt"
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"=""
- *          },
+ *          }
  *      }
  * )
  */

@@ -105,7 +105,7 @@ class QuoteController extends Controller
                 'orob2b_sale_frontend_quote_accept_and_submit_to_order',
                 new ActionData(
                     [
-                        'quoteDemand' => $quoteDemand
+                        'data' => $quoteDemand
                     ]
                 )
             );

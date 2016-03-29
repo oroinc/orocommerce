@@ -38,8 +38,10 @@ class CheckoutLineItemDataProvider extends AbstractCheckoutProvider
         $this->registry = $registry;
     }
 
+
     /**
-     * {@inheritdoc}
+     * @param ShoppingList $entity
+     * @return array
      */
     public function prepareData($entity)
     {

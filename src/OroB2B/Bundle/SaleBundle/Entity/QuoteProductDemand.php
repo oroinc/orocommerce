@@ -10,15 +10,11 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  * SelectedOffers
  *
  * @ORM\Table(name="orob2b_quote_product_demand")
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\SaleBundle\Entity\Repository\QuoteProductDemandRepository")
+ * @ORM\Entity
  * @Config(
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-list-alt"
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"=""
  *          }
  *      }
  * )

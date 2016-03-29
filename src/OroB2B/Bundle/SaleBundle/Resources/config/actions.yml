@@ -121,58 +121,58 @@ actions:
             - @assign_url:
                 attribute: $.editLink
                 route: orob2b_sale_quote_frontend_choice
-                route_parameters: { 'id': $.quoteDemand.id }
+                route_parameters: { 'id': $.data.id }
             - @translate:
                 attribute: $.sourceRemoveLabel
                 id: orob2b.frontend.shoppinglist.quote.remove_source.label
             - @assign_value:
                 conditions:
-                   @empty: $.quote.shippingEstimate
+                   @empty: $.data.quote.shippingEstimate
                 parameters: [$.disallow_shipping_method_edit, false]
             - @assign_value:
                 conditions:
-                   @not_empty: $.quote.shippingEstimate
+                   @not_empty: $.data.quote.shippingEstimate
                 parameters: [$.disallow_shipping_method_edit, true]
             - @tree:
                 conditions:
-                    @not_empty: $.quote.shippingAddress
+                    @not_empty: $.data.quote.shippingAddress
                 actions:
                     - @create_entity:
                         attribute: $.orderAddress
                         class: OroB2B\Bundle\OrderBundle\Entity\OrderAddress
                         data:
-                            accountAddress: $.quote.accountAddress
-                            accountUserAddress: $.quote.accountUserAddress
-                            label: $.quote.shippingAddress.label
-                            organization: $.quote.shippingAddress.organization
-                            street: $.quote.shippingAddress.street
-                            street2: $.quote.shippingAddress.street2
-                            city: $.quote.shippingAddress.city
-                            postalCode: $.quote.shippingAddress.postalCode
-                            country: $.quote.shippingAddress.country
-                            region: $.quote.shippingAddress.region
-                            regionText: $.quote.shippingAddress.regionText
-                            namePrefix: $.quote.shippingAddress.namePrefix
-                            firstName: $.quote.shippingAddress.firstName
-                            middleName: $.quote.shippingAddress.middleName
-                            lastName: $.quote.shippingAddress.lastName
-                            nameSuffix: $.quote.shippingAddress.nameSuffix
-                            phone: $.quote.shippingAddress.phone
+                            accountAddress: $.data.quote.accountAddress
+                            accountUserAddress: $.data.quote.accountUserAddress
+                            label: $.data.quote.shippingAddress.label
+                            organization: $.data.quote.shippingAddress.organization
+                            street: $.data.quote.shippingAddress.street
+                            street2: $.data.quote.shippingAddress.street2
+                            city: $.data.quote.shippingAddress.city
+                            postalCode: $.data.quote.shippingAddress.postalCode
+                            country: $.data.quote.shippingAddress.country
+                            region: $.data.quote.shippingAddress.region
+                            regionText: $.data.quote.shippingAddress.regionText
+                            namePrefix: $.data.quote.shippingAddress.namePrefix
+                            firstName: $.data.quote.shippingAddress.firstName
+                            middleName: $.data.quote.shippingAddress.middleName
+                            lastName: $.data.quote.shippingAddress.lastName
+                            nameSuffix: $.data.quote.shippingAddress.nameSuffix
+                            phone: $.data.quote.shippingAddress.phone
                             fromExternalSource: true
                     - @assign_value:
                         parameters: [$.disallow_shipping_address_edit, true]
             - @tree:
                 conditions:
-                      @empty: $.quote.shippingAddress
+                      @empty: $.data.quote.shippingAddress
                 actions:
                     - @assign_value: [$.orderAddress, null]
                     - @assign_value:
                         parameters: [$.disallow_shipping_address_edit, false]
             - @assign_value:
-                parameters: [$.shippingEstimate, $.quote.shippingEstimate]
+                parameters: [$.shippingEstimate, $.data.quote.shippingEstimate]
             - @start_checkout:
                 source_name: 'quoteDemand'
-                source_entity: $.quoteDemand
+                source_entity: $.data
                 force: true
                 data:
                     shippingAddress: $.orderAddress
@@ -195,14 +195,12 @@ actions:
               icon: icon-edit
               class:  quota-accept-btn
           functions:
-
               - @find_entity:
                   parameters:
                       class: OroB2B\Bundle\SaleBundle\Entity\QuoteDemand
                       attribute: $.quoteDemand
                       where:
                           quote: $.data
-
               - @create_entity:
                   attribute: $.quoteDemand
                   class: OroB2B\Bundle\SaleBundle\Entity\QuoteDemand
@@ -211,9 +209,6 @@ actions:
                       quote: $.data
                   conditions:
                       @empty: $.quoteDemand
-
-              - @assign_value:
-                  parameters: [$.disallow_shipping_address_edit, true]
               - @redirect:
                    parameters:
                        route: 'orob2b_sale_quote_frontend_choice'
