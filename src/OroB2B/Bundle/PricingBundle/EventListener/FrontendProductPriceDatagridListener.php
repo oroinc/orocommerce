@@ -115,7 +115,7 @@ class FrontendProductPriceDatagridListener extends AbstractProductPriceDatagridL
         $select = sprintf($selectPattern, $joinAlias, $separator, $pricesColumnName);
         $this->addConfigElement($config, '[source][query][select]', $select);
 
-        $selectPattern = 'GROUP_CONCAT(%s.unit SEPARATOR %s) as %s';
+        $selectPattern = 'GROUP_CONCAT(IDENTITY(%s.unit) SEPARATOR %s) as %s';
         $select = sprintf($selectPattern, $joinAlias, $separator, $unitColumnName);
         $this->addConfigElement($config, '[source][query][select]', $select);
 
