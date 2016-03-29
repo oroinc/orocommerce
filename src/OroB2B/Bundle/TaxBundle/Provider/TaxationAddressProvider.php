@@ -21,9 +21,9 @@ class TaxationAddressProvider
     /**
      * @param AbstractAddress $billingAddress
      * @param AbstractAddress $shippingAddress
-     * @return AbstractAddress|null
+     * @return AbstractAddress|null Billing, shipping or origin address according to exclusions
      */
-    public function getAddressForTaxation(
+    public function getTaxationAddress(
         AbstractAddress $billingAddress = null,
         AbstractAddress $shippingAddress = null
     ) {
@@ -76,9 +76,9 @@ class TaxationAddressProvider
      *
      * @param AbstractAddress $billingAddress
      * @param AbstractAddress $shippingAddress
-     * @return null|AbstractAddress
+     * @return null|AbstractAddress Billing or shipping address
      */
-    protected function getDestinationAddress(
+    public function getDestinationAddress(
         AbstractAddress $billingAddress = null,
         AbstractAddress $shippingAddress = null
     ) {

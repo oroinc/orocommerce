@@ -62,15 +62,16 @@
         <div class="row-oro">
             {% set prototype_name = form.vars.prototype_name %}
             <div {{ block('widget_container_attributes') }}>
-                <table class="grid table-hover table table-bordered table-condensed">
+                <table class="grid table-hover table table-bordered table-condensed order-line-items-table">
                     <thead>
                     <tr>
                         <th class="order-line-item-sku"><span>{{ 'orob2b.product.sku.label'|trans }}</span></th>
                         <th class="order-line-item-type"><span>{{ 'orob2b.product.entity_label'|trans }}</span></th>
                         {% if form.vars.prototype.vars.sections is defined and form.vars.prototype.vars.sections|length %}
-                            {% for sectionName in form.vars.prototype.vars.sections|keys %}
+                            {% for sectionName, section in form.vars.prototype.vars.sections %}
+                                {% set label = section.label|default('orob2b.order.orderlineitem.%s.label'|format(sectionName)) %}
                                 <th class="{{ 'order-line-item-%s'|format(sectionName) }}">
-                                    <span>{{ 'orob2b.order.orderlineitem.%s.label'|format(sectionName)|trans }}</span>
+                                    <span>{{ label|trans }}</span>
                                 </th>
                             {% endfor %}
                         {% endif %}
@@ -131,6 +132,8 @@
     {% if sections is defined and not sections.isEmpty %}
         {% for sectionName, sections in form.vars.sections %}
             <td class="{{ 'order-line-item-%s'|format(sectionName) }}">
+                {% placeholder 'order_edit_section_' ~ sectionName ~ '_before' with {form: form} %}
+
                 {% if overrides[sectionName] is defined %}
                     {{ overrides[sectionName] }}
                 {% elseif sections.data is defined and sections.data is iterable %}
@@ -140,14 +143,20 @@
                                 {% if subSection.page_component is defined %} data-page-component-module="{{ subSection.page_component }}"
                                     {% if subSection.page_component_options is defined %} data-page-component-options="{{ subSection.page_component_options }}"{% endif %}
                                 {% endif %}>
-                                {{ form_widget(form[subSectionName]) }}
+                                {% placeholder 'order_edit_subsection_' ~ subSectionName ~ '_before' with {subSection: subSection} %}
+                                {% if subSectionName in form|keys %}
+                                    {{ form_widget(form[subSectionName]) }}
+                                {% endif %}
+                                {% placeholder 'order_edit_subsection_' ~ subSectionName ~ '_after' with {subSection: subSection} %}
                             </div>
                         {% endfor %}
                     </div>
-                {% for subSectionName, subSection in sections.data %}
+                    {% for subSectionName, subSection in sections.data if subSectionName in form|keys %}
                         {{ form_errors(form[subSectionName]) }}
                     {% endfor %}
                 {% endif %}
+
+                {% placeholder 'order_edit_section_' ~ sectionName ~ '_after' with {form: form} %}
             </td>
         {% endfor %}
     {% endif %}

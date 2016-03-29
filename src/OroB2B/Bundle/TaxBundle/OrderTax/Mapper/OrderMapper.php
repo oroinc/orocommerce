@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\TaxBundle\OrderTax\Mapper;
 
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Selectable;
 use Doctrine\Common\Util\ClassUtils;
 
@@ -14,8 +13,6 @@ use OroB2B\Bundle\TaxBundle\Model\Taxable;
 
 class OrderMapper extends AbstractOrderMapper
 {
-    const PROCESSING_CLASS_NAME = 'OroB2B\Bundle\OrderBundle\Entity\Order';
-
     /**
      * @var OrderLineItemMapper
      */
@@ -32,20 +29,13 @@ class OrderMapper extends AbstractOrderMapper
             ->setIdentifier($order->getId())
             ->setClassName(ClassUtils::getClass($order))
             ->setItems($this->mapLineItems($order->getLineItems()))
-            ->setDestination($this->getOrderAddress($order))
             ->setOrigin($this->addressProvider->getOriginAddress())
+            ->setDestination($this->getDestinationAddress($order))
+            ->setTaxationAddress($this->getTaxationAddress($order))
             ->setContext($this->getContext($order))
             ->setCurrency($order->getCurrency());
 
         return $taxable;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getProcessingClassName()
-    {
-        return self::PROCESSING_CLASS_NAME;
     }
 
     /**
@@ -56,11 +46,7 @@ class OrderMapper extends AbstractOrderMapper
     {
         $storage = new \SplObjectStorage();
 
-        $criteria = Criteria::create();
-        $criteria->orderBy(['id' => Criteria::ASC]);
-
         $lineItems
-            ->matching($criteria)
             ->map(
                 function (OrderLineItem $item) use ($storage) {
                     $storage->attach($this->orderLineItemMapper->map($item));

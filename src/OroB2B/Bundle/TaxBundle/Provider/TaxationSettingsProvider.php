@@ -9,6 +9,9 @@ use OroB2B\Bundle\TaxBundle\Factory\AddressModelFactory;
 use OroB2B\Bundle\TaxBundle\Model\TaxBaseExclusion;
 use OroB2B\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class TaxationSettingsProvider
 {
     const DESTINATION_BILLING_ADDRESS = 'billing_address';
@@ -53,6 +56,14 @@ class TaxationSettingsProvider
         $this->configManager = $configManager;
         $this->taxBaseExclusionFactory = $taxBaseExclusionFactory;
         $this->addressModelFactory = $addressModelFactory;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnabled()
+    {
+        return (bool)$this->configManager->get('orob2b_tax.tax_enable');
     }
 
     /**

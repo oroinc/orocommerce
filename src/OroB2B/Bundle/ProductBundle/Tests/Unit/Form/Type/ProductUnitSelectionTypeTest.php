@@ -360,6 +360,22 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     ],
                 ],
             ],
+            'new product unit holder' => [
+                'inputData' => [
+                    'options' => [],
+                    'productUnitHolder' => $this->createProductUnitHolder(
+                        null,
+                        null,
+                        null,
+                        $this->createProductHolder(1, 'sku', (new Product())->addUnitPrecision($precision))
+                    ),
+                ],
+                'expectedData' => [
+                    'choices' => [
+                        'code' => 'orob2b.product_unit.code.label.full',
+                    ],
+                ],
+            ],
             'deleted product' => [
                 'inputData' => [
                     'options' => [],

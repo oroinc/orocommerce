@@ -123,7 +123,7 @@ expectedResult:
                 adjustment: '-0.0009'   # 20.19 - 20.1909
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.19', tax_amount: '2.02', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
         -
             row:
                 includingTax: '22.21'
@@ -138,7 +138,7 @@ expectedResult:
                 adjustment: '-0.0009'   # 20.19 - 20.1909
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.19', tax_amount: '2.02', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
         -
             row:
                 includingTax: '22.21'
@@ -153,7 +153,7 @@ expectedResult:
                 adjustment: '-0.0009'   # 20.19 - 20.1909
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.19', tax_amount: '2.02', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
         -
             row:
                 includingTax: '22.21'
@@ -168,7 +168,7 @@ expectedResult:
                 adjustment: '-0.0009'   # 20.19 - 20.1909
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.19', tax_amount: '2.02', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
         -
             row:
                 includingTax: '22.21'
@@ -183,7 +183,7 @@ expectedResult:
                 adjustment: '-0.0009'   # 20.19 - 20.1909
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.19', tax_amount: '2.02', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
         -
             row:
                 includingTax: '22.21'
@@ -198,7 +198,7 @@ expectedResult:
                 adjustment: '-0.0009'   # 20.19 - 20.1909
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.19', tax_amount: '2.02', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
         -
             row:
                 includingTax: '22.21'
@@ -213,7 +213,7 @@ expectedResult:
                 adjustment: '-0.0009'   # 20.19 - 20.1909
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.19', tax_amount: '2.02', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
         -
             row:
                 includingTax: '22.21'
@@ -228,7 +228,7 @@ expectedResult:
                 adjustment: '-0.0009'   # 20.19 - 20.1909
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.19', tax_amount: '2.02', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
         -
             row:
                 includingTax: '22.21'
@@ -243,6 +243,6 @@ expectedResult:
                 adjustment: '-0.0009'   # 20.19 - 20.1909
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '20.19', tax_amount: '2.02', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
     taxes:
-        - { tax: 'TAX1', rate: '0.1', taxable_amount: '181.72', tax_amount: '18.17', currency: 'USD' }
+        - { tax: 'TAX1', rate: '0.1', taxableAmount: '181.72', taxAmount: '18.17', currency: 'USD' }

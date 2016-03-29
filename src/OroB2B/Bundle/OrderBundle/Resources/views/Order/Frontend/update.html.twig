@@ -11,7 +11,7 @@
 
 {% block navButtons %}
     {{ parent() }}
-    
+
     {{ UI.cancelButton(path('orob2b_order_frontend_index')) }}
     {% set html = UI.saveAndCloseButton() %}
     {% if entity.id or resource_granted('orob2b_order_frontend_update') %}
@@ -35,27 +35,18 @@
     {% endif %}
 {% endblock pageHeader %}
 
+{% set pageComponent = {
+    module: 'orob2border/js/app/components/entry-point-component',
+    options: { route: 'orob2b_order_frontend_entry_point', routeParams: {id: entity.id} },
+} %}
+
 {% block content_data %}
     {% set id = 'frontend-order-edit' %}
 
     {% set subtotals %}
-        {% include 'OroB2BPricingBundle:Totals/Frontend:totalsEntityEditPage.html.twig' with {
-            options: {
-                route: 'orob2b_pricing_frontend_recalculate_entity_totals',
-                selectors: {
-                    template: '#frontend-totals-template',
-                    form: '#' ~ form.vars.id
-                },
-                events: [
-                    'line-items-totals:update',
-                    'update:account',
-                    'update:website',
-                    'update:currency'
-                ],
-                entityClassName: 'OroB2B\\Bundle\\OrderBundle\\Entity\\Order',
-                entityId: form.vars.value.id,
-                data: totals
-            }
+        {% include 'OroB2BPricingBundle:Totals:totalsEntityEditPage.html.twig' with {
+            pageComponent: 'orob2border/js/app/components/totals-component',
+            options: {totals: totals}
         } only %}
     {% endset %}
 
@@ -66,8 +57,6 @@
                  view: 'orob2border/js/app/views/line-items-view',
                  tierPrices: tierPrices|default({}),
                  matchedPrices: matchedPrices|default({}),
-                 tierPricesRoute: 'orob2b_pricing_frontend_price_by_account',
-                 matchedPricesRoute: 'orob2b_pricing_frontend_matching_price',
                  currency: form.vars.value.currency
              }|json_encode }}"
              data-layout="separate">
@@ -79,6 +68,7 @@
     {% set dataBlocks = [
         {
             'title': 'orob2b.order.sections.order_line_items'|trans,
+            'content_attr': {'class': 'order-line-items-content'},
             'subblocks': [{
             'title': '',
                 'data': [

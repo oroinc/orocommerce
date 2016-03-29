@@ -44,4 +44,7 @@ expectedResult: # values from simple_order_item_1 used to check database overrid
         adjustment: '-0.005' # 0.555 - 0.56
         currency: 'USD'
     taxes:
-        - { tax: 'TAX1', rate: '0.1', taxable_amount: '33.3', tax_amount: '3.33', currency: 'USD' }
+        - { tax: 'TAX1', rate: '0.1', taxableAmount: '33.3', taxAmount: '3.33', currency: 'USD' }
+databaseAfter:
+    'OroB2B\Bundle\TaxBundle\Entity\TaxValue':
+        - { entityClass: 'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem', entityId: { reference: 'order_line_item_2' } }

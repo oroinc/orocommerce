@@ -7,8 +7,9 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
-use Oro\Bundle\ThemeBundle\Model\ThemeRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\NavigationBundle\Event\ResponseHashnavListener;
+use Oro\Bundle\ThemeBundle\Model\ThemeRegistry;
 
 use OroB2B\Bundle\FrontendBundle\EventListener\ThemeListener;
 use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
@@ -61,6 +62,8 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
      * @param boolean $isFrontendRequest
      * @param string $expectedOroTheme
      * @param string $expectedLayoutTheme
+     * @param boolean $hashNavigation
+     * @param boolean $fullRedirect
      *
      * @dataProvider onKernelRequestProvider
      */
@@ -69,11 +72,16 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
         $requestType,
         $isFrontendRequest,
         $expectedOroTheme,
-        $expectedLayoutTheme
+        $expectedLayoutTheme,
+        $hashNavigation,
+        $fullRedirect
     ) {
         $this->themeRegistry->setActiveTheme('oro');
 
         $request = new Request();
+        if ($hashNavigation) {
+            $request->headers->set(ResponseHashnavListener::HASH_NAVIGATION_HEADER, true);
+        }
         $event = new GetResponseEvent($this->kernel, $request, $requestType);
 
         $this->helper->expects($this->any())
@@ -91,6 +99,7 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expectedOroTheme, $this->themeRegistry->getActiveTheme()->getName());
         $this->assertEquals($expectedLayoutTheme, $request->attributes->get('_theme'));
+        $this->assertEquals($fullRedirect, $request->attributes->has('_fullRedirect'));
     }
 
     /**
@@ -104,28 +113,36 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'isFrontendRequest' => true,
                 'expectedOroTheme' => 'oro',
-                'expectedLayoutTheme' => null
+                'expectedLayoutTheme' => null,
+                'hashNavigation' => false,
+                'fullRedirect' => false,
             ],
             'not master request' => [
                 'installed' => true,
                 'requestType' => HttpKernelInterface::SUB_REQUEST,
                 'isFrontendRequest' => true,
                 'expectedOroTheme' => 'oro',
-                'expectedLayoutTheme' => null
+                'expectedLayoutTheme' => null,
+                'hashNavigation' => false,
+                'fullRedirect' => false,
             ],
             'frontend' => [
                 'installed' => true,
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'isFrontendRequest' => true,
                 'expectedOroTheme' => 'demo',
-                'expectedLayoutTheme' => 'test_layout_theme'
+                'expectedLayoutTheme' => 'test_layout_theme',
+                'hashNavigation' => true,
+                'fullRedirect' => true,
             ],
             'backend' => [
                 'installed' => true,
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'isFrontendRequest' => false,
                 'expectedOroTheme' => 'oro',
-                'expectedLayoutTheme' => null
+                'expectedLayoutTheme' => null,
+                'hashNavigation' => false,
+                'fullRedirect' => false,
             ],
         ];
     }
