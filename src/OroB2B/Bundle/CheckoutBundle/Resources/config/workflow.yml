@@ -237,6 +237,7 @@ workflows:
                     - @assign_value:
                         conditions:
                             @and:
+                                - @equal: [$disallow_shipping_address_edit, false]
                                 - @equal: [$checkout.shipToBillingAddress, true]
                                 - @equal: [$billing_address_has_shipping, true]
                         parameters: [$checkout.shippingAddress, $checkout.billingAddress]
