@@ -181,8 +181,6 @@ define(function(require) {
                 self.unitSelector.val('');
             }
 
-            this.unitSelector.trigger('change');
-
             var $unitSelectorContainer = this.unitSelector.inputWidget('getContainer');
             if ($unitSelectorContainer) {
                 if (disabled) {
@@ -191,7 +189,10 @@ define(function(require) {
                     $unitSelectorContainer.removeClass('disabled');
                 }
             }
-            this.unitSelector.trigger('value:changed');
+
+            this.unitSelector
+                .trigger('value:changed')
+                .trigger('change');
         },
 
         dispose: function() {

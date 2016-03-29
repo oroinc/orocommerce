@@ -105,7 +105,7 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
                     'filters' => [
                         'columns' => [
                             'minimum_price' => [
-                                'type' => 'product-price',
+                                'type' => 'frontend-product-price',
                                 'data_name' => 'EUR'
                             ],
                         ],

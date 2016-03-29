@@ -44,11 +44,10 @@ class FrontendOrderType extends AbstractType
     /** @var OrderCurrencyHandler */
     protected $orderCurrencyHandler;
 
-    /** @var SubtotalSubscriber  */
+    /** @var SubtotalSubscriber */
     protected $subtotalSubscriber;
 
     /**
-     * FrontendOrderType constructor.
      * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
      * @param SecurityFacade $securityFacade
      * @param PaymentTermProvider $paymentTermProvider

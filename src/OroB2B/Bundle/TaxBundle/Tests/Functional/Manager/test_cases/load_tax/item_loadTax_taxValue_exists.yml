@@ -52,13 +52,15 @@ databaseBefore:
                             taxAmount: '1.6' # 15.99 * 0.1
                             adjustment: '0.001'
                             currency: 'USD'
-    'OroB2B\Bundle\TaxBundle\Entity\TaxApply':
-        simple_order_tax_value_applied_tax:
-            tax: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
-            rate: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' }, property: rate }
-            taxableAmount: { property_value: '9.6' }
-            taxAmount: { property_value: '1.6' }
-            taxValue: { reference: simple_order_tax_value }
+                    taxes:
+                        -
+                            class: 'OroB2B\Bundle\TaxBundle\Model\TaxResultElement'
+                            property_value:
+                                tax: 'TAX1'
+                                rate: '0.1'
+                                taxableAmount: '9.6'
+                                taxAmount: '1.6'
+                                currency: 'USD'
 expectedResult: # loaded from fixtures, values from simple_order_item_1 used to check database overrid
     row:
         includingTax: '105.54' # 95.94 + 9.594
@@ -73,4 +75,4 @@ expectedResult: # loaded from fixtures, values from simple_order_item_1 used to 
         adjustment: '0.001'
         currency: 'USD'
     taxes:
-        - { tax: 'TAX1', rate: '0.1', taxable_amount: '9.6', tax_amount: '1.6', currency: 'USD' }
+        - { tax: 'TAX1', rate: '0.1', taxableAmount: '9.6', taxAmount: '1.6', currency: 'USD' }
