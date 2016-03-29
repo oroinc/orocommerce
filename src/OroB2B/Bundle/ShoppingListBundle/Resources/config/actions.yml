@@ -81,6 +81,29 @@ actions:
             page_component_options:
                 quickAddComponentPrefix: 'quick-add-import'
 
+    orob2b_shoppinglist_frontend_products_quick_add_to_checkout:
+        label: orob2b.order.btn.create_order
+        applications: [frontend]
+        routes:
+            - orob2b_product_frontend_quick_add
+            - orob2b_product_frontend_quick_add_copy_paste
+            - orob2b_product_frontend_quick_add_import
+        order: 20
+        button_options:
+            icon: icon-briefcase
+            data:
+                component_name: orob2b_shopping_list_to_checkout_quick_add_processor
+            page_component_module: orob2bproduct/js/app/components/quick-add-form-button-component
+            page_component_options:
+                component_name: '[name$="[component]"]'
+        prefunctions:
+            - @call_service_method:
+                service: orob2b_shopping_list.processor.quick_add_to_checkout
+                method: isAllowed
+                attribute: $.isAllowed
+        preconditions:
+            @equal: [true, $.isAllowed]
+
     orob2b_shoppinglist_frontend_addlineitem:
         extends: orob2b_shoppinglist_lineitem_base
         label: orob2b.shoppinglist.product.add_to_shopping_list.label

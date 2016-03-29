@@ -153,7 +153,8 @@ class FrontendProductPriceDatagridListener extends AbstractProductPriceDatagridL
             $minimumPriceColumnName
         );
 
-        $this->addConfigFilter($config, $currency);
+        $filter = ['type' => 'frontend-product-price', 'data_name' => $currency];
+        $this->addConfigElement($config, '[filters][columns]', $filter, $minimumPriceColumnName);
     }
 
     /**

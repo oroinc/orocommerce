@@ -60,9 +60,9 @@
                 <div data-tab-trigger="" data-allow-tab-toggle="true">
                     <div class="checkout-order-summary__header__icon-group">
                         <span class="badge badge_sm badge_orange badge_circled-corners mmr7-md mmr7-sm">
-                          <i class="icon-basket"></i>
+                          <i class="cf-basket"></i>
                         </span>
-                        <i class="icon-play"></i>
+                        <i class="cf-play"></i>
                     </div>
                     <h3 class="checkout-order-summary__header__title">{{ 'orob2b.checkout.order_summary.label'|trans }}</h3>
                     <div class="checkout-order-summary__header__desc">
@@ -73,7 +73,7 @@
                 {% set editLink = workfowItem.data.get('edit_order_link') %}
                 {% if editLink %}
                 <a href="{{ editLink }}" class="checkout-order-summary__header__edit-link">
-                    <i class="icon-pencil"></i>
+                    <i class="cf-pencil"></i>
                     {{ 'orob2b.checkout.order_summary.edit_order'|trans }}
                 </a>
                 {% endif %}
@@ -131,8 +131,8 @@
                 {% if hasEditList %}
                 <td class="va-t_md hidden-xs">
                     <a href="{{ editLink }}">
-                        <i class="icon-pencil"></i>
-                        {{ 'orob2b.checkout.order_summary.edit_order_list'|trans }}
+                        <i class="cf-pencil"></i>
+                        {{ 'orob2b.checkout.order_summary.edit_order'|trans }}
                     </a>
                 </td>
                 {% endif %}
