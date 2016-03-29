@@ -84,15 +84,18 @@ class RequestType extends AbstractType
                 'label' => 'orob2b.rfp.request.email.label'
             ])
             ->add('phone', 'text', [
+                'required' => false,
                 'label' => 'orob2b.rfp.request.phone.label'
             ])
             ->add('company', 'text', [
                 'label' => 'orob2b.rfp.request.company.label'
             ])
             ->add('role', 'text', [
+                'required' => false,
                 'label' => 'orob2b.rfp.request.role.label'
             ])
             ->add('note', 'textarea', [
+                'required' => false,
                 'label' => 'orob2b.rfp.request.note.label'
             ])
             ->add('poNumber', 'text', [
