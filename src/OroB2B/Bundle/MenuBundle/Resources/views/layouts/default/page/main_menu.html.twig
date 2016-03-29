@@ -12,7 +12,17 @@
 {% endblock %}
 
 {% block _main_menu_widget %}
-    <li>{{ block_widget(block) }}</li>
+    <li>{{ block_widget(block, {
+        attr: {
+            class: 'top-nav__list'
+        },
+        child_attr: {
+            class: 'top-nav__list__item'
+        },
+        link_attr: {
+            class: 'top-nav__list__item__link'
+        }
+    }) }}</li>
 {% endblock %}
 
 {% block _main_menu_widgets_widget %}
