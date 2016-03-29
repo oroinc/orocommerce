@@ -1,173 +1,111 @@
 {% block _categories_main_menu_widget %}
+    {% if (max_size is not null ) %}
+        {% set categories = categories[0:max_size] %}
+    {%- endif %}
+
+    {% for category in categories -%}
+        {% set hasSublist = category.childCategories is not empty %}
+        <li class="top-nav__list__item {{ hasSublist ? "top-nav__list__item_has-sublist": "" }}" {{ hasSublist ? "data-dropdown-trigger": "" }}>
+            {% do block|merge_context({'category': category}) %}
+            {{ block('container_widget') }}
+        </li>
+    {%- endfor %}
+{% endblock %}
+
+{% block _categories_main_menu_first_level_item_widget %}
+    {% set hasSublist = category.childCategories is not empty %}
+    <a href="{{ path('orob2b_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}"
+       class="top-nav__list__item__link">
+        <span>{{ category.defaultTitle }}
+            {% if hasSublist %}
+                <i class="cf-down-open-mini"></i>
+            {% endif %}
+        </span>
+    </a>
+    {% if hasSublist %}
+        <!-- START TOP NAVIGATION SUBLIST -->
+        <div class="top-nav__sublist-container">
+            <ul class="top-nav__sublist">
+                {% do block|merge_context({'categories': category.childCategories }) %}
+                {% for child in block -%}
+                    {% set attr = child.vars.attr|merge({
+                        class: child.vars.attr.class|default('') ~ " top-nav__sublist__item"
+                    }) %}
+                    <li {{ block('block_attributes') }}>
+                        {{ block_widget(child) }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- ENDTOP NAVIGATION SUBLIST -->
+    {% endif %}
+{% endblock %}
+
+{% block _categories_main_menu_second_level_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " top-nav hidden-sm hidden-xs not-implemented"
+        class: attr.class|default('') ~ " top-nav__sublist__title"
     }) %}
-    <li class="top-nav__list__item top-nav__list__item_has-sublist" data-dropdown-trigger>
-        <a href="#" class="top-nav__list__item__link" >
-            <span>Uniforms</span><i class="icon-down-open-mini"></i>
-        </a>
 
-        <!-- START TOP NAVIGATION SUBLIST -->
-        <div class="top-nav__sublist-container">
-            <ul class="top-nav__sublist">
-                <li class="top-nav__sublist__item top-nav__sublist__item_has-2columns">
-                    <div class="top-nav__sublist__title">By Category</div>
-                    <ul class="top-nav__sublist_nested top-nav__sublist_nested_has-sibling">
-                        <li class="top-nav__sublist_nested__item">
-                            <a href="#">Men's Uniforms</a>
-                            <ul class="top-nav__sublist_subnested">
-                                <li><a href="#">Doctors Uniforms</a></li>
-                                <li><a href="#">Nurse Uniforms</a></li>
-                                <li><a href="#">Scrubs</a></li>
-                                <li><a href="#">Security</a></li>
-                                <li><a href="#">Kitchen</a></li>
-                                <li><a href="#">Corporate Uniforms</a></li>
-                                <li><a href="#">Assistant Uniforms</a></li>
-                                <li><a href="#">All Men's Uniforms</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                    <ul class="top-nav__sublist_nested top-nav__sublist_nested_has-sibling">
-                        <li class="top-nav__sublist_nested__item">
-                            <a href="#">Women's Uniforms</a>
-                            <ul class="top-nav__sublist_subnested">
-                                <li><a href="#">Doctors Uniforms</a></li>
-                                <li><a href="#">Nurse Uniforms</a></li>
-                                <li><a href="#">Scrubs</a></li>
-                                <li><a href="#">Security</a></li>
-                                <li><a href="#">Kitchen</a></li>
-                                <li><a href="#">Corporate Uniforms</a></li>
-                                <li><a href="#">Assistant Uniforms</a></li>
-                                <li><a href="#">All Men's Uniforms</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-                <li class="top-nav__sublist__item top-nav__sublist__item_has-adv-block">
-                    <div class="top-nav__sublist__title">On Sale</div>
-                    <div class="adv-block">
-                        <a href="#"><img class="img-responsive" src="{% image '@OroB2BCatalogBundle/Resources/public/default/images/adv_1.jpg' %}{{ asset_url }}{% endimage %}" alt=""></a>
-                    </div>
-                    <div class="adv-block">
-                        <a href="#"><img class="img-responsive" src="{% image '@OroB2BCatalogBundle/Resources/public/default/images/adv_2.jpg' %}{{ asset_url }}{% endimage %}" alt=""></a>
-                    </div>
-                </li>
-            </ul>
-        </div>
-        <!-- ENDTOP NAVIGATION SUBLIST -->
+    <div {{ block('block_attributes') }}>By Category</div>
+    {% for category in categories %}
+        {% do block|merge_context({'category': category}) %}
+        {{ block('container_widget') }}
+    {% endfor %}
+{% endblock %}
 
-    </li>
-    <li class="top-nav__list__item top-nav__list__item_has-sublist" data-dropdown-trigger>
-        <a href="#" class="top-nav__list__item__link">
-            <span>Protective Wear</span><i class="icon-down-open-mini"></i>
-        </a>
+{% block _categories_main_menu_second_level_item_widget %}
+    {% set hasSublist = category.childCategories is not empty %}
+    {% set class = attr.class|default('') ~ " top-nav__sublist_nested" %}
+    {% set class = hasSublist ? class ~ " top-nav__sublist_nested_has-sibling" : class %}
+    {% set attr = attr|merge({class: class}) %}
+    <ul {{ block('block_attributes') }}>
+        <li class="top-nav__sublist_nested__item">
+            <a href="{{ path('orob2b_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}">
+                {{ category.defaultTitle }}
+            </a>
+            {% if hasSublist %}
+                {% do block|merge_context({'categories': category.childCategories }) %}
+                {{ block('container_widget') }}
+            {% endif %}
+        </li>
+    </ul>
+{% endblock %}
 
-        <!-- START TOP NAVIGATION SUBLIST -->
-        <div class="top-nav__sublist-container">
-            <ul class="top-nav__sublist">
-                <li class="top-nav__sublist__item top-nav__sublist__item_has-2columns">
-                    <div class="top-nav__sublist__title">By Category</div>
-                    <ul class="top-nav__sublist_nested top-nav__sublist_nested_has-sibling">
-                        <li class="top-nav__sublist_nested__item">
-                            <a href="#">Men's Uniforms</a>
-                            <ul class="top-nav__sublist_subnested">
-                                <li><a href="#">Doctors Uniforms</a></li>
-                                <li><a href="#">Nurse Uniforms</a></li>
-                                <li><a href="#">Scrubs</a></li>
-                                <li><a href="#">Security</a></li>
-                                <li><a href="#">Kitchen</a></li>
-                                <li><a href="#">Corporate Uniforms</a></li>
-                                <li><a href="#">Assistant Uniforms</a></li>
-                                <li><a href="#">All Men's Uniforms</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                    <ul class="top-nav__sublist_nested top-nav__sublist_nested_has-sibling">
-                        <li class="top-nav__sublist_nested__item">
-                            <a href="#">Women's Uniforms</a>
-                            <ul class="top-nav__sublist_subnested">
-                                <li><a href="#">Doctors Uniforms</a></li>
-                                <li><a href="#">Nurse Uniforms</a></li>
-                                <li><a href="#">Scrubs</a></li>
-                                <li><a href="#">Security</a></li>
-                                <li><a href="#">Kitchen</a></li>
-                                <li><a href="#">Corporate Uniforms</a></li>
-                                <li><a href="#">Assistant Uniforms</a></li>
-                                <li><a href="#">All Men's Uniforms</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-                {# This li will be moved to another bundle #}
-                <li class="top-nav__sublist__item top-nav__sublist__item_has-adv-block">
-                    <div class="top-nav__sublist__title">On Sale</div>
-                    <div class="adv-block">
-                        <a href="#"><img class="img-responsive" src="{% image '@OroB2BCatalogBundle/Resources/public/default/images/adv_1.jpg' %}{{ asset_url }}{% endimage %}" alt=""></a>
-                    </div>
-                    <div class="adv-block">
-                        <a href="#"><img class="img-responsive" src="{% image '@OroB2BCatalogBundle/Resources/public/default/images/adv_2.jpg' %}{{ asset_url }}{% endimage %}" alt=""></a>
-                    </div>
-                </li>
-            </ul>
-        </div>
-        <!-- ENDTOP NAVIGATION SUBLIST -->
-    </li>
-    <li class="top-nav__list__item"><a href="#" class="top-nav__list__item__link"><span>Scrubs</span></a></li>
-    <li class="top-nav__list__item"><a href="#" class="top-nav__list__item__link"><span>Supplies</span></a></li>
-    <li class="top-nav__list__item"><a href="#" class="top-nav__list__item__link"><span>Men's</span></a></li>
-    <li class="top-nav__list__item"><a href="#" class="top-nav__list__item__link"><span>Women's</span></a></li>
-
-    {% set categoriesData = [
-        {
-            'title': 'First',
-            'url': 'http://first/',
-            'children': [
-                {
-                    'title': 'First One',
-                    'url': 'http://first.one/',
-                    'children': []
-                },
-                {
-                    'title': 'First Two',
-                    'url': 'http://first.two/',
-                    'children': [
-                        {
-                            'title': 'First Two Deep',
-                            'url': 'http://first.two.deep/',
-                            'children': []
-                        },
-                    ]
-                },
-            ]
-        },
-        {
-            'title': 'Second',
-            'url': 'http://second/',
-            'children': []
-        },
-    ] %}
-
-    <ul>
-        {% for firstLevelCategory in categoriesData %}
+{% block _categories_main_menu_third_level_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " top-nav__sublist_subnested"
+    }) %}
+    <ul {{ block('block_attributes') }}>
+        {% for category in categories %}
             <li>
-                <a href="{{ firstLevelCategory.url }}">{{ firstLevelCategory.title }}</a>
-                {% if firstLevelCategory.children %}
-                    <ul>
-                        {% for secondLevelCategory in firstLevelCategory.children %}
-                            <li>
-                                <a href="{{ secondLevelCategory.url }}">{{ secondLevelCategory.title }}</a>
-                                {% if secondLevelCategory.children %}
-                                    <ul>
-                                        {% for thirdLevelCategory in secondLevelCategory.children %}
-                                            <li><a href="{{ thirdLevelCategory.url }}">{{ thirdLevelCategory.title }}</a></li>
-                                        {% endfor %}
-                                    </ul>
-                                {% endif %}
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
+                {% do block|merge_context({'category': category}) %}
+                {{ block('container_widget') }}
             </li>
         {% endfor %}
     </ul>
+{% endblock %}
+
+{% block _categories_main_menu_third_level_item_widget %}
+    {% set attr = attr|merge({
+        href: path('orob2b_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true})
+    }) %}
+    <a {{ block('block_attributes') }}>{{ category.defaultTitle }}</a>
+{% endblock %}
+
+{% block _categories_main_menu_second_level_sales_widget %}
+    <div class="top-nav__sublist__title">On Sale</div>
+    <div class="adv-block">
+        <a href="#">
+            <img class="img-responsive"
+                 src="{% image '@OroB2BCatalogBundle/Resources/public/default/images/adv_1.jpg' %}{{ asset_url }}{% endimage %}"
+                 alt="">
+        </a>
+    </div>
+    <div class="adv-block">
+        <a href="#">
+            <img class="img-responsive"
+                 src="{% image '@OroB2BCatalogBundle/Resources/public/default/images/adv_2.jpg' %}{{ asset_url }}{% endimage %}"
+                 alt="">
+        </a>
+    </div>
 {% endblock %}
