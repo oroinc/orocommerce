@@ -43,6 +43,9 @@ class FrontendControllerTest extends WebTestCase
         );
 
         if ($categories) {
+            $categories = $categories[0]->getChildCategories()->toArray();
+            $categories = array_slice($categories, 0, 4);
+
             foreach ($categories[0]->getChildCategories() as $category) {
                 $this->assertContains((string)$category->getDefaultTitle(), $menuHtml);
             }
