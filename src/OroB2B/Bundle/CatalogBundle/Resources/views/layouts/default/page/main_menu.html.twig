@@ -16,11 +16,11 @@
     {% set hasSublist = category.childCategories is not empty %}
     <a href="{{ path('orob2b_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}"
        class="top-nav__list__item__link">
-                        <span>{{ category.defaultTitle }}
-                            {% if hasSublist %}
-                                <i class="cf-down-open-mini"></i>
-                            {% endif %}
-                        </span>
+        <span>{{ category.defaultTitle }}
+            {% if hasSublist %}
+                <i class="cf-down-open-mini"></i>
+            {% endif %}
+        </span>
     </a>
     {% if hasSublist %}
         <!-- START TOP NAVIGATION SUBLIST -->
