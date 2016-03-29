@@ -21,14 +21,18 @@
 {% set billingAddressBlock %}
     {{ address.renderAddress(order.billingAddress)}}
     <div>
-        {{ order.billingAddress.phone|escape|nl2br }}
+        {% if order.billingAddress is not empty %}
+            {{ order.billingAddress.phone|escape|nl2br }}
+        {% endif %}
     </div>
 {% endset %}
 
 {% set shippingAddressBlock %}
     {{ address.renderAddress(order.shippingAddress)}}
     <div>
-        {{ order.shippingAddress.phone|escape|nl2br }}
+        {% if order.shippingAddress is not empty %}
+            {{ order.shippingAddress.phone|escape|nl2br }}
+        {% endif %}
     </div>
 {% endset %}
 
