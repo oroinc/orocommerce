@@ -2,31 +2,33 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Event;
 
-use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
+use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use Symfony\Component\EventDispatcher\Event;
 
-class CheckoutEvent
+class CheckoutEvent extends Event
 {
     /**
-     * @var object
+     * @var CheckoutInterface
      */
     protected $checkoutEntity;
 
     /**
-     * @var WorkflowItem
+     * @var object
      */
-    protected $workflowItem;
+    protected $source;
 
     /**
-     * CheckoutEvent constructor.
-     * @param WorkflowItem $workflowItem
+     * @var int
      */
-    public function __construct(WorkflowItem $workflowItem)
-    {
-        $this->workflowItem = $workflowItem;
-    }
+    protected $checkoutId;
 
     /**
-     * @return object
+     * @var string
+     */
+    protected $type;
+
+    /**
+     * @return CheckoutInterface
      */
     public function getCheckoutEntity()
     {
@@ -34,18 +36,62 @@ class CheckoutEvent
     }
 
     /**
-     * @param object $checkoutEntity
+     * @param CheckoutInterface $checkoutEntity
      */
-    public function setCheckoutEntity($checkoutEntity)
+    public function setCheckoutEntity(CheckoutInterface $checkoutEntity)
     {
         $this->checkoutEntity = $checkoutEntity;
     }
 
     /**
-     * @return WorkflowItem
+     * @return object
      */
-    public function getWorkflowItem()
+    public function getSource()
     {
-        return $this->workflowItem;
+        return $this->source;
+    }
+
+    /**
+     * @param object $source
+     */
+    public function setSource($source)
+    {
+        $this->source = $source;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCheckoutId()
+    {
+        return $this->checkoutId;
+    }
+
+    /**
+     * @param int $checkoutId
+     * @return $this
+     */
+    public function setCheckoutId($checkoutId)
+    {
+        $this->checkoutId = $checkoutId;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     * @return $this
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+        return $this;
     }
 }

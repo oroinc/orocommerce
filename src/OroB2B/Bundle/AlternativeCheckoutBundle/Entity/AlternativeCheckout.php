@@ -7,12 +7,13 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
-use Oro\Bundle\WorkflowBundle\Entity\WorkflowAwareInterface;
 use Oro\Component\Layout\ContextItemInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AlternativeCheckoutBundle\Model\ExtendAlternativeCheckout;
+use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutTrait;
+use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutTypeAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 
 /**
@@ -47,13 +48,15 @@ use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareI
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class AlternativeCheckout extends ExtendAlternativeCheckout implements
+    CheckoutInterface,
     OrganizationAwareInterface,
     AccountOwnerAwareInterface,
     DatesAwareInterface,
-    WorkflowAwareInterface,
     ContextItemInterface,
-    LineItemsNotPricedAwareInterface
+    LineItemsNotPricedAwareInterface,
+    CheckoutTypeAwareInterface
 {
+    const TYPE = 'alternative';
     use CheckoutTrait;
 
     /**
@@ -66,7 +69,7 @@ class AlternativeCheckout extends ExtendAlternativeCheckout implements
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="allow_request_date", type="datetime")
+     * @ORM\Column(name="allow_request_date", type="datetime", nullable=true)
      */
     protected $allowRequestDate;
 
@@ -100,5 +103,13 @@ class AlternativeCheckout extends ExtendAlternativeCheckout implements
     public function setAllowRequestDate($allowRequestDate)
     {
         $this->allowRequestDate = $allowRequestDate;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return self::TYPE;
     }
 }

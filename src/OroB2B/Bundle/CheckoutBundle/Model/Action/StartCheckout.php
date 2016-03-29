@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\CheckoutBundle\Model\Action;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
+use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutTypeAwareInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -21,6 +22,8 @@ use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
+use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEvent;
+use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEvents;
 
 /**
  * Start checkout process on frontend
@@ -192,8 +195,7 @@ class StartCheckout extends AbstractAction
 
         if ($checkoutSource) {
             $newCheckout = false;
-            $checkout = $em->getRepository('OroB2BCheckoutBundle:Checkout')
-                ->findOneBy(['source' => $checkoutSource]);
+            $checkout = $this->getCheckout($checkoutSource);
 
         } else {
             $checkoutSource = $this->createCheckoutSource($sourceFieldName, $sourceEntity);
@@ -208,10 +210,12 @@ class StartCheckout extends AbstractAction
             $em->flush($checkout->getWorkflowItem());
         }
 
+        $checkoutType = $checkout instanceof CheckoutTypeAwareInterface ? $checkout->getType() : null;
+
         $this->redirect->initialize(
             [
                 'route' => $this->checkoutRoute,
-                'route_parameters' => ['id' => $checkout->getId()]
+                'route_parameters' => ['id' => $checkout->getId(), 'type' => $checkoutType]
             ]
         );
         $this->redirect->execute($context);
@@ -248,15 +252,15 @@ class StartCheckout extends AbstractAction
     }
 
     /**
+     * We can create any custom checkout entity here in event listener
+     *
      * @param mixed $context
      * @param CheckoutSource $checkoutSource
-     * @return Checkout
+     * @return Checkout|object
      */
     protected function createCheckout($context, CheckoutSource $checkoutSource)
     {
-
-//        $this->dispatcher
-        $checkout = new Checkout();
+        $checkout = $this->getCheckout();
         $checkout->setSource($checkoutSource);
         $this->updateCheckoutData($context, $checkout);
 
@@ -265,9 +269,9 @@ class StartCheckout extends AbstractAction
 
     /**
      * @param mixed $context
-     * @param Checkout $checkout
+     * @param Checkout|object $checkout
      */
-    protected function updateCheckoutData($context, Checkout $checkout)
+    protected function updateCheckoutData($context, $checkout)
     {
         /** @var AccountUser $user */
         $user = $this->tokenStorage->getToken()->getUser();
@@ -287,10 +291,10 @@ class StartCheckout extends AbstractAction
 
     /**
      * @param mixed $context
-     * @param Checkout $checkout
+     * @param Checkout|object $checkout
      * @param array $defaultData
      */
-    protected function setCheckoutData($context, Checkout $checkout, array $defaultData)
+    protected function setCheckoutData($context, $checkout, array $defaultData)
     {
         $data = $this->getOptionFromContext($context, self::CHECKOUT_DATA_KEY, []);
         $data = array_filter(
@@ -340,5 +344,25 @@ class StartCheckout extends AbstractAction
         }
 
         return $data;
+    }
+
+    /**
+     * @param object $checkoutSource
+     * @return null|object
+     */
+    protected function getCheckout($checkoutSource = null)
+    {
+        $event = new CheckoutEvent();
+        $event->setSource($checkoutSource);
+        $event->setSource($checkoutSource);
+        $this->dispatcher->dispatch(CheckoutEvents::GET_CHECKOUT_ENTITY, $event);
+        $checkout = $event->getCheckoutEntity();
+
+        if ($checkoutSource && !$checkout) {
+            $checkout = $this->getEntityManager()->getRepository('OroB2BCheckoutBundle:Checkout')
+                ->findOneBy(['source' => $checkoutSource]);
+        }
+
+        return $checkout ?: new Checkout();
     }
 }

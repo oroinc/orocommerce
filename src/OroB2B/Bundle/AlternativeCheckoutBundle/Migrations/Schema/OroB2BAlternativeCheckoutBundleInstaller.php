@@ -69,7 +69,7 @@ class OroB2BAlternativeCheckoutBundleInstaller implements Installation
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('allowed', 'boolean', []);
-        $table->addColumn('allow_request_date', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addColumn('allow_request_date', 'datetime', ['notnull' => false, 'comment' => '(DC2Type:datetime)']);
         $table->addIndex(['organization_id'], 'idx_organization_id', []);
         $table->addUniqueIndex(['workflow_item_id'], 'uniq_workflow_item_id');
         $table->addUniqueIndex(['billing_address_id'], 'uniq_billing_address_id');
