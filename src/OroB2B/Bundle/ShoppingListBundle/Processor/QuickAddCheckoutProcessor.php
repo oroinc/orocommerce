@@ -45,7 +45,7 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
     /**
      * @var string
      */
-    protected $actionName;
+    protected $operationName;
 
     /**
      * @param ShoppingListManager $shoppingListManager
@@ -62,7 +62,7 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
      * @param OperationManager $operationManager
      * @return QuickAddCheckoutProcessor
      */
-    public function setActionManager(OperationManager $operationManager)
+    public function setOperationManager(OperationManager $operationManager)
     {
         $this->operationManager = $operationManager;
 
@@ -92,12 +92,12 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
     }
 
     /**
-     * @param string $actionName
+     * @param string $operationName
      * @return QuickAddCheckoutProcessor
      */
-    public function setActionName($actionName)
+    public function setOperationName($operationName)
     {
-        $this->actionName = $actionName;
+        $this->operationName = $operationName;
 
         return $this;
     }
@@ -127,7 +127,7 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
         if ($entitiesCount = $this->fillShoppingList($shoppingList, $data)) {
             $actionData = new ActionData(['data' => $shoppingList]);
             $errors = new ArrayCollection([]);
-            $actionData = $this->operationManager->execute($this->actionName, $actionData, $errors);
+            $actionData = $this->operationManager->execute($this->operationName, $actionData, $errors);
 
             if ($redirectUrl = $actionData->getRedirectUrl()) {
                 $em->commit();

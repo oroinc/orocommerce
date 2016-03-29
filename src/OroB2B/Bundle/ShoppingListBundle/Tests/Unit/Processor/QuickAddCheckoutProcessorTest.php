@@ -41,7 +41,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
     /**
      * @var string
      */
-    protected $actionName;
+    protected $operationName;
 
     public function getProcessorName()
     {
@@ -79,7 +79,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
         $this->processor->setOperationManager($this->operationManager);
         $this->processor->setTranslator($this->translator);
         $this->processor->setDateFormatter($this->dateFormatter);
-        $this->processor->setActionName('orob2b_shoppinglist_frontend_action_createorder');
+        $this->processor->setOperationName('orob2b_shoppinglist_frontend_createorder');
     }
 
     /**
