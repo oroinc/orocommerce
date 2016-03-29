@@ -71,8 +71,15 @@ layout:
             id: require_js_config
             parentId: require_js
             blockType: block
-        - @replaceOption:
-            id: head
-            optionName: title
-            oldOptionValue: OroPlatform
-            newOptionValue: OroCommerce
+        - @setOption:
+            id: title
+            optionName: separator
+            optionValue: ' - '
+        - @setOption:
+            id: title
+            optionName: reverse
+            optionValue: true
+        - @subtractOption:
+            id: title
+            optionName: value
+            optionValue: OroPlatform
