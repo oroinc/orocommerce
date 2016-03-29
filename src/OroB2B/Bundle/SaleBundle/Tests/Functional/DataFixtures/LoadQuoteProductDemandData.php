@@ -16,18 +16,19 @@ class LoadQuoteProductDemandData extends AbstractFixture implements FixtureInter
     /**
      * @var array
      */
-    static $items = [
+    public static $items = [
         self::SELECTED_OFFER_1 => [
             'quote' => LoadQuoteData::QUOTE1,
             'offer' => LoadQuoteProductOfferData::QUOTE_PRODUCT_OFFER_1,
             'quantity' => 10,
         ],
-        self::SELECTED_OFFER_2 =>[
+        self::SELECTED_OFFER_2 => [
             'quote' => LoadQuoteData::QUOTE1,
             'offer' => LoadQuoteProductOfferData::QUOTE_PRODUCT_OFFER_2,
             'quantity' => 10,
         ],
     ];
+
     /**
      * {@inheritdoc}
      */
@@ -37,6 +38,7 @@ class LoadQuoteProductDemandData extends AbstractFixture implements FixtureInter
             'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductOfferData',
         ];
     }
+
     /**
      * Load data fixtures with the passed EntityManager
      *
