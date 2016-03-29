@@ -87,16 +87,16 @@
     </tr>
 {% endblock %}
 
-{% block _account_user_role_items_view_privileges_entity_privilege_permition_widget %}
+{% block _account_user_role_items_view_privileges_entity_privilege_permission_widget %}
     {% if permission.name == field %}
         <tr>
-            <td class="span8">
+            <td class="col-md-6">
                 {% set aclPermission = acl_permission(permission) %}
 
                 {{ aclPermission.label|default(permission.name)|trans }}
                 {% if aclPermission.description %} ({{ aclPermission.description|trans }}){% endif %}
             </td>
-            <td>
+            <td class="col-md-6">
                 {% set accessLevel = prefix ~ (privileges.accessLevelNames[permission.accessLevel-1])|default(none_ownership) %}
                 <div>{{ accessLevel|trans }}</div>
             </td>
@@ -136,7 +136,7 @@
 
 {% endblock %}
 
-{% block _account_user_role_items_view_privileges_action_privilege_permition_widget %}
+{% block _account_user_role_items_view_privileges_action_privilege_permission_widget %}
     {% set accessLevel = prefix ~ (privileges.accessLevelNames[permission.accessLevel-1])|default(none_ownership) %}
     <div class="col-md-3 text-center">{{ accessLevel|trans }}</div>
 {% endblock %}

@@ -42,13 +42,13 @@ layout:
                     blockType: container
                 account_user_role_items_view_privileges_entity_privilege:
                     blockType: container
-                account_user_role_items_view_privileges_entity_privilege_permition:
+                account_user_role_items_view_privileges_entity_privilege_permission:
                     blockType: container
                 account_user_role_items_view_privileges_action:
                     blockType: container
                 account_user_role_items_view_privileges_action_privilege:
                     blockType: container
-                account_user_role_items_view_privileges_action_privilege_permition:
+                account_user_role_items_view_privileges_action_privilege_permission:
                     blockType: container
                 account_user_role_items_view_users:
                     blockType: datagrid
@@ -66,8 +66,8 @@ layout:
                                 account_user_role_items_view_privileges_container:
                                     account_user_role_items_view_privileges_entity:
                                         account_user_role_items_view_privileges_entity_privilege:
-                                            account_user_role_items_view_privileges_entity_privilege_permition: ~
+                                            account_user_role_items_view_privileges_entity_privilege_permission: ~
                                     account_user_role_items_view_privileges_action:
                                         account_user_role_items_view_privileges_action_privilege:
-                                            account_user_role_items_view_privileges_action_privilege_permition: ~
+                                            account_user_role_items_view_privileges_action_privilege_permission: ~
                             account_user_role_items_view_users: ~
