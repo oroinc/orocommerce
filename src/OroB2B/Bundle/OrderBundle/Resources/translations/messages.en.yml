@@ -30,6 +30,12 @@ orob2b:
         source_entity_class.label: Source Entity Class
         source_entity_id.label: Source Entity Id
         source_entity_identifier.label: Source Entity Identifier
+        order_date.label: Order Date
+        shipping_method.label: Shipping Method
+        payment.label: Payment
+        frontend.order_information.title: 'Order Information'
+        frontend.ordered_items.title: 'Items Ordered'
+        frontend.order_list_link.text: '< Back to Orders List'
         discount.label: Discount
         total_discounts_amount.label: Total Discounts Amount
         discounts.label: Discounts
@@ -103,6 +109,8 @@ orob2b:
 
             column:
                 product: 'Product'
+
+            frontend.order.view.label: Item#
 
         orderdiscountitem:
             columns:

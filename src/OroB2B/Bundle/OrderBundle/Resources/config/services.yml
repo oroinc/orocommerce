@@ -18,6 +18,12 @@ parameters:
     orob2b_order.model.order_totals_handler.class: OroB2B\Bundle\OrderBundle\Model\OrderTotalsHandler
     orob2b_order.event_listener.form_view.class: OroB2B\Bundle\OrderBundle\EventListener\FormViewListener
 
+    orob2b_order.event_listener.order.total.class: OroB2B\Bundle\OrderBundle\EventListener\Order\OrderTotalEventListener
+    orob2b_order.event_listener.order.address.class: OroB2B\Bundle\OrderBundle\EventListener\Order\OrderAddressEventListener
+    orob2b_order.event_listener.order.payment_term.class: OroB2B\Bundle\OrderBundle\EventListener\Order\OrderPaymentTermEventListener
+    orob2b_order.event_listener.order.matching_price.class: OroB2B\Bundle\OrderBundle\EventListener\Order\MatchingPriceEventListener
+    orob2b_order.event_listener.order.tier_prices.class: OroB2B\Bundle\OrderBundle\EventListener\Order\TierPriceEventListener
+
     orob2b_order.provider.shipping_cost_subtotal.class: OroB2B\Bundle\OrderBundle\Provider\ShippingCostSubtotalProvider
     orob2b_order.provider.discount_subtotal.class: OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider
 
@@ -28,11 +34,16 @@ parameters:
     #formaters
     orob2b_order.formatter.source_document.class: OroB2B\Bundle\OrderBundle\Formatter\SourceDocumentFormatter
 
+    orob2b_order.layout.block_type.date.class: OroB2B\Bundle\OrderBundle\Layout\Block\Type\DateType
+    orob2b_order.layout.block_type.currency.class: OroB2B\Bundle\OrderBundle\Layout\Block\Type\CurrencyType
+    orob2b_order.layout.block_type.address.class: OroB2B\Bundle\OrderBundle\Layout\Block\Type\AddressType
+    orob2b_order.layout.block_type_extension.block_prefixes.class: OroB2B\Bundle\OrderBundle\Layout\Block\Extension\BlockPrefixExtension
+    orob2b_order.layout.block_type.order_total.class: OroB2B\Bundle\OrderBundle\Layout\Block\Type\OrderTotalType
+
     orob2b_order.validator.checkout_address.class: OroB2B\Bundle\OrderBundle\Validator\Constraints\OrderAddressValidator
+    orob2b_order.pricing.price_matcher.class: OroB2B\Bundle\OrderBundle\Pricing\PriceMatcher
 
     orob2b_order.order.total.total_helper.class: OroB2B\Bundle\OrderBundle\Total\TotalHelper
-
-    orob2b_order.form.subscriber.subtotal_subscriber.class: OroB2B\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber
 
 services:
     orob2b_order.order.manager.api:
@@ -126,16 +137,6 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-user-view, method: onAccountUserView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
 
-    orob2b_order.processor.quick_add:
-        parent: orob2b_product.component_processor.data_storage_aware.processor
-        calls:
-            - [setName, ['orob2b_order_quick_add_processor']]
-            - [setRedirectRouteName, ['orob2b_order_frontend_create']]
-            - [setAcl, ['orob2b_order_frontend_create']]
-            - [setScope, ['order']]
-        tags:
-            - { name: orob2b_product.quick_add_processor }
-
     orob2b_order.event_listener.product_select_db_query:
         class: %orob2b_product.event_listener.scoped_product_select_db_query.class%
         parent: orob2b_product.event_listener.abstract_product_select_db_query
@@ -146,6 +147,42 @@ services:
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
 
+    orob2b_order.event_listener.order.total:
+        class: %orob2b_order.event_listener.order.total.class%
+        arguments:
+            - @orob2b_pricing.subtotal_processor.total_processor_provider
+        tags:
+            - { name: kernel.event_listener, event: orob2b_order.order, method: onOrderEvent, priority: -255 }
+
+    orob2b_order.event_listener.order.address:
+        class: %orob2b_order.event_listener.order.address.class%
+        arguments:
+            - @templating
+            - @form.factory
+        tags:
+            - { name: kernel.event_listener, event: orob2b_order.order, method: onOrderEvent }
+
+    orob2b_order.event_listener.order.payment_term:
+        class: %orob2b_order.event_listener.order.payment_term.class%
+        arguments:
+            - @orob2b_payment.provider.payment_term
+        tags:
+            - { name: kernel.event_listener, event: orob2b_order.order, method: onOrderEvent }
+
+    orob2b_order.event_listener.order.matching_price:
+        class: %orob2b_order.event_listener.order.matching_price.class%
+        arguments:
+            - @orob2b_order.pricing.price_matcher
+        tags:
+            - { name: kernel.event_listener, event: orob2b_order.order, method: onOrderEvent }
+
+    orob2b_order.event_listener.order.tier_prices:
+        class: %orob2b_order.event_listener.order.tier_prices.class%
+        arguments:
+            - @orob2b_pricing.provider.product_price
+            - @orob2b_pricing.model.price_list_tree_handler
+        tags:
+            - { name: kernel.event_listener, event: orob2b_order.order, method: onOrderEvent }
 
     orob2b_order.twig.order:
         class: %orob2b_order.twig.order.class%
@@ -158,6 +195,31 @@ services:
         class: %orob2b_order.formatter.source_document.class%
         arguments:
             - @oro_entity.entity_class_name_provider
+
+    orob2b_order.layout.block_type.currency:
+        class: %orob2b_order.layout.block_type.currency.class%
+        tags:
+             - { name: layout.block_type, alias: currency }
+
+    orob2b_order.layout.block_type.date:
+        class: %orob2b_order.layout.block_type.date.class%
+        tags:
+             - { name: layout.block_type, alias: date }
+
+    orob2b_order.layout.block_type.address:
+        class: %orob2b_order.layout.block_type.address.class%
+        tags:
+             - { name: layout.block_type, alias: address }
+
+    orob2b_order.layout.block_type_extension.block_prefixes:
+        class: %orob2b_order.layout.block_type_extension.block_prefixes.class%
+        tags:
+            - { name: layout.block_type_extension, alias: block }
+
+    orob2b_order.layout.block_type.order_total:
+        class: %orob2b_order.layout.block_type.order_total.class%
+        tags:
+             - { name: layout.block_type, alias: order_total }
 
     orob2b_order.order.listener.total_calculate_listener:
         class: %orob2b_order.order.listener.total_calculate_listener.class%
@@ -174,14 +236,15 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: orob2b_order_address_validator }
 
+    orob2b_order.pricing.price_matcher:
+        class: %orob2b_order.pricing.price_matcher.class%
+        arguments:
+            - @orob2b_pricing.provider.matching_price
+            - @orob2b_pricing.model.price_list_tree_handler
+
     orob2b_order.order.total.total_helper:
         class: %orob2b_order.order.total.total_helper.class%
         arguments:
             - @orob2b_pricing.subtotal_processor.total_processor_provider
             - @orob2b_pricing.subtotal_processor.provider.subtotal_line_item
             - @orob2b_order.provider.discount_subtotal
-
-    orob2b_order.form.subscriber.subtotal_subscriber:
-        class: %orob2b_order.form.subscriber.subtotal_subscriber.class%
-        arguments:
-            - @orob2b_order.order.total.total_helper
