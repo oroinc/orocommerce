@@ -46,7 +46,6 @@ orob2b:
             items: Items
             subtotal: Subtotal
             edit_order: Edit Order
-            edit_order_list: Edit your Order List
             item: Item
             sku: SKU
             quantity : Quantity
