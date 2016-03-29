@@ -13,7 +13,7 @@ use OroB2B\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository;
 use OroB2B\Bundle\TaxBundle\Form\Extension\ProductTaxExtension;
 use OroB2B\Bundle\TaxBundle\Form\Type\ProductTaxCodeAutocompleteType;
 
-class ProductTaxExtensionTest extends AbstractTaxExtensionText
+class ProductTaxExtensionTest extends AbstractTaxExtensionTest
 {
     /**
      * @var ProductTaxCodeRepository|\PHPUnit_Framework_MockObject_MockObject

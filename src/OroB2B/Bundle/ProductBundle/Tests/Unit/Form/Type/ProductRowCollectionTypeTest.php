@@ -10,6 +10,7 @@ use Symfony\Component\Validator\Validation;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
+use OroB2B\Bundle\ProductBundle\Model\ProductRow;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRowCollectionType;
@@ -98,23 +99,14 @@ class ProductRowCollectionTypeTest extends FormIntegrationTestCase
                     ]
                 ],
                 'expectedData' => [
-                    [
-                        'productSku' => 'SKU_001',
-                        'productQuantity' => '1'
-                    ],
-                    [
-                        'productSku' => 'SKU_002',
-                        'productQuantity' => '20'
-                    ]
+                    $this->createProductRow('SKU_001', '1'),
+                    $this->createProductRow('SKU_002', '20')
                 ],
                 'options' => []
             ],
             'with default data' => [
                 'defaultData' => [
-                    [
-                        'productSku' => 'SKU',
-                        'productQuantity' => '42'
-                    ]
+                    $this->createProductRow('SKU', '42')
                 ],
                 'submittedData' => [
                     [
@@ -139,18 +131,10 @@ class ProductRowCollectionTypeTest extends FormIntegrationTestCase
                     ],
                 ],
                 'expectedData' => [
-                    [
-                        'productSku' => 'SKU_003',
-                        'productQuantity' => '30'
-                    ],
-                    [
-                        'productSku' => 'SKU_004',
-                        'productQuantity' => '40'
-                    ],
-                    [
-                        'productSku' => 'SKU_005',
-                        'productQuantity' => '50'
-                    ]
+                    $this->createProductRow('SKU_003', '30'),
+                    $this->createProductRow('SKU_004', '40'),
+                    $this->createProductRow('SKU_005', '50')
+
                 ],
                 'options' => []
             ]
@@ -179,5 +163,19 @@ class ProductRowCollectionTypeTest extends FormIntegrationTestCase
     public function testGetName()
     {
         $this->assertEquals(ProductRowCollectionType::NAME, $this->formType->getName());
+    }
+
+    /**
+     * @param string $sku
+     * @param string $qty
+     * @return ProductRow
+     */
+    protected function createProductRow($sku, $qty)
+    {
+        $productRow = new ProductRow();
+        $productRow->productSku = $sku;
+        $productRow->productQuantity= $qty;
+
+        return $productRow;
     }
 }

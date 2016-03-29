@@ -10,6 +10,7 @@ define(function (require) {
     var TotalsListener = require('orob2bpricing/js/app/listener/totals-listener');
     var NumberFormatter = require('orolocale/js/formatter/number');
     var mediator = require('oroui/js/mediator');
+    var localeSettings = require('orolocale/js/locale-settings');
 
     /**
      * @export orob2binvoice/js/app/views/line-item-view
@@ -36,7 +37,7 @@ define(function (require) {
                 freeFormType: '.invoice-line-item-type-free-form',
                 totalPrice: '.invoice-line-item-total-price'
             },
-            currency: 'USD',
+            currency: localeSettings.defaults.currency,
             precision: 4
         },
 
