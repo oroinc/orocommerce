@@ -57,7 +57,7 @@ class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider getAddressForTaxationProvider
+     * @dataProvider getTaxationAddressProvider
      *
      * @param AbstractAddress|null $expectedResult
      * @param string $destination
@@ -67,7 +67,7 @@ class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
      * @param OrderAddress $shippingAddress
      * @param array $exclusions
      */
-    public function testGetAddressForTaxation(
+    public function testGetTaxationAddress(
         $expectedResult,
         $destination,
         $origin,
@@ -95,7 +95,7 @@ class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $expectedResult,
-            $this->addressProvider->getAddressForTaxation($billingAddress, $shippingAddress)
+            $this->addressProvider->getTaxationAddress($billingAddress, $shippingAddress)
         );
     }
 
@@ -104,7 +104,7 @@ class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function getAddressForTaxationProvider()
+    public function getTaxationAddressProvider()
     {
         $countryUS = new Country('US');
         $countryCA = new Country('CA');

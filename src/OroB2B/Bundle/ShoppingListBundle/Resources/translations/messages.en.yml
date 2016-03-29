@@ -102,6 +102,8 @@ orob2b:
 
     frontend:
         shoppinglist:
+            quick_order:
+                default_label: Quick Order (%date%)
             selector:
                 sort_by.label: 'Sort By:'
                 last_updated.label: 'Last Updated'
@@ -132,8 +134,8 @@ orob2b:
                 delete_confirm: 'Are you sure you want to delete this Shopping list?'
                 deleted: 'Shopping list has been deleted'
             btn:
-                request_quote_create_rfp: 'Request a Quote'
+                request_quote_create_rfp: 'Request Quote'
                 create_order: 'Create Order'
-                delete: 'Delete Shooping List'
+                delete: 'Delete'
             workflow:
                 remove_source.label: Clear the shopping list

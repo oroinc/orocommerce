@@ -21,6 +21,11 @@ parameters:
     orob2b_tax.event_listener.config.address.class: OroB2B\Bundle\TaxBundle\EventListener\Config\AddressEventListener
     orob2b_tax.event_listener.config.digital_products.class: OroB2B\Bundle\TaxBundle\EventListener\Config\DigitalProductEventListener
 
+    orob2b_tax.event_listener.tax_value.class: OroB2B\Bundle\TaxBundle\EventListener\TaxValueListener
+    orob2b_tax.event_listener.entity_tax.class: OroB2B\Bundle\TaxBundle\EventListener\EntityTaxListener
+    orob2b_tax.event_listener.grid.order_line_item.class: OroB2B\Bundle\TaxBundle\EventListener\Order\OrderLineItemGridListener
+    orob2b_tax.event_listener.order.taxes.class: OroB2B\Bundle\TaxBundle\EventListener\Order\OrderTaxesListener
+
     orob2b_tax.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
     orob2b_tax.provider.tax_provider_registry.class: OroB2B\Bundle\TaxBundle\Provider\TaxProviderRegistry
@@ -69,6 +74,10 @@ parameters:
     orob2b_tax.event.tax_event_dispatcher.class: OroB2B\Bundle\TaxBundle\Event\TaxEventDispatcher
     orob2b_tax.event.context_event_dispatcher.class: OroB2B\Bundle\TaxBundle\Event\ContextEventDispatcher
     orob2b_tax.event.resolver_event_connector.class: OroB2B\Bundle\TaxBundle\Event\ResolverEventConnector
+
+    orob2b_tax.layout.data_provider.tax.class: OroB2B\Bundle\TaxBundle\Layout\Provider\TaxDataProvider
+    orob2b_tax.layout.type.tax.class: OroB2B\Bundle\TaxBundle\Layout\Block\Type\TaxType
+    orob2b_tax.provider.tax_subtotal.class: OroB2B\Bundle\TaxBundle\Provider\TaxSubtotalProvider
 
 services:
     orob2b_tax.manager.product_tax_code.api:
@@ -252,6 +261,24 @@ services:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
 
+    orob2b_tax.event_listener.grid.order_line_item:
+        class: %orob2b_tax.event_listener.grid.order_line_item.class%
+        arguments:
+            - @orob2b_tax.provider.taxation_settings_provider
+            - %orob2b_tax.entity.tax_value.class%
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid-frontend, method: onBuildBefore }
+
+    orob2b_tax.event_listener.order.taxes:
+        class: %orob2b_tax.event_listener.order.taxes.class%
+        arguments:
+            - @orob2b_tax.manager.tax_manager
+            - @orob2b_tax.provider.taxation_settings_provider
+            - @orob2b_order.pricing.price_matcher
+        tags:
+            - { name: kernel.event_listener, event: orob2b_order.order, method: onOrderEvent, priority: -128 }
+
     orob2b_tax.provider.tax_provider_registry:
         class: %orob2b_tax.provider.tax_provider_registry.class%
 
@@ -281,6 +308,7 @@ services:
             - @orob2b_tax.factory.tax
             - @orob2b_tax.event.tax_event_dispatcher
             - @orob2b_tax.manager.tax_value_manager
+            - @orob2b_tax.provider.taxation_settings_provider
         calls:
             - [addTransformer, [%orob2b_order.entity.order.class%, @orob2b_tax.transformer.tax_value]]
             - [addTransformer, [%orob2b_order.entity.order_line_item.class%, @orob2b_tax.transformer.tax_value]]
@@ -310,6 +338,7 @@ services:
         arguments:
             - @orob2b_tax.event.context_event_dispatcher
             - @orob2b_tax.provider.taxation_address_provider
+            - %orob2b_order.entity.order.class%
         calls:
             - [setOrderLineItemMapper, [@orob2b_tax.order_tax.mapper.order_line_item_mapper]]
         tags:
@@ -320,6 +349,7 @@ services:
         arguments:
             - @orob2b_tax.event.context_event_dispatcher
             - @orob2b_tax.provider.taxation_address_provider
+            - %orob2b_order.entity.order_line_item.class%
         tags:
             - { name: orob2b_tax.tax_mapper }
 
@@ -337,7 +367,7 @@ services:
     orob2b_tax.provider.taxation_settings_provider:
         class: %orob2b_tax.provider.taxation_settings_provider.class%
         arguments:
-            - @oro_config.manager
+            - @oro_config.global
             - @orob2b_tax.factory.tax_base_exclusion
             - @orob2b_tax.factory.address_model_factory
 
@@ -463,3 +493,51 @@ services:
             - @orob2b_tax.resolver.us_sales_tax_digital.item
         tags:
             - { name: orob2b_tax.resolver, event: orob2b_tax.resolve }
+
+    orob2b_tax.event_listener.tax_value:
+        class: %orob2b_tax.event_listener.tax_value.class%
+        arguments:
+            - @orob2b_tax.manager.tax_value_manager
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: %orob2b_tax.entity.tax_value.class%, event: postRemove }
+
+    orob2b_tax.event_listener.order_tax:
+        class: %orob2b_tax.event_listener.entity_tax.class%
+        arguments:
+            - @orob2b_tax.manager.tax_manager
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: %orob2b_order.entity.order.class%, event: prePersist }
+            - { name: doctrine.orm.entity_listener, entity: %orob2b_order.entity.order.class%, event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: %orob2b_order.entity.order.class%, event: preFlush }
+            - { name: doctrine.orm.entity_listener, entity: %orob2b_order.entity.order.class%, event: preRemove }
+
+    orob2b_tax.event_listener.order_line_item_tax:
+        class: %orob2b_tax.event_listener.entity_tax.class%
+        arguments:
+            - @orob2b_tax.manager.tax_manager
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: %orob2b_order.entity.order_line_item.class%, event: prePersist }
+            - { name: doctrine.orm.entity_listener, entity: %orob2b_order.entity.order_line_item.class%, event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: %orob2b_order.entity.order_line_item.class%, event: preFlush }
+            - { name: doctrine.orm.entity_listener, entity: %orob2b_order.entity.order_line_item.class%, event: preRemove }
+
+    orob2b_tax.layout.data_provider.tax:
+        class: %orob2b_tax.layout.data_provider.tax.class%
+        arguments:
+            - @orob2b_tax.manager.tax_manager
+        tags:
+            - { name: layout.data_provider, alias: tax }
+
+    orob2b_tax.layout.type.tax:
+        class: %orob2b_tax.layout.type.tax.class%
+        tags:
+             - { name: layout.block_type, alias: tax }
+
+    orob2b_tax.provider.tax_subtotal:
+        class: %orob2b_tax.provider.tax_subtotal.class%
+        arguments:
+            - @translator
+            - @orob2b_tax.manager.tax_manager
+            - @orob2b_tax.factory.tax
+        tags:
+            - { name: orob2b_pricing.subtotal_provider, priority: 20 }

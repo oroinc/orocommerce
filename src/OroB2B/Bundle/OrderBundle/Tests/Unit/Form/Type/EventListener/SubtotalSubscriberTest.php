@@ -2,14 +2,15 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type\EventListener;
 
-use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
-use OroB2B\Bundle\OrderBundle\Total\TotalHelper;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Symfony\Component\Form\FormEvents;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
+use OroB2B\Bundle\OrderBundle\Entity\OrderDiscount;
 use OroB2B\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
+use OroB2B\Bundle\OrderBundle\Pricing\PriceMatcher;
 use OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
+use OroB2B\Bundle\OrderBundle\Total\TotalHelper;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
@@ -27,32 +28,37 @@ class SubtotalSubscriberTest extends \PHPUnit_Framework_TestCase
     /** @var DiscountSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $discountSubtotalProvider;
 
+    /** @var PriceMatcher|\PHPUnit_Framework_MockObject_MockObject */
+    protected $priceMatcher;
+
     protected function setUp()
     {
-        $this->totalProvider = $this->getMockBuilder(
-            'OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider'
-        )
+        $this->totalProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->lineItemSubtotalProvider = $this->getMockBuilder(
-            'OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
-        )
+        $this->lineItemSubtotalProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->discountSubtotalProvider = $this->getMockBuilder(
-            'OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider'
-        )
+        $this->discountSubtotalProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->priceMatcher = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Pricing\PriceMatcher')
             ->disableOriginalConstructor()
             ->getMock();
 
         $totalHelper = new TotalHelper(
             $this->totalProvider,
             $this->lineItemSubtotalProvider,
-            $this->discountSubtotalProvider
+            $this->discountSubtotalProvider,
+            $this->priceMatcher
         );
-        $this->subscriber = new SubtotalSubscriber($totalHelper);
+        $this->subscriber = new SubtotalSubscriber($totalHelper, $this->priceMatcher);
     }
 
     public function testGetSubscribedEvents()
@@ -146,6 +152,8 @@ class SubtotalSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->discountSubtotalProvider->expects($this->any())
             ->method('getSubtotal')
             ->willReturn([$discountSubtotal, $discountSubtotal2]);
+
+        $this->priceMatcher->expects($this->any())->method('addMatchingPrices');
 
         $this->totalProvider->expects($this->any())
             ->method('getTotal')
