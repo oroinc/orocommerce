@@ -52,7 +52,7 @@ expectedResult:
                 adjustment: '0.0036'    # 1.4536 - 1.45
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '87.22', tax_amount: '8.72', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '87.22', taxAmount: '8.72', currency: 'USD' }
         -
             row:
                 includingTax: '38.85' # 5.55 * 7
@@ -67,4 +67,4 @@ expectedResult:
                 adjustment: '0.0045'  # 0.5045 - 0.5
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxable_amount: '35.32', tax_amount: '3.53', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '35.32', taxAmount: '3.53', currency: 'USD' }

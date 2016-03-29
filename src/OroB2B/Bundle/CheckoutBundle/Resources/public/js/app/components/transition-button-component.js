@@ -66,7 +66,7 @@ define(function(require) {
         onSuccess: function(response) {
             this.inProgress = false;
             if (response.hasOwnProperty('redirectUrl')) {
-                mediator.execute('redirectTo', {url: response.redirectUrl});
+                mediator.execute('redirectTo', {url: response.redirectUrl}, {redirect: true});
             } else {
                 var $response = $('<div/>').html(response);
                 mediator.trigger('checkout-content:before-update');

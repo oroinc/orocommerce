@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListProductPriceType;
@@ -62,13 +61,8 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     public function getMatchingPriceAction(Request $request)
     {
         $lineItems = $request->get('items', []);
+        $matchedPrices = $this->get('orob2b_pricing.provider.matching_price')->getMatchingPrices($lineItems);
 
-        $productsPriceCriteria = $this->prepareProductsPriceCriteria($lineItems);
-
-        /** @var Price[] $matchedPrice */
-        $matchedPrice = $this->get('orob2b_pricing.provider.combined_product_price')
-            ->getMatchedPrices($productsPriceCriteria);
-
-        return new JsonResponse($this->formatMatchedPrices($matchedPrice));
+        return new JsonResponse($matchedPrices);
     }
 }

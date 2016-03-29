@@ -7,6 +7,7 @@ use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\NavigationBundle\Event\ResponseHashnavListener;
 use Oro\Bundle\ThemeBundle\Model\ThemeRegistry;
 
 use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
@@ -74,6 +75,13 @@ class ThemeListener
             $request = $event->getRequest();
             $layoutTheme = $this->configManager->get(self::DEFAULT_LAYOUT_THEME_CONFIG_VALUE_KEY);
             $request->attributes->set('_theme', $layoutTheme);
+
+            //disable SPA
+            $hashNavigationHeader = $request->get(ResponseHashnavListener::HASH_NAVIGATION_HEADER) ||
+                $request->headers->get(ResponseHashnavListener::HASH_NAVIGATION_HEADER);
+            if ($hashNavigationHeader && !$request->attributes->has('_fullRedirect')) {
+                $request->attributes->set('_fullRedirect', true);
+            }
         }
     }
 
