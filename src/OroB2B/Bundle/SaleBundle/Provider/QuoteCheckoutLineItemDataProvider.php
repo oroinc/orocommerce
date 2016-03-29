@@ -24,13 +24,13 @@ class QuoteCheckoutLineItemDataProvider extends AbstractCheckoutProvider
     protected function prepareData($entity)
     {
         $result = [];
-        foreach ($entity->getDemandOffers() as $offer) {
+        foreach ($entity->getDemandProducts() as $demandProduct) {
             /** @var QuoteProductOffer $productOffer */
-            $productOffer = $offer->getQuoteProductOffer();
+            $productOffer = $demandProduct->getQuoteProductOffer();
             $result[] = [
                 'product' => $productOffer->getProduct(),
                 'productSku' => $productOffer->getProductSku(),
-                'quantity' => $productOffer->getQuantity(),
+                'quantity' => $demandProduct->getQuantity(),
                 'productUnit' => $productOffer->getProductUnit(),
                 'productUnitCode' => $productOffer->getProductUnitCode(),
                 'price' => $productOffer->getPrice(),

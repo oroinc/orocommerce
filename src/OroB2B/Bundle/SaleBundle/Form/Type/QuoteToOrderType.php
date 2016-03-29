@@ -86,7 +86,7 @@ class QuoteToOrderType extends CollectionType
         }
         $em = $this->registry->getManagerForClass('OroB2BSaleBundle:QuoteProductDemand');
         $selectedOffers = [];
-        foreach ($this->quoteDemand->getDemandOffers() as $quoteProductDemand) {
+        foreach ($this->quoteDemand->getDemandProducts() as $quoteProductDemand) {
             $selectedOffers[$quoteProductDemand->getQuoteProductOffer()->getId()] = $quoteProductDemand;
         }
         foreach ($event->getData() as $item) {

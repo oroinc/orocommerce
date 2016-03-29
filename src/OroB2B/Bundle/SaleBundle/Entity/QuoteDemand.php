@@ -52,11 +52,11 @@ class QuoteDemand implements CheckoutSourceEntityInterface
      * @ORM\OneToMany(targetEntity="OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand",
      *     mappedBy="quoteDemand", cascade={"all"})
      */
-    protected $demandOffers;
+    protected $demandProducts;
 
     public function __construct()
     {
-        $this->demandOffers = new ArrayCollection();
+        $this->demandProducts = new ArrayCollection();
     }
 
     /**
@@ -86,9 +86,9 @@ class QuoteDemand implements CheckoutSourceEntityInterface
     /**
      * @return QuoteProductDemand[]|Collection
      */
-    public function getDemandOffers()
+    public function getDemandProducts()
     {
-        return $this->demandOffers;
+        return $this->demandProducts;
     }
 
     /**
@@ -97,8 +97,8 @@ class QuoteDemand implements CheckoutSourceEntityInterface
      */
     public function addDemandOffer(QuoteProductDemand $demandOffer)
     {
-        if (!$this->demandOffers->contains($demandOffer)) {
-            $this->demandOffers->add($demandOffer);
+        if (!$this->demandProducts->contains($demandOffer)) {
+            $this->demandProducts->add($demandOffer);
         }
         return $this;
     }
@@ -109,8 +109,8 @@ class QuoteDemand implements CheckoutSourceEntityInterface
      */
     public function removeDemandOffer(QuoteProductDemand $demandOffer)
     {
-        if ($this->demandOffers->contains($demandOffer)) {
-            $this->demandOffers->remove($demandOffer);
+        if ($this->demandProducts->contains($demandOffer)) {
+            $this->demandProducts->remove($demandOffer);
         }
         return $this;
     }
