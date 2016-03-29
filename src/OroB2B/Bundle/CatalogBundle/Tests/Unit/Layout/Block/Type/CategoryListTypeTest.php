@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Layout\Block\Type;
 
-
 use Oro\Component\Layout\Block\Type\ContainerType;
 use Oro\Component\Layout\LayoutFactoryBuilderInterface;
 use Oro\Bundle\LayoutBundle\Tests\Unit\BlockTypeTestCase;
@@ -21,7 +20,8 @@ class CategoryListTypeTest extends BlockTypeTestCase
         $layoutFactoryBuilder
             ->addType(new CategoryListType());
     }
-        /**
+
+    /**
      * @expectedException \Symfony\Component\OptionsResolver\Exception\MissingOptionsException
      * @expectedExceptionMessage The required option "categories" is missing.
      */
@@ -40,7 +40,7 @@ class CategoryListTypeTest extends BlockTypeTestCase
 
         $this->assertEquals($categories, $view->vars['categories']);
     }
-    
+
     public function testGetName()
     {
         $type = $this->getBlockType(CategoryListType::NAME);
