@@ -3,12 +3,11 @@
 namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
@@ -62,7 +61,7 @@ class AccountUserRoleController extends Controller
 
     /**
      * @Route("/create", name="orob2b_account_frontend_account_user_role_create")
-     * @Template("OroB2BAccountBundle:AccountUserRole/Frontend:update.html.twig")
+     * @Layout()
      * @Acl(
      *      id="orob2b_account_frontend_account_user_role_create",
      *      type="entity",
@@ -75,12 +74,23 @@ class AccountUserRoleController extends Controller
      */
     public function createAction()
     {
-        return $this->update(new AccountUserRole());
+        $role = new AccountUserRole();
+        $response = $this->update($role);
+
+        if ($response instanceof Response) {
+            return $response;
+        }
+
+        return [
+            'data' => [
+                'entity' => $role
+            ]
+        ];
     }
 
     /**
      * @Route("/update/{id}", name="orob2b_account_frontend_account_user_role_update", requirements={"id"="\d+"})
-     * @Template("OroB2BAccountBundle:AccountUserRole/Frontend:update.html.twig")
+     * @Layout()
      * @param AccountUserRole $role
      * @param Request $request
      * @return array
@@ -106,7 +116,17 @@ class AccountUserRoleController extends Controller
             throw $this->createAccessDeniedException();
         }
 
-        return $this->update($role);
+        $response = $this->update($role);
+
+        if ($response instanceof Response) {
+            return $response;
+        }
+
+        return [
+            'data' => [
+                'entity' => $role
+            ]
+        ];
     }
 
     /**
@@ -134,15 +154,7 @@ class AccountUserRoleController extends Controller
                 ];
             },
             $this->get('translator')->trans('orob2b.account.controller.accountuserrole.saved.message'),
-            $handler,
-            function (AccountUserRole $entity, FormInterface $form, Request $request) use ($role) {
-                return [
-                    'form' => $form->createView(),
-                    'entity' => $entity,
-                    'isWidgetContext' => (bool)$request->get('_wid', false),
-                    'predefined_role_id' => $role->getId(),
-                ];
-            }
+            $handler
         );
     }
 }
