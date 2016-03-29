@@ -12,11 +12,11 @@ abstract class AbstractCheckoutProvider implements CheckoutDataProviderInterface
     /**
      * ${@inheritdoc}
      */
-    public function getData($entity, $additionalData = [])
+    public function getData($entity)
     {
-        $cacheKey = $this->getCacheKey($entity, $additionalData);
+        $cacheKey = $this->getCacheKey($entity);
         if (!isset($this->data[$cacheKey])) {
-            $this->data[$cacheKey] = $this->prepareData($entity, $additionalData);
+            $this->data[$cacheKey] = $this->prepareData($entity);
         }
 
         return $this->data[$cacheKey];
@@ -25,10 +25,9 @@ abstract class AbstractCheckoutProvider implements CheckoutDataProviderInterface
 
     /**
      * @param object|array $entity
-     * @param $additionalData
      * @return string
      */
-    protected function getCacheKey($entity, $additionalData)
+    protected function getCacheKey($entity)
     {
         $cacheKey = '';
         if (is_object($entity)) {
@@ -41,13 +40,12 @@ abstract class AbstractCheckoutProvider implements CheckoutDataProviderInterface
             $cacheKey .= md5(serialize($entity));
         }
 
-        return $cacheKey . "_" . md5(serialize($additionalData));
+        return $cacheKey;
     }
 
     /**
      * @param object|array $entity
-     * @param array $additionalData
      * @return array
      */
-    abstract protected function prepareData($entity, $additionalData);
+    abstract protected function prepareData($entity);
 }

@@ -59,8 +59,7 @@ use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  */
 class Quote extends ExtendQuote implements
     AccountOwnerAwareInterface,
-    EmailHolderInterface,
-    CheckoutSourceEntityInterface
+    EmailHolderInterface
 {
     /**
      * @var int

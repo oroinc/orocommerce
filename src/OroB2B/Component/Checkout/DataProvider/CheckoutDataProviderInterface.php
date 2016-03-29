@@ -6,10 +6,9 @@ interface CheckoutDataProviderInterface
 {
     /**
      * @param object|array $entity
-     * @param array $additionalData
      * @return array
      */
-    public function getData($entity, $additionalData);
+    public function getData($entity);
 
     /**
      * @param object|array $transformData

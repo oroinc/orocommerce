@@ -31,7 +31,7 @@ class QuoteCheckoutLineItemDataProvider extends AbstractCheckoutProvider
     /**
      * {@inheritdoc}
      */
-    protected function prepareData($entity, $additionalData)
+    protected function prepareData($entity)
     {
         $result = [];
         foreach ($entity->getDemandOffers() as $offer) {

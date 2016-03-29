@@ -20,7 +20,7 @@ use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 /**
  *
  * @ORM\Table(name="orob2b_quote_demand")
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\SaleBundle\Entity\Repository\QuoteProductDemandRepository")
+ * @ORM\Entity
  * @Config(
  *      defaultValues={
  *          "entity"={

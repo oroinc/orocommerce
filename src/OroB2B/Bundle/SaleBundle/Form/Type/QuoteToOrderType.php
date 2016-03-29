@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
-use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -13,6 +11,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
+use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand;
