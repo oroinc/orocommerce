@@ -9,9 +9,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\RFPBundle\Form\Type\OffersType;
 use OroB2B\Bundle\RFPBundle\Storage\OffersFormStorage;
@@ -26,6 +25,9 @@ class OrderDataStorageExtension extends AbstractTypeExtension
 
     /** @var DataStorageInterface */
     protected $sessionStorage;
+
+    /** @var \OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider */
+    protected $sectionProvider;
 
     /**
      * @var array|bool false if not initialized
@@ -48,6 +50,23 @@ class OrderDataStorageExtension extends AbstractTypeExtension
         $this->requestStack = $requestStack;
         $this->sessionStorage = $sessionStorage;
         $this->formStorage = $formStorage;
+    }
+
+    /**
+     * @param \OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider $sectionProvider
+     */
+    public function setSectionProvider($sectionProvider)
+    {
+        $className = 'OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider';
+
+        if (!is_a($sectionProvider, $className)) {
+            $actual = is_object($this->sectionProvider) ?
+                get_class($this->sectionProvider) : gettype($this->sectionProvider);
+
+            throw new \InvalidArgumentException(sprintf('"%s" expected, "%s" given', $className, $actual));
+        }
+
+        $this->sectionProvider = $sectionProvider;
     }
 
     /** {@inheritdoc} */
@@ -133,26 +152,22 @@ class OrderDataStorageExtension extends AbstractTypeExtension
     }
 
     /** {@inheritdoc} */
-    public function configureOptions(OptionsResolver $resolver)
+    public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        if (!$this->isApplicable()) {
-            return;
-        }
-
-        $resolver->setNormalizer(
-            'sections',
-            function (Options $options, array $sections) {
-                $sections[self::OFFERS_DATA_KEY] = [
-                    'data' => [
-                        self::OFFERS_DATA_KEY => [],
-                        OffersFormStorage::DATA_KEY => [],
+        if ($this->sectionProvider && $this->isApplicable()) {
+            $this->sectionProvider->addSections(
+                $this->getExtendedType(),
+                [
+                    self::OFFERS_DATA_KEY => [
+                        'data' => [
+                            self::OFFERS_DATA_KEY => [],
+                            OffersFormStorage::DATA_KEY => [],
+                        ],
+                        'order' => 5,
                     ],
-                    'order' => 5,
-                ];
-
-                return $sections;
-            }
-        );
+                ]
+            );
+        }
     }
 
     /**

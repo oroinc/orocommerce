@@ -13,7 +13,6 @@ use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
 use OroB2B\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
 
 /**
  * @dbIsolation
@@ -125,77 +124,6 @@ class OrderControllerTest extends WebTestCase
         $this->assertEquals($expectedLineItems, $this->getActualLineItems($crawler, count($lineItems)));
     }
 
-    public function testQuickAdd()
-    {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_frontend_quick_add'));
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-
-        $form = $crawler->filter('form[name="orob2b_product_quick_add"]')->form();
-
-        /** @var Product $product */
-        $product = $this->getReference('product.3');
-
-        $products = [
-            [
-                'productSku' => $product->getSku(),
-                'productQuantity' => 15
-            ]
-        ];
-
-        /** @var DataStorageAwareComponentProcessor $processor */
-        $processor = $this->getContainer()->get('orob2b_order.processor.quick_add');
-
-        $this->client->followRedirects(true);
-        $crawler = $this->client->request(
-            $form->getMethod(),
-            $form->getUri(),
-            [
-                'orob2b_product_quick_add' => [
-                    '_token' => $form['orob2b_product_quick_add[_token]']->getValue(),
-                    'products' => $products,
-                    'component' => $processor->getName()
-                ]
-            ]
-        );
-
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-
-        $expectedQuickAddLineItems = [
-            [
-                'product' => $product->getId(),
-                'quantity' => 15,
-            ]
-        ];
-
-        $this->assertEquals($expectedQuickAddLineItems, $this->getActualLineItems($crawler, count($products), true));
-
-        $form = $crawler->selectButton('Save')->form();
-        $form['input_action'] = 'save_and_stay';
-        $form['orob2b_order_frontend_type[poNumber]'] = self::QUICK_ADD_ORDER_PO_NUMBER;
-
-        $crawler = $this->client->submit($form);
-
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('Order has been saved', $crawler->html());
-
-        $this->assertViewPage($crawler, [self::QUICK_ADD_ORDER_PO_NUMBER]);
-
-        /** @var CombinedProductPrice $productPrice */
-        $productPrice = $this->getReference('product_price.9');
-
-        $expectedLineItems = [
-            [
-                'product' => $product->getId(),
-                'quantity' => 15,
-                'productUnit' => 'orob2b.product_unit.liter.label.full',
-                'price' => $this->formatProductPrice($productPrice),
-                'shipBy' => null
-            ]
-        ];
-
-        $this->assertEquals($expectedLineItems, $this->getActualLineItems($crawler, count($products)));
-    }
-
     /**
      * @depends testCreate
      * @return int
@@ -285,7 +213,7 @@ class OrderControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertViewPage($crawler, ['Notes', self::ORDER_PO_NUMBER_UPDATED]);
+        $this->assertViewPage($crawler, ['Notes']);
     }
 
     /**
