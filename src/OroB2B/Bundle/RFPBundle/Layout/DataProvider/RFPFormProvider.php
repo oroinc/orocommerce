@@ -11,7 +11,7 @@ use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAction;
 
 use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestType;
+use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 
 class RFPFormProvider extends AbstractServerRenderDataProvider
 {
@@ -42,7 +42,7 @@ class RFPFormProvider extends AbstractServerRenderDataProvider
 
         if (!isset($this->data[$requestId])) {
             if ($requestId) {
-                $action = FormAction::createByRoute('orob2b_rfp_frontend_request_view', ['id' => $requestId]);
+                $action = FormAction::createByRoute('orob2b_rfp_frontend_request_update', ['id' => $requestId]);
             } else {
                 $action = FormAction::createByRoute('orob2b_rfp_frontend_request_create');
             }

@@ -3,7 +3,9 @@
 namespace OroB2B\Bundle\RFPBundle\Controller\Frontend;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -107,7 +109,13 @@ class RequestController extends Controller
             ;
         }
 
-        return ['data' => $this->update($rfpRequest)];
+        $data = $this->update($rfpRequest);
+
+        if (!is_array($data) && $data->getStatusCode() ===  302) {
+            return $data;
+        }
+
+        return ['data' => $data];
     }
 
     /**
@@ -126,7 +134,13 @@ class RequestController extends Controller
      */
     public function updateAction(RFPRequest $rfpRequest)
     {
-        return ['data' => $this->update($rfpRequest)];
+        $data = $this->update($rfpRequest);
+
+        if (!is_array($data) && $data->getStatusCode() ===  302) {
+            return $data;
+        }
+
+        return ['data' => $data];
     }
 
     /**
@@ -165,7 +179,6 @@ class RequestController extends Controller
                     'route'         => 'orob2b_rfp_frontend_request_create',
                     'parameters'    => [],
                 ];
-
             },
             function (RFPRequest $rfpRequest) use ($securityFacade) {
                 if ($securityFacade->isGranted('ACCOUNT_VIEW', $rfpRequest)) {
@@ -180,7 +193,19 @@ class RequestController extends Controller
                     'parameters'    => [],
                 ];
             },
-            $this->get('translator')->trans('orob2b.rfp.controller.request.saved.message')
+            $this->get('translator')->trans('orob2b.rfp.controller.request.saved.message'),
+            null,
+            function (RFPRequest $rfpRequest, FormInterface $form, Request $request) {
+                $url = $request->getUri();
+                if ($request->headers->get('referer')) {
+                    $url = $request->headers->get('referer');
+                }
+
+                return [
+                    'backToUrl' => $url,
+                    'form' => $form->createView()
+                ];
+            }
         );
     }
 
