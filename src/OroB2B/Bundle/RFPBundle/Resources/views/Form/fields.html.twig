@@ -42,8 +42,8 @@
                 </thead>
 
                 {% if form.children|length %}
-                    {% for child in form.children %}
-                        {{ _self.orob2b_rfp_request_lineitem_prototype(child, prototype_name) }}
+                    {% for key, child in form.children %}
+                        {{ _self.orob2b_rfp_request_lineitem_prototype(child, prototype_name, key) }}
                     {% endfor %}
                 {% elseif show_form_when_empty and prototype_html is defined %}
                     {{ prototype_html|replace({(prototype_name): '0'})|raw }}
@@ -54,7 +54,7 @@
     </div>
 {% endblock %}
 
-{% macro orob2b_rfp_request_lineitem_prototype(widget, prototype_name) %}
+{% macro orob2b_rfp_request_lineitem_prototype(widget, prototype_name, key) %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
 
     {% if 'collection' in widget.vars.block_prefixes %}
@@ -65,6 +65,10 @@
         {% set form = widget %}
         {% set name = widget.vars.full_name %}
         {% set id = widget.vars.id %}
+    {% endif %}
+
+    {% if (key is not null) %}
+        {% set prototype_name  = 'child-' ~key %}
     {% endif %}
 
     {% set page_component_options = form.vars.page_component_options|merge(form.vars.componentOptions|default({})) %}
