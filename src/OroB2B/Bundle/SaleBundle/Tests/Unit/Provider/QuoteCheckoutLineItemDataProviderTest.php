@@ -10,20 +10,10 @@ use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use OroB2B\Bundle\SaleBundle\Model\QuoteOfferConverter;
 use OroB2B\Bundle\SaleBundle\Provider\QuoteCheckoutLineItemDataProvider;
 
 class QuoteCheckoutLineItemDataProviderTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var  QuoteOfferConverter|\PHPUnit_Framework_MockObject_MockObject */
-    protected $quoteOfferConverter;
-
-    protected function setUp()
-    {
-        $this->quoteOfferConverter = $this->getMockBuilder('OroB2B\Bundle\SaleBundle\Model\QuoteOfferConverter')
-            ->disableOriginalConstructor()
-            ->getMock();
-    }
     /**
      * @dataProvider isEntitySupportedProvider
      * @param object $entity
@@ -31,8 +21,7 @@ class QuoteCheckoutLineItemDataProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testisEntitySupported($entity, $result)
     {
-
-        $provider = new QuoteCheckoutLineItemDataProvider($this->quoteOfferConverter);
+        $provider = new QuoteCheckoutLineItemDataProvider();
 
         $this->assertEquals($result, $provider->isEntitySupported($entity));
     }
@@ -54,12 +43,18 @@ class QuoteCheckoutLineItemDataProviderTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testGetData()
+    /**
+     * @dataProvider productDataProvider
+     * @param Product|null $product
+     * @param string $sku
+     */
+    public function testGetData($product, $sku)
     {
-        $product = (new Product())->setSku('SKU');
+        $freeFormProduct = 'freeFromProduct';
         $quotProduct = (new QuoteProduct())
             ->setProduct($product)
-            ->setFreeFormProduct('freeFromProduct');
+            ->setFreeFormProduct($freeFormProduct)
+            ->setProductSku($sku);
         $productUnit = (new ProductUnit());
         $price = new Price();
         $demand = new QuoteDemand();
@@ -75,15 +70,34 @@ class QuoteCheckoutLineItemDataProviderTest extends \PHPUnit_Framework_TestCase
         $expected = [
             [
                 'product' => $product,
-                'productSku' => 'SKU',
+                'productSku' => $sku,
+                'freeFormProduct' => $product ? null : $freeFormProduct,
                 'quantity' => 10,
                 'productUnit' => $productUnit,
                 'productUnitCode' => 'code',
-                'price' => $price
+                'price' => $price,
+                'fromExternalSource' => true
             ]
         ];
-        $provider = new QuoteCheckoutLineItemDataProvider($this->quoteOfferConverter);
+        $provider = new QuoteCheckoutLineItemDataProvider();
 
-        $this->assertSame($expected, $provider->getData($demand));
+        $this->assertEquals($expected, $provider->getData($demand));
+    }
+
+    /**
+     * @return array
+     */
+    public function productDataProvider()
+    {
+        return [
+            [
+                (new Product())->setSku('TEST'),
+                'TEST'
+            ],
+            [
+                null,
+                'SKU'
+            ]
+        ];
     }
 }

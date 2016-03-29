@@ -3,8 +3,7 @@
 namespace OroB2B\Bundle\SaleBundle\Provider;
 
 use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use OroB2B\Bundle\SaleBundle\Model\QuoteOfferConverter;
+
 use OroB2B\Component\Checkout\DataProvider\AbstractCheckoutProvider;
 
 class QuoteCheckoutLineItemDataProvider extends AbstractCheckoutProvider
@@ -19,17 +18,19 @@ class QuoteCheckoutLineItemDataProvider extends AbstractCheckoutProvider
 
     /**
      * @param QuoteDemand $entity
-     * @return array
+     * {@inheritdoc}
      */
     protected function prepareData($entity)
     {
         $result = [];
         foreach ($entity->getDemandProducts() as $demandProduct) {
-            /** @var QuoteProductOffer $productOffer */
             $productOffer = $demandProduct->getQuoteProductOffer();
+            $quoteProduct = $productOffer->getQuoteProduct();
+            $productSku = $productOffer->getProductSku() ? : $quoteProduct->getProductSku();
             $result[] = [
                 'product' => $productOffer->getProduct(),
-                'productSku' => $productOffer->getProductSku(),
+                'freeFormProduct' => $productOffer->getProduct() ? null : $quoteProduct->getFreeFormProduct(),
+                'productSku' => $productSku,
                 'quantity' => $demandProduct->getQuantity(),
                 'productUnit' => $productOffer->getProductUnit(),
                 'productUnitCode' => $productOffer->getProductUnitCode(),
