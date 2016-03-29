@@ -1,5 +1,5 @@
 operations:
-    orob2b_order_frontend_order_grid_create_action:
+    orob2b_order_frontend_order_grid_create:
         label: orob2b.frontend.order.create.label
         applications: [frontend]
         routes:
