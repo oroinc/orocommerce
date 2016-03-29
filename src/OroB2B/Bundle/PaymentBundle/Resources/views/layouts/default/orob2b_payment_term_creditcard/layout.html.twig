@@ -1,4 +1,25 @@
+{% block _payment_methods_widget %}
+    <div class="checkout__form">
+        <div class="checkout__form__row" data-page-component-module="orob2bpayment/js/app/components/payment-method-selector-component">
+            <div class="checkout__form__col form__col_x6">
+                <span class="checkout__form__label">{{ 'orob2b.payment.methods.select_method'|trans }}<sup class="red">*</sup></span>
+                {{ block_widget(block) }}
+            </div>
+        </div>
 
+        <div class="checkout__form__row">
+            <div class="create-account__form__req-text"><sup>*</sup>{{ 'orob2b.payment.methods.required_field'|trans }}</div>
+            <div class="create-account__form__col form__col_x12">
+                <button type="submit" class="btn btn_orange btn_lg checkout__form__submit">
+                    {{ 'orob2b.payment.methods.continue'|trans }}<i class="icon-right-open-mini va-m_md"></i>
+                </button>
+            </div>
+        </div>
+        <div class="checkout__form__back">
+            <a href="#"><i class="icon-left-open-mini"></i>{{ 'orob2b.payment.methods.back'|trans }}</a>
+        </div>
+    </div>
+{% endblock %}
 
 {% block _payment_credit_card_cvv_widget %}
     <div class="testetstets">
@@ -6,7 +27,7 @@
     </div>
 {% endblock %}
 
-{% block _credit_card_head_widget %}
+{% block _payment_methods_head_widget %}
    <main class="main">
       <!-- START CONTENT -->
       <div class="content content_has-sidebar">
@@ -170,67 +191,9 @@
                     </h2>
                   </div>
                   <div class="checkout__body">
-                    <form action="#" class="checkout__form">
-                      <fieldset class="checkout__form__row">
-                        <div class="checkout__form__col form__col_x6">
-                          <span class="checkout__form__label">Select a Payment Method<sup class="red">*</sup></span>
-                          <div class="checkout__form__radio">
-                            <label class="radio_custom radio_custom_blue" data-radio>
-                              <input type="radio" name="paymentMethod" />
-                              <i class="material-icons radio_checked fs18 mmr5-md">radio_button_checked</i>
-                              <i class="material-icons radio_not-checked fs18 mmr5-md">radio_button_unchecked</i>
-                              <span class="checkbox_custom__text fs13">Payment Account</span>
-                            </label>
-
-                            <div class="checkout__form__payment-container">
-                              <div class="checkout__form__select">
-                                <select data-chosen-selectbox class="input input_md" name="billingAddress" id="billingAddress">
-                                  <option value="0">Wells Fargo ************1234</option>
-                                  <option value="0">Wells Fargo ************5678</option>
-                                  <option value="0">Wells Fargo ************3455</option>
-                                </select>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="checkout__form__radio">
-                            <label class="radio_custom radio_custom_blue checked" data-radio>
-                              <input type="radio" name="paymentMethod" checked="checked" />
-                              <i class="material-icons radio_checked fs18 mmr5-md">radio_button_checked</i>
-                              <i class="material-icons radio_not-checked fs18 mmr5-md">radio_button_unchecked</i>
-                              <span class="checkbox_custom__text fs13">Credit Card</span>
-                            </label>
-
-                            <div class="checkout__form__payment-container">
-                              <div class="checkout__form__payment-methods">
-                                <ul class="checkout__form__payment-methods__list">
-                                  <li><a href="#"><i class="credit-card-icon credit-card-icon_mc"></i></a></li>
-                                  <li><a href="#"><i class="credit-card-icon credit-card-icon_visa"></i></a></li>
-                                  <li><a href="#"><i class="credit-card-icon credit-card-icon_ae"></i></a></li>
-                                  <li><a href="#"><i class="credit-card-icon credit-card-icon_discover"></i></a></li>
-                                </ul>
-
-                                <div class="checkout__form__payment-methods__form">
 {% endblock %}
 
-{% block _credit_card_footer_widget %}
-</div>
-                            </div>
-                          </div>
-                        </div>
-                      </fieldset>
-
-                        <fieldset class="checkout__form__row">
-                            <div class="create-account__form__req-text"><sup>*</sup>Required Field</div>
-                            <div class="create-account__form__col form__col_x12">
-                                <button type="submit" class="btn btn_orange btn_lg checkout__form__submit">
-                                    Continue<i class="icon-right-open-mini va-m_md"></i>
-                                </button>
-                            </div>
-                        </fieldset>
-                        <div class="checkout__form__back">
-                            <a href="#"><i class="icon-left-open-mini"></i>Back</a>
-                        </div>
-                    </form>
+{% block _payment_methods_footer_widget %}
                   </div>
                 </div>
 

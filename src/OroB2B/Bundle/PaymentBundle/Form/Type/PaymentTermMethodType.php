@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\PaymentBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -37,22 +36,6 @@ class PaymentTermMethodType extends AbstractType
     }
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        $builder->add(
-            'paymentCreditCard',
-            'text',
-            [
-                'required' => true,
-                'label' => 'orob2b.payment.payment_credit_card.label'
-            ]
-        );
-    }
-
-    /**
      * @param OptionsResolver $resolver
      */
     public function configureOptions(OptionsResolver $resolver)
@@ -71,8 +54,13 @@ class PaymentTermMethodType extends AbstractType
 
         /** @var AccountUser $user */
         if ($token && ($user = $token->getUser()) instanceof AccountUser) {
-            $view->vars['paymentTerm'] = $this->paymentTermProvider->getPaymentTerm($user->getAccount())->getLabel();
+            $view->vars['payment_term'] = $this->paymentTermProvider->getPaymentTerm($user->getAccount())->getLabel();
         }
+
+        $view->vars['block_prefixes'] = array_merge(
+            $view->vars['block_prefixes'],
+            ['payment_method_form']
+        );
     }
 
     /**

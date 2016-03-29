@@ -5,25 +5,25 @@ layout:
         - @setFormTheme:
             themes: 'OroB2BPaymentBundle:layouts:default/orob2b_payment_term_creditcard/form.html.twig'
         - @add:
-            id: credit_card_form
+            id: payment_term_form
             parentId: payment_methods
             blockType: container
         - @addTree:
             items:
-                credit_card_form_start:
+                payment_term_form_start:
                     blockType: form_start
                     options:
-                        form: { @value: $data.orob2b_payment_credit_card_form_provider }
-                credit_card_form_fields:
+                        form: { @value: $data.orob2b_payment_payment_term_form_provider }
+                payment_term_form_fields:
                     blockType: form
                     options:
-                        form: { @value: $data.orob2b_payment_credit_card_form_provider }
-                credit_card_form_end:
+                        form: { @value: $data.orob2b_payment_payment_term_form_provider }
+                payment_term_form_end:
                     blockType: form_end
                     options:
-                        form: { @value: $data.orob2b_payment_credit_card_form_provider }
+                        form: { @value: $data.orob2b_payment_payment_term_form_provider }
             tree:
-                credit_card_form:
-                    credit_card_form_start: ~
-                    credit_card_form_fields: ~
-                    credit_card_form_end: ~
+                payment_term_form:
+                    payment_term_form_start: ~
+                    payment_term_form_fields: ~
+                    payment_term_form_end: ~

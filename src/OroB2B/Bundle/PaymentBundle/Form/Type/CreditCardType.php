@@ -6,10 +6,26 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 class CreditCardType extends AbstractType
 {
     const NAME = 'orob2b_payment_credit_card';
+    const CONFIG_NAME = 'paypal_payments_pro';
+
+    /** @var ConfigManager */
+    protected $configManager;
+
+    /**
+     * @param ConfigManager $configManager
+     */
+    public function __construct(
+        ConfigManager $configManager
+    ) {
+        $this->configManager = $configManager;
+    }
 
     /**
      * @param FormBuilderInterface $builder
@@ -54,8 +70,23 @@ class CreditCardType extends AbstractType
                     'mapped' => false,
                     'block_name' => 'payment_credit_card_cvv'
                 ]
-            )
-        ;
+            );
+    }
+
+    /**
+     * @param OptionsResolver $resolver
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $label = $this->configManager->get('oro_b2b_payment.' . self::CONFIG_NAME . '_label');
+        $enabled = $this->configManager->get('oro_b2b_payment.' . self::CONFIG_NAME . '_enabled');
+
+        $resolver->setDefaults(
+            [
+                'label' => empty($label) ? 'orob2b.payment.methods.credit_card.label' : $label,
+                'enabled' => $enabled,
+            ]
+        );
     }
 
     /**
@@ -66,8 +97,12 @@ class CreditCardType extends AbstractType
         foreach ($view->children as $child) {
             $child->vars['full_name'] = $child->vars['name'];
         }
-    }
 
+        $view->vars['block_prefixes'] = array_merge(
+            $view->vars['block_prefixes'],
+            ['payment_method_form']
+        );
+    }
 
     /**
      * @return string

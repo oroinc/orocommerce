@@ -47,3 +47,25 @@
         {#</div>#}
     {#</div>#}
 {#{% endblock %}#}
+
+{% block payment_method_form_widget %}
+    <div class="checkout__form__radio" data-item-container>
+        <label class="radio_custom radio_custom_blue">
+            <input type="radio" name="paymentMethod" data-choice="{{ form.vars.name }}" />
+            <i class="material-icons radio_checked fs18 mmr5-md">radio_button_checked</i>
+            <i class="material-icons radio_not-checked fs18 mmr5-md">radio_button_unchecked</i>
+            <span class="checkbox_custom__text fs13">{{ form.vars.label|trans }}</span>
+        </label>
+        <div class="checkout__form__payment-container" data-form-container>
+            {% if form.vars.unique_block_prefix == '_orob2b_payment_term_method' %}
+                <div>
+                    {{ form.vars.payment_term }}
+                </div>
+            {% else %}
+                {{ form_widget(form) }}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block _orob2b_payment_method_paymentMethod_entry_label %}{% endblock %}

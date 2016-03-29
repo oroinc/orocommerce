@@ -2,7 +2,6 @@ parameters:
     orob2b_payment.form.type.payment_term.class: OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermType
     orob2b_payment.form.type.payment_term_select.class: OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType
     orob2b_payment.form.type.payment_term_method.class: OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermMethodType
-    orob2b_payment.form.type.payment_method.class: OroB2B\Bundle\PaymentBundle\Form\Type\PaymentMethodType
     orob2b_payment.form.type.paypal_password.class: OroB2B\Bundle\PaymentBundle\Form\Type\PayPalPasswordType
     orob2b_payment.form.extension.account_type.class: OroB2B\Bundle\PaymentBundle\Form\Extension\AccountFormExtension
     orob2b_payment.form.extension.account_group_type.class: OroB2B\Bundle\PaymentBundle\Form\Extension\AccountGroupFormExtension
@@ -20,8 +19,11 @@ services:
 
     orob2b_payment.form.type.credit_card:
         class: OroB2B\Bundle\PaymentBundle\Form\Type\CreditCardType
+        arguments:
+            - @oro_config.global
         tags:
             - { name: form.type, alias: orob2b_payment_credit_card }
+            - { name: orob2b_payment.payment_method_type, priority: 90 }
 
     orob2b_payment.form.type.credit_card_expiration_date:
             class: OroB2B\Bundle\PaymentBundle\Form\Type\CreditCardExpirationDateType
@@ -66,12 +68,3 @@ services:
         tags:
             - { name: form.type, alias: orob2b_payment_term_method }
             - { name: orob2b_payment.payment_method_type, priority: 100 }
-
-    orob2b_payment.form.type.payment_method:
-        class: %orob2b_payment.form.type.payment_method.class%
-        arguments:
-            - @orob2b_payment.form.payment_method_type_registry
-            - @form.factory
-            - @oro_config.manager
-        tags:
-            - { name: form.type, alias: orob2b_payment_method }

@@ -38,9 +38,7 @@ orob2b:
             back: 'Back'
             continue: 'Continue'
             term_method.label: 'Payment Term'
-            credit_card_method:
-                label: 'Credit Card'
-                card_name.label: 'Card Name'
+            credit_card.label: 'Credit Card'
 
         system_configuration:
             groups:
