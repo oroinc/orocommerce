@@ -46,11 +46,6 @@ define(function(require) {
         $address: null,
 
         /**
-         * @property {Boolean}
-         */
-        useDefaultAddress: null,
-
-        /**
          * @property {Object}
          */
         fieldsByName: null,
@@ -84,7 +79,6 @@ define(function(require) {
 
             this.setAddress(this.$el.find(this.options.selectors.address));
 
-            this.useDefaultAddress = true;
             this.$fields = this.$el.find(':input[data-ftid]').filter(':not(' + this.options.selectors.address + ')');
             this.fieldsByName = {};
         },
@@ -96,9 +90,6 @@ define(function(require) {
             var self = this;
             this.$fields.each(function() {
                 var $field = $(this);
-                if ($field.val().length > 0) {
-                    self.useDefaultAddress = false;
-                }
                 var name = self.normalizeName($field.data('ftid').replace(self.ftid + '_', ''));
                 self.fieldsByName[name] = $field;
             });
@@ -131,7 +122,6 @@ define(function(require) {
 
             var self = this;
             this.$address.change(function(e) {
-                self.useDefaultAddress = false;
                 self.accountAddressChange(e);
             });
         },
@@ -171,12 +161,12 @@ define(function(require) {
             } else {
                 this.$fields.each(function() {
                     var $field = $(this);
-
                     if ($field.data('select2')) {
                         $field.select2('readonly', false);
                     } else {
                         $field.attr('readonly', false);
                     }
+
                 });
             }
         },
@@ -213,15 +203,15 @@ define(function(require) {
                 var $field = $(this);
                 $field.val('');
                 if ($field.data('select2')) {
+                    $field.select2('readonly', true);
                     $field.data('selected-data', '').change();
+                } else {
+                    $field.attr('readonly', true);
                 }
             });
             $oldAddress.parent().trigger('content:remove');
             $oldAddress.select2('destroy')
                 .replaceWith(this.$address);
-            if (this.useDefaultAddress) {
-                this.$address.val(this.$address.data('default')).change();
-            }
 
             this.initLayout().done(_.bind(this.loadingEnd, this));
         },
