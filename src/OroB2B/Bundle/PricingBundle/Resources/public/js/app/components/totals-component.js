@@ -4,10 +4,13 @@ define(function(require) {
     var TotalsComponent;
     var $ = require('jquery');
     var _ = require('underscore');
+    var routing = require('routing');
     var mediator = require('oroui/js/mediator');
+    var messenger =  require('oroui/js/messenger');
     var NumberFormatter = require('orolocale/js/formatter/number');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var BaseComponent = require('oroui/js/app/components/base/component');
+    var localeSettings = require('orolocale/js/locale-settings');
 
     /**
      * @export orob2bpricing/js/app/components/totals-component
@@ -19,14 +22,17 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            url: '',
+            route: '',
+            entityClassName: '',
+            entityId: 0,
             selectors: {
                 form: '',
-                template: '.totals-template',
-                subtotals: '.totals-container'
+                template: '#totals-template',
+                noDataTemplate: '#totals-template-no-data',
+                totals: '[data-totals-container]'
             },
-            method: 'POST',
-            events: []
+            events: [],
+            skipMaskView: false
         },
 
         /**
@@ -47,12 +53,17 @@ define(function(require) {
         /**
          * @property {jQuery}
          */
-        $subtotals: null,
+        $totals: null,
 
         /**
          * @property {Object}
          */
         template: null,
+
+        /**
+         * @property {Object}
+         */
+        noDataTemplate: null,
 
         /**
          * @property {String}
@@ -70,41 +81,58 @@ define(function(require) {
         loadingMaskView: null,
 
         /**
+         * @property {Array}
+         */
+        items: [],
+
+        /**
          * @inheritDoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
 
-            if (this.options.url.length === 0) {
+            if (this.options.route.length === 0) {
                 return;
             }
 
             this.$el = options._sourceElement;
             this.$form = $(this.options.selectors.form);
-            this.$method = this.options.method;
-            this.$subtotals = this.$el.find(this.options.selectors.subtotals);
-            this.template = _.template(this.$el.find(this.options.selectors.template).text());
+            this.$totals = this.$el.find(this.options.selectors.totals);
+            this.template = _.template($(this.options.selectors.template).text());
+            this.noDataTemplate = _.template($(this.options.selectors.noDataTemplate).text());
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
             this.eventName = 'total-target:changing';
 
             this.updateTotals();
+            this.initializeListeners();
 
-            mediator.on('line-items-totals:update', this.updateTotals, this);
-            mediator.on('update:account', this.updateTotals, this);
-            mediator.on('update:website', this.updateTotals, this);
-            mediator.on('update:currency', this.updateTotals, this);
+            this.render(this.options.data);
+        },
 
+        initializeListeners: function() {
             var self = this;
             _.each(this.options.events, function(event) {
                 mediator.on(event, self.updateTotals, self);
             });
         },
 
+        showLoadingMask: function() {
+            if (!this.options.skipMaskView) {
+                this.loadingMaskView.show();
+            }
+        },
+
+        hideLoadingMask: function() {
+            if (this.loadingMaskView.isShown()) {
+                this.loadingMaskView.hide();
+            }
+        },
+
         /**
-         * Get and render subtotals
+         * Get and render totals
          */
         updateTotals: function(e) {
-            this.loadingMaskView.show();
+            this.showLoadingMask();
 
             if (this.getTotals.timeoutId) {
                 clearTimeout(this.getTotals.timeoutId);
@@ -119,47 +147,65 @@ define(function(require) {
                 if (promises.length) {
                     $.when.apply($, promises).done(_.bind(this.updateTotals, this, e));
                 } else {
-                    this.getTotals(_.bind(function(subtotals) {
-                        this.loadingMaskView.hide();
-                        if (!subtotals) {
-                            return;
-                        }
-                        this.render(subtotals);
+                    this.getTotals(_.bind(function(totals) {
+                        this.hideLoadingMask();
+                        this.triggerTotalsUpdateEvent(totals);
+                        this.render(totals);
                     }, this));
                 }
             }, this), 100);
         },
 
         /**
-         * Get order subtotals
+         * @param {Object} totals
+         */
+        triggerTotalsUpdateEvent: function(totals)
+        {
+            if (!_.isUndefined(totals) && !_.isEmpty(totals)) {
+                mediator.trigger('totals:update', totals);
+            }
+        },
+
+        /**
+         * Get order totals
          *
          * @param {Function} callback
          */
         getTotals: function(callback) {
-            if (this.$method === 'GET') {
-                $.get(this.options.url, function (response) {
-                    callback(response);
-                });
-                return;
-            }
+            var self = this;
+
+            var params = {
+                entityClassName: this.options.entityClassName,
+                entityId: this.options.entityId ? this.options.entityId : 0
+            };
 
             var formData = this.$form.find(':input[data-ftid]').serialize();
-
-            if (formData === this.formData) {
-                callback();//nothing changed
-                return;
-            }
-
             this.formData = formData;
 
-            var self = this;
-            $.post(this.options.url, formData, function(response) {
-                if (formData === self.formData) {
-                    //data doesn't change after ajax call
-                    var totals = response || {};
-                    callback(totals);
-                }
-            });
+            if (formData) {
+                $.post(routing.generate(this.options.route, params), formData, function(response) {
+                    if (formData === self.formData) {
+                        //data doesn't change after ajax call
+                        var totals = response || {};
+                        callback(totals);
+                    }
+                });
+            } else {
+                $.ajax({
+                    url: routing.generate(this.options.route, params),
+                    type: 'GET',
+                    success: function (response) {
+                        if (formData === self.formData) {
+                            //data doesn't change after ajax call
+                            var totals = response || {};
+                            callback(totals);
+                        }
+                    },
+                    error: function(jqXHR) {
+                        messenger.showErrorMessage(__('Sorry, unexpected error was occurred'), jqXHR.responseJSON);
+                    }
+                });
+            }
         },
 
         /**
@@ -168,15 +214,52 @@ define(function(require) {
          * @param {Object} totals
          */
         render: function(totals) {
-            _.each(totals.subtotals, function(subtotal) {
-                subtotal.formattedAmount = NumberFormatter.formatCurrency(subtotal.amount, subtotal.currency);
-            });
+            this.items = [];
 
-            totals.total.formattedAmount = NumberFormatter.formatCurrency(totals.total.amount, totals.total.currency);
+            _.each(totals.subtotals, _.bind(this.pushItem, this));
 
-            this.$subtotals.html(this.template({
-                totals: totals
-            }));
+            this.pushItem(totals.total);
+
+            var items = _.filter(this.items);
+            if (_.isEmpty(items)) {
+                items = this.noDataTemplate();
+            }
+
+            this.$totals.html(items.join(''));
+
+            this.items = [];
+        },
+
+        /**
+         * @param {Object} item
+         */
+        pushItem: function(item) {
+            var localItem = _.defaults(
+                item,
+                {
+                    amount: 0,
+                    currency: localeSettings.defaults.currency,
+                    visible: false,
+                    template: null,
+                    data: {}
+                }
+            );
+
+            if (localItem.visible === false) {
+                return;
+            }
+
+            item.formattedAmount = NumberFormatter.formatCurrency(item.amount, item.currency);
+
+            var renderedItem = null;
+
+            if (localItem.template) {
+                renderedItem = _.template(item.template)({item: item});
+            } else {
+                renderedItem = this.template({item: item});
+            }
+
+            this.items.push(renderedItem);
         },
 
         /**
@@ -187,10 +270,8 @@ define(function(require) {
                 return;
             }
 
-            mediator.off('line-items-totals:update', this.updateTotals, this);
-            mediator.off('update:account', this.updateTotals, this);
-            mediator.off('update:website', this.updateTotals, this);
-            mediator.off('update:currency', this.updateTotals, this);
+            delete this.items;
+
             var self = this;
             _.each(this.options.events, function(event) {
                 mediator.off(event, self.updateTotals, self);

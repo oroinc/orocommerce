@@ -2,9 +2,6 @@
 
 namespace OroB2B\Bundle\OrderBundle\Form\Type;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Criteria;
-
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -14,6 +11,7 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
+use OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
 
@@ -23,6 +21,31 @@ abstract class AbstractOrderLineItemType extends AbstractType
      * @var string
      */
     protected $dataClass;
+
+    /**
+     * @var SectionProvider
+     */
+    private $sectionProvider;
+
+    /**
+     * @return SectionProvider
+     */
+    public function getSectionProvider()
+    {
+        if (!$this->sectionProvider) {
+            throw new \BadMethodCallException('SectionProvider not injected');
+        }
+
+        return $this->sectionProvider;
+    }
+
+    /**
+     * @param SectionProvider $sectionProvider
+     */
+    public function setSectionProvider(SectionProvider $sectionProvider)
+    {
+        $this->sectionProvider = $sectionProvider;
+    }
 
     /**
      * @param string $dataClass
@@ -99,21 +122,11 @@ abstract class AbstractOrderLineItemType extends AbstractType
                 'page_component' => 'oroui/js/app/components/view-component',
                 'page_component_options' => [],
                 'currency' => null,
-                'sections' => [
-                    'quantity' => ['data' => ['quantity' => [], 'productUnit' => []], 'order' => 10],
-                    'price' => ['data' => ['price' => [], 'priceType' => []], 'order' => 20],
-                    'ship_by' => ['data' => ['shipBy' => []], 'order' => 30],
-                    'comment' => [
-                        'data' => ['comment' => ['page_component' => 'orob2border/js/app/components/notes-component']],
-                        'order' => 40,
-                    ],
-                ],
             ]
         );
         $resolver->setAllowedTypes('page_component_options', 'array');
         $resolver->setAllowedTypes('page_component', 'string');
         $resolver->setAllowedTypes('currency', ['null', 'string']);
-        $resolver->setAllowedTypes('sections', ['array']);
     }
 
     /**
@@ -121,6 +134,19 @@ abstract class AbstractOrderLineItemType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
+        $this->getSectionProvider()->addSections(
+            $this->getName(),
+            [
+                'quantity' => ['data' => ['quantity' => [], 'productUnit' => []], 'order' => 10],
+                'price' => ['data' => ['price' => [], 'priceType' => []], 'order' => 20],
+                'ship_by' => ['data' => ['shipBy' => []], 'order' => 30],
+                'comment' => [
+                    'data' => ['comment' => ['page_component' => 'orob2border/js/app/components/notes-component']],
+                    'order' => 40,
+                ],
+            ]
+        );
+
         if (array_key_exists('page_component', $options)) {
             $view->vars['page_component'] = $options['page_component'];
         } else {
@@ -136,10 +162,7 @@ abstract class AbstractOrderLineItemType extends AbstractType
     /** {@inheritdoc} */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $sections = new ArrayCollection($options['sections']);
-        $criteria = Criteria::create();
-        $criteria->orderBy(['order' => Criteria::ASC]);
-        $view->vars['sections'] = $sections->matching($criteria);
+        $view->vars['sections'] = $this->getSectionProvider()->getSections($this->getName());
     }
 
     /**

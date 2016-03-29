@@ -12,6 +12,7 @@ use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
+use OroB2B\Bundle\ProductBundle\Model\ProductRow;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
@@ -57,10 +58,10 @@ class ProductRowTypeTest extends FormIntegrationTestCase
      * @dataProvider submitDataProvider
      * @param array|null $defaultData
      * @param array $submittedData
-     * @param array $expectedData
+     * @param ProductRow $expectedData
      * @param array $options
      */
-    public function testSubmit($defaultData, array $submittedData, array $expectedData, array $options = [])
+    public function testSubmit($defaultData, array $submittedData, ProductRow $expectedData, array $options = [])
     {
         if (count($options)) {
             $this->validator->expects($this->once())
@@ -137,38 +138,23 @@ class ProductRowTypeTest extends FormIntegrationTestCase
                     ProductDataStorage::PRODUCT_SKU_KEY => 'SKU_001',
                     ProductDataStorage::PRODUCT_QUANTITY_KEY => '10'
                 ],
-                'expectedData' => [
-                    ProductDataStorage::PRODUCT_SKU_KEY => 'SKU_001',
-                    ProductDataStorage::PRODUCT_QUANTITY_KEY => '10'
-                ]
+                'expectedData' => $this->createProductRow('SKU_001', '10')
             ],
             'with default data' => [
-                'defaultData' => [
-                    ProductDataStorage::PRODUCT_SKU_KEY => 'SKU_001',
-                    ProductDataStorage::PRODUCT_QUANTITY_KEY => '10'
-                ],
+                'defaultData' => $this->createProductRow('SKU_001', '10'),
                 'submittedData' => [
                     ProductDataStorage::PRODUCT_SKU_KEY => 'SKU_002',
                     ProductDataStorage::PRODUCT_QUANTITY_KEY => '20'
                 ],
-                'expectedData' => [
-                    ProductDataStorage::PRODUCT_SKU_KEY => 'SKU_002',
-                    ProductDataStorage::PRODUCT_QUANTITY_KEY => '20'
-                ]
+                'expectedData' =>$this->createProductRow('SKU_002', '20')
             ],
             'with default data and validation' => [
-                'defaultData' => [
-                    ProductDataStorage::PRODUCT_SKU_KEY => 'SKU_001',
-                    ProductDataStorage::PRODUCT_QUANTITY_KEY => '10'
-                ],
+                'defaultData' => $this->createProductRow('SKU_001', '10'),
                 'submittedData' => [
                     ProductDataStorage::PRODUCT_SKU_KEY => 'SKU_002',
                     ProductDataStorage::PRODUCT_QUANTITY_KEY => '20'
                 ],
-                'expectedData' => [
-                    ProductDataStorage::PRODUCT_SKU_KEY => 'SKU_002',
-                    ProductDataStorage::PRODUCT_QUANTITY_KEY => '20'
-                ],
+                'expectedData' => $this->createProductRow('SKU_002', '20'),
                 'options' => [
                     'validation_required' => true
                 ]
@@ -255,5 +241,19 @@ class ProductRowTypeTest extends FormIntegrationTestCase
         $this->formType->buildView($view, $form, []);
 
         $this->assertEquals($product, $view->vars['product']);
+    }
+
+    /**
+     * @param string $sku
+     * @param string $qty
+     * @return ProductRow
+     */
+    protected function createProductRow($sku, $qty)
+    {
+        $productRow = new ProductRow();
+        $productRow->productSku = $sku;
+        $productRow->productQuantity= $qty;
+
+        return $productRow;
     }
 }

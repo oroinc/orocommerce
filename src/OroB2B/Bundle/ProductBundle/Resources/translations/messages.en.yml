@@ -117,6 +117,10 @@ orob2b:
             save_and_duplicate: Save And Duplicate
 
         frontend:
+            index:
+                item: 'Item #:'
+                mfg: 'MFG Model #:'
+                view_details: 'View Details'
             quick_add:
                 title: Quick Order
                 description: Quick add products to order, RFQ or shopping cart

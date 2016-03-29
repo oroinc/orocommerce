@@ -96,6 +96,10 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testBuildFromFile(UploadedFile $file)
     {
+        if (extension_loaded('xdebug')) {
+            $this->markTestSkipped('Skipped due to xdebug enabled (nesting level can be reached)');
+        }
+
         $this->prepareProductRepository();
         $this->assertValidCollection($this->builder->buildFromFile($file));
     }

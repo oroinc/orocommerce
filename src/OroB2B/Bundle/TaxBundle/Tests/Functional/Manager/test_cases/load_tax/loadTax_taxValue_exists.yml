@@ -23,13 +23,15 @@ databaseBefore:
                             taxAmount: '78.9' # 789 * 0.1
                             adjustment: ~
                             currency: 'USD'
-    'OroB2B\Bundle\TaxBundle\Entity\TaxApply':
-        simple_order_tax_value_applied_tax:
-            tax: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
-            rate: { class: 'OroB2B\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' }, property: rate }
-            taxableAmount: { property_value: '789' }
-            taxAmount: { property_value: '78.9' }
-            taxValue: { reference: simple_order_tax_value }
+                    taxes:
+                        -
+                            class: 'OroB2B\Bundle\TaxBundle\Model\ResultElement'
+                            property_value:
+                                tax: 'TAX1'
+                                rate: '0.1'
+                                taxableAmount: '789'
+                                taxAmount: '78.9'
+                                currency: 'USD'
 expectedResult:
     total:
         includingTax: '867.9' # 789 + 78.9
@@ -38,4 +40,4 @@ expectedResult:
         adjustment: ~
         currency: 'USD'
     taxes:
-        - { tax: 'TAX1', rate: '0.1', taxable_amount: '789', tax_amount: '78.9', currency: 'USD' }
+        - { tax: 'TAX1', rate: '0.1', taxableAmount: '789', taxAmount: '78.9', currency: 'USD' }

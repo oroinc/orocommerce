@@ -16,6 +16,7 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
 {
     protected function setUp()
     {
+        $this->markTestSkipped('Will be done in scope BB-2098');
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)

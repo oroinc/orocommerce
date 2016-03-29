@@ -4,7 +4,8 @@ define(function(require) {
     var LineItemsView;
     var $ = require('jquery');
     var _ = require('underscore');
-    var ProductsPricesComponent = require('orob2bpricing/js/app/components/products-prices-component');
+    var mediator = require('oroui/js/mediator');
+    var ProductsPricesComponent = require('orob2border/js/app/components/products-prices-component');
     var BaseView = require('oroui/js/app/views/base/view');
 
     /**
@@ -19,11 +20,12 @@ define(function(require) {
         options: {
             tierPrices: null,
             matchedPrices: {},
-            tierPricesRoute: '',
-            matchedPricesRoute: '',
             currency: null,
             account: null,
-            website: null
+            website: null,
+            subtotalValidationSelector: '[data-ftid=orob2b_order_type_subtotalValidation]',
+            totalValidationSelector: '[data-ftid=orob2b_order_type_totalValidation]',
+            subtotalType: null
         },
 
         /**
@@ -42,6 +44,8 @@ define(function(require) {
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
             this.initLayout().done(_.bind(this.handleLayoutInit, this));
+
+            mediator.on('totals:update', this.updateValidators, this);
         },
 
         /**
@@ -58,10 +62,44 @@ define(function(require) {
                 matchedPrices: this.options.matchedPrices,
                 currency: this.options.currency,
                 account: this.options.account,
-                website: this.options.website,
-                tierPricesRoute: this.options.tierPricesRoute,
-                matchedPricesRoute: this.options.matchedPricesRoute
+                website: this.options.website
             }));
+        },
+
+        updateValidators: function(subtotals) {
+            var $subtotal = this.$el.closest('form').find(this.options.subtotalValidationSelector);
+            var $total = this.$el.closest('form').find(this.options.totalValidationSelector);
+            var subtotalAmount = 0;
+            var totalAmount = subtotals.total.amount;
+
+            var self = this;
+            _.each(subtotals.subtotals, function(subtotal) {
+                if (subtotal.type == self.options.subtotalType) {
+                    subtotalAmount = subtotal.amount;
+                }
+            });
+
+            $subtotal.val(subtotalAmount);
+            $total.val(totalAmount);
+
+            var validator = $subtotal.closest('form').validate();
+
+            if (validator) {
+                validator.element($subtotal);
+                validator.element($total);
+            }
+        },
+
+        /**
+         * @inheritDoc
+         */
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            mediator.off('totals:update', this.updateValidators, this);
+            LineItemsView.__super__.dispose.call(this);
         }
     });
 
