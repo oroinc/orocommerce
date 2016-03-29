@@ -45,7 +45,7 @@ class FrontendAccountUserRolePrivilegesDataProviderTest extends \PHPUnit_Framewo
         $role = new AccountUserRole();
 
         $context = new LayoutContext();
-        $context->data()->set('role', 'role', $role);
+        $context->data()->set('entity', 'entity', $role);
 
         $this->privilegesHelper->expects($this->once())
             ->method('collect')
