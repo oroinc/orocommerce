@@ -4,14 +4,15 @@ namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-abstract class AbstractOption implements OptionInterface
+class RateLookup extends AbstractOption
 {
-    const YES = 'Y';
-
-    const TRUE = 'TRUE';
+    const RATELOOKUPID = 'RATELOOKUPID';
 
     /** {@inheritdoc} */
     public function configureOption(OptionsResolver $resolver)
     {
+        $resolver
+            ->setDefined(RateLookup::RATELOOKUPID)
+            ->addAllowedTypes(RateLookup::RATELOOKUPID, 'string');
     }
 }

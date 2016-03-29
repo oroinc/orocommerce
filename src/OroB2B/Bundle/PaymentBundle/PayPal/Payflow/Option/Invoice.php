@@ -4,14 +4,15 @@ namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-abstract class AbstractOption implements OptionInterface
+class Invoice extends AbstractOption
 {
-    const YES = 'Y';
-
-    const TRUE = 'TRUE';
+    const INVNUM = 'INVNUM';
 
     /** {@inheritdoc} */
     public function configureOption(OptionsResolver $resolver)
     {
+        $resolver
+            ->setDefined(Invoice::INVNUM)
+            ->addAllowedTypes(Invoice::INVNUM, 'string');
     }
 }

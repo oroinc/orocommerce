@@ -2,13 +2,36 @@
 
 namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request;
 
-use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option\Action;
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 
 class SaleRequest extends AbstractRequest
 {
     /** {@inheritdoc} */
     public function getAction()
     {
-        return Action::SALE;
+        return Option\Transaction::SALE;
+    }
+
+    /** {@inheritdoc} */
+    public function configureOptions()
+    {
+        $this
+            ->addOption(new Option\Amount())
+            ->addOption(new Option\Currency())
+            ->addOption(new Option\Account())
+            ->addOption(new Option\ExpirationDate())
+            ->addOption(new Option\BillingAddress())
+            ->addOption(new Option\ShippingAddress())
+            ->addOption(new Option\OriginalTransaction())
+            ->addOption(new Option\Comment())
+            ->addOption(new Option\Code())
+            ->addOption(new Option\IPAddress())
+            ->addOption(new Option\Swipe())
+            ->addOption(new Option\Invoice())
+            ->addOption(new Option\Purchase())
+            ->addOption(new Option\Verbosity())
+            ->addOption(new Option\TransparentRedirect())
+            ->addOption(new Option\SecureToken())
+            ->addOption(new Option\SecureTokenIdentifier());
     }
 }

@@ -2,13 +2,15 @@
 
 namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
 /**
  * @codingStandardsIgnoreStart
  * @link https://registration.paypal.com/welcomePage.do?country=US&mode=try#ProcessorSelectionNode
  * @link https://developer.paypal.com/docs/classic/payflow/integration-guide/#processing-platforms-supporting-card-present-transactions
  * @codingStandardsIgnoreEnd
  */
-class Partner
+class Partner extends AbstractOption
 {
     const PARTNER = 'PARTNER';
 
@@ -63,26 +65,26 @@ class Partner
      * @var array
      */
     public static $list = [
-        self::PAYPAL,
-        self::AMEX,
-        self::MESP,
-        self::NOVA,
-        self::NASH,
-        self::NORT,
-        self::SOUT,
-        self::MAPP,
-        self::NDCE,
-        self::HTLD,
-        self::LITL,
-        self::MONE,
-        self::PAYT,
-        self::TMPA,
-        self::PPAY,
-        self::SNET,
-        self::VITA,
-        self::TELN,
-        self::FIFT,
-        self::WPAY,
+        Partner::PAYPAL,
+        Partner::AMEX,
+        Partner::MESP,
+        Partner::NOVA,
+        Partner::NASH,
+        Partner::NORT,
+        Partner::SOUT,
+        Partner::MAPP,
+        Partner::NDCE,
+        Partner::HTLD,
+        Partner::LITL,
+        Partner::MONE,
+        Partner::PAYT,
+        Partner::TMPA,
+        Partner::PPAY,
+        Partner::SNET,
+        Partner::VITA,
+        Partner::TELN,
+        Partner::FIFT,
+        Partner::WPAY,
     ];
 
     /**
@@ -90,6 +92,14 @@ class Partner
      */
     public static function getPartnersList()
     {
-        return array_combine(self::$list, self::$labels);
+        return array_combine(Partner::$list, Partner::$labels);
+    }
+
+    /** {@inheritdoc} */
+    public function configureOption(OptionsResolver $resolver)
+    {
+        $resolver
+            ->setRequired(Partner::PARTNER)
+            ->addAllowedValues(Partner::PARTNER, Partner::$list);
     }
 }

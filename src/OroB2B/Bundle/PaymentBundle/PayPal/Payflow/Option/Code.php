@@ -4,14 +4,15 @@ namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-abstract class AbstractOption implements OptionInterface
+class Code implements OptionInterface
 {
-    const YES = 'Y';
-
-    const TRUE = 'TRUE';
+    const CVV2 = 'CVV2';
 
     /** {@inheritdoc} */
     public function configureOption(OptionsResolver $resolver)
     {
+        $resolver
+            ->setDefined(Code::CVV2)
+            ->addAllowedTypes(Code::CVV2, 'string');
     }
 }

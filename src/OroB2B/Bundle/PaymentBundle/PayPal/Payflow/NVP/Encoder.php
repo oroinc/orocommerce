@@ -18,6 +18,21 @@ class Encoder implements EncoderInterface
     /** {@inheritdoc} */
     public function decode($data)
     {
-        return explode('&', $data);
+        $values = explode('&', $data);
+        $result = [];
+
+        foreach ($values as $value) {
+            $keyValue = explode('=', $value);
+
+            $key = $keyValue[0];
+
+            if (false !== strpos($key, '[')) {
+                $key = substr($key, 0, strpos($key, '['));
+            }
+
+            $result[$key] = $keyValue[1];
+        }
+
+        return $result;
     }
 }

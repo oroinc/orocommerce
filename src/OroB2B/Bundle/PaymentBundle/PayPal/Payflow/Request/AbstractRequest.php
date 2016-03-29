@@ -2,8 +2,9 @@
 
 namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request;
 
-use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 
 /**
  * @link https://developer.paypal.com/docs/classic/payflow/integration-guide/#core-credit-card-parameters
@@ -16,13 +17,32 @@ abstract class AbstractRequest implements RequestInterface
     protected $options = [];
 
     /**
+     * Lazy initialized @see AbstractRequest::getOptionsResolver
+     *
      * @var OptionsResolver
      */
-    protected $resolver;
+    private $resolver;
 
-    public function __construct()
+    /**
+     * @param array $options
+     */
+    public function __construct(array $options = [])
     {
-        $this->resolver = new OptionsResolver();
+        if ($options) {
+            $this->setOptions($options);
+        }
+    }
+
+    /**
+     * @return OptionsResolver
+     */
+    public function getOptionsResolver()
+    {
+        if (!$this->resolver) {
+            $this->resolver = new OptionsResolver();
+        }
+
+        return $this->resolver;
     }
 
     /** {@inheritdoc} */
@@ -31,6 +51,11 @@ abstract class AbstractRequest implements RequestInterface
         $this->configureBaseOptions();
         $this->configureOptions();
         $this->configureFinalOptions();
+
+        $this
+            ->getOptionsResolver()
+            ->setDefault(Option\Transaction::TRXTYPE, $this->getAction())
+            ->addAllowedValues(Option\Transaction::TRXTYPE, $this->getAction());
 
         $this->options = $this->resolver->resolve($options);
     }
@@ -43,11 +68,13 @@ abstract class AbstractRequest implements RequestInterface
 
     public function configureBaseOptions()
     {
-        $this->resolver
-            ->setDefault(Option\Action::TRANSACTION_TYPE, $this->getAction())
-            ->addAllowedValues(Option\Action::TRANSACTION_TYPE, $this->getAction())
-            ->setRequired([Option\User::USER, Option\User::PASSWORD, Option\User::VENDOR, Option\User::PARTNER])
-            ->addAllowedValues(Option\User::PARTNER, Option\Partner::$list);
+        $this
+            ->addOption(new Option\Transaction())
+            ->addOption(new Option\Tender())
+            ->addOption(new Option\User())
+            ->addOption(new Option\Partner())
+            ->addOption(new Option\Password())
+            ->addOption(new Option\Vendor());
     }
 
     public function configureOptions()
@@ -60,11 +87,11 @@ abstract class AbstractRequest implements RequestInterface
 
     /**
      * @param Option\OptionInterface $option
-     * @return AbstractRequest
+     * @return $this
      */
     protected function addOption(Option\OptionInterface $option)
     {
-        $option->configureOption($this->resolver);
+        $option->configureOption($this->getOptionsResolver());
 
         return $this;
     }

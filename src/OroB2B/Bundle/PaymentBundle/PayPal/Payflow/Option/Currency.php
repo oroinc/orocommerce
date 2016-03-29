@@ -19,19 +19,19 @@ class Currency implements OptionInterface
      * @var array
      */
     public static $currencies = [
-        self::AUSTRALIAN_DOLLAR,
-        self::CANADIAN_DOLLAR,
-        self::EURO,
-        self::BRITISH_POUND,
-        self::JAPANESE_YEN,
-        self::US_DOLLAR,
+        Currency::AUSTRALIAN_DOLLAR,
+        Currency::CANADIAN_DOLLAR,
+        Currency::EURO,
+        Currency::BRITISH_POUND,
+        Currency::JAPANESE_YEN,
+        Currency::US_DOLLAR,
     ];
 
     /** {@inheritdoc} */
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver
-            ->setDefined([Currency::CURRENCY])
+            ->setDefined(Currency::CURRENCY)
             ->addAllowedValues(Currency::CURRENCY, Currency::$currencies);
     }
 }

@@ -4,15 +4,17 @@ namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class User extends AbstractOption
+class Verbosity extends AbstractOption
 {
-    const USER = 'USER';
+    const VERBOSITY = 'VERBOSITY';
+
+    const HIGH = 'HIGH';
 
     /** {@inheritdoc} */
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver
-            ->setRequired(User::USER)
-            ->addAllowedTypes(User::USER, 'string');
+            ->setDefined(Verbosity::VERBOSITY)
+            ->addAllowedValues(Verbosity::VERBOSITY, [Verbosity::HIGH]);
     }
 }

@@ -4,14 +4,15 @@ namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-abstract class AbstractOption implements OptionInterface
+class ExpirationDate extends AbstractOption
 {
-    const YES = 'Y';
-
-    const TRUE = 'TRUE';
+    const EXPDATE = 'EXPDATE';
 
     /** {@inheritdoc} */
     public function configureOption(OptionsResolver $resolver)
     {
+        $resolver
+            ->setDefined(ExpirationDate::EXPDATE)
+            ->addAllowedTypes(ExpirationDate::EXPDATE, 'string');
     }
 }

@@ -19,14 +19,22 @@ class Amount implements OptionInterface
     /** {@inheritdoc} */
     public function configureOption(OptionsResolver $resolver)
     {
+        $allowedTypes = ['string', 'integer', 'float'];
         $resolver
-            ->setDefined([Amount::AMT])
+            ->setDefined(Amount::AMT)
             ->setDefault(Amount::ITEMAMT, 0)
             ->setDefault(Amount::TAXAMT, 0)
             ->setDefault(Amount::FREIGHTAMT, 0)
             ->setDefault(Amount::HANDLINGAMT, 0)
             ->setDefault(Amount::INSURANCEAMT, 0)
             ->setDefault(Amount::DISCOUNT, 0)
+            ->addAllowedTypes(Amount::AMT, $allowedTypes)
+            ->addAllowedTypes(Amount::ITEMAMT, $allowedTypes)
+            ->addAllowedTypes(Amount::TAXAMT, $allowedTypes)
+            ->addAllowedTypes(Amount::FREIGHTAMT, $allowedTypes)
+            ->addAllowedTypes(Amount::HANDLINGAMT, $allowedTypes)
+            ->addAllowedTypes(Amount::INSURANCEAMT, $allowedTypes)
+            ->addAllowedTypes(Amount::DISCOUNT, $allowedTypes)
             ->setNormalizer(
                 Amount::AMT,
                 function (Options $options, $amount) {
