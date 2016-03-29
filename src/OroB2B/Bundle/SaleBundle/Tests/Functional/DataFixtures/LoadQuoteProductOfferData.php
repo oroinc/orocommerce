@@ -17,7 +17,7 @@ class LoadQuoteProductOfferData extends AbstractFixture implements FixtureInterf
     /**
      * @var array
      */
-     public static $items = [
+    public static $items = [
         self::QUOTE_PRODUCT_OFFER_1 => [
             'allowIncrements' => true,
             'amount' => 100,
@@ -43,6 +43,7 @@ class LoadQuoteProductOfferData extends AbstractFixture implements FixtureInterf
             'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
         ];
     }
+
     /**
      * Load data fixtures with the passed EntityManager
      *
