@@ -150,6 +150,9 @@ class FrontendAccountUserRoleFormDataProviderTest extends \PHPUnit_Framework_Tes
             ->method('createForm')
             ->with($role)
             ->willReturn($form);
+        $this->handler->expects($this->once())
+            ->method('process')
+            ->with($role);
 
         return $form;
     }

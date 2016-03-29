@@ -66,6 +66,10 @@ class FrontendAccountUserRoleFormDataProvider extends AbstractServerRenderDataPr
 
         if (!isset($this->forms[$roleId])) {
             $this->forms[$roleId] = $this->handler->createForm($role);
+
+            /* This call needs for set privileges data to form */
+            //TODO: refactor handler and set privileges data on form creation
+            $this->handler->process($role);
         }
 
         return $this->forms[$roleId];
