@@ -31,11 +31,11 @@ class ProductPriceTest extends WebTestCase
         $productPrice = $this->getReference('product_price.3');
 
         $form = $this->getWidgetForm($productPrice->getPriceList());
-        $form['oro_action[price][product]'] = $productPrice->getProduct()->getId();
-        $form['oro_action[price][quantity]'] = $productPrice->getQuantity();
-        $form['oro_action[price][unit]'] = $productPrice->getUnit()->getCode();
-        $form['oro_action[price][price][value]'] = $productPrice->getPrice()->getValue();
-        $form['oro_action[price][price][currency]'] = $productPrice->getPrice()->getCurrency();
+        $form['oro_action_operation[price][product]'] = $productPrice->getProduct()->getId();
+        $form['oro_action_operation[price][quantity]'] = $productPrice->getQuantity();
+        $form['oro_action_operation[price][unit]'] = $productPrice->getUnit()->getCode();
+        $form['oro_action_operation[price][price][value]'] = $productPrice->getPrice()->getValue();
+        $form['oro_action_operation[price][price][currency]'] = $productPrice->getPrice()->getCurrency();
 
         $crawler = $this->client->submit($form);
 
@@ -58,7 +58,7 @@ class ProductPriceTest extends WebTestCase
             $this->getUrl(
                 'oro_action_widget_form',
                 [
-                    'actionName' => 'orob2b_pricing_add_product_price_action',
+                    'operationName' => 'orob2b_pricing_add_product_price',
                     'route' => 'orob2b_pricing_price_list_view',
                     'entityId' => $priceList->getId(),
                     'entityClass' => 'OroB2B\Bundle\PricingBundle\Entity\PriceList'
