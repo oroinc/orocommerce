@@ -1,4 +1,4 @@
-{% extends 'OroActionBundle:Action:page.html.twig' %}
+{% extends 'OroActionBundle:Operation:page.html.twig' %}
 
 {% block pageHeader %}
     {% if entity %}
@@ -11,7 +11,7 @@
 
         {{ parent() }}
     {% else %}
-        {% include 'OroUIBundle::page_title_block.html.twig' with { title: action.definition.label|trans } %}
+        {% include 'OroUIBundle::page_title_block.html.twig' with { title: operation.definition.label|trans } %}
     {% endif %}
 {% endblock pageHeader %}
 

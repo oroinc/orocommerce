@@ -101,10 +101,10 @@ services:
         parent: orob2b_shopping_list.processor.abstract_quick_add
         calls:
             - [setShoppingListManager, [@orob2b_shopping_list.shopping_list.manager]]
-            - [setActionManager, [@oro_action.manager]]
+            - [setOperationManager, [@oro_action.operation_manager]]
             - [setTranslator, [@translator]]
             - [setDateFormatter, [@oro_locale.formatter.date_time]]
-            - [setActionName, ['orob2b_shoppinglist_frontend_action_createorder']]
+            - [setOperationName, ['orob2b_shoppinglist_frontend_createorder']]
         tags:
             - { name: orob2b_product.quick_add_processor }
 

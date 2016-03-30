@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;
-use Oro\Bundle\ActionBundle\Model\ActionManager;
+use Oro\Bundle\ActionBundle\Model\OperationManager;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
@@ -28,9 +28,9 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
     protected $shoppingListManager;
 
     /**
-     * @var ActionManager
+     * @var OperationManager
      */
-    protected $actionManager;
+    protected $operationManager;
 
     /**
      * @var TranslatorInterface
@@ -45,7 +45,7 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
     /**
      * @var string
      */
-    protected $actionName;
+    protected $operationName;
 
     /**
      * @param ShoppingListManager $shoppingListManager
@@ -59,12 +59,12 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
     }
 
     /**
-     * @param ActionManager $actionManager
+     * @param OperationManager $operationManager
      * @return QuickAddCheckoutProcessor
      */
-    public function setActionManager(ActionManager $actionManager)
+    public function setOperationManager(OperationManager $operationManager)
     {
-        $this->actionManager = $actionManager;
+        $this->operationManager = $operationManager;
 
         return $this;
     }
@@ -92,12 +92,12 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
     }
 
     /**
-     * @param string $actionName
+     * @param string $operationName
      * @return QuickAddCheckoutProcessor
      */
-    public function setActionName($actionName)
+    public function setOperationName($operationName)
     {
-        $this->actionName = $actionName;
+        $this->operationName = $operationName;
 
         return $this;
     }
@@ -127,7 +127,7 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
         if ($entitiesCount = $this->fillShoppingList($shoppingList, $data)) {
             $actionData = new ActionData(['data' => $shoppingList]);
             $errors = new ArrayCollection([]);
-            $actionData = $this->actionManager->execute($this->actionName, $actionData, $errors);
+            $actionData = $this->operationManager->execute($this->operationName, $actionData, $errors);
 
             if ($redirectUrl = $actionData->getRedirectUrl()) {
                 $em->commit();

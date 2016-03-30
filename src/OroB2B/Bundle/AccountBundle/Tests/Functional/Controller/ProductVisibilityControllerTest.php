@@ -165,9 +165,9 @@ class ProductVisibilityControllerTest extends WebTestCase
         $this->client->request(
             'GET',
             $this->getUrl(
-                'oro_api_action_execute_actions',
+                'oro_api_action_execute_operations',
                 [
-                    'actionName' => 'orob2b_product_duplicate_action',
+                    'operationName' => 'orob2b_product_duplicate',
                     'route' => 'orob2b_product_view',
                     'entityId' => $this->product->getId(),
                     'entityClass' => 'OroB2B\Bundle\ProductBundle\Entity\Product'
