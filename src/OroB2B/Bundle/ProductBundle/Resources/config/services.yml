@@ -120,8 +120,9 @@ services:
         parent: oro_form.model.update_handler
         scope: request
         calls:
-            - [setActionManager, [@oro_action.manager]]
+            - [setActionGroupRegistry, [@oro_action.action_group_registry]]
             - [setTranslator, [@translator]]
+            - [setRouter, [@router]]
 
     orob2b_product.storage.product_data_bag:
         class: %session.attribute_bag.class%

@@ -1,0 +1,12 @@
+operations:
+    orob2b_order_frontend_order_grid_create:
+        label: orob2b.frontend.order.create.label
+        applications: [frontend]
+        routes:
+            - orob2b_order_frontend_index
+        acl_resource: orob2b_order_frontend_create
+        order: 10
+        actions:
+            - @redirect:
+                parameters:
+                    route: orob2b_order_frontend_create
