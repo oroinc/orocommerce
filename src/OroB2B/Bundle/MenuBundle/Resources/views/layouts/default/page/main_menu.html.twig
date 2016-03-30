@@ -1,6 +1,6 @@
 {% block _main_menu_container_widget %}
     {% set attr = attr|merge({
-    class: attr.class|default('') ~ " top-nav hidden-sm hidden-xs"
+        class: attr.class|default('') ~ " top-nav hidden-sm hidden-xs"
     }) %}
     <nav {{ block('block_attributes') }}>
         <div class="container-fluid">
@@ -13,28 +13,28 @@
 
 {% block _main_menu_widget %}
     <li class="top-nav__list__item">{{ block_widget(block, {
-            attr: {
-                class: 'top-nav__list'
-            },
-            child_attr: {
-                class: 'top-nav__list__item'
-            },
-            link_attr: {
-                class: 'top-nav__list__item__link'
-            }
-        }) }}</li>
+        attr: {
+            class: 'top-nav__list'
+        },
+        child_attr: {
+            class: 'top-nav__list__item'
+        },
+        link_attr: {
+            class: 'top-nav__list__item__link'
+        }
+    }) }}</li>
 {% endblock %}
 
 {% block _main_menu_widgets_widget %}
     {% set attr = attr|merge({
-    class: attr.class|default('') ~ " clearfix not-implemented"
+        class: attr.class|default('') ~ " clearfix not-implemented"
     }) %}
     <li><ul {{ block('block_attributes') }}>{{ block_widget(block) }}</ul></li>
 {% endblock %}
 
 {% block _main_menu_messages_widget_widget %}
     {% set attr = attr|merge({
-    class: attr.class|default('') ~ " top-nav__list__item top-nav__list__item_gray-bg"
+        class: attr.class|default('') ~ " top-nav__list__item top-nav__list__item_gray-bg"
     }) %}
     <li {{ block('block_attributes') }}>
         <button class="messages-widget__trigger" data-oro-mpa-trigger>
@@ -48,7 +48,7 @@
 
 {% block _main_menu_orders_widget_widget %}
     {% set attr = attr|merge({
-    class: attr.class|default('') ~ " top-nav__list__item top-nav__list__item_gray-bg"
+        class: attr.class|default('') ~ " top-nav__list__item top-nav__list__item_gray-bg"
     }) %}
     <li {{ block('block_attributes') }}>
         <div class="cart-widget__content">
