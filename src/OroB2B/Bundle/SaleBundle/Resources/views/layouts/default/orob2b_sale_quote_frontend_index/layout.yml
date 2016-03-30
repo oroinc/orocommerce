@@ -1,5 +1,13 @@
 layout:
     actions:
+        - @appendOption:
+            id: title
+            optionName: value
+            optionValue: 'orob2b.account.menu.account_user.label'
+        - @appendOption:
+            id: title
+            optionName: value
+            optionValue: 'orob2b.frontend.sale.quote.entity_plural_label'
         - @setOption:
             id: page_title
             optionName: text
