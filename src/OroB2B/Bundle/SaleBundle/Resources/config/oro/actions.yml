@@ -81,19 +81,32 @@ operations:
                     email: $.email
 
     orob2b_sale_frontend_quote_change:
-          label: orob2b.frontend.sale.btn.accept_quote_create_order
-          applications: [frontend]
-          routes:
-              - orob2b_sale_quote_frontend_view
-          order: 20
-          button_options:
-              icon: icon-edit
-              class:  quota-accept-btn
-          actions:
-              - @redirect:
-                   parameters:
-                       route: 'orob2b_sale_quote_frontend_choice'
-                       route_parameters: {id: $.data.id}
+        label: orob2b.frontend.sale.btn.accept_quote_create_order
+        applications: [frontend]
+        routes:
+            - orob2b_sale_quote_frontend_view
+        order: 20
+        button_options:
+            icon: icon-edit
+            class:  quota-accept-btn
+        actions:
+            - @find_entity:
+                class: OroB2B\Bundle\SaleBundle\Entity\QuoteDemand
+                attribute: $.quoteDemand
+                where:
+                    quote: $.data
+            - @create_entity:
+                conditions:
+                    @empty: $.quoteDemand
+                parameters:
+                    attribute: $.quoteDemand
+                    class: OroB2B\Bundle\SaleBundle\Entity\QuoteDemand
+                    flush: true
+                    data:
+                        quote: $.data
+            - @redirect:
+                 route: 'orob2b_sale_quote_frontend_choice'
+                 route_parameters: {id: $.quoteDemand.id}
 
 action_groups:
     orob2b_sale_expire_quote:
@@ -157,8 +170,8 @@ action_groups:
 
     orob2b_sale_frontend_quote_accept_and_submit_to_order:
         parameters:
-            quote:
-                type: OroB2B\Bundle\SaleBundle\Entity\Quote
+            data:
+                type: OroB2B\Bundle\SaleBundle\Entity\QuoteDemand
         actions:
             - @assign_url:
                 attribute: $.editLink

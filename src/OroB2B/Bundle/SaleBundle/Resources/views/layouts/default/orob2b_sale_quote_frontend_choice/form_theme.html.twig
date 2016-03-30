@@ -86,7 +86,7 @@
                                 </span>
                             </label>
                         </td>
-                        <td class="quote-product-offer-select-offer-price">
+                        <td class="quote-product-offer-select-offer-price {% if loop.first %}offset-top-s{% endif %}">
                             {{ offer.price|oro_format_price }}
                         </td>
                     </tr>

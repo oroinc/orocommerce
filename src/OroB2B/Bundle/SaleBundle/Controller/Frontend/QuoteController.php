@@ -101,21 +101,18 @@ class QuoteController extends Controller
         $form = $this->createForm(QuoteToOrderType::NAME, $quoteDemand);
         $form->handleRequest($request);
         if ($form->isValid()) {
-            $actionData = $this->container->get('oro_action.manager')->execute(
-                'orob2b_sale_frontend_quote_accept_and_submit_to_order',
-                new ActionData(
-                    [
-                        'data' => $quoteDemand
-                    ]
-                )
-            );
+            $actionGroupRegistry = $this->get('oro_action.action_group_registry');
+            $actionGroup = $actionGroupRegistry->findByName('orob2b_sale_frontend_quote_accept_and_submit_to_order');
+            if ($actionGroup) {
+                $actionData = $actionGroup->execute(new ActionData(['data' => $quoteDemand]));
 
-            $redirectUrl = $actionData->getRedirectUrl();
-            if ($redirectUrl) {
-                if ($request->isXmlHttpRequest()) {
-                    return new JsonResponse(['redirectUrl' => $redirectUrl]);
-                } else {
-                    return $this->redirect($redirectUrl);
+                $redirectUrl = $actionData->getRedirectUrl();
+                if ($redirectUrl) {
+                    if ($request->isXmlHttpRequest()) {
+                        return new JsonResponse(['redirectUrl' => $redirectUrl]);
+                    } else {
+                        return $this->redirect($redirectUrl);
+                    }
                 }
             }
         }

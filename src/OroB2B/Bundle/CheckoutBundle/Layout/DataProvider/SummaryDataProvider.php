@@ -62,16 +62,13 @@ class SummaryDataProvider extends AbstractServerRenderDataProvider
         /** @var Checkout $checkout */
         $checkout = $context->data()->get('checkout');
         if (!array_key_exists($checkout->getId(), $this->summary)) {
-            $orderLineItems = $this->checkoutLineItemsManager->getData($checkout);
-            $lineItemTotals = $this->getOrderLineItemsTotals($orderLineItems);
             $order = new Order();
-            $order->setLineItems($orderLineItems);
             $order->setShippingCost($checkout->getShippingCost());
+            $order->setLineItems($this->checkoutLineItemsManager->getData($checkout));
+            $lineItemsWithTotals = $this->getOrderLineItemsTotals($order->getLineItems());
 
             $this->summary[$checkout->getId()] = [
-                'lineItemTotals' => $lineItemTotals,
-                'lineItems' => $orderLineItems,
-                'lineItemsCount' => $orderLineItems->count(),
+                'lineItemsWithTotals' => $lineItemsWithTotals,
                 'subtotals' => $this->totalsProvider->getSubtotals($order),
                 'generalTotal' => $this->totalsProvider->getTotal($order)
             ];
@@ -82,11 +79,11 @@ class SummaryDataProvider extends AbstractServerRenderDataProvider
 
     /**
      * @param Collection|OrderLineItem[] $orderLineItems
-     * @return array
+     * @return \SplObjectStorage
      */
     protected function getOrderLineItemsTotals(Collection $orderLineItems)
     {
-        $lineItemTotals = [];
+        $lineItemTotals = new \SplObjectStorage();
         foreach ($orderLineItems as $orderLineItem) {
             $lineItemTotal = new Price();
             $lineItemTotal->setValue(
@@ -94,7 +91,7 @@ class SummaryDataProvider extends AbstractServerRenderDataProvider
             );
             $lineItemTotal->setCurrency($orderLineItem->getCurrency());
 
-            $lineItemTotals[$orderLineItem->getProductSku()] = $lineItemTotal;
+            $lineItemTotals->attach($orderLineItem, ['total' => $lineItemTotal]);
         }
 
         return $lineItemTotals;
