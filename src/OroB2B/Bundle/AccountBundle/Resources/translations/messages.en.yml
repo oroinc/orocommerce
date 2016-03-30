@@ -313,6 +313,7 @@ orob2b.account:
         shortcut_list_account_user_roles.label: 'Show account user roles'
         shortcut_list_account_user_roles.description: 'View list of account user roles'
 
+        account_user.label: My Account
         account_user_profile.label: My Profile
         account_user_login.label: Login
         account_user_logout.label: Logout
