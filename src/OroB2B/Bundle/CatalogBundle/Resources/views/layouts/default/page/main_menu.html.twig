@@ -16,11 +16,10 @@
     {% set hasSublist = category.childCategories is not empty %}
     <a href="{{ path('orob2b_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}"
        class="top-nav__list__item__link">
-        <span>{{ category.defaultTitle }}
-            {% if hasSublist %}
-                <i class="cf-down-open-mini"></i>
-            {% endif %}
-        </span>
+        <span>{{ category.defaultTitle }} </span>
+        {% if hasSublist %}
+            <i class="cf-down-open-mini"></i>
+        {% endif %}
     </a>
     {% if hasSublist %}
         <!-- START TOP NAVIGATION SUBLIST -->
@@ -94,14 +93,14 @@
 
 {% block _categories_main_menu_second_level_sales_widget %}
     <div class="top-nav__sublist__title">On Sale</div>
-    <div class="adv-block">
+    <div class="sales-block">
         <a href="#">
             <img class="img-responsive"
                  src="{% image '@OroB2BCatalogBundle/Resources/public/default/images/adv_1.jpg' %}{{ asset_url }}{% endimage %}"
                  alt="">
         </a>
     </div>
-    <div class="adv-block">
+    <div class="sales-block">
         <a href="#">
             <img class="img-responsive"
                  src="{% image '@OroB2BCatalogBundle/Resources/public/default/images/adv_2.jpg' %}{{ asset_url }}{% endimage %}"

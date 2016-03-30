@@ -1,6 +1,6 @@
 {% block _main_menu_container_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " top-nav hidden-sm hidden-xs"
+    class: attr.class|default('') ~ " top-nav hidden-sm hidden-xs"
     }) %}
     <nav {{ block('block_attributes') }}>
         <div class="container-fluid">
@@ -12,51 +12,51 @@
 {% endblock %}
 
 {% block _main_menu_widget %}
-    <li>{{ block_widget(block, {
-        attr: {
-            class: 'top-nav__list'
-        },
-        child_attr: {
-            class: 'top-nav__list__item'
-        },
-        link_attr: {
-            class: 'top-nav__list__item__link'
-        }
-    }) }}</li>
+    <li class="top-nav__list__item">{{ block_widget(block, {
+            attr: {
+                class: 'top-nav__list'
+            },
+            child_attr: {
+                class: 'top-nav__list__item'
+            },
+            link_attr: {
+                class: 'top-nav__list__item__link'
+            }
+        }) }}</li>
 {% endblock %}
 
 {% block _main_menu_widgets_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " clearfix not-implemented"
+    class: attr.class|default('') ~ " clearfix not-implemented"
     }) %}
     <li><ul {{ block('block_attributes') }}>{{ block_widget(block) }}</ul></li>
 {% endblock %}
 
 {% block _main_menu_messages_widget_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " top-nav__list__item top-nav__list__item_gray-bg"
+    class: attr.class|default('') ~ " top-nav__list__item top-nav__list__item_gray-bg"
     }) %}
     <li {{ block('block_attributes') }}>
         <button class="messages-widget__trigger" data-oro-mpa-trigger>
             <span class="badge badge_xs badge_circle badge_blue messages-widget__badge">3</span>
-            <span class="badge badge_md badge_circle badge_dark"><i class="icon-comment"></i></span>
+            <span class="badge badge_md badge_circle badge_dark"><i class="cf-comment"></i></span>
             <span class="messages-widget__title text-uppercase">Messages</span>
-            <i class="icon-down-open-mini"></i>
+            <i class="cf-down-open-mini"></i>
         </button>
     </li>
 {% endblock %}
 
 {% block _main_menu_orders_widget_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " top-nav__list__item top-nav__list__item_gray-bg"
+    class: attr.class|default('') ~ " top-nav__list__item top-nav__list__item_gray-bg"
     }) %}
     <li {{ block('block_attributes') }}>
         <div class="cart-widget__content">
             <span class="badge badge_md badge_circle badge_orange badge_i-block cart-widget__clipboard">
-              <i class="icon-clipboard"></i>
+              <i class="cf-clipboard"></i>
             </span>
             <span class="cart-widget__list-trigger">
-              <span class="cart-widget-text">Orders</span> <strong>$1,345</strong> <i class="icon-down-open-mini"></i>
+              <span class="cart-widget-text">Orders</span> <strong>$1,345</strong> <i class="cf-down-open-mini"></i>
             </span>
         </div>
     </li>

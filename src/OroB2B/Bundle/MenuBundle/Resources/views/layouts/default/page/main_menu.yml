@@ -11,6 +11,7 @@ layout:
                     blockType: menu
                     options:
                         menu: main-menu
+                        depth: 1
                 main_menu_widgets:
                     blockType: container
                 main_menu_messages_widget:

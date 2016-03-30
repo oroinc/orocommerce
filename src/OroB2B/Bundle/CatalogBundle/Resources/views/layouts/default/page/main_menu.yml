@@ -28,7 +28,7 @@ layout:
                     blockType: block
                     options:
                         attr:
-                            class: 'top-nav__sublist__item_has-adv-block'
+                            class: 'top-nav__sublist__item_has-sales-block'
             tree:
                 main_menu_container:
                     categories_main_menu:
