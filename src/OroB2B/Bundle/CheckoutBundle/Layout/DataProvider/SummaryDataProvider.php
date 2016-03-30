@@ -66,6 +66,7 @@ class SummaryDataProvider extends AbstractServerRenderDataProvider
             $lineItemTotals = $this->getOrderLineItemsTotals($orderLineItems);
             $order = new Order();
             $order->setLineItems($orderLineItems);
+            $order->setShippingCost($checkout->getShippingCost());
 
             $this->summary[$checkout->getId()] = [
                 'lineItemTotals' => $lineItemTotals,

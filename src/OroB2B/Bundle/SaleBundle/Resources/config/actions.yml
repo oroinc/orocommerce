@@ -176,7 +176,7 @@ actions:
                 force: true
                 data:
                     shippingAddress: $.orderAddress
-                    shippingEstimate: $.shippingEstimate
+                    shippingCost: $.shippingEstimate
                 settings:
                     allow_source_remove: false
                     remove_source: false
