@@ -38,7 +38,7 @@ class ShoppingListActionsTest extends ActionTestCase
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         $this->assertFalse($shoppingList->getLineItems()->isEmpty());
 
-        $this->executeAction($shoppingList, 'orob2b_shoppinglist_action_createorder');
+        $this->executeOperation($shoppingList, 'orob2b_shoppinglist_createorder');
 
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
 
@@ -69,7 +69,7 @@ class ShoppingListActionsTest extends ActionTestCase
         /* @var $product2 Product */
         $product = $this->getReference('product.2');
 
-        $crawler = $this->assertActionForm(
+        $crawler = $this->assertOperationForm(
             'orob2b_shoppinglist_addlineitem',
             $shoppingList->getId(),
             get_class($shoppingList)
@@ -77,14 +77,14 @@ class ShoppingListActionsTest extends ActionTestCase
 
         $form = $crawler->selectButton('Save')->form(
             [
-                'oro_action[lineItem][product]' => $product->getId(),
-                'oro_action[lineItem][quantity]' => 22.2,
-                'oro_action[lineItem][notes]' => 'test_notes',
-                'oro_action[lineItem][unit]' => $unit->getCode()
+                'oro_action_operation[lineItem][product]' => $product->getId(),
+                'oro_action_operation[lineItem][quantity]' => 22.2,
+                'oro_action_operation[lineItem][notes]' => 'test_notes',
+                'oro_action_operation[lineItem][unit]' => $unit->getCode()
             ]
         );
 
-        $this->assertActionFormSubmitted($form, 'Line item has been added');
+        $this->assertOperationFormSubmitted($form, 'Line item has been added');
     }
 
     public function testLineItemCreateDuplicate()
@@ -94,7 +94,7 @@ class ShoppingListActionsTest extends ActionTestCase
 
         $shoppingList = $lineItem->getShoppingList();
 
-        $crawler = $this->assertActionForm(
+        $crawler = $this->assertOperationForm(
             'orob2b_shoppinglist_addlineitem',
             $shoppingList->getId(),
             get_class($shoppingList)
@@ -102,14 +102,14 @@ class ShoppingListActionsTest extends ActionTestCase
 
         $form = $crawler->selectButton('Save')->form(
             [
-                'oro_action[lineItem][product]' => $lineItem->getProduct()->getId(),
-                'oro_action[lineItem][quantity]' => 100,
-                'oro_action[lineItem][notes]' => 'test_notes',
-                'oro_action[lineItem][unit]' => $lineItem->getUnit()->getCode()
+                'oro_action_operation[lineItem][product]' => $lineItem->getProduct()->getId(),
+                'oro_action_operation[lineItem][quantity]' => 100,
+                'oro_action_operation[lineItem][notes]' => 'test_notes',
+                'oro_action_operation[lineItem][unit]' => $lineItem->getUnit()->getCode()
             ]
         );
 
-        $this->assertActionFormSubmitted($form, 'Line item has been added');
+        $this->assertOperationFormSubmitted($form, 'Line item has been added');
     }
 
     public function testLineItemUpdate()
@@ -119,7 +119,7 @@ class ShoppingListActionsTest extends ActionTestCase
         /** @var ProductUnit $unit */
         $unit = $this->getReference('product_unit.liter');
 
-        $crawler = $this->assertActionForm(
+        $crawler = $this->assertOperationForm(
             'orob2b_shoppinglist_updatelineitem',
             $lineItem->getId(),
             get_class($lineItem)
@@ -127,23 +127,23 @@ class ShoppingListActionsTest extends ActionTestCase
 
         $form = $crawler->selectButton('Save')->form(
             [
-                'oro_action[lineItem][quantity]' => 33.3,
-                'oro_action[lineItem][unit]' => $unit->getCode(),
-                'oro_action[lineItem][notes]' => 'Updated test notes',
+                'oro_action_operation[lineItem][quantity]' => 33.3,
+                'oro_action_operation[lineItem][unit]' => $unit->getCode(),
+                'oro_action_operation[lineItem][notes]' => 'Updated test notes',
             ]
         );
 
-        $this->assertActionFormSubmitted($form, 'Line item has been updated');
+        $this->assertOperationFormSubmitted($form, 'Line item has been updated');
     }
 
     /**
      * @param ShoppingList $shoppingList
-     * @param string $actionName
+     * @param string $operationName
      */
-    protected function executeAction(ShoppingList $shoppingList, $actionName)
+    protected function executeOperation(ShoppingList $shoppingList, $operationName)
     {
-        $this->assertExecuteAction(
-            $actionName,
+        $this->assertExecuteOperation(
+            $operationName,
             $shoppingList->getId(),
             'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList',
             ['route' => 'orob2b_shopping_list_view']
