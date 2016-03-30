@@ -638,4 +638,14 @@ class Checkout extends ExtendCheckout implements
         $this->shippingEstimateAmount = $this->shippingEstimate ? $this->shippingEstimate->getValue() : null;
         $this->shippingEstimateCurrency = $this->shippingEstimate ? $this->shippingEstimate->getCurrency() : null;
     }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return '';
+    }
+
+
 }

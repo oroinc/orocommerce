@@ -13,7 +13,6 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AlternativeCheckoutBundle\Model\ExtendAlternativeCheckout;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutTrait;
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutTypeAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 
 /**
@@ -53,8 +52,7 @@ class AlternativeCheckout extends ExtendAlternativeCheckout implements
     AccountOwnerAwareInterface,
     DatesAwareInterface,
     ContextItemInterface,
-    LineItemsNotPricedAwareInterface,
-    CheckoutTypeAwareInterface
+    LineItemsNotPricedAwareInterface
 {
     const TYPE = 'alternative';
     use CheckoutTrait;

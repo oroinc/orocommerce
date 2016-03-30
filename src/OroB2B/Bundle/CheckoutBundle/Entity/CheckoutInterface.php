@@ -10,4 +10,9 @@ interface CheckoutInterface extends WorkflowAwareInterface
      * @return CheckoutSource
      */
     public function getSourceEntity();
+
+    /**
+     * @return string
+     */
+    public function getType();
 }

@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\CheckoutBundle\Controller\Frontend;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -48,8 +49,9 @@ class CheckoutController extends Controller
      * @param int $id
      * @param null|string $type
      * @return array|Response
+     * @throws \Exception
      */
-    public function checkoutAction(Request $request, $id, $type = null)
+    public function checkoutAction(Request $request, $id, $type)
     {
         if (!$type) {
             $checkout = $this->getDoctrine()->getRepository('OroB2BCheckoutBundle:Checkout')
@@ -63,7 +65,9 @@ class CheckoutController extends Controller
             $checkout = $event->getCheckoutEntity();
         }
 
-        //todo 404
+        if (!$checkout) {
+            throw new NotFoundHttpException(sprintf('Checkout not found'));
+        }
 
         $workflowItem = $this->handleTransition($checkout, $request);
         $currentStep = $workflowItem->getCurrentStep();

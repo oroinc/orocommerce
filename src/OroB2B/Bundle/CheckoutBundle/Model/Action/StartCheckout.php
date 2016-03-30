@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\CheckoutBundle\Model\Action;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutTypeAwareInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -210,12 +209,10 @@ class StartCheckout extends AbstractAction
             $em->flush($checkout->getWorkflowItem());
         }
 
-        $checkoutType = $checkout instanceof CheckoutTypeAwareInterface ? $checkout->getType() : null;
-
         $this->redirect->initialize(
             [
                 'route' => $this->checkoutRoute,
-                'route_parameters' => ['id' => $checkout->getId(), 'type' => $checkoutType]
+                'route_parameters' => ['id' => $checkout->getId(), 'type' => $checkout->getType()]
             ]
         );
         $this->redirect->execute($context);
