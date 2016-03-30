@@ -90,14 +90,14 @@ class GetOrderLineItemsTest extends \PHPUnit_Framework_TestCase
                 'options' => [
                     GetOrderLineItems::OPTION_KEY_CHECKOUT => new PropertyPath('checkout')
                 ],
-                'expectedException' => 'Oro\Bundle\ActionBundle\Exception\InvalidParameterException',
+                'expectedException' => 'Oro\Component\Action\Exception\InvalidParameterException',
                 'expectedExceptionMessage' => 'Attribute name parameter is required',
             ],
             [
                 'options' => [
                     GetOrderLineItems::OPTION_KEY_ATTRIBUTE => 'lineItems'
                 ],
-                'expectedException' => 'Oro\Bundle\ActionBundle\Exception\InvalidParameterException',
+                'expectedException' => 'Oro\Component\Action\Exception\InvalidParameterException',
                 'expectedExceptionMessage' => 'Checkout name parameter is required',
             ],
         ];
