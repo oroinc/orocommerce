@@ -202,10 +202,10 @@ operations:
         preconditions:
             @equal: [false, $.isPredefined]
         actions:
-            - @call_service_method:
-                service: oro_action.handler.delete
-                method: handleDelete
-                method_parameters: [$.data]
+            - @run_action_group:
+                action_group: DELETE
+                parameters_mapping:
+                    data: $.data
             - @trans:
                 id: orob2b.account.accountuserrole.entity_label
                 attribute: $.entityLabel
