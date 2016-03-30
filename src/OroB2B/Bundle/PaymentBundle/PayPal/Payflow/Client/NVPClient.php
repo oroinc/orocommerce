@@ -2,24 +2,23 @@
 
 namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Client;
 
+use Guzzle\Http\ClientInterface as HTTPClientInterface;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\NVP\EncoderInterface;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\ResponseInterface;
 
-use Guzzle\Http\ClientInterface as HTTPClient;
-
 class NVPClient implements ClientInterface
 {
-    /** @var HTTPClient */
+    /** @var HTTPClientInterface */
     protected $httpClient;
 
     /** @var EncoderInterface */
     protected $encoder;
 
     /**
-     * @param HTTPClient $httpClient
+     * @param HTTPClientInterface $httpClient
      * @param EncoderInterface $encoder
      */
-    public function __construct(HTTPClient $httpClient, EncoderInterface $encoder)
+    public function __construct(HTTPClientInterface $httpClient, EncoderInterface $encoder)
     {
         $this->httpClient = $httpClient;
         $this->encoder = $encoder;

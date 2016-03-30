@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 class ShippingAddress extends AbstractOption
 {
     const SHIPTOFIRSTNAME = 'SHIPTOFIRSTNAME';

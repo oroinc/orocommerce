@@ -3,6 +3,9 @@ TRXTYPE:
     request: |
         TRXTYPE=D&PWD=x1y2z3&PARTNER=PayPal&VENDOR=SuperMerchant
         &USER=SuperMerchant&ORIGID=VXYZ01234567&AMT=66.00
+    error:
+        - 'Symfony\Component\OptionsResolver\Exception\MissingOptionsException'
+        - 'The required option "TENDER" is missing.'
 ORIGID:
     class: 'OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\DelayedCaptureRequest'
     request: |

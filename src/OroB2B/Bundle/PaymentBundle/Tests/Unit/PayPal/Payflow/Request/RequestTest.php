@@ -2,12 +2,12 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\PayPal\Payflow\Request;
 
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\NVP\Encoder;
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option\OptionsResolver;
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\RequestInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Yaml\Yaml;
-
-use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\NVP\Encoder;
-use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\RequestInterface;
 
 class RequestTest extends \PHPUnit_Framework_TestCase
 {
@@ -32,7 +32,10 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $options = (new Encoder())->decode($requestString);
         /** @var RequestInterface $request */
         $request = new $requestClass($options);
-        $this->assertInternalType('array', $request->getOptions());
+
+        $resolver = new OptionsResolver();
+        $request->configureOptions($resolver);
+        $this->assertInternalType('array', $resolver->resolve($options));
     }
 
     /**

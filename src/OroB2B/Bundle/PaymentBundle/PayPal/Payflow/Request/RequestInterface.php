@@ -2,20 +2,12 @@
 
 namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request;
 
-interface RequestInterface
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option\OptionsAwareInterface;
+
+interface RequestInterface extends OptionsAwareInterface
 {
     /**
      * @return string
      */
     public function getAction();
-
-    /**
-     * @return array
-     */
-    public function getOptions();
-
-    /**
-     * @param array $options
-     */
-    public function setOptions(array $options = []);
 }

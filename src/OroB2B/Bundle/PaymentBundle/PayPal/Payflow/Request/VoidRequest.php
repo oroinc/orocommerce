@@ -13,10 +13,13 @@ class VoidRequest extends AbstractRequest
     }
 
     /** {@inheritdoc} */
-    public function configureOptions()
+    public function configureRequestOptions()
     {
         $this
+            ->addOption(new Option\Tender())
             ->addOption(new Option\OriginalTransaction())
             ->addOption(new Option\Verbosity());
+
+        return $this;
     }
 }

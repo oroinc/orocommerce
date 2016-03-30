@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 class SecureTokenIdentifier extends AbstractOption
 {
     const SECURETOKENID = 'SECURETOKENID';

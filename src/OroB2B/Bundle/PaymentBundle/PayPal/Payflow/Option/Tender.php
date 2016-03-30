@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 class Tender extends AbstractOption
 {
     const TENDER = 'TENDER';
@@ -18,8 +16,7 @@ class Tender extends AbstractOption
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver
-            ->setDefined(Tender::TENDER)
-            ->setDefault(Tender::TENDER, Tender::CREDIT_CARD)
+            ->setRequired(Tender::TENDER)
             ->addAllowedValues(
                 Tender::TENDER,
                 [

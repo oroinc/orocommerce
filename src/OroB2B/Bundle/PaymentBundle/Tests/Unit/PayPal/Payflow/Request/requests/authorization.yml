@@ -5,7 +5,7 @@ CREATESECURETOKEN:
         &PONUM=PO9876&CREATESECURETOKEN=Y&SECURETOKENID=9a9ea8208de1413abc3d60c86cb1f4c5
     error:
         - 'Symfony\Component\OptionsResolver\Exception\MissingOptionsException'
-        - 'The required options "ACCT", "PARTNER", "PWD", "USER", "VENDOR" are missing.'
+        - 'The required options "ACCT", "PARTNER", "PWD", "TENDER", "USER", "VENDOR" are missing.'
 CREATESECURETOKEN_SILENTTRAN:
     class: 'OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\AuthorizationRequest'
     request: |
@@ -13,7 +13,7 @@ CREATESECURETOKEN_SILENTTRAN:
         &CREATESECURETOKEN=Y&SECURETOKENID=9a9ea8208de1413abc3d60c86cb1f4c5&SILENTTRAN=TRUE
     error:
         - 'Symfony\Component\OptionsResolver\Exception\MissingOptionsException'
-        - 'The required options "ACCT", "PARTNER", "PWD", "USER", "VENDOR" are missing.'
+        - 'The required options "ACCT", "PARTNER", "PWD", "TENDER", "USER", "VENDOR" are missing.'
 Verifications:
     class: 'OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\AuthorizationRequest'
     request: |
