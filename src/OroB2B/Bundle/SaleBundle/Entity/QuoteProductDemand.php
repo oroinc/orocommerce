@@ -45,8 +45,9 @@ class QuoteProductDemand
     protected $quoteProductOffer;
 
     /**
-     * @var integer
-     * @ORM\Column(name="quantity", type="integer")
+     * @var float
+     *
+     * @ORM\Column(name="quantity", type="float")
      */
     protected $quantity;
 
@@ -54,7 +55,7 @@ class QuoteProductDemand
      * SelectedOffer constructor.
      * @param QuoteDemand $quoteDemand
      * @param QuoteProductOffer $quoteProductOffer
-     * @param int $quantity
+     * @param float $quantity
      */
     public function __construct(QuoteDemand $quoteDemand, QuoteProductOffer $quoteProductOffer, $quantity)
     {
@@ -80,7 +81,7 @@ class QuoteProductDemand
     }
 
     /**
-     * @return int
+     * @return float
      */
     public function getQuantity()
     {
@@ -88,7 +89,7 @@ class QuoteProductDemand
     }
 
     /**
-     * @param int $quantity
+     * @param float $quantity
      */
     public function setQuantity($quantity)
     {

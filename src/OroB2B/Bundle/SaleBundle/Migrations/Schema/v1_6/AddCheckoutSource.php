@@ -88,7 +88,7 @@ class AddCheckoutSource implements Migration, ExtendExtensionAwareInterface
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('quote_demand_id', 'integer', ['notnull' => false]);
         $table->addColumn('quote_product_offer', 'integer', ['notnull' => false]);
-        $table->addColumn('quantity', 'integer', []);
+        $table->addColumn('quantity', 'float', []);
         $table->setPrimaryKey(['id']);
     }
 
