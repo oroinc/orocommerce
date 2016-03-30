@@ -326,18 +326,26 @@
                 {% for offer in quoteProduct.quoteProductOffers %}
                     <tr>
                         <td class="quote-product-offer-select-offer-choice">
-                            <input type="radio" name="{{ offerChoiceName }}" value="{{ offer.id }}"
-                               {% if offer.id == selectedOffer.id %}checked="checked"{% endif %}
-                               data-unit="{{ offer.productUnitCode }}"
-                               data-quantity="{{ offer.quantity }}"
-                               data-price="{{ offer.price|oro_format_price }}"
-                            />
-                        </td>
-                        <td class="quote-product-offer-select-offer-label">
-                            {{ offer.quantity|orob2b_format_short_product_unit_value(offer.productUnit) }}
-                            {% if offer.allowIncrements %}
-                                {{ 'orob2b.frontend.sale.quoteproductoffer.allow_increments.label'|trans }}
-                            {% endif %}
+                            {% set checked = offer.id == selectedOffer.id %}
+                            <label class="radio_custom radio_custom_blue {% if checked %}checked{% endif %}" data-radio="">
+                                <input type="radio"
+                                       name="{{ offerChoiceName }}"
+                                       value="{{ offer.id }}"
+                                       data-allow-more="{{ offer.allowIncrements }}"
+                                       data-unit="{{ offer.productUnitCode }}"
+                                       data-quantity="{{ offer.quantity }}"
+                                       data-price="{{ offer.price|oro_format_price }}"
+                                       {% if checked %}checked="checked"{% endif %}
+                                />
+                                <i class="cf-radio_button_checked radio_checked fs18 mmr5-md"></i>
+                                <i class="cf-radio_button_unchecked radio_not-checked fs18 mmr5-md"></i>
+                                <span class="checkbox_custom__text fs13">
+                                    {{ offer.quantity|orob2b_format_short_product_unit_value(offer.productUnit) }}
+                                    {% if offer.allowIncrements %}
+                                        {{ 'orob2b.frontend.sale.quoteproductoffer.allow_increments.label'|trans }}
+                                    {% endif %}
+                                </span>
+                            </label>
                         </td>
                         <td class="quote-product-offer-select-offer-price">
                             {{ offer.price|oro_format_price }}
@@ -348,7 +356,7 @@
         </td>
         <td class="quote-product-offer-quantity">
             <div class="fields-row">
-                {{ form_widget(form.quantity, {'attr': {'data-valid': isQuantityValid|json_encode}}) }}
+                {{ form_widget(form.quantity, {'attr': {'data-valid': isQuantityValid|json_encode, 'readonly': selectedOffer and not selectedOffer.allowIncrements}}) }}
                 {{ form_widget(form.unit) }}
                 <span class="quote-product-offer-quantity-unit">{{ defaultUnitCode }}</span>
             </div>

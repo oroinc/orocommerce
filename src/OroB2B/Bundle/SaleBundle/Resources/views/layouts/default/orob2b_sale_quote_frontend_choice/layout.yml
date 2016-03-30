@@ -3,15 +3,49 @@ layout:
         - @setBlockTheme:
             themes: 'OroB2BSaleBundle:layouts:default/orob2b_sale_quote_frontend_choice/layout.html.twig'
 
+        - @setOption:
+            id: head
+            optionName: title
+            optionValue:
+                label: 'orob2b.frontend.sale.quote.head_title.label'
+                parameters:
+                    id: { @value: $data.quote.qid }
+
+        - @setOption:
+            id: page_title
+            optionName: class_prefix
+            optionValue: 'account'
+
+        - @setOption:
+            id: page_title
+            optionName: text
+            optionValue:
+                label: 'orob2b.frontend.sale.quote.title.label'
+                parameters:
+                    id: { @value: $data.quote.qid }
+
+        - @add:
+            id: account_sidebar
+            parentId: sidebar_left
+            blockType: block
+
         - @addTree:
             items:
+                quote_view_page:
+                    blockType: container
+                quote_view_information:
+                    blockType: block
+                    options:
+                        vars:
+                            quote: { @value: $data.quote }
                 quote_choice_page:
                     blockType: block
                     options:
                         vars:
-                            form:
-                                @value: $data.form
-
+                            form: { @value: $data.form }
+                            quote: { @value: $data.quote }
             tree:
                 content:
-                    quote_choice_page: ~
+                    quote_view_page:
+                        quote_view_information: ~
+                        quote_choice_page: ~

@@ -123,7 +123,8 @@ class QuoteController extends Controller
         return [
             'data' => [
                 'data' => $quoteDemand,
-                'form' => $form->createView()
+                'form' => $form->createView(),
+                'quote' => $quoteDemand->getQuote()
             ]
         ];
     }

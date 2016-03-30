@@ -10,12 +10,138 @@
             {{ form_widget(form) }}
             {{ form_rest(form) }}
 
-            <div class="widget-actions">
-                <button type="reset" class="btn">{{ 'orob2b.frontend.sale.quote.submit_to_order.cancel'|trans }}</button>
-                <button type="submit" class="btn btn-success">{{ 'orob2b.frontend.sale.quote.submit_to_order.submit'|trans }}</button>
+            <div class="order-checkout-widget order-checkout-widget_block">
+                <div class="text-left">
+                    <a href="{{ path('orob2b_sale_quote_frontend_view', {id: quote.id}) }}"><i class="cf-left-open-mini"></i><span>Back to Quote</span></a>
+                </div>
+                <div class=" text-right mb4-md">
+                    <button class="btn theme-btn btn-orange" type="submit">{{ 'orob2b.frontend.sale.quote.submit_to_order.submit'|trans }}</button>
+                </div>
             </div>
         </form>
         {{ oro_form_js_validation(form) }}
         {{ block_widget(block) }}
     </div>
 {% endblock %}
+
+{% block _quote_view_information_widget %}
+    <div class="account-oq-container">
+        <div class="account-oq__item__head">
+            <div class="account-oq__item account-oq__item_full mb0-sm">
+                <h2 class="account-oq__item__title">
+                    {{ 'orob2b.frontend.sale.quote.sections.general'|trans }}
+                </h2>
+            </div>
+        </div>
+        <div class="account-oq__item__body">
+            <div class="account-oq__item">
+                <div class="account-oq__order-info">
+                    <table class="table borderless">
+                        <tbody>
+                        {% if quote.assignedUsers | length %}
+                            <tr>
+                                <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.assigned_account_users.label'|trans }}</td>
+                                <td>
+                                    {% set assigned_users = [] %}
+                                    {% for entity in quote.assignedUsers %}
+                                        {% set assigned_users = assigned_users|merge([entity.fullName]) %}
+                                    {% endfor %}
+                                    {{ assigned_users|join(', ') }}
+                                </td>
+                            </tr>
+                        {% endif %}
+                        <tr class="account-oq__order-info__control">
+                            <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.valid_until.label'|trans }}</td>
+                            <td>{{ quote.validUntil ? quote.validUntil|oro_format_datetime : 'N/A'|trans }}</td>
+                        </tr>
+                        <tr class="account-oq__order-info__control">
+                            <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.po_number.label'|trans }}</td>
+                            <td>{{ quote.poNumber|default('N/A'|trans) }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="account-oq__item">
+                <div class="account-oq__order-info">
+                    <table class="table borderless">
+                        <tbody>
+                        <tr class="account-oq__order-info__control">
+                            <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.ship_until.label'|trans }}</td>
+                            <td>{{ quote.shipUntil|oro_format_date|default('N/A'|trans) }}</td>
+                        </tr>
+                        {% if quote.shippingAddress %}
+                            {% set name = [] %}
+                            {% if quote.shippingAddress.namePrefix %}
+                                {% set name = name|merge([quote.shippingAddress.namePrefix]) %}
+                            {% endif %}
+                            {% if quote.shippingAddress.firstName %}
+                                {% set name = name|merge([quote.shippingAddress.firstName]) %}
+                            {% endif %}
+                            {% if quote.shippingAddress.middleName %}
+                                {% set name = name|merge([quote.shippingAddress.middleName]) %}
+                            {% endif %}
+                            {% if quote.shippingAddress.lastName %}
+                                {% set name = name|merge([quote.shippingAddress.lastName]) %}
+                            {% endif %}
+                            {% if quote.shippingAddress.nameSuffix %}
+                                {% set name = name|merge([quote.shippingAddress.nameSuffix]) %}
+                            {% endif %}
+                            {% set rowspan = 3 %}
+                            {% if name|length == 0 %}
+                                {% set rowspan = 2 %}
+                            {% endif %}
+                            <tr class="account-oq__order-info__control">
+                            <td class="account-oq__order-info__title" rowspan="{{ rowspan }}">{{ 'orob2b.frontend.sale.quote.shipping_address.label'|trans }}</td>
+                            {% if name|length > 0 %}
+                                <td>{{ name|join(' ') }}</td>
+                                </tr>
+                                <tr>
+                            {% endif %}
+                            <td>
+                                {% set address = [] %}
+                                {% if quote.shippingAddress.street %}
+                                    {% set address = address|merge([quote.shippingAddress.street]) %}
+                                {% endif %}
+                                {% if quote.shippingAddress.street2 %}
+                                    {% set address = address|merge([quote.shippingAddress.street2]) %}
+                                {% endif %}
+                                {% if quote.shippingAddress.organization %}
+                                    {% set address = address|merge([quote.shippingAddress.organization]) %}
+                                {% endif %}
+                                {{ address|join(', ') }}
+                            </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    {% set address = [] %}
+                                    {% if quote.shippingAddress.city %}
+                                        {% set address = address|merge([quote.shippingAddress.city]) %}
+                                    {% endif %}
+                                    {% if quote.shippingAddress.country.name %}
+                                        {% set address = address|merge([quote.shippingAddress.country.name]) %}
+                                    {% endif %}
+                                    {% if quote.shippingAddress.postalCode %}
+                                        {% set address = address|merge([quote.shippingAddress.postalCode]) %}
+                                    {% endif %}
+                                    {{ address|join(', ') }}
+                                    <br/>
+                                    {{ quote.shippingAddress.phone }}
+                                </td>
+                            </tr>
+                        {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _quote_view_page_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " quote"}) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+

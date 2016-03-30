@@ -2,6 +2,7 @@ define(function(require) {
     'use strict';
 
     var CheckboxInputWidget;
+    var $ = require('jquery');
     var AbstractInputWidget = require('oroui/js/app/views/input-widget/abstract');
 
     CheckboxInputWidget = AbstractInputWidget.extend({

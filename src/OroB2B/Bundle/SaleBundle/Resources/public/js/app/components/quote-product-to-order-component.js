@@ -22,7 +22,8 @@ define(function(require) {
             data_attributes: {
                 unit: 'unit',
                 quantity: 'quantity',
-                price: 'price'
+                price: 'price',
+                allow_more: 'allow-more'
             },
             matchOfferRoute: 'orob2b_sale_quote_frontend_quote_product_match_offer',
             quoteProductId: null,
@@ -77,8 +78,7 @@ define(function(require) {
             this.$unitPrice = $(this.options.unitPriceSelector);
             this.$offerSelector = $(this.options.offerSelector);
 
-            this.$offerSelector.mousedown(_.bind(this.onSelectorStartChange, this));
-            this.$offerSelector.change(_.bind(this.onSelectorFinishChange, this));
+            this.$offerSelector.change(_.bind(this.onSelectorStartChange, this));
             this.addQuantityEvents();
         },
 
@@ -91,12 +91,11 @@ define(function(require) {
             this.quantityEventsEnabled = false;
 
             this.updateQuantityInputValue(Number(target.data(this.options.data_attributes.quantity)));
+            this.$quantity.prop('readonly', !target.data(this.options.data_attributes.allow_more));
             this.setValidAttribute(this.$quantity, true);
             this.updateUnitValue(String(target.data(this.options.data_attributes.unit)));
             this.updateUnitPriceValue(String(target.data(this.options.data_attributes.price)));
-        },
 
-        onSelectorFinishChange: function() {
             this.quantityEventsEnabled = true;
         },
 
