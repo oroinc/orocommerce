@@ -70,62 +70,12 @@
                             <td>{{ quote.shipUntil|oro_format_date|default('N/A'|trans) }}</td>
                         </tr>
                         {% if quote.shippingAddress %}
-                            {% set name = [] %}
-                            {% if quote.shippingAddress.namePrefix %}
-                                {% set name = name|merge([quote.shippingAddress.namePrefix]) %}
-                            {% endif %}
-                            {% if quote.shippingAddress.firstName %}
-                                {% set name = name|merge([quote.shippingAddress.firstName]) %}
-                            {% endif %}
-                            {% if quote.shippingAddress.middleName %}
-                                {% set name = name|merge([quote.shippingAddress.middleName]) %}
-                            {% endif %}
-                            {% if quote.shippingAddress.lastName %}
-                                {% set name = name|merge([quote.shippingAddress.lastName]) %}
-                            {% endif %}
-                            {% if quote.shippingAddress.nameSuffix %}
-                                {% set name = name|merge([quote.shippingAddress.nameSuffix]) %}
-                            {% endif %}
-                            {% set rowspan = 3 %}
-                            {% if name|length == 0 %}
-                                {% set rowspan = 2 %}
-                            {% endif %}
                             <tr class="account-oq__order-info__control">
-                            <td class="account-oq__order-info__title" rowspan="{{ rowspan }}">{{ 'orob2b.frontend.sale.quote.shipping_address.label'|trans }}</td>
-                            {% if name|length > 0 %}
-                                <td>{{ name|join(' ') }}</td>
-                                </tr>
-                                <tr>
-                            {% endif %}
-                            <td>
-                                {% set address = [] %}
-                                {% if quote.shippingAddress.street %}
-                                    {% set address = address|merge([quote.shippingAddress.street]) %}
-                                {% endif %}
-                                {% if quote.shippingAddress.street2 %}
-                                    {% set address = address|merge([quote.shippingAddress.street2]) %}
-                                {% endif %}
-                                {% if quote.shippingAddress.organization %}
-                                    {% set address = address|merge([quote.shippingAddress.organization]) %}
-                                {% endif %}
-                                {{ address|join(', ') }}
-                            </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    {% set address = [] %}
-                                    {% if quote.shippingAddress.city %}
-                                        {% set address = address|merge([quote.shippingAddress.city]) %}
-                                    {% endif %}
-                                    {% if quote.shippingAddress.country.name %}
-                                        {% set address = address|merge([quote.shippingAddress.country.name]) %}
-                                    {% endif %}
-                                    {% if quote.shippingAddress.postalCode %}
-                                        {% set address = address|merge([quote.shippingAddress.postalCode]) %}
-                                    {% endif %}
-                                    {{ address|join(', ') }}
-                                    <br/>
-                                    {{ quote.shippingAddress.phone }}
+                                <td class="account-oq__order-info__title va-t_md">
+                                    {{ 'orob2b.frontend.sale.quote.shipping_address.label'|trans }}
+                                </td>
+                                <td class="va-t_md">
+                                    {{ quote.shippingAddress|oro_format_address(null, '<br/>') }}
                                 </td>
                             </tr>
                         {% endif %}
