@@ -20,6 +20,12 @@ class FrontendControllerTest extends WebTestCase
 
     public function testIndex()
     {
+        /** @var \Knp\Menu\ItemInterface $menu */
+        $menu = $this->getContainer()->get('orob2b_menu.menu_provider')->get('main-menu');
+        if (!$menu) {
+            $this->markTestSkipped('There is no "main-menu" in system.');
+        }
+
         $this->client->request('GET', $this->getUrl('_frontend'));
         $crawler = $this->client->followRedirect();
         $result = $this->client->getResponse();
@@ -27,14 +33,9 @@ class FrontendControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $menuHtml = $crawler->filter('ul.top-nav__list')->text();
 
-        /** @var \Knp\Menu\ItemInterface $menu */
-        $menu = $this->getContainer()->get('orob2b_menu.menu_provider')->get('main-menu');
-        if ($menu) {
-            /** @var \Knp\Menu\ItemInterface $menuItem */
-            foreach ($menu->getChildren() as $menuItem) {
-                $this->assertContains($menuItem->getLabel(), $menuHtml);
-            }
+        /** @var \Knp\Menu\ItemInterface $menuItem */
+        foreach ($menu->getChildren() as $menuItem) {
+            $this->assertContains($menuItem->getLabel(), $menuHtml);
         }
-
     }
 }

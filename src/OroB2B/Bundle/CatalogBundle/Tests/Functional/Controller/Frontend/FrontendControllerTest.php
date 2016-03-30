@@ -6,6 +6,7 @@ use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 /**
  * @dbIsolation
@@ -18,11 +19,7 @@ class FrontendControllerTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
-        $this->loadFixtures(
-            [
-                'OroB2B\Bundle\CatalogBundle\Migrations\Data\Demo\ORM\LoadCategoryDemoData',
-            ]
-        );
+        $this->loadFixtures(['OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData']);
     }
 
     public function testIndex()
@@ -42,14 +39,19 @@ class FrontendControllerTest extends WebTestCase
             null
         );
 
-        if ($categories) {
-            $categories = $categories[0]->getChildCategories()->toArray();
-            $categories = array_slice($categories, 0, 4);
+        /** @var Category[] $categories */
+        $categories = $categories[0]->getChildCategories()->toArray();
+        // "categories_main_menu" layout block has option "max_size" with value 4
+        $categories = array_slice($categories, 0, 4);
 
-            foreach ($categories[0]->getChildCategories() as $category) {
-                $this->assertContains((string)$category->getDefaultTitle(), $menuHtml);
+        foreach ($categories as $categoryFirstLevel) {
+            $this->assertContains((string)$categoryFirstLevel->getDefaultTitle(), $menuHtml);
+            foreach ($categoryFirstLevel->getChildCategories() as $categorySecondLevel) {
+                $this->assertContains((string)$categorySecondLevel->getDefaultTitle(), $menuHtml);
+                foreach ($categorySecondLevel->getChildCategories() as $categoryThirdLevel) {
+                    $this->assertContains((string)$categoryThirdLevel->getDefaultTitle(), $menuHtml);
+                }
             }
         }
-
     }
 }
