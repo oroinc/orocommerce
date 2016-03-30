@@ -168,8 +168,6 @@ class OrderDataStorageExtension extends AbstractTypeExtension
                 ]
             );
         }
-
-        $view->vars['page_component_options']['isNew'] = true;
     }
 
     /**
