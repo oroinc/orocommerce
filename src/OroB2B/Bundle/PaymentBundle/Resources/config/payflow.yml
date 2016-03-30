@@ -1,0 +1,25 @@
+parameters:
+    orob2b_payment.paypal.payflow.nvp_encoder.class: OroB2B\Bundle\PaymentBundle\PayPal\Payflow\NVP\Encoder
+    orob2b_payment.event_listener.callaback.payflow.class: OroB2B\Bundle\PaymentBundle\EventListener\Callback\PayflowListener
+    orob2b_payment.eveny.callaback_handler.class: OroB2B\Bundle\PaymentBundle\Event\CallbackHandler
+
+services:
+    orob2b_payment.paypal.payflow.nvp_encoder:
+        class: '%orob2b_payment.paypal.payflow.nvp_encoder.class%'
+
+    orob2b_payment.eveny.callaback_handler:
+        class: '%orob2b_payment.eveny.callaback_handler.class%'
+        arguments:
+            - '@event_dispatcher'
+            - '@oro_entity.doctrine_helper'
+            - '%orob2b_payment.entity.payment_transaction.class%'
+
+    orob2b_payment.event_listener.callaback.payflow:
+        class: '%orob2b_payment.event_listener.callaback.payflow.class%'
+        arguments:
+            - '@orob2b_payment.paypal.payflow.nvp_encoder'
+        calls:
+            - ['setLogger', ['@logger']]
+        tags:
+            - { name: kernel.event_listener, event: orob2b_payment.callback.return.payflow, method: onReturn }
+            - { name: kernel.event_listener, event: orob2b_payment.callback.error.payflow, method: onError }
