@@ -53,11 +53,13 @@
 {% endblock %}
 
 {% block _product_rating_widget %}
+    {#
     <div class="product-review-widget product-review-widget__bmargin not-implemented">
         <span class="product-review__rating" data-rating></span>
         <span class="product-review__count">(2)</span>
         <a href="#" class="product-review__add-link">Add Your Review</a>
     </div>
+    #}
 {% endblock %}
 
 {% block _product_specification_container_widget %}
@@ -73,15 +75,18 @@
                 <td>Item #:</td>
                 <td><span class="red">{{ product.sku }}</span></td>
             </tr>
+            {#
             <tr class="not-implemented">
                 <td>MFG Model #:</td>
                 <td><span class="red">1ABC13656</span></td>
             </tr>
+            #}
         </table>
     </div>
 {% endblock %}
 
 {% block _order_with_matrix_widget %}
+    {#
     <div class="product__matrix not-implemented">
         <a href="#" class="product__matrix__link">
             <i class="cf-list"></i>
@@ -89,9 +94,11 @@
             <i class="cf-right-open-mini"></i>
         </a>
     </div>
+    #}
 {% endblock %}
 
 {% block _product_variants_widget %}
+    {#
     <div class="product__colors not-implemented">
         <label>Select Colors</label>
                       <span class="badge badge_sm product__colors__item color-item_red">
@@ -113,6 +120,7 @@
                         <input type="checkbox" name="product_gray"/>
                       </span>
     </div>
+    #}
 {% endblock %}
 
 {% block _product_description_content_widget %}
@@ -124,6 +132,7 @@
 {% endblock %}
 
 {% block _attachments_widget %}
+    {#
     <ul class="product__docs not-implemented">
         <li>
             <a href="#">
@@ -138,18 +147,22 @@
             </a>
         </li>
     </ul>
+    #}
 {% endblock %}
 
 {% block _share_widget %}
+    {#
     <p class="not-implemented">
         <a href="#">
             <i class="cf-share"></i>
             Share This product
         </a>
     </p>
+    #}
 {% endblock %}
 
 {% block _product_tabs_widget %}
+    {#
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " oro-grid__tabs-container not-implemented"
     }) %}
@@ -284,4 +297,5 @@
         </div>
         <!-- END Product Tabs -->
     </div>
+    #}
 {% endblock %}
