@@ -4,6 +4,9 @@ namespace OroB2B\Bundle\OrderBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Range;
 
@@ -43,11 +46,10 @@ class OrderType extends AbstractType
     /** @var OrderCurrencyHandler */
     protected $orderCurrencyHandler;
 
-    /** @var SubtotalSubscriber  */
+    /** @var SubtotalSubscriber */
     protected $subtotalSubscriber;
 
     /**
-     * OrderType constructor.
      * @param SecurityFacade $securityFacade
      * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
      * @param PaymentTermProvider $paymentTermProvider
@@ -154,12 +156,44 @@ class OrderType extends AbstractType
             ->add('sourceEntityId', 'hidden')
             ->add('sourceEntityIdentifier', 'hidden');
 
+        $this->addAddresses($builder, $order);
+        $builder->addEventListener(
+            FormEvents::SUBMIT,
+            function (FormEvent $event) {
+                $this->addAddresses($event->getForm(), $event->getData());
+            }
+        );
+
         $this->addTotalsValidationFields($builder, $order);
         $this->addBillingAddress($builder, $order, $options);
         $this->addShippingAddress($builder, $order, $options);
         $this->addPaymentTerm($builder, $order);
 
         $builder->addEventSubscriber($this->subtotalSubscriber);
+    }
+
+    /**
+     * @param FormBuilderInterface|FormInterface $form
+     * @param Order $order
+     */
+    protected function addAddresses($form, Order $order)
+    {
+        if (!$form instanceof FormInterface && !$form instanceof FormBuilderInterface) {
+            throw new \InvalidArgumentException('Invalid form');
+        }
+
+        foreach ([AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING] as $type) {
+            if ($this->orderAddressSecurityProvider->isAddressGranted($order, $type)) {
+                $options = [
+                    'label' => sprintf('orob2b.order.%s_address.label', $type),
+                    'object' => $order,
+                    'required' => false,
+                    'addressType' => $type,
+                ];
+
+                $form->add(sprintf('%sAddress', $type), OrderAddressType::NAME, $options);
+            }
+        }
     }
 
     /**

@@ -59,75 +59,16 @@
                             <td>{{ quote.shipUntil|oro_format_date|default('N/A'|trans) }}</td>
                         </tr>
                         {% if quote.shippingAddress %}
-                            {% set name = [] %}
-                            {% if quote.shippingAddress.namePrefix %}
-                                {% set name = name|merge([quote.shippingAddress.namePrefix]) %}
-                            {% endif %}
-                            {% if quote.shippingAddress.firstName %}
-                                {% set name = name|merge([quote.shippingAddress.firstName]) %}
-                            {% endif %}
-                            {% if quote.shippingAddress.middleName %}
-                                {% set name = name|merge([quote.shippingAddress.middleName]) %}
-                            {% endif %}
-                            {% if quote.shippingAddress.lastName %}
-                                {% set name = name|merge([quote.shippingAddress.lastName]) %}
-                            {% endif %}
-                            {% if quote.shippingAddress.nameSuffix %}
-                                {% set name = name|merge([quote.shippingAddress.nameSuffix]) %}
-                            {% endif %}
-                            {% set rowspan = 3 %}
-                            {% if name|length == 0 %}
-                                {% set rowspan = 2 %}
-                            {% endif %}
-
-                            {% if name|length > 0 %}
-                                <tr class="account-oq__order-info__control">
-                                    <td class="account-oq__order-info__title" rowspan="{{ rowspan }}">{{ 'orob2b.frontend.sale.quote.shipping_address.label'|trans }}</td>
-
-                                    <td>{{ name|join(' ') }}</td>
-                                </tr>
-                            {% endif %}
-
-                            {% set address = [] %}
-                            {% if quote.shippingAddress.street %}
-                                {% set address = address|merge([quote.shippingAddress.street]) %}
-                            {% endif %}
-                            {% if quote.shippingAddress.street2 %}
-                                {% set address = address|merge([quote.shippingAddress.street2]) %}
-                            {% endif %}
-                            {% if quote.shippingAddress.organization %}
-                                {% set address = address|merge([quote.shippingAddress.organization]) %}
-                            {% endif %}
-
-                            {%  if (address|join(', ')|length) %}
-                                <tr>
-                                    <td>
-                                        {{ address|join(', ') }}
-                                    </td>
-                                </tr>
-                             {% endif %}
-
-                            {% set address = [] %}
-                            {% if quote.shippingAddress.city %}
-                                {% set address = address|merge([quote.shippingAddress.city]) %}
-                            {% endif %}
-                            {% if quote.shippingAddress.country.name %}
-                                {% set address = address|merge([quote.shippingAddress.country.name]) %}
-                            {% endif %}
-                            {% if quote.shippingAddress.postalCode %}
-                                {% set address = address|merge([quote.shippingAddress.postalCode]) %}
-                            {% endif %}
-
-                            {%  if (address|join(', ')|length
-                            ) %}
-                                <tr>
-                                    <td>
-                                        {{ address|join(', ') }}
-                                        <br/>
+                            <tr class="account-oq__order-info__control">
+                                <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.shipping_address.label'|trans }}</td>
+                                <td>
+                                    {{ quote.shippingAddress|oro_format_address }}
+                                    {% if quote.shippingAddress.phone %}
+                                        <br />
                                         {{ quote.shippingAddress.phone }}
-                                    </td>
-                                </tr>
-                            {% endif %}
+                                    {% endif %}
+                                </td>
+                            </tr>
                         {% endif %}
                         </tbody>
                     </table>

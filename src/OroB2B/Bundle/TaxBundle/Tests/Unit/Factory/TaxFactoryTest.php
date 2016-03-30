@@ -36,9 +36,11 @@ class TaxFactoryTest extends \PHPUnit_Framework_TestCase
         $mapper
             ->expects($this->exactly(2))
             ->method('map')
-            ->willReturnCallback(function () {
-                return new Taxable();
-            });
+            ->willReturnCallback(
+                function () {
+                    return new Taxable();
+                }
+            );
 
         $this->factory->addMapper($mapper);
         $object = new Order();
@@ -61,5 +63,21 @@ class TaxFactoryTest extends \PHPUnit_Framework_TestCase
     public function testCreateThrowExceptionWithoutMapper()
     {
         $this->factory->create(new \stdClass());
+    }
+
+    public function testSupports()
+    {
+        $this->assertFalse($this->factory->supports(new \stdClass()));
+
+        /** @var TaxMapperInterface|\PHPUnit_Framework_MockObject_MockObject $mapper */
+        $mapper = $this->getMock('OroB2B\Bundle\TaxBundle\Mapper\TaxMapperInterface');
+        $mapper
+            ->expects($this->once())
+            ->method('getProcessingClassName')
+            ->willReturn('stdClass');
+
+        $this->factory->addMapper($mapper);
+        $this->assertTrue($this->factory->supports(new \stdClass()));
+
     }
 }

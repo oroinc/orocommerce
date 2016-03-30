@@ -8,8 +8,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-
 use OroB2B\Bundle\PricingBundle\Controller\AbstractAjaxProductPriceController;
 
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
@@ -34,14 +32,9 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     public function getMatchingPriceAction(Request $request)
     {
         $lineItems = $request->get('items', []);
+        $matchedPrices = $this->get('orob2b_pricing.provider.matching_price')->getMatchingPrices($lineItems);
 
-        $productsPriceCriteria = $this->prepareProductsPriceCriteria($lineItems);
-
-        /** @var Price[] $matchedPrice */
-        $matchedPrice = $this->get('orob2b_pricing.provider.combined_product_price')
-            ->getMatchedPrices($productsPriceCriteria);
-
-        return new JsonResponse($this->formatMatchedPrices($matchedPrice));
+        return new JsonResponse($matchedPrices);
     }
 
     /**
