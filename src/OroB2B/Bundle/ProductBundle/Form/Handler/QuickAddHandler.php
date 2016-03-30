@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
+use OroB2B\Bundle\ProductBundle\Model\ProductRow;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
@@ -119,6 +120,16 @@ class QuickAddHandler
             );
         } elseif ($form->isValid()) {
             $products = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
+            $products = array_map(
+                function (ProductRow $productRow) {
+                    return [
+                        ProductDataStorage::PRODUCT_SKU_KEY => $productRow->productSku,
+                        ProductDataStorage::PRODUCT_QUANTITY_KEY => $productRow->productQuantity
+                    ];
+                },
+                $products
+            );
+
             $additionalData = $request->get(
                 QuickAddType::NAME . '[' . QuickAddType::ADDITIONAL_FIELD_NAME . ']',
                 null,

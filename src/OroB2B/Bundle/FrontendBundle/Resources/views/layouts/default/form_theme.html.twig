@@ -1,6 +1,7 @@
 {% extends 'form_div_layout.html.twig' %}
 
 {%- block form_label -%}
+    {% set class_prefix = form.vars.class_prefix is defined ?  form.vars.class_prefix : '' %}
     {% set label_attr = label_attr|merge({
         class: [
             label_attr.class|default(''),
@@ -12,6 +13,7 @@
 {%- endblock form_label -%}
 
 {% block form_widget_simple %}
+    {% set class_prefix = form.vars.class_prefix is defined ?  form.vars.class_prefix : '' %}
     {% set attr = attr|merge({
         class: [
             attr.class|default(''),
@@ -67,7 +69,7 @@
         <div class="notification notification_xsm notification_error notification-radiused mmt5-md">
             <ul>
             {%- for error in errors -%}
-                <li><i class="icon-attention"></i><span class="mml5-md">{{ error.message }}</span></li>
+                <li><i class="cf-attention"></i><span class="mml5-md">{{ error.message }}</span></li>
             {%- endfor -%}
             </ul>
         </div>

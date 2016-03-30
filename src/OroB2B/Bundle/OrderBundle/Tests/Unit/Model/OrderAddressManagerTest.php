@@ -259,4 +259,102 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
             ],
         ];
     }
+
+    /**
+     * @param Order $order
+     * @param array $accountAddresses
+     * @param array $accountUserAddresses
+     * @param array $addresses
+     *
+     * @dataProvider groupedAddressDataProvider
+     */
+    public function testGetAddressTypes(
+        Order $order,
+        array $accountAddresses = [],
+        array $accountUserAddresses = [],
+        array $addresses = []
+    ) {
+        $accountManager = $this->getManager(
+            $accountAddresses,
+            $this->getTypes($accountAddresses, ['billing'])
+        );
+        $accountUserManager = $this->getManager(
+            $accountUserAddresses,
+            $this->getTypes($accountUserAddresses, ['billing', 'shipping'])
+        );
+
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturnMap(
+                [
+                    ['OroB2BAccountBundle:AccountAddressToAddressType', $accountManager],
+                    ['OroB2BAccountBundle:AccountUserAddressToAddressType', $accountUserManager]
+                ]
+            );
+
+        $expectedTypes = [];
+        if (array_key_exists(OrderAddressManager::ACCOUNT_LABEL, $addresses)) {
+            foreach ($addresses[OrderAddressManager::ACCOUNT_LABEL] as $id => $address) {
+                $expectedTypes[$id] = ['billing'];
+            }
+        }
+        if (array_key_exists(OrderAddressManager::ACCOUNT_USER_LABEL, $addresses)) {
+            foreach ($addresses[OrderAddressManager::ACCOUNT_USER_LABEL] as $id => $address) {
+                $expectedTypes[$id] = ['billing', 'shipping'];
+            }
+        }
+
+        $this->manager->addEntity('au', 'OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress');
+        $this->manager->addEntity('a', 'OroB2B\Bundle\AccountBundle\Entity\AccountAddress');
+        $this->assertEquals($expectedTypes, $this->manager->getAddressTypes($addresses));
+    }
+
+    /**
+     * @param array $addresses
+     * @param array $types
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getManager(array $addresses, $types)
+    {
+        $repo = $this->getMock('\Doctrine\Common\Persistence\ObjectRepository');
+        $manager = $this->getMock('\Doctrine\Common\Persistence\ObjectManager');
+        $manager->expects($this->any())
+            ->method('getRepository')
+            ->willReturn($repo);
+        $repo->expects($this->any())
+            ->method('findBy')
+            ->with(['address' => $addresses])
+            ->willReturn($types);
+
+        return $manager;
+    }
+
+    /**
+     * @param array $addresses
+     * @param array $types
+     * @return array
+     */
+    protected function getTypes(array $addresses, array $types)
+    {
+        $result = [];
+        foreach ($addresses as $address) {
+            foreach ($types as $type) {
+                $typeEntity = new AddressType($type);
+                $typeToEntity = $this
+                    ->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\AbstractAddressToAddressType')
+                    ->disableOriginalConstructor()
+                    ->setMethods(['getAddress', 'getType'])
+                    ->getMockForAbstractClass();
+                $typeToEntity->expects($this->any())
+                    ->method('getAddress')
+                    ->willReturn($address);
+                $typeToEntity->expects($this->any())
+                    ->method('getType')
+                    ->willReturn($typeEntity);
+                $result[] = $typeToEntity;
+            }
+        }
+
+        return $result;
+    }
 }

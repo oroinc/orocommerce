@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\ShoppingListBundle\Storage;
 
 use Doctrine\Common\Util\ClassUtils;
 
-use OroB2B\Bundle\OrderBundle\Provider\IdentifierAwareInterface;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage as Storage;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
@@ -32,12 +31,9 @@ class ProductDataStorage
                 'account' => $shoppingList->getAccount()->getId(),
                 'sourceEntityId' => $shoppingList->getId(),
                 'sourceEntityClass' => ClassUtils::getClass($shoppingList),
+                'sourceEntityIdentifier' => $shoppingList->getIdentifier(),
             ],
         ];
-
-        if ($shoppingList instanceof IdentifierAwareInterface) {
-            $data[Storage::ENTITY_DATA_KEY]['sourceEntityIdentifier'] = $shoppingList->getIdentifier();
-        }
 
         foreach ($shoppingList->getLineItems() as $lineItem) {
             $data[Storage::ENTITY_ITEMS_DATA_KEY][] = [

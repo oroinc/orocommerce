@@ -202,7 +202,7 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
     {
         return array_map(
             function ($entityItem) {
-                return $entityItem['productSku'];
+                return $entityItem[ProductDataStorage::PRODUCT_SKU_KEY];
             },
             $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]
         );

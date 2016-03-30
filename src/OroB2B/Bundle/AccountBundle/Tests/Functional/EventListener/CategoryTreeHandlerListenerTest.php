@@ -311,7 +311,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
     }
 
     /**
-     * @return string
+     * @return array
      */
     protected function getTreeData()
     {
@@ -319,7 +319,14 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        return $crawler->filter('.category div')->attr('data-page-component-options');
+        $data = $crawler->filter('.categories-widget .navigation-widget__list_nested a');
+
+        $tree = [];
+        foreach ($data as $li) {
+            /** @var \DOMElement $li */
+            $tree[] = $li->nodeValue;
+        }
+        return $tree;
     }
 
     /**
@@ -328,14 +335,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
      */
     protected function assertTreeCategories(array $visibleCategories, array $invisibleCategories)
     {
-        $treeData = $this->getTreeData();
-
-        $treeCategories = array_map(
-            function ($data) {
-                return $data->text;
-            },
-            json_decode($treeData)->data
-        );
+        $treeCategories = $this->getTreeData();
 
         $this->assertCount(count($visibleCategories), $treeCategories);
 

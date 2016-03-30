@@ -18,10 +18,20 @@ placeholders:
             window_bundle_js:
                 order: 200
 
+    scripts_before:
+        items:
+            template_datagrid_toolbar_pagination_input_frontend: ~
+            template_datagrid_toolbar_page_size_frontend: ~
+
     install_additional_configuration_fields:
         items:
             web_settings:
                 order: 300
+
+    requirejs_config_extend:
+        items:
+            frontend_requirejs_config:
+                order: 100
 
 items:
     logo:
@@ -47,3 +57,20 @@ items:
         template: OroActivityListBundle:ActivityList:activities.html.twig
     web_settings:
         template: OroB2BFrontendBundle:InstallConfiguration:web.html.twig
+    frontend_requirejs_config:
+        applicable: @orob2b_frontend.placeholder.filter->isFrontendRoute()
+        template: OroB2BFrontendBundle::requirejs.config.js.twig
+
+    # frontend grid
+    template_datagrid_toolbar_pagination_input_frontend:
+        template: OroB2BFrontendBundle:js:pagination-input.html.twig
+        applicable: @oro_layout.helper->isLayoutRequest()
+    template_datagrid_toolbar_page_size_frontend:
+        template: OroB2BFrontendBundle:js:page-size.html.twig
+        applicable: @oro_layout.helper->isLayoutRequest()
+
+    # backend grid only
+    template_datagrid_toolbar_pagination_input:
+        applicable: @oro_layout.helper->isTemplateRequest()
+    template_datagrid_toolbar_page_size:
+        applicable: @oro_layout.helper->isTemplateRequest()

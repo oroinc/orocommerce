@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\DataTransformer;
 
 use OroB2B\Bundle\ProductBundle\Form\DataTransformer\ProductCollectionTransformer;
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use OroB2B\Bundle\ProductBundle\Model\ProductRow;
 
 class ProductCollectionTransformerTest extends \PHPUnit_Framework_TestCase
 {
@@ -38,6 +38,7 @@ class ProductCollectionTransformerTest extends \PHPUnit_Framework_TestCase
      */
     public function reverseTransformDataProvider()
     {
+        $productRow1 = $this->createProductRow('sku', 1);
         return [
             'null' => [
                 'input' => null,
@@ -45,27 +46,29 @@ class ProductCollectionTransformerTest extends \PHPUnit_Framework_TestCase
             ],
             'array' => [
                 'input' => [
-                    [
-                        ProductDataStorage::PRODUCT_SKU_KEY => 'sku',
-                        ProductDataStorage::PRODUCT_QUANTITY_KEY => 1,
-                    ],
-                    [
-                        ProductDataStorage::PRODUCT_SKU_KEY => '',
-                        ProductDataStorage::PRODUCT_QUANTITY_KEY => '',
-                    ],
-                    [
-                        ProductDataStorage::PRODUCT_SKU_KEY => null,
-                        ProductDataStorage::PRODUCT_QUANTITY_KEY => null,
-                    ],
-                    []
+                    $productRow1,
+                    $this->createProductRow('', ''),
+                    $this->createProductRow(null, null),
+                    null
                 ],
                 'expected' => [
-                    [
-                        ProductDataStorage::PRODUCT_SKU_KEY => 'sku',
-                        ProductDataStorage::PRODUCT_QUANTITY_KEY => 1,
-                    ]
+                    $productRow1,
                 ]
             ],
         ];
+    }
+
+    /**
+     * @param string $sku
+     * @param string $qty
+     * @return ProductRow
+     */
+    protected function createProductRow($sku, $qty)
+    {
+        $productRow = new ProductRow();
+        $productRow->productSku = $sku;
+        $productRow->productQuantity= $qty;
+
+        return $productRow;
     }
 }

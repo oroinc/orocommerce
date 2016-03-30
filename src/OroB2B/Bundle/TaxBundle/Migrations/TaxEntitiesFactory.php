@@ -134,7 +134,6 @@ class TaxEntitiesFactory
             $jurisdiction->setCountry($country);
             if ($region) {
                 $jurisdiction->setRegion($region);
-                $jurisdiction->setRegionText($region->getName());
             }
         }
 

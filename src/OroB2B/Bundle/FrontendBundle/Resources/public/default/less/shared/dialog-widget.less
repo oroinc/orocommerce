@@ -29,21 +29,22 @@
   .ui-dialog-titlebar-close {
     background: none;
     border: 0;
+    color: @base-dark-color;
     opacity: .2;
 
     &:hover {
-      opacity: 1;
+      opacity: .5;
     }
 
     .ui-icon-closethick {
       text-indent: 0;
 
       &:before {
-        content: "clear";
-        font-family: 'Material Icons';
+        content: "\e5cd";
+        font-family: 'custom-font-icon';
         font-weight: normal;
         font-style: normal;
-        font-size: 2.4rem;
+        font-size: 2.1rem;
         display: inline-block;
         vertical-align: middle;
         width: 1em;
@@ -69,8 +70,8 @@
 
   .ui-dialog-titlebar-buttonpane {
     position: absolute;
-    top: .5rem;
-    right: .5rem;
+    top: 5px;
+    right: 0;
   }
 
   .ui-dialog-title {
