@@ -74,18 +74,7 @@ class AccountUserRoleController extends Controller
      */
     public function createAction()
     {
-        $role = new AccountUserRole();
-        $response = $this->update($role);
-
-        if ($response instanceof Response) {
-            return $response;
-        }
-
-        return [
-            'data' => [
-                'entity' => $role
-            ]
-        ];
+        return $this->update(new AccountUserRole());
     }
 
     /**
@@ -116,17 +105,7 @@ class AccountUserRoleController extends Controller
             throw $this->createAccessDeniedException();
         }
 
-        $response = $this->update($role);
-
-        if ($response instanceof Response) {
-            return $response;
-        }
-
-        return [
-            'data' => [
-                'entity' => $role
-            ]
-        ];
+        return $this->update($role);
     }
 
     /**
@@ -138,7 +117,7 @@ class AccountUserRoleController extends Controller
         $handler = $this->get('orob2b_account.form.handler.update_account_user_role_frontend');
         $form = $handler->createForm($role);
 
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        $response = $this->get('oro_form.model.update_handler')->handleUpdate(
             $form->getData(),
             $form,
             function (AccountUserRole $role) {
@@ -156,5 +135,15 @@ class AccountUserRoleController extends Controller
             $this->get('translator')->trans('orob2b.account.controller.accountuserrole.saved.message'),
             $handler
         );
+
+        if ($response instanceof Response) {
+            return $response;
+        }
+
+        return [
+            'data' => [
+                'entity' => $role
+            ]
+        ];
     }
 }
