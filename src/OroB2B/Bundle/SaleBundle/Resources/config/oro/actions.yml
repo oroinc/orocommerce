@@ -81,19 +81,32 @@ operations:
                     email: $.email
 
     orob2b_sale_frontend_quote_change:
-          label: orob2b.frontend.sale.btn.accept_quote_create_order
-          applications: [frontend]
-          routes:
-              - orob2b_sale_quote_frontend_view
-          order: 20
-          button_options:
-              icon: icon-edit
-              class:  quota-accept-btn
-          actions:
-              - @redirect:
-                   parameters:
-                       route: 'orob2b_sale_quote_frontend_choice'
-                       route_parameters: {id: $.data.id}
+        label: orob2b.frontend.sale.btn.accept_quote_create_order
+        applications: [frontend]
+        routes:
+            - orob2b_sale_quote_frontend_view
+        order: 20
+        button_options:
+            icon: icon-edit
+            class:  quota-accept-btn
+        actions:
+            - @find_entity:
+                class: OroB2B\Bundle\SaleBundle\Entity\QuoteDemand
+                attribute: $.quoteDemand
+                where:
+                    quote: $.data
+            - @create_entity:
+                conditions:
+                    @empty: $.quoteDemand
+                parameters:
+                    attribute: $.quoteDemand
+                    class: OroB2B\Bundle\SaleBundle\Entity\QuoteDemand
+                    flush: true
+                    data:
+                        quote: $.data
+            - @redirect:
+                 route: 'orob2b_sale_quote_frontend_choice'
+                 route_parameters: {id: $.quoteDemand.id}
 
 action_groups:
     orob2b_sale_expire_quote:
@@ -157,59 +170,68 @@ action_groups:
 
     orob2b_sale_frontend_quote_accept_and_submit_to_order:
         parameters:
-            quote:
-                type: OroB2B\Bundle\SaleBundle\Entity\Quote
+            data:
+                type: OroB2B\Bundle\SaleBundle\Entity\QuoteDemand
         actions:
             - @assign_url:
                 attribute: $.editLink
                 route: orob2b_sale_quote_frontend_choice
-                route_parameters: { 'id': $.quote.id }
-            - @translate:
-                attribute: $.sourceRemoveLabel
-                id: orob2b.frontend.shoppinglist.quote.remove_source.label
+                route_parameters: { 'id': $.data.id }
+            - @assign_value:
+                conditions:
+                   @empty: $.data.quote.shippingEstimate
+                parameters: [$.disallow_shipping_method_edit, false]
+            - @assign_value:
+                conditions:
+                   @not_empty: $.data.quote.shippingEstimate
+                parameters: [$.disallow_shipping_method_edit, true]
             - @tree:
                 conditions:
-                    @not_empty: $.quote.shippingAddress
+                    @not_empty: $.data.quote.shippingAddress
                 actions:
                     - @create_entity:
                         attribute: $.orderAddress
                         class: OroB2B\Bundle\OrderBundle\Entity\OrderAddress
                         data:
-                            accountAddress: $.quote.accountAddress
-                            accountUserAddress: $.quote.accountUserAddress
-                            label: $.quote.shippingAddress.label
-                            organization: $.quote.shippingAddress.organization
-                            street: $.quote.shippingAddress.street
-                            street2: $.quote.shippingAddress.street2
-                            city: $.quote.shippingAddress.city
-                            postalCode: $.quote.shippingAddress.postalCode
-                            country: $.quote.shippingAddress.country
-                            region: $.quote.shippingAddress.region
-                            regionText: $.quote.shippingAddress.regionText
-                            namePrefix: $.quote.shippingAddress.namePrefix
-                            firstName: $.quote.shippingAddress.firstName
-                            middleName: $.quote.shippingAddress.middleName
-                            lastName: $.quote.shippingAddress.lastName
-                            nameSuffix: $.quote.shippingAddress.nameSuffix
-                            phone: $.quote.shippingAddress.phone
+                            accountAddress: $.data.quote.accountAddress
+                            accountUserAddress: $.data.quote.accountUserAddress
+                            label: $.data.quote.shippingAddress.label
+                            organization: $.data.quote.shippingAddress.organization
+                            street: $.data.quote.shippingAddress.street
+                            street2: $.data.quote.shippingAddress.street2
+                            city: $.data.quote.shippingAddress.city
+                            postalCode: $.data.quote.shippingAddress.postalCode
+                            country: $.data.quote.shippingAddress.country
+                            region: $.data.quote.shippingAddress.region
+                            regionText: $.data.quote.shippingAddress.regionText
+                            namePrefix: $.data.quote.shippingAddress.namePrefix
+                            firstName: $.data.quote.shippingAddress.firstName
+                            middleName: $.data.quote.shippingAddress.middleName
+                            lastName: $.data.quote.shippingAddress.lastName
+                            nameSuffix: $.data.quote.shippingAddress.nameSuffix
+                            phone: $.data.quote.shippingAddress.phone
                             fromExternalSource: true
                     - @assign_value:
                         parameters: [$.disallow_shipping_address_edit, true]
             - @tree:
                 conditions:
-                      @empty: $.quote.shippingAddress
+                      @empty: $.data.quote.shippingAddress
                 actions:
                     - @assign_value: [$.orderAddress, null]
                     - @assign_value:
                         parameters: [$.disallow_shipping_address_edit, false]
+            - @assign_value:
+                parameters: [$.shippingEstimate, $.data.quote.shippingEstimate]
             - @start_checkout:
-                source_name: 'quote'
-                source_entity: $.quote
+                source_name: 'quoteDemand'
+                source_entity: $.data
+                force: true
                 data:
                     shippingAddress: $.orderAddress
+                    shippingCost: $.shippingEstimate
                 settings:
-                    allow_source_remove: false
-                    remove_source: false
-                    source_remove_label: $.sourceRemoveLabel
+                    allow_manual_source_remove: false
+                    auto_remove_source: true
                     edit_order_link: $.editLink
                     disallow_shipping_address_edit: $.disallow_shipping_address_edit
+                    disallow_shipping_method_edit: $.disallow_shipping_method_edit
