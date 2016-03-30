@@ -79,7 +79,3 @@ layout:
             id: title
             optionName: reverse
             optionValue: true
-        - @subtractOption:
-            id: title
-            optionName: value
-            optionValue: OroPlatform
