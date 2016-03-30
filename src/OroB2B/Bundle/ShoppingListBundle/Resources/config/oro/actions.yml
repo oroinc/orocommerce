@@ -1,5 +1,5 @@
-actions:
-    orob2b_shoppinglist_action_createorder:
+operations:
+    orob2b_shoppinglist_createorder:
         label: orob2b.shoppinglist.btn.create_order
         applications: [backend]
         routes:
@@ -8,7 +8,7 @@ actions:
         order: 10
         button_options:
             icon: icon-briefcase
-        functions:
+        actions:
             - @call_service_method:
                 service: orob2b_shopping_list.service.product_data_storage
                 method: saveToStorage
@@ -18,7 +18,7 @@ actions:
                     route: orob2b_order_create
                     route_parameters: {'storage': true}
 
-    orob2b_shoppinglist_frontend_action_createorder:
+    orob2b_shoppinglist_frontend_createorder:
         label: orob2b.frontend.shoppinglist.btn.create_order
         applications: [frontend]
         routes:
@@ -27,7 +27,7 @@ actions:
         order: 10
         button_options:
             icon: icon-briefcase
-        functions:
+        actions:
             - @assign_url:
                 attribute: $.editLink
                 route: orob2b_shopping_list_frontend_view
@@ -52,7 +52,7 @@ actions:
         button_options:
             template: OroB2BShoppingListBundle:Action:buttons.html.twig
             page_component_module: orob2bshoppinglist/js/app/components/quick-add-button-component
-        prefunctions:
+        preactions:
             - @call_service_method:
                 service: orob2b_shopping_list.shopping_list.manager
                 method: getShoppingLists
@@ -96,7 +96,7 @@ actions:
             page_component_module: orob2bproduct/js/app/components/quick-add-form-button-component
             page_component_options:
                 component_name: '[name$="[component]"]'
-        prefunctions:
+        preactions:
             - @call_service_method:
                 service: orob2b_shopping_list.processor.quick_add_to_checkout
                 method: isAllowed
@@ -129,17 +129,15 @@ actions:
                 method: prepareLineItemWithProduct
                 method_parameters: [$.currentUser, $.data]
                 attribute: $.lineItem
-        functions:
-            - @call_service_method:
-                service: orob2b_shopping_list.handler.shopping_list_line_item
-                method: processLineItem
-                method_parameters: [$.lineItem, $.form]
-            - @call_service_method:
-                service: orob2b_shopping_list.service.message_generator
-                method: getSuccessMessage
-                method_parameters: [$.lineItem.shoppingList.id, 1, orob2b.shoppinglist.lineitem.flash.added]
-                attribute: $.successMessage
-            - @flash_message: { message: $.successMessage, type: success }
+        actions:
+            - @run_action_group:
+                results:
+                    success_message: $.successMessage
+                action_group: orob2b_shoppinglist_frontend_addlineitem
+                parameters_mapping:
+                    line_item: $.lineItem
+                    form: $.form
+            - @flash_message: { message: $.success_message, type: success }
             - @refresh_grid: frontend-products-grid
 
     orob2b_shoppinglist_lineitem_base:
@@ -190,23 +188,23 @@ actions:
             - @assign_value: [$.lineItem.shoppingList, $.data]
             - @assign_value: [$.lineItem.accountUser, $.data.accountUser]
             - @assign_value: [$.lineItem.organization, $.data.organization]
-        functions:
-            - @call_service_method:
-                service: orob2b_shopping_list.shopping_list.manager
-                method: addLineItem
-                method_parameters: [$.lineItem, $.data, true, true]
-            - @call_service_method:
-                service: orob2b_shopping_list.shopping_list.manager
-                method: recalculateSubtotals
-                method_parameters: [$.data]
+        actions:
+            - @run_action_group:
+                action_group: orob2b_shoppinglist_addlineitem
+                parameters_mapping:
+                    data: $.data
+                    line_item: $.lineItem
             - @refresh_grid: shopping-list-line-items-grid
             - @flash_message:
                 message: orob2b.shoppinglist.lineitem.flash.added
                 type: 'success'
 
-    orob2b_shoppinglist_updatelineitem_base:
+    orob2b_shoppinglist_updatelineitem:
         extends: orob2b_shoppinglist_lineitem_base
         label: orob2b.shoppinglist.lineitem.edit_line_item
+        acl_resource: [EDIT, entity:OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
+        datagrids:
+            - shopping-list-line-items-grid
         button_options:
             icon: icon-edit
         frontend_options:
@@ -215,24 +213,17 @@ actions:
         form_init:
             - @assign_value: [$.lineItem, $.data]
             - @assign_value: [$.lineItem.shoppingList, $.data.shoppingList]
-        functions:
-            - @flash_message:
-                message: orob2b.shoppinglist.lineitem.flash.updated
-                type: 'success'
-
-    orob2b_shoppinglist_updatelineitem:
-        extends: orob2b_shoppinglist_updatelineitem_base
-        acl_resource: [EDIT, entity:OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
-        datagrids:
-            - shopping-list-line-items-grid
-        functions:
+        actions:
             - @call_service_method:
                 service: orob2b_shopping_list.shopping_list.manager
                 method: recalculateSubtotals
                 method_parameters: [$.data.shoppingList]
+            - @flash_message:
+                message: orob2b.shoppinglist.lineitem.flash.updated
+                type: 'success'
             - @refresh_grid: shopping-list-line-items-grid
 
-    orob2b_shoppinglist_frontend_action_request_quote:
+    orob2b_shoppinglist_frontend_request_quote:
         label: orob2b.frontend.shoppinglist.btn.request_quote_create_rfp
         applications: [frontend]
         routes:
@@ -241,7 +232,7 @@ actions:
         order: 20
         button_options:
             icon: icon-briefcase
-        functions:
+        actions:
             - @call_service_method:
                 service: orob2b_shopping_list.service.product_data_storage
                 method: saveToStorage
@@ -250,3 +241,39 @@ actions:
                 parameters:
                     route: orob2b_rfp_frontend_request_create
                     route_parameters: {'storage': true}
+
+action_groups:
+    orob2b_shoppinglist_frontend_addlineitem:
+        parameters:
+            line_item:
+                type: OroB2B\Bundle\ShoppingListBundle\Entity\LineItem
+            form:
+                type: Symfony\Component\Form\FormInterface
+        acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
+        actions:
+            - @call_service_method:
+                service: orob2b_shopping_list.handler.shopping_list_line_item
+                method: processLineItem
+                method_parameters: [$.line_item, $.form]
+            - @call_service_method:
+                service: orob2b_shopping_list.service.message_generator
+                method: getSuccessMessage
+                method_parameters: [$.line_item.shoppingList.id, 1, orob2b.shoppinglist.lineitem.flash.added]
+                attribute: $.successMessage
+
+    orob2b_shoppinglist_addlineitem:
+        parameters:
+            data:
+                type: OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList
+            line_item:
+                type: OroB2B\Bundle\ShoppingListBundle\Entity\LineItem
+        acl_resource: [CREATE, entity:OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
+        actions:
+            - @call_service_method:
+                service: orob2b_shopping_list.shopping_list.manager
+                method: addLineItem
+                method_parameters: [$.line_item, $.data, true, true]
+            - @call_service_method:
+                service: orob2b_shopping_list.shopping_list.manager
+                method: recalculateSubtotals
+                method_parameters: [$.data]

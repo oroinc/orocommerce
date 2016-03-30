@@ -107,7 +107,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Oro\Bundle\ActionBundle\Exception\InvalidParameterException
+     * @expectedException \Oro\Component\Action\Exception\InvalidParameterException
      */
     public function testException()
     {
