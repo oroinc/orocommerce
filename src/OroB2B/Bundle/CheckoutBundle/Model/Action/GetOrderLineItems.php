@@ -2,8 +2,8 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Model\Action;
 
-use Oro\Bundle\ActionBundle\Exception\InvalidParameterException;
 use Oro\Component\Action\Action\AbstractAction;
+use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\Action\Model\ContextAccessor;
 
 use OroB2B\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;

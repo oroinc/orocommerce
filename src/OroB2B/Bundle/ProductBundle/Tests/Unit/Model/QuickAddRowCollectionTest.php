@@ -27,10 +27,10 @@ class QuickAddRowCollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('', (string) $collection);
 
         $this->addTwoCompleteRows($collection);
-        $this->assertEquals("SKU1, 1\nSKU2, 2.5", (string) $collection);
+        $this->assertEquals(implode(PHP_EOL, ['SKU1, 1', 'SKU2, 2.5']), (string) $collection);
 
         $this->addIncompleteRow($collection);
-        $this->assertEquals("SKU1, 1\nSKU2, 2.5\nSKU3, ", (string) $collection);
+        $this->assertEquals(implode(PHP_EOL, ['SKU1, 1', 'SKU2, 2.5', 'SKU3, ']), (string) $collection);
     }
 
     public function testGetValidRows()

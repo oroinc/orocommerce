@@ -30,31 +30,30 @@ class AccountUserFrontendActionsTest extends AbstractAccountUserActionsTest
     /**
      * {@inheritdoc}
      */
-    protected function getAccountUserEnableActionName()
+    protected function getAccountUserEnableOperationName()
     {
-        return 'orob2b_account_frontend_accountuser_enable_action';
+        return 'orob2b_account_frontend_accountuser_enable';
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getAccountUserDisableActionName()
+    protected function getAccountUserDisableOperationName()
     {
-        return 'orob2b_account_frontend_accountuser_disable_action';
+        return 'orob2b_account_frontend_accountuser_disable';
     }
 
     /**
-     * @param AccountUser $accountUser
-     * @param string $actionName
+     * {@inheritdoc}
      */
-    protected function executeAction(AccountUser $accountUser, $actionName)
+    protected function executeOperation(AccountUser $accountUser, $operationName)
     {
         $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_api_frontend_action_execute_actions',
+                'orob2b_api_frontend_action_execute_operations',
                 [
-                    'actionName' => $actionName,
+                    'operationName' => $operationName,
                     'route' => 'orob2b_account_frontend_account_user_view',
                     'entityId' => $accountUser->getId(),
                     'entityClass' => 'OroB2B\Bundle\AccountBundle\Entity\AccountUser'
