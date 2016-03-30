@@ -32,7 +32,7 @@ use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *     data:
  *         currency: $.currency
  *     settings:
- *          allow_source_remove: false
+ *          allow_manual_source_remove: false
  *
  * source_name (required) is name of corresponding extended relation added to CheckoutSource
  * source_entity (required) is a source entity

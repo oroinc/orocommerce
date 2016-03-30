@@ -177,9 +177,6 @@ action_groups:
                 attribute: $.editLink
                 route: orob2b_sale_quote_frontend_choice
                 route_parameters: { 'id': $.data.id }
-            - @translate:
-                attribute: $.sourceRemoveLabel
-                id: orob2b.frontend.shoppinglist.quote.remove_source.label
             - @assign_value:
                 conditions:
                    @empty: $.data.quote.shippingEstimate
@@ -233,9 +230,8 @@ action_groups:
                     shippingAddress: $.orderAddress
                     shippingCost: $.shippingEstimate
                 settings:
-                    allow_source_remove: false
-                    remove_source: false
-                    source_remove_label: $.sourceRemoveLabel
+                    allow_manual_source_remove: false
+                    auto_remove_source: true
                     edit_order_link: $.editLink
                     disallow_shipping_address_edit: $.disallow_shipping_address_edit
                     disallow_shipping_method_edit: $.disallow_shipping_method_edit
