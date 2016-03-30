@@ -1,7 +1,7 @@
-{% extends 'OroActionBundle:Action:form.html.twig' %}
+{% extends 'OroActionBundle:Operation:form.html.twig' %}
 
 {% block form %}
-    {% set buttonOptions = action.definition.buttonOptions %}
+    {% set buttonOptions = operation.definition.buttonOptions %}
     {% set pageComponentOptions = {} %}
     <div class="widget-content add-product-widget">
         <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ app.request.uri }}" {{ form_enctype(form) }}

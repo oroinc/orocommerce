@@ -1,5 +1,5 @@
-actions:
-    orob2b_pricing_add_product_price_action:
+operations:
+    orob2b_pricing_add_product_price:
         label: orob2b.pricing.add_product_price
         applications: [backend]
         routes: [orob2b_pricing_price_list_view]
@@ -40,7 +40,26 @@ actions:
                 attribute: $.price
             - @assign_value: [$.price.priceList, $.data]
 
-        functions:
+        actions:
+            - @run_action_group:
+                action_group: orob2b_pricing_add_product_price
+                parameters_mapping:
+                    data: $.data
+                    price: $.price
+            - @refresh_grid: price-list-product-prices-grid
+            - @flash_message:
+                message: orob2b.pricing.productprice.save.success
+                type: 'success'
+
+action_groups:
+    orob2b_pricing_add_product_price:
+        parameters:
+            data:
+                type: OroB2B\Bundle\PricingBundle\Entity\PriceList
+            price:
+                type: OroB2B\Bundle\PricingBundle\Entity\ProductPrice
+        acl_resource: ['CREATE', 'entity:OroB2B\Bundle\PricingBundle\Entity\ProductPrice']
+        actions:
             - @create_entity:
                 class: OroB2B\Bundle\PricingBundle\Entity\ProductPrice
                 attribute: $.newPrice
@@ -51,7 +70,3 @@ actions:
                     unit: $.price.unit
                     price: $.price.price
                 flush: true
-            - @refresh_grid: price-list-product-prices-grid
-            - @flash_message:
-                message: orob2b.pricing.productprice.save.success
-                type: 'success'
