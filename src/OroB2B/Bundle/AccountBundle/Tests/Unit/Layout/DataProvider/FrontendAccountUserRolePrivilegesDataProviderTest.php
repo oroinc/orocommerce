@@ -76,7 +76,7 @@ class FrontendAccountUserRolePrivilegesDataProviderTest extends \PHPUnit_Framewo
     public function getDataWithIncorrectRoleProvider()
     {
         $context = new LayoutContext();
-        $context->data()->set('role', 'role', new \stdClass());
+        $context->data()->set('entity', 'entity', new \stdClass());
 
         return [
             [new LayoutContext()],
