@@ -21,9 +21,9 @@ define(function(require) {
             unitPriceSelector: '.unitPrice',
             data_attributes: {
                 unit: 'unit',
+                formatted_unit: 'formatted-unit',
                 quantity: 'quantity',
-                price: 'price',
-                allow_more: 'allow-more'
+                price: 'price'
             },
             matchOfferRoute: 'orob2b_sale_quote_frontend_quote_product_match_offer',
             quoteProductId: null,
@@ -72,28 +72,35 @@ define(function(require) {
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
-            this.$quantity = $(this.options.quantitySelector);
-            this.$unitInput = $(this.options.unitInputSelector);
-            this.$unit = $(this.options.unitSelector);
-            this.$unitPrice = $(this.options.unitPriceSelector);
-            this.$offerSelector = $(this.options.offerSelector);
+            this.$el = options._sourceElement;
+            this.blockQuantityUpdate = false;
 
-            this.$offerSelector.change(_.bind(this.onSelectorStartChange, this));
+            this.$quantity = this.$el.find(this.options.quantitySelector);
+            this.$unitInput = this.$el.find(this.options.unitInputSelector);
+            this.$unit = this.$el.find(this.options.unitSelector);
+            this.$unitPrice = this.$el.find(this.options.unitPriceSelector);
+            this.$offerSelector = this.$el.find(this.options.offerSelector);
+
+            this.$offerSelector.on('change', _.bind(this.onOfferChange, this));
             this.addQuantityEvents();
         },
 
         /**
          * @param {Event} e
          */
-        onSelectorStartChange: function(e) {
+        onOfferChange: function(e) {
             var target = $(e.target);
 
             this.quantityEventsEnabled = false;
 
-            this.updateQuantityInputValue(Number(target.data(this.options.data_attributes.quantity)));
-            this.$quantity.prop('readonly', !target.data(this.options.data_attributes.allow_more));
+            if (!this.blockQuantityUpdate) {
+                this.updateQuantityInputValue(Number(target.data(this.options.data_attributes.quantity)));
+            }
             this.setValidAttribute(this.$quantity, true);
-            this.updateUnitValue(String(target.data(this.options.data_attributes.unit)));
+            this.updateUnitValue(
+                String(target.data(this.options.data_attributes.unit)),
+                String(target.data(this.options.data_attributes.formatted_unit))
+            );
             this.updateUnitPriceValue(String(target.data(this.options.data_attributes.price)));
 
             this.quantityEventsEnabled = true;
@@ -149,7 +156,7 @@ define(function(require) {
         },
 
         addQuantityEvents: function() {
-            this.$quantity.change(_.bind(function() {
+            this.$quantity.on('change', _.bind(function() {
                 if (!this.quantityEventsEnabled) {
                     return;
                 }
@@ -159,7 +166,7 @@ define(function(require) {
                 this.onQuantityChange.call(this);
             }, this));
 
-            this.$quantity.keyup(_.bind(function() {
+            this.$quantity.on('keyup', _.bind(function() {
                 if (this.isQuantityValueValid(this.$quantity.val())) {
                     this.updateUnitPriceValue(this.options.calculatingMessage);
                 } else {
@@ -186,10 +193,11 @@ define(function(require) {
 
         /**
          * @param {String} unit
+         * @param {String} formattedUnit
          */
-        updateUnitValue: function(unit) {
+        updateUnitValue: function(unit, formattedUnit) {
             this.$unitInput.val(unit);
-            this.$unit.text(unit);
+            this.$unit.text(formattedUnit);
         },
 
         /**
@@ -203,7 +211,10 @@ define(function(require) {
          * @param {Integer} id
          */
         updateSelector: function(id) {
+            this.blockQuantityUpdate = true;
             $(this.options.offerSelector + '[value="' + id + '"]').prop('checked', 'checked');
+            $(this.options.offerSelector + '[value="' + id + '"]').trigger('change');
+            this.blockQuantityUpdate = false;
         },
 
         dispose: function() {
