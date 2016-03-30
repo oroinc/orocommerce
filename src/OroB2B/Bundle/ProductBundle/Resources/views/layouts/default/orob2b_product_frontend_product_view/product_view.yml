@@ -6,8 +6,8 @@ layout:
             id: title
             optionName: value
             optionValue:
-                - orob2b.product.entity_plural_label
-                - {@value: $data.product.defaultName.string}
+                - 'orob2b.product.entity_plural_label'
+                - { @value: $data.product.defaultName.string }
         - @setOption:
             id: page_title
             optionName: text
