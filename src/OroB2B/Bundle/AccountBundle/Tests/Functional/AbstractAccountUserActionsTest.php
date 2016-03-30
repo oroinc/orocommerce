@@ -24,7 +24,7 @@ abstract class AbstractAccountUserActionsTest extends WebTestCase
         $this->getObjectManager()->flush();
         $this->getObjectManager()->clear();
 
-        $this->executeAction($user, 'orob2b_account_action_accountuser_confirm');
+        $this->executeOperation($user, 'orob2b_account_accountuser_confirm');
 
         /** @var MessageDataCollector $collector */
         $collector = $this->client->getProfile()->getCollector('swiftmailer');
@@ -67,7 +67,7 @@ abstract class AbstractAccountUserActionsTest extends WebTestCase
         $this->getObjectManager()->flush();
         $this->getObjectManager()->clear();
 
-        $this->executeAction($user, 'orob2b_account_action_accountuser_sendconfirmation');
+        $this->executeOperation($user, 'orob2b_account_accountuser_sendconfirmation');
 
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);
@@ -94,7 +94,7 @@ abstract class AbstractAccountUserActionsTest extends WebTestCase
         $this->assertNotNull($user);
         $this->assertTrue($user->isEnabled());
 
-        $this->executeAction($user, $this->getAccountUserDisableActionName());
+        $this->executeOperation($user, $this->getAccountUserDisableOperationName());
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
 
         $this->getObjectManager()->clear();
@@ -102,7 +102,7 @@ abstract class AbstractAccountUserActionsTest extends WebTestCase
         $user = $this->getUserRepository()->find($id);
         $this->assertFalse($user->isEnabled());
 
-        $this->executeAction($user, $this->getAccountUserEnableActionName());
+        $this->executeOperation($user, $this->getAccountUserEnableOperationName());
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
 
         $this->getObjectManager()->clear();
@@ -129,17 +129,17 @@ abstract class AbstractAccountUserActionsTest extends WebTestCase
 
     /**
      * @param AccountUser $accountUser
-     * @param string $actionName
+     * @param string $operationName
      */
-    abstract protected function executeAction(AccountUser $accountUser, $actionName);
+    abstract protected function executeOperation(AccountUser $accountUser, $operationName);
 
     /**
      * @return string
      */
-    abstract protected function getAccountUserEnableActionName();
+    abstract protected function getAccountUserEnableOperationName();
 
     /**
      * @return string
      */
-    abstract protected function getAccountUserDisableActionName();
+    abstract protected function getAccountUserDisableOperationName();
 }

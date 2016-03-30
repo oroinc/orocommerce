@@ -1,5 +1,5 @@
 orob2b_frontend_action_widget_form:
-    path: /actionwidget/form/{actionName}
+    path: /actionwidget/form/{operationName}
     defaults: { _controller: OroActionBundle:Widget:form }
     options:
         frontend: true
@@ -11,7 +11,7 @@ orob2b_frontend_action_widget_buttons:
         frontend: true
 
 orob2b_frontend_action_api:
-    resource: "@OroB2BFrontendBundle/Controller/Api/Rest/FrontendActionController.php"
+    resource: "@OroB2BFrontendBundle/Controller/Api/Rest/FrontendOperationController.php"
     type: rest
     prefix: api/rest/{version}/
     requirements:
