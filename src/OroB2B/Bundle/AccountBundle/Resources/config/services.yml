@@ -100,6 +100,8 @@ parameters:
     orob2b_account.provider.visibility_choices.class: OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider
     orob2b_account.provider.sign_in.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\SignInProvider
     orob2b_account.provider.frontend_account_user_registration_form.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRegistrationFormProvider
+    orob2b_account.provider.frontend_account_user_role_privileges.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRolePrivilegesDataProvider
+    orob2b_account.provider.frontend_account_user_role_form.class: OroB2B\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRoleFormDataProvider
 
     orob2b_account.audit.discriminator_map_listener.class: OroB2B\Bundle\AccountBundle\Audit\DiscriminatorMapListener
 
@@ -854,3 +856,17 @@ services:
             - @orob2b_frontend.request.frontend_helper
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onRequest }
+
+    orob2b_account.provider.frontend_account_user_role_privileges:
+        class: %orob2b_account.provider.frontend_account_user_role_privileges.class%
+        arguments:
+            - @orob2b_account.helper.account_user_role_privileges.frontend
+        tags:
+            - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_role_privileges }
+
+    orob2b_account.provider.frontend_account_user_role_form:
+        class: %orob2b_account.provider.frontend_account_user_role_form.class%
+        arguments:
+            - @orob2b_account.form.handler.update_account_user_role_frontend=
+        tags:
+            - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_role_form }

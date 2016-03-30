@@ -7,9 +7,9 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\ActionBundle\Model\ActionManager;
-use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\ActionBundle\Model\ActionData;
+use Oro\Bundle\ActionBundle\Model\OperationManager;
+use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Processor\QuickAddCheckoutProcessor;
@@ -24,9 +24,9 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
     protected $shoppingListManager;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ActionManager
+     * @var \PHPUnit_Framework_MockObject_MockObject|OperationManager
      */
-    protected $actionManager;
+    protected $operationManager;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
@@ -41,7 +41,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
     /**
      * @var string
      */
-    protected $actionName;
+    protected $operationName;
 
     public function getProcessorName()
     {
@@ -59,8 +59,8 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->actionManager =  $this
-            ->getMockBuilder('Oro\Bundle\ActionBundle\Model\ActionManager')
+        $this->operationManager =  $this
+            ->getMockBuilder('Oro\Bundle\ActionBundle\Model\OperationManager')
             ->disableOriginalConstructor()
             ->getMock();
         $this->translator = $this
@@ -76,10 +76,10 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
 
         $this->processor->setProductClass('OroB2B\Bundle\ProductBundle\Entity\Product');
         $this->processor->setShoppingListManager($this->shoppingListManager);
-        $this->processor->setActionManager($this->actionManager);
+        $this->processor->setOperationManager($this->operationManager);
         $this->processor->setTranslator($this->translator);
         $this->processor->setDateFormatter($this->dateFormatter);
-        $this->processor->setActionName('orob2b_shoppinglist_frontend_action_createorder');
+        $this->processor->setOperationName('orob2b_shoppinglist_frontend_createorder');
     }
 
     /**
@@ -91,7 +91,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
 
         unset(
             $this->shoppingListManager,
-            $this->actionManager,
+            $this->operationManager,
             $this->translator,
             $this->dateFormatter
         );
@@ -160,7 +160,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
                     $this->assertFailedFlashMessage($request);
                 }
 
-                $this->actionManager->expects($this->once())
+                $this->operationManager->expects($this->once())
                     ->method('execute')
                     ->willReturn($actionData);
 
