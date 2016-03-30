@@ -7,3 +7,10 @@ services:
             - @doctrine
         tags:
             - {name: kernel.event_listener, event: orob2b_checkout.get_checkout_entity, method: onGetCheckoutEntity}
+
+    orob2b.workflow_expression.user_in_group:
+        class: OroB2B\Bundle\AlternativeCheckoutBundle\Model\UserInGroupCondition
+        arguments:
+            - @oro_security.security_facade
+        tags:
+            - { name: oro_workflow.condition, alias: assert_user_group }

@@ -13,7 +13,7 @@ class CheckoutEntityListener extends AbstractCheckoutEventListener
     protected function createCheckoutEntity()
     {
         $checkout = new AlternativeCheckout();
-        $checkout->setAllowed(false);//todo
+        $checkout->setAllowed(false);
 
         return $checkout;
     }

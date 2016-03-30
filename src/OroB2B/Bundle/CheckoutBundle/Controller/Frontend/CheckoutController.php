@@ -51,7 +51,7 @@ class CheckoutController extends Controller
      * @return array|Response
      * @throws \Exception
      */
-    public function checkoutAction(Request $request, $id, $type)
+    public function checkoutAction(Request $request, $id, $type = null)
     {
         if (!$type) {
             $checkout = $this->getDoctrine()->getRepository('OroB2BCheckoutBundle:Checkout')

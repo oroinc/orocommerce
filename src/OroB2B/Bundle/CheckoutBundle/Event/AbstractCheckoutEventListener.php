@@ -5,12 +5,13 @@ namespace OroB2B\Bundle\CheckoutBundle\Event;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
+
 use OroB2B\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout;
 use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 
 abstract class AbstractCheckoutEventListener
 {
-    const START_TRANSITION_DEFINITION = '__start';
+    const START_TRANSITION_DEFINITION = '__start__';
 
     /**
      * @var WorkflowManager
