@@ -120,36 +120,26 @@ class QuoteToOrderType extends CollectionType
         $em = $this->registry->getManagerForClass('OroB2BSaleBundle:QuoteProductDemand');
         $selectedItems = $em->getRepository('OroB2BSaleBundle:QuoteProductDemand')
             ->findBy(['quoteDemand' => $this->quoteDemand]);
+        /** @var QuoteProductDemand[] $sortedItems */
+        $sortedItems = [];
+        foreach ($selectedItems as $item) {
+            $sortedItems[$item->getQuoteProductOffer()->getQuoteProduct()->getId()] = $item;
+        }
         if ($selectedItems) {
             foreach ($view->children as $view) {
                 /** @var QuoteProduct $quoteProduct */
                 if (array_key_exists('quoteProduct', $view->vars)) {
                     $quoteProduct = $view->vars['quoteProduct'];
 
-                    $selectedId = $this->getSelectedId($quoteProduct, $selectedItems);
-                    if ($selectedId) {
-                        $view->vars['selectedOfferId'] = $selectedId;
+                    if (array_key_exists($quoteProduct->getId(), $sortedItems)) {
+                        $selectedItem = $sortedItems[$quoteProduct->getId()];
+                        $view->vars['selectedOfferId'] = $selectedItem->getQuoteProductOffer()->getId();
+                        $view->offsetGet('quantity')->vars['value'] = $selectedItem->getQuantity();
+                        $view->offsetGet('unit')->vars['value'] = $selectedItem->getQuoteProductOffer()->getProductUnitCode();
                     }
                 }
             }
         }
-    }
-
-    /**
-     * @param QuoteProduct $quoteProduct
-     * @param QuoteProductDemand[] $selectedItems
-     * @return integer|null
-     */
-    protected function getSelectedId($quoteProduct, $selectedItems)
-    {
-        foreach ($selectedItems as $item) {
-            $productOffer = $item->getQuoteProductOffer();
-            if ($productOffer->getQuoteProduct()->getId() == $quoteProduct->getId()) {
-                return $productOffer->getId();
-            }
-        }
-
-        return null;
     }
 
     /**
