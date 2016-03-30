@@ -60,17 +60,17 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
             $name = new LocalizedFallbackValue();
             $name->setString($row['name']);
 
-            $text = "<p>" . $row['description'] . "</p>"
+            $text = '<p>' . $row['description'] . '</p>'
                 . (
-                    isset($row['information']) && !empty($row['information']) ?
-                    "<p style=\"text-decoration: underline; font-weight: bold;\">Product Information &amp; Features:</p>"
-                    . "<ul><li>" . implode("</li><li>", explode("\n", $row['information'])) . "</li></ul>"
+                    array_key_exists('information', $row) && !empty($row['information']) ?
+                    '<p style="text-decoration: underline; font-weight: bold;">Product Information &amp; Features:</p>'
+                    . '<ul><li>' . implode('</li><li>', explode("\n", $row['information'])) . '</li></ul>'
                     : ''
                 )
                 . (
-                    isset($row['specifications']) && !empty($row['specifications'])  ?
-                    "<p style=\"text-decoration: underline; font-weight: bold;\">Technical Specs:</p>"
-                    . "<ul><li>" . implode("</li><li>", explode("\n", $row['specifications'])) . "</li></ul>"
+                    array_key_exists('specifications', $row) && !empty($row['specifications'])  ?
+                    '<p style="text-decoration: underline; font-weight: bold;">Technical Specs:</p>'
+                    . '<ul><li>' . implode('</li><li>', explode("\n", $row['specifications'])) . '</li></ul>'
                     : ''
                 );
 

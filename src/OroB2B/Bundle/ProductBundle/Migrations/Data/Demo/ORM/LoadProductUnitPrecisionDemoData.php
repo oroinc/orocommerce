@@ -75,7 +75,7 @@ class LoadProductUnitPrecisionDemoData extends AbstractFixture implements
             $productUnitPrecision
                 ->setProduct($product)
                 ->setUnit($productUnit)
-                ->setPrecision(intval($row['precision']));
+                ->setPrecision((int)$row['precision']);
 
             $manager->persist($productUnitPrecision);
         }

@@ -102,7 +102,6 @@ class LoadProductPriceDemoData extends AbstractFixture implements ContainerAware
             foreach ($priceLists as $listName => $listOptions) {
                 $priceList = $this->getPriceList($manager, $listName);
                 foreach ($listOptions['currencies'] as $currency) {
-
                     $amount = round(
                         $row['price'] * (1 - $listOptions['discount']) * $xRate[$currency],
                         2
