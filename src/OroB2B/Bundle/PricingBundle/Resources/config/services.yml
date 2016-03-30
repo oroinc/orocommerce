@@ -381,7 +381,7 @@ services:
             - @orob2b_pricing.provider.user_currency
         tags:
             - { name: oro_workflow.action, alias: assign_user_currency }
-            - { name: oro_action.function, alias: assign_user_currency }
+            - { name: oro_action.action, alias: assign_user_currency }
 
     orob2b_pricing.filter.product_price:
         class: %orob2b_pricing.filter.product_price.class%
