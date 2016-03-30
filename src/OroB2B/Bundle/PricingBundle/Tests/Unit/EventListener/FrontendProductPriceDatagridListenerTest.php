@@ -122,7 +122,7 @@ class FrontendProductPriceDatagridListenerTest extends AbstractProductPriceDatag
                         'query' => [
                             'select' => [
                                 'GROUP_CONCAT(minimum_price_table.value SEPARATOR \'{sep}\') as prices',
-                                'GROUP_CONCAT(minimum_price_table.unit SEPARATOR \'{sep}\') as price_units',
+                                'GROUP_CONCAT(IDENTITY(minimum_price_table.unit) SEPARATOR \'{sep}\') as price_units',
                                 'MIN(minimum_price_table.value) as minimum_price',
                             ],
                             'join' => [
