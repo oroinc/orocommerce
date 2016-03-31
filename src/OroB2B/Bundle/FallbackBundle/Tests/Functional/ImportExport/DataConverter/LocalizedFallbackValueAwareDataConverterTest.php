@@ -95,6 +95,8 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
 
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function exportDataProvider()
     {
@@ -121,6 +123,14 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'descriptions.en_US.value' => '',
                     'descriptions.en_CA.fallback' => '',
                     'descriptions.en_CA.value' => '',
+                    'shortDescriptions.default.fallback' => '',
+                    'shortDescriptions.default.value' => '',
+                    'shortDescriptions.en.fallback' => '',
+                    'shortDescriptions.en.value' => '',
+                    'shortDescriptions.en_US.fallback' => '',
+                    'shortDescriptions.en_US.value' => '',
+                    'shortDescriptions.en_CA.fallback' => '',
+                    'shortDescriptions.en_CA.value' => '',
                     'hasVariants' => '',
                     'variantFields' => '',
                 ],
@@ -147,6 +157,14 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'descriptions.en_US.value' => '',
                     'descriptions.en_CA.fallback' => '',
                     'descriptions.en_CA.value' => '',
+                    'shortDescriptions.default.fallback' => '',
+                    'shortDescriptions.default.value' => '',
+                    'shortDescriptions.en.fallback' => '',
+                    'shortDescriptions.en.value' => '',
+                    'shortDescriptions.en_US.fallback' => '',
+                    'shortDescriptions.en_US.value' => '',
+                    'shortDescriptions.en_CA.fallback' => '',
+                    'shortDescriptions.en_CA.value' => '',
                     'hasVariants' => '',
                     'variantFields' => '',
                 ],
@@ -178,6 +196,14 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'descriptions.en_US.value' => '',
                     'descriptions.en_CA.fallback' => '',
                     'descriptions.en_CA.value' => '',
+                    'shortDescriptions.default.fallback' => '',
+                    'shortDescriptions.default.value' => '',
+                    'shortDescriptions.en.fallback' => '',
+                    'shortDescriptions.en.value' => '',
+                    'shortDescriptions.en_US.fallback' => '',
+                    'shortDescriptions.en_US.value' => '',
+                    'shortDescriptions.en_CA.fallback' => '',
+                    'shortDescriptions.en_CA.value' => '',
                     'hasVariants' => '',
                     'variantFields' => '',
                 ],
