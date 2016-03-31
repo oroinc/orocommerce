@@ -12,7 +12,7 @@ use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
 use OroB2B\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository;
 use OroB2B\Bundle\TaxBundle\Form\Type\AccountTaxCodeAutocompleteType;
 
-abstract class AbstractAccountTaxExtensionTest extends AbstractTaxExtensionText
+abstract class AbstractAccountTaxExtensionTest extends AbstractTaxExtensionTest
 {
     /**
      * @var AccountTaxCodeRepository|\PHPUnit_Framework_MockObject_MockObject

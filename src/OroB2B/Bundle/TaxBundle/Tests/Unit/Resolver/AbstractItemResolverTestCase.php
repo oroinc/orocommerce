@@ -115,7 +115,7 @@ abstract class AbstractItemResolverTestCase extends \PHPUnit_Framework_TestCase
     public function testEmptyRules()
     {
         $taxable = $this->getTaxable();
-        $taxable->setDestination(new OrderAddress());
+        $taxable->setTaxationAddress(new OrderAddress());
         $taxable->setPrice('1');
         $taxable->setAmount('1');
 
@@ -148,7 +148,7 @@ abstract class AbstractItemResolverTestCase extends \PHPUnit_Framework_TestCase
         $taxable->setPrice($taxableAmount);
         $taxable->setQuantity(3);
         $taxable->setAmount($taxableAmount);
-        $taxable->setDestination(new OrderAddress());
+        $taxable->setTaxationAddress(new OrderAddress());
         $taxable->getContext()->offsetSet(Taxable::PRODUCT_TAX_CODE, 'prod_tax_code');
         $taxable->getContext()->offsetSet(Taxable::ACCOUNT_TAX_CODE, 'acc_tax_code');
 

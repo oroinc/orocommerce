@@ -116,6 +116,6 @@ services:
             - @orob2b_pricing.provider.user_currency
             - @security.token_storage
             - @property_accessor
-            - @oro_action.function.redirect
+            - @oro_action.action.redirect
         tags:
-            - { name: oro_action.function, alias: start_checkout }
+            - { name: oro_action.action, alias: start_checkout }

@@ -8,7 +8,7 @@
 {% block _no_shopping_lists_widget %}
     {% if not shoppingList %}
         <div class="cart-list_empty">
-            <span class="badge badge_orange badge_xlg badge_circle"><i class="icon-basket"></i></span>
+            <span class="badge badge_orange badge_xlg badge_circle"><i class="cf-basket"></i></span>
             <span class="fs24 va-m_md">{{ 'orob2b.frontend.shoppinglist.view.not_have_available'|trans }}</span>
         </div>
     {% endif %}
@@ -63,7 +63,7 @@
     {% set hasRecords = notes is not empty %}
     {% set attr = attr|merge({ class: attr.class|default('') ~ " oro-more-info-toggler" }) %}
     <div{{ block('block_attributes') }}>
-        <i class="icon-play {% if hasRecords %}expanded{% endif %}"></i>
+        <i class="cf-play {% if hasRecords %}expanded{% endif %}"></i>
         <a href="#" data-more-info-expand tabindex="0">{{ 'orob2b.frontend.shoppinglist.view.view_options.label'|trans }}</a>
         <div class="oro-more-info-toggler__container" data-more-info {% if hasRecords %}style="display: block"{% endif %}>
 
@@ -93,8 +93,8 @@
                     class="checkbox_custom checkbox_custom_blue mml5-md {% if notes is not empty %}checked{% endif %}">
                     <input type="checkbox" name="addANote" id="addANote" data-role="start-editing"
                         {% if notes is not empty %}checked="checked"{% endif %}>
-                    <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
-                    <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
+                    <i class="cf-check_box checkbox_checked fs18 mmr5-md"></i>
+                    <i class="cf-check_box_outline_blank checkbox_not-checked fs18 mmr5-md"></i>
                     <span class="checkbox_custom__text fs13">{{ 'orob2b.frontend.shoppinglist.view.add_note.label'|trans }}</span>
                 </label>
                 <div class="form-input" data-role="editor">
@@ -219,7 +219,7 @@
                                         cancelButtonClass: 'btn cancel theme-btn_sm btn_gray'
                                     }
                                 }) }} >
-                                <i class="icon-trash"></i>
+                                <i class="cf-trash"></i>
                             </button>
                         </td>
                     </tr>
@@ -251,8 +251,8 @@
                                     {% if notes is not empty %} checked {% endif %}" data-checkbox>
                                     <input type="checkbox" name="{{ 'lineItem'~lineItem.id }}" id="{{ 'lineItem'~lineItem.id }}"
                                         data-role="start-editing" {% if notes is not empty %} checked = "checked" {% endif %}">
-                                    <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
-                                    <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
+                                    <i class="cf-check_box checkbox_checked fs18 mmr5-md"></i>
+                                    <i class="cf-check_box_outline_blank checkbox_not-checked fs18 mmr5-md"></i>
                                     <span class="checkbox_custom__text fs13">{{ 'orob2b.frontend.shoppinglist.view.add_item_note.label'|trans }}</span>
                                 </label>
 
@@ -278,7 +278,7 @@
     {% endif %}
     <div {{ block('block_attributes') }}>
           <span class="badge badge_orange badge_xlg badge_circle">
-            <i class="icon-basket"></i>
+            <i class="cf-basket"></i>
           </span>
         <span class="fs24 va-m_md">{{ 'orob2b.frontend.shoppinglist.view.empty'|trans }}</span>
     </div>
@@ -311,7 +311,7 @@
                 cancelButtonClass: 'btn cancel theme-btn_sm btn_gray'
             }
         }) }} >
-            <i class="fa icon-trash mmr5-md"></i> {{ 'orob2b.frontend.shoppinglist.btn.delete'|trans }}
+            <i class="fa cf-trash mmr5-md"></i> {{ 'orob2b.frontend.shoppinglist.btn.delete'|trans }}
         </button>
 {% endblock %}
 

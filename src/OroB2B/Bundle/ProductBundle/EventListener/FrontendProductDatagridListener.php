@@ -80,7 +80,7 @@ class FrontendProductDatagridListener
 
         // add all product units
         $select = sprintf(
-            'GROUP_CONCAT(unit_precisions.unit SEPARATOR %s) as %s',
+            'GROUP_CONCAT(IDENTITY(unit_precisions.unit) SEPARATOR %s) as %s',
             (new Expr())->literal(self::DATA_SEPARATOR),
             self::COLUMN_PRODUCT_UNITS
         );

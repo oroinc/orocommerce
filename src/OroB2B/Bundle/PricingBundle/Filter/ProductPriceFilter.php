@@ -28,6 +28,11 @@ class ProductPriceFilter extends NumberRangeFilter
     protected $priceListRequestHandler;
 
     /**
+     * @var string
+     */
+    protected $productPriceClass;
+
+    /**
      * @param FormFactoryInterface $factory
      * @param FilterUtility $util
      * @param ProductUnitLabelFormatter $formatter
@@ -42,6 +47,16 @@ class ProductPriceFilter extends NumberRangeFilter
         parent::__construct($factory, $util);
         $this->formatter = $formatter;
         $this->priceListRequestHandler = $priceListRequestHandler;
+    }
+
+    /**
+     * @param string $productPriceClass
+     * @return $this
+     */
+    public function setProductPriceClass($productPriceClass)
+    {
+        $this->productPriceClass = $productPriceClass;
+        return $this;
     }
 
     /**
@@ -94,7 +109,7 @@ class ProductPriceFilter extends NumberRangeFilter
         $currency = $this->get('data_name');
 
         $qb->innerJoin(
-            'OroB2BPricingBundle:ProductPrice',
+            $this->productPriceClass,
             $productPriceAlias,
             Join::WITH,
             sprintf('%s.id = IDENTITY(%s.product)', $rootAlias, $productPriceAlias)
@@ -104,11 +119,19 @@ class ProductPriceFilter extends NumberRangeFilter
             $ds,
             $productPriceAlias . '.priceList',
             $ds->generateParameterName('priceList'),
-            $this->priceListRequestHandler->getPriceList()
+            $this->getPriceList()
         );
         $this->addEqExpr($ds, $productPriceAlias . '.currency', $ds->generateParameterName('currency'), $currency);
         $this->addEqExpr($ds, $productPriceAlias . '.quantity', $ds->generateParameterName('quantity'), 1);
         $this->addEqExpr($ds, 'IDENTITY(' . $productPriceAlias . '.unit)', $ds->generateParameterName('unit'), $unit);
+    }
+
+    /**
+     * @return null|object|\OroB2B\Bundle\PricingBundle\Entity\PriceList
+     */
+    protected function getPriceList()
+    {
+        return $this->priceListRequestHandler->getPriceList();
     }
 
     /**

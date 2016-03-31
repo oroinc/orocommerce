@@ -38,7 +38,7 @@ class AccountUserRoleController extends Controller
 
     /**
      * @Route("/view/{id}", name="orob2b_account_frontend_account_user_role_view", requirements={"id"="\d+"})
-     * @Template("OroB2BAccountBundle:AccountUserRole/Frontend:view.html.twig")
+     * @Layout()
      * @Acl(
      *      id="orob2b_account_frontend_account_user_role_view",
      *      type="entity",
@@ -53,11 +53,10 @@ class AccountUserRoleController extends Controller
      */
     public function viewAction(AccountUserRole $role)
     {
-        $privileges = $this->get('orob2b_account.helper.account_user_role_privileges.frontend')->collect($role);
-
         return [
-            'entity' => $role,
-            'privileges' => $privileges
+            'data' => [
+                'entity' => $role
+            ]
         ];
     }
 

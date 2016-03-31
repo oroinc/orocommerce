@@ -64,11 +64,8 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->formType = new FrontendOrderLineItemType(
-            $this->registry,
-            $this->priceListRequestHandler,
-            self::PRICE_CLASS
-        );
+        $this->formType = $this->getFormType();
+        $this->formType->setSectionProvider($this->sectionProvider);
 
         $priceList = new PriceList();
 
@@ -77,6 +74,16 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
             ->willReturn($priceList);
 
         $this->formType->setDataClass('OroB2B\Bundle\OrderBundle\Entity\OrderLineItem');
+    }
+
+    /** {@inheritdoc} */
+    public function getFormType()
+    {
+        return new FrontendOrderLineItemType(
+            $this->registry,
+            $this->priceListRequestHandler,
+            self::PRICE_CLASS
+        );
     }
 
     public function testGetName()
@@ -91,6 +98,10 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
      */
     public function testBuildView($data, $expected)
     {
+        $this->sectionProvider->expects($this->atLeastOnce())->method('addSections')
+            ->with($this->formType->getName(), $this->isType('array'))
+            ->willReturn($this->getExpectedSections());
+
         $view = new FormView();
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
@@ -344,7 +355,6 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
             'page_component_options' => [
                 'view' => 'orob2border/js/app/views/frontend-line-item-view',
             ],
-            'sections' => $this->getExpectedSections()->toArray()
         ];
     }
 }
