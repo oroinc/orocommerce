@@ -79,7 +79,7 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
     protected function createQuickAccessMenu(ObjectManager $manager)
     {
         $item = $this->factory->createItem('quick-access');
-        $item->addChild('Purchase Orders');
+        $item->addChild('Orders');
         $item->addChild('Quotes', ['uri' => '/account/quote']);
         $item->addChild('Quick Order Form', ['uri' => '/account/product/quick-add']);
 
