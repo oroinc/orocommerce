@@ -2,23 +2,23 @@
 
 namespace OroB2B\Bundle\SaleBundle\Controller\Frontend;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\ActionBundle\Model\ActionData;
-
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteToOrderType;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteDemandType;
 
 class QuoteController extends Controller
 {
@@ -99,7 +99,17 @@ class QuoteController extends Controller
      */
     public function choiceAction(Request $request, QuoteDemand $quoteDemand)
     {
-        $form = $this->createForm(QuoteToOrderType::NAME, $quoteDemand);
+        // TODO: Move to action_group
+        if (!$quoteDemand->getDemandProducts()->count()) {
+            foreach ($quoteDemand->getQuote()->getQuoteProducts() as $quoteProduct) {
+                /** @var QuoteProductOffer $offer */
+                $offer = $quoteProduct->getQuoteProductOffers()->first();
+                $demandProduct = new QuoteProductDemand($quoteDemand, $offer, $offer->getQuantity());
+                $quoteDemand->addDemandProduct($demandProduct);
+            }
+        }
+
+        $form = $this->createForm(QuoteDemandType::NAME, $quoteDemand);
         $form->handleRequest($request);
         if ($form->isValid()) {
             $actionGroupRegistry = $this->get('oro_action.action_group_registry');

@@ -212,8 +212,9 @@ define(function(require) {
          */
         updateSelector: function(id) {
             this.blockQuantityUpdate = true;
-            $(this.options.offerSelector + '[value="' + id + '"]').prop('checked', 'checked');
-            $(this.options.offerSelector + '[value="' + id + '"]').trigger('change');
+            var selector = $(this.options.offerSelector + '[data-value="' + id + '"]');
+            selector.prop('checked', 'checked');
+            selector.trigger('change');
             this.blockQuantityUpdate = false;
         },
 

@@ -99,7 +99,7 @@ class QuoteToOrderType extends CollectionType
             unset($selectedOffers[$offer->getId()]);
             if (!$selectedOffer) {
                 $selectedOffer = new QuoteProductDemand($this->quoteDemand, $offer, $item['quantity']);
-                $this->quoteDemand->addDemandOffer($selectedOffer);
+                $this->quoteDemand->addDemandProduct($selectedOffer);
                 $em->persist($selectedOffer);
             } else {
                 $selectedOffer->setQuoteProductOffer($offer);

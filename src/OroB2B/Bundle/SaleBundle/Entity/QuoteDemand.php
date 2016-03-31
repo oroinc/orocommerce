@@ -47,7 +47,7 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
     /**
      *
      * @ORM\OneToMany(targetEntity="OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand",
-     *     mappedBy="quoteDemand", cascade={"all"})
+     *     mappedBy="quoteDemand", cascade={"all"}, orphanRemoval=true)
      */
     protected $demandProducts;
 
@@ -94,27 +94,36 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
     }
 
     /**
-     * @param QuoteProductDemand $demandOffer
+     * @param QuoteProductDemand $demandProduct
      * @return $this
      */
-    public function addDemandProduct(QuoteProductDemand $demandOffer)
+    public function addDemandProduct(QuoteProductDemand $demandProduct)
     {
-        if (!$this->demandProducts->contains($demandOffer)) {
-            $this->demandProducts->add($demandOffer);
+        if (!$this->hasDemandProduct($demandProduct)) {
+            $this->demandProducts->add($demandProduct);
         }
         return $this;
     }
 
     /**
-     * @param QuoteProductDemand $demandOffer
+     * @param QuoteProductDemand $demandProduct
      * @return $this
      */
-    public function removeDemandProduct(QuoteProductDemand $demandOffer)
+    public function removeDemandProduct(QuoteProductDemand $demandProduct)
     {
-        if ($this->demandProducts->contains($demandOffer)) {
-            $this->demandProducts->removeElement($demandOffer);
+        if ($this->hasDemandProduct($demandProduct)) {
+            $this->demandProducts->remove($demandProduct);
         }
         return $this;
+    }
+
+    /**
+     * @param QuoteProductDemand $demandProduct
+     * @return bool
+     */
+    protected function hasDemandProduct(QuoteProductDemand $demandProduct)
+    {
+        return $this->demandProducts->contains($demandProduct);
     }
 
     /**
