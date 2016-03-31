@@ -332,3 +332,20 @@
         {{ block_widget(block) }}
     </div>
 {% endblock %}
+
+{% block address_widget %}
+    {% if address %}
+        {{ address|oro_format_address|escape|nl2br }}
+    {% else %}
+        {{ 'oro.ui.empty'|trans }}
+    {% endif %}
+{% endblock %}
+
+{% block quote_body_column_element_widget %}
+    {% if address is not null %}
+        <tr>
+            <td class="account-oq__order-info__title">{{ label|trans }}</td>
+            <td>{{ block_widget(block) }}</td>
+        </tr>
+    {% endif %}
+{% endblock %}
