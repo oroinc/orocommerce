@@ -41,7 +41,7 @@ abstract class AbstractCallbackEvent extends Event
      */
     public function getTypedEventName($type)
     {
-        return implode('.', [$this->getEventName(), $type]);
+        return implode('.', [$this->getEventName(), strtolower($type)]);
     }
 
     /**

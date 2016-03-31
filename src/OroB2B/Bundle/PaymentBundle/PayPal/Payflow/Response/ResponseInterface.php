@@ -5,7 +5,17 @@ namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response;
 interface ResponseInterface
 {
     /**
-     * @return array
+     * @return bool
      */
-    public function getData();
+    public function isSuccessful();
+
+    /**
+     * @return string
+     */
+    public function getReference();
+
+    /**
+     * @return string
+     */
+    public function getState();
 }

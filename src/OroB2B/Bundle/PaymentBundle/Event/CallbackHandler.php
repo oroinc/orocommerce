@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Event;
 
+use Psr\Log\LoggerAwareTrait;
+
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -11,6 +13,8 @@ use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 
 class CallbackHandler
 {
+    use LoggerAwareTrait;
+
     /** @var EventDispatcherInterface */
     protected $eventDispatcher;
 
@@ -51,6 +55,18 @@ class CallbackHandler
 
         $this->eventDispatcher->dispatch($event->getEventName(), $event);
         $this->eventDispatcher->dispatch($event->getTypedEventName($paymentTransaction->getType()), $event);
+
+        $entityManager = $this->doctrineHelper->getEntityManager($paymentTransaction);
+        try {
+            $entityManager->transactional(
+                function () {
+                }
+            );
+        } catch (\Exception $e) {
+            if ($this->logger) {
+                $this->logger->error($e->getMessage(), $e->getTrace());
+            }
+        }
 
         return $event->getResponse();
     }

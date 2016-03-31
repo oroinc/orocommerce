@@ -2,33 +2,24 @@
 
 namespace OroB2B\Bundle\PaymentBundle\EventListener\Callback;
 
-use Psr\Log\LoggerAwareTrait;
-
-use Oro\Bundle\SecurityBundle\Encoder\Mcrypt;
-
+use OroB2B\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
 use OroB2B\Bundle\PaymentBundle\Event\CallbackErrorEvent;
 use OroB2B\Bundle\PaymentBundle\Event\CallbackReturnEvent;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\NVP\EncoderInterface;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\Response;
 
 class PayflowListener
 {
-    use LoggerAwareTrait;
-
     /**  @var EncoderInterface */
     protected $encoder;
 
-    /** @var Mcrypt */
-    protected $crypt;
-
     /**
      * @param EncoderInterface $encoder
-     * @param Mcrypt $crypt
      */
-    public function __construct(EncoderInterface $encoder, Mcrypt $crypt)
+    public function __construct(EncoderInterface $encoder)
     {
         $this->encoder = $encoder;
-        $this->crypt = $crypt;
     }
 
     /**
@@ -36,30 +27,7 @@ class PayflowListener
      */
     public function onReturn(CallbackReturnEvent $event)
     {
-        $data = $this->encoder->decode($event->getQueryString());
-
-        if (!empty($data[Option\SecureToken::SECURETOKEN])) {
-            return;
-        }
-
-        if (!empty($data[Option\SecureTokenIdentifier::SECURETOKENID])) {
-            return;
-        }
-
-        $secureToken = $data[Option\SecureToken::SECURETOKEN];
-        $secureTokenIdentifier = $data[Option\SecureTokenIdentifier::SECURETOKENID];
-
-        $paymentTransaction = $event->getPaymentTransaction();
-
-        if ($secureToken !== $paymentTransaction->getToken()) {
-            return;
-        }
-
-        if ($secureTokenIdentifier !== $paymentTransaction->getIdentifier()) {
-            return;
-        }
-
-        $paymentTransaction->setData($this->crypt->encryptData($event->getQueryString()));
+        $this->handleEvent($event);
     }
 
     /**
@@ -67,5 +35,29 @@ class PayflowListener
      */
     public function onError(CallbackErrorEvent $event)
     {
+        $this->handleEvent($event);
+    }
+
+    /**
+     * @param AbstractCallbackEvent $event
+     */
+    protected function handleEvent(AbstractCallbackEvent $event)
+    {
+        $data = $this->encoder->decode($event->getQueryString());
+        $response = new Response($data);
+
+        $paymentTransaction = $event->getPaymentTransaction();
+        $paymentTransactionData = $this->encoder->decode($paymentTransaction->getData());
+
+        $keys = [Option\SecureToken::SECURETOKEN, Option\SecureTokenIdentifier::SECURETOKENID];
+        $keys = array_flip($keys);
+        if (array_intersect_key($data, $keys) !== array_intersect_key($paymentTransactionData, $keys)) {
+            return;
+        }
+
+        $paymentTransaction
+            ->setState($response->getState())
+            ->setReference($response->getReference())
+            ->setData($event->getQueryString());
     }
 }
