@@ -13,10 +13,10 @@ class Gateway
     /** @var ClientInterface */
     protected $client;
 
-    /** @var ProcessorRegistry ProcessorRegistry */
+    /** @var ProcessorRegistry */
     protected $processorRegistry;
 
-    /** @var RequestRegistry RequestRegistry */
+    /** @var RequestRegistry */
     protected $requestRegistry;
 
     /**
