@@ -37,6 +37,8 @@ operations:
         button_options:
             icon: icon-time
         acl_resource: orob2b_alternativecheckout_checkout_approve
+        preconditions:
+            @not_empty: $.checkoutSource
         actions:
             - @find_entity:
                 class: OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource
