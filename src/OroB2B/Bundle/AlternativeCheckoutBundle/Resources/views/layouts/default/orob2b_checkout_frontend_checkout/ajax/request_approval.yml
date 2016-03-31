@@ -11,5 +11,4 @@ layout:
                 workflowStep: { @value: $data.workflowStep }
                 stepOrder: 6
     conditions:
-        @and:
-            - @eq: [$context.workflowStepName, 'request_approval']
+        @eq: [$context.workflowStepName, 'request_approval']

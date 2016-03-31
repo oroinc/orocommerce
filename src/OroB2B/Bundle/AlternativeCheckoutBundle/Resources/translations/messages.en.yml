@@ -1,5 +1,29 @@
 orob2b:
     alternativecheckout:
+        entity_label: Checkout
+        entity_plural_label: Checkouts
+        id.label: Id
+        owner.label: Owner
+        account.label: Account
+        account_user.label: Account User
+        organization.label: Organization
+        customer_notes.label: Customer Notes
+        customer_notes.frontend.label: Notes
+        po_number.label: PO Number
+        ship_until.label: Do Not Ship Later Than
+        billing_address.label: Billing Address
+        shipping_address.label: Shipping Address
+        save_billing_address.label: Save Billing Address
+        save_shipping_address.label: Save Shipping Address
+        ship_to_billing_address.label: Ship to Billing Address
+        quoted_shipping_amount.label: Quoted shipping amount
+        preferred_shipping_method.label: Preferred shipping method
+        source.label: Source
+        currency.label: Currency
+        website.label: Website
+        workflow_item.label: Workflow Item
+        workflow_step.label: Workflow Step
+
         workflow:
             b2b_flow_alternative_checkout:
                 step:
@@ -11,8 +35,9 @@ orob2b:
                     continue_to_order_review.label: Continue
                     continue_to_request_approval.label: Request Approval
                     continue_to_approved_request.label: Request Approval
-                    back_to_order_review: Back To Order Review
-                    back_to_request_approval: Back To Request Approval
+                    order_approve.label: Approve
+                    back_to_order_review.label: Back To Order Review
+                    back_to_request_approval.label: Back To Request Approval
 
         security:
             permission:
