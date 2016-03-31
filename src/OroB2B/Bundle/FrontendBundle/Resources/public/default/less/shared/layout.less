@@ -3232,7 +3232,7 @@
 
 //Accout my order page, quotes page
 .account-oq-container {
-  margin: 2rem -1.5rem 0;
+  margin: 2.3rem -1.5rem 0;
 
   &:before, &:after {
     content: "";
@@ -3263,7 +3263,7 @@
    @media (max-width: 767px) {
     width: 100%;
     float: none;
-    margin: 0 0 3rem;
+    margin: 0;
    }
 }
 
@@ -3293,13 +3293,24 @@
 
 .account-oq__item__title {
   float: left;
+
   font-size: 1.6rem;
   font-weight: 400;
   text-transform: uppercase;
+
+  @media (max-width: 991px) {
+    &.styled {
+      float: none;
+
+      padding-bottom: 10px;
+      margin-bottom: 16px;
+
+      border-bottom: 1px solid @base-border-color;
+    }
+  }
 }
 
 .account-oq__order-info {
-   margin: .5rem 0 0;
    max-width: 35rem;
 
    &__title {
@@ -3310,6 +3321,10 @@
      // TODO: override hard selector
      > tbody > tr > td {
        padding-left: 0;
+
+       line-height: 1.4;
+
+       vertical-align: top;
      }
 
      td {
@@ -3318,6 +3333,7 @@
 
        &:last-child {
          font-style: italic;
+         line-height: 1.75;
        }
      }
    }
@@ -3325,15 +3341,27 @@
 
 .account-oq__order-item-more {
   width: 52%;
+
   color: @base-font-color-lighter;
 
   @media (max-width: 767px) {
-    width: 42%;
+    width: 95%;
+
+    margin-top: 1.2rem;
+    margin-bottom: -1.2rem;
   }
 
 
   div {
     .ellipsis;
+
+    &.oro-long-text-expanded {
+      overflow: visible;
+
+      line-height: 1.2;
+
+      white-space: normal;
+    }
   }
 }
 
