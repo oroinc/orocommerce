@@ -37,7 +37,7 @@ class QuoteNotificationTest extends WebTestCase
             $this->getUrl(
                 'oro_action_widget_form',
                 [
-                    'actionName' => 'orob2b_sale_notify_customer_by_email_action',
+                    'operationName' => 'orob2b_sale_notify_customer_by_email',
                     'entityClass' => 'OroB2B\Bundle\SaleBundle\Entity\Quote',
                     'entityId' => $quote->getId()
                 ]

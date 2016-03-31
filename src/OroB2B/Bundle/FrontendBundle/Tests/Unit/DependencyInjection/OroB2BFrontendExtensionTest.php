@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\FrontendBundle\Tests\Unit\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
+use Oro\Bundle\LocaleBundle\DependencyInjection\OroLocaleExtension;
+
 use OroB2B\Bundle\FrontendBundle\DependencyInjection\OroB2BFrontendExtension;
 
 class OroB2BFrontendExtensionTest extends \PHPUnit_Framework_TestCase
@@ -18,6 +20,11 @@ class OroB2BFrontendExtensionTest extends \PHPUnit_Framework_TestCase
         $container->expects($this->once())
             ->method('prependExtensionConfig')
             ->with(OroB2BFrontendExtension::ALIAS, $this->isType('array'));
+
+        $container->expects($this->once())
+            ->method('getParameter')
+            ->with(OroLocaleExtension::PARAMETER_ADDRESS_FORMATS)
+            ->willReturn([]);
 
         $extension = new OroB2BFrontendExtension();
         $extension->load([], $container);

@@ -99,7 +99,9 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
             $taxCode = $this->entitiesFactory->createProductTaxCode($code, $data['description'], $manager, $this);
             foreach ($data['products'] as $sku) {
                 $product = $manager->getRepository('OroB2BProductBundle:Product')->findOneBySku($sku);
-                $taxCode->addProduct($product);
+                if ($product) {
+                    $taxCode->addProduct($product);
+                }
             }
         }
 

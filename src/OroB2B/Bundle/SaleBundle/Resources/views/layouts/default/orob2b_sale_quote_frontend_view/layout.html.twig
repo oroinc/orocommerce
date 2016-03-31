@@ -54,22 +54,11 @@
                 <div class="account-oq__order-info">
                     <table class="table borderless  mobile-table">
                         <tbody>
-                        <tr class="account-oq__order-info__control">
-                            <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.ship_until.label'|trans }}</td>
-                            <td>{{ quote.shipUntil|oro_format_date|default('N/A'|trans) }}</td>
-                        </tr>
-                        {% if quote.shippingAddress %}
                             <tr class="account-oq__order-info__control">
-                                <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.shipping_address.label'|trans }}</td>
-                                <td>
-                                    {{ quote.shippingAddress|oro_format_address }}
-                                    {% if quote.shippingAddress.phone %}
-                                        <br />
-                                        {{ quote.shippingAddress.phone }}
-                                    {% endif %}
-                                </td>
+                                <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.ship_until.label'|trans }}</td>
+                                <td>{{ quote.shipUntil|oro_format_date|default('N/A'|trans) }}</td>
                             </tr>
-                        {% endif %}
+                            {{ block_widget(block) }}
                         </tbody>
                     </table>
                 </div>
@@ -335,4 +324,21 @@
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
+{% endblock %}
+
+{% block address_widget %}
+    {% if address %}
+        {{ address|oro_format_address|escape|nl2br }}
+    {% else %}
+        {{ 'oro.ui.empty'|trans }}
+    {% endif %}
+{% endblock %}
+
+{% block quote_body_column_element_widget %}
+    {% if address is not null %}
+        <tr class="account-oq__order-info__control">
+            <td class="account-oq__order-info__title">{{ label|trans }}</td>
+            <td>{{ block_widget(block) }}</td>
+        </tr>
+    {% endif %}
 {% endblock %}
