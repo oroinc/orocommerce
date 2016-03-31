@@ -46,8 +46,12 @@ class OroB2BFrontendExtension extends Extension
     protected function addPhoneToAddress(ContainerBuilder $container)
     {
         $formatAddressLocales = $container->getParameter(OroLocaleExtension::PARAMETER_ADDRESS_FORMATS);
+
         foreach ($formatAddressLocales as &$locale) {
-            $locale['format'] .= "\n%%phone%%";
+            $searchResult = stripos($locale['format'], '%%phone%%');
+            if (false === $searchResult) {
+                $locale['format'] .= "\n%%phone%%";
+            }
         }
         
         $container->setParameter(
