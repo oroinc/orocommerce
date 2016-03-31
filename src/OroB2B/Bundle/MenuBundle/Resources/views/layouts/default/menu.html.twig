@@ -115,7 +115,7 @@
             entityId: app.user.id
         }) }}
     {%- else %}
-        <a href="{{ item.uri }}"{{ oro_menu.attributes(linkAttributes) }}>{{ block('label') }}</a>
+        <a href="{{ app.request.getUriForPath(item.uri) }}"{{ oro_menu.attributes(linkAttributes) }}>{{ block('label') }}</a>
     {% endif %}
 
 {% endblock %}
