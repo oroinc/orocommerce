@@ -21,31 +21,7 @@
         ]|join(' ')
     }) %}
 
-    {%- set type = type|default('text') -%}
+    {%- set type = type|default('password') -%}
     <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
     <a href="#" class="what-this-link">What's this?</a>
 {% endblock %}
-
-{#{% block orob2b_payment_credit_card_widget %}#}
-    {#<div class="{{ class_prefix }}__form__payment-container ">#}
-        {#<div class="{{ class_prefix }}__form__payment-methods">#}
-            {#<ul class="{{ class_prefix }}__form__payment-methods__list">#}
-                {#<li><a href="#"><i class="credit-card-icon credit-card-icon_mc"></i></a></li>#}
-                {#<li><a href="#"><i class="credit-card-icon credit-card-icon_visa"></i></a></li>#}
-                {#<li><a href="#"><i class="credit-card-icon credit-card-icon_ae"></i></a></li>#}
-                {#<li><a href="#"><i class="credit-card-icon credit-card-icon_discover"></i></a></li>#}
-            {#</ul>#}
-
-            {#<div class="{{ class_prefix }}__form__payment-methods__form">#}
-                {#<div class="{{ class_prefix }}__form__row">#}
-                    {#<div class="{{ class_prefix }}__form__col form__col_x12">#}
-                    {#<label for="cardNumber" class="checkout__form__payment-label">Credit Card Number<sup class="red">*</sup></label>#}
-                    {#<input type="text" name="cardNumber" id="cardNumber" class="input input_md input_block checkout__form__input " placeholder="Enter your credit card number" />#}
-                    {#</div>#}
-                {#</div>#}
-            {#</div>#}
-        {#</div>#}
-    {#</div>#}
-{#{% endblock %}#}
-
-

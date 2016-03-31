@@ -1,3 +1,5 @@
+{% extends 'OroB2BFrontendBundle:layouts/default:layout.html.twig' %}
+
 {% block _payment_methods_widget %}
     <div class="checkout__form" data-page-component-module="orob2bpayment/js/app/components/payment-method-selector-component">
         <div class="checkout__form__row">
@@ -439,4 +441,15 @@
        </aside>
        <!-- END SIDEBAR -->
    </main>
+{% endblock %}
+
+{% block _credit_card_form_widget %}
+    <div data-page-component-module="orob2bpayment/js/app/components/credit-card-component">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block form_end_widget %}
+    {% set js_validation_options = {'ignore': ':hidden:not([type=hidden]):input[autocomplete]'} %}
+    {{ parent() }}
 {% endblock %}

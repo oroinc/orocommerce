@@ -25,13 +25,18 @@ class CreditCardExpirationDateType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
+        $months = array_map(function ($value) {
+            return sprintf('%02d', $value);
+        }, range(1, 12));
+
         $resolver->setDefaults(
             [
                 'model_timezone' => 'UTC',
                 'view_timezone' => 'UTC',
                 'format' => 'dMMMMy',
                 'input' => 'array',
-                'years' => range(date('Y'), date('Y')+self::YEAR_PERIOD)
+                'years' => range(date('y'), date('y') + self::YEAR_PERIOD),
+                'months' => $months
             ]
         );
 
