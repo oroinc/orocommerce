@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow;
 
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Client\ClientInterface;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option\OptionsResolver;
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option\Partner;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Processor\ProcessorRegistry;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\RequestRegistry;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\ResponseInterface;
@@ -45,7 +46,7 @@ class Gateway
         $request = $this->requestRegistry->getRequest($action);
         $request->configureOptions($resolver);
 
-        $processor = $this->processorRegistry->getProcessor($options['PARTNER']);
+        $processor = $this->processorRegistry->getProcessor($options[Partner::PARTNER]);
         $processor->configureOptions($resolver);
 
         $response = $this->client->send($resolver->resolve($options));

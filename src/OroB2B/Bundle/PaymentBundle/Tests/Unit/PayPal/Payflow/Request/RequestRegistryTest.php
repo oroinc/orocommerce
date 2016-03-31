@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\PayPal\Payflow\Request;
 
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\RequestInterface;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\RequestRegistry;
 
 class RequestRegistryTest extends \PHPUnit_Framework_TestCase
@@ -16,6 +17,7 @@ class RequestRegistryTest extends \PHPUnit_Framework_TestCase
 
     public function testAddRequest()
     {
+        /** @var RequestInterface|\PHPUnit_Framework_MockObject_MockObject $request */
         $request = $this->getMock('OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\RequestInterface');
         $request->expects($this->once())->method('getAction')->willReturn('X');
 
@@ -26,7 +28,7 @@ class RequestRegistryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Request with "X" action is missing. Registered request are "A, S, D, V"
+     * @expectedExceptionMessage Request with "X" action is missing. Registered requests are "A, S, D, V"
      */
     public function testGetInvalidRequest()
     {
