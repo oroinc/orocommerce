@@ -54,7 +54,7 @@
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'orob2b.order.sections.order_line_items'|trans,
         'priority': -150,
-        'subblocks': [{'data' : [dataGrid.renderGrid('order-line-items-grid', { order_id: entity.id })]}]
+        'subblocks': [{'data' : [dataGrid.renderGrid('order-line-items-grid', { order_id: entity.id })], spanClass: 'order-line-items'}]
     }]) %}
 
     {% set dataBlocks = dataBlocks|merge([{
