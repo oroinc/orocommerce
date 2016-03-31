@@ -1,0 +1,16 @@
+layout:
+    actions:
+        - @setBlockTheme:
+            themes: 'OroB2BAlternativeCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/request_approval.html.twig'
+        - @setFormTheme:
+            themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/form_theme.html.twig'
+        - @setOption:
+            id: checkout_information
+            optionName: vars
+            optionValue:
+                workflowStep: { @value: $data.workflowStep }
+                stepOrder: 6
+    conditions:
+        @and:
+            - @eq: [$context.workflowStepName, 'request_approval']
+            - @empty: [$context.widget_container]

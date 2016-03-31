@@ -135,7 +135,7 @@
             {% endfor %}
             <tr>
                 {% set editLink = workfowItem.data.get('edit_order_link') %}
-                {% set hasEditList = editLink and workflowStep.name == 'place_order' %}
+                {% set hasEditList = editLink and workflowStep.name == 'order_review' %}
                 {% if hasEditList %}
                 <td class="va-t_md hidden-xs">
                     <a href="{{ editLink }}">

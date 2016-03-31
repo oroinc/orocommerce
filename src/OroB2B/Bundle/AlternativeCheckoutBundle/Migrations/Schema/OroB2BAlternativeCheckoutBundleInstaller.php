@@ -57,6 +57,7 @@ class OroB2BAlternativeCheckoutBundleInstaller implements Installation
         $table->addColumn('save_shipping_address', 'boolean', []);
         $table->addColumn('po_number', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('customer_notes', 'text', ['notnull' => false]);
+        $table->addColumn('request_approval_notes', 'text', ['notnull' => false]);
         $table->addColumn('ship_until', 'date', ['notnull' => false, 'comment' => '(DC2Type:date)']);
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->addColumn('shipping_estimate_amount', 'money', [

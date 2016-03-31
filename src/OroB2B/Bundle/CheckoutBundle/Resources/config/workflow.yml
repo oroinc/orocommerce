@@ -73,12 +73,12 @@ workflows:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.step.enter_payment.label
                 order: 40
                 allowed_transitions:
-                    - continue_to_place_order
+                    - continue_to_order_review
                     - back_to_billing_address
                     - back_to_shipping_address
                     - back_to_shipping_method
-            place_order:
-                label: orob2b.checkout.workflow.b2b_flow_checkout.step.place_order.label
+            order_review:
+                label: orob2b.checkout.workflow.b2b_flow_checkout.step.order_review.label
                 order: 50
                 is_final: true
                 allowed_transitions:
@@ -153,9 +153,9 @@ workflows:
                 frontend_options:
                     is_checkout_continue: true
 
-            continue_to_place_order:
-                label: orob2b.checkout.workflow.b2b_flow_checkout.transition.continue_to_place_order.label
-                step_to: place_order
+            continue_to_order_review:
+                label: orob2b.checkout.workflow.b2b_flow_checkout.transition.continue_to_order_review.label
+                step_to: order_review
                 transition_definition: do_nothing
                 frontend_options:
                     is_checkout_continue: true
@@ -190,7 +190,7 @@ workflows:
 
             place_order:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.place_order.label
-                step_to: place_order
+                step_to: order_review
                 transition_definition: place_order_definition
                 display_type: page
                 frontend_options:
