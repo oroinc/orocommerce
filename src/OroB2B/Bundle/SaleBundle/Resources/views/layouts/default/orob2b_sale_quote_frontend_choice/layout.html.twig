@@ -10,7 +10,7 @@
           data-disable-autofocus="true"
           id="{{ form.vars.id }}"
           name="{{ form.vars.name }}"
-          class="form-dialog"
+          class="form-dialog quote-choice-form"
     >
         {{ form_widget(form.demandProducts) }}
         {{ form_rest(form) }}
@@ -35,8 +35,8 @@
     </div>
 {% endblock %}
 
-{% block _quote_choice_subtotals_widget %}
-    <div class="order-checkout-widget__container-wrapper">
+{% block _quote_choise_subtotals_widget %}
+    <div id="quote-choice-subtotal" class="order-checkout-widget__container-wrapper">
         <div class="order-checkout-widget__container order-checkout-widget__container_lg">
             <table class="order-checkout-widget__table pull-right">
                 {% for subtotal in subtotals %}
