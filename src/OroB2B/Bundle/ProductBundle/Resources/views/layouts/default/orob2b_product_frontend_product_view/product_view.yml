@@ -33,10 +33,15 @@ layout:
                 product_specification_container:
                     blockType: container
                 product_specification:
-                    blockType: block
+                    blockType: container
+                product_specification_sku:
+                    blockType: text
                     options:
-                        vars:
-                            product: {@value: $data.product}
+                        text: {@value: $data.product.sku}
+                product_specification_mfg:
+                    blockType: text
+                    options:
+                        text: 1ABC13656
                 product_variants:
                     blockType: block
                     options:
@@ -63,14 +68,16 @@ layout:
                             product_title_mobile: ~
                             product_image: ~
                             product_description_container:
-                                product_title_container:
-                                    product_rating: ~
+                                product_title_container: ~
+                                    #product_rating: ~
                                 product_specification_container:
-                                    product_specification: ~
-                                    product_variants: ~
-                                    order_with_matrix: ~
+                                    product_specification:
+                                        product_specification_sku: ~
+                                        #product_specification_mfg: ~
+                                    #product_variants: ~
+                                    #order_with_matrix: ~
                                 product_description_content:
                                     product_description: ~
-                                    attachments: ~
-                                    share: ~
-                        product_tabs: ~
+                                    #attachments: ~
+                                    #share: ~
+                        #product_tabs: ~
