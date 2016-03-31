@@ -1,10 +1,4 @@
-
-
-{% block _payment_credit_card_cvv_widget %}
-    <div class="testetstets">
-        {{ block('form_widget_simple') }}
-    </div>
-{% endblock %}
+{% extends 'OroB2BFrontendBundle:layouts/default:layout.html.twig' %}
 
 {% block _credit_card_head_widget %}
    <main class="main">
@@ -170,46 +164,45 @@
                     </h2>
                   </div>
                   <div class="checkout__body">
-                    <form action="#" class="checkout__form">
-                      <fieldset class="checkout__form__row">
-                        <div class="checkout__form__col form__col_x6">
-                          <span class="checkout__form__label">Select a Payment Method<sup class="red">*</sup></span>
-                          <div class="checkout__form__radio">
-                            <label class="radio_custom radio_custom_blue" data-radio>
-                              <input type="radio" name="paymentMethod" />
-                              <i class="material-icons radio_checked fs18 mmr5-md">radio_button_checked</i>
-                              <i class="material-icons radio_not-checked fs18 mmr5-md">radio_button_unchecked</i>
-                              <span class="checkbox_custom__text fs13">Payment Account</span>
-                            </label>
+                  <fieldset class="checkout__form__row">
+                    <div class="checkout__form__col form__col_x6">
+                      <span class="checkout__form__label">Select a Payment Method<sup class="red">*</sup></span>
+                      <div class="checkout__form__radio">
+                        <label class="radio_custom radio_custom_blue" data-radio>
+                          <input type="radio" name="paymentMethod" />
+                          <i class="material-icons radio_checked fs18 mmr5-md">radio_button_checked</i>
+                          <i class="material-icons radio_not-checked fs18 mmr5-md">radio_button_unchecked</i>
+                          <span class="checkbox_custom__text fs13">Payment Account</span>
+                        </label>
 
-                            <div class="checkout__form__payment-container">
-                              <div class="checkout__form__select">
-                                <select data-chosen-selectbox class="input input_md" name="billingAddress" id="billingAddress">
-                                  <option value="0">Wells Fargo ************1234</option>
-                                  <option value="0">Wells Fargo ************5678</option>
-                                  <option value="0">Wells Fargo ************3455</option>
-                                </select>
-                              </div>
-                            </div>
+                        <div class="checkout__form__payment-container">
+                          <div class="checkout__form__select">
+                            <select data-chosen-selectbox class="input input_md" name="billingAddress" id="billingAddress">
+                              <option value="0">Wells Fargo ************1234</option>
+                              <option value="0">Wells Fargo ************5678</option>
+                              <option value="0">Wells Fargo ************3455</option>
+                            </select>
                           </div>
-                          <div class="checkout__form__radio">
-                            <label class="radio_custom radio_custom_blue checked" data-radio>
-                              <input type="radio" name="paymentMethod" checked="checked" />
-                              <i class="material-icons radio_checked fs18 mmr5-md">radio_button_checked</i>
-                              <i class="material-icons radio_not-checked fs18 mmr5-md">radio_button_unchecked</i>
-                              <span class="checkbox_custom__text fs13">Credit Card</span>
-                            </label>
+                        </div>
+                      </div>
+                      <div class="checkout__form__radio">
+                        <label class="radio_custom radio_custom_blue checked" data-radio>
+                          <input type="radio" name="paymentMethod" checked="checked" />
+                          <i class="material-icons radio_checked fs18 mmr5-md">radio_button_checked</i>
+                          <i class="material-icons radio_not-checked fs18 mmr5-md">radio_button_unchecked</i>
+                          <span class="checkbox_custom__text fs13">Credit Card</span>
+                        </label>
 
-                            <div class="checkout__form__payment-container">
-                              <div class="checkout__form__payment-methods">
-                                <ul class="checkout__form__payment-methods__list">
-                                  <li><a href="#"><i class="credit-card-icon credit-card-icon_mc"></i></a></li>
-                                  <li><a href="#"><i class="credit-card-icon credit-card-icon_visa"></i></a></li>
-                                  <li><a href="#"><i class="credit-card-icon credit-card-icon_ae"></i></a></li>
-                                  <li><a href="#"><i class="credit-card-icon credit-card-icon_discover"></i></a></li>
-                                </ul>
+                        <div class="checkout__form__payment-container">
+                          <div class="checkout__form__payment-methods">
+                            <ul class="checkout__form__payment-methods__list">
+                              <li><a href="#"><i class="credit-card-icon credit-card-icon_mc"></i></a></li>
+                              <li><a href="#"><i class="credit-card-icon credit-card-icon_visa"></i></a></li>
+                              <li><a href="#"><i class="credit-card-icon credit-card-icon_ae"></i></a></li>
+                              <li><a href="#"><i class="credit-card-icon credit-card-icon_discover"></i></a></li>
+                            </ul>
 
-                                <div class="checkout__form__payment-methods__form">
+                            <div class="checkout__form__payment-methods__form">
 {% endblock %}
 
 {% block _credit_card_footer_widget %}
@@ -219,18 +212,17 @@
                         </div>
                       </fieldset>
 
-                        <fieldset class="checkout__form__row">
-                            <div class="create-account__form__req-text"><sup>*</sup>Required Field</div>
-                            <div class="create-account__form__col form__col_x12">
-                                <button type="submit" class="btn btn_orange btn_lg checkout__form__submit">
-                                    Continue<i class="icon-right-open-mini va-m_md"></i>
-                                </button>
-                            </div>
-                        </fieldset>
+                    <fieldset class="checkout__form__row">
+                        <div class="create-account__form__req-text"><sup>*</sup>Required Field</div>
+                        <div class="create-account__form__col form__col_x12">
+                            <button type="submit" class="btn btn_orange btn_lg checkout__form__submit">
+                                Continue<i class="icon-right-open-mini va-m_md"></i>
+                            </button>
+                        </div>
+                    </fieldset>
                         <div class="checkout__form__back">
                             <a href="#"><i class="icon-left-open-mini"></i>Back</a>
                         </div>
-                    </form>
                   </div>
                 </div>
 
@@ -453,4 +445,15 @@
        </aside>
        <!-- END SIDEBAR -->
    </main>
+{% endblock %}
+
+{% block _credit_card_form_widget %}
+    <div data-page-component-module="orob2bpayment/js/app/components/credit-card-component">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block form_end_widget %}
+    {% set js_validation_options = {'ignore': ':hidden:not([type=hidden]):input[autocomplete]'} %}
+    {{ parent() }}
 {% endblock %}

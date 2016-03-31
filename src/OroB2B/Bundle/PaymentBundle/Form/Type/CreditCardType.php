@@ -6,6 +6,10 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer;
 
 class CreditCardType extends AbstractType
 {
@@ -24,7 +28,19 @@ class CreditCardType extends AbstractType
                 [
                     'required' => true,
                     'label' => 'orob2b.payment.credit_card.card_number.label',
-                    'mapped' => false
+                    'mapped' => false,
+                    'attr' => [
+                        'data-validation' => [
+                            'creditCardNumberLuhnCheck' => [
+                                'message' => 'Invalid card number.',
+                                'payload' => null
+                            ]
+                        ]
+                    ],
+                    'constraints' => [
+                        new Integer(),
+                        new NotBlank(),
+                    ]
                 ]
             )
             ->add(
@@ -37,6 +53,9 @@ class CreditCardType extends AbstractType
                     'placeholder' => [
                         'year' => 'Year',
                         'month' => 'Month'
+                    ],
+                    'constraints' => [
+                        new NotBlank()
                     ]
                 ]
             )
@@ -50,9 +69,13 @@ class CreditCardType extends AbstractType
                 [
                     'required' => true,
                     'label' => 'orob2b.payment.credit_card.cvv2.label',
-                    'always_empty' => true,
                     'mapped' => false,
-                    'block_name' => 'payment_credit_card_cvv'
+                    'block_name' => 'payment_credit_card_cvv',
+                    'constraints' => [
+                        new Integer(),
+                        new NotBlank(),
+                        new Length(['max' => 3, 'min' => 3])
+                    ]
                 ]
             )
         ;
@@ -67,7 +90,6 @@ class CreditCardType extends AbstractType
             $child->vars['full_name'] = $child->vars['name'];
         }
     }
-
 
     /**
      * @return string

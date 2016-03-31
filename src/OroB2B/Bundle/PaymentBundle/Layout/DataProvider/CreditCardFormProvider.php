@@ -13,8 +13,8 @@ use OroB2B\Bundle\PaymentBundle\Form\Type\CreditCardType;
 
 class CreditCardFormProvider implements DataProviderInterface
 {
-
     const NAME = 'orob2b_payment_credit_card_form_provider';
+
     /**
      * @var FormAccessor
      */
