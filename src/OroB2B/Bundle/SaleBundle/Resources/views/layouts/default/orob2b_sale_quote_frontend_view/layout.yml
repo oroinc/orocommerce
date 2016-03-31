@@ -41,7 +41,7 @@ layout:
                 quote_view_controls_list:
                     blockType: block
                 quote_view_information:
-                    blockType: block
+                    blockType: container
                     options:
                         vars:
                             quote: { @value: $data.quote }
@@ -65,12 +65,19 @@ layout:
                             @value: $data.quote
                 quote_view_accept_container:
                     blockType: container
+                quote_shipping_address:
+                    blockType: address
+                    options:
+                        address: {@value: $data.quote.shippingAddress}
+                        label: 'orob2b.sale.quote.shipping_address.label'
+                        block_prefixes: ['quote_body_column_element']
             tree:
                 content:
                     quote_view_page:
                         quote_view_top: ~
                         quote_view_controls_list: ~
-                        quote_view_information: ~
+                        quote_view_information:
+                            quote_shipping_address: ~
                         quote_view_line_items: ~
                         quote_view_line_items_mobile: ~
                         quote_view_accept_container:
