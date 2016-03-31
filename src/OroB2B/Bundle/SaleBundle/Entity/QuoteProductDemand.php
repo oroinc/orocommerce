@@ -132,6 +132,7 @@ class QuoteProductDemand implements PriceAwareInterface, QuantityAwareInterface,
     /**
      * @param Price $price
      * @return $this
+     * @throws \LogicException
      */
     public function setPrice(Price $price = null)
     {

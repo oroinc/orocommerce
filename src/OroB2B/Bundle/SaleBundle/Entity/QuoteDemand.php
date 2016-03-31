@@ -78,6 +78,11 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
     public function setQuote(Quote $quote)
     {
         $this->quote = $quote;
+        foreach ($quote->getQuoteProducts() as $quoteProduct) {
+            $offer = $quoteProduct->getQuoteProductOffers()->first();
+            $demandProduct = new QuoteProductDemand($this, $offer, $offer->getQuantity());
+            $this->addDemandProduct($demandProduct);
+        }
     }
 
     /**
@@ -92,7 +97,7 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
      * @param QuoteProductDemand $demandOffer
      * @return $this
      */
-    public function addDemandOffer(QuoteProductDemand $demandOffer)
+    public function addDemandProduct(QuoteProductDemand $demandOffer)
     {
         if (!$this->demandProducts->contains($demandOffer)) {
             $this->demandProducts->add($demandOffer);
@@ -104,10 +109,10 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
      * @param QuoteProductDemand $demandOffer
      * @return $this
      */
-    public function removeDemandOffer(QuoteProductDemand $demandOffer)
+    public function removeDemandProduct(QuoteProductDemand $demandOffer)
     {
         if ($this->demandProducts->contains($demandOffer)) {
-            $this->demandProducts->remove($demandOffer);
+            $this->demandProducts->removeElement($demandOffer);
         }
         return $this;
     }
