@@ -343,7 +343,7 @@ class StartCheckout extends AbstractAction
 
     /**
      * @param object $checkoutSource
-     * @return null|object
+     * @return null|CheckoutInterface
      */
     protected function getCheckout($checkoutSource = null)
     {
