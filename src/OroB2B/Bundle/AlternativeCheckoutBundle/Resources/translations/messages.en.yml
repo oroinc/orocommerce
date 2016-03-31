@@ -1,0 +1,21 @@
+orob2b:
+    alternativecheckout:
+        workflow:
+            b2b_flow_alternative_checkout:
+                step:
+                    order_review.label: Order Review
+                    request_approval.label: Request Order Approval
+                    approved_request.label: Approved Request
+
+                transition:
+                    continue_to_order_review.label: Continue
+                    continue_to_request_approval.label: Request Approval
+                    continue_to_approved_request.label: Request Approval
+                    back_to_order_review: Back To Order Review
+                    back_to_request_approval: Back To Request Approval
+
+        security:
+            permission:
+                checkout_approve: Checkout Approve
+
+

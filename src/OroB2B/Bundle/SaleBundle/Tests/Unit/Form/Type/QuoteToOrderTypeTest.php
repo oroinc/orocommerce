@@ -7,6 +7,7 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Validator\Validation;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductToOrderType;
@@ -25,8 +26,12 @@ class QuoteToOrderTypeTest extends AbstractQuoteToProductTestCase
     protected function setUp()
     {
         parent::setUp();
-
-        $this->type = new QuoteToOrderType();
+        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $registry->expects($this->any())->method('getManagerForClass')->willReturn($em);
+        $this->type = new QuoteToOrderType($registry);
     }
 
     /**
@@ -89,16 +94,19 @@ class QuoteToOrderTypeTest extends AbstractQuoteToProductTestCase
             ->addQuoteProduct($firstUnitQuoteProduct)
             ->addQuoteProduct($secondUnitQuoteProduct)
             ->addQuoteProduct($bundledQuoteProduct);
-
+        $quoteDemand = new QuoteDemand();
+        $quoteDemand->setQuote($unitAndBundledQuote);
+        $emptyQuoteDemand = new QuoteDemand();
+        $emptyQuoteDemand->setQuote(new Quote());
         return [
             'no products' => [
-                'quote' => new Quote(),
+                'quote' => $emptyQuoteDemand,
                 'defaultData' => [],
                 'submit' => [],
                 'expectedData' => [],
             ],
             'unit and bundled products' => [
-                'quote' => $unitAndBundledQuote,
+                'quoteDemand' => $quoteDemand,
                 'defaultData' => [
                     $firstUnitQuoteProduct,
                     $secondUnitQuoteProduct,
@@ -138,7 +146,7 @@ class QuoteToOrderTypeTest extends AbstractQuoteToProductTestCase
 
     /**
      * @expectedException \Symfony\Component\Form\Exception\UnexpectedTypeException
-     * @expectedExceptionMessage Expected argument of type "Quote", "stdClass" given
+     * @expectedExceptionMessage Expected argument of type "QuoteDemand", "stdClass" given
      */
     public function testBuildInvalidData()
     {

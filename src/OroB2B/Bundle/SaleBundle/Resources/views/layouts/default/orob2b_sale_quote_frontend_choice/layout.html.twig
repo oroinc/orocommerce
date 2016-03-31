@@ -1,0 +1,96 @@
+{% block _quote_choice_page_widget %}
+    <div{{ block('block_attributes') }}>
+        <form method="POST"
+              data-nohash="true"
+              data-disable-autofocus="true"
+              id="{{ form.vars.id }}"
+              name="{{ form.vars.name }}"
+              class="form-dialog"
+        >
+            {{ form_widget(form) }}
+
+            <div class="order-checkout-widget order-checkout-widget_block">
+                <div class="text-left">
+                    <a href="{{ path('orob2b_sale_quote_frontend_view', {id: quote.id}) }}"><i class="cf-left-open-mini"></i><span>Back to Quote</span></a>
+                </div>
+                <div class=" text-right mb4-md">
+                    <button class="btn theme-btn btn-orange" type="submit">{{ 'orob2b.frontend.sale.quote.submit_to_order.submit'|trans }}</button>
+                </div>
+            </div>
+        </form>
+        {{ oro_form_js_validation(form) }}
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _quote_view_information_widget %}
+    <div class="account-oq-container">
+        <div class="account-oq__item__head">
+            <div class="account-oq__item account-oq__item_full mb0-sm">
+                <h2 class="account-oq__item__title">
+                    {{ 'orob2b.frontend.sale.quote.sections.general'|trans }}
+                </h2>
+            </div>
+        </div>
+        <div class="account-oq__item__body">
+            <div class="account-oq__item">
+                <div class="account-oq__order-info">
+                    <table class="table borderless">
+                        <tbody>
+                        {% if quote.assignedUsers | length %}
+                            <tr>
+                                <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.assigned_account_users.label'|trans }}</td>
+                                <td>
+                                    {% set assigned_users = [] %}
+                                    {% for entity in quote.assignedUsers %}
+                                        {% set assigned_users = assigned_users|merge([entity.fullName]) %}
+                                    {% endfor %}
+                                    {{ assigned_users|join(', ') }}
+                                </td>
+                            </tr>
+                        {% endif %}
+                        <tr class="account-oq__order-info__control">
+                            <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.valid_until.label'|trans }}</td>
+                            <td>{{ quote.validUntil ? quote.validUntil|oro_format_datetime : 'N/A'|trans }}</td>
+                        </tr>
+                        <tr class="account-oq__order-info__control">
+                            <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.po_number.label'|trans }}</td>
+                            <td>{{ quote.poNumber|default('N/A'|trans) }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="account-oq__item">
+                <div class="account-oq__order-info">
+                    <table class="table borderless">
+                        <tbody>
+                        <tr class="account-oq__order-info__control">
+                            <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.ship_until.label'|trans }}</td>
+                            <td>{{ quote.shipUntil|oro_format_date|default('N/A'|trans) }}</td>
+                        </tr>
+                        {% if quote.shippingAddress %}
+                            <tr class="account-oq__order-info__control">
+                                <td class="account-oq__order-info__title va-t_md">
+                                    {{ 'orob2b.frontend.sale.quote.shipping_address.label'|trans }}
+                                </td>
+                                <td class="va-t_md">
+                                    {{ quote.shippingAddress|oro_format_address(null, '<br/>') }}
+                                </td>
+                            </tr>
+                        {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _quote_view_page_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " quote"}) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+

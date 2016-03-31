@@ -16,6 +16,8 @@ orob2b:
         save_billing_address.label: Save Billing Address
         save_shipping_address.label: Save Shipping Address
         ship_to_billing_address.label: Ship to Billing Address
+        quoted_shipping_amount.label: Quoted shipping amount
+        preferred_shipping_method.label: Preferred shipping method
         source.label: Source
         currency.label: Currency
         website.label: Website
@@ -68,13 +70,13 @@ orob2b:
                     enter_shipping_address.label: Shipping Information
                     enter_shipping_method.label: Shipping Method
                     enter_payment.label: Payment
-                    place_order.label: Order Review
+                    order_review.label: Order Review
 
                 transition:
                     continue_to_shipping_address.label: Continue
                     continue_to_shipping_method.label: Continue
                     continue_to_payment.label: Continue
-                    continue_to_place_order.label: Continue
+                    continue_to_order_review.label: Continue
                     back_to_billing_address.label: Edit Billing Information
                     back_to_shipping_address.label: Edit Shipping Information
                     back_to_shipping_method.label: Edit Shipping Method

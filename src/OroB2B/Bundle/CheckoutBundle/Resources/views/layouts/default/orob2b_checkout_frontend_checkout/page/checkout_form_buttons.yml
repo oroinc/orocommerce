@@ -26,5 +26,7 @@ layout:
             siblingId: checkout_form_fields
     conditions:
         @and:
-            - @neq: [$context.workflowStepName, 'place_order']
+            - @neq: [$context.workflowStepName, 'order_review']
+#            - @neq: [$context.workflowStepName, 'request_approval']
+            - @neq: [$context.workflowStepName, 'approved_request']
             - @empty: [$context.widget_container]

@@ -89,23 +89,24 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
-            this.options = $.extend(true, {}, this.options, options || {});
-
-            if (this.options.route.length === 0) {
-                return;
-            }
-
-            this.$el = options._sourceElement;
-            this.$form = $(this.options.selectors.form);
-            this.$totals = this.$el.find(this.options.selectors.totals);
-            this.template = _.template($(this.options.selectors.template).text());
-            this.noDataTemplate = _.template($(this.options.selectors.noDataTemplate).text());
-            this.loadingMaskView = new LoadingMaskView({container: this.$el});
-            this.eventName = 'total-target:changing';
-
-            this.initializeListeners();
-
-            this.render(this.options.data);
+            //this.options = $.extend(true, {}, this.options, options || {});
+            //
+            //if (this.options.route.length === 0) {
+            //    return;
+            //}
+            //
+            //this.$el = options._sourceElement;
+            //this.$form = $(this.options.selectors.form);
+            //this.$totals = this.$el.find(this.options.selectors.totals);
+            //this.template = _.template($(this.options.selectors.template).text());
+            //this.noDataTemplate = _.template($(this.options.selectors.noDataTemplate).text());
+            //this.loadingMaskView = new LoadingMaskView({container: this.$el});
+            //this.eventName = 'total-target:changing';
+            //
+            //this.updateTotals();
+            //this.initializeListeners();
+            //
+            //this.render(this.options.data);
         },
 
         initializeListeners: function() {
