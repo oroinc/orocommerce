@@ -3,6 +3,7 @@ define(function(require) {
 
     var ChosenInputWidget;
     var AbstractInputWidget = require('oroui/js/app/views/input-widget/abstract');
+    require('chosen');
 
     ChosenInputWidget = AbstractInputWidget.extend({
         widgetFunctionName: 'chosen',
@@ -18,8 +19,8 @@ define(function(require) {
 
         containerClassSuffix: 'select',
 
-        dispose: function() {
-            ChosenInputWidget.__super__.dispose.apply(this, arguments);
+        isInitialized: function() {
+            return this.$el.data('chosen') ? true : false;
         },
 
         refresh: function() {

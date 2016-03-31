@@ -189,6 +189,7 @@ class Order extends ExtendOrder implements
      * )
      */
     protected $shippingAddress;
+
     /**
      * @var string
      *
@@ -843,6 +844,21 @@ class Order extends ExtendOrder implements
         if ($this->hasLineItem($lineItem)) {
             $this->lineItems->removeElement($lineItem);
         }
+
+        return $this;
+    }
+
+    /**
+     * @param Collection|OrderLineItem[] $lineItems
+     * @return $this
+     */
+    public function setLineItems(Collection $lineItems)
+    {
+        foreach ($lineItems as $lineItem) {
+            $lineItem->setOrder($this);
+        }
+
+        $this->lineItems = $lineItems;
 
         return $this;
     }

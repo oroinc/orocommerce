@@ -2,9 +2,11 @@
 
 namespace OroB2B\Bundle\OrderBundle\Form\Type;
 
-use OroB2B\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Range;
 
@@ -18,11 +20,9 @@ use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
-use OroB2B\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
-use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use OroB2B\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
 
 class OrderType extends AbstractType
 {
@@ -46,44 +46,33 @@ class OrderType extends AbstractType
     /** @var OrderCurrencyHandler */
     protected $orderCurrencyHandler;
 
-    /** @var TotalProcessorProvider */
-    protected $totalProvider;
-
-    /** @var LineItemSubtotalProvider */
-    protected $lineItemSubtotalProvider;
-
-    /** @var DiscountSubtotalProvider */
-    protected $discountSubtotalProvider;
+    /** @var SubtotalSubscriber */
+    protected $subtotalSubscriber;
 
     /**
      * @param SecurityFacade $securityFacade
      * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
      * @param PaymentTermProvider $paymentTermProvider
      * @param OrderCurrencyHandler $orderCurrencyHandler
-     * @param TotalProcessorProvider $totalProvider
-     * @param LineItemSubtotalProvider $lineItemSubtotalProvider
-     * @param DiscountSubtotalProvider $discountSubtotalProvider
+     * @param SubtotalSubscriber $subtotalSubscriber
      */
     public function __construct(
         SecurityFacade $securityFacade,
         OrderAddressSecurityProvider $orderAddressSecurityProvider,
         PaymentTermProvider $paymentTermProvider,
         OrderCurrencyHandler $orderCurrencyHandler,
-        TotalProcessorProvider $totalProvider,
-        LineItemSubtotalProvider $lineItemSubtotalProvider,
-        DiscountSubtotalProvider $discountSubtotalProvider
+        SubtotalSubscriber $subtotalSubscriber
     ) {
         $this->securityFacade = $securityFacade;
         $this->orderAddressSecurityProvider = $orderAddressSecurityProvider;
         $this->paymentTermProvider = $paymentTermProvider;
         $this->orderCurrencyHandler = $orderCurrencyHandler;
-        $this->totalProvider = $totalProvider;
-        $this->lineItemSubtotalProvider = $lineItemSubtotalProvider;
-        $this->discountSubtotalProvider = $discountSubtotalProvider;
+        $this->subtotalSubscriber = $subtotalSubscriber;
     }
 
     /**
      * {@inheritDoc}
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -167,18 +156,44 @@ class OrderType extends AbstractType
             ->add('sourceEntityId', 'hidden')
             ->add('sourceEntityIdentifier', 'hidden');
 
+        $this->addAddresses($builder, $order);
+        $builder->addEventListener(
+            FormEvents::SUBMIT,
+            function (FormEvent $event) {
+                $this->addAddresses($event->getForm(), $event->getData());
+            }
+        );
+
         $this->addTotalsValidationFields($builder, $order);
         $this->addBillingAddress($builder, $order, $options);
         $this->addShippingAddress($builder, $order, $options);
         $this->addPaymentTerm($builder, $order);
 
-        $builder->addEventSubscriber(
-            new SubtotalSubscriber(
-                $this->totalProvider,
-                $this->lineItemSubtotalProvider,
-                $this->discountSubtotalProvider
-            )
-        );
+        $builder->addEventSubscriber($this->subtotalSubscriber);
+    }
+
+    /**
+     * @param FormBuilderInterface|FormInterface $form
+     * @param Order $order
+     */
+    protected function addAddresses($form, Order $order)
+    {
+        if (!$form instanceof FormInterface && !$form instanceof FormBuilderInterface) {
+            throw new \InvalidArgumentException('Invalid form');
+        }
+
+        foreach ([AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING] as $type) {
+            if ($this->orderAddressSecurityProvider->isAddressGranted($order, $type)) {
+                $options = [
+                    'label' => sprintf('orob2b.order.%s_address.label', $type),
+                    'object' => $order,
+                    'required' => false,
+                    'addressType' => $type,
+                ];
+
+                $form->add(sprintf('%sAddress', $type), OrderAddressType::NAME, $options);
+            }
+        }
     }
 
     /**
@@ -295,9 +310,10 @@ class OrderType extends AbstractType
                     OrderAddressType::NAME,
                     [
                         'label' => 'orob2b.order.billing_address.label',
-                        'order' => $options['data'],
+                        'object' => $options['data'],
                         'required' => false,
                         'addressType' => AddressType::TYPE_BILLING,
+                        'isEditEnabled' => true
                     ]
                 );
         }
@@ -317,10 +333,10 @@ class OrderType extends AbstractType
                     OrderAddressType::NAME,
                     [
                         'label' => 'orob2b.order.shipping_address.label',
-                        'order' => $options['data'],
+                        'object' => $options['data'],
                         'required' => false,
                         'addressType' => AddressType::TYPE_SHIPPING,
-                        'application' => OrderAddressType::APPLICATION_BACKEND
+                        'isEditEnabled' => true
                     ]
                 );
         }

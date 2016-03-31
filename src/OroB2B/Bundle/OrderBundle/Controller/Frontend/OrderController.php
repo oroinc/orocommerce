@@ -12,6 +12,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
@@ -26,7 +27,7 @@ class OrderController extends AbstractOrderController
 {
     /**
      * @Route("/", name="orob2b_order_frontend_index")
-     * @Template("OroB2BOrderBundle:Order/Frontend:index.html.twig")
+     * @Layout(vars={"entity_class"})
      * @Acl(
      *      id="orob2b_order_frontend_view",
      *      type="entity",
@@ -46,8 +47,8 @@ class OrderController extends AbstractOrderController
 
     /**
      * @Route("/view/{id}", name="orob2b_order_frontend_view", requirements={"id"="\d+"})
-     * @Template("OroB2BOrderBundle:Order/Frontend:view.html.twig")
      * @AclAncestor("orob2b_order_frontend_view")
+     * @Layout()
      *
      * @param Order $order
      * @return array
@@ -55,8 +56,10 @@ class OrderController extends AbstractOrderController
     public function viewAction(Order $order)
     {
         return [
-            'entity' => $order,
-            'totals' => $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($order)
+            'data' => [
+                'order' => $order,
+                'totals' => (object)$this->getTotalProcessor()->getTotalWithSubtotalsAsArray($order),
+            ],
         ];
     }
 
@@ -119,6 +122,31 @@ class OrderController extends AbstractOrderController
     public function updateAction(Order $order, Request $request)
     {
         return $this->update($order, $request);
+    }
+
+    /**
+     * Success order
+     *
+     * @Route("/success/{id}", name="orob2b_order_frontend_success", requirements={"id"="\d+"})
+     * @Layout()
+     * @Acl(
+     *      id="orob2b_order_view",
+     *      type="entity",
+     *      class="OroB2BOrderBundle:Order",
+     *      permission="EDIT"
+     * )
+     *
+     * @param Order $order
+     *
+     * @return array
+     */
+    public function successAction(Order $order)
+    {
+        return [
+            'data' => [
+                'order' => $order,
+            ],
+        ];
     }
 
     /**

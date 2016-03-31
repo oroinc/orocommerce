@@ -180,7 +180,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
 
         $productUnit = $productUnitHolder->getProductUnit();
 
-        if (!$productUnit || ($product && !in_array($productUnit, $choices, true))) {
+        if ($this->isProductUnitRemoved($productUnitHolder, $product, $choices, $productUnit)) {
             $emptyValueTitle = $this->translator->trans(
                 $options['empty_label'],
                 ['{title}' => $productUnitHolder->getProductUnitCode()]
@@ -189,6 +189,23 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         }
 
         $this->setChoicesViews($view, $choices, $options);
+    }
+
+    /**
+     * @param ProductUnit $productUnit
+     * @param ProductUnitHolderInterface $productUnitHolder
+     * @param Product $product
+     * @param array $choices
+     * @return bool
+     */
+    protected function isProductUnitRemoved(
+        ProductUnitHolderInterface $productUnitHolder,
+        Product $product,
+        array $choices,
+        ProductUnit $productUnit = null
+    ) {
+        return (!$productUnit && $productUnitHolder->getEntityIdentifier())
+            || ($product && $productUnit && !in_array($productUnit, $choices, true));
     }
 
     /**

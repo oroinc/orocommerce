@@ -61,7 +61,7 @@ class CustomerAddressItemResolverTest extends AbstractItemResolverTestCase
         $result->lockResult();
         $taxable = new Taxable();
         $taxable->setPrice('20');
-        $taxable->setDestination(new Address());
+        $taxable->setTaxationAddress(new Address());
         $taxable->setResult($result);
 
         $this->assertNothing();

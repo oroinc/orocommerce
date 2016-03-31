@@ -1,0 +1,63 @@
+@import "oroui/css/less/variables";
+
+.tax-address-row {
+  margin-bottom: 3px !important;
+  padding: 3px !important;
+  width: 300px;
+  .option {
+    .input-widget-select {
+      margin: 0 !important;
+      width: 294px !important;
+    }
+  }
+  .region {
+    input {
+      margin-bottom: 2px !important;
+      width: 280px !important;
+    }
+  }
+  .removeRow {
+    float: right !important;
+    margin: 0 !important;
+  }
+  .tax-address {
+    margin: 2px 0 !important;
+  }
+  .row-oro {
+    margin: 0 !important;
+  }
+}
+
+.tax-address {
+  margin: 0 !important;
+}
+
+.tax-result-grid {
+  th {
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
+
+  .other-scroll-container & {
+    border: 1px solid @generalBorderColor !important;
+  }
+}
+
+.order-line-item-unitPriceIncludingTax,
+.order-line-item-unitPriceExcludingTax,
+.order-line-item-unitPriceTaxAmount,
+.order-line-item-rowTotalIncludingTax,
+.order-line-item-rowTotalExcludingTax,
+.order-line-item-rowTotalTaxAmount {
+  span {
+    white-space: normal;
+  }
+}
+
+.order-line-items-content fieldset {
+  min-width: inherit !important;
+  .order-line-items-table {
+    overflow-x: scroll !important;
+    display: block !important;
+  }
+}

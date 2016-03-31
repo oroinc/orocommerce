@@ -10,8 +10,12 @@ use OroB2B\Bundle\TaxBundle\Manager\TaxManager;
 use OroB2B\Bundle\TaxBundle\Manager\TaxValueManager;
 use OroB2B\Bundle\TaxBundle\Model\Result;
 use OroB2B\Bundle\TaxBundle\Model\ResultElement;
+use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use OroB2B\Bundle\TaxBundle\Transformer\TaxTransformerInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class TaxManagerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var TaxManager */
@@ -26,6 +30,12 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|TaxValueManager */
     protected $taxValueManager;
 
+    /** @var  \PHPUnit_Framework_MockObject_MockObject|TaxationSettingsProvider */
+    protected $settingsProvider;
+
+    /** @var bool */
+    protected $taxationEnabled = true;
+
     protected function setUp()
     {
         $this->factory = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Factory\TaxFactory')
@@ -39,7 +49,23 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->manager = new TaxManager($this->factory, $this->eventDispatcher, $this->taxValueManager);
+        $this->settingsProvider = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->settingsProvider
+            ->expects($this->any())
+            ->method('isEnabled')
+            ->willReturnCallback(function () {
+                return $this->taxationEnabled;
+            });
+
+        $this->manager = new TaxManager(
+            $this->factory,
+            $this->eventDispatcher,
+            $this->taxValueManager,
+            $this->settingsProvider
+        );
     }
 
     /**
@@ -188,7 +214,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(null, $result->getRow()->getIncludingTax());
     }
 
-    public function testSave()
+    public function testSaveWithoutItems()
     {
         $entity = new \stdClass();
         $taxValue = new TaxValue();
@@ -219,7 +245,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->taxValueManager->expects($this->once())->method('saveTaxValue')->with($taxValue);
 
-        $this->manager->saveTax($entity);
+        $this->assertEquals($taxValue->getResult(), $this->manager->saveTax($entity, false));
     }
 
     public function testSaveNewEntity()
@@ -233,6 +259,229 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
         $this->taxValueManager->expects($this->never())->method('getTaxValue');
         $this->taxValueManager->expects($this->never())->method('saveTaxValue')->with($taxValue);
 
-        $this->manager->saveTax($entity);
+        $this->assertFalse($this->manager->saveTax($entity, false));
+    }
+
+    public function testSaveTaxWithItems()
+    {
+        $entity = new \stdClass();
+
+        $taxableItem = new Taxable();
+        $taxableItem->setClassName('stdClass');
+        $taxableItem->setIdentifier(1);
+
+        $taxable = new Taxable();
+        $taxable->setClassName('stdClass');
+        $taxable->setIdentifier(1);
+        $taxable->addItem($taxableItem);
+
+        $itemResult = new Result();
+
+        $result = new Result();
+        $result->offsetSet(Result::ITEMS, [$itemResult]);
+
+        $taxValue = new TaxValue();
+        $taxValue->setResult($result);
+
+        $this->factory->expects($this->exactly(3))->method('create')->willReturn($taxable);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|TaxTransformerInterface $transformer */
+        $transformer = $this->getMock('OroB2B\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
+        $transformer->expects($this->exactly(2))
+            ->method('reverseTransform')
+            ->willReturnCallback(
+                function (Result $result) use ($taxValue) {
+                    $taxValue->setResult($result);
+
+                    return $taxValue;
+                }
+            );
+
+        $transformer->expects($this->once())
+            ->method('transform')
+            ->willReturnCallback(
+                function (TaxValue $taxValue) {
+                    return $taxValue->getResult();
+                }
+            );
+
+        $this->manager->addTransformer('stdClass', $transformer);
+
+        $this->taxValueManager->expects($this->once())
+            ->method('getTaxValue')
+            ->with($taxable->getClassName(), $taxable->getIdentifier())
+            ->willReturn($taxValue);
+
+        $this->taxValueManager->expects($this->exactly(2))
+            ->method('saveTaxValue')
+            ->with($taxValue);
+
+        $this->manager->saveTax($entity, true);
+    }
+
+    public function testSaveTaxWithItemsNewEntity()
+    {
+        $entity = new \stdClass();
+        $taxValue = new TaxValue();
+        $taxable = new Taxable();
+        $taxable->setClassName('stdClass');
+        $this->factory->expects($this->once())->method('create')->willReturn($taxable);
+
+        $this->taxValueManager->expects($this->never())->method('getTaxValue');
+        $this->taxValueManager->expects($this->never())->method('saveTaxValue')->with($taxValue);
+
+        $this->assertFalse($this->manager->saveTax($entity));
+    }
+
+    public function testRemoveTaxWithoutItems()
+    {
+        $entity = new \stdClass();
+        $taxable = new Taxable();
+        $taxable
+            ->setClassName('stdClass')
+            ->setIdentifier(1);
+
+        $taxValue = new TaxValue();
+
+        $this->factory->expects($this->once())
+            ->method('create')
+            ->with($entity)
+            ->willReturn($taxable);
+
+        $this->taxValueManager
+            ->expects($this->once())
+            ->method('findTaxValue')
+            ->with($taxable->getClassName(), $taxable->getIdentifier())
+            ->willReturn($taxValue);
+
+        $this->taxValueManager
+            ->expects($this->once())
+            ->method('removeTaxValue')
+            ->with($taxValue)
+            ->willReturn(true);
+
+        $this->assertTrue($this->manager->removeTax($entity, false));
+    }
+
+    public function testRemoveTaxWithoutItemsWhenTaxValueNotFound()
+    {
+        $entity = new \stdClass();
+        $taxable = new Taxable();
+        $taxable
+            ->setClassName('stdClass')
+            ->setIdentifier(1);
+
+        $this->factory->expects($this->once())
+            ->method('create')
+            ->with($entity)
+            ->willReturn($taxable);
+
+        $this->taxValueManager
+            ->expects($this->once())
+            ->method('findTaxValue')
+            ->with($taxable->getClassName(), $taxable->getIdentifier())
+            ->willReturn(null);
+
+        $this->taxValueManager
+            ->expects($this->never())
+            ->method('removeTaxValue');
+
+        $this->assertFalse($this->manager->removeTax($entity, false));
+    }
+
+    public function testRemoveTaxWithItems()
+    {
+        $entity = new \stdClass();
+        $taxable = new Taxable();
+        $taxable
+            ->setClassName('stdClass')
+            ->setIdentifier(1);
+
+        $taxValue = new TaxValue();
+
+        $itemTaxable = new Taxable();
+        $itemTaxable
+            ->setClassName('stdClass')
+            ->setIdentifier(2);
+
+        $itemTaxValue = new TaxValue();
+
+        $taxable->addItem($itemTaxable);
+
+
+        $this->factory->expects($this->once())
+            ->method('create')
+            ->with($entity)
+            ->willReturn($taxable);
+
+        $this->taxValueManager
+            ->expects($this->exactly(2))
+            ->method('findTaxValue')
+            ->withConsecutive(
+                [$itemTaxable->getClassName(), $itemTaxable->getIdentifier()],
+                [$taxable->getClassName(), $taxable->getIdentifier()]
+            )
+            ->willReturnOnConsecutiveCalls($taxValue, $itemTaxValue);
+
+        $this->taxValueManager
+            ->expects($this->exactly(2))
+            ->method('removeTaxValue')
+            ->withConsecutive($itemTaxValue, $taxValue)
+            ->willReturn(true);
+
+        $this->assertTrue($this->manager->removeTax($entity, true));
+    }
+
+    public function testCrateTaxValue()
+    {
+        $entity = new \stdClass();
+
+        $taxable = new Taxable();
+        $taxable->setClassName('stdClass');
+        $taxable->setIdentifier(1);
+
+        $taxValue = new TaxValue();
+        $taxValue->setResult(new Result());
+
+        $this->factory->expects($this->exactly(2))->method('create')->willReturn($taxable);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|TaxTransformerInterface $transformer */
+        $transformer = $this->getMock('OroB2B\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
+        $transformer->expects($this->once())
+            ->method('reverseTransform')
+            ->willReturnCallback(
+                function (Result $result) use ($taxValue) {
+                    $taxValue->setResult($result);
+
+                    return $taxValue;
+                }
+            );
+
+        $transformer->expects($this->once())
+            ->method('transform')
+            ->willReturnCallback(
+                function (TaxValue $taxValue) {
+                    return $taxValue->getResult();
+                }
+            );
+
+        $this->manager->addTransformer('stdClass', $transformer);
+
+        $this->taxValueManager->expects($this->once())
+            ->method('getTaxValue')
+            ->with($taxable->getClassName(), $taxable->getIdentifier())
+            ->willReturn($taxValue);
+
+        $this->assertEquals($taxValue, $this->manager->createTaxValue($entity));
+    }
+
+    /**
+     * @expectedException \OroB2B\Bundle\TaxBundle\Exception\TaxationDisabledException
+     */
+    public function testExceptionWhenTaxationDisabled()
+    {
+        $this->taxationEnabled = false;
+
+        $this->manager->getTax(new \stdClass());
     }
 }

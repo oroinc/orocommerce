@@ -1,0 +1,4 @@
+{% set result = record.getValue('result') %}
+{% if result.row is defined and result.row.taxAmount is defined %}
+    {{ result.row.taxAmount|oro_format_currency({currency: result.row.currency}) }}
+{% endif %}

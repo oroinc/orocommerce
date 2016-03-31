@@ -84,19 +84,19 @@ class DuplicateTest extends \PHPUnit_Framework_TestCase
                 'options' => [
                     Duplicate::OPTION_KEY_TARGET => ['target'],
                 ],
-                'expectedException' => 'Oro\Bundle\ActionBundle\Exception\InvalidParameterException',
+                'expectedException' => 'Oro\Component\Action\Exception\InvalidParameterException',
                 'expectedExceptionMessage' => 'Option \'target\' should be string',
             ],
             [
                 'options' => [
                     Duplicate::OPTION_KEY_SETTINGS => 'wrong settings',
                 ],
-                'expectedException' => 'Oro\Bundle\ActionBundle\Exception\InvalidParameterException',
+                'expectedException' => 'Oro\Component\Action\Exception\InvalidParameterException',
                 'expectedExceptionMessage' => 'Option \'settings\' should be array',
             ],
             [
                 'options' => [],
-                'expectedException' => 'Oro\Bundle\ActionBundle\Exception\InvalidParameterException',
+                'expectedException' => 'Oro\Component\Action\Exception\InvalidParameterException',
                 'expectedExceptionMessage' => 'Attribute name parameter is required',
             ],
         ];
