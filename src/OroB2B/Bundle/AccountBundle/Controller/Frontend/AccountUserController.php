@@ -20,8 +20,29 @@ use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
 class AccountUserController extends Controller
 {
     /**
-     * @Route("/view/{id}", name="orob2b_account_frontend_account_user_view", requirements={"id"="\d+"})
+     * @Route("/view1/{id}", name="orob2b_account_frontend_account_user_view1", requirements={"id"="\d+"})
      * @Template("OroB2BAccountBundle:AccountUser/Frontend:view.html.twig")
+     * @Acl(
+     *      id="orob2b_account_frontend_account_user_view1",
+     *      type="entity",
+     *      class="OroB2BAccountBundle:AccountUser",
+     *      permission="VIEW",
+     *      group_name="commerce"
+     * )
+     *
+     * @param AccountUser $accountUser
+     * @return array
+     */
+    public function view1Action(AccountUser $accountUser)
+    {
+        return [
+            'entity' => $accountUser
+        ];
+    }
+
+    /**
+     * @Route("/view/{id}", name="orob2b_account_frontend_account_user_view", requirements={"id"="\d+"})
+     * @Layout
      * @Acl(
      *      id="orob2b_account_frontend_account_user_view",
      *      type="entity",
@@ -36,7 +57,9 @@ class AccountUserController extends Controller
     public function viewAction(AccountUser $accountUser)
     {
         return [
-            'entity' => $accountUser
+            'data' => [
+                'entity' => $accountUser
+            ]
         ];
     }
 

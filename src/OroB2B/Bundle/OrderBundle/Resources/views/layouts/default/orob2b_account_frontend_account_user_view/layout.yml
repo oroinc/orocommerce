@@ -1,0 +1,13 @@
+layout:
+    actions:
+        - @setBlockTheme:
+            themes: 'OroB2BOrderBundle:layouts:default/orob2b_account_frontend_account_user_view/layout.html.twig'
+
+        - @add:
+            id: order_grid_block
+            parentId: account_user_view_page
+            blockType: datagrid
+            options:
+                grid_name: frontend-orders-grid
+                grid_parameters:
+                    account_user_id: {@value: $data.entity.id}

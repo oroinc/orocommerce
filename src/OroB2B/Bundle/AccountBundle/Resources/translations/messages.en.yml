@@ -69,6 +69,9 @@ orob2b.account:
         owner.label:                 'Owner'
         sales_representatives.label: 'Assigned Sales Representatives'
 
+        navigation:
+            view: 'Account User - %identifier%'
+
         profile:
             company_name: 'Company Name'
             registration.title: 'Registration'
@@ -153,6 +156,8 @@ orob2b.account:
             confirm: 'Confirm'
             send_confirmation: 'Resend Confirmation Email'
             create: 'Create Account'
+            edit: 'Edit'
+            delete: 'Delete'
 
         account_user_role:
             create: 'Create Account User Role'
