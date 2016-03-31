@@ -152,7 +152,7 @@ define(function(require) {
                     url: routing.generate(this.options.unitsRoute, routeParams),
                     type: 'GET',
                     beforeSend: function() {
-                        if (self.options.skipLoadingMask) {
+                        if (!self.options.skipLoadingMask) {
                             self.loadingMask.show();
                         }
                     },
