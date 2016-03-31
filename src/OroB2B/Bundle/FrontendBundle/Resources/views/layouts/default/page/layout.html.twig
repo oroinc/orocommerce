@@ -142,6 +142,16 @@
     </footer>
 {% endblock %}
 
+{% block _footer_copyright_widget %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="copy">
+                {{ block_widget(block) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
 {% block _notification_widget %}
     {% set attr = {
         id: 'flash-messages'
