@@ -32,7 +32,13 @@ DESC
 $productTaxCodes = [
     'TAXABLE_ITEMS' => [
         'description' => '',
-        'products' => ['HLCU', 'HCCM', 'HSSUC', 'HSTUC', 'HPGMPUE'],
+        'products' => [
+            '6BC45', '7BS72', '2JD90', '1GS46', '8TF72', '2TK59', '6UK81', '3UK92', '0RT28', '5GF68', '5TU10', '2JD29',
+            '2CF67', '3TU20', '2JV62', '1GB82', '9OK21', '3YB32', '8BC37', '4HC51', '3LV37', '7NM98', '7YV41', '5GN30',
+            '6UB33', '3RE23', '8NN54', '4QI22', '4KL66', '6LJ54', '8UF78', '5IF41', '3JK76', '5UB78', '6GH85', '6PM40',
+            '3ET67', '3JK90', '7BS71', '5BM69', '8LG34', '8VS71', '1AB92', '5TJ23', '4PJ19', '2RW93', '8DO33', '5GE27',
+            '1TB10', '2LM04', '7TY55', '5XY10', '9GQ28', '2WE71', '6VC22', 'XS56', '4HJ92', '9OL25', '7NQ22', '2EW02',
+        ],
     ],
     'MEDICAL_IDENTIFICATION_TAGS' => [
         'description' => <<<DESC
