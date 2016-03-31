@@ -1,7 +1,7 @@
 layout:
     actions:
         - @setBlockTheme:
-            themes: 'OroB2BAlternativeCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/approved_request.html.twig'
+            themes: 'OroB2BAlternativeCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/approve_request.html.twig'
         - @setFormTheme:
             themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/form_theme.html.twig'
         - @setOption:
@@ -37,4 +37,4 @@ layout:
             siblingId: checkout_form_fields
             prepend: false
     conditions:
-        @eq: [$context.workflowStepName, 'approved_request']
+        @eq: [$context.workflowStepName, 'approve_request']

@@ -11,11 +11,11 @@ services:
             - {name: kernel.event_listener, event: orob2b_checkout.get_checkout_entity, method: onGetCheckoutEntity}
 
     orob2b.workflow_expression.user_in_group:
-        class: OroB2B\Bundle\AlternativeCheckoutBundle\Model\UserInGroupCondition
+        class: OroB2B\Bundle\AlternativeCheckoutBundle\Condition\AssertAccount
         arguments:
             - @oro_security.security_facade
         tags:
-            - { name: oro_workflow.condition, alias: assert_user_group }
+            - { name: oro_workflow.condition, alias: assert_account }
 
     orob2b_alternativecheckout.conditions.order_total_limit:
         class: %orob2b_alternativecheckout.conditions.order_total_limit.class%

@@ -25,7 +25,7 @@ workflows:
                 property_path: checkout.customerNotes
             request_approval_notes:
                 property_path: checkout.requestApprovalNotes
-                label: Request approval notes
+                label: Notes
             billing_address_has_shipping:
                 type: boolean
                 label: If billing address also shipping
@@ -94,14 +94,14 @@ workflows:
                 label: orob2b.alternativecheckout.workflow.b2b_flow_alternative_checkout.step.request_approval.label
                 order: 60
                 allowed_transitions:
-                    - continue_to_approved_request
+                    - continue_to_approve_request
                     - back_to_billing_address
                     - back_to_billing_address
                     - back_to_shipping_address
                     - back_to_shipping_method
                     - back_to_order_review
-            approved_request:
-                label: orob2b.alternativecheckout.workflow.b2b_flow_alternative_checkout.step.approved_request.label
+            approve_request:
+                label: orob2b.alternativecheckout.workflow.b2b_flow_alternative_checkout.step.approve_request.label
                 order: 70
                 is_final: true
                 allowed_transitions:
@@ -203,9 +203,9 @@ workflows:
                             options:
                                 data: $checkout.customerNotes
 
-            continue_to_approved_request:
-                label: orob2b.alternativecheckout.workflow.b2b_flow_alternative_checkout.transition.continue_to_approved_request.label
-                step_to: approved_request
+            continue_to_approve_request:
+                label: orob2b.alternativecheckout.workflow.b2b_flow_alternative_checkout.transition.continue_to_approve_request.label
+                step_to: approve_request
                 transition_definition: do_nothing
                 frontend_options:
                     is_checkout_continue: true
@@ -260,7 +260,7 @@ workflows:
 
             place_order:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.place_order.label
-                step_to: approved_request
+                step_to: approve_request
                 transition_definition: place_order_definition
                 display_type: page
 #                is_unavailable_hidden: true
@@ -275,7 +275,7 @@ workflows:
                             form_type: textarea
             approve_order:
                 label: orob2b.alternativecheckout.workflow.b2b_flow_alternative_checkout.transition.order_approve.label
-                step_to: approved_request
+                step_to: approve_request
                 transition_definition: approve_order_definition
                 frontend_options:
                     is_checkout_continue: true
@@ -283,7 +283,7 @@ workflows:
         transition_definitions:
             __start___definition:
                 pre_conditions:
-                    @assert_user_group: 1
+                    @assert_account: 1
             do_nothing: ~
             back_to_billing_address_definition:
                 post_actions:

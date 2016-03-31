@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AlternativeCheckoutBundle\Model;
+namespace OroB2B\Bundle\AlternativeCheckoutBundle\Condition;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
@@ -10,14 +10,14 @@ use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
-class UserInGroupCondition extends AbstractCondition implements ContextAccessorAwareInterface
+class AssertAccount extends AbstractCondition implements ContextAccessorAwareInterface
 {
     use ContextAccessorAwareTrait;
 
     /**
      * @var int
      */
-    protected $groupId;
+    protected $accountId;
 
     /**
      * @var SecurityFacade
@@ -40,7 +40,7 @@ class UserInGroupCondition extends AbstractCondition implements ContextAccessorA
         $user = $this->securityFacade->getLoggedUser();
 
         return $user instanceof AccountUser
-            && ($this->resolveValue($context, $this->groupId) === $user->getAccount()->getGroup()->getId());
+            && ($this->resolveValue($context, $this->accountId) === $user->getAccount()->getId());
     }
 
     /**
@@ -50,7 +50,7 @@ class UserInGroupCondition extends AbstractCondition implements ContextAccessorA
      */
     public function getName()
     {
-        return 'assert_user_group';
+        return 'assert_account';
     }
 
     /**
@@ -63,7 +63,7 @@ class UserInGroupCondition extends AbstractCondition implements ContextAccessorA
                 sprintf('Options must have 1 elements, but %d given.', count($options))
             );
         }
-        $this->groupId = $options[0];
+        $this->accountId = $options[0];
 
         return $this;
     }
@@ -73,7 +73,7 @@ class UserInGroupCondition extends AbstractCondition implements ContextAccessorA
      */
     public function toArray()
     {
-        return $this->convertToArray([$this->groupId]);
+        return $this->convertToArray([$this->accountId]);
     }
 
     /**
@@ -81,6 +81,6 @@ class UserInGroupCondition extends AbstractCondition implements ContextAccessorA
      */
     public function compile($factoryAccessor)
     {
-        return $this->convertToPhpCode($this->groupId, $factoryAccessor);
+        return $this->convertToPhpCode($this->accountId, $factoryAccessor);
     }
 }

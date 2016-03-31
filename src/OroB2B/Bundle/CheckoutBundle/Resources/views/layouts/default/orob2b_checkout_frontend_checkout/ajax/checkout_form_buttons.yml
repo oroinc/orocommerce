@@ -27,4 +27,4 @@ layout:
     conditions:
         @and:
         - @neq: [$context.workflowStepName, 'order_review']
-        - @neq: [$context.workflowStepName, 'approved_request']
+        - @neq: [$context.workflowStepName, 'approve_request']
