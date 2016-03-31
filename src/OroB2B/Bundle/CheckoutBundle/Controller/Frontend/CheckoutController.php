@@ -20,6 +20,7 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowAwareInterface;
 use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
 use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEvent;
 use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEvents;
+use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 
 class CheckoutController extends Controller
 {
@@ -53,17 +54,7 @@ class CheckoutController extends Controller
      */
     public function checkoutAction(Request $request, $id, $type = null)
     {
-        if (!$type) {
-            $checkout = $this->getDoctrine()->getRepository('OroB2BCheckoutBundle:Checkout')
-                ->find($id);
-        } else {
-            $event = new CheckoutEvent();
-            $event->setCheckoutId($id)
-                ->setType($type);
-            $this->get('event_dispatcher')->dispatch(CheckoutEvents::GET_CHECKOUT_ENTITY, $event);
-
-            $checkout = $event->getCheckoutEntity();
-        }
+        $checkout = $this->getCheckout($id, $type);
 
         if (!$checkout) {
             throw new NotFoundHttpException(sprintf('Checkout not found'));
@@ -148,5 +139,27 @@ class CheckoutController extends Controller
     {
         return $this->get('orob2b_checkout.layout.data_provider.transition_form')
             ->getForm($transitionData, $workflowItem);
+    }
+
+    /**
+     * @param int $id
+     * @param string|null $type
+     * @return CheckoutInterface|null
+     */
+    protected function getCheckout($id, $type)
+    {
+        if (!$type) {
+            $checkout = $this->getDoctrine()->getRepository('OroB2BCheckoutBundle:Checkout')
+                ->find($id);
+        } else {
+            $event = new CheckoutEvent();
+            $event->setCheckoutId($id)
+                ->setType($type);
+            $this->get('event_dispatcher')->dispatch(CheckoutEvents::GET_CHECKOUT_ENTITY, $event);
+
+            $checkout = $event->getCheckoutEntity();
+        }
+
+        return $checkout;
     }
 }
