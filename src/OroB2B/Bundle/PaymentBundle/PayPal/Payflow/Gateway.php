@@ -21,13 +21,17 @@ class Gateway
 
     /**
      * @param ClientInterface $client
+     * @param ProcessorRegistry $processorRegistry
+     * @param RequestRegistry $requestRegistry
      */
-    public function __construct(ClientInterface $client)
-    {
+    public function __construct(
+        ClientInterface $client,
+        ProcessorRegistry $processorRegistry,
+        RequestRegistry $requestRegistry
+    ) {
         $this->client = $client;
-
-        $this->processorRegistry = new ProcessorRegistry();
-        $this->requestRegistry = new RequestRegistry();
+        $this->processorRegistry = $processorRegistry;
+        $this->requestRegistry = $requestRegistry;
     }
 
     /**
