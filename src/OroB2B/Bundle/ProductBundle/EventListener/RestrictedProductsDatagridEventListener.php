@@ -40,7 +40,7 @@ class RestrictedProductsDatagridEventListener
     public function onBuildAfter(BuildAfter $event)
     {
         /** @var OrmDatasource $dataSource */
-        $dataSource = $event->getDatagrid()->getAcceptedDatasource();
+        $dataSource = $event->getDatagrid()->getDatasource();
         $queryBuilder = $dataSource->getQueryBuilder();
         $request = $this->requestStack->getCurrentRequest();
         if (!$request || !$params = $request->get(ProductSelectType::DATA_PARAMETERS)) {

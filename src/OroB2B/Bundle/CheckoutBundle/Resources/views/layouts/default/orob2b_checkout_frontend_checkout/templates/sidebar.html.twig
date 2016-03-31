@@ -23,7 +23,7 @@
                     {% endif %}
                     <span class="badge badge_xmd badge_circle {{ badgeClass }}">
                         {% if isComplete %}
-                            <i class="icon-check"></i>
+                            <i class="cf-check"></i>
                         {% else %}
                             {{ pageNum }}
                         {% endif %}
@@ -65,9 +65,12 @@
 {% endblock %}
 
 {% block _enter_shipping_method_information_widget %}
-    {#{% if checkout.shippingMethod %}#}
-        <div>Preferred shipping method</div>
-    {#{% endif %}#}
+    {% if checkout.shippingCost %}
+        <div>{{ 'orob2b.checkout.quoted_shipping_amount.label'|trans}}:
+            {{ checkout.shippingCost|oro_format_price }}</div>
+    {% else %}
+        <div>{{ 'orob2b.checkout.preferred_shipping_method.label'|trans}}</div>
+    {% endif %}
 {% endblock %}
 
 {% block _enter_payment_information_widget %}

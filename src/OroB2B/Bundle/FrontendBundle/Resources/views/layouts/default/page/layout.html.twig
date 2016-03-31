@@ -42,13 +42,13 @@
         });
         require({
             paths: {
-                lodash: '/bundles/orob2bfrontend/default/js/vendors/lodash.min',
-                bootstrapDatepicker: '/bundles/orob2bfrontend/default/js/vendors/bootstrap-datepicker.min',
-                raty: '/bundles/orob2bfrontend/default/js/vendors/jquery.raty',
-                chosen: '/bundles/orob2bfrontend/default/js/vendors/chosen.jquery.min',
-                slick: '/bundles/orob2bfrontend/default/js/vendors/slick.min',
-                perfectScrollbar: '/bundles/orob2bfrontend/default/js/vendors/perfect-scrollbar.jquery.min',
-                fastclick: '/bundles/orob2bfrontend/default/js/vendors/fastclick'
+                lodash: 'orob2bfrontend/default/js/vendors/lodash.min',
+                bootstrapDatepicker: 'orob2bfrontend/default/js/vendors/bootstrap-datepicker.min',
+                raty: 'orob2bfrontend/default/js/vendors/jquery.raty',
+                chosen: 'orob2bfrontend/default/js/vendors/chosen.jquery.min',
+                slick: 'orob2bfrontend/default/js/vendors/slick.min',
+                perfectScrollbar: 'orob2bfrontend/default/js/vendors/perfect-scrollbar.jquery.min',
+                fastclick: 'orob2bfrontend/default/js/vendors/fastclick'
             },
             shim: {
                 raty: {deps: ['jquery']},
@@ -57,8 +57,10 @@
         });
         require({
             appmodules: (requirejs.s.contexts._.config.appmodules || []).concat([
-                '/bundles/orob2bfrontend/default/js/app/modules/input-widgets.js',
-                '/bundles/orob2bfrontend/default/js/app/modules/action-manager.js'
+                'orob2bfrontend/default/js/app/modules/input-widgets',
+                'orob2bfrontend/default/js/app/modules/action-manager',
+                'orob2bfrontend/default/js/app/modules/delete-action',
+                'orob2bfrontend/default/js/app/modules/select-filter'
             ])
         });
     </script>
@@ -149,7 +151,7 @@
     <div{{ block('block_attributes') }}></div>
     <script type="text/template" id="message-item-template">
         <div class="container-fluid alert">
-            <span class="badge badge_sm_xs badge_notice"><i class="icon-check"></i></span>
+            <span class="badge badge_sm_xs badge_notice"><i class="cf-check"></i></span>
             <span class="fs16 ml1-md ml1-sm"><%= message %></span>
         </div>
     </script>
@@ -171,4 +173,63 @@
                 {% endif %}
             });
     </script>
+{% endblock %}
+
+{% block _datagrid_toolbar_sorting_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " sorting pull-left form-horizontal",
+        'data-grid-sorting': ''
+    }) %}
+    <div class="oro-oq__filter__item">
+        <div{{ block('block_attributes') }}></div>
+    </div>
+{% endblock %}
+
+{% block _datagrid_toolbar_mass_actions_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " mass-actions-panel btn-group icons-holder"
+    }) %}
+    <div class="oro-oq__filter__item">
+        <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+    </div>
+{% endblock %}
+
+{% block _datagrid_toolbar_extra_actions_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " extra-actions-panel",
+        'data-grid-extra-actions-panel': ''
+    }) %}
+    <div class="oro-oq__filter__item">
+        <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+    </div>
+{% endblock %}
+
+{% block _datagrid_toolbar_pagination_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " oro-pagination",
+        'data-grid-pagination': ''
+    }) %}
+    <div class="oro-oq__filter__item">
+        <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+    </div>
+{% endblock %}
+
+{% block _datagrid_toolbar_page_size_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " page-size pull-right form-horizontal",
+        'data-grid-pagesize': ''
+    }) %}
+    <div class="oro-oq__filter__item">
+        <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+    </div>
+{% endblock %}
+
+{% block _datagrid_toolbar_actions_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " actions-panel pull-right form-horizontal",
+        'data-grid-actions-panel': ''
+    }) %}
+    <div class="oro-oq__filter__item">
+        <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+    </div>
 {% endblock %}

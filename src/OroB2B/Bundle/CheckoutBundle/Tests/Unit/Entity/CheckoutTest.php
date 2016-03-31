@@ -40,7 +40,7 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
             ['accountUser', new AccountUser()],
             ['website', new Website()],
             ['source', new CheckoutSource()],
-            ['shippingEstimate', Price::create(2, 'USD')],
+            ['shippingCost', Price::create(2, 'USD')],
         ];
 
         $entity = new Checkout();
@@ -125,7 +125,7 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
 
         $item->postLoad();
 
-        $this->assertEquals(Price::create($value, $currency), $item->getShippingEstimate());
+        $this->assertEquals(Price::create($value, $currency), $item->getShippingCost());
     }
 
     public function testUpdateShippingEstimate()
@@ -133,11 +133,11 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
         $item = new Checkout();
         $value = 1;
         $currency = 'USD';
-        $item->setShippingEstimate(Price::create($value, $currency));
+        $item->setShippingCost(Price::create($value, $currency));
 
         $item->updateShippingEstimate();
 
-        $this->assertEquals($value, $item->getShippingEstimate()->getValue());
-        $this->assertEquals($currency, $item->getShippingEstimate()->getCurrency());
+        $this->assertEquals($value, $item->getShippingCost()->getValue());
+        $this->assertEquals($currency, $item->getShippingCost()->getCurrency());
     }
 }

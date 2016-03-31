@@ -2,51 +2,40 @@
 
 namespace OroB2B\Bundle\SaleBundle\Provider;
 
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use OroB2B\Bundle\SaleBundle\Model\QuoteOfferConverter;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
+
 use OroB2B\Component\Checkout\DataProvider\AbstractCheckoutProvider;
 
 class QuoteCheckoutLineItemDataProvider extends AbstractCheckoutProvider
 {
-    /** @var  QuoteOfferConverter */
-    protected $quoteOfferConverter;
-
-    /**
-     * @param QuoteOfferConverter $quoteOfferConverter
-     */
-    public function __construct(QuoteOfferConverter $quoteOfferConverter)
-    {
-        $this->quoteOfferConverter = $quoteOfferConverter;
-    }
-
-
     /**
      * {@inheritDoc}
      */
     public function isEntitySupported($entity)
     {
-        return $entity instanceof Quote;
+        return $entity instanceof QuoteDemand;
     }
 
     /**
+     * @param QuoteDemand $entity
      * {@inheritdoc}
      */
-    protected function prepareData($entity, $additionalData)
+    protected function prepareData($entity)
     {
-        $data = $this->quoteOfferConverter->toModel($additionalData);
         $result = [];
-        foreach ($data as $offer) {
-            /** @var QuoteProductOffer $productOffer */
-            $productOffer = $offer[QuoteOfferConverter::OFFER];
+        foreach ($entity->getDemandProducts() as $demandProduct) {
+            $productOffer = $demandProduct->getQuoteProductOffer();
+            $quoteProduct = $productOffer->getQuoteProduct();
+            $productSku = $productOffer->getProductSku() ? : $quoteProduct->getProductSku();
             $result[] = [
                 'product' => $productOffer->getProduct(),
-                'productSku' => $productOffer->getProductSku(),
-                'quantity' => $productOffer->getQuantity(),
+                'freeFormProduct' => $productOffer->getProduct() ? null : $quoteProduct->getFreeFormProduct(),
+                'productSku' => $productSku,
+                'quantity' => $demandProduct->getQuantity(),
                 'productUnit' => $productOffer->getProductUnit(),
-                'freeFromProduct' => $productOffer->getQuoteProduct()->getFreeFormProduct(),
                 'productUnitCode' => $productOffer->getProductUnitCode(),
-                'price' => $productOffer->getPrice()
+                'price' => $productOffer->getPrice(),
+                'fromExternalSource' => true,
             ];
         }
 

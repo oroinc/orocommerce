@@ -121,7 +121,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                     'source' => [
                         'query' => [
                             'select' => [
-                                'GROUP_CONCAT(unit_precisions.unit SEPARATOR \'{sep}\') as product_units',
+                                'GROUP_CONCAT(IDENTITY(unit_precisions.unit) SEPARATOR \'{sep}\') as product_units',
                             ],
                             'join' => [
                                 'left' => [
@@ -148,7 +148,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                     'source' => [
                         'query' => [
                             'select' => [
-                                'GROUP_CONCAT(unit_precisions.unit SEPARATOR \'{sep}\') as product_units',
+                                'GROUP_CONCAT(IDENTITY(unit_precisions.unit) SEPARATOR \'{sep}\') as product_units',
                                 'productImage.filename as image',
                                 'productDescriptions.text as description'
                             ],
@@ -193,7 +193,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                     'source' => [
                         'query' => [
                             'select' => [
-                                'GROUP_CONCAT(unit_precisions.unit SEPARATOR \'{sep}\') as product_units',
+                                'GROUP_CONCAT(IDENTITY(unit_precisions.unit) SEPARATOR \'{sep}\') as product_units',
                                 'productImage.filename as image',
                             ],
                             'join' => [

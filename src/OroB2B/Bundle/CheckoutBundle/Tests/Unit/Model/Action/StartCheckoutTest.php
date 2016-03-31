@@ -107,7 +107,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Oro\Bundle\ActionBundle\Exception\InvalidParameterException
+     * @expectedException \Oro\Component\Action\Exception\InvalidParameterException
      */
     public function testException()
     {
@@ -228,7 +228,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
                         'poNumber' => 123
                     ],
                     StartCheckout::SETTINGS_KEY => [
-                        'allow_source_remove' => true,
+                        'allow_manual_source_remove' => true,
                         'disallow_billing_address_edit' => false,
                         'disallow_shipping_address_edit' => false,
                         'remove_source' => true
@@ -251,7 +251,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
                         'poNumber' => 123
                     ],
                     StartCheckout::SETTINGS_KEY  => [
-                        'allow_source_remove' => true,
+                        'allow_manual_source_remove' => true,
                         'disallow_billing_address_edit' => false,
                         'disallow_shipping_address_edit' => false,
                         'remove_source' => true

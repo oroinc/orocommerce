@@ -6,8 +6,9 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Provider\QuoteCheckoutLineItemDataProvider;
 
@@ -36,46 +37,67 @@ class QuoteCheckoutLineItemDataProviderTest extends \PHPUnit_Framework_TestCase
                 'result' => false
             ],
             [
-                'data' => new Quote(),
+                'data' => new QuoteDemand(),
                 'result' => true
             ]
         ];
     }
 
-    public function testGetData()
+    /**
+     * @dataProvider productDataProvider
+     * @param Product|null $product
+     * @param string $sku
+     */
+    public function testGetData($product, $sku)
     {
-        $product = (new Product())->setSku('SKU');
+        $freeFormProduct = 'freeFromProduct';
         $quotProduct = (new QuoteProduct())
             ->setProduct($product)
-            ->setFreeFormProduct('freeFromProduct');
+            ->setFreeFormProduct($freeFormProduct)
+            ->setProductSku($sku);
         $productUnit = (new ProductUnit());
         $price = new Price();
-
-        $submittedData = [
-            [
-                'quantity' => 10,
-                'offer' =>
-                    (new QuoteProductOffer())
-                        ->setQuoteProduct($quotProduct)
-                        ->setQuantity(10)
-                        ->setProductUnit($productUnit)
-                        ->setProductUnitCode('code')
-                        ->setPrice($price)
-            ]
-        ];
+        $demand = new QuoteDemand();
+        $productOffer = new QuoteProductOffer();
+        $productOffer->setQuoteProduct($quotProduct)
+            ->setQuantity(10)
+            ->setProductUnit($productUnit)
+            ->setProductUnitCode('code')
+            ->setPrice($price)
+        ;
+        $demand->addDemandOffer(new QuoteProductDemand($demand, $productOffer, $productOffer->getQuantity()));
 
         $expected = [
             [
                 'product' => $product,
-                'productSku' => 'SKU',
+                'productSku' => $sku,
+                'freeFormProduct' => $product ? null : $freeFormProduct,
                 'quantity' => 10,
                 'productUnit' => $productUnit,
-                'freeFromProduct' => 'freeFromProduct',
                 'productUnitCode' => 'code',
-                'price' => $price
+                'price' => $price,
+                'fromExternalSource' => true
             ]
         ];
         $provider = new QuoteCheckoutLineItemDataProvider();
-        $this->assertSame($expected, $provider->getData(new Quote(), $submittedData));
+
+        $this->assertEquals($expected, $provider->getData($demand));
+    }
+
+    /**
+     * @return array
+     */
+    public function productDataProvider()
+    {
+        return [
+            [
+                (new Product())->setSku('TEST'),
+                'TEST'
+            ],
+            [
+                null,
+                'SKU'
+            ]
+        ];
     }
 }

@@ -20,6 +20,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\CheckoutBundle\Model\ExtendCheckout;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
+use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -61,7 +62,8 @@ class Checkout extends ExtendCheckout implements
     AccountOwnerAwareInterface,
     DatesAwareInterface,
     ContextItemInterface,
-    LineItemsNotPricedAwareInterface
+    LineItemsNotPricedAwareInterface,
+    ShippingAwareInterface
 {
     use DatesAwareTrait;
     use WorkflowAwareTrait;
@@ -215,7 +217,7 @@ class Checkout extends ExtendCheckout implements
     /**
      * @var Price
      */
-    protected $shippingEstimate;
+    protected $shippingCost;
 
     /**
      * @return Account
@@ -599,20 +601,20 @@ class Checkout extends ExtendCheckout implements
      *
      * @return Price|null
      */
-    public function getShippingEstimate()
+    public function getShippingCost()
     {
-        return $this->shippingEstimate;
+        return $this->shippingCost;
     }
 
     /**
      * Set shipping estimate
      *
-     * @param Price $shippingEstimate
+     * @param Price $shippingCost
      * @return $this
      */
-    public function setShippingEstimate($shippingEstimate = null)
+    public function setShippingCost($shippingCost = null)
     {
-        $this->shippingEstimate = $shippingEstimate;
+        $this->shippingCost = $shippingCost;
 
         $this->updateShippingEstimate();
 
@@ -625,7 +627,7 @@ class Checkout extends ExtendCheckout implements
     public function postLoad()
     {
         if (null !== $this->shippingEstimateAmount && null !== $this->shippingEstimateCurrency) {
-            $this->shippingEstimate = Price::create($this->shippingEstimateAmount, $this->shippingEstimateCurrency);
+            $this->shippingCost = Price::create($this->shippingEstimateAmount, $this->shippingEstimateCurrency);
         }
     }
 
@@ -635,8 +637,8 @@ class Checkout extends ExtendCheckout implements
      */
     public function updateShippingEstimate()
     {
-        $this->shippingEstimateAmount = $this->shippingEstimate ? $this->shippingEstimate->getValue() : null;
-        $this->shippingEstimateCurrency = $this->shippingEstimate ? $this->shippingEstimate->getCurrency() : null;
+        $this->shippingEstimateAmount = $this->shippingCost ? $this->shippingCost->getValue() : null;
+        $this->shippingEstimateCurrency = $this->shippingCost ? $this->shippingCost->getCurrency() : null;
     }
 
     /**

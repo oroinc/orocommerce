@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\TaxBundle\Manager;
 
+use Doctrine\ORM\EntityManager;
+
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\TaxBundle\Entity\Tax;
@@ -46,8 +48,11 @@ class TaxValueManager
             return $this->taxValues[$key];
         }
 
-        $taxValue = $this->doctrineHelper->getEntityRepositoryForClass($this->taxValueClass)
-            ->findOneBy(['entityClass' => $entityClass, 'entityId' => $entityId]);
+        $taxValue = null;
+
+        if ($entityId) {
+            $taxValue = $this->findTaxValue($entityClass, $entityId);
+        }
 
         if (!$taxValue) {
             /** @var TaxValue $taxValue */
@@ -57,19 +62,59 @@ class TaxValueManager
                 ->setEntityId($entityId);
         }
 
-        $this->taxValues[$key] = $taxValue;
+        // Save taxValues to cache only with entity IDs
+        if ($entityId) {
+            $this->taxValues[$key] = $taxValue;
+        }
 
         return $taxValue;
     }
 
     /**
-     * @param TaxValue $taxValue
+     * @param string $entityClass
+     * @param string $entityId
+     * @return null|TaxValue
      */
-    public function saveTaxValue(TaxValue $taxValue)
+    public function findTaxValue($entityClass, $entityId)
     {
-        $em = $this->doctrineHelper->getEntityManager($taxValue);
+        return $this->doctrineHelper->getEntityRepositoryForClass($this->taxValueClass)
+            ->findOneBy(['entityClass' => $entityClass, 'entityId' => $entityId]);
+    }
+
+    /**
+     * @param TaxValue $taxValue
+     * @param bool $flush
+     */
+    public function saveTaxValue(TaxValue $taxValue, $flush = true)
+    {
+        $em = $this->getTaxValueEntityManager();
         $em->persist($taxValue);
-        $em->flush($taxValue);
+
+        if ($flush) {
+            $em->flush($taxValue);
+        }
+    }
+
+    /**
+     * @param TaxValue $taxValue
+     * @param bool $flush
+     * @return bool
+     */
+    public function removeTaxValue(TaxValue $taxValue, $flush = false)
+    {
+        $em = $this->getTaxValueEntityManager();
+
+        if (!$em->contains($taxValue)) {
+            return false;
+        }
+
+        $em->remove($taxValue);
+
+        if ($flush) {
+            $em->flush($taxValue);
+        }
+
+        return true;
     }
 
     /**
@@ -79,6 +124,22 @@ class TaxValueManager
     public function getTax($taxCode)
     {
         return $this->doctrineHelper->getEntityRepository($this->taxClass)->findOneBy(['code' => $taxCode]);
+    }
+
+    /**
+     * Clear caches
+     */
+    public function clear()
+    {
+        $this->taxValues = [];
+    }
+
+    /**
+     * @return EntityManager
+     */
+    protected function getTaxValueEntityManager()
+    {
+        return $this->doctrineHelper->getEntityManagerForClass($this->taxValueClass);
     }
 
     /**

@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\DataProvider\Converter;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Symfony\Component\PropertyAccess\PropertyAccess;
+
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
 use OroB2B\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
@@ -23,7 +25,7 @@ class CheckoutLineItemsConverterTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->checkoutLineItemsConverter = new CheckoutLineItemsConverter();
+        $this->checkoutLineItemsConverter = new CheckoutLineItemsConverter(PropertyAccess::createPropertyAccessor());
     }
 
     /**
@@ -57,6 +59,7 @@ class CheckoutLineItemsConverterTest extends \PHPUnit_Framework_TestCase
         $productUnit->setCode('item');
         $quantity = 10;
         $price = new Price();
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
 
         return [
             [
@@ -67,8 +70,6 @@ class CheckoutLineItemsConverterTest extends \PHPUnit_Framework_TestCase
                 'data' => [[]],
                 'expected' => new ArrayCollection([
                     (new OrderLineItem())
-                    ->setFreeFormProduct('')
-                    ->setQuantity(1)
                 ])
             ],
             [
@@ -77,7 +78,7 @@ class CheckoutLineItemsConverterTest extends \PHPUnit_Framework_TestCase
                         'product' => $product1,
                         'productSku' => $product1->getSku(),
                         'quantity' => $quantity,
-                        'freeFromProduct' => 'test1',
+                        'freeFormProduct' => 'test1',
                         'productUnit' => $productUnit,
                         'productUnitCode' => $productUnit->getCode(),
                         'price' => $price
@@ -86,10 +87,14 @@ class CheckoutLineItemsConverterTest extends \PHPUnit_Framework_TestCase
                         'product' => $product2,
                         'productSku' => $product2->getSku(),
                         'quantity' => $quantity,
-                        'freeFromProduct' => 'test2',
+                        'freeFormProduct' => 'test2',
                         'productUnit' => $productUnit,
                         'productUnitCode' => $productUnit->getCode(),
-                        'price' => $price
+                        'price' => $price,
+                        'priceType' => OrderLineItem::PRICE_TYPE_BUNDLED,
+                        'shipBy' => $now,
+                        'fromExternalSource' => true,
+                        'comment' => 'Comment'
                     ]
 
                 ],
@@ -108,6 +113,10 @@ class CheckoutLineItemsConverterTest extends \PHPUnit_Framework_TestCase
                         ->setProductUnitCode($productUnit->getCode())
                         ->setFreeFormProduct('test2')
                         ->setPrice($price)
+                        ->setPriceType(OrderLineItem::PRICE_TYPE_BUNDLED)
+                        ->setShipBy($now)
+                        ->setFromExternalSource(true)
+                        ->setComment('Comment')
                 ])
             ],
         ];

@@ -38,10 +38,12 @@ class CheckoutLineItemDataProvider extends AbstractCheckoutProvider
         $this->registry = $registry;
     }
 
+
     /**
-     * {@inheritdoc}
+     * @param ShoppingList $entity
+     * @return array
      */
-    public function prepareData($entity, $additionalData)
+    public function prepareData($entity)
     {
         /** @var LineItemRepository $repository */
         $repository = $this->registry->getManagerForClass('OroB2BShoppingListBundle:LineItem')

@@ -115,7 +115,7 @@ class FrontendProductPriceDatagridListener extends AbstractProductPriceDatagridL
         $select = sprintf($selectPattern, $joinAlias, $separator, $pricesColumnName);
         $this->addConfigElement($config, '[source][query][select]', $select);
 
-        $selectPattern = 'GROUP_CONCAT(%s.unit SEPARATOR %s) as %s';
+        $selectPattern = 'GROUP_CONCAT(IDENTITY(%s.unit) SEPARATOR %s) as %s';
         $select = sprintf($selectPattern, $joinAlias, $separator, $unitColumnName);
         $this->addConfigElement($config, '[source][query][select]', $select);
 
@@ -153,7 +153,8 @@ class FrontendProductPriceDatagridListener extends AbstractProductPriceDatagridL
             $minimumPriceColumnName
         );
 
-        $this->addConfigFilter($config, $currency);
+        $filter = ['type' => 'frontend-product-price', 'data_name' => $currency];
+        $this->addConfigElement($config, '[filters][columns]', $filter, $minimumPriceColumnName);
     }
 
     /**

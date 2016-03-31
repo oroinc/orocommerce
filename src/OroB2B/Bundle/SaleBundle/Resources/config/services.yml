@@ -17,7 +17,6 @@ parameters:
 
     #Models
     orob2b_sale.service.quote_to_order_converter.class: OroB2B\Bundle\SaleBundle\Model\QuoteToOrderConverter
-    orob2b_sale.service.quote_offer_converter.class: OroB2B\Bundle\SaleBundle\Model\QuoteOfferConverter
     orob2b_sale.service.quote_product_offer_matcher.class: OroB2B\Bundle\SaleBundle\Model\QuoteProductOfferMatcher
     orob2b_sale.service.request_helper.class: OroB2B\Bundle\SaleBundle\Model\RequestHelper
 
@@ -80,11 +79,6 @@ services:
             - @orob2b_order.model.order_currency_handler
             - @orob2b_pricing.subtotal_processor.provider.subtotal_line_item
             - @orob2b_pricing.subtotal_processor.total_processor_provider
-            - @doctrine
-
-    orob2b_sale.service.quote_offer_converter:
-        class: %orob2b_sale.service.quote_offer_converter.class%
-        arguments:
             - @doctrine
 
     orob2b_sale.service.quote_product_offer_matcher:
@@ -155,7 +149,5 @@ services:
 
     orob2b_sale.data_provider.checkout_line_item:
         class: %orob2b_sale.data_provider.checkout_line_item.class%
-        arguments:
-            - @orob2b_sale.service.quote_offer_converter
         tags:
              - { name: checkout.data_provider.line_item }

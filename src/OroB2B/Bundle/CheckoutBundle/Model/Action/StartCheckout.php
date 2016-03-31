@@ -5,14 +5,15 @@ namespace OroB2B\Bundle\CheckoutBundle\Model\Action;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
+use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use Oro\Bundle\ActionBundle\Exception\InvalidParameterException;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 
 use Oro\Component\Action\Action\AbstractAction;
+use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\Action\Model\ContextAccessor;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -35,7 +36,7 @@ use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEvents;
  *     data:
  *         currency: $.currency
  *     settings:
- *          allow_source_remove: false
+ *          allow_manual_source_remove: false
  *
  * source_name (required) is name of corresponding extended relation added to CheckoutSource
  * source_entity (required) is a source entity
@@ -190,21 +191,18 @@ class StartCheckout extends AbstractAction
         $checkoutSource = $em->getRepository('OroB2BCheckoutBundle:CheckoutSource')
             ->findOneBy([$sourceFieldName => $sourceEntity]);
 
-        $newCheckout = true;
-
         if ($checkoutSource) {
-            $newCheckout = false;
             $checkout = $this->getCheckout($checkoutSource);
-
+            if ($this->getOptionFromContext($context, self::FORCE, false)) {
+                $this->updateCheckoutData($context, $checkout);
+                $this->addWorkflowItemDataSettings($context, $checkout->getWorkflowItem());
+                $em->flush();
+            }
         } else {
             $checkoutSource = $this->createCheckoutSource($sourceFieldName, $sourceEntity);
             $checkout = $this->createCheckout($context, $checkoutSource);
             $em->persist($checkout);
             $em->flush($checkout);
-        }
-
-        if ($newCheckout || $this->getOptionFromContext($context, self::FORCE, false)) {
-            $this->updateCheckoutData($context, $checkout);
             $this->addWorkflowItemDataSettings($context, $checkout->getWorkflowItem());
             $em->flush($checkout->getWorkflowItem());
         }
@@ -253,7 +251,7 @@ class StartCheckout extends AbstractAction
      *
      * @param mixed $context
      * @param CheckoutSource $checkoutSource
-     * @return Checkout|object
+     * @return CheckoutInterface
      */
     protected function createCheckout($context, CheckoutSource $checkoutSource)
     {
@@ -266,9 +264,9 @@ class StartCheckout extends AbstractAction
 
     /**
      * @param mixed $context
-     * @param Checkout|object $checkout
+     * @param CheckoutInterface $checkout
      */
-    protected function updateCheckoutData($context, $checkout)
+    protected function updateCheckoutData($context, CheckoutInterface $checkout)
     {
         /** @var AccountUser $user */
         $user = $this->tokenStorage->getToken()->getUser();
@@ -288,10 +286,10 @@ class StartCheckout extends AbstractAction
 
     /**
      * @param mixed $context
-     * @param Checkout|object $checkout
+     * @param CheckoutInterface $checkout
      * @param array $defaultData
      */
-    protected function setCheckoutData($context, $checkout, array $defaultData)
+    protected function setCheckoutData($context, CheckoutInterface $checkout, array $defaultData)
     {
         $data = $this->getOptionFromContext($context, self::CHECKOUT_DATA_KEY, []);
         $data = array_filter(
