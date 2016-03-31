@@ -2,14 +2,17 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Event;
 
+use Doctrine\Common\Inflector\Inflector;
+
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Response;
+
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 
 abstract class AbstractCallbackEvent extends Event
 {
     /** @var string */
-    protected $queryString;
+    protected $data;
 
     /** @var Response */
     protected $response;
@@ -18,11 +21,11 @@ abstract class AbstractCallbackEvent extends Event
     protected $paymentTransaction;
 
     /**
-     * @param string $queryString
+     * @param array $data
      */
-    public function __construct($queryString)
+    public function __construct(array $data = [])
     {
-        $this->queryString = $queryString;
+        $this->data = $data;
 
         $this->response = new Response();
     }
@@ -30,9 +33,9 @@ abstract class AbstractCallbackEvent extends Event
     /**
      * @return string
      */
-    public function getQueryString()
+    public function getData()
     {
-        return $this->queryString;
+        return $this->data;
     }
 
     /**
@@ -41,7 +44,7 @@ abstract class AbstractCallbackEvent extends Event
      */
     public function getTypedEventName($type)
     {
-        return implode('.', [$this->getEventName(), strtolower($type)]);
+        return implode('.', [$this->getEventName(), Inflector::tableize(Inflector::classify($type))]);
     }
 
     /**

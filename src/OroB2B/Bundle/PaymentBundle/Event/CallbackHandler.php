@@ -40,7 +40,7 @@ class CallbackHandler
     }
 
     /**
-     * @param string $transactionId
+     * @param int $transactionId
      * @param AbstractCallbackEvent $event
      * @return Response
      */
@@ -72,7 +72,7 @@ class CallbackHandler
     }
 
     /**
-     * @param string $transactionId
+     * @param int $transactionId
      * @return PaymentTransaction
      */
     protected function getPaymentTransaction($transactionId)

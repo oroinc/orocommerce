@@ -10,6 +10,8 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
+use OroB2B\Bundle\PaymentBundle\DBAL\Types\SecureArrayType;
+
 class OroB2BPaymentBundleInstaller implements Installation, NoteExtensionAwareInterface
 {
     /**
@@ -106,12 +108,12 @@ class OroB2BPaymentBundleInstaller implements Installation, NoteExtensionAwareIn
     {
         $table = $schema->createTable('orob2b_payment_transaction');
         $table->addColumn('id', Type::INTEGER, ['autoincrement' => true]);
-        $table->addColumn('reference', Type::STRING);
+        $table->addColumn('reference', Type::STRING, ['notnull' => false]);
         $table->addColumn('state', Type::STRING, ['notnull' => false]);
         $table->addColumn('type', Type::STRING);
         $table->addColumn('entity_class', Type::STRING);
         $table->addColumn('entity_identifier', Type::INTEGER);
-        $table->addColumn('data', Type::TEXT, ['notnull' => false]);
+        $table->addColumn('data', SecureArrayType::TYPE, ['notnull' => false]);
         $table->setPrimaryKey(['id']);
     }
 

@@ -18,8 +18,6 @@ services:
 
     orob2b_payment.event_listener.callback.payflow:
         class: '%orob2b_payment.event_listener.callback.payflow.class%'
-        arguments:
-            - '@orob2b_payment.paypal.payflow.nvp_encoder'
         tags:
-            - { name: kernel.event_listener, event: orob2b_payment.callback.return.payflow, method: onReturn }
-            - { name: kernel.event_listener, event: orob2b_payment.callback.error.payflow, method: onError }
+            - { name: kernel.event_listener, event: orob2b_payment.callback.return.payflow, method: onCallback }
+            - { name: kernel.event_listener, event: orob2b_payment.callback.error.payflow, method: onCallback }

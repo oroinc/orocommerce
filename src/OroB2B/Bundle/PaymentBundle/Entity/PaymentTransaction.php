@@ -20,7 +20,7 @@ class PaymentTransaction
 
     /**
      * @var string
-     * @ORM\Column(name="reference", type="string")
+     * @ORM\Column(name="reference", type="string", nullable=true)
      */
     protected $reference;
 
@@ -49,10 +49,10 @@ class PaymentTransaction
     protected $entityIdentifier;
 
     /**
-     * @var string
-     * @ORM\Column(name="data", type="text", nullable=true)
+     * @var array
+     * @ORM\Column(name="data", type="secure_array", nullable=true)
      */
-    protected $data;
+    protected $data = [];
 
     /**
      * @return int
@@ -158,7 +158,7 @@ class PaymentTransaction
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function getData()
     {
@@ -166,12 +166,12 @@ class PaymentTransaction
     }
 
     /**
-     * @param string $data
+     * @param array $data
      * @return PaymentTransaction
      */
-    public function setData($data)
+    public function setData(array $data)
     {
-        $this->data = (string)$data;
+        $this->data = $data;
 
         return $this;
     }
