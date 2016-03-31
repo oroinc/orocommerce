@@ -648,6 +648,4 @@ class Checkout extends ExtendCheckout implements
     {
         return '';
     }
-
-
 }

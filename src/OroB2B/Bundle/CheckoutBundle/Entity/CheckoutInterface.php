@@ -22,10 +22,8 @@ interface CheckoutInterface extends WorkflowAwareInterface
     public function getType();
 
     /**
-     * Set source entity from which checkout process starts
-     *
-     * @param object $source
+     * @param CheckoutSource $source
      * @return $this
      */
-    public function setSource($source);
+    public function setSource(CheckoutSource $source);
 }
