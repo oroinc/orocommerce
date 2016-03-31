@@ -273,21 +273,6 @@ workflows:
                         customer_notes:
                             form_type: textarea
 
-            approve:
-                label: orob2b.checkout.workflow.b2b_flow_checkout.transition.order_approve.label
-                step_to: approved_request
-                transition_definition: place_order_definition
-                display_type: page
-    #                is_unavailable_hidden: true
-                frontend_options:
-                    is_checkout_continue: true
-                form_options:
-                    attribute_fields:
-                        remove_source: ~
-                        po_number: ~
-                        ship_until: ~
-                        customer_notes:
-                            form_type: textarea
         transition_definitions:
             __start___definition:
                 pre_conditions:
