@@ -112,6 +112,10 @@ class QuoteController extends Controller
         $form = $this->createForm(QuoteDemandType::NAME, $quoteDemand);
         $form->handleRequest($request);
         if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($quoteDemand);
+            $em->flush();
+
             $actionGroupRegistry = $this->get('oro_action.action_group_registry');
             $actionGroup = $actionGroupRegistry->findByName('orob2b_sale_frontend_quote_accept_and_submit_to_order');
             if ($actionGroup) {

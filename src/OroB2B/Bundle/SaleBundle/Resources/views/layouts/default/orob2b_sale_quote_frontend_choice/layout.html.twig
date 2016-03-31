@@ -4,7 +4,7 @@
     </div>
 {% endblock %}
 
-{% block _quot_choise_form_widget %}
+{% block _quot_choice_form_widget %}
     <form method="POST"
           data-nohash="true"
           data-disable-autofocus="true"
@@ -12,7 +12,8 @@
           name="{{ form.vars.name }}"
           class="form-dialog"
     >
-        {{ form_widget(form) }}
+        {{ form_widget(form.demandProducts) }}
+        {{ form_rest(form) }}
         <div class="order-checkout-widget order-checkout-widget_block text-right">
             {{ block_widget(block) }}
         </div>
@@ -20,13 +21,13 @@
     {{ oro_form_js_validation(form) }}
 {% endblock %}
 
-{% block _quote_choise_back_button_widget %}
+{% block _quote_choice_back_button_widget %}
     <div class="order-builder-clear-btn">
         <a href="{{ path('orob2b_sale_quote_frontend_view', {id: quote.id}) }}"><i class="cf-left-open-mini"></i><span>Back to Quote</span></a>
     </div>
 {% endblock %}
 
-{% block _quote_choise_submit_button_widget %}
+{% block _quote_choice_submit_button_widget %}
     <div class=" order-checkout-widget order-checkout-widget_block text-right mb4-md">
         <div class=" text-right mb4-md">
             <button class="btn theme-btn btn-orange" type="submit">{{ 'orob2b.frontend.sale.quote.submit_to_order.submit'|trans }}</button>
@@ -34,7 +35,7 @@
     </div>
 {% endblock %}
 
-{% block _quote_choise_subtotals_widget %}
+{% block _quote_choice_subtotals_widget %}
     <div class="order-checkout-widget__container-wrapper">
         <div class="order-checkout-widget__container order-checkout-widget__container_lg">
             <table class="order-checkout-widget__table pull-right">
@@ -65,7 +66,7 @@
         <div class="account-oq__item__body">
             <div class="account-oq__item">
                 <div class="account-oq__order-info">
-                    <table class="table borderless">
+                    <table class="table borderless mobile-table">
                         <tbody>
                         {% if quote.assignedUsers | length %}
                             <tr>
@@ -93,22 +94,13 @@
             </div>
             <div class="account-oq__item">
                 <div class="account-oq__order-info">
-                    <table class="table borderless">
+                    <table class="table borderless  mobile-table">
                         <tbody>
                         <tr class="account-oq__order-info__control">
                             <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.ship_until.label'|trans }}</td>
                             <td>{{ quote.shipUntil|oro_format_date|default('N/A'|trans) }}</td>
                         </tr>
-                        {% if quote.shippingAddress %}
-                            <tr class="account-oq__order-info__control">
-                                <td class="account-oq__order-info__title va-t_md">
-                                    {{ 'orob2b.frontend.sale.quote.shipping_address.label'|trans }}
-                                </td>
-                                <td class="va-t_md">
-                                    {{ quote.shippingAddress|oro_format_address(null, '<br/>') }}
-                                </td>
-                            </tr>
-                        {% endif %}
+                        {{ block_widget(block) }}
                         </tbody>
                     </table>
                 </div>
@@ -124,3 +116,19 @@
     </div>
 {% endblock %}
 
+{% block address_widget %}
+    {% if address %}
+        {{ address|oro_format_address|escape|nl2br }}
+    {% else %}
+        {{ 'oro.ui.empty'|trans }}
+    {% endif %}
+{% endblock %}
+
+{% block quote_body_column_element_widget %}
+    {% if address is not null %}
+        <tr class="account-oq__order-info__control">
+            <td class="account-oq__order-info__title">{{ label|trans }}</td>
+            <td>{{ block_widget(block) }}</td>
+        </tr>
+    {% endif %}
+{% endblock %}

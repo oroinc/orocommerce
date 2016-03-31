@@ -28,7 +28,7 @@ class QuoteProductDemandType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand',
-                'constraints' => new ConfigurableQuoteProductOffer(), // TODO Refactor constraint
+//                'constraints' => new ConfigurableQuoteProductOffer(), // TODO Refactor constraint
             ]
         );
     }
