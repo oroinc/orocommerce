@@ -1,23 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\Type;
+namespace OroB2B\Bundle\AccountBundle\Form\Type\Frontend;
 
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType as BaseAccountUserMultiSelectType;
 
-class AccountUserMultiSelectType extends AbstractType
+class AccountUserMultiSelectType extends BaseAccountUserMultiSelectType
 {
-    const NAME = 'orob2b_account_account_user_multiselect';
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getParent()
-    {
-        return UserMultiSelectType::NAME;
-    }
+    const NAME = 'orob2b_account_frontend_account_user_multiselect';
 
     /**
      * {@inheritdoc}
@@ -26,8 +17,9 @@ class AccountUserMultiSelectType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'autocomplete_alias' => 'orob2b_account_account_user',
+                'autocomplete_alias' => 'orob2b_account_frontend_account_user',
                 'configs' => [
+                    'route_name' => 'orob2b_frontend_autocomplete_search',
                     'multiple' => true,
                     'component' => 'autocomplete-accountuser',
                     'placeholder' => 'orob2b.account.accountuser.form.choose',
@@ -37,13 +29,5 @@ class AccountUserMultiSelectType extends AbstractType
                 ],
             ]
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return static::NAME;
     }
 }

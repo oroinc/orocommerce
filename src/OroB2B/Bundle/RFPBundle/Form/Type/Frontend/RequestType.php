@@ -13,7 +13,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
+use OroB2B\Bundle\AccountBundle\Form\Type\Frontend\AccountUserMultiSelectType;
 
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
