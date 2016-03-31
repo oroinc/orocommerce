@@ -2,7 +2,7 @@ contact_us:
     slug: contact-us
     title: 'Contact Us'
     content: >
-        <h1>Lorem ipsum dolor sit amet</h1>
+        <h3>Lorem ipsum dolor sit amet</h3>
         <p>consectetur adipiscing elit. Aenean in sollicitudin magna. Duis quis fermentum risus, ac egestas metus. Sed felis nisi, molestie a nisi a, varius lacinia sapien. Integer vehicula metus vitae diam gravida porta. Quisque fringilla tincidunt arcu, eu consectetur ligula finibus a. Curabitur porttitor nunc faucibus augue congue, vitae scelerisque ex ultricies. Suspendisse eleifend felis ut lacus interdum, eu pulvinar sem interdum. Aliquam facilisis ipsum eget tortor finibus, ut dignissim nisl pulvinar.</p>
         <br />
         <h3 class="text-uppercase">Vestibulum consequat eu enim nec viverra </h3>
@@ -22,7 +22,7 @@ contact_us:
 
         <p>Donec maximus vehicula dolor, pharetra egestas justo. Nullam sed venenatis eros. Maecenas malesuada tellus sed eros blandit, a consectetur purus condimentum. Quisque a metus ligula. Praesent et ante elit. Fusce sem nisi, rutrum nec tellus sed, elementum pretium erat. Aliquam dictum commodo sollicitudin. Vestibulum fermentum justo nisi, eget dignissim nibh tempus sed. Vestibulum non condimentum elit.</p>
         <br />
-        <h2>Ut id dignissim urna</h2>
+        <h3>Ut id dignissim urna</h3>
         <p>Sed placerat viverra magna, eget suscipit tellus dignissim eget. Sed vel sollicitudin odio, ac aliquam odio. Quisque vel quam viverra, volutpat dui id, laoreet tellus. Nullam lobortis lectus congue, varius neque at, porttitor est. Morbi sit amet neque sed felis elementum efficitur. Cras placerat ex nec magna imperdiet placerat. Pellentesque sit amet facilisis elit. Fusce sed cursus lectus. Vestibulum dignissim neque ante, sit amet porttitor enim faucibus sed. Curabitur placerat, magna sit amet ullamcorper dapibus, ligula tellus sagittis massa, eu commodo nisl purus eu ante. In hac habitasse platea dictumst. Duis tempus feugiat risus, sed tristique justo sagittis in. Etiam vitae nunc porttitor, efficitur quam auctor, luctus erat. Sed placerat non quam semper facilisis. </p>
 
         <ol>
@@ -35,7 +35,7 @@ about:
     slug: about
     title: 'About'
     content: >
-        <h1>Lorem ipsum dolor sit amet</h1>
+        <h3>Lorem ipsum dolor sit amet</h3>
         <p>consectetur adipiscing elit. Aenean in sollicitudin magna. Duis quis fermentum risus, ac egestas metus. Sed felis nisi, molestie a nisi a, varius lacinia sapien. Integer vehicula metus vitae diam gravida porta. Quisque fringilla tincidunt arcu, eu consectetur ligula finibus a. Curabitur porttitor nunc faucibus augue congue, vitae scelerisque ex ultricies. Suspendisse eleifend felis ut lacus interdum, eu pulvinar sem interdum. Aliquam facilisis ipsum eget tortor finibus, ut dignissim nisl pulvinar.</p>
         <br />
         <h3 class="text-uppercase">Vestibulum consequat eu enim nec viverra </h3>
@@ -55,7 +55,7 @@ about:
 
         <p>Donec maximus vehicula dolor, pharetra egestas justo. Nullam sed venenatis eros. Maecenas malesuada tellus sed eros blandit, a consectetur purus condimentum. Quisque a metus ligula. Praesent et ante elit. Fusce sem nisi, rutrum nec tellus sed, elementum pretium erat. Aliquam dictum commodo sollicitudin. Vestibulum fermentum justo nisi, eget dignissim nibh tempus sed. Vestibulum non condimentum elit.</p>
         <br />
-        <h2>Ut id dignissim urna</h2>
+        <h3>Ut id dignissim urna</h3>
         <p>Sed placerat viverra magna, eget suscipit tellus dignissim eget. Sed vel sollicitudin odio, ac aliquam odio. Quisque vel quam viverra, volutpat dui id, laoreet tellus. Nullam lobortis lectus congue, varius neque at, porttitor est. Morbi sit amet neque sed felis elementum efficitur. Cras placerat ex nec magna imperdiet placerat. Pellentesque sit amet facilisis elit. Fusce sed cursus lectus. Vestibulum dignissim neque ante, sit amet porttitor enim faucibus sed. Curabitur placerat, magna sit amet ullamcorper dapibus, ligula tellus sagittis massa, eu commodo nisl purus eu ante. In hac habitasse platea dictumst. Duis tempus feugiat risus, sed tristique justo sagittis in. Etiam vitae nunc porttitor, efficitur quam auctor, luctus erat. Sed placerat non quam semper facilisis. </p>
 
         <ol>
