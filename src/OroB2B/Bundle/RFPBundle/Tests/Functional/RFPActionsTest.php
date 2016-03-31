@@ -45,7 +45,7 @@ class RFPActionsTest extends WebTestCase
             $this->getUrl(
                 'oro_action_widget_form',
                 [
-                    'actionName' => 'orob2b_rfp_change_status_action',
+                    'operationName' => 'orob2b_rfp_change_status',
                     'entityClass' => 'OroB2B\Bundle\RFPBundle\Entity\Request',
                     'entityId' => $request->getId()
                 ]
@@ -55,15 +55,15 @@ class RFPActionsTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $form = $crawler->selectButton('Update Request')->form();
-        $form['oro_action[request_status]'] = $status->getId();
-        $form['oro_action[request_note]'] = 'Test Request Note';
+        $form['oro_action_operation[request_status]'] = $status->getId();
+        $form['oro_action_operation[request_note]'] = 'Test Request Note';
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('widget.trigger(\'formSave\', []);', $crawler->html());
+        $this->assertContains('widget.trigger(\'formSave\', {"success":true});', $crawler->html());
 
         /** @var Request $requestUpdated */
         $requestUpdated = $this->getReference(LoadRequestData::REQUEST1);

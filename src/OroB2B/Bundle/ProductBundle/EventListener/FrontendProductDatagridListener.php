@@ -24,6 +24,7 @@ class FrontendProductDatagridListener
     const COLUMN_PRODUCT_UNITS = 'product_units';
 
     const DATA_SEPARATOR = '{sep}';
+    const PRODUCT_IMAGE_FILTER = 'product_large';
 
     /**
      * @var DataGridThemeHelper
@@ -80,7 +81,7 @@ class FrontendProductDatagridListener
 
         // add all product units
         $select = sprintf(
-            'GROUP_CONCAT(unit_precisions.unit SEPARATOR %s) as %s',
+            'GROUP_CONCAT(IDENTITY(unit_precisions.unit) SEPARATOR %s) as %s',
             (new Expr())->literal(self::DATA_SEPARATOR),
             self::COLUMN_PRODUCT_UNITS
         );
@@ -222,11 +223,9 @@ class FrontendProductDatagridListener
             $productId = $record->getValue('id');
             foreach ($products as $product) {
                 if ($product->getId() === $productId) {
-                    $imageUrl = $this->attachmentManager->getAttachment(
-                        'OroB2B\Bundle\ProductBundle\Entity\Product',
-                        $productId,
-                        'image',
-                        $product->getImage()
+                    $imageUrl = $this->attachmentManager->getFilteredImageUrl(
+                        $product->getImage(),
+                        self::PRODUCT_IMAGE_FILTER
                     );
                     break;
                 }

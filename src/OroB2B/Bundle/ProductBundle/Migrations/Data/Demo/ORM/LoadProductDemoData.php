@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM;
 
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -60,8 +61,22 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
             $name = new LocalizedFallbackValue();
             $name->setString($row['name']);
 
+            $text = '<p>' . $row['description'] . '</p>'
+                . (
+                    array_key_exists('information', $row) && !empty($row['information']) ?
+                    '<p style="text-decoration: underline; font-weight: bold;">Product Information &amp; Features:</p>'
+                    . '<ul><li>' . implode('</li><li>', explode("\n", $row['information'])) . '</li></ul>'
+                    : ''
+                )
+                . (
+                    array_key_exists('specifications', $row) && !empty($row['specifications'])  ?
+                    '<p style="text-decoration: underline; font-weight: bold;">Technical Specs:</p>'
+                    . '<ul><li>' . implode('</li><li>', explode("\n", $row['specifications'])) . '</li></ul>'
+                    : ''
+                );
+
             $description = new LocalizedFallbackValue();
-            $description->setText(nl2br($row['description']));
+            $description->setText(nl2br($text));
 
             $product = new Product();
             $product->setOwner($businessUnit)
@@ -71,6 +86,11 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
                 ->setStatus(Product::STATUS_ENABLED)
                 ->addName($name)
                 ->addDescription($description);
+
+            $image = $this->getImageForProductSku($manager, $locator, $row['sku']);
+            if ($image) {
+                $product->setImage($image);
+            }
 
             $manager->persist($product);
         }
@@ -90,5 +110,36 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName($enumCode);
 
         return $manager->getRepository($inventoryStatusClassName)->findAll();
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param FileLocator $locator
+     * @param string $sku
+     * @return null|\Oro\Bundle\AttachmentBundle\Entity\File
+     */
+    protected function getImageForProductSku(ObjectManager $manager, FileLocator $locator, $sku)
+    {
+        $image = null;
+
+        try {
+            $imagePath = $locator->locate(sprintf('@OroB2BProductBundle/Migrations/Data/Demo/ORM/images/%s.jpg', $sku));
+
+            if (is_array($imagePath)) {
+                $imagePath = current($imagePath);
+            }
+
+            $attachmentManager = $this->container->get('oro_attachment.manager');
+
+            $image = $attachmentManager->prepareRemoteFile($imagePath);
+
+            $attachmentManager->upload($image);
+
+            $manager->persist($image);
+        } catch (\Exception $e) {
+            //image not found
+        }
+
+        return $image;
     }
 }
