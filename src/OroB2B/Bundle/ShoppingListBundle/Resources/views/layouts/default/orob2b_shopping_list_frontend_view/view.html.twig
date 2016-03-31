@@ -317,7 +317,7 @@
 
 {% block _shopping_list_totals_widget %}
     <div class="order-checkout-widget__container-wrapper">
-        {% include 'OroB2BPricingBundle:Totals/Frontend:totalsEntityEditPage.html.twig' with {
+        {% include 'OroB2BPricingBundle:Totals/Frontend:totals.html.twig' with {
             options: {
                 route: 'orob2b_pricing_frontend_entity_totals',
                 events: [
@@ -330,6 +330,7 @@
                 entityClassName: 'OroB2B\\Bundle\\ShoppingListBundle\\Entity\\ShoppingList',
                 entityId: shoppingList.id,
                 skipMaskView: true,
+                application: 'frontend',
                 data: totals
             }
         } only %}

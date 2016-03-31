@@ -32,7 +32,8 @@ define(function(require) {
                 totals: '[data-totals-container]'
             },
             events: [],
-            skipMaskView: false
+            skipMaskView: false,
+            application: ''
         },
 
         /**
@@ -105,7 +106,29 @@ define(function(require) {
 
             this.initializeListeners();
 
-            this.render(this.options.data);
+            var totals = this.setDefaultTemplatesForData(this.options.data);
+
+            this.render(totals);
+        },
+
+        setDefaultTemplatesForData: function(totals) {
+            var i;
+
+            if (this.options.application === 'frontend') {
+                if (totals.subtotals) {
+                    var frontendSubtotalsTemplate = $('#frontend-subtotals-template').text();
+
+                    for (i in totals.subtotals) {
+                        if (totals.subtotals.hasOwnProperty(i)) {
+                            if (!totals.subtotals[i].template) {
+                                totals.subtotals[i].template = frontendSubtotalsTemplate;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return totals;
         },
 
         initializeListeners: function() {
@@ -149,6 +172,7 @@ define(function(require) {
                     this.getTotals(_.bind(function(totals) {
                         this.hideLoadingMask();
                         this.triggerTotalsUpdateEvent(totals);
+                        totals = this.setDefaultTemplatesForData(totals);
                         this.render(totals);
                     }, this));
                 }
