@@ -103,7 +103,6 @@ define(function(require) {
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
             this.eventName = 'total-target:changing';
 
-            this.updateTotals();
             this.initializeListeners();
 
             this.render(this.options.data);
@@ -215,7 +214,7 @@ define(function(require) {
          */
         render: function(totals) {
             this.items = [];
-
+debugger;
             _.each(totals.subtotals, _.bind(this.pushItem, this));
 
             this.pushItem(totals.total);
