@@ -176,6 +176,11 @@ trait CheckoutTrait
     protected $shippingEstimate;
 
     /**
+     * @var Price
+     */
+    protected $shippingCost;
+
+    /**
      * @return Account
      */
     public function getAccount()
@@ -571,6 +576,31 @@ trait CheckoutTrait
     public function setShippingEstimate($shippingEstimate = null)
     {
         $this->shippingEstimate = $shippingEstimate;
+
+        $this->updateShippingEstimate();
+
+        return $this;
+    }
+
+    /**
+     * Get shipping estimate
+     *
+     * @return Price|null
+     */
+    public function getShippingCost()
+    {
+        return $this->shippingCost;
+    }
+
+    /**
+     * Set shipping estimate
+     *
+     * @param Price $shippingCost
+     * @return $this
+     */
+    public function setShippingCost($shippingCost = null)
+    {
+        $this->shippingCost = $shippingCost;
 
         $this->updateShippingEstimate();
 
