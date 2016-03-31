@@ -48,7 +48,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
         return [
             [
                 'visibleCategories' => [
-                    'Product Catalog',
+                    'Master catalog',
                     'category_1',
                     'category_1_5',
                 ],
@@ -90,7 +90,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
             [
                 'categoryToHide' => 'category_1_5',
                 'visibleCategories' => [
-                    'Product Catalog',
+                    'Master catalog',
                     'category_1',
                 ],
                 'invisibleCategories' => [
@@ -134,7 +134,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
             [
                 'categoryToShow' => 'category_1_2',
                 'visibleCategories' => [
-                    'Product Catalog',
+                    'Master catalog',
                     'category_1',
                     'category_1_2',
                     'category_1_2_3',
@@ -177,7 +177,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
             [
                 'categoryToShow' => 'category_1',
                 'visibleCategories' => [
-                    'Product Catalog',
+                    'Master catalog',
                 ],
                 'invisibleCategories' => [
                     'category_1',
@@ -220,7 +220,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
             [
                 'categoryToShow' => 'category_1',
                 'visibleCategories' => [
-                    'Product Catalog',
+                    'Master catalog',
                     'category_1',
                     'category_1_2',
                     'category_1_2_3',
