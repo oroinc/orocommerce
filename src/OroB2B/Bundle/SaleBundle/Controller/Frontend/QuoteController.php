@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\SaleBundle\Controller\Frontend;
 
-use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,6 +15,8 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteToOrderType;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 
@@ -121,8 +122,17 @@ class QuoteController extends Controller
             'data' => [
                 'data' => $quoteDemand,
                 'form' => $form->createView(),
-                'quote' => $quoteDemand->getQuote()
+                'quote' => $quoteDemand->getQuote(),
+                'totals' => (object)$this->getTotalProcessor()->getTotalWithSubtotalsAsArray($quoteDemand)
             ]
         ];
+    }
+
+    /**
+     * @return TotalProcessorProvider
+     */
+    protected function getTotalProcessor()
+    {
+        return $this->get('orob2b_pricing.subtotal_processor.total_processor_provider');
     }
 }

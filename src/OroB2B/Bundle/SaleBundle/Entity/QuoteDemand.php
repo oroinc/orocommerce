@@ -4,17 +4,14 @@ namespace OroB2B\Bundle\SaleBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
-use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
-use Oro\Bundle\UserBundle\Entity\User;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountAwareInterface;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
@@ -29,7 +26,7 @@ use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *      }
  * )
  */
-class QuoteDemand implements CheckoutSourceEntityInterface
+class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterface, ShippingAwareInterface
 {
     /**
      * @var int
@@ -113,5 +110,24 @@ class QuoteDemand implements CheckoutSourceEntityInterface
             $this->demandProducts->remove($demandOffer);
         }
         return $this;
+    }
+
+    /**
+     * @return ArrayCollection|QuoteProductDemand[]
+     */
+    public function getLineItems()
+    {
+        return $this->demandProducts;
+    }
+
+    /**
+     * @return Price|null
+     */
+    public function getShippingCost()
+    {
+        if ($this->quote) {
+            return $this->quote->getShippingEstimate();
+        }
+        return null;
     }
 }

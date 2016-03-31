@@ -1,25 +1,55 @@
 {% block _quote_choice_page_widget %}
     <div{{ block('block_attributes') }}>
-        <form method="POST"
-              data-nohash="true"
-              data-disable-autofocus="true"
-              id="{{ form.vars.id }}"
-              name="{{ form.vars.name }}"
-              class="form-dialog"
-        >
-            {{ form_widget(form) }}
-
-            <div class="order-checkout-widget order-checkout-widget_block">
-                <div class="text-left">
-                    <a href="{{ path('orob2b_sale_quote_frontend_view', {id: quote.id}) }}"><i class="cf-left-open-mini"></i><span>Back to Quote</span></a>
-                </div>
-                <div class=" text-right mb4-md">
-                    <button class="btn theme-btn btn-orange" type="submit">{{ 'orob2b.frontend.sale.quote.submit_to_order.submit'|trans }}</button>
-                </div>
-            </div>
-        </form>
-        {{ oro_form_js_validation(form) }}
         {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _quot_choise_form_widget %}
+    <form method="POST"
+          data-nohash="true"
+          data-disable-autofocus="true"
+          id="{{ form.vars.id }}"
+          name="{{ form.vars.name }}"
+          class="form-dialog"
+    >
+        {{ form_widget(form) }}
+        <div class="order-checkout-widget order-checkout-widget_block text-right">
+            {{ block_widget(block) }}
+        </div>
+    </form>
+    {{ oro_form_js_validation(form) }}
+{% endblock %}
+
+{% block _quote_choise_back_button_widget %}
+    <div class="order-builder-clear-btn">
+        <a href="{{ path('orob2b_sale_quote_frontend_view', {id: quote.id}) }}"><i class="cf-left-open-mini"></i><span>Back to Quote</span></a>
+    </div>
+{% endblock %}
+
+{% block _quote_choise_submit_button_widget %}
+    <div class=" order-checkout-widget order-checkout-widget_block text-right mb4-md">
+        <div class=" text-right mb4-md">
+            <button class="btn theme-btn btn-orange" type="submit">{{ 'orob2b.frontend.sale.quote.submit_to_order.submit'|trans }}</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _quote_choise_subtotals_widget %}
+    <div class="order-checkout-widget__container-wrapper">
+        <div class="order-checkout-widget__container order-checkout-widget__container_lg">
+            <table class="order-checkout-widget__table pull-right">
+                {% for subtotal in subtotals %}
+                    <tr>
+                        <td>{{ subtotal.label }}</td>
+                        <td>{{ subtotal.amount|oro_format_currency({'currency': subtotal.currency}) }}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td class="order-checkout-widget__total"><span class="text-uppercase">{{ total.label }}</span></td>
+                    <td class="order-checkout-widget__total"><span class="blue">{{ total.amount|oro_format_currency({'currency': total.currency}) }}</span></td>
+                </tr>
+            </table>
+        </div>
     </div>
 {% endblock %}
 

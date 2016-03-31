@@ -4,7 +4,11 @@ namespace OroB2B\Bundle\SaleBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use OroB2B\Bundle\PricingBundle\Entity\QuantityAwareInterface;
+use OroB2B\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 
 /**
  * SelectedOffers
@@ -19,7 +23,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *      }
  * )
  */
-class QuoteProductDemand
+class QuoteProductDemand implements PriceAwareInterface, QuantityAwareInterface, PriceTypeAwareInterface
 {
     /**
      * @var int
@@ -50,6 +54,11 @@ class QuoteProductDemand
      * @ORM\Column(name="quantity", type="float")
      */
     protected $quantity;
+
+    /**
+     * @var Price
+     */
+    protected $price;
 
     /**
      * SelectedOffer constructor.
@@ -110,5 +119,30 @@ class QuoteProductDemand
     public function setQuoteDemand($quoteDemand)
     {
         $this->quoteDemand = $quoteDemand;
+    }
+
+    /**
+     * @return Price
+     */
+    public function getPrice()
+    {
+        return $this->getQuoteProductOffer()->getPrice();
+    }
+
+    /**
+     * @param Price $price
+     * @return $this
+     */
+    public function setPrice(Price $price = null)
+    {
+        throw new \LogicException('Price can\'t be changed to this entity');
+    }
+
+    /**
+     * @return int
+     */
+    public function getPriceType()
+    {
+        return $this->getQuoteProductOffer()->getPriceType();
     }
 }
