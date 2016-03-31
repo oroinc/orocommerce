@@ -29,4 +29,48 @@ class NVPClientTest extends \PHPUnit_Framework_TestCase
     {
         unset($this->client, $this->encoder, $this->httpClient);
     }
+
+    public function testSend()
+    {
+        $options = [];
+        $encodedData = 'encoded[4]=data';
+        $responseString = 'response=string';
+        $responseArray = ['response' => 'string'];
+
+        $this->encoder
+            ->expects($this->once())
+            ->method('encode')
+            ->with($options)
+            ->willReturn($encodedData);
+
+        $response = $this->getMockBuilder('Guzzle\Http\Message\Response')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $response
+            ->expects($this->once())
+            ->method('getBody')
+            ->with(true)
+            ->willReturn($responseString);
+
+        $request = $this->getMock('Guzzle\Http\Message\RequestInterface');
+        $request
+            ->expects($this->once())
+            ->method('send')
+            ->willReturn($response);
+
+        $this->httpClient
+            ->expects($this->once())
+            ->method('post')
+            ->with(NVPClient::PILOT_HOST_ADDRESS, [], $encodedData)
+            ->willReturn($request);
+
+        $this->encoder
+            ->expects($this->once())
+            ->method('decode')
+            ->with($responseString)
+            ->willReturn($responseArray);
+
+        $this->assertEquals($responseArray, $this->client->send($options));
+    }
 }
