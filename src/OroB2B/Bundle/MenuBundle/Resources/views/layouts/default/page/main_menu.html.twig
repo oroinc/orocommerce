@@ -12,18 +12,13 @@
 {% endblock %}
 
 {% block _main_menu_widget %}
-    {{ block_widget(block, {
-        listTag: false,
-        attr: {
-            class: 'top-nav__list'
-        },
-        child_attr: {
-            class: 'top-nav__list__item'
-        },
-        link_attr: {
-            class: 'top-nav__list__item__link'
-        }
-    }) }}
+    {% for child in item.children -%}
+        <li class="top-nav__list__item">
+            <a href="{{ app.request.getUriForPath(child.uri) }}" class="top-nav__list__item__link">
+                <span>{{ child.label }} </span>
+            </a>
+        </li>
+    {%- endfor %}
 {% endblock %}
 
 {% block _main_menu_widgets_widget %}

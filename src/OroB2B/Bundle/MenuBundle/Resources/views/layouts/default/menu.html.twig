@@ -27,16 +27,11 @@
 {% endblock %}
 
 {% block list %}
-    {% if listTag is not defined %}{% set listTag = true %}{% endif %}
     {% if item.hasChildren and options.depth is not sameas(0) and item.displayChildren %}
         {% import _self as oro_menu %}
-        {% if listTag %}
-            <ul{{ oro_menu.attributes(listAttributes) }}>
-                {{ block('children') }}
-            </ul>
-        {% else %}
+        <ul{{ oro_menu.attributes(listAttributes) }}>
             {{ block('children') }}
-        {% endif %}
+        </ul>
     {% endif %}
 {% endblock %}
 
