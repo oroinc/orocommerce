@@ -26,9 +26,9 @@ workflows:
             billing_address_has_shipping:
                 type: boolean
                 label: If billing address also shipping
-            allow_source_remove:
+            allow_manual_source_remove:
                 type: boolean
-                label: Allow source entity removal
+                label: Allow manual source entity removal
             disallow_billing_address_edit:
                 type: boolean
                 label: Disallow billing address edit
@@ -41,15 +41,15 @@ workflows:
             remove_source:
                 type: boolean
                 label: orob2b.checkout.workflow.b2b_flow_checkout.attribute.remove_source.label
+            auto_remove_source:
+                type: boolean
+                label: Always remove source entity automatically
             source_remove_label:
                 type: string
                 label: Label for remove source
             edit_order_link:
                 type: string
                 label: Edit Order Link
-            source_options:
-                type: array
-                label: ' '
         steps:
             enter_billing_address:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.step.enter_billing_address.label
@@ -74,22 +74,12 @@ workflows:
                 order: 40
                 allowed_transitions:
                     - continue_to_place_order
-                    - continue_to_confirm
                     - back_to_billing_address
                     - back_to_shipping_address
                     - back_to_shipping_method
-            confirm_order:
-                label: orob2b.checkout.workflow.b2b_flow_checkout.step.confirm_order.label
-                order: 50
-                allowed_transitions:
-                    - continue_to_place_order
-                    - back_to_billing_address
-                    - back_to_shipping_address
-                    - back_to_shipping_method
-                    - back_to_payment
             place_order:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.step.place_order.label
-                order: 60
+                order: 50
                 is_final: true
                 allowed_transitions:
                     - place_order
@@ -170,13 +160,6 @@ workflows:
                 frontend_options:
                     is_checkout_continue: true
 
-            continue_to_confirm:
-                label: orob2b.checkout.workflow.b2b_flow_checkout.transition.continue_to_confirm.label
-                step_to: confirm_order
-                transition_definition: do_nothing
-                frontend_options:
-                    is_checkout_continue: true
-
             back_to_billing_address:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.back_to_billing_address.label
                 step_to: enter_billing_address
@@ -219,10 +202,11 @@ workflows:
                         ship_until: ~
                         customer_notes:
                             form_type: textarea
+
         transition_definitions:
             __start___definition:
                 pre_conditions:
-                    @assert_user_group: 1
+                    @assert_user_group: 2
             do_nothing: ~
             back_to_billing_address_definition:
                 post_actions:
@@ -259,6 +243,7 @@ workflows:
                     - @assign_value:
                         conditions:
                             @and:
+                                - @equal: [$disallow_shipping_address_edit, false]
                                 - @equal: [$checkout.shipToBillingAddress, true]
                                 - @equal: [$billing_address_has_shipping, true]
                         parameters: [$checkout.shippingAddress, $checkout.billingAddress]
@@ -399,6 +384,7 @@ workflows:
                             accountUser: $checkout.accountUser
                             billingAddress: $checkout.billingAddress
                             shippingAddress: $.result.shippingAddress
+                            shippingCost: $checkout.shippingCost
                             poNumber: $checkout.poNumber
                             customerNotes: $checkout.customerNotes
                             shipUntil: $checkout.shipUntil
@@ -432,9 +418,11 @@ workflows:
                                 parameters: [$.result.customerShippingAddress]
                             - @remove_entity:
                                 conditions:
-                                    @and:
-                                        - @equal: [$.data.allow_source_remove, true]
-                                        - @equal: [$.data.remove_source, true]
+                                    @or:
+                                        - @equal: [$auto_remove_source, true]
+                                        - @and:
+                                            - @equal: [$allow_manual_source_remove, true]
+                                            - @equal: [$remove_source, true]
                                 parameters: [$checkout.sourceEntity]
                             - @remove_entity: $checkout
                             - @redirect:
