@@ -38,6 +38,11 @@ operations:
             icon: icon-time
         acl_resource: orob2b_alternativecheckout_checkout_approve
         actions:
+            - @find_entity:
+                class: OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource
+                attribute: $.checkoutSource
+                where:
+                   quote: $.data
             - @redirect:
                 route: 'orob2b_sale_quote_index'
 
