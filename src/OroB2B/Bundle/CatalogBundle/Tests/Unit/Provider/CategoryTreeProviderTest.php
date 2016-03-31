@@ -68,7 +68,7 @@ class CategoryTreeProviderTest extends \PHPUnit_Framework_TestCase
             ->with(CategoryTreeCreateAfterEvent::NAME, $event)
             ->willReturn($visibleCategories);
 
-        $actual = $this->provider->getCategories($user, null, null);
+        $actual = $this->provider->getCategories($user, null, false);
 
         $this->assertEquals($visibleCategories, $actual);
     }

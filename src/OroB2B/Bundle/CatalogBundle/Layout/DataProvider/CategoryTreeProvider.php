@@ -35,7 +35,7 @@ class CategoryTreeProvider extends AbstractServerRenderDataProvider
         $userId = $user ? $user->getId() : null;
 
         if (!$this->data[$userId]) {
-            $categories = $this->categoryProvider->getCategories($user, null, null);
+            $categories = $this->categoryProvider->getCategories($user, null, false);
             $rootCategory = $this->findRootCategory($categories);
 
             $this->data[$userId] = [

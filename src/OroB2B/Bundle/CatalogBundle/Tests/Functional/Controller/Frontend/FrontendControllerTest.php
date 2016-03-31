@@ -36,7 +36,7 @@ class FrontendControllerTest extends WebTestCase
         $categories = $this->getContainer()->get('orob2b_catalog.provider.category_tree_provider')->getCategories(
             $loggedUser,
             null,
-            null
+            false
         );
 
         /** @var Category[] $categories */

@@ -36,11 +36,11 @@ class CategoryTreeProvider
 
     /**
      * @param UserInterface|null $user
-     * @param null $root
+     * @param Category|null $root
      * @param bool $includeRoot
      * @return Category[]
      */
-    public function getCategories($user, $root, $includeRoot)
+    public function getCategories($user, $root = null, $includeRoot = true)
     {
         $categories = $this->categoryRepository->getChildrenWithTitles($root, false, 'left', 'ASC', $includeRoot);
 
