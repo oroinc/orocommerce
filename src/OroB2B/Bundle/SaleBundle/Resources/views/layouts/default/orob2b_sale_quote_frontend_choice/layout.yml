@@ -71,3 +71,5 @@ layout:
                                 quote_choise_back_button: ~
                                 quote_choise_subtotals: ~
                                 quote_choise_submit_button: ~
+    conditions:
+        @empty: [$context.widget_container]

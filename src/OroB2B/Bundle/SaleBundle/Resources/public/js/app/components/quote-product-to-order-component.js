@@ -8,6 +8,7 @@ define(function(require) {
     var _ = require('underscore');
     var $ = require('jquery');
     var routing = require('routing');
+    var mediator = require('oroui/js/mediator');
 
     QuoteProductToOrderComponent = BaseComponent.extend({
         /**
@@ -19,6 +20,7 @@ define(function(require) {
             unitInputSelector: '.unitInput',
             unitSelector: '.unit',
             unitPriceSelector: '.unitPrice',
+            subtotalSelector: '#quote-choie-subtotal',
             data_attributes: {
                 unit: 'unit',
                 formatted_unit: 'formatted-unit',
@@ -128,12 +130,41 @@ define(function(require) {
                         self.updateUnitPriceValue(String(response.price));
                         self.updateSelector(response.id);
                         self.setValidAttribute(self.$quantity, true);
+                        self.loadSubtotals();
                     } else {
                         self.updateUnitPriceValue(self.options.notAvailableMessage);
                         self.setValidAttribute(self.$quantity, false);
                     }
                 }
             });
+        },
+
+        loadSubtotals: function(value) {
+            //TODO: submit form
+            var url = window.location.href;
+            var widgetParameters = '_widgetContainer=ajax';
+            url += (-1 !== _.indexOf(url, '?') ? '&' : '?') + widgetParameters;
+
+            var data = data || {method: 'GET'};
+            data.url = url;
+            $.ajax(data)
+                .done(_.bind(this.onSubtotalSuccess, this))
+                .fail(_.bind(this.onSubtotalFail, this));
+        },
+
+        onSubtotalSuccess: function(response) {
+            if (response.hasOwnProperty('redirectUrl')) {
+                mediator.execute('redirectTo', {url: response.redirectUrl}, {redirect: true});
+            } else {
+                var $response = $('<div/>').html(response);
+                var $content = $(this.options.subtotalSelector);
+                $content.html($response.find(this.options.subtotalSelector).html());
+            }
+        },
+
+        onSubtotalFail: function() {
+            this.inProgress = false;
+            mediator.execute('showFlashMessage', 'error', 'Could not perform transition');
         },
 
         /**
