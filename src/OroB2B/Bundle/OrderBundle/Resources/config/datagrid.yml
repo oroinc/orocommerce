@@ -89,12 +89,7 @@ datagrid:
             view_link:
                 type:  url
                 params: [ id ]
-            update_link:
-                type: url
-                params: [ id ]
-            delete_link:
-                type: url
-                params: [ id ]
+
         actions:
             view:
                 type:          navigate
@@ -153,10 +148,6 @@ datagrid:
             id: ~
             view_link:
                 route: orob2b_order_frontend_view
-            update_link:
-                route: orob2b_order_frontend_update
-            delete_link:
-                route: orob2b_api_frontend_delete_order
         actions:
             view:
                 acl_resource:  orob2b_order_frontend_view
