@@ -44,7 +44,7 @@
         </form>
         {{ oro_form_js_validation(form) }}
         {% else %}
-            <form method="post" action="">
+            <form method="post" class="checkout__form" action="">
             {{ block_widget(block) }}
             </form>
         {% endif %}

@@ -36,6 +36,7 @@ layout:
             id: checkout_form_buttons
             siblingId: checkout_form_fields
             prepend: false
+
     conditions:
         @and:
             - @eq: [$context.workflowStepName, 'approved_request']
