@@ -90,7 +90,7 @@
 
         <tr class="borderless t_paddingless">
             {% set notes = form.comment %}
-            <td colspan="5">
+            <td colspan="5" class="comment">
                 <div class="checkbox_custom-wrapper" >
                     <label for="{{ 'lineItem-'~prototype_name }}" class="checkbox_custom checkbox_custom_blue
                                     {% if notes is not empty %} checked {% endif %}" data-checkbox>
@@ -108,7 +108,6 @@
                 </div>
             </td>
         </tr>
-
     </tbody>
 {% endmacro %}
 
