@@ -5,9 +5,14 @@ layout:
         - @setFormTheme:
             themes: 'OroB2BPaymentBundle:layouts:default/orob2b_payment_term_creditcard/form.html.twig'
         - @add:
-            id: payment_term_form
+            id: payment_term_method
             parentId: payment_methods
             blockType: container
+            options:
+                vars:
+                    form_block_name: payment_term_form_fields
+                block_prefixes:
+                    - payment_method
         - @addTree:
             items:
                 payment_term_form_start:
@@ -23,7 +28,7 @@ layout:
                     options:
                         form: { @value: $data.orob2b_payment_payment_term_form_provider }
             tree:
-                payment_term_form:
+                payment_term_method:
                     payment_term_form_start: ~
                     payment_term_form_fields: ~
                     payment_term_form_end: ~

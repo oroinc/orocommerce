@@ -78,13 +78,11 @@ class CreditCardType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $label = $this->configManager->get('oro_b2b_payment.' . self::CONFIG_NAME . '_label');
-        $enabled = $this->configManager->get('oro_b2b_payment.' . self::CONFIG_NAME . '_enabled');
+        $label = $this->configManager->get('orob2b_payment.' . self::CONFIG_NAME . '_label');
 
         $resolver->setDefaults(
             [
-                'label' => empty($label) ? 'orob2b.payment.methods.credit_card.label' : $label,
-                'enabled' => $enabled,
+                'label' => empty($label) ? 'orob2b.payment.methods.credit_card.label' : $label
             ]
         );
     }
@@ -98,10 +96,8 @@ class CreditCardType extends AbstractType
             $child->vars['full_name'] = $child->vars['name'];
         }
 
-        $view->vars['block_prefixes'] = array_merge(
-            $view->vars['block_prefixes'],
-            ['payment_method_form']
-        );
+        $enabled = $this->configManager->get('orob2b_payment.' . self::CONFIG_NAME . '_enabled');
+        $view->vars['method_enabled'] = $enabled;
     }
 
     /**

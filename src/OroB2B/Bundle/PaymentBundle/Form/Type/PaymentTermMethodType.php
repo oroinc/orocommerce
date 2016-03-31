@@ -54,13 +54,12 @@ class PaymentTermMethodType extends AbstractType
 
         /** @var AccountUser $user */
         if ($token && ($user = $token->getUser()) instanceof AccountUser) {
-            $view->vars['payment_term'] = $this->paymentTermProvider->getPaymentTerm($user->getAccount())->getLabel();
+            $paymentTerm = $this->paymentTermProvider->getPaymentTerm($user->getAccount())->getLabel();
+        } else {
+            $paymentTerm = '';
         }
-
-        $view->vars['block_prefixes'] = array_merge(
-            $view->vars['block_prefixes'],
-            ['payment_method_form']
-        );
+        $view->vars['method_enabled'] = !empty($paymentTerm);
+        $view->vars['payment_term'] = $paymentTerm;
     }
 
     /**

@@ -14,7 +14,9 @@ define(function(require) {
             selectors: {
                 radio: '[data-choice]',
                 item_container: '[data-item-container]',
-                subform: '[data-form-container]'
+                subform: '[data-form-container]',
+                submit_button: '[data-payment-method-submit]',
+                no_methods: 'payment-no-methods'
             }
         },
 
@@ -24,22 +26,38 @@ define(function(require) {
         $el: null,
 
         /**
+         * @property {jQuery}
+         */
+        $radios: null,
+
+        /**
          * @inheritDoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
             this.$el = this.options._sourceElement;
+            this.$radios = this.$el.find(this.options.selectors.radio);
 
-            this.updateForms();
-            this.$el.find(this.options.selectors.radio).on('change', _.bind(this.updateForms, this));
+            if (this.$radios.length) {
+                this.updateForms();
+                _.each(
+                    this.$radios,
+                    function(item) {
+                        $(item).on('click', _.bind(this.updateForms, this));
+                    },
+                    this
+                );
+            } else {
+                var $noMethods = this.$el.find('[data-' + this.options.selectors.no_methods + ']');
+                $noMethods.html($noMethods.data(this.options.selectors.no_methods));
+            }
         },
 
         updateForms: function() {
-            var $radios = this.$el.find(this.options.selectors.radio);
-            var $selected = $radios.filter(':checked');
+            var $selected = this.$radios.filter(':checked');
             _.each(
-                $radios,
+                this.$radios,
                 function(item) {
                     var $item = $(item);
                     if ($item.data('choice') == $selected.data('choice')) {
