@@ -16,25 +16,17 @@
     {% set hasSublist = category.childCategories is not empty %}
     <a href="{{ path('orob2b_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}"
        class="top-nav__list__item__link">
-        <span>{{ category.defaultTitle }}
-            {% if hasSublist %}
-                <i class="cf-down-open-mini"></i>
-            {% endif %}
-        </span>
+        <span>{{ category.defaultTitle }} </span>
+        {% if hasSublist %}
+            <i class="cf-down-open-mini"></i>
+        {% endif %}
     </a>
     {% if hasSublist %}
         <!-- START TOP NAVIGATION SUBLIST -->
         <div class="top-nav__sublist-container">
             <ul class="top-nav__sublist">
                 {% do block|merge_context({'categories': category.childCategories }) %}
-                {% for child in block -%}
-                    {% set attr = child.vars.attr|merge({
-                        class: child.vars.attr.class|default('') ~ " top-nav__sublist__item"
-                    }) %}
-                    <li {{ block('block_attributes') }}>
-                        {{ block_widget(child) }}
-                    </li>
-                {% endfor %}
+                {{ block_widget(block) }}
             </ul>
         </div>
         <!-- ENDTOP NAVIGATION SUBLIST -->
@@ -43,19 +35,20 @@
 
 {% block _categories_main_menu_second_level_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " top-nav__sublist__title"
+        class: attr.class|default('') ~ " top-nav__sublist__item"
     }) %}
-
-    <div {{ block('block_attributes') }}>By Category</div>
-    {% for category in categories %}
-        {% do block|merge_context({'category': category}) %}
-        {{ block('container_widget') }}
-    {% endfor %}
+    <li {{ block('block_attributes') }}>
+        <div class="top-nav__sublist__title">By Category</div>
+        {% for category in categories %}
+            {% do block|merge_context({'category': category}) %}
+            {{ block('container_widget') }}
+        {% endfor %}
+    </li>
 {% endblock %}
 
 {% block _categories_main_menu_second_level_item_widget %}
     {% set hasSublist = category.childCategories is not empty %}
-    {% set class = attr.class|default('') ~ " top-nav__sublist_nested" %}
+    {% set class = attr.class|default('') ~ " top-nav__sublist_nested top-nav__sublist__item_has-2columns" %}
     {% set class = hasSublist ? class ~ " top-nav__sublist_nested_has-sibling" : class %}
     {% set attr = attr|merge({class: class}) %}
     <ul {{ block('block_attributes') }}>
@@ -93,19 +86,24 @@
 {% endblock %}
 
 {% block _categories_main_menu_second_level_sales_widget %}
-    <div class="top-nav__sublist__title">On Sale</div>
-    <div class="adv-block">
-        <a href="#">
-            <img class="img-responsive"
-                 src="{% image '@OroB2BCatalogBundle/Resources/public/default/images/adv_1.jpg' %}{{ asset_url }}{% endimage %}"
-                 alt="">
-        </a>
-    </div>
-    <div class="adv-block">
-        <a href="#">
-            <img class="img-responsive"
-                 src="{% image '@OroB2BCatalogBundle/Resources/public/default/images/adv_2.jpg' %}{{ asset_url }}{% endimage %}"
-                 alt="">
-        </a>
-    </div>
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " top-nav__sublist__item top-nav__sublist__item_has-sales-block"
+    }) %}
+    <li {{ block('block_attributes') }}>
+        <div class="top-nav__sublist__title">On Sale</div>
+        <div class="sales-block">
+            <a href="#">
+                <img class="img-responsive"
+                     src="{% image '@OroB2BCatalogBundle/Resources/public/default/images/adv_1.jpg' %}{{ asset_url }}{% endimage %}"
+                     alt="">
+            </a>
+        </div>
+        <div class="sales-block">
+            <a href="#">
+                <img class="img-responsive"
+                     src="{% image '@OroB2BCatalogBundle/Resources/public/default/images/adv_2.jpg' %}{{ asset_url }}{% endimage %}"
+                     alt="">
+            </a>
+        </div>
+    </li>
 {% endblock %}

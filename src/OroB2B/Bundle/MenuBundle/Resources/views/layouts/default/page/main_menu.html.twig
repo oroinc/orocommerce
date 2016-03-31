@@ -12,17 +12,13 @@
 {% endblock %}
 
 {% block _main_menu_widget %}
-    <li>{{ block_widget(block, {
-        attr: {
-            class: 'top-nav__list'
-        },
-        child_attr: {
-            class: 'top-nav__list__item'
-        },
-        link_attr: {
-            class: 'top-nav__list__item__link'
-        }
-    }) }}</li>
+    {% for child in item.children -%}
+        <li class="top-nav__list__item">
+            <a href="{{ app.request.getUriForPath(child.uri) }}" class="top-nav__list__item__link">
+                <span>{{ child.label }} </span>
+            </a>
+        </li>
+    {%- endfor %}
 {% endblock %}
 
 {% block _main_menu_widgets_widget %}
@@ -39,9 +35,9 @@
     <li {{ block('block_attributes') }}>
         <button class="messages-widget__trigger" data-oro-mpa-trigger>
             <span class="badge badge_xs badge_circle badge_blue messages-widget__badge">3</span>
-            <span class="badge badge_md badge_circle badge_dark"><i class="icon-comment"></i></span>
+            <span class="badge badge_md badge_circle badge_dark"><i class="cf-comment"></i></span>
             <span class="messages-widget__title text-uppercase">Messages</span>
-            <i class="icon-down-open-mini"></i>
+            <i class="cf-down-open-mini"></i>
         </button>
     </li>
 {% endblock %}
@@ -53,10 +49,10 @@
     <li {{ block('block_attributes') }}>
         <div class="cart-widget__content">
             <span class="badge badge_md badge_circle badge_orange badge_i-block cart-widget__clipboard">
-              <i class="icon-clipboard"></i>
+              <i class="cf-clipboard"></i>
             </span>
             <span class="cart-widget__list-trigger">
-              <span class="cart-widget-text">Orders</span> <strong>$1,345</strong> <i class="icon-down-open-mini"></i>
+              <span class="cart-widget-text">Orders</span> <strong>$1,345</strong> <i class="cf-down-open-mini"></i>
             </span>
         </div>
     </li>

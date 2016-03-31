@@ -24,21 +24,21 @@
 
 {% block _top_nav_controls_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " col-md-5 col-sm-5 text-right not-implemented"
+        class: attr.class|default('') ~ " col-md-5 col-sm-5 text-right"
     }) %}
     <div {{ block('block_attributes') }}>
         <div class="topbar__controls">
-            <a href="#" class="cart__promo__link ">
+            <a href="{{ app.request.getUriForPath('/about') }}" class="cart__promo__link ">
                 <span>Fast &amp; Free Shipping</span> for orders over $45
             </a>
-            <span class="currency">
+            {#<span class="currency">
               <span>$</span>
               <i class="icon-down-open-mini"></i>
             </span>
             <span class="language">
               <span>Eng</span>
               <i class="icon-down-open-mini"></i>
-            </span>
+            </span>#}
         </div>
     </div>
 {% endblock %}
