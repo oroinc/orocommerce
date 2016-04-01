@@ -11,16 +11,23 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Validation;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+
 use OroB2B\Bundle\PaymentBundle\Form\Type\CreditCardExpirationDateType;
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer;
 use OroB2B\Bundle\PaymentBundle\Form\Type\CreditCardType;
 
 class CreditCardTypeTest extends FormIntegrationTestCase
 {
+    const LABEL = 'test_label';
+
     /**
      * @var CreditCardType
      */
     protected $formType;
+
+    /** @var ConfigManager */
+    protected $configManager;
 
     /**
      * {@inheritDoc}
@@ -29,7 +36,16 @@ class CreditCardTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->formType = new CreditCardType();
+        /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject $configManager */
+        $this->configManager = $this
+            ->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->willReturn(self::LABEL);
+
+        $this->formType = new CreditCardType($this->configManager);
     }
 
     /**
@@ -65,6 +81,7 @@ class CreditCardTypeTest extends FormIntegrationTestCase
                 $this->assertEquals($dataValue, $options[$dataKey]);
             }
         }
+        $this->assertEquals(self::LABEL, $form->getConfig()->getOptions()['label']);
     }
 
     /**
