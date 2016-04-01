@@ -128,7 +128,7 @@ class ProductPriceRepository extends EntityRepository
         $getTierPrices = true,
         $currency = null,
         $productUnitCode = null,
-        array $orderBy = ['price.unit' => 'ASC', 'price.quantity' => 'ASC']
+        array $orderBy = ['unit' => 'ASC', 'quantity' => 'ASC']
     ) {
         if (!$productIds) {
             return [];
@@ -162,7 +162,7 @@ class ProductPriceRepository extends EntityRepository
         }
 
         foreach ($orderBy as $fieldName => $orderDirection) {
-            $qb->addOrderBy($fieldName, $orderDirection);
+            $qb->addOrderBy('price.' . $fieldName, $orderDirection);
         }
 
         return $qb->getQuery()->getResult();

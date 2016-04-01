@@ -216,7 +216,7 @@ class ProductPriceRepositoryTest extends WebTestCase
         array $expectedPrices,
         $getTierPrices = true,
         $currency = null,
-        array $orderBy = ['price.unit' => 'ASC', 'price.quantity' => 'ASC']
+        array $orderBy = ['unit' => 'ASC', 'quantity' => 'ASC']
     ) {
         $priceListId = -1;
         if ($priceList) {
@@ -321,7 +321,7 @@ class ProductPriceRepositoryTest extends WebTestCase
                 'expectedPrices' => ['product_price.5', 'product_price.4', 'product_price.6', 'product_price.12'],
                 'getTierPrices' => true,
                 'currency' => null,
-                ['price.currency' => 'DESC', 'price.unit' => 'ASC', 'price.quantity' => 'ASC']
+                ['currency' => 'DESC', 'unit' => 'ASC', 'quantity' => 'ASC']
             ],
         ];
     }

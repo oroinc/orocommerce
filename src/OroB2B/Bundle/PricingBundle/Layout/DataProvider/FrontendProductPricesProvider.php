@@ -56,9 +56,9 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
                 null,
                 null,
                 [
-                    'price.currency' => 'DESC',
-                    'price.unit' => 'ASC',
-                    'price.quantity' => 'ASC'
+                    'currency' => 'DESC',
+                    'unit' => 'ASC',
+                    'quantity' => 'ASC'
                 ]
             );
         }
