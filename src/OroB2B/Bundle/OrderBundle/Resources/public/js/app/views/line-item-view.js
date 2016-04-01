@@ -21,8 +21,7 @@ define(function(require) {
                 selectors: {
                     productType: '.order-line-item-type-product',
                     freeFormType: '.order-line-item-type-free-form'
-                },
-                isNew: false
+                }
             }, this.options);
 
             LineItemView.__super__.initialize.apply(this, arguments);
@@ -58,8 +57,7 @@ define(function(require) {
                 $priceType: this.fieldsByName.priceType,
                 $productUnit: this.fieldsByName.productUnit,
                 $quantity: this.fieldsByName.quantity,
-                $currency: this.fieldsByName.currency,
-                isNew: this.options.isNew
+                $currency: this.fieldsByName.currency
             }));
         },
 
