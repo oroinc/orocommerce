@@ -399,10 +399,16 @@ orob2b.account:
             account_user_role.edit: Edit Account User Role
         sections:
             account_user_role:
+                label: Role Title
                 users.label: Role Users
         action:
             back.label: "< Back"
             account_user_role.edit: "Edit Role"
+        table:
+            entity:
+                section.label: Section
+                action.label: Action
+                permission.label: Permission
 
     account_typed_address_with_default_type:
         choice.default_text: 'Default %type_name%'
