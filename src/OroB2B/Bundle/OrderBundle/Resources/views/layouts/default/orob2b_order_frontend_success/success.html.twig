@@ -2,7 +2,7 @@
     <div class="checkout__success">
         <h1 class="checkout__success___title">{{ 'orob2b.order.success.thank_you'|trans }}</h1>
         <div class="checkout__success__order">
-            <p>{{ 'orob2b.order.success.order_number'|trans }} <a href="{{ path('orob2b_order_frontend_view', {id: order.id}) }}">#{{ order.id }}</a></p>
+            <p>{{ 'orob2b.order.success.order_number'|trans }} <a href="{{ path('orob2b_order_frontend_view', {id: order.id}) }}">{{ order.id }}</a></p>
             <p>{{ 'orob2b.order.success.receive_email'|trans }}</p>
         </div>
         {#<div class="checkout__success__print">#}

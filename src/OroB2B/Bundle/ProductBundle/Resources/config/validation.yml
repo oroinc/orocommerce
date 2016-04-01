@@ -20,6 +20,8 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
             - Choice: { callback: getStatuses }
         names:
             - Valid: ~
+        shortDescriptions:
+            - Valid: ~
         descriptions:
             - Valid: ~
         organization:

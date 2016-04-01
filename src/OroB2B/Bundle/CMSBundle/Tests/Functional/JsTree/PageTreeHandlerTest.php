@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\CMSBundle\Tests\Functional\JsTree;
 
 use OroB2B\Bundle\CMSBundle\Entity\Page;
+use OroB2B\Bundle\CMSBundle\Migrations\Data\ORM\LoadPageData;
 use OroB2B\Component\Tree\Handler\AbstractTreeHandler;
 use OroB2B\Component\Tree\Test\AbstractTreeHandlerTestCase;
 
@@ -43,11 +44,11 @@ class PageTreeHandlerTest extends AbstractTreeHandlerTestCase
 
         $expectedData = array_reduce($expectedData, function ($result, $data) {
             /** @var Page $entity */
-            $entity = $this->getReference($data['entity']);
+            $entity = $this->getPage($data['entity']);
             $data['id'] = $entity->getId();
             $data['text'] = $entity->getTitle();
             if ($data['parent'] !== AbstractTreeHandler::ROOT_PARENT_VALUE) {
-                $data['parent'] = $this->getReference($data['parent'])->getId();
+                $data['parent'] = $this->getPage($data['parent'])->getId();
             }
             unset($data['entity']);
             $result[$data['id']] = $data;
@@ -136,6 +137,20 @@ class PageTreeHandlerTest extends AbstractTreeHandlerTestCase
                             'opened' => false
                         ],
                     ],
+                    [
+                        'entity' => LoadPageData::ABOUT_TITLE,
+                        'parent' => AbstractTreeHandler::ROOT_PARENT_VALUE,
+                        'state' => [
+                            'opened' => true
+                        ],
+                    ],
+                    [
+                        'entity' => LoadPageData::CONTENT_US_TITLE,
+                        'parent' => AbstractTreeHandler::ROOT_PARENT_VALUE,
+                        'state' => [
+                            'opened' => true
+                        ],
+                    ],
                 ]
             ],
             'all' => [
@@ -163,6 +178,20 @@ class PageTreeHandlerTest extends AbstractTreeHandlerTestCase
                             'opened' => false
                         ],
                     ],
+                    [
+                        'entity' => LoadPageData::ABOUT_TITLE,
+                        'parent' => AbstractTreeHandler::ROOT_PARENT_VALUE,
+                        'state' => [
+                            'opened' => true
+                        ],
+                    ],
+                    [
+                        'entity' => LoadPageData::CONTENT_US_TITLE,
+                        'parent' => AbstractTreeHandler::ROOT_PARENT_VALUE,
+                        'state' => [
+                            'opened' => true
+                        ],
+                    ],
                 ]
             ],
         ];
@@ -178,7 +207,7 @@ class PageTreeHandlerTest extends AbstractTreeHandlerTestCase
      */
     public function testMove($entityReference, $parent, $position, array $expectedStatus, array $expectedData)
     {
-        $entityId = $this->getReference($entityReference)->getId();
+        $entityId = $this->getPage($entityReference)->getId();
         if ($parent !== AbstractTreeHandler::ROOT_PARENT_VALUE) {
             $parent = $this->getReference($parent)->getId();
         }
@@ -205,6 +234,8 @@ class PageTreeHandlerTest extends AbstractTreeHandlerTestCase
                     'page.1_3' => [
                         'parent' => 'page.1_2'
                     ],
+                    LoadPageData::CONTENT_US_TITLE => [],
+                    LoadPageData::ABOUT_TITLE => [],
                 ]
             ],
         ];
@@ -224,5 +255,19 @@ class PageTreeHandlerTest extends AbstractTreeHandlerTestCase
             }
             return $result;
         }, []);
+    }
+
+    /**
+     * @param string $title
+     * @return Page
+     */
+    protected function getPage($title)
+    {
+        $page = $this->getReferenceRepository()->hasReference($title) ? $this->getReference($title) : null;
+        if (!$page) {
+            $page = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BCMSBundle:Page')
+                ->getRepository('OroB2BCMSBundle:Page')->findOneByTitle($title);
+        }
+        return $page;
     }
 }

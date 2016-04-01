@@ -209,6 +209,7 @@ define(function(require) {
                 this.$priceOverridden.on('click', 'a', _.bind(this.setPriceFromMatched, this));
             }
 
+            mediator.on('pricing:set:line-items-from-matched-prices', this.setPriceFromMatched, this);
             mediator.on('pricing:refresh:line-items-matched-prices', this.setMatchedPrices, this);
             mediator.on('pricing:collect:line-items', this.collectLineItems, this);
 
@@ -296,6 +297,7 @@ define(function(require) {
                     this.options.$priceValue.addClass('matched-price');
                 } else {
                     this.renderPriceOverridden();
+                    mediator.trigger('pricing:load:line-item-price-overridden', this.options.$priceValue);
                 }
             } else if (!this.options.disabled) {
                 var matchedPrice = this.getMatchedPriceValue();
