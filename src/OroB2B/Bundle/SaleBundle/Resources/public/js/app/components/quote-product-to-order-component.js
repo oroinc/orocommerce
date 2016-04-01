@@ -141,6 +141,7 @@ define(function(require) {
         },
 
         loadSubtotals: function(value) {
+            return;
             var $form = $(this.options.mainFormSelector);
             $form.ajaxSubmit({
                 data: {
@@ -243,7 +244,7 @@ define(function(require) {
         updateSelector: function(id) {
             this.blockQuantityUpdate = true;
             var selector = $(this.options.offerSelector + '[data-value="' + id + '"]');
-            selector.prop('checked', true);
+            selector.prop('checked', 'checked');
             selector.trigger('change');
             this.blockQuantityUpdate = false;
         },

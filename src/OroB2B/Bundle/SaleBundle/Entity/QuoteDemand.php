@@ -48,6 +48,7 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
      *
      * @ORM\OneToMany(targetEntity="OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand",
      *     mappedBy="quoteDemand", cascade={"all"}, orphanRemoval=true)
+     * @ORM\OrderBy({"id" = "ASC"})
      */
     protected $demandProducts;
 
