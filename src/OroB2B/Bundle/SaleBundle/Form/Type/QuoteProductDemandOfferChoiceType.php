@@ -46,7 +46,6 @@ class QuoteProductDemandOfferChoiceType extends AbstractType
                 'choices_as_values' => true,
                 'choice_label' => function ($value) {
                     $label = '';
-                    // TODO Use unit formatter and translator
                     if ($value instanceof QuoteProductOffer) {
                         $label = $this->unitValueFormatter->formatCode(
                             $value->getQuantity(),
