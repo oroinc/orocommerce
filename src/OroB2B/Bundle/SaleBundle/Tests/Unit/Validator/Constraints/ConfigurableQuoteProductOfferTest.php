@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Validator\Constraints;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductToOrderType;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductDemandType;
 use OroB2B\Bundle\SaleBundle\Validator\Constraints\ConfigurableQuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Validator\Constraints\ConfigurableQuoteProductOfferValidator;
 
@@ -69,70 +69,70 @@ class ConfigurableQuoteProductOfferTest extends \PHPUnit_Framework_TestCase
             [
                 null,
                 'orob2b.sale.quoteproductoffer.configurable.offer.blank',
-                QuoteProductToOrderType::FIELD_QUANTITY
+                QuoteProductDemandType::FIELD_QUANTITY
             ],
             [
                 [],
                 'orob2b.sale.quoteproductoffer.configurable.offer.blank',
-                QuoteProductToOrderType::FIELD_QUANTITY
+                QuoteProductDemandType::FIELD_QUANTITY
             ],
             [
-                [QuoteProductToOrderType::FIELD_QUANTITY => 10],
+                [QuoteProductDemandType::FIELD_QUANTITY => 10],
                 'orob2b.sale.quoteproductoffer.configurable.offer.blank',
-                QuoteProductToOrderType::FIELD_QUANTITY
+                QuoteProductDemandType::FIELD_QUANTITY
             ],
             [
                 [
-                    QuoteProductToOrderType::FIELD_OFFER => new \stdClass(),
-                    QuoteProductToOrderType::FIELD_QUANTITY => 10
+                    QuoteProductDemandType::FIELD_QUOTE_PRODUCT_OFFER => new \stdClass(),
+                    QuoteProductDemandType::FIELD_QUANTITY => 10
                 ],
                 'orob2b.sale.quoteproductoffer.configurable.offer.blank',
-                QuoteProductToOrderType::FIELD_QUANTITY
+                QuoteProductDemandType::FIELD_QUANTITY
             ],
             [
                 [
-                    QuoteProductToOrderType::FIELD_OFFER => $offer,
-                    QuoteProductToOrderType::FIELD_QUANTITY => $offer->getQuantity() - 5
+                    QuoteProductDemandType::FIELD_QUOTE_PRODUCT_OFFER => $offer,
+                    QuoteProductDemandType::FIELD_QUANTITY => $offer->getQuantity() - 5
                 ],
                 'orob2b.sale.quoteproductoffer.configurable.quantity.equal',
-                QuoteProductToOrderType::FIELD_QUANTITY
+                QuoteProductDemandType::FIELD_QUANTITY
             ],
             [
                 [
-                    QuoteProductToOrderType::FIELD_OFFER => $offer,
-                    QuoteProductToOrderType::FIELD_QUANTITY => $offer->getQuantity() + 5
+                    QuoteProductDemandType::FIELD_QUOTE_PRODUCT_OFFER => $offer,
+                    QuoteProductDemandType::FIELD_QUANTITY => $offer->getQuantity() + 5
                 ],
                 'orob2b.sale.quoteproductoffer.configurable.quantity.equal',
-                QuoteProductToOrderType::FIELD_QUANTITY
+                QuoteProductDemandType::FIELD_QUANTITY
             ],
             [
                 [
-                    QuoteProductToOrderType::FIELD_OFFER => $moreOffer,
-                    QuoteProductToOrderType::FIELD_QUANTITY => $moreOffer->getQuantity() - 5
+                    QuoteProductDemandType::FIELD_QUOTE_PRODUCT_OFFER => $moreOffer,
+                    QuoteProductDemandType::FIELD_QUANTITY => $moreOffer->getQuantity() - 5
                 ],
                 'orob2b.sale.quoteproductoffer.configurable.quantity.less',
-                QuoteProductToOrderType::FIELD_QUANTITY
+                QuoteProductDemandType::FIELD_QUANTITY
             ],
             [
                 [
-                    QuoteProductToOrderType::FIELD_OFFER => $moreOffer,
-                    QuoteProductToOrderType::FIELD_QUANTITY => $moreOffer->getQuantity() + 5
+                    QuoteProductDemandType::FIELD_QUOTE_PRODUCT_OFFER => $moreOffer,
+                    QuoteProductDemandType::FIELD_QUANTITY => $moreOffer->getQuantity() + 5
                 ],
                 null,
                 null
             ],
             [
                 [
-                    QuoteProductToOrderType::FIELD_OFFER => $moreOffer,
-                    QuoteProductToOrderType::FIELD_QUANTITY => $moreOffer->getQuantity()
+                    QuoteProductDemandType::FIELD_QUOTE_PRODUCT_OFFER => $moreOffer,
+                    QuoteProductDemandType::FIELD_QUANTITY => $moreOffer->getQuantity()
                 ],
                 null,
                 null
             ],
             [
                 [
-                    QuoteProductToOrderType::FIELD_OFFER => $offer,
-                    QuoteProductToOrderType::FIELD_QUANTITY => $offer->getQuantity()
+                    QuoteProductDemandType::FIELD_QUOTE_PRODUCT_OFFER => $offer,
+                    QuoteProductDemandType::FIELD_QUANTITY => $offer->getQuantity()
                 ],
                 null,
                 null

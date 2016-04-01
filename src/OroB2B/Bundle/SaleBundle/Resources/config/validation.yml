@@ -78,3 +78,11 @@ OroB2B\Bundle\SaleBundle\Entity\QuoteAddress:
         phone:
             - Length:
                 max: 255
+
+OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand:
+    properties:
+        quantity:
+            - NotBlank: ~
+            - GreaterThanZero: ~
+        quoteProductOffer:
+            - NotBlank: ~
