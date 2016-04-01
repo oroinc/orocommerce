@@ -4,8 +4,8 @@ orob2b:
         entity_plural_label: Checkouts
         id.label: Id
         owner.label: Owner
-        account.label: Account
-        account_user.label: Account User
+        account.label: Global Address Book
+        account_user.label: My Address Book
         organization.label: Organization
         customer_notes.label: Customer Notes
         customer_notes.frontend.label: Notes
@@ -13,9 +13,9 @@ orob2b:
         ship_until.label: Do Not Ship Later Than
         billing_address.label: Billing Address
         shipping_address.label: Shipping Address
-        save_billing_address.label: Save Billing Address
-        save_shipping_address.label: Save Shipping Address
-        ship_to_billing_address.label: Ship to Billing Address
+        save_billing_address.label: Save address to my address book
+        save_shipping_address.label: Save address to my address book
+        ship_to_billing_address.label: Ship to billing address
         source.label: Source
         currency.label: Currency
         website.label: Website
@@ -34,12 +34,12 @@ orob2b:
 
         order_review:
             label: Order Review
-            shipping_date: Add last ship to this order
-            shipping_date_placeholder: Shipping Date
-            note: Add a note to the order
-            note_placeholder: Enter your note
-            po_number_placeholder: Add your po number
-            po_number: Add a po number (optional)
+            shipping_date: Do not ship later than
+            shipping_date_placeholder: ""
+            note: Notes
+            note_placeholder: ""
+            po_number_placeholder: ""
+            po_number: PO Number
 
         order_summary:
             label: Order Summary
@@ -51,14 +51,14 @@ orob2b:
             quantity : Quantity
             price : Price
             price_per_item: Price per item
-            total_price: Total Price
+            total_price: Row Total
             total_qty: Total QTY
 
         workflow:
             view_options.label: View Options for this Order
             unavailable_transition.message: Transition could not be performed because:
             b2b_flow_checkout:
-                label: eCommerce Checkout
+                label: Checkout
 
                 attribute:
                     remove_source.label: Remove Source Entity
@@ -91,22 +91,22 @@ orob2b:
 
                     placeholder:
                         address:
-                            label: Enter address label
-                            organization: Enter your organization
-                            street: Enter street
-                            street2: Enter street 2
-                            city: Enter city
-                            zip: Zip
-                            phone: Enter phone number
+                            label: ""
+                            organization: ""
+                            street: ""
+                            street2: ""
+                            city: ""
+                            zip: ""
+                            phone: ""
                         name:
-                            prefix: Enter your name prefix
-                            first_name: Enter your first name
-                            middle_name: Enter your middle name
-                            last_name: Enter your last name
-                            sufix: Enter your name sufix
+                            prefix: ""
+                            first_name: ""
+                            middle_name: ""
+                            last_name: ""
+                            sufix: ""
         form:
-            address.manual: Enter address manually
-            address.select.billing.label: SELECT A BILLING ADDRESS FROM YOUR ACCOUNT
-            address.select.shipping.label: SELECT A SHIPPING ADDRESS FROM YOUR ACCOUNT
+            address.manual: Enter other address
+            address.select.billing.label: SELECT BILLING ADDRESS
+            address.select.shipping.label: SELECT SHIPPING ADDRESS
 
 
