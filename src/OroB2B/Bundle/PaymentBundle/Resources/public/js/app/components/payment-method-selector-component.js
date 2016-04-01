@@ -34,7 +34,7 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
-            this.options = _.defaults(options || {}, this.options);
+            this.options = _.extend(this.options, options);
 
             this.$el = this.options._sourceElement;
             this.$radios = this.$el.find(this.options.selectors.radio);
@@ -52,6 +52,27 @@ define(function(require) {
                 var $noMethods = this.$el.find('[data-' + this.options.selectors.no_methods + ']');
                 $noMethods.html($noMethods.data(this.options.selectors.no_methods));
             }
+        },
+
+        /**
+         * @inheritDoc
+         */
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            if (this.$radios.length) {
+                _.each(
+                    this.$radios,
+                    function (item) {
+                        $(item).off('click', _.bind(this.updateForms, this));
+                    },
+                    this
+                );
+            }
+
+            PaymentMethodSelectorComponent.__super__.dispose.call(this);
         },
 
         updateForms: function() {

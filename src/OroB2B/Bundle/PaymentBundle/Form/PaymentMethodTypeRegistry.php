@@ -20,7 +20,7 @@ class PaymentMethodTypeRegistry
     {
         if (array_key_exists($paymentType->getName(), $this->paymentTypes)) {
             throw new \LogicException(
-                sprintf('Tax payment type with name "%s" already registered', $paymentType->getName())
+                sprintf('Payment method type with name "%s" already registered', $paymentType->getName())
             );
         }
         $this->paymentTypes[$paymentType->getName()] = $paymentType;
@@ -45,7 +45,7 @@ class PaymentMethodTypeRegistry
     {
         if (!array_key_exists($name, $this->paymentTypes)) {
             throw new \LogicException(
-                sprintf('Tax payment type with name "%s" does not exist', $name)
+                sprintf('Payment method type with name "%s" does not exist', $name)
             );
         }
 

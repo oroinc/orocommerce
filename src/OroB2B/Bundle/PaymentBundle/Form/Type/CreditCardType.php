@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer;
+use OroB2B\Bundle\PaymentBundle\DependencyInjection\OroB2BPaymentExtension;
 
 class CreditCardType extends AbstractType
 {
@@ -22,9 +23,7 @@ class CreditCardType extends AbstractType
     /** @var ConfigManager */
     protected $configManager;
 
-    /**
-     * @param ConfigManager $configManager
-     */
+    /** @param ConfigManager $configManager */
     public function __construct(
         ConfigManager $configManager
     ) {
@@ -101,7 +100,9 @@ class CreditCardType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $label = $this->configManager->get('orob2b_payment.' . self::CONFIG_NAME . '_label');
+        $label = $this->configManager->get(
+            OroB2BPaymentExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . self::CONFIG_NAME . '_label'
+        );
 
         $resolver->setDefaults(
             [
@@ -119,7 +120,9 @@ class CreditCardType extends AbstractType
             $child->vars['full_name'] = $child->vars['name'];
         }
 
-        $view->vars['method_enabled'] = $this->configManager->get('orob2b_payment.' . self::CONFIG_NAME . '_enabled');
+        $view->vars['method_enabled'] = $this->configManager->get(
+            OroB2BPaymentExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . self::CONFIG_NAME . '_enabled'
+        );
     }
 
     /**

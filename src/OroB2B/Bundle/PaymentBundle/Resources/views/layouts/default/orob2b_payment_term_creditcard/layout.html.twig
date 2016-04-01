@@ -35,9 +35,7 @@
             </label>
             <div class="checkout__form__payment-container" data-form-container>
                 {% if vars.unique_block_prefix == '_orob2b_payment_term_method' %}
-                    <div>
-                        {{ vars.payment_term }}
-                    </div>
+                    {{ block('payment_term_widget') }}
                 {% else %}
                     {{ block_widget(block) }}
                 {% endif %}
@@ -46,9 +44,9 @@
     {% endif %}
 {% endblock %}
 
-{% block _payment_credit_card_cvv_widget %}
-    <div class="testetstets">
-        {{ block('form_widget_simple') }}
+{% block payment_term_widget %}
+    <div>
+        {{ vars.payment_term }}
     </div>
 {% endblock %}
 
