@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -10,8 +9,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 
-class PaymentTermMethodType extends AbstractType
+class PaymentTermMethodType extends AbstractPaymentMethodType
 {
     const NAME = 'orob2b_payment_term_method';
 
@@ -24,6 +24,11 @@ class PaymentTermMethodType extends AbstractType
      * @var TokenStorageInterface
      */
     protected $tokenStorage;
+
+    /**
+     * @var PaymentTerm
+     */
+    protected $paymentTerm;
 
     /**
      * @param PaymentTermProvider $paymentTermProvider
@@ -50,18 +55,7 @@ class PaymentTermMethodType extends AbstractType
     /** {@inheritdoc} */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $token = $this->tokenStorage->getToken();
-
-        $paymentTermLabel = '';
-        /** @var AccountUser $user */
-        if ($token && ($user = $token->getUser()) instanceof AccountUser) {
-            $paymentTerm = $this->paymentTermProvider->getPaymentTerm($user->getAccount());
-            if ($paymentTerm) {
-                $paymentTermLabel = $paymentTerm->getLabel();
-            }
-        }
-        $view->vars['method_enabled'] = !empty($paymentTerm);
-        $view->vars['payment_term'] = $paymentTermLabel;
+        $view->vars['payment_term'] = $this->paymentTerm ? $this->paymentTerm->getLabel() : '';
     }
 
     /**
@@ -70,5 +64,20 @@ class PaymentTermMethodType extends AbstractType
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isMethodEnabled()
+    {
+        $token = $this->tokenStorage->getToken();
+
+        /** @var AccountUser $user */
+        if ($token && ($user = $token->getUser()) instanceof AccountUser) {
+            $this->paymentTerm = $this->paymentTermProvider->getPaymentTerm($user->getAccount());
+        }
+
+        return !empty($paymentTerm);
     }
 }

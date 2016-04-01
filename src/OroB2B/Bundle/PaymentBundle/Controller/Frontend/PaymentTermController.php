@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 class PaymentTermController extends Controller
 {
     /**
-     * @Route("/creditcard/test", name="orob2b_payment_term_creditcard")
+     * @Route("/creditcard/test", name="orob2b_payment_methods")
      * @Layout()
      *
      * @return array

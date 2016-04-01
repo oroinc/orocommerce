@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PaymentBundle\Form;
 
 use Symfony\Component\Form\FormTypeInterface;
+use OroB2B\Bundle\PaymentBundle\Form\Type\AbstractPaymentMethodType;
 
 class PaymentMethodTypeRegistry
 {
@@ -14,9 +15,9 @@ class PaymentMethodTypeRegistry
     /**
      * Add payment method type to the registry
      *
-     * @param FormTypeInterface $paymentType
+     * @param AbstractPaymentMethodType $paymentType
      */
-    public function addPaymentMethodType(FormTypeInterface $paymentType)
+    public function addPaymentMethodType(AbstractPaymentMethodType $paymentType)
     {
         if (array_key_exists($paymentType->getName(), $this->paymentTypes)) {
             throw new \LogicException(
@@ -27,7 +28,7 @@ class PaymentMethodTypeRegistry
     }
 
     /**
-     * @return FormTypeInterface[]
+     * @return AbstractPaymentMethodType[]
      */
     public function getPaymentMethodTypes()
     {
@@ -38,7 +39,7 @@ class PaymentMethodTypeRegistry
      * Get payment method type by name
      *
      * @param string $name
-     * @return FormTypeInterface
+     * @return AbstractPaymentMethodType
      * @throws \LogicException Throw exception when provider with specified name not found
      */
     public function getPaymentMethodType($name)

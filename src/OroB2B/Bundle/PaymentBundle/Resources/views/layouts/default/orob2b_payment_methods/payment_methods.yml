@@ -1,9 +1,9 @@
 layout:
     actions:
         - @setBlockTheme:
-            themes: 'OroB2BPaymentBundle:layouts:default/orob2b_payment_term_creditcard/layout.html.twig'
+            themes: 'OroB2BPaymentBundle:layouts:default/orob2b_payment_methods/layout.html.twig'
         - @setFormTheme:
-            themes: 'OroB2BPaymentBundle:layouts:default/orob2b_payment_term_creditcard/form.html.twig'
+            themes: 'OroB2BPaymentBundle:layouts:default/orob2b_payment_methods/form.html.twig'
         - @setOption:
             id: page_title
             optionName: text
@@ -20,6 +20,9 @@ layout:
                     blockType: container
                 payment_methods:
                     blockType: container
+                    options:
+                        vars:
+                            forms: { @value: $data.orob2b_payment_methods_provider }
             tree:
                 content:
                     payment_methods_head: ~

@@ -48,9 +48,6 @@ define(function(require) {
                     },
                     this
                 );
-            } else {
-                var $noMethods = this.$el.find('[data-' + this.options.selectors.no_methods + ']');
-                $noMethods.html($noMethods.data(this.options.selectors.no_methods));
             }
         },
 

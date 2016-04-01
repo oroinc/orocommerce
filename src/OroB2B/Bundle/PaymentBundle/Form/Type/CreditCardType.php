@@ -15,7 +15,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer;
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\OroB2BPaymentExtension;
 
-class CreditCardType extends AbstractType
+class CreditCardType extends AbstractPaymentMethodType
 {
     const NAME = 'orob2b_payment_credit_card';
     const CONFIG_NAME = 'paypal_payments_pro';
@@ -131,5 +131,15 @@ class CreditCardType extends AbstractType
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isMethodEnabled()
+    {
+        return $this->configManager->get(
+            OroB2BPaymentExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . self::CONFIG_NAME . '_enabled'
+        );
     }
 }

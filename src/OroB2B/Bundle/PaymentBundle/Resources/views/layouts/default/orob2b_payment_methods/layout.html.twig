@@ -4,8 +4,15 @@
     <div class="checkout__form" data-page-component-module="orob2bpayment/js/app/components/payment-method-selector-component">
         <div class="checkout__form__row">
             <div class="checkout__form__col form__col_x6" data-payment-method-forms>
-                <span class="checkout__form__label" data-payment-no-methods="{{ 'orob2b.payment.methods.no_method'|trans }}">{{ 'orob2b.payment.methods.select_method'|trans }}<sup class="red">*</sup></span>
-                {{ block_widget(block) }}
+                {% if forms|length > 0 %}
+                    <span class="checkout__form__label">{{ 'orob2b.payment.methods.select_method'|trans }}<sup class="red">*</sup></span>
+                    {% for form in forms %}
+                        {% do block|merge_context({'form': form, 'class_prefix': class_prefix}) %}
+                        {{ block('payment_method_widget') }}
+                    {% endfor %}
+                {% else %}
+                    <span class="checkout__form__label" >{{ 'orob2b.payment.methods.no_method'|trans }}</span>
+                {% endif %}
             </div>
         </div>
 
@@ -24,8 +31,7 @@
 {% endblock %}
 
 {% block payment_method_widget %}
-    {% set vars = blocks[form_block_name].vars.form.vars %}
-    {% if (vars.method_enabled) %}
+    {% set vars = form.vars %}
         <div class="checkout__form__radio" data-item-container>
             <label class="radio_custom radio_custom_blue" data-radio>
                 <input type="radio" name="paymentMethod" data-choice="{{ vars.name }}" />
@@ -37,11 +43,10 @@
                 {% if vars.unique_block_prefix == '_orob2b_payment_term_method' %}
                     {{ block('payment_term_widget') }}
                 {% else %}
-                    {{ block_widget(block) }}
+                    {{ form_widget(form,{'class_prefix': class_prefix}) }}
                 {% endif %}
             </div>
         </div>
-    {% endif %}
 {% endblock %}
 
 {% block payment_term_widget %}
