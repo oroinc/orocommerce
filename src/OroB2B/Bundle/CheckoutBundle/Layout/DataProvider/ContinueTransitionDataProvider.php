@@ -38,9 +38,13 @@ class ContinueTransitionDataProvider extends AbstractTransitionDataProvider
             $transitions = $this->workflowManager->getTransitionsByWorkflowItem($workflowItem);
             foreach ($transitions as $transition) {
                 $frontendOptions = $transition->getFrontendOptions();
-                if (!empty($frontendOptions['is_checkout_continue']) && !$transition->isUnavailableHidden()) {
+                if (!empty($frontendOptions['is_checkout_continue'])) {
                     $continueTransition = $this->getTransitionData($transition, $workflowItem);
-                    break;
+                    if ($continueTransition) {
+                        break;
+                    } else {
+                        continue;
+                    }
                 }
             }
             $this->continueTransitions[$cacheKey] = $continueTransition;

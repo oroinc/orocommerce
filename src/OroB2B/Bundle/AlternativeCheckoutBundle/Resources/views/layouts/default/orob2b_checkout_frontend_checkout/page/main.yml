@@ -9,6 +9,6 @@ layout:
                 @and:
                     - @neq: [$context.workflowStepName, 'order_review']
     #                                - @neq: [$context.workflowStepName, 'request_approval']
-                    - @neq: [$context.workflowStepName, 'approved_request']
+                    - @neq: [$context.workflowStepName, 'approve_request']
     conditions:
         @empty: [$context.widget_container]

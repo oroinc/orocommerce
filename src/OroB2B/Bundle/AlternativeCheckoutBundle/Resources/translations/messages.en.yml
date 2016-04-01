@@ -28,13 +28,13 @@ orob2b:
             b2b_flow_alternative_checkout:
                 step:
                     order_review.label: Order Review
-                    request_approval.label: Request Order Approval
-                    approved_request.label: Approved Request
+                    request_approval.label: Request Approval
+                    approve_request.label: Approve Request
 
                 transition:
                     continue_to_order_review.label: Continue
                     continue_to_request_approval.label: Request Approval
-                    continue_to_approved_request.label: Request Approval
+                    continue_to_approve_request.label: Request Approval
                     order_approve.label: Approve
                     back_to_order_review.label: Back To Order Review
                     back_to_request_approval.label: Back To Request Approval

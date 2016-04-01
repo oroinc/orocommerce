@@ -1,7 +1,7 @@
 {% block _checkout_form_fields_widget -%}
-    <textarea class="input input_md input_block checkout__form__input" disabled>
+    <div class="notification notification_xmd notification_notice notification-radiused mb1-md">
         {{ checkout.requestApprovalNotes }}
-    </textarea>
+    </div>
 
     {{ block_widget(block) }}
 {%- endblock %}

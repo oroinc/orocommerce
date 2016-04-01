@@ -1,23 +1,12 @@
 {% block _checkout_form_fields_widget -%}
     {% set workflowItem = checkout.workflowItem %}
-    <div>
-        You exceeded the allowable amount of $5,000.00.
-        To proceed please request manager approval.
+    <div class="notification notification_xmd notification_alert notification-radiused mb1-md">
+        {{ transitionData.transition.message|raw }}
     </div>
 
-    <fieldset class="checkout__form__row"
-              data-trigger-selector="#addNote"
-              data-page-component-module="orob2bcheckout/js/app/components/clear-field-data-component">
+    <fieldset class="checkout__form__row">
         <div class="checkout__form__col form__col_x6 mmb5-md mmb5-sm">
-            <label for="addNote" class="checkbox_custom checkbox_custom_blue" data-checkbox>
-                <input type="checkbox" name="addNote" id="addNote" checked="checked"/>
-                <i class="material-icons checkbox_checked fs18 mmr5-md">check_box</i>
-                <i class="material-icons checkbox_not-checked fs18 mmr5-md">check_box_outline_blank</i>
-                <span class="checkbox_custom__text fs13">{{ "orob2b.checkout.order_review.note"|trans }}</span>
-            </label>
-            <div class="checkout__form__order-note">
-                {{ form_widget(form.request_approval_notes, {'attr': {'class': 'input input_md input_block checkout__form__input', 'placeholder': 'orob2b.checkout.order_review.note_placeholder'|trans}}) }}
-            </div>
+            {{ form_row(form.request_approval_notes, {'attr': {'class': 'input input_md input_block checkout__form__input', 'placeholder': 'orob2b.checkout.order_review.note_placeholder'|trans}}) }}
         </div>
     </fieldset>
 
