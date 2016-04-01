@@ -380,10 +380,13 @@ orob2b.account:
             NONE: 'None'
 
     frontend:
+        privileges:
+            entity.label: Access
+            action.label: Capabillities
         security:
             access-level:
-                BASIC: 'Own'
-                LOCAL: 'All'
+                BASIC: 'My Account'
+                LOCAL: 'All Accounts'
                 DEEP: 'Not supported'
                 GLOBAL: 'Not supported'
                 SYSTEM: 'System'
@@ -394,6 +397,12 @@ orob2b.account:
         title:
             account_user_role.create: Create Account User Role
             account_user_role.edit: Edit Account User Role
+        sections:
+            account_user_role:
+                users.label: Role Users
+        action:
+            back.label: "< Back"
+            account_user_role.edit: "Edit Role"
 
     account_typed_address_with_default_type:
         choice.default_text: 'Default %type_name%'

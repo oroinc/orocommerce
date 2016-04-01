@@ -170,7 +170,7 @@ operations:
                     route: orob2b_account_frontend_account_user_role_create
 
     orob2b_account_frontend_edit_role:
-        label: orob2b.account.action.account_user_role.edit
+        label: orob2b.account.frontend.action.account_user_role.edit
         applications: [frontend]
         routes:
             - orob2b_account_frontend_account_user_role_view
