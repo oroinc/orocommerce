@@ -80,6 +80,8 @@ OroB2B\Bundle\SaleBundle\Entity\QuoteAddress:
                 max: 255
 
 OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand:
+    constraints:
+        - OroB2B\Bundle\SaleBundle\Validator\Constraints\AllowedQuoteDemandQuantity: ~
     properties:
         quantity:
             - NotBlank: ~

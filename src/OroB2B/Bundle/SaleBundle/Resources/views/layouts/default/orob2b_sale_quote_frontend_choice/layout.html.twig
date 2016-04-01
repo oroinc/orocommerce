@@ -11,6 +11,9 @@
         subtotalSelector: '#quote-choice-subtotal',
         lineItemsSelector: '.quote-line-items'
     } %}
+
+        {{ form_errors(form) }}
+
     <form method="POST"
           data-nohash="true"
           data-disable-autofocus="true"

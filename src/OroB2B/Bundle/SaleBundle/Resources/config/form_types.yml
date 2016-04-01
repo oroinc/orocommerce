@@ -108,5 +108,8 @@ services:
 
     orob2b_sale.form.type.quote_product_demand_offer_choice:
         class: %orob2b_sale.form.type.quote_product_demand_offer_choice.class%
+        arguments:
+            - '@orob2b_product.formatter.product_unit_value'
+            - '@translator'
         tags:
             - { name: form.type, alias: orob2b_sale_quote_product_demand_offer_choice }

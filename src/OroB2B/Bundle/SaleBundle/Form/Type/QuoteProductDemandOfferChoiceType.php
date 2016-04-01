@@ -4,12 +4,34 @@ namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
 
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
 class QuoteProductDemandOfferChoiceType extends AbstractType
 {
     const NAME = 'orob2b_sale_quote_product_demand_offer_choice';
+
+    /**
+     * @var ProductUnitValueFormatter
+     */
+    protected $unitValueFormatter;
+
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
+     * @param ProductUnitValueFormatter $unitValueFormatter
+     * @param TranslatorInterface $translator
+     */
+    public function __construct(ProductUnitValueFormatter $unitValueFormatter, TranslatorInterface $translator)
+    {
+        $this->unitValueFormatter = $unitValueFormatter;
+        $this->translator = $translator;
+    }
 
     /**
      * {@inheritdoc}
@@ -26,9 +48,14 @@ class QuoteProductDemandOfferChoiceType extends AbstractType
                     $label = '';
                     // TODO Use unit formatter and translator
                     if ($value instanceof QuoteProductOffer) {
-                        $label = $value->getQuantity() . ' ' . $value->getProductUnitCode();
+                        $label = $this->unitValueFormatter->formatCode(
+                            $value->getQuantity(),
+                            $value->getProductUnitCode(),
+                            true
+                        );
                         if ($value->isAllowIncrements()) {
-                            $label .= ' or more';
+                            $label .=  ' ' . $this->translator
+                                ->trans('orob2b.frontend.sale.quoteproductoffer.allow_increments.label');
                         }
                     }
                     return $label;

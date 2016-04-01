@@ -12,7 +12,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand;
-use OroB2B\Bundle\SaleBundle\Validator\Constraints\ConfigurableQuoteProductOffer;
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero;
 
@@ -32,8 +31,7 @@ class QuoteProductDemandType extends AbstractType
         $resolver->setRequired(['data']);
         $resolver->setDefaults(
             [
-                'data_class' => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand',
-                'constraints' => new ConfigurableQuoteProductOffer()
+                'data_class' => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand'
             ]
         );
     }
@@ -104,17 +102,14 @@ class QuoteProductDemandType extends AbstractType
         $quoteProductDemand = $options['data'];
         $view->vars['quoteProduct'] = $quoteProductDemand->getQuoteProductOffer()->getQuoteProduct();
 
-        // move constraint to quantity field to support JS validation
         /** @var FormView $quantityView */
         $quantityView = $view->children[self::FIELD_QUANTITY];
-        if (isset($view->vars['attr']['data-validation'], $quantityView->vars['attr']['data-validation'])) {
-            $viewAttr = $view->vars['attr']['data-validation'];
-            $quantityViewAttr = $quantityView->vars['attr']['data-validation'];
-
-            $quantityView->vars['attr']['data-validation'] = json_encode(
-                array_merge(json_decode($viewAttr, true), json_decode($quantityViewAttr, true))
-            );
-        }
+        $quantityView->vars['attr']['data-validation'] = json_encode(
+            array_merge(
+                ['AllowedQuoteDemandQuantity' => []],
+                json_decode($quantityView->vars['attr']['data-validation'], true)
+            )
+        );
     }
 
     /**
