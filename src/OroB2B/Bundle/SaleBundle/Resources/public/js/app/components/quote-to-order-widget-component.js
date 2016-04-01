@@ -2,37 +2,38 @@ define(function(require) {
     'use strict';
 
     var QuoteToOrderWidgetComponent;
-    var WidgetComponent = require('oroui/js/app/components/widget-component');
-    var mediator = require('oroui/js/mediator');
+    var BaseComponent = require('oroui/js/app/components/base/component');
+    var $ = require('jquery');
+    var _ = require('underscore');
+    var template = require('tpl!../../../templates/quote-to-order-item-error.html');
 
-    QuoteToOrderWidgetComponent = WidgetComponent.extend({
-        defaults: {
-            type: 'dialog',
-            createOnEvent: 'click',
-            options: {
-                loadingMaskEnabled: true,
-                dialogOptions: {
-                    modal: true,
-                    resizable: true,
-                    width: 1000,
-                    height: 500,
-                    allowMaximize: true,
-                    dblclick: 'maximize'
+    if (typeof template === 'string') {
+        template = _.template(template);
+    }
+
+    QuoteToOrderWidgetComponent = BaseComponent.extend({
+        /**
+         * @inheritDoc
+         */
+        initialize: function(options) {
+            $(options._sourceElement).validate(
+                {
+                    errorClass: 'error',
+                    showErrors: function(errorMap, errorList) {
+                        var $element = $(this.currentElements[0]);
+                        var $container = $element.closest('td');
+
+                        $container.find('[data-role="error-container"]').remove();
+                        $element.removeClass(this.settings.errorClass);
+                        if (errorList.length) {
+                            $element.addClass(this.settings.errorClass);
+                            _.each(errorMap, function(message) {
+                                $(template({'message': message})).appendTo($container);
+                            });
+                        }
+                    }
                 }
-            }
-        },
-
-        _bindEnvironmentEvent: function(widget) {
-            QuoteToOrderWidgetComponent.__super__._bindEnvironmentEvent.call(this, widget);
-
-            this.listenTo(widget, 'formSave', function(redirectUrl) {
-                widget.remove();
-                if (redirectUrl) {
-                    mediator.execute('redirectTo', {url: redirectUrl});
-                } else {
-                    mediator.execute('refreshPage');
-                }
-            });
+            );
         }
     });
 

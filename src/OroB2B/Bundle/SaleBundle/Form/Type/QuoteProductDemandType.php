@@ -54,12 +54,14 @@ class QuoteProductDemandType extends AbstractType
                 [
                     'constraints' => [new NotBlank(), new Decimal(), new GreaterThanZero()],
                     'read_only' => !$quoteProduct->hasIncrementalOffers(),
+                    'required' => true
                 ]
             )->add(
                 self::FIELD_QUOTE_PRODUCT_OFFER,
                 QuoteProductDemandOfferChoiceType::NAME,
                 [
-                    'choices' => $quoteProduct->getQuoteProductOffers()
+                    'choices' => $quoteProduct->getQuoteProductOffers(),
+                    'required' => true
                 ]
             )->add(
                 self::FIELD_UNIT,
@@ -103,7 +105,6 @@ class QuoteProductDemandType extends AbstractType
         $view->vars['quoteProduct'] = $quoteProductDemand->getQuoteProductOffer()->getQuoteProduct();
 
         // move constraint to quantity field to support JS validation
-        // TODO Review this
         /** @var FormView $quantityView */
         $quantityView = $view->children[self::FIELD_QUANTITY];
         if (isset($view->vars['attr']['data-validation'], $quantityView->vars['attr']['data-validation'])) {
