@@ -6,8 +6,6 @@ layout:
             items:
                 footer_menu_container:
                     blockType: container
-                footer_copyright_container:
-                    blockType: container
                 footer_menu:
                     blockType: menu
                     options:
@@ -19,8 +17,6 @@ layout:
                 footer:
                     footer_menu_container:
                         footer_menu: ~
-                    footer_copyright_container: ~
         - @move:
             id: footer_copyright
-            parentId: footer_copyright_container
-            siblingId: ~
+            siblingId: footer_menu_container
