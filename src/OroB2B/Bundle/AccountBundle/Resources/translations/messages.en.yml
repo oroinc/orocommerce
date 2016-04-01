@@ -98,6 +98,23 @@ orob2b.account:
             unconfirmed.label: 'Unconfirmed'
             cancel.label: 'Cancel'
 
+            form:
+                sections:
+                    profile_information.label: 'Profile information'
+                    password.label: 'Password'
+                placeholder:
+                    first_name: ''
+                    middle_name: ''
+                    last_name: ''
+                    email: ''
+                    password: ''
+                    new_password: ''
+                    current_password: ''
+                    password_confirmation: ''
+                    birthday.label: ''
+                    name_prefix: ''
+                    name_suffix: ''
+
     accountuserrole:
         entity_label:                    'Account User Role'
         entity_plural_label:             'Account User Roles'
