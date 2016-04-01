@@ -41,6 +41,7 @@ class RequestProductType extends AbstractType
                 'create_enabled' => false,
                 'grid_name' => 'products-select-grid-frontend',
                 'grid_widget_route' => 'orob2b_frontend_datagrid_widget',
+                'grid_view_widget_route' => 'orob2b_frontend_datagrid_widget',
                 'configs' => [
                     'route_name' => 'orob2b_frontend_autocomplete_search'
                 ],
