@@ -21,6 +21,7 @@ define(function(require) {
             unitSelector: '.unit',
             unitPriceSelector: '.unitPrice',
             subtotalSelector: '#quote-choie-subtotal',
+            mainFormSelector: 'form',
             data_attributes: {
                 unit: 'unit',
                 formatted_unit: 'formatted-unit',
@@ -104,7 +105,7 @@ define(function(require) {
                 String(target.data(this.options.data_attributes.formatted_unit))
             );
             this.updateUnitPriceValue(String(target.data(this.options.data_attributes.price)));
-
+            this.loadSubtotals();
             this.quantityEventsEnabled = true;
         },
 
@@ -140,16 +141,14 @@ define(function(require) {
         },
 
         loadSubtotals: function(value) {
-            //TODO: submit form
-            var url = window.location.href;
-            var widgetParameters = '_widgetContainer=ajax';
-            url += (-1 !== _.indexOf(url, '?') ? '&' : '?') + widgetParameters;
-
-            var data = data || {method: 'GET'};
-            data.url = url;
-            $.ajax(data)
-                .done(_.bind(this.onSubtotalSuccess, this))
-                .fail(_.bind(this.onSubtotalFail, this));
+            var $form = $(this.options.mainFormSelector);
+            $form.ajaxSubmit({
+                data: {
+                    '_widgetContainer': 'ajax',
+                },
+                success: _.bind(this.onSubtotalSuccess, this),
+                error: _.bind(this.onSubtotalFail, this)
+            });
         },
 
         onSubtotalSuccess: function(response) {

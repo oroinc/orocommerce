@@ -101,7 +101,7 @@ class QuoteController extends Controller
     {
         $form = $this->createForm(QuoteToOrderType::NAME, $quoteDemand);
         $form->handleRequest($request);
-        if ($form->isValid()) {
+        if ($form->isValid() && $request->get('_widgetContainer') !== 'ajax') {
             $actionGroupRegistry = $this->get('oro_action.action_group_registry');
             $actionGroup = $actionGroupRegistry->findByName('orob2b_sale_frontend_quote_accept_and_submit_to_order');
             if ($actionGroup) {

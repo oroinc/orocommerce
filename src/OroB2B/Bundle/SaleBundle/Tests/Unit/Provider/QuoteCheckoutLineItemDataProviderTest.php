@@ -65,7 +65,7 @@ class QuoteCheckoutLineItemDataProviderTest extends \PHPUnit_Framework_TestCase
             ->setProductUnitCode('code')
             ->setPrice($price)
         ;
-        $demand->addDemandOffer(new QuoteProductDemand($demand, $productOffer, $productOffer->getQuantity()));
+        $demand->addDemandProduct(new QuoteProductDemand($demand, $productOffer, $productOffer->getQuantity()));
 
         $expected = [
             [
