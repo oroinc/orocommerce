@@ -11,7 +11,7 @@ use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class OrderTotalLimit extends AbstractComparison
 {
-    const NAME = 'order_total_limit';
+    const NAME = 'less_order_total_limit';
 
     /**
      * @var TotalProcessorProvider

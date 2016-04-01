@@ -10,6 +10,10 @@ layout:
             optionValue:
                 workflowStep: { @value: $data.workflowStep }
                 stepOrder: 6
+        - @setOption:
+            id: checkout_form_fields
+            optionName: vars.transitionData
+            optionValue: { @value: $data.orob2b_checkout_continue_transition }
     conditions:
         @and:
             - @eq: [$context.workflowStepName, 'request_approval']

@@ -1,5 +1,5 @@
 parameters:
-    orob2b_alternativecheckout.conditions.order_total_limit.class: OroB2B\Bundle\AlternativeCheckoutBundle\Condition\OrderTotalLimit
+    orob2b_alternativecheckout.conditions.less_order_total_limit.class: OroB2B\Bundle\AlternativeCheckoutBundle\Condition\OrderTotalLimit
 services:
     orob2b.event_listener.checkout_entity:
         class: OroB2B\Bundle\AlternativeCheckoutBundle\EventListener\CheckoutEntityListener
@@ -17,11 +17,11 @@ services:
         tags:
             - { name: oro_workflow.condition, alias: assert_account }
 
-    orob2b_alternativecheckout.conditions.order_total_limit:
-        class: %orob2b_alternativecheckout.conditions.order_total_limit.class%
+    orob2b_alternativecheckout.conditions.less_order_total_limit:
+        class: %orob2b_alternativecheckout.conditions.less_order_total_limit.class%
         arguments:
             - @orob2b_pricing.subtotal_processor.total_processor_provider
             - @orob2b_checkout.data_provider.manager.checkout_line_items
         tags:
-            - { name: oro_workflow.condition, alias: order_total_limit }
+            - { name: oro_workflow.condition, alias: less_order_total_limit }
 

@@ -19,7 +19,6 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
  * @ORM\Table(name="orob2b_sale_quote")
