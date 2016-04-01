@@ -108,6 +108,7 @@
 {% endblock %}
 
 {% block _shopping_list_line_items_list_widget %}
+    {% import 'OroB2BProductBundle::image_macros.html.twig' as Image %}
     {% if shoppingList.lineItems is not empty %}
         {% import 'OroUIBundle::macros.html.twig' as UI %}
         {# TODO: Pass default currency from provider. BB-2218 #}
@@ -161,7 +162,7 @@
                         <td class="va-t_md">
                             <div class="product-item product-item_in-cart">
                                 <div class="product-item__image-holder product-item__image-holder_in-cart">
-                                    <a href="{{ path('orob2b_product_frontend_product_view', {'id': lineItem.product.id}) }}">{{ oro_image_view(lineItem.product, lineItem.product.image, null, 'image') }}</a>
+                                    <a href="{{ path('orob2b_product_frontend_product_view', {'id': lineItem.product.id}) }}">{{ Image.image(lineItem.product.image, 'product_small') }}</a>
                                 </div>
                                 <div class="product-item__desctiption product-item__desctiption_in-cart">
                                     <h3 class="product-item__title product-item__title_in-cart mb1-md">
@@ -317,7 +318,7 @@
 
 {% block _shopping_list_totals_widget %}
     <div class="order-checkout-widget__container-wrapper">
-        {% include 'OroB2BPricingBundle:Totals/Frontend:totalsEntityEditPage.html.twig' with {
+        {% include 'OroB2BPricingBundle:Totals/Frontend:totals.html.twig' with {
             options: {
                 route: 'orob2b_pricing_frontend_entity_totals',
                 events: [
@@ -330,6 +331,7 @@
                 entityClassName: 'OroB2B\\Bundle\\ShoppingListBundle\\Entity\\ShoppingList',
                 entityId: shoppingList.id,
                 skipMaskView: true,
+                application: 'frontend',
                 data: totals
             }
         } only %}
