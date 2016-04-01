@@ -62,6 +62,10 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements Subto
      */
     public function getSubtotal($entity)
     {
+        if (!$entity instanceof LineItemsAwareInterface) {
+            return null;
+        }
+
         $subtotalAmount = 0.0;
         $subtotal = new Subtotal();
         $subtotal->setLabel($this->translator->trans(self::NAME . '.label'));
@@ -72,8 +76,10 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements Subto
         foreach ($entity->getLineItems() as $lineItem) {
             if ($lineItem instanceof PriceAwareInterface && $lineItem->getPrice() instanceof Price) {
                 $subtotalAmount += $this->getRowTotal($lineItem, $baseCurrency);
-                $subtotal->setVisible(true);
             }
+        }
+        if ($subtotalAmount > 0) {
+            $subtotal->setVisible(true);
         }
 
         $subtotal->setAmount($this->rounding->round($subtotalAmount));
@@ -87,7 +93,7 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements Subto
      * @param string $baseCurrency
      * @return float|int
      */
-    protected function getRowTotal(PriceAwareInterface $lineItem, $baseCurrency)
+    public function getRowTotal(PriceAwareInterface $lineItem, $baseCurrency)
     {
         $rowTotal = $lineItem->getPrice()->getValue();
         $rowCurrency = $lineItem->getPrice()->getCurrency();

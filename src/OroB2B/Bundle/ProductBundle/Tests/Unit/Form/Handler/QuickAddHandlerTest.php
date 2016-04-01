@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Handler;
 
+use OroB2B\Bundle\ProductBundle\Model\ProductRow;
 use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,6 +22,9 @@ use OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddCopyPasteFormProvide
 use OroB2B\Bundle\ProductBundle\Layout\DataProvider\QuickAddImportFormProvider;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 {
     const PRODUCT_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
@@ -210,8 +214,8 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             QuickAddType::NAME,
             [
                 QuickAddType::PRODUCTS_FIELD_NAME => [
-                    ['productSku' => 'sku1'],
-                    ['productSku' => 'sku2'],
+                    [ProductDataStorage::PRODUCT_SKU_KEY => 'sku1'],
+                    [ProductDataStorage::PRODUCT_SKU_KEY => 'sku2'],
                 ],
                 QuickAddType::COMPONENT_FIELD_NAME => self::COMPONENT_NAME,
             ]
@@ -254,12 +258,19 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $request = Request::create('/post/valid-without-response', 'POST');
         $request->request->set(QuickAddType::NAME, [QuickAddType::COMPONENT_FIELD_NAME => self::COMPONENT_NAME]);
 
-        $products = [['sku' => '111', 'qty' => 123], ['sku' => '222', 'qty' => 234]];
+        $productRows = [
+            $this->createProductRow('111', 123),
+            $this->createProductRow('222', 234)
+        ];
+        $products = [
+            [ProductDataStorage::PRODUCT_SKU_KEY => '111', ProductDataStorage::PRODUCT_QUANTITY_KEY => 123],
+            [ProductDataStorage::PRODUCT_SKU_KEY => '222', ProductDataStorage::PRODUCT_QUANTITY_KEY => 234]
+        ];
 
         $productsForm = $this->getMock('Symfony\Component\Form\FormInterface');
         $productsForm->expects($this->once())
             ->method('getData')
-            ->willReturn($products);
+            ->willReturn($productRows);
 
         $mainForm = $this->getMock('Symfony\Component\Form\FormInterface');
         $mainForm->expects($this->once())
@@ -306,12 +317,19 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $response = new RedirectResponse('/processor-redirect');
 
-        $products = [['sku' => '111', 'qty' => 123], ['sku' => '222', 'qty' => 234]];
+        $productRows = [
+            $this->createProductRow('111', 123),
+            $this->createProductRow('222', 234)
+        ];
+        $products = [
+            [ProductDataStorage::PRODUCT_SKU_KEY => '111', ProductDataStorage::PRODUCT_QUANTITY_KEY => 123],
+            [ProductDataStorage::PRODUCT_SKU_KEY => '222', ProductDataStorage::PRODUCT_QUANTITY_KEY => 234]
+        ];
 
         $productsForm = $this->getMock('Symfony\Component\Form\FormInterface');
         $productsForm->expects($this->once())
             ->method('getData')
-            ->willReturn($products);
+            ->willReturn($productRows);
 
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
@@ -509,5 +527,19 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($processor);
 
         return $processor;
+    }
+
+    /**
+     * @param string $sku
+     * @param string $qty
+     * @return ProductRow
+     */
+    protected function createProductRow($sku, $qty)
+    {
+        $row = new ProductRow();
+        $row->productSku = $sku;
+        $row->productQuantity = $qty;
+
+        return $row;
     }
 }

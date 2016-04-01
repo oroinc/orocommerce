@@ -60,6 +60,13 @@ class AccountTypedAddressType extends AbstractType
                 [
                     'required' => false
                 ]
+            )
+            ->add(
+                'phone',
+                'text',
+                [
+                    'required' => false
+                ]
             );
     }
 

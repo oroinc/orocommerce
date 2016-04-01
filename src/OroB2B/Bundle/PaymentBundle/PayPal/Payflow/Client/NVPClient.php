@@ -2,14 +2,14 @@
 
 namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Client;
 
+use Guzzle\Http\ClientInterface as HTTPClientInterface;
+
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\NVP\EncoderInterface;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\ResponseInterface;
 
-use Guzzle\Http\ClientInterface as HTTPClient;
-
 class NVPClient implements ClientInterface
 {
-    /** @var HTTPClient */
+    /** @var HTTPClientInterface */
     protected $httpClient;
 
     /** @var EncoderInterface */
@@ -19,11 +19,11 @@ class NVPClient implements ClientInterface
     protected $testMode;
 
     /**
-     * @param HTTPClient $httpClient
+     * @param HTTPClientInterface $httpClient
      * @param EncoderInterface $encoder
      * @param bool $testMode true - use pilot(test) host, otherwise use production
      */
-    public function __construct(HTTPClient $httpClient, EncoderInterface $encoder, $testMode = true)
+    public function __construct(HTTPClientInterface $httpClient, EncoderInterface $encoder, $testMode = true)
     {
         $this->httpClient = $httpClient;
         $this->encoder = $encoder;

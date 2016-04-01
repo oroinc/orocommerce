@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 class IPAddress implements OptionInterface
 {
     const CUSTIP = 'CUSTIP';
@@ -13,6 +11,6 @@ class IPAddress implements OptionInterface
     {
         $resolver
             ->setDefined(IPAddress::CUSTIP)
-            ->addAllowedValues(IPAddress::CUSTIP, 'string');
+            ->addAllowedTypes(IPAddress::CUSTIP, 'string');
     }
 }

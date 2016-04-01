@@ -76,7 +76,7 @@ expectedResult:
                 adjustment: '0'
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX2', rate: '0.2', taxable_amount: '79.95', tax_amount: '15.99', currency: 'USD' }
+                - { tax: 'TAX2', rate: '0.2', taxableAmount: '79.95', taxAmount: '15.99', currency: 'USD' }
         -
             unit:
                 includingTax: '6.66'  # 5.55 + 1.11
@@ -91,6 +91,6 @@ expectedResult:
                 adjustment: '0'
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX2', rate: '0.2', taxable_amount: '33.3', tax_amount: '6.66', currency: 'USD' }
+                - { tax: 'TAX2', rate: '0.2', taxableAmount: '33.3', taxAmount: '6.66', currency: 'USD' }
     taxes:
-        - { tax: 'TAX2', rate: '0.2', taxable_amount: '113.25', tax_amount: '22.65', currency: 'USD' }
+        - { tax: 'TAX2', rate: '0.2', taxableAmount: '113.25', taxAmount: '22.65', currency: 'USD' }

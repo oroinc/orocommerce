@@ -6,19 +6,13 @@ use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option\Transaction;
 
 class VoiceAuthorizationRequest extends AbstractRequest
 {
-    private function __construct()
-    {
-    }
-
-    /** {@inheritdoc} */
-    public function setOptions(array $options = [])
-    {
-        throw new \BadMethodCallException();
-    }
-
     /** {@inheritdoc} */
     public function getAction()
     {
+        throw new \BadMethodCallException(
+            sprintf('Request type "%s" is not implemented yet', get_class($this))
+        );
+
         return Transaction::VOICE_AUTHORIZATION;
     }
 }

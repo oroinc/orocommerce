@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 class Comment extends AbstractOption
 {
     const COMMENT1 = 'COMMENT1';

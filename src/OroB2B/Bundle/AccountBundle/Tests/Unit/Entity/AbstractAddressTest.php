@@ -68,6 +68,7 @@ abstract class AbstractAddressTest extends \PHPUnit_Framework_TestCase
         static::assertPropertyAccessors($this->address, [
             ['systemOrganization', new Organization()],
             ['owner', new User()],
+            ['phone', '11111111111']
         ]);
     }
 

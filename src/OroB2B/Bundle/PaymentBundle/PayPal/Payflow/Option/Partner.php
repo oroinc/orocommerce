@@ -2,19 +2,18 @@
 
 namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Processor;
 
+// @codingStandardsIgnoreStart
 /**
- * @codingStandardsIgnoreStart
  * @link https://registration.paypal.com/welcomePage.do?country=US&mode=try#ProcessorSelectionNode
  * @link https://developer.paypal.com/docs/classic/payflow/integration-guide/#processing-platforms-supporting-card-present-transactions
- * @codingStandardsIgnoreEnd
  */
+// @codingStandardsIgnoreEnd
 class Partner extends AbstractOption
 {
     const PARTNER = 'PARTNER';
 
-    const PAYPAL = 'PayPal';
     const AMEX = 'AMEX';
     const MESP = 'MESP';
     const NOVA = 'NOVA';
@@ -38,68 +37,34 @@ class Partner extends AbstractOption
     /**
      * @var array
      */
-    public static $labels = [
-        'PayPal',
-        'American Express',
-        'Cielo Payments',
-        'Elavon',
-        'FDMS Nashville',
-        'FDMS North',
-        'FDMS South',
-        'Global Payments - Central',
-        'Global Payments - East',
-        'Heartland',
-        'Litle & Co',
-        'Moneris',
-        'Paymentech - Salem',
-        'Paymentech - Tampa',
-        'Planet Payment',
-        'SecureNet',
-        'TSYS',
-        'TeleCheck 2',
-        'Vantiv',
-        'World Pay',
+    public static $partners = [
+        Processor\PayPal::CODE => Processor\PayPal::NAME,
+        Partner::AMEX => 'American Express',
+        Partner::MESP => 'Cielo Payments',
+        Partner::NOVA => 'Elavon',
+        Partner::NASH => 'FDMS Nashville',
+        Partner::NORT => 'FDMS North',
+        Partner::SOUT => 'FDMS South',
+        Partner::MAPP => 'Global Payments - Central',
+        Partner::NDCE => 'Global Payments - East',
+        Partner::HTLD => 'Heartland',
+        Partner::LITL => 'Litle & Co',
+        Partner::MONE => 'Moneris',
+        Partner::PAYT => 'Paymentech - Salem',
+        Partner::TMPA => 'Paymentech - Tampa',
+        Partner::PPAY => 'Planet Payment',
+        Partner::SNET => 'SecureNet',
+        Partner::VITA => 'TSYS',
+        Partner::TELN => 'TeleCheck 2',
+        Partner::FIFT => 'Vantiv',
+        Partner::WPAY => 'World Pay',
     ];
-
-    /**
-     * @var array
-     */
-    public static $list = [
-        Partner::PAYPAL,
-        Partner::AMEX,
-        Partner::MESP,
-        Partner::NOVA,
-        Partner::NASH,
-        Partner::NORT,
-        Partner::SOUT,
-        Partner::MAPP,
-        Partner::NDCE,
-        Partner::HTLD,
-        Partner::LITL,
-        Partner::MONE,
-        Partner::PAYT,
-        Partner::TMPA,
-        Partner::PPAY,
-        Partner::SNET,
-        Partner::VITA,
-        Partner::TELN,
-        Partner::FIFT,
-        Partner::WPAY,
-    ];
-
-    /**
-     * @return array
-     */
-    public static function getPartnersList()
-    {
-        return array_combine(Partner::$list, Partner::$labels);
-    }
 
     /** {@inheritdoc} */
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver
             ->setRequired(Partner::PARTNER)
-            ->addAllowedValues(Partner::PARTNER, Partner::$list);
+            ->addAllowedValues(Partner::PARTNER, array_keys(Partner::$partners));
     }
 }

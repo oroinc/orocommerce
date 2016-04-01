@@ -2,9 +2,6 @@
 
 namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 
-use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 class Amount implements OptionInterface
 {
     const AMT = 'AMT';
@@ -16,18 +13,41 @@ class Amount implements OptionInterface
     const INSURANCEAMT = 'INSURANCEAMT';
     const DISCOUNT = 'DISCOUNT';
 
+    /** @var bool */
+    private $amountRequired;
+
+    /**
+     * @param bool $amountRequired
+     */
+    public function __construct($amountRequired = true)
+    {
+        $this->amountRequired = $amountRequired;
+    }
+
+    /**
+     * @var array
+     */
+    protected $additionalAmounts = [
+        Amount::ITEMAMT,
+        Amount::TAXAMT,
+        Amount::FREIGHTAMT,
+        Amount::HANDLINGAMT,
+        Amount::INSURANCEAMT,
+        Amount::DISCOUNT,
+    ];
+
     /** {@inheritdoc} */
     public function configureOption(OptionsResolver $resolver)
     {
         $allowedTypes = ['string', 'integer', 'float'];
+
+        if ($this->amountRequired) {
+            $resolver->setRequired(Amount::AMT);
+        }
+
         $resolver
             ->setDefined(Amount::AMT)
-            ->setDefault(Amount::ITEMAMT, 0)
-            ->setDefault(Amount::TAXAMT, 0)
-            ->setDefault(Amount::FREIGHTAMT, 0)
-            ->setDefault(Amount::HANDLINGAMT, 0)
-            ->setDefault(Amount::INSURANCEAMT, 0)
-            ->setDefault(Amount::DISCOUNT, 0)
+            ->setDefined($this->additionalAmounts)
             ->addAllowedTypes(Amount::AMT, $allowedTypes)
             ->addAllowedTypes(Amount::ITEMAMT, $allowedTypes)
             ->addAllowedTypes(Amount::TAXAMT, $allowedTypes)
@@ -37,18 +57,17 @@ class Amount implements OptionInterface
             ->addAllowedTypes(Amount::DISCOUNT, $allowedTypes)
             ->setNormalizer(
                 Amount::AMT,
-                function (Options $options, $amount) {
-                    if (!$amount) {
-                        $amounts = [
-                            $options[Amount::ITEMAMT],
-                            $options[Amount::TAXAMT],
-                            $options[Amount::FREIGHTAMT],
-                            $options[Amount::HANDLINGAMT],
-                            $options[Amount::INSURANCEAMT],
-                            $options[Amount::DISCOUNT],
-                        ];
+                function (OptionsResolver $resolver, $amount) {
+                    $amounts = [];
+                    foreach ($this->additionalAmounts as $key) {
+                        if ($resolver->offsetExists($key)) {
+                            $amounts[] = $resolver->offsetGet($key);
+                        }
+                    }
+                    $amounts = array_filter($amounts);
 
-                        $amount = array_sum(array_filter($amounts));
+                    if ($amounts) {
+                        return array_sum($amounts);
                     }
 
                     return $amount;

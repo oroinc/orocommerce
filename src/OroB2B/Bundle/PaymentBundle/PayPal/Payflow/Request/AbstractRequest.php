@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 
 /**
@@ -12,77 +10,93 @@ use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 abstract class AbstractRequest implements RequestInterface
 {
     /**
-     * @var array
+     * @var Option\OptionsResolver
      */
-    protected $options = [];
+    protected $resolver;
 
     /**
-     * Lazy initialized @see AbstractRequest::getOptionsResolver
-     *
-     * @var OptionsResolver
+     * @param Option\OptionsResolver $resolver
+     * @return $this
      */
-    private $resolver;
-
-    /**
-     * @param array $options
-     */
-    public function __construct(array $options = [])
+    protected function withResolver(Option\OptionsResolver $resolver)
     {
-        if ($options) {
-            $this->setOptions($options);
-        }
+        $this->resolver = $resolver;
+
+        return $this;
     }
 
     /**
-     * @return OptionsResolver
+     * @return $this
      */
-    public function getOptionsResolver()
-    {
-        if (!$this->resolver) {
-            $this->resolver = new OptionsResolver();
-        }
-
-        return $this->resolver;
-    }
-
-    /** {@inheritdoc} */
-    public function setOptions(array $options = [])
-    {
-        $this->configureBaseOptions();
-        $this->configureOptions();
-        $this->configureFinalOptions();
-
-        $this
-            ->getOptionsResolver()
-            ->setDefault(Option\Transaction::TRXTYPE, $this->getAction())
-            ->addAllowedValues(Option\Transaction::TRXTYPE, $this->getAction());
-
-        $this->options = $this->resolver->resolve($options);
-    }
-
-    /** {@inheritdoc} */
-    public function getOptions()
-    {
-        return $this->options;
-    }
-
-    public function configureBaseOptions()
+    private function configureRequiredOptions()
     {
         $this
             ->addOption(new Option\Transaction())
-            ->addOption(new Option\Tender())
             ->addOption(new Option\User())
             ->addOption(new Option\Partner())
             ->addOption(new Option\Password())
             ->addOption(new Option\Vendor());
+
+        return $this;
     }
 
-    public function configureOptions()
+    /** {@inheritdoc} */
+    public function configureOptions(Option\OptionsResolver $resolver)
     {
+        $this
+            ->withResolver($resolver)
+            ->configureRequiredOptions()
+            ->configureBaseOptions()
+            ->configureRequestOptions()
+            ->configureFinalOptions()
+            ->configureTransactionOptions()
+            ->endResolver();
     }
 
-    public function configureFinalOptions()
+    /**
+     * @return $this
+     */
+    protected function configureBaseOptions()
     {
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    protected function configureRequestOptions()
+    {
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    protected function configureFinalOptions()
+    {
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    protected function configureTransactionOptions()
+    {
+        $this->resolver
+            ->setDefault(Option\Transaction::TRXTYPE, $this->getAction())
+            ->addAllowedValues(Option\Transaction::TRXTYPE, $this->getAction());
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    private function endResolver()
+    {
+        $this->resolver = null;
+
+        return $this;
     }
 
     /**
@@ -91,7 +105,11 @@ abstract class AbstractRequest implements RequestInterface
      */
     protected function addOption(Option\OptionInterface $option)
     {
-        $option->configureOption($this->getOptionsResolver());
+        if (!$this->resolver) {
+            throw new \InvalidArgumentException('Call AbstractRequest->withResolver($resolver) first');
+        }
+
+        $option->configureOption($this->resolver);
 
         return $this;
     }

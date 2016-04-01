@@ -13,12 +13,15 @@ class DelayedCaptureRequest extends AbstractRequest
     }
 
     /** {@inheritdoc} */
-    public function configureOptions()
+    public function configureRequestOptions()
     {
         $this
-            ->addOption(new Option\Amount())
+            ->addOption(new Option\Tender())
+            ->addOption(new Option\Amount(false))
             ->addOption(new Option\SecureToken())
             ->addOption(new Option\OriginalTransaction())
             ->addOption(new Option\Verbosity());
+
+        return $this;
     }
 }

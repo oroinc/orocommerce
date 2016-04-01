@@ -19,7 +19,7 @@ class CustomerAddressItemResolver extends AbstractItemResolver
             return;
         }
 
-        $address = $taxable->getDestination();
+        $address = $taxable->getTaxationAddress();
         if (!$address) {
             return;
         }

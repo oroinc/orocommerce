@@ -2,9 +2,7 @@
 
 namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-class PartialAuthorization extends AbstractOption
+class PartialAuthorization extends AbstractBooleanOption
 {
     const PARTIALAUTH = 'PARTIALAUTH';
 
@@ -13,6 +11,9 @@ class PartialAuthorization extends AbstractOption
     {
         $resolver
             ->setDefined(PartialAuthorization::PARTIALAUTH)
-            ->addAllowedValues(PartialAuthorization::PARTIALAUTH, PartialAuthorization::YES);
+            ->setNormalizer(
+                PartialAuthorization::PARTIALAUTH,
+                $this->getNormalizer(PartialAuthorization::YES, PartialAuthorization::NO)
+            );
     }
 }

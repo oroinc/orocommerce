@@ -13,9 +13,10 @@ class SaleRequest extends AbstractRequest
     }
 
     /** {@inheritdoc} */
-    public function configureOptions()
+    public function configureRequestOptions()
     {
         $this
+            ->addOption(new Option\Tender())
             ->addOption(new Option\Amount())
             ->addOption(new Option\Currency())
             ->addOption(new Option\Account())
@@ -31,7 +32,9 @@ class SaleRequest extends AbstractRequest
             ->addOption(new Option\Purchase())
             ->addOption(new Option\Verbosity())
             ->addOption(new Option\TransparentRedirect())
-            ->addOption(new Option\SecureToken())
-            ->addOption(new Option\SecureTokenIdentifier());
+            ->addOption(new Option\SecureTokenIdentifier())
+            ->addOption(new Option\CreateSecureToken());
+
+        return $this;
     }
 }

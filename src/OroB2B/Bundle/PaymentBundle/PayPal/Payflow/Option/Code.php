@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 class Code implements OptionInterface
 {
     const CVV2 = 'CVV2';

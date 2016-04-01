@@ -2,9 +2,7 @@
 
 namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-class CreateSecureToken extends AbstractOption
+class CreateSecureToken extends AbstractBooleanOption
 {
     const CREATESECURETOKEN = 'CREATESECURETOKEN';
 
@@ -13,7 +11,9 @@ class CreateSecureToken extends AbstractOption
     {
         $resolver
             ->setDefined(CreateSecureToken::CREATESECURETOKEN)
-            ->setDefault(CreateSecureToken::CREATESECURETOKEN, CreateSecureToken::YES)
-            ->addAllowedValues(CreateSecureToken::CREATESECURETOKEN, CreateSecureToken::YES);
+            ->setNormalizer(
+                CreateSecureToken::CREATESECURETOKEN,
+                $this->getNormalizer(CreateSecureToken::YES, CreateSecureToken::NO)
+            );
     }
 }

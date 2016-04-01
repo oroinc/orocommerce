@@ -3,51 +3,55 @@
 namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow;
 
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Client\ClientInterface;
-use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\RequestInterface;
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option\OptionsResolver;
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option\Partner;
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Processor\ProcessorRegistry;
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\RequestRegistry;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\ResponseInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Exception\InvalidOptionsException;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class Gateway
 {
-    /** @var ValidatorInterface */
-    protected $validator;
-
     /** @var ClientInterface */
     protected $client;
 
+    /** @var ProcessorRegistry */
+    protected $processorRegistry;
+
+    /** @var RequestRegistry */
+    protected $requestRegistry;
+
     /**
      * @param ClientInterface $client
-     * @param ValidatorInterface $validator
+     * @param ProcessorRegistry $processorRegistry
+     * @param RequestRegistry $requestRegistry
      */
-    public function __construct(ClientInterface $client, ValidatorInterface $validator)
-    {
+    public function __construct(
+        ClientInterface $client,
+        ProcessorRegistry $processorRegistry,
+        RequestRegistry $requestRegistry
+    ) {
         $this->client = $client;
-        $this->validator = $validator;
-
-        $this->resolver = new OptionsResolver();
+        $this->processorRegistry = $processorRegistry;
+        $this->requestRegistry = $requestRegistry;
     }
 
     /**
-     * @param RequestInterface $request
+     * @param string $action
+     * @param array $options
      * @return ResponseInterface
      */
-    public function request(RequestInterface $request)
+    public function request($action, array $options = [])
     {
-        $violations = $this->validator->validate($request);
+        $resolver = new OptionsResolver();
+        $request = $this->requestRegistry->getRequest($action);
+        $request->configureOptions($resolver);
 
-        if ($violations->count()) {
-            throw new InvalidOptionsException((string)$violations, $request->getOptions());
-        }
+        $processor = $this->processorRegistry->getProcessor($options[Partner::PARTNER]);
+        $processor->configureOptions($resolver);
 
-        $response = $this->client->send($request->getOptions());
+        $response = $this->client->send($resolver->resolve($options));
 
-        $violations = $this->validator->validate($response);
-
-        if ($violations->count()) {
-            throw new InvalidOptionsException((string)$violations, $response->getData());
-        }
+        // @todo create response
 
         return $response;
     }

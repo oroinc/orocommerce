@@ -2,9 +2,7 @@
 
 namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-class TransparentRedirect extends AbstractOption
+class TransparentRedirect extends AbstractBooleanOption
 {
     const SILENTTRAN = 'SILENTTRAN';
 
@@ -13,6 +11,9 @@ class TransparentRedirect extends AbstractOption
     {
         $resolver
             ->setDefined(TransparentRedirect::SILENTTRAN)
-            ->addAllowedValues(TransparentRedirect::SILENTTRAN, TransparentRedirect::YES);
+            ->setNormalizer(
+                TransparentRedirect::SILENTTRAN,
+                $this->getNormalizer(TransparentRedirect::TRUE, TransparentRedirect::FALSE)
+            );
     }
 }

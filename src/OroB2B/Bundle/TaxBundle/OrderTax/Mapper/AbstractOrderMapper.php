@@ -22,24 +22,41 @@ abstract class AbstractOrderMapper implements TaxMapperInterface
     protected $addressProvider;
 
     /**
+     * @var string
+     */
+    protected $className;
+
+    /**
      * @param ContextEventDispatcher $contextEventDispatcher
      * @param TaxationAddressProvider $addressProvider
+     * @param string $className
      */
     public function __construct(
         ContextEventDispatcher $contextEventDispatcher,
-        TaxationAddressProvider $addressProvider
+        TaxationAddressProvider $addressProvider,
+        $className
     ) {
         $this->contextEventDispatcher = $contextEventDispatcher;
         $this->addressProvider = $addressProvider;
+        $this->className = (string)$className;
     }
 
     /**
      * @param Order $order
-     * @return AbstractAddress
+     * @return AbstractAddress Billing, shipping or origin address according to exclusions
      */
-    public function getOrderAddress(Order $order)
+    public function getTaxationAddress(Order $order)
     {
-        return $this->addressProvider->getAddressForTaxation($order->getBillingAddress(), $order->getShippingAddress());
+        return $this->addressProvider->getTaxationAddress($order->getBillingAddress(), $order->getShippingAddress());
+    }
+
+    /**
+     * @param Order $order
+     * @return AbstractAddress Billing or shipping address
+     */
+    public function getDestinationAddress(Order $order)
+    {
+        return $this->addressProvider->getDestinationAddress($order->getBillingAddress(), $order->getShippingAddress());
     }
 
     /**
@@ -49,5 +66,13 @@ abstract class AbstractOrderMapper implements TaxMapperInterface
     protected function getContext($mappingObject)
     {
         return $this->contextEventDispatcher->dispatch($mappingObject);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProcessingClassName()
+    {
+        return $this->className;
     }
 }
