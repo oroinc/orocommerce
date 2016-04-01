@@ -20,8 +20,6 @@ define(function(require) {
             unitInputSelector: '.unitInput',
             unitSelector: '.unit',
             unitPriceSelector: '.unitPrice',
-            subtotalSelector: '#quote-choie-subtotal',
-            mainFormSelector: 'form',
             data_attributes: {
                 unit: 'unit',
                 formatted_unit: 'formatted-unit',
@@ -77,7 +75,6 @@ define(function(require) {
 
             this.$el = options._sourceElement;
             this.blockQuantityUpdate = false;
-
             this.$quantity = this.$el.find(this.options.quantitySelector);
             this.$unitInput = this.$el.find(this.options.unitInputSelector);
             this.$unit = this.$el.find(this.options.unitSelector);
@@ -105,7 +102,7 @@ define(function(require) {
                 String(target.data(this.options.data_attributes.formatted_unit))
             );
             this.updateUnitPriceValue(String(target.data(this.options.data_attributes.price)));
-            this.loadSubtotals();
+            this.updateSubtotals();
             this.quantityEventsEnabled = true;
         },
 
@@ -131,7 +128,7 @@ define(function(require) {
                         self.updateUnitPriceValue(String(response.price));
                         self.updateSelector(response.id);
                         self.setValidAttribute(self.$quantity, true);
-                        self.loadSubtotals();
+                        self.updateSubtotals();
                     } else {
                         self.updateUnitPriceValue(self.options.notAvailableMessage);
                         self.setValidAttribute(self.$quantity, false);
@@ -140,33 +137,10 @@ define(function(require) {
             });
         },
 
-        loadSubtotals: function(value) {
-            return;
-            var $form = $(this.options.mainFormSelector);
-            $form.ajaxSubmit({
-                data: {
-                    '_widgetContainer': 'ajax',
-                },
-                success: _.bind(this.onSubtotalSuccess, this),
-                error: _.bind(this.onSubtotalFail, this)
-            });
+        updateSubtotals: function(value) {
+            this.$el.trigger('quote-items-changed');
         },
-
-        onSubtotalSuccess: function(response) {
-            if (response.hasOwnProperty('redirectUrl')) {
-                mediator.execute('redirectTo', {url: response.redirectUrl}, {redirect: true});
-            } else {
-                var $response = $('<div/>').html(response);
-                var $content = $(this.options.subtotalSelector);
-                $content.html($response.find(this.options.subtotalSelector).html());
-            }
-        },
-
-        onSubtotalFail: function() {
-            this.inProgress = false;
-            mediator.execute('showFlashMessage', 'error', 'Could not perform transition');
-        },
-
+        
         /**
          * @param {String} value
          * @returns {Boolean}

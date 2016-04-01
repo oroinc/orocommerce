@@ -131,6 +131,35 @@ class QuoteController extends Controller
     }
 
     /**
+     * @Route("/subtotals/{id}", name="orob2b_sale_quote_frontend_subtotals", requirements={"id"="\d+"})
+     * @Layout()
+     * @Acl(
+     *      id="orob2b_sale_quote_frontend_subtotals",
+     *      type="entity",
+     *      class="OroB2BSaleBundle:Quote",
+     *      permission="ACCOUNT_VIEW",
+     *      group_name="commerce"
+     * )
+     *
+     * @param Request $request
+     * @param QuoteDemand $quoteDemand
+     * @return array
+     */
+    public function subtotalsAction(Request $request, QuoteDemand $quoteDemand)
+    {
+        $form = $this->createForm(QuoteDemandType::NAME, $quoteDemand);
+        if ($request->isMethod(Request::METHOD_POST)) {
+            $form->handleRequest($request);
+        }
+
+        return [
+            'data' => [
+                'totals' => (object)$this->getTotalProcessor()->getTotalWithSubtotalsAsArray($quoteDemand)
+            ]
+        ];
+    }
+
+    /**
      * @return TotalProcessorProvider
      */
     protected function getTotalProcessor()

@@ -20,10 +20,10 @@
         quoteProductId: quoteProduct.id,
         calculatingMessage: 'orob2b.frontend.sale.quoteproductoffer.price_calculating.message'|trans,
         notAvailableMessage: 'orob2b.frontend.sale.quoteproductoffer.not_available.message'|trans,
-        subtotalSelector: '#quote-choice-subtotal'
+        currentLineItemSelector: '#' ~ id
     } %}
     <tr id="{{ id }}"
-        class="borderless"
+        class="borderless quote-line-items"
         data-page-component-module="orob2bsale/js/app/components/quote-product-to-order-component"
         data-page-component-options="{{ componentOptions|json_encode }}">
         <td class="va-t_md">
