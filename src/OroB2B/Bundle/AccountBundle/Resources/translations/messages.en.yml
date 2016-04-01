@@ -156,6 +156,11 @@ orob2b.account:
 
         account_user_role:
             create: 'Create Account User Role'
+            edit: 'Edit'
+            delete: 'Delete'
+            create_label: 'Create'
+            save_label: 'Save'
+            cancel_label: 'Cancel'
 
     sections:
         general: 'General Information'
@@ -386,10 +391,13 @@ orob2b.account:
         account_user:
             role.entity_plural_label: Account User Roles
             entity_plural_label: Account Users
+        title:
+            account_user_role.create: Create Account User Role
+            account_user_role.edit: Edit Account User Role
 
     account_typed_address_with_default_type:
         choice.default_text: 'Default %type_name%'
 
     dataaudit:
         administrator: Administrator
-        module_label: Audig history for Account User
+        module_label: Audit history for Account User

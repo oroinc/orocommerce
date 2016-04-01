@@ -18,25 +18,6 @@
   {% endif %}
 {% endset %}
 
-{% set billingAddressBlock %}
-    {{ address.renderAddress(order.billingAddress)}}
-    <div>
-        {% if order.billingAddress is not empty %}
-            {{ order.billingAddress.phone|escape|nl2br }}
-        {% endif %}
-    </div>
-{% endset %}
-
-{% set shippingAddressBlock %}
-    {{ address.renderAddress(order.shippingAddress)}}
-    <div>
-        {% if order.shippingAddress is not empty %}
-            {{ order.shippingAddress.phone|escape|nl2br }}
-        {% endif %}
-    </div>
-{% endset %}
-
-
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
