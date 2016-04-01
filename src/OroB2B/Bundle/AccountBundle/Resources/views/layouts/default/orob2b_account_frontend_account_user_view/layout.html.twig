@@ -12,6 +12,14 @@
     </div>
 {% endblock %}
 
+{% block _account_user_view_information_title_widget %}
+    <div class="account-oq__item account-oq__item_full mb0-sm">
+        <h2 class="account-oq__item__title">
+            {{ block_widget(block) }}
+        </h2>
+    </div>
+{% endblock %}
+
 {% block _account_user_view_information_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% import 'OroEmailBundle::actions.html.twig' as EmailActions %}
@@ -23,11 +31,18 @@
     }) }}
 {% endblock %}
 
+{% block _account_user_address_book_title_widget %}
+    <div class="account-oq__item account-oq__item_full mb0-sm">
+        <h2 class="account-oq__item__title">
+            {{ block_widget(block) }}
+        </h2>
+    </div>
+{% endblock %}
+
 {% block _account_user_address_book_widget %}
     {{ oro_widget_render({
         'widgetType': 'block',
         'contentClasses': [],
-        'url': path('orob2b_account_account_user_address_book', {id: entity.id}),
-        'title': 'orob2b.account.accountuser.address_book.label'|trans
+        'url': path('orob2b_account_account_user_address_book', {id: entity.id})
     }) }}
 {% endblock %}

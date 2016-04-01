@@ -224,6 +224,20 @@ operations:
                     route_parameters:
                         id: $id
 
+    orob2b_account_frontend_profile_user:
+        label: orob2b.account.action.account_user.edit
+        applications: [frontend]
+        routes:
+            - orob2b_account_frontend_account_user_profile
+        acl_resource: [EDIT, $.data]
+        order: 5
+        button_options:
+            icon: icon-edit
+        actions:
+            - @redirect:
+                parameters:
+                    route: orob2b_account_frontend_account_user_profile_update
+
     orob2b_account_frontend_edit_role:
         label: orob2b.account.action.account_user_role.edit
         applications: [frontend]
