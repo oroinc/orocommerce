@@ -161,7 +161,6 @@
 {% endblock %}
 
 {% macro orob2b_rfp_request_lineitem_prototype(widget) %}
-    3333
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
