@@ -75,15 +75,14 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
 
     /**
      * @param Quote $quote
+     * @return $this
      */
     public function setQuote(Quote $quote)
     {
         $this->quote = $quote;
-        foreach ($quote->getQuoteProducts() as $quoteProduct) {
-            $offer = $quoteProduct->getQuoteProductOffers()->first();
-            $demandProduct = new QuoteProductDemand($this, $offer, $offer->getQuantity());
-            $this->addDemandProduct($demandProduct);
-        }
+        $this->initQuoteProductDemands();
+
+        return $this;
     }
 
     /**
@@ -144,5 +143,14 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
             return $this->quote->getShippingEstimate();
         }
         return null;
+    }
+
+    protected function initQuoteProductDemands()
+    {
+        foreach ($this->quote->getQuoteProducts() as $quoteProduct) {
+            $offer = $quoteProduct->getQuoteProductOffers()->first();
+            $demandProduct = new QuoteProductDemand($this, $offer, $offer->getQuantity());
+            $this->addDemandProduct($demandProduct);
+        }
     }
 }

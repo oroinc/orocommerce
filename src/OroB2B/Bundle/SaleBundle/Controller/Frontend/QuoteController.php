@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\SaleBundle\Controller\Frontend;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,11 +14,10 @@ use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteDemandType;
 
 class QuoteController extends Controller
@@ -91,7 +91,6 @@ class QuoteController extends Controller
      *      permission="ACCOUNT_VIEW",
      *      group_name="commerce"
      * )
-     * @ParamConverter("quote", options={"repository_method" = "getQuote"})
      *
      * @param Request $request
      * @param QuoteDemand $quoteDemand
@@ -99,25 +98,10 @@ class QuoteController extends Controller
      */
     public function choiceAction(Request $request, QuoteDemand $quoteDemand)
     {
-        // TODO: Move to action_group
-        if (!$quoteDemand->getDemandProducts()->count()) {
-            foreach ($quoteDemand->getQuote()->getQuoteProducts() as $quoteProduct) {
-                /** @var QuoteProductOffer $offer */
-                $offer = $quoteProduct->getQuoteProductOffers()->first();
-                $demandProduct = new QuoteProductDemand($quoteDemand, $offer, $offer->getQuantity());
-                $quoteDemand->addDemandProduct($demandProduct);
-            }
-        }
-
         $form = $this->createForm(QuoteDemandType::NAME, $quoteDemand);
         if ($request->isMethod(Request::METHOD_POST)) {
             $form->handleRequest($request);
             if ($form->isValid()) {
-                // TODO: Save $quoteDemand if everything is OK
-//                $em = $this->getDoctrine()->getManager();
-//                $em->persist($quoteDemand);
-//                $em->flush();
-
                 $actionGroupRegistry = $this->get('oro_action.action_group_registry');
                 $actionGroup = $actionGroupRegistry
                     ->findByName('orob2b_sale_frontend_quote_accept_and_submit_to_order');
