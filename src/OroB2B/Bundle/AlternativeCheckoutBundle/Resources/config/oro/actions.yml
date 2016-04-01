@@ -10,25 +10,9 @@ operations:
             icon: icon-time
         acl_resource: orob2b_alternativecheckout_checkout_approve
         preactions:
-            - @find_entity:
-                class: OroB2B\Bundle\SaleBundle\Entity\QuoteDemand
-                attribute: $.quoteDemand
-                where:
-                    quote: $.data
-            - @find_entity:
-                conditions:
-                    @not_empty: $.quoteDemand
-                class: OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource
-                attribute: $.checkoutSource
-                where:
-                    quoteDemand: $.quoteDemand
-            - @find_entity:
-                conditions:
-                    @not_empty: $.checkoutSource
-                class: OroB2B\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout
-                attribute: $.checkout
-                where:
-                    source: $.checkoutSource
+            - @alternative_checkout_to_quote:
+                quote: $.data
+                checkout: $.checkout
         preconditions:
             @not_empty: $.checkout
         actions:

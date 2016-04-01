@@ -39,7 +39,7 @@ class QuoteController extends Controller
     public function viewAction(Quote $quote)
     {
         return [
-            'data' => ['entity' => $quote]
+            'data' => ['entity' => $quote, 'quote' => $quote]
         ];
     }
 

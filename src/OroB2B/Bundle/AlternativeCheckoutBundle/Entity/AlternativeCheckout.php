@@ -17,7 +17,9 @@ use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareI
 
 /**
  * @ORM\Table(name="orob2b_alternative_checkout")
- * @ORM\Entity
+ * @ORM\Entity(
+ *     repositoryClass="OroB2B\Bundle\AlternativeCheckoutBundle\Entity\Repository\AlternativeCheckoutRepository"
+ * )
  * @ORM\HasLifecycleCallbacks()
  * @Config(
  *      defaultValues={
