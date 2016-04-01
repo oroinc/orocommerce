@@ -12,6 +12,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\TaxBundle\DependencyInjection\OroB2BTaxExtension;
+use OroB2B\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class LoadTaxConfigurationDemoData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
@@ -25,7 +26,7 @@ class LoadTaxConfigurationDemoData extends AbstractFixture implements DependentF
             'region_text' => null,
             'postal_code' => '90401' #Santa Monica
         ],
-        'use_as_base_by_default' => 'destination'
+        'use_as_base_by_default' => TaxationSettingsProvider::USE_AS_BASE_DESTINATION
     ];
 
     /**
