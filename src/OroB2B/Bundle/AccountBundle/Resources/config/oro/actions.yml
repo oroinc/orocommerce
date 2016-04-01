@@ -67,6 +67,11 @@ operations:
                     data: $.data
                     value: false
                     current_user: $.currentUser
+            - @redirect:
+                parameters:
+                    route: orob2b_account_frontend_account_user_view
+                    route_parameters:
+                        id: $id
             - @flash_message:
                 message: orob2b.account.controller.accountuser.disabled.message
                 type: 'success'
@@ -101,6 +106,11 @@ operations:
                     data: $.data
                     value: true
                     current_user: $.currentUser
+            - @redirect:
+                parameters:
+                    route: orob2b_account_frontend_account_user_view
+                    route_parameters:
+                        id: $id
             - @flash_message:
                 message: orob2b.account.controller.accountuser.enabled.message
                 type: 'success'

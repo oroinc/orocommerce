@@ -2,12 +2,21 @@
     <div class="account-sidebar">
         <h3 class="account-navigation-title">My Account</h3>
         <ul class="account-navigation-list">
-            <li><a href="{{ path('orob2b_account_frontend_account_user_profile') }}">Account Information</a></li>
-            <li><a href="{{ path('orob2b_account_frontend_account_user_index') }}">Account User</a></li>
-            <li><a href="{{ path('orob2b_account_frontend_account_user_role_index') }}">Account User Role</a></li>
-            <li><a href="{{ path('orob2b_rfp_frontend_request_index') }}">Requests For Quote</a></li>
-            <li class="current"><a href="{{ path('orob2b_sale_quote_frontend_index') }}">Quotes</a></li>
-            <li><a href="{{ path('orob2b_order_frontend_index') }}">Orders</a></li>
+            {% set menu = [
+                {'path': 'orob2b_account_frontend_account_user_profile', 'title': 'Account Information'},
+                {'path': 'orob2b_account_frontend_account_user_index', 'title': 'Account User'},
+                {'path': 'orob2b_account_frontend_account_user_role_index', 'title': 'Account User Role'},
+                {'path': 'orob2b_rfp_frontend_request_index', 'title': 'Requests For Quote'},
+                {'path': 'orob2b_sale_quote_frontend_index', 'title': 'Quotes'},
+                {'path': 'orob2b_order_frontend_index', 'title': 'Orders'}
+            ] %}
+            {% for element in menu %}
+                <li{% if route is defined and element.path == route %} class="current"{% endif %}>
+                    <a href="{{ path(element.path) }}">
+                        {{ element.title }}
+                    </a>
+                </li>
+            {% endfor %}
         </ul>
     </div>
 {% endblock %}

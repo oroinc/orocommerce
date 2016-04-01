@@ -21,6 +21,9 @@ layout:
             id: account_sidebar
             parentId: sidebar_left
             blockType: block
+            options:
+                vars:
+                    route: { @value: 'orob2b_order_frontend_index' }
         - @addTree:
             items:
                 order_view_page:

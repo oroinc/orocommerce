@@ -50,3 +50,6 @@ layout:
             id: account_sidebar
             parentId: sidebar_left
             blockType: block
+            options:
+                vars:
+                    route: { @value: 'orob2b_rfp_frontend_request_index' }

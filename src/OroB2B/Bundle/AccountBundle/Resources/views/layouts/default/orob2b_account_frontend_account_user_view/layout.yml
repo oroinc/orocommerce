@@ -28,6 +28,9 @@ layout:
             id: account_sidebar
             parentId: sidebar_left
             blockType: block
+            options:
+                vars:
+                    route: { @value: 'orob2b_account_frontend_account_user_index' }
 
         - @addTree:
             items:
@@ -70,9 +73,15 @@ layout:
                     options:
                         vars:
                             entity: { @value: $data.entity }
+                account_user_list_link:
+                    blockType: link
+                    options:
+                        route_name: orob2b_account_frontend_account_user_index
+                        text: 'orob2b.account.frontend.account_user_link.text'
             tree:
                 content:
                     account_user_view_page:
+                        account_user_list_link: ~
                         account_user_top_actions: ~
                         account_user_view_top: ~
                         account_user_view_information:
