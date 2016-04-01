@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response;
 
 class Response implements ResponseInterface
 {
+    const PNREF_KEY = 'PNREF';
+    const RESULT_KEY = 'RESULT';
     /**
      * @var \ArrayObject
      */
@@ -20,18 +22,18 @@ class Response implements ResponseInterface
     /** {@inheritdoc} */
     public function isSuccessful()
     {
-        return $this->values->offsetGet('RESULT') === '0';
+        return $this->getState() === '0';
     }
 
     /** {@inheritdoc} */
     public function getReference()
     {
-        return $this->values->offsetGet('PNREF');
+        return $this->values->offsetGet(self::PNREF_KEY);
     }
 
     /** {@inheritdoc} */
     public function getState()
     {
-        return $this->values->offsetGet('RESULT');
+        return $this->values->offsetGet(self::RESULT_KEY);
     }
 }
