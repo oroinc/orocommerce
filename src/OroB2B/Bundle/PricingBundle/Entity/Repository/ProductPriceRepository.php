@@ -142,15 +142,14 @@ class ProductPriceRepository extends EntityRepository
             )
             ->setParameter('priceListId', $priceListId)
             ->setParameter('productIds', $productIds);
-        
+
         if ($orderByCurrency) {
             $qb
                 ->addOrderBy('price.currency', 'DESC');
-        } else {
-            $qb
-                ->addOrderBy('price.unit')
-                ->addOrderBy('price.quantity');
         }
+        $qb
+            ->addOrderBy('price.unit')
+            ->addOrderBy('price.quantity');
 
         if ($currency) {
             $qb
