@@ -9,7 +9,7 @@ layout:
             optionValue:
                 label: 'orob2b.frontend.sale.quote.head_title.label'
                 parameters:
-                    id: { @value: $data.quote.qid }
+                    id: { @value: $data.entity.qid }
 
         - @setOption:
             id: page_title
@@ -22,7 +22,7 @@ layout:
             optionValue:
                 label: 'orob2b.frontend.sale.quote.title.label'
                 parameters:
-                    id: { @value: $data.quote.qid }
+                    id: { @value: $data.entity.qid }
 
         - @add:
             id: account_sidebar
@@ -37,28 +37,28 @@ layout:
                     blockType: block
                     options:
                         vars:
-                            quote: { @value: $data.quote }
+                            quote: { @value: $data.entity }
                 quote_view_controls_list:
                     blockType: block
                 quote_view_information:
                     blockType: container
                     options:
                         vars:
-                            quote: { @value: $data.quote }
+                            quote: { @value: $data.entity }
                 quote_view_line_items:
                     blockType: block
                     options:
                         vars:
-                            quote: { @value: $data.quote }
+                            quote: { @value: $data.entity }
                 quote_view_line_items_mobile:
                     blockType: block
                     options:
                         vars:
-                            quote: { @value: $data.quote }
+                            quote: { @value: $data.entity }
                 quote_view_accept_button:
                     blockType: action_combined_buttons
                     options:
-                        visible: { @not_empty: $data.quote.hasOfferVariants }
+                        visible: { @not_empty: $data.entity.hasOfferVariants }
                         actions:
                             @value: $data.actions.all
                         entity:
@@ -68,7 +68,7 @@ layout:
                 quote_shipping_address:
                     blockType: address
                     options:
-                        address: {@value: $data.quote.shippingAddress}
+                        address: {@value: $data.entity.shippingAddress}
                         label: 'orob2b.sale.quote.shipping_address.label'
                         block_prefixes: ['quote_body_column_element']
             tree:

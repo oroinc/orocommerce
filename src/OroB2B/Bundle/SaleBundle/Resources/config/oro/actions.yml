@@ -27,27 +27,6 @@ operations:
             - @redirect:
                 route: 'orob2b_sale_quote_index'
 
-    orob2b_accept_quote:
-        label: orob2b.sale.quote.actions.accept_quote
-        enabled: true
-        applications: [frontend]
-        routes:
-            - orob2b_sale_quote_frontend_view
-        order: 10
-        button_options:
-            icon: icon-time
-        acl_resource: orob2b_alternativecheckout_checkout_approve
-        preconditions:
-            @not_empty: $.checkoutSource
-        actions:
-            - @find_entity:
-                class: OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource
-                attribute: $.checkoutSource
-                where:
-                   quote: $.data
-            - @redirect:
-                route: 'orob2b_sale_quote_index'
-
     orob2b_sale_notify_customer_by_email:
         label: orob2b.sale.quote.notify_customer.by_email.link.text
         applications: [backend, frontend]
