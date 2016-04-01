@@ -44,6 +44,7 @@ layout:
                     options:
                         vars:
                             form: { @value: $data.form }
+                            quoteDemand: { @value: $data.data }
                 quote_choice_back_button:
                     blockType: block
                     options:
@@ -51,9 +52,6 @@ layout:
                             quote: { @value: $data.quote }
                 quote_choice_submit_button:
                     blockType: block
-                    options:
-                        vars:
-                            form: { @value: $data.quote }
 
                 quote_choice_subtotals:
                     blockType: order_total

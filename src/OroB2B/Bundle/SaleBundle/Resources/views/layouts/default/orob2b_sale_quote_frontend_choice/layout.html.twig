@@ -5,11 +5,19 @@
 {% endblock %}
 
 {% block _quot_choice_form_widget %}
+    {% set componentOptions = {
+        subtotalsRoute: 'orob2b_sale_quote_frontend_subtotals',
+        quoteDemandId: quoteDemand.id,
+        subtotalSelector: '#quote-choice-subtotal',
+        lineItemsSelector: '.quote-line-items'
+    } %}
     <form method="POST"
           data-nohash="true"
           data-disable-autofocus="true"
           id="{{ form.vars.id }}"
           name="{{ form.vars.name }}"
+          data-page-component-module="orob2bsale/js/app/components/quote-demand-component"
+          data-page-component-options="{{ componentOptions|json_encode }}"
           class="form-dialog quote-choice-form"
     >
         {{ form_widget(form.demandProducts) }}
@@ -35,7 +43,7 @@
     </div>
 {% endblock %}
 
-{% block _quote_choise_subtotals_widget %}
+{% block _quote_choice_subtotals_widget %}
     <div id="quote-choice-subtotal" class="order-checkout-widget__container-wrapper">
         <div class="order-checkout-widget__container order-checkout-widget__container_lg">
             <table class="order-checkout-widget__table pull-right">

@@ -83,6 +83,6 @@ OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand:
     properties:
         quantity:
             - NotBlank: ~
-            - GreaterThanZero: ~
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
         quoteProductOffer:
             - NotBlank: ~

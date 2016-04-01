@@ -5,11 +5,11 @@ layout:
 
         - @addTree:
             items:
-                quote_choise_subtotals:
+                quote_choice_subtotals:
                     blockType: order_total
                     options:
                         total: {@value: $data.totals.total}
                         subtotals: {@value: $data.totals.subtotals}
             tree:
                 root:
-                     quote_choise_subtotals: ~
+                     quote_choice_subtotals: ~
