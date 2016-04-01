@@ -1,8 +1,5 @@
 {% block _quote_view_top_widget %}
-    <div class="mmb5-md mmb5-sm">{{ 'oro.ui.created_at'|trans }}: {{ quote.createdAt ? quote.createdAt|oro_format_datetime : 'N/A' }}</div>
-    <div class="mmb5-md mmb5-sm">{{ 'oro.ui.updated_at'|trans }}: {{ quote.updatedAt ? quote.updatedAt|oro_format_datetime : 'N/A' }}</div>
 {% endblock %}
-
 
 {% block _quote_view_controls_list_widget %}
     <ul class="oro-order__controls-list">

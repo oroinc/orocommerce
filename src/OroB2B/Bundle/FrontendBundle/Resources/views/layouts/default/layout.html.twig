@@ -1,5 +1,13 @@
 {% extends 'OroLayoutBundle:Layout:div_layout.html.twig' %}
 
+{% block datagrid_widget %}
+    {% set grid_render_parameters = {
+        viewLoading: true
+    }|merge(grid_render_parameters) %}
+    {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+    {{ dataGrid.renderGrid(grid_full_name, grid_parameters, grid_render_parameters) }}
+{% endblock %}
+
 {% block block_attributes_underscore %}
     {% set attributes = block('block_attributes_base')|replace({
         '&lt;%': '<%',

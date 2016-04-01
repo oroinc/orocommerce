@@ -74,7 +74,7 @@ orob2b:
                 address:
                     choose: Select an address
                     choose_or_create: Select an existing address or enter a new address below
-                    manual: Enter address manually
+                    manual: Enter other address
         system_configuration:
             fields:
                 backend_product_visibility.title: 'Can Be Added to Quotes'

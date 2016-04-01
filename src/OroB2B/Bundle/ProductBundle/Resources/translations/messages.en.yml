@@ -19,6 +19,7 @@ orob2b:
         image.label: Image
         names.label: Name
         descriptions.label: Description
+        short_descriptions.label: Short Description
         removed: '{title} - removed'
         is_variant.label: Is Variant
         variant_links.label: Product Variant Links
