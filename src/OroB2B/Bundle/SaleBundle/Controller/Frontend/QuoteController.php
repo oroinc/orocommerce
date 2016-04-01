@@ -110,23 +110,27 @@ class QuoteController extends Controller
         }
 
         $form = $this->createForm(QuoteDemandType::NAME, $quoteDemand);
-        $form->handleRequest($request);
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($quoteDemand);
-            $em->flush();
+        if ($request->isMethod(Request::METHOD_POST)) {
+            $form->handleRequest($request);
+            if ($form->isValid()) {
+                // TODO: Save $quoteDemand if everything is OK
+//                $em = $this->getDoctrine()->getManager();
+//                $em->persist($quoteDemand);
+//                $em->flush();
 
-            $actionGroupRegistry = $this->get('oro_action.action_group_registry');
-            $actionGroup = $actionGroupRegistry->findByName('orob2b_sale_frontend_quote_accept_and_submit_to_order');
-            if ($actionGroup) {
-                $actionData = $actionGroup->execute(new ActionData(['data' => $quoteDemand]));
+                $actionGroupRegistry = $this->get('oro_action.action_group_registry');
+                $actionGroup = $actionGroupRegistry
+                    ->findByName('orob2b_sale_frontend_quote_accept_and_submit_to_order');
+                if ($actionGroup) {
+                    $actionData = $actionGroup->execute(new ActionData(['data' => $quoteDemand]));
 
-                $redirectUrl = $actionData->getRedirectUrl();
-                if ($redirectUrl) {
-                    if ($request->isXmlHttpRequest()) {
-                        return new JsonResponse(['redirectUrl' => $redirectUrl]);
-                    } else {
-                        return $this->redirect($redirectUrl);
+                    $redirectUrl = $actionData->getRedirectUrl();
+                    if ($redirectUrl) {
+                        if ($request->isXmlHttpRequest()) {
+                            return new JsonResponse(['redirectUrl' => $redirectUrl]);
+                        } else {
+                            return $this->redirect($redirectUrl);
+                        }
                     }
                 }
             }

@@ -10,7 +10,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand;
-use OroB2B\Bundle\SaleBundle\Validator\Constraints\ConfigurableQuoteProductOffer;
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero;
 
@@ -28,7 +27,7 @@ class QuoteProductDemandType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand',
-//                'constraints' => new ConfigurableQuoteProductOffer(), // TODO Refactor constraint
+                // 'constraints' => new ConfigurableQuoteProductOffer(), // TODO Refactor constraint
             ]
         );
     }
