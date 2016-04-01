@@ -50,7 +50,7 @@ class LoadTaxConfigurationDemoData extends AbstractFixture implements DependentF
 
         foreach (self::$configurations as $option => $value) {
             $configManager->set(
-                $configOption = OroB2BTaxExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $option,
+                OroB2BTaxExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $option,
                 $value
             );
         }
