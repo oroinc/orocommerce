@@ -169,6 +169,54 @@ operations:
                 parameters:
                     route: orob2b_account_frontend_account_user_role_create
 
+    orob2b_account_frontend_edit_role:
+        label: orob2b.account.action.account_user_role.edit
+        applications: [frontend]
+        routes:
+            - orob2b_account_frontend_account_user_role_view
+        acl_resource: [EDIT, entity:commerce@OroB2B\Bundle\AccountBundle\Entity\AccountUserRole]
+        order: 10
+        button_options:
+            icon: icon-edit
+        actions:
+            - @redirect:
+                parameters:
+                    route: orob2b_account_frontend_account_user_role_update
+                    route_parameters:
+                        id: $id
+
+    orob2b_account_frontend_delete_role:
+        label: orob2b.account.action.account_user_role.delete
+        applications: [frontend]
+        routes:
+            - orob2b_account_frontend_account_user_role_view
+            - orob2b_account_frontend_account_user_role_update
+        acl_resource: [DELETE, $.data]
+        order: 20
+        button_options:
+            icon: icon-trash
+        preactions:
+            - @call_method:
+                object: $.data
+                method: isPredefined
+                attribute: $.isPredefined
+        preconditions:
+            @equal: [false, $.isPredefined]
+        actions:
+            - @run_action_group:
+                action_group: DELETE
+                parameters_mapping:
+                    data: $.data
+            - @trans:
+                id: orob2b.account.accountuserrole.entity_label
+                attribute: $.entityLabel
+            - @flash_message:
+                message: oro.action.delete_message
+                type: 'info'
+                message_parameters:
+                    entityLabel: $.entityLabel
+            - @redirect: {route: orob2b_account_frontend_account_user_role_index}
+
 action_groups:
     orob2b_account_accountuser_set_enabled:
         parameters:

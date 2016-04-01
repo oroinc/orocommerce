@@ -1,0 +1,114 @@
+{% block oro_acl_access_level_selector_widget %}
+    {% set additionalClass = '' %}
+    {% if form.parent.parent.vars.privileges_config.view_type is defined and form.parent.parent.vars.privileges_config.view_type != 'grid' %}
+        {% set additionalClass = 'col-md-3 text-center' %}
+    {% endif %}
+    <div class="access_level_value {{ additionalClass }}"
+         data-identity="{{ identity }}"
+         data-selector-id="{{ id }}"
+         data-selector-name="{{ full_name }}"
+         data-value="{{ value }}"
+    >
+        <div class="access_level_value_link">
+            <a href="javascript:void(0);">
+                {% set label = level_label is not defined or level_label is empty ?
+                    translation_prefix ~ 'NONE' :
+                    translation_prefix ~ level_label
+                %}
+                {{ label|trans({}, translation_domain) }}
+            </a>
+            {% set type = type|default('hidden') %}
+            {{ block('form_widget_simple') }}
+        </div>
+        <div class="access_level_value_choice" style="display: none"></div>
+    </div>
+{% endblock %}
+
+{% block oro_acl_privilege_identity_widget %}
+    {% set class = '' %}
+    {% if form.parent.vars.privileges_config.view_type is defined and form.parent.vars.privileges_config.view_type != 'grid' %}
+        {% set class = 'col-md-9' %}
+    {% endif %}
+
+    {{ form_widget(form, {'attr': {'class': class}}) }}
+{% endblock %}
+
+{% block oro_acl_collection_widget %}
+    <div data-page-component-module="{{ page_component_module|escape }}" data-page-component-options="{{ page_component_options|json_encode|escape }}">
+        {% if privileges_config.view_type == 'grid' %}
+            <table class="oro-grid-table">
+                <thead>
+                    <tr>
+                        <th class="col-md-6">&nbsp;</th>
+                        <th class="col-md-6">{{ 'orob2b.account.security.permissions'|trans }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for child in form %}
+                        {{ form_widget(child) }}
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="row mt1-md mb1-md">
+                {% for child in form %}
+                    <div class="col-md-6">
+                        <div class="row">
+                            {{ form_widget(child) }}
+                        </div>
+                    </div>
+
+                    {% if loop.index is even %}
+                        </div><div class="row mb1-md">
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block oro_acl_privilege_widget %}
+    {% spaceless %}
+        <tr {% if form.vars.value.identity.name == "(default)" %}class="default-field"{% endif %}>
+            <td>
+                {{ form_widget(form.identity) }}
+            </td>
+            {% if privileges_config.view_type == 'grid' %}
+                <td>
+                    <table class="oro-grid-table borderless">
+                        <tbody>
+                            {{ form_widget(form.permissions) }}
+                        </tbody>
+                    </table>
+                </td>
+            {% else %}
+                {{ form_widget(form.permissions) }}
+            {% endif %}
+        </tr>
+        <tr>
+            <td class="decor-row" colspan="2"></td>
+        </tr>
+    {% endspaceless %}
+{% endblock %}
+
+{% block oro_acl_permission_collection_widget %}
+    {% for field in privileges_config['permissions'] %}
+        <tr {% if form.parent.vars.value.identity.name == "(default)" %}class="default-field"{% endif %}>
+            {% for permission in form %}
+                {% if permission.vars.value.name == field %}
+                    <td class="col-md-6">
+                        {% if privileges_config.view_type == 'grid' %}
+                            {% set aclPermission = acl_permission(permission.vars.value) %}
+
+                            {{ aclPermission.label|default(field)|trans }}
+                            {% if aclPermission.description %} ({{ aclPermission.description|trans }}){% endif %}
+                        {% endif %}
+                    </td>
+                    <td class="col-md-6">
+                        {{ form_widget(permission) }}
+                    </td>
+                {% endif %}
+            {% endfor %}
+        </tr>
+    {% endfor %}
+{% endblock %}

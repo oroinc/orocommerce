@@ -293,12 +293,10 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             $products[] = $product;
 
             $this->attachmentManager->expects($this->at($index))
-                ->method('getAttachment')
+                ->method('getFilteredImageUrl')
                 ->with(
-                    'OroB2B\Bundle\ProductBundle\Entity\Product',
-                    $productId,
-                    'image',
-                    $image
+                    $image,
+                    'product_large'
                 )
                 ->willReturn($productId);
         }

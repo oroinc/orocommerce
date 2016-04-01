@@ -14,23 +14,21 @@
 {% endblock %}
 
 {% block _product_image_widget %}
-    {% if product.image %}
-        <!-- START Product Gallery -->
-        <div class="product-gallery-widget product-gallery-widget_vertical product-gallery-widget_l_floated">
-            <div class="product-gallery product-gallery_vertical">
-                <div class="product-gallery__image-holder">
-                    <div class="product-gallery__image-holder__carousel" data-product-gallery>
-                        <a href="#">
-                            <img src="{{ resized_image_url(product.image, 378, 378) }}" alt="{{ product.defaultName }}"
-                            width="378" height="378">
-                        </a>
-                        {#todo update image preview filter#}
-                    </div>
+    {% import 'OroB2BProductBundle::image_macros.html.twig' as Image %}
+    <!-- START Product Gallery -->
+    <div class="product-gallery-widget product-gallery-widget_vertical product-gallery-widget_l_floated">
+        <div class="product-gallery product-gallery_vertical">
+            <div class="product-gallery__image-holder">
+                <div class="product-gallery__image-holder__carousel" data-product-gallery>
+                    <a href="#">
+                        <img src="{{ Image.url(product.image, 'product_large') }}" alt="{{ product.defaultName }}"
+                             width="378" height="378">
+                    </a>
                 </div>
             </div>
         </div>
-        <!-- END Product Gallery -->
-    {% endif %}
+    </div>
+    <!-- END Product Gallery -->
 {% endblock %}
 
 {% block _product_description_container_widget %}
@@ -50,8 +48,8 @@
     </div>
 {% endblock %}
 
-{% block _product_title_widget %}
-    <h1 class="product-title">{{ text }}</h1>
+{% block _page_title_widget %}
+    <h3 class="product-title">{{ text }}</h3>
 {% endblock %}
 
 {% block _product_rating_widget %}
@@ -71,16 +69,23 @@
 {% block _product_specification_widget %}
     <div class="product__specification">
         <table class="table borderless paddingless">
-            <tr>
-                <td>Item #:</td>
-                <td><span class="red">{{ product.sku }}</span></td>
-            </tr>
-            <tr class="not-implemented">
-                <td>MFG Model #:</td>
-                <td><span class="red">1ABC13656</span></td>
-            </tr>
+            {{ block_widget(block) }}
         </table>
     </div>
+{% endblock %}
+
+{% block _product_specification_sku_widget %}
+    <tr>
+        <td>Item #:</td>
+        <td><span class="red">{{ block_widget(block) }}</span></td>
+    </tr>
+{% endblock %}
+
+{% block _product_specification_mfg_widget %}
+    <tr class="not-implemented">
+        <td>MFG Model #:</td>
+        <td><span class="red">{{ block_widget(block) }}</span></td>
+    </tr>
 {% endblock %}
 
 {% block _order_with_matrix_widget %}
@@ -96,24 +101,24 @@
 {% block _product_variants_widget %}
     <div class="product__colors not-implemented">
         <label>Select Colors</label>
-                      <span class="badge badge_sm product__colors__item color-item_red">
-                        <input type="checkbox" name="product_red"/>
-                      </span>
-                      <span class="badge badge_sm product__colors__item color-item_blue">
-                        <input type="checkbox" name="product_blue"/>
-                      </span>
-                      <span class="badge badge_sm product__colors__item color-item_purple">
-                        <input type="checkbox" name="product_purple"/>
-                      </span>
-                      <span class="badge badge_sm product__colors__item color-item_green">
-                        <input type="checkbox" name="product_green"/>
-                      </span>
-                      <span class="badge badge_sm product__colors__item color-item_light-green">
-                        <input type="checkbox" name="product_green"/>
-                      </span>
-                      <span class="badge badge_sm product__colors__item color-item_gray">
-                        <input type="checkbox" name="product_gray"/>
-                      </span>
+        <span class="badge badge_sm product__colors__item color-item_red">
+            <input type="checkbox" name="product_red"/>
+        </span>
+        <span class="badge badge_sm product__colors__item color-item_blue">
+            <input type="checkbox" name="product_blue"/>
+        </span>
+        <span class="badge badge_sm product__colors__item color-item_purple">
+            <input type="checkbox" name="product_purple"/>
+        </span>
+        <span class="badge badge_sm product__colors__item color-item_green">
+            <input type="checkbox" name="product_green"/>
+        </span>
+        <span class="badge badge_sm product__colors__item color-item_light-green">
+            <input type="checkbox" name="product_green"/>
+        </span>
+        <span class="badge badge_sm product__colors__item color-item_gray">
+            <input type="checkbox" name="product_gray"/>
+        </span>
     </div>
 {% endblock %}
 
