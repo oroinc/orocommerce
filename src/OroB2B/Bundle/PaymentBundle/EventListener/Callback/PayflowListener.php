@@ -35,6 +35,6 @@ class PayflowListener
         $paymentTransaction
             ->setState($response->getState())
             ->setReference($response->getReference())
-            ->setData($eventData + $paymentTransactionData);
+            ->setData(array_replace($paymentTransactionData, $eventData));
     }
 }

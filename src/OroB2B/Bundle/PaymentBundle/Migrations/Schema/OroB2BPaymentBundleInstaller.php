@@ -115,6 +115,7 @@ class OroB2BPaymentBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('entity_identifier', Type::INTEGER);
         $table->addColumn('data', SecureArrayType::TYPE, ['notnull' => false]);
         $table->setPrimaryKey(['id']);
+        $table->addIndex(['entity_class', 'entity_identifier'], 'orob2b_payment_tran_entity_idx', []);
     }
 
     /**

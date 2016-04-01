@@ -5,7 +5,12 @@ namespace OroB2B\Bundle\PaymentBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="orob2b_payment_transaction")
+ * @ORM\Table(
+ *      name="orob2b_payment_transaction",
+ *      indexes={
+ *          @ORM\Index(name="orob2b_payment_tran_entity_idx", columns={"entity_class", "entity_identifier"})
+ *      }
+ * )
  * @ORM\Entity
  */
 class PaymentTransaction

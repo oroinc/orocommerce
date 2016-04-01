@@ -24,6 +24,7 @@ class OroB2BPaymentExtension extends Extension
         $loader->load('services.yml');
         $loader->load('form_types.yml');
         $loader->load('payflow.yml');
+        $loader->load('payment.yml');
     }
 
     /**

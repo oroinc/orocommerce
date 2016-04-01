@@ -34,4 +34,10 @@ class Response implements ResponseInterface
     {
         return $this->values->offsetGet('RESULT');
     }
+
+    /** {@inheritdoc} */
+    public function getData()
+    {
+        return $this->values->getArrayCopy();
+    }
 }

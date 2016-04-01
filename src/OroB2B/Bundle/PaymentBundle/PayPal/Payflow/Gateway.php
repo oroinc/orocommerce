@@ -7,6 +7,7 @@ use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option\OptionsResolver;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option\Partner;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Processor\ProcessorRegistry;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\RequestRegistry;
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\Response;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\ResponseInterface;
 
 class Gateway
@@ -14,25 +15,25 @@ class Gateway
     /** @var ClientInterface */
     protected $client;
 
-    /** @var ProcessorRegistry */
-    protected $processorRegistry;
-
     /** @var RequestRegistry */
     protected $requestRegistry;
 
+    /** @var ProcessorRegistry */
+    protected $processorRegistry;
+
     /**
      * @param ClientInterface $client
-     * @param ProcessorRegistry $processorRegistry
      * @param RequestRegistry $requestRegistry
+     * @param ProcessorRegistry $processorRegistry
      */
     public function __construct(
         ClientInterface $client,
-        ProcessorRegistry $processorRegistry,
-        RequestRegistry $requestRegistry
+        RequestRegistry $requestRegistry,
+        ProcessorRegistry $processorRegistry
     ) {
         $this->client = $client;
-        $this->processorRegistry = $processorRegistry;
         $this->requestRegistry = $requestRegistry;
+        $this->processorRegistry = $processorRegistry;
     }
 
     /**
@@ -49,10 +50,8 @@ class Gateway
         $processor = $this->processorRegistry->getProcessor($options[Partner::PARTNER]);
         $processor->configureOptions($resolver);
 
-        $response = $this->client->send($resolver->resolve($options));
+        $responseData = $this->client->send($resolver->resolve($options));
 
-        // @todo create response
-
-        return $response;
+        return new Response($responseData);
     }
 }

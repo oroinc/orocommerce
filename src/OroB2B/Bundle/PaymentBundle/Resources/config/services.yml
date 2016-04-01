@@ -10,6 +10,9 @@ parameters:
     orob2b_payment.payment_term.delete_message_generator.class: OroB2B\Bundle\PaymentBundle\Twig\DeleteMessageTextGenerator
     orob2b_payment.extension.action.type.payment_delete.class: OroB2B\Bundle\PaymentBundle\Extension\Action\Actions\PaymentDeleteAction
     orob2b_payment.provider.payment_term.class: OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider
+    orob2b_payment.provider.payment_transaction.class: OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider
+    orob2b_payment.event.callback_handler.class: OroB2B\Bundle\PaymentBundle\Event\CallbackHandler
+    orob2b_payment.action.capture.class: OroB2B\Bundle\PaymentBundle\Action\CaptureAction
 
 services:
     orob2b_payment.payment_term.manager.api:
@@ -87,3 +90,29 @@ services:
         arguments:
             - @doctrine
             - %orob2b_payment.entity.payment_term.class%
+
+    orob2b_payment.event.callback_handler:
+        class: '%orob2b_payment.event.callback_handler.class%'
+        lazy: true
+        arguments:
+            - '@event_dispatcher'
+            - '@oro_entity.doctrine_helper'
+            - '%orob2b_payment.entity.payment_transaction.class%'
+        calls:
+            - ['setLogger', ['@logger']]
+
+    orob2b_payment.provider.payment_transaction:
+        class: '%orob2b_payment.provider.payment_transaction.class%'
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '%orob2b_payment.entity.payment_transaction.class%'
+
+    orob2b_payment.action.capture:
+        class: '%orob2b_payment.action.capture.class%'
+        arguments:
+            - '@oro_action.context_accessor'
+            - '@orob2b_payment.payment_method.registry'
+            - '@orob2b_payment.provider.payment_transaction'
+        tags:
+            - { name: oro_workflow.action, alias: payment_capture }
+            - { name: oro_action.action, alias: payment_capture }
