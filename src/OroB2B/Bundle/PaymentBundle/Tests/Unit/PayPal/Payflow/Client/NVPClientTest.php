@@ -73,4 +73,13 @@ class NVPClientTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($responseArray, $this->client->send($options));
     }
+
+    public function testGetTestMode()
+    {
+        $this->assertTrue($this->client->getTestMode());
+        $this->client->setTestMode(false);
+        $this->assertFalse($this->client->getTestMode());
+        $this->client->setTestMode('test');
+        $this->assertTrue($this->client->getTestMode());
+    }
 }

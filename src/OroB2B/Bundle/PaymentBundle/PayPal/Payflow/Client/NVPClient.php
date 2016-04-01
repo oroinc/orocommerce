@@ -33,10 +33,22 @@ class NVPClient implements ClientInterface
 
     /**
      * @param bool $testMode true - use pilot(test) host, otherwise use production
+     *
+     * @return $this
      */
     public function setTestMode($testMode)
     {
         $this->testMode = (bool)$testMode;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getTestMode()
+    {
+        return $this->testMode;
     }
 
     /**
