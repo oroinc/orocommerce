@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PaymentBundle\Controller\Frontend;
 
 use Oro\Component\Testing\WebTestCase;
+
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData;
 

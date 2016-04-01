@@ -28,7 +28,7 @@ class LoadPaymentTransactionData extends AbstractFixture
                 ]
             );
 
-        $this->setReference('' . self::PAYFLOW_TRANSACTION . '', $paymentTransaction);
+        $this->setReference(self::PAYFLOW_TRANSACTION, $paymentTransaction);
 
         $manager->persist($paymentTransaction);
         $manager->flush();
