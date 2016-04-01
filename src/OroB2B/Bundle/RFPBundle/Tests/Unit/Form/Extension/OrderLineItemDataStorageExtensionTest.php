@@ -11,15 +11,15 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider;
 use OroB2B\Bundle\ProductBundle\Storage\DataStorageInterface;
-use OroB2B\Bundle\RFPBundle\Form\Extension\OrderDataStorageExtension;
+use OroB2B\Bundle\RFPBundle\Form\Extension\OrderLineItemDataStorageExtension;
 use OroB2B\Bundle\RFPBundle\Storage\OffersFormStorage;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
+class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var OrderDataStorageExtension */
+    /** @var OrderLineItemDataStorageExtension */
     protected $extension;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|RequestStack */
@@ -45,7 +45,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->sectionProvider = $this->getMock('OroB2B\Bundle\OrderBundle\Form\Section\SectionProvider');
 
-        $this->extension = new OrderDataStorageExtension(
+        $this->extension = new OrderLineItemDataStorageExtension(
             $this->requestStack,
             $this->sessionStorage,
             $this->formDataStorage
@@ -290,7 +290,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
      */
     public function testSectionProviderInvalid()
     {
-        $extension = new OrderDataStorageExtension(
+        $extension = new OrderLineItemDataStorageExtension(
             $this->requestStack,
             $this->sessionStorage,
             $this->formDataStorage
