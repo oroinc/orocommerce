@@ -27,9 +27,11 @@ class OrderDataStorageExtension extends AbstractProductDataStorageExtension
             ->setProduct($product)
             ->setProductSku($product->getSku());
 
+        $quantity = 1;
         if (array_key_exists(ProductDataStorage::PRODUCT_QUANTITY_KEY, $itemData)) {
-            $lineItem->setQuantity($itemData[ProductDataStorage::PRODUCT_QUANTITY_KEY]);
+            $quantity = $itemData[ProductDataStorage::PRODUCT_QUANTITY_KEY];
         }
+        $lineItem->setQuantity($quantity);
 
         $this->fillEntityData($lineItem, $itemData);
 
