@@ -69,7 +69,6 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @ORM\EntityListeners({ "OroB2B\Bundle\OrderBundle\EventListener\ORM\OrderListener" })
  */
 class Order extends ExtendOrder implements
     OrganizationAwareInterface,

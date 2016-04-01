@@ -61,7 +61,7 @@ services:
         arguments:
             - @orob2b_order.order.entity.id_generator
         tags:
-            - { name: doctrine.orm.entity_listener }
+            - { name: doctrine.orm.entity_listener, entity: %orob2b_order.entity.order.class%, method: postPersist}
 
     orob2b_order.provider.shipping_cost_subtotal:
         class: %orob2b_order.provider.shipping_cost_subtotal.class%
