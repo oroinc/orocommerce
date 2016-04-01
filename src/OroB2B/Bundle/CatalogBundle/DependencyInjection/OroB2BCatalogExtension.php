@@ -18,5 +18,6 @@ class OroB2BCatalogExtension extends Extension
         $loader->load('services.yml');
         $loader->load('form_types.yml');
         $loader->load('twig.yml');
+        $loader->load('layout.yml');
     }
 }
