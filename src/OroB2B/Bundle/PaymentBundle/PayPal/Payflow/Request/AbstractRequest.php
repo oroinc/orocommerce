@@ -48,13 +48,9 @@ abstract class AbstractRequest implements RequestInterface
             ->configureRequiredOptions()
             ->configureBaseOptions()
             ->configureRequestOptions()
-            ->configureFinalOptions();
-
-        $resolver
-            ->setDefault(Option\Transaction::TRXTYPE, $this->getAction())
-            ->addAllowedValues(Option\Transaction::TRXTYPE, $this->getAction());
-
-        $this->resolver = null;
+            ->configureFinalOptions()
+            ->configureTransactionOptions()
+            ->endResolver();
     }
 
     /**
@@ -78,6 +74,28 @@ abstract class AbstractRequest implements RequestInterface
      */
     protected function configureFinalOptions()
     {
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    protected function configureTransactionOptions()
+    {
+        $this->resolver
+            ->setDefault(Option\Transaction::TRXTYPE, $this->getAction())
+            ->addAllowedValues(Option\Transaction::TRXTYPE, $this->getAction());
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    private function endResolver()
+    {
+        $this->resolver = null;
+
         return $this;
     }
 

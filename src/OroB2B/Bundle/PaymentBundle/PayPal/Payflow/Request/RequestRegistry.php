@@ -41,7 +41,7 @@ class RequestRegistry
 
         throw new \InvalidArgumentException(
             sprintf(
-                'Request with "%s" action is missing. Registered request are "%s"',
+                'Request with "%s" action is missing. Registered requests are "%s"',
                 $action,
                 implode(', ', array_keys($this->requests))
             )

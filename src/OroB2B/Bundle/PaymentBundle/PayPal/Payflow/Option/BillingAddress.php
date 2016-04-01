@@ -16,30 +16,27 @@ class BillingAddress extends AbstractOption
     /** {@inheritdoc} */
     public function configureOption(OptionsResolver $resolver)
     {
+        $keys = $this->getAllKeys();
+
         $resolver
-            ->setDefined(
-                [
-                    BillingAddress::BILLTOFIRSTNAME,
-                    BillingAddress::BILLTOLASTNAME,
-                    BillingAddress::BILLTOSTREET,
-                    BillingAddress::BILLTOSTREET2,
-                    BillingAddress::BILLTOCITY,
-                    BillingAddress::BILLTOSTATE,
-                    BillingAddress::BILLTOZIP,
-                    BillingAddress::BILLTOCOUNTRY,
-                ]
-            )
-            ->setAllowedTypes(
-                [
-                    BillingAddress::BILLTOFIRSTNAME => 'string',
-                    BillingAddress::BILLTOLASTNAME => 'string',
-                    BillingAddress::BILLTOSTREET => 'string',
-                    BillingAddress::BILLTOSTREET2 => 'string',
-                    BillingAddress::BILLTOCITY => 'string',
-                    BillingAddress::BILLTOSTATE => 'string',
-                    BillingAddress::BILLTOZIP => 'string',
-                    BillingAddress::BILLTOCOUNTRY => 'string',
-                ]
-            );
+            ->setDefined($keys)
+            ->setAllowedTypes(array_fill_keys($keys, 'string'));
+    }
+
+    /**
+     * @return string[]
+     */
+    protected function getAllKeys()
+    {
+        return [
+            BillingAddress::BILLTOFIRSTNAME,
+            BillingAddress::BILLTOLASTNAME,
+            BillingAddress::BILLTOSTREET,
+            BillingAddress::BILLTOSTREET2,
+            BillingAddress::BILLTOCITY,
+            BillingAddress::BILLTOSTATE,
+            BillingAddress::BILLTOZIP,
+            BillingAddress::BILLTOCOUNTRY,
+        ];
     }
 }
