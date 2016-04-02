@@ -1,7 +1,7 @@
 workflows:
-    b2b_flow_checkout:
-        label: orob2b.checkout.workflow.b2b_flow_checkout.label
-        entity: OroB2B\Bundle\CheckoutBundle\Entity\Checkout
+    b2b_flow_alternative_checkout:
+        label: orob2b.alternativecheckout.workflow.b2b_flow_checkout.label
+        entity: OroB2B\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout
         entity_attribute: checkout
         start_step: enter_billing_address
         steps_display_ordered: true
@@ -23,6 +23,9 @@ workflows:
                 property_path: checkout.shipUntil
             customer_notes:
                 property_path: checkout.customerNotes
+            request_approval_notes:
+                property_path: checkout.requestApprovalNotes
+                label: Notes
             billing_address_has_shipping:
                 type: boolean
                 label: If billing address also shipping
@@ -78,15 +81,38 @@ workflows:
                     - back_to_shipping_address
                     - back_to_shipping_method
             order_review:
-                label: orob2b.checkout.workflow.b2b_flow_checkout.step.order_review.label
+                label: orob2b.alternativecheckout.workflow.b2b_flow_alternative_checkout.step.order_review.label
                 order: 50
-                is_final: true
                 allowed_transitions:
+                    - continue_to_request_approval
                     - place_order
                     - back_to_billing_address
                     - back_to_shipping_address
                     - back_to_shipping_method
                     - back_to_payment
+            request_approval:
+                label: orob2b.alternativecheckout.workflow.b2b_flow_alternative_checkout.step.request_approval.label
+                order: 60
+                allowed_transitions:
+                    - continue_to_approve_request
+                    - back_to_billing_address
+                    - back_to_billing_address
+                    - back_to_shipping_address
+                    - back_to_shipping_method
+                    - back_to_order_review
+            approve_request:
+                label: orob2b.alternativecheckout.workflow.b2b_flow_alternative_checkout.step.approve_request.label
+                order: 70
+                is_final: true
+                allowed_transitions:
+                    - approve_order
+                    - place_order
+                    - back_to_billing_address
+                    - back_to_billing_address
+                    - back_to_shipping_address
+                    - back_to_shipping_method
+                    - back_to_order_review
+                    - back_to_request_approval
         transitions:
             continue_to_shipping_address:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.continue_to_shipping_address.label
@@ -154,11 +180,42 @@ workflows:
                     is_checkout_continue: true
 
             continue_to_order_review:
-                label: orob2b.checkout.workflow.b2b_flow_checkout.transition.continue_to_order_review.label
+                label: orob2b.alternativecheckout.workflow.b2b_flow_alternative_checkout.transition.continue_to_order_review.label
                 step_to: order_review
                 transition_definition: do_nothing
                 frontend_options:
                     is_checkout_continue: true
+
+            continue_to_request_approval:
+                label: orob2b.alternativecheckout.workflow.b2b_flow_alternative_checkout.transition.continue_to_request_approval.label
+                step_to: request_approval
+                transition_definition: continue_to_request_approval_definition
+                is_unavailable_hidden: true
+                frontend_options:
+                    is_checkout_continue: true
+                form_options:
+                    attribute_fields:
+                        remove_source: ~
+                        po_number: ~
+                        ship_until: ~
+                        customer_notes:
+                            form_type: textarea
+                            options:
+                                data: $checkout.customerNotes
+
+            continue_to_approve_request:
+                label: orob2b.alternativecheckout.workflow.b2b_flow_alternative_checkout.transition.continue_to_approve_request.label
+                step_to: approve_request
+                transition_definition: do_nothing
+                frontend_options:
+                    is_checkout_continue: true
+                message: 'You exceeded the allowable amount of $5,000.00. <br/> To proceed please request manager approval. <br/>'
+                form_options:
+                    attribute_fields:
+                        request_approval_notes:
+                            form_type: textarea
+                            options:
+                                data: $checkout.requestApprovalNotes
 
             back_to_billing_address:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.back_to_billing_address.label
@@ -170,29 +227,44 @@ workflows:
             back_to_shipping_address:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.back_to_shipping_address.label
                 step_to: enter_shipping_address
-                transition_definition: do_nothing
+                transition_definition: go_back_definition
                 frontend_options:
                     is_checkout_back: true
 
             back_to_shipping_method:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.back_to_shipping_method.label
                 step_to: enter_shipping_method
-                transition_definition: do_nothing
+                transition_definition: go_back_definition
                 frontend_options:
                     is_checkout_back: true
 
             back_to_payment:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.back_to_payment.label
                 step_to: enter_payment
-                transition_definition: do_nothing
+                transition_definition: go_back_definition
+                frontend_options:
+                    is_checkout_back: true
+
+            back_to_order_review:
+                label: orob2b.alternativecheckout.workflow.b2b_flow_alternative_checkout.transition.back_to_order_review.label
+                step_to: order_review
+                transition_definition: go_back_definition
+                frontend_options:
+                    is_checkout_back: true
+
+            back_to_request_approval:
+                label: orob2b.alternativecheckout.workflow.b2b_flow_alternative_checkout.transition.back_to_request_approval.label
+                step_to: request_approval
+                transition_definition: go_back_definition
                 frontend_options:
                     is_checkout_back: true
 
             place_order:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.place_order.label
-                step_to: order_review
+                step_to: approve_request
                 transition_definition: place_order_definition
                 display_type: page
+                is_unavailable_hidden: true
                 frontend_options:
                     is_checkout_continue: true
                 form_options:
@@ -202,9 +274,25 @@ workflows:
                         ship_until: ~
                         customer_notes:
                             form_type: textarea
+            approve_order:
+                label: orob2b.alternativecheckout.workflow.b2b_flow_alternative_checkout.transition.order_approve.label
+                step_to: approve_request
+                transition_definition: approve_order_definition
+                is_unavailable_hidden: true
+                frontend_options:
+                    is_checkout_continue: true
 
         transition_definitions:
+            __start___definition:
+                pre_conditions:
+                    @assert_account: 1
             do_nothing: ~
+            go_back_definition:
+                post_actions:
+                    - @assign_value:
+                        conditions:
+                            @equal: [$checkout.allowed, true]
+                        parameters: [$checkout.allowed, false]
             back_to_billing_address_definition:
                 post_actions:
                     - @assign_value: [$billing_address_has_shipping, true]
@@ -261,6 +349,11 @@ workflows:
                                 - @equal: [$billing_address_has_shipping, true]
                         parameters: [$checkout.shippingAddress, $checkout.billingAddress]
             place_order_definition:
+                pre_conditions:
+                    @or:
+                        - @less_order_total_limit: [$checkout, 5000]
+                        - @equal: [$checkout.allowed, true]
+                        - @acl_granted: 'orob2b_alternativecheckout_checkout_approve'
                 post_actions:
                     - @assign_constant_value: [$.result.typeBillingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_BILLING]
                     - @assign_constant_value: [$.result.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
@@ -426,3 +519,24 @@ workflows:
                                 route: orob2b_order_frontend_success
                                 route_parameters:
                                     id: $.result.order.id
+
+            continue_to_request_approval_definition:
+                pre_conditions:
+                    @and:
+                        - @not:
+                            - @acl_granted: 'orob2b_alternativecheckout_checkout_approve'
+                        - @not:
+                            - @less_order_total_limit: [$checkout, 5000]
+                        - @equal: [$checkout.allowed, false]
+
+            approve_order_definition:
+                pre_conditions:
+                    @and:
+                        - @acl_granted: 'orob2b_alternativecheckout_checkout_approve'
+                        - @equal: [$checkout.allowed, false]
+                post_actions:
+                    - @assign_value:
+                        conditions:
+                            @equal: [$checkout.allowed, false]
+                        parameters: [$checkout.allowed, true]
+

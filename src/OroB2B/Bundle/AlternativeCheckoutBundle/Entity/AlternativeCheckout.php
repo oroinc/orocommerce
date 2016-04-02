@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CheckoutBundle\Entity;
+namespace OroB2B\Bundle\AlternativeCheckoutBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -18,15 +18,16 @@ use Oro\Component\Layout\ContextItemInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\CheckoutBundle\Model\ExtendCheckout;
+use OroB2B\Bundle\AlternativeCheckoutBundle\Model\ExtendAlternativeCheckout;
+use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
-use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
- * @ORM\Table(name="orob2b_checkout")
+ * @ORM\Table(name="orob2b_alternative_checkout")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  * @Config(
@@ -49,22 +50,24 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *              "group_name"="commerce"
  *          },
  *          "workflow"={
- *              "active_workflow"="b2b_flow_checkout"
+ *              "active_workflow"="b2b_flow_alternative_checkout"
  *          }
  *      }
  * )
  * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class Checkout extends ExtendCheckout implements
+class AlternativeCheckout extends ExtendAlternativeCheckout implements
     CheckoutInterface,
     OrganizationAwareInterface,
     AccountOwnerAwareInterface,
     DatesAwareInterface,
     ContextItemInterface,
-    LineItemsNotPricedAwareInterface,
-    ShippingAwareInterface
+    LineItemsNotPricedAwareInterface
 {
+    const TYPE = 'alternative';
+
     use DatesAwareTrait;
     use WorkflowAwareTrait;
 
@@ -215,6 +218,25 @@ class Checkout extends ExtendCheckout implements
     protected $shippingEstimateCurrency;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="allowed", type="boolean")
+     */
+    protected $allowed;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="allow_request_date", type="datetime", nullable=true)
+     */
+    protected $allowRequestDate;
+
+    /**
+     * @var Price
+     */
+    protected $shippingEstimate;
+
+    /**
      * @var Price
      */
     protected $shippingCost;
@@ -229,7 +251,7 @@ class Checkout extends ExtendCheckout implements
 
     /**
      * @param Account $account
-     * @return Checkout
+     * @return AlternativeCheckout
      */
     public function setAccount(Account $account)
     {
@@ -248,7 +270,7 @@ class Checkout extends ExtendCheckout implements
 
     /**
      * @param AccountUser $accountUser
-     * @return Checkout
+     * @return AlternativeCheckout
      */
     public function setAccountUser(AccountUser $accountUser)
     {
@@ -271,7 +293,7 @@ class Checkout extends ExtendCheckout implements
 
     /**
      * @param OrderAddress $billingAddress
-     * @return Checkout
+     * @return AlternativeCheckout
      */
     public function setBillingAddress(OrderAddress $billingAddress = null)
     {
@@ -290,7 +312,7 @@ class Checkout extends ExtendCheckout implements
 
     /**
      * @param string $customerNotes
-     * @return Checkout
+     * @return AlternativeCheckout
      */
     public function setCustomerNotes($customerNotes)
     {
@@ -309,7 +331,7 @@ class Checkout extends ExtendCheckout implements
 
     /**
      * @param int $id
-     * @return Checkout
+     * @return AlternativeCheckout
      */
     public function setId($id)
     {
@@ -328,7 +350,7 @@ class Checkout extends ExtendCheckout implements
 
     /**
      * @param OrganizationInterface $organization
-     * @return Checkout
+     * @return AlternativeCheckout
      */
     public function setOrganization(OrganizationInterface $organization)
     {
@@ -347,7 +369,7 @@ class Checkout extends ExtendCheckout implements
 
     /**
      * @param User $owner
-     * @return Checkout
+     * @return AlternativeCheckout
      */
     public function setOwner(User $owner)
     {
@@ -366,7 +388,7 @@ class Checkout extends ExtendCheckout implements
 
     /**
      * @param mixed $paymentMethod
-     * @return Checkout
+     * @return AlternativeCheckout
      */
     public function setPaymentMethod($paymentMethod)
     {
@@ -385,7 +407,7 @@ class Checkout extends ExtendCheckout implements
 
     /**
      * @param string $poNumber
-     * @return Checkout
+     * @return AlternativeCheckout
      */
     public function setPoNumber($poNumber)
     {
@@ -404,7 +426,7 @@ class Checkout extends ExtendCheckout implements
 
     /**
      * @param boolean $saveBillingAddress
-     * @return Checkout
+     * @return AlternativeCheckout
      */
     public function setSaveBillingAddress($saveBillingAddress)
     {
@@ -423,7 +445,7 @@ class Checkout extends ExtendCheckout implements
 
     /**
      * @param boolean $saveShippingAddress
-     * @return Checkout
+     * @return AlternativeCheckout
      */
     public function setSaveShippingAddress($saveShippingAddress)
     {
@@ -442,7 +464,7 @@ class Checkout extends ExtendCheckout implements
 
     /**
      * @param OrderAddress $shippingAddress
-     * @return Checkout
+     * @return AlternativeCheckout
      */
     public function setShippingAddress(OrderAddress $shippingAddress = null)
     {
@@ -461,7 +483,7 @@ class Checkout extends ExtendCheckout implements
 
     /**
      * @param mixed $shippingMethod
-     * @return Checkout
+     * @return AlternativeCheckout
      */
     public function setShippingMethod($shippingMethod)
     {
@@ -480,7 +502,7 @@ class Checkout extends ExtendCheckout implements
 
     /**
      * @param boolean $shipToBillingAddress
-     * @return Checkout
+     * @return AlternativeCheckout
      */
     public function setShipToBillingAddress($shipToBillingAddress)
     {
@@ -499,7 +521,7 @@ class Checkout extends ExtendCheckout implements
 
     /**
      * @param \DateTime $shipUntil
-     * @return Checkout
+     * @return AlternativeCheckout
      */
     public function setShipUntil(\DateTime $shipUntil = null)
     {
@@ -518,7 +540,7 @@ class Checkout extends ExtendCheckout implements
 
     /**
      * @param Website $website
-     * @return Checkout
+     * @return AlternativeCheckout
      */
     public function setWebsite(Website $website = null)
     {
@@ -549,7 +571,7 @@ class Checkout extends ExtendCheckout implements
 
     /**
      * @param CheckoutSource $source
-     * @return Checkout
+     * @return AlternativeCheckout
      */
     public function setSource(CheckoutSource $source)
     {
@@ -576,7 +598,7 @@ class Checkout extends ExtendCheckout implements
 
     /**
      * @param string $currency
-     * @return Checkout
+     * @return AlternativeCheckout
      */
     public function setCurrency($currency)
     {
@@ -594,6 +616,31 @@ class Checkout extends ExtendCheckout implements
         $sourceEntity = $this->getSourceEntity();
         return $sourceEntity && ($sourceEntity instanceof LineItemsNotPricedAwareInterface
             || $sourceEntity instanceof LineItemsAwareInterface) ? $sourceEntity->getLineItems() : [];
+    }
+
+    /**
+     * Get shipping estimate
+     *
+     * @return Price|null
+     */
+    public function getShippingEstimate()
+    {
+        return $this->shippingEstimate;
+    }
+
+    /**
+     * Set shipping estimate
+     *
+     * @param Price $shippingEstimate
+     * @return $this
+     */
+    public function setShippingEstimate($shippingEstimate = null)
+    {
+        $this->shippingEstimate = $shippingEstimate;
+
+        $this->updateShippingEstimate();
+
+        return $this;
     }
 
     /**
@@ -627,7 +674,7 @@ class Checkout extends ExtendCheckout implements
     public function postLoad()
     {
         if (null !== $this->shippingEstimateAmount && null !== $this->shippingEstimateCurrency) {
-            $this->shippingCost = Price::create($this->shippingEstimateAmount, $this->shippingEstimateCurrency);
+            $this->shippingEstimate = Price::create($this->shippingEstimateAmount, $this->shippingEstimateCurrency);
         }
     }
 
@@ -637,8 +684,66 @@ class Checkout extends ExtendCheckout implements
      */
     public function updateShippingEstimate()
     {
-        $this->shippingEstimateAmount = $this->shippingCost ? $this->shippingCost->getValue() : null;
-        $this->shippingEstimateCurrency = $this->shippingCost ? $this->shippingCost->getCurrency() : null;
+        $this->shippingEstimateAmount = $this->shippingEstimate ? $this->shippingEstimate->getValue() : null;
+        $this->shippingEstimateCurrency = $this->shippingEstimate ? $this->shippingEstimate->getCurrency() : null;
+    }
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="request_approval_notes", type="text", nullable=true)
+     */
+    protected $requestApprovalNotes;
+
+    /**
+     * @return string
+     */
+    public function getRequestApprovalNotes()
+    {
+        return $this->requestApprovalNotes;
+    }
+
+    /**
+     * @param string $requestApprovalNotes
+     * @return $this
+     */
+    public function setRequestApprovalNotes($requestApprovalNotes)
+    {
+        $this->requestApprovalNotes = $requestApprovalNotes;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isAllowed()
+    {
+        return $this->allowed;
+    }
+
+    /**
+     * @param boolean $allowed
+     */
+    public function setAllowed($allowed)
+    {
+        $this->allowed = $allowed;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getAllowRequestDate()
+    {
+        return $this->allowRequestDate;
+    }
+
+    /**
+     * @param \DateTime $allowRequestDate
+     */
+    public function setAllowRequestDate($allowRequestDate)
+    {
+        $this->allowRequestDate = $allowRequestDate;
     }
 
     /**
@@ -646,6 +751,6 @@ class Checkout extends ExtendCheckout implements
      */
     public function getType()
     {
-        return '';
+        return self::TYPE;
     }
 }
