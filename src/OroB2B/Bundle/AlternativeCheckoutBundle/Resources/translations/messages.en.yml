@@ -35,12 +35,12 @@ orob2b:
                     continue_to_order_review.label: Continue
                     continue_to_request_approval.label: Request Approval
                     continue_to_approve_request.label: Request Approval
-                    order_approve.label: Approve
+                    order_approve.label: Approve Order
                     back_to_order_review.label: Back To Order Review
                     back_to_request_approval.label: Back To Request Approval
 
         security:
             permission:
-                checkout_approve: Checkout Approve
+                checkout_approve: Approve orders for quotes exceeding the allowable amount
 
 

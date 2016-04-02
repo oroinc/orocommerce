@@ -1,6 +1,6 @@
 {% block _checkout_form_fields_widget -%}
-    <div class="notification notification_xmd notification_notice notification-radiused mb1-md">
-        {{ checkout.requestApprovalNotes }}
+    <div>
+        Notes: {{ checkout.requestApprovalNotes }}
     </div>
 
     {{ block_widget(block) }}
