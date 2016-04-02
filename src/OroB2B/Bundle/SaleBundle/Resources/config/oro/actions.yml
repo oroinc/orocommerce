@@ -86,6 +86,7 @@ operations:
         routes:
             - orob2b_sale_quote_frontend_view
         order: 20
+        acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\OrderBundle\Entity\Order]
         button_options:
             icon: icon-edit
             class:  quota-accept-btn
