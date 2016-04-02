@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
 use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
