@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\CheckoutBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -20,6 +21,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\CheckoutBundle\Model\ExtendCheckout;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
+use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -27,6 +29,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 /**
  * @ORM\Table(name="orob2b_checkout")
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks()
  * @Config(
  *      defaultValues={
  *          "entity"={
@@ -60,7 +63,8 @@ class Checkout extends ExtendCheckout implements
     DatesAwareInterface,
     WorkflowAwareInterface,
     ContextItemInterface,
-    LineItemsNotPricedAwareInterface
+    LineItemsNotPricedAwareInterface,
+    ShippingAwareInterface
 {
     use DatesAwareTrait;
     use WorkflowAwareTrait;
@@ -196,6 +200,25 @@ class Checkout extends ExtendCheckout implements
      * @var
      */
     protected $paymentMethod;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="shipping_estimate_amount", type="money", nullable=true)
+     */
+    protected $shippingEstimateAmount;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="shipping_estimate_currency", type="string", nullable=true, length=3)
+     */
+    protected $shippingEstimateCurrency;
+
+    /**
+     * @var Price
+     */
+    protected $shippingCost;
 
     /**
      * @return Account
@@ -572,5 +595,50 @@ class Checkout extends ExtendCheckout implements
         $sourceEntity = $this->getSourceEntity();
         return $sourceEntity && ($sourceEntity instanceof LineItemsNotPricedAwareInterface
             || $sourceEntity instanceof LineItemsAwareInterface) ? $sourceEntity->getLineItems() : [];
+    }
+
+    /**
+     * Get shipping estimate
+     *
+     * @return Price|null
+     */
+    public function getShippingCost()
+    {
+        return $this->shippingCost;
+    }
+
+    /**
+     * Set shipping estimate
+     *
+     * @param Price $shippingCost
+     * @return $this
+     */
+    public function setShippingCost($shippingCost = null)
+    {
+        $this->shippingCost = $shippingCost;
+
+        $this->updateShippingEstimate();
+
+        return $this;
+    }
+
+    /**
+     * @ORM\PostLoad
+     */
+    public function postLoad()
+    {
+        if (null !== $this->shippingEstimateAmount && null !== $this->shippingEstimateCurrency) {
+            $this->shippingCost = Price::create($this->shippingEstimateAmount, $this->shippingEstimateCurrency);
+        }
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updateShippingEstimate()
+    {
+        $this->shippingEstimateAmount = $this->shippingCost ? $this->shippingCost->getValue() : null;
+        $this->shippingEstimateCurrency = $this->shippingCost ? $this->shippingCost->getCurrency() : null;
     }
 }
