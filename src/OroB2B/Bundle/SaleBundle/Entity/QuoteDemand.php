@@ -112,7 +112,7 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
     public function removeDemandProduct(QuoteProductDemand $demandProduct)
     {
         if ($this->hasDemandProduct($demandProduct)) {
-            $this->demandProducts->remove($demandProduct);
+            $this->demandProducts->removeElement($demandProduct);
         }
         return $this;
     }
