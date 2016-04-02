@@ -4,7 +4,7 @@ parameters:
     orob2b_order.entity.order_line_item.class: OroB2B\Bundle\OrderBundle\Entity\OrderLineItem
 
     orob2b_order.order.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
-    orob2b_order.order.listener.order_listener.class: OroB2B\Bundle\OrderBundle\EventListener\OrderListener
+    orob2b_order.order.listener.orm.order_listener.class: OroB2B\Bundle\OrderBundle\EventListener\ORM\OrderListener
     orob2b_order.order.listener.total_calculate_listener.class: OroB2B\Bundle\OrderBundle\EventListener\TotalCalculateListener
 
     orob2b_order.order.entity.id_generator.class: OroB2B\Bundle\OrderBundle\Doctrine\ORM\Id\SimpleEntityAwareGenerator
@@ -56,12 +56,12 @@ services:
     orob2b_order.order.entity.id_generator:
         class: %orob2b_order.order.entity.id_generator.class%
 
-    orob2b_order.order.listener.order_listener:
-        class: %orob2b_order.order.listener.order_listener.class%
+    orob2b_order.order.listener.orm.order_listener:
+        class: %orob2b_order.order.listener.orm.order_listener.class%
         arguments:
             - @orob2b_order.order.entity.id_generator
         tags:
-            - { name: doctrine.event_listener, event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: %orob2b_order.entity.order.class%, event: postPersist}
 
     orob2b_order.provider.shipping_cost_subtotal:
         class: %orob2b_order.provider.shipping_cost_subtotal.class%

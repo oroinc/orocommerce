@@ -33,13 +33,13 @@ abstract class AbstractAddressACLTest extends WebTestCase
             $filter = sprintf('select[name="%s[%s][accountAddress]"]', $formName, $addressType);
             $accountAddressSelector = $crawler->filter($filter)->html();
 
-            $this->assertContains('Enter address manually', $accountAddressSelector);
+            $this->assertContains('Enter other address', $accountAddressSelector);
         }
 
         // Check account addresses
         if (!empty($expected['account'])) {
             $filter = sprintf(
-                'select[name="%s[%s][accountAddress]"] optgroup[label="Account"]',
+                'select[name="%s[%s][accountAddress]"] optgroup[label="Global Address Book"]',
                 $formName,
                 $addressType
             );
@@ -53,7 +53,7 @@ abstract class AbstractAddressACLTest extends WebTestCase
         // Check account users addresses
         if (!empty($expected['accountUser'])) {
             $filter = sprintf(
-                'select[name="%s[%s][accountAddress]"] optgroup[label="Account User"]',
+                'select[name="%s[%s][accountAddress]"] optgroup[label="My Address Book"]',
                 $formName,
                 $addressType
             );

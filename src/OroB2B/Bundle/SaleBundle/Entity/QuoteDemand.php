@@ -4,17 +4,14 @@ namespace OroB2B\Bundle\SaleBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
-use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
-use Oro\Bundle\UserBundle\Entity\User;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountAwareInterface;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
@@ -29,7 +26,7 @@ use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *      }
  * )
  */
-class QuoteDemand implements CheckoutSourceEntityInterface
+class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterface, ShippingAwareInterface
 {
     /**
      * @var int
@@ -50,7 +47,8 @@ class QuoteDemand implements CheckoutSourceEntityInterface
     /**
      *
      * @ORM\OneToMany(targetEntity="OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand",
-     *     mappedBy="quoteDemand", cascade={"all"})
+     *     mappedBy="quoteDemand", cascade={"all"}, orphanRemoval=true)
+     * @ORM\OrderBy({"id" = "ASC"})
      */
     protected $demandProducts;
 
@@ -77,10 +75,14 @@ class QuoteDemand implements CheckoutSourceEntityInterface
 
     /**
      * @param Quote $quote
+     * @return $this
      */
     public function setQuote(Quote $quote)
     {
         $this->quote = $quote;
+        $this->initQuoteProductDemands();
+
+        return $this;
     }
 
     /**
@@ -92,26 +94,63 @@ class QuoteDemand implements CheckoutSourceEntityInterface
     }
 
     /**
-     * @param QuoteProductDemand $demandOffer
+     * @param QuoteProductDemand $demandProduct
      * @return $this
      */
-    public function addDemandOffer(QuoteProductDemand $demandOffer)
+    public function addDemandProduct(QuoteProductDemand $demandProduct)
     {
-        if (!$this->demandProducts->contains($demandOffer)) {
-            $this->demandProducts->add($demandOffer);
+        if (!$this->hasDemandProduct($demandProduct)) {
+            $this->demandProducts->add($demandProduct);
         }
         return $this;
     }
 
     /**
-     * @param QuoteProductDemand $demandOffer
+     * @param QuoteProductDemand $demandProduct
      * @return $this
      */
-    public function removeDemandOffer(QuoteProductDemand $demandOffer)
+    public function removeDemandProduct(QuoteProductDemand $demandProduct)
     {
-        if ($this->demandProducts->contains($demandOffer)) {
-            $this->demandProducts->remove($demandOffer);
+        if ($this->hasDemandProduct($demandProduct)) {
+            $this->demandProducts->removeElement($demandProduct);
         }
         return $this;
+    }
+
+    /**
+     * @param QuoteProductDemand $demandProduct
+     * @return bool
+     */
+    protected function hasDemandProduct(QuoteProductDemand $demandProduct)
+    {
+        return $this->demandProducts->contains($demandProduct);
+    }
+
+    /**
+     * @return ArrayCollection|QuoteProductDemand[]
+     */
+    public function getLineItems()
+    {
+        return $this->demandProducts;
+    }
+
+    /**
+     * @return Price|null
+     */
+    public function getShippingCost()
+    {
+        if ($this->quote) {
+            return $this->quote->getShippingEstimate();
+        }
+        return null;
+    }
+
+    protected function initQuoteProductDemands()
+    {
+        foreach ($this->quote->getQuoteProducts() as $quoteProduct) {
+            $offer = $quoteProduct->getQuoteProductOffers()->first();
+            $demandProduct = new QuoteProductDemand($this, $offer, $offer->getQuantity());
+            $this->addDemandProduct($demandProduct);
+        }
     }
 }

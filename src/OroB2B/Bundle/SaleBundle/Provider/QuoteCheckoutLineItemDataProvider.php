@@ -25,18 +25,20 @@ class QuoteCheckoutLineItemDataProvider extends AbstractCheckoutProvider
         $result = [];
         foreach ($entity->getDemandProducts() as $demandProduct) {
             $productOffer = $demandProduct->getQuoteProductOffer();
-            $quoteProduct = $productOffer->getQuoteProduct();
-            $productSku = $productOffer->getProductSku() ? : $quoteProduct->getProductSku();
-            $result[] = [
-                'product' => $productOffer->getProduct(),
-                'freeFormProduct' => $productOffer->getProduct() ? null : $quoteProduct->getFreeFormProduct(),
-                'productSku' => $productSku,
-                'quantity' => $demandProduct->getQuantity(),
-                'productUnit' => $productOffer->getProductUnit(),
-                'productUnitCode' => $productOffer->getProductUnitCode(),
-                'price' => $productOffer->getPrice(),
-                'fromExternalSource' => true,
-            ];
+            if ($productOffer) {
+                $quoteProduct = $productOffer->getQuoteProduct();
+                $productSku = $productOffer->getProductSku() ?: $quoteProduct->getProductSku();
+                $result[] = [
+                    'product' => $productOffer->getProduct(),
+                    'freeFormProduct' => $productOffer->getProduct() ? null : $quoteProduct->getFreeFormProduct(),
+                    'productSku' => $productSku,
+                    'quantity' => $demandProduct->getQuantity(),
+                    'productUnit' => $productOffer->getProductUnit(),
+                    'productUnitCode' => $productOffer->getProductUnitCode(),
+                    'price' => $productOffer->getPrice(),
+                    'fromExternalSource' => true,
+                ];
+            }
         }
 
         return $result;

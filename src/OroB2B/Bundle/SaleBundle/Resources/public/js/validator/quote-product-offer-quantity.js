@@ -9,7 +9,7 @@ define([
     };
 
     return [
-        'OroB2B\\Bundle\\SaleBundle\\Validator\\Constraints\\ConfigurableQuoteProductOffer',
+        'AllowedQuoteDemandQuantity',
         function(value, element) {
             var valid = $(element).data('valid');
 

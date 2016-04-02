@@ -1,3 +1,10 @@
+{% block _add_to_shopping_list_form_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " add_to_shopping_list_form_product_view"
+    }) %}
+    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
 {% block _add_to_shopping_list_form_button_widget %}
     {% import 'OroB2BShoppingListBundle:ShoppingList/Frontend:buttons.html.twig' as buttons %}
     {% set commonOptions = {

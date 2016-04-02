@@ -55,6 +55,9 @@
     {% set productDescription %}
         {{ UI.renderHtmlProperty('orob2b.product.descriptions.label'|trans, entity.defaultDescription) }}
     {% endset %}
+    {% set productShortDescription %}
+        {{ UI.renderHtmlProperty('orob2b.product.short_descriptions.label'|trans, entity.defaultShortDescription) }}
+    {% endset %}
 
     {% set dataBlocks = [
         {
@@ -62,7 +65,7 @@
             'class': 'active',
             'subblocks': [
                 {'data' : [productInformationWidget]},
-                {'data' : [productDescription]}
+                {'data' : [productDescription, productShortDescription]}
             ]
         }
     ] %}

@@ -27,7 +27,7 @@
     {% set generalSectionBlocks = [{'data' : [shoppingListInformationWidget]}]%}
 
     {% set subtotals %}
-        {% include 'OroB2BPricingBundle:Totals:totalsEntityEditPage.html.twig' with {
+        {% include 'OroB2BPricingBundle:Totals:totals.html.twig' with {
             options: {
                 route: 'orob2b_pricing_entity_totals',
                 method: 'GET',
@@ -58,6 +58,7 @@
                 {
                     'title' : '',
                     'useSpan': false,
+                    'spanClass': 'shopping-list-line-items',
                     'data' : [dataGrid.renderGrid('shopping-list-line-items-grid', {shopping_list_id: entity.id}, { cssClass: 'inner-grid' })]
                 }
             ]

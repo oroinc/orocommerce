@@ -8,6 +8,7 @@ define(function(require) {
     var _ = require('underscore');
     var $ = require('jquery');
     var routing = require('routing');
+    var mediator = require('oroui/js/mediator');
 
     QuoteProductToOrderComponent = BaseComponent.extend({
         /**
@@ -74,7 +75,6 @@ define(function(require) {
 
             this.$el = options._sourceElement;
             this.blockQuantityUpdate = false;
-
             this.$quantity = this.$el.find(this.options.quantitySelector);
             this.$unitInput = this.$el.find(this.options.unitInputSelector);
             this.$unit = this.$el.find(this.options.unitSelector);
@@ -102,7 +102,7 @@ define(function(require) {
                 String(target.data(this.options.data_attributes.formatted_unit))
             );
             this.updateUnitPriceValue(String(target.data(this.options.data_attributes.price)));
-
+            this.updateSubtotals();
             this.quantityEventsEnabled = true;
         },
 
@@ -128,6 +128,7 @@ define(function(require) {
                         self.updateUnitPriceValue(String(response.price));
                         self.updateSelector(response.id);
                         self.setValidAttribute(self.$quantity, true);
+                        self.updateSubtotals();
                     } else {
                         self.updateUnitPriceValue(self.options.notAvailableMessage);
                         self.setValidAttribute(self.$quantity, false);
@@ -136,6 +137,10 @@ define(function(require) {
             });
         },
 
+        updateSubtotals: function(value) {
+            this.$el.trigger('quote-items-changed');
+        },
+        
         /**
          * @param {String} value
          * @returns {Boolean}
@@ -212,8 +217,9 @@ define(function(require) {
          */
         updateSelector: function(id) {
             this.blockQuantityUpdate = true;
-            $(this.options.offerSelector + '[value="' + id + '"]').prop('checked', 'checked');
-            $(this.options.offerSelector + '[value="' + id + '"]').trigger('change');
+            var selector = $(this.options.offerSelector + '[data-value="' + id + '"]');
+            selector.prop('checked', 'checked');
+            selector.trigger('change');
             this.blockQuantityUpdate = false;
         },
 
