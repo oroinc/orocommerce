@@ -6,7 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use OroB2B\Bundle\PricingBundle\Entity\QuantityAwareInterface;
 use OroB2B\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 
@@ -15,13 +14,6 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
  *
  * @ORM\Table(name="orob2b_quote_product_demand")
  * @ORM\Entity
- * @Config(
- *      defaultValues={
- *          "entity"={
- *              "icon"="icon-list-alt"
- *          }
- *      }
- * )
  */
 class QuoteProductDemand implements PriceAwareInterface, QuantityAwareInterface, PriceTypeAwareInterface
 {

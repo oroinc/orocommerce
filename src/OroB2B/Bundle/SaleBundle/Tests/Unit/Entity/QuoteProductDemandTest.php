@@ -33,6 +33,6 @@ class QuoteProductDemandTest extends AbstractTest
     public function testSetPrice()
     {
         $productDemand = new QuoteProductDemand(new QuoteDemand(), new QuoteProductOffer(), 1);
-        $productDemand->setPrice(Price::create(1,' USD'));
+        $productDemand->setPrice(Price::create(1, ' USD'));
     }
 }

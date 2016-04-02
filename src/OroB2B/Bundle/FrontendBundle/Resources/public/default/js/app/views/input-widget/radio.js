@@ -11,11 +11,12 @@ define(function(require) {
                 var $element = $(this);
                 var inputName = $element.attr('name');
 
-                if ($element.attr('checked') !== 'checked' || typeof $element.attr('checked') === 'undefined') {
-                    $('input[type="radio"][name="' + inputName + '"]').attr('checked', false)
+                if ($element.is(':checked')) {
+                    $('input[type="radio"][name="' + inputName + '"]')
+                        .removeProp('checked')
                         .closest('label').removeClass('checked');
 
-                    $element.attr('checked', true);
+                    $element.prop('checked', 'checked');
                     $element.closest('label').addClass('checked');
                 }
             });

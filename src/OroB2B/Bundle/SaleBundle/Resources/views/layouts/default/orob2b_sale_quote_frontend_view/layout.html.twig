@@ -51,20 +51,11 @@
                 <div class="account-oq__order-info">
                     <table class="table borderless  mobile-table">
                         <tbody>
-                        <tr class="account-oq__order-info__control">
-                            <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.ship_until.label'|trans }}</td>
-                            <td>{{ quote.shipUntil|oro_format_date|default('N/A'|trans) }}</td>
-                        </tr>
-                        {% if quote.shippingAddress %}
                             <tr class="account-oq__order-info__control">
-                                <td class="account-oq__order-info__title va-t_md">
-                                    {{ 'orob2b.frontend.sale.quote.shipping_address.label'|trans }}
-                                </td>
-                                <td class="va-t_md">
-                                    {{ quote.shippingAddress|oro_format_address(null, '<br/>') }}
-                                </td>
+                                <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.ship_until.label'|trans }}</td>
+                                <td>{{ quote.shipUntil|oro_format_date|default('N/A'|trans) }}</td>
                             </tr>
-                        {% endif %}
+                            {{ block_widget(block) }}
                         </tbody>
                     </table>
                 </div>
@@ -72,7 +63,6 @@
         </div>
     </div>
 {% endblock %}
-
 
 {% block _quote_view_line_items_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
@@ -114,13 +104,13 @@
                                         <div>{{ 'orob2b.frontend.sale.quoteproduct.product_sku.label'|trans }} <span class="red">{{ quoteProduct.productSku }}</span></div>
                                     </td>
                                 {% endif %}
-                                <td class="va-t_md offset-top-s">
+                                <td>
                                     {{ productOffer.quantity|orob2b_format_short_product_unit_value(productOffer.productUnit) }}
                                     {% if productOffer.allowIncrements %}
                                         {{ 'orob2b.frontend.sale.quoteproductoffer.allow_increments.label'|trans }}
                                     {% endif %}
                                 </td>
-                                <td class="text-right va-t_md offset-top-s">{{ productOffer.price|oro_format_price }}</td>
+                                <td class="text-right">{{ productOffer.price|oro_format_price }}</td>
                             </tr>
                         {% endfor %}
 

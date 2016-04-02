@@ -47,7 +47,8 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
     /**
      *
      * @ORM\OneToMany(targetEntity="OroB2B\Bundle\SaleBundle\Entity\QuoteProductDemand",
-     *     mappedBy="quoteDemand", cascade={"all"})
+     *     mappedBy="quoteDemand", cascade={"all"}, orphanRemoval=true)
+     * @ORM\OrderBy({"id" = "ASC"})
      */
     protected $demandProducts;
 
@@ -74,15 +75,14 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
 
     /**
      * @param Quote $quote
+     * @return $this
      */
     public function setQuote(Quote $quote)
     {
         $this->quote = $quote;
-        foreach ($quote->getQuoteProducts() as $quoteProduct) {
-            $offer = $quoteProduct->getQuoteProductOffers()->first();
-            $demandProduct = new QuoteProductDemand($this, $offer, $offer->getQuantity());
-            $this->addDemandProduct($demandProduct);
-        }
+        $this->initQuoteProductDemands();
+
+        return $this;
     }
 
     /**
@@ -94,27 +94,36 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
     }
 
     /**
-     * @param QuoteProductDemand $demandOffer
+     * @param QuoteProductDemand $demandProduct
      * @return $this
      */
-    public function addDemandProduct(QuoteProductDemand $demandOffer)
+    public function addDemandProduct(QuoteProductDemand $demandProduct)
     {
-        if (!$this->demandProducts->contains($demandOffer)) {
-            $this->demandProducts->add($demandOffer);
+        if (!$this->hasDemandProduct($demandProduct)) {
+            $this->demandProducts->add($demandProduct);
         }
         return $this;
     }
 
     /**
-     * @param QuoteProductDemand $demandOffer
+     * @param QuoteProductDemand $demandProduct
      * @return $this
      */
-    public function removeDemandProduct(QuoteProductDemand $demandOffer)
+    public function removeDemandProduct(QuoteProductDemand $demandProduct)
     {
-        if ($this->demandProducts->contains($demandOffer)) {
-            $this->demandProducts->removeElement($demandOffer);
+        if ($this->hasDemandProduct($demandProduct)) {
+            $this->demandProducts->removeElement($demandProduct);
         }
         return $this;
+    }
+
+    /**
+     * @param QuoteProductDemand $demandProduct
+     * @return bool
+     */
+    protected function hasDemandProduct(QuoteProductDemand $demandProduct)
+    {
+        return $this->demandProducts->contains($demandProduct);
     }
 
     /**
@@ -134,5 +143,14 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
             return $this->quote->getShippingEstimate();
         }
         return null;
+    }
+
+    protected function initQuoteProductDemands()
+    {
+        foreach ($this->quote->getQuoteProducts() as $quoteProduct) {
+            $offer = $quoteProduct->getQuoteProductOffers()->first();
+            $demandProduct = new QuoteProductDemand($this, $offer, $offer->getQuantity());
+            $this->addDemandProduct($demandProduct);
+        }
     }
 }

@@ -23,6 +23,8 @@ orob2b:
         website.label: Website
         workflow_item.label: Workflow Item
         workflow_step.label: Workflow Step
+        shipping_estimate_amount.label: Shipping Estimate Ammount
+        shipping_estimate_currency.label: Shipping Estimate Currency
 
         checkoutsource:
             entity_label: Checkout Source
