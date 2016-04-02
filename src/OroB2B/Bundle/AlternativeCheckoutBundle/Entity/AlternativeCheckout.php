@@ -689,6 +689,32 @@ class AlternativeCheckout extends ExtendAlternativeCheckout implements
     }
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="request_approval_notes", type="text", nullable=true)
+     */
+    protected $requestApprovalNotes;
+
+    /**
+     * @return string
+     */
+    public function getRequestApprovalNotes()
+    {
+        return $this->requestApprovalNotes;
+    }
+
+    /**
+     * @param string $requestApprovalNotes
+     * @return $this
+     */
+    public function setRequestApprovalNotes($requestApprovalNotes)
+    {
+        $this->requestApprovalNotes = $requestApprovalNotes;
+
+        return $this;
+    }
+
+    /**
      * @return boolean
      */
     public function isAllowed()

@@ -56,7 +56,9 @@ abstract class AbstractCheckoutEventListener
             ]);
         }
 
-        $event->setCheckoutEntity($checkout);
+        if ($checkout) {
+            $event->setCheckoutEntity($checkout);
+        }
     }
 
     /**
