@@ -17,6 +17,7 @@ use OroB2B\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandl
 abstract class AbstractProductSelectTypeTest extends WebTestCase
 {
     /** @var string */
+//    protected $searchAutocompletePath = 'orob2b_frontend_autocomplete_search';
     protected $searchAutocompletePath = 'oro_form_autocomplete_search';
 
     /** @var string */
@@ -55,7 +56,7 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertResponseContainsProducts($result, 'results', $expectedProducts);
-    }
+        }
 
     /**
      * @dataProvider restrictionDataProvider
