@@ -17,7 +17,7 @@ class PayflowListener
         $response = new Response($eventData);
 
         $paymentTransaction = $event->getPaymentTransaction();
-        $paymentTransactionData = $paymentTransaction->getData();
+        $paymentTransactionData = $paymentTransaction->getRequest();
 
         $keys = [Option\SecureToken::SECURETOKEN, Option\SecureTokenIdentifier::SECURETOKENID];
         $keys = array_flip($keys);
@@ -33,8 +33,8 @@ class PayflowListener
         }
 
         $paymentTransaction
-            ->setState($response->getState())
+            ->setActive($response->isSuccessful())
             ->setReference($response->getReference())
-            ->setData(array_replace($paymentTransactionData, $eventData));
+            ->setResponse(array_replace($paymentTransactionData, $eventData));
     }
 }

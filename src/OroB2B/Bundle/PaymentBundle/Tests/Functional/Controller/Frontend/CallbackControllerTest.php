@@ -53,7 +53,7 @@ class CallbackControllerTest extends WebTestCase
         /** @var PaymentTransaction $paymentTransaction */
         $paymentTransaction = $this->getReference(LoadPaymentTransactionData::PAYFLOW_TRANSACTION);
 
-        $expectedData = $parameters + $paymentTransaction->getData();
+        $expectedData = $parameters + $paymentTransaction->getRequest();
         $this->client->request(
             $method,
             $this->getUrl($route, ['transactionId' => $paymentTransaction->getId()]),
@@ -72,6 +72,6 @@ class CallbackControllerTest extends WebTestCase
 
         $this->assertEquals('Transaction Reference', $paymentTransaction->getReference());
         $this->assertEquals('0', $paymentTransaction->getState());
-        $this->assertEquals($expectedData, $paymentTransaction->getData());
+        $this->assertEquals($expectedData, $paymentTransaction->getRequest());
     }
 }

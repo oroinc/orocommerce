@@ -55,7 +55,7 @@ class CallbackHandlerTest extends \PHPUnit_Framework_TestCase
         $response = new Response();
         $event = new CallbackReturnEvent();
         $transaction = new PaymentTransaction();
-        $transaction->setType('type');
+        $transaction->setAction('type');
 
         $objectManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
@@ -93,7 +93,7 @@ class CallbackHandlerTest extends \PHPUnit_Framework_TestCase
         $response = new Response();
         $event = new CallbackReturnEvent();
         $transaction = new PaymentTransaction();
-        $transaction->setType('type');
+        $transaction->setAction('type');
 
         $objectManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()

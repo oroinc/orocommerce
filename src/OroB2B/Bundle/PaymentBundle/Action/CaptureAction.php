@@ -2,94 +2,44 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Action;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\PropertyAccess\PropertyPath;
-
-use Oro\Component\Action\Model\ContextAccessor;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
-use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
-use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use OroB2B\Bundle\PaymentBundle\Model\AmountAwareInterface;
 
 class CaptureAction extends AbstractPaymentMethodAction
 {
-    /** @var PaymentMethodRegistry */
-    protected $paymentMethodRegistry;
-
-    /** @var PaymentTransactionProvider */
-    protected $paymentTransactionProvider;
-
-    /** @var OptionsResolver */
-    private $optionsResolver;
-
-    /** @var object */
-    protected $entity;
-
-    /** @var array */
-    protected $options;
-
-    /**
-     * @param ContextAccessor $contextAccessor
-     * @param PaymentMethodRegistry $paymentMethodRegistry
-     * @param PaymentTransactionProvider $paymentTransactionProvider
-     */
-    public function __construct(
-        ContextAccessor $contextAccessor,
-        PaymentMethodRegistry $paymentMethodRegistry,
-        PaymentTransactionProvider $paymentTransactionProvider
-    ) {
-        parent::__construct($contextAccessor);
-
-        $this->paymentMethodRegistry = $paymentMethodRegistry;
-        $this->paymentTransactionProvider = $paymentTransactionProvider;
-    }
-
-    /**
-     * @return OptionsResolver
-     */
-    protected function getOptionsResolver()
-    {
-        if (!$this->optionsResolver) {
-            $this->optionsResolver = new OptionsResolver();
-            $this->optionsResolver
-                ->setRequired('object')
-                ->addAllowedTypes('object', ['string', 'Symfony\Component\PropertyAccess\PropertyPathInterface'])
-                ->setNormalizer(
-                    'object',
-                    function (OptionsResolver $resolver, $value) {
-                        if (is_string($value)) {
-                            return new PropertyPath($value);
-                        }
-
-                        return $value;
-                    }
-                );
-        }
-
-        return $this->optionsResolver;
-    }
 
     /** {@inheritdoc} */
     protected function executeAction($context)
     {
         $object = $this->contextAccessor->getValue($context, $this->options['object']);
-        if (!$object) {
+        if (!$object instanceof AmountAwareInterface) {
             return;
         }
 
-        $paymentTransaction = $this->paymentTransactionProvider->getPaymentTransaction($object);
+        $paymentTransaction = $this->paymentTransactionProvider->getActivePaymentTransaction(
+            $object,
+            PaymentMethodInterface::AUTHORIZE
+        );
+
         if (!$paymentTransaction) {
             return;
         }
 
-        $this->paymentMethodRegistry
-            ->getPaymentMethod($paymentTransaction->getType())
-            ->action(PaymentMethodInterface::CAPTURE, $paymentTransaction->getData());
-    }
+        $capturePaymentTransaction = $this->paymentTransactionProvider->createPaymentTransaction(
+            $paymentTransaction->getPaymentMethod(),
+            PaymentMethodInterface::CAPTURE,
+            $object
+        );
 
-    /** {@inheritdoc} */
-    public function initialize(array $options)
-    {
-        $this->options = $this->getOptionsResolver()->resolve($options);
+        $capturePaymentTransaction
+            ->setAmount($paymentTransaction->getAmount())
+            ->setSourcePaymentTransaction($paymentTransaction);
+
+        $this->paymentMethodRegistry
+            ->getPaymentMethod($capturePaymentTransaction->getPaymentMethod())
+            ->execute($capturePaymentTransaction);
+
+        $this->paymentTransactionProvider->savePaymentTransaction($capturePaymentTransaction);
+        $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
     }
 }

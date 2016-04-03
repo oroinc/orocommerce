@@ -2,15 +2,12 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(
- *      name="orob2b_payment_transaction",
- *      indexes={
- *          @ORM\Index(name="orob2b_payment_tran_entity_idx", columns={"entity_class", "entity_identifier"})
- *      }
- * )
+ * @ORM\Table(name="orob2b_payment_transaction")
  * @ORM\Entity
  */
 class PaymentTransaction
@@ -25,24 +22,6 @@ class PaymentTransaction
 
     /**
      * @var string
-     * @ORM\Column(name="reference", type="string", nullable=true)
-     */
-    protected $reference;
-
-    /**
-     * @var string
-     * @ORM\Column(name="state", type="string", nullable=true)
-     */
-    protected $state;
-
-    /**
-     * @var string
-     * @ORM\Column(name="type", type="string")
-     */
-    protected $type;
-
-    /**
-     * @var string
      * @ORM\Column(name="entity_class", type="string")
      */
     protected $entityClass;
@@ -54,10 +33,73 @@ class PaymentTransaction
     protected $entityIdentifier;
 
     /**
-     * @var array
-     * @ORM\Column(name="data", type="secure_array", nullable=true)
+     * @var string
+     * @ORM\Column(name="payment_method", type="string")
      */
-    protected $data = [];
+    protected $paymentMethod;
+
+    /**
+     * @var string
+     * @ORM\Column(name="action", type="string")
+     */
+    protected $action;
+
+    /**
+     * @var string
+     * @ORM\Column(name="reference", type="string", nullable=true)
+     */
+    protected $reference;
+
+    /**
+     * @var string
+     * @ORM\Column(name="amount", type="string")
+     */
+    protected $amount;
+
+    /**
+     * @var bool
+     * @ORM\Column(name="active", type="boolean")
+     */
+    protected $active = false;
+
+    /**
+     * @var PaymentTransaction
+     *
+     * @ORM\ManyToOne(
+     *     targetEntity="OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction",
+     *     inversedBy="relatedPaymentTransactions"
+     * )
+     * @ORM\JoinColumn(name="source_payment_transaction", referencedColumnName="id", onDelete="CASCADE")
+     */
+    protected $sourcePaymentTransaction;
+
+    /**
+     * @var Collection|PaymentTransaction[]
+     *
+     * @ORM\OneToMany(
+     *     targetEntity="OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction",
+     *     mappedBy="sourcePaymentTransaction"
+     * )
+     */
+    protected $relatedPaymentTransactions;
+
+    /**
+     * @var array
+     * @ORM\Column(name="request", type="secure_array")
+     */
+    protected $request = [];
+
+    /**
+     * @var array
+     * @ORM\Column(name="response", type="secure_array")
+     */
+    protected $response = [];
+
+
+    public function __construct()
+    {
+        $this->relatedPaymentTransactions = new ArrayCollection();
+    }
 
     /**
      * @return int
@@ -67,9 +109,7 @@ class PaymentTransaction
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
+    /** {@inheritdoc} */
     public function getReference()
     {
         return $this->reference;
@@ -89,37 +129,18 @@ class PaymentTransaction
     /**
      * @return string
      */
-    public function getState()
+    public function getAction()
     {
-        return $this->state;
+        return $this->action;
     }
 
     /**
-     * @param string $state
+     * @param string $action
      * @return PaymentTransaction
      */
-    public function setState($state)
+    public function setAction($action)
     {
-        $this->state = $state;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * @param string $type
-     * @return PaymentTransaction
-     */
-    public function setType($type)
-    {
-        $this->type = (string)$type;
+        $this->action = (string)$action;
 
         return $this;
     }
@@ -162,22 +183,134 @@ class PaymentTransaction
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getData()
+    /** {@inheritdoc} */
+    public function getRequest()
     {
-        return $this->data;
+        return $this->request;
     }
 
     /**
-     * @param array $data
+     * @param array $request
      * @return PaymentTransaction
      */
-    public function setData(array $data)
+    public function setRequest(array $request)
     {
-        $this->data = $data;
+        $this->request = $request;
 
         return $this;
+    }
+
+    /** {@inheritdoc} */
+    public function getResponse()
+    {
+        return $this->response;
+    }
+
+    /**
+     * @param array $response
+     * @return PaymentTransaction
+     */
+    public function setResponse(array $response)
+    {
+        $this->response = $response;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPaymentMethod()
+    {
+        return $this->paymentMethod;
+    }
+
+    /**
+     * @param string $paymentMethod
+     * @return PaymentTransaction
+     */
+    public function setPaymentMethod($paymentMethod)
+    {
+        $this->paymentMethod = (string)$paymentMethod;
+
+        return $this;
+    }
+
+    /**
+     * @param PaymentTransaction $sourcePaymentTransaction
+     * @return PaymentTransaction
+     */
+    public function setSourcePaymentTransaction(PaymentTransaction $sourcePaymentTransaction)
+    {
+        $this->sourcePaymentTransaction = $sourcePaymentTransaction;
+
+        return $this;
+    }
+
+    /**
+     * @return PaymentTransaction
+     */
+    public function getSourcePaymentTransaction()
+    {
+        return $this->sourcePaymentTransaction;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActive()
+    {
+        return $this->active;
+    }
+
+    /**
+     * @param bool $active
+     * @return PaymentTransaction
+     */
+    public function setActive($active)
+    {
+        $this->active = (bool)$active;
+
+        return $this;
+    }
+
+    /**
+     * @param string $amount
+     * @return PaymentTransaction
+     */
+    public function setAmount($amount)
+    {
+        $this->amount = (string)$amount;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAmount()
+    {
+        return $this->amount;
+    }
+
+    /**
+     * @param PaymentTransaction $relatedPaymentTransaction
+     * @return PaymentTransaction
+     */
+    public function addRelatedPaymentTransaction(PaymentTransaction $relatedPaymentTransaction)
+    {
+        if (!$this->relatedPaymentTransactions->contains($relatedPaymentTransaction)) {
+            $this->relatedPaymentTransactions->add($relatedPaymentTransaction);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PaymentTransaction[]
+     */
+    public function getRelatedPaymentTransactions()
+    {
+        return $this->relatedPaymentTransactions;
     }
 }

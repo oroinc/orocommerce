@@ -6,22 +6,13 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\OroB2BPaymentExtension;
+use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Gateway;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 
 class PayflowGateway implements PaymentMethodInterface
 {
     const TYPE = 'PayPalPaymentsPro';
-
-    /**
-     * @var array
-     */
-    protected $actionMapping = [
-        self::AUTHORIZE => Option\Transaction::AUTHORIZATION,
-        self::CAPTURE => Option\Transaction::DELAYED_CAPTURE,
-        self::CHARGE => Option\Transaction::SALE,
-        self::AUTHORIZE => Option\Transaction::AUTHORIZATION,
-    ];
 
     /** @var Gateway */
     protected $gateway;
@@ -40,23 +31,65 @@ class PayflowGateway implements PaymentMethodInterface
     }
 
     /** {@inheritdoc} */
-    public function action($actionName, array $options = [])
+    public function execute(PaymentTransaction $paymentTransaction)
     {
-        $actionName = (string)$actionName;
+        $actionName = $paymentTransaction->getAction();
 
-        if (!array_key_exists($actionName, $this->actionMapping)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Unknown action "%s", known actions are "%s"',
-                    $actionName,
-                    implode(', ', array_keys($this->actionMapping))
-                )
-            );
+        if (!method_exists($this, $actionName)) {
+            throw new \InvalidArgumentException(sprintf('Unknown action "%s"', $actionName));
         }
 
-        $options = array_replace($this->getCredentials(), $options);
+        return $this->{$actionName}($paymentTransaction);
+    }
 
-        return $this->gateway->request($this->actionMapping[$actionName], $options)->getData();
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     */
+    public function authorize(PaymentTransaction $paymentTransaction)
+    {
+        $options = [
+            Option\Tender::TENDER => Option\Tender::CREDIT_CARD,
+            Option\Amount::AMT => round($paymentTransaction->getAmount(), 2),
+            Option\Account::ACCT => '4111111111111111',
+            Option\ExpirationDate::EXPDATE => '1218',
+        ];
+
+        $paymentTransaction->setRequest($options);
+
+        $response = $this->gateway
+            ->request(Option\Transaction::AUTHORIZATION, array_replace($this->getCredentials(), $options));
+
+        $paymentTransaction
+            ->setActive($response->isSuccessful())
+            ->setReference($response->getReference())
+            ->setResponse($response->getData());
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     */
+    public function capture(PaymentTransaction $paymentTransaction)
+    {
+        $sourcePaymentTransaction = $paymentTransaction->getSourcePaymentTransaction();
+        if (!$sourcePaymentTransaction) {
+            return;
+        }
+
+        $keys = [Option\Tender::TENDER];
+        $options = array_intersect_key($sourcePaymentTransaction->getRequest(), array_flip($keys));
+        $options[Option\OriginalTransaction::ORIGID] = $sourcePaymentTransaction->getReference();
+
+        $paymentTransaction->setRequest($options);
+
+        $response = $this->gateway
+            ->request(Option\Transaction::DELAYED_CAPTURE, array_replace($this->getCredentials(), $options));
+
+        $paymentTransaction
+            ->setAmount($sourcePaymentTransaction->getAmount())
+            ->setReference($response->getReference())
+            ->setResponse($response->getData());
+
+        $sourcePaymentTransaction->setActive(!$response->isSuccessful());
     }
 
     /**

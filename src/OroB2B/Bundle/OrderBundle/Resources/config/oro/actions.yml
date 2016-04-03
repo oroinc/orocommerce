@@ -13,11 +13,22 @@ operations:
 
     orob2b_order_capture:
         label: orob2b.payment.capture
+        button_options:
+            icon: icon-credit-card
         applications: [backend]
         routes:
             - orob2b_order_view
         acl_resource: orob2b_payment_transaction
         order: 20
+        preactions:
+            - @assign_constant_value: [$.authorizeAction,  OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface::AUTHORIZE]
+            - @call_service_method:
+                service: orob2b_payment.provider.payment_transaction
+                method: getActivePaymentTransaction
+                method_parameters: [$.data, $.authorizeAction]
+                attribute: $.authorizePaymentTransaction
+        preconditions:
+            @not_empty: [$.authorizePaymentTransaction]
         actions:
             - @payment_capture:
                   object: $.data

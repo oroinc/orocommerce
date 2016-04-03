@@ -19,7 +19,5 @@ services:
 
     orob2b_payment.payment_method.paypal_payments_pro:
         class: '%orob2b_payment.payment_method.paypal_payments_pro.class%'
+        parent: orob2b_payment.payment_method.payflow_gateway
         public: false
-        arguments:
-            - '@orob2b_payment.paypal.payflow.gateway'
-            - '@oro_config.global'

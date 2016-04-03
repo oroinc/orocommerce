@@ -26,27 +26,45 @@ class PaymentTransactionProvider
 
     /**
      * @param object $object
+     * @param array $filter
      * @return PaymentTransaction
      */
-    public function getPaymentTransaction($object)
+    public function getPaymentTransaction($object, array $filter = [])
     {
         $className = $this->doctrineHelper->getEntityClass($object);
         $identifier = $this->doctrineHelper->getSingleEntityIdentifier($object);
 
         return $this->doctrineHelper->getEntityRepository($this->paymentTransactionClass)->findOneBy(
-            [
-                'entityClass' => $className,
-                'entityIdentifier' => $identifier,
-            ]
+            array_merge(
+                $filter,
+                [
+                    'entityClass' => $className,
+                    'entityIdentifier' => $identifier,
+                ]
+            )
         );
     }
 
     /**
+     * @param object $object
+     * @param string $action
+     * @return PaymentTransaction
+     */
+    public function getActivePaymentTransaction($object, $action)
+    {
+        return $this->getPaymentTransaction(
+            $object,
+            ['active' => true, 'action' => (string)$action]
+        );
+    }
+
+    /**
+     * @param string $paymentMethod
      * @param string $type
      * @param object $object
      * @return PaymentTransaction
      */
-    public function createPaymentTransaction($type, $object)
+    public function createPaymentTransaction($paymentMethod, $type, $object)
     {
         $className = $this->doctrineHelper->getEntityClass($object);
         $identifier = $this->doctrineHelper->getSingleEntityIdentifier($object);
@@ -54,10 +72,22 @@ class PaymentTransactionProvider
         /** @var PaymentTransaction $paymentTransaction */
         $paymentTransaction = new $this->paymentTransactionClass;
         $paymentTransaction
+            ->setPaymentMethod($paymentMethod)
+            ->setAction($type)
             ->setEntityClass($className)
-            ->setEntityIdentifier($identifier)
-            ->setType($type);
+            ->setEntityIdentifier($identifier);
 
         return $paymentTransaction;
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     */
+    public function savePaymentTransaction(PaymentTransaction $paymentTransaction)
+    {
+        $em = $this->doctrineHelper->getEntityManager($paymentTransaction);
+
+        $em->persist($paymentTransaction);
+        $em->flush($paymentTransaction);
     }
 }
