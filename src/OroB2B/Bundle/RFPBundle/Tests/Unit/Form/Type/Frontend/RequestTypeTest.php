@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use OroB2B\Bundle\AccountBundle\Form\Type\Frontend\AccountUserMultiSelectType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -13,6 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
@@ -29,7 +31,7 @@ use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType;
 use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductCollectionType;
 use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType as FrontendRequestProductType;
 use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
+use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemCollectionType;
 use OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type\AbstractTest;
 
 class RequestTypeTest extends AbstractTest
@@ -321,5 +323,22 @@ class RequestTypeTest extends AbstractTest
             ),
             $this->getValidatorExtension(true),
         ];
+    }
+
+    /**
+     * @return EntityType
+     */
+    protected function prepareAccountUserMultiSelectType()
+    {
+        return new EntityType(
+            [
+                10 => $this->getAccountUser(10),
+                11 => $this->getAccountUser(11),
+            ],
+            AccountUserMultiSelectType::NAME,
+            [
+                'multiple' => true
+            ]
+        );
     }
 }

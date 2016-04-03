@@ -34,7 +34,7 @@ layout:
                 rfp_page:
                     blockType: container
                     options:
-                        class_prefix: 'update-rfq'
+                        class_prefix: 'edit-frq'
 
                 rfp_form_container:
                     blockType: container

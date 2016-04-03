@@ -51,6 +51,7 @@ class RFPFormProvider extends AbstractServerRenderDataProvider
                 $action
             );
         }
+
         return $this->data[$requestId];
     }
 
@@ -67,6 +68,7 @@ class RFPFormProvider extends AbstractServerRenderDataProvider
             $this->form[$requestId] = $this->formFactory
                 ->create(RequestType::NAME, $request);
         }
+
         return $this->form[$requestId];
     }
 }

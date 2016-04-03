@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -109,13 +110,13 @@ class RequestController extends Controller
             ;
         }
 
-        $data = $this->update($rfpRequest);
+        $response = $this->update($rfpRequest);
 
-        if (!is_array($data) && $data->getStatusCode() ===  302) {
-            return $data;
+        if ($response instanceof Response) {
+            return $response;
         }
 
-        return ['data' => $data];
+        return ['data' => $response];
     }
 
     /**
@@ -134,13 +135,13 @@ class RequestController extends Controller
      */
     public function updateAction(RFPRequest $rfpRequest)
     {
-        $data = $this->update($rfpRequest);
+        $response = $this->update($rfpRequest);
 
-        if (!is_array($data) && $data->getStatusCode() ===  302) {
-            return $data;
+        if ($response instanceof Response) {
+            return $response;
         }
 
-        return ['data' => $data];
+        return ['data' => $response];
     }
 
     /**

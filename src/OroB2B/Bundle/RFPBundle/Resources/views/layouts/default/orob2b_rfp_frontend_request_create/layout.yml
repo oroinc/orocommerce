@@ -29,7 +29,7 @@ layout:
                 rfp_page:
                     blockType: container
                     options:
-                        class_prefix: 'create-frq'
+                        class_prefix: 'edit-frq'
 
                 rfp_form_container:
                     blockType: container
