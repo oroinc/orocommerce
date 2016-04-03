@@ -39,6 +39,8 @@ class PayflowGateway implements PaymentMethodInterface
             throw new \InvalidArgumentException(sprintf('Unknown action "%s"', $actionName));
         }
 
+        $this->gateway->setTestMode($this->isTestMode());
+
         return $this->{$actionName}($paymentTransaction);
     }
 
@@ -47,17 +49,28 @@ class PayflowGateway implements PaymentMethodInterface
      */
     public function authorize(PaymentTransaction $paymentTransaction)
     {
-        $options = [
-            Option\Tender::TENDER => Option\Tender::CREDIT_CARD,
-            Option\Amount::AMT => round($paymentTransaction->getAmount(), 2),
-            Option\Account::ACCT => '4111111111111111',
-            Option\ExpirationDate::EXPDATE => '1218',
-        ];
-
-        $paymentTransaction->setRequest($options);
-
         $response = $this->gateway
-            ->request(Option\Transaction::AUTHORIZATION, array_replace($this->getCredentials(), $options));
+            ->request(
+                Option\Transaction::AUTHORIZATION,
+                array_replace($this->getCredentials(), $paymentTransaction->getRequest())
+            );
+
+        $paymentTransaction
+            ->setActive($response->isSuccessful())
+            ->setReference($response->getReference())
+            ->setResponse($response->getData());
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     */
+    public function charge(PaymentTransaction $paymentTransaction)
+    {
+        $response = $this->gateway
+            ->request(
+                Option\Transaction::SALE,
+                array_replace($this->getCredentials(), $paymentTransaction->getRequest())
+            );
 
         $paymentTransaction
             ->setActive($response->isSuccessful())
@@ -85,11 +98,31 @@ class PayflowGateway implements PaymentMethodInterface
             ->request(Option\Transaction::DELAYED_CAPTURE, array_replace($this->getCredentials(), $options));
 
         $paymentTransaction
-            ->setAmount($sourcePaymentTransaction->getAmount())
             ->setReference($response->getReference())
             ->setResponse($response->getData());
 
         $sourcePaymentTransaction->setActive(!$response->isSuccessful());
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     */
+    public function purchase(PaymentTransaction $paymentTransaction)
+    {
+        $options = [
+            Option\SecureTokenIdentifier::SECURETOKENID => Option\SecureTokenIdentifier::generate(),
+            Option\CreateSecureToken::CREATESECURETOKEN => true,
+            Option\Amount::AMT => round($paymentTransaction->getAmount(), 2),
+            Option\TransparentRedirect::SILENTTRAN => true,
+            Option\Tender::TENDER => Option\Tender::CREDIT_CARD,
+            Option\Currency::CURRENCY => $paymentTransaction->getCurrency(),
+        ];
+
+        $paymentTransaction
+            ->setRequest($options)
+            ->setAction($this->getPurchaseAction());
+
+        $this->execute($paymentTransaction);
     }
 
     /**
@@ -103,6 +136,22 @@ class PayflowGateway implements PaymentMethodInterface
             Option\Password::PASSWORD => $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_PASSWORD_KEY),
             Option\Partner::PARTNER => $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_PARTNER_KEY),
         ];
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isTestMode()
+    {
+        return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_TEST_MODE_KEY);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getPurchaseAction()
+    {
+        return $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_PAYMENT_ACTION_KEY);
     }
 
     /**

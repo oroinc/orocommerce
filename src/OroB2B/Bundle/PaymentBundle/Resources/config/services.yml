@@ -13,6 +13,7 @@ parameters:
     orob2b_payment.provider.payment_transaction.class: OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider
     orob2b_payment.event.callback_handler.class: OroB2B\Bundle\PaymentBundle\Event\CallbackHandler
     orob2b_payment.action.capture.class: OroB2B\Bundle\PaymentBundle\Action\CaptureAction
+    orob2b_payment.action.purchase.class: OroB2B\Bundle\PaymentBundle\Action\PurchaseAction
 
 services:
     orob2b_payment.payment_term.manager.api:
@@ -116,3 +117,13 @@ services:
         tags:
             - { name: oro_workflow.action, alias: payment_capture }
             - { name: oro_action.action, alias: payment_capture }
+
+    orob2b_payment.action.purchase:
+        class: '%orob2b_payment.action.purchase.class%'
+        arguments:
+            - '@oro_action.context_accessor'
+            - '@orob2b_payment.payment_method.registry'
+            - '@orob2b_payment.provider.payment_transaction'
+        tags:
+            - { name: oro_workflow.action, alias: payment_purchase }
+            - { name: oro_action.action, alias: payment_purchase }

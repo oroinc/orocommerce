@@ -57,6 +57,12 @@ class PaymentTransaction
     protected $amount;
 
     /**
+     * @var string
+     * @ORM\Column(name="currency", type="string", length=3)
+     */
+    protected $currency;
+
+    /**
      * @var bool
      * @ORM\Column(name="active", type="boolean")
      */
@@ -312,5 +318,24 @@ class PaymentTransaction
     public function getRelatedPaymentTransactions()
     {
         return $this->relatedPaymentTransactions;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * @param string $currency
+     * @return $this
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = (string)$currency;
+
+        return $this;
     }
 }

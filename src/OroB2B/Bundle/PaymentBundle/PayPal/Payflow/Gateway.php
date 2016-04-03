@@ -12,6 +12,9 @@ use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\ResponseInterface;
 
 class Gateway
 {
+    const PRODUCTION_HOST_ADDRESS = 'https://payflowpro.paypal.com';
+    const PILOT_HOST_ADDRESS = 'https://pilot-payflowpro.paypal.com';
+
     /** @var ClientInterface */
     protected $client;
 
@@ -20,6 +23,9 @@ class Gateway
 
     /** @var ProcessorRegistry */
     protected $processorRegistry;
+
+    /** @var bool */
+    protected $testMode = false;
 
     /**
      * @param ClientInterface $client
@@ -50,8 +56,24 @@ class Gateway
         $processor = $this->processorRegistry->getProcessor($options[Partner::PARTNER]);
         $processor->configureOptions($resolver);
 
-        $responseData = $this->client->send($resolver->resolve($options));
+        $responseData = $this->client->send($this->getHostName(), $resolver->resolve($options));
 
         return new Response($responseData);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getHostName()
+    {
+        return $this->testMode ? self::PILOT_HOST_ADDRESS : self::PRODUCTION_HOST_ADDRESS;
+    }
+
+    /**
+     * @param bool $testMode
+     */
+    public function setTestMode($testMode)
+    {
+        $this->testMode = (bool)$testMode;
     }
 }

@@ -9,10 +9,15 @@ interface PaymentMethodInterface
     const AUTHORIZE = 'authorize';
     const CAPTURE = 'capture';
     const CHARGE = 'charge';
-    const VOID = 'void';
+
+    /**
+     * Action to wrap action combination - charge, authorize, authorize and capture
+     */
+    const PURCHASE = 'purchase';
 
     /**
      * @param PaymentTransaction $paymentTransaction
+     * @return array
      */
     public function execute(PaymentTransaction $paymentTransaction);
 

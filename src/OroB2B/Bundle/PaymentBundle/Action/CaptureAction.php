@@ -32,7 +32,8 @@ class CaptureAction extends AbstractPaymentMethodAction
         );
 
         $capturePaymentTransaction
-            ->setAmount($paymentTransaction->getAmount())
+            ->setAmount($object->getAmount())
+            ->setCurrency($object->getCurrency())
             ->setSourcePaymentTransaction($paymentTransaction);
 
         $this->paymentMethodRegistry

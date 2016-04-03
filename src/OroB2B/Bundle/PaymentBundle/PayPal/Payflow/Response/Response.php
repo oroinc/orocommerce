@@ -26,7 +26,7 @@ class Response implements ResponseInterface
     /** {@inheritdoc} */
     public function getReference()
     {
-        return $this->values->offsetGet('PNREF');
+        return $this->values->offsetExists('PNREF') ? $this->values->offsetGet('PNREF') : null;
     }
 
     /** {@inheritdoc} */

@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PaymentBundle\DependencyInjection;
 
+use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -59,9 +60,6 @@ class Configuration implements ConfigurationInterface
 
     const ALLOWED_COUNTRIES_ALL = 'all';
     const ALLOWED_COUNTRIES_SELECTED = 'selected';
-
-    const PAYMENT_ACTION_AUTHORIZATION = 'authorization';
-    const PAYMENT_ACTION_SALE = 'sale';
 
     /**
      * {@inheritdoc}
@@ -125,7 +123,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 self::PAYPAL_PAYMENTS_PRO_PAYMENT_ACTION_KEY => [
                     'type' => 'text',
-                    'value' => self::PAYMENT_ACTION_AUTHORIZATION
+                    'value' => PaymentMethodInterface::AUTHORIZE
                 ],
                 self::PAYPAL_PAYMENTS_PRO_TEST_MODE_KEY => [
                     'type' => 'boolean',
@@ -203,7 +201,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 self::PAYFLOW_GATEWAY_PAYMENT_ACTION_KEY => [
                     'type' => 'text',
-                    'value' => self::PAYMENT_ACTION_AUTHORIZATION
+                    'value' => PaymentMethodInterface::AUTHORIZE
                 ],
                 self::PAYFLOW_GATEWAY_TEST_MODE_KEY => [
                     'type' => 'boolean',

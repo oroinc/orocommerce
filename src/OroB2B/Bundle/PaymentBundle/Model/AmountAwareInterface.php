@@ -8,4 +8,9 @@ interface AmountAwareInterface
      * @return string
      */
     public function getAmount();
+
+    /**
+     * @return string
+     */
+    public function getCurrency();
 }

@@ -53,24 +53,31 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
     {
         if (!$this->optionsResolver) {
             $this->optionsResolver = new OptionsResolver();
-            $this->optionsResolver
-                ->setRequired('object')
-                ->addAllowedTypes('object', ['string', 'Symfony\Component\PropertyAccess\PropertyPathInterface'])
-                ->setNormalizer(
-                    'object',
-                    function (OptionsResolver $resolver, $value) {
-                        if (is_string($value)) {
-                            return new PropertyPath($value);
-                        }
-
-                        return $value;
-                    }
-                );
+            $this->configureOptionsResolver($this->optionsResolver);
         }
 
         return $this->optionsResolver;
     }
 
+    /**
+     * @param OptionsResolver $resolver
+     */
+    protected function configureOptionsResolver(OptionsResolver $resolver)
+    {
+        $resolver
+            ->setRequired('object')
+            ->addAllowedTypes('object', ['string', 'Symfony\Component\PropertyAccess\PropertyPathInterface'])
+            ->setNormalizer(
+                'object',
+                function (OptionsResolver $resolver, $value) {
+                    if (is_string($value)) {
+                        return new PropertyPath($value);
+                    }
+
+                    return $value;
+                }
+            );
+    }
 
     /** {@inheritdoc} */
     public function initialize(array $options)

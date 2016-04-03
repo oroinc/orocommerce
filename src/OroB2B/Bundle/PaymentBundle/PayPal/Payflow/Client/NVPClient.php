@@ -26,13 +26,14 @@ class NVPClient implements ClientInterface
     }
 
     /**
+     * @param string $hostAddress
      * @param array $options
      * @return ResponseInterface
      */
-    public function send(array $options = [])
+    public function send($hostAddress, array $options = [])
     {
         $response = $this->httpClient
-            ->post(NVPClient::PILOT_HOST_ADDRESS, [], $this->encoder->encode($options))
+            ->post($hostAddress, [], $this->encoder->encode($options))
             ->send();
 
         return $this->encoder->decode($response->getBody(true));

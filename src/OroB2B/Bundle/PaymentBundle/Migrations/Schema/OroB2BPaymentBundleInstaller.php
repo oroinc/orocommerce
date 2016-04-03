@@ -112,6 +112,7 @@ class OroB2BPaymentBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('action', 'string', ['length' => 255]);
         $table->addColumn('reference', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('amount', 'string', ['length' => 255]);
+        $table->addColumn('currency', 'string', ['length' => 3]);
         $table->addColumn('active', 'boolean', []);
         $table->addColumn('source_payment_transaction', 'integer', ['notnull' => false]);
         $table->addColumn('request', 'secure_array');
