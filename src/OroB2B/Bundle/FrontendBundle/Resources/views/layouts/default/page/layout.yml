@@ -32,6 +32,7 @@ layout:
                     options:
                         text: 'orob2b_frontend.copyright'
                         escape: false
+                        visible: { @neq: [ $context.logged_user, null ] }
                 scripts:
                     blockType: script
                     options:
