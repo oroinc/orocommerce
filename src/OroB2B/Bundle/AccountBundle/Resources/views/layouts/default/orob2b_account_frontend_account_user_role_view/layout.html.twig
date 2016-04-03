@@ -74,15 +74,16 @@
 {% endblock %}
 
 {% block _account_user_role_items_view_privileges_entity_privilege_widget %}
+    {% set permissionsCount = (privilege.permissions|length / 2)|round %}
+
     <tr>
         <td class="col-md-5">
             <div class="col-md-12">
                 <strong>{{ privilege.identity.name|trans }}</strong>
             </div>
         </td>
-        <td class="col-md-3">
+        <td class="col-md-3 va-t_md">
             {% for field in privilegeConfig['permissions'] %}
-                {% set permissionsCount = (privilege.permissions|length / 2)|round %}
                 {% set index = loop.index %}
 
                 {% for permission in privilege.permissions %}
@@ -95,7 +96,7 @@
                         {{ block('container_widget') }}
 
                         {% if index == permissionsCount %}
-                            </td><td class="col-md-1"></td><td class="col-md-3">
+                            </td><td class="col-md-1"></td><td class="col-md-3 va-t_md">
                         {% endif %}
                     {% endif %}
                 {% endfor %}
