@@ -57,7 +57,7 @@ class RFPFormProvider extends AbstractServerRenderDataProvider
 
     /**
      * @param Request $request
-     * 
+     *
      * @return FormInterface
      */
     public function getForm(Request $request)
