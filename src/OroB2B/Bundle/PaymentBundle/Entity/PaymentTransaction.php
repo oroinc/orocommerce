@@ -68,6 +68,13 @@ class PaymentTransaction
      */
     protected $active = false;
 
+
+    /**
+     * @var bool
+     * @ORM\Column(name="successful", type="boolean")
+     */
+    protected $successful = false;
+
     /**
      * @var PaymentTransaction
      *
@@ -337,5 +344,24 @@ class PaymentTransaction
         $this->currency = (string)$currency;
 
         return $this;
+    }
+
+    /**
+     * @param boolean $successful
+     * @return PaymentTransaction
+     */
+    public function setSuccessful($successful)
+    {
+        $this->successful = $successful;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isSuccessful()
+    {
+        return $this->successful;
     }
 }

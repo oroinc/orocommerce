@@ -56,7 +56,7 @@ class PayflowGateway implements PaymentMethodInterface
             );
 
         $paymentTransaction
-            ->setActive($response->isSuccessful())
+            ->setActive(true)
             ->setReference($response->getReference())
             ->setResponse($response->getData());
     }
@@ -73,7 +73,7 @@ class PayflowGateway implements PaymentMethodInterface
             );
 
         $paymentTransaction
-            ->setActive($response->isSuccessful())
+            ->setSuccessful($response->isSuccessful())
             ->setReference($response->getReference())
             ->setResponse($response->getData());
     }
@@ -98,10 +98,13 @@ class PayflowGateway implements PaymentMethodInterface
             ->request(Option\Transaction::DELAYED_CAPTURE, array_replace($this->getCredentials(), $options));
 
         $paymentTransaction
+            ->setSuccessful($response->isSuccessful())
             ->setReference($response->getReference())
             ->setResponse($response->getData());
 
-        $sourcePaymentTransaction->setActive(!$response->isSuccessful());
+        $sourcePaymentTransaction
+            ->setActive(false)
+            ->setSuccessful($response->isSuccessful());
     }
 
     /**
