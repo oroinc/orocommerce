@@ -16,7 +16,6 @@ class OroB2BSaleBundle implements Migration
     {
         /** Tables update **/
         $this->alterAddressTable($schema);
-
     }
 
     /**

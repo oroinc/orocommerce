@@ -75,7 +75,7 @@ define(function(require) {
         units: {},
 
         /**
-         * @property {array}
+         * @property {Array}
          */
         allUnits: {},
 
@@ -251,7 +251,7 @@ define(function(require) {
                 var routeParams = {'id': productId};
 
                 if (this.options.compactUnits) {
-                    routeParams['short'] = true;
+                    routeParams.short = true;
                 }
 
                 $.ajax({

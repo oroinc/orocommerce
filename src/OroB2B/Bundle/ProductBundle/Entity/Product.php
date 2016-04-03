@@ -109,7 +109,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *              "auditable"=true
      *          },
      *          "importexport"={
-     *              "order"=60
+     *              "order"=70
      *          }
      *      }
      * )
@@ -143,7 +143,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *              "auditable"=true
      *          },
      *          "importexport"={
-     *              "order"=70,
+     *              "order"=80,
      *              "process_as_scalar"=true
      *          }
      *      }
@@ -294,7 +294,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *              "auditable"=true
      *          },
      *          "importexport"={
-     *              "order"=50,
+     *              "order"=60,
      *              "full"=true,
      *              "fallback_field"="text"
      *          }
@@ -313,13 +313,45 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *              "auditable"=true
      *          },
      *          "importexport"={
-     *              "order"=80,
+     *              "order"=90,
      *              "full"=true,
      *          }
      *      }
      * )
      */
     protected $variantLinks;
+
+    /**
+     * @var Collection|LocalizedFallbackValue[]
+     *
+     * @ORM\ManyToMany(
+     *      targetEntity="OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     * @ORM\JoinTable(
+     *      name="orob2b_product_short_desc",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="short_description_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *      }
+     * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=50,
+     *              "full"=true,
+     *              "fallback_field"="text"
+     *          }
+     *      }
+     * )
+     */
+    protected $shortDescriptions;
 
     /**
      * {@inheritdoc}
@@ -329,9 +361,10 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
         parent::__construct();
 
         $this->unitPrecisions = new ArrayCollection();
-        $this->names          = new ArrayCollection();
-        $this->descriptions   = new ArrayCollection();
-        $this->variantLinks   = new ArrayCollection();
+        $this->names = new ArrayCollection();
+        $this->descriptions = new ArrayCollection();
+        $this->shortDescriptions = new ArrayCollection();
+        $this->variantLinks = new ArrayCollection();
     }
 
     /**
@@ -744,6 +777,59 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     }
 
     /**
+     * @return Collection|LocalizedFallbackValue[]
+     */
+    public function getShortDescriptions()
+    {
+        return $this->shortDescriptions;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $shortDescription
+     *
+     * @return $this
+     */
+    public function addShortDescription(LocalizedFallbackValue $shortDescription)
+    {
+        if (!$this->shortDescriptions->contains($shortDescription)) {
+            $this->shortDescriptions->add($shortDescription);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $shortDescription
+     *
+     * @return $this
+     */
+    public function removeShortDescription(LocalizedFallbackValue $shortDescription)
+    {
+        if ($this->shortDescriptions->contains($shortDescription)) {
+            $this->shortDescriptions->removeElement($shortDescription);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return LocalizedFallbackValue
+     * @throws \LogicException
+     */
+    public function getDefaultShortDescription()
+    {
+        $shortDescriptions = $this->shortDescriptions->filter(function (LocalizedFallbackValue $shortDescription) {
+            return null === $shortDescription->getLocale();
+        });
+
+        if ($shortDescriptions->count() > 1) {
+            throw new \LogicException('There must be only one default short description');
+        }
+
+        return $shortDescriptions->first();
+    }
+
+    /**
      * Pre persist event handler
      *
      * @ORM\PrePersist
@@ -776,6 +862,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
             $this->unitPrecisions = new ArrayCollection();
             $this->names = new ArrayCollection();
             $this->descriptions = new ArrayCollection();
+            $this->shortDescriptions = new ArrayCollection();
             $this->variantLinks = new ArrayCollection();
             $this->variantFields = [];
         }
