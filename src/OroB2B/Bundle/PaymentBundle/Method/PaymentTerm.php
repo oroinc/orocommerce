@@ -12,6 +12,8 @@ class PaymentTerm implements PaymentMethodInterface
     public function execute(PaymentTransaction $paymentTransaction)
     {
         $paymentTransaction->setSuccessful(true);
+
+        return [];
     }
 
     /** {@inheritdoc} */

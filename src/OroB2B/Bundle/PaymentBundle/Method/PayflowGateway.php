@@ -41,7 +41,7 @@ class PayflowGateway implements PaymentMethodInterface
 
         $this->gateway->setTestMode($this->isTestMode());
 
-        return $this->{$actionName}($paymentTransaction);
+        return $this->{$actionName}($paymentTransaction) ?: [];
     }
 
     /**
@@ -126,6 +126,10 @@ class PayflowGateway implements PaymentMethodInterface
             ->setAction($this->getPurchaseAction());
 
         $this->execute($paymentTransaction);
+
+        $keys = [Option\SecureToken::SECURETOKEN, Option\SecureTokenIdentifier::SECURETOKENID];
+
+        return array_intersect_key($paymentTransaction->getResponse(), array_flip($keys));
     }
 
     /**

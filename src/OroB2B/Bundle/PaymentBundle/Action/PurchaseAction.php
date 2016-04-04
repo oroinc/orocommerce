@@ -47,13 +47,15 @@ class PurchaseAction extends AbstractPaymentMethodAction
             $paymentTransaction->setTransactionOptions($options['transactionOptions']);
         }
 
-        $this->paymentMethodRegistry
+        $response = $this->paymentMethodRegistry
             ->getPaymentMethod($options['paymentMethod'])
             ->execute($paymentTransaction);
 
         $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
 
-        // TODO: Assign real data here
-        $this->setAttributeValue($context, $paymentTransaction->getId());
+        $this->setAttributeValue(
+            $context,
+            array_merge($response, ['transaction' => $paymentTransaction->getEntityIdentifier()])
+        );
     }
 }
