@@ -51,12 +51,13 @@ class RFPFormProvider extends AbstractServerRenderDataProvider
                 $action
             );
         }
+
         return $this->data[$requestId];
     }
 
     /**
      * @param Request $request
-     * 
+     *
      * @return FormInterface
      */
     public function getForm(Request $request)
@@ -67,6 +68,7 @@ class RFPFormProvider extends AbstractServerRenderDataProvider
             $this->form[$requestId] = $this->formFactory
                 ->create(RequestType::NAME, $request);
         }
+
         return $this->form[$requestId];
     }
 }

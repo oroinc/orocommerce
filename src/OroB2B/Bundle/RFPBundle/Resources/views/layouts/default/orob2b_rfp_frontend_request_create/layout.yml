@@ -22,14 +22,14 @@ layout:
         - @add:
             id: account_sidebar
             parentId: sidebar_left
-            blockType: block
+            blockType: container
 
         - @addTree:
             items:
                 rfp_page:
                     blockType: container
                     options:
-                        class_prefix: 'create-frq'
+                        class_prefix: 'edit-frq'
 
                 rfp_form_container:
                     blockType: container
