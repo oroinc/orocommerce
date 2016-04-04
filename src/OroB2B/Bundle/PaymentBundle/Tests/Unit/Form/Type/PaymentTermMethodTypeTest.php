@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Oro\Bundle\UserBundle\Entity\User;
 
@@ -71,42 +72,39 @@ class PaymentTermMethodTypeTest extends FormIntegrationTestCase
         $this->assertEquals(PaymentTermMethodType::NAME, $this->formType->getName());
     }
 
-    public function testFinishViewNoToken()
+    public function testFinishViewEmpty()
     {
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
         $formView = new FormView();
 
         $this->formType->finishView($formView, $form, []);
-
-        $this->assertFalse($formView->vars['method_enabled']);
         $this->assertEquals($formView->vars['payment_term'], '');
     }
 
-    public function testFinishViewNoUser()
+    public function testGetPaymentTermNoToken()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $formView = new FormView();
+        $result = $this->formType->getPaymentTerm();
+        $this->assertNull($result);
 
+        $result = $this->formType->isMethodEnabled();
+        $this->assertFalse($result);
+    }
+
+    public function testGetPaymentTermNoUser()
+    {
         /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject $token */
         $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $this->tokenStorage->expects($this->once())
             ->method('getToken')
             ->willReturn($token);
 
-        $this->formType->finishView($formView, $form, []);
-
-        $this->assertFalse($formView->vars['method_enabled']);
-        $this->assertEquals($formView->vars['payment_term'], '');
+        $result = $this->formType->getPaymentTerm();
+        $this->assertNull($result);
     }
 
-    public function testFinishViewWrongUser()
+    public function testGetPaymentTermWrongUser()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $formView = new FormView();
-
         /** @var User|\PHPUnit_Framework_MockObject_MockObject $user */
         $user = $this->getMock('Oro\Bundle\UserBundle\Entity\User');
 
@@ -120,13 +118,11 @@ class PaymentTermMethodTypeTest extends FormIntegrationTestCase
             ->method('getToken')
             ->willReturn($token);
 
-        $this->formType->finishView($formView, $form, []);
-
-        $this->assertFalse($formView->vars['method_enabled']);
-        $this->assertEquals($formView->vars['payment_term'], '');
+        $result = $this->formType->getPaymentTerm();
+        $this->assertNull($result);
     }
 
-    public function testFinishViewOk()
+    public function testGetPaymentTermOk()
     {
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
@@ -161,9 +157,19 @@ class PaymentTermMethodTypeTest extends FormIntegrationTestCase
             ->method('getPaymentTerm')
             ->willReturn($paymentTerm);
 
-        $this->formType->finishView($formView, $form, []);
+        $propertyAccessor = PropertyAccess::createPropertyAccessor();
+        $this->assertEquals(
+            $paymentTerm,
+            $propertyAccessor->getValue($this->formType, 'paymentTerm')
+        );
 
-        $this->assertTrue($formView->vars['method_enabled']);
+        $result = $this->formType->getPaymentTerm();
+        $this->assertEquals($result, $paymentTerm);
+
+        $result = $this->formType->isMethodEnabled();
+        $this->assertTrue($result);
+
+        $this->formType->finishView($formView, $form, []);
         $this->assertEquals($formView->vars['payment_term'], self::PAYMENT_TERM_LABEL);
     }
 }
