@@ -35,7 +35,8 @@ define(function(require) {
             compactUnits: false,
             itemsContainer: '.rfp-lineitem-requested-items',
             itemWidget: '.rfp-lineitem-requested-item',
-            addItemButton: '.rfp-lineitem-requested-item-add'
+            addItemButton: '.rfp-lineitem-requested-item-add',
+            skipLoadingMask: false
         },
 
         /**
@@ -151,7 +152,9 @@ define(function(require) {
                     url: routing.generate(this.options.unitsRoute, routeParams),
                     type: 'GET',
                     beforeSend: function() {
-                        self.loadingMask.show();
+                        if (!self.options.skipLoadingMask) {
+                            self.loadingMask.show();
+                        }
                     },
                     success: function(response) {
                         self.units[productId] = response.units;
