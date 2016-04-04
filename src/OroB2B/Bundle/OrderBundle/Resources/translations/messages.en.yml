@@ -163,7 +163,10 @@ orob2b:
             address:
                 choose: Select an address
                 choose_or_create: Select an existing address or enter a new address below
-                manual: Enter address manually
+                manual: Enter other address
+                group_label:
+                    account: Account Address Book
+                    account_user: Account User Address Book
 
         subtotals:
             shipping_cost: Shipping Cost
@@ -181,11 +184,15 @@ orob2b:
 
         success:
             thank_you: 'Thank You For Your Purchase!'
-            order_number: 'Your Order number is'
-            receive_email: 'You will receive an email with a confirmation and a link to your purchase order.'
+            order_number: 'Your order number is'
+            receive_email: 'You will receive a confirmation email with a link to view your order.'
             done: 'Done'
 
     frontend:
         order:
             entity_plural_label: Orders
             create.label: 'Create Order'
+            form:
+                group_label:
+                    account: Global Address Book
+                    account_user: My Address Book

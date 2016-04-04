@@ -8,7 +8,6 @@ layout:
             optionValue:
                 @and:
                     - @neq: [$context.workflowStepName, 'order_review']
-    #                                - @neq: [$context.workflowStepName, 'request_approval']
                     - @neq: [$context.workflowStepName, 'approve_request']
     conditions:
         @empty: [$context.widget_container]

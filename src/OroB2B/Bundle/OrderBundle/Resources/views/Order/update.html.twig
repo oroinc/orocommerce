@@ -47,7 +47,7 @@
     {% set subtotals %}
         {{ form_row(form.subtotalValidation) }}
         {{ form_row(form.totalValidation) }}
-        {% include 'OroB2BPricingBundle:Totals:totalsEntityEditPage.html.twig' with {
+        {% include 'OroB2BPricingBundle:Totals:totals.html.twig' with {
             pageComponent: 'orob2border/js/app/components/totals-component',
             options: {totals: totals}
         } only %}

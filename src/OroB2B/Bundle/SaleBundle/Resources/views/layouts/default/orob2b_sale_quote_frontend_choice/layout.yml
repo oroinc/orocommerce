@@ -32,21 +32,46 @@ layout:
 
         - @addTree:
             items:
-                quote_view_page:
-                    blockType: container
                 quote_view_information:
-                    blockType: block
+                    blockType: container
                     options:
                         vars:
                             quote: { @value: $data.quote }
                 quote_choice_page:
-                    blockType: block
+                    blockType: container
+                quot_choice_form:
+                    blockType: container
                     options:
                         vars:
                             form: { @value: $data.form }
+                            quoteDemand: { @value: $data.data }
+                quote_choice_back_button:
+                    blockType: block
+                    options:
+                        vars:
                             quote: { @value: $data.quote }
+                quote_choice_submit_button:
+                    blockType: block
+
+                quote_choice_subtotals:
+                    blockType: order_total
+                    options:
+                        total: {@value: $data.totals.total}
+                        subtotals: {@value: $data.totals.subtotals}
+                quote_shipping_address:
+                    blockType: address
+                    options:
+                        address: {@value: $data.quote.shippingAddress}
+                        label: 'orob2b.sale.quote.shipping_address.label'
+                        block_prefixes: ['quote_body_column_element']
             tree:
                 content:
-                    quote_view_page:
-                        quote_view_information: ~
-                        quote_choice_page: ~
+                    quote_choice_page:
+                        quote_view_information:
+                            quote_shipping_address: ~
+                        quot_choice_form:
+                            quote_choice_back_button: ~
+                            quote_choice_subtotals: ~
+                            quote_choice_submit_button: ~
+    conditions:
+        @empty: [$context.widget_container]

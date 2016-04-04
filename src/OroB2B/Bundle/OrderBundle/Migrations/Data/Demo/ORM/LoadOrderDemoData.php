@@ -57,7 +57,8 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
             'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
             'OroB2B\Bundle\PaymentBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData',
             'OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData',
-            'OroB2B\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM\LoadShoppingListDemoData'
+            'OroB2B\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM\LoadShoppingListDemoData',
+            'OroB2B\Bundle\TaxBundle\Migrations\Data\Demo\ORM\LoadTaxConfigurationDemoData'
         ];
     }
 

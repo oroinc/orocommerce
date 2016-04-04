@@ -11,9 +11,9 @@
                         <span class="hidden-when-collapsed">{{ 'orob2b.catalog.frontend.category.master_category.label'|trans }}</span>
                     </a>
                     <ul class="navigation-widget__list_nested nested-list_expanded hidden-when-collapsed">
-                        {% for category in orob2b_category_list('orob2b.catalog.frontend.category.master_category.label'|trans) %}
+                        {% for category in categories %}
                             <li>
-                                <a href="{{ path('orob2b_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}">{{ category.text }}</a>
+                                <a href="{{ path('orob2b_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}">{{ category.defaultTitle }}</a>
                             </li>
                         {% endfor %}
                     </ul>

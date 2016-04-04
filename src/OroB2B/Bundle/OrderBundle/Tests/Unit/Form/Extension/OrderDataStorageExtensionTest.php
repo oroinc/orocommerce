@@ -97,4 +97,33 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
 
         $this->assertEmpty($order->getLineItems());
     }
+
+    public function testBuildWithoutQuantity()
+    {
+        $sku = 'TEST';
+        $data = [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                [
+                    ProductDataStorage::PRODUCT_SKU_KEY => $sku,
+                ],
+            ]
+        ];
+        $this->entity = new Order();
+
+        $productUnit = new ProductUnit();
+        $productUnit->setCode('item');
+
+        $product = $this->getProductEntity($sku, $productUnit);
+
+        $this->assertMetadataCalled();
+        $this->assertRequestGetCalled();
+        $this->assertStorageCalled($data);
+        $this->assertProductRepositoryCalled($product);
+
+        $this->extension->buildForm($this->getBuilderMock(true), []);
+
+        /** @var OrderLineItem $lineItem */
+        $lineItem = $this->entity->getLineItems()->first();
+        $this->assertEquals(1, $lineItem->getQuantity());
+    }
 }

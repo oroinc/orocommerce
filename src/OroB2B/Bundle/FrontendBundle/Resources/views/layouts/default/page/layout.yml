@@ -27,6 +27,11 @@ layout:
                         text: ~
                 footer:
                     blockType: container
+                footer_copyright:
+                    blockType: text
+                    options:
+                        text: 'orob2b_frontend.copyright'
+                        escape: false
                 scripts:
                     blockType: script
                     options:
@@ -41,7 +46,8 @@ layout:
                                 page_title_container:
                                     page_title: ~
                             sidebar_left: ~
-                        footer: ~
+                        footer:
+                            footer_copyright: ~
                     scripts: ~
         - @move:
             id: datagrid_toolbar_mass_actions
@@ -76,3 +82,7 @@ layout:
             optionName: title
             oldOptionValue: OroPlatform
             newOptionValue: OroCommerce
+        - @setOption:
+            id: datagrid_toolbar
+            optionName: attr.class
+            optionValue: 'oro-oq__filter-controls oro-oq__filter-controls oro-oq__filter-controls_has-pagination'

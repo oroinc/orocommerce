@@ -49,7 +49,7 @@ layout:
                     blockType: block
                     options:
                         visible: false
-                product_grid_row_description:
+                product_grid_row_short_description:
                     blockType: block
                     options:
                         vars:
@@ -94,7 +94,7 @@ layout:
                                 product_grid_row_sku_container:
                                     product_grid_row_sku: ~
                                     product_grid_row_mfg: ~
-                            product_grid_row_description: ~
+                            product_grid_row_short_description: ~
                             product_grid_row_details: ~
                         product_grid_row_secondary_content_container:
                             product_grid_row_secondary_content_first_container:
