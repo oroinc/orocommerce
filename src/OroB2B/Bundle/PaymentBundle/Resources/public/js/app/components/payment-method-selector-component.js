@@ -14,9 +14,7 @@ define(function(require) {
             selectors: {
                 radio: '[data-choice]',
                 item_container: '[data-item-container]',
-                subform: '[data-form-container]',
-                submit_button: '[data-payment-method-submit]',
-                no_methods: 'payment-no-methods'
+                subform: '[data-form-container]'
             }
         },
 
@@ -41,13 +39,7 @@ define(function(require) {
 
             if (this.$radios.length) {
                 this.updateForms();
-                _.each(
-                    this.$radios,
-                    function(item) {
-                        $(item).on('click', _.bind(this.updateForms, this));
-                    },
-                    this
-                );
+                this.$el.on('change', this.options.selectors.radio, _.bind(this.updateForms, this));
             }
         },
 
@@ -60,13 +52,7 @@ define(function(require) {
             }
 
             if (this.$radios.length) {
-                _.each(
-                    this.$radios,
-                    function (item) {
-                        $(item).off('click', _.bind(this.updateForms, this));
-                    },
-                    this
-                );
+                this.$el.off('change', this.options.selectors.radio, _.bind(this.updateForms, this));
             }
 
             PaymentMethodSelectorComponent.__super__.dispose.call(this);

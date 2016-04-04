@@ -39,7 +39,7 @@
                 <i class="cf-radio_button_unchecked radio_not-checked fs18 mmr5-md"></i>
                 <span class="checkbox_custom__text fs13">{{ vars.label|trans }}</span>
             </label>
-            <div class="checkout__form__payment-container" data-form-container>
+            <div class="checkout__form__payment-container" data-form-container style="display:none;">
                 {% if vars.unique_block_prefix == '_orob2b_payment_term_method' %}
                     {{ block('payment_term_widget') }}
                 {% else %}
