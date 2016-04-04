@@ -85,6 +85,7 @@ workflows:
                 is_final: true
                 allowed_transitions:
                     - place_order
+                    - verify_payment
                     - back_to_billing_address
                     - back_to_shipping_address
                     - back_to_shipping_method
@@ -194,6 +195,14 @@ workflows:
                 frontend_options:
                     is_checkout_back: true
 
+            verify_payment:
+                label: Verify Payment
+                step_to: enter_payment
+                transition_definition: verify_payment_definition
+                is_hidden: true
+                frontend_options:
+                    is_checkout_verify: true
+
             place_order:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.place_order.label
                 step_to: place_order
@@ -211,10 +220,12 @@ workflows:
 
         transition_definitions:
             do_nothing: ~
+
             back_to_billing_address_definition:
                 post_actions:
                     - @assign_value: [$billing_address_has_shipping, true]
                     - @assign_value: [$payment_method, null]
+
             continue_to_shipping_address_definition:
                 conditions:
                     @not_empty: $checkout.billingAddress
@@ -251,6 +262,7 @@ workflows:
                                 - @equal: [$checkout.shipToBillingAddress, true]
                                 - @equal: [$billing_address_has_shipping, true]
                         parameters: [$checkout.shippingAddress, $checkout.billingAddress]
+
             continue_to_shipping_method_definition:
                 conditions:
                     @or:
@@ -267,14 +279,28 @@ workflows:
                                 - @equal: [$checkout.shipToBillingAddress, true]
                                 - @equal: [$billing_address_has_shipping, true]
                         parameters: [$checkout.shippingAddress, $checkout.billingAddress]
+
             continue_to_place_order_definition:
                 conditions:
                     @and:
-                        - @not_empty: $checkout.paymentMethod
+                        - @not_empty:
+                            message: Payment method was not selected
+                            parameters: $checkout.paymentMethod
+                        - @check_request:
+                            message: Invalid request
+                            parameters:
+                                is_ajax: true
+                                expected_key: _wid
+                                expected_value: ajax_checkout
+
+            verify_payment_definition:
+                pre_conditions:
+                    @not:
                         - @check_request:
                             is_ajax: true
                             expected_key: _wid
                             expected_value: ajax_checkout
+
             place_order_definition:
                 post_actions:
                     - @assign_constant_value: [$.result.typeBillingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_BILLING]

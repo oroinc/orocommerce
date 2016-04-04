@@ -14,6 +14,10 @@ parameters:
     orob2b_payment.provider.term_form_provider.class: OroB2B\Bundle\PaymentBundle\Layout\DataProvider\PaymentTermFormProvider
     orob2b_payment.provider.methods_provider.class: OroB2B\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodsProvider
     orob2b_payment.form.payment_method_type_registry.class: OroB2B\Bundle\PaymentBundle\Form\PaymentMethodTypeRegistry
+    orob2b_payment.provider.payment_transaction.class: OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider
+    orob2b_payment.event.callback_handler.class: OroB2B\Bundle\PaymentBundle\Event\CallbackHandler
+    orob2b_payment.action.capture.class: OroB2B\Bundle\PaymentBundle\Action\CaptureAction
+    orob2b_payment.action.purchase.class: OroB2B\Bundle\PaymentBundle\Action\PurchaseAction
 
 services:
     orob2b_payment.payment_term.manager.api:
@@ -68,11 +72,22 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-groups-grid, method: onBuildBeforeAccountGroups }
 
     orob2b_payment.event_listener.config.paypal_encrypt:
-        class: %orob2b_payment.event_listener.config.paypal_encrypt.class%
+        class: '%orob2b_payment.event_listener.config.paypal_encrypt.class%'
         arguments:
-            - @oro_security.encoder.mcrypt
+            - '@oro_security.encoder.mcrypt'
         tags:
-            - { name: kernel.event_listener, event: oro_config.get, method: loadConfig }
+            - { name: kernel.event_listener, event: oro_config.get.orob2b_payment.paypal_payments_pro_partner, method: loadConfig }
+            - { name: kernel.event_listener, event: oro_config.get.orob2b_payment.paypal_payments_pro_user, method: loadConfig }
+            - { name: kernel.event_listener, event: oro_config.get.orob2b_payment.paypal_payments_pro_vendor, method: loadConfig }
+            - { name: kernel.event_listener, event: oro_config.get.orob2b_payment.paypal_payments_pro_password, method: loadConfig }
+            - { name: kernel.event_listener, event: oro_config.get.orob2b_payment.paypal_payments_pro_proxy_host, method: loadConfig }
+            - { name: kernel.event_listener, event: oro_config.get.orob2b_payment.paypal_payments_pro_proxy_port, method: loadConfig }
+            - { name: kernel.event_listener, event: oro_config.get.orob2b_payment.payflow_gateway_partner, method: loadConfig }
+            - { name: kernel.event_listener, event: oro_config.get.orob2b_payment.payflow_gateway_user, method: loadConfig }
+            - { name: kernel.event_listener, event: oro_config.get.orob2b_payment.payflow_gateway_vendor, method: loadConfig }
+            - { name: kernel.event_listener, event: oro_config.get.orob2b_payment.payflow_gateway_password, method: loadConfig }
+            - { name: kernel.event_listener, event: oro_config.get.orob2b_payment.payflow_gateway_proxy_host, method: loadConfig }
+            - { name: kernel.event_listener, event: oro_config.get.orob2b_payment.payflow_gateway_proxy_port, method: loadConfig }
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
 
     orob2b_payment.event_listener.config.paypal_selected_countries:
@@ -116,3 +131,39 @@ services:
             - @orob2b_payment.form.payment_method_type_registry
         tags:
             - { name: layout.data_provider, alias: orob2b_payment_methods_provider }
+
+    orob2b_payment.event.callback_handler:
+        class: '%orob2b_payment.event.callback_handler.class%'
+        lazy: true
+        arguments:
+            - '@event_dispatcher'
+            - '@oro_entity.doctrine_helper'
+            - '%orob2b_payment.entity.payment_transaction.class%'
+        calls:
+            - ['setLogger', ['@logger']]
+
+    orob2b_payment.provider.payment_transaction:
+        class: '%orob2b_payment.provider.payment_transaction.class%'
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '%orob2b_payment.entity.payment_transaction.class%'
+
+    orob2b_payment.action.capture:
+        class: '%orob2b_payment.action.capture.class%'
+        arguments:
+            - '@oro_action.context_accessor'
+            - '@orob2b_payment.payment_method.registry'
+            - '@orob2b_payment.provider.payment_transaction'
+        tags:
+            - { name: oro_workflow.action, alias: payment_capture }
+            - { name: oro_action.action, alias: payment_capture }
+
+    orob2b_payment.action.purchase:
+        class: '%orob2b_payment.action.purchase.class%'
+        arguments:
+            - '@oro_action.context_accessor'
+            - '@orob2b_payment.payment_method.registry'
+            - '@orob2b_payment.provider.payment_transaction'
+        tags:
+            - { name: oro_workflow.action, alias: payment_purchase }
+            - { name: oro_action.action, alias: payment_purchase }
