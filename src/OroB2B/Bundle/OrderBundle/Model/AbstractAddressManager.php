@@ -20,8 +20,10 @@ class AbstractAddressManager
 {
     const DELIMITER = '_';
 
-    const ACCOUNT_LABEL = 'orob2b.account.entity_label';
-    const ACCOUNT_USER_LABEL = 'orob2b.account.accountuser.entity_label';
+    // TODO use orob2b.order.form.group_label.account in the admin
+    const ACCOUNT_LABEL = 'orob2b.frontend.order.form.group_label.account';
+    // TODO use orob2b.order.form.group_label.account_user in the admin
+    const ACCOUNT_USER_LABEL = 'orob2b.frontend.order.form.group_label.account_user';
 
     /**
      * @var AddressProviderInterface

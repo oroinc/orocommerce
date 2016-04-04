@@ -4,6 +4,7 @@ oro_menu_config:
             label:  'orob2b.warehouse.menu.warehouse_tab.label'
             uri:    '#'
             extras:
+                icon:     icon-building
                 position: 400
 
         warehouse_list:

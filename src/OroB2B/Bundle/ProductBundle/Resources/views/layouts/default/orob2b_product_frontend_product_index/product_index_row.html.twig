@@ -93,12 +93,12 @@
     </tr>
 {% endblock %}
 
-{% block _product_grid_row_description_widget %}
+{% block _product_grid_row_short_description_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " product__description product__description_<%= themeOptions.view %>"
     }) %}
     <div {{ block('block_attributes') }}>
-        <p><%= model.description %></p>
+        <p><%= model.shortDescription %></p>
     </div>
 {% endblock %}
 
