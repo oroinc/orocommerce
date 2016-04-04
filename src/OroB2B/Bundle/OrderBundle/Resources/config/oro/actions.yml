@@ -32,3 +32,5 @@ operations:
         actions:
             - @payment_capture:
                   object: $.data
+                  amount: $.data.total
+                  currency: $.data.currency

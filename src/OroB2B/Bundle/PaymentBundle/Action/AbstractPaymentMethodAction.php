@@ -14,7 +14,6 @@ use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
 abstract class AbstractPaymentMethodAction extends AbstractAction
 {
-
     /** @var PaymentMethodRegistry */
     protected $paymentMethodRegistry;
 
