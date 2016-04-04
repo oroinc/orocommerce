@@ -102,17 +102,23 @@
 {% block oro_acl_privilege_identity_widget %}
     {% set class = '' %}
     {% if form.parent.vars.privileges_config.view_type is defined and form.parent.vars.privileges_config.view_type == 'grid' %}
-        {% set class = 'col-md-12' %}
+        {% set class = 'col-md-12 mt1-md mt1-sm' %}
     {% endif %}
 
     {{ form_widget(form, {'attr': {'class': class}}) }}
+{% endblock %}
+
+{% block oro_acl_label_widget %}
+    {{ value|trans }}
+    {% set type = type|default('hidden') %}
+    {{ block('form_widget_simple') }}
 {% endblock %}
 
 {% block oro_acl_privilege_widget %}
    {% spaceless %}
         {% if privileges_config.view_type == 'grid' %}
             <tr {% if form.vars.value.identity.name == "(default)" %}class="default-field"{% endif %}>
-                <td class="col-md-5">
+                <td class="col-md-5 va-t_md">
                     {{ form_widget(form.identity) }}
                 </td>
                 <td class="col-md-3 va-t_md">
@@ -124,7 +130,7 @@
             </tr>
         {% else %}
             <div class="col-md-11">
-                <strong>{{ form_widget(form.identity) }}</strong>
+                {{ form_widget(form.identity) }}
             </div>
             <div class="col-md-1">
                 {{ form_widget(form.permissions) }}

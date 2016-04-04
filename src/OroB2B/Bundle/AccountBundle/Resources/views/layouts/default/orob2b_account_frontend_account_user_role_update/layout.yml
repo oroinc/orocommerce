@@ -33,7 +33,7 @@ layout:
                 account_user_role_edit_form_users:
                     blockType: datagrid
                     options:
-                        grid_name: account-account-users-grid-frontend-update
+                        grid_name: frontend-account-account-users-grid-update
                         grid_parameters:
                             role: {@value: $data.entity.id}
                             account: {@value: $data.entity.account}
