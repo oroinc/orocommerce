@@ -21,6 +21,10 @@ layout:
             id: datagrid_toolbar_pagination
             optionName: attr.class
             optionValue: 'catalog__filter-controls__item'
+        - @setOption:
+            id: datagrid_toolbar_sorting
+            optionName: visible
+            optionValue: true
         - @remove:
             id: datagrid_toolbar_actions
         - @addTree:
