@@ -3,7 +3,9 @@ layout:
         - @setBlockTheme:
             themes: 'OroB2BPaymentBundle:layouts:default/orob2b_payment_methods/layout.html.twig'
         - @setFormTheme:
-            themes: 'OroB2BPaymentBundle:layouts:default/orob2b_payment_methods/form.html.twig'
+            themes:
+                - 'OroB2BPaymentBundle:layouts:default/orob2b_payment_methods/form.html.twig'
+                - 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/payment.html.twig'
         - @setOption:
             id: checkout_information
             optionName: vars
@@ -16,6 +18,7 @@ layout:
             blockType: block
             prepend: true
             options:
+                class_prefix: 'checkout'
                 vars:
                     forms: { @value: $data.orob2b_payment_methods_provider }
 
