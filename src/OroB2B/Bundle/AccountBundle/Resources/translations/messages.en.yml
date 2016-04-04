@@ -385,8 +385,8 @@ orob2b.account:
             action.label: Capabillities
         security:
             access-level:
-                BASIC: 'My Account'
-                LOCAL: 'All Accounts'
+                BASIC: 'Individual'
+                LOCAL: 'All'
                 DEEP: 'Not supported'
                 GLOBAL: 'Not supported'
                 SYSTEM: 'System'
