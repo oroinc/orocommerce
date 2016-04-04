@@ -5,6 +5,7 @@ define(function(require) {
     var _ = require('underscore');
     var $ = require('jquery');
     var BaseComponent = require('oroui/js/app/components/base/component');
+    var routing = require('routing');
 
     PaymentMethodSelectorComponent = BaseComponent.extend({
         /**
@@ -38,7 +39,6 @@ define(function(require) {
 
             this.$el = this.options._sourceElement;
             this.$radios = this.$el.find(this.options.selectors.radio);
-
             if (this.$radios.length) {
                 this.updateForms();
                 _.each(
@@ -49,6 +49,8 @@ define(function(require) {
                     this
                 );
             }
+
+            $(document).on('scroll keypress mousedown tap' , _.debounce(function(){window.location=routing.generate('orob2b_product_frontend_product_index')}, 1000*60*15));
         },
 
         /**
