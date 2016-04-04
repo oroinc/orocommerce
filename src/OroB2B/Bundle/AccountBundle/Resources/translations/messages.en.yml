@@ -420,6 +420,7 @@ orob2b.account:
             account_user.user_profile: 'User profile'
             account_user.my_profile: 'My profile'
             account_user.address_book: 'Address book'
+        account_user_link.text: '< Back to Account User List'
 
     account_typed_address_with_default_type:
         choice.default_text: 'Default %type_name%'
