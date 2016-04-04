@@ -2,10 +2,11 @@
     <div class="account-sidebar">
         <h3 class="account-navigation-title">My Account</h3>
         <ul class="account-navigation-list">
+            {% set requestUrl = path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) %}
             {% for child in block if child.vars.visible %}
                 {% set currentUrl = path(child.vars.route_name, child.vars.route_parameters) %}
 
-                <li {% if currentUrl in app.request.pathinfo %}class="current"{% endif %}>{{ block_widget(child) }}</li>
+                <li {% if currentUrl in requestUrl %}class="current"{% endif %}>{{ block_widget(child) }}</li>
             {% endfor %}
         </ul>
     </div>
