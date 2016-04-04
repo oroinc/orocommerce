@@ -269,7 +269,12 @@ workflows:
                         parameters: [$checkout.shippingAddress, $checkout.billingAddress]
             continue_to_place_order_definition:
                 conditions:
-                    @not_empty: $checkout.paymentMethod
+                    @and:
+                        - @not_empty: $checkout.paymentMethod
+                        - @check_request:
+                            is_ajax: true
+                            expected_key: _wid
+                            expected_value: ajax_checkout
             place_order_definition:
                 post_actions:
                     - @assign_constant_value: [$.result.typeBillingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_BILLING]
