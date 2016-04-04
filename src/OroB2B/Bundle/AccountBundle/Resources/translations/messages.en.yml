@@ -380,9 +380,12 @@ orob2b.account:
             NONE: 'None'
 
     frontend:
+        privileges:
+            entity.label: Access
+            action.label: Capabillities
         security:
             access-level:
-                BASIC: 'Own'
+                BASIC: 'Individual'
                 LOCAL: 'All'
                 DEEP: 'Not supported'
                 GLOBAL: 'Not supported'
@@ -392,9 +395,26 @@ orob2b.account:
             role.entity_plural_label: Account User Roles
             entity_plural_label: Account Users
             profile.label: Account Information
+            full_name.label: Name
+            email.label: Email Address
+            status.label: Status
+            status_active.label: Active
+            status_inactive.label: Inactive
         title:
             account_user_role.create: Create Account User Role
             account_user_role.edit: Edit Account User Role
+        sections:
+            account_user_role:
+                label: Role Title
+                users.label: Role Users
+        action:
+            back.label: "< Back"
+            account_user_role.edit: "Edit Role"
+        table:
+            entity:
+                section.label: Section
+                action.label: Action
+                permission.label: Permission
 
     account_typed_address_with_default_type:
         choice.default_text: 'Default %type_name%'

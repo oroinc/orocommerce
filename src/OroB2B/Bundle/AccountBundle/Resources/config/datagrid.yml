@@ -656,8 +656,104 @@ datagrid:
                     data_name: accountName
 
     frontend-account-account-users-grid-view:
+        entity_name: %orob2b_account.entity.account_user.class%
+        options:
+            entityHint: account user
         acl_resource: orob2b_account_frontend_account_user_view
-        extends: account-account-users-grid-view-basic
+        source:
+            type: orm
+            query:
+                select:
+                    - user.id
+                    - CONCAT(user.firstName, CONCAT(' ', user.lastName)) AS fullName
+                    - user.email
+                    - CASE WHEN user.enabled = true AND user.confirmed = true THEN true ELSE false END AS status
+                from:
+                    - { table: %orob2b_account.entity.account_user.class%, alias: user }
+                where:
+                    and:
+                        - :role MEMBER OF user.roles
+            bind_parameters:
+                -
+                    name: role
+                    default: NULL
+        columns:
+            fullName:
+                label: orob2b.account.frontend.account_user.full_name.label
+                type: twig
+                frontend_type: html
+                data_name: fullName
+                template: OroB2BAccountBundle:AccountUser:Frontend/Datagrid/fullName.html.twig
+            email:
+                label: orob2b.account.frontend.account_user.email.label
+                type: twig
+                frontend_type: html
+                data_name: user.email
+                template: OroB2BAccountBundle:AccountUser:Frontend/Datagrid/email.html.twig
+            status:
+                label: orob2b.account.frontend.account_user.status.label
+                type: twig
+                frontend_type: html
+                data_name: status
+                template: OroB2BAccountBundle:AccountUser:Frontend/Datagrid/status.html.twig
+        filters:
+            columns:
+                fullName:
+                    type:      string
+                    data_name: fullName
+                email:
+                    type:      string
+                    data_name: user.email
+                status:
+                    type: choice
+                    data_name: CAST(status as int)
+                    options:
+                        field_options:
+                            choices:
+                                true:  orob2b.account.frontend.account_user.status_active.label
+                                false: orob2b.account.frontend.account_user.status_inactive.label
+        sorters:
+            columns:
+                fullName:
+                    data_name: fullName
+                email:
+                    data_name: user.email
+                status:
+                    data_name: status
+        properties:
+            id: ~
+            view_link:
+                type:   url
+                route:  orob2b_account_frontend_account_user_view
+                params: [ id ]
+            update_link:
+                type:   url
+                route:  orob2b_account_frontend_account_user_update
+                params: [ id ]
+            delete_link:
+                type:   url
+                route:  orob2b_api_account_frontend_delete_account_user
+                params: [ id ]
+        actions:
+            view:
+                type:         navigate
+                label:        oro.grid.action.view
+                link:         view_link
+                icon:         eye-open
+                acl_resource: orob2b_account_frontend_account_user_view
+                rowAction:    true
+            update:
+                type:          navigate
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
+                acl_resource:  orob2b_account_frontend_account_user_update
+            delete:
+                type:          delete
+                label:         oro.grid.action.delete
+                link:          delete_link
+                icon:          trash
+                acl_resource:  orob2b_account_frontend_account_user_delete
 
     account-account-users-grid-update:
         acl_resource: orob2b_account_account_user_view
