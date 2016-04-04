@@ -1,4 +1,6 @@
 parameters:
+    orob2b_alternativecheckout.conditions.order_total_limit.class: OroB2B\Bundle\AlternativeCheckoutBundle\Condition\OrderTotalLimit
+    orob2b_alternativecheckout.model.action.checkout_to_quote.class: OroB2B\Bundle\AlternativeCheckoutBundle\Model\Action\AlternativeCheckoutByQuote
     orob2b_alternativecheckout.conditions.less_order_total_limit.class: OroB2B\Bundle\AlternativeCheckoutBundle\Condition\OrderTotalLimit
 services:
     orob2b.event_listener.checkout_entity:
@@ -25,3 +27,10 @@ services:
         tags:
             - { name: oro_workflow.condition, alias: less_order_total_limit }
 
+    orob2b_alternativecheckout.model.action.checkout_to_quote:
+        class: %orob2b_alternativecheckout.model.action.checkout_to_quote.class%
+        arguments:
+            - @doctrine
+            - @oro_action.context_accessor
+        tags:
+            - { name: oro_action.action, alias: alternative_checkout_to_quote }

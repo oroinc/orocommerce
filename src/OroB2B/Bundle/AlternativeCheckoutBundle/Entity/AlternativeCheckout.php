@@ -28,7 +28,9 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Table(name="orob2b_alternative_checkout")
- * @ORM\Entity
+ * @ORM\Entity(
+ *     repositoryClass="OroB2B\Bundle\AlternativeCheckoutBundle\Entity\Repository\AlternativeCheckoutRepository"
+ * )
  * @ORM\HasLifecycleCallbacks()
  * @Config(
  *      defaultValues={
@@ -57,6 +59,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class AlternativeCheckout extends ExtendAlternativeCheckout implements
     CheckoutInterface,
@@ -222,7 +225,7 @@ class AlternativeCheckout extends ExtendAlternativeCheckout implements
      *
      * @ORM\Column(name="allowed", type="boolean")
      */
-    protected $allowed;
+    protected $allowed = false;
 
     /**
      * @var \DateTime
@@ -253,7 +256,7 @@ class AlternativeCheckout extends ExtendAlternativeCheckout implements
      *
      * @ORM\Column(name="requested_for_approve", type="boolean")
      */
-    protected $requestedForApprove;
+    protected $requestedForApprove = false;
 
     /**
      * @return Account

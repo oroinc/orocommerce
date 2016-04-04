@@ -301,7 +301,7 @@ workflows:
         transition_definitions:
             __start___definition:
                 pre_conditions:
-                    @assert_account: 1
+                    @assert_account: 4
             do_nothing: ~
             go_back_definition:
                 post_actions:
