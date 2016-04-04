@@ -20,7 +20,7 @@ CardPresent:
     class: 'OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\SaleRequest'
     request: |
         TRXTYPE=S&TENDER=C&PARTNER=PayPal&USER=SuperMerchant&PWD=SuperMerchant
-        &SWIPE[40]=;4912000033330026=15121011000012345678?&AMT=21.00
+        &SWIPE[40]=;4912000033330026=151210110000123456789?&AMT=21.00
     error:
         - 'Symfony\Component\OptionsResolver\Exception\MissingOptionsException'
         - 'The required options "ACCT", "VENDOR" are missing.'
