@@ -264,7 +264,7 @@ class RequestTypeTest extends AbstractTest
                 'defaultData'   => $this->getRequest(),
             ],
             'empty note' => [
-                'isValid'       => false,
+                'isValid'       => true,
                 'submittedData' => [
                     'firstName' => 'FirstName',
                     'lastName'  => 'LastName',
