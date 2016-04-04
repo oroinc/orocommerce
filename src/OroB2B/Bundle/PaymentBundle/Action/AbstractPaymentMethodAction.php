@@ -83,8 +83,10 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
         $resolver
             ->setRequired(['object', 'amount', 'currency'])
             ->setDefined(['transactionOptions', 'attribute'])
+            ->setDefault('attribute', null)
+            ->setDefault('transactionOptions', [])
             ->addAllowedTypes('object', ['object', $propertyPathType])
-            ->addAllowedTypes('amount', ['string', $propertyPathType])
+            ->addAllowedTypes('amount', ['float', $propertyPathType])
             ->addAllowedTypes('currency', ['string', $propertyPathType])
             ->setAllowedTypes('transactionOptions', ['array', $propertyPathType])
             ->setAllowedTypes('attribute', $propertyPathType);
@@ -98,11 +100,13 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
         $resolver
             ->setRequired(['object', 'amount', 'currency'])
             ->setDefined(['transactionOptions', 'attribute'])
+            ->setDefault('attribute', null)
+            ->setDefault('transactionOptions', [])
             ->addAllowedTypes('object', 'object')
-            ->addAllowedTypes('amount', 'string')
+            ->addAllowedTypes('amount', 'float')
             ->addAllowedTypes('currency', 'string')
             ->addAllowedTypes('transactionOptions', 'array')
-            ->setAllowedTypes('attribute', 'Symfony\Component\PropertyAccess\PropertyPathInterface');
+            ->setAllowedTypes('attribute', ['null', 'Symfony\Component\PropertyAccess\PropertyPathInterface']);
     }
 
     /**
@@ -140,7 +144,7 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
      */
     protected function setAttributeValue($context, $value)
     {
-        if (array_key_exists('attribute', $this->options)) {
+        if (!empty($this->options['attribute'])) {
             $this->contextAccessor->setValue($context, $this->options['attribute'], $value);
         }
     }

@@ -52,6 +52,9 @@ workflows:
             edit_order_link:
                 type: string
                 label: Edit Order Link
+            result_entity_id:
+                type: int
+                label: Result entity ID
         steps:
             enter_billing_address:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.step.enter_billing_address.label
@@ -86,6 +89,7 @@ workflows:
                 allowed_transitions:
                     - place_order
                     - verify_payment
+                    - finish_checkout
                     - back_to_billing_address
                     - back_to_shipping_address
                     - back_to_shipping_method
@@ -217,6 +221,12 @@ workflows:
                         ship_until: ~
                         customer_notes:
                             form_type: textarea
+
+            finish_checkout:
+                label: Finish checkout
+                step_to: place_order
+                transition_definition: finish_checkout_definition
+                is_hidden: true
 
         transition_definitions:
             do_nothing: ~
@@ -446,6 +456,7 @@ workflows:
                         conditions:
                             @not_empty: $.result.order.id
                         actions:
+                            - @assign_value: [$result_entity_id, $.result.order.id]
                             - @flush_entity:
                                 conditions:
                                     @not_empty: $.result.customerBillingAddress
@@ -454,16 +465,42 @@ workflows:
                                 conditions:
                                     @not_empty: $.result.customerShippingAddress
                                 parameters: [$.result.customerShippingAddress]
-                            - @remove_entity:
-                                conditions:
-                                    @or:
-                                        - @equal: [$auto_remove_source, true]
-                                        - @and:
-                                            - @equal: [$allow_manual_source_remove, true]
-                                            - @equal: [$remove_source, true]
-                                parameters: [$checkout.sourceEntity]
-                            - @remove_entity: $checkout
-                            - @redirect:
-                                route: orob2b_order_frontend_success
+                            - @assign_url:
+                                attribute: $.result.successUrl
+                                route: orob2b_checkout_frontend_checkout
                                 route_parameters:
-                                    id: $.result.order.id
+                                    id: $checkout.id
+                                    transition: 'finish_checkout'
+                            - @assign_url:
+                                attribute: $.result.errorUrl
+                                route: orob2b_checkout_frontend_checkout
+                                route_parameters:
+                                    id: $checkout.id
+                                    transition: 'back_to_payment'
+                            - @payment_purchase:
+                                attribute: $.result.responseData
+                                object: $.result.order
+                                amount: $.result.order.total
+                                currency: $.result.order.currency
+                                paymentMethod: $payment_method
+                                transactionOptions:
+                                    successUrl: $.result.successUrl
+                                    errorUrl: $.result.errorUrl
+
+            finish_checkout_definition:
+                conditions:
+                    @not_empty: [$result_entity_id]
+                post_actions:
+                   - @remove_entity:
+                       conditions:
+                           @or:
+                               - @equal: [$auto_remove_source, true]
+                               - @and:
+                                   - @equal: [$allow_manual_source_remove, true]
+                                   - @equal: [$remove_source, true]
+                       parameters: [$checkout.sourceEntity]
+                   - @remove_entity: $checkout
+                   - @redirect:
+                       route: orob2b_order_frontend_success
+                       route_parameters:
+                           id: $result_entity_id

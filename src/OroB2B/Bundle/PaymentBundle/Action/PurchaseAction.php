@@ -15,7 +15,7 @@ class PurchaseAction extends AbstractPaymentMethodAction
 
         $resolver
             ->setRequired('paymentMethod')
-            ->addAllowedTypes('paymentMethod', 'string');
+            ->addAllowedTypes('paymentMethod', ['string', 'Symfony\Component\PropertyAccess\PropertyPathInterface']);
     }
 
     /** {@inheritdoc} */
