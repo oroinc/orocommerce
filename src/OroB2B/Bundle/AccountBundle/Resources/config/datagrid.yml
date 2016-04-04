@@ -665,7 +665,7 @@ datagrid:
             query:
                 select:
                     - user.id
-                    - CONCAT(user.firstName, CONCAT(' ', user.lastName)) AS full_name
+                    - CONCAT(user.firstName, CONCAT(' ', user.lastName)) AS fullName
                     - user.email
                     - CASE WHEN user.enabled = true AND user.confirmed = true THEN true ELSE false END AS status
                 from:
@@ -679,8 +679,8 @@ datagrid:
                     default: NULL
         sorters:
             columns:
-                full_name:
-                    data_name: full_name
+                fullName:
+                    data_name: fullName
                 email:
                     data_name: user.email
                 status:
@@ -723,11 +723,11 @@ datagrid:
     frontend-account-account-users-grid-view:
         extends: frontend-account-account-users-grid-basic
         columns:
-            full_name:
+            fullName:
                 label: orob2b.account.frontend.account_user.full_name.label
                 type: twig
                 frontend_type: html
-                data_name: full_name
+                data_name: fullName
                 template: OroB2BAccountBundle:AccountUser:Frontend/Datagrid/fullName.html.twig
             email:
                 label: orob2b.account.frontend.account_user.email.label
@@ -743,9 +743,9 @@ datagrid:
                 template: OroB2BAccountBundle:AccountUser:Frontend/Datagrid/status.html.twig
         filters:
             columns:
-                full_name:
+                fullName:
                     type:      string
-                    data_name: full_name
+                    data_name: fullName
                 email:
                     type:      string
                     data_name: user.email
@@ -793,11 +793,11 @@ datagrid:
                 label: orob2b.account.accountuser.has_role.label
                 editable: true
                 frontend_type: boolean
-            full_name:
-                label: orob2b.account.frontend.account_user.full_name.label
+            fullName:
+                label: orob2b.account.frontend.account_user.fullName.label
                 type: twig
                 frontend_type: html
-                data_name: full_name
+                data_name: fullName
                 template: OroB2BAccountBundle:AccountUser:Frontend/Datagrid/fullName.html.twig
             email:
                 label: orob2b.account.frontend.account_user.email.label
@@ -816,9 +816,9 @@ datagrid:
                 hasRole:
                     type: boolean
                     data_name: hasRole
-                full_name:
+                fullName:
                     type:      string
-                    data_name: full_name
+                    data_name: fullName
                 email:
                     type:      string
                     data_name: user.email

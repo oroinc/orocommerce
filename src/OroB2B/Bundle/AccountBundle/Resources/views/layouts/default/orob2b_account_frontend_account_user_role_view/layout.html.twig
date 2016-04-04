@@ -146,7 +146,7 @@
 
 {% block _account_user_role_items_view_privileges_action_privilege_widget %}
     <div class="col-md-11">
-        <strong>{{ privilege.identity.name|trans }}</strong>
+        {{ privilege.identity.name|trans }}
     </div>
     <div class="col-md-1">
         {% for permission in privilege.permissions %}
