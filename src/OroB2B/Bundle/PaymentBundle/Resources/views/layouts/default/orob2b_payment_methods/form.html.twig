@@ -1,0 +1,27 @@
+{% extends '@OroB2BFrontend/layouts/default/form_theme.html.twig' %}
+
+{%- block form_label -%}
+    {% set label_attr = label_attr|merge({
+        class: [
+            label_attr.class|default(''),
+            class_prefix ~ "__form__payment-label"
+            ]|join(' ')
+        }) %}
+
+    {{ parent() }}
+{%- endblock form_label -%}
+
+{% block _orob2b_payment_credit_card_payment_credit_card_cvv_widget %}
+    {% set attr = attr|merge({
+        class: [
+            attr.class|default(''),
+            class_prefix ~ "__form__input_ccv",
+            class_prefix ~ "__form__input",
+            'input input_md'
+        ]|join(' ')
+    }) %}
+
+    {%- set type = type|default('password') -%}
+    <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+    <a href="#" class="what-this-link">What's this?</a>
+{% endblock %}

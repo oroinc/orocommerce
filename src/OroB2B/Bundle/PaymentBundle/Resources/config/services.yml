@@ -10,6 +10,10 @@ parameters:
     orob2b_payment.payment_term.delete_message_generator.class: OroB2B\Bundle\PaymentBundle\Twig\DeleteMessageTextGenerator
     orob2b_payment.extension.action.type.payment_delete.class: OroB2B\Bundle\PaymentBundle\Extension\Action\Actions\PaymentDeleteAction
     orob2b_payment.provider.payment_term.class: OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider
+    orob2b_payment.provider.credit_form_provider.class: OroB2B\Bundle\PaymentBundle\Layout\DataProvider\CreditCardFormProvider
+    orob2b_payment.provider.term_form_provider.class: OroB2B\Bundle\PaymentBundle\Layout\DataProvider\PaymentTermFormProvider
+    orob2b_payment.provider.methods_provider.class: OroB2B\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodsProvider
+    orob2b_payment.form.payment_method_type_registry.class: OroB2B\Bundle\PaymentBundle\Form\PaymentMethodTypeRegistry
 
 services:
     orob2b_payment.payment_term.manager.api:
@@ -87,3 +91,28 @@ services:
         arguments:
             - @doctrine
             - %orob2b_payment.entity.payment_term.class%
+
+    orob2b_payment.form.payment_method_type_registry:
+        class: %orob2b_payment.form.payment_method_type_registry.class%
+
+    orob2b_payment.provider.credit_form_provider:
+        class: %orob2b_payment.provider.credit_form_provider.class%
+        arguments:
+            - @form.factory
+        tags:
+            - { name: layout.data_provider, alias: orob2b_payment_credit_card_form_provider }
+
+    orob2b_payment.provider.term_form_provider:
+        class: %orob2b_payment.provider.term_form_provider.class%
+        arguments:
+            - @form.factory
+        tags:
+            - { name: layout.data_provider, alias: orob2b_payment_payment_term_form_provider }
+
+    orob2b_payment.provider.methods_provider:
+        class: %orob2b_payment.provider.methods_provider.class%
+        arguments:
+            - @form.factory
+            - @orob2b_payment.form.payment_method_type_registry
+        tags:
+            - { name: layout.data_provider, alias: orob2b_payment_methods_provider }
