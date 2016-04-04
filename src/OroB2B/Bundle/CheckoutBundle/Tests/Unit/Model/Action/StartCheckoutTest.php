@@ -84,6 +84,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
             ->getMockForAbstractClass();
         $this->propertyAccessor = $this
             ->getMockWithoutConstructor('Symfony\Component\PropertyAccess\PropertyAccessor');
+        $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
         $this->action = new StartCheckout(
             new ContextAccessor(),
@@ -92,10 +93,10 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
             $this->currencyProvider,
             $this->tokenStorage,
             $this->propertyAccessor,
-            $this->redirect
+            $this->redirect,
+            $this->eventDispatcher
         );
 
-        $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
         $this->action->setDispatcher($this->eventDispatcher);
         $this->action->setCheckoutRoute('orob2b_checkout_frontend_checkout');
     }
@@ -203,7 +204,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
             ->with(
                 [
                     'route' => 'orob2b_checkout_frontend_checkout',
-                    'route_parameters' => ['id' => $checkout->getId()]
+                    'route_parameters' => ['id' => $checkout->getId(), 'type' => $checkout->getType()]
                 ]
             );
         $this->redirect->expects($this->once())
