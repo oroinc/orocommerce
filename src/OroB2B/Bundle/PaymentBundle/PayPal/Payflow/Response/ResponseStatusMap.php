@@ -226,15 +226,16 @@ class ResponseStatusMap
             'Buyer Authentication Service — Validate Authentication failed: Mismatched or invalid Merchant ID in PARES',
         self::BAS_VAF_MISMATCHED_OR_INVALID_CARD_NUMBER_IN_PARES =>
             'Buyer Authentication Service — Validate Authentication failed: Mismatched or invalid card number in PARES',
-        self::BAS_VAF_MISMATCHED_OR_INVALID_CURRENCY_CODE_IN_PARES => 'Buyer Authentication Service' .
-            '— Validate Authentication failed: Mismatched or invalid currency code in PARES',
+        self::BAS_VAF_MISMATCHED_OR_INVALID_CURRENCY_CODE_IN_PARES =>
+            'Buyer Authentication Service — Validate Authentication failed:
+            Mismatched or invalid currency code in PARES',
         self::BAS_VAF_MISMATCHED_OR_INVALID_XID_IN_PARES =>
             'Buyer Authentication Service — Validate Authentication failed: Mismatched or invalid XID in PARES',
         self::BAS_VAF_MISMATCHED_OR_INVALID_ORDER_DATE_IN_PARES =>
             'Buyer Authentication Service — Validate Authentication failed: Mismatched or invalid order date in PARES',
         self::BAS_VAF_THIS_PARES_WAS_ALREADY_VALIDATED_FOR_A_PREVIOUS_VALIDATE_AUTHENTICATION_TRANSACTION =>
-            'Buyer Authentication Service — Validate Authentication failed: ' .
-            'This PARES was already validated for a previous Validate Authentication transaction',
+            'Buyer Authentication Service — Validate Authentication failed:
+            This PARES was already validated for a previous Validate Authentication transaction',
     ];
 
     /**
