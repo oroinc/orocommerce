@@ -30,7 +30,7 @@ class Response implements ResponseInterface
     }
 
     /** {@inheritdoc} */
-    public function getState()
+    public function getResult()
     {
         return $this->values->offsetGet('RESULT');
     }

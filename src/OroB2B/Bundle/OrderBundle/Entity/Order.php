@@ -22,7 +22,6 @@ use OroB2B\Bundle\OrderBundle\Model\DiscountAwareInterface;
 use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PaymentBundle\Model\AmountAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -78,8 +77,7 @@ class Order extends ExtendOrder implements
     LineItemsAwareInterface,
     ShippingAwareInterface,
     CurrencyAwareInterface,
-    DiscountAwareInterface,
-    AmountAwareInterface
+    DiscountAwareInterface
 {
     /**
      * @var integer
@@ -741,12 +739,6 @@ class Order extends ExtendOrder implements
     public function getTotal()
     {
         return $this->total;
-    }
-
-    /** {@inheritdoc} */
-    public function getAmount()
-    {
-        return (string)$this->total;
     }
 
     /**

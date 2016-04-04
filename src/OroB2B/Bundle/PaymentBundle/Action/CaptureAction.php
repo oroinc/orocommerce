@@ -3,21 +3,16 @@
 namespace OroB2B\Bundle\PaymentBundle\Action;
 
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use OroB2B\Bundle\PaymentBundle\Model\AmountAwareInterface;
 
 class CaptureAction extends AbstractPaymentMethodAction
 {
-
     /** {@inheritdoc} */
     protected function executeAction($context)
     {
-        $object = $this->contextAccessor->getValue($context, $this->options['object']);
-        if (!$object instanceof AmountAwareInterface) {
-            return;
-        }
+        $options = $this->getOptions($context);
 
         $paymentTransaction = $this->paymentTransactionProvider->getActivePaymentTransaction(
-            $object,
+            $options['object'],
             PaymentMethodInterface::AUTHORIZE
         );
 
@@ -28,12 +23,12 @@ class CaptureAction extends AbstractPaymentMethodAction
         $capturePaymentTransaction = $this->paymentTransactionProvider->createPaymentTransaction(
             $paymentTransaction->getPaymentMethod(),
             PaymentMethodInterface::CAPTURE,
-            $object
+            $options['object']
         );
 
         $capturePaymentTransaction
-            ->setAmount($object->getAmount())
-            ->setCurrency($object->getCurrency())
+            ->setAmount($options['amount'])
+            ->setCurrency($options['currency'])
             ->setSourcePaymentTransaction($paymentTransaction);
 
         $this->paymentMethodRegistry

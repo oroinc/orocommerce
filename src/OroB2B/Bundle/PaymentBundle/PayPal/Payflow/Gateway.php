@@ -76,20 +76,4 @@ class Gateway
     {
         $this->testMode = (bool)$testMode;
     }
-
-    /**
-     * @return string
-     */
-    protected function getHostName()
-    {
-        return $this->testMode ? self::PILOT_HOST_ADDRESS : self::PRODUCTION_HOST_ADDRESS;
-    }
-
-    /**
-     * @param bool $testMode
-     */
-    public function setTestMode($testMode)
-    {
-        $this->testMode = (bool)$testMode;
-    }
 }

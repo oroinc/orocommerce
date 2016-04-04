@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Action;
 
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use OroB2B\Bundle\PaymentBundle\Model\AmountAwareInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class PurchaseAction extends AbstractPaymentMethodAction
 {
@@ -17,32 +17,33 @@ class PurchaseAction extends AbstractPaymentMethodAction
             ->setRequired('paymentMethod')
             ->addAllowedTypes('paymentMethod', 'string');
     }
+    /** {@inheritdoc} */
+    protected function configureValuesResolver(OptionsResolver $resolver)
+    {
+        parent::configureValuesResolver($resolver);
+
+        $resolver
+            ->setRequired('paymentMethod')
+            ->addAllowedTypes('paymentMethod', 'string');
+    }
 
     /** {@inheritdoc} */
     protected function executeAction($context)
     {
-        $object = $this->contextAccessor->getValue($context, $this->options['object']);
-        if (!$object instanceof AmountAwareInterface) {
-            return;
-        }
-
-        $paymentMethod = $this->contextAccessor->getValue($context, $this->options['paymentMethod']);
-        if (!$paymentMethod) {
-            return;
-        }
+        $options = $this->getOptions($context);
 
         $paymentTransaction = $this->paymentTransactionProvider->createPaymentTransaction(
-            $paymentMethod,
+            $options['paymentMethod'],
             PaymentMethodInterface::PURCHASE,
-            $object
+            $options['object']
         );
 
         $paymentTransaction
-            ->setAmount($object->getAmount())
-            ->setCurrency($object->getCurrency());
+            ->setAmount($options['amount'])
+            ->setCurrency($options['currency']);
 
         $this->paymentMethodRegistry
-            ->getPaymentMethod($paymentMethod)
+            ->getPaymentMethod($options['paymentMethod'])
             ->execute($paymentTransaction);
 
         $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);

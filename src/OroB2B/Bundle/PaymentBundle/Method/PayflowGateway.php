@@ -56,7 +56,7 @@ class PayflowGateway implements PaymentMethodInterface
             );
 
         $paymentTransaction
-            ->setActive(true)
+            ->setActive($response->isSuccessful())
             ->setReference($response->getReference())
             ->setResponse($response->getData());
     }
@@ -103,7 +103,7 @@ class PayflowGateway implements PaymentMethodInterface
             ->setResponse($response->getData());
 
         $sourcePaymentTransaction
-            ->setActive(false)
+            ->setActive(!$paymentTransaction->isSuccessful())
             ->setSuccessful($response->isSuccessful());
     }
 

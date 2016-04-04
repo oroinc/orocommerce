@@ -98,15 +98,15 @@ class PaymentTransaction
 
     /**
      * @var array
-     * @ORM\Column(name="request", type="secure_array")
+     * @ORM\Column(name="request", type="secure_array", nullable=true)
      */
-    protected $request = [];
+    protected $request;
 
     /**
      * @var array
-     * @ORM\Column(name="response", type="secure_array")
+     * @ORM\Column(name="response", type="secure_array", nullable=true)
      */
-    protected $response = [];
+    protected $response;
 
 
     public function __construct()

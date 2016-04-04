@@ -49,6 +49,12 @@ class SecureArrayType extends JsonArrayType
     }
 
     /** {@inheritdoc} */
+    public function requiresSQLCommentHint(AbstractPlatform $platform)
+    {
+        return true;
+    }
+
+    /** {@inheritdoc} */
     public function getName()
     {
         return self::TYPE;

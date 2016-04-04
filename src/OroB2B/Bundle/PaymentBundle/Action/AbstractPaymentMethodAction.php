@@ -24,6 +24,9 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
     /** @var OptionsResolver */
     private $optionsResolver;
 
+    /** @var OptionsResolver */
+    private $valuesResolver;
+
     /** @var object */
     protected $entity;
 
@@ -60,23 +63,69 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
     }
 
     /**
+     * @return OptionsResolver
+     */
+    protected function getValuesResolver()
+    {
+        if (!$this->valuesResolver) {
+            $this->valuesResolver = new OptionsResolver();
+            $this->configureValuesResolver($this->optionsResolver);
+        }
+
+        return $this->optionsResolver;
+    }
+
+    /**
      * @param OptionsResolver $resolver
      */
     protected function configureOptionsResolver(OptionsResolver $resolver)
     {
-        $resolver
-            ->setRequired('object')
-            ->addAllowedTypes('object', ['string', 'Symfony\Component\PropertyAccess\PropertyPathInterface'])
-            ->setNormalizer(
-                'object',
-                function (OptionsResolver $resolver, $value) {
-                    if (is_string($value)) {
-                        return new PropertyPath($value);
-                    }
+        $normalizer = function (OptionsResolver $resolver, $value) {
+            if (is_string($value)) {
+                return new PropertyPath($value);
+            }
 
-                    return $value;
-                }
-            );
+            return $value;
+        };
+
+        $allowedTypes = ['string', 'Symfony\Component\PropertyAccess\PropertyPathInterface'];
+
+        $resolver
+            ->setRequired(['object', 'amount', 'currency'])
+            ->addAllowedTypes('object', $allowedTypes)
+            ->addAllowedTypes('amount', $allowedTypes)
+            ->addAllowedTypes('currency', $allowedTypes)
+            ->setNormalizer('object', $normalizer)
+            ->setNormalizer('amount', $normalizer)
+            ->setNormalizer('currency', $normalizer);
+    }
+
+    /**
+     * @param OptionsResolver $resolver
+     */
+    protected function configureValuesResolver(OptionsResolver $resolver)
+    {
+        $resolver
+            ->setRequired(['object', 'amount', 'currency'])
+            ->addAllowedTypes('object', 'object')
+            ->addAllowedTypes('amount', 'string')
+            ->addAllowedTypes('currency', 'string');
+    }
+
+    /**
+     * @param mixed $context
+     * @return array
+     */
+    public function getOptions($context)
+    {
+        $values = [];
+
+        $definedOptions = $this->getOptionsResolver()->getDefinedOptions();
+        foreach ($definedOptions as $definedOption) {
+            $values[$definedOption] = $this->contextAccessor->getValue($context, $this->options[$definedOption]);
+        }
+
+        return $this->getValuesResolver()->resolve($values);
     }
 
     /** {@inheritdoc} */

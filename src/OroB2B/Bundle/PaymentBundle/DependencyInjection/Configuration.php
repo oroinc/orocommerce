@@ -2,12 +2,13 @@
 
 namespace OroB2B\Bundle\PaymentBundle\DependencyInjection;
 
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
+
+use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class Configuration implements ConfigurationInterface
 {
