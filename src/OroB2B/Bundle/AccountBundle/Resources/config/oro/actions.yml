@@ -203,6 +203,8 @@ operations:
             - @get_active_user: $.currentUser
         preconditions:
             @not_equal: [$id, $.currentUser.id]
+        frontend_options:
+            confirmation: orob2b.account.account_user.delete_confirm
         actions:
             - @run_action_group:
                 action_group: DELETE
