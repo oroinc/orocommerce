@@ -52,7 +52,9 @@ class CheckoutController extends Controller
         $workflowItem = $this->handleTransition($checkout, $request);
         $currentStep = $this->validateStep($workflowItem);
 
-        if ($workflowItem->getResult()->has('redirectUrl')) {
+        if ($workflowItem->getResult()->has('responseData')) {
+            return new JsonResponse(['responseData' => $workflowItem->getResult()->get('responseData')]);
+        } elseif ($workflowItem->getResult()->has('redirectUrl')) {
             if ($request->isXmlHttpRequest()) {
                 return new JsonResponse(['redirectUrl' => $workflowItem->getResult()->get('redirectUrl')]);
             } else {
