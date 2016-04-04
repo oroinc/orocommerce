@@ -97,8 +97,8 @@
                                 {{ quoteProductOffer.price|oro_format_price }}
                             </td>
                             {% if loop.first %}
-                                <td rowspan="{{ numSubItems }}">{{ quoteProduct.commentAccount }}</td>
-                                <td rowspan="{{ numSubItems }}">{{ quoteProduct.comment }}</td>
+                                <td  class="quote-line_item-target_notes" rowspan="{{ numSubItems }}">{{ quoteProduct.commentAccount }}</td>
+                                <td class="quote-line_item-target_notes" rowspan="{{ numSubItems }}">{{ quoteProduct.comment }}</td>
                             {% endif %}
                         </tr>
                     {% endfor %}
@@ -117,10 +117,11 @@
             {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.last_name.label'|trans, entity.shippingAddress.lastName) }}
             {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.name_suffix.label'|trans, entity.shippingAddress.nameSuffix) }}
             {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.organization.label'|trans , entity.shippingAddress.organization) }}
-            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.country.label'|trans, entity.shippingAddress.country.name) }}
+            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.country.label'|trans, entity.shippingAddress.country.name|default('N/A')) }}
             {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.street.label'|trans, entity.shippingAddress.street) }}
             {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.street2.label'|trans,entity.shippingAddress.street2) }}
             {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.city.label'|trans, entity.shippingAddress.city) }}
+            {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.region.label'|trans, entity.shippingAddress.region) }}
             {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.postal_code.label'|trans, entity.shippingAddress.postalCode) }}
             {{ UI.renderHtmlProperty('orob2b.sale.quoteaddress.phone.label'|trans, entity.shippingAddress.phone) }}
         {% else %}

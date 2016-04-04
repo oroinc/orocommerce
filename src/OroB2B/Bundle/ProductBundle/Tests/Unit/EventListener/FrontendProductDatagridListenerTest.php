@@ -150,7 +150,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                             'select' => [
                                 'GROUP_CONCAT(IDENTITY(unit_precisions.unit) SEPARATOR \'{sep}\') as product_units',
                                 'productImage.filename as image',
-                                'productDescriptions.text as description'
+                                'productShortDescriptions.text as shortDescription'
                             ],
                             'join' => [
                                 'left' => [
@@ -165,10 +165,10 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                                 ],
                                 'inner' => [
                                     [
-                                        'join' => 'product.descriptions',
-                                        'alias' => 'productDescriptions',
+                                        'join' => 'product.shortDescriptions',
+                                        'alias' => 'productShortDescriptions',
                                         'conditionType' => 'WITH',
-                                        'condition' => 'productDescriptions.locale IS NULL'
+                                        'condition' => 'productShortDescriptions.locale IS NULL'
                                     ]
                                 ]
                             ]
@@ -182,7 +182,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                     ],
                     'columns' => [
                         'image' => ['label' => 'orob2b.product.image.label.trans'],
-                        'description' => ['label' => 'orob2b.product.descriptions.label.trans'],
+                        'shortDescription' => ['label' => 'orob2b.product.short_descriptions.label.trans'],
                     ]
                 ]
             ],
@@ -293,12 +293,10 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             $products[] = $product;
 
             $this->attachmentManager->expects($this->at($index))
-                ->method('getAttachment')
+                ->method('getFilteredImageUrl')
                 ->with(
-                    'OroB2B\Bundle\ProductBundle\Entity\Product',
-                    $productId,
-                    'image',
-                    $image
+                    $image,
+                    'product_large'
                 )
                 ->willReturn($productId);
         }

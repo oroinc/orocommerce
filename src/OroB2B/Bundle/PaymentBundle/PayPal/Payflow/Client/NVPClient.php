@@ -3,8 +3,8 @@
 namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Client;
 
 use Guzzle\Http\ClientInterface as HTTPClientInterface;
+
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\NVP\EncoderInterface;
-use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\ResponseInterface;
 
 class NVPClient implements ClientInterface
 {
@@ -24,14 +24,11 @@ class NVPClient implements ClientInterface
         $this->encoder = $encoder;
     }
 
-    /**
-     * @param array $options
-     * @return ResponseInterface
-     */
-    public function send(array $options = [])
+    /** {@inheritdoc} */
+    public function send($hostAddress, array $options = [])
     {
         $response = $this->httpClient
-            ->post(NVPClient::PILOT_HOST_ADDRESS, [], $this->encoder->encode($options))
+            ->post($hostAddress, [], $this->encoder->encode($options))
             ->send();
 
         return $this->encoder->decode($response->getBody(true));

@@ -9,7 +9,9 @@ class CreditRequest extends AbstractRequest
     /** {@inheritdoc} */
     public function getAction()
     {
-        throw new \BadMethodCallException();
+        throw new \BadMethodCallException(
+            sprintf('Request type "%s" is not implemented yet', get_class($this))
+        );
 
         return Transaction::CREDIT;
     }

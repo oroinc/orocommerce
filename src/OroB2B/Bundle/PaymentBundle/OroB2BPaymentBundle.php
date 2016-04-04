@@ -17,9 +17,7 @@ class OroB2BPaymentBundle extends Bundle
 
     public function boot()
     {
-        try {
-            SecureArrayType::getType(SecureArrayType::TYPE);
-        } catch (\Doctrine\DBAL\DBALException $e) {
+        if (!SecureArrayType::hasType(SecureArrayType::TYPE)) {
             SecureArrayType::addType(
                 SecureArrayType::TYPE,
                 'OroB2B\Bundle\PaymentBundle\DBAL\Types\SecureArrayType'

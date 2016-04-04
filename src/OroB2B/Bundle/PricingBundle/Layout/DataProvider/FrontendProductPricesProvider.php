@@ -51,7 +51,15 @@ class FrontendProductPricesProvider extends AbstractServerRenderDataProvider
 
             $this->data[$productId] = $priceRepository->findByPriceListIdAndProductIds(
                 $priceList->getId(),
-                [$productId]
+                [$productId],
+                true,
+                null,
+                null,
+                [
+                    'currency' => 'DESC',
+                    'unit' => 'ASC',
+                    'quantity' => 'ASC'
+                ]
             );
         }
 

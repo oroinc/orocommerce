@@ -32,7 +32,7 @@ use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *     data:
  *         currency: $.currency
  *     settings:
- *          allow_source_remove: false
+ *          allow_manual_source_remove: false
  *
  * source_name (required) is name of corresponding extended relation added to CheckoutSource
  * source_entity (required) is a source entity
@@ -45,6 +45,7 @@ class StartCheckout extends AbstractAction
     const SOURCE_ENTITY_KEY = 'source_entity';
     const CHECKOUT_DATA_KEY = 'data';
     const SETTINGS_KEY = 'settings';
+    const FORCE = 'force';
 
     /**
      * @var ManagerRegistry
@@ -181,13 +182,16 @@ class StartCheckout extends AbstractAction
         if ($checkoutSource) {
             $checkout = $em->getRepository('OroB2BCheckoutBundle:Checkout')
                 ->findOneBy(['source' => $checkoutSource]);
-
+            if ($this->getOptionFromContext($context, self::FORCE, false)) {
+                $this->updateCheckoutData($context, $checkout);
+                $this->addWorkflowItemDataSettings($context, $checkout->getWorkflowItem());
+                $em->flush();
+            }
         } else {
             $checkoutSource = $this->createCheckoutSource($sourceFieldName, $sourceEntity);
             $checkout = $this->createCheckout($context, $checkoutSource);
             $em->persist($checkout);
             $em->flush($checkout);
-
             $this->addWorkflowItemDataSettings($context, $checkout->getWorkflowItem());
             $em->flush($checkout->getWorkflowItem());
         }
@@ -238,6 +242,19 @@ class StartCheckout extends AbstractAction
      */
     protected function createCheckout($context, CheckoutSource $checkoutSource)
     {
+        $checkout = new Checkout();
+        $checkout->setSource($checkoutSource);
+        $this->updateCheckoutData($context, $checkout);
+
+        return $checkout;
+    }
+
+    /**
+     * @param mixed $context
+     * @param Checkout $checkout
+     */
+    protected function updateCheckoutData($context, Checkout $checkout)
+    {
         /** @var AccountUser $user */
         $user = $this->tokenStorage->getToken()->getUser();
         $account = $user->getAccount();
@@ -251,13 +268,7 @@ class StartCheckout extends AbstractAction
             'website' => $this->websiteManager->getCurrentWebsite(),
             'currency' => $this->currencyProvider->getUserCurrency()
         ];
-
-        $checkout = new Checkout();
-        $checkout->setSource($checkoutSource);
-
         $this->setCheckoutData($context, $checkout, $defaultData);
-
-        return $checkout;
     }
 
     /**
@@ -308,7 +319,7 @@ class StartCheckout extends AbstractAction
             $data = $this->contextAccessor->getValue($context, $this->options[$key]);
         }
 
-        if ($data) {
+        if ($data && is_array($data)) {
             foreach ($data as &$value) {
                 $value = $this->contextAccessor->getValue($context, $value);
             }

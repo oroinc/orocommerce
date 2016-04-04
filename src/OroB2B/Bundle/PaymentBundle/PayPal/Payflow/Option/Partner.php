@@ -4,12 +4,12 @@ namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Processor;
 
+// @codingStandardsIgnoreStart
 /**
- * @codingStandardsIgnoreStart
  * @link https://registration.paypal.com/welcomePage.do?country=US&mode=try#ProcessorSelectionNode
  * @link https://developer.paypal.com/docs/classic/payflow/integration-guide/#processing-platforms-supporting-card-present-transactions
- * @codingStandardsIgnoreEnd
  */
+// @codingStandardsIgnoreEnd
 class Partner extends AbstractOption
 {
     const PARTNER = 'PARTNER';

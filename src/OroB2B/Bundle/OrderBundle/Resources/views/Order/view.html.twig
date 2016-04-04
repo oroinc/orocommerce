@@ -36,7 +36,7 @@
     ] %}
 
     {% set orderTotals %}
-        {% include 'OroB2BPricingBundle:Totals:totalsEntityViewPage.html.twig' with {
+        {% include 'OroB2BPricingBundle:Totals:totals.html.twig' with {
             pageComponent: 'orob2border/js/app/components/totals-component',
             options: {totals: totals}
         } only %}
@@ -54,7 +54,7 @@
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'orob2b.order.sections.order_line_items'|trans,
         'priority': -150,
-        'subblocks': [{'data' : [dataGrid.renderGrid('order-line-items-grid', { order_id: entity.id })]}]
+        'subblocks': [{'data' : [dataGrid.renderGrid('order-line-items-grid', { order_id: entity.id })], spanClass: 'order-line-items'}]
     }]) %}
 
     {% set dataBlocks = dataBlocks|merge([{

@@ -53,6 +53,9 @@ class MenuType extends AbstractType
                 'clear_matcher' => true,
                 'leaf_class' => null,
                 'branch_class' => null,
+                'child_attr' => [],
+                'link_attr' => [],
+                'label_attr' => [],
             ]
         );
 
@@ -72,6 +75,9 @@ class MenuType extends AbstractType
         $view->vars['item'] = $this->menuProvider->get($title);
         $view->vars['options'] = $options;
         $view->vars['matcher'] = $this->matcher;
+        $view->vars['child_attr'] = $options['child_attr'];
+        $view->vars['link_attr'] = $options['link_attr'];
+        $view->vars['label_attr'] = $options['label_attr'];
     }
 
     /**

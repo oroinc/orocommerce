@@ -10,19 +10,23 @@ class LoadCategoryDemoData extends AbstractCategoryFixture
      * @var array
      */
     protected $categories = [
-        'Uniforms' => [
-            'Healthcare' => [
-                'Medical Scrubs' => [],
-                'Lab Coats' => [],
-                'Patient Gowns' => [],
-                'Counter Coats' => [],
-            ],
-        ],
-        'Identification' => [
-            'Medical Identification Tags' => [],
-        ],
-        'Patient Transport Equipment' => [
-            'Hospital Wheelchairs' => [],
-        ],
+        'Lighting Products' => [],
+        'Medical Apparel' => [],
+        'Office Furniture' => [],
+        'Retail Supplies' => [],
+        //'Uniforms' => [
+        //    'Healthcare' => [
+        //        'Medical Scrubs' => [],
+        //        'Lab Coats' => [],
+        //        'Patient Gowns' => [],
+        //        'Counter Coats' => [],
+        //    ],
+        //],
+        //'Identification' => [
+        //    'Medical Identification Tags' => [],
+        //],
+        //'Patient Transport Equipment' => [
+        //    'Hospital Wheelchairs' => [],
+        //],
     ];
 }
