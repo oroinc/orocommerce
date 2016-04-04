@@ -22,20 +22,20 @@ layout:
             optionName: class_prefix
             optionValue: 'account-users'
 
+        - @setOption:
+            id: datagrid_toolbar_button_container
+            optionName: visible
+            optionValue: true
+
         - @add:
-            id: create_account_user_button_top
-            parentId: content
+            id: create_account_user_button
+            parentId: datagrid_toolbar_button_container
             blockType: action_combined_buttons
             options:
                 actions:
                     @value: $data.actions.all
                 entityClass:
                     @value: 'OroB2B\Bundle\AccountBundle\Entity\AccountUser'
-
-        - @add:
-            id: create_account_user_button
-            parentId: content
-            blockType: block
 
         - @add:
             id: account_users
@@ -43,16 +43,6 @@ layout:
             blockType: datagrid
             options:
                 grid_name: frontend-account-account-user-grid
-
-        - @add:
-            id: create_account_user_button_bottom
-            parentId: content
-            blockType: action_combined_buttons
-            options:
-                actions:
-                    @value: $data.actions.all
-                entityClass:
-                    @value: 'OroB2B\Bundle\AccountBundle\Entity\AccountUser'
 
         - @add:
             id: account_sidebar
