@@ -19,8 +19,29 @@ define(function(require) {
 
             PaymentTransitionButtonComponent.__super__.initialize.call(this, options);
 
+            this.initPaymentMethod();
             this.getPaymentMethodSelector().on('change', _.bind(this.onPaymentMethodChange, this));
-            this.getPaymentMethodSelector().trigger('change');
+        },
+
+        initPaymentMethod: function() {
+            var filledForm = this.getContent().next(this.options.selectors.paymentForm);
+            var selectedValue = this.getPaymentMethodElement().val();
+            if (filledForm.length > 0) {
+                if (selectedValue) {
+                    filledForm.removeClass('hidden');
+                    this.getPaymentForm().replaceWith(filledForm);
+                } else {
+                    filledForm.remove();
+                }
+            } else {
+                if (selectedValue) {
+                    var selectedEl = this.getPaymentMethodSelector().filter('[value="' + selectedValue + '"]');
+                    selectedEl.prop('checked', 'checked');
+                    selectedEl.trigger('change');
+                } else {
+                    this.getPaymentMethodElement().val(this.getPaymentMethodSelector().filter(':checked').val());
+                }
+            }
         },
 
         /**
@@ -29,7 +50,7 @@ define(function(require) {
         transit: function(e, data) {
             this.getPaymentForm()
                 .addClass('hidden')
-                .insertAfter($(this.defaults.selectors.checkoutContent));
+                .insertAfter($(this.options.selectors.checkoutContent));
 
             PaymentTransitionButtonComponent.__super__.transit.call(this, e, data);
         },
@@ -59,28 +80,44 @@ define(function(require) {
          * @returns {jQuery|HTMLElement}
          */
         getContent: function() {
-            return $(this.defaults.selectors.checkoutContent);
+            if (!this.hasOwnProperty('$content')) {
+                this.$content = $(this.options.selectors.checkoutContent);
+            }
+
+            return this.$content;
         },
 
         /**
          * @returns {jQuery|HTMLElement}
          */
         getPaymentForm: function() {
-            return this.getContent().find(this.defaults.selectors.paymentForm);
+            if (!this.hasOwnProperty('$paymentForm')) {
+                this.$paymentForm = this.getContent().find(this.options.selectors.paymentForm);
+            }
+
+            return this.$paymentForm;
         },
 
         /**
          * @returns {jQuery|HTMLElement}
          */
         getPaymentMethodSelector: function() {
-            return this.getPaymentForm().find(this.defaults.selectors.paymentMethodSelector);
+            if (!this.hasOwnProperty('$paymentMethodSelector')) {
+                this.$paymentMethodSelector = this.getPaymentForm().find(this.options.selectors.paymentMethodSelector);
+            }
+
+            return this.$paymentMethodSelector;
         },
 
         /**
          * @returns {jQuery|HTMLElement}
          */
         getPaymentMethodElement: function() {
-            return this.getContent().find(this.defaults.selectors.paymentMethod);
+            if (!this.hasOwnProperty('$paymentMethodElement')) {
+                this.$paymentMethodElement = this.getContent().find(this.options.selectors.paymentMethod);
+            }
+
+            return this.$paymentMethodElement;
         }
     });
 

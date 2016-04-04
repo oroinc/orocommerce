@@ -71,11 +71,11 @@ define(function(require) {
                 var $response = $('<div/>').html(response);
                 mediator.trigger('checkout-content:before-update');
 
-                var $sidebar = $(this.defaults.selectors.checkoutSidebar);
-                $sidebar.html($response.find(this.defaults.selectors.checkoutSidebar).html());
+                var $sidebar = $(this.options.selectors.checkoutSidebar);
+                $sidebar.html($response.find(this.options.selectors.checkoutSidebar).html());
 
-                var $content = $(this.defaults.selectors.checkoutContent);
-                $content.html($response.find(this.defaults.selectors.checkoutContent).html());
+                var $content = $(this.options.selectors.checkoutContent);
+                $content.html($response.find(this.options.selectors.checkoutContent).html());
 
                 mediator.trigger('checkout-content:updated');
             }
