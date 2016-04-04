@@ -3,13 +3,16 @@ layout:
         - @setBlockTheme:
             themes: 'OroB2BSaleBundle:layouts:default/orob2b_sale_quote_frontend_view/layout.html.twig'
 
-        - @setOption:
-            id: head
-            optionName: title
+        - @appendOption:
+            id: title
+            optionName: value
             optionValue:
-                label: 'orob2b.frontend.sale.quote.head_title.label'
-                parameters:
-                    id: { @value: $data.quote.qid }
+                - 'orob2b.account.menu.account_user.label'
+                - 'orob2b.frontend.sale.quote.entity_plural_label'
+                -
+                    label: 'orob2b.frontend.sale.quote.title.label'
+                    parameters:
+                        '%id%': { @value: $data.quote.qid }
 
         - @setOption:
             id: page_title
@@ -22,12 +25,12 @@ layout:
             optionValue:
                 label: 'orob2b.frontend.sale.quote.title.label'
                 parameters:
-                    id: { @value: $data.quote.qid }
+                    '%id%': { @value: $data.quote.qid }
 
         - @add:
             id: account_sidebar
             parentId: sidebar_left
-            blockType: block
+            blockType: container
 
         - @addTree:
             items:
