@@ -163,8 +163,8 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
 
             /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject $token */
             $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-            $token->expects($this->once())->method('getUser')->willReturn($user);
-            $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($token);
+            $token->expects($this->any())->method('getUser')->willReturn($user);
+            $this->tokenStorage->expects($this->any())->method('getToken')->willReturn($token);
 
             $propertyAccessor = PropertyAccess::createPropertyAccessor();
             $this->propertyAccessor
@@ -228,7 +228,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
                         'poNumber' => 123
                     ],
                     StartCheckout::SETTINGS_KEY => [
-                        'allow_source_remove' => true,
+                        'allow_manual_source_remove' => true,
                         'disallow_billing_address_edit' => false,
                         'disallow_shipping_address_edit' => false,
                         'remove_source' => true
@@ -251,7 +251,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
                         'poNumber' => 123
                     ],
                     StartCheckout::SETTINGS_KEY  => [
-                        'allow_source_remove' => true,
+                        'allow_manual_source_remove' => true,
                         'disallow_billing_address_edit' => false,
                         'disallow_shipping_address_edit' => false,
                         'remove_source' => true

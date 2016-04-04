@@ -36,7 +36,7 @@ layout:
         - @add:
             id: account_sidebar
             parentId: sidebar_left
-            blockType: block
+            blockType: container
         - @addTree:
             items:
                 order_view_page:

@@ -80,8 +80,8 @@
 }
 
 td.quote-lineitem-notes {
-    max-width: 330px;
-    width: 330px;
+  max-width: 330px;
+  width: 330px;
 }
 
 .quote-lineitems {
@@ -253,4 +253,18 @@ td.quote-lineitem-product-sku {
 
 .quote-lineitem-product-select-link {
   display: block;
+}
+
+.quote-line-items-info {
+  .quote-line_item-target_notes {
+    width: 450px;
+  }
+
+  tr {
+    &:last-child {
+      .quote-line_item-price {
+        height: 100%;
+      }
+    }
+  }
 }

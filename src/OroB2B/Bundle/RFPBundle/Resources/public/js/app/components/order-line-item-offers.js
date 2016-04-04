@@ -7,6 +7,7 @@ define(function(require) {
     var BaseComponent = require('oroui/js/app/components/base/component');
     var _ = require('underscore');
     var $ = require('jquery');
+    var mediator = require('oroui/js/mediator');
 
     OrderLineItemOffers = BaseComponent.extend({
         /**
@@ -14,6 +15,7 @@ define(function(require) {
          */
         options: {
             offersSelector: '.order-line-item-offers',
+            priceSelector: '.order-line-item-price input',
             quantitySelector: '.order-line-item-quantity input',
             unitSelector: '.order-line-item-quantity select',
             productSelector: '.order-line-item-product input',
@@ -32,6 +34,11 @@ define(function(require) {
         $product: null,
 
         /**
+         * @property {Object}
+         */
+        items: [],
+
+        /**
          * @inheritDoc
          */
         initialize: function(options) {
@@ -43,6 +50,18 @@ define(function(require) {
             this.$product = $(this.options.productSelector);
             this.$product
                 .on('change', _.bind(this.onProductChange, this));
+
+            mediator.on('pricing:load:line-item-price-overridden', _.bind(this.onProductPriceOverriddenLoad, this));
+        },
+
+        /**
+         * @param {Object} priceValue
+         */
+        onProductPriceOverriddenLoad: function(priceValue) {
+            if (!_.contains(this.items, priceValue)) {
+                this.items.push(priceValue);
+                mediator.trigger('pricing:set:line-items-from-matched-prices', priceValue);
+            }
         },
 
         /**

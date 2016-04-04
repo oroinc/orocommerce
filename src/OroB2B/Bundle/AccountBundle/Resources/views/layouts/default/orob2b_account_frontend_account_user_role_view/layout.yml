@@ -19,7 +19,7 @@ layout:
         - @add:
             id: account_sidebar
             parentId: sidebar_left
-            blockType: block
+            blockType: container
         - @addTree:
             items:
                 account_user_role_view_container:

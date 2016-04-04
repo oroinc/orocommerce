@@ -130,6 +130,7 @@ class QuoteController extends Controller
 
     /**
      * @param Quote $quote
+     * @param Request $request
      * @return array|RedirectResponse
      */
     protected function update(Quote $quote, Request $request)

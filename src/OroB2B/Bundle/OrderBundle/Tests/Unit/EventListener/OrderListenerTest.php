@@ -2,16 +2,18 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\EventListener;
 
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\UnitOfWork;
 
 use OroB2B\Bundle\OrderBundle\Doctrine\ORM\Id\EntityAwareGeneratorInterface;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\EventListener\OrderListener;
+use OroB2B\Bundle\OrderBundle\EventListener\ORM\OrderListener;
 
 class OrderListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|EntityAwareGeneratorInterface
+     * @var EntityAwareGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $generator;
 
@@ -40,15 +42,33 @@ class OrderListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testPostPersist()
     {
+        $newId = 125;
         $this->generator->expects($this->once())
             ->method('generate')
-            ->willReturn(125);
+            ->willReturn($newId);
 
         /** @var Order|\PHPUnit_Framework_MockObject_MockObject $orderMock */
         $orderMock = $this->getMock('OroB2B\Bundle\OrderBundle\Entity\Order');
-        $orderMock->expects($this->once())->method('setIdentifier')->with(125);
+        $lifecycleEventArgs = $this->getLifecycleEventArgs();
+        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $em */
+        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()->getMock();
+        $lifecycleEventArgs->expects($this->once())
+            ->method('getEntityManager')
+            ->willReturn($em);
+        /** @var UnitOfWork|\PHPUnit_Framework_MockObject_MockObject $unitOfWork */
+        $unitOfWork = $this->getMockBuilder('Doctrine\ORM\UnitOfWork')
+            ->disableOriginalConstructor()->getMock();
+        $em->expects($this->once())
+            ->method('getUnitOfWork')
+            ->willReturn($unitOfWork);
+        $unitOfWork->expects($this->once())
+            ->method('scheduleExtraUpdate')
+            ->with($orderMock, [
+                'identifier' => [null, $newId],
+            ]);
 
-        $this->listener->postPersist($this->getLifecycleEventArgs($orderMock));
+        $this->listener->postPersist($orderMock, $lifecycleEventArgs);
     }
 
     public function testPostPersistOrderWithIdentifier()
@@ -60,22 +80,22 @@ class OrderListenerTest extends \PHPUnit_Framework_TestCase
         $orderMock = $this->getMock('OroB2B\Bundle\OrderBundle\Entity\Order');
         $orderMock->expects($this->once())->method('getIdentifier')->willReturn(125);
 
-        $this->listener->postPersist($this->getLifecycleEventArgs($orderMock));
+        $lifecycleEventArgs = $this->getLifecycleEventArgs();
+        $lifecycleEventArgs->expects($this->never())
+            ->method('getEntityManager');
+
+        $this->listener->postPersist($orderMock, $lifecycleEventArgs);
     }
 
     /**
-     * @param Order $order
      * @return LifecycleEventArgs|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function getLifecycleEventArgs(Order $order)
+    protected function getLifecycleEventArgs()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|LifecycleEventArgs $lifecycleEventArgs */
+        /** @var LifecycleEventArgs|\PHPUnit_Framework_MockObject_MockObject $lifecycleEventArgs */
         $lifecycleEventArgs = $this->getMockBuilder('Doctrine\ORM\Event\LifecycleEventArgs')
             ->disableOriginalConstructor()
             ->getMock();
-        $lifecycleEventArgs->expects($this->once())
-            ->method('getEntity')
-            ->willReturn($order);
 
         return $lifecycleEventArgs;
     }

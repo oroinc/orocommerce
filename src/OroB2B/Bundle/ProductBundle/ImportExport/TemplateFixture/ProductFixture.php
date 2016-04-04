@@ -63,6 +63,14 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
             ->setText('US Product Description')
             ->setFallback('system');
 
+        $shortDescription = new LocalizedFallbackValue();
+        $shortDescription->setText('Product Short Description');
+
+        $localizedShortDescription = new LocalizedFallbackValue();
+        $localizedShortDescription->setLocale($locale)
+            ->setText('US Product Short Description')
+            ->setFallback('system');
+
         $entity->setSku('sku_001')
             ->setStatus('enabled')
             ->setInventoryStatus($inventoryStatus)
@@ -70,6 +78,8 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
             ->addName($localizedName)
             ->addDescription($description)
             ->addDescription($localizedDescription)
+            ->addShortDescription($shortDescription)
+            ->addShortDescription($localizedShortDescription)
             ->setHasVariants(true);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM;
 
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -77,6 +78,9 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
             $description = new LocalizedFallbackValue();
             $description->setText(nl2br($text));
 
+            $shortDescription = new LocalizedFallbackValue();
+            $shortDescription->setText($row['description']);
+
             $product = new Product();
             $product->setOwner($businessUnit)
                 ->setOrganization($organization)
@@ -84,7 +88,13 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
                 ->setInventoryStatus($inventoryStatuses[1])
                 ->setStatus(Product::STATUS_ENABLED)
                 ->addName($name)
-                ->addDescription($description);
+                ->addDescription($description)
+                ->addShortDescription($shortDescription);
+
+            $image = $this->getImageForProductSku($manager, $locator, $row['sku']);
+            if ($image) {
+                $product->setImage($image);
+            }
 
             $manager->persist($product);
         }
@@ -104,5 +114,36 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName($enumCode);
 
         return $manager->getRepository($inventoryStatusClassName)->findAll();
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param FileLocator $locator
+     * @param string $sku
+     * @return null|\Oro\Bundle\AttachmentBundle\Entity\File
+     */
+    protected function getImageForProductSku(ObjectManager $manager, FileLocator $locator, $sku)
+    {
+        $image = null;
+
+        try {
+            $imagePath = $locator->locate(sprintf('@OroB2BProductBundle/Migrations/Data/Demo/ORM/images/%s.jpg', $sku));
+
+            if (is_array($imagePath)) {
+                $imagePath = current($imagePath);
+            }
+
+            $attachmentManager = $this->container->get('oro_attachment.manager');
+
+            $image = $attachmentManager->prepareRemoteFile($imagePath);
+
+            $attachmentManager->upload($image);
+
+            $manager->persist($image);
+        } catch (\Exception $e) {
+            //image not found
+        }
+
+        return $image;
     }
 }

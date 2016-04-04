@@ -5,13 +5,11 @@
         {{ block_widget(block) }}
         </html>
     {% else %}
-        {% include 'OroNavigationBundle:HashNav:hashNavAjax.html.twig'
-        with {
-        'data': {
-        'content': block_widget(blocks.content),
-        }
-        }
-        %}
+        {% include 'OroNavigationBundle:HashNav:hashNavAjax.html.twig' with {
+            'data': {
+                'content': block_widget(blocks.content),
+            }
+        } %}
     {% endif %}
 {% endblock %}
 
@@ -27,6 +25,7 @@
             config: {
                 'oroui/js/app': {routeLinks: ''},
                 'controllers/page-controller': {fullRedirect: true},
+                'oroui/js/app/modules/views-module': {showLoadingMaskOnStartup: false},
                 'oro/datagrid/cell/action-cell': {showCloseButton: false},
                 'orodatagrid/js/app/plugins/grid/column-manager-plugin': {icon: 'gear'},
                 'orodatagrid/js/datagrid/action-launcher': {iconHideText: false},
@@ -51,8 +50,7 @@
                 fastclick: 'orob2bfrontend/default/js/vendors/fastclick'
             },
             shim: {
-                raty: {deps: ['jquery']},
-                'orob2bfrontend/default/js/app/views/input-widget/chosen': {deps: ['chosen']}
+                raty: {deps: ['jquery']}
             }
         });
         require({
@@ -140,6 +138,16 @@
             {{ block_widget(block) }}
         </div>
     </footer>
+{% endblock %}
+
+{% block _footer_copyright_widget %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="copy">
+                {{ block_widget(block) }}
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block _notification_widget %}
