@@ -1,6 +1,6 @@
 operations:
     orob2b_accept_quote:
-        label: orob2b.sale.quote.actions.accept_quote
+        label: orob2b.alternativecheckout.actions.accept_quote
         enabled: true
         applications: [frontend]
         routes:
@@ -14,7 +14,9 @@ operations:
                 quote: $.data
                 checkout: $.checkout
         preconditions:
-            @not_empty: $.checkout
+            @and:
+                - @not_empty: $.checkout
+                - @equal: [$.checkout.requestedForApprove, true]
         actions:
             - @redirect:
                 route: 'orob2b_checkout_frontend_checkout'

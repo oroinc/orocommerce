@@ -14,12 +14,12 @@ layout:
             items:
                 checkout_form_buttons:
                     blockType: container
-                checkout_button_continue:
+                checkout_button_continue_right:
                     blockType: checkout_transition_continue
                     options:
                         transitionData: { @value: $data.orob2b_checkout_continue_transition }
                         checkout: { @value: $data.checkout }
-                checkout_button_back:
+                checkout_button_back_right:
                     blockType: checkout_transition_back
                     options:
                         transitionData: { @value: $data.orob2b_checkout_back_transition }
@@ -27,8 +27,8 @@ layout:
             tree:
                 checkout_form:
                     checkout_form_buttons:
-                          checkout_button_continue: ~
-                          checkout_button_back: ~
+                          checkout_button_continue_right: ~
+                          checkout_button_back_right: ~
         - @move:
             id: checkout_order_summary_table
             parentId: checkout_form_fields
