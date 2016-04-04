@@ -28,7 +28,7 @@ class ShoppingListController extends Controller
      *     class="OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList",
      *     isOptional="true",
      *     options={"id" = "id"})
-     * @Layout()
+     * @Layout(vars={"title"})
      * @Acl(
      *      id="orob2b_shopping_list_frontend_view",
      *      type="entity",
