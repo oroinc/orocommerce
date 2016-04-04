@@ -2,20 +2,11 @@
     <div class="account-sidebar">
         <h3 class="account-navigation-title">My Account</h3>
         <ul class="account-navigation-list">
-            {% set menu = [
-                {'path': 'orob2b_account_frontend_account_user_profile', 'title': 'Account Information'},
-                {'path': 'orob2b_account_frontend_account_user_index', 'title': 'Account User'},
-                {'path': 'orob2b_account_frontend_account_user_role_index', 'title': 'Account User Role'},
-                {'path': 'orob2b_rfp_frontend_request_index', 'title': 'Requests For Quote'},
-                {'path': 'orob2b_sale_quote_frontend_index', 'title': 'Quotes'},
-                {'path': 'orob2b_order_frontend_index', 'title': 'Orders'}
-            ] %}
-            {% for element in menu %}
-                <li{% if route is defined and element.path == route %} class="current"{% endif %}>
-                    <a href="{{ path(element.path) }}">
-                        {{ element.title }}
-                    </a>
-                </li>
+            {% set requestUrl = path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) %}
+            {% for child in block if child.vars.visible %}
+                {% set currentUrl = path(child.vars.route_name, child.vars.route_parameters) %}
+
+                <li {% if currentUrl in requestUrl %}class="current"{% endif %}>{{ block_widget(child) }}</li>
             {% endfor %}
         </ul>
     </div>

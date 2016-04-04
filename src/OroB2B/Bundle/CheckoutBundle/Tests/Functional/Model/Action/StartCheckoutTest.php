@@ -141,7 +141,7 @@ class StartCheckoutTest extends WebTestCase
                     'currency' => 'EUR'
                 ],
                 StartCheckout::SETTINGS_KEY => [
-                    'allow_source_remove' => true,
+                    'allow_manual_source_remove' => true,
                     'disallow_billing_address_edit' => false,
                     'disallow_shipping_address_edit' => false,
                     'remove_source' => true
