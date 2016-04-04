@@ -77,9 +77,9 @@
     {% set permissionsCount = (privilege.permissions|length / 2)|round %}
 
     <tr>
-        <td class="col-md-5">
-            <div class="col-md-12">
-                <strong>{{ privilege.identity.name|trans }}</strong>
+        <td class="col-md-5 va-t_md">
+            <div class="col-md-12 mt1-md mt1-sm">
+                {{ privilege.identity.name|trans }}
             </div>
         </td>
         <td class="col-md-3 va-t_md">
