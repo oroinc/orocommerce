@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\NVP;
 
 class Encoder implements EncoderInterface
 {
+    const DECODE_REGEXP = '/(\w+)(\[(\d+)\])?=/';
+
     /** {@inheritdoc} */
     public function encode(array $data)
     {
@@ -18,21 +20,21 @@ class Encoder implements EncoderInterface
     /** {@inheritdoc} */
     public function decode($data)
     {
-        $values = explode('&', $data);
-        $result = [];
-
-        foreach ($values as $value) {
-            $keyValue = explode('=', $value);
-
-            $key = $keyValue[0];
-
-            if (false !== strpos($key, '[')) {
-                $key = substr($key, 0, strpos($key, '['));
+        $result = array();
+        while (strlen($data) > 0) {
+            $matches = [];
+            preg_match(self::DECODE_REGEXP, $data, $matches);
+            $key = $matches[1];
+            $data = substr($data, strlen($matches[0]));
+            if (isset($matches[3])) {
+                $value = substr($data, 0, $matches[3]);
+            } else {
+                $next = strpos($data, '&');
+                $value = $next === false ? $data : substr($data, 0, $next);
             }
-
-            $result[$key] = $keyValue[1];
+            $data = substr($data, strlen($value) + 1);
+            $result[$key] = $value ?: '';
         }
-
         return $result;
     }
 }

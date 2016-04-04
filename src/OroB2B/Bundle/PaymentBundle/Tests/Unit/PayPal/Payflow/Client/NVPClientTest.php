@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\PayPal\Payflow\Client;
 use Guzzle\Http\ClientInterface;
 
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Client\NVPClient;
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Gateway;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\NVP\EncoderInterface;
 
 class NVPClientTest extends \PHPUnit_Framework_TestCase
@@ -62,7 +63,7 @@ class NVPClientTest extends \PHPUnit_Framework_TestCase
         $this->httpClient
             ->expects($this->once())
             ->method('post')
-            ->with(NVPClient::PILOT_HOST_ADDRESS, [], $encodedData)
+            ->with(Gateway::PILOT_HOST_ADDRESS, [], $encodedData)
             ->willReturn($request);
 
         $this->encoder
@@ -71,6 +72,6 @@ class NVPClientTest extends \PHPUnit_Framework_TestCase
             ->with($responseString)
             ->willReturn($responseArray);
 
-        $this->assertEquals($responseArray, $this->client->send($options));
+        $this->assertEquals($responseArray, $this->client->send(Gateway::PILOT_HOST_ADDRESS, $options));
     }
 }

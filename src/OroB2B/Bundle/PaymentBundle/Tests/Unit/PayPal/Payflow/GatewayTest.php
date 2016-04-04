@@ -36,7 +36,7 @@ class GatewayTest extends \PHPUnit_Framework_TestCase
 
         $this->client = $this->getMock('OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Client\ClientInterface');
 
-        $this->gateway = new Gateway($this->client, $this->processorRegistry, $this->requestRegistry);
+        $this->gateway = new Gateway($this->client, $this->requestRegistry, $this->processorRegistry);
     }
 
     protected function tearDown()
