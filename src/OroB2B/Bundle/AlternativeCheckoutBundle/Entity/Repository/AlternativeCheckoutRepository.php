@@ -24,6 +24,6 @@ class AlternativeCheckoutRepository extends EntityRepository
             ->where($qb->expr()->eq('quote', ':quote'))
             ->setParameter('quote', $quote)
             ->getQuery()
-            ->getSingleResult();
+            ->getOneOrNullResult();
     }
 }
