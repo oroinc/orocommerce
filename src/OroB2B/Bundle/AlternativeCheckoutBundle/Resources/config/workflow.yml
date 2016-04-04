@@ -367,7 +367,7 @@ workflows:
             place_order_definition:
                 pre_conditions:
                     @or:
-                        message: "Wayting For Approve"
+                        message: "Pending approval"
                         parameters:
                             - @less_order_total_limit: [$checkout, 5000]
                             - @equal: [$checkout.allowed, true]

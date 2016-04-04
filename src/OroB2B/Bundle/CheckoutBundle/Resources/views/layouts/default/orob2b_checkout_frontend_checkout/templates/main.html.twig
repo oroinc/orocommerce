@@ -167,3 +167,45 @@
         </table>
     </div>
 {% endblock %}
+
+{% block _checkout_button_continue_widget -%}
+    <fieldset class="checkout__form__row">
+        <fieldset class="checkout__form__row">
+            <div class="create-account__form__req-text"><sup>*</sup>
+                {{ 'orob2b.checkout.workflow.b2b_flow_checkout.form.required.label'|trans }}
+            </div>
+        </fieldset>
+        <div class="create-account__form__col form__col_x12">
+            {{ block_widget(block) }}
+        </div>
+    </fieldset>
+{% endblock %}
+
+{% block _checkout_button_back_widget -%}
+    <div class="checkout__form__back">
+        {{ block_widget(block) }}
+    </div>
+{%- endblock %}
+
+{% block _checkout_button_continue_right_widget %}
+    {% if transitionData is defined and transitionData %}
+        {% import 'OroB2BCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
+        <div class="order-checkout-widget order-checkout-widget_block text-right">
+            {{ _layout.conditionMessagesStart(transitionData) }}
+            <button type="submit"
+                    class="btn btn_xlg {% if transitionData.isAllowed %}btn-orange{% endif %} checkout__submit-btn" {{ _layout.transitionAttrbiutes(transitionData, checkout) }}>
+                {{ transitionData.transition.label|trans }}
+            </button>
+            {{ _layout.conditionMessagesEnd(transitionData) }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _checkout_button_back_right_widget %}
+    {% if transitionData is defined and transitionData %}
+        {% import 'OroB2BCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
+        <div class="checkout__form__back order-checkout-widget order-checkout-widget_block text-right">
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
+{% endblock %}
