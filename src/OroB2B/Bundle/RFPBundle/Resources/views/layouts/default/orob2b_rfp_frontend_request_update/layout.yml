@@ -3,13 +3,22 @@ layout:
         - @setBlockTheme:
             themes: 'OroB2BRFPBundle:layouts:default/orob2b_rfp_frontend_request_create/layout.html.twig'
 
-        - @setOption:
-            id: head
-            optionName: title
+        - @appendOption:
+            id: title
+            optionName: value
+            optionValue: 'orob2b.account.menu.account_user.label'
+        - @appendOption:
+            id: title
+            optionName: value
+            optionValue: 'orob2b.frontend.rfp.request.entity_plural_label'
+        - @appendOption:
+            id: title
+            optionName: value
             optionValue:
-                label: 'orob2b.frontend.rfp.request.head_title.label'
-                parameters:
-                    id: { @value: $data.entity.id }
+                -
+                    label: 'orob2b.frontend.rfp.request.edit_title.label'
+                    parameters:
+                        '%id%': { @value: $data.entity.id }
 
         - @setOption:
             id: page_title
@@ -22,7 +31,7 @@ layout:
             optionValue:
                 label: 'orob2b.frontend.rfp.request.edit_title.label'
                 parameters:
-                    id: { @value: $data.entity.id }
+                    '%id%': { @value: $data.entity.id }
 
         - @add:
             id: account_sidebar

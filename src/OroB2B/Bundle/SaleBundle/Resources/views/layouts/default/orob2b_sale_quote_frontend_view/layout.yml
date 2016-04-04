@@ -6,11 +6,19 @@ layout:
         - @appendOption:
             id: title
             optionName: value
+            optionValue: 'orob2b.account.menu.account_user.label'
+        - @appendOption:
+            id: title
+            optionName: value
+            optionValue: 'orob2b.frontend.sale.quote.entity_plural_label'
+        - @appendOption:
+            id: title
+            optionName: value
             optionValue:
                 -
-                    label: 'orob2b.frontend.sale.quote.head_title.label'
+                    label: 'orob2b.frontend.sale.quote.title.label'
                     parameters:
-                        id: { @value: $data.quote.qid }
+                        '%id%': { @value: $data.quote.qid }
 
         - @setOption:
             id: page_title
@@ -23,7 +31,7 @@ layout:
             optionValue:
                 label: 'orob2b.frontend.sale.quote.title.label'
                 parameters:
-                    id: { @value: $data.quote.qid }
+                    '%id%': { @value: $data.quote.qid }
 
         - @add:
             id: account_sidebar
