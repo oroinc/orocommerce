@@ -665,7 +665,7 @@ datagrid:
             query:
                 select:
                     - user.id
-                    - CONCAT(user.firstName, CONCAT(' ', user.lastName)) AS full_name
+                    - CONCAT(user.firstName, CONCAT(' ', user.lastName)) AS fullName
                     - user.email
                     - CASE WHEN user.enabled = true AND user.confirmed = true THEN true ELSE false END AS status
                 from:
@@ -678,11 +678,11 @@ datagrid:
                     name: role
                     default: NULL
         columns:
-            full_name:
+            fullName:
                 label: orob2b.account.frontend.account_user.full_name.label
                 type: twig
                 frontend_type: html
-                data_name: full_name
+                data_name: fullName
                 template: OroB2BAccountBundle:AccountUser:Frontend/Datagrid/fullName.html.twig
             email:
                 label: orob2b.account.frontend.account_user.email.label
@@ -698,9 +698,9 @@ datagrid:
                 template: OroB2BAccountBundle:AccountUser:Frontend/Datagrid/status.html.twig
         filters:
             columns:
-                full_name:
+                fullName:
                     type:      string
-                    data_name: full_name
+                    data_name: fullName
                 email:
                     type:      string
                     data_name: user.email
@@ -714,8 +714,8 @@ datagrid:
                                 false: orob2b.account.frontend.account_user.status_inactive.label
         sorters:
             columns:
-                full_name:
-                    data_name: full_name
+                fullName:
+                    data_name: fullName
                 email:
                     data_name: user.email
                 status:
