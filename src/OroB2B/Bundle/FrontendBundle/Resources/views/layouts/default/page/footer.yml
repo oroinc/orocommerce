@@ -1,0 +1,19 @@
+layout:
+    actions:
+        - @setBlockTheme:
+            themes: 'OroB2BFrontendBundle:layouts:default/page/footer.html.twig'
+        - @addTree:
+            items:
+                footer:
+                    blockType: container
+                footer_copyright:
+                    blockType: text
+                    options:
+                        text: 'orob2b_frontend.copyright'
+                        escape: false
+            tree:
+                wrapper:
+                    footer:
+                        footer_copyright: ~
+    conditions:
+        @neq: [ $context.logged_user, null ]
