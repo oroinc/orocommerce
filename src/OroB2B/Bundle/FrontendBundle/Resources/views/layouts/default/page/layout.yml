@@ -82,3 +82,7 @@ layout:
             optionName: title
             oldOptionValue: OroPlatform
             newOptionValue: OroCommerce
+        - @setOption:
+            id: datagrid_toolbar
+            optionName: attr.class
+            optionValue: 'oro-oq__filter-controls oro-oq__filter-controls oro-oq__filter-controls_has-pagination'

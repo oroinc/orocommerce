@@ -240,7 +240,7 @@ class QuoteControllerTest extends WebTestCase
         }
 
         $createOrderButton = (bool)$crawler
-            ->filterXPath('//a[contains(., \'Submit to Order\')]')->count();
+            ->filterXPath('//a[contains(., \'Accept and Submit to Order\')]')->count();
          $this->assertEquals($expectedData['createOrderButton'], $createOrderButton);
     }
 
