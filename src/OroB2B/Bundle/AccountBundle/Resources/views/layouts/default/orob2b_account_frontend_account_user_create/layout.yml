@@ -5,17 +5,29 @@ layout:
         - @setFormTheme:
             themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_frontend_account_user_update/form_theme.html.twig'
 
-        - @setOption:
-            id: head
-            optionName: title
+#        - @setOption:
+#            id: head
+#            optionName: title
+#            optionValue:
+#                label: 'orob2b.account.frontend.title.account_user.profile'
+
+#        - @setOption:
+#            id: page_title
+#            optionName: text
+#            optionValue:
+#                label: 'orob2b.account.frontend.title.account_user.profile'
+
+        - @appendOption:
+            id: title
+            optionName: value
             optionValue:
-                label: 'orob2b.account.frontend.title.account_user.profile'
+                - 'orob2b.account.menu.account_user.label'
+                - 'orob2b.account.frontend.account_user.entity_plural_label'
 
         - @setOption:
             id: page_title
             optionName: text
-            optionValue:
-                label: 'orob2b.account.frontend.title.account_user.profile'
+            optionValue: 'orob2b.account.frontend.account_user.entity_plural_label'
 
         - @setOption:
             id: content
