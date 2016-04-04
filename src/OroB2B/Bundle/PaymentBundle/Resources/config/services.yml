@@ -18,6 +18,7 @@ parameters:
     orob2b_payment.event.callback_handler.class: OroB2B\Bundle\PaymentBundle\Event\CallbackHandler
     orob2b_payment.action.capture.class: OroB2B\Bundle\PaymentBundle\Action\CaptureAction
     orob2b_payment.action.purchase.class: OroB2B\Bundle\PaymentBundle\Action\PurchaseAction
+    orob2b_payment.event_listener.callback.redirect.class: OroB2B\Bundle\PaymentBundle\EventListener\Callback\RedirectListener
 
 services:
     orob2b_payment.payment_term.manager.api:
@@ -167,3 +168,10 @@ services:
         tags:
             - { name: oro_workflow.action, alias: payment_purchase }
             - { name: oro_action.action, alias: payment_purchase }
+
+    orob2b_payment.event_listener.callback.redirect:
+        class: '%orob2b_payment.event_listener.callback.redirect.class%'
+        lazy: true
+        tags:
+            - { name: kernel.event_listener, event: orob2b_payment.callback.return, method: onReturn }
+            - { name: kernel.event_listener, event: orob2b_payment.callback.error, method: onError }

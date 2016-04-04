@@ -25,7 +25,7 @@ class CallbackController extends Controller
     {
         $event = new CallbackReturnEvent($request->request->all() + $request->query->all());
 
-        return $this->get('orob2b_payment.eveny.callback_handler')->handle($transactionId, $event);
+        return $this->get('orob2b_payment.event.callback_handler')->handle($transactionId, $event);
     }
 
     /**
@@ -39,6 +39,6 @@ class CallbackController extends Controller
     {
         $event = new CallbackErrorEvent($request->request->all() + $request->query->all());
 
-        return $this->get('orob2b_payment.eveny.callback_handler')->handle($transactionId, $event);
+        return $this->get('orob2b_payment.event.callback_handler')->handle($transactionId, $event);
     }
 }
