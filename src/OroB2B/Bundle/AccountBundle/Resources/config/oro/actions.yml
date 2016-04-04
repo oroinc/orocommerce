@@ -190,6 +190,7 @@ operations:
         applications: [frontend]
         routes:
             - orob2b_account_frontend_account_user_role_view
+            - orob2b_account_frontend_account_user_role_update
         acl_resource: [DELETE, $.data]
         order: 20
         button_options:

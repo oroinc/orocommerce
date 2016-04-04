@@ -13,6 +13,15 @@ class GreaterThanZero extends GreaterThan implements AliasAwareConstraintInterfa
     /**
      * {@inheritdoc}
      */
+    public function __construct($options = null)
+    {
+        $options['value'] = $this->value;
+        parent::__construct($options);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getDefaultOption()
     {
     }

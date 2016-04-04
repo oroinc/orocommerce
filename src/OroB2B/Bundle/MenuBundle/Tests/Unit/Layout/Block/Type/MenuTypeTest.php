@@ -64,7 +64,10 @@ class MenuTypeTest extends BaseBlockTypeTestCase
                     'clear_matcher' => true,
                     'leaf_class' => null,
                     'branch_class' => null,
-                    'menu' => 'Top Menu'
+                    'menu' => 'Top Menu',
+                    'child_attr' => [],
+                    'link_attr' => [],
+                    'label_attr' => [],
                 ]
             ],
             'all options' => [
@@ -81,6 +84,9 @@ class MenuTypeTest extends BaseBlockTypeTestCase
                     'clear_matcher' => false,
                     'leaf_class' => 'leaf',
                     'branch_class' => 'branch',
+                    'child_attr' => ['class' => 'child-class'],
+                    'link_attr' => ['class' => 'link-class'],
+                    'label_attr' => ['class' => 'label-class'],
                 ],
                 'expected' => [
                     'depth' => 5,
@@ -95,6 +101,9 @@ class MenuTypeTest extends BaseBlockTypeTestCase
                     'leaf_class' => 'leaf',
                     'branch_class' => 'branch',
                     'menu' => 'Top Menu',
+                    'child_attr' => ['class' => 'child-class'],
+                    'link_attr' => ['class' => 'link-class'],
+                    'label_attr' => ['class' => 'label-class'],
                 ]
             ],
         ];
@@ -108,7 +117,12 @@ class MenuTypeTest extends BaseBlockTypeTestCase
         $view = new BlockView($rootView);
         $block = $this->getMock('Oro\Component\Layout\BlockInterface');
         $menu = $this->getMock('Knp\Menu\ItemInterface');
-        $options = ['menu' => $menuName];
+        $options = [
+            'menu' => $menuName,
+            'child_attr' => [],
+            'link_attr' => [],
+            'label_attr' => [],
+        ];
 
         $this->provider->expects($this->once())
             ->method('has')
