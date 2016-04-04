@@ -17,6 +17,7 @@ class PurchaseAction extends AbstractPaymentMethodAction
             ->setRequired('paymentMethod')
             ->addAllowedTypes('paymentMethod', 'string');
     }
+
     /** {@inheritdoc} */
     protected function configureValuesResolver(OptionsResolver $resolver)
     {

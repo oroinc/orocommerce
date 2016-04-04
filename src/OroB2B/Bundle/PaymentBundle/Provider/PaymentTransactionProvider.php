@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PaymentBundle\Provider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class PaymentTransactionProvider
 {
@@ -47,14 +48,20 @@ class PaymentTransactionProvider
 
     /**
      * @param object $object
-     * @param string $action
+     * @param string $amount
+     * @param string $currency
      * @return PaymentTransaction
      */
-    public function getActivePaymentTransaction($object, $action)
+    public function getActiveAuthorizePaymentTransaction($object, $amount, $currency)
     {
         return $this->getPaymentTransaction(
             $object,
-            ['active' => true, 'action' => (string)$action]
+            [
+                'active' => true,
+                'action' => PaymentMethodInterface::AUTHORIZE,
+                'amount' => $amount,
+                'currency' => $currency,
+            ]
         );
     }
 

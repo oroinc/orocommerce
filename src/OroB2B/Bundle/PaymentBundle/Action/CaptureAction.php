@@ -11,9 +11,10 @@ class CaptureAction extends AbstractPaymentMethodAction
     {
         $options = $this->getOptions($context);
 
-        $paymentTransaction = $this->paymentTransactionProvider->getActivePaymentTransaction(
+        $paymentTransaction = $this->paymentTransactionProvider->getActiveAuthorizePaymentTransaction(
             $options['object'],
-            PaymentMethodInterface::AUTHORIZE
+            $options['amount'],
+            $options['currency']
         );
 
         if (!$paymentTransaction) {
