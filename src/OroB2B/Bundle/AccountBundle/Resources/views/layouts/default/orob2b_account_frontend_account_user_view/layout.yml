@@ -27,10 +27,7 @@ layout:
         - @add:
             id: account_sidebar
             parentId: sidebar_left
-            blockType: block
-            options:
-                vars:
-                    route: { @value: 'orob2b_account_frontend_account_user_index' }
+            blockType: container
 
         - @addTree:
             items:
