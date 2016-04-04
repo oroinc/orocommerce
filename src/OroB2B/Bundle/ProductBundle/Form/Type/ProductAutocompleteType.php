@@ -44,6 +44,7 @@ class ProductAutocompleteType extends AbstractProductAwareType
                         'OroB2BProductBundle:Product:Autocomplete/autocomplete_selection.html.twig',
                     'componentModule' => 'orob2bproduct/js/app/components/product-autocomplete-component',
                 ],
+                'attr' => ['spellcheck' => 'false'],
             ]
         );
 

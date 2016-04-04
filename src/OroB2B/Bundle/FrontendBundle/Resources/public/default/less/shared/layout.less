@@ -2953,6 +2953,10 @@
     padding: 1rem;
   }
 
+  .removeLineItem.btn {
+    min-width: 3rem;
+  }
+
   .btn {
     min-width: 20rem;
   }
@@ -3432,7 +3436,7 @@
 
 /*Account page filter controls*/
 .oro-oq__filter-controls {
-  margin: 1rem 0 0;
+  margin: 1rem 0 1rem !important;
 
   &.oro-oq__filter-controls_by-sides {
     display: flex;
@@ -3484,6 +3488,7 @@
       &:last-child {
         text-align: left;
         flex-grow: 0;
+        flex-basis: 15rem;
       }
     }
   }
@@ -3554,11 +3559,11 @@
     }
 
     .oro-oq__filter__item {
-      flex-grow: 1;
+      flex-grow: 0;
 
       &:first-child {
         flex-basis: 32rem;
-        flex-grow: 0;
+        flex-grow: 1;
         position: relative;
 
         @media (max-width: 1280px) {
@@ -3569,7 +3574,6 @@
 
       &:last-child {
         flex-grow: 0;
-        flex-basis: 15rem;
 
         @media (max-width: 767px) {
           flex-basis: auto;
