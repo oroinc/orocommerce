@@ -11,7 +11,7 @@ class SecureTokenIdentifier extends AbstractOption
      */
     public static function generate()
     {
-        return md5(time() . uniqid('Payflow', true));
+        return md5(microtime() . uniqid('Payflow', true));
     }
 
     /** {@inheritdoc} */

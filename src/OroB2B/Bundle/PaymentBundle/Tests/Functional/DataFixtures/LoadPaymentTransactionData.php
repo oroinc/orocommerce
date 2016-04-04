@@ -6,6 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use OroB2B\Bundle\PaymentBundle\Method\PayflowGateway;
 
 class LoadPaymentTransactionData extends AbstractFixture
 {
@@ -18,10 +19,10 @@ class LoadPaymentTransactionData extends AbstractFixture
     {
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction
-            ->setType('Payflow')
+            ->setAction(PayflowGateway::TYPE)
             ->setEntityIdentifier(1)
             ->setEntityClass('OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm')
-            ->setData(
+            ->setRequest(
                 [
                     'SECURETOKEN' => 'SECURETOKEN',
                     'SECURETOKENID' => 'SECURETOKENID',

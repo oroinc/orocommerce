@@ -29,13 +29,13 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
         array $expectedPaymentTransactionData = []
     ) {
         $paymentTransaction = new PaymentTransaction();
-        $paymentTransaction->setData($paymentTransactionData);
+        $paymentTransaction->setRequest($paymentTransactionData);
 
         $event = new CallbackReturnEvent($data);
         $event->setPaymentTransaction($paymentTransaction);
 
         $this->listener->onCallback($event);
-        $this->assertEquals($expectedPaymentTransactionData, $paymentTransaction->getData());
+        $this->assertEquals($expectedPaymentTransactionData, $paymentTransaction->getRequest());
     }
 
     /**
