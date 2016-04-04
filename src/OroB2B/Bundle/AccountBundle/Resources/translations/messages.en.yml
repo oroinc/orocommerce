@@ -391,6 +391,7 @@ orob2b.account:
         account_user:
             role.entity_plural_label: Account User Roles
             entity_plural_label: Account Users
+            profile.label: Account Information
         title:
             account_user_role.create: Create Account User Role
             account_user_role.edit: Edit Account User Role
