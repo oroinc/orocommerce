@@ -3,11 +3,14 @@
 namespace OroB2B\Bundle\PaymentBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Types\Type;
 
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
+
+use OroB2B\Bundle\PaymentBundle\DBAL\Types\SecureArrayType;
 
 class OroB2BPaymentBundleInstaller implements Installation, NoteExtensionAwareInterface
 {
@@ -30,7 +33,7 @@ class OroB2BPaymentBundleInstaller implements Installation, NoteExtensionAwareIn
      */
     public function getMigrationVersion()
     {
-        return 'v1_0';
+        return 'v1_1';
     }
 
     /**
@@ -49,6 +52,7 @@ class OroB2BPaymentBundleInstaller implements Installation, NoteExtensionAwareIn
         $this->createOroB2BPaymentTermTable($schema);
         $this->addNoteAssociations($schema);
         $this->createOroB2BPaymentIntersectionTables($schema);
+        $this->createOroB2BPaymentTransactionTable($schema);
 
         $this->addOroB2BPaymentTermToAccountGroupForeignKeys($schema);
         $this->addOroB2BPaymentTermToAccountForeignKeys($schema);
@@ -93,6 +97,24 @@ class OroB2BPaymentBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('account_group_id', 'integer', []);
         $table->setPrimaryKey(['payment_term_id', 'account_group_id']);
         $table->addUniqueIndex(['account_group_id']);
+    }
+
+    /**
+     * Create table for PaymentTransaction entity
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BPaymentTransactionTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_payment_transaction');
+        $table->addColumn('id', Type::INTEGER, ['autoincrement' => true]);
+        $table->addColumn('reference', Type::STRING, ['notnull' => false]);
+        $table->addColumn('state', Type::STRING, ['notnull' => false]);
+        $table->addColumn('type', Type::STRING);
+        $table->addColumn('entity_class', Type::STRING);
+        $table->addColumn('entity_identifier', Type::INTEGER);
+        $table->addColumn('data', SecureArrayType::TYPE, ['notnull' => false]);
+        $table->setPrimaryKey(['id']);
     }
 
     /**
