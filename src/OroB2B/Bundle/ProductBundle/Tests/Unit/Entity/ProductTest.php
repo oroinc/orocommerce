@@ -41,6 +41,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $collections = [
             ['names', new LocalizedFallbackValue()],
             ['descriptions', new LocalizedFallbackValue()],
+            ['shortDescriptions', new LocalizedFallbackValue()],
         ];
 
         $this->assertPropertyCollections(new Product(), $collections);
@@ -154,6 +155,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $product->getUnitPrecisions()->add(new ProductUnitPrecision());
         $product->getNames()->add(new LocalizedFallbackValue());
         $product->getDescriptions()->add(new LocalizedFallbackValue());
+        $product->getShortDescriptions()->add(new LocalizedFallbackValue());
         $product->addVariantLink(new ProductVariantLink(new Product(), new Product()));
         $product->setVariantFields(['field']);
 
@@ -166,6 +168,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $product->getUnitPrecisions());
         $this->assertCount(1, $product->getNames());
         $this->assertCount(1, $product->getDescriptions());
+        $this->assertCount(1, $product->getShortDescriptions());
         $this->assertCount(1, $product->getVariantLinks());
         $this->assertCount(1, $product->getVariantFields());
 
@@ -175,6 +178,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(0, $productCopy->getUnitPrecisions());
         $this->assertCount(0, $productCopy->getNames());
         $this->assertCount(0, $productCopy->getDescriptions());
+        $this->assertCount(0, $productCopy->getShortDescriptions());
         $this->assertCount(0, $productCopy->getVariantLinks());
         $this->assertCount(0, $productCopy->getVariantFields());
     }
@@ -224,11 +228,25 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $localizedDescription->setString('localized')
             ->setLocale(new Locale());
 
-        $category = new Product();
-        $category->addDescription($defaultDescription)
+        $product = new Product();
+        $product->addDescription($defaultDescription)
             ->addDescription($localizedDescription);
 
-        $this->assertEquals($defaultDescription, $category->getDefaultDescription());
+        $this->assertEquals($defaultDescription, $product->getDefaultDescription());
+    }
+
+    public function testGetDefaultShortDescription()
+    {
+        $defaultShortDescription = new LocalizedFallbackValue();
+        $defaultShortDescription->setString('default short');
+
+        $localizedShortDescription = new LocalizedFallbackValue();
+        $localizedShortDescription->setString('localized')->setLocale(new Locale());
+
+        $product = new Product();
+        $product->addShortDescription($defaultShortDescription)->addShortDescription($localizedShortDescription);
+
+        $this->assertEquals($defaultShortDescription, $product->getDefaultShortDescription());
     }
 
     /**
@@ -245,6 +263,22 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             $product->addDescription($description);
         }
         $product->getDefaultDescription();
+    }
+
+    /**
+     * @param array $shortDescriptions
+     * @dataProvider getDefaultDescriptionExceptionDataProvider
+     *
+     * @expectedException \LogicException
+     * @expectedExceptionMessage There must be only one default short description
+     */
+    public function testGetDefaultShortDescriptionException(array $shortDescriptions)
+    {
+        $product = new Product();
+        foreach ($shortDescriptions as $shortDescription) {
+            $product->addShortDescription($shortDescription);
+        }
+        $product->getDefaultShortDescription();
     }
 
     public function testVariantLinksRelation()

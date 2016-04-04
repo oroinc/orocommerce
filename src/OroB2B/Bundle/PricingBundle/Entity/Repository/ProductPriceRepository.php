@@ -118,6 +118,7 @@ class ProductPriceRepository extends EntityRepository
      * @param bool $getTierPrices
      * @param string|null $currency
      * @param string|null $productUnitCode
+     * @param array $orderBy
      *
      * @return ProductPrice[]
      */
@@ -126,7 +127,8 @@ class ProductPriceRepository extends EntityRepository
         array $productIds,
         $getTierPrices = true,
         $currency = null,
-        $productUnitCode = null
+        $productUnitCode = null,
+        array $orderBy = ['unit' => 'ASC', 'quantity' => 'ASC']
     ) {
         if (!$productIds) {
             return [];
@@ -139,9 +141,7 @@ class ProductPriceRepository extends EntityRepository
                 $qb->expr()->in('IDENTITY(price.product)', ':productIds')
             )
             ->setParameter('priceListId', $priceListId)
-            ->setParameter('productIds', $productIds)
-            ->addOrderBy('price.unit')
-            ->addOrderBy('price.quantity');
+            ->setParameter('productIds', $productIds);
 
         if ($currency) {
             $qb
@@ -159,6 +159,10 @@ class ProductPriceRepository extends EntityRepository
             $qb
                 ->andWhere($qb->expr()->eq('IDENTITY(price.unit)', ':productUnitCode'))
                 ->setParameter('productUnitCode', $productUnitCode);
+        }
+
+        foreach ($orderBy as $fieldName => $orderDirection) {
+            $qb->addOrderBy('price.' . $fieldName, $orderDirection);
         }
 
         return $qb->getQuery()->getResult();

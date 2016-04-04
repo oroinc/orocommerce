@@ -39,7 +39,7 @@ operations:
                 source_name: 'shoppingList'
                 source_entity: $.data
                 settings:
-                    allow_source_remove: true
+                    allow_manual_source_remove: true
                     remove_source: true
                     source_remove_label: $.sourceRemoveLabel
                     edit_order_link: $.editLink

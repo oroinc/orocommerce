@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\EventListener;
+namespace OroB2B\Bundle\OrderBundle\EventListener\ORM;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
@@ -23,15 +23,17 @@ class OrderListener
     }
 
     /**
+     * @param Order $entity
      * @param LifecycleEventArgs $args
      */
-    public function postPersist(LifecycleEventArgs $args)
+    public function postPersist(Order $entity, LifecycleEventArgs $args)
     {
-        /** @var Order $entity */
-        $entity = $args->getEntity();
+        if (!$entity->getIdentifier()) {
+            $changeSet = [
+                'identifier' => [null, $this->idGenerator->generate($entity)],
+            ];
 
-        if ($entity instanceof Order && !$entity->getIdentifier()) {
-            $entity->setIdentifier($this->idGenerator->generate($entity));
+            $args->getEntityManager()->getUnitOfWork()->scheduleExtraUpdate($entity, $changeSet);
         }
     }
 }
