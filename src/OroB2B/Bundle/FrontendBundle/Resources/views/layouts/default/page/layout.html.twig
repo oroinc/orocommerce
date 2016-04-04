@@ -129,27 +129,6 @@
     {% endif %}
 {% endblock %}
 
-{% block _footer_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " footer"
-    }) %}
-    <footer{{ block('block_attributes') }}>
-        <div class="container-fluid">
-            {{ block_widget(block) }}
-        </div>
-    </footer>
-{% endblock %}
-
-{% block _footer_copyright_widget %}
-    <div class="row">
-        <div class="col-md-12">
-            <div class="copy">
-                {{ block_widget(block) }}
-            </div>
-        </div>
-    </div>
-{% endblock %}
-
 {% block _notification_widget %}
     {% set attr = {
         id: 'flash-messages'
