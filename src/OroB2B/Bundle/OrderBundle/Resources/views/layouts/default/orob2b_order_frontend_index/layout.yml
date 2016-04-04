@@ -19,9 +19,14 @@ layout:
             optionName: class_prefix
             optionValue: 'orders'
 
+        - @setOption:
+            id: datagrid_toolbar_button_container
+            optionName: visible
+            optionValue: true
+
         - @add:
-            id: create_order_button_top
-            parentId: content
+            id: create_order_button
+            parentId: datagrid_toolbar_button_container
             blockType: action_combined_buttons
             options:
                 actions:
@@ -35,16 +40,6 @@ layout:
             blockType: datagrid
             options:
                 grid_name: frontend-orders-grid
-
-        - @add:
-            id: create_order_button_bottom
-            parentId: content
-            blockType: action_combined_buttons
-            options:
-                actions:
-                    @value: $data.actions.all
-                entityClass:
-                    @value: 'OroB2B\Bundle\OrderBundle\Entity\Order'
 
         - @add:
             id: account_sidebar
