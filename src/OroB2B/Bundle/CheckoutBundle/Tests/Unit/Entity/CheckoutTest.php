@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CheckoutBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
@@ -38,7 +39,8 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
             ['account', new Account()],
             ['accountUser', new AccountUser()],
             ['website', new Website()],
-            ['source', new CheckoutSource()]
+            ['source', new CheckoutSource()],
+            ['shippingCost', Price::create(2, 'USD')],
         ];
 
         $entity = new Checkout();
@@ -106,5 +108,36 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
                 'source' => '\OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface',
             ]
         ];
+    }
+
+    public function testPostLoad()
+    {
+        $value = 1;
+        $currency = 'USD';
+
+        $item = $this->getEntity(
+            'OroB2B\Bundle\CheckoutBundle\Entity\Checkout',
+            [
+                'shippingEstimateAmount' => $value,
+                'shippingEstimateCurrency' => $currency
+            ]
+        );
+
+        $item->postLoad();
+
+        $this->assertEquals(Price::create($value, $currency), $item->getShippingCost());
+    }
+
+    public function testUpdateShippingEstimate()
+    {
+        $item = new Checkout();
+        $value = 1;
+        $currency = 'USD';
+        $item->setShippingCost(Price::create($value, $currency));
+
+        $item->updateShippingEstimate();
+
+        $this->assertEquals($value, $item->getShippingCost()->getValue());
+        $this->assertEquals($currency, $item->getShippingCost()->getCurrency());
     }
 }

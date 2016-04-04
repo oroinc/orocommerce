@@ -10,11 +10,13 @@
 {% endblock %}
 
 {% block _product_grid_row_image_holder_widget %}
+    {% import 'OroB2BProductBundle::image_macros.html.twig' as Image %}
+
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " product-item__image-holder product-item__image-holder_<%= themeOptions.view %>"
     }) %}
     <div {{ block('block_attributes') }}>
-        {% image '@OroB2BProductBundle/Resources/public/default/images/no_image.png' %}{% set noImageUrl = asset_url %}{% endimage %}
+        {% set noImageUrl = Image.url(null, 'product_large') %}
         <a href="javascript:void(0)" class="view-product" style="background-image: url('<% if (model.image) { %><%= model.image %><% } else { %>{{ noImageUrl }}<% } %>')"></a>
     </div>
 {% endblock %}
@@ -91,12 +93,12 @@
     </tr>
 {% endblock %}
 
-{% block _product_grid_row_description_widget %}
+{% block _product_grid_row_short_description_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " product__description product__description_<%= themeOptions.view %>"
     }) %}
     <div {{ block('block_attributes') }}>
-        <p><%= model.description %></p>
+        <p><%= model.shortDescription %></p>
     </div>
 {% endblock %}
 

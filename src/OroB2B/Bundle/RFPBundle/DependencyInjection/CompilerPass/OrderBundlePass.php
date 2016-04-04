@@ -17,7 +17,7 @@ class OrderBundlePass implements CompilerPassInterface
 
         if ($container->hasDefinition('orob2b_order.form.section.provider')) {
             $container
-                ->getDefinition('orob2b_rfp.form.type.extension.order_data_storage')
+                ->getDefinition('orob2b_rfp.form.type.extension.order_line_item_data_storage')
                 ->addMethodCall('setSectionProvider', [new Reference('orob2b_order.form.section.provider')]);
         }
     }

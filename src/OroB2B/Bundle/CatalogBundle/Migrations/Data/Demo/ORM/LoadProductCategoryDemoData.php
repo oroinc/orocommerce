@@ -81,8 +81,10 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
 
             $product = $this->getProductBySku($manager, $row['sku']);
             $category = $this->getCategoryByDefaultTitle($manager, $row['category']);
-            $category->addProduct($product);
-            $manager->persist($category);
+            if ($category) {
+                $category->addProduct($product);
+                $manager->persist($category);
+            }
         }
 
         fclose($handler);

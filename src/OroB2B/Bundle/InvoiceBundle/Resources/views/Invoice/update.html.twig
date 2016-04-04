@@ -48,7 +48,7 @@
     {% set id = 'invoice-edit' %}
 
     {% set totals %}
-        {% include 'OroB2BPricingBundle:Totals:totalsEntityEditPage.html.twig' with {
+        {% include 'OroB2BPricingBundle:Totals:totals.html.twig' with {
             options: {
                 route: 'orob2b_pricing_recalculate_entity_totals',
                 selectors: {

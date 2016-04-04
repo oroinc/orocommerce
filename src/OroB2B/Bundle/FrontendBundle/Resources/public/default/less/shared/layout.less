@@ -225,7 +225,6 @@
   height: 3.5rem;
   margin: 1.2rem 0 0;
   text-indent: -999rem;
-  background: url("@{images}/logo.png") no-repeat;
 
   @media (max-width: 991px) {
     width: 24rem;
@@ -463,7 +462,7 @@
 
 .top-nav__sublist-container {
   display: none;
-  width: 100%;
+  width: 1197px;
   padding: 0 1.5rem;
   position: absolute;
   top: 4.8rem;
@@ -501,11 +500,15 @@
     padding: 0 0 0 2.5rem;
   }
 
-  &.top-nav__sublist__item_has-adv-block {
+  &.top-nav__sublist__item_has-sales-block {
     flex-grow: 0;
 
     @media (max-width: 991px) {
       order: 1;
+    }
+
+    .sales-block {
+      margin: 2rem 0 0;
     }
   }
 
@@ -574,10 +577,6 @@
       }
     }
   }
-}
-
-.adv-block {
-  margin: 2rem 0 0;
 }
 /* END TOP NAVIGATION*/
 
@@ -3233,7 +3232,7 @@
 
 //Accout my order page, quotes page
 .account-oq-container {
-  margin: 2rem -1.5rem 0;
+  margin: 2.3rem -1.5rem 0;
 
   &:before, &:after {
     content: "";
@@ -3264,7 +3263,7 @@
    @media (max-width: 767px) {
     width: 100%;
     float: none;
-    margin: 0 0 3rem;
+    margin: 0;
    }
 }
 
@@ -3294,13 +3293,24 @@
 
 .account-oq__item__title {
   float: left;
+
   font-size: 1.6rem;
   font-weight: 400;
   text-transform: uppercase;
+
+  @media (max-width: 991px) {
+    &.styled {
+      float: none;
+
+      padding-bottom: 10px;
+      margin-bottom: 16px;
+
+      border-bottom: 1px solid @base-border-color;
+    }
+  }
 }
 
 .account-oq__order-info {
-   margin: .5rem 0 0;
    max-width: 35rem;
 
    &__title {
@@ -3311,6 +3321,10 @@
      // TODO: override hard selector
      > tbody > tr > td {
        padding-left: 0;
+
+       line-height: 1.4;
+
+       vertical-align: top;
      }
 
      td {
@@ -3319,6 +3333,7 @@
 
        &:last-child {
          font-style: italic;
+         line-height: 1.75;
        }
      }
    }
@@ -3326,15 +3341,27 @@
 
 .account-oq__order-item-more {
   width: 52%;
+
   color: @base-font-color-lighter;
 
   @media (max-width: 767px) {
-    width: 42%;
+    width: 95%;
+
+    margin-top: 1.2rem;
+    margin-bottom: -1.2rem;
   }
 
 
   div {
     .ellipsis;
+
+    &.oro-long-text-expanded {
+      overflow: visible;
+
+      line-height: 1.2;
+
+      white-space: normal;
+    }
   }
 }
 
@@ -3457,7 +3484,6 @@
       &:last-child {
         text-align: left;
         flex-grow: 0;
-        flex-basis: 15rem;
       }
     }
   }
@@ -6177,3 +6203,9 @@
   }
 }
 /*/Compare Products*/
+
+.pinned-dropdown {
+  .icons-holder:not(:first-child) {
+    display: none !important;
+  }
+}

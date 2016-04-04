@@ -2,13 +2,14 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Event;
 
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Event\CallbackReturnEvent;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+
+use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use OroB2B\Bundle\PaymentBundle\Event\CallbackReturnEvent;
 use OroB2B\Bundle\PaymentBundle\Event\CallbackHandler;
-use Symfony\Component\HttpFoundation\Response;
 
 class CallbackHandlerTest extends \PHPUnit_Framework_TestCase
 {

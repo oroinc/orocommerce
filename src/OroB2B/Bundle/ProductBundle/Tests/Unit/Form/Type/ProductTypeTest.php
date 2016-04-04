@@ -215,6 +215,10 @@ class ProductTypeTest extends FormIntegrationTestCase
                         ['text' => 'first description'],
                         ['text' => 'second description'],
                     ],
+                    'shortDescriptions' => [
+                        ['text' => 'first short description'],
+                        ['text' => 'second short description'],
+                    ],
                     'variantFields' => array_keys($this->exampleCustomFields)
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(false, true),
@@ -272,7 +276,9 @@ class ProductTypeTest extends FormIntegrationTestCase
                 ->addName($this->createLocalizedValue('first name'))
                 ->addName($this->createLocalizedValue('second name'))
                 ->addDescription($this->createLocalizedValue(null, 'first description'))
-                ->addDescription($this->createLocalizedValue(null, 'second description'));
+                ->addDescription($this->createLocalizedValue(null, 'second description'))
+                ->addShortDescription($this->createLocalizedValue(null, 'first short description'))
+                ->addShortDescription($this->createLocalizedValue(null, 'second short description'));
         }
 
         return $expectedProduct->setSku('test sku');

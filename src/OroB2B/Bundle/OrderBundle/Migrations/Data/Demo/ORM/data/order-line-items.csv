@@ -1,35 +1,46 @@
 orderIdentifier,productSku,productUnitCode,freeFormProduct,shipBy,comment
-FR1012401,HSTUC,piece,,2016-05-01,
-FR1012401,HSSUC,set,,2016-05-01,
+FR1012401,4HC51,piece,,2016-05-01,
+FR1012401,2JV62,set,,2016-05-01,
 FR1012401,,piece,Custom logo patch,,
 FR1012401,,piece,Custom embroidery,,
-FR1012401,HCCM,piece,,,
-FR1012402,HSSUC,set,,,
-FR1012402,HLCU,piece,,,
-FR1012402,HPGMPUE,piece,,,
-FR1012402,HCCM,piece,,,
-FR1012402,HSTUC,piece,,,
+FR1012401,3YB32,piece,,,
+FR1012402,2JV62,set,,,
+FR1012402,1GB82,piece,,,
+FR1012402,3LV37,piece,,,
+FR1012402,3YB32,piece,,,
+FR1012402,4HC51,piece,,,
 FR1012402,,piece,Custom logo patch,2016-01-01,
 FR1012402,,piece,Custom embroidery,2016-01-01,
-FR1012403,HPGMPUE,piece,,,
-FR1012403,HCCM,piece,,2016-03-15,
-FR1012403,HSTUC,piece,,2016-03-15,
-FR1012403,HSSUC,set,,2016-03-15,
-FR1012403,HLCU,piece,,2016-03-15,
-FR1012403,HPGMPUE,piece,,,
-FR1012403,HCCM,piece,,,
+FR1012403,3LV37,piece,,,
+FR1012403,3YB32,piece,,2016-03-15,
+FR1012403,4HC51,piece,,2016-03-15,
+FR1012403,2JV62,set,,2016-03-15,
+FR1012403,1GB82,piece,,2016-03-15,
+FR1012403,3LV37,piece,,,
+FR1012403,3YB32,piece,,,
 FR1012403,,piece,Custom logo patch,2016-09-01,
 FR1012403,,piece,Custom embroidery,2016-09-01,
-FR1012404,HLCU,piece,,,
-FR1012404,HPGMPUE,piece,,,
-FR1012404,HCCM,piece,,,
-FR1012404,HSTUC,piece,,,
+FR1012404,1GB82,set,,,
+FR1012404,3LV37,piece,,,
+FR1012404,3YB32,piece,,,
+FR1012404,4HC51,piece,,,
 FR1012404,,piece,Custom logo patch,,
 FR1012404,,piece,Custom embroidery,,
-FR1012405,HPGMPUE,piece,,2016-04-03,"Please, make enhanced packaging"
-FR1012405,HCCM,piece,,2016-04-03,"Please, make enhanced packaging"
-FR1012405,HSTUC,piece,,2016-04-03,"Please, make enhanced packaging"
-FR1012405,HSSUC,set,,2016-04-03,"Please, make enhanced packaging"
-FR1012405,HLCU,piece,,2016-04-03,"Please, make enhanced packaging"
+FR1012405,3LV37,piece,,2016-04-03,"Please, make enhanced packaging"
+FR1012405,3YB32,piece,,2016-04-03,"Please, make enhanced packaging"
+FR1012405,4HC51,piece,,2016-04-03,"Please, make enhanced packaging"
+FR1012405,2JV62,set,,2016-04-03,"Please, make enhanced packaging"
+FR1012405,1GB82,set,,2016-04-03,"Please, make enhanced packaging"
 FR1012405,,piece,Custom logo patch,,
 FR1012405,,piece,Custom embroidery,,
+FR1012406,1GB82,set,,,
+FR1012406,3LV37,piece,,,
+FR1012406,3YB32,piece,,,
+FR1012406,4HC51,piece,,,
+FR1012406,,piece,Custom logo patch,,
+FR1012407,1GB82,set,,,
+FR1012407,3LV37,piece,,,
+FR1012407,3YB32,piece,,,"Please, make enhanced packaging"
+FR1012407,4HC51,piece,,,
+FR1012407,,piece,Custom logo patch,,
+FR1012407,,piece,Custom embroidery,,"Please, make enhanced packaging"
