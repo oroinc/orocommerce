@@ -66,6 +66,13 @@ class OroB2BCheckoutBundle implements Migration
         $table->addColumn('ship_until', 'date', ['notnull' => false, 'comment' => '(DC2Type:date)']);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addColumn('shipping_estimate_amount', 'money', [
+            'notnull' => false,
+            'precision' => 19,
+            'scale' => 4,
+            'comment' => '(DC2Type:money)'
+        ]);
+        $table->addColumn('shipping_estimate_currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->addUniqueIndex(['billing_address_id'], 'uniq_e56b559d79d0c0e4');
         $table->addUniqueIndex(['source_id'], 'uniq_e56b559d953c1c61');
         $table->addUniqueIndex(['workflow_item_id'], 'uniq_e56b559d1023c4ee');
