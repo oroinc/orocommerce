@@ -245,6 +245,20 @@ class AlternativeCheckout extends ExtendAlternativeCheckout implements
     protected $shippingCost;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="request_approval_notes", type="text", nullable=true)
+     */
+    protected $requestApprovalNotes;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="requested_for_approve", type="boolean")
+     */
+    protected $requestedForApprove;
+
+    /**
      * @return Account
      */
     public function getAccount()
@@ -692,13 +706,6 @@ class AlternativeCheckout extends ExtendAlternativeCheckout implements
     }
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="request_approval_notes", type="text", nullable=true)
-     */
-    protected $requestApprovalNotes;
-
-    /**
      * @return string
      */
     public function getRequestApprovalNotes()
@@ -715,6 +722,22 @@ class AlternativeCheckout extends ExtendAlternativeCheckout implements
         $this->requestApprovalNotes = $requestApprovalNotes;
 
         return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isRequestedForApprove()
+    {
+        return $this->requestedForApprove;
+    }
+
+    /**
+     * @param boolean $requestedForApprove
+     */
+    public function setRequestedForApprove($requestedForApprove)
+    {
+        $this->requestedForApprove = $requestedForApprove;
     }
 
     /**

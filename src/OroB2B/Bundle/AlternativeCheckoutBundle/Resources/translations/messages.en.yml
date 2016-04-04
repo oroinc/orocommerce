@@ -18,6 +18,7 @@ orob2b:
         ship_to_billing_address.label: Ship to Billing Address
         quoted_shipping_amount.label: Quoted shipping amount
         preferred_shipping_method.label: Preferred shipping method
+        requestApprovalNotes.label: Notes
         source.label: Source
         currency.label: Currency
         website.label: Website
@@ -34,18 +35,21 @@ orob2b:
                 step:
                     order_review.label: Order Review
                     request_approval.label: Request Approval
-                    approve_request.label: Approve Request
+                    approve_request.label: Order Approval
 
                 transition:
                     continue_to_order_review.label: Continue
                     continue_to_request_approval.label: Request Approval
                     continue_to_approve_request.label: Request Approval
-                    order_approve.label: Approve
+                    order_approve.label: Approve Order
                     back_to_order_review.label: Back To Order Review
                     back_to_request_approval.label: Back To Request Approval
 
+        messages:
+            waiting_for_approve: Waiting for approve
+            approved_at: Approved at
+
         security:
             permission:
-                checkout_approve: Checkout Approve
-
+                checkout_approve: Approve orders for quotes exceeding the allowable amount
 
