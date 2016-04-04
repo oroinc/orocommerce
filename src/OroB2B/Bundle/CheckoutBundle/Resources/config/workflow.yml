@@ -23,6 +23,8 @@ workflows:
                 property_path: checkout.shipUntil
             customer_notes:
                 property_path: checkout.customerNotes
+            payment_method:
+                property_path: checkout.paymentMethod
             billing_address_has_shipping:
                 type: boolean
                 label: If billing address also shipping
@@ -156,9 +158,13 @@ workflows:
             continue_to_place_order:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.continue_to_place_order.label
                 step_to: place_order
-                transition_definition: do_nothing
+                transition_definition: continue_to_place_order_definition
                 frontend_options:
                     is_checkout_continue: true
+                    page_component_module: 'orob2bcheckout/js/app/components/payment-transition-button-component'
+                form_options:
+                    attribute_fields:
+                        payment_method: ~
 
             back_to_billing_address:
                 label: orob2b.checkout.workflow.b2b_flow_checkout.transition.back_to_billing_address.label
@@ -260,6 +266,9 @@ workflows:
                                 - @equal: [$checkout.shipToBillingAddress, true]
                                 - @equal: [$billing_address_has_shipping, true]
                         parameters: [$checkout.shippingAddress, $checkout.billingAddress]
+            continue_to_place_order_definition:
+                conditions:
+                    @not_empty: $checkout.paymentMethod
             place_order_definition:
                 post_actions:
                     - @assign_constant_value: [$.result.typeBillingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_BILLING]

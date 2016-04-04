@@ -1,10 +1,18 @@
 {% block _checkout_form_fields_widget %}
+    {#<div class="hidden">#}
     <fieldset class="checkout__form__row">
+        {{ form_widget(form.payment_method) }}
+    </fieldset>
+{#</div>#}
+{% endblock %}
+
+{% block _payment_methods_form_widget %}
+    <div class="checkout__form__row" data-content="payment_method_form">
         <div class="checkout__form__col form__col_x6">
             <span class="checkout__form__label">Select a Payment Method<sup class="red">*</sup></span>
             <div class="checkout__form__radio">
                 <label class="radio_custom radio_custom_blue" data-radio="">
-                    <input type="radio" name="paymentMethod">
+                    <input type="radio" name="paymentMethod" value="payment_term">
                     <i class="cf-radio_button_checked radio_checked fs18 mmr5-md"></i>
                     <i class="cf-radio_button_unchecked radio_not-checked fs18 mmr5-md"></i>
                     <span class="checkbox_custom__text fs13">Payment Account</span>
@@ -23,7 +31,7 @@
             </div>
             <div class="checkout__form__radio">
                 <label class="radio_custom radio_custom_blue checked" data-radio="">
-                    <input type="radio" name="paymentMethod" checked="checked">
+                    <input type="radio" name="paymentMethod" checked="checked" value="paypal">
                     <i class="cf-radio_button_checked radio_checked fs18 mmr5-md"></i>
                     <i class="cf-radio_button_unchecked radio_not-checked fs18 mmr5-md"></i>
                     <span class="checkbox_custom__text fs13">Credit Card</span>
@@ -96,5 +104,5 @@
                 </div>
             </div>
         </div>
-    </fieldset>
+    </div>
 {% endblock %}

@@ -197,7 +197,9 @@ class Checkout extends ExtendCheckout implements
     protected $shippingMethod;
 
     /**
-     * @var
+     * @var string
+     *
+     * @ORM\Column(name="payment_method", type="string", nullable=true)
      */
     protected $paymentMethod;
 
@@ -358,7 +360,7 @@ class Checkout extends ExtendCheckout implements
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getPaymentMethod()
     {
@@ -366,7 +368,7 @@ class Checkout extends ExtendCheckout implements
     }
 
     /**
-     * @param mixed $paymentMethod
+     * @param string $paymentMethod
      * @return Checkout
      */
     public function setPaymentMethod($paymentMethod)

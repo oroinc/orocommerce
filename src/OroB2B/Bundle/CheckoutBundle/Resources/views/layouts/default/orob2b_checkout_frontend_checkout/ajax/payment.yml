@@ -8,6 +8,11 @@ layout:
             optionValue:
                 workflowStep: { @value: $data.workflowStep }
                 stepOrder: 4
+        - @add:
+            id: payment_methods_form
+            parentId: checkout_information
+            blockType: block
+            prepend: true
 
     conditions:
         @eq: [$context.workflowStepName, 'enter_payment']
