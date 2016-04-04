@@ -1,11 +1,12 @@
-require(['jquery', 'lodash', 'slick', 'bootstrapDatepicker', 'raty', 'perfectScrollbar', 'fastclick'], function(
+require(['jquery', 'lodash', 'slick', 'bootstrapDatepicker', 'raty', 'perfectScrollbar', 'fastclick', 'elevatezoom'], function(
     jQuery,
     _,
     slick,
     datepicker,
     raty,
     perfectScrollbar,
-    FastClick
+    FastClick,
+    elevateZoom
 ) {
 
     (function($) {
@@ -47,6 +48,7 @@ require(['jquery', 'lodash', 'slick', 'bootstrapDatepicker', 'raty', 'perfectScr
                 avoidDropdwonMenuHideInit();
                 dropdownMenuHideByCloseBtnBinding();
                 customScrollbarInit();
+                elevateZoomInit();
 
                 countInit().init({
                     plus: '[data-count-plus]',
@@ -686,6 +688,10 @@ require(['jquery', 'lodash', 'slick', 'bootstrapDatepicker', 'raty', 'perfectScr
                         $(this).perfectScrollbar('update');
                     });
                 });
+            }
+
+            function elevateZoomInit() {
+                $('[data-zoom-image]').elevateZoom({scrollZoom : true});
             }
 
             return app;
