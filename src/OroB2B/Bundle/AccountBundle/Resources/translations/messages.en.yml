@@ -404,6 +404,9 @@ orob2b.account:
         title:
             account_user_role.create: Create Account User Role
             account_user_role.edit: Edit Account User Role
+            page:
+                account_user_role.create: Create Role
+                account_user_role.edit: Edit Role
         sections:
             account_user_role:
                 label: Role Title
