@@ -1,5 +1,6 @@
 parameters:
     orob2b_payment.entity.payment_term.class: OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm
+    orob2b_payment.entity.payment_transaction.class: OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction
     orob2b_payment.payment_term.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_payment.twig.delete_message_text_extension.class: OroB2B\Bundle\PaymentBundle\Twig\DeleteMessageTextExtension
     orob2b_payment.event_listener.form_view.class: OroB2B\Bundle\PaymentBundle\EventListener\FormViewListener

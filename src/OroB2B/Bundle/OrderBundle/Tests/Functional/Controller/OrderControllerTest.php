@@ -135,6 +135,8 @@ class OrderControllerTest extends WebTestCase
             $crawler->filter('input[name="orob2b_order_type[poNumber]"]')->extract('value')[0]
         );
 
+        $this->assertNotEquals('N/A', $crawler->filter('.user-name')->text());
+
         $actualLineItems = $this->getActualLineItems($crawler, count($lineItems));
         $expectedLineItems = [
             [

@@ -26,6 +26,10 @@ define(function(require) {
             }
         },
 
+        events: {
+            'click [name="orob2b_sale_quote[shippingAddress][accountAddress]"]': 'addressFormChange',
+        },
+
         /**
          * @property {String}
          */
@@ -40,11 +44,6 @@ define(function(require) {
          * @property {jQuery}
          */
         $address: null,
-
-        /**
-         * @property {Boolean}
-         */
-        useDefaultAddress: null,
 
         /**
          * @property {Object}
@@ -74,20 +73,21 @@ define(function(require) {
          * Doing something after loading child components
          */
         handleLayoutInit: function() {
-            var self = this;
-
             this.ftid = this.$el.find('div[data-ftid]:first').data('ftid');
 
             this.setAddress(this.$el.find(this.options.selectors.address));
 
-            this.useDefaultAddress = true;
             this.$fields = this.$el.find(':input[data-ftid]').filter(':not(' + this.options.selectors.address + ')');
             this.fieldsByName = {};
+        },
+
+        /**
+         * Loading form after on select address click
+         */
+        addressFormChange: function() {
+            var self = this;
             this.$fields.each(function() {
                 var $field = $(this);
-                if ($field.val().length > 0) {
-                    self.useDefaultAddress = false;
-                }
                 var name = self.normalizeName($field.data('ftid').replace(self.ftid + '_', ''));
                 self.fieldsByName[name] = $field;
             });
@@ -120,7 +120,6 @@ define(function(require) {
 
             var self = this;
             this.$address.change(function(e) {
-                self.useDefaultAddress = false;
                 self.accountAddressChange(e);
             });
         },
@@ -160,12 +159,12 @@ define(function(require) {
             } else {
                 this.$fields.each(function() {
                     var $field = $(this);
-
                     if ($field.data('select2')) {
                         $field.select2('readonly', false);
                     } else {
                         $field.attr('readonly', false);
                     }
+
                 });
             }
         },
@@ -198,14 +197,19 @@ define(function(require) {
 
             var $oldAddress = this.$address;
             this.setAddress($(address));
-
+            this.$fields.each(function() {
+                var $field = $(this);
+                $field.val('');
+                if ($field.data('select2')) {
+                    $field.select2('readonly', true);
+                    $field.data('selected-data', '').change();
+                } else {
+                    $field.attr('readonly', true);
+                }
+            });
             $oldAddress.parent().trigger('content:remove');
             $oldAddress.select2('destroy')
                 .replaceWith(this.$address);
-
-            if (this.useDefaultAddress) {
-                this.$address.val(this.$address.data('default')).change();
-            }
 
             this.initLayout().done(_.bind(this.loadingEnd, this));
         },

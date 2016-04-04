@@ -16,3 +16,4 @@ orob2b_frontend:
             commerce.title: 'Commerce'
         fields:
             frontend_theme.label: 'Theme'
+    copyright: '&copy; 2016 Oro.Inc. All Rights Reserved.'

@@ -34,6 +34,8 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
     const NAME_CUSTOM_LOCALE = 'name custom';
     const DESCRIPTION_DEFAULT_LOCALE = 'description default';
     const DESCRIPTION_CUSTOM_LOCALE = 'description custom';
+    const SHORT_DESCRIPTION_DEFAULT_LOCALE = 'short description default';
+    const SHORT_DESCRIPTION_CUSTOM_LOCALE = 'short description custom';
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|EntityManager
@@ -150,6 +152,8 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
             ->addName($this->prepareLocalizedValue(self::NAME_CUSTOM_LOCALE))
             ->addDescription($this->prepareLocalizedValue(null, self::DESCRIPTION_DEFAULT_LOCALE))
             ->addDescription($this->prepareLocalizedValue(null, self::DESCRIPTION_CUSTOM_LOCALE))
+            ->addShortDescription($this->prepareLocalizedValue(null, self::SHORT_DESCRIPTION_DEFAULT_LOCALE))
+            ->addShortDescription($this->prepareLocalizedValue(null, self::SHORT_DESCRIPTION_CUSTOM_LOCALE))
             ->setImage($image);
 
         $this->skuIncrementor->expects($this->once())
@@ -204,6 +208,10 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
         $productCopyDescriptions = $productCopy->getDescriptions();
         $this->assertEquals(self::DESCRIPTION_DEFAULT_LOCALE, $productCopyDescriptions[0]->getText());
         $this->assertEquals(self::DESCRIPTION_CUSTOM_LOCALE, $productCopyDescriptions[1]->getText());
+
+        $productCopyShortDescriptions = $productCopy->getShortDescriptions();
+        $this->assertEquals(self::SHORT_DESCRIPTION_DEFAULT_LOCALE, $productCopyShortDescriptions[0]->getText());
+        $this->assertEquals(self::SHORT_DESCRIPTION_CUSTOM_LOCALE, $productCopyShortDescriptions[1]->getText());
 
         $this->assertEquals($imageCopy, $productCopy->getImage());
     }

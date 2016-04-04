@@ -13,6 +13,7 @@ parameters:
     orob2b_sale.provider.quote_product_price.class: OroB2B\Bundle\SaleBundle\Provider\QuoteProductPriceProvider
     orob2b_sale.provider.quote_address.class: OroB2B\Bundle\SaleBundle\Provider\QuoteAddressProvider
     orob2b_sale.provider.quote_address_security.class: OroB2B\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider
+    orob2b_sale.data_provider.checkout_line_item.class: OroB2B\Bundle\SaleBundle\Provider\QuoteCheckoutLineItemDataProvider
 
     #Models
     orob2b_sale.service.quote_to_order_converter.class: OroB2B\Bundle\SaleBundle\Model\QuoteToOrderConverter
@@ -145,3 +146,8 @@ services:
             - @request_stack
             - %orob2b_account.entity.account.class%
             - %orob2b_account.entity.account_user.class%
+
+    orob2b_sale.data_provider.checkout_line_item:
+        class: %orob2b_sale.data_provider.checkout_line_item.class%
+        tags:
+             - { name: checkout.data_provider.line_item }
