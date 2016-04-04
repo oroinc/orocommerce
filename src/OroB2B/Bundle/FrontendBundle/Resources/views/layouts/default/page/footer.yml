@@ -15,5 +15,9 @@ layout:
                 wrapper:
                     footer:
                         footer_copyright: ~
+        - @move:
+            id: footer
+            parentId: wrapper
+            siblingId: main
     conditions:
         @neq: [ $context.logged_user, null ]
