@@ -91,13 +91,12 @@ define(function(require) {
          */
         createNewShoppingList: function(url, urlOptions, formData) {
             var self = this;
-            if (!this.dialog) {
-                this.dialog = new ShoppingListWidget({});
-                this.dialog.on('formSave', _.bind(function(response) {
-                    urlOptions.shoppingListId = response;
-                    self.addProductToShoppingList(url, urlOptions, formData);
-                }, this));
-            }
+
+            this.dialog = new ShoppingListWidget({});
+            this.dialog.on('formSave', _.bind(function(response) {
+                urlOptions.shoppingListId = response;
+                self.addProductToShoppingList(url, urlOptions, formData);
+            }, this));
 
             this.dialog.render();
         },

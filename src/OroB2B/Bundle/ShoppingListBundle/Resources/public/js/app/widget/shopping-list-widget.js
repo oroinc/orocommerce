@@ -6,13 +6,10 @@ define(function(require) {
     var DialogWidget = require('oro/dialog-widget');
     var __ = require('orotranslation/js/translator');
 
-    var config = require('module').config();
-
     ShoppingListWidget = DialogWidget.extend({
         initialize: function(options) {
             this.options.title = __('orob2b.shoppinglist.widget.add_to_new_shopping_list');
-            // TODO: remove config.routeParams after implement Layout for all pages used this widget
-            this.options.url = routing.generate('orob2b_shopping_list_frontend_create', config.routeParams || {});
+            this.options.url = routing.generate('orob2b_shopping_list_frontend_create');
             this.options.regionEnabled = false;
             this.options.incrementalPosition = false;
 
