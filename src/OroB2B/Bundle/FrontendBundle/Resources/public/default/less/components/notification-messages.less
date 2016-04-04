@@ -10,8 +10,23 @@
   }
 
   &.notification_notice {
-    background: @theme-notice-bg-color;
-    color: @theme-notice-font-color;
+    .alert {
+      background: @theme-notice-bg-color;
+      color: @theme-notice-font-color;
+      position: relative;
+    }
+
+    .badge {
+      margin-top: -4px;
+    }
+
+    .cf-clear {
+      cursor: pointer;
+      position: absolute;
+      top: 18px;
+      right: 8px;
+      font-size: 24px;
+    }
   }
 
   &.notification_alert {
@@ -80,10 +95,11 @@
   }
 
   &.notification_lg {
-    position: fixed;
+    position: relative;
     top: 0;
     left: 0;
-    width: 100%;
+    margin-left: 15px;
+    margin-right: 15px;
     z-index: 101;
     min-height: 5rem;
     line-height: 3rem;
