@@ -313,8 +313,8 @@ oro_system_configuration:
                 required: true
                 choice_translation_domain: messages
                 choices:
-                    authorization: orob2b.payment.system_configuration.fields.payment_action.authorization
-                    sale: orob2b.payment.system_configuration.fields.payment_action.sale
+                    authorize: orob2b.payment.system_configuration.fields.payment_action.authorize
+                    charge: orob2b.payment.system_configuration.fields.payment_action.charge
 
         orob2b_payment.payflow_gateway_test_mode:
             data_type: boolean

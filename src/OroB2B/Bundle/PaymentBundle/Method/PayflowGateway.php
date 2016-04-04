@@ -12,7 +12,7 @@ use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 
 class PayflowGateway implements PaymentMethodInterface
 {
-    const TYPE = 'PayPalPaymentsPro';
+    const TYPE = 'PayflowGateway';
 
     /** @var Gateway */
     protected $gateway;
@@ -171,6 +171,6 @@ class PayflowGateway implements PaymentMethodInterface
     /** {@inheritdoc} */
     public function getType()
     {
-        return self::TYPE;
+        return static::TYPE;
     }
 }

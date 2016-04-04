@@ -7,6 +7,8 @@ use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 
 class PayPalPaymentsPro extends PayflowGateway
 {
+    const TYPE = 'PayPalPaymentsPro';
+
     /** {@inheritdoc} */
     protected function getCredentials()
     {
