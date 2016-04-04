@@ -25,13 +25,6 @@ layout:
                     blockType: text
                     options:
                         text: ~
-                footer:
-                    blockType: container
-                footer_copyright:
-                    blockType: text
-                    options:
-                        text: 'orob2b_frontend.copyright'
-                        escape: false
                 scripts:
                     blockType: script
                     options:
@@ -46,8 +39,6 @@ layout:
                                 page_title_container:
                                     page_title: ~
                             sidebar_left: ~
-                        footer:
-                            footer_copyright: ~
                     scripts: ~
         - @add:
             id: require_js_config
