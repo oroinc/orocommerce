@@ -502,7 +502,7 @@ class QuoteProduct implements ProductHolderInterface
     public function addQuoteProductOffer(QuoteProductOffer $quoteProductOffer)
     {
         if (!$this->quoteProductOffers->contains($quoteProductOffer)) {
-            $this->quoteProductOffers[] = $quoteProductOffer;
+            $this->quoteProductOffers->add($quoteProductOffer);
             $quoteProductOffer->setQuoteProduct($this);
         }
 
@@ -558,7 +558,7 @@ class QuoteProduct implements ProductHolderInterface
     public function addQuoteProductRequest(QuoteProductRequest $quoteProductRequest)
     {
         if (!$this->quoteProductRequests->contains($quoteProductRequest)) {
-            $this->quoteProductRequests[] = $quoteProductRequest;
+            $this->quoteProductRequests->add($quoteProductRequest);
             $quoteProductRequest->setQuoteProduct($this);
         }
 
