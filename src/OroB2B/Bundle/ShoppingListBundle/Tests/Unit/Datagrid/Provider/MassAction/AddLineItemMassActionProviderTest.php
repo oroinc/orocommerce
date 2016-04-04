@@ -70,10 +70,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'no shopping lists' => [
-                'shoppingLists' => [
-                    'shoppingLists' => [],
-                    'currentShoppingList' => null
-                ],
+                'shoppingLists' => [],
                 'expected' => [
                     'new' => [
                         'type' => 'window',
@@ -101,11 +98,8 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
             ],
             'shopping lists without current' => [
                 'shoppingLists' => [
-                    'shoppingLists' => [
-                        $this->createShoppingList(1),
-                        $this->createShoppingList(2),
-                    ],
-                    'currentShoppingList' => null
+                    $this->createShoppingList(1),
+                    $this->createShoppingList(2),
                 ],
                 'expected' => [
                     'list1' => [
@@ -156,10 +150,8 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
             ],
             'shopping lists with current' => [
                 'shoppingLists' => [
-                    'shoppingLists' => [
-                        $this->createShoppingList(3)
-                    ],
-                    'currentShoppingList' => $this->createShoppingList(42, true)
+                    $this->createShoppingList(42, true),
+                    $this->createShoppingList(3),
                 ],
                 'expected' => [
                     'current' => [
