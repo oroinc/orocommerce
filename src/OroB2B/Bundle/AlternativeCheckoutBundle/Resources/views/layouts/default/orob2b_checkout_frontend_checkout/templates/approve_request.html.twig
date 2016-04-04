@@ -1,38 +1,17 @@
 {% block _checkout_form_fields_widget -%}
     {% if checkout.allowed and checkout.allowRequestDate %}
         <div class="notification notification_xmd notification_notice notification-radiused mb1-md">
-            {{ 'orob2b.alternativecheckout.messages.approved_at'|trans }}: {{ checkout.allowRequestDate|oro_format_date }}
+            {{ 'orob2b.alternativecheckout.messages.approved_at'|trans }} {{ checkout.allowRequestDate|oro_time_format }}
         </div>
     {% else %}
         <div class="notification notification_xmd notification_alert notification-radiused mb1-md">
             {{ 'orob2b.alternativecheckout.messages.waiting_for_approve'|trans }}
         </div>
     {% endif %}
-    <label>{{ 'orob2b.alternativecheckout.requestApprovalNotes.label'|trans }}:</label>
-    <span>{{ checkout.requestApprovalNotes|nl2br|raw }}</span>
+    {% if checkout.requestApprovalNotes %}
+        <label>{{ 'orob2b.alternativecheckout.requestApprovalNotes.label'|trans }}:</label>
+        <span>{{ checkout.requestApprovalNotes|nl2br|raw }}</span>
+    {% endif %}
 
     {{ block_widget(block) }}
 {%- endblock %}
-
-{% block _checkout_button_continue_widget %}
-    {% if transitionData is defined and transitionData %}
-        {% import 'OroB2BCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
-        <div class="order-checkout-widget order-checkout-widget_block text-right">
-            {{ _layout.conditionMessagesStart(transitionData) }}
-            <button type="submit"
-                    class="btn btn_xlg {% if transitionData.isAllowed %}btn_orange{% endif %} checkout__submit-btn" {{ _layout.transitionAttrbiutes(transitionData, checkout) }}>
-                {{ transitionData.transition.label|trans }}
-            </button>
-            {{ _layout.conditionMessagesEnd(transitionData) }}
-        </div>
-    {% endif %}
-{% endblock %}
-
-{% block _checkout_button_back_widget %}
-    {% if transitionData is defined and transitionData %}
-        {% import 'OroB2BCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
-        <div class="checkout__form__back order-checkout-widget order-checkout-widget_block text-right">
-            {{ block_widget(block) }}
-        </div>
-    {% endif %}
-{% endblock %}
