@@ -1,7 +1,13 @@
-{% extends 'OroB2BFrontendBundle:layouts/default:layout.html.twig' %}
+{% block _checkout_form_fields_widget %}
+    <div class="hidden">
+    <fieldset class="checkout__form__row">
+        {{ form_widget(form.payment_method) }}
+    </fieldset>
+    </div>
+{% endblock %}
 
 {% block _payment_methods_widget %}
-    <div class="checkout__form" data-page-component-module="orob2bpayment/js/app/components/payment-method-selector-component">
+    <div class="checkout__form" data-content="payment_method_form" data-page-component-module="orob2bpayment/js/app/components/payment-method-selector-component">
         <div class="checkout__form__row">
             <div class="checkout__form__col form__col_x6" data-payment-method-forms>
                 {% if forms|length > 0 %}
@@ -22,7 +28,7 @@
     {% set vars = form.vars %}
     <div class="checkout__form__radio" data-item-container>
         <label class="radio_custom radio_custom_blue" data-radio>
-            <input type="radio" name="paymentMethod" data-choice="{{ vars.name }}" />
+            <input type="radio" name="paymentMethod" data-choice="{{ vars.name }}" value="{{ vars.name }}" />
             <i class="cf-radio_button_checked radio_checked fs18 mmr5-md"></i>
             <i class="cf-radio_button_unchecked radio_not-checked fs18 mmr5-md"></i>
             <span class="checkbox_custom__text fs13">{{ vars.label|trans }}</span>
@@ -47,9 +53,4 @@
     <div data-page-component-module="orob2bpayment/js/app/components/credit-card-component">
         {{ block_widget(block) }}
     </div>
-{% endblock %}
-
-{% block form_end_widget %}
-    {% set js_validation_options = {'ignore': ':hidden:not([type=hidden]):input[autocomplete]'} %}
-    {{ parent() }}
 {% endblock %}
