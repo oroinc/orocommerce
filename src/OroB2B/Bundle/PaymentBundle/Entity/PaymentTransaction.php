@@ -108,6 +108,12 @@ class PaymentTransaction
      */
     protected $response;
 
+    /**
+     * @var array
+     * @ORM\Column(name="transaction_options", type="array", nullable=true)
+     */
+    protected $transactionOptions;
+
 
     public function __construct()
     {
@@ -363,5 +369,24 @@ class PaymentTransaction
     public function isSuccessful()
     {
         return $this->successful;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTransactionOptions()
+    {
+        return $this->transactionOptions;
+    }
+
+    /**
+     * @param array $transactionOptions
+     * @return PaymentTransaction
+     */
+    public function setTransactionOptions(array $transactionOptions = null)
+    {
+        $this->transactionOptions = $transactionOptions;
+
+        return $this;
     }
 }

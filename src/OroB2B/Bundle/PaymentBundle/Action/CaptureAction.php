@@ -32,11 +32,18 @@ class CaptureAction extends AbstractPaymentMethodAction
             ->setCurrency($options['currency'])
             ->setSourcePaymentTransaction($paymentTransaction);
 
+        if (!empty($options['transactionOptions'])) {
+            $capturePaymentTransaction->setTransactionOptions($options['transactionOptions']);
+        }
+
         $this->paymentMethodRegistry
             ->getPaymentMethod($capturePaymentTransaction->getPaymentMethod())
             ->execute($capturePaymentTransaction);
 
         $this->paymentTransactionProvider->savePaymentTransaction($capturePaymentTransaction);
         $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
+        
+        // TODO: Assign real data here
+        $this->setAttributeValue($context, $capturePaymentTransaction->getId());
     }
 }

@@ -43,10 +43,17 @@ class PurchaseAction extends AbstractPaymentMethodAction
             ->setAmount($options['amount'])
             ->setCurrency($options['currency']);
 
+        if (!empty($options['transactionOptions'])) {
+            $paymentTransaction->setTransactionOptions($options['transactionOptions']);
+        }
+
         $this->paymentMethodRegistry
             ->getPaymentMethod($options['paymentMethod'])
             ->execute($paymentTransaction);
 
         $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
+
+        // TODO: Assign real data here
+        $this->setAttributeValue($context, $paymentTransaction->getId());
     }
 }
