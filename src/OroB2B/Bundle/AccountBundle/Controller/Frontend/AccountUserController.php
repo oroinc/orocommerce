@@ -7,6 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -60,7 +61,7 @@ class AccountUserController extends Controller
      * Create account user form
      *
      * @Route("/create", name="orob2b_account_frontend_account_user_create")
-     * @Template("OroB2BAccountBundle:AccountUser/Frontend:update.html.twig")
+     * @Layout
      * @Acl(
      *      id="orob2b_account_frontend_account_user_create",
      *      type="entity",
@@ -74,6 +75,15 @@ class AccountUserController extends Controller
     public function createAction(Request $request)
     {
         return $this->update(new AccountUser(), $request);
+
+//        if ($result instanceof Response) {
+//            return $result;
+//        }
+//        return [
+//            'data' => [
+//                'entity' => new AccountUser()
+//            ]
+//        ];
     }
 
     /**
@@ -134,7 +144,16 @@ class AccountUserController extends Controller
             $handler
         );
 
-        return $result;
+//        return $result;
+        if ($result instanceof Response) {
+            return $result;
+        }
+
+        return [
+            'data' => [
+                'entity' => $accountUser
+            ]
+        ];
     }
 
     /**
