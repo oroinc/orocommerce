@@ -1,0 +1,72 @@
+{% block _account_user_view_page_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}_full"
+}) %}
+    <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
+{% block _account_user_top_actions_widget %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " oro-order__controls-list oro-account__controls-list" }) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _account_user_view_information_widget %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " oro-account__block" }) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _account_user_view_information_title_widget %}
+    <div class="account-oq__item account-oq__item_full mb0-sm">
+        <h2 class="account-oq__item__title">
+            {{ block_widget(block) }}
+        </h2>
+    </div>
+{% endblock %}
+
+{% block _account_user_view_information_content_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import 'OroEmailBundle::actions.html.twig' as EmailActions %}
+    {% import 'OroEmailBundle::macros.html.twig' as Email %}
+
+    <div class="account-oq__item__body">
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'url': path('orob2b_account_account_user_info', {id: entity.id})
+        }) }}
+    </div>
+{% endblock %}
+
+{% block _account_user_address_book_widget %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " oro-account__block" }) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _account_user_address_book_title_widget %}
+    <div class="account-oq__item account-oq__item_full mb0-sm">
+        <h2 class="account-oq__item__title">
+            {{ block_widget(block) }}
+        </h2>
+    </div>
+{% endblock %}
+
+{% block _account_user_address_book_content_widget %}
+<div class="account-oq__item__body">
+    {{ oro_widget_render({
+        'widgetType': 'block',
+        'contentClasses': [],
+        'url': path('orob2b_account_account_user_address_book', {id: entity.id})
+    }) }}
+</div>
+{% endblock %}
+
+{% block _account_user_list_link_widget %}
+    <div class="">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
