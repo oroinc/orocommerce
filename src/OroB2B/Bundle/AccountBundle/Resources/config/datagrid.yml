@@ -796,7 +796,7 @@ datagrid:
                 editable: true
                 frontend_type: boolean
             fullName:
-                label: orob2b.account.frontend.account_user.fullName.label
+                label: orob2b.account.frontend.account_user.full_name.label
                 type: twig
                 frontend_type: html
                 data_name: fullName
