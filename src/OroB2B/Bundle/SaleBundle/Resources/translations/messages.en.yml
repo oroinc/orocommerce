@@ -176,6 +176,13 @@ orob2b:
             phone.label: Phone
 
             no_exist: No shipping address found
+
+        quotedemand:
+            entity_label: 'Quote Demand'
+            entity_plural_label: 'Quote Demands'
+            id.label: 'Id'
+            quote.label: 'Quote'
+
         controller:
             quote:
                 saved.message: 'Quote has been saved'
@@ -229,7 +236,7 @@ orob2b:
                     cancel: 'Cancel'
 
             quoteproduct:
-                product_sku.label: 'SKU'
+                product_sku.label: 'SKU #:'
                 product_name.label: 'Product'
                 comment.label: 'Seller Notes'
                 comment_account.label: 'My Notes'

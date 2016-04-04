@@ -24,6 +24,8 @@ services:
 
     orob2b_checkout.data_provider.converter.checkout_line_items:
         class: %orob2b_checkout.data_provider.converter.checkout_line_items.class%
+        arguments:
+            - @property_accessor
 
     orob2b_checkout.data_provider.manager.checkout_line_items:
         class: %orob2b_checkout.data_provider.manager.checkout_line_items.class%

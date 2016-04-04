@@ -78,6 +78,9 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
             $description = new LocalizedFallbackValue();
             $description->setText(nl2br($text));
 
+            $shortDescription = new LocalizedFallbackValue();
+            $shortDescription->setText($row['description']);
+
             $product = new Product();
             $product->setOwner($businessUnit)
                 ->setOrganization($organization)
@@ -85,7 +88,8 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
                 ->setInventoryStatus($inventoryStatuses[1])
                 ->setStatus(Product::STATUS_ENABLED)
                 ->addName($name)
-                ->addDescription($description);
+                ->addDescription($description)
+                ->addShortDescription($shortDescription);
 
             $image = $this->getImageForProductSku($manager, $locator, $row['sku']);
             if ($image) {

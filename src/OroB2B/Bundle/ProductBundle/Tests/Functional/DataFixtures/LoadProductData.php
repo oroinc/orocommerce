@@ -83,6 +83,12 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
                 }
             }
 
+            if (!empty($item['shortDescriptions'])) {
+                foreach ($item['shortDescriptions'] as $name) {
+                    $product->addShortDescription($this->createValue($name));
+                }
+            }
+
             $manager->persist($product);
             $this->addReference($item['productCode'], $product);
         }
