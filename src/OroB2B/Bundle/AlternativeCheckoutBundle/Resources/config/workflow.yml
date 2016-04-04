@@ -206,7 +206,7 @@ workflows:
             continue_to_approve_request:
                 label: orob2b.alternativecheckout.workflow.b2b_flow_alternative_checkout.transition.continue_to_approve_request.label
                 step_to: approve_request
-                transition_definition: do_nothing
+                transition_definition: request_for_approve_order_definition
                 frontend_options:
                     is_checkout_continue: true
                 message: 'You exceeded the allowable amount of $5,000.00. <br/> To proceed please request manager approval. <br/>'
@@ -547,6 +547,13 @@ workflows:
                             - @less_order_total_limit: [$checkout, 5000]
                         - @equal: [$checkout.allowed, false]
 
+            request_for_approve_order_definition:
+                post_actions:
+                    - @assign_value:
+                        conditions:
+                            @equal: [$checkout.requestedForApprove, false]
+                        parameters: [$checkout.requestedForApprove, true]
+
             approve_order_definition:
                 pre_conditions:
                     @and:
@@ -557,4 +564,6 @@ workflows:
                         conditions:
                             @equal: [$checkout.allowed, false]
                         parameters: [$checkout.allowed, true]
+                    - @create_datetime:
+                        attribute: $checkout.allowRequestDate
 
