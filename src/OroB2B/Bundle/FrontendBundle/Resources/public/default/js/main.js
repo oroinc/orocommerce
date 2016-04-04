@@ -691,7 +691,16 @@ require(['jquery', 'lodash', 'slick', 'bootstrapDatepicker', 'raty', 'perfectScr
             }
 
             function elevateZoomInit() {
-                $('[data-zoom-image]').elevateZoom({scrollZoom : true});
+                $('[data-zoom-image]').elevateZoom({
+                    scrollZoom: true,
+                    zoomWindowWidth: 630,
+                    zoomWindowHeight: 378,
+                    borderSize: 1,
+                    borderColour: '#ebebeb',
+                    lensBorderColour: '#7d7d7d',
+                    lensColour: '#000',
+                    lensOpacity: 0.22
+                });
             }
 
             return app;
