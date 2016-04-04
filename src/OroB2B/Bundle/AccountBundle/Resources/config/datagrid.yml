@@ -670,13 +670,6 @@ datagrid:
                     - CASE WHEN user.enabled = true AND user.confirmed = true THEN true ELSE false END AS status
                 from:
                     - { table: %orob2b_account.entity.account_user.class%, alias: user }
-                where:
-                    and:
-                        - :role MEMBER OF user.roles
-            bind_parameters:
-                -
-                    name: role
-                    default: NULL
         sorters:
             columns:
                 fullName:
@@ -722,6 +715,15 @@ datagrid:
 
     frontend-account-account-users-grid-view:
         extends: frontend-account-account-users-grid-basic
+        source:
+            query:
+                where:
+                    and:
+                        - :role MEMBER OF user.roles
+            bind_parameters:
+                -
+                    name: role
+                    default: NULL
         columns:
             fullName:
                 label: orob2b.account.frontend.account_user.full_name.label
