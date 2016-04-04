@@ -2,6 +2,16 @@ layout:
     actions:
         - @setBlockTheme:
             themes: 'OroB2BOrderBundle:layouts:default/orob2b_order_frontend_view/layout.html.twig'
+        - @appendOption:
+            id: title
+            optionName: value
+            optionValue:
+                - 'orob2b.account.menu.account_user.label'
+                - 'orob2b.frontend.order.entity_plural_label'
+                -
+                    label: 'orob2b.order.navigation.view'
+                    parameters:
+                        '%identifier%': { @value: $data.order.identifier }
         - @setOption:
             id: page_title
             optionName: text
@@ -20,7 +30,7 @@ layout:
         - @add:
             id: account_sidebar
             parentId: sidebar_left
-            blockType: block
+            blockType: container
         - @addTree:
             items:
                 order_view_page:

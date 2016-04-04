@@ -1,5 +1,11 @@
 layout:
     actions:
+        - @appendOption:
+            id: title
+            optionName: value
+            optionValue:
+                - 'orob2b.account.menu.account_user.label'
+                - 'orob2b.frontend.sale.quote.entity_plural_label'
         - @setOption:
             id: page_title
             optionName: text
@@ -17,4 +23,4 @@ layout:
         - @add:
             id: account_sidebar
             parentId: sidebar_left
-            blockType: block
+            blockType: container
