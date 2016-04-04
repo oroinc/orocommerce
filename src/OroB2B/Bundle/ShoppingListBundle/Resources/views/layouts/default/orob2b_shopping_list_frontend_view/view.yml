@@ -93,8 +93,8 @@ layout:
                         no_shopping_lists: ~
                         shopping_list_title: ~
                         shopping_list_top_actions: ~
-                        shopping_list_options: ~
                         shopping_list_line_items:
+                            shopping_list_options: ~
                             shopping_list_line_items_list: ~
                             shopping_list_line_items_empty: ~
                         shopping_list_checkout_container:
