@@ -4,10 +4,12 @@ namespace OroB2B\Bundle\RFPBundle\Form\Type\Frontend;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
+use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemCollectionType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType as BaseRequestProductType;
 
 class RequestProductType extends AbstractType
@@ -39,6 +41,7 @@ class RequestProductType extends AbstractType
                 'create_enabled' => false,
                 'grid_name' => 'products-select-grid-frontend',
                 'grid_widget_route' => 'orob2b_frontend_datagrid_widget',
+                'grid_view_widget_route' => 'orob2b_frontend_datagrid_widget',
                 'configs' => [
                     'route_name' => 'orob2b_frontend_autocomplete_search'
                 ],
@@ -68,7 +71,16 @@ class RequestProductType extends AbstractType
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
             'intention'  => 'rfp_frontend_request_product',
+            'skipLoadingMask' => true
         ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars['componentOptions']['skipLoadingMask'] = $options['skipLoadingMask'];
     }
 
     /**

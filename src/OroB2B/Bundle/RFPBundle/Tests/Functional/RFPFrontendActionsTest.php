@@ -76,7 +76,7 @@ class RFPFrontendActionsTest extends WebTestCase
 
         $this->assertEquals($expectedQuickAddLineItems, $this->getActualLineItems($crawler, 1));
 
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Submit Request For Quote')->form();
         $form['orob2b_rfp_frontend_request[firstName]'] = 'Firstname';
         $form['orob2b_rfp_frontend_request[lastName]'] = 'Lastname';
         $form['orob2b_rfp_frontend_request[email]'] = 'email@example.com';
