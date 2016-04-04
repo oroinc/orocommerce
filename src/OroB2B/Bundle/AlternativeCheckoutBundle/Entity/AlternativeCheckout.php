@@ -225,7 +225,7 @@ class AlternativeCheckout extends ExtendAlternativeCheckout implements
      *
      * @ORM\Column(name="allowed", type="boolean")
      */
-    protected $allowed;
+    protected $allowed = false;
 
     /**
      * @var \DateTime
@@ -256,7 +256,7 @@ class AlternativeCheckout extends ExtendAlternativeCheckout implements
      *
      * @ORM\Column(name="requested_for_approve", type="boolean")
      */
-    protected $requestedForApprove;
+    protected $requestedForApprove = false;
 
     /**
      * @return Account
