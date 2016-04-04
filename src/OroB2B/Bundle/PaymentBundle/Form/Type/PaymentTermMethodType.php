@@ -69,15 +69,27 @@ class PaymentTermMethodType extends AbstractPaymentMethodType
     /**
      * {@inheritdoc}
      */
-    public function isMethodEnabled()
+    public function getPaymentTerm()
     {
-        $token = $this->tokenStorage->getToken();
+        if (empty($this->paymentTerm)) {
+            $token = $this->tokenStorage->getToken();
 
-        /** @var AccountUser $user */
-        if ($token && ($user = $token->getUser()) instanceof AccountUser) {
-            $this->paymentTerm = $this->paymentTermProvider->getPaymentTerm($user->getAccount());
+            /** @var AccountUser $user */
+            if ($token && ($user = $token->getUser()) instanceof AccountUser) {
+                $this->paymentTerm = $this->paymentTermProvider->getPaymentTerm($user->getAccount());
+            }
         }
 
-        return !empty($this->paymentTerm);
+        return $this->paymentTerm;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isMethodEnabled()
+    {
+        $paymentTerm = $this->getPaymentTerm();
+
+        return !empty($paymentTerm);
     }
 }
