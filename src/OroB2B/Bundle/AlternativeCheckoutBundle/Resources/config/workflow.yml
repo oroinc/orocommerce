@@ -106,7 +106,7 @@ workflows:
                 is_final: true
                 allowed_transitions:
                     - approve_order
-                    - place_order
+                    - place_order_with_inactive_possibility
                     - back_to_billing_address
                     - back_to_billing_address
                     - back_to_shipping_address
@@ -206,7 +206,7 @@ workflows:
             continue_to_approve_request:
                 label: orob2b.alternativecheckout.workflow.b2b_flow_alternative_checkout.transition.continue_to_approve_request.label
                 step_to: approve_request
-                transition_definition: do_nothing
+                transition_definition: request_for_approve_order_definition
                 frontend_options:
                     is_checkout_continue: true
                 message: 'You exceeded the allowable amount of $5,000.00. <br/> To proceed please request manager approval. <br/>'
@@ -265,6 +265,22 @@ workflows:
                 transition_definition: place_order_definition
                 display_type: page
                 is_unavailable_hidden: true
+                frontend_options:
+                    is_checkout_continue: true
+                form_options:
+                    attribute_fields:
+                        remove_source: ~
+                        po_number: ~
+                        ship_until: ~
+                        customer_notes:
+                            form_type: textarea
+
+            place_order_with_inactive_possibility:
+                label: orob2b.checkout.workflow.b2b_flow_checkout.transition.place_order.label
+                step_to: approve_request
+                transition_definition: place_order_definition
+                display_type: page
+                is_unavailable_hidden: false
                 frontend_options:
                     is_checkout_continue: true
                 form_options:
@@ -351,9 +367,11 @@ workflows:
             place_order_definition:
                 pre_conditions:
                     @or:
-                        - @less_order_total_limit: [$checkout, 5000]
-                        - @equal: [$checkout.allowed, true]
-                        - @acl_granted: 'orob2b_alternativecheckout_checkout_approve'
+                        message: "Wayting For Approve"
+                        parameters:
+                            - @less_order_total_limit: [$checkout, 5000]
+                            - @equal: [$checkout.allowed, true]
+                            - @acl_granted: 'orob2b_alternativecheckout_checkout_approve'
                 post_actions:
                     - @assign_constant_value: [$.result.typeBillingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_BILLING]
                     - @assign_constant_value: [$.result.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
@@ -529,6 +547,13 @@ workflows:
                             - @less_order_total_limit: [$checkout, 5000]
                         - @equal: [$checkout.allowed, false]
 
+            request_for_approve_order_definition:
+                post_actions:
+                    - @assign_value:
+                        conditions:
+                            @equal: [$checkout.requestedForApprove, false]
+                        parameters: [$checkout.requestedForApprove, true]
+
             approve_order_definition:
                 pre_conditions:
                     @and:
@@ -539,4 +564,6 @@ workflows:
                         conditions:
                             @equal: [$checkout.allowed, false]
                         parameters: [$checkout.allowed, true]
+                    - @create_datetime:
+                        attribute: $checkout.allowRequestDate
 
