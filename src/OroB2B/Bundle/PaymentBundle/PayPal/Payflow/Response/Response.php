@@ -22,7 +22,7 @@ class Response implements ResponseInterface
     /** {@inheritdoc} */
     public function isSuccessful()
     {
-        return $this->getState() === '0';
+        return $this->getState() === ResponseStatusMap::APPROVED;
     }
 
     /** {@inheritdoc} */
@@ -35,5 +35,20 @@ class Response implements ResponseInterface
     public function getState()
     {
         return $this->values->offsetGet(self::RESULT_KEY);
+    }
+
+    /**
+     * Throws exception if status not found
+     * @return string
+     */
+    public function getMessage()
+    {
+        // Communication Error Response
+        if ((int)$this->getState() < 0) {
+            return CommunicationErrorsStatusMap::getMessage($this->getState());
+        }
+
+        // Return message by status code
+        return ResponseStatusMap::getMessage($this->getState());
     }
 }
