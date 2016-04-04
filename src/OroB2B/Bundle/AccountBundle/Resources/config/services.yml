@@ -411,6 +411,7 @@ services:
         class: %orob2b_account.event_listener.datagrid.account_user.class%
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.account-account-users-grid-update-basic, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-account-account-users-grid-update, method: onBuildBefore }
 
     orob2b_account.twig.security_extension:
         class: %orob2b_account.twig.account_extension.class%

@@ -63,7 +63,7 @@ class FrontendControllerTest extends WebTestCase
 
         $this->client->request('GET', $this->getUrl('_frontend'));
         $crawler = $this->client->followRedirect();
-        $this->assertEquals('OroCommerce', $crawler->filter('title')->html());
+        $this->assertEquals('Login', $crawler->filter('title')->html());
 
         // Check that backend theme was not affected
         $crawler = $this->client->request('GET', $this->getUrl('oro_user_security_login'));

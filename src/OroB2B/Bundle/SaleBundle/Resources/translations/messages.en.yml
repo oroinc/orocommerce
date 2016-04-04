@@ -217,8 +217,7 @@ orob2b:
                 po_number.label: 'PO Number'
                 ship_until.label: 'Do Not Ship Later Than'
                 assigned_account_users.label: 'Assigned To'
-                title.label: 'Quote #id'
-                head_title.label: 'Quote #id - Quotes'
+                title.label: 'Quote #%id%'
                 shipping_address.label: 'Shipping Address'
                 sections:
                     general: 'Quote Information'
