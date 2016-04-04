@@ -13,7 +13,7 @@ define(function(require) {
         options: {
             selectors: {
                 month: '.checkout__form__select_exp-month',
-                year: '.checkout__form__select_exp-day',
+                year: '.checkout__form__select_exp-year',
                 hiddenDate: 'input[name="EXPDATE"]'
             }
         },
@@ -45,6 +45,8 @@ define(function(require) {
             this.$el.find(this.options.selectors.year).on('change', _.bind(this.collectYearDate, this));
 
             $.validator.loadMethod('orob2bpayment/js/validator/creditCardNumberLuhnCheck');
+            $.validator.loadMethod('orob2bpayment/js/validator/creditCardExpirationDate');
+            $.validator.loadMethod('orob2bpayment/js/validator/creditCardExpirationDateNotBlank');
         },
 
         collectMonthDate: function(e) {
@@ -66,6 +68,17 @@ define(function(require) {
             } else {
                 hiddenExpirationDate.val('');
             }
+        },
+
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            this.$el.find(this.options.selectors.month).off('change', _.bind(this.collectMonthDate, this));
+            this.$el.find(this.options.selectors.year).off('change', _.bind(this.collectYearDate, this));
+
+            CreditCardComponent.__super__.dispose.call(this);
         }
     });
 
