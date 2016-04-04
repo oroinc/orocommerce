@@ -69,7 +69,7 @@ abstract class AbstractOrderAddressType extends AbstractType
         $isManualEditGranted = $this->orderAddressSecurityProvider->isManualEditGranted($type);
         $this->initAccountAddressField($builder, $type, $order, $isManualEditGranted, $isEditEnabled);
 
-        $builder->add('phone', 'text');
+        $builder->add('phone', 'text', ['required' => false]);
 
         $builder->addEventListener(
             FormEvents::SUBMIT,
@@ -127,10 +127,12 @@ abstract class AbstractOrderAddressType extends AbstractType
     {
         $resolver
             ->setRequired(['object', 'addressType'])
-            ->setDefaults([
-                'data_class' => $this->dataClass,
-                'isEditEnabled' => true,
-            ])
+            ->setDefaults(
+                [
+                    'data_class' => $this->dataClass,
+                    'isEditEnabled' => true,
+                ]
+            )
             ->setAllowedValues('addressType', [AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING])
             ->setAllowedTypes('object', 'OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface');
     }
