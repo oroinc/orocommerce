@@ -43,7 +43,7 @@
                 {% if vars.unique_block_prefix == '_orob2b_payment_term_method' %}
                     {{ block('payment_term_widget') }}
                 {% else %}
-                    {{ form_widget(form,{'class_prefix': class_prefix}) }}
+                    {{ form(form, {'class_prefix': class_prefix}) }}
                 {% endif %}
             </div>
         </div>

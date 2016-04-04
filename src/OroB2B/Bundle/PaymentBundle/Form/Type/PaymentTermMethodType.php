@@ -78,6 +78,6 @@ class PaymentTermMethodType extends AbstractPaymentMethodType
             $this->paymentTerm = $this->paymentTermProvider->getPaymentTerm($user->getAccount());
         }
 
-        return !empty($paymentTerm);
+        return !empty($this->paymentTerm);
     }
 }
