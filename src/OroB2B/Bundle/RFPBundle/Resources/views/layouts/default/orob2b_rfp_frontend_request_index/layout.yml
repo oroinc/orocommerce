@@ -3,11 +3,12 @@ layout:
         - @setBlockTheme:
             themes: 'OroB2BRFPBundle:layouts:default/orob2b_rfp_frontend_request_index/layout.html.twig'
 
-        - @setOption:
-            id: head
-            optionName: title
+        - @appendOption:
+            id: title
+            optionName: value
             optionValue:
-                label: 'orob2b.frontend.rfp.request.entity_plural_label'
+                - 'orob2b.account.menu.account_user.label'
+                - 'orob2b.frontend.rfp.request.entity_plural_label'
 
         - @setOption:
             id: page_title

@@ -4,11 +4,13 @@ layout:
             themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_frontend_account_user_role_update/layout.html.twig'
         - @setFormTheme:
             themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_frontend_account_user_role_update/form.html.twig'
-        - @setOption:
-            id: head
-            optionName: title
+        - @appendOption:
+            id: title
+            optionName: value
             optionValue:
-                label: 'orob2b.account.frontend.title.account_user_role.create'
+                - 'orob2b.account.menu.account_user.label'
+                - 'orob2b.account.frontend.account_user.role.entity_plural_label'
+                - 'orob2b.account.frontend.title.account_user_role.create'
         - @setOption:
             id: page_title
             optionName: text

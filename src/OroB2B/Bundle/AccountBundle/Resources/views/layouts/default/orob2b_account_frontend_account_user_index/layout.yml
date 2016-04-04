@@ -3,10 +3,12 @@ layout:
         - @setBlockTheme:
             themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_frontend_account_user_index/layout.html.twig'
 
-        - @setOption:
-            id: head
-            optionName: title
-            optionValue: 'orob2b.account.frontend.account_user.entity_plural_label'
+        - @appendOption:
+            id: title
+            optionName: value
+            optionValue:
+                - 'orob2b.account.menu.account_user.label'
+                - 'orob2b.account.frontend.account_user.entity_plural_label'
 
         - @setOption:
             id: page_title
