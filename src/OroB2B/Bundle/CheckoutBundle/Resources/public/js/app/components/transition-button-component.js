@@ -69,13 +69,16 @@ define(function(require) {
                 mediator.execute('redirectTo', {url: response.redirectUrl}, {redirect: true});
             } else {
                 var $response = $('<div/>').html(response);
+                var sidebarSelector = this.options.selectors.checkoutSidebar;
+                var contentSelector = this.options.selectors.checkoutContent;
+
                 mediator.trigger('checkout-content:before-update');
 
-                var $sidebar = $(this.options.selectors.checkoutSidebar);
-                $sidebar.html($response.find(this.options.selectors.checkoutSidebar).html());
+                var $sidebar = $(sidebarSelector);
+                $sidebar.html($response.find(sidebarSelector).html());
 
-                var $content = $(this.options.selectors.checkoutContent);
-                $content.html($response.find(this.options.selectors.checkoutContent).html());
+                var $content = $(contentSelector);
+                $content.html($response.find(contentSelector).html());
 
                 mediator.trigger('checkout-content:updated');
             }
