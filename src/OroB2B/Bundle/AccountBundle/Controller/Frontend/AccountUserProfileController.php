@@ -157,7 +157,6 @@ class AccountUserProfileController extends Controller
             return $resultHandler;
         }
 
-//@Template("OroB2BAccountBundle:AccountUser/Frontend:updateProfile.html.twig")
         return [
             'data' =>[
                 'entity'=>$accountUser
