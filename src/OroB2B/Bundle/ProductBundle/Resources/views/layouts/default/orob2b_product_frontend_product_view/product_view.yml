@@ -2,6 +2,12 @@ layout:
     actions:
         - @setBlockTheme:
             themes: 'OroB2BProductBundle:layouts:default/orob2b_product_frontend_product_view/layout.html.twig'
+        - @appendOption:
+            id: title
+            optionName: value
+            optionValue:
+                - 'orob2b.product.entity_plural_label'
+                - { @value: $data.product.defaultName.string }
         - @setOption:
             id: page_title
             optionName: text

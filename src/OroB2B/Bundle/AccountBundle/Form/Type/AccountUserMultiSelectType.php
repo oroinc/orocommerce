@@ -44,6 +44,6 @@ class AccountUserMultiSelectType extends AbstractType
      */
     public function getName()
     {
-        return self::NAME;
+        return static::NAME;
     }
 }

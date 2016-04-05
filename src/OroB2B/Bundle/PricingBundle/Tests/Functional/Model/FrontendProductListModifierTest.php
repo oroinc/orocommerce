@@ -41,7 +41,7 @@ class FrontendProductListModifierTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices'
             ]
         );
 
@@ -89,7 +89,7 @@ class FrontendProductListModifierTest extends WebTestCase
             $this->priceListTreeHandler->expects($this->once())
                 ->method('getPriceList')
                 ->with($this->tokenStorage->getToken()->getUser()->getAccount())
-                ->will($this->returnValue($this->getReference('price_list_2')));
+                ->will($this->returnValue($this->getReference('2f')));
         }
 
         $qb = $this->getManager()->createQueryBuilder()
@@ -132,7 +132,7 @@ class FrontendProductListModifierTest extends WebTestCase
                     LoadProductData::PRODUCT_2,
                     LoadProductData::PRODUCT_3,
                 ],
-                'priceList' => 'price_list_1'
+                'priceList' => '1f'
             ],
             'with USD' => [
                 'currency' => 'USD',
@@ -167,7 +167,7 @@ class FrontendProductListModifierTest extends WebTestCase
         $this->priceListTreeHandler->expects($this->exactly(3))
             ->method('getPriceList')
             ->with($this->tokenStorage->getToken()->getUser()->getAccount())
-            ->will($this->returnValue($this->getReference('price_list_2')));
+            ->will($this->returnValue($this->getReference('2f')));
 
         $qb = $this->getManager()->createQueryBuilder()
             ->select('p')
