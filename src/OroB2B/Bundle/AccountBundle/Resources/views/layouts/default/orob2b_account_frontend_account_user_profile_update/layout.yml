@@ -5,17 +5,17 @@ layout:
         - @setFormTheme:
             themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_frontend_account_user_profile_update/form_theme.html.twig'
 
-        - @setOption:
-            id: head
-            optionName: title
+        - @appendOption:
+            id: title
+            optionName: value
             optionValue:
-                label: 'orob2b.account.frontend.title.account_user.profile'
+                - 'orob2b.account.accountuser.profile.edit'
 
         - @setOption:
             id: page_title
             optionName: text
             optionValue:
-                label: 'orob2b.account.frontend.title.account_user.profile'
+                label: 'orob2b.account.accountuser.profile.edit'
 
         - @setOption:
             id: content
@@ -25,7 +25,7 @@ layout:
         - @add:
             id: account_sidebar
             parentId: sidebar_left
-            blockType: block
+            blockType: container
 
         - @addTree:
             items:
@@ -56,7 +56,7 @@ layout:
                 account_profile_edit_form_actions_cancel:
                     blockType: link
                     options:
-                        route_name: orob2b_account_frontend_account_user_role_index
+                        route_name: orob2b_account_frontend_account_user_profile
                         text: orob2b.account.action.account_user_role.cancel_label
                         attr:
                             'class': btn theme-btn btn-gray

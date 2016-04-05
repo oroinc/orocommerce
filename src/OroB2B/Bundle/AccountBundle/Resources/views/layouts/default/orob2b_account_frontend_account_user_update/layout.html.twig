@@ -22,11 +22,6 @@
                 {{ form_row(form.nameSuffix, {'attr': {'placeholder': 'orob2b.account.accountuser.profile.form.placeholder.name_suffix'|trans}, 'parentClass': ''}) }}
 
                 {{ form_row(form.enabled, {'attr': {'placeholder': 'orob2b.account.accountuser.profile.form.placeholder.password_confirmation'|trans}, 'parentClass': 'profile__form__col form__col_x6'}) }}
-
-                {% if form.sendEmail is defined %}
-                    {{ form_row(form.sendEmail, {'attr': {'placeholder': 'orob2b.account.accountuser.profile.form.placeholder.password_confirmation'|trans}, 'parentClass': 'profile__form__col form__col_x6'}) }}
-                {% endif %}
-
             </div>
             <div class="profile__form__col form__col_x6">
                 {{ form_row(form.email, {'attr': {'placeholder': 'orob2b.account.accountuser.profile.form.placeholder.email'|trans}, 'parentClass': ''}) }}
@@ -59,6 +54,11 @@
             </div>
         {% endif %}
         </div>
+    </fieldset>
+
+    <fieldset class="profile__form__row">
+        <legend>{{ 'orob2b.account.accountuser.profile.form.sections.roles.label'|trans }}</legend>
+        {{ form_row(form.roles)}}
     </fieldset>
 {% endblock %}
 

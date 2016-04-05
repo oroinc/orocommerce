@@ -89,22 +89,35 @@
 }
 
 .profile__form__row {
-  padding: 0 .5rem;
-  margin: 0 0 1.5rem;
   position: relative;
 
   legend {
     text-transform: uppercase;
-    padding: 2rem 1rem;
-    margin-bottom: 2rem;
+    padding: 2rem 0;
+    margin: 0 0 2rem 0;
     border-bottom: 1px solid #e6e6e6;
     font-size: 1.6rem;
   }
 
   .field {
-    padding: 0 .5rem;
     margin: 0 0 1.5rem;
   }
+
+  .profile__form__col.col_first{
+    padding-right: 2rem;
+  }
+
+  .profile__form__col.col_last{
+    padding-left: 2rem;
+  }
+
+  input[type="text"] {
+    padding: 1.1rem 0.9rem;
+  }
+}
+
+.profile__form__fields_container{
+  margin: 0 0 2rem 0;
 }
 
 .profile__form__col.form__col_x6 {
@@ -113,8 +126,6 @@
 
 .profile__form__col {
   float: left;
-  padding: 0 .5rem;
-  margin: 0 0 1.5rem;
 }
 
 .profile__form__label.profile__form__label_additional {
@@ -128,8 +139,8 @@
 
 .profile__form__req-text {
   position: absolute;
-  left: 23rem;
-  top: -3rem;
+  left: 21rem;
+  top: -3.2rem;
   color: #b84926;
 }
 

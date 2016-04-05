@@ -74,7 +74,14 @@ class AccountUserController extends Controller
      */
     public function createAction(Request $request)
     {
-        return $this->update(new AccountUser(), $request);
+        $aacountUser = new AccountUser();
+        $user = $this->getUser();
+        if ($user instanceof AccountUser) {
+            $aacountUser
+                ->setAccount($user->getAccount());
+        }
+
+        return $this->update($aacountUser, $request);
 
 //        if ($result instanceof Response) {
 //            return $result;
@@ -144,7 +151,6 @@ class AccountUserController extends Controller
             $handler
         );
 
-//        return $result;
         if ($result instanceof Response) {
             return $result;
         }
