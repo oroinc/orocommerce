@@ -29,9 +29,9 @@ services:
     orob2b_shopping_list.form.type.frontend_line_item_widget:
         class: %orob2b_shopping_list.form.type.frontend_line_item_widget.class%
         arguments:
-            - @doctrine
-            - @security.token_storage
-            - @translator
+            - "@doctrine"
+            - "@security.token_storage"
+            - "@translator"
         calls:
             - [setShoppingListClass, [%orob2b_shopping_list.entity.shopping_list.class%]]
         tags:

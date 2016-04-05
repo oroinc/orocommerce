@@ -388,7 +388,7 @@ datagrid:
                 link:          delete_link
                 icon:          trash
                 acl_resource:  orob2b_account_account_user_delete
-        action_configuration: [@orob2b_account.datagrid.action_permission_provider, "getUserPermissions"]
+        action_configuration: ['@orob2b_account.datagrid.action_permission_provider', "getUserPermissions"]
 
     account-user-by-account-grid:
         extends:  account-account-user-grid-base
@@ -544,7 +544,7 @@ datagrid:
                 acl_resource:  orob2b_account_frontend_account_user_role_update
             delete:
                 acl_resource:  orob2b_account_frontend_account_user_role_delete
-        action_configuration: [@orob2b_account.datagrid.action_permission_provider, "getAccountUserRolePermission"]
+        action_configuration: ['@orob2b_account.datagrid.action_permission_provider', "getAccountUserRolePermission"]
 
     account-account-users-grid-update-basic:
         extends: account-account-users-grid-basic
@@ -935,7 +935,7 @@ datagrid:
                 link:          delete_link
                 icon:          trash
                 acl_resource:  orob2b_account_frontend_account_user_delete
-        action_configuration: [@orob2b_account.datagrid.action_permission_provider, "getUserPermissions"]
+        action_configuration: ['@orob2b_account.datagrid.action_permission_provider', "getUserPermissions"]
 
     audit-grid:
         source:

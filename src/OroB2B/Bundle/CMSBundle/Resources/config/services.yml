@@ -12,22 +12,22 @@ services:
         class: %orob2b_cms.page_tree_handler.class%
         arguments:
             - %orob2b_cms.page.class%
-            - @doctrine
-            - @orob2b_redirect.slug.manager
+            - "@doctrine"
+            - "@orob2b_redirect.slug.manager"
 
     orob2b_cms.page.manager.api:
         class: %orob2b_cms.page.manager.api.class%
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - %orob2b_cms.page.class%
-            - @doctrine.orm.entity_manager
+            - "@doctrine.orm.entity_manager"
 
     orob2b_cms.loginpage.manager.api:
         class: %orob2b_cms.loginpage.manager.api.class%
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - %orob2b_cms.loginpage.class%
-            - @doctrine.orm.entity_manager
+            - "@doctrine.orm.entity_manager"
 
     orob2b_cms.listener.page_slug_listener:
         class: %orob2b_cms.listener.page_slug_listener.class%
@@ -39,7 +39,7 @@ services:
     orob2b_cms.provider.login_page_data_provider:
         class: %orob2b_cms.provider.login_page_data_provider.class%
         arguments:
-            - @doctrine
+            - "@doctrine"
         calls:
             - [setLoginPageClass, [%orob2b_cms.loginpage.class%]]
         tags:

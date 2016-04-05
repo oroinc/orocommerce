@@ -20,7 +20,7 @@ services:
     orob2b_checkout.layout.data_provider.abstract_transition:
         class: %orob2b_checkout.layout.data_provider.abstract_transition.class%
         arguments:
-            - @oro_workflow.manager
+            - '@oro_workflow.manager'
 
     orob2b_checkout.data_provider.converter.checkout_line_items:
         class: %orob2b_checkout.data_provider.converter.checkout_line_items.class%
@@ -28,23 +28,23 @@ services:
     orob2b_checkout.data_provider.manager.checkout_line_items:
         class: %orob2b_checkout.data_provider.manager.checkout_line_items.class%
         arguments:
-            - @orob2b_checkout.data_provider.converter.checkout_line_items
+            - '@orob2b_checkout.data_provider.converter.checkout_line_items'
 
     orob2b_checkout.layout.data_provider.summary:
         class: %orob2b_checkout.layout.data_provider.summary.class%
         arguments:
-            - @orob2b_checkout.data_provider.manager.checkout_line_items
-            - @orob2b_pricing.subtotal_processor.provider.subtotal_line_item
-            - @orob2b_pricing.subtotal_processor.total_processor_provider
+            - '@orob2b_checkout.data_provider.manager.checkout_line_items'
+            - '@orob2b_pricing.subtotal_processor.provider.subtotal_line_item'
+            - '@orob2b_pricing.subtotal_processor.total_processor_provider'
         tags:
             - { name: layout.data_provider, alias: orob2b_checkout_summary }
 
     orob2b_checkout.layout.data_provider.transition_form:
         class: %orob2b_checkout.layout.data_provider.transition_form.class%
         arguments:
-            - @form.factory
+            - '@form.factory'
         calls:
-            - [setContinueTransitionDataProvider, [@orob2b_checkout.layout.data_provider.continue_transition]]
+            - [setContinueTransitionDataProvider, ['@orob2b_checkout.layout.data_provider.continue_transition']]
         tags:
             - { name: layout.data_provider, alias: orob2b_checkout_transition_form }
 
@@ -57,7 +57,7 @@ services:
     orob2b_checkout.layout.data_provider.checkout_steps:
         class: %orob2b_checkout.layout.data_provider.checkout_steps.class%
         arguments:
-            - @oro_workflow.manager
+            - '@oro_workflow.manager'
         tags:
             - { name: layout.data_provider, alias: orob2b_checkout_steps }
 
@@ -70,7 +70,7 @@ services:
     orob2b_checkout.layout.data_provider.back_transition:
         class: %orob2b_checkout.layout.data_provider.back_transition.class%
         calls:
-            - [setBackTransitionsDataProvider, [@orob2b_checkout.layout.data_provider.back_transitions]]
+            - [setBackTransitionsDataProvider, ['@orob2b_checkout.layout.data_provider.back_transitions']]
         tags:
             - { name: layout.data_provider, alias: orob2b_checkout_back_transition }
 
@@ -99,8 +99,8 @@ services:
     orob2b_checkout.model.action.get_order_line_items:
         class: %orob2b_checkout.model.action.get_order_line_items.class%
         arguments:
-            - @oro_action.context_accessor
-            - @orob2b_checkout.data_provider.manager.checkout_line_items
+            - '@oro_action.context_accessor'
+            - '@orob2b_checkout.data_provider.manager.checkout_line_items'
         tags:
             - { name: oro_workflow.action, alias: get_order_line_items }
 
@@ -110,12 +110,12 @@ services:
             - [setCheckoutClass, [%orob2b_checkout.entity.checkout.class%]]
             - [setCheckoutRoute, ['orob2b_checkout_frontend_checkout']]
         arguments:
-            - @oro_action.context_accessor
-            - @doctrine
-            - @orob2b_website.manager
-            - @orob2b_pricing.provider.user_currency
-            - @security.token_storage
-            - @property_accessor
-            - @oro_action.action.redirect
+            - '@oro_action.context_accessor'
+            - '@doctrine'
+            - '@orob2b_website.manager'
+            - '@orob2b_pricing.provider.user_currency'
+            - '@security.token_storage'
+            - '@property_accessor'
+            - '@oro_action.action.redirect'
         tags:
             - { name: oro_action.action, alias: start_checkout }

@@ -268,7 +268,7 @@ datagrid:
                 label:         oro.grid.action.delete
                 icon:          trash
                 link:          delete_link
-        action_configuration: [@orob2b_rfp.datagrid.action_permission_provider, "getRequestStatusDefinitionPermissions"]
+        action_configuration: ['@orob2b_rfp.datagrid.action_permission_provider', "getRequestStatusDefinitionPermissions"]
 
     frontend-requests-grid:
         extended_entity_name: %orob2b_rfp.entity.request.class%

@@ -39,13 +39,13 @@ services:
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - %orob2b_sale.entity.quote.class%
-            - @doctrine.orm.entity_manager
+            - "@doctrine.orm.entity_manager"
 
     orob2b_sale.provider.quote_product_price:
         class: %orob2b_sale.provider.quote_product_price.class%
         arguments:
-            - @orob2b_pricing.provider.combined_product_price
-            - @orob2b_pricing.model.price_list_tree_handler
+            - "@orob2b_pricing.provider.combined_product_price"
+            - "@orob2b_pricing.model.price_list_tree_handler"
 
     orob2b_sale.validator.quote_product:
         class: %orob2b_sale.validator.quote_product.class%
@@ -55,30 +55,30 @@ services:
     orob2b_sale.twig.quote:
         class: %orob2b_sale.twig.quote.class%
         arguments:
-            - @orob2b_sale.formatter.quote_product
+            - "@orob2b_sale.formatter.quote_product"
         tags:
             - { name: twig.extension }
 
     orob2b_sale.formatter.quote_product:
         class: %orob2b_sale.formatter.quote_product.class%
         arguments:
-            - @translator
-            - @oro_locale.formatter.number
-            - @orob2b_product.formatter.product_unit_value
-            - @orob2b_product.formatter.product_unit_label
+            - "@translator"
+            - "@oro_locale.formatter.number"
+            - "@orob2b_product.formatter.product_unit_value"
+            - "@orob2b_product.formatter.product_unit_label"
 
     orob2b_sale.formatter.quote_product_offer:
         class: %orob2b_sale.formatter.quote_product_offer.class%
         arguments:
-            - @translator
+            - "@translator"
 
     orob2b_sale.service.quote_to_order_converter:
         class: %orob2b_sale.service.quote_to_order_converter.class%
         arguments:
-            - @orob2b_order.model.order_currency_handler
-            - @orob2b_pricing.subtotal_processor.provider.subtotal_line_item
-            - @orob2b_pricing.subtotal_processor.total_processor_provider
-            - @doctrine
+            - "@orob2b_order.model.order_currency_handler"
+            - "@orob2b_pricing.subtotal_processor.provider.subtotal_line_item"
+            - "@orob2b_pricing.subtotal_processor.total_processor_provider"
+            - "@doctrine"
 
     orob2b_sale.service.quote_product_offer_matcher:
         class: %orob2b_sale.service.quote_product_offer_matcher.class%
@@ -96,10 +96,10 @@ services:
         class: %orob2b_sale.helper.notification.class%
         scope: request
         arguments:
-            - @doctrine
-            - @request
-            - @oro_email.email.model.builder
-            - @oro_email.mailer.processor
+            - "@doctrine"
+            - "@request"
+            - "@oro_email.email.model.builder"
+            - "@oro_email.mailer.processor"
         calls:
             - [ setQuoteClassName, [ %orob2b_sale.entity.quote.class% ] ]
             - [ setEmailTemplateClassName, [ %oro_email.emailtemplate.entity.class% ] ]
@@ -107,15 +107,15 @@ services:
     orob2b_sale.service.request_helper:
         class: %orob2b_sale.service.request_helper.class%
         arguments:
-            - @doctrine
+            - "@doctrine"
             - %orob2b_sale.entity.quote.class%
             - %orob2b_rfp.entity.request.class%
 
     orob2b_sale.manager.quote_address:
         class: %orob2b_sale.manager.quote_address.class%
         arguments:
-            - @orob2b_sale.provider.quote_address
-            - @doctrine
+            - "@orob2b_sale.provider.quote_address"
+            - "@doctrine"
             - %orob2b_sale.entity.quote_address.class%
         calls:
             - [addEntity, ['a', %orob2b_account.entity.account_address.class%]]
@@ -124,24 +124,24 @@ services:
     orob2b_sale.provider.quote_address:
         class: %orob2b_sale.provider.quote_address.class%
         arguments:
-            - @oro_security.security_facade
-            - @doctrine
-            - @oro_security.acl_helper
+            - "@oro_security.security_facade"
+            - "@doctrine"
+            - "@oro_security.acl_helper"
             - %orob2b_account.entity.account_address.class%
             - %orob2b_account.entity.account_user_address.class%
 
     orob2b_sale.provider.quote_address_security:
         class: %orob2b_sale.provider.quote_address_security.class%
         arguments:
-            - @oro_security.security_facade
-            - @orob2b_sale.provider.quote_address
+            - "@oro_security.security_facade"
+            - "@orob2b_sale.provider.quote_address"
             - %orob2b_account.entity.account_address.class%
             - %orob2b_account.entity.account_user_address.class%
 
     orob2b_sale.service.quote_request_handler:
         class: %orob2b_sale.service.quote_request_handler.class%
         arguments:
-            - @doctrine
-            - @request_stack
+            - "@doctrine"
+            - "@request_stack"
             - %orob2b_account.entity.account.class%
             - %orob2b_account.entity.account_user.class%

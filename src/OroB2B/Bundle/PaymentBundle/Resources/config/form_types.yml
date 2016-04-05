@@ -23,8 +23,8 @@ services:
     orob2b_payment.form.extension.abstract:
         class: %orob2b_payment.form.extension.abstract.class%
         arguments:
-            - @oro_entity.doctrine_helper
-            - @translator
+            - '@oro_entity.doctrine_helper'
+            - '@translator'
             - %orob2b_payment.entity.payment_term.class%
         abstract: true
 

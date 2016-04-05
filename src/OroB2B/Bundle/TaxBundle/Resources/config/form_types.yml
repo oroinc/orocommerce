@@ -56,7 +56,7 @@ services:
     orob2b_tax.form.extension.product_tax:
         class: %orob2b_tax.form.extension.product_tax.class%
         arguments:
-            - @oro_entity.doctrine_helper
+            - '@oro_entity.doctrine_helper'
             - %orob2b_tax.entity.product_tax_code.class%
         tags:
             - { name: form.type_extension, alias: orob2b_product }
@@ -64,7 +64,7 @@ services:
     orob2b_tax.form.extension.account_tax:
         class: %orob2b_tax.form.extension.account_tax.class%
         arguments:
-            - @oro_entity.doctrine_helper
+            - '@oro_entity.doctrine_helper'
             - %orob2b_tax.entity.account_tax_code.class%
         tags:
             - { name: form.type_extension, alias: orob2b_account_type }
@@ -72,7 +72,7 @@ services:
     orob2b_tax.form.extension.account_group_tax:
         class: %orob2b_tax.form.extension.account_group_tax.class%
         arguments:
-            - @oro_entity.doctrine_helper
+            - '@oro_entity.doctrine_helper'
             - %orob2b_tax.entity.account_tax_code.class%
         tags:
             - { name: form.type_extension, alias: orob2b_account_group_type }
@@ -80,10 +80,10 @@ services:
     orob2b_tax.form.extension.order_line_item:
         class: %orob2b_tax.form.extension.order_line_item.class%
         arguments:
-            - @orob2b_tax.provider.taxation_settings_provider
-            - @orob2b_tax.manager.tax_manager
-            - @orob2b_tax.provider.tax_subtotal
-            - @orob2b_order.form.section.provider
+            - '@orob2b_tax.provider.taxation_settings_provider'
+            - '@orob2b_tax.manager.tax_manager'
+            - '@orob2b_tax.provider.tax_subtotal'
+            - '@orob2b_order.form.section.provider'
             - 'orob2b_order_line_item'
         tags:
             - { name: form.type_extension, alias: orob2b_order_line_item }
@@ -91,10 +91,10 @@ services:
     orob2b_tax.form.extension.order_line_item.frontend:
         class: %orob2b_tax.form.extension.order_line_item.class%
         arguments:
-            - @orob2b_tax.provider.taxation_settings_provider
-            - @orob2b_tax.manager.tax_manager
-            - @orob2b_tax.provider.tax_subtotal
-            - @orob2b_order.form.section.provider
+            - '@orob2b_tax.provider.taxation_settings_provider'
+            - '@orob2b_tax.manager.tax_manager'
+            - '@orob2b_tax.provider.tax_subtotal'
+            - '@orob2b_order.form.section.provider'
             - 'orob2b_order_line_item_frontend'
         tags:
             - { name: form.type_extension, alias: orob2b_order_line_item_frontend }
@@ -121,7 +121,7 @@ services:
     orob2b_tax.form.type.tax_jurisdiction:
         class: %orob2b_tax.form.type.tax_jurisdiction.class%
         arguments:
-            - @oro_address.form.listener.address
+            - '@oro_address.form.listener.address'
         calls:
             - [setDataClass, [%orob2b_tax.entity.tax_jurisdiction.class%]]
         tags:
@@ -148,14 +148,14 @@ services:
     orob2b_tax.form.type.tax_provider_type:
         class: %orob2b_tax.form.type.tax_provider_type.class%
         arguments:
-            - @orob2b_tax.provider.tax_provider_registry
+            - '@orob2b_tax.provider.tax_provider_registry'
         tags:
             - { name: form.type, alias: orob2b_tax_provider_type }
 
     orob2b_tax.form.type.tax_base_exclusion:
         class: %orob2b_tax.form.type.tax_base_exclusion.class%
         arguments:
-            - @oro_address.form.listener.address
+            - '@oro_address.form.listener.address'
         calls:
             - [setDataClass, [%orob2b_tax.model.tax_base_exclusion.class%]]
         tags:
@@ -169,7 +169,7 @@ services:
     orob2b_tax.form.type.origin_address:
         class: %orob2b_tax.form.type.origin_address.class%
         arguments:
-            - @oro_address.form.listener.address
+            - '@oro_address.form.listener.address'
         calls:
             - [setDataClass, [%orob2b_tax.model.address.class%]]
         tags:

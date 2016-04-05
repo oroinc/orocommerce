@@ -14,7 +14,7 @@ services:
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - %orob2b_payment.entity.payment_term.class%
-            - @doctrine.orm.entity_manager
+            - "@doctrine.orm.entity_manager"
 
     orob2b_payment.form.autocomplete.payment_term.search_handler:
         parent: oro_form.autocomplete.search_handler
@@ -28,23 +28,23 @@ services:
     orob2b_payment.payment_term.delete_message_generator:
         class: %orob2b_payment.payment_term.delete_message_generator.class%
         arguments:
-            - @router
-            - @twig
-            - @doctrine
+            - "@router"
+            - "@twig"
+            - "@doctrine"
 
     orob2b_payment.twig.delete_message_text_extension:
         class: %orob2b_payment.twig.delete_message_text_extension.class%
         arguments:
-            - @orob2b_payment.payment_term.delete_message_generator
+            - "@orob2b_payment.payment_term.delete_message_generator"
         tags:
             - { name: twig.extension }
 
     orob2b_payment.event_listener.form_view:
         class: %orob2b_payment.event_listener.form_view.class%
         arguments:
-            - @request_stack
-            - @translator
-            - @oro_entity.doctrine_helper
+            - "@request_stack"
+            - "@translator"
+            - "@oro_entity.doctrine_helper"
             - %orob2b_payment.entity.payment_term.class%
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
@@ -69,5 +69,5 @@ services:
     orob2b_payment.provider.payment_term:
         class: %orob2b_payment.provider.payment_term.class%
         arguments:
-            - @doctrine
+            - "@doctrine"
             - %orob2b_payment.entity.payment_term.class%
