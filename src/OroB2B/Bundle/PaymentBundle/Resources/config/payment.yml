@@ -1,0 +1,29 @@
+parameters:
+    orob2b_payment.payment_method.registry.class: OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry
+    orob2b_payment.payment_method.payflow_gateway.class: OroB2B\Bundle\PaymentBundle\Method\PayflowGateway
+    orob2b_payment.payment_method.paypal_payments_pro.class: OroB2B\Bundle\PaymentBundle\Method\PayPalPaymentsPro
+    orob2b_payment.payment_method.payment_term.class: OroB2B\Bundle\PaymentBundle\Method\PaymentTerm
+
+services:
+    orob2b_payment.payment_method.registry:
+        class: '%orob2b_payment.payment_method.registry.class%'
+        calls:
+            - ['addPaymentMethod', ['@orob2b_payment.payment_method.payflow_gateway']]
+            - ['addPaymentMethod', ['@orob2b_payment.payment_method.paypal_payments_pro']]
+            - ['addPaymentMethod', ['@orob2b_payment.payment_method.payment_term']]
+
+    orob2b_payment.payment_method.payflow_gateway:
+        class: '%orob2b_payment.payment_method.payflow_gateway.class%'
+        public: false
+        arguments:
+            - '@orob2b_payment.paypal.payflow.gateway'
+            - '@oro_config.global'
+
+    orob2b_payment.payment_method.paypal_payments_pro:
+        class: '%orob2b_payment.payment_method.paypal_payments_pro.class%'
+        parent: orob2b_payment.payment_method.payflow_gateway
+        public: false
+
+    orob2b_payment.payment_method.payment_term:
+        class: '%orob2b_payment.payment_method.payment_term.class%'
+        public: false

@@ -6,11 +6,26 @@ class Account extends AbstractOption
 {
     const ACCT = 'ACCT';
 
+    /** @var bool */
+    private $accountRequired;
+
+    /**
+     * @param bool $accountRequired
+     */
+    public function __construct($accountRequired = true)
+    {
+        $this->accountRequired = $accountRequired;
+    }
+
     /** {@inheritdoc} */
     public function configureOption(OptionsResolver $resolver)
     {
+        if ($this->accountRequired) {
+            $resolver->setRequired(Account::ACCT);
+        }
+
         $resolver
-            ->setRequired(Account::ACCT)
+            ->setDefined(Account::ACCT)
             ->addAllowedTypes(Account::ACCT, 'string');
     }
 }

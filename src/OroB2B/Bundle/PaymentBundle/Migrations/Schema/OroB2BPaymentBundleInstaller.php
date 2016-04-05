@@ -3,14 +3,11 @@
 namespace OroB2B\Bundle\PaymentBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Types\Type;
 
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
-
-use OroB2B\Bundle\PaymentBundle\DBAL\Types\SecureArrayType;
 
 class OroB2BPaymentBundleInstaller implements Installation, NoteExtensionAwareInterface
 {
@@ -56,6 +53,7 @@ class OroB2BPaymentBundleInstaller implements Installation, NoteExtensionAwareIn
 
         $this->addOroB2BPaymentTermToAccountGroupForeignKeys($schema);
         $this->addOroB2BPaymentTermToAccountForeignKeys($schema);
+        $this->addOroB2BPaymentTransactionForeignKeys($schema);
     }
 
     /**
@@ -107,14 +105,21 @@ class OroB2BPaymentBundleInstaller implements Installation, NoteExtensionAwareIn
     protected function createOroB2BPaymentTransactionTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_payment_transaction');
-        $table->addColumn('id', Type::INTEGER, ['autoincrement' => true]);
-        $table->addColumn('reference', Type::STRING, ['notnull' => false]);
-        $table->addColumn('state', Type::STRING, ['notnull' => false]);
-        $table->addColumn('type', Type::STRING);
-        $table->addColumn('entity_class', Type::STRING);
-        $table->addColumn('entity_identifier', Type::INTEGER);
-        $table->addColumn('data', SecureArrayType::TYPE, ['notnull' => false]);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('entity_class', 'string', ['length' => 255]);
+        $table->addColumn('entity_identifier', 'integer', []);
+        $table->addColumn('payment_method', 'string', ['length' => 255]);
+        $table->addColumn('action', 'string', ['length' => 255]);
+        $table->addColumn('reference', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('amount', 'string', ['length' => 255]);
+        $table->addColumn('currency', 'string', ['length' => 3]);
+        $table->addColumn('active', 'boolean', []);
+        $table->addColumn('successful', 'boolean', []);
+        $table->addColumn('source_payment_transaction', 'integer', ['notnull' => false]);
+        $table->addColumn('request', 'secure_array', ['notnull' => false]);
+        $table->addColumn('response', 'secure_array', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
+        $table->addIndex(['source_payment_transaction']);
     }
 
     /**
@@ -152,6 +157,22 @@ class OroB2BPaymentBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addForeignKeyConstraint(
             $schema->getTable(static::TABLE_NAME),
             ['payment_term_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * Add orob2b_payment_transaction foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BPaymentTransactionForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_payment_transaction');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_payment_transaction'),
+            ['source_payment_transaction'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
