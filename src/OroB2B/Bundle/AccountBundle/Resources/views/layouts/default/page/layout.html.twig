@@ -8,7 +8,7 @@
             {% for child in block if child.vars.visible %}
                 {% set currentUrl = path(child.vars.route_name, child.vars.route_parameters) %}
 
-                <li {% if currentUrl in requestUrl and not found %}class="current"{% endif %}>{{ currentUrl }} <br> {{ requestUrl }} {{ block_widget(child) }}</li>
+                <li {% if currentUrl in requestUrl and not found %}class="current"{% endif %}>{{ block_widget(child) }}</li>
 
                 {% if currentUrl in requestUrl and not found %}
                     {% set found = true %}
