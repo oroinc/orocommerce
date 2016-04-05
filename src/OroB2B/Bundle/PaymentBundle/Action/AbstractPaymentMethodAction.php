@@ -93,7 +93,7 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
             ->setDefault('attribute', null)
             ->setDefault('transactionOptions', [])
             ->addAllowedTypes('object', ['object', $propertyPathType])
-            ->addAllowedTypes('amount', ['float', $propertyPathType])
+            ->addAllowedTypes('amount', ['float', 'string', $propertyPathType])
             ->addAllowedTypes('currency', ['string', $propertyPathType])
             ->setAllowedTypes('transactionOptions', ['array', $propertyPathType])
             ->setAllowedTypes('attribute', $propertyPathType);

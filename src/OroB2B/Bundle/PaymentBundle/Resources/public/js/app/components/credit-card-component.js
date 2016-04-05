@@ -39,10 +39,9 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
-            console.log(options);
             this.options = _.defaults(options || {}, this.options);
 
-            mediator.on('checkout-responseData', this.handleSubmit, this);
+            mediator.on('checkout:place-order:response', this.handleSubmit, this);
 
             this.$el = this.options._sourceElement;
 
@@ -54,17 +53,27 @@ define(function(require) {
             $.validator.loadMethod('orob2bpayment/js/validator/creditCardExpirationDateNotBlank');
         },
 
-        handleSubmit: function(responseData) {
-            console.log(this.disposed, responseData.paymentMethod, this.options.paymentMethod)
-            if (responseData.paymentMethod === this.options.paymentMethod) {
-                responseData.preventDefault = true;
+        handleSubmit: function(eventData) {
+            if (eventData.responseData.paymentMethod === this.options.paymentMethod) {
+                eventData.stopped = true;
                 var data = this.$el.find('[data-gateway]').serializeArray();
-                data.push({name: 'SECURETOKEN', value: responseData.SECURETOKEN});
-                data.push({name: 'SECURETOKENID', value: responseData.SECURETOKENID});
-                data.push({name: 'ERRORURL', value: responseData.errorUrl});
-                data.push({name: 'RETURNURL', value: responseData.returnUrl});
+                var resolvedEventData = _.extend(
+                    {
+                        'SECURETOKEN': false,
+                        'SECURETOKENID': false,
+                        'errorUrl': false,
+                        'returnUrl': false,
+                        'formAction': false
+                    },
+                    eventData.responseData
+                );
 
-                this.postUrl(responseData.formAction, data);
+                data.push({name: 'SECURETOKEN', value: resolvedEventData.SECURETOKEN});
+                data.push({name: 'SECURETOKENID', value: resolvedEventData.SECURETOKENID});
+                data.push({name: 'ERRORURL', value: resolvedEventData.errorUrl});
+                data.push({name: 'RETURNURL', value: resolvedEventData.returnUrl});
+
+                this.postUrl(resolvedEventData.formAction, data);
             }
         },
 
@@ -104,13 +113,6 @@ define(function(require) {
         },
 
         dispose: function() {
-            if (this.disposed) {
-                return;
-            }
-
-            this.$el.off();
-
-            CreditCardComponent.__super__.dispose.call(this);
         }
     });
 

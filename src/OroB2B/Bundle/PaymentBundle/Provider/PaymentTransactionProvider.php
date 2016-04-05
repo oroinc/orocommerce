@@ -59,7 +59,7 @@ class PaymentTransactionProvider
             [
                 'active' => true,
                 'action' => PaymentMethodInterface::AUTHORIZE,
-                'amount' => $amount,
+                'amount' => round($amount, 2),
                 'currency' => $currency,
             ]
         );
@@ -94,7 +94,9 @@ class PaymentTransactionProvider
     {
         $em = $this->doctrineHelper->getEntityManager($paymentTransaction);
 
-        $em->persist($paymentTransaction);
+        if (!$paymentTransaction->getId()) {
+            $em->persist($paymentTransaction);
+        }
         $em->flush($paymentTransaction);
     }
 }

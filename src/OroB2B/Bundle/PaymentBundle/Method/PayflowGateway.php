@@ -9,6 +9,7 @@ use OroB2B\Bundle\PaymentBundle\DependencyInjection\OroB2BPaymentExtension;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Gateway;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
+use Symfony\Component\Routing\RouterInterface;
 
 class PayflowGateway implements PaymentMethodInterface
 {
@@ -19,15 +20,21 @@ class PayflowGateway implements PaymentMethodInterface
 
     /** @var ConfigManager */
     protected $configManager;
+    /**
+     * @var RouterInterface
+     */
+    private $router;
 
     /**
      * @param Gateway $gateway
      * @param ConfigManager $configManager
+     * @param RouterInterface $router
      */
-    public function __construct(Gateway $gateway, ConfigManager $configManager)
+    public function __construct(Gateway $gateway, ConfigManager $configManager, RouterInterface $router)
     {
         $this->gateway = $gateway;
         $this->configManager = $configManager;
+        $this->router = $router;
     }
 
     /** {@inheritdoc} */
@@ -119,6 +126,16 @@ class PayflowGateway implements PaymentMethodInterface
             Option\TransparentRedirect::SILENTTRAN => true,
             Option\Tender::TENDER => Option\Tender::CREDIT_CARD,
             Option\Currency::CURRENCY => $paymentTransaction->getCurrency(),
+            Option\ReturnUrl::RETURNURL => $this->router->generate(
+                'orob2b_payment_callback_return',
+                ['transactionId' => $paymentTransaction->getId()],
+                true
+            ),
+            Option\ErrorUrl::ERRORURL => $this->router->generate(
+                'orob2b_payment_callback_error',
+                ['transactionId' => $paymentTransaction->getId()],
+                true
+            ),
         ];
 
         $paymentTransaction
