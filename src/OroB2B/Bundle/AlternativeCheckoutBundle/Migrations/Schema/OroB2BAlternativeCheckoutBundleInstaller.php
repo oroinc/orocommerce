@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AlternativeCheckoutBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
+
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -26,10 +27,10 @@ class OroB2BAlternativeCheckoutBundleInstaller implements Installation
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOrob2BAlternativeCheckoutTable($schema);
+        $this->createOroB2BAlternativeCheckoutTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOrob2BAlternativeCheckoutForeignKeys($schema);
+        $this->addOroB2BAlternativeCheckoutForeignKeys($schema);
     }
 
     /**
@@ -37,7 +38,7 @@ class OroB2BAlternativeCheckoutBundleInstaller implements Installation
      *
      * @param Schema $schema
      */
-    protected function createOrob2BAlternativeCheckoutTable(Schema $schema)
+    protected function createOroB2BAlternativeCheckoutTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_alternative_checkout');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -75,10 +76,10 @@ class OroB2BAlternativeCheckoutBundleInstaller implements Installation
         $table->addIndex(['organization_id'], 'idx_organization_id', []);
         $table->addUniqueIndex(['workflow_item_id'], 'uniq_workflow_item_id');
         $table->addUniqueIndex(['billing_address_id'], 'uniq_billing_address_id');
+        $table->addUniqueIndex(['shipping_address_id'], 'uniq_shipping_address_id');
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['source_id'], 'uniq_source_id');
         $table->addIndex(['user_owner_id'], 'idx_user_owner_id', []);
-        $table->addUniqueIndex(['shipping_address_id'], 'uniq_shipping_address_id');
         $table->addIndex(['workflow_step_id'], 'idx_workflow_step_id', []);
         $table->addIndex(['account_user_id'], 'idx_account_user_id', []);
         $table->addIndex(['account_id'], 'idx_account_id', []);
@@ -90,7 +91,7 @@ class OroB2BAlternativeCheckoutBundleInstaller implements Installation
      *
      * @param Schema $schema
      */
-    protected function addOrob2BAlternativeCheckoutForeignKeys(Schema $schema)
+    protected function addOroB2BAlternativeCheckoutForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_alternative_checkout');
         $table->addForeignKeyConstraint(
@@ -136,13 +137,6 @@ class OroB2BAlternativeCheckoutBundleInstaller implements Installation
             'fk_orob2b_account'
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_order_address'),
-            ['billing_address_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'SET NULL'],
-            'fk_orob2b_order_address'
-        );
-        $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),
             ['organization_id'],
             ['id'],
@@ -155,6 +149,13 @@ class OroB2BAlternativeCheckoutBundleInstaller implements Installation
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL'],
             'fk_oro_user'
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_order_address'),
+            ['billing_address_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL'],
+            'fk_orob2b_order_address'
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_order_address'),
