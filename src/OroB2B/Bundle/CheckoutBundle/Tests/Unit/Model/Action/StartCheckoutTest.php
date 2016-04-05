@@ -155,18 +155,18 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->will($this->returnValue($em));
 
+        $account = new Account();
+        $account->setOwner(new User());
+        $account->setOrganization(new Organization());
+        $user = new AccountUser();
+        $user->setAccount($account);
+
+        /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject $token */
+        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token->expects($this->any())->method('getUser')->willReturn($user);
+        $this->tokenStorage->expects($this->any())->method('getToken')->willReturn($token);
+
         if (!$checkoutSource) {
-            $account = new Account();
-            $account->setOwner(new User());
-            $account->setOrganization(new Organization());
-            $user = new AccountUser();
-            $user->setAccount($account);
-
-            /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject $token */
-            $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-            $token->expects($this->any())->method('getUser')->willReturn($user);
-            $this->tokenStorage->expects($this->any())->method('getToken')->willReturn($token);
-
             $propertyAccessor = PropertyAccess::createPropertyAccessor();
             $this->propertyAccessor
                 ->expects($this->once())
@@ -259,6 +259,24 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
                     ]
                 ],
                 'checkoutSource' => new CheckoutSourceStub()
+            ],
+            'with_force' => [
+                'options' => [
+                    StartCheckout::SOURCE_FIELD_KEY => 'shoppingList',
+                    StartCheckout::SOURCE_ENTITY_KEY => new ShoppingList(),
+                    StartCheckout::CHECKOUT_DATA_KEY => [
+                        'poNumber' => 123
+                    ],
+                    StartCheckout::SETTINGS_KEY  => [
+                        'allow_manual_source_remove' => true,
+                        'disallow_billing_address_edit' => false,
+                        'disallow_shipping_address_edit' => false,
+                        'remove_source' => true
+                    ],
+                    'force' => true
+                ],
+                'checkoutSource' => new CheckoutSourceStub(),
+                'force' => true
             ]
         ];
     }

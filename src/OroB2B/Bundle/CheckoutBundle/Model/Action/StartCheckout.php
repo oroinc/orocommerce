@@ -191,8 +191,8 @@ class StartCheckout extends AbstractAction
         $checkoutSource = $em->getRepository('OroB2BCheckoutBundle:CheckoutSource')
             ->findOneBy([$sourceFieldName => $sourceEntity]);
 
-        if ($checkoutSource) {
-            $checkout = $this->getCheckout($checkoutSource);
+        $checkout = $this->getCheckout($checkoutSource);
+        if ($this->isCheckoutExist($checkout)) {
             if ($this->getOptionFromContext($context, self::FORCE, false)) {
                 $this->updateCheckoutData($context, $checkout);
                 $this->addWorkflowItemDataSettings($context, $checkout->getWorkflowItem());
@@ -343,7 +343,7 @@ class StartCheckout extends AbstractAction
 
     /**
      * @param object $checkoutSource
-     * @return null|CheckoutInterface
+     * @return CheckoutInterface
      */
     protected function getCheckout($checkoutSource = null)
     {
@@ -359,5 +359,14 @@ class StartCheckout extends AbstractAction
         }
 
         return $checkout ?: new Checkout();
+    }
+
+    /**
+     * @param CheckoutInterface|null $checkout
+     * @return bool
+     */
+    protected function isCheckoutExist(CheckoutInterface $checkout = null)
+    {
+        return $checkout && $checkout->getWorkflowItem();
     }
 }
