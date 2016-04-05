@@ -36,7 +36,7 @@ services:
     orob2b_pricing.form.type.product_price_collection:
         class: %orob2b_pricing.form.type.product_price_collection.class%
         arguments:
-            - @doctrine
+            -"@doctrine"
         calls:
             - [setDataClass, [%orob2b_pricing.entity.product_price.class%]]
             - [setPriceListClass, [%orob2b_pricing.entity.price_list.class%]]
@@ -70,38 +70,38 @@ services:
     orob2b_pricing.form.price_lists_settings:
         class: %orob2b_pricing.form.price_lists_settings.class%
         arguments:
-            - @doctrine
-            - @property_accessor
+            - "@doctrine"
+            - "@property_accessor"
         tags:
             - { name: form.type, alias: orob2b_pricing_price_lists_settings }
 
     orob2b_pricing.form.type.product_price_filter:
         class: %orob2b_pricing.form.type.product_price_filter.class%
         arguments:
-            - @translator
-            - @doctrine
-            - @orob2b_product.formatter.product_unit_label
+            - "@translator"
+            - "@doctrine"
+            - "@orob2b_product.formatter.product_unit_label"
         tags:
             - { name: form.type, alias: orob2b_pricing_product_price_filter }
 
     orob2b_pricing.form.extension.account_type:
         class: %orob2b_pricing.form.extension.account_type.class%
         arguments:
-            - @orob2b_pricing.entity_listener.account
+            - "@orob2b_pricing.entity_listener.account"
         tags:
             - { name: form.type_extension, alias: orob2b_account_type }
 
     orob2b_pricing.form.extension.account_group_type:
         class: %orob2b_pricing.form.extension.account_group_type.class%
         arguments:
-            - @orob2b_pricing.entity_listener.account_group
+            - "@orob2b_pricing.entity_listener.account_group"
         tags:
             - { name: form.type_extension, alias: orob2b_account_group_type }
 
     orob2b_pricing.form.extension.product_type:
         class: %orob2b_pricing.form.extension.product_type.class%
         arguments:
-            - @doctrine
+            - "@doctrine"
         tags:
             - { name: form.type_extension, alias: orob2b_product }
 
@@ -114,7 +114,7 @@ services:
         class: %orob2b_pricing.form.extension.website_type.class%
         arguments:
             - %orob2b_pricing.entity.price_list_to_website.class%
-            - @orob2b_pricing.entity_listener.website
+            - "@orob2b_pricing.entity_listener.website"
         tags:
             - { name: form.type_extension, alias: orob2b_website_type }
 

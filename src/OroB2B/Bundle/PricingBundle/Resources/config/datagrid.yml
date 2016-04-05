@@ -103,7 +103,7 @@ datagrid:
                 link:          delete_link
                 icon:          trash
                 acl_resource:  orob2b_pricing_price_list_delete
-        action_configuration: [@orob2b_pricing.datagrid.price_list_permissions_provider, "getPermissions"]
+        action_configuration: ['@orob2b_pricing.datagrid.price_list_permissions_provider', "getPermissions"]
 
     base-price-list-relations-grid:
         acl_resource:      orob2b_pricing_price_list_view
@@ -477,7 +477,7 @@ datagrid:
                     data_name: productPrice.currency
                     options:
                         field_options:
-                            choices: @orob2b_pricing.provider.currency->getAvailableCurrencies
+                            choices: "@orob2b_pricing.provider.currency->getAvailableCurrencies"
         properties:
             id: ~
             productId: ~
@@ -596,7 +596,7 @@ datagrid:
                     data_name: productPrice.currency
                     options:
                         field_options:
-                            choices: @orob2b_pricing.provider.currency->getAvailableCurrencies
+                            choices: "@orob2b_pricing.provider.currency->getAvailableCurrencies"
         properties:
             priceListId: ~
             view_price_list_link:
