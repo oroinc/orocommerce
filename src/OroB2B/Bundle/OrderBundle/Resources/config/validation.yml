@@ -101,3 +101,9 @@ OroB2B\Bundle\OrderBundle\Entity\OrderDiscount:
             - Range:
                 min: -100
                 max: 100
+        amount:
+            - Type:
+                type: numeric
+            - Range:
+                min: 0
+                max: 999999999999999999
