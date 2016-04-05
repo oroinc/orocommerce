@@ -286,7 +286,7 @@ datagrid:
                     - request.poNumber
                     - request.shipUntil
                     - CONCAT(requestAccountUser.firstName, ' ', requestAccountUser.lastName) as accountUserName
-                    - requestStatus.name as statusName
+                    - requestStatus.label as statusLabel
                 from:
                     - { table: %orob2b_rfp.entity.request.class%, alias: request }
                 join:
@@ -297,9 +297,8 @@ datagrid:
         columns:
             id:
                 label:         orob2b.frontend.rfp.request.id.label
-            isDraft:
-                label:         orob2b.frontend.rfp.request.is_draft.label
-                frontend_type: boolean
+            statusLabel:
+                label:         orob2b.frontend.rfp.request.status.label
             poNumber:
                 label:         orob2b.frontend.rfp.request.po_number.label
             shipUntil:
