@@ -127,12 +127,10 @@ abstract class AbstractOrderAddressType extends AbstractType
     {
         $resolver
             ->setRequired(['object', 'addressType'])
-            ->setDefaults(
-                [
-                    'data_class' => $this->dataClass,
-                    'isEditEnabled' => true,
-                ]
-            )
+            ->setDefaults([
+                'data_class' => $this->dataClass,
+                'isEditEnabled' => true,
+            ])
             ->setAllowedValues('addressType', [AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING])
             ->setAllowedTypes('object', 'OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface');
     }
