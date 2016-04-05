@@ -134,6 +134,7 @@ class DatagridListener
 
         $config = $event->getConfig();
         $config->offsetSetByPath('[source][query][where][and]', ['productCategory.id IN (:productCategoryIds)']);
+        $config->offsetSetByPath('[options][urlParams][categoryId]', $categoryId);
         $config->offsetSetByPath(
             DatasourceBindParametersListener::DATASOURCE_BIND_PARAMETERS_PATH,
             ['productCategoryIds']

@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class RequestProductHandler
 {
     const CATEGORY_ID_KEY = 'categoryId';
+    const PRODUCTS_GRID_CATEGORY = 'frontend-products-grid';
     const INCLUDE_SUBCATEGORIES_KEY = 'includeSubcategories';
     const INCLUDE_SUBCATEGORIES_DEFAULT_VALUE = false;
 
@@ -31,7 +32,13 @@ class RequestProductHandler
             return false;
         }
 
-        $value = $request->get(self::CATEGORY_ID_KEY);
+        $requestCategory = $request->get(self::PRODUCTS_GRID_CATEGORY);
+        if ($requestCategory !== null) {
+            $value = $requestCategory[self::CATEGORY_ID_KEY];
+        } else {
+            $value = $request->get(self::CATEGORY_ID_KEY);
+        }
+
 
         if (is_bool($value)) {
             return false;
