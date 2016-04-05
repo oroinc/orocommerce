@@ -17,6 +17,12 @@ class PaymentTerm implements PaymentMethodInterface
     }
 
     /** {@inheritdoc} */
+    public function isEnabled()
+    {
+        return true;
+    }
+
+    /** {@inheritdoc} */
     public function getType()
     {
         return self::TYPE;

@@ -13,7 +13,6 @@ parameters:
     orob2b_payment.provider.credit_form_provider.class: OroB2B\Bundle\PaymentBundle\Layout\DataProvider\CreditCardFormProvider
     orob2b_payment.provider.term_form_provider.class: OroB2B\Bundle\PaymentBundle\Layout\DataProvider\PaymentTermFormProvider
     orob2b_payment.provider.methods_provider.class: OroB2B\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodsProvider
-    orob2b_payment.form.payment_method_type_registry.class: OroB2B\Bundle\PaymentBundle\Form\PaymentMethodTypeRegistry
     orob2b_payment.provider.payment_transaction.class: OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider
     orob2b_payment.event.callback_handler.class: OroB2B\Bundle\PaymentBundle\Event\CallbackHandler
     orob2b_payment.action.capture.class: OroB2B\Bundle\PaymentBundle\Action\CaptureAction
@@ -108,9 +107,6 @@ services:
             - @doctrine
             - %orob2b_payment.entity.payment_term.class%
 
-    orob2b_payment.form.payment_method_type_registry:
-        class: %orob2b_payment.form.payment_method_type_registry.class%
-
     orob2b_payment.provider.credit_form_provider:
         class: %orob2b_payment.provider.credit_form_provider.class%
         arguments:
@@ -128,8 +124,7 @@ services:
     orob2b_payment.provider.methods_provider:
         class: %orob2b_payment.provider.methods_provider.class%
         arguments:
-            - @form.factory
-            - @orob2b_payment.form.payment_method_type_registry
+            - @orob2b_payment.payment_method.view.registry
         tags:
             - { name: layout.data_provider, alias: orob2b_payment_methods_provider }
 

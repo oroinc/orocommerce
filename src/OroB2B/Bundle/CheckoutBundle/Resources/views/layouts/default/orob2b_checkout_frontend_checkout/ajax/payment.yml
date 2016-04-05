@@ -20,7 +20,7 @@ layout:
             options:
                 class_prefix: 'checkout'
                 vars:
-                    forms: { @value: $data.orob2b_payment_methods_provider }
+                    views: { @value: $data.orob2b_payment_methods_provider }
 
     conditions:
         @eq: [$context.workflowStepName, 'enter_payment']

@@ -25,4 +25,9 @@ interface PaymentMethodInterface
      * @return string
      */
     public function getType();
+
+    /**
+     * @return bool
+     */
+    public function isEnabled();
 }

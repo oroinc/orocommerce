@@ -172,6 +172,14 @@ class PayflowGateway implements PaymentMethodInterface
         return $this->configManager->get($key);
     }
 
+    /**
+     * @return bool
+     */
+    public function isEnabled()
+    {
+        return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ENABLED_KEY);
+    }
+
     /** {@inheritdoc} */
     public function getType()
     {

@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Form;
 
 use Symfony\Component\Form\FormTypeInterface;
 
-use OroB2B\Bundle\PaymentBundle\Form\PaymentMethodTypeRegistry;
+use OroB2B\Bundle\PaymentBundle\Form\PaymentMethodViewRegistry;
 
 class PaymentMethodTypeRegistryTest extends \PHPUnit_Framework_TestCase
 {
@@ -13,7 +13,7 @@ class PaymentMethodTypeRegistryTest extends \PHPUnit_Framework_TestCase
     public function testRegistry()
     {
         $testType = $this->getTypeMock(self::NAME);
-        $registry = new PaymentMethodTypeRegistry();
+        $registry = new PaymentMethodViewRegistry();
 
         $this->assertEmpty($registry->getPaymentMethodTypes());
 
@@ -29,7 +29,7 @@ class PaymentMethodTypeRegistryTest extends \PHPUnit_Framework_TestCase
      */
     public function testWrongTypeException()
     {
-        $registry = new PaymentMethodTypeRegistry();
+        $registry = new PaymentMethodViewRegistry();
         $registry->getPaymentMethodType(self::NAME);
     }
 

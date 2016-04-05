@@ -1,13 +1,7 @@
 {% extends '@OroB2BFrontend/layouts/default/form_theme.html.twig' %}
 
 {%- block form_label -%}
-    {% set label_attr = label_attr|merge({
-        class: [
-            label_attr.class|default(''),
-            class_prefix ~ "__form__payment-label"
-            ]|join(' ')
-        }) %}
-
+    {% set modifier = "__form__payment-label" %}
     {{ parent() }}
 {%- endblock form_label -%}
 
@@ -24,4 +18,25 @@
     {%- set type = type|default('password') -%}
     <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
     <a href="#" class="what-this-link">What's this?</a>
+{% endblock %}
+
+{% block _orob2b_payment_credit_card_widget %}
+    <div class="{{ class_prefix }}__form__payment-methods"
+            data-page-component-module="orob2bpayment/js/app/components/credit-card-component">
+        <ul class="{{ class_prefix }}__form__payment-methods__list">
+            <li><a href="#"><i class="credit-card-icon credit-card-icon_mc"></i></a></li>
+            <li><a href="#"><i class="credit-card-icon credit-card-icon_visa"></i></a></li>
+            <li><a href="#"><i class="credit-card-icon credit-card-icon_ae"></i></a></li>
+            <li><a href="#"><i class="credit-card-icon credit-card-icon_discover"></i></a></li>
+        </ul>
+        <div class="{{ class_prefix }}__form__payment-methods__form">
+            {% for child in form.children %}
+                <div class="{{ class_prefix }}__form__row">
+                    <div class="{{ class_prefix }}__form__col form__col_x12">
+                        {{ form_row(child, {class_prefix: class_prefix}) }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}
