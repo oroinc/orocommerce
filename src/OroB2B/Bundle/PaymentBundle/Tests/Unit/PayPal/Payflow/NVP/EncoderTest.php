@@ -118,7 +118,21 @@ class EncoderTest extends \PHPUnit_Framework_TestCase
                     'key4' => '',
                     'key5' => 'value=with-some=symbols'
                 ]
-            ]
+            ],
+            'delayed capture' => [
+                'source' => 'RESULT=0&PNREF=EQRB8A32CD6A&RESPMSG=Approved&AUTHCODE=00&TRACEID=1234567890' .
+                    '&ACHSTATUS=A&HOSTCODE=07&TRANSTIME=2012-02-09 15:24:22',
+                'expectedResult' => [
+                    'RESULT' => '0',
+                    'PNREF' => 'EQRB8A32CD6A',
+                    'RESPMSG' => 'Approved',
+                    'AUTHCODE' => '00',
+                    'TRACEID' => '1234567890',
+                    'ACHSTATUS' => 'A',
+                    'HOSTCODE' => '07',
+                    'TRANSTIME' => '2012-02-09 15:24:22',
+                ],
+            ],
         ];
     }
 }

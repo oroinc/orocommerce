@@ -20,7 +20,7 @@ class Encoder implements EncoderInterface
     /** {@inheritdoc} */
     public function decode($data)
     {
-        $result = array();
+        $result = [];
         while (strlen($data) > 0) {
             $matches = [];
             preg_match(self::DECODE_REGEXP, $data, $matches);
@@ -33,7 +33,7 @@ class Encoder implements EncoderInterface
                 $value = $next === false ? $data : substr($data, 0, $next);
             }
             $data = substr($data, strlen($value) + 1);
-            $result[$key] = $value ?: '';
+            $result[$key] = $value === false ? '' : $value;
         }
         return $result;
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Controller\Frontend;
+namespace OroB2B\Bundle\PaymentBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Component\Testing\WebTestCase;
 
@@ -54,7 +54,7 @@ class CallbackControllerTest extends WebTestCase
         /** @var PaymentTransaction $paymentTransaction */
         $paymentTransaction = $this->getReference(LoadPaymentTransactionData::PAYFLOW_TRANSACTION);
 
-        $expectedData = $parameters + $paymentTransaction->getData();
+        $expectedData = $parameters + $paymentTransaction->getRequest();
         $this->client->request(
             $method,
             $this->getUrl($route, ['transactionId' => $paymentTransaction->getId()]),
@@ -63,16 +63,19 @@ class CallbackControllerTest extends WebTestCase
 
         $paymentTransaction->setEntityClass('stdClass');
 
-        $this->getContainer()->get('doctrine')->getManager()->clear();
-        $paymentTransaction = $this->getContainer()->get('doctrine')->getManager()->find(
+        $manager = $this->getContainer()->get('doctrine')->getManager();
+        $manager->flush();
+        $manager->clear();
+
+        $paymentTransaction = $manager->find(
             'OroB2BPaymentBundle:PaymentTransaction',
             $paymentTransaction->getId()
         );
 
         $this->assertNotEquals('stdClass', $paymentTransaction->getEntityClass());
 
+        $this->assertEquals(true, $paymentTransaction->isActive());
         $this->assertEquals('Transaction Reference', $paymentTransaction->getReference());
-        $this->assertEquals('0', $paymentTransaction->getState());
-        $this->assertEquals($expectedData, $paymentTransaction->getData());
+        $this->assertEquals($expectedData, $paymentTransaction->getResponse());
     }
 }

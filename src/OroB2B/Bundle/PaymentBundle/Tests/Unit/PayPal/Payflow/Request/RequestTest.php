@@ -45,7 +45,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
     {
         $this->getFinder()
             ->files()
-            ->in(__DIR__)
+            ->in(__DIR__ . DIRECTORY_SEPARATOR . 'requests')
             ->name('*.yml');
 
         $cases = [];

@@ -7,15 +7,6 @@ class RequestRegistry
     /** @var RequestInterface[] */
     protected $requests = [];
 
-    public function __construct()
-    {
-        $this
-            ->addRequest(new AuthorizationRequest())
-            ->addRequest(new SaleRequest())
-            ->addRequest(new DelayedCaptureRequest())
-            ->addRequest(new VoidRequest());
-    }
-
     /**
      * @param RequestInterface $request
      * @return $this
