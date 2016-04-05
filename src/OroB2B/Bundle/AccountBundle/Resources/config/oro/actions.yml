@@ -203,6 +203,8 @@ operations:
             - @get_active_user: $.currentUser
         preconditions:
             @not_equal: [$id, $.currentUser.id]
+        frontend_options:
+            confirmation: orob2b.account.account_user.delete_confirm
         actions:
             - @run_action_group:
                 action_group: DELETE
@@ -226,7 +228,7 @@ operations:
         acl_resource: [EDIT, $.data]
         order: 5
         button_options:
-            icon: icon-edit
+            icon: icon-pencil
         actions:
             - @redirect:
                 parameters:
@@ -242,7 +244,7 @@ operations:
         acl_resource: [EDIT, $.data]
         order: 5
         button_options:
-            icon: icon-edit
+            icon: icon-pencil
         actions:
             - @redirect:
                 parameters:

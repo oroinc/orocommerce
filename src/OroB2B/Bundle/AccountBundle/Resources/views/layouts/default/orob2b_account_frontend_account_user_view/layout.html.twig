@@ -1,6 +1,6 @@
 {% block _account_user_view_page_widget %}
     {% set attr = attr|merge({
-    class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}_full"
+        class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}_full"
 }) %}
     <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
