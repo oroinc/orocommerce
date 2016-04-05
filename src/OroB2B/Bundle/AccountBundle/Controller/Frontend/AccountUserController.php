@@ -21,7 +21,7 @@ class AccountUserController extends Controller
 {
     /**
      * @Route("/view/{id}", name="orob2b_account_frontend_account_user_view", requirements={"id"="\d+"})
-     * @Template("OroB2BAccountBundle:AccountUser/Frontend:view.html.twig")
+     * @Layout
      * @Acl(
      *      id="orob2b_account_frontend_account_user_view",
      *      type="entity",
@@ -36,7 +36,9 @@ class AccountUserController extends Controller
     public function viewAction(AccountUser $accountUser)
     {
         return [
-            'entity' => $accountUser
+            'data' => [
+                'entity' => $accountUser
+            ]
         ];
     }
 
