@@ -75,11 +75,6 @@ class AccountUserController extends Controller
     public function createAction(Request $request)
     {
         $accountUser = new AccountUser();
-//        $user = $this->getUser();
-//        if ($user instanceof AccountUser) {
-//            $aacountUser
-//                ->setAccount($user->getAccount());
-//        }
 
         return $this->update($accountUser, $request);
     }

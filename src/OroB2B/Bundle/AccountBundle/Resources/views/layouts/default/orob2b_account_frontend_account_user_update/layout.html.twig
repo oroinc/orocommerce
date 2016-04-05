@@ -11,7 +11,8 @@
 
 {% block _account_profile_edit_form_fields_widget %}
     {{ form_row(form._token) }}
-    {{ form_row(form.account) }}
+    {{ form_errors(form) }}
+    {#{{ form_row(form.account) }}#}
     <fieldset class="profile__form__row">
         <legend>{{ 'orob2b.account.accountuser.profile.form.sections.profile_information.label'|trans }}</legend>
         <fieldset class="profile__form__row">
