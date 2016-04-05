@@ -9,8 +9,7 @@
                 <i class="cf-clipboard"></i>
             </span>
             <span class="cart-widget__list-trigger">
-                <strong>{{ shoppingLists|length }} </strong>
-                <span class="cart-widget-text">{{ 'orob2b.frontend.shoppinglist.view.entity_label'|transchoice(shoppingLists|length) }} </span>
+                <span class="cart-widget-text">{{ 'orob2b.frontend.shoppinglist.view.entity.label'|transchoice(shoppingLists|length)|raw }} </span>
                 <i class="cf-down-open-mini"></i>
             </span>
         </div>
@@ -55,7 +54,7 @@
         <table class="order-widget__table">
             <tbody>
             <tr>
-                <td>{{ shoppingList.lineItems|length }} {{ 'orob2b.frontend.shoppinglist.view.items.label'|transchoice(shoppingList.lineItems|length) }}</td>
+                <td>{{ 'orob2b.frontend.shoppinglist.view.items.label'|transchoice(shoppingList.lineItems|length) }}</td>
                 <td class="text-right">
                     {{ 'orob2b.frontend.shoppinglist.view.subtotal.label'|trans }} {{ shoppingList.subtotal|oro_format_currency({'currency': shoppingList.currency}) }}
                 </td>
