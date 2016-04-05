@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Form;
 use Symfony\Component\Form\FormTypeInterface;
 
 use OroB2B\Bundle\PaymentBundle\Form\PaymentMethodViewRegistry;
+use OroB2B\Bundle\PaymentBundle\Form\Type\AbstractPaymentMethodType;
 
 class PaymentMethodTypeRegistryTest extends \PHPUnit_Framework_TestCase
 {
@@ -12,6 +13,7 @@ class PaymentMethodTypeRegistryTest extends \PHPUnit_Framework_TestCase
 
     public function testRegistry()
     {
+        /** @var AbstractPaymentMethodType $testType */
         $testType = $this->getTypeMock(self::NAME);
         $registry = new PaymentMethodViewRegistry();
 
@@ -25,7 +27,7 @@ class PaymentMethodTypeRegistryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \LogicException
-     * @expectedExceptionMessage Tax payment type with name "test_method_type" does not exist
+     * @expectedExceptionMessage Payment method type with name "test_method_type" does not exist
      */
     public function testWrongTypeException()
     {
@@ -35,11 +37,11 @@ class PaymentMethodTypeRegistryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $name
-     * @return \PHPUnit_Framework_MockObject_MockObject|FormTypeInterface
+     * @return \PHPUnit_Framework_MockObject_MockObject|AbstractPaymentMethodType
      */
     protected function getTypeMock($name)
     {
-        $type = $this->getMock('Symfony\Component\Form\FormTypeInterface');
+        $type = $this->getMock('OroB2B\Bundle\PaymentBundle\Form\Type\AbstractPaymentMethodType');
         $type->expects($this->any())
             ->method('getName')
             ->will($this->returnValue($name));
