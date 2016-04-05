@@ -1,25 +1,8 @@
-{% extends 'form_div_layout.html.twig' %}
-
-{%- block checkbox_row -%}
-    <div class="checkout__form__col form__col_x12 mmb5-md mmb5-sm">
-    {% if label is defined and label is not same as(false) %}
-        {%- if label is empty -%}
-            {% set label = id|humanize %}
-        {%- endif -%}
-        <label for="{{ id }}" class="checkbox_custom checkbox_custom_blue {% if form.vars.checked %}checked{% endif %}" data-checkbox>
-            {{- form_widget(form) -}}
-            <i class="cf-check_box checkbox_checked fs18 mmr5-md"></i>
-            <i class="cf-check_box_outline_blank checkbox_not-checked fs18 mmr5-md"></i>
-            <span class="checkbox_custom__text fs13">{{ label|block_text(translation_domain) }}</span>
-        </label>
-    {%- endif %}
-    {{- form_errors(form) -}}
-    </div>
-{%- endblock checkbox_row -%}
+{% extends 'OroB2BFrontendBundle:layouts/default:form_theme.html.twig' %}
 
 {% block orob2b_country_widget %}
     <div class="checkout__form__select">
-        {{ form_widget(form) }}
+        {{ form_widget(form, {'class_prefix': 'checkout'}) }}
     </div>
 {% endblock %}
 
@@ -30,64 +13,20 @@
 {% endblock %}
 
 {%- block form_label -%}
-    {% set label_attr = label_attr|merge({
-        class: [
-            label_attr.class|default(''),
-            "checkout__form__label checkout__form__label_additional"
-            ]|join(' ')
-        })
-    %}
+    {% set label_attr = label_attr|merge({class: label_attr.class|default('') ~ "checkout__form__label_additional"}) %}
 
     {{ parent() }}
 {%- endblock form_label -%}
 
-{% block form_widget_simple %}
-    {% set attr = attr|merge({
-        class: [
-            attr.class|default(''),
-            'input input_md input_block checkout__form__input'
-        ]|join(' ')
-    })
-    %}
-    {{ parent() }}
-{% endblock %}
-
-{%- block choice_widget %}
-    {% set attr = attr|merge({
-        class: [
-            attr.class|default(''),
-            'input input_md input_block checkout__form__input'
-        ]|join(' ')
-    })
-    %}
-    {{ parent() }}
-{% endblock %}
-
 {%- block form_row -%}
     <div class="checkout__form__col {{ parentClass|default('form__col_x6') }}">
-        {{- form_label(form) -}}
-        {{- form_widget(form) -}}
-        {{- form_errors(form) -}}
+        {{- form_label(form, null, {'class_prefix': 'checkout'}) -}}
+        {{- form_widget(form, {'class_prefix': 'checkout'}) -}}
+        {{- form_errors(form, {'class_prefix': 'checkout'}) -}}
     </div>
 {%- endblock form_row -%}
 
-{% block widget_attributes %}
-    {% if errors|length > 0 %}
-        {% set attr = attr|merge({
-            class: attr.class|default('') ~ ' input_error'
-        }) %}
-    {% endif %}
-    {{ parent() }}
-{% endblock widget_attributes %}
-
-{%- block form_errors -%}
-    {%- if errors|length > 0 -%}
-        <div class="notification notification_xsm notification_error notification-radiused mmt5-md">
-            <ul>
-                {%- for error in errors -%}
-                    <li><i class="cf-attention"></i><span class="mml5-md">{{ error.message }}</span></li>
-                {%- endfor -%}
-            </ul>
-        </div>
-    {%- endif -%}
-{%- endblock form_errors -%}
+{% block checkbox_row %}
+    {{- form_widget(form) -}}
+    {{- form_errors(form) -}}
+{% endblock %}

@@ -225,7 +225,6 @@
   height: 3.5rem;
   margin: 1.2rem 0 0;
   text-indent: -999rem;
-  background: url("@{images}/logo.png") no-repeat;
 
   @media (max-width: 991px) {
     width: 24rem;
@@ -463,7 +462,7 @@
 
 .top-nav__sublist-container {
   display: none;
-  width: 100%;
+  width: 1197px;
   padding: 0 1.5rem;
   position: absolute;
   top: 4.8rem;
@@ -501,11 +500,15 @@
     padding: 0 0 0 2.5rem;
   }
 
-  &.top-nav__sublist__item_has-adv-block {
+  &.top-nav__sublist__item_has-sales-block {
     flex-grow: 0;
 
     @media (max-width: 991px) {
       order: 1;
+    }
+
+    .sales-block {
+      margin: 2rem 0 0;
     }
   }
 
@@ -574,10 +577,6 @@
       }
     }
   }
-}
-
-.adv-block {
-  margin: 2rem 0 0;
 }
 /* END TOP NAVIGATION*/
 
@@ -2716,6 +2715,7 @@
 
 .cart__order__controls-list,
 .oro-order__controls-list,
+.oro-account-user-role__controls-list,
 .oro-grid-table__item__controls-list {
   .list-normalize;
   margin: 0 0 .5rem;
@@ -2757,6 +2757,10 @@
       } 
     }
   }
+}
+
+.oro-account-user-role__back-link {
+  padding-left: 0;
 }
 
 //Cart list on mobile devices
@@ -2952,6 +2956,10 @@
 
   @media (max-width: 991px) {
     padding: 1rem;
+  }
+
+  .removeLineItem.btn {
+    min-width: 3rem;
   }
 
   .btn {
@@ -3433,7 +3441,7 @@
 
 /*Account page filter controls*/
 .oro-oq__filter-controls {
-  margin: 1rem 0 0;
+  margin: 1rem 0 1rem !important;
 
   &.oro-oq__filter-controls_by-sides {
     display: flex;
@@ -3556,11 +3564,11 @@
     }
 
     .oro-oq__filter__item {
-      flex-grow: 1;
+      flex-grow: 0;
 
       &:first-child {
         flex-basis: 32rem;
-        flex-grow: 0;
+        flex-grow: 1;
         position: relative;
 
         @media (max-width: 1280px) {
@@ -3571,7 +3579,6 @@
 
       &:last-child {
         flex-grow: 0;
-        flex-basis: 15rem;
 
         @media (max-width: 767px) {
           flex-basis: auto;
@@ -6205,3 +6212,9 @@
   }
 }
 /*/Compare Products*/
+
+.pinned-dropdown {
+  .icons-holder:not(:first-child) {
+    display: none !important;
+  }
+}

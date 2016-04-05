@@ -17,7 +17,7 @@ use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTy
 
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType as BaseRequestProductType;
 use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
+use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemCollectionType;
 use OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type\AbstractTest;
 
 class RequestProductTypeTest extends AbstractTest
@@ -163,6 +163,7 @@ class RequestProductTypeTest extends AbstractTest
         return [
             new PreloadedExtension(
                 [
+
                     CollectionType::NAME                   => new CollectionType(),
                     RequestProductItemCollectionType::NAME => new RequestProductItemCollectionType(),
                     ProductUnitSelectionType::NAME         => new ProductUnitSelectionTypeStub(),

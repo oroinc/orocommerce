@@ -17,7 +17,6 @@ use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;

@@ -72,33 +72,29 @@
     {% set attr = attr|merge({
     class: attr.class|default('') ~ " table borderless paddingless mb0-md mb0-sm"
     }) %}
-    <table {{ block('block_attributes') }}>
-        <tbody>
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
-        </tbody>
-    </table>
+    </div>
 {% endblock %}
 
 {% block _product_grid_row_sku_widget %}
-    <tr>
-        <td>{{ 'orob2b.product.frontend.index.item'|trans }}</td>
-        <td><span class="red"><%= model.sku %></span></td>
-    </tr>
+    <div>
+        {{ 'orob2b.product.frontend.index.item'|trans }} <span class="red"><%= model.sku %></span>
+    </div>
 {% endblock %}
 
 {% block _product_grid_row_mfg_widget %}
-    <tr>
-        <td>{{ 'orob2b.product.frontend.index.mfg'|trans }}</td>
-        <td><span class="red">1ABC13656</span></td>
-    </tr>
+    <div>
+        {{ 'orob2b.product.frontend.index.mfg'|trans }} <span class="red">1ABC13656</span>
+    </div>
 {% endblock %}
 
-{% block _product_grid_row_description_widget %}
+{% block _product_grid_row_short_description_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " product__description product__description_<%= themeOptions.view %>"
     }) %}
     <div {{ block('block_attributes') }}>
-        <p><%= model.description %></p>
+        <p><%= model.shortDescription %></p>
     </div>
 {% endblock %}
 

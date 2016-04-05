@@ -128,6 +128,10 @@ class ProductDuplicator
             $productCopy->addDescription(clone $description);
         }
 
+        foreach ($product->getShortDescriptions() as $shortDescription) {
+            $productCopy->addShortDescription(clone $shortDescription);
+        }
+
         if ($imageFile = $product->getImage()) {
             $imageFileCopy = $this->attachmentManager->copyAttachmentFile($imageFile);
             $productCopy->setImage($imageFileCopy);

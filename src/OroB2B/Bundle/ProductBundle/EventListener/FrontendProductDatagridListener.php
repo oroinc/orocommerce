@@ -112,7 +112,7 @@ class FrontendProductDatagridListener
                 break;
             case DataGridThemeHelper::VIEW_GRID:
                 $this->addImageToConfig($config);
-                $this->addDescriptionToConfig($config);
+                $this->addShortDescriptionToConfig($config);
                 break;
             case DataGridThemeHelper::VIEW_TILES:
                 $this->addImageToConfig($config);
@@ -148,23 +148,23 @@ class FrontendProductDatagridListener
     /**
      * @param DatagridConfiguration $config
      */
-    protected function addDescriptionToConfig(DatagridConfiguration $config)
+    protected function addShortDescriptionToConfig(DatagridConfiguration $config)
     {
         $updates = [
             '[source][query][select]' => [
-                'productDescriptions.text as description'
+                'productShortDescriptions.text as shortDescription'
             ],
             '[source][query][join][inner]' => [
                 [
-                    'join' => 'product.descriptions',
-                    'alias' => 'productDescriptions',
+                    'join' => 'product.shortDescriptions',
+                    'alias' => 'productShortDescriptions',
                     'conditionType' => 'WITH',
-                    'condition' => 'productDescriptions.locale IS NULL'
+                    'condition' => 'productShortDescriptions.locale IS NULL'
                 ]
             ],
             '[columns]' => [
-                'description' => [
-                    'label' => $this->translator->trans('orob2b.product.descriptions.label'),
+                'shortDescription' => [
+                    'label' => $this->translator->trans('orob2b.product.short_descriptions.label'),
                 ]
             ],
         ];

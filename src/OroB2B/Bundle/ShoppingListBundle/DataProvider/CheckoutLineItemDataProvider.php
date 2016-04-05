@@ -7,9 +7,9 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use OroB2B\Bundle\PricingBundle\Provider\UserCurrencyProvider;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
+use OroB2B\Component\Checkout\DataProvider\AbstractCheckoutProvider;
 
-class CheckoutLineItemDataProvider implements CheckoutDataProviderInterface
+class CheckoutLineItemDataProvider extends AbstractCheckoutProvider
 {
     /**
      * @var FrontendProductPricesDataProvider
@@ -38,16 +38,17 @@ class CheckoutLineItemDataProvider implements CheckoutDataProviderInterface
         $this->registry = $registry;
     }
 
+
     /**
-     * @param ShoppingList $shoppingList
+     * @param ShoppingList $entity
      * @return array
      */
-    public function getData($shoppingList)
+    public function prepareData($entity)
     {
         /** @var LineItemRepository $repository */
         $repository = $this->registry->getManagerForClass('OroB2BShoppingListBundle:LineItem')
             ->getRepository('OroB2BShoppingListBundle:LineItem');
-        $lineItems = $repository->getItemsWithProductByShoppingList($shoppingList);
+        $lineItems = $repository->getItemsWithProductByShoppingList($entity);
 
         $shoppingListPrices = $this->frontendProductPricesDataProvider->getProductsPrices($lineItems);
         $data = [];

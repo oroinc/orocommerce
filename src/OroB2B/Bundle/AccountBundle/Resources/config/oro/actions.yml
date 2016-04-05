@@ -50,8 +50,6 @@ operations:
         applications: [frontend]
         routes:
             - orob2b_account_frontend_account_user_view
-        datagrids:
-            - frontend-account-account-user-grid
         order: 10
         button_options:
             icon: icon-remove
@@ -69,18 +67,28 @@ operations:
                     data: $.data
                     value: false
                     current_user: $.currentUser
-            - @refresh_grid: frontend-account-account-user-grid
+            - @redirect:
+                parameters:
+                    route: orob2b_account_frontend_account_user_view
+                    route_parameters:
+                        id: $id
             - @flash_message:
                 message: orob2b.account.controller.accountuser.disabled.message
                 type: 'success'
+
+    orob2b_account_frontend_accountuser_disable_datagrid:
+        extends: orob2b_account_frontend_accountuser_disable
+        routes: ~
+        datagrids:
+            - frontend-account-account-user-grid
+        actions:
+            - @refresh_grid: frontend-account-account-user-grid
 
     orob2b_account_frontend_accountuser_enable:
         label: orob2b.account.action.account_user.enable
         applications: [frontend]
         routes:
             - orob2b_account_frontend_account_user_view
-        datagrids:
-            - frontend-account-account-user-grid
         order: 10
         button_options:
             icon: icon-ok
@@ -98,10 +106,22 @@ operations:
                     data: $.data
                     value: true
                     current_user: $.currentUser
-            - @refresh_grid: frontend-account-account-user-grid
+            - @redirect:
+                parameters:
+                    route: orob2b_account_frontend_account_user_view
+                    route_parameters:
+                        id: $id
             - @flash_message:
                 message: orob2b.account.controller.accountuser.enabled.message
                 type: 'success'
+
+    orob2b_account_frontend_accountuser_enable_datagrid:
+        extends: orob2b_account_frontend_accountuser_enable
+        routes: ~
+        datagrids:
+            - frontend-account-account-user-grid
+        actions:
+            - @refresh_grid: frontend-account-account-user-grid
 
     orob2b_account_accountuser_confirm:
         label: orob2b.account.action.account_user.confirm
@@ -169,15 +189,76 @@ operations:
                 parameters:
                     route: orob2b_account_frontend_account_user_role_create
 
+    orob2b_account_frontend_delete_user:
+        label: orob2b.account.action.account_user.delete
+        applications: [frontend]
+        routes:
+            - orob2b_account_frontend_account_user_view
+            - orob2b_account_frontend_account_user_update
+        acl_resource: [DELETE, $.data]
+        order: 20
+        button_options:
+            icon: icon-trash
+        preactions:
+            - @get_active_user: $.currentUser
+        preconditions:
+            @not_equal: [$id, $.currentUser.id]
+        frontend_options:
+            confirmation: orob2b.account.account_user.delete_confirm
+        actions:
+            - @run_action_group:
+                action_group: DELETE
+                parameters_mapping:
+                    data: $.data
+            - @trans:
+                id: orob2b.account.accountuser.entity_label
+                attribute: $.entityLabel
+            - @flash_message:
+                message: oro.action.delete_message
+                type: 'info'
+                message_parameters:
+                    entityLabel: $.entityLabel
+            - @redirect: {route: orob2b_account_frontend_account_user_index}
+
+    orob2b_account_frontend_edit_user:
+        label: orob2b.account.action.account_user.edit
+        applications: [frontend]
+        routes:
+            - orob2b_account_frontend_account_user_view
+        acl_resource: [EDIT, $.data]
+        order: 5
+        button_options:
+            icon: icon-pencil
+        actions:
+            - @redirect:
+                parameters:
+                    route: orob2b_account_frontend_account_user_update
+                    route_parameters:
+                        id: $id
+
+    orob2b_account_frontend_profile_user:
+        label: orob2b.account.action.account_user.edit
+        applications: [frontend]
+        routes:
+            - orob2b_account_frontend_account_user_profile
+        acl_resource: [EDIT, $.data]
+        order: 5
+        button_options:
+            icon: icon-pencil
+        actions:
+            - @redirect:
+                parameters:
+                    route: orob2b_account_frontend_account_user_profile_update
+
     orob2b_account_frontend_edit_role:
-        label: orob2b.account.action.account_user_role.edit
+        label: orob2b.account.frontend.action.account_user_role.edit
         applications: [frontend]
         routes:
             - orob2b_account_frontend_account_user_role_view
         acl_resource: [EDIT, entity:commerce@OroB2B\Bundle\AccountBundle\Entity\AccountUserRole]
         order: 10
         button_options:
-            icon: icon-edit
+            icon: icon-pencil
         actions:
             - @redirect:
                 parameters:
