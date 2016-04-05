@@ -61,13 +61,9 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
     protected function createTopNavMenu(ObjectManager $manager)
     {
         $item = $this->factory->createItem('top-nav');
-        $item->addChild('My Account', ['uri' => '/account/user/profile']);
-        $item->addChild('Order History', ['uri' => '/account/order']);
-        $item->addChild('Sign Out', ['uri' => '/account/user/logout', 'extras' => [
-            'condition' => 'is_logged_in()'
-        ]]);
         $item->addChild('1-800-555-5555');
         $item->addChild('Live Chat', ['uri' => '/contact-us']);
+        $item->addChild('Fast & Free Shipping for orders over $45', ['uri' => '/about']);
 
         $menuItem = $this->menuItemManager->createFromItem($item);
         $manager->persist($menuItem);

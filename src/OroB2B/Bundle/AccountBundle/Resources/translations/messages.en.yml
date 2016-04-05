@@ -428,6 +428,10 @@ orob2b.account:
                 section.label: Section
                 action.label: Action
                 permission.label: Permission
+        menu:
+            account_user_signed_in_as.label: 'Signed in as:'
+            account_user_sign_out.label: 'Sign Out'
+            account_user_profile.label: 'My Account'
 
     account_typed_address_with_default_type:
         choice.default_text: 'Default %type_name%'
