@@ -228,7 +228,7 @@ operations:
         acl_resource: [EDIT, $.data]
         order: 5
         button_options:
-            icon: icon-edit
+            icon: icon-pencil
         actions:
             - @redirect:
                 parameters:
@@ -244,7 +244,7 @@ operations:
         acl_resource: [EDIT, $.data]
         order: 5
         button_options:
-            icon: icon-edit
+            icon: icon-pencil
         actions:
             - @redirect:
                 parameters:
