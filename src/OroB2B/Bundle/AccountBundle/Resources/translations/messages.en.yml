@@ -410,7 +410,7 @@ orob2b.account:
         sections:
             account_user_role:
                 label: Role Title
-                users.label: Role Users
+                users.label: Users
         action:
             back.label: "< Back"
             account_user_role.edit: "Edit Role"
