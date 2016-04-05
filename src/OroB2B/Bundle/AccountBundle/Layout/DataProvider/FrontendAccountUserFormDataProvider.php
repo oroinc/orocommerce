@@ -11,7 +11,6 @@ use Oro\Bundle\LayoutBundle\Layout\Form\FormAction;
 use Oro\Component\Layout\AbstractServerRenderDataProvider;
 use Oro\Component\Layout\ContextInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateFrontendHandler;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
@@ -37,6 +36,7 @@ class FrontendAccountUserFormDataProvider extends AbstractServerRenderDataProvid
     {
         $this->formFactory = $formFactory;
     }
+
     /**
      * {@inheritdoc}
      */
@@ -63,6 +63,7 @@ class FrontendAccountUserFormDataProvider extends AbstractServerRenderDataProvid
 
     /**
      * @param AccountUser $accountUser
+     *
      * @return FormInterface
      */
     public function getForm(AccountUser $accountUser)
