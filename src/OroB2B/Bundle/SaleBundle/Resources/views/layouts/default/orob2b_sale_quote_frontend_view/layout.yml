@@ -43,6 +43,8 @@ layout:
                             quote: { @value: $data.quote }
                 quote_view_controls_list:
                     blockType: block
+                    options:
+                        visible: false
                 quote_view_information:
                     blockType: container
                     options:
