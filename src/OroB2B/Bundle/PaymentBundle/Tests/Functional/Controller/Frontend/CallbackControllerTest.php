@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Controller\Frontend;
+namespace OroB2B\Bundle\PaymentBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Component\Testing\WebTestCase;
 
@@ -63,16 +63,19 @@ class CallbackControllerTest extends WebTestCase
 
         $paymentTransaction->setEntityClass('stdClass');
 
-        $this->getContainer()->get('doctrine')->getManager()->clear();
-        $paymentTransaction = $this->getContainer()->get('doctrine')->getManager()->find(
+        $manager = $this->getContainer()->get('doctrine')->getManager();
+        $manager->flush();
+        $manager->clear();
+
+        $paymentTransaction = $manager->find(
             'OroB2BPaymentBundle:PaymentTransaction',
             $paymentTransaction->getId()
         );
 
         $this->assertNotEquals('stdClass', $paymentTransaction->getEntityClass());
 
+        $this->assertEquals(true, $paymentTransaction->isActive());
         $this->assertEquals('Transaction Reference', $paymentTransaction->getReference());
-        $this->assertEquals('0', $paymentTransaction->getState());
-        $this->assertEquals($expectedData, $paymentTransaction->getRequest());
+        $this->assertEquals($expectedData, $paymentTransaction->getResponse());
     }
 }

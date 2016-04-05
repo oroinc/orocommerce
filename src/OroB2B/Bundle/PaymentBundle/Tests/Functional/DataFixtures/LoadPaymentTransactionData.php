@@ -19,9 +19,12 @@ class LoadPaymentTransactionData extends AbstractFixture
     {
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction
-            ->setAction(PayflowGateway::TYPE)
+            ->setAction(PayflowGateway::AUTHORIZE)
             ->setEntityIdentifier(1)
             ->setEntityClass('OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm')
+            ->setPaymentMethod(PayflowGateway::TYPE)
+            ->setAmount('1000')
+            ->setCurrency('USD')
             ->setRequest(
                 [
                     'SECURETOKEN' => 'SECURETOKEN',
