@@ -31,7 +31,6 @@ class Configuration implements ConfigurationInterface
     const PAYPAL_PAYMENTS_PRO_ENABLE_SSL_VERIFICATION_KEY = 'paypal_payments_pro_enable_ssl_verification';
     const PAYPAL_PAYMENTS_PRO_REQUIRE_CVV_KEY = 'paypal_payments_pro_require_cvv';
     const PAYPAL_PAYMENTS_PRO_VALIDATE_CVV_KEY = 'paypal_payments_pro_validate_cvv';
-    const PAYPAL_PAYMENTS_PRO_PAYMENT_TERM_ENABLED_KEY = 'paypal_payments_pro_payment_term_enabled';
 
     const PAYFLOW_GATEWAY_ENABLED_KEY = 'payflow_gateway_enabled';
     const PAYFLOW_GATEWAY_LABEL_KEY = 'payflow_gateway_label';
@@ -52,7 +51,10 @@ class Configuration implements ConfigurationInterface
     const PAYFLOW_GATEWAY_ENABLE_SSL_VERIFICATION_KEY = 'payflow_gateway_enable_ssl_verification';
     const PAYFLOW_GATEWAY_REQUIRE_CVV_KEY = 'payflow_gateway_require_cvv';
     const PAYFLOW_GATEWAY_VALIDATE_CVV_KEY = 'payflow_gateway_validate_cvv';
-    const PAYFLOW_GATEWAY_PAYMENT_TERM_ENABLED_KEY = 'payflow_gateway_payment_term_enabled';
+
+    const PAYMENT_TERM_ENABLED_KEY = 'payment_term_enabled';
+    const PAYMENT_TERM_LABEL_KEY = 'payment_term_label';
+    const PAYMENT_TERM_SORT_ORDER_KEY = 'payment_term_sort_order';
 
     const CARD_VISA = 'visa';
     const CARD_MASTERCARD = 'mastercard';
@@ -64,6 +66,8 @@ class Configuration implements ConfigurationInterface
 
     const PAYMENT_ACTION_AUTHORIZATION = 'authorization';
     const PAYMENT_ACTION_SALE = 'sale';
+
+    const CREDIT_CARD_LABEL = 'Credit Card';
 
     /**
      * {@inheritdoc}
@@ -91,7 +95,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 self::PAYPAL_PAYMENTS_PRO_LABEL_KEY => [
                     'type' => 'text',
-                    'value' => 'Credit Card'
+                    'value' => self::CREDIT_CARD_LABEL
                 ],
                 self::PAYPAL_PAYMENTS_PRO_SORT_ORDER_KEY => [
                     'type' => 'string',
@@ -161,10 +165,6 @@ class Configuration implements ConfigurationInterface
                     'type' => 'boolean',
                     'value' => true
                 ],
-                self::PAYPAL_PAYMENTS_PRO_PAYMENT_TERM_ENABLED_KEY => [
-                    'type' => 'boolean',
-                    'value' => true
-                ],
 
                 // Payflow Gateway
                 self::PAYFLOW_GATEWAY_ENABLED_KEY => [
@@ -173,7 +173,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 self::PAYFLOW_GATEWAY_LABEL_KEY => [
                     'type' => 'text',
-                    'value' => 'Credit Card'
+                    'value' => self::CREDIT_CARD_LABEL
                 ],
                 self::PAYFLOW_GATEWAY_SORT_ORDER_KEY => [
                     'type' => 'string',
@@ -243,10 +243,20 @@ class Configuration implements ConfigurationInterface
                     'type' => 'boolean',
                     'value' => true
                 ],
-                self::PAYFLOW_GATEWAY_PAYMENT_TERM_ENABLED_KEY => [
+
+                // Payment Term
+                self::PAYMENT_TERM_ENABLED_KEY => [
                     'type' => 'boolean',
                     'value' => true
-                ]
+                ],
+                self::PAYMENT_TERM_LABEL_KEY => [
+                    'type' => 'text',
+                    'value' => self::CREDIT_CARD_LABEL
+                ],
+                self::PAYMENT_TERM_SORT_ORDER_KEY => [
+                    'type' => 'string',
+                    'value' => '30'
+                ],
             ]
         );
 

@@ -26,8 +26,11 @@ oro_system_configuration:
             title: orob2b.payment.system_configuration.groups.integration.title
         payflow_gateway_settings:
             title: orob2b.payment.system_configuration.groups.advansed_settings.title
-        payflow_gateway_payment_term:
+
+        payment_term:
             title: orob2b.payment.system_configuration.groups.payment_term.title
+        payment_term_display:
+            title: orob2b.payment.system_configuration.groups.display_options.title
 
     fields:
         orob2b_payment.merchant_country:
@@ -209,12 +212,6 @@ oro_system_configuration:
             options:
                 label: orob2b.payment.system_configuration.fields.validate_cvv.label
 
-        orob2b_payment.paypal_payments_pro_payment_term_enabled:
-            data_type: boolean
-            type: oro_config_checkbox
-            options:
-                label: orob2b.payment.system_configuration.fields.enabled.label
-
         # Payflow Gateway
         orob2b_payment.payflow_gateway_enabled:
             data_type: boolean
@@ -388,11 +385,29 @@ oro_system_configuration:
             options:
                 label: orob2b.payment.system_configuration.fields.validate_cvv.label
 
-        orob2b_payment.payflow_gateway_payment_term_enabled:
+        # Payment Term
+        orob2b_payment.payment_term_enabled:
             data_type: boolean
             type: oro_config_checkbox
+            priority: 100
             options:
                 label: orob2b.payment.system_configuration.fields.enabled.label
+
+        orob2b_payment.payment_term_label:
+            data_type: string
+            type: text
+            priority: 90
+            options:
+                label: orob2b.payment.system_configuration.fields.label.label
+
+        orob2b_payment.payment_term_sort_order:
+            data_type: string
+            type: text
+            priority: 80
+            options:
+                label: orob2b.payment.system_configuration.fields.sort_order.label
+                constraints:
+                    - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
 
     tree:
         system_configuration:
@@ -439,10 +454,6 @@ oro_system_configuration:
                                             - orob2b_payment.paypal_payments_pro_enable_ssl_verification
                                             - orob2b_payment.paypal_payments_pro_require_cvv
                                             - orob2b_payment.paypal_payments_pro_validate_cvv
-                                    paypal_payments_pro_payment_term:
-                                        priority: 70
-                                        children:
-                                            - orob2b_payment.paypal_payments_pro_payment_term_enabled
                             payflow_gateway:
                                 priority: 90
                                 children:
@@ -474,7 +485,12 @@ oro_system_configuration:
                                             - orob2b_payment.payflow_gateway_enable_ssl_verification
                                             - orob2b_payment.payflow_gateway_require_cvv
                                             - orob2b_payment.payflow_gateway_validate_cvv
-                                    payflow_gateway_payment_term:
-                                        priority: 70
+                            payment_term:
+                                priority: 80
+                                children:
+                                    payment_term_display:
+                                        priority: 100
                                         children:
-                                            - orob2b_payment.payflow_gateway_payment_term_enabled
+                                            - orob2b_payment.payment_term_enabled
+                                            - orob2b_payment.payment_term_label
+                                            - orob2b_payment.payment_term_sort_order
