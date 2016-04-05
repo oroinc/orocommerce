@@ -423,8 +423,8 @@ workflows:
                         conditions:
                             @and:
                                 - @equal: [$checkout.saveBillingAddress, true]
-                                - @empty: $checkout.billingAddress.accountAddress
-                                - @empty: $checkout.billingAddress.accountUserAddress
+                                - @empty: $checkout.order.billingAddress.accountAddress
+                                - @empty: $checkout.order.billingAddress.accountUserAddress
                                 - @acl_granted: 'orob2b_order_address_billing_allow_manual'
                         actions:
                             - @find_entity:
@@ -438,21 +438,21 @@ workflows:
                                     frontendOwner: $checkout.accountUser
                                     owner: $checkout.owner
                                     systemOrganization: $checkout.organization
-                                    label: $checkout.billingAddress.label
-                                    organization: $checkout.billingAddress.organization
-                                    street: $checkout.billingAddress.street
-                                    street2: $checkout.billingAddress.street2
-                                    city: $checkout.billingAddress.city
-                                    postalCode: $checkout.billingAddress.postalCode
-                                    country: $checkout.billingAddress.country
-                                    region: $checkout.billingAddress.region
-                                    regionText: $checkout.billingAddress.regionText
-                                    namePrefix: $checkout.billingAddress.namePrefix
-                                    firstName: $checkout.billingAddress.firstName
-                                    middleName: $checkout.billingAddress.middleName
-                                    lastName: $checkout.billingAddress.lastName
-                                    nameSuffix: $checkout.billingAddress.nameSuffix
-                                    phone: $checkout.billingAddress.phone
+                                    label: $checkout.order.billingAddress.label
+                                    organization: $checkout.order.billingAddress.organization
+                                    street: $checkout.order.billingAddress.street
+                                    street2: $checkout.order.billingAddress.street2
+                                    city: $checkout.order.billingAddress.city
+                                    postalCode: $checkout.order.billingAddress.postalCode
+                                    country: $checkout.order.billingAddress.country
+                                    region: $checkout.order.billingAddress.region
+                                    regionText: $checkout.order.billingAddress.regionText
+                                    namePrefix: $checkout.order.billingAddress.namePrefix
+                                    firstName: $checkout.order.billingAddress.firstName
+                                    middleName: $checkout.order.billingAddress.middleName
+                                    lastName: $checkout.order.billingAddress.lastName
+                                    nameSuffix: $checkout.order.billingAddress.nameSuffix
+                                    phone: $checkout.order.billingAddress.phone
                             - @call_method:
                                 object: $.result.customerBillingAddress
                                 method: addType
@@ -469,8 +469,8 @@ workflows:
                         conditions:
                             @and:
                                 - @equal: [$checkout.saveShippingAddress, true]
-                                - @empty: $.result.shippingAddress.accountAddress
-                                - @empty: $.result.shippingAddress.accountUserAddress
+                                - @empty: $checkout.order.shippingAddress.accountAddress
+                                - @empty: $checkout.order.shippingAddress.accountUserAddress
                                 - @acl_granted: 'orob2b_order_address_shipping_allow_manual'
                         actions:
                             - @find_entity:
@@ -490,19 +490,19 @@ workflows:
                                             systemOrganization: $checkout.organization
                                             label: $checkout.shippingAddress.label
                                             organization: $checkout.shippingAddress.organization
-                                            street: $.result.shippingAddress.street
-                                            street2: $.result.shippingAddress.street2
-                                            city: $.result.shippingAddress.city
-                                            postalCode: $.result.shippingAddress.postalCode
-                                            country: $.result.shippingAddress.country
-                                            region: $.result.shippingAddress.region
-                                            regionText: $.result.shippingAddress.regionText
-                                            namePrefix: $.result.shippingAddress.namePrefix
-                                            firstName: $.result.shippingAddress.firstName
-                                            middleName: $.result.shippingAddress.middleName
-                                            lastName: $.result.shippingAddress.lastName
-                                            nameSuffix: $.result.shippingAddress.nameSuffix
-                                            phone: $.result.shippingAddress.phone
+                                            street: $checkout.order.shippingAddress.street
+                                            street2: $checkout.order.shippingAddress.street2
+                                            city: $checkout.order.shippingAddress.city
+                                            postalCode: $checkout.order.shippingAddress.postalCode
+                                            country: $checkout.order.shippingAddress.country
+                                            region: $checkout.order.shippingAddress.region
+                                            regionText: $checkout.order.shippingAddress.regionText
+                                            namePrefix: $checkout.order.shippingAddress.namePrefix
+                                            firstName: $checkout.order.shippingAddress.firstName
+                                            middleName: $checkout.order.shippingAddress.middleName
+                                            lastName: $checkout.order.shippingAddress.lastName
+                                            nameSuffix: $checkout.order.shippingAddress.nameSuffix
+                                            phone: $checkout.order.shippingAddress.phone
                                     - @call_method:
                                         object: $.result.customerShippingAddress
                                         method: addType
