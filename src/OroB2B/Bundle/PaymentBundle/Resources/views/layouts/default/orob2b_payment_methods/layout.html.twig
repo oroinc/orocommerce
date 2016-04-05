@@ -21,7 +21,7 @@
                                 <span class="checkbox_custom__text fs13">{{ view.label }}</span>
                             </label>
                             <div class="checkout__form__payment-container" data-form-container>
-                                {% include view.template with {options: view.options, class_prefix: class_prefix} only %}
+                                {% include view.template with {options: view.options, class_prefix: class_prefix, paymentMethod: name} only %}
                             </div>
                         </div>
                     {% endfor %}

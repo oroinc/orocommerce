@@ -15,6 +15,9 @@ class Gateway
     const PRODUCTION_HOST_ADDRESS = 'https://payflowpro.paypal.com';
     const PILOT_HOST_ADDRESS = 'https://pilot-payflowpro.paypal.com';
 
+    const PRODUCTION_FORM_ACTION = 'https://payflowlink.paypal.com';
+    const PILOT_FORM_ACTION = 'https://pilot-payflowlink.paypal.com';
+
     /** @var ClientInterface */
     protected $client;
 
@@ -56,7 +59,7 @@ class Gateway
         $processor = $this->processorRegistry->getProcessor($options[Partner::PARTNER]);
         $processor->configureOptions($resolver);
 
-        $responseData = $this->client->send($this->getHostName(), $resolver->resolve($options));
+        $responseData = $this->client->send($this->getHostAddress(), $resolver->resolve($options));
 
         return new Response($responseData);
     }
@@ -64,9 +67,17 @@ class Gateway
     /**
      * @return string
      */
-    protected function getHostName()
+    public function getHostAddress()
     {
         return $this->testMode ? self::PILOT_HOST_ADDRESS : self::PRODUCTION_HOST_ADDRESS;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormAction()
+    {
+        return $this->testMode ? self::PILOT_FORM_ACTION : self::PRODUCTION_FORM_ACTION;
     }
 
     /**

@@ -129,7 +129,11 @@ class PayflowGateway implements PaymentMethodInterface
 
         $keys = [Option\SecureToken::SECURETOKEN, Option\SecureTokenIdentifier::SECURETOKENID];
 
-        return array_intersect_key($paymentTransaction->getResponse(), array_flip($keys));
+        $response = array_intersect_key($paymentTransaction->getResponse(), array_flip($keys));
+
+        $response['formAction'] = $this->gateway->getFormAction();
+        
+        return $response;
     }
 
     /**

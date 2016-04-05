@@ -150,6 +150,7 @@ services:
             - '@oro_action.context_accessor'
             - '@orob2b_payment.payment_method.registry'
             - '@orob2b_payment.provider.payment_transaction'
+            - '@router'
         tags:
             - { name: oro_workflow.action, alias: payment_capture }
             - { name: oro_action.action, alias: payment_capture }
@@ -160,6 +161,7 @@ services:
             - '@oro_action.context_accessor'
             - '@orob2b_payment.payment_method.registry'
             - '@orob2b_payment.provider.payment_transaction'
+            - '@router'
         tags:
             - { name: oro_workflow.action, alias: payment_purchase }
             - { name: oro_action.action, alias: payment_purchase }
