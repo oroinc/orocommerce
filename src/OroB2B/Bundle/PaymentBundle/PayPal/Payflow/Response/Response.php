@@ -45,11 +45,11 @@ class Response implements ResponseInterface
     {
         // Communication Error Response
         if ((int)$this->getResult() < 0) {
-            return CommunicationErrorsStatusMap::getMessage($this->getState());
+            return CommunicationErrorsStatusMap::getMessage($this->getResult());
         }
 
         // Return message by status code
-        return ResponseStatusMap::getMessage($this->getState());
+        return ResponseStatusMap::getMessage($this->getResult());
     }
 
     /** {@inheritdoc} */
