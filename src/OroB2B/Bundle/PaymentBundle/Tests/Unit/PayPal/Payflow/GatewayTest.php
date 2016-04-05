@@ -82,14 +82,17 @@ class GatewayTest extends \PHPUnit_Framework_TestCase
             ->with($options[Partner::PARTNER])
             ->willReturn($processor);
 
-        $response = $this->getMock('OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\ResponseInterface');
-
+        $responseData = ['response' => 'data'];
         $this->client
             ->expects($this->once())
             ->method('send')
-            ->with($options)
-            ->willReturn($response);
+            ->with(Gateway::PILOT_HOST_ADDRESS)
+            ->willReturn($responseData);
 
-        $this->assertEquals($response, $this->gateway->request($action, $options));
+        $this->gateway->setTestMode(true);
+        $response = $this->gateway->request($action, $options);
+
+        $this->assertInstanceOf('OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\ResponseInterface', $response);
+        $this->assertEquals($responseData, $response->getData());
     }
 }

@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Event;
 
+use Psr\Log\LoggerInterface;
+
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -56,7 +58,7 @@ class CallbackHandlerTest extends \PHPUnit_Framework_TestCase
         $response = new Response();
         $event = new CallbackReturnEvent();
         $transaction = new PaymentTransaction();
-        $transaction->setAction('type');
+        $transaction->setPaymentMethod('paymentMethod');
 
         $objectManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
@@ -77,7 +79,7 @@ class CallbackHandlerTest extends \PHPUnit_Framework_TestCase
         $this->eventDispatcher->expects($this->exactly(2))->method('dispatch')
             ->withConsecutive(
                 [CallbackReturnEvent::NAME, $event],
-                [CallbackReturnEvent::NAME . '.type', $event]
+                [CallbackReturnEvent::NAME . '.payment_method', $event]
             )->willReturnCallback(
                 function ($name, CallbackReturnEvent $event) use ($response) {
                     $event->setResponse($response);
@@ -94,7 +96,7 @@ class CallbackHandlerTest extends \PHPUnit_Framework_TestCase
         $response = new Response();
         $event = new CallbackReturnEvent();
         $transaction = new PaymentTransaction();
-        $transaction->setAction('type');
+        $transaction->setPaymentMethod('paymentMethod');
 
         $objectManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
@@ -103,6 +105,7 @@ class CallbackHandlerTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHelper->expects($this->once())->method('getEntity')->willReturn($transaction);
         $this->doctrineHelper->expects($this->once())->method('getEntityManager')->willReturn($objectManager);
 
+        /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject $logger */
         $logger = $this->getMock('Psr\Log\LoggerInterface');
         $logger->expects($this->once())->method('error')->with('message');
         $this->handler->setLogger($logger);
@@ -121,7 +124,7 @@ class CallbackHandlerTest extends \PHPUnit_Framework_TestCase
         $this->eventDispatcher->expects($this->exactly(2))->method('dispatch')
             ->withConsecutive(
                 [CallbackReturnEvent::NAME, $event],
-                [CallbackReturnEvent::NAME . '.type', $event]
+                [CallbackReturnEvent::NAME . '.payment_method', $event]
             )->willReturnCallback(
                 function ($name, CallbackReturnEvent $event) use ($response) {
                     $event->setResponse($response);
