@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response;
 
 class Response implements ResponseInterface
 {
+    const PNREF_KEY = 'PNREF';
+    const RESULT_KEY = 'RESULT';
     /**
      * @var \ArrayObject
      */
@@ -20,18 +22,33 @@ class Response implements ResponseInterface
     /** {@inheritdoc} */
     public function isSuccessful()
     {
-        return $this->values->offsetGet('RESULT') === '0';
+        return $this->getState() === ResponseStatusMap::APPROVED;
     }
 
     /** {@inheritdoc} */
     public function getReference()
     {
-        return $this->values->offsetGet('PNREF');
+        return $this->values->offsetGet(self::PNREF_KEY);
     }
 
     /** {@inheritdoc} */
     public function getState()
     {
-        return $this->values->offsetGet('RESULT');
+        return $this->values->offsetGet(self::RESULT_KEY);
+    }
+
+    /**
+     * Throws exception if status not found
+     * @return string
+     */
+    public function getMessage()
+    {
+        // Communication Error Response
+        if ((int)$this->getState() < 0) {
+            return CommunicationErrorsStatusMap::getMessage($this->getState());
+        }
+
+        // Return message by status code
+        return ResponseStatusMap::getMessage($this->getState());
     }
 }

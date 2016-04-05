@@ -22,7 +22,7 @@ class ProductSelectTypeTest extends AbstractProductSelectTypeTest
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
             ]
         );
 
@@ -41,6 +41,7 @@ class ProductSelectTypeTest extends AbstractProductSelectTypeTest
             [
                 [],
                 'expectedProducts' => [
+                    LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
                     LoadProductData::PRODUCT_3,
                 ],
