@@ -33,7 +33,7 @@ class ShoppingListController extends Controller
      *      id="orob2b_shopping_list_frontend_view",
      *      type="entity",
      *      class="OroB2BShoppingListBundle:ShoppingList",
-     *      permission="VIEW",
+     *      permission="ACCOUNT_VIEW",
      *      group_name="commerce"
      * )
      *
