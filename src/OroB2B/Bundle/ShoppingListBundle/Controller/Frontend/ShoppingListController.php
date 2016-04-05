@@ -43,11 +43,11 @@ class ShoppingListController extends Controller
      */
     public function viewAction(ShoppingList $shoppingList = null)
     {
+        $totalWithSubtotalsAsArray = [];
         if (!$shoppingList) {
             /** @var ShoppingListRepository $repo */
             $repo = $this->getDoctrine()->getRepository('OroB2BShoppingListBundle:ShoppingList');
             $user = $this->getUser();
-            $totalWithSubtotalsAsArray = [];
             if ($user instanceof AccountUser) {
                 $shoppingList = $repo->findAvailableForAccountUser($user);
             }
