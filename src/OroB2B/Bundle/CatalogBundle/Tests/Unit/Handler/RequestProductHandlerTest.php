@@ -39,6 +39,7 @@ class RequestProductHandlerTest extends \PHPUnit_Framework_TestCase
         $this->request->expects($this->once())
             ->method('get')
             ->with(RequestProductHandler::CATEGORY_ID_KEY)
+            ->with(RequestProductHandler::PRODUCTS_GRID_CATEGORY)
             ->willReturn($value);
         $actual = $this->requestProductHandler->getCategoryId();
         $this->assertEquals($expected, $actual);
