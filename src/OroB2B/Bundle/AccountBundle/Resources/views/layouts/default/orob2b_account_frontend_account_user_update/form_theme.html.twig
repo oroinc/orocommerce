@@ -24,6 +24,10 @@
     {{- form_errors(form) -}}
 {% endblock %}
 
+{%- block _orob2b_account_frontend_account_user_account_row -%}
+    <input type="hidden" name="{{ form.vars.full_name  }}" value="{{ value}}">
+{% endblock %}
+
 {%- block choice_widget_expanded -%}
     <div {{ block('widget_container_attributes') }}>
         {%- for child in form %}

@@ -38,30 +38,14 @@
             {{ form_row(form.plainPassword.first, {'attr': {'placeholder': 'orob2b.account.accountuser.profile.form.placeholder.new_password'|trans}, 'parentClass': 'profile__form__col form__col_x6 col_first'}) }}
             {{ form_row(form.plainPassword.second, {'attr': {'placeholder': 'orob2b.account.accountuser.profile.form.placeholder.password_confirmation'|trans}, 'parentClass': 'profile__form__col form__col_x6 col_last'}) }}
         </div>
-        <div>
-        {% if form.passwordGenerate is defined %}
-            <div class="field profile__form__col form__col_x6">
-                {{ form_row(
-                    form.passwordGenerate,
-                        {'attr':
-                            {
-                                'placeholder': 'orob2b.account.accountuser.profile.form.placeholder.password_confirmation'|trans
-                            },
-                            'parentClass': 'profile__form__col form__col_x6 password-trigger'
-                        }
-                    )
-                }}
-            <span data-page-component-module="orob2baccount/js/app/components/password-generate"
-                  data-page-component-options="{{ {class: 'password-trigger', targetClass: 'password'}|json_encode }}"></span>
-            </div>
-        {% endif %}
-        </div>
     </fieldset>
 
     <fieldset class="profile__form__row">
         <legend>{{ 'orob2b.account.accountuser.profile.form.sections.roles.label'|trans }}</legend>
         {{ form_row(form.roles)}}
     </fieldset>
+
+    {{ form_row(form.account)}}
 {% endblock %}
 
 {% block _account_profile_edit_form_actions_widget %}
