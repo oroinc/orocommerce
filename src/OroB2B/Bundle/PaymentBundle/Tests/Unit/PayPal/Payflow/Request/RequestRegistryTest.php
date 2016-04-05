@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\PayPal\Payflow\Request;
 
-use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\AuthorizationRequest;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\RequestInterface;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\RequestRegistry;
 

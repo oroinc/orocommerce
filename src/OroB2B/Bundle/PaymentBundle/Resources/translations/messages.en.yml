@@ -32,6 +32,15 @@ orob2b:
         sections:
             general_information: General information
 
+        methods:
+            select_method: 'Select a Payment Method'
+            no_method: 'None payment methods are configured'
+            required_field: 'Required Field'
+            back: 'Back'
+            continue: 'Continue'
+            term_method.label: 'Payment Term'
+            credit_card.label: 'Credit Card'
+
         system_configuration:
             groups:
                 payment.title: 'Payment'
@@ -77,5 +86,9 @@ orob2b:
                 require_cvv.label: 'Require CVV Entry'
                 validate_cvv.label: 'Validate CVV'
 
+        credit_card:
+            card_number.label: Credit Card Number
+            expiration_date.label: Expiration Date
+            cvv2.label: Credit Card Verification Number
         security.transaction: Work with payments
         capture: Capture
