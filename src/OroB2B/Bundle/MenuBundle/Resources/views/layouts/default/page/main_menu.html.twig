@@ -23,7 +23,7 @@
 
 {% block _main_menu_widgets_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " clearfix not-implemented"
+        class: attr.class|default('') ~ " clearfix"
     }) %}
     <li><ul {{ block('block_attributes') }}>{{ block_widget(block) }}</ul></li>
 {% endblock %}
@@ -39,21 +39,5 @@
             <span class="messages-widget__title text-uppercase">Messages</span>
             <i class="cf-down-open-mini"></i>
         </button>
-    </li>
-{% endblock %}
-
-{% block _main_menu_orders_widget_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " top-nav__list__item top-nav__list__item_gray-bg"
-    }) %}
-    <li {{ block('block_attributes') }}>
-        <div class="cart-widget__content">
-            <span class="badge badge_md badge_circle badge_orange badge_i-block cart-widget__clipboard">
-              <i class="cf-clipboard"></i>
-            </span>
-            <span class="cart-widget__list-trigger">
-              <span class="cart-widget-text">Orders</span> <strong>$1,345</strong> <i class="cf-down-open-mini"></i>
-            </span>
-        </div>
     </li>
 {% endblock %}

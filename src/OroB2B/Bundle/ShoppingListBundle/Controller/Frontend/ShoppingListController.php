@@ -92,7 +92,8 @@ class ShoppingListController extends Controller
 
         $defaultResponse = [
             'savedId' => null,
-            'shoppingList' => $shoppingList
+            'shoppingList' => $shoppingList,
+            'createOnly' => $request->get('createOnly')
         ];
 
         return ['data' => array_merge($defaultResponse, $response)];
