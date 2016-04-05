@@ -5,6 +5,13 @@ descriptions:
         - "Error in row #3. descriptions[en].fallback: The value you selected is not a valid choice."
         - "Error in row #4. descriptions[default].fallback: The value you selected is not a valid choice."
         - "Error in row #4. descriptions[en].fallback: The value you selected is not a valid choice."
+shortDescriptions:
+    fileName: short_descriptions.csv
+    contextErrors:
+        - "Error in row #3. shortDescriptions[default].fallback: The value you selected is not a valid choice."
+        - "Error in row #3. shortDescriptions[en].fallback: The value you selected is not a valid choice."
+        - "Error in row #4. shortDescriptions[default].fallback: The value you selected is not a valid choice."
+        - "Error in row #4. shortDescriptions[en].fallback: The value you selected is not a valid choice."
 empty:
     fileName: empty.csv
     contextErrors:

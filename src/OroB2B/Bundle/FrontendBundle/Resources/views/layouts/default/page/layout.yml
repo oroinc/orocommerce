@@ -25,8 +25,6 @@ layout:
                     blockType: text
                     options:
                         text: ~
-                footer:
-                    blockType: container
                 scripts:
                     blockType: script
                     options:
@@ -35,44 +33,22 @@ layout:
                 body:
                     wrapper:
                         header: ~
-                        notification: ~
                         main:
+                            notification: ~
                             content:
                                 page_title_container:
                                     page_title: ~
                             sidebar_left: ~
-                        footer: ~
                     scripts: ~
-        - @move:
-            id: datagrid_toolbar_mass_actions
-            parentId: datagrid_toolbar
-            siblingId: datagrid_toolbar_sorting
-        - @move:
-            id: datagrid_toolbar_extra_actions
-            parentId: datagrid_toolbar
-            siblingId: datagrid_toolbar_mass_actions
-        - @move:
-            id: datagrid_toolbar_pagination
-            parentId: datagrid_toolbar
-            siblingId: datagrid_toolbar_extra_actions
-        - @move:
-            id: datagrid_toolbar_page_size
-            parentId: datagrid_toolbar
-            siblingId: datagrid_toolbar_pagination
-        - @move:
-            id: datagrid_toolbar_actions
-            parentId: datagrid_toolbar
-            siblingId: datagrid_toolbar_page_size
-        - @remove:
-            id: datagrid_toolbar_actions_container
-        - @remove:
-            id: datagrid_toolbar_tools_container
         - @add:
             id: require_js_config
             parentId: require_js
             blockType: block
-        - @replaceOption:
-            id: head
-            optionName: title
-            oldOptionValue: OroPlatform
-            newOptionValue: OroCommerce
+        - @setOption:
+            id: title
+            optionName: separator
+            optionValue: ' - '
+        - @setOption:
+            id: title
+            optionName: reverse
+            optionValue: true

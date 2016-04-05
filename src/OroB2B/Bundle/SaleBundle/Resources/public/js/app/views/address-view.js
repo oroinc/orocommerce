@@ -73,8 +73,6 @@ define(function(require) {
          * Doing something after loading child components
          */
         handleLayoutInit: function() {
-            var self = this;
-
             this.ftid = this.$el.find('div[data-ftid]:first').data('ftid');
 
             this.setAddress(this.$el.find(this.options.selectors.address));

@@ -38,6 +38,7 @@ class ProductControllerTest extends WebTestCase
     const DEFAULT_NAME = 'default name';
     const DEFAULT_NAME_ALTERED = 'altered default name';
     const DEFAULT_DESCRIPTION = 'default description';
+    const DEFAULT_SHORT_DESCRIPTION = 'default short description';
 
     protected function setUp()
     {
@@ -65,6 +66,7 @@ class ProductControllerTest extends WebTestCase
         $form['orob2b_product[status]'] = Product::STATUS_DISABLED;
         $form['orob2b_product[names][values][default]'] = self::DEFAULT_NAME;
         $form['orob2b_product[descriptions][values][default]'] = self::DEFAULT_DESCRIPTION;
+        $form['orob2b_product[shortDescriptions][values][default]'] = self::DEFAULT_SHORT_DESCRIPTION;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -125,6 +127,13 @@ class ProductControllerTest extends WebTestCase
                     ],
                     'ids' => [$locale->getId() => $localizedName->getId()],
                 ],
+                'shortDescriptions' => [
+                    'values' => [
+                        'default' => self::DEFAULT_SHORT_DESCRIPTION,
+                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
+                    ],
+                    'ids' => [$locale->getId() => $localizedName->getId()],
+                ]
             ],
         ];
 
@@ -274,6 +283,13 @@ class ProductControllerTest extends WebTestCase
                 'descriptions' => [
                     'values' => [
                         'default' => self::DEFAULT_DESCRIPTION,
+                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
+                    ],
+                    'ids' => [$locale->getId() => $localizedName->getId()],
+                ],
+                'shortDescriptions' => [
+                    'values' => [
+                        'default' => self::DEFAULT_SHORT_DESCRIPTION,
                         'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
                     'ids' => [$locale->getId() => $localizedName->getId()],

@@ -2,15 +2,17 @@ layout:
     actions:
         - @setBlockTheme:
             themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_frontend_account_user_role_view/layout.html.twig'
-        - @setOption:
-            id: head
-            optionName: title
+        - @appendOption:
+            id: title
+            optionName: value
             optionValue:
-                label: 'orob2b.account.frontend.account_user.role.entity_plural_label'
+                - 'orob2b.account.menu.account_user.label'
+                - 'orob2b.account.frontend.account_user.role.entity_plural_label'
+                - { @value: $data.entity.label }
         - @add:
             id: account_sidebar
             parentId: sidebar_left
-            blockType: block
+            blockType: container
         - @addTree:
             items:
                 account_user_role_view_container:
@@ -21,6 +23,11 @@ layout:
                         visible: { @not_empty: $data.entity }
                         vars:
                             entity: { @value: $data.entity }
+                account_user_role_back_link:
+                    blockType: link
+                    options:
+                        route_name: orob2b_account_frontend_account_user_role_index
+                        text: orob2b.account.frontend.action.back.label
                 account_user_role_top_actions:
                     blockType: action_line_buttons
                     options:
@@ -60,8 +67,9 @@ layout:
                 content:
                     account_user_role_view_container:
                         account_user_role_title: ~
-                        account_user_role_top_actions: ~
+                        account_user_role_back_link: ~
                         account_user_role_items:
+                            account_user_role_top_actions: ~
                             account_user_role_items_view_privileges:
                                 account_user_role_items_view_privileges_container:
                                     account_user_role_items_view_privileges_entity:
