@@ -22,7 +22,8 @@
 
 {% block _orob2b_payment_credit_card_widget %}
     <div class="{{ class_prefix }}__form__payment-methods"
-            data-page-component-module="orob2bpayment/js/app/components/credit-card-component">
+            data-page-component-module="orob2bpayment/js/app/components/credit-card-component"
+            data-page-component-options="{{ {paymentMethod: paymentMethod}|json_encode }}">
         <ul class="{{ class_prefix }}__form__payment-methods__list">
             <li><a href="#"><i class="credit-card-icon credit-card-icon_mc"></i></a></li>
             <li><a href="#"><i class="credit-card-icon credit-card-icon_visa"></i></a></li>

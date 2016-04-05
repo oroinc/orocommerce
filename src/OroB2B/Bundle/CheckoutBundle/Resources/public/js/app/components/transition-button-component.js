@@ -64,6 +64,15 @@ define(function(require) {
         },
 
         onSuccess: function(response) {
+            if (response.hasOwnProperty('responseData')) {
+                mediator.trigger('checkout-responseData', response.responseData);
+
+                console.log(response.responseData)
+                if (response.responseData.hasOwnProperty('preventDefault')) {
+                    return;
+                }
+            }
+
             this.inProgress = false;
             if (response.hasOwnProperty('redirectUrl')) {
                 mediator.execute('redirectTo', {url: response.redirectUrl}, {redirect: true});
