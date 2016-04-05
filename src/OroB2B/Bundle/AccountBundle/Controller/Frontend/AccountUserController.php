@@ -74,30 +74,21 @@ class AccountUserController extends Controller
      */
     public function createAction(Request $request)
     {
-        $aacountUser = new AccountUser();
-        $user = $this->getUser();
-        if ($user instanceof AccountUser) {
-            $aacountUser
-                ->setAccount($user->getAccount());
-        }
-
-        return $this->update($aacountUser, $request);
-
-//        if ($result instanceof Response) {
-//            return $result;
+        $accountUser = new AccountUser();
+//        $user = $this->getUser();
+//        if ($user instanceof AccountUser) {
+//            $aacountUser
+//                ->setAccount($user->getAccount());
 //        }
-//        return [
-//            'data' => [
-//                'entity' => new AccountUser()
-//            ]
-//        ];
+
+        return $this->update($accountUser, $request);
     }
 
     /**
      * Edit account user form
      *
      * @Route("/update/{id}", name="orob2b_account_frontend_account_user_update", requirements={"id"="\d+"})
-     * @Template("OroB2BAccountBundle:AccountUser/Frontend:update.html.twig")
+     * @Layout
      * @Acl(
      *      id="orob2b_account_frontend_account_user_update",
      *      type="entity",
@@ -107,6 +98,7 @@ class AccountUserController extends Controller
      * )
      * @param AccountUser $accountUser
      * @param Request $request
+     *
      * @return array|RedirectResponse
      */
     public function updateAction(AccountUser $accountUser, Request $request)

@@ -11,10 +11,11 @@
 
 {% block _account_profile_edit_form_fields_widget %}
     {{ form_row(form._token) }}
+    {{ form_row(form.account) }}
     <fieldset class="profile__form__row">
         <legend>{{ 'orob2b.account.accountuser.profile.form.sections.profile_information.label'|trans }}</legend>
         <fieldset class="profile__form__row">
-            <div class="profile__form__col form__col_x6">
+            <div class="profile__form__col form__col_x6 col_first">
                 {{ form_row(form.namePrefix, {'attr': {'placeholder': 'orob2b.account.accountuser.profile.form.placeholder.name_prefix'|trans}, 'parentClass': ''}) }}
                 {{ form_row(form.firstName, {'attr': {'placeholder': 'orob2b.account.accountuser.profile.form.placeholder.first_name'|trans}, 'parentClass': ''}) }}
                 {{ form_row(form.middleName, {'attr': {'placeholder': 'orob2b.account.accountuser.profile.form.placeholder.middle_name'|trans}, 'parentClass': ''}) }}
@@ -23,7 +24,7 @@
 
                 {{ form_row(form.enabled, {'attr': {'placeholder': 'orob2b.account.accountuser.profile.form.placeholder.password_confirmation'|trans}, 'parentClass': 'profile__form__col form__col_x6'}) }}
             </div>
-            <div class="profile__form__col form__col_x6">
+            <div class="profile__form__col form__col_x6 col_last">
                 {{ form_row(form.email, {'attr': {'placeholder': 'orob2b.account.accountuser.profile.form.placeholder.email'|trans}, 'parentClass': ''}) }}
                 {{ form_row(form.birthday, {'attr': {'placeholder': 'orob2b.account.accountuser.profile.form.placeholder.birthday.label'|trans}, 'parentClass': ''}) }}
             </div>
@@ -33,8 +34,8 @@
     <fieldset class="profile__form__row">
         <legend>{{ 'orob2b.account.accountuser.profile.form.sections.password.label'|trans }}</legend>
         <div class="password">
-            {{ form_row(form.plainPassword.first, {'attr': {'placeholder': 'orob2b.account.accountuser.profile.form.placeholder.new_password'|trans}, 'parentClass': 'profile__form__col form__col_x6 '}) }}
-            {{ form_row(form.plainPassword.second, {'attr': {'placeholder': 'orob2b.account.accountuser.profile.form.placeholder.password_confirmation'|trans}, 'parentClass': 'profile__form__col form__col_x6 '}) }}
+            {{ form_row(form.plainPassword.first, {'attr': {'placeholder': 'orob2b.account.accountuser.profile.form.placeholder.new_password'|trans}, 'parentClass': 'profile__form__col form__col_x6 col_first'}) }}
+            {{ form_row(form.plainPassword.second, {'attr': {'placeholder': 'orob2b.account.accountuser.profile.form.placeholder.password_confirmation'|trans}, 'parentClass': 'profile__form__col form__col_x6 col_last'}) }}
         </div>
         <div>
         {% if form.passwordGenerate is defined %}
