@@ -55,5 +55,5 @@ orob2b:
 
         security:
             permission:
-                checkout_approve: Approve orders for quotes exceeding the allowable amount
+                checkout_approve: Approve orders that exceed the allowable amount
 

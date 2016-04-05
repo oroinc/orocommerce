@@ -25,7 +25,7 @@ layout:
             optionValue:
                 label: 'orob2b.frontend.sale.quote.title.label'
                 parameters:
-                    id: { @value: $data.entity.qid }
+                    '%id%': { @value: $data.entity.qid }
 
         - @add:
             id: account_sidebar
