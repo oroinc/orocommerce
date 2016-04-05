@@ -20,6 +20,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\CheckoutBundle\Model\ExtendCheckout;
+use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
@@ -221,6 +222,14 @@ class Checkout extends ExtendCheckout implements
      * @var Price
      */
     protected $shippingCost;
+
+    /**
+     * @var Order
+     *
+     * @ORM\OneToOne(targetEntity="OroB2B\Bundle\OrderBundle\Entity\Order")
+     * @ORM\JoinColumn(name="order_id", referencedColumnName="id", nullable=true)
+     */
+    protected $order;
 
     /**
      * @return Account
@@ -642,5 +651,24 @@ class Checkout extends ExtendCheckout implements
     {
         $this->shippingEstimateAmount = $this->shippingCost ? $this->shippingCost->getValue() : null;
         $this->shippingEstimateCurrency = $this->shippingCost ? $this->shippingCost->getCurrency() : null;
+    }
+
+    /**
+     * @return Order
+     */
+    public function getOrder()
+    {
+        return $this->order;
+    }
+
+    /**
+     * @param Order $order
+     * @return Checkout
+     */
+    public function setOrder(Order $order = null)
+    {
+        $this->order = $order;
+
+        return $this;
     }
 }
