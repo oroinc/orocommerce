@@ -15,14 +15,29 @@ class PaymentTransactionTest extends \PHPUnit_Framework_TestCase
         $properties = [
             ['id', '1'],
             ['reference', 'reference'],
-            ['state', 'state'],
-            ['type', 'type'],
+            ['action', 'action'],
             ['entityClass', 'entityClass'],
             ['entityIdentifier', 1],
-            ['data', ['value']],
+            ['request', ['request', 'data']],
+            ['response', ['response', 'data']],
+            ['paymentMethod', 'paymentMethod'],
+            ['active', true],
+            ['amount', '1000'],
+            ['currency', 'USD'],
+            ['successful', true],
+            ['sourcePaymentTransaction', $this->createPaymentTransaction()],
         ];
 
         $this->assertPropertyAccessors($this->createPaymentTransaction(), $properties);
+    }
+
+    public function testRelations()
+    {
+        $properties = [
+            ['relatedPaymentTransactions', $this->createPaymentTransaction()],
+        ];
+
+        $this->assertPropertyCollections($this->createPaymentTransaction(), $properties);
     }
 
     /**

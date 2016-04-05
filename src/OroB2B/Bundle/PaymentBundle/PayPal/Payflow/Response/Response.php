@@ -28,13 +28,23 @@ class Response implements ResponseInterface
     /** {@inheritdoc} */
     public function getReference()
     {
-        return $this->values->offsetExists(self::PNREF_KEY) ? $this->values->offsetGet(self::PNREF_KEY) : null;
+        return $this->getOffset(self::PNREF_KEY);
     }
 
     /** {@inheritdoc} */
     public function getResult()
     {
-        return $this->values->offsetGet(self::RESULT_KEY);
+        return $this->getOffset(self::RESULT_KEY);
+    }
+
+    /**
+     * @param mixed $index
+     * @param mixed $default
+     * @return mixed|null
+     */
+    public function getOffset($index, $default = null)
+    {
+        return $this->values->offsetExists($index) ? $this->values->offsetGet($index) : $default;
     }
 
     /**
