@@ -40,5 +40,4 @@ class PaymentMethodTypePass implements CompilerPassInterface
             $registryDefinition->addMethodCall('addPaymentMethodType', [new Reference($paymentType)]);
         }
     }
-
 }

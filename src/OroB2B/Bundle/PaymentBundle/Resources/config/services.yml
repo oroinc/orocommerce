@@ -109,7 +109,6 @@ services:
             - @doctrine
             - %orob2b_payment.entity.payment_term.class%
 
-<<<<<<< HEAD
     orob2b_payment.form.payment_method_type_registry:
         class: %orob2b_payment.form.payment_method_type_registry.class%
 

@@ -8,9 +8,7 @@ use Oro\Component\Layout\DataProviderInterface;
 use Oro\Component\Layout\ContextInterface;
 use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
 
-use OroB2B\Bundle\PaymentBundle\Form\Type\CreditCardType;
 use OroB2B\Bundle\PaymentBundle\Form\PaymentMethodTypeRegistry;
-use OroB2B\Bundle\PaymentBundle\Form\Type\AbstractPaymentMethodType;
 
 class PaymentMethodsProvider implements DataProviderInterface
 {
