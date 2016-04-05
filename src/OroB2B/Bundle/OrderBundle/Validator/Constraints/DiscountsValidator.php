@@ -29,7 +29,7 @@ class DiscountsValidator extends ConstraintValidator
         
         if ($value->getTotalDiscounts() && $value->getSubtotal() < $value->getTotalDiscounts()->getValue()) {
             $this->context->buildViolation($constraint->errorMessage)
-                ->atPath('discounts')
+                ->atPath('totalDiscountsAmount')
                 ->addViolation();
         }
     }
