@@ -2,6 +2,10 @@ layout:
     actions:
         - @setBlockTheme:
             themes: 'OroB2BOrderBundle:layouts:default/orob2b_order_frontend_success/success.html.twig'
+        - @appendOption:
+            id: title
+            optionName: value
+            optionValue: 'orob2b.order.success.thank_you'
         - @addTree:
             items:
                 success_order_container:

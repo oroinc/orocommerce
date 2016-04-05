@@ -91,7 +91,8 @@ class AccountUserProfileController extends Controller
         $token = $request->get('token');
         if ($accountUser === null || empty($token) || $accountUser->getConfirmationToken() !== $token) {
             throw $this->createNotFoundException(
-                $this->get('translator')->trans('orob2b.account.controller.accountuser.confirmation_error.message')
+                $this->get('translator')
+                    ->trans('orob2b.account.controller.accountuser.confirmation_error.message')
             );
         }
 
@@ -110,7 +111,7 @@ class AccountUserProfileController extends Controller
 
     /**
      * @Route("/profile", name="orob2b_account_frontend_account_user_profile")
-     * @Template("OroB2BAccountBundle:AccountUser/Frontend:viewProfile.html.twig")
+     * @Layout
      * @AclAncestor("orob2b_account_frontend_account_user_view")
      *
      * @return array
@@ -118,8 +119,9 @@ class AccountUserProfileController extends Controller
     public function profileAction()
     {
         return [
-            'entity' => $this->getUser(),
-            'editRoute' => 'orob2b_account_frontend_account_user_profile_update'
+            'data' => [
+                'entity' => $this->getUser()
+            ]
         ];
     }
 
