@@ -12,12 +12,6 @@ class ProcessorRegistry
     /** @var ProcessorInterface */
     protected $fallback;
 
-    public function __construct()
-    {
-        $this
-            ->addProcessor(new PayPal());
-    }
-
     /**
      * @param ProcessorInterface $processor
      * @return $this

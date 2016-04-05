@@ -22,19 +22,29 @@ class Response implements ResponseInterface
     /** {@inheritdoc} */
     public function isSuccessful()
     {
-        return $this->getState() === ResponseStatusMap::APPROVED;
+        return $this->getResult() === ResponseStatusMap::APPROVED;
     }
 
     /** {@inheritdoc} */
     public function getReference()
     {
-        return $this->values->offsetGet(self::PNREF_KEY);
+        return $this->getOffset(self::PNREF_KEY);
     }
 
     /** {@inheritdoc} */
-    public function getState()
+    public function getResult()
     {
-        return $this->values->offsetGet(self::RESULT_KEY);
+        return $this->getOffset(self::RESULT_KEY);
+    }
+
+    /**
+     * @param mixed $index
+     * @param mixed $default
+     * @return mixed|null
+     */
+    public function getOffset($index, $default = null)
+    {
+        return $this->values->offsetExists($index) ? $this->values->offsetGet($index) : $default;
     }
 
     /**
@@ -44,11 +54,17 @@ class Response implements ResponseInterface
     public function getMessage()
     {
         // Communication Error Response
-        if ((int)$this->getState() < 0) {
-            return CommunicationErrorsStatusMap::getMessage($this->getState());
+        if ((int)$this->getResult() < 0) {
+            return CommunicationErrorsStatusMap::getMessage($this->getResult());
         }
 
         // Return message by status code
-        return ResponseStatusMap::getMessage($this->getState());
+        return ResponseStatusMap::getMessage($this->getResult());
+    }
+
+    /** {@inheritdoc} */
+    public function getData()
+    {
+        return $this->values->getArrayCopy();
     }
 }

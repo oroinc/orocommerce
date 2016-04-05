@@ -65,8 +65,8 @@ orob2b:
                 password.label: 'Password'
                 payment_action:
                     label: 'Payment Action'
-                    authorization: 'Authorization'
-                    sale: 'Sale'
+                    authorize: 'Authorize'
+                    charge: 'Authorize and Charge'
                 test_mode.label: 'Test Mode'
 
                 use_proxy.label: 'Use Proxy'
@@ -77,3 +77,5 @@ orob2b:
                 require_cvv.label: 'Require CVV Entry'
                 validate_cvv.label: 'Validate CVV'
 
+        security.transaction: Work with payments
+        capture: Capture

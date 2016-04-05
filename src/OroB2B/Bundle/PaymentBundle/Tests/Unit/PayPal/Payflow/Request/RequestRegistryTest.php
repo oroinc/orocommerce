@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\PayPal\Payflow\Request;
 
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\AuthorizationRequest;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\RequestInterface;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\RequestRegistry;
 
@@ -28,7 +29,7 @@ class RequestRegistryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Request with "X" action is missing. Registered requests are "A, S, D, V"
+     * @expectedExceptionMessage Request with "X" action is missing. Registered requests are ""
      */
     public function testGetInvalidRequest()
     {
@@ -37,7 +38,12 @@ class RequestRegistryTest extends \PHPUnit_Framework_TestCase
 
     public function testGetRequest()
     {
-        $request = $this->registry->getRequest('A');
-        $this->assertInstanceOf('OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\AuthorizationRequest', $request);
+        /** @var RequestInterface|\PHPUnit_Framework_MockObject_MockObject $expectedRequest */
+        $expectedRequest = $this->getMock('OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\RequestInterface');
+        $expectedRequest->expects($this->once())->method('getAction')->willReturn('A');
+        $this->registry->addRequest($expectedRequest);
+
+        $actualRequest = $this->registry->getRequest('A');
+        $this->assertSame($expectedRequest, $actualRequest);
     }
 }

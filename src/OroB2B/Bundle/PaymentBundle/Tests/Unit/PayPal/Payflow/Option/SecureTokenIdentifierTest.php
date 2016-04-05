@@ -36,13 +36,15 @@ class SecureTokenIdentifierTest extends AbstractOptionTest
     {
         $i = 0;
         $iterations = 1000000;
-        $tokens = [];
+        $tokens = new \SplDoublyLinkedList();
         while ($i < $iterations) {
             $token = SecureTokenIdentifier::generate();
-            $tokens[$token] = true;
+            if (!$tokens->offsetExists($token)) {
+                $tokens->push($token);
+            }
             $i++;
         }
 
-        $this->assertCount($iterations, $tokens);
+        $this->assertSame($iterations, $tokens->count());
     }
 }
