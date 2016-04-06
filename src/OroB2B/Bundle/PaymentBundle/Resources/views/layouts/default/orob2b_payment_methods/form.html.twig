@@ -17,7 +17,13 @@
 
     {%- set type = type|default('password') -%}
     <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
-    <a href="#" class="what-this-link">What's this?</a>
+
+    <span class="ttip__wrap">
+        <a href="javascript: void(0);" class="ttip__toggle what-this-link">{{ 'orob2b.payment.methods.whats_this'|trans }}</a>
+        <span class="ttip">
+            <span class="ttip__content">{{ 'orob2b.payment.methods.tooltip'|trans|nl2br }}</span>
+        </span>
+    </span>
 {% endblock %}
 
 {% block _orob2b_payment_credit_card_widget %}
