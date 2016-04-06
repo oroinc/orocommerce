@@ -47,10 +47,10 @@
     <fieldset class="{{ class_prefix }}__form__row">
         <div class="{{ class_prefix }}__form__col form__col_x12">
             {{- form_label(form) -}}
-            {{- form_errors(form) -}}
             {{- form_widget(form, {
                 attr: attr
             }) -}}
+            {{- form_errors(form) -}}
         </div>
     </fieldset>
 {%- endblock form_row -%}
@@ -66,10 +66,10 @@
 
 {%- block form_errors -%}
     {%- if errors|length > 0 -%}
-        <div class="notification notification_xsm notification_error notification-radiused mmt5-md">
+        <div class="validation-failed">
             <ul>
             {%- for error in errors -%}
-                <li><i class="cf-attention"></i><span class="mml5-md">{{ error.message }}</span></li>
+                <li><i class="cf-attention"></i><span>{{ error.message }}</span></li>
             {%- endfor -%}
             </ul>
         </div>
