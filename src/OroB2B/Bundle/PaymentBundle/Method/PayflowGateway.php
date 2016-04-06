@@ -21,9 +21,6 @@ class PayflowGateway implements PaymentMethodInterface
     /** @var Gateway */
     protected $gateway;
 
-    /** @var ConfigManager */
-    protected $configManager;
-
     /** @var RouterInterface */
     protected $router;
 

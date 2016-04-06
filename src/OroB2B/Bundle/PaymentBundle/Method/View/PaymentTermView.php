@@ -21,9 +21,6 @@ class PaymentTermView implements PaymentMethodViewInterface
     /**  @var TranslatorInterface */
     protected $translator;
 
-    /** @var ConfigManager */
-    protected $configManager;
-
     /**
      * @param PaymentTermProvider $paymentTermProvider
      * @param TranslatorInterface $translator

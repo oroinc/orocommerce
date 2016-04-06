@@ -18,9 +18,6 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     /** @var FormFactoryInterface */
     protected $formFactory;
 
-    /** @var ConfigManager */
-    protected $configManager;
-
     /**
      * @param FormFactoryInterface $formFactory
      * @param ConfigManager $configManager
