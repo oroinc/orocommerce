@@ -137,7 +137,7 @@ class LoadAccountUserRoles extends AbstractFixture implements DependentFixtureIn
             $fileName = $this->getFileName($bundle);
             try {
                 $file = $kernel->locateResource($fileName);
-                $rolesData = array_merge_recursive($rolesData, Yaml::parse($file));
+                $rolesData = array_merge_recursive($rolesData, Yaml::parse(file_get_contents($file)));
             } catch (\InvalidArgumentException $e) {
             }
         }

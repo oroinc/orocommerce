@@ -98,7 +98,7 @@ class TaxManagerTest extends WebTestCase
 
         /** @var SplFileInfo $file */
         foreach ($finder as $file) {
-            $cases[$file->getRelativePathname()] = Yaml::parse($file);
+            $cases[$file->getRelativePathname()] = Yaml::parse($file->getContents());
         }
 
         return $cases;
