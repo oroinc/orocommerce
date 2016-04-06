@@ -166,5 +166,23 @@ orob2b:
                 assigned_account_users.label: 'Assigned To'
                 create_form.back.label: 'Back'
                 create_form.submit.label: 'Submit Request For Quote'
+                page_title.label: 'RFQ #%id%: %firstName% %lastName%'
+                title.label: 'Request For Quote #%id%'
+                cancellation_reason.label: 'Cancelation Reason'
+                sections:
+                    general: 'RFQ Information'
+                    notes.label: 'Notes'
+                    back.label: '< Back to RFQ List'
+                    request_products:
+                        label: 'Line Items'
+                        columns:
+                            item.label: 'Item'
+                            quantity.label: 'Requested Quantity'
+                            price.label: 'Target Price'
+            requestproduct:
+                product_sku.label: 'Item #:'
+                comment.label: 'Notes'
+            action:
+                request.edit: 'Edit RFQ'
 
 orob2b.order.orderlineitem.offers.label: 'Requested QTY and price'
