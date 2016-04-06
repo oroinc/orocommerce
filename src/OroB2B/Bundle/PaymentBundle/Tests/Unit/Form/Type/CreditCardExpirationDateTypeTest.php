@@ -66,7 +66,7 @@ class CreditCardExpirationDateTypeTest extends FormIntegrationTestCase
                 [
                     'model_timezone' => 'UTC',
                     'view_timezone' => 'UTC',
-                    'format' => 'dMMMMy',
+                    'format' => 'dMy',
                     'input' => 'array',
                     'years' => range(date('y'), date('y') + CreditCardExpirationDateType::YEAR_PERIOD),
                     'months' => ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']

@@ -16,7 +16,9 @@ define(function(require) {
             selectors: {
                 radio: '[data-choice]',
                 item_container: '[data-item-container]',
-                subform: '[data-form-container]'
+                subform: '[data-form-container]',
+                submit_button: '[data-payment-method-submit]',
+                no_methods: 'payment-no-methods'
             },
             redirectEvent: 'scroll keypress mousedown tap',
             delay: 1000 * 60 * 15 // 15 minutes
@@ -41,10 +43,6 @@ define(function(require) {
             this.$el = this.options._sourceElement;
             this.$radios = this.$el.find(this.options.selectors.radio);
             this.$el.on('change', this.options.selectors.radio, _.bind(this.updateForms, this));
-
-            if (this.$radios.length) {
-                this.updateForms();
-            }
 
             this.$el.on(
                 this.options.redirectEvent,
@@ -72,20 +70,10 @@ define(function(require) {
             PaymentMethodSelectorComponent.__super__.dispose.call(this);
         },
 
-        updateForms: function() {
-            var $selected = this.$radios.filter(':checked');
-            _.each(
-                this.$radios,
-                function(item) {
-                    var $item = $(item);
-
-                    $item
-                        .closest(this.options.selectors.item_container)
-                        .find(this.options.selectors.subform)
-                        .toggle($item.data('choice') === $selected.data('choice'));
-                },
-                this
-            );
+        updateForms: function(e) {
+            var element =  e.target;
+            this.$el.find(this.options.selectors.subform).hide();
+            $(element).parents(this.options.selectors.item_container).find(this.options.selectors.subform).show();
         }
     });
 

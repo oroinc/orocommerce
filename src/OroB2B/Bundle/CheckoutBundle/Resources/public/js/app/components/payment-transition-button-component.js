@@ -5,6 +5,7 @@ define(function(require) {
     var TransitionButtonComponent = require('orob2bcheckout/js/app/components/transition-button-component');
     var $ = require('jquery');
     var _ = require('underscore');
+    var mediator = require('oroui/js/mediator');
 
     var PaymentTransitionButtonComponent;
     PaymentTransitionButtonComponent = TransitionButtonComponent.extend(/** @exports PaymentTransitionButtonComponent.prototype */{
@@ -48,6 +49,15 @@ define(function(require) {
          * @inheritDoc
          */
         transit: function(e, data) {
+            var paymentMethod = this.getPaymentMethodElement().val();
+            var eventData = {stopped: false, data: {paymentMethod: paymentMethod}};
+
+            mediator.trigger('checkout:payment:before-transit', eventData);
+            if (eventData.stopped) {
+                e.preventDefault();
+                return;
+            }
+
             this.getPaymentForm()
                 .addClass('hidden')
                 .insertAfter($(this.options.selectors.checkoutContent));

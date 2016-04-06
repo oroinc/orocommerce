@@ -3,7 +3,7 @@ define(['underscore', 'orotranslation/js/translator', 'jquery', 'jquery.validate
     'use strict';
 
     var defaultParam = {
-        message: 'Expiration date cannot be blank.',
+        message: 'orob2b.payment.validation.expiration_date',
         monthSelector: '.checkout__form__select_exp-month select',
         yearSelector: '.checkout__form__select_exp-year select'
     };
@@ -15,7 +15,7 @@ define(['underscore', 'orotranslation/js/translator', 'jquery', 'jquery.validate
             var year = $(param.yearSelector).val();
             var month = $(param.monthSelector).val();
 
-            return (year.length > 0 || month.length > 0)
+            return (year.length > 0 && month.length > 0)
         },
         function(param) {
             param = _.extend({}, defaultParam, param);

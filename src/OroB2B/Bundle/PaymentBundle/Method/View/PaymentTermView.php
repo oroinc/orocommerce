@@ -54,9 +54,9 @@ class PaymentTermView implements PaymentMethodViewInterface
     }
 
     /** {@inheritdoc} */
-    public function getTemplate()
+    public function getBlock()
     {
-        return 'OroB2BPaymentBundle:PaymentMethod:plain.html.twig';
+        return '_payment_methods_payment_term_widget';
     }
 
     /** {@inheritdoc} */

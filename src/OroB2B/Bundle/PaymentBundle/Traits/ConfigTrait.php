@@ -10,9 +10,10 @@ trait ConfigTrait
 {
     /** @var ConfigManager */
     protected $configManager;
+
     /**
      * @param string $key
-     * @return string
+     * @return mixed
      */
     protected function getConfigValue($key)
     {

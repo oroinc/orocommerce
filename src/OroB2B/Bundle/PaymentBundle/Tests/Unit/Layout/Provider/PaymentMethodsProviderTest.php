@@ -54,7 +54,7 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
 
         $view = $this->getMock('OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface');
         $view->expects($this->any())->method('getLabel')->will($this->returnValue('label'));
-        $view->expects($this->any())->method('getTemplate')->will($this->returnValue('template'));
+        $view->expects($this->any())->method('getBlock')->will($this->returnValue('block'));
         $view->expects($this->any())->method('getOptions')->will($this->returnValue([]));
 
         $this->registry->expects($this->once())
@@ -62,6 +62,6 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn(['payment' => $view]);
 
         $data = $this->provider->getData($context);
-        $this->assertEquals(['payment' => ['label' => 'label', 'template' => 'template', 'options' => []]], $data);
+        $this->assertEquals(['payment' => ['label' => 'label', 'block' => 'block', 'options' => []]], $data);
     }
 }

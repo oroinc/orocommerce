@@ -33,7 +33,7 @@ class CreditCardExpirationDateType extends AbstractType
             [
                 'model_timezone' => 'UTC',
                 'view_timezone' => 'UTC',
-                'format' => 'dMMMMy',
+                'format' => 'dMy',
                 'input' => 'array',
                 'years' => range(date('y'), date('y') + self::YEAR_PERIOD),
                 'months' => $months

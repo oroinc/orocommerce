@@ -33,13 +33,16 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     {
         $formView = $this->formFactory->create(CreditCardType::NAME)->createView();
 
-        return ['formView' => $formView];
+        return [
+            'formView' => $formView,
+            'allowedCreditCards' => $this->getAllowedCreditCards()
+        ];
     }
 
     /** {@inheritdoc} */
-    public function getTemplate()
+    public function getBlock()
     {
-        return 'OroB2BPaymentBundle:PaymentMethod:form.html.twig';
+        return '_payment_methods_credit_card_widget';
     }
 
     /** {@inheritdoc} */
@@ -58,5 +61,13 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     public function getLabel()
     {
         return $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_LABEL_KEY);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAllowedCreditCards()
+    {
+        return $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ALLOWED_CC_TYPES_KEY);
     }
 }

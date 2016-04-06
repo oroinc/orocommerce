@@ -12,7 +12,7 @@ interface PaymentMethodViewInterface
     /**
      * @return string
      */
-    public function getTemplate();
+    public function getBlock();
 
     /**
      * @return int

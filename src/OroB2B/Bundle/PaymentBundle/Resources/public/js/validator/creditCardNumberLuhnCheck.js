@@ -4,7 +4,7 @@ define(['underscore', 'orotranslation/js/translator', 'jquery.validate'
 
     // Combination of ShirtlessKirk and Plotnitzky
     var defaultParam = {
-        message: 'Invalid card number.'
+        message: 'orob2b.payment.validation.credit_card'
     };
 
     /**

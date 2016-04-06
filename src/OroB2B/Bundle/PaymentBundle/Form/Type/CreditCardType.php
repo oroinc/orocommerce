@@ -34,6 +34,8 @@ class CreditCardType extends AbstractType
                                 'payload' => null,
                             ],
                         ],
+                        'class' => 'credit-card-number',
+                        'autocomplete' => 'off',
                         'data-gateway' => true,
                     ],
                     'constraints' => [
@@ -78,11 +80,12 @@ class CreditCardType extends AbstractType
                     'constraints' => [
                         new Integer(),
                         new NotBlank(),
-                        new Length(['max' => 3, 'min' => 3]),
+                        new Length(['min' => 3, 'max' => 4]),
                     ],
                     'attr' => [
+                        'class' => 'credit-card-cvv',
                         'data-gateway' => true,
-                    ],
+                    ]
                 ]
             );
     }
