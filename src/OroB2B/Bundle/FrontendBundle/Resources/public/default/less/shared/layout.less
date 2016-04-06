@@ -2852,6 +2852,26 @@
 
 /*START CREATE ACCOUNT FORM*/
 .create-account {
+  &.create-account_full {
+    width: 86rem;
+    margin: 0 auto;
+
+    @media (max-width: 991px) {
+      width: 100%;
+      margin-bottom: 8rem;
+    }
+  }
+
+  &.create-account_half-cols {
+    margin: 0 -1.5rem;
+
+    &:before, &:after {
+      content: "";
+      display: block;
+      height: 0;
+      clear: both;
+    }
+  }
 
   &.create-account_pos-absolute_vert-centered {
     position: absolute;
@@ -2864,27 +2884,6 @@
       margin: 0;
     }
   }
-   
-   &.create-account_full {
-      width: 86rem;
-      margin: 0 auto;
-
-      @media (max-width: 991px) {
-        width: 100%;
-        margin-bottom: 8rem;
-      }
-   }
-
-   &.create-account_half-cols {
-    margin: 0 -1.5rem;
-
-    &:before, &:after {
-      content: "";
-      display: block;
-      height: 0;
-      clear: both;
-    }
-   }
 }
 
 .create-account__title {
