@@ -80,7 +80,7 @@ layout:
                         text: orob2b.account.accountuser.profile.create_an_account
                         attr:
                             class: col-md-12
-                        visible: visible: { @eq: [$data.registrationAllowed, true] }
+                        visible: { @eq: [$data.registrationAllowed, true] }
             tree:
                 content:
                     login_page:
