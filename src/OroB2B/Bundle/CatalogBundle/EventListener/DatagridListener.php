@@ -113,7 +113,15 @@ class DatagridListener
      */
     protected function addFilterByCategory(PreBuild $event)
     {
-        $categoryId = $this->requestProductHandler->getCategoryId();
+        $categoryId = $event->getParameters()->get('categoryId');
+        $subCategoryId = $event->getParameters()->get('includeSubcategories');
+        if (!$categoryId) {
+            $categoryId = $this->requestProductHandler->getCategoryId();
+            $subCategoryId = $this->requestProductHandler->getIncludeSubcategoriesChoice();
+        }
+        $config = $event->getConfig();
+        $config->offsetSetByPath('[options][urlParams][categoryId]', $categoryId);
+        $config->offsetSetByPath('[options][urlParams][includeSubcategories]', $subCategoryId);
         if (!$categoryId) {
             return;
         }
@@ -132,9 +140,8 @@ class DatagridListener
             $productCategoryIds = array_merge($repo->getChildrenIds($category), $productCategoryIds);
         }
 
-        $config = $event->getConfig();
         $config->offsetSetByPath('[source][query][where][and]', ['productCategory.id IN (:productCategoryIds)']);
-        $config->offsetSetByPath('[options][urlParams][categoryId]', $categoryId);
+
         $config->offsetSetByPath(
             DatasourceBindParametersListener::DATASOURCE_BIND_PARAMETERS_PATH,
             ['productCategoryIds']
