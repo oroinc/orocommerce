@@ -170,7 +170,7 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'columns' => [
                         'id',
-                        'isDraft',
+                        'statusLabel',
                         'poNumber',
                         'shipUntil',
                         'createdAt',
@@ -196,7 +196,7 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'columns' => [
                         'id',
-                        'isDraft',
+                        'statusLabel',
                         'poNumber',
                         'shipUntil',
                         'createdAt',
@@ -219,7 +219,7 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'columns' => [
                         'id',
-                        'isDraft',
+                        'statusLabel',
                         'poNumber',
                         'shipUntil',
                         'createdAt',
@@ -242,7 +242,7 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'columns' => [
                         'id',
-                        'isDraft',
+                        'statusLabel',
                         'poNumber',
                         'shipUntil',
                         'createdAt',
