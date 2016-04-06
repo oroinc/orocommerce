@@ -47,6 +47,8 @@ class PurchaseAction extends AbstractPaymentMethodAction
             $paymentTransaction->setTransactionOptions($options['transactionOptions']);
         }
 
+        $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
+
         $response = $this->paymentMethodRegistry
             ->getPaymentMethod($options['paymentMethod'])
             ->execute($paymentTransaction);
@@ -55,7 +57,22 @@ class PurchaseAction extends AbstractPaymentMethodAction
 
         $this->setAttributeValue(
             $context,
-            array_merge($response, ['transaction' => $paymentTransaction->getEntityIdentifier()])
+            array_merge(
+                $response,
+                [
+                    'paymentMethod' => $options['paymentMethod'],
+                    'errorUrl' => $this->router->generate(
+                        'orob2b_payment_callback_error',
+                        ['transactionId' => $paymentTransaction->getId()],
+                        true
+                    ),
+                    'returnUrl' => $this->router->generate(
+                        'orob2b_payment_callback_return',
+                        ['transactionId' => $paymentTransaction->getId()],
+                        true
+                    ),
+                ]
+            )
         );
     }
 }

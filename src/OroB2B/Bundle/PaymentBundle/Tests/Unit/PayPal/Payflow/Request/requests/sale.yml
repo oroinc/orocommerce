@@ -23,15 +23,12 @@ CardPresent:
         &SWIPE[40]=;4912000033330026=151210110000123456789?&AMT=21.00
     error:
         - 'Symfony\Component\OptionsResolver\Exception\MissingOptionsException'
-        - 'The required options "ACCT", "VENDOR" are missing.'
+        - 'The required option "VENDOR" is missing.'
 Example:
     class: 'OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\SaleRequest'
     request: |
         TRXTYPE=S&TENDER=C&PWD=x1y2z3&PARTNER=PayPal&VENDOR=SuperMerchant
         &USER=SuperMerchant&ORIGID=VXYZ01234567&AMT=34.00
-    error:
-        - 'Symfony\Component\OptionsResolver\Exception\MissingOptionsException'
-        - 'The required option "ACCT" is missing.'
 NVP:
     class: 'OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Request\SaleRequest'
     request: |

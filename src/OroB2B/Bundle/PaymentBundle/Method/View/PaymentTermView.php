@@ -2,48 +2,55 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Method\View;
 
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+
+use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentTerm as PaymentTermMethod;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use OroB2B\Bundle\PaymentBundle\Traits\ConfigTrait;
 
 class PaymentTermView implements PaymentMethodViewInterface
 {
+    use ConfigTrait;
+
     /** @var PaymentTermProvider */
     protected $paymentTermProvider;
-
-    /** @var TokenStorageInterface */
-    protected $tokenStorage;
 
     /**  @var TranslatorInterface */
     protected $translator;
 
-    /** @var PaymentTerm */
-    protected $paymentTerm = false;
+    /** @var ConfigManager */
+    protected $configManager;
 
     /**
      * @param PaymentTermProvider $paymentTermProvider
-     * @param TokenStorageInterface $tokenStorage
      * @param TranslatorInterface $translator
+     * @param ConfigManager $configManager
      */
     public function __construct(
         PaymentTermProvider $paymentTermProvider,
-        TokenStorageInterface $tokenStorage,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        ConfigManager $configManager
     ) {
         $this->paymentTermProvider = $paymentTermProvider;
-        $this->tokenStorage = $tokenStorage;
         $this->translator = $translator;
+        $this->configManager = $configManager;
     }
 
     /** {@inheritdoc} */
     public function getOptions()
     {
-        if ($this->getPaymentTerm()) {
-            return ['value' => $this->getPaymentTerm()->getLabel()];
+        $paymentTerm = $this->paymentTermProvider->getCurrentPaymentTerm();
+
+        if ($paymentTerm) {
+            return [
+                'value' => $this->translator->trans(
+                    'orob2b.payment.payment_term.label',
+                    ['%paymentTerm%' => $paymentTerm->getLabel()]
+                ),
+            ];
         }
 
         return [];
@@ -58,38 +65,18 @@ class PaymentTermView implements PaymentMethodViewInterface
     /** {@inheritdoc} */
     public function getOrder()
     {
-        /* @todo: config */
-        return 0;
+        return $this->getConfigValue(Configuration::PAYMENT_TERM_SORT_ORDER_KEY);
     }
 
     /** {@inheritdoc} */
     public function getLabel()
     {
-        return $this->translator->trans('orob2b.payment.methods.term_method.label');
+        return $this->getConfigValue(Configuration::PAYMENT_TERM_LABEL_KEY);
     }
 
     /** {@inheritdoc} */
     public function getPaymentMethodType()
     {
         return PaymentTermMethod::TYPE;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPaymentTerm()
-    {
-        if (false !== $this->paymentTerm) {
-            return $this->paymentTerm;
-        }
-
-        $token = $this->tokenStorage->getToken();
-
-        /** @var AccountUser $user */
-        if ($token && ($user = $token->getUser()) instanceof AccountUser) {
-            $this->paymentTerm = $this->paymentTermProvider->getPaymentTerm($user->getAccount());
-        }
-
-        return $this->paymentTerm;
     }
 }

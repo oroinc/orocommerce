@@ -40,6 +40,7 @@ class OroB2BPaymentBundle implements Migration
         $table->addColumn('source_payment_transaction', 'integer', ['notnull' => false]);
         $table->addColumn('request', 'secure_array', ['notnull' => false]);
         $table->addColumn('response', 'secure_array', ['notnull' => false]);
+        $table->addColumn('transaction_options', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['source_payment_transaction']);
     }

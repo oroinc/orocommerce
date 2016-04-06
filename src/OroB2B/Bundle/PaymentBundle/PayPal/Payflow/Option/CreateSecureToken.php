@@ -22,5 +22,11 @@ class CreateSecureToken extends AbstractBooleanOption
             $account = new Account(false);
             $account->configureOption($resolver);
         }
+
+        $returnUrl = new ReturnUrl();
+        $returnUrl->configureOption($resolver);
+
+        $errorUrl = new ErrorUrl();
+        $errorUrl->configureOption($resolver);
     }
 }

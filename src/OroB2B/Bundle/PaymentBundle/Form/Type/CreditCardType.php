@@ -35,7 +35,8 @@ class CreditCardType extends AbstractType
                             ],
                         ],
                         'class' => 'credit-card-number',
-                        'autocomplete' => 'off'
+                        'autocomplete' => 'off',
+                        'data-gateway' => true,
                     ],
                     'constraints' => [
                         new Integer(),
@@ -61,7 +62,12 @@ class CreditCardType extends AbstractType
             )
             ->add(
                 'EXPDATE',
-                'hidden'
+                'hidden',
+                [
+                    'attr' => [
+                        'data-gateway' => true,
+                    ],
+                ]
             )
             ->add(
                 'CVV2',
@@ -77,7 +83,8 @@ class CreditCardType extends AbstractType
                         new Length(['max' => 3, 'min' => 3]),
                     ],
                     'attr' => [
-                        'class' => 'credit-card-cvv'
+                        'class' => 'credit-card-cvv',
+                        'data-gateway' => true,
                     ]
                 ]
             );
@@ -88,7 +95,7 @@ class CreditCardType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(['label' => 'orob2b.payment.methods.credit_card.label']);
+        $resolver->setDefaults(['label' => 'orob2b.payment.methods.credit_card.label', 'csrf_protection' => false]);
     }
 
     /**

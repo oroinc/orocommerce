@@ -27,7 +27,7 @@ class ProcessorRegistryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Processor "not_supported" is missing. Registered processors are "PayPal"
+     * @expectedExceptionMessage Processor "not_supported" is missing. Registered processors are ""
      */
     public function testGetInvalidProcessor()
     {

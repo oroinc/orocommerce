@@ -10,6 +10,7 @@ use Oro\Component\Action\Model\ContextAccessor;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Symfony\Component\Routing\RouterInterface;
 
 abstract class AbstractPaymentMethodAction extends AbstractAction
 {
@@ -18,6 +19,9 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
 
     /** @var PaymentTransactionProvider */
     protected $paymentTransactionProvider;
+
+    /** @var RouterInterface */
+    protected $router;
 
     /** @var OptionsResolver */
     private $optionsResolver;
@@ -35,16 +39,19 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
      * @param ContextAccessor $contextAccessor
      * @param PaymentMethodRegistry $paymentMethodRegistry
      * @param PaymentTransactionProvider $paymentTransactionProvider
+     * @param RouterInterface $router
      */
     public function __construct(
         ContextAccessor $contextAccessor,
         PaymentMethodRegistry $paymentMethodRegistry,
-        PaymentTransactionProvider $paymentTransactionProvider
+        PaymentTransactionProvider $paymentTransactionProvider,
+        RouterInterface $router
     ) {
         parent::__construct($contextAccessor);
 
         $this->paymentMethodRegistry = $paymentMethodRegistry;
         $this->paymentTransactionProvider = $paymentTransactionProvider;
+        $this->router = $router;
     }
 
     /**
@@ -86,7 +93,7 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
             ->setDefault('attribute', null)
             ->setDefault('transactionOptions', [])
             ->addAllowedTypes('object', ['object', $propertyPathType])
-            ->addAllowedTypes('amount', ['float', $propertyPathType])
+            ->addAllowedTypes('amount', ['float', 'string', $propertyPathType])
             ->addAllowedTypes('currency', ['string', $propertyPathType])
             ->setAllowedTypes('transactionOptions', ['array', $propertyPathType])
             ->setAllowedTypes('attribute', $propertyPathType);

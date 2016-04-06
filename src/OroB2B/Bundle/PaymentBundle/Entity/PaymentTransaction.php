@@ -326,6 +326,19 @@ class PaymentTransaction
     }
 
     /**
+     * @param PaymentTransaction $relatedPaymentTransaction
+     * @return PaymentTransaction
+     */
+    public function removeRelatedPaymentTransaction(PaymentTransaction $relatedPaymentTransaction)
+    {
+        if ($this->relatedPaymentTransactions->contains($relatedPaymentTransaction)) {
+            $this->relatedPaymentTransactions->removeElement($relatedPaymentTransaction);
+        }
+
+        return $this;
+    }
+
+    /**
      * @return Collection|PaymentTransaction[]
      */
     public function getRelatedPaymentTransactions()

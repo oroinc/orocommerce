@@ -4,6 +4,7 @@ define(function(require) {
     var CreditCardComponent;
     var _ = require('underscore');
     var $ = require('jquery');
+    var mediator = require('oroui/js/mediator');
     var BaseComponent = require('oroui/js/app/components/base/component');
     require('jquery.validate');
 
@@ -12,6 +13,7 @@ define(function(require) {
          * @property {Object}
          */
         options: {
+            paymentMethod: null,
             selectors: {
                 month: '.checkout__form__select_exp-month',
                 year: '.checkout__form__select_exp-year',
@@ -49,10 +51,12 @@ define(function(require) {
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
+            mediator.on('checkout:place-order:response', this.handleSubmit, this);
+
             this.$el = this.options._sourceElement;
 
-            this.$el.find(this.options.selectors.month).on('change', _.bind(this.collectMonthDate, this));
-            this.$el.find(this.options.selectors.year).on('change', _.bind(this.collectYearDate, this));
+            this.$el.on('change', this.options.selectors.month, _.bind(this.collectMonthDate, this));
+            this.$el.on('change', this.options.selectors.year, _.bind(this.collectYearDate, this));
 
             $.validator.loadMethod('orob2bpayment/js/validator/creditCardNumberLuhnCheck');
             $.validator.loadMethod('orob2bpayment/js/validator/creditCardExpirationDate');
@@ -62,6 +66,44 @@ define(function(require) {
 
             this.$el.find(this.options.selectors.cardNumber).on('focusout', _.bind(this.validateElement, this, this.options.selectors.cardNumber));
             this.$el.find(this.options.selectors.cvv).on('focusout', _.bind(this.validateElement, this, this.options.selectors.cvv));
+        },
+
+        handleSubmit: function(eventData) {
+            if (eventData.responseData.paymentMethod === this.options.paymentMethod) {
+                eventData.stopped = true;
+                var data = this.$el.find('[data-gateway]').serializeArray();
+                var resolvedEventData = _.extend(
+                    {
+                        'SECURETOKEN': false,
+                        'SECURETOKENID': false,
+                        'errorUrl': false,
+                        'returnUrl': false,
+                        'formAction': false
+                    },
+                    eventData.responseData
+                );
+
+                data.push({name: 'SECURETOKEN', value: resolvedEventData.SECURETOKEN});
+                data.push({name: 'SECURETOKENID', value: resolvedEventData.SECURETOKENID});
+                data.push({name: 'ERRORURL', value: resolvedEventData.errorUrl});
+                data.push({name: 'RETURNURL', value: resolvedEventData.returnUrl});
+
+                this.postUrl(resolvedEventData.formAction, data);
+            }
+        },
+
+        postUrl: function(formAction, data) {
+            var $form = $('<form action="' + formAction + '">');
+            _.each(data, function(field) {
+                var $field = $('<input>')
+                    .prop('type', 'hidden')
+                    .prop('name', field.name)
+                    .val(field.value);
+
+                $form.append($field);
+            });
+
+            $form.submit();
         },
 
         collectMonthDate: function(e) {
@@ -87,14 +129,6 @@ define(function(require) {
         },
 
         dispose: function() {
-            if (this.disposed) {
-                return;
-            }
-
-            this.$el.find(this.options.selectors.month).off('change', _.bind(this.collectMonthDate, this));
-            this.$el.find(this.options.selectors.year).off('change', _.bind(this.collectYearDate, this));
-
-            CreditCardComponent.__super__.dispose.call(this);
         },
         
         validateElement: function (selector) {

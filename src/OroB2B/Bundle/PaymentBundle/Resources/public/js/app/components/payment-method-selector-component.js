@@ -39,7 +39,10 @@ define(function(require) {
             this.$el = this.options._sourceElement;
             this.$radios = this.$el.find(this.options.selectors.radio);
 
-            this.$radios.on('change', _.bind(this.updateForms, this));
+            if (this.$radios.length) {
+                this.updateForms();
+                this.$el.on('change', this.options.selectors.radio, _.bind(this.updateForms, this));
+            }
         },
 
         /**
@@ -48,6 +51,10 @@ define(function(require) {
         dispose: function() {
             if (this.disposed) {
                 return;
+            }
+
+            if (this.$radios.length) {
+                this.$el.off('change', this.options.selectors.radio, _.bind(this.updateForms, this));
             }
 
             PaymentMethodSelectorComponent.__super__.dispose.call(this);

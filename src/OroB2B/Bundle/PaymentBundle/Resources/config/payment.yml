@@ -23,6 +23,7 @@ services:
         arguments:
             - '@orob2b_payment.paypal.payflow.gateway'
             - '@oro_config.global'
+            - '@router'
 
     orob2b_payment.payment_method.paypal_payments_pro:
         class: '%orob2b_payment.payment_method.paypal_payments_pro.class%'
@@ -32,6 +33,9 @@ services:
     orob2b_payment.payment_method.payment_term:
         class: '%orob2b_payment.payment_method.payment_term.class%'
         public: false
+        arguments:
+            - '@orob2b_payment.provider.payment_term'
+            - '@oro_config.global'
 
     orob2b_payment.payment_method.view.registry:
         class: '%orob2b_payment.payment_method.view.registry.class%'
@@ -56,5 +60,5 @@ services:
         class: '%orob2b_payment.payment_method.view.payment_term.class%'
         arguments:
             - '@orob2b_payment.provider.payment_term'
-            - '@security.token_storage'
             - '@translator'
+            - '@oro_config.global'

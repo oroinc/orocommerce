@@ -28,8 +28,10 @@ services:
         class: '%orob2b_payment.event_listener.callback.payflow.class%'
         lazy: true
         tags:
-            - { name: kernel.event_listener, event: orob2b_payment.callback.return.payflow, method: onCallback }
-            - { name: kernel.event_listener, event: orob2b_payment.callback.error.payflow, method: onCallback }
+            - { name: kernel.event_listener, event: orob2b_payment.callback.return.payflow_gateway, method: onCallback }
+            - { name: kernel.event_listener, event: orob2b_payment.callback.error.payflow_gateway, method: onCallback }
+            - { name: kernel.event_listener, event: orob2b_payment.callback.return.pay_pal_payments_pro, method: onCallback }
+            - { name: kernel.event_listener, event: orob2b_payment.callback.return.pay_pal_payments_pro, method: onCallback }
 
     orob2b_payment.paypal.payflow.request.registry:
         class: '%orob2b_payment.paypal.payflow.request.registry.class%'

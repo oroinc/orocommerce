@@ -12,7 +12,7 @@ class PaymentMethodsProvider implements DataProviderInterface
     const NAME = 'orob2b_payment_methods_provider';
 
     /**
-     * @var string[]
+     * @var array[]
      */
     protected $data;
 
