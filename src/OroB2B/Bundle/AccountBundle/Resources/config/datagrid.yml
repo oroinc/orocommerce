@@ -528,8 +528,6 @@ datagrid:
         acl_resource: orob2b_account_frontend_account_user_role_index
         extends: basic-account-account-user-roles-grid
         extended_entity_name: %orob2b_account.entity.account_user_role.class%
-        source:
-            skip_acl_apply: true
         properties:
             view_link:
                 route:  orob2b_account_frontend_account_user_role_view
