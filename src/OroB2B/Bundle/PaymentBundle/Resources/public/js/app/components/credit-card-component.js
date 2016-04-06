@@ -64,8 +64,8 @@ define(function(require) {
 
             this.$form = this.$el.find(this.options.selectors.form);
 
-            this.$el.find(this.options.selectors.cardNumber).on('focusout', _.bind(this.validateElement, this, this.options.selectors.cardNumber));
-            this.$el.find(this.options.selectors.cvv).on('focusout', _.bind(this.validateElement, this, this.options.selectors.cvv));
+            this.$el.find(this.options.selectors.cardNumber).on('focusout', _.bind(this.validate, this, this.options.selectors.cardNumber));
+            this.$el.find(this.options.selectors.cvv).on('focusout', _.bind(this.validate, this, this.options.selectors.cvv));
 
             mediator.on('checkout:payment:before-transit', _.bind(this.beforeTransit, this));
         },
@@ -112,13 +112,13 @@ define(function(require) {
             this.month = e.target.value;
 
             this.setExpirationDate();
-            this.validateElement(this.options.selectors.expirationDate);
+            this.validate(this.options.selectors.expirationDate);
         },
 
         collectYearDate: function(e) {
             this.year = e.target.value;
             this.setExpirationDate();
-            this.validateElement(this.options.selectors.expirationDate);
+            this.validate(this.options.selectors.expirationDate);
         },
 
         setExpirationDate: function() {
@@ -138,49 +138,44 @@ define(function(require) {
             mediator.off('checkout:payment:before-transit', _.bind(this.beforeTransit, this));
         },
 
-        validateForm: function() {
+        validate: function(elementSelector) {
             var virtualForm = $('<form>');
-            var validator = virtualForm.append(this.$form.clone()).validate({ignore: ''});
+            var clonedForm = this.$form.clone();
+
+            var self = this;
+            var validator = virtualForm.append(clonedForm).validate({ignore: '', errorPlacement: function(error, element) {
+                var $el = self.$form.find('#' + $(element).attr('id'));
+                error.appendTo($el.parent());
+            }});
+
+            var errors;
+
+            if (elementSelector) {
+                errors = this.$form.find(elementSelector).parent();
+            } else {
+                errors = this.$form;
+            }
+
+            errors.find(validator.settings.errorElement + '.' + validator.settings.errorClass).remove();
+            errors.parent().find('.error').removeClass('error');
 
             var staticRules = $.validator.staticRules;
             $.validator.staticRules = function() { return {}; };
-            var isValid = validator.form();
-            $.validator.staticRules = staticRules;
 
-            this.clearError(validator);
-            this.showError(validator);
+            var isValid;
+            if (elementSelector) {
+                isValid = validator.element(virtualForm.find(elementSelector));
+            } else {
+                isValid = validator.form();
+            }
+
+            $.validator.staticRules = staticRules;
 
             return isValid;
         },
 
-        validateElement: function(selector) {
-            var virtualForm = $('<form>');
-            var validator = virtualForm.append(this.$form.clone()).validate({ignore: ''});
-
-            var staticRules = $.validator.staticRules;
-            $.validator.staticRules = function() { return {}; };
-            validator.element(virtualForm.find(selector));
-            $.validator.staticRules = staticRules;
-
-            this.clearError(validator);
-            this.showError(validator);
-        },
-
-        showError: function(validator) {
-            var self = this;
-            $.each(validator.errorList, function(key, errorData) {
-                errorData.element = self.$form.find('#' + $(errorData.element).attr('id'));
-            });
-            validator.showErrors();
-        },
-
-        clearError: function(validator) {
-            this.$form.find(validator.settings.errorElement + '.' + validator.settings.errorClass).remove();
-            this.$form.find('.error').removeClass('error');
-        },
-
         beforeTransit: function(eventData) {
-            if (eventData.data.paymentMethod === this.options.paymentMethod && !this.validateForm()) {
+            if (eventData.data.paymentMethod === this.options.paymentMethod && !this.validate()) {
                 eventData.stopped = true;
             }
         }
