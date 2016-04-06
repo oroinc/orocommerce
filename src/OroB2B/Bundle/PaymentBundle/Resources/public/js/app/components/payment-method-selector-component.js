@@ -39,16 +39,7 @@ define(function(require) {
             this.$el = this.options._sourceElement;
             this.$radios = this.$el.find(this.options.selectors.radio);
 
-            if (this.$radios.length) {
-                this.updateForms();
-                _.each(
-                    this.$radios,
-                    function(item) {
-                        $(item).on('click', _.bind(this.updateForms, this));
-                    },
-                    this
-                );
-            }
+            this.$radios.on('change', _.bind(this.updateForms, this));
         },
 
         /**
@@ -59,33 +50,13 @@ define(function(require) {
                 return;
             }
 
-            if (this.$radios.length) {
-                _.each(
-                    this.$radios,
-                    function (item) {
-                        $(item).off('click', _.bind(this.updateForms, this));
-                    },
-                    this
-                );
-            }
-
             PaymentMethodSelectorComponent.__super__.dispose.call(this);
         },
 
-        updateForms: function() {
-            var $selected = this.$radios.filter(':checked');
-            _.each(
-                this.$radios,
-                function(item) {
-                    var $item = $(item);
-                    if ($item.data('choice') == $selected.data('choice')) {
-                        $item.closest(this.options.selectors.item_container).find(this.options.selectors.subform).show();
-                    } else {
-                        $item.closest(this.options.selectors.item_container).find(this.options.selectors.subform).hide();
-                    }
-                },
-                this
-            );
+        updateForms: function(e) {
+            var element =  e.target;
+            this.$el.find(this.options.selectors.subform).hide();
+            $(element).parents(this.options.selectors.item_container).find(this.options.selectors.subform).show();
         }
     });
 

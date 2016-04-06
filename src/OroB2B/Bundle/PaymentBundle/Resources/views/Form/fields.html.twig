@@ -10,9 +10,9 @@
         }
     %}
 
-    <div data-validation="{{ validation|json_encode }}">
+    <div id="credit-card-expiration-date" data-validation="{{ validation|json_encode }}">
         <div class="{{ class_prefix }}__form__select {{ class_prefix }}__form__select_exp-month">
-            {{ form_row(form.month) }}
+            {{ form_widget(form.month) }}
         </div>
         <div class="{{ class_prefix }}__form__select {{ class_prefix }}__form__select_exp-year">
             {{ form_widget(form.year) }}
