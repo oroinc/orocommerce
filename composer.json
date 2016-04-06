@@ -17,7 +17,7 @@
     ],
     "require": {
         "oro/platform": "1.x-dev",
-        "oro/platform-serialised-fields" : "1.x-dev"
+        "oro/platform-serialised-fields": "1.x-dev"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
