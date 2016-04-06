@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PaymentBundle\EventListener\Callback;
 
 use OroB2B\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
+use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\Response;
 
@@ -33,8 +34,13 @@ class PayflowListener
         }
 
         $paymentTransaction
-            ->setActive($response->isSuccessful())
             ->setReference($response->getReference())
             ->setResponse(array_replace($paymentTransactionData, $eventData));
+
+        if ($paymentTransaction->getAction() === PaymentMethodInterface::AUTHORIZE) {
+            $paymentTransaction->setActive($response->isSuccessful());
+        } else {
+            $paymentTransaction->setActive(!$response->isSuccessful());
+        }
     }
 }

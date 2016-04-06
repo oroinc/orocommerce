@@ -4,7 +4,9 @@ define(function(require) {
     var PaymentMethodSelectorComponent;
     var _ = require('underscore');
     var $ = require('jquery');
+    var mediator = require('oroui/js/mediator');
     var BaseComponent = require('oroui/js/app/components/base/component');
+    var routing = require('routing');
 
     PaymentMethodSelectorComponent = BaseComponent.extend({
         /**
@@ -17,7 +19,9 @@ define(function(require) {
                 subform: '[data-form-container]',
                 submit_button: '[data-payment-method-submit]',
                 no_methods: 'payment-no-methods'
-            }
+            },
+            redirectEvent: 'scroll keypress mousedown tap',
+            delay: 1000 * 60 * 15 // 15 minutes
         },
 
         /**
@@ -38,10 +42,19 @@ define(function(require) {
 
             this.$el = this.options._sourceElement;
             this.$radios = this.$el.find(this.options.selectors.radio);
+            this.$el.on('change', this.options.selectors.radio, _.bind(this.updateForms, this));
 
-            if (this.$radios.length) {
-                this.$el.on('change', this.options.selectors.radio, _.bind(this.updateForms, this));
-            }
+            this.$el.on(
+                this.options.redirectEvent,
+                _.debounce(_.bind(this.redirectToHomepage, this), this.options.delay)
+            );
+        },
+
+        redirectToHomepage: function() {
+            mediator.execute(
+                'redirectTo',
+                {url: routing.generate('orob2b_product_frontend_product_index')}, {redirect: true}
+            );
         },
 
         /**
@@ -52,9 +65,7 @@ define(function(require) {
                 return;
             }
 
-            if (this.$radios.length) {
-                this.$el.off('change', this.options.selectors.radio, _.bind(this.updateForms, this));
-            }
+            this.$el.off();
 
             PaymentMethodSelectorComponent.__super__.dispose.call(this);
         },

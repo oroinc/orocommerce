@@ -19,6 +19,18 @@ interface ResponseInterface
      */
     public function getResult();
 
+
+    /**
+     * @return string
+     */
+    public function getErrorMessage();
+
+
+    /**
+     * @return string
+     */
+    public function getMessage();
+
     /**
      * @return array
      */

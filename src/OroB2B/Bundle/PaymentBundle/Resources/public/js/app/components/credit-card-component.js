@@ -85,10 +85,19 @@ define(function(require) {
                     eventData.responseData
                 );
 
-                data.push({name: 'SECURETOKEN', value: resolvedEventData.SECURETOKEN});
                 data.push({name: 'SECURETOKENID', value: resolvedEventData.SECURETOKENID});
-                data.push({name: 'ERRORURL', value: resolvedEventData.errorUrl});
+                data.push({name: 'SECURETOKEN', value: resolvedEventData.SECURETOKEN});
                 data.push({name: 'RETURNURL', value: resolvedEventData.returnUrl});
+                data.push({name: 'ERRORURL', value: resolvedEventData.errorUrl});
+
+                if (!resolvedEventData.formAction || !resolvedEventData.SECURETOKEN) {
+                    mediator.execute(
+                        'redirectTo',
+                        {url: resolvedEventData.errorUrl + '?' + $.param(data)}, {redirect: true}
+                    );
+
+                    return;
+                }
 
                 this.postUrl(resolvedEventData.formAction, data);
             }
