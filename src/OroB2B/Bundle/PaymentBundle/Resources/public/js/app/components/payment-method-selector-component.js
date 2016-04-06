@@ -40,7 +40,6 @@ define(function(require) {
             this.$radios = this.$el.find(this.options.selectors.radio);
 
             if (this.$radios.length) {
-                this.updateForms();
                 this.$el.on('change', this.options.selectors.radio, _.bind(this.updateForms, this));
             }
         },

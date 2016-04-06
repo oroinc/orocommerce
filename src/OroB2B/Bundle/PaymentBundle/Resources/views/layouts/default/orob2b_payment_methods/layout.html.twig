@@ -14,8 +14,8 @@
                     <span class="checkout__form__label">{{ 'orob2b.payment.methods.select_method'|trans }}<sup class="red">*</sup></span>
                     {% for name, view in views %}
                         <div class="checkout__form__radio" data-item-container>
-                            <label class="radio_custom radio_custom_blue" data-radio>
-                                <input type="radio" name="paymentMethod" data-choice="{{ name }}" value="{{ name }}" />
+                            <label class="radio_custom radio_custom_blue {% if loop.first %}checked{% endif %}" data-radio>
+                                <input type="radio" name="paymentMethod" data-choice="{{ name }}" value="{{ name }}" {% if loop.first %}checked{% endif %} />
                                 <i class="cf-radio_button_checked radio_checked fs18 mmr5-md"></i>
                                 <i class="cf-radio_button_unchecked radio_not-checked fs18 mmr5-md"></i>
                                 <span class="checkbox_custom__text fs13">{{ view.label }}</span>
