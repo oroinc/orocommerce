@@ -49,11 +49,15 @@ class PurchaseAction extends AbstractPaymentMethodAction
 
         $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
 
-        $response = $this->paymentMethodRegistry
-            ->getPaymentMethod($options['paymentMethod'])
-            ->execute($paymentTransaction);
+        $response = [];
+        try {
+            $response = $this->paymentMethodRegistry
+                ->getPaymentMethod($options['paymentMethod'])
+                ->execute($paymentTransaction);
 
-        $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
+            $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
+        } catch (\Exception $e) {
+        }
 
         $this->setAttributeValue(
             $context,
