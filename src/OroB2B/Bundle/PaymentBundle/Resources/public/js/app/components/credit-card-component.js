@@ -66,6 +66,8 @@ define(function(require) {
 
             this.$el.find(this.options.selectors.cardNumber).on('focusout', _.bind(this.validateElement, this, this.options.selectors.cardNumber));
             this.$el.find(this.options.selectors.cvv).on('focusout', _.bind(this.validateElement, this, this.options.selectors.cvv));
+
+            mediator.on('checkout:payment:before-transit', _.bind(this.beforeTransit, this));
         },
 
         handleSubmit: function(eventData) {
@@ -129,9 +131,29 @@ define(function(require) {
         },
 
         dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            mediator.off('checkout:payment:before-transit', _.bind(this.beforeTransit, this));
         },
-        
-        validateElement: function (selector) {
+
+        validateForm: function() {
+            var virtualForm = $('<form>');
+            var validator = virtualForm.append(this.$form.clone()).validate({ignore: ''});
+
+            var staticRules = $.validator.staticRules;
+            $.validator.staticRules = function() { return {}; };
+            var isValid = validator.form();
+            $.validator.staticRules = staticRules;
+
+            this.clearError(validator);
+            this.showError(validator);
+
+            return isValid;
+        },
+
+        validateElement: function(selector) {
             var virtualForm = $('<form>');
             var validator = virtualForm.append(this.$form.clone()).validate({ignore: ''});
 
@@ -141,20 +163,26 @@ define(function(require) {
             $.validator.staticRules = staticRules;
 
             this.clearError(validator);
-            this.showError(validator)
+            this.showError(validator);
         },
 
         showError: function(validator) {
             var self = this;
-            $.each(validator.errorList, function (key, errorData) {
+            $.each(validator.errorList, function(key, errorData) {
                 errorData.element = self.$form.find('#' + $(errorData.element).attr('id'));
             });
             validator.showErrors();
         },
 
-        clearError: function (validator) {
+        clearError: function(validator) {
             this.$form.find(validator.settings.errorElement + '.' + validator.settings.errorClass).remove();
             this.$form.find('.error').removeClass('error');
+        },
+
+        beforeTransit: function(eventData) {
+            if (eventData.data.paymentMethod === this.options.paymentMethod && !this.validateForm()) {
+                eventData.stopped = true;
+            }
         }
     });
 
