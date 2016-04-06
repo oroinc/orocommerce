@@ -65,7 +65,7 @@ class LoadProductPriceDemoData extends AbstractFixture implements ContainerAware
     public function load(ObjectManager $manager)
     {
         $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroB2BPricingBundle/Migrations/Data/Demo/ORM/data/product_prices.csv');
+        $filePath = $locator->locate('@OroB2BProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
 
         if (is_array($filePath)) {
             $filePath = current($filePath);
@@ -74,52 +74,81 @@ class LoadProductPriceDemoData extends AbstractFixture implements ContainerAware
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
 
+        $priceLists = [
+            'Default Price List' => [
+                'currencies' => ['USD'], // 'EUR'], // intentionally no prices in the default list in the sample data
+                'discount' => 0,
+            ],
+            'Wholesale Price List' => [
+                'currencies' => ['USD', 'EUR'],
+                'discount' => 0.1,
+            ],
+            'Partner C Custom Price List' => [
+                'currencies' => ['USD'],
+                'discount' => 0.2,
+            ],
+        ];
+
+        $xRate = [
+            'USD' => 1.00,
+            'EUR' => 0.89,
+        ];
+
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
             $product = $this->getProductBySku($manager, $row['sku']);
-            $productUnit = $this->getProductUnit($manager, $row['unitCode']);
-            $priceList = $this->getPriceList($manager, $row['priceListName']);
-            $price = Price::create($row['price'], $row['currency']);
+            $productUnit = $this->getProductUnit($manager, $row['unit']);
+            foreach ($priceLists as $listName => $listOptions) {
+                $priceList = $this->getPriceList($manager, $listName);
+                foreach ($listOptions['currencies'] as $currency) {
+                    $amount = round(
+                        $row['price'] * (1 - $listOptions['discount']) * $xRate[$currency],
+                        2
+                    );
+                    $price = Price::create($amount, $currency);
 
-            $productPrice = new ProductPrice();
-            $productPrice
-                ->setProduct($product)
-                ->setUnit($productUnit)
-                ->setPriceList($priceList)
-                ->setQuantity($row['quantity'])
-                ->setPrice($price);
+                    $productPrice = new ProductPrice();
+                    $productPrice
+                        ->setProduct($product)
+                        ->setUnit($productUnit)
+                        ->setPriceList($priceList)
+                        ->setQuantity(1)
+                        ->setPrice($price);
 
-            $manager->persist($productPrice);
+                    $manager->persist($productPrice);
 
-            $productPrice10 = clone $productPrice;
-            $productPrice10
-                ->setQuantity($row['quantity'] * 10)
-                ->setPrice($price->setValue($price->getValue() * 0.95));
-            $manager->persist($productPrice10);
-
-            $productPrice20 = clone $productPrice;
-            $productPrice20
-                ->setQuantity($row['quantity'] * 20)
-                ->setPrice($price->setValue($price->getValue() * 0.9));
-            $manager->persist($productPrice20);
-
-            $productPrice50 = clone $productPrice;
-            $productPrice50
-                ->setQuantity($row['quantity'] * 50)
-                ->setPrice($price->setValue($price->getValue() * 0.85));
-            $manager->persist($productPrice50);
-
-            $productPrice100 = clone $productPrice;
-            $productPrice100
-                ->setQuantity($row['quantity'] * 100)
-                ->setPrice($price->setValue($price->getValue() * 0.8));
-            $manager->persist($productPrice100);
+                    $this->createPriceTiers($manager, $productPrice, $price);
+                }
+            }
         }
 
         fclose($handler);
 
         $manager->flush();
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param ProductPrice $productPrice
+     * @param Price $unitPrice
+     */
+    protected function createPriceTiers(ObjectManager $manager, ProductPrice $productPrice, Price $unitPrice)
+    {
+        $tiers = [
+            10  => 0.05,
+            20  => 0.10,
+            50  => 0.15,
+            100 => 0.20,
+        ];
+
+        foreach ($tiers as $qty => $discount) {
+            $price = clone $productPrice;
+            $price
+                ->setQuantity($qty)
+                ->setPrice($unitPrice->setValue(round($unitPrice->getValue() * (1 - $discount), 2)));
+            $manager->persist($price);
+        }
     }
 
     /**

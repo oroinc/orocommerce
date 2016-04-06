@@ -53,8 +53,11 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetData()
     {
         $prices = [1 => 'test', 2 => 'test2'];
-        $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', ['id'=> 23]);
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id'=> 24]);
+        $priceListId = 23;
+        $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', ['id' => $priceListId]);
+        $productId = 24;
+        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => $productId]);
+        $priceSorting = ['currency' => 'DESC', 'unit' => 'ASC', 'quantity' => 'ASC'];
         $context = new LayoutContext();
         $context->data()->set('product', null, $product);
 
@@ -63,6 +66,7 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $repo->expects($this->once())
             ->method('findByPriceListIdAndProductIds')
+            ->with($priceListId, [$productId], true, null, null, $priceSorting)
             ->willReturn($prices);
 
         $this->doctrineHelper->expects($this->once())

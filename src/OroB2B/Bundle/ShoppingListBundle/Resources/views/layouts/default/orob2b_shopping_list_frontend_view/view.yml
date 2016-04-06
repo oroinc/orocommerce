@@ -2,6 +2,10 @@ layout:
     actions:
         - @setBlockTheme:
             themes: 'OroB2BShoppingListBundle:layouts:default/orob2b_shopping_list_frontend_view/view.html.twig'
+        - @appendOption:
+            id: title
+            optionName: value
+            optionValue: 'orob2b.shoppinglist.entity_plural_label'
         - @addTree:
             items:
                 shopping_list_view_container:
@@ -89,8 +93,8 @@ layout:
                         no_shopping_lists: ~
                         shopping_list_title: ~
                         shopping_list_top_actions: ~
-                        shopping_list_options: ~
                         shopping_list_line_items:
+                            shopping_list_options: ~
                             shopping_list_line_items_list: ~
                             shopping_list_line_items_empty: ~
                         shopping_list_checkout_container:

@@ -28,6 +28,10 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
             target_type:            text
             target_fields:          [defaultDescription]
         -
+            name:                   defaultShortDescription
+            target_type:            text
+            target_fields:          [defaultShortDescription]
+        -
             name: descriptions
             relation_type: many-to-many
             relation_fields:
@@ -35,3 +39,11 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
                     name: text
                     target_type: text
                     target_fields: [descriptions]
+        -
+            name: shortDescriptions
+            relation_type: many-to-many
+            relation_fields:
+                -
+                    name: text
+                    target_type: text
+                    target_fields: [shortDescriptions]
