@@ -30,6 +30,8 @@ operations:
             @not_empty: [$.authorizePaymentTransaction]
         actions:
             - @payment_capture:
+                attribute: $.result.responseData
                 object: $.data
                 amount: $.data.total
                 currency: $.data.currency
+                transactionOptions: []

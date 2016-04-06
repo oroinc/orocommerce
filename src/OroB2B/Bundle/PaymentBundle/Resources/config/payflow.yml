@@ -30,6 +30,8 @@ services:
         tags:
             - { name: kernel.event_listener, event: orob2b_payment.callback.return.payflow_gateway, method: onCallback }
             - { name: kernel.event_listener, event: orob2b_payment.callback.error.payflow_gateway, method: onCallback }
+            - { name: kernel.event_listener, event: orob2b_payment.callback.return.pay_pal_payments_pro, method: onCallback }
+            - { name: kernel.event_listener, event: orob2b_payment.callback.return.pay_pal_payments_pro, method: onCallback }
 
     orob2b_payment.paypal.payflow.request.registry:
         class: '%orob2b_payment.paypal.payflow.request.registry.class%'
