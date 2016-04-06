@@ -75,10 +75,10 @@ class ProductUnitSelectionType extends AbstractProductAwareType
             return;
         }
 
-        $options['choices'] = $this->getProductUnits($product);
+        $options['choices'] = $this->getProductUnits($form, $product);
         $options['choices_updated'] = true;
 
-        $formParent->add($form->getName(), self::NAME, $options);
+        $formParent->add($form->getName(), $this->getName(), $options);
     }
 
     /**
@@ -92,7 +92,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
             return;
         }
 
-        $units = $this->getProductUnits($product);
+        $units = $this->getProductUnits($form, $product);
         $data = $event->getData();
         foreach ($units as $unit) {
             if ($unit->getCode() === $data) {
@@ -108,10 +108,11 @@ class ProductUnitSelectionType extends AbstractProductAwareType
     }
 
     /**
-     * @param Product $product
+     * @param FormInterface $form
+     * @param Product|null $product
      * @return ProductUnit[]
      */
-    protected function getProductUnits(Product $product = null)
+    protected function getProductUnits(FormInterface $form, Product $product = null)
     {
         $choices = [];
 
@@ -175,7 +176,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         }
 
         $product = $productHolder->getProduct();
-        $choices = $this->getProductUnits($product);
+        $choices = $this->getProductUnits($form, $product);
         $view->vars['choices'] = [];
 
         $productUnit = $productUnitHolder->getProductUnit();

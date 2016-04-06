@@ -160,10 +160,17 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('isValid')
             ->willReturn(false);
 
+        $priceOne = $this->createProductPrice(1);
+        $priceTwo = $this->createProductPrice(2);
+
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $pricesForm */
         $pricesForm = $mainForm->get('prices');
-        $pricesForm->expects($this->never())
-            ->method('getData');
+        $pricesForm->expects($this->once())
+            ->method('getData')
+            ->willReturn([$priceOne, $priceTwo]);
+
+        $this->priceManager->expects($this->never())
+            ->method('persist');
 
         $this->extension->onPostSubmit($event);
     }

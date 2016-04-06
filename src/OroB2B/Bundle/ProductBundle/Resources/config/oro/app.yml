@@ -1,5 +1,9 @@
 liip_imagine:
     filter_sets:
+        product_original:
+            quality:          95
+            filters:
+                strip:        ~
         product_large:
             quality:          95
             filters:
