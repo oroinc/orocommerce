@@ -655,9 +655,90 @@ datagrid:
                 accountName:
                     data_name: accountName
 
-    frontend-account-account-users-grid-view:
+    frontend-account-account-users-grid-basic:
+        entity_name: %orob2b_account.entity.account_user.class%
+        options:
+            entityHint: account user
         acl_resource: orob2b_account_frontend_account_user_view
-        extends: account-account-users-grid-view-basic
+        source:
+            type: orm
+            query:
+                select:
+                    - user.id
+                    - CONCAT(user.firstName, CONCAT(' ', user.lastName)) AS fullName
+                    - user.email
+                    - CASE WHEN user.enabled = true AND user.confirmed = true THEN true ELSE false END AS status
+                from:
+                    - { table: %orob2b_account.entity.account_user.class%, alias: user }
+        sorters:
+            columns:
+                fullName:
+                    data_name: fullName
+                email:
+                    data_name: user.email
+                status:
+                    data_name: status
+        properties:
+            id: ~
+            view_link:
+                type:   url
+                route:  orob2b_account_frontend_account_user_view
+                params: [ id ]
+        actions:
+            view:
+                type:         navigate
+                label:        oro.grid.action.view
+                link:         view_link
+                icon:         eye-open
+                acl_resource: orob2b_account_frontend_account_user_view
+                rowAction:    true
+
+    frontend-account-account-users-grid-view:
+        extends: frontend-account-account-users-grid-basic
+        source:
+            query:
+                where:
+                    and:
+                        - :role MEMBER OF user.roles
+            bind_parameters:
+                -
+                    name: role
+                    default: NULL
+        columns:
+            fullName:
+                label: orob2b.account.frontend.account_user.full_name.label
+                type: twig
+                frontend_type: html
+                data_name: fullName
+                template: OroB2BAccountBundle:AccountUser:Frontend/Datagrid/fullName.html.twig
+            email:
+                label: orob2b.account.frontend.account_user.email.label
+                type: twig
+                frontend_type: html
+                data_name: user.email
+                template: OroB2BAccountBundle:AccountUser:Frontend/Datagrid/email.html.twig
+            status:
+                label: orob2b.account.frontend.account_user.status.label
+                type: twig
+                frontend_type: html
+                data_name: status
+                template: OroB2BAccountBundle:AccountUser:Frontend/Datagrid/status.html.twig
+        filters:
+            columns:
+                fullName:
+                    type:      string
+                    data_name: fullName
+                email:
+                    type:      string
+                    data_name: user.email
+                status:
+                    type: choice
+                    data_name: CAST(status as int)
+                    options:
+                        field_options:
+                            choices:
+                                true:  orob2b.account.frontend.account_user.status_active.label
+                                false: orob2b.account.frontend.account_user.status_inactive.label
 
     account-account-users-grid-update:
         acl_resource: orob2b_account_account_user_view
@@ -687,14 +768,64 @@ datagrid:
             delete_link:
                 route: orob2b_api_account_delete_accountuserrole
 
-    account-account-users-grid-frontend-update:
-        acl_resource: orob2b_account_frontend_account_user_view
-        extends: account-account-users-grid-update-basic
-        properties:
-            update_link:
-                route: orob2b_account_frontend_account_user_role_update
-            delete_link:
-                route: orob2b_api_frontend_account_delete_accountuserrole
+    frontend-account-account-users-grid-update:
+        extends: frontend-account-account-users-grid-basic
+        columns:
+            hasRole:
+                label: orob2b.account.accountuser.has_role.label
+                editable: true
+                frontend_type: boolean
+            fullName:
+                label: orob2b.account.frontend.account_user.full_name.label
+                type: twig
+                frontend_type: html
+                data_name: fullName
+                template: OroB2BAccountBundle:AccountUser:Frontend/Datagrid/fullName.html.twig
+            email:
+                label: orob2b.account.frontend.account_user.email.label
+                type: twig
+                frontend_type: html
+                data_name: user.email
+                template: OroB2BAccountBundle:AccountUser:Frontend/Datagrid/email.html.twig
+            status:
+                label: orob2b.account.frontend.account_user.status.label
+                type: twig
+                frontend_type: html
+                data_name: status
+                template: OroB2BAccountBundle:AccountUser:Frontend/Datagrid/status.html.twig
+        filters:
+            columns:
+                hasRole:
+                    type: boolean
+                    data_name: hasRole
+                fullName:
+                    type:      string
+                    data_name: fullName
+                email:
+                    type:      string
+                    data_name: user.email
+                status:
+                    type: choice
+                    data_name: CAST(status as int)
+                    options:
+                        field_options:
+                            choices:
+                                true:  orob2b.account.frontend.account_user.status_active.label
+                                false: orob2b.account.frontend.account_user.status_inactive.label
+        sorters:
+            columns:
+                hasRole:
+                    data_name: hasRole
+            default:
+                hasRole: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+        options:
+            entityHint: user
+            rowSelection:
+                dataField: id
+                columnName: hasRole
+                selectors:
+                    included: '#roleAppendUsers'
+                    excluded: '#roleRemoveUsers'
 
     account-category-visibility-grid:
         source:

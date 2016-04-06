@@ -10,30 +10,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer;
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\OroB2BPaymentExtension;
 
-class CreditCardType extends AbstractPaymentMethodType
+class CreditCardType extends AbstractType
 {
     const NAME = 'orob2b_payment_credit_card';
-    const CONFIG_NAME = 'paypal_payments_pro';
 
-    /** @var ConfigManager */
-    protected $configManager;
-
-    /** @param ConfigManager $configManager */
-    public function __construct(
-        ConfigManager $configManager
-    ) {
-        $this->configManager = $configManager;
-    }
-
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
+    /** {@inheritdoc} */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -48,14 +31,15 @@ class CreditCardType extends AbstractPaymentMethodType
                         'data-validation' => [
                             'creditCardNumberLuhnCheck' => [
                                 'message' => 'Invalid card number.',
-                                'payload' => null
-                            ]
-                        ]
+                                'payload' => null,
+                            ],
+                        ],
+                        'data-gateway' => true,
                     ],
                     'constraints' => [
                         new Integer(),
                         new NotBlank(),
-                    ]
+                    ],
                 ]
             )
             ->add(
@@ -67,16 +51,21 @@ class CreditCardType extends AbstractPaymentMethodType
                     'mapped' => false,
                     'placeholder' => [
                         'year' => 'Year',
-                        'month' => 'Month'
+                        'month' => 'Month',
                     ],
                     'constraints' => [
-                        new NotBlank()
-                    ]
+                        new NotBlank(),
+                    ],
                 ]
             )
             ->add(
                 'EXPDATE',
-                'hidden'
+                'hidden',
+                [
+                    'attr' => [
+                        'data-gateway' => true,
+                    ],
+                ]
             )
             ->add(
                 'CVV2',
@@ -89,8 +78,11 @@ class CreditCardType extends AbstractPaymentMethodType
                     'constraints' => [
                         new Integer(),
                         new NotBlank(),
-                        new Length(['max' => 3, 'min' => 3])
-                    ]
+                        new Length(['max' => 3, 'min' => 3]),
+                    ],
+                    'attr' => [
+                        'data-gateway' => true,
+                    ],
                 ]
             );
     }
@@ -100,15 +92,7 @@ class CreditCardType extends AbstractPaymentMethodType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $label = $this->configManager->get(
-            OroB2BPaymentExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . self::CONFIG_NAME . '_label'
-        );
-
-        $resolver->setDefaults(
-            [
-                'label' => empty($label) ? 'orob2b.payment.methods.credit_card.label' : $label
-            ]
-        );
+        $resolver->setDefaults(['label' => 'orob2b.payment.methods.credit_card.label', 'csrf_protection' => false]);
     }
 
     /**
@@ -119,10 +103,6 @@ class CreditCardType extends AbstractPaymentMethodType
         foreach ($view->children as $child) {
             $child->vars['full_name'] = $child->vars['name'];
         }
-
-        $view->vars['method_enabled'] = $this->configManager->get(
-            OroB2BPaymentExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . self::CONFIG_NAME . '_enabled'
-        );
     }
 
     /**
@@ -131,15 +111,5 @@ class CreditCardType extends AbstractPaymentMethodType
     public function getName()
     {
         return self::NAME;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isMethodEnabled()
-    {
-        return $this->configManager->get(
-            OroB2BPaymentExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . self::CONFIG_NAME . '_enabled'
-        );
     }
 }

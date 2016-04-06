@@ -17,5 +17,22 @@ interface ResponseInterface
     /**
      * @return string
      */
-    public function getState();
+    public function getResult();
+
+
+    /**
+     * @return string
+     */
+    public function getErrorMessage();
+
+
+    /**
+     * @return string
+     */
+    public function getMessage();
+
+    /**
+     * @return array
+     */
+    public function getData();
 }

@@ -2,44 +2,30 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Layout\DataProvider;
 
-use Symfony\Component\Form\FormFactoryInterface;
-
 use Oro\Component\Layout\DataProviderInterface;
 use Oro\Component\Layout\ContextInterface;
-use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
 
-use OroB2B\Bundle\PaymentBundle\Form\Type\CreditCardType;
-use OroB2B\Bundle\PaymentBundle\Form\PaymentMethodTypeRegistry;
-use OroB2B\Bundle\PaymentBundle\Form\Type\AbstractPaymentMethodType;
+use OroB2B\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
 
 class PaymentMethodsProvider implements DataProviderInterface
 {
     const NAME = 'orob2b_payment_methods_provider';
 
     /**
-     * @var FormAccessor
+     * @var array[]
      */
-    protected $data = null;
+    protected $data;
 
     /**
-     * @var FormFactoryInterface
-     */
-    protected $formFactory;
-
-    /**
-     * @var PaymentMethodTypeRegistry
+     * @var PaymentMethodViewRegistry
      */
     protected $registry;
 
     /**
-     * @param FormFactoryInterface $formFactory
-     * @param PaymentMethodTypeRegistry $registry
+     * @param PaymentMethodViewRegistry $registry
      */
-    public function __construct(
-        FormFactoryInterface $formFactory,
-        PaymentMethodTypeRegistry $registry
-    ) {
-        $this->formFactory = $formFactory;
+    public function __construct(PaymentMethodViewRegistry $registry)
+    {
         $this->registry = $registry;
     }
 
@@ -51,23 +37,20 @@ class PaymentMethodsProvider implements DataProviderInterface
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    /** {@inheritdoc} */
     public function getData(ContextInterface $context)
     {
         if (null === $this->data) {
-            $this->data = [];
-
-            $types = $this->registry->getPaymentMethodTypes();
-            foreach ($types as $type) {
-                if ($type->isMethodEnabled()) {
-                    $name = $type->getName();
-                    $form =  $this->formFactory->create($name, [], []);
-                    $this->data[$name] = $form->createView();
-                }
+            $views = $this->registry->getPaymentMethodViews();
+            foreach ($views as $name => $view) {
+                $this->data[$name] = [
+                    'label' => $view->getLabel(),
+                    'template' => $view->getTemplate(),
+                    'options' => $view->getOptions(),
+                ];
             }
         }
+
         return $this->data;
     }
 }

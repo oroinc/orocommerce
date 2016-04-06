@@ -31,7 +31,7 @@ abstract class AbstractCallbackEvent extends Event
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function getData()
     {

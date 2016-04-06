@@ -15,5 +15,18 @@ class CreateSecureToken extends AbstractBooleanOption
                 CreateSecureToken::CREATESECURETOKEN,
                 $this->getNormalizer(CreateSecureToken::YES, CreateSecureToken::NO)
             );
+
+        if ($resolver->isRequired(Account::ACCT)) {
+            $resolver->remove(Account::ACCT);
+
+            $account = new Account(false);
+            $account->configureOption($resolver);
+        }
+
+        $returnUrl = new ReturnUrl();
+        $returnUrl->configureOption($resolver);
+
+        $errorUrl = new ErrorUrl();
+        $errorUrl->configureOption($resolver);
     }
 }

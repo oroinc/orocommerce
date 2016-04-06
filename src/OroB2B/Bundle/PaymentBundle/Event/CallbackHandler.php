@@ -54,7 +54,7 @@ class CallbackHandler
         $event->setPaymentTransaction($paymentTransaction);
 
         $this->eventDispatcher->dispatch($event->getEventName(), $event);
-        $this->eventDispatcher->dispatch($event->getTypedEventName($paymentTransaction->getType()), $event);
+        $this->eventDispatcher->dispatch($event->getTypedEventName($paymentTransaction->getPaymentMethod()), $event);
 
         $entityManager = $this->doctrineHelper->getEntityManager($paymentTransaction);
         try {

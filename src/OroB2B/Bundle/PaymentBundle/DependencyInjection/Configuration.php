@@ -8,6 +8,8 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 
+use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+
 class Configuration implements ConfigurationInterface
 {
     const MERCHANT_COUNTRY_KEY = 'merchant_country';
@@ -52,6 +54,10 @@ class Configuration implements ConfigurationInterface
     const PAYFLOW_GATEWAY_REQUIRE_CVV_KEY = 'payflow_gateway_require_cvv';
     const PAYFLOW_GATEWAY_VALIDATE_CVV_KEY = 'payflow_gateway_validate_cvv';
 
+    const PAYMENT_TERM_ENABLED_KEY = 'payment_term_enabled';
+    const PAYMENT_TERM_LABEL_KEY = 'payment_term_label';
+    const PAYMENT_TERM_SORT_ORDER_KEY = 'payment_term_sort_order';
+
     const CARD_VISA = 'visa';
     const CARD_MASTERCARD = 'mastercard';
     const CARD_DISCOVER = 'discover';
@@ -60,8 +66,8 @@ class Configuration implements ConfigurationInterface
     const ALLOWED_COUNTRIES_ALL = 'all';
     const ALLOWED_COUNTRIES_SELECTED = 'selected';
 
-    const PAYMENT_ACTION_AUTHORIZATION = 'authorization';
-    const PAYMENT_ACTION_SALE = 'sale';
+    const CREDIT_CARD_LABEL = 'Credit Card';
+    const PAYMENT_TERM_LABEL = 'Payment Term';
 
     /**
      * {@inheritdoc}
@@ -89,7 +95,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 self::PAYPAL_PAYMENTS_PRO_LABEL_KEY => [
                     'type' => 'text',
-                    'value' => 'Credit Card'
+                    'value' => self::CREDIT_CARD_LABEL
                 ],
                 self::PAYPAL_PAYMENTS_PRO_SORT_ORDER_KEY => [
                     'type' => 'string',
@@ -125,7 +131,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 self::PAYPAL_PAYMENTS_PRO_PAYMENT_ACTION_KEY => [
                     'type' => 'text',
-                    'value' => self::PAYMENT_ACTION_AUTHORIZATION
+                    'value' => PaymentMethodInterface::AUTHORIZE
                 ],
                 self::PAYPAL_PAYMENTS_PRO_TEST_MODE_KEY => [
                     'type' => 'boolean',
@@ -167,7 +173,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 self::PAYFLOW_GATEWAY_LABEL_KEY => [
                     'type' => 'text',
-                    'value' => 'Credit Card'
+                    'value' => self::CREDIT_CARD_LABEL
                 ],
                 self::PAYFLOW_GATEWAY_SORT_ORDER_KEY => [
                     'type' => 'string',
@@ -203,7 +209,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 self::PAYFLOW_GATEWAY_PAYMENT_ACTION_KEY => [
                     'type' => 'text',
-                    'value' => self::PAYMENT_ACTION_AUTHORIZATION
+                    'value' => PaymentMethodInterface::AUTHORIZE
                 ],
                 self::PAYFLOW_GATEWAY_TEST_MODE_KEY => [
                     'type' => 'boolean',
@@ -236,7 +242,21 @@ class Configuration implements ConfigurationInterface
                 self::PAYFLOW_GATEWAY_VALIDATE_CVV_KEY => [
                     'type' => 'boolean',
                     'value' => true
-                ]
+                ],
+
+                // Payment Term
+                self::PAYMENT_TERM_ENABLED_KEY => [
+                    'type' => 'boolean',
+                    'value' => true
+                ],
+                self::PAYMENT_TERM_LABEL_KEY => [
+                    'type' => 'text',
+                    'value' => self::PAYMENT_TERM_LABEL
+                ],
+                self::PAYMENT_TERM_SORT_ORDER_KEY => [
+                    'type' => 'string',
+                    'value' => '30'
+                ],
             ]
         );
 

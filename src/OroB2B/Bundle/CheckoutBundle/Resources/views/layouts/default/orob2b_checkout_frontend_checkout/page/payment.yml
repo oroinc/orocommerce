@@ -1,13 +1,26 @@
 layout:
     actions:
         - @setBlockTheme:
-            themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/payment.html.twig'
+            themes: 'OroB2BPaymentBundle:layouts:default/orob2b_payment_methods/layout.html.twig'
+        - @setFormTheme:
+            themes:
+                - 'OroB2BPaymentBundle:layouts:default/orob2b_payment_methods/form.html.twig'
+                - 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/payment.html.twig'
         - @setOption:
             id: checkout_information
             optionName: vars
             optionValue:
                 workflowStep: { @value: $data.workflowStep }
                 stepOrder: 4
+        - @add:
+            id: payment_methods
+            parentId: checkout_information
+            blockType: block
+            prepend: true
+            options:
+                class_prefix: 'checkout'
+                vars:
+                    views: { @value: $data.orob2b_payment_methods_provider }
 
     conditions:
         @and:

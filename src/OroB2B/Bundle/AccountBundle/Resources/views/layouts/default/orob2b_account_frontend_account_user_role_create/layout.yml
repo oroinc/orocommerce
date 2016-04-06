@@ -4,20 +4,22 @@ layout:
             themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_frontend_account_user_role_update/layout.html.twig'
         - @setFormTheme:
             themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_frontend_account_user_role_update/form.html.twig'
-        - @setOption:
-            id: head
-            optionName: title
+        - @appendOption:
+            id: title
+            optionName: value
             optionValue:
-                label: 'orob2b.account.frontend.title.account_user_role.create'
+                - 'orob2b.account.menu.account_user.label'
+                - 'orob2b.account.frontend.account_user.role.entity_plural_label'
+                - 'orob2b.account.frontend.title.account_user_role.create'
         - @setOption:
             id: page_title
             optionName: text
             optionValue:
-                label: 'orob2b.account.frontend.title.account_user_role.create'
+                label: 'orob2b.account.frontend.title.page.account_user_role.create'
         - @add:
             id: account_sidebar
             parentId: sidebar_left
-            blockType: block
+            blockType: container
         - @addTree:
             items:
                 account_user_role_edit_container:
@@ -38,7 +40,7 @@ layout:
                 account_user_role_edit_form_users:
                     blockType: datagrid
                     options:
-                        grid_name: account-account-users-grid-frontend-update
+                        grid_name: frontend-account-account-users-grid-update
                         grid_parameters:
                             role: {@value: $data.entity.id}
                             account: {@value: $data.entity.account}
@@ -48,16 +50,9 @@ layout:
                     blockType: form_end
                     options:
                         form: { @value: $data.orob2b_account_frontend_account_user_role_form }
-                account_user_role_edit_form_actions:
+                account_user_role_edit_form_actions_top:
                     blockType: container
-                account_user_role_edit_form_actions_cancel:
-                    blockType: link
-                    options:
-                        route_name: orob2b_account_frontend_account_user_role_index
-                        text: orob2b.account.action.account_user_role.cancel_label
-                        attr:
-                            'class': btn theme-btn btn-gray
-                account_user_role_edit_form_actions_create:
+                account_user_role_edit_form_actions_create_top:
                     blockType: button
                     options:
                         action: submit
@@ -66,14 +61,42 @@ layout:
                             style: auto
                         attr:
                             'class': role-submit
+                account_user_role_edit_form_actions_cancel_top:
+                    blockType: link
+                    options:
+                        route_name: orob2b_account_frontend_account_user_role_index
+                        text: orob2b.account.action.account_user_role.cancel_label
+                        attr:
+                            'class': btn theme-btn btn-gray
+                account_user_role_edit_form_actions_bottom:
+                    blockType: container
+                account_user_role_edit_form_actions_create_bottom:
+                    blockType: button
+                    options:
+                        action: submit
+                        text: orob2b.account.action.account_user_role.create_label
+                        vars:
+                            style: auto
+                        attr:
+                            'class': role-submit
+                account_user_role_edit_form_actions_cancel_bottom:
+                    blockType: link
+                    options:
+                        route_name: orob2b_account_frontend_account_user_role_index
+                        text: orob2b.account.action.account_user_role.cancel_label
+                        attr:
+                            'class': btn theme-btn btn-gray
             tree:
                 content:
                     account_user_role_edit_container:
                         account_user_role_edit_form_errors: ~
                         account_user_role_edit_form_start: ~
+                        account_user_role_edit_form_actions_top:
+                            account_user_role_edit_form_actions_create_top: ~
+                            account_user_role_edit_form_actions_cancel_top: ~
                         account_user_role_edit_form_fields: ~
                         account_user_role_edit_form_users: ~
-                        account_user_role_edit_form_actions:
-                            account_user_role_edit_form_actions_cancel: ~
-                            account_user_role_edit_form_actions_create: ~
+                        account_user_role_edit_form_actions_bottom:
+                            account_user_role_edit_form_actions_create_bottom: ~
+                            account_user_role_edit_form_actions_cancel_bottom: ~
                         account_user_role_edit_form_end: ~

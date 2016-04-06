@@ -15,9 +15,7 @@ define(function(require) {
             selectors: {
                 radio: '[data-choice]',
                 item_container: '[data-item-container]',
-                subform: '[data-form-container]',
-                submit_button: '[data-payment-method-submit]',
-                no_methods: 'payment-no-methods'
+                subform: '[data-form-container]'
             }
         },
 
@@ -41,13 +39,7 @@ define(function(require) {
             this.$radios = this.$el.find(this.options.selectors.radio);
             if (this.$radios.length) {
                 this.updateForms();
-                _.each(
-                    this.$radios,
-                    function(item) {
-                        $(item).on('click', _.bind(this.updateForms, this));
-                    },
-                    this
-                );
+                this.$el.on('change', this.options.selectors.radio, _.bind(this.updateForms, this));
             }
 
             $(document).on('scroll keypress mousedown tap' , _.debounce(function(){window.location=routing.generate('orob2b_product_frontend_product_index')}, 1000*60*15));
@@ -62,13 +54,7 @@ define(function(require) {
             }
 
             if (this.$radios.length) {
-                _.each(
-                    this.$radios,
-                    function (item) {
-                        $(item).off('click', _.bind(this.updateForms, this));
-                    },
-                    this
-                );
+                this.$el.off('change', this.options.selectors.radio, _.bind(this.updateForms, this));
             }
 
             PaymentMethodSelectorComponent.__super__.dispose.call(this);
