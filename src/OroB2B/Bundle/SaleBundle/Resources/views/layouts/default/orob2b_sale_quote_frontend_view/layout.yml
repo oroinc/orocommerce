@@ -3,13 +3,16 @@ layout:
         - @setBlockTheme:
             themes: 'OroB2BSaleBundle:layouts:default/orob2b_sale_quote_frontend_view/layout.html.twig'
 
-        - @setOption:
-            id: head
-            optionName: title
+        - @appendOption:
+            id: title
+            optionName: value
             optionValue:
-                label: 'orob2b.frontend.sale.quote.head_title.label'
-                parameters:
-                    id: { @value: $data.quote.qid }
+                - 'orob2b.account.menu.account_user.label'
+                - 'orob2b.frontend.sale.quote.entity_plural_label'
+                -
+                    label: 'orob2b.frontend.sale.quote.title.label'
+                    parameters:
+                        '%id%': { @value: $data.entity.qid }
 
         - @setOption:
             id: page_title
@@ -22,12 +25,12 @@ layout:
             optionValue:
                 label: 'orob2b.frontend.sale.quote.title.label'
                 parameters:
-                    id: { @value: $data.quote.qid }
+                    '%id%': { @value: $data.entity.qid }
 
         - @add:
             id: account_sidebar
             parentId: sidebar_left
-            blockType: block
+            blockType: container
 
         - @addTree:
             items:
@@ -37,40 +40,49 @@ layout:
                     blockType: block
                     options:
                         vars:
-                            quote: { @value: $data.quote }
+                            quote: { @value: $data.entity }
                 quote_view_controls_list:
                     blockType: block
+                    options:
+                        visible: false
                 quote_view_information:
-                    blockType: block
+                    blockType: container
                     options:
                         vars:
-                            quote: { @value: $data.quote }
+                            quote: { @value: $data.entity }
                 quote_view_line_items:
                     blockType: block
                     options:
                         vars:
-                            quote: { @value: $data.quote }
+                            quote: { @value: $data.entity }
                 quote_view_line_items_mobile:
                     blockType: block
                     options:
                         vars:
-                            quote: { @value: $data.quote }
+                            quote: { @value: $data.entity }
                 quote_view_accept_button:
                     blockType: action_combined_buttons
                     options:
-                        visible: { @not_empty: $data.quote.hasOfferVariants }
+                        visible: { @not_empty: $data.entity.hasOfferVariants }
                         actions:
                             @value: $data.actions.all
                         entity:
                             @value: $data.quote
                 quote_view_accept_container:
                     blockType: container
+                quote_shipping_address:
+                    blockType: address
+                    options:
+                        address: {@value: $data.entity.shippingAddress}
+                        label: 'orob2b.sale.quote.shipping_address.label'
+                        block_prefixes: ['quote_body_column_element']
             tree:
                 content:
                     quote_view_page:
                         quote_view_top: ~
                         quote_view_controls_list: ~
-                        quote_view_information: ~
+                        quote_view_information:
+                            quote_shipping_address: ~
                         quote_view_line_items: ~
                         quote_view_line_items_mobile: ~
                         quote_view_accept_container:

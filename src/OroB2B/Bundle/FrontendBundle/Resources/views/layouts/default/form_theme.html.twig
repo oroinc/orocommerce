@@ -1,7 +1,7 @@
 {% extends 'form_div_layout.html.twig' %}
 
 {%- block form_label -%}
-    {% set class_prefix = form.vars.class_prefix is defined ?  form.vars.class_prefix : '' %}
+    {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('')) %}
     {% set label_attr = label_attr|merge({
         class: [
             label_attr.class|default(''),
@@ -13,7 +13,7 @@
 {%- endblock form_label -%}
 
 {% block form_widget_simple %}
-    {% set class_prefix = form.vars.class_prefix is defined ?  form.vars.class_prefix : '' %}
+    {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('')) %}
     {% set attr = attr|merge({
         class: [
             attr.class|default(''),
@@ -25,7 +25,7 @@
 {% endblock %}
 
 {% block textarea_widget %}
-    {% set class_prefix = form.vars.class_prefix is defined ?  form.vars.class_prefix : '' %}
+    {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('')) %}
     {% set attr = attr|merge({
         class: [
             attr.class|default(''),
@@ -37,7 +37,7 @@
 {% endblock %}
 
 {%- block form_row -%}
-    {% set class_prefix = form.vars.class_prefix is defined ?  form.vars.class_prefix : '' %}
+    {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('')) %}
     {% set attr = attr|merge({
         class: [
             attr.class|default(''),
@@ -45,12 +45,13 @@
         ]|join(' ')
     }) %}
     <fieldset class="{{ class_prefix }}__form__row">
-        <div class="{{ class_prefix }}__form__col form__col_x12">
-            {{- form_label(form) -}}
+        <div class="{{ class_prefix }}__form__col form__col form__col_x12">
+            {{- form_label(form, null, {'class_prefix': class_prefix}) -}}
             {{- form_widget(form, {
+                'class_prefix': class_prefix,
                 attr: attr
             }) -}}
-            {{- form_errors(form) -}}
+            {{- form_errors(form, {'class_prefix': class_prefix}) -}}
         </div>
     </fieldset>
 {%- endblock form_row -%}
@@ -69,9 +70,52 @@
         <div class="validation-failed">
             <ul>
             {%- for error in errors -%}
-                <li><i class="cf-attention"></i><span>{{ error.message }}</span></li>
+                <li><i class="cf-attention cf--base-line"></i><span class="mml5-md">{{ error.message }}</span></li>
             {%- endfor -%}
             </ul>
         </div>
     {%- endif -%}
 {%- endblock form_errors -%}
+
+{%- block choice_widget %}
+    {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('')) %}
+    {% set attr = attr|merge({
+        class: [
+            attr.class|default(''),
+            'input input_md input_block',
+            class_prefix ~ '__form__input'
+        ]|join(' ')
+    })
+    %}
+    {{ parent() }}
+{% endblock %}
+
+{%- block checkbox_widget -%}
+    {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('checkbox')) %}
+
+    {%- if label is empty -%}
+        {% set label = id|humanize %}
+    {%- endif -%}
+    <label for="{{ id }}" class="checkbox_custom checkbox_custom_blue {% if form.vars.checked %}checked{% endif %}" data-checkbox>
+        {{- parent() -}}
+        <i class="cf-check_box checkbox_checked fs18 mmr5-md"></i>
+        <i class="cf-check_box_outline_blank checkbox_not-checked fs18 mmr5-md"></i>
+        <span class="{{ class_prefix }}_custom__text fs13">{{ label|block_text(translation_domain) }}</span>
+    </label>
+    {{- form_errors(form, {'class_prefix': class_prefix}) -}}
+{%- endblock checkbox_widget -%}
+
+{%- block radio_widget -%}
+    {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('radio')) %}
+
+    {%- if label is empty -%}
+        {% set label = id|humanize %}
+    {%- endif -%}
+    <label class="radio_custom radio_custom_blue {% if form.vars.checked %}checked{% endif %}" data-radio>
+        {{- parent() -}}
+        <i class="cf-radio_button_checked radio_checked fs18 mmr5-md"></i>
+        <i class="cf-radio_button_unchecked radio_not-checked fs18 mmr5-md"></i>
+        <span class="{{ class_prefix }}_custom__text fs13">{{ label|block_text(translation_domain) }}</span>
+    </label>
+    {{- form_errors(form, {'class_prefix': class_prefix}) -}}
+{%- endblock radio_widget -%}

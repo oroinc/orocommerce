@@ -251,6 +251,8 @@
   }
 
   &.btn-dark {
+    position: relative;
+
     background: @theme-dark-gray-color;
     color: #fff;
 
@@ -265,8 +267,19 @@
     }
 
     > a {
-      color: #fff;
       text-decoration: none !important;
+
+      color: #fff;
+
+      &:before {
+        content: '';
+
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
 
       &:hover {
         text-decoration: none !important;
@@ -791,12 +804,6 @@
     vertical-align: bottom;
   }
 
-  &.badge_i-block {
-    i {
-      display: block;
-    }
-  }
-
   &.badge_no-radius {
     .radiused(0);
   }
@@ -807,8 +814,8 @@
   }
 
   i {
-    width: auto;
-    margin: 0 auto;
+    margin: auto;
+    vertical-align: baseline;
 
     &.fa-filter {
       margin-left: -.1rem;

@@ -74,7 +74,7 @@ orob2b:
                 address:
                     choose: Select an address
                     choose_or_create: Select an existing address or enter a new address below
-                    manual: Enter address manually
+                    manual: Enter other address
         system_configuration:
             fields:
                 backend_product_visibility.title: 'Can Be Added to Quotes'
@@ -176,6 +176,13 @@ orob2b:
             phone.label: Phone
 
             no_exist: No shipping address found
+
+        quotedemand:
+            entity_label: 'Quote Demand'
+            entity_plural_label: 'Quote Demands'
+            id.label: 'Id'
+            quote.label: 'Quote'
+
         controller:
             quote:
                 saved.message: 'Quote has been saved'
@@ -210,8 +217,7 @@ orob2b:
                 po_number.label: 'PO Number'
                 ship_until.label: 'Do Not Ship Later Than'
                 assigned_account_users.label: 'Assigned To'
-                title.label: 'Quote #id'
-                head_title.label: 'Quote #id - Quotes'
+                title.label: 'Quote #%id%'
                 shipping_address.label: 'Shipping Address'
                 sections:
                     general: 'Quote Information'
@@ -229,7 +235,7 @@ orob2b:
                     cancel: 'Cancel'
 
             quoteproduct:
-                product_sku.label: 'SKU'
+                product_sku.label: 'SKU #:'
                 product_name.label: 'Product'
                 comment.label: 'Seller Notes'
                 comment_account.label: 'My Notes'

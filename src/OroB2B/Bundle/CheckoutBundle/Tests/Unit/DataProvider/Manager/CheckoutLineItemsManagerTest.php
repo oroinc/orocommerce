@@ -30,7 +30,9 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->checkoutLineItemsConverter = $this
-            ->getMock('OroB2B\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter');
+            ->getMockBuilder('OroB2B\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->checkoutLineItemsManager = new CheckoutLineItemsManager($this->checkoutLineItemsConverter);
     }
@@ -72,7 +74,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
         $checkout = new Checkout();
         $checkout->setSource($checkoutSource);
 
-        $expected = false;
+        $expected = new ArrayCollection();
 
         if ($withDataProvider) {
             /** @var CheckoutDataProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider */

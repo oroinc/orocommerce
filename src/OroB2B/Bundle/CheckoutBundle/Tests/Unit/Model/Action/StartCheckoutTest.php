@@ -84,6 +84,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
             ->getMockForAbstractClass();
         $this->propertyAccessor = $this
             ->getMockWithoutConstructor('Symfony\Component\PropertyAccess\PropertyAccessor');
+        $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
         $this->action = new StartCheckout(
             new ContextAccessor(),
@@ -92,10 +93,10 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
             $this->currencyProvider,
             $this->tokenStorage,
             $this->propertyAccessor,
-            $this->redirect
+            $this->redirect,
+            $this->eventDispatcher
         );
 
-        $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
         $this->action->setDispatcher($this->eventDispatcher);
         $this->action->setCheckoutRoute('orob2b_checkout_frontend_checkout');
     }
@@ -154,18 +155,18 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->will($this->returnValue($em));
 
+        $account = new Account();
+        $account->setOwner(new User());
+        $account->setOrganization(new Organization());
+        $user = new AccountUser();
+        $user->setAccount($account);
+
+        /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject $token */
+        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token->expects($this->any())->method('getUser')->willReturn($user);
+        $this->tokenStorage->expects($this->any())->method('getToken')->willReturn($token);
+
         if (!$checkoutSource) {
-            $account = new Account();
-            $account->setOwner(new User());
-            $account->setOrganization(new Organization());
-            $user = new AccountUser();
-            $user->setAccount($account);
-
-            /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject $token */
-            $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-            $token->expects($this->once())->method('getUser')->willReturn($user);
-            $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($token);
-
             $propertyAccessor = PropertyAccess::createPropertyAccessor();
             $this->propertyAccessor
                 ->expects($this->once())
@@ -203,7 +204,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
             ->with(
                 [
                     'route' => 'orob2b_checkout_frontend_checkout',
-                    'route_parameters' => ['id' => $checkout->getId()]
+                    'route_parameters' => ['id' => $checkout->getId(), 'type' => $checkout->getType()]
                 ]
             );
         $this->redirect->expects($this->once())
@@ -228,7 +229,7 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
                         'poNumber' => 123
                     ],
                     StartCheckout::SETTINGS_KEY => [
-                        'allow_source_remove' => true,
+                        'allow_manual_source_remove' => true,
                         'disallow_billing_address_edit' => false,
                         'disallow_shipping_address_edit' => false,
                         'remove_source' => true
@@ -251,13 +252,31 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
                         'poNumber' => 123
                     ],
                     StartCheckout::SETTINGS_KEY  => [
-                        'allow_source_remove' => true,
+                        'allow_manual_source_remove' => true,
                         'disallow_billing_address_edit' => false,
                         'disallow_shipping_address_edit' => false,
                         'remove_source' => true
                     ]
                 ],
                 'checkoutSource' => new CheckoutSourceStub()
+            ],
+            'with_force' => [
+                'options' => [
+                    StartCheckout::SOURCE_FIELD_KEY => 'shoppingList',
+                    StartCheckout::SOURCE_ENTITY_KEY => new ShoppingList(),
+                    StartCheckout::CHECKOUT_DATA_KEY => [
+                        'poNumber' => 123
+                    ],
+                    StartCheckout::SETTINGS_KEY  => [
+                        'allow_manual_source_remove' => true,
+                        'disallow_billing_address_edit' => false,
+                        'disallow_shipping_address_edit' => false,
+                        'remove_source' => true
+                    ],
+                    'force' => true
+                ],
+                'checkoutSource' => new CheckoutSourceStub(),
+                'force' => true
             ]
         ];
     }
