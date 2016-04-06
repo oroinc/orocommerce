@@ -29,7 +29,7 @@ layout:
                     top_nav_left_logged_user:
                         top_nav_left_signed_in_as_label: ~
                         top_nav_left_signed_in_as: ~
-                        top_nav_left_sign_out: ~
                     top_nav_left_my_account: ~
+                    top_nav_left_sign_out: ~
     conditions:
         @neq: [ $context.logged_user, null ]

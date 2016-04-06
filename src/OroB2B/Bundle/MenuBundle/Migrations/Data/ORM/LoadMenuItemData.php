@@ -63,7 +63,9 @@ class LoadMenuItemData extends AbstractFixture implements ContainerAwareInterfac
         $item = $this->factory->createItem('top-nav');
         $item->addChild('1-800-555-5555');
         $item->addChild('Live Chat', ['uri' => '/contact-us']);
-        $item->addChild('Fast & Free Shipping for orders over $45', ['uri' => '/about']);
+        $item->addChild('<span>Fast & Free Shipping</span> for orders over $45', ['uri' => '/about'])
+            ->setAttribute('class', 'topbar__controls')
+            ->setLinkAttribute('class', 'cart__promo__link');
 
         $menuItem = $this->menuItemManager->createFromItem($item);
         $manager->persist($menuItem);
