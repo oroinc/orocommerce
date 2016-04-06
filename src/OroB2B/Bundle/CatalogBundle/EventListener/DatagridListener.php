@@ -114,17 +114,18 @@ class DatagridListener
     protected function addFilterByCategory(PreBuild $event)
     {
         $categoryId = $event->getParameters()->get('categoryId');
-        $subCategoryId = $event->getParameters()->get('includeSubcategories');
+        $isIncludeSubcategories = $event->getParameters()->get('includeSubcategories');
         if (!$categoryId) {
             $categoryId = $this->requestProductHandler->getCategoryId();
-            $subCategoryId = $this->requestProductHandler->getIncludeSubcategoriesChoice();
+            $isIncludeSubcategories = $this->requestProductHandler->getIncludeSubcategoriesChoice();
         }
-        $config = $event->getConfig();
-        $config->offsetSetByPath('[options][urlParams][categoryId]', $categoryId);
-        $config->offsetSetByPath('[options][urlParams][includeSubcategories]', $subCategoryId);
         if (!$categoryId) {
             return;
         }
+
+        $config = $event->getConfig();
+        $config->offsetSetByPath('[options][urlParams][categoryId]', $categoryId);
+        $config->offsetSetByPath('[options][urlParams][includeSubcategories]', $isIncludeSubcategories);
 
         /** @var CategoryRepository $repo */
         $repo = $this->doctrine->getRepository($this->dataClass);
