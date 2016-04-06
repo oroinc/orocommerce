@@ -422,6 +422,7 @@ orob2b.account:
                 users.label: Role Users
         action:
             back.label: "< Back"
+            back_to_login.label: "Already have an account? Log in >"
             account_user_role.edit: "Edit Role"
         table:
             entity:
