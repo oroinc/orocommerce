@@ -10,16 +10,16 @@ parameters:
     orob2b_payment.payment_term.delete_message_generator.class: OroB2B\Bundle\PaymentBundle\Twig\DeleteMessageTextGenerator
     orob2b_payment.extension.action.type.payment_delete.class: OroB2B\Bundle\PaymentBundle\Extension\Action\Actions\PaymentDeleteAction
     orob2b_payment.provider.payment_term.class: OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider
-
     orob2b_payment.provider.credit_form_provider.class: OroB2B\Bundle\PaymentBundle\Layout\DataProvider\CreditCardFormProvider
     orob2b_payment.provider.term_form_provider.class: OroB2B\Bundle\PaymentBundle\Layout\DataProvider\PaymentTermFormProvider
     orob2b_payment.provider.methods_provider.class: OroB2B\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodsProvider
-    orob2b_payment.form.payment_method_type_registry.class: OroB2B\Bundle\PaymentBundle\Form\PaymentMethodTypeRegistry
 
     orob2b_payment.provider.payment_transaction.class: OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider
     orob2b_payment.event.callback_handler.class: OroB2B\Bundle\PaymentBundle\Event\CallbackHandler
     orob2b_payment.action.capture.class: OroB2B\Bundle\PaymentBundle\Action\CaptureAction
     orob2b_payment.action.purchase.class: OroB2B\Bundle\PaymentBundle\Action\PurchaseAction
+    orob2b_payment.event_listener.callback.redirect.class: OroB2B\Bundle\PaymentBundle\EventListener\Callback\RedirectListener
+    orob2b_payment.event_listener.callback.payment_term.class: OroB2B\Bundle\PaymentBundle\EventListener\Callback\PaymentTermListener
 
 services:
     orob2b_payment.payment_term.manager.api:
@@ -107,10 +107,8 @@ services:
         class: %orob2b_payment.provider.payment_term.class%
         arguments:
             - @doctrine
+            - @security.token_storage
             - %orob2b_payment.entity.payment_term.class%
-
-    orob2b_payment.form.payment_method_type_registry:
-        class: %orob2b_payment.form.payment_method_type_registry.class%
 
     orob2b_payment.provider.credit_form_provider:
         class: %orob2b_payment.provider.credit_form_provider.class%
@@ -129,8 +127,7 @@ services:
     orob2b_payment.provider.methods_provider:
         class: %orob2b_payment.provider.methods_provider.class%
         arguments:
-            - @form.factory
-            - @orob2b_payment.form.payment_method_type_registry
+            - @orob2b_payment.payment_method.view.registry
         tags:
             - { name: layout.data_provider, alias: orob2b_payment_methods_provider }
 
@@ -156,6 +153,7 @@ services:
             - '@oro_action.context_accessor'
             - '@orob2b_payment.payment_method.registry'
             - '@orob2b_payment.provider.payment_transaction'
+            - '@router'
         tags:
             - { name: oro_workflow.action, alias: payment_capture }
             - { name: oro_action.action, alias: payment_capture }
@@ -166,6 +164,24 @@ services:
             - '@oro_action.context_accessor'
             - '@orob2b_payment.payment_method.registry'
             - '@orob2b_payment.provider.payment_transaction'
+            - '@router'
         tags:
             - { name: oro_workflow.action, alias: payment_purchase }
             - { name: oro_action.action, alias: payment_purchase }
+
+    orob2b_payment.event_listener.callback.redirect:
+        class: '%orob2b_payment.event_listener.callback.redirect.class%'
+        lazy: true
+        tags:
+            - { name: kernel.event_listener, event: orob2b_payment.callback.return, method: onReturn }
+            - { name: kernel.event_listener, event: orob2b_payment.callback.error, method: onError }
+
+    orob2b_payment.event_listener.callback.payment_term:
+        class: '%orob2b_payment.event_listener.callback.payment_term.class%'
+        lazy: true
+        arguments:
+            - '@property_accessor'
+            - '@oro_entity.doctrine_helper'
+            - '@orob2b_payment.provider.payment_term'
+        tags:
+            - { name: kernel.event_listener, event: orob2b_payment.callback.return, method: onReturn }

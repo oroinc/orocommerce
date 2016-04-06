@@ -29,10 +29,18 @@ class PaymentMethodRegistry
 
         throw new \InvalidArgumentException(
             sprintf(
-                'Payment method with "%s" action is missing. Registered payment methods are "%s"',
+                'Payment method with "%s" is missing. Registered payment methods are "%s"',
                 $type,
                 implode(', ', array_keys($this->paymentMethods))
             )
         );
+    }
+
+    /**
+     * @return PaymentMethodInterface[]
+     */
+    public function getPaymentMethods()
+    {
+        return $this->paymentMethods;
     }
 }

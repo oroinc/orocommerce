@@ -15,7 +15,7 @@ class PurchaseAction extends AbstractPaymentMethodAction
 
         $resolver
             ->setRequired('paymentMethod')
-            ->addAllowedTypes('paymentMethod', 'string');
+            ->addAllowedTypes('paymentMethod', ['string', 'Symfony\Component\PropertyAccess\PropertyPathInterface']);
     }
 
     /** {@inheritdoc} */
@@ -43,10 +43,36 @@ class PurchaseAction extends AbstractPaymentMethodAction
             ->setAmount($options['amount'])
             ->setCurrency($options['currency']);
 
-        $this->paymentMethodRegistry
+        if (!empty($options['transactionOptions'])) {
+            $paymentTransaction->setTransactionOptions($options['transactionOptions']);
+        }
+
+        $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
+
+        $response = $this->paymentMethodRegistry
             ->getPaymentMethod($options['paymentMethod'])
             ->execute($paymentTransaction);
 
         $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
+
+        $this->setAttributeValue(
+            $context,
+            array_merge(
+                $response,
+                [
+                    'paymentMethod' => $options['paymentMethod'],
+                    'errorUrl' => $this->router->generate(
+                        'orob2b_payment_callback_error',
+                        ['transactionId' => $paymentTransaction->getId()],
+                        true
+                    ),
+                    'returnUrl' => $this->router->generate(
+                        'orob2b_payment_callback_return',
+                        ['transactionId' => $paymentTransaction->getId()],
+                        true
+                    ),
+                ]
+            )
+        );
     }
 }

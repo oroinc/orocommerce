@@ -29,6 +29,14 @@ class PayPalPaymentsPro extends PayflowGateway
     }
 
     /**
+     * @return bool
+     */
+    public function isEnabled()
+    {
+        return (bool)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_ENABLED_KEY);
+    }
+
+    /**
      * @return string
      */
     protected function getPurchaseAction()

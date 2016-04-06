@@ -2,32 +2,38 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Method;
 
+use Symfony\Component\Routing\RouterInterface;
+
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\OroB2BPaymentExtension;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Gateway;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
+use OroB2B\Bundle\PaymentBundle\Traits\ConfigTrait;
 
 class PayflowGateway implements PaymentMethodInterface
 {
+    use ConfigTrait;
+
     const TYPE = 'PayflowGateway';
 
     /** @var Gateway */
     protected $gateway;
 
-    /** @var ConfigManager */
-    protected $configManager;
+    /** @var RouterInterface */
+    protected $router;
 
     /**
      * @param Gateway $gateway
      * @param ConfigManager $configManager
+     * @param RouterInterface $router
      */
-    public function __construct(Gateway $gateway, ConfigManager $configManager)
+    public function __construct(Gateway $gateway, ConfigManager $configManager, RouterInterface $router)
     {
         $this->gateway = $gateway;
         $this->configManager = $configManager;
+        $this->router = $router;
     }
 
     /** {@inheritdoc} */
@@ -41,7 +47,7 @@ class PayflowGateway implements PaymentMethodInterface
 
         $this->gateway->setTestMode($this->isTestMode());
 
-        return $this->{$actionName}($paymentTransaction);
+        return $this->{$actionName}($paymentTransaction) ?: [];
     }
 
     /**
@@ -109,6 +115,7 @@ class PayflowGateway implements PaymentMethodInterface
 
     /**
      * @param PaymentTransaction $paymentTransaction
+     * @return array
      */
     public function purchase(PaymentTransaction $paymentTransaction)
     {
@@ -119,6 +126,16 @@ class PayflowGateway implements PaymentMethodInterface
             Option\TransparentRedirect::SILENTTRAN => true,
             Option\Tender::TENDER => Option\Tender::CREDIT_CARD,
             Option\Currency::CURRENCY => $paymentTransaction->getCurrency(),
+            Option\ReturnUrl::RETURNURL => $this->router->generate(
+                'orob2b_payment_callback_return',
+                ['transactionId' => $paymentTransaction->getId()],
+                true
+            ),
+            Option\ErrorUrl::ERRORURL => $this->router->generate(
+                'orob2b_payment_callback_error',
+                ['transactionId' => $paymentTransaction->getId()],
+                true
+            ),
         ];
 
         $paymentTransaction
@@ -126,6 +143,14 @@ class PayflowGateway implements PaymentMethodInterface
             ->setAction($this->getPurchaseAction());
 
         $this->execute($paymentTransaction);
+
+        $keys = [Option\SecureToken::SECURETOKEN, Option\SecureTokenIdentifier::SECURETOKENID];
+
+        $response = array_intersect_key($paymentTransaction->getResponse(), array_flip($keys));
+
+        $response['formAction'] = $this->gateway->getFormAction();
+        
+        return $response;
     }
 
     /**
@@ -158,14 +183,11 @@ class PayflowGateway implements PaymentMethodInterface
     }
 
     /**
-     * @param string $key
-     * @return string
+     * @return bool
      */
-    protected function getConfigValue($key)
+    public function isEnabled()
     {
-        $key = OroB2BPaymentExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $key;
-
-        return $this->configManager->get($key);
+        return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ENABLED_KEY);
     }
 
     /** {@inheritdoc} */
