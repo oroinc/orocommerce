@@ -73,11 +73,11 @@ workflows:
                 label: Payment
                 order: 40
                 allowed_transitions:
-                    - continue_to_place_order
+                    - continue_to_order_review
                     - back_to_billing_address
                     - back_to_shipping_address
                     - back_to_shipping_method
-            place_order:
+            order_review:
                 label: Order Review
                 order: 50
                 is_final: true
@@ -153,9 +153,9 @@ workflows:
                 frontend_options:
                     is_checkout_continue: true
 
-            continue_to_place_order:
+            continue_to_order_review:
                 label: Continue
-                step_to: place_order
+                step_to: order_review
                 transition_definition: do_nothing
                 frontend_options:
                     is_checkout_continue: true
@@ -190,7 +190,7 @@ workflows:
 
             place_order:
                 label: Submit Order
-                step_to: place_order
+                step_to: order_review
                 transition_definition: place_order_definition
                 display_type: page
                 frontend_options:

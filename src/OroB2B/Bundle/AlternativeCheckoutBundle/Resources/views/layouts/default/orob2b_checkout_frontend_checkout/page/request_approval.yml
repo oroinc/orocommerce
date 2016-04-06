@@ -1,7 +1,19 @@
 layout:
     actions:
         - @setBlockTheme:
-            themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/checkout_form_buttons.html.twig'
+            themes: 'OroB2BAlternativeCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/request_approval.html.twig'
+        - @setFormTheme:
+            themes: 'OroB2BCheckoutBundle:layouts:default/orob2b_checkout_frontend_checkout/templates/form_theme.html.twig'
+        - @setOption:
+            id: checkout_information
+            optionName: vars
+            optionValue:
+                workflowStep: { @value: $data.workflowStep }
+                stepOrder: 6
+        - @setOption:
+            id: checkout_form_fields
+            optionName: vars.transitionData
+            optionValue: { @value: $data.orob2b_checkout_continue_transition }
         - @addTree:
             items:
                 checkout_form_buttons:
@@ -21,8 +33,7 @@ layout:
                     checkout_form_buttons:
                           checkout_button_continue: ~
                           checkout_button_back: ~
-        - @move:
-            id: checkout_form_buttons
-            siblingId: checkout_form_fields
     conditions:
-        @neq: [$context.workflowStepName, 'place_order']
+        @and:
+            - @eq: [$context.workflowStepName, 'request_approval']
+            - @empty: [$context.widget_container]

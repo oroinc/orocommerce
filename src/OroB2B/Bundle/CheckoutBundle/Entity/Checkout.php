@@ -12,7 +12,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField; // required b
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\WorkflowBundle\Entity\WorkflowAwareInterface;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowAwareTrait;
 use Oro\Component\Layout\ContextItemInterface;
 
@@ -58,10 +57,10 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Checkout extends ExtendCheckout implements
+    CheckoutInterface,
     OrganizationAwareInterface,
     AccountOwnerAwareInterface,
     DatesAwareInterface,
-    WorkflowAwareInterface,
     ContextItemInterface,
     LineItemsNotPricedAwareInterface,
     ShippingAwareInterface
@@ -640,5 +639,13 @@ class Checkout extends ExtendCheckout implements
     {
         $this->shippingEstimateAmount = $this->shippingCost ? $this->shippingCost->getValue() : null;
         $this->shippingEstimateCurrency = $this->shippingCost ? $this->shippingCost->getCurrency() : null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return '';
     }
 }
