@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Migrations\Schema\v1_3;
+namespace OroB2B\Bundle\ProductBundle\Migrations\Schema\v1_4;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Internal\Hydration\IterableResult;
