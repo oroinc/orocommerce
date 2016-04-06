@@ -15,6 +15,7 @@ parameters:
     orob2b_payment.provider.methods_provider.class: OroB2B\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodsProvider
 
     orob2b_payment.provider.payment_transaction.class: OroB2B\Bundle\PaymentBundle\Provider\PaymentTransactionProvider
+    orob2b_payment.provider.payment_status.class: OroB2B\Bundle\PaymentBundle\Provider\PaymentStatusProvider
     orob2b_payment.event.callback_handler.class: OroB2B\Bundle\PaymentBundle\Event\CallbackHandler
     orob2b_payment.action.capture.class: OroB2B\Bundle\PaymentBundle\Action\CaptureAction
     orob2b_payment.action.purchase.class: OroB2B\Bundle\PaymentBundle\Action\PurchaseAction
@@ -146,6 +147,11 @@ services:
         arguments:
             - '@oro_api.doctrine_helper'
             - '%orob2b_payment.entity.payment_transaction.class%'
+
+    orob2b_payment.provider.payment_status:
+        class: '%orob2b_payment.provider.payment_status.class%'
+        arguments:
+            - '@orob2b_payment.provider.payment_transaction'
 
     orob2b_payment.action.capture:
         class: '%orob2b_payment.action.capture.class%'

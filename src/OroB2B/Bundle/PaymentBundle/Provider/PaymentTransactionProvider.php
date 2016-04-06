@@ -48,6 +48,27 @@ class PaymentTransactionProvider
 
     /**
      * @param object $object
+     * @param array $filter
+     * @return PaymentTransaction[]
+     */
+    public function getPaymentTransactions($object, array $filter = [])
+    {
+        $className = $this->doctrineHelper->getEntityClass($object);
+        $identifier = $this->doctrineHelper->getSingleEntityIdentifier($object);
+
+        return $this->doctrineHelper->getEntityRepository($this->paymentTransactionClass)->findBy(
+            array_merge(
+                $filter,
+                [
+                    'entityClass' => $className,
+                    'entityIdentifier' => $identifier,
+                ]
+            )
+        );
+    }
+
+    /**
+     * @param object $object
      * @param string $amount
      * @param string $currency
      * @return PaymentTransaction

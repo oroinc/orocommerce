@@ -6,6 +6,7 @@ class Response implements ResponseInterface
 {
     const PNREF_KEY = 'PNREF';
     const RESULT_KEY = 'RESULT';
+    const RESPMSG_KEY = 'RESPMSG';
     /**
      * @var \ArrayObject
      */
@@ -47,11 +48,14 @@ class Response implements ResponseInterface
         return $this->values->offsetExists($index) ? $this->values->offsetGet($index) : $default;
     }
 
-    /**
-     * Throws exception if status not found
-     * @return string
-     */
+    /** {@inheritdoc} */
     public function getMessage()
+    {
+        return $this->getOffset(self::RESPMSG_KEY);
+    }
+
+    /** {@inheritdoc} */
+    public function getErrorMessage()
     {
         // Communication Error Response
         if ((int)$this->getResult() < 0) {

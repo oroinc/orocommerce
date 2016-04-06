@@ -92,3 +92,15 @@ orob2b:
             cvv2.label: Credit Card Verification Number
         payment_term:
             label: 'Term: %paymentTerm%'
+
+        status:
+            label: Payment Status
+            full: Paid in full
+            authorized: Payment authorized
+            pending: Pending payment
+            declined: Payment declined
+            partially: Paid partially
+
+        response:
+            error: 'Error: %error%'
+            success: ''

@@ -30,8 +30,22 @@ operations:
             @not_empty: [$.authorizePaymentTransaction]
         actions:
             - @payment_capture:
-                attribute: $.result.responseData
+                attribute: $.result
                 object: $.data
                 amount: $.data.total
                 currency: $.data.currency
                 transactionOptions: []
+            - @flash_message:
+                conditions:
+                    @and:
+                        - @not_empty: ['$.result[message]']
+                        - @equal: ['$.result[successful]', true]
+                message: '$.result[message]'
+                type: 'success'
+            - @flash_message:
+                conditions:
+                    @and:
+                        - @not_empty: ['$.result[message]']
+                        - @equal: ['$.result[successful]', false]
+                message: '$.result[message]'
+                type: 'error'

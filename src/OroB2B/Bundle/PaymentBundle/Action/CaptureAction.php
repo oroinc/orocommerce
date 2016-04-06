@@ -45,7 +45,14 @@ class CaptureAction extends AbstractPaymentMethodAction
 
         $this->setAttributeValue(
             $context,
-            array_merge($response, ['transaction' => $capturePaymentTransaction->getEntityIdentifier()])
+            array_merge(
+                [
+                    'transaction' => $capturePaymentTransaction->getEntityIdentifier(),
+                    'successful' => false,
+                    'message' => null,
+                ],
+                $response
+            )
         );
     }
 }

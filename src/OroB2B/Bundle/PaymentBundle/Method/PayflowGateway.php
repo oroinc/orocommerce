@@ -87,12 +87,13 @@ class PayflowGateway implements PaymentMethodInterface
 
     /**
      * @param PaymentTransaction $paymentTransaction
+     * @return array
      */
     public function capture(PaymentTransaction $paymentTransaction)
     {
         $sourcePaymentTransaction = $paymentTransaction->getSourcePaymentTransaction();
         if (!$sourcePaymentTransaction) {
-            return;
+            return [];
         }
 
         $keys = [Option\Tender::TENDER];
@@ -112,6 +113,11 @@ class PayflowGateway implements PaymentMethodInterface
         $sourcePaymentTransaction
             ->setActive(!$paymentTransaction->isSuccessful())
             ->setSuccessful($response->isSuccessful());
+
+        return [
+            'message' => $response->getMessage(),
+            'successful' => $response->isSuccessful(),
+        ];
     }
 
     /**
@@ -149,7 +155,7 @@ class PayflowGateway implements PaymentMethodInterface
         $response = array_intersect_key($paymentTransaction->getResponse(), array_flip($keys));
 
         $response['formAction'] = $this->gateway->getFormAction();
-        
+
         return $response;
     }
 
