@@ -54,6 +54,10 @@ class Configuration implements ConfigurationInterface
     const PAYFLOW_GATEWAY_REQUIRE_CVV_KEY = 'payflow_gateway_require_cvv';
     const PAYFLOW_GATEWAY_VALIDATE_CVV_KEY = 'payflow_gateway_validate_cvv';
 
+    const PAYMENT_TERM_ENABLED_KEY = 'payment_term_enabled';
+    const PAYMENT_TERM_LABEL_KEY = 'payment_term_label';
+    const PAYMENT_TERM_SORT_ORDER_KEY = 'payment_term_sort_order';
+
     const CARD_VISA = 'visa';
     const CARD_MASTERCARD = 'mastercard';
     const CARD_DISCOVER = 'discover';
@@ -61,6 +65,9 @@ class Configuration implements ConfigurationInterface
 
     const ALLOWED_COUNTRIES_ALL = 'all';
     const ALLOWED_COUNTRIES_SELECTED = 'selected';
+
+    const CREDIT_CARD_LABEL = 'Credit Card';
+    const PAYMENT_TERM_LABEL = 'Payment Term';
 
     /**
      * {@inheritdoc}
@@ -88,7 +95,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 self::PAYPAL_PAYMENTS_PRO_LABEL_KEY => [
                     'type' => 'text',
-                    'value' => 'Credit Card'
+                    'value' => self::CREDIT_CARD_LABEL
                 ],
                 self::PAYPAL_PAYMENTS_PRO_SORT_ORDER_KEY => [
                     'type' => 'string',
@@ -166,7 +173,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 self::PAYFLOW_GATEWAY_LABEL_KEY => [
                     'type' => 'text',
-                    'value' => 'Credit Card'
+                    'value' => self::CREDIT_CARD_LABEL
                 ],
                 self::PAYFLOW_GATEWAY_SORT_ORDER_KEY => [
                     'type' => 'string',
@@ -235,7 +242,21 @@ class Configuration implements ConfigurationInterface
                 self::PAYFLOW_GATEWAY_VALIDATE_CVV_KEY => [
                     'type' => 'boolean',
                     'value' => true
-                ]
+                ],
+
+                // Payment Term
+                self::PAYMENT_TERM_ENABLED_KEY => [
+                    'type' => 'boolean',
+                    'value' => true
+                ],
+                self::PAYMENT_TERM_LABEL_KEY => [
+                    'type' => 'text',
+                    'value' => self::PAYMENT_TERM_LABEL
+                ],
+                self::PAYMENT_TERM_SORT_ORDER_KEY => [
+                    'type' => 'string',
+                    'value' => '30'
+                ],
             ]
         );
 

@@ -49,6 +49,7 @@ orob2b:
                 display_options.title: 'Display Options'
                 integration.title: 'Integration'
                 advansed_settings.title: 'Advansed Settings'
+                payment_term.title: 'Payment Term'
             fields:
                 merchant_country.label: 'Merchant Country'
 
