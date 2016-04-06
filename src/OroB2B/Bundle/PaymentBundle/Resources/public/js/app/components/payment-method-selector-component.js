@@ -4,7 +4,9 @@ define(function(require) {
     var PaymentMethodSelectorComponent;
     var _ = require('underscore');
     var $ = require('jquery');
+    var mediator = require('oroui/js/mediator');
     var BaseComponent = require('oroui/js/app/components/base/component');
+    var routing = require('routing');
 
     PaymentMethodSelectorComponent = BaseComponent.extend({
         /**
@@ -15,7 +17,9 @@ define(function(require) {
                 radio: '[data-choice]',
                 item_container: '[data-item-container]',
                 subform: '[data-form-container]'
-            }
+            },
+            redirectEvent: 'scroll keypress mousedown tap',
+            delay: 1000 * 60 * 15 // 15 minutes
         },
 
         /**
@@ -36,11 +40,23 @@ define(function(require) {
 
             this.$el = this.options._sourceElement;
             this.$radios = this.$el.find(this.options.selectors.radio);
+            this.$el.on('change', this.options.selectors.radio, _.bind(this.updateForms, this));
 
             if (this.$radios.length) {
                 this.updateForms();
-                this.$el.on('change', this.options.selectors.radio, _.bind(this.updateForms, this));
             }
+
+            this.$el.on(
+                this.options.redirectEvent,
+                _.debounce(_.bind(this.redirectToHomepage, this), this.options.delay)
+            );
+        },
+
+        redirectToHomepage: function() {
+            mediator.execute(
+                'redirectTo',
+                {url: routing.generate('orob2b_product_frontend_product_index')}, {redirect: true}
+            );
         },
 
         /**
@@ -51,9 +67,7 @@ define(function(require) {
                 return;
             }
 
-            if (this.$radios.length) {
-                this.$el.off('change', this.options.selectors.radio, _.bind(this.updateForms, this));
-            }
+            this.$el.off();
 
             PaymentMethodSelectorComponent.__super__.dispose.call(this);
         },
@@ -64,11 +78,11 @@ define(function(require) {
                 this.$radios,
                 function(item) {
                     var $item = $(item);
-                    if ($item.data('choice') == $selected.data('choice')) {
-                        $item.closest(this.options.selectors.item_container).find(this.options.selectors.subform).show();
-                    } else {
-                        $item.closest(this.options.selectors.item_container).find(this.options.selectors.subform).hide();
-                    }
+
+                    $item
+                        .closest(this.options.selectors.item_container)
+                        .find(this.options.selectors.subform)
+                        .toggle($item.data('choice') === $selected.data('choice'));
                 },
                 this
             );
