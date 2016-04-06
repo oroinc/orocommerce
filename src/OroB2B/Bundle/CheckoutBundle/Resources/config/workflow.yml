@@ -369,6 +369,9 @@ workflows:
                                         - $.result.typeShipping
 
                     # Place order
+                    - @get_class_name:
+                        object: $checkout.sourceEntity
+                        attribute: $sourceEntityClassName
                     - @create_entity:
                         attribute: $.result.order
                         class: OroB2B\Bundle\OrderBundle\Entity\Order
@@ -385,6 +388,8 @@ workflows:
                             poNumber: $checkout.poNumber
                             customerNotes: $checkout.customerNotes
                             shipUntil: $checkout.shipUntil
+                            sourceEntityClass: $sourceEntityClassName
+                            sourceEntityId: $checkout.sourceEntity.id
                             paymentTerm: ~
                     - @get_order_line_items:
                         attribute: $.result.lineItems
