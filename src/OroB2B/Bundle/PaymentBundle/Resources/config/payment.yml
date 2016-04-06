@@ -35,6 +35,7 @@ services:
         public: false
         arguments:
             - '@orob2b_payment.provider.payment_term'
+            - '@oro_config.global'
 
     orob2b_payment.payment_method.view.registry:
         class: '%orob2b_payment.payment_method.view.registry.class%'
@@ -60,3 +61,4 @@ services:
         arguments:
             - '@orob2b_payment.provider.payment_term'
             - '@translator'
+            - '@oro_config.global'

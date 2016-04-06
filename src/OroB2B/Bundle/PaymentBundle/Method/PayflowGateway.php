@@ -7,13 +7,15 @@ use Symfony\Component\Routing\RouterInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\PaymentBundle\DependencyInjection\OroB2BPaymentExtension;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Gateway;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
+use OroB2B\Bundle\PaymentBundle\Traits\ConfigTrait;
 
 class PayflowGateway implements PaymentMethodInterface
 {
+    use ConfigTrait;
+
     const TYPE = 'PayflowGateway';
 
     /** @var Gateway */
@@ -116,6 +118,7 @@ class PayflowGateway implements PaymentMethodInterface
 
     /**
      * @param PaymentTransaction $paymentTransaction
+     * @return array
      */
     public function purchase(PaymentTransaction $paymentTransaction)
     {
@@ -180,17 +183,6 @@ class PayflowGateway implements PaymentMethodInterface
     protected function getPurchaseAction()
     {
         return $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_PAYMENT_ACTION_KEY);
-    }
-
-    /**
-     * @param string $key
-     * @return string
-     */
-    protected function getConfigValue($key)
-    {
-        $key = OroB2BPaymentExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $key;
-
-        return $this->configManager->get($key);
     }
 
     /**
