@@ -580,6 +580,7 @@
             <arg line="--exclude=CheckoutBundle/Migrations/Schema"/>
             <arg line="--exclude=SaleBundle/Entity"/>
             <arg line="--exclude=RFPBundle/Entity"/>
+            <arg line="--exclude=AlternativeCheckoutBundle/Entity"/>
             <arg line="${srcdir}"/>
         </exec>
     </target>
