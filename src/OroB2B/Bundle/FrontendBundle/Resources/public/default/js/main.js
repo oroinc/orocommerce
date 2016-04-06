@@ -694,7 +694,7 @@ require(['jquery', 'lodash', 'slick', 'bootstrapDatepicker', 'raty', 'perfectScr
                 $('[data-zoom-image]').elevateZoom({
                     scrollZoom: true,
                     zoomWindowWidth: 630,
-                    zoomWindowHeight: 378,
+                    zoomWindowHeight: 376,
                     borderSize: 1,
                     borderColour: '#ebebeb',
                     lensBorderColour: '#7d7d7d',
