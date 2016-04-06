@@ -15,8 +15,6 @@ oro_system_configuration:
             title: orob2b.payment.system_configuration.groups.integration.title
         paypal_payments_pro_settings:
             title: orob2b.payment.system_configuration.groups.advansed_settings.title
-        paypal_payments_pro_payment_term:
-            title: orob2b.payment.system_configuration.groups.payment_term.title
 
         payflow_gateway:
             title: orob2b.payment.system_configuration.groups.payflow_gateway.title

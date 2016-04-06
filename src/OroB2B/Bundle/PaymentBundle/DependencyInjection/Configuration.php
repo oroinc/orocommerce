@@ -67,6 +67,7 @@ class Configuration implements ConfigurationInterface
     const ALLOWED_COUNTRIES_SELECTED = 'selected';
 
     const CREDIT_CARD_LABEL = 'Credit Card';
+    const PAYMENT_TERM_LABEL = 'Payment Term';
 
     /**
      * {@inheritdoc}
@@ -250,7 +251,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 self::PAYMENT_TERM_LABEL_KEY => [
                     'type' => 'text',
-                    'value' => self::CREDIT_CARD_LABEL
+                    'value' => self::PAYMENT_TERM_LABEL
                 ],
                 self::PAYMENT_TERM_SORT_ORDER_KEY => [
                     'type' => 'string',
