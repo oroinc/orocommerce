@@ -18,9 +18,6 @@ class PaymentTerm implements PaymentMethodInterface
     /** @var PaymentTermProvider */
     protected $paymentTermProvider;
 
-    /** @var ConfigManager */
-    protected $configManager;
-
     /**
      * @param PaymentTermProvider $paymentTermProvider
      * @param ConfigManager $configManager
