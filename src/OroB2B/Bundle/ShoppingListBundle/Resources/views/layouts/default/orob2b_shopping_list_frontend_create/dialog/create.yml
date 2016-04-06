@@ -35,7 +35,7 @@ layout:
                         action: reset
                         text: orob2b.shoppinglist.create_new_form.cancel_label
                         vars:
-                            style: auto
+                            style: gray
                 form_actions_create:
                     blockType: button
                     options:
