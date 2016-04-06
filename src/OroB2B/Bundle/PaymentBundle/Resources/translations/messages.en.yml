@@ -100,7 +100,3 @@ orob2b:
             pending: Pending payment
             declined: Payment declined
             partially: Paid partially
-
-        response:
-            error: 'Error: %error%'
-            success: ''
