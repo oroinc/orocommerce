@@ -4,11 +4,17 @@ namespace OroB2B\Bundle\PaymentBundle\Method\View;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+
+use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentTerm as PaymentTermMethod;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use OroB2B\Bundle\PaymentBundle\Traits\ConfigTrait;
 
 class PaymentTermView implements PaymentMethodViewInterface
 {
+    use ConfigTrait;
+
     /** @var PaymentTermProvider */
     protected $paymentTermProvider;
 
@@ -18,13 +24,16 @@ class PaymentTermView implements PaymentMethodViewInterface
     /**
      * @param PaymentTermProvider $paymentTermProvider
      * @param TranslatorInterface $translator
+     * @param ConfigManager $configManager
      */
     public function __construct(
         PaymentTermProvider $paymentTermProvider,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        ConfigManager $configManager
     ) {
         $this->paymentTermProvider = $paymentTermProvider;
         $this->translator = $translator;
+        $this->configManager = $configManager;
     }
 
     /** {@inheritdoc} */
@@ -53,13 +62,13 @@ class PaymentTermView implements PaymentMethodViewInterface
     /** {@inheritdoc} */
     public function getOrder()
     {
-        return 0;
+        return $this->getConfigValue(Configuration::PAYMENT_TERM_SORT_ORDER_KEY);
     }
 
     /** {@inheritdoc} */
     public function getLabel()
     {
-        return $this->translator->trans('orob2b.payment.methods.term_method.label');
+        return $this->getConfigValue(Configuration::PAYMENT_TERM_LABEL_KEY);
     }
 
     /** {@inheritdoc} */

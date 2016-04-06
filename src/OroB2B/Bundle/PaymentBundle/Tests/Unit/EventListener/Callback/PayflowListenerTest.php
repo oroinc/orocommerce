@@ -26,10 +26,10 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnCallback(
         array $data,
         array $paymentTransactionData = [],
-        array $expectedPaymentTransactionData = null
+        array $expectedPaymentTransactionData = []
     ) {
         $paymentTransaction = new PaymentTransaction();
-        $paymentTransaction->setRequest($paymentTransactionData);
+        $paymentTransaction->setResponse($paymentTransactionData);
 
         $event = new CallbackReturnEvent($data);
         $event->setPaymentTransaction($paymentTransaction);
@@ -71,12 +71,20 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
                     'SECURETOKEN' => 'SECURETOKEN',
                     'SECURETOKENID' => 'SECURETOKENID1',
                 ],
+                [
+                    'SECURETOKEN' => 'SECURETOKEN',
+                    'SECURETOKENID' => 'SECURETOKENID1',
+                ],
             ],
             'token not match' => [
                 [
                     'PNREF' => 'Transaction Reference',
                     'RESULT' => '0',
                     'SECURETOKEN' => 'SECURETOKEN',
+                    'SECURETOKENID' => 'SECURETOKENID',
+                ],
+                [
+                    'SECURETOKEN' => 'SECURETOKEN1',
                     'SECURETOKENID' => 'SECURETOKENID',
                 ],
                 [
