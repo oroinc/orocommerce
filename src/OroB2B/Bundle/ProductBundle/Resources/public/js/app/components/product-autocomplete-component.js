@@ -20,7 +20,8 @@ define(function(require) {
                     name: '.product-autocomplete-name',
                     error: '.product-autocomplete-error',
                     success: '.product-autocomplete-success'
-                }
+                },
+                errorClass: 'error'
             };
             this.options = $.extend(true, thisOptions, this.options);
 
@@ -93,6 +94,7 @@ define(function(require) {
             this.$name.hide().find('span').html('');
             this.$success.hide();
             this.$error.hide();
+            this.$el.removeClass(this.options.errorClass);
         },
 
         updateProduct: function() {
@@ -102,6 +104,7 @@ define(function(require) {
                 this.$success.show();
             } else if (this.$el.val().length > 0) {
                 this.$error.show();
+                this.$el.addClass(this.options.errorClass);
             }
         }
     });

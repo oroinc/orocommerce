@@ -1,79 +1,23 @@
-{% block _account_user_role_top_actions_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " oro-order__controls-list" }) %}
+{% block _account_user_role_edit_form_actions_top_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " pull-right account_user_role_edit_buttons_top"}) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
-{% block _account_user_role_edit_form_fields_widget %}
-    {% set fields = [] %}
-    {% for name, child in form %}
-        {% if name not in ['appendUsers', 'removeUsers', 'entity', 'privileges', 'action'] %}
-            {% set fields = fields|merge({(name): '#' ~ child.vars.id}) %}
-        {% endif %}
-    {% endfor %}
-
-    {% set options = {
-        elSelector: '.btn.role-submit',
-        formName: form.vars.name,
-        formSelector: '#' ~ form.vars.id,
-        labelSelector: '#' ~ form.label.vars.id,
-        privilegesSelector: '#' ~ form.privileges.vars.id,
-        appendUsersSelector: '#roleAppendUsers',
-        removeUsersSelector: '#roleRemoveUsers',
-        fields: fields
-    } %}
-
-    <div data-page-component-module="orouser/js/views/role-view"
-         data-page-component-options="{{ options|json_encode }}">
-    </div>
-
-    <div class="row">
-        <div class="col-md-4">
-            {{ form_row(form.label) }}
-        </div>
-    </div>
-
-    {% for name, config in form.vars.privilegeConfig %}
-        <div class="account-oq-container">
-            <div class="account-oq__item__head">
-                <div class="account-oq__item account-oq__item_full mb0-sm">
-                    <h2 class="account-oq__item__title">
-                        {{ config.label|trans }}
-                    </h2>
-                </div>
-            </div>
-            <div class="account-oq__item__body">
-                {{ form_widget(form.children[name]) }}
-            </div>
-        </div>
-    {% endfor %}
-{% endblock %}
-
 {% block _account_user_role_edit_form_users_widget %}
-    {{ form_widget(form.appendUsers, {'id': 'roleAppendUsers'}) }}
-    {{ form_widget(form.removeUsers, {'id': 'roleRemoveUsers'}) }}
-
     {% set grid_parameters = grid_parameters|merge({
         _parameters: {data_in: form.appendUsers.vars.value|split(',')|default([])}
     }) %}
 
-    <div class="account-oq-container">
-        <div class="account-oq__item__head">
-            <div class="account-oq__item account-oq__item_full mb0-sm">
-                <h2 class="account-oq__item__title">
-                    {{ 'orob2b.account.sections.accountuserrole.users'|trans }}
-                </h2>
-            </div>
-        </div>
-        <div class="account-oq__item__body">
-            {{ block_widget(block) }}
-        </div>
-    </div>
+    <h3 class="account-navigation-title mb2-md mb2-sm">
+        {{ 'orob2b.account.sections.accountuserrole.users'|trans }}
+    </h3>
+    {{ block_widget(block) }}
 {% endblock %}
 
-{% block _account_user_role_edit_form_actions_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " widget-actions mt2-md"}) %}
+{% block _account_user_role_edit_form_actions_bottom_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " pull-right mt2-md"}) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
