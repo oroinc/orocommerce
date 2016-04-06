@@ -3,7 +3,7 @@ define(['underscore', 'orotranslation/js/translator', 'jquery', 'jquery.validate
     'use strict';
 
     var defaultParam = {
-        message: 'Expiration date cannot be blank.',
+        message: 'Invalid Expiration date.',
         monthSelector: '.checkout__form__select_exp-month select',
         yearSelector: '.checkout__form__select_exp-year select'
     };

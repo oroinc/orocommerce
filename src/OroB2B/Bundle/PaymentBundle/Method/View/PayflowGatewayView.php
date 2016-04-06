@@ -15,6 +15,16 @@ class PayflowGatewayView implements PaymentMethodViewInterface
 {
     use ConfigTrait;
 
+    /**
+     * @var array
+     */
+    protected $cardNamesMap = [
+        'visa' => 'visa',
+        'mastercard' => 'mc',
+        'discover' => 'discover',
+        'american_express' => 'ae'
+    ];
+
     /** @var FormFactoryInterface */
     protected $formFactory;
 
@@ -33,7 +43,10 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     {
         $formView = $this->formFactory->create(CreditCardType::NAME)->createView();
 
-        return ['formView' => $formView];
+        return [
+            'formView' => $formView,
+            'allowedCreditCards' => $this->mapAllowedCreditCards($this->getAllowedCreditCards())
+        ];
     }
 
     /** {@inheritdoc} */
@@ -58,5 +71,24 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     public function getLabel()
     {
         return $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_LABEL_KEY);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAllowedCreditCards()
+    {
+        return $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ALLOWED_CC_TYPES_KEY);
+    }
+
+    /**
+     * @param array $allowedCreditCard
+     * @return array
+     */
+    protected function mapAllowedCreditCards(array $allowedCreditCard)
+    {
+        return array_map(function ($value) {
+            return $this->cardNamesMap[$value];
+        }, $allowedCreditCard);
     }
 }

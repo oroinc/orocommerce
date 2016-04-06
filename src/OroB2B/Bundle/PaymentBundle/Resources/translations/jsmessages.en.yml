@@ -4,6 +4,6 @@ orob2b:
             account: account default
             account_group: account group default
 
-"Expiration date cannot be blank.": "Expiration date cannot be blank."
+"Invalid expiration date.": "Invalid Expiration date."
 "Please, choose correct month.": "Please, choose correct month."
 "Invalid card number.": "Invalid card number."
