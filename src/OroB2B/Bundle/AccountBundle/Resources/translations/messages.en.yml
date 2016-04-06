@@ -87,11 +87,6 @@ orob2b.account:
         owner.label:                 'Owner'
         sales_representatives.label: 'Assigned Sales Representatives'
 
-        form:
-            action:
-                create.label: 'Create Account User'
-                save.label: 'Save Account User'
-
         profile:
             company_name: 'Company Name'
             registration.title: 'Registration'

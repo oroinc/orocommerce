@@ -888,7 +888,7 @@ services:
         arguments:
             - @form.factory
         tags:
-            - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_profile }
+            - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_profile_form }
 
     orob2b_account.provider.frontend_account_user_form:
         class: %orob2b_account.provider.frontend_account_user_form.class%
