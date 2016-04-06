@@ -64,8 +64,8 @@ define(function(require) {
 
             this.$form = this.$el.find(this.options.selectors.form);
 
-            this.$el.find(this.options.selectors.cardNumber).on('focusout', _.bind(this.validate, this, this.options.selectors.cardNumber));
-            this.$el.find(this.options.selectors.cvv).on('focusout', _.bind(this.validate, this, this.options.selectors.cvv));
+            this.$el.on('focusout', this.options.selectors.cardNumber, _.bind(this.validate, this, this.options.selectors.cardNumber));
+            this.$el.on('focusout', this.options.selectors.cvv,  _.bind(this.validate, this, this.options.selectors.cvv));
 
             mediator.on('checkout:payment:before-transit', _.bind(this.beforeTransit, this));
         },
