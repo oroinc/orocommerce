@@ -26,6 +26,8 @@ class OroB2BProductBundleInstaller implements
     const PRODUCT_UNIT_TABLE_NAME = 'orob2b_product_unit';
     const PRODUCT_UNIT_PRECISION_TABLE_NAME = 'orob2b_product_unit_precision';
     const PRODUCT_VARIANT_LINK_TABLE_NAME = 'orob2b_product_variant_link';
+    const PRODUCT_SHORT_DESCRIPTION_TABLE_NAME = 'orob2b_product_short_desc';
+    const FALLBACK_LOCALE_VALUE_TABLE_NAME = 'orob2b_fallback_locale_value';
 
     const MAX_PRODUCT_IMAGE_SIZE_IN_MB = 10;
     const MAX_PRODUCT_ATTACHMENT_SIZE_IN_MB = 5;
@@ -84,6 +86,7 @@ class OroB2BProductBundleInstaller implements
         $this->createOrob2BProductNameTable($schema);
         $this->createOrob2BProductDescriptionTable($schema);
         $this->createOroB2BProductVariantLinkTable($schema);
+        $this->createOroB2BProductShortDescriptionTable($schema);
         $this->createOroB2BProductImageTable($schema);
 
         $this->addOroB2BProductForeignKeys($schema);
@@ -91,6 +94,7 @@ class OroB2BProductBundleInstaller implements
         $this->addOrob2BProductNameForeignKeys($schema);
         $this->addOrob2BProductDescriptionForeignKeys($schema);
         $this->addOroB2BProductVariantLinkForeignKeys($schema);
+        $this->addOroB2BProductShortDescriptionForeignKeys($schema);
         $this->addOroB2BProductImageForeignKeys($schema);
 
         $this->updateProductTable($schema);
@@ -349,6 +353,38 @@ class OroB2BProductBundleInstaller implements
             ['parent_product_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function createOroB2BProductShortDescriptionTable(Schema $schema)
+    {
+        $table = $schema->createTable(self::PRODUCT_SHORT_DESCRIPTION_TABLE_NAME);
+        $table->addColumn('short_description_id', 'integer', []);
+        $table->addColumn('localized_value_id', 'integer', []);
+        $table->setPrimaryKey(['short_description_id', 'localized_value_id']);
+        $table->addUniqueIndex(['localized_value_id']);
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addOroB2BProductShortDescriptionForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable(self::PRODUCT_SHORT_DESCRIPTION_TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::FALLBACK_LOCALE_VALUE_TABLE_NAME),
+            ['localized_value_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::PRODUCT_TABLE_NAME),
+            ['short_description_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 

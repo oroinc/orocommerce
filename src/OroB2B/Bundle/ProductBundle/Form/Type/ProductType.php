@@ -85,6 +85,27 @@ class ProductType extends AbstractType
                 ]
             )
             ->add(
+                'shortDescriptions',
+                LocalizedFallbackValueCollectionType::NAME,
+                [
+                    'label' => 'orob2b.product.short_descriptions.label',
+                    'required' => false,
+                    'field' => 'text',
+                    'type' => OroRichTextType::NAME,
+                    'options' => [
+                        'wysiwyg_options' => [
+                            'statusbar' => true,
+                            'resize' => true,
+                            'width' => 500,
+                            'height' => 300,
+                            'plugins' => array_merge(OroRichTextType::$defaultPlugins, ['fullscreen']),
+                            'toolbar' =>
+                                [reset(OroRichTextType::$toolbars[OroRichTextType::TOOLBAR_DEFAULT]) . ' | fullscreen'],
+                        ]
+                    ]
+                ]
+            )
+            ->add(
                 'image',
                 'oro_image',
                 [

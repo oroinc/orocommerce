@@ -2,17 +2,23 @@
 
 namespace OroB2B\Bundle\SaleBundle\Controller\Frontend;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
+use OroB2B\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteDemand;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteDemandType;
 
 class QuoteController extends Controller
 {
@@ -34,9 +40,7 @@ class QuoteController extends Controller
     public function viewAction(Quote $quote)
     {
         return [
-            'data' => [
-                'quote' => $quote
-            ]
+            'data' => ['entity' => $quote, 'quote' => $quote]
         ];
     }
 
@@ -73,5 +77,91 @@ class QuoteController extends Controller
         return [
             'entity' => $quote
         ];
+    }
+
+    /**
+     * @Route("/choice/{id}", name="orob2b_sale_quote_frontend_choice", requirements={"id"="\d+"})
+     * @Layout()
+     * @Acl(
+     *      id="orob2b_sale_quote_frontend_choice",
+     *      type="entity",
+     *      class="OroB2BSaleBundle:Quote",
+     *      permission="ACCOUNT_VIEW",
+     *      group_name="commerce"
+     * )
+     *
+     * @param Request $request
+     * @param QuoteDemand $quoteDemand
+     * @return array
+     */
+    public function choiceAction(Request $request, QuoteDemand $quoteDemand)
+    {
+        $form = $this->createForm(QuoteDemandType::NAME, $quoteDemand);
+        if ($request->isMethod(Request::METHOD_POST)) {
+            $form->handleRequest($request);
+            if ($form->isValid()) {
+                $actionGroupRegistry = $this->get('oro_action.action_group_registry');
+                $actionGroup = $actionGroupRegistry
+                    ->findByName('orob2b_sale_frontend_quote_accept_and_submit_to_order');
+                if ($actionGroup) {
+                    $actionData = $actionGroup->execute(new ActionData(['data' => $quoteDemand]));
+
+                    $redirectUrl = $actionData->getRedirectUrl();
+                    if ($redirectUrl) {
+                        if ($request->isXmlHttpRequest()) {
+                            return new JsonResponse(['redirectUrl' => $redirectUrl]);
+                        } else {
+                            return $this->redirect($redirectUrl);
+                        }
+                    }
+                }
+            }
+        }
+
+        return [
+            'data' => [
+                'data' => $quoteDemand,
+                'form' => $form->createView(),
+                'quote' => $quoteDemand->getQuote(),
+                'totals' => (object)$this->getTotalProcessor()->getTotalWithSubtotalsAsArray($quoteDemand)
+            ]
+        ];
+    }
+
+    /**
+     * @Route("/subtotals/{id}", name="orob2b_sale_quote_frontend_subtotals", requirements={"id"="\d+"})
+     * @Layout()
+     * @Acl(
+     *      id="orob2b_sale_quote_frontend_subtotals",
+     *      type="entity",
+     *      class="OroB2BSaleBundle:Quote",
+     *      permission="ACCOUNT_VIEW",
+     *      group_name="commerce"
+     * )
+     *
+     * @param Request $request
+     * @param QuoteDemand $quoteDemand
+     * @return array
+     */
+    public function subtotalsAction(Request $request, QuoteDemand $quoteDemand)
+    {
+        $form = $this->createForm(QuoteDemandType::NAME, $quoteDemand);
+        if ($request->isMethod(Request::METHOD_POST)) {
+            $form->handleRequest($request);
+        }
+
+        return [
+            'data' => [
+                'totals' => (object)$this->getTotalProcessor()->getTotalWithSubtotalsAsArray($quoteDemand)
+            ]
+        ];
+    }
+
+    /**
+     * @return TotalProcessorProvider
+     */
+    protected function getTotalProcessor()
+    {
+        return $this->get('orob2b_pricing.subtotal_processor.total_processor_provider');
     }
 }

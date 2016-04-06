@@ -225,7 +225,6 @@
   height: 3.5rem;
   margin: 1.2rem 0 0;
   text-indent: -999rem;
-  background: url("@{images}/logo.png") no-repeat;
 
   @media (max-width: 991px) {
     width: 24rem;
@@ -463,7 +462,7 @@
 
 .top-nav__sublist-container {
   display: none;
-  width: 100%;
+  width: 1197px;
   padding: 0 1.5rem;
   position: absolute;
   top: 4.8rem;
@@ -501,11 +500,15 @@
     padding: 0 0 0 2.5rem;
   }
 
-  &.top-nav__sublist__item_has-adv-block {
+  &.top-nav__sublist__item_has-sales-block {
     flex-grow: 0;
 
     @media (max-width: 991px) {
       order: 1;
+    }
+
+    .sales-block {
+      margin: 2rem 0 0;
     }
   }
 
@@ -574,10 +577,6 @@
       }
     }
   }
-}
-
-.adv-block {
-  margin: 2rem 0 0;
 }
 /* END TOP NAVIGATION*/
 
@@ -2507,16 +2506,21 @@
     }
   }
 
+  &:first-child:not(.oro-pagination) {
+    @media (max-width: 991px) {
+      display: none;
+    }
+  }
+
   &:nth-child(2) {
     @media (max-width: 991px) {
-      order: 3;
+      order: 1;
     }
   }
 
   &:nth-child(3) {
     @media (max-width: 991px) {
-      order: 4;
-      margin-right: 0;
+      order: 2;
     }
   }
 
@@ -2530,8 +2534,7 @@
 
     @media (max-width: 991px) {
       order: 2;
-      flex-basis: 45%;
-      margin: 0 0 1rem;
+      flex-basis: auto;
     }
   }
 }
@@ -2716,6 +2719,7 @@
 
 .cart__order__controls-list,
 .oro-order__controls-list,
+.oro-account-user-role__controls-list,
 .oro-grid-table__item__controls-list {
   .list-normalize;
   margin: 0 0 .5rem;
@@ -2757,6 +2761,10 @@
       } 
     }
   }
+}
+
+.oro-account-user-role__back-link {
+  padding-left: 0;
 }
 
 //Cart list on mobile devices
@@ -2952,6 +2960,10 @@
 
   @media (max-width: 991px) {
     padding: 1rem;
+  }
+
+  .removeLineItem.btn {
+    min-width: 3rem;
   }
 
   .btn {
@@ -3233,7 +3245,7 @@
 
 //Accout my order page, quotes page
 .account-oq-container {
-  margin: 2rem -1.5rem 0;
+  margin: 2.3rem -1.5rem 0;
 
   &:before, &:after {
     content: "";
@@ -3264,7 +3276,7 @@
    @media (max-width: 767px) {
     width: 100%;
     float: none;
-    margin: 0 0 3rem;
+    margin: 0;
    }
 }
 
@@ -3294,13 +3306,24 @@
 
 .account-oq__item__title {
   float: left;
+
   font-size: 1.6rem;
   font-weight: 400;
   text-transform: uppercase;
+
+  @media (max-width: 991px) {
+    &.styled {
+      float: none;
+
+      padding-bottom: 10px;
+      margin-bottom: 16px;
+
+      border-bottom: 1px solid @base-border-color;
+    }
+  }
 }
 
 .account-oq__order-info {
-   margin: .5rem 0 0;
    max-width: 35rem;
 
    &__title {
@@ -3311,6 +3334,10 @@
      // TODO: override hard selector
      > tbody > tr > td {
        padding-left: 0;
+
+       line-height: 1.4;
+
+       vertical-align: top;
      }
 
      td {
@@ -3319,6 +3346,7 @@
 
        &:last-child {
          font-style: italic;
+         line-height: 1.75;
        }
      }
    }
@@ -3326,15 +3354,27 @@
 
 .account-oq__order-item-more {
   width: 52%;
+
   color: @base-font-color-lighter;
 
   @media (max-width: 767px) {
-    width: 42%;
+    width: 95%;
+
+    margin-top: 1.2rem;
+    margin-bottom: -1.2rem;
   }
 
 
   div {
     .ellipsis;
+
+    &.oro-long-text-expanded {
+      overflow: visible;
+
+      line-height: 1.2;
+
+      white-space: normal;
+    }
   }
 }
 
@@ -3405,7 +3445,7 @@
 
 /*Account page filter controls*/
 .oro-oq__filter-controls {
-  margin: 1rem 0 0;
+  margin: 1rem 0 1rem !important;
 
   &.oro-oq__filter-controls_by-sides {
     display: flex;
@@ -3528,22 +3568,20 @@
     }
 
     .oro-oq__filter__item {
-      flex-grow: 1;
+      flex-grow: 0;
 
       &:first-child {
         flex-basis: 32rem;
-        flex-grow: 0;
+        flex-grow: 1;
         position: relative;
 
         @media (max-width: 1280px) {
-          flex-basis: 100%;
-          margin: 0 0 1rem;
+          flex-basis: 30rem;
         }
       }
 
       &:last-child {
         flex-grow: 0;
-        flex-basis: 15rem;
 
         @media (max-width: 767px) {
           flex-basis: auto;
@@ -3851,7 +3889,7 @@
 }
 
 .oq-group-btn {
-  line-height: 1.5rem;
+  line-height: 1.3;
   padding: .8rem 1.5rem !important;
 
   i, span {
@@ -4248,7 +4286,8 @@
 
 .action-select  {
   .input();
-  padding: .5rem .9rem .6rem !important;
+  border: .1rem solid #d6d6d6;
+  padding: .6rem .9rem .6rem !important;
   background: rgb(255,255,255);
   background: -moz-linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(230,230,230,1) 100%);
   background: -webkit-gradient(linear, to bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(230,230,230,1))); 
@@ -6177,3 +6216,9 @@
   }
 }
 /*/Compare Products*/
+
+.pinned-dropdown {
+  .icons-holder:not(:first-child) {
+    display: none !important;
+  }
+}
