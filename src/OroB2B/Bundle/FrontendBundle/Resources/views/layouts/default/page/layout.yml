@@ -6,9 +6,6 @@ layout:
             items:
                 wrapper:
                     blockType: container
-                    options:
-                        attr:
-                          id: 'container'
                 header:
                     blockType: container
                 notification:
@@ -17,6 +14,9 @@ layout:
                     blockType: container
                 content:
                     blockType: container
+                    options:
+                        attr:
+                          id: 'container'
                 sidebar_left:
                     blockType: container
                 page_title_container:

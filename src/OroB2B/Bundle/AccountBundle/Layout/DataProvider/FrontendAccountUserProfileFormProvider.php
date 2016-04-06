@@ -62,11 +62,11 @@ class FrontendAccountUserProfileFormProvider extends AbstractServerRenderDataPro
      */
     public function getForm(AccountUser $accountUser)
     {
-        $requestId = $accountUser->getId();
-        if (!isset($this->form[$requestId])) {
-            $this->form[$requestId] = $this->formFactory
+        $accountUserId = $accountUser->getId();
+        if (!isset($this->form[$accountUserId])) {
+            $this->form[$accountUserId] = $this->formFactory
                 ->create(FrontendAccountUserProfileType::NAME, $accountUser);
         }
-        return $this->form[$requestId];
+        return $this->form[$accountUserId];
     }
 }

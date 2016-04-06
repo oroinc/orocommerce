@@ -16,8 +16,11 @@ use Oro\Bundle\LayoutBundle\Annotation\Layout;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserHandler;
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
 
+/**
+ * Class AccountUserController
+ * @package OroB2B\Bundle\AccountBundle\Controller\Frontend
+ */
 class AccountUserController extends Controller
 {
     /**
@@ -60,28 +63,6 @@ class AccountUserController extends Controller
     /**
      * Create account user form
      *
-     * @Route("/create1", name="orob2b_account_frontend_account_user_create1")
-     * @Template("OroB2BAccountBundle:AccountUser/Frontend:update.html.twig")
-     * @Acl(
-     *      id="orob2b_account_frontend_account_user_create",
-     *      type="entity",
-     *      class="OroB2BAccountBundle:AccountUser",
-     *      permission="CREATE",
-     *      group_name="commerce"
-     * )
-     * @param Request $request
-     * @return array|RedirectResponse
-     */
-    public function create1Action(Request $request)
-    {
-        $accountUser = new AccountUser();
-
-        return $this->update($accountUser, $request);
-    }
-
-    /**
-     * Create account user form
-     *
      * @Route("/create", name="orob2b_account_frontend_account_user_create")
      * @Layout
      * @Acl(
@@ -96,19 +77,7 @@ class AccountUserController extends Controller
      */
     public function createAction(Request $request)
     {
-        $accountUser = new AccountUser();
-
-        $result = $this->update($accountUser, $request);
-
-        if ($result instanceof Response) {
-            return $result;
-        }
-
-        return [
-            'data' => [
-                'entity' => $accountUser
-            ]
-        ];
+        return $this->update(new AccountUser(), $request);
     }
 
     /**
@@ -130,39 +99,7 @@ class AccountUserController extends Controller
      */
     public function updateAction(AccountUser $accountUser, Request $request)
     {
-        $result = $this->update($accountUser, $request);
-
-        if ($result instanceof Response) {
-            return $result;
-        }
-
-        return [
-            'data' => [
-                'entity' => $accountUser
-            ]
-        ];
-    }
-
-    /**
-     * Edit account user form
-     *
-     * @Route("/update1/{id}", name="orob2b_account_frontend_account_user_update1", requirements={"id"="\d+"})
-     * @Template("OroB2BAccountBundle:AccountUser/Frontend:update.html.twig")
-     * @Acl(
-     *      id="orob2b_account_frontend_account_user_update",
-     *      type="entity",
-     *      class="OroB2BAccountBundle:AccountUser",
-     *      permission="EDIT",
-     *      group_name="commerce"
-     * )
-     * @param AccountUser $accountUser
-     * @param Request $request
-     *
-     * @return array|RedirectResponse
-     */
-    public function update1Action(AccountUser $accountUser, Request $request)
-    {
-        return $this->update($accountUser, $request);
+        return  $this->update($accountUser, $request);
     }
 
     /**
@@ -172,7 +109,7 @@ class AccountUserController extends Controller
      */
     protected function update(AccountUser $accountUser, Request $request)
     {
-        $form = $this->createForm(FrontendAccountUserType::NAME, $accountUser);
+        $form = $this->get('orob2b_account.provider.frontend_account_user_form')->getForm($accountUser);
         $handler = new AccountUserHandler(
             $form,
             $request,
@@ -202,7 +139,15 @@ class AccountUserController extends Controller
             $handler
         );
 
-        return $result;
+        if ($result instanceof Response) {
+            return $result;
+        }
+
+        return [
+            'data' => [
+                'entity' => $accountUser
+            ]
+        ];
     }
 
     /**

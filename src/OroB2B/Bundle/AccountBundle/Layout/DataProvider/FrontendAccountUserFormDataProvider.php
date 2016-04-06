@@ -54,8 +54,8 @@ class FrontendAccountUserFormDataProvider extends AbstractServerRenderDataProvid
             } else {
                 $action = FormAction::createByRoute('orob2b_account_frontend_account_user_create');
             }
-
-            $this->data[$accountUserId] = new FormAccessor($this->getForm($accountUser), $action);
+            $form = $this->getForm($accountUser);
+            $this->data[$accountUserId] = new FormAccessor($form, $action);
         }
 
         return $this->data[$accountUserId];
@@ -68,11 +68,11 @@ class FrontendAccountUserFormDataProvider extends AbstractServerRenderDataProvid
      */
     public function getForm(AccountUser $accountUser)
     {
-        $requestId = $accountUser->getId();
-        if (!isset($this->form[$requestId])) {
-            $this->form[$requestId] = $this->formFactory
+        $accountUserId = $accountUser->getId();
+        if (!isset($this->form[$accountUserId])) {
+            $this->form[$accountUserId] = $this->formFactory
                 ->create(FrontendAccountUserType::NAME, $accountUser);
         }
-        return $this->form[$requestId];
+        return $this->form[$accountUserId];
     }
 }

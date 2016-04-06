@@ -29,7 +29,7 @@
 {% endblock %}
 
 {%- block choice_widget_expanded -%}
-    <div {{ block('widget_container_attributes') }}>
+    <div {{ block('widget_container_attributes') }} class="input-widget-select">
         {%- for child in form %}
             {{- form_widget(child) -}}
         {% endfor -%}
