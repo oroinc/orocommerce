@@ -90,3 +90,5 @@ orob2b:
             card_number.label: Credit Card Number
             expiration_date.label: Expiration Date
             cvv2.label: Credit Card Verification Number
+        payment_term:
+            label: 'Term: %paymentTerm%'

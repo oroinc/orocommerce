@@ -33,7 +33,12 @@ class PaymentTermView implements PaymentMethodViewInterface
         $paymentTerm = $this->paymentTermProvider->getCurrentPaymentTerm();
 
         if ($paymentTerm) {
-            return ['value' => $paymentTerm->getLabel()];
+            return [
+                'value' => $this->translator->trans(
+                    'orob2b.payment.payment_term.label',
+                    ['%paymentTerm%' => $paymentTerm->getLabel()]
+                ),
+            ];
         }
 
         return [];
@@ -48,7 +53,6 @@ class PaymentTermView implements PaymentMethodViewInterface
     /** {@inheritdoc} */
     public function getOrder()
     {
-        /* @todo: config */
         return 0;
     }
 

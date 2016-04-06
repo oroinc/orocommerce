@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Method;
 
+use Symfony\Component\Routing\RouterInterface;
+
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
@@ -9,7 +11,6 @@ use OroB2B\Bundle\PaymentBundle\DependencyInjection\OroB2BPaymentExtension;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Gateway;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
-use Symfony\Component\Routing\RouterInterface;
 
 class PayflowGateway implements PaymentMethodInterface
 {
@@ -20,10 +21,9 @@ class PayflowGateway implements PaymentMethodInterface
 
     /** @var ConfigManager */
     protected $configManager;
-    /**
-     * @var RouterInterface
-     */
-    private $router;
+
+    /** @var RouterInterface */
+    protected $router;
 
     /**
      * @param Gateway $gateway

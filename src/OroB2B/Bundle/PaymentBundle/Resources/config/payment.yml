@@ -33,6 +33,8 @@ services:
     orob2b_payment.payment_method.payment_term:
         class: '%orob2b_payment.payment_method.payment_term.class%'
         public: false
+        arguments:
+            - '@orob2b_payment.provider.payment_term'
 
     orob2b_payment.payment_method.view.registry:
         class: '%orob2b_payment.payment_method.view.registry.class%'
