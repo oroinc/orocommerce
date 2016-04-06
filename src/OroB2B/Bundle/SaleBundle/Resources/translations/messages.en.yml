@@ -216,6 +216,7 @@ orob2b:
                 valid_until.label: 'Valid Until'
                 po_number.label: 'PO Number'
                 ship_until.label: 'Do Not Ship Later Than'
+                ship_estimate.label: 'Shipping Estimate'
                 assigned_account_users.label: 'Assigned To'
                 title.label: 'Quote #%id%'
                 shipping_address.label: 'Shipping Address'

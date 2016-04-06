@@ -82,6 +82,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             'account'       => LoadUserData::ACCOUNT1,
             'accountUser'   => LoadUserData::ACCOUNT1_USER1,
             'products'      => [],
+            'shippingEstimate' => 10
         ],
         self::QUOTE4 => [
             'qid'           => self::QUOTE4,
@@ -141,6 +142,9 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
                 ->setPoNumber($poNumber)
             ;
 
+            if (!empty($item['shippingEstimate'])) {
+                $quote->setShippingEstimate(Price::create($item['shippingEstimate'], 'USD'));
+            }
             if (!empty($item['account'])) {
                 $quote->setAccount($this->getReference($item['account']));
             }
