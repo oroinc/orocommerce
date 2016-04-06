@@ -3,7 +3,7 @@ define(['underscore', 'orotranslation/js/translator', 'jquery', 'jquery.validate
     'use strict';
 
     var defaultParam = {
-        message: 'Invalid Expiration date.',
+        message: 'orob2b.payment.validation.expiration_date',
         monthSelector: '.checkout__form__select_exp-month select',
         yearSelector: '.checkout__form__select_exp-year select'
     };

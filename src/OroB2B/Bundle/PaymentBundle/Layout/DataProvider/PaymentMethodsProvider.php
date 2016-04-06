@@ -45,7 +45,7 @@ class PaymentMethodsProvider implements DataProviderInterface
             foreach ($views as $name => $view) {
                 $this->data[$name] = [
                     'label' => $view->getLabel(),
-                    'template' => $view->getTemplate(),
+                    'block' => $view->getBlock(),
                     'options' => $view->getOptions(),
                 ];
             }

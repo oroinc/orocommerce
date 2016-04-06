@@ -3,7 +3,7 @@ define(['underscore', 'orotranslation/js/translator', 'jquery', 'jquery.validate
     'use strict';
 
     var defaultParam = {
-        message: 'Please, choose correct month.',
+        message: 'orob2b.payment.validation.month',
         monthSelector: '.checkout__form__select_exp-month select',
         yearSelector: '.checkout__form__select_exp-year select'
     };

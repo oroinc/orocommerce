@@ -57,6 +57,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  * )
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class Checkout extends ExtendCheckout implements
     OrganizationAwareInterface,

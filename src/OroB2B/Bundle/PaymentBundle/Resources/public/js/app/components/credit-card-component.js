@@ -21,7 +21,8 @@ define(function(require) {
                 form: '.checkout__form__payment-methods__form',
                 expirationDate: '#credit-card-expiration-date',
                 cvv: '.credit-card-cvv',
-                cardNumber: '.credit-card-number'
+                cardNumber: '.credit-card-number',
+                validation: '[data-validation]'
             }
         },
 
@@ -53,19 +54,23 @@ define(function(require) {
 
             mediator.on('checkout:place-order:response', this.handleSubmit, this);
 
-            this.$el = this.options._sourceElement;
-
-            this.$el.on('change', this.options.selectors.month, _.bind(this.collectMonthDate, this));
-            this.$el.on('change', this.options.selectors.year, _.bind(this.collectYearDate, this));
-
             $.validator.loadMethod('orob2bpayment/js/validator/creditCardNumberLuhnCheck');
             $.validator.loadMethod('orob2bpayment/js/validator/creditCardExpirationDate');
             $.validator.loadMethod('orob2bpayment/js/validator/creditCardExpirationDateNotBlank');
 
+            this.$el = this.options._sourceElement;
+
             this.$form = this.$el.find(this.options.selectors.form);
 
-            this.$el.on('focusout', this.options.selectors.cardNumber, _.bind(this.validate, this, this.options.selectors.cardNumber));
-            this.$el.on('focusout', this.options.selectors.cvv,  _.bind(this.validate, this, this.options.selectors.cvv));
+            this.$el
+                .on('change', this.options.selectors.month, _.bind(this.collectMonthDate, this))
+                .on('change', this.options.selectors.year, _.bind(this.collectYearDate, this))
+                .on(
+                    'focusout',
+                    this.options.selectors.cardNumber,
+                    _.bind(this.validate, this, this.options.selectors.cardNumber)
+                )
+                .on('focusout', this.options.selectors.cvv, _.bind(this.validate, this, this.options.selectors.cvv));
 
             mediator.on('checkout:payment:before-transit', _.bind(this.beforeTransit, this));
         },
@@ -152,10 +157,21 @@ define(function(require) {
             var clonedForm = this.$form.clone();
 
             var self = this;
-            var validator = virtualForm.append(clonedForm).validate({ignore: '', errorPlacement: function(error, element) {
-                var $el = self.$form.find('#' + $(element).attr('id'));
-                error.appendTo($el.parent());
-            }});
+            var validator = virtualForm
+                .append(clonedForm)
+                .validate({
+                    ignore: '',
+                    errorPlacement: function(error, element) {
+                        var $el = self.$form.find('#' + $(element).attr('id'));
+                        var parentWithValidation = $el.parents(self.options.selectors.validation);
+
+                        if (parentWithValidation.length) {
+                            error.appendTo(parentWithValidation.first());
+                        } else {
+                            error.appendTo($el.parent());
+                        }
+                    }
+                });
 
             var errors;
 
@@ -184,8 +200,8 @@ define(function(require) {
         },
 
         beforeTransit: function(eventData) {
-            if (eventData.data.paymentMethod === this.options.paymentMethod && !this.validate()) {
-                eventData.stopped = true;
+            if (eventData.data.paymentMethod === this.options.paymentMethod) {
+                eventData.stopped = !this.validate();
             }
         }
     });

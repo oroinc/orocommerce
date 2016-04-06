@@ -21,6 +21,7 @@ layout:
                 class_prefix: 'checkout'
                 vars:
                     views: { @value: $data.orob2b_payment_methods_provider }
+                    currentPaymentMethod: { @value: $data.checkout.paymentMethod }
 
     conditions:
         @eq: [$context.workflowStepName, 'enter_payment']

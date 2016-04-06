@@ -15,16 +15,6 @@ class PayflowGatewayView implements PaymentMethodViewInterface
 {
     use ConfigTrait;
 
-    /**
-     * @var array
-     */
-    protected $cardNamesMap = [
-        'visa' => 'visa',
-        'mastercard' => 'mc',
-        'discover' => 'discover',
-        'american_express' => 'ae'
-    ];
-
     /** @var FormFactoryInterface */
     protected $formFactory;
 
@@ -45,14 +35,14 @@ class PayflowGatewayView implements PaymentMethodViewInterface
 
         return [
             'formView' => $formView,
-            'allowedCreditCards' => $this->mapAllowedCreditCards($this->getAllowedCreditCards())
+            'allowedCreditCards' => $this->getAllowedCreditCards()
         ];
     }
 
     /** {@inheritdoc} */
-    public function getTemplate()
+    public function getBlock()
     {
-        return 'OroB2BPaymentBundle:PaymentMethod:form.html.twig';
+        return '_payment_methods_credit_card_widget';
     }
 
     /** {@inheritdoc} */
@@ -79,16 +69,5 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     public function getAllowedCreditCards()
     {
         return $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ALLOWED_CC_TYPES_KEY);
-    }
-
-    /**
-     * @param array $allowedCreditCard
-     * @return array
-     */
-    protected function mapAllowedCreditCards(array $allowedCreditCard)
-    {
-        return array_map(function ($value) {
-            return $this->cardNamesMap[$value];
-        }, $allowedCreditCard);
     }
 }
