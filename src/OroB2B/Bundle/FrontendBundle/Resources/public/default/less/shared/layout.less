@@ -2852,6 +2852,18 @@
 
 /*START CREATE ACCOUNT FORM*/
 .create-account {
+
+  &.create-account_pos-absolute_vert-centered {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    transform: translateY(-50%);
+
+    @media (min-width: 992px) {
+      margin: 0;
+    }
+  }
    
    &.create-account_full {
       width: 86rem;
