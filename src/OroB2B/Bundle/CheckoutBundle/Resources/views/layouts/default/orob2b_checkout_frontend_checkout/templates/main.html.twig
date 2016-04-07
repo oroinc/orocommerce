@@ -20,35 +20,35 @@
                 {{ workflowStep.label }}
             </h2>
         </div>
-        {{ block_widget(block) }}
+        <div class="checkout__body">
+            {{ block_widget(block) }}
+        </div>
     </div>
 {% endblock %}
 
 {% block _checkout_form_widget -%}
-    <div class="checkout__body">
-        {% if form %}
-            {{ form_errors(form) }}
-            {{ form_start(form, {
-                'method': 'post',
-                'action': path('orob2b_checkout_frontend_checkout', {'id': checkout.id, 'type': checkout.type}),
-                'attr' : {
-                    'class': 'checkout__form',
-                    'data-nohash': 'true',
-                    'id': form.vars.id
-                }})
-            }}
-            <div class="hidden">
-                {{ form_widget(form._token) }}
-            </div>
-            {{ block_widget(block) }}
+    {% if form %}
+        {{ form_errors(form) }}
+        {{ form_start(form, {
+            'method': 'post',
+            'action': path('orob2b_checkout_frontend_checkout', {'id': checkout.id, 'type': checkout.type}),
+            'attr' : {
+                'class': 'checkout__form',
+                'data-nohash': 'true',
+                'id': form.vars.id
+            }})
+        }}
+        <div class="hidden">
+            {{ form_widget(form._token) }}
+        </div>
+        {{ block_widget(block) }}
+    </form>
+    {{ oro_form_js_validation(form) }}
+    {% else %}
+        <form method="post" class="checkout__form" action="">
+        {{ block_widget(block) }}
         </form>
-        {{ oro_form_js_validation(form) }}
-        {% else %}
-            <form method="post" class="checkout__form" action="">
-            {{ block_widget(block) }}
-            </form>
-        {% endif %}
-    </div>
+    {% endif %}
 {%- endblock %}
 
 {% block _checkout_order_summary_widget %}
@@ -149,10 +149,12 @@
                         <table class="table">
                             <tbody>
                                 {% for total in summary.subtotals %}
-                                <tr>
-                                    <td>{{ total.label }}</td>
-                                    <td class="text-right">{{ total.totalPrice|oro_format_price }}</td>
-                                </tr>
+                                    {% if total.visible %}
+                                        <tr>
+                                            <td>{{ total.label }}</td>
+                                            <td class="text-right">{{ total.totalPrice|oro_format_price }}</td>
+                                        </tr>
+                                    {% endif %}
                                 {% endfor %}
                                 <tr>
                                     <td><span class="fs18 text-uppercase">{{ summary.generalTotal.label }}</span></td>
