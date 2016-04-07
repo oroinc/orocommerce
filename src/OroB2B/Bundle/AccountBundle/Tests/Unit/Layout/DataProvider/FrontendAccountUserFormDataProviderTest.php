@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Layout\DataProvider;
 
 use Symfony\Component\Form\FormConfigInterface;
-use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
@@ -18,7 +18,7 @@ class FrontendAccountUserFormDataProviderTest extends \PHPUnit_Framework_TestCas
 {
     use EntityTrait;
 
-    /** @var FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FormFactory|\PHPUnit_Framework_MockObject_MockObject */
     protected $formFactory;
 
     /** @var FrontendAccountUserFormDataProvider */
@@ -27,7 +27,7 @@ class FrontendAccountUserFormDataProviderTest extends \PHPUnit_Framework_TestCas
     protected function setUp()
     {
         $this->formFactory = $this
-            ->getMockBuilder(' Symfony\Component\Form\FormFactoryInterface')
+            ->getMockBuilder('Symfony\Component\Form\FormFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
