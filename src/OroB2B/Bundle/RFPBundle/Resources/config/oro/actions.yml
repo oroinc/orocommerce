@@ -155,28 +155,28 @@ operations:
                 request:
                     $.data
 
-    orob2b_rfp_edit:
-        extends: orob2b_rfp_base_edit
-        label: orob2b.rfp.btn.edit
-        routes:
-            - orob2b_rfp_request_view
-        datagrids:
-            - rfp-requests-grid
-        order: 70
-        button_options:
-            icon: icon-edit
-        acl_resource: orob2b_rfp_request_update
-        frontend_options:
-            template: OroB2BRFPBundle:Action:rfpEditForm.html.twig
-            show_dialog: false
-        actions:
-            - @flash_message:
-                message: orob2b.rfp.action.request.updated.message
-                type: 'success'
-            - @redirect:
-                route: 'orob2b_rfp_request_view'
-                route_parameters:
-                    id: $.data.id
+#    orob2b_rfp_edit:
+#        extends: orob2b_rfp_base_edit
+#        label: orob2b.rfp.btn.edit
+#        routes:
+#            - orob2b_rfp_request_view
+#        datagrids:
+#            - rfp-requests-grid
+#        order: 70
+#        button_options:
+#            icon: icon-edit
+#        acl_resource: orob2b_rfp_request_update
+#        frontend_options:
+#            template: OroB2BRFPBundle:Action:rfpEditForm.html.twig
+#            show_dialog: false
+#        actions:
+#            - @flash_message:
+#                message: orob2b.rfp.action.request.updated.message
+#                type: 'success'
+#            - @redirect:
+#                route: 'orob2b_rfp_request_view'
+#                route_parameters:
+#                    id: $.data.id
 
     orob2b_rfp_resubmit:
         extends: orob2b_rfp_base_edit
@@ -268,6 +268,22 @@ operations:
             - @redirect:
                 parameters:
                     route: orob2b_rfp_frontend_request_create
+
+    orob2b_rfp_frontend_request_edit:
+        label: orob2b.frontend.rfp.action.request.edit
+        applications: [frontend]
+        routes:
+            - orob2b_rfp_frontend_request_view
+        acl_resource: [ACCOUNT_EDIT, entity:commerce@OroB2B\Bundle\RFPBundle\Entity\Request]
+        order: 10
+        button_options:
+            icon: icon-pencil
+        actions:
+            - @redirect:
+                parameters:
+                    route: orob2b_rfp_frontend_request_update
+                    route_parameters:
+                        id: $id
 
 action_groups:
     orob2b_rfp_change_status:

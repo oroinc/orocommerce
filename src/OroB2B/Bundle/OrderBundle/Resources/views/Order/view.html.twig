@@ -24,7 +24,13 @@
         }) }}
     {% endset %}
 
-    {% set generalSectionBlocks = [{'data' : [orderInformationWidget]}]%}
+    {% set generalSectionBlocks = [
+        {'data' : [
+            placeholder('view_general_section_before', {'entity':  entity}),
+            orderInformationWidget,
+            placeholder('view_general_section_after', {'entity':  entity})
+        ]}
+    ] %}
 
     {% set dataBlocks = [
         {
