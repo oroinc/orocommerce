@@ -90,7 +90,7 @@ class AccountUserRoleController extends Controller
     {
         $isGranted = $role->isPredefined()
             ? $this->getSecurityFacade()->isGranted('orob2b_account_frontend_account_user_role_create')
-            : $this->getSecurityFacade()->isGranted('FRONTEND_ACCOUNT_ROLE_UPDATE', $role);
+            : $this->getSecurityFacade()->isGranted('FRONTEND_ACCOUNT_ROLE_VIEW', $role);
 
         if (!$isGranted) {
             throw $this->createAccessDeniedException();
