@@ -1,11 +1,12 @@
-require(['jquery', 'lodash', 'slick', 'bootstrapDatepicker', 'raty', 'perfectScrollbar', 'fastclick'], function(
+require(['jquery', 'lodash', 'slick', 'bootstrapDatepicker', 'raty', 'perfectScrollbar', 'fastclick', 'elevatezoom'], function(
     jQuery,
     _,
     slick,
     datepicker,
     raty,
     perfectScrollbar,
-    FastClick
+    FastClick,
+    elevateZoom
 ) {
 
     (function($) {
@@ -47,6 +48,7 @@ require(['jquery', 'lodash', 'slick', 'bootstrapDatepicker', 'raty', 'perfectScr
                 avoidDropdwonMenuHideInit();
                 dropdownMenuHideByCloseBtnBinding();
                 customScrollbarInit();
+                elevateZoomInit();
 
                 countInit().init({
                     plus: '[data-count-plus]',
@@ -685,6 +687,19 @@ require(['jquery', 'lodash', 'slick', 'bootstrapDatepicker', 'raty', 'perfectScr
                     $('.columnsSettings').each(function() {
                         $(this).perfectScrollbar('update');
                     });
+                });
+            }
+
+            function elevateZoomInit() {
+                $('[data-zoom-image]').elevateZoom({
+                    scrollZoom: true,
+                    zoomWindowWidth: 630,
+                    zoomWindowHeight: 376,
+                    borderSize: 1,
+                    borderColour: '#ebebeb',
+                    lensBorderColour: '#7d7d7d',
+                    lensColour: '#000',
+                    lensOpacity: 0.22
                 });
             }
 

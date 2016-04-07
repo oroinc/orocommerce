@@ -37,8 +37,6 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *      routeCommerceName="orob2b_order_frontend_index",
  *      routeCommerceView="orob2b_order_frontend_view",
  *      routeCommerceCreate="orob2b_order_frontend_create",
- *      routeCommerceUpdate="orob2b_order_frontend_update",
- *      routeCommerceDelete="orob2b_order_frontend_delete",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-briefcase"
