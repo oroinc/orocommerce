@@ -119,6 +119,7 @@ services:
             - @security.token_storage
             - @property_accessor
             - @oro_action.action.redirect
+            - @event_dispatcher
         tags:
             - { name: oro_action.action, alias: start_checkout }
 

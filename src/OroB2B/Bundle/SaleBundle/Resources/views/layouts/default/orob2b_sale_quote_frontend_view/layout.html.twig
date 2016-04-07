@@ -55,11 +55,18 @@
                                 <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.ship_until.label'|trans }}</td>
                                 <td>{{ quote.shipUntil|oro_format_date|default('N/A'|trans) }}</td>
                             </tr>
+                            {% if quote.shippingEstimate is not empty %}
+                            <tr class="account-oq__order-info__control">
+                                <td class="account-oq__order-info__title">{{ 'orob2b.frontend.sale.quote.ship_estimate.label'|trans }}</td>
+                                <td>{{ quote.shippingEstimate|oro_format_price }}</td>
+                            </tr>
+                            {% endif %}
                             {{ block_widget(block) }}
                         </tbody>
                     </table>
                 </div>
             </div>
+
         </div>
     </div>
 {% endblock %}

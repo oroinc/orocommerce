@@ -78,11 +78,11 @@ workflows:
                 label: Payment
                 order: 40
                 allowed_transitions:
-                    - continue_to_place_order
+                    - continue_to_order_review
                     - back_to_billing_address
                     - back_to_shipping_address
                     - back_to_shipping_method
-            place_order:
+            order_review:
                 label: Order Review
                 order: 50
                 is_final: true
@@ -161,10 +161,10 @@ workflows:
                 frontend_options:
                     is_checkout_continue: true
 
-            continue_to_place_order:
+            continue_to_order_review:
                 label: Continue
-                step_to: place_order
-                transition_definition: continue_to_place_order_definition
+                step_to: order_review
+                transition_definition: continue_to_order_review_definition
                 frontend_options:
                     is_checkout_continue: true
                     page_component_module: 'orob2bcheckout/js/app/components/payment-transition-button-component'
@@ -214,7 +214,7 @@ workflows:
 
             place_order:
                 label: Submit Order
-                step_to: place_order
+                step_to: order_review
                 transition_definition: place_order_definition
                 display_type: page
                 frontend_options:
@@ -229,10 +229,10 @@ workflows:
 
             finish_checkout:
                 label: Finish checkout
-                step_to: place_order
+                step_to: order_review
                 transition_definition: finish_checkout_definition
                 is_hidden: true
-                
+
             payment_error:
                 label: Payment error
                 step_to: enter_payment
@@ -309,7 +309,7 @@ workflows:
                                 - @equal: [$billing_address_has_shipping, true]
                         parameters: [$checkout.shippingAddress, $checkout.billingAddress]
 
-            continue_to_place_order_definition:
+            continue_to_order_review_definition:
                 pre_conditions:
                     @not_equal: [$payment_in_progress, true]
                 conditions:
@@ -534,7 +534,7 @@ workflows:
                         route: orob2b_order_frontend_success
                         route_parameters:
                             id: $checkout.order.id
-                           
+
             payment_error_definition:
                 pre_conditions:
                     @equal: [$payment_in_progress, true]

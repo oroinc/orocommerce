@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 use OroB2B\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
-use OroB2B\Bundle\CheckoutBundle\Entity\Checkout;
+use OroB2B\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
 
@@ -39,10 +39,10 @@ class CheckoutLineItemsManager
     }
 
     /**
-     * @param Checkout $checkout
+     * @param CheckoutInterface $checkout
      * @return Collection|OrderLineItem[]
      */
-    public function getData(Checkout $checkout)
+    public function getData(CheckoutInterface $checkout)
     {
         $entity = $checkout->getSourceEntity();
 

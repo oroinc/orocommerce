@@ -138,9 +138,8 @@ class ProductControllerTest extends WebTestCase
         ];
 
         $this->client->followRedirects(true);
-
-        $result = $this->client->getResponse();
         $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
+        $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         // Check product unit precisions
