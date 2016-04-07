@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Method;
 
-use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\Response;
-use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\ResponseStatusMap;
 use Symfony\Component\Routing\RouterInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -12,6 +10,8 @@ use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Gateway;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\Response;
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\ResponseStatusMap;
 use OroB2B\Bundle\PaymentBundle\Traits\ConfigTrait;
 
 class PayflowGateway implements PaymentMethodInterface
