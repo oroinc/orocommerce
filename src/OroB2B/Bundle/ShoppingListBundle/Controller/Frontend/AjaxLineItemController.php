@@ -79,7 +79,16 @@ class AjaxLineItemController extends Controller
             ['%shoppinglist%' => $shoppingListLink]
         );
 
-        return new JsonResponse(['successful' => true, 'message' => $message]);
+        return new JsonResponse(
+            [
+                'successful' => true,
+                'message' => $message,
+                'shoppingList' => [
+                    'id' => $shoppingList->getId(),
+                    'label' => $shoppingList->getLabel(),
+                ]
+            ]
+        );
     }
 
     /**

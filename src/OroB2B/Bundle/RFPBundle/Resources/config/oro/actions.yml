@@ -155,28 +155,28 @@ operations:
                 request:
                     $.data
 
-    orob2b_rfp_edit:
-        extends: orob2b_rfp_base_edit
-        label: orob2b.rfp.btn.edit
-        routes:
-            - orob2b_rfp_request_view
-        datagrids:
-            - rfp-requests-grid
-        order: 70
-        button_options:
-            icon: icon-edit
-        acl_resource: orob2b_rfp_request_update
-        frontend_options:
-            template: OroB2BRFPBundle:Action:rfpEditForm.html.twig
-            show_dialog: false
-        actions:
-            - @flash_message:
-                message: orob2b.rfp.action.request.updated.message
-                type: 'success'
-            - @redirect:
-                route: 'orob2b_rfp_request_view'
-                route_parameters:
-                    id: $.data.id
+#    orob2b_rfp_edit:
+#        extends: orob2b_rfp_base_edit
+#        label: orob2b.rfp.btn.edit
+#        routes:
+#            - orob2b_rfp_request_view
+#        datagrids:
+#            - rfp-requests-grid
+#        order: 70
+#        button_options:
+#            icon: icon-edit
+#        acl_resource: orob2b_rfp_request_update
+#        frontend_options:
+#            template: OroB2BRFPBundle:Action:rfpEditForm.html.twig
+#            show_dialog: false
+#        actions:
+#            - @flash_message:
+#                message: orob2b.rfp.action.request.updated.message
+#                type: 'success'
+#            - @redirect:
+#                route: 'orob2b_rfp_request_view'
+#                route_parameters:
+#                    id: $.data.id
 
     orob2b_rfp_resubmit:
         extends: orob2b_rfp_base_edit
