@@ -67,12 +67,18 @@ class PurchaseAction extends AbstractPaymentMethodAction
                     'paymentMethod' => $options['paymentMethod'],
                     'errorUrl' => $this->router->generate(
                         'orob2b_payment_callback_error',
-                        ['transactionId' => $paymentTransaction->getId()],
+                        [
+                            'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+                            'accessToken' => $paymentTransaction->getAccessToken(),
+                        ],
                         true
                     ),
                     'returnUrl' => $this->router->generate(
                         'orob2b_payment_callback_return',
-                        ['transactionId' => $paymentTransaction->getId()],
+                        [
+                            'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+                            'accessToken' => $paymentTransaction->getAccessToken(),
+                        ],
                         true
                     ),
                 ],

@@ -62,7 +62,8 @@ class PayflowGateway implements PaymentMethodInterface
             );
 
         $paymentTransaction
-            ->setActive(!$response->isSuccessful())
+            ->setSuccessful($response->isSuccessful())
+            ->setActive($response->isSuccessful())
             ->setReference($response->getReference())
             ->setResponse($response->getData());
     }
@@ -134,12 +135,18 @@ class PayflowGateway implements PaymentMethodInterface
             Option\Currency::CURRENCY => $paymentTransaction->getCurrency(),
             Option\ReturnUrl::RETURNURL => $this->router->generate(
                 'orob2b_payment_callback_return',
-                ['transactionId' => $paymentTransaction->getId()],
+                [
+                    'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+                    'accessToken' => $paymentTransaction->getAccessToken(),
+                ],
                 true
             ),
             Option\ErrorUrl::ERRORURL => $this->router->generate(
                 'orob2b_payment_callback_error',
-                ['transactionId' => $paymentTransaction->getId()],
+                [
+                    'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+                    'accessToken' => $paymentTransaction->getAccessToken(),
+                ],
                 true
             ),
         ];
@@ -152,7 +159,7 @@ class PayflowGateway implements PaymentMethodInterface
 
         $paymentTransaction
             ->setSuccessful(false)
-            ->setActive(true);
+            ->setActive(false);
 
         $keys = [Option\SecureToken::SECURETOKEN, Option\SecureTokenIdentifier::SECURETOKENID];
 
