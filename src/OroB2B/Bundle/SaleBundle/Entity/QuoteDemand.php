@@ -102,6 +102,7 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
         if (!$this->hasDemandProduct($demandProduct)) {
             $this->demandProducts->add($demandProduct);
         }
+
         return $this;
     }
 
@@ -114,6 +115,7 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
         if ($this->hasDemandProduct($demandProduct)) {
             $this->demandProducts->removeElement($demandProduct);
         }
+
         return $this;
     }
 
@@ -142,6 +144,7 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
         if ($this->quote) {
             return $this->quote->getShippingEstimate();
         }
+
         return null;
     }
 
@@ -152,5 +155,21 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
             $demandProduct = new QuoteProductDemand($this, $offer, $offer->getQuantity());
             $this->addDemandProduct($demandProduct);
         }
+    }
+
+    /**
+     * @return Quote
+     */
+    public function getSourceDocument()
+    {
+        return $this->quote;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSourceDocumentIdentifier()
+    {
+        return $this->quote->getPoNumber();
     }
 }
