@@ -431,11 +431,14 @@ orob2b.account:
             account_user_role.create: Create Account User Role
             account_user_role.edit: Edit Account User Role
             account_user.view: 'Account User - %identifier%'
+            account_user.edit: 'Edit Account User'
+            account_user.create: 'Create Account User'
             account_user.profile: 'Account information'
 
             page:
                 account_user_role.create: Create Role
                 account_user_role.edit: Edit Role
+                account_user.edit: 'Edit Account User - %identifier%'
         sections:
             account_user_role:
                 label: Role Title
