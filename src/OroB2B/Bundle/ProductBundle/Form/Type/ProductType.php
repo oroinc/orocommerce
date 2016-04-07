@@ -121,11 +121,6 @@ class ProductType extends AbstractType
                     'tooltip'  => 'orob2b.product.form.tooltip.unit_precision',
                     'required' => false
                 ]
-            )
-            ->add(
-                'variantFields',
-                ProductCustomFieldsChoiceType::NAME,
-                ['label' => 'orob2b.product.variant_fields.label']
             );
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener']);

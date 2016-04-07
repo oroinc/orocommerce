@@ -175,8 +175,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'unitPrecisions' => [],
                     'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
-                    'status' => Product::STATUS_DISABLED,
-                    'variantFields' => array_keys($this->exampleCustomFields)
+                    'status' => Product::STATUS_DISABLED
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(),
                 'rounding' => false
@@ -193,8 +192,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     ],
                     'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
-                    'status' => Product::STATUS_DISABLED,
-                    'variantFields' => array_keys($this->exampleCustomFields)
+                    'status' => Product::STATUS_DISABLED
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(true),
                 'rounding' => false
@@ -218,8 +216,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'shortDescriptions' => [
                         ['text' => 'first short description'],
                         ['text' => 'second short description'],
-                    ],
-                    'variantFields' => array_keys($this->exampleCustomFields)
+                    ]
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(false, true),
                 'rounding' => false
@@ -253,10 +250,6 @@ class ProductTypeTest extends FormIntegrationTestCase
         $expectedProduct = new StubProduct();
 
         $expectedProduct->setHasVariants($hasVariants);
-
-        if ($hasVariants) {
-            $expectedProduct->setVariantFields(array_keys($this->exampleCustomFields));
-        }
 
         $productUnit = new ProductUnit();
         $productUnit->setCode('kg');
@@ -320,10 +313,6 @@ class ProductTypeTest extends FormIntegrationTestCase
     {
         $defaultProduct = new StubProduct();
         $defaultProduct->setHasVariants($hasVariants);
-
-        if ($hasVariants) {
-            $defaultProduct->setVariantFields(array_keys($this->exampleCustomFields));
-        }
 
         return $defaultProduct;
     }

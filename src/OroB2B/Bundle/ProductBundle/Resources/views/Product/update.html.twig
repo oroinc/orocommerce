@@ -54,8 +54,7 @@
     {% set productHasVariants = entity.hasVariants and form.variantFields.vars.choices|length != 0 %}
 
     {% set generalData = [
-        form_row(form.sku),
-        form_row(form.variantFields)
+        form_row(form.sku)
     ] %}
 
     {% set generalData = generalData|merge([
@@ -90,21 +89,6 @@
     {% set dataBlocks = [
         generalBlock
     ] %}
-
-    {% set additionalData = [] %}
-    {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
-        {% set additionalData = additionalData|merge([form_row(child)]) %}
-    {% endfor %}
-    {% if additionalData is not empty %}
-        {% set dataBlocks = dataBlocks|merge([{
-            'title': 'orob2b.product.sections.additional'|trans,
-            'subblocks': [{
-                'title': '',
-                'useSpan': false,
-                'data' : additionalData
-            }]
-        }] ) %}
-    {% endif %}
 
     {% if productHasVariants %}
         {% set variantLinksForm = form.variantLinks %}
