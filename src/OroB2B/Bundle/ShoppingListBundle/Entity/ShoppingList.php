@@ -20,6 +20,7 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
+use OroB2B\Component\Checkout\Entity\SourceDocumentAwareInterface;
 
 /**
  * @ORM\Table(
@@ -60,7 +61,8 @@ class ShoppingList extends ExtendShoppingList implements
     CurrencyAwareInterface,
     AccountOwnerAwareInterface,
     WebsiteAwareInterface,
-    CheckoutSourceEntityInterface
+    CheckoutSourceEntityInterface,
+    SourceDocumentAwareInterface
 {
     /**
      * @var int
@@ -242,7 +244,7 @@ class ShoppingList extends ExtendShoppingList implements
      */
     public function __toString()
     {
-        return (string) $this->label;
+        return (string)$this->label;
     }
 
     /**
@@ -403,7 +405,7 @@ class ShoppingList extends ExtendShoppingList implements
      */
     public function setCurrent($current)
     {
-        $this->current = (bool) $current;
+        $this->current = (bool)$current;
 
         return $this;
     }
@@ -567,5 +569,13 @@ class ShoppingList extends ExtendShoppingList implements
     public function getIdentifier()
     {
         return $this->getId();
+    }
+
+    /**
+     * @return $this
+     */
+    public function getSourceDocument()
+    {
+        return $this;
     }
 }

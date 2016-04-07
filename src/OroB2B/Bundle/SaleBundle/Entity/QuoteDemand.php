@@ -13,6 +13,7 @@ use Doctrine\Common\Collections\Collection;
 use OroB2B\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use OroB2B\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
+use OroB2B\Component\Checkout\Entity\SourceDocumentAwareInterface;
 
 /**
  *
@@ -26,7 +27,11 @@ use OroB2B\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *      }
  * )
  */
-class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterface, ShippingAwareInterface
+class QuoteDemand implements
+    CheckoutSourceEntityInterface,
+    LineItemsAwareInterface,
+    ShippingAwareInterface,
+    SourceDocumentAwareInterface
 {
     /**
      * @var int
@@ -102,6 +107,7 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
         if (!$this->hasDemandProduct($demandProduct)) {
             $this->demandProducts->add($demandProduct);
         }
+
         return $this;
     }
 
@@ -114,6 +120,7 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
         if ($this->hasDemandProduct($demandProduct)) {
             $this->demandProducts->removeElement($demandProduct);
         }
+
         return $this;
     }
 
@@ -142,6 +149,7 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
         if ($this->quote) {
             return $this->quote->getShippingEstimate();
         }
+
         return null;
     }
 
@@ -152,5 +160,13 @@ class QuoteDemand implements CheckoutSourceEntityInterface, LineItemsAwareInterf
             $demandProduct = new QuoteProductDemand($this, $offer, $offer->getQuantity());
             $this->addDemandProduct($demandProduct);
         }
+    }
+
+    /**
+     * @return Quote
+     */
+    public function getSourceDocument()
+    {
+        $this->quote;
     }
 }
