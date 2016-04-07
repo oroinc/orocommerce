@@ -14,14 +14,15 @@
         },
         dataAttributes: {}
     } %}
-    <div class="pull-left"
+    <div class="form__col "
          data-page-component-module="orob2bshoppinglist/js/app/components/add-product-from-view-component">
         {{ buttons.createAddToShoppingListButton({
             groupContainer: '<div class="btn btn-block btn-orange btn_has-dropdown btn_has-dropdown_lg"></div>',
             new: commonOptions,
             current: commonOptions,
             existing: commonOptions,
-            shoppingLists: shoppingLists
+            shoppingLists: shoppingLists,
+            singleButtonACss: 'btn-block btn-orange btn_lg'
         }) }}
     </div>
 {% endblock %}
