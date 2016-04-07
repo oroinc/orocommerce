@@ -113,7 +113,7 @@ datagrid:
             type:              orm
             query:
                 select:
-                    - relatedEntity.id
+                    - distinct relatedEntity.id
                     - relatedEntity.name
                 where:
                     and:
