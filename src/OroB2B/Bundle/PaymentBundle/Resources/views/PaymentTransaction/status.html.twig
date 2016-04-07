@@ -2,7 +2,7 @@
     <label class="control-label">{{ 'orob2b.payment.status.label'|trans }}</label>
     <div class="controls">
         <div class="control-label">
-            {{ 'orob2b.payment.status.%s'|format(data|default('oro.ui.empty'|trans))|trans }}
+            {{ data ? 'orob2b.payment.status.%s'|format(data)|trans : 'oro.ui.empty'|trans }}
         </div>
     </div>
 </div>

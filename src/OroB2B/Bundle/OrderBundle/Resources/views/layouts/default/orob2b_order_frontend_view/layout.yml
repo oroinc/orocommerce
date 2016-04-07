@@ -125,17 +125,23 @@ layout:
                     options:
                         grid_name: order-line-items-grid-frontend
                         grid_parameters: { order_id: {@value: $data.order.id} }
+                order_po_number:
+                    blockType: text
+                    options:
+                        label: 'orob2b.order.po_number.label'
+                        text: {@value: $data.order.poNumber}
+                        block_prefixes: ['order_body_column_element']
                 order_shipping_method:
                     blockType: text
                     options:
-                        text: {@value: 'USPS Ground - $19.75' }
+                        text: {@value: 'orob2b.checkout.preferred_shipping_method.label' }
                         label: 'orob2b.order.shipping_method.label'
                         block_prefixes: ['order_body_column_element']
-                order_payment:
+                order_notes:
                     blockType: text
                     options:
-                        text: {@value: 'Wells Fargo ************1234' }
-                        label: 'orob2b.order.payment.label'
+                        label: 'orob2b.order.customer_notes.frontend.label'
+                        text: {@value: $data.order.customerNotes}
                         block_prefixes: ['order_body_column_element']
                 order_total:
                     blockType: order_total
@@ -155,8 +161,9 @@ layout:
                                         order_billing_address: ~
                                         order_shipping_address: ~
                                     order_body_column_right:
+                                        order_po_number: ~
                                         order_shipping_method: ~
-                                        order_payment: ~
+                                        order_notes: ~
                             order_line_items_grid_container:
                                 order_ine_items_grid_head_container:
                                     order_line_items_grid_title: ~

@@ -79,7 +79,7 @@ class CreditCardType extends AbstractType
                     'mapped' => false,
                     'block_name' => 'payment_credit_card_cvv',
                     'constraints' => [
-                        new Integer(),
+                        new Integer(['message' => 'orob2b.payment.integer.error']),
                         new NotBlank(),
                         new Length(['min' => 3, 'max' => 4]),
                     ],

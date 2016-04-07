@@ -104,3 +104,10 @@
     </div>
 {% endblock %}
 
+{% block _order_po_number_widget %}
+    {{ text ?: 'oro.ui.empty'|trans }}
+{% endblock %}
+
+{% block _order_notes_widget %}
+    {{ text ?: 'oro.ui.empty'|trans }}
+{% endblock %}

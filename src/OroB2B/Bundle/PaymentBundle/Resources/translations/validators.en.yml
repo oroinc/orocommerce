@@ -1,0 +1,3 @@
+orob2b:
+    payment:
+        integer.error: This value should be a number.
