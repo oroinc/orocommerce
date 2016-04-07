@@ -16,6 +16,7 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowAwareInterface;
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
 
 use OroB2B\Bundle\CheckoutBundle\Model\TransitionData;
 use OroB2B\Bundle\CheckoutBundle\Event\CheckoutEvent;
@@ -61,9 +62,11 @@ class CheckoutController extends Controller
         }
 
         $workflowItem = $this->handleTransition($checkout, $request);
-        $currentStep = $workflowItem->getCurrentStep();
+        $currentStep = $this->validateStep($workflowItem);
 
-        if ($workflowItem->getResult()->has('redirectUrl')) {
+        if ($workflowItem->getResult()->has('responseData')) {
+            return new JsonResponse(['responseData' => $workflowItem->getResult()->get('responseData')]);
+        } elseif ($workflowItem->getResult()->has('redirectUrl')) {
             if ($request->isXmlHttpRequest()) {
                 return new JsonResponse(['redirectUrl' => $workflowItem->getResult()->get('redirectUrl')]);
             } else {
@@ -79,6 +82,36 @@ class CheckoutController extends Controller
                     'workflowStep' => $currentStep
                 ]
         ];
+    }
+
+    /**
+     * @param WorkflowItem $workflowItem
+     *
+     * @return WorkflowStep
+     */
+    protected function validateStep(WorkflowItem $workflowItem)
+    {
+        $currentStep = $workflowItem->getCurrentStep();
+        $workflowManager = $this->getWorkflowManager();
+        $verifyTransition = null;
+        $transitions = $this->workflowManager->getTransitionsByWorkflowItem($workflowItem);
+        foreach ($transitions as $transition) {
+            $frontendOptions = $transition->getFrontendOptions();
+            if (!empty($frontendOptions['is_checkout_verify'])) {
+                $verifyTransition = $transition;
+                break;
+            }
+        }
+
+        if ($verifyTransition) {
+            $workflow = $workflowManager->getWorkflow($workflowItem);
+            if ($workflow->isTransitionAllowed($workflowItem, $verifyTransition)) {
+                $workflowManager->transit($workflowItem, $verifyTransition);
+                $currentStep = $workflowItem->getCurrentStep();
+            }
+        }
+
+        return $currentStep;
     }
 
     /**
