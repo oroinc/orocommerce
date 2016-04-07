@@ -51,21 +51,22 @@ class ShippingCostSubtotalProvider implements SubtotalProviderInterface
      */
     public function getSubtotal($entity)
     {
+        if (!$this->isSupported($entity)) {
+            throw new \InvalidArgumentException("Entity not supported for provider");
+        }
         $subtotal = new Subtotal();
 
         $subtotal->setType(self::TYPE);
         $translation = 'orob2b.order.subtotals.' . self::TYPE;
         $subtotal->setLabel($this->translator->trans($translation));
+        $subtotal->setVisible(false);
 
-        $subtotalAmount = 0.0;
-        if ($entity->getShippingCost()) {
+        if ($entity->getShippingCost() !== null) {
             $subtotalAmount = $entity->getShippingCost()->getValue();
-            $subtotal->setVisible(true);
-        } else {
-            $subtotal->setVisible(false);
+            $subtotal->setAmount($this->rounding->round($subtotalAmount))
+                ->setCurrency($this->getBaseCurrency($entity))
+                ->setVisible(true);
         }
-        $subtotal->setAmount($this->rounding->round($subtotalAmount));
-        $subtotal->setCurrency($this->getBaseCurrency($entity));
 
         return $subtotal;
     }

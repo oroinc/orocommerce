@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Form\Type;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Form\PreloadedExtension;
 
+use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
@@ -12,6 +13,8 @@ use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermType;
 
 class PaymentTermTypeTest extends FormIntegrationTestCase
 {
+    use EntityTrait;
+
     const ACCOUNT_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Account';
     const ACCOUNT_GROUP_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountGroup';
 
@@ -45,10 +48,10 @@ class PaymentTermTypeTest extends FormIntegrationTestCase
     {
         $entityIdentifierType = new EntityIdentifierType(
             [
-                1 => $this->getEntity(self::ACCOUNT_CLASS, 1),
-                2 => $this->getEntity(self::ACCOUNT_CLASS, 2),
-                3 => $this->getEntity(self::ACCOUNT_GROUP_CLASS, 3),
-                4 => $this->getEntity(self::ACCOUNT_GROUP_CLASS, 4)
+                1 => $this->getEntity(self::ACCOUNT_CLASS, ['id' => 1]),
+                2 => $this->getEntity(self::ACCOUNT_CLASS, ['id' => 2]),
+                3 => $this->getEntity(self::ACCOUNT_GROUP_CLASS, ['id' => 3]),
+                4 => $this->getEntity(self::ACCOUNT_GROUP_CLASS, ['id' => 4])
             ]
         );
 
@@ -150,33 +153,16 @@ class PaymentTermTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'label' => 'Test Payment Term Update',
-                    'appendAccounts' => [$this->getEntity(self::ACCOUNT_CLASS, 1)],
-                    'removeAccounts' => [$this->getEntity(self::ACCOUNT_CLASS, 2)],
+                    'appendAccounts' => [$this->getEntity(self::ACCOUNT_CLASS, ['id' => 1])],
+                    'removeAccounts' => [$this->getEntity(self::ACCOUNT_CLASS, ['id' => 2])],
                     'appendAccountGroups' => [
-                        $this->getEntity(self::ACCOUNT_GROUP_CLASS, 3)
+                        $this->getEntity(self::ACCOUNT_GROUP_CLASS, ['id' => 3])
                     ],
                     'removeAccountGroups' => [
-                        $this->getEntity(self::ACCOUNT_GROUP_CLASS, 4)
+                        $this->getEntity(self::ACCOUNT_GROUP_CLASS, ['id' => 4])
                     ]
                 ]
             ]
         ];
-    }
-
-    /**
-     * @param string $className
-     * @param int $id
-     * @return object
-     */
-    protected function getEntity($className, $id)
-    {
-        $entity = new $className;
-
-        $reflectionClass = new \ReflectionClass($className);
-        $method = $reflectionClass->getProperty('id');
-        $method->setAccessible(true);
-        $method->setValue($entity, $id);
-
-        return $entity;
     }
 }

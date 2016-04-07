@@ -58,8 +58,10 @@
 {% endblock %}
 
 {% block _datagrid_toolbar_button_container_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ "oro-oq__filter__item oro-oq__filter__item_group-btn"}) %}
-    <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
+    {% if block.children|length %}
+        {% set attr = attr|merge({class: attr.class|default('') ~ "oro-oq__filter__item oro-oq__filter__item_group-btn"}) %}
+        <div{{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
 {% endblock %}
