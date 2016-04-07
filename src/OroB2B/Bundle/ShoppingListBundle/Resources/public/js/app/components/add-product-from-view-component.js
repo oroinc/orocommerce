@@ -122,9 +122,7 @@ define(function(require) {
                         );
                     }
                     if (!self.buttonExists(urlOptions.shoppingListId)) {
-                        widgetManager.getWidgetInstanceByAlias(self.options.widgetAlias, function(widget) {
-                            widget.render();
-                        });
+                        mediator.trigger('shopping-list:created', response.shoppingList);
                     }
                 },
                 error: function(xhr) {
