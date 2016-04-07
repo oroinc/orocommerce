@@ -13,7 +13,7 @@ orob2b:
         organization.label: Organization
         line_items.label: Line Items
         current.label: Current
-        default.label: Default
+        default.label: 'Shopping list'
         items.label: 'Item|Items'
         subtotal.label: Subtotal
         total.label: Grand Total
