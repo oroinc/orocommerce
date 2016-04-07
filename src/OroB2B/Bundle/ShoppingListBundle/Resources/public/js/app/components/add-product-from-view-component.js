@@ -11,7 +11,6 @@ define(function(require) {
     var Error = require('oroui/js/error');
     var $ = require('jquery');
     var _ = require('underscore');
-    var widgetManager = require('oroui/js/widget-manager');
 
     AddProductFromViewComponent = BaseComponent.extend({
         /**
@@ -122,6 +121,7 @@ define(function(require) {
                         );
                     }
                     if (!self.buttonExists(urlOptions.shoppingListId)) {
+                        self.transformCreateNewButton();
                         mediator.trigger('shopping-list:created', response.shoppingList);
                     }
                 },
@@ -137,6 +137,14 @@ define(function(require) {
          */
         buttonExists: function(id) {
             return Boolean(this.options._sourceElement.find('[data-id="' + id + '"]').length);
+        },
+
+        transformCreateNewButton: function() {
+            var $button = this.options._sourceElement.find('[data-id=""]');
+            if ($button.length) {
+                $button.data('intention', this.options.intention.new);
+                $button.html('Create New Shopping List');
+            }
         },
 
         dispose: function() {
