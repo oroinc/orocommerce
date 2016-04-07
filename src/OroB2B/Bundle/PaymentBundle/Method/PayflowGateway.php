@@ -10,15 +10,13 @@ use OroB2B\Bundle\PaymentBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Gateway;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
-use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\Response;
-use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\ResponseStatusMap;
 use OroB2B\Bundle\PaymentBundle\Traits\ConfigTrait;
 
 class PayflowGateway implements PaymentMethodInterface
 {
     use ConfigTrait;
 
-    const TYPE = 'PayflowGateway';
+    const TYPE = 'payflow_gateway';
 
     /** @var Gateway */
     protected $gateway;
@@ -64,7 +62,7 @@ class PayflowGateway implements PaymentMethodInterface
             );
 
         $paymentTransaction
-            ->setActive($response->isSuccessful())
+            ->setActive(!$response->isSuccessful())
             ->setReference($response->getReference())
             ->setResponse($response->getData());
     }
@@ -152,23 +150,15 @@ class PayflowGateway implements PaymentMethodInterface
 
         $this->execute($paymentTransaction);
 
+        $paymentTransaction
+            ->setSuccessful(false)
+            ->setActive(true);
+
         $keys = [Option\SecureToken::SECURETOKEN, Option\SecureTokenIdentifier::SECURETOKENID];
 
         $response = array_intersect_key($paymentTransaction->getResponse(), array_flip($keys));
 
         $response['formAction'] = $this->gateway->getFormAction();
-
-        if (!$paymentTransaction->isSuccessful()) {
-            $response['message'] = 'orob2b.payment.result.error';
-            $response['type'] = 'error';
-
-            $paymentTransactionResponse = new Response($paymentTransaction->getResponse());
-            $secureTokenErrors = [ResponseStatusMap::SECURE_TOKEN_EXPIRED];
-            if (in_array($paymentTransactionResponse->getResult(), $secureTokenErrors, true)) {
-                $response['message'] = 'orob2b.payment.result.token_expired';
-                $response['type'] = 'warning';
-            }
-        }
 
         return $response;
     }

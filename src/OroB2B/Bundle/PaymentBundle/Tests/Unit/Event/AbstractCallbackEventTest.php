@@ -24,9 +24,9 @@ abstract class AbstractCallbackEventTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTypedEventName()
     {
-        $result = $this->getEvent()->getTypedEventName('Type With Spaces');
+        $result = $this->getEvent()->getTypedEventName('payment_type');
         $this->assertInternalType('string', $result);
-        $this->assertEquals($this->getEvent()->getEventName() . '.type_with_spaces', $result);
+        $this->assertEquals($this->getEvent()->getEventName() . '.payment_type', $result);
     }
 
     public function testOverrideResponse()

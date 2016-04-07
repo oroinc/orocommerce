@@ -44,6 +44,8 @@ class CallbackControllerTest extends WebTestCase
         $parameters = [
             'PNREF' => 'Transaction Reference',
             'RESULT' => '0',
+            'SECURETOKEN' => 'SECURETOKEN',
+            'SECURETOKENID' => 'SECURETOKENID',
         ];
 
         $this->loadFixtures(

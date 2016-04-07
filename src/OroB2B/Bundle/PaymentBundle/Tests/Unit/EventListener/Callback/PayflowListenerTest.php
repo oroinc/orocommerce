@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\EventListener\Callback;
 
+use Symfony\Component\HttpFoundation\Session\Session;
+
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use OroB2B\Bundle\PaymentBundle\Event\CallbackReturnEvent;
 use OroB2B\Bundle\PaymentBundle\EventListener\Callback\PayflowListener;
@@ -11,9 +13,16 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
     /** @var PayflowListener */
     protected $listener;
 
+    /** @var Session|\PHPUnit_Framework_MockObject_MockObject */
+    protected $session;
+
     protected function setUp()
     {
-        $this->listener = new PayflowListener();
+        $this->session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->listener = new PayflowListener($this->session);
     }
 
     /**

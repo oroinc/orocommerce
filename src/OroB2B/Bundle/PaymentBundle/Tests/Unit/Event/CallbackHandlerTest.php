@@ -79,7 +79,7 @@ class CallbackHandlerTest extends \PHPUnit_Framework_TestCase
         $this->eventDispatcher->expects($this->exactly(2))->method('dispatch')
             ->withConsecutive(
                 [CallbackReturnEvent::NAME, $event],
-                [CallbackReturnEvent::NAME . '.payment_method', $event]
+                [CallbackReturnEvent::NAME . '.paymentMethod', $event]
             )->willReturnCallback(
                 function ($name, CallbackReturnEvent $event) use ($response) {
                     $event->setResponse($response);
@@ -124,7 +124,7 @@ class CallbackHandlerTest extends \PHPUnit_Framework_TestCase
         $this->eventDispatcher->expects($this->exactly(2))->method('dispatch')
             ->withConsecutive(
                 [CallbackReturnEvent::NAME, $event],
-                [CallbackReturnEvent::NAME . '.payment_method', $event]
+                [CallbackReturnEvent::NAME . '.paymentMethod', $event]
             )->willReturnCallback(
                 function ($name, CallbackReturnEvent $event) use ($response) {
                     $event->setResponse($response);

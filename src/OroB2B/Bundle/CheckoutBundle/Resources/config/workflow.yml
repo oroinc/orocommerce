@@ -410,13 +410,6 @@ workflows:
                                     successUrl: $.result.successUrl
                                     errorUrl: $.result.errorUrl
                             - @assign_value: [$payment_in_progress, true]
-                            - @flash_message:
-                                conditions:
-                                    @and:
-                                        - @not_empty: ['$.result.responseData[message]']
-                                        - @not_empty: ['$.result.responseData[type]']
-                                message: '$.result.responseData[message]'
-                                type: '$.result.responseData[type]'
 
             finish_checkout_definition:
                 conditions:

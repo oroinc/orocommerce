@@ -2,13 +2,42 @@
 
 namespace OroB2B\Bundle\PaymentBundle\EventListener\Callback;
 
+use Symfony\Component\HttpFoundation\Session\Session;
+
 use OroB2B\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
 use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Option;
 use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\Response;
+use OroB2B\Bundle\PaymentBundle\PayPal\Payflow\Response\ResponseStatusMap;
 
 class PayflowListener
 {
+    /** @var Session */
+    protected $session;
+
+    /**
+     * @param Session $session
+     */
+    public function __construct(Session $session)
+    {
+        $this->session = $session;
+    }
+
+    /**
+     * @param AbstractCallbackEvent $event
+     */
+    public function onError(AbstractCallbackEvent $event)
+    {
+        $this->onCallback($event);
+
+        $eventData = $event->getData();
+        $response = new Response($eventData);
+
+        if (in_array($response->getResult(), [ResponseStatusMap::SECURE_TOKEN_EXPIRED], true)) {
+            $this->session->getFlashBag()->set('warning', 'orob2b.payment.result.token_expired');
+        }
+    }
+
     /**
      * @param AbstractCallbackEvent $event
      */
@@ -34,13 +63,14 @@ class PayflowListener
         }
 
         $paymentTransaction
+            ->setActive(false)
+            ->setSuccessful($response->isSuccessful())
             ->setReference($response->getReference())
             ->setResponse(array_replace($paymentTransactionData, $eventData));
 
         if ($paymentTransaction->getAction() === PaymentMethodInterface::AUTHORIZE) {
-            $paymentTransaction->setActive($response->isSuccessful());
-        } else {
-            $paymentTransaction->setActive(!$response->isSuccessful());
+            $paymentTransaction
+                ->setActive($response->isSuccessful());
         }
     }
 }

@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Event;
 
-use Doctrine\Common\Inflector\Inflector;
-
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -44,7 +42,7 @@ abstract class AbstractCallbackEvent extends Event
      */
     public function getTypedEventName($type)
     {
-        return implode('.', [$this->getEventName(), Inflector::tableize(Inflector::classify($type))]);
+        return implode('.', [$this->getEventName(), $type]);
     }
 
     /**

@@ -25,7 +25,7 @@ class LoadPaymentTransactionData extends AbstractFixture
             ->setPaymentMethod(PayflowGateway::TYPE)
             ->setAmount('1000')
             ->setCurrency('USD')
-            ->setRequest(
+            ->setResponse(
                 [
                     'SECURETOKEN' => 'SECURETOKEN',
                     'SECURETOKENID' => 'SECURETOKENID',

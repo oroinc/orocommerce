@@ -49,6 +49,8 @@ class PurchaseAction extends AbstractPaymentMethodAction
 
         $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
 
+        $response = [];
+
         try {
             $response = $this->paymentMethodRegistry
                 ->getPaymentMethod($options['paymentMethod'])
@@ -56,7 +58,6 @@ class PurchaseAction extends AbstractPaymentMethodAction
 
             $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
         } catch (\Exception $e) {
-            $response = ['message' => 'orob2b.payment.result.error', 'type' => 'error'];
         }
 
         $this->setAttributeValue(
