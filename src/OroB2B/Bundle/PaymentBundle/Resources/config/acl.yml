@@ -1,0 +1,3 @@
+orob2b_payment_transaction:
+    label: orob2b.payment.security.transaction
+    type: action
