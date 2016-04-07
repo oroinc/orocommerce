@@ -390,6 +390,7 @@ workflows:
                             shipUntil: $checkout.shipUntil
                             sourceEntityClass: $sourceDocumentEntityClassName
                             sourceEntityId: $checkout.sourceEntity.sourceDocument.id
+                            sourceEntityIdentifier: $checkout.sourceEntity.sourceDocumentIdentifier
                             paymentTerm: ~
                     - @get_order_line_items:
                         attribute: $.result.lineItems

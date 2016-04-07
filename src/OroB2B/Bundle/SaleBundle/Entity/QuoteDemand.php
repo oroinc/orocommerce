@@ -169,4 +169,12 @@ class QuoteDemand implements
     {
         $this->quote;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSourceDocumentIdentifier()
+    {
+        return $this->quote->getPoNumber();
+    }
 }

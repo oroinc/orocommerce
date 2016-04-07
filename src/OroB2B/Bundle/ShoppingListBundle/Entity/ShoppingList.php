@@ -578,4 +578,12 @@ class ShoppingList extends ExtendShoppingList implements
     {
         return $this;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSourceDocumentIdentifier()
+    {
+        return $this->label;
+    }
 }
