@@ -4,8 +4,11 @@ namespace OroB2B\Bundle\PaymentBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository;
 
@@ -22,13 +25,20 @@ class PaymentTermProvider
     protected $paymentTermClass;
 
     /**
+     * @var TokenStorageInterface
+     */
+    protected $tokenStorage;
+
+    /**
      * @param ManagerRegistry $registry
+     * @param TokenStorageInterface $tokenStorage
      * @param string $paymentTermClass
      */
-    public function __construct(ManagerRegistry $registry, $paymentTermClass)
+    public function __construct(ManagerRegistry $registry, TokenStorageInterface $tokenStorage, $paymentTermClass)
     {
         $this->registry = $registry;
         $this->paymentTermClass = $paymentTermClass;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -47,6 +57,21 @@ class PaymentTermProvider
     }
 
     /**
+     * @return PaymentTerm|null
+     */
+    public function getCurrentPaymentTerm()
+    {
+        $token = $this->tokenStorage->getToken();
+
+        /** @var AccountUser $user */
+        if ($token && ($user = $token->getUser()) instanceof AccountUser) {
+            return $this->getAccountPaymentTerm($user->getAccount());
+        }
+
+        return null;
+    }
+
+    /**
      * @param Account $account
      * @return PaymentTerm|null
      */
@@ -56,7 +81,7 @@ class PaymentTermProvider
     }
 
     /**
-     * @param AccountGroup $account
+     * @param AccountGroup $accountGroup
      * @return PaymentTerm|null
      */
     public function getAccountGroupPaymentTerm(AccountGroup $accountGroup)

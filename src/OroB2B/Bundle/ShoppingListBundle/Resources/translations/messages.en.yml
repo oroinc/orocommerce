@@ -23,7 +23,7 @@ orob2b:
             create_order: 'Create Order'
 
         create_new_form:
-            input_label: Shopping List Label
+            input_label: Shopping List Name
             comment: Selected products will be added to this new shopping list.
             comment_cancel: Click "Cancel" to select a different list.
             submit_label: Create and Add

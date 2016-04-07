@@ -20,8 +20,6 @@ define(function(require) {
                     $(this).parent().removeClass('checked');
                     $content.hide();
                 }
-
-                event.stopPropagation();
             });
         },
 

@@ -69,7 +69,7 @@ abstract class AbstractOrderAddressType extends AbstractType
         $isManualEditGranted = $this->orderAddressSecurityProvider->isManualEditGranted($type);
         $this->initAccountAddressField($builder, $type, $order, $isManualEditGranted, $isEditEnabled);
 
-        $builder->add('phone', 'text');
+        $builder->add('phone', 'text', ['required' => false]);
 
         $builder->addEventListener(
             FormEvents::SUBMIT,
