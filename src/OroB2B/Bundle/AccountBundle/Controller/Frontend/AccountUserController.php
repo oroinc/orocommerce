@@ -15,10 +15,6 @@ use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserHandler;
 
-/**
- * Class AccountUserController
- * @package OroB2B\Bundle\AccountBundle\Controller\Frontend
- */
 class AccountUserController extends Controller
 {
     /**
