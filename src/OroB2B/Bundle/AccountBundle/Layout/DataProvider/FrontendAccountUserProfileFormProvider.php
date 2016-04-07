@@ -55,6 +55,7 @@ class FrontendAccountUserProfileFormProvider extends AbstractServerRenderDataPro
 
         return $this->data[$accountUserId];
     }
+
     /**
      * @param AccountUser $accountUser
      *
@@ -67,6 +68,7 @@ class FrontendAccountUserProfileFormProvider extends AbstractServerRenderDataPro
             $this->form[$accountUserId] = $this->formFactory
                 ->create(FrontendAccountUserProfileType::NAME, $accountUser);
         }
+
         return $this->form[$accountUserId];
     }
 }
