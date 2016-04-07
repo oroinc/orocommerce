@@ -78,6 +78,11 @@
         dataId: shoppingListId,
         actionLabel: 'orob2b.shoppinglist.actions.add_to_shopping_list'|trans({'{{ shoppingList }}': label})
     } %}
+    {% if options.aCss is defined %}
+        {% set btnOptions = btnOptions|merge({
+        'aCss': options.aCss,
+        }) %}
+    {% endif %}
 
     {{ buttons.getButton(btnOptions) }}
 {% endmacro %}
@@ -95,6 +100,12 @@
             'dataUrl': options.dataUrl,
         }) %}
     {% endif %}
+
+    {% if options.aCss is defined %}
+        {% set buttonOptions = buttonOptions|merge({
+        'aCss': buttonOptions.aCss ~ ' ' ~ options.aCss,
+        }) %}
+    {% endif %}
     {{ UI.clientButton(buttonOptions) }}
 {% endmacro %}
 
@@ -109,11 +120,16 @@
             {% else %}
                 {%  set existingShoppingLists = existingShoppingLists|merge([shoppingList]) %}
             {% endif %}
+        {% else %}
+            {% set aCss = options.singleButtonACss is defined ? options.singleButtonACss : "" %}
+            {{ buttons.addToCurrentShoppingListButton(options.current|merge({shoppingList: null, aCss: aCss})) }}
         {% endfor %}
         {% for shoppingList in existingShoppingLists %}
             {{ buttons.addToShoppingListButton(options.existing|merge({shoppingList: shoppingList})) }}
         {% endfor %}
-        {{ buttons.addToNewShoppingListButton(options.new) }}
+        {% if options.shoppingLists is not empty %}
+            {{ buttons.addToNewShoppingListButton(options.new) }}
+        {% endif %}
     {% endset %}
     {% set customOptions = {}
         |merge(options.groupContainer|default(false) ? {'groupContainer': options.groupContainer} : {} )
