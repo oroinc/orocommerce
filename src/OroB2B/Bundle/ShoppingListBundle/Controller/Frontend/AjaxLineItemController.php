@@ -70,14 +70,14 @@ class AjaxLineItemController extends Controller
             return new JsonResponse(['successful' => false, 'message' => (string)$form->getErrors(true, false)]);
         }
 
-        $link = $this->get('router')->generate('orob2b_shopping_list_frontend_view', ['id' => $shoppingList->getId()]);
         $translator = $this->get('translator');
+        $link = $this->get('router')->generate('orob2b_shopping_list_frontend_view', ['id' => $shoppingList->getId()]);
+        $shoppingListLink = sprintf("<a href='%s'>%s</a>", $link, $shoppingList->getLabel());
+
         $message = $translator->trans(
             'orob2b.shoppinglist.product.added.label',
-            ['%shoppinglist%' => $shoppingList->getLabel()]
+            ['%shoppinglist%' => $shoppingListLink]
         );
-        $linkTitle = $translator->trans('orob2b.shoppinglist.actions.view');
-        $message = sprintf("%s (<a href='%s'>%s</a>).", $message, $link, $linkTitle);
 
         return new JsonResponse(['successful' => true, 'message' => $message]);
     }

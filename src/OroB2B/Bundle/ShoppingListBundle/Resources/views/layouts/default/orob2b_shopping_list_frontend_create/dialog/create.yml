@@ -8,8 +8,8 @@ layout:
             optionValue: { @value: $data.savedId }
         - @setOption:
             id: widget_content
-            optionName: 'vars.shoppingListLabel'
-            optionValue: { @value: $data.shoppingList.label }
+            optionName: 'vars.shoppingList'
+            optionValue: { @value: $data.shoppingList }
         - @addTree:
             items:
                 form_errors:

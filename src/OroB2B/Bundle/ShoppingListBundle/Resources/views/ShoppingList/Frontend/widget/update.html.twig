@@ -1,8 +1,13 @@
+{% set shoppingListLink %}
+    <a href="{{ path('orob2b_shopping_list_frontend_view', {id: shoppingList.id}) }}">{{ shoppingList.label }}</a>
+{% endset %}
+
 {% set pageComponentOptions = {
     '_wid': app.request.get('_wid'),
     'savedId': savedId|default(null),
-    'message': message|default('orob2b.shoppinglist.flash.success'|trans({'%shoppinglist%': shoppingListLabel|default(null)})
+    'message': message|default('orob2b.shoppinglist.flash.success'|trans({'%shoppinglist%': shoppingListLink|trim|default(null)})
 } %}
+
 <div class="widget-content"
      data-page-component-module="orob2bfrontend/js/app/components/widget-form-component"
      data-page-component-options="{{ pageComponentOptions|json_encode }}"
