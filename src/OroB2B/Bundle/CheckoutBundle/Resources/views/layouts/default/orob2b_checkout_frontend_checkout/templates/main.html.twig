@@ -149,10 +149,12 @@
                         <table class="table">
                             <tbody>
                                 {% for total in summary.subtotals %}
-                                <tr>
-                                    <td>{{ total.label }}</td>
-                                    <td class="text-right">{{ total.totalPrice|oro_format_price }}</td>
-                                </tr>
+                                    {% if total.visible %}
+                                        <tr>
+                                            <td>{{ total.label }}</td>
+                                            <td class="text-right">{{ total.totalPrice|oro_format_price }}</td>
+                                        </tr>
+                                    {% endif %}
                                 {% endfor %}
                                 <tr>
                                     <td><span class="fs18 text-uppercase">{{ summary.generalTotal.label }}</span></td>
