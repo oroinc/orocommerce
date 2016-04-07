@@ -58,10 +58,19 @@ layout:
 
                 account_user_address_book:
                     blockType: container
+                account_user_address_book_head:
+                    blockType: container
                 account_user_address_book_title:
                     blockType: text
                     options:
                         text: {@value: 'orob2b.account.frontend.section.account_user.address_book'}
+                account_user_address_add_link:
+                    blockType: link
+                    options:
+                        visible: true
+                        route_name: orob2b_account_frontend_account_user_address_create
+                        route_parameters: { entityId: {@value: $data.entity.id }}
+                        text: {@value: 'orob2b.account.address.add'}
                 account_user_address_book_content:
                     blockType: block
                     options:
@@ -76,5 +85,7 @@ layout:
                             account_user_view_information_title: ~
                             account_user_view_information_content:
                         account_user_address_book:
-                            account_user_address_book_title: ~
+                            account_user_address_book_head:
+                                account_user_address_book_title: ~
+                                account_user_address_add_link: ~
                             account_user_address_book_content: ~

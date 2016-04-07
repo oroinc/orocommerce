@@ -1,0 +1,84 @@
+{% macro group(field, size, placeholder) %}
+    {% set attr = placeholder?{placeholder:placeholder}:{} %}
+    <div class="form-group col-md-{{ size|default(8) }}">
+        {% if placeholder is empty %}
+            {{ form_label(field) }}
+        {% endif %}
+        {{ form_widget(field, {attr: attr}) }}
+    </div>
+{% endmacro %}
+{% block orob2b_account_typed_address_widget %}
+    {% import _self as draw %}
+    {% spaceless %}
+
+        <div class="row">
+            {{ draw.group(form.label, 6) }}
+        </div>
+        <div class="row">
+            <div class="form-group col-md-2">
+                {{ form_widget(form.primary, {label: "orob2b.account.accountaddress.primary.label"|trans}) }}
+            </div>
+        </div>
+
+        <div class="row">
+            {{ draw.group(form.namePrefix, 2) }}
+        </div>
+        <div class="row">
+            {{ draw.group(form.firstName, 3) }}
+            {{ draw.group(form.middleName, 3) }}
+        </div>
+        <div class="row">
+            {{ draw.group(form.lastName, 3) }}
+            {{ draw.group(form.nameSuffix, 2) }}
+        </div>
+        <div class="row">
+            {{ draw.group(form.phone) }}
+        </div>
+        <div class="row">
+            {{ draw.group(form.organization, 8) }}
+        </div>
+        <div class="row">
+            {{ draw.group(form.street, 8) }}
+            {{ draw.group(form.street2, 8, 'orob2b.account.frontend.address.form.street2.placeholder') }}
+        </div>
+        <div class="row">
+            {{ draw.group(form.city, 3) }}
+            {{ draw.group(form.postalCode, 2) }}
+        </div>
+        <div class="row">
+            {{ draw.group(form.country, 3) }}
+            {{ draw.group(form.region, 3) }}
+        </div>
+
+        <div class="row">
+            <fieldset class="input col-md-6">
+                <style scoped>
+                    .input>legend {
+                        width:auto;
+                        padding:0 10px;
+                        border-bottom:none
+                    }
+                </style>
+                <legend>
+                    <small>{{ "orob2b.account.frontend.address.form.addressTypes.label"|trans }}:</small>
+                </legend>
+                {{ form_widget(form.types) }}
+                {{ form_widget(form.defaults) }}
+            </fieldset>
+        </div>
+    {% endspaceless %}
+{% endblock %}
+
+{% block orob2b_account_typed_address_with_default_widget %}
+    {{ form_widget(form.default) }}
+{% endblock %}
+
+{% block choice_widget_expanded %}
+    <div class="col">
+        {% for child in form %}
+            <div class="{{ multiple ? "checkbox" : "radio" }} col">
+                {{ form_widget(child) }}
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -1,7 +1,7 @@
 {% block _account_user_view_page_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}_full"
-}) %}
+    class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}_full"
+    }) %}
     <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
@@ -47,22 +47,32 @@
     </div>
 {% endblock %}
 
-{% block _account_user_address_book_title_widget %}
+{% block _account_user_address_book_head_widget %}
     <div class="account-oq__item account-oq__item_full mb0-sm">
-        <h2 class="account-oq__item__title">
-            {{ block_widget(block) }}
-        </h2>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _account_user_address_book_title_widget %}
+    <h2 class="account-oq__item__title">
+        {{ block_widget(block) }}
+    </h2>
+{% endblock %}
+
+{% block _account_user_address_add_link_widget %}
+    <div class="oro-account-user-address__add-link pull-right">
+        {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block _account_user_address_book_content_widget %}
-<div class="account-oq__item__body">
-    {{ oro_widget_render({
-        'widgetType': 'block',
-        'contentClasses': [],
-        'url': path('orob2b_account_account_user_address_book', {id: entity.id})
-    }) }}
-</div>
+    <div class="account-oq__item__body">
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'contentClasses': [],
+            'url': path('orob2b_account_account_user_address_book', {id: entity.id})
+        }) }}
+    </div>
 {% endblock %}
 
 {% block _account_user_list_link_widget %}

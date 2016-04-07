@@ -349,6 +349,8 @@ orob2b.account:
             profile_updated.message: 'Account User profile updated'
             token_not_found.message: 'The user with "confirmation token" does not exist for value "%token%"'
             confirmation_sent.message: 'Confirmation email has been sent'
+        accountuseraddress:
+            saved.message: 'Account User Address has been saved'
         accountuserrole:
             saved.message:     'Account User Role has been saved'
 
@@ -386,6 +388,12 @@ orob2b.account:
         privileges:
             entity.label: Access
             action.label: Capabillities
+        address: #orob2b.account.frontend.address
+            form:
+                street2:
+                    placeholder: Secondary street address (optional)
+                addressTypes:
+                    label: Address types and usage
         security:
             access-level:
                 BASIC: 'Individual'

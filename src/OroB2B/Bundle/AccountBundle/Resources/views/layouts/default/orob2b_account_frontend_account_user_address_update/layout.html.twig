@@ -1,0 +1,20 @@
+
+{% block _account_user_address_edit_form_start_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('')
+    }) %}
+    {{ block('form_start_widget') }}
+{% endblock %}
+
+
+{% block _account_user_address_edit_form_actions_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " mt2-md"}) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _account_user_address_edit_form_end_widget %}
+    {% set attr = attr|merge({class: attr.class|default('')}) %}
+    {{ form_end(form, {'render_rest': true}) }}
+{% endblock %}
